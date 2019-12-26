@@ -214,7 +214,7 @@ public class CiCdProperties implements InitializingBean {
 	 * @param taskHisId
 	 * @return
 	 */
-	public File getJobBackup(Integer taskHisId) {
+	public File getJobBackupDir(Integer taskHisId) {
 		Assert.notNull(taskHisId, "Rollback task history ref ID must not be null.");
 		return new File(getJobBaseDir(taskHisId).getAbsolutePath());
 	}
@@ -269,7 +269,7 @@ public class CiCdProperties implements InitializingBean {
 	public File getTransferLocalTmpFile(Integer taskHisId, String projectName, String suffix) {
 		hasText(projectName, "Transfer project name must not be empty.");
 		hasText(suffix, "Transfer project file suffix must not be empty.");
-		return new File(getJobBackup(taskHisId).getAbsolutePath() + "/" + projectName + "." + suffix);
+		return new File(getJobBackupDir(taskHisId).getAbsolutePath() + "/" + projectName + "." + suffix);
 	}
 
 	/**

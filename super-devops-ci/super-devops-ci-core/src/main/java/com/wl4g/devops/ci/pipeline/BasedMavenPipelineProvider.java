@@ -28,7 +28,7 @@ import java.io.File;
  * @version v1.0 2019年10月12日
  * @since
  */
-public abstract class BasedMavenPipelineProvider extends BasedPhysicalBackupPipelineProvider {
+public abstract class BasedMavenPipelineProvider extends RestorableDeployPipelineProvider {
 
 	public BasedMavenPipelineProvider(PipelineContext context) {
 		super(context);
@@ -36,9 +36,9 @@ public abstract class BasedMavenPipelineProvider extends BasedPhysicalBackupPipe
 
 	@Override
 	protected void doBuildWithDefaultCommands(String projectDir, File jobLogFile, Integer taskId) throws Exception {
-		String defaultCommand = "mvn -f " + projectDir + "/pom.xml clean install -Dmaven.test.skip=true -DskipTests";
+		String defaultMvnCommand = String.format("mvn -f %s/pom.xml clean install -Dmaven.test.skip=true -DskipTests", projectDir);
 		// TODO timeoutMs/pwdDir?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultCommand, null, 300000L)
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultMvnCommand, null, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}

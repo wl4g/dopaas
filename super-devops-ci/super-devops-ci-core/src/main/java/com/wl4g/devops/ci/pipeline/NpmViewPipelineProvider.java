@@ -33,7 +33,7 @@ import java.io.File;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider {
+public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 
 	public NpmViewPipelineProvider(PipelineContext context) {
 		super(context);
@@ -53,7 +53,7 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 	}
 
 	@Override
-	protected Runnable newDeployer(AppInstance instance) {
+	protected Runnable newPipeDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(NpmViewPipeDeployer.class, args);
 	}
@@ -96,7 +96,7 @@ public class NpmViewPipelineProvider extends BasedPhysicalBackupPipelineProvider
 		 */
 		String tarCommand = String.format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/%s.tar *", projectDir,
 				prgramInstallFileName, prgramInstallFileName, prgramInstallFileName,
-				config.getJobBackup(getContext().getTaskHistory().getId()), prgramInstallFileName);
+				config.getJobBackupDir(getContext().getTaskHistory().getId()), prgramInstallFileName);
 		// Execution command. TODO timeoutMs?
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);

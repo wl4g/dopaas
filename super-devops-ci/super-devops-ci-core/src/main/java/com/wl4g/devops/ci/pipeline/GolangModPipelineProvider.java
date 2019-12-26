@@ -30,7 +30,7 @@ import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
  * @version v1.0 2019年5月22日
  * @since
  */
-public class GolangModPipelineProvider extends BasedPhysicalBackupPipelineProvider {
+public class GolangModPipelineProvider extends RestorableDeployPipelineProvider {
 
 	public GolangModPipelineProvider(PipelineContext context) {
 		super(context);
@@ -47,7 +47,7 @@ public class GolangModPipelineProvider extends BasedPhysicalBackupPipelineProvid
 	}
 
 	@Override
-	protected Runnable newDeployer(AppInstance instance) {
+	protected Runnable newPipeDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(GolangModPipeDeployer.class, args);
 	}

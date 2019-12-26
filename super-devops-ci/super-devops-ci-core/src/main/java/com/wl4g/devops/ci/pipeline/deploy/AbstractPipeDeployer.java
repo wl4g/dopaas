@@ -23,13 +23,13 @@ import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.PipelineDeployingException;
+import com.wl4g.devops.common.log.SmartLoggerFactory;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.tool.common.cli.SshUtils.CommandResult;
 import com.wl4g.devops.tool.common.crypto.AES;
 import com.wl4g.devops.tool.common.io.FileIOUtils;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -53,7 +53,7 @@ import static org.springframework.util.Assert.*;
  * @param <P>
  */
 public abstract class AbstractPipeDeployer<P extends PipelineProvider> implements Runnable {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = SmartLoggerFactory.getLogger(getClass());
 
 	/** Pipeline CICD properties configuration. */
 	@Autowired
@@ -93,21 +93,17 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	@Override
 	public void run() {
 		notNull(taskDetailId, "Transfer job for taskDetailId inmust not be null");
-
 		Integer projectId = getContext().getProject().getId();
 		String projectName = getContext().getProject().getProjectName();
-		if (log.isInfoEnabled()) {
-			log.info("Starting transfer job for instanceId:{}, projectId:{}, projectName:{} ...", instance.getId(), projectId,
-					projectName);
-		}
+		log.info("Starting transfer job for instanceId:{}, projectId:{}, projectName:{} ...", instance.getId(), projectId,
+				projectName);
+
 		try {
 			TaskHistory taskHisy = provider.getContext().getTaskHistory();
 			// Update status to running.
 			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_RUNNING);
-			if (log.isInfoEnabled()) {
-				log.info("[PRE] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
-						TASK_STATUS_RUNNING, taskDetailId, instance.getId(), projectId, projectName);
-			}
+			log.info("[PRE] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
+					TASK_STATUS_RUNNING, taskDetailId, instance.getId(), projectId, projectName);
 
 			// PRE commands.
 			if (!isBlank(taskHisy.getPreCommand())) {
@@ -124,25 +120,22 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
 			// Update status to success.
 			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_SUCCESS);
-			if (log.isInfoEnabled()) {
-				log.info("[SUCCESS] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
-						TASK_STATUS_SUCCESS, taskDetailId, instance.getId(), projectId, projectName);
-			}
+
+			log.info("[SUCCESS] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
+					TASK_STATUS_SUCCESS, taskDetailId, instance.getId(), projectId, projectName);
+
 		} catch (Exception e) {
-			if (log.isInfoEnabled()) {
-				log.info("[FAILED] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
-						TASK_STATUS_FAIL, taskDetailId, instance.getId(), projectId, projectName);
-			}
+			log.info("[FAILED] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
+					TASK_STATUS_FAIL, taskDetailId, instance.getId(), projectId, projectName);
+
 			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_FAIL);
 			throw new PipelineDeployingException(
 					String.format("Failed to deploying for taskDetailId: %s, instance: %s, projectName: %s, \nCaused by:\n%s",
 							taskDetailId, instance.getId(), projectName, getStackTraceAsString(e)));
 		}
 
-		if (log.isInfoEnabled()) {
-			log.info("Completed of transfer job for instanceId:{}, projectId:{}, projectName:{}", instance.getId(), projectId,
-					projectName);
-		}
+		log.info("Completed of transfer job for instanceId:{}, projectId:{}, projectName:{}", instance.getId(), projectId,
+				projectName);
 	}
 
 	/**
@@ -187,16 +180,13 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		if (!isBlank(result.getMessage())) {
 			String logmsg = writeDeployLog("%s@%s, command:[%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command,
 					result.getMessage());
-			if (log.isInfoEnabled()) {
-				log.info(logmsg);
-			}
+			log.info(logmsg);
 		}
 		if (!isBlank(result.getErrmsg())) {
 			String logmsg = writeDeployLog("%s@%s, command:[%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
 					result.getErrmsg());
-			if (log.isInfoEnabled()) {
-				log.info(logmsg);
-			}
+			log.info(logmsg);
+
 			// Strictly handle, as long as there is error message in remote
 			// command execution, throw error.
 			throw new PipelineDeployingException(logmsg);
@@ -215,9 +205,8 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		// Obtain text-plain privateKey(RSA)
 		String cipherKey = config.getDeploy().getCipherKey();
 		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
-		if (log.isInfoEnabled()) {
-			log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
-		}
+		log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
+
 		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
 		FileIOUtils.writeBLineFile(jobDeployerLog, String.format("Transfer plain sshkey: %s => %s", cipherKey, "******"));
 		return sshkeyPlain;

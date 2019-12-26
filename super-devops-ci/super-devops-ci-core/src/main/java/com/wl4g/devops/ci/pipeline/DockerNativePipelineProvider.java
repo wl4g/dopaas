@@ -73,7 +73,7 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
 	}
 
 	@Override
-	protected Runnable newDeployer(AppInstance instance) {
+	protected Runnable newPipeDeployer(AppInstance instance) {
 		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(DockerNativePipeDeployer.class, args);
 	}

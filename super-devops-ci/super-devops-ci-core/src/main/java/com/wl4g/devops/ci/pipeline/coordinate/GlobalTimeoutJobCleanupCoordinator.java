@@ -16,13 +16,13 @@
 package com.wl4g.devops.ci.pipeline.coordinate;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.common.log.SmartLoggerFactory;
 import com.wl4g.devops.common.utils.task.GenericTaskRunner;
 import com.wl4g.devops.common.utils.task.RunnerProperties;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -43,7 +43,7 @@ import static java.util.Objects.nonNull;
 public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<RunnerProperties> {
 	final public static long DEFAULT_MIN_WATCH_MS = 2_000L;
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = SmartLoggerFactory.getLogger(getClass());
 
 	@Autowired
 	protected ThreadPoolTaskScheduler scheduler;
@@ -84,9 +84,7 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 		while (true) {
 			long maxIntervalMs = getGlobalJobCleanMaxIntervalMs();
 			sleepRandom(DEFAULT_MIN_WATCH_MS, maxIntervalMs);
-			if (log.isInfoEnabled()) {
-				log.info("Global jobs timeout cleanup for maxIntervalMs: {}ms ... ", maxIntervalMs);
-			}
+			log.info("Global jobs timeout cleanup for maxIntervalMs: {}ms ... ", maxIntervalMs);
 
 			Lock lock = lockManager.getLock(cleanupFinalizerLockName);
 			try {
@@ -94,12 +92,12 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 				// acquire lock are on ready in place.
 				if (lock.tryLock()) {
 					int count = taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
-					if (log.isInfoEnabled() && count > 0) {
+					if (count > 0) {
 						log.info(
 								"Updated pipeline timeout jobs, with jobTimeoutSec:{}, global jobCleanMaxIntervalMs:{}, count:{}",
 								config.getBuild().getJobTimeoutSec(), maxIntervalMs, count);
 					}
-				} else if (log.isDebugEnabled()) {
+				} else {
 					log.debug("Skip cleanup jobs ... jobTimeoutSec:{}, global jobCleanMaxIntervalMs:{}",
 							config.getBuild().getJobTimeoutSec(), maxIntervalMs);
 				}
@@ -122,9 +120,7 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 	public Long refreshGlobalJobCleanMaxIntervalMs(Long globalJobCleanMaxIntervalMs) {
 		// Distributed global intervalMs.
 		jedisService.setObjectT(KEY_FINALIZER_INTERVALMS, globalJobCleanMaxIntervalMs, -1);
-		if (log.isInfoEnabled()) {
-			log.info("Refreshed global timeoutCleanupFinalizer of intervalMs:<%s>", globalJobCleanMaxIntervalMs);
-		}
+		log.info("Refreshed global timeoutCleanupFinalizer of intervalMs:<%s>", globalJobCleanMaxIntervalMs);
 
 		// Get available global intervalMs.
 		return getGlobalJobCleanMaxIntervalMs();

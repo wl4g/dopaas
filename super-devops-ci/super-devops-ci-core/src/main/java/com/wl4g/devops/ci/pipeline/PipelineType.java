@@ -45,7 +45,7 @@ public abstract class PipelineType {
 	final public static String PYTHON3_STANDARD = "Python3";
 
 	/**
-	 * GOLANG standard provider alias.
+	 * GOLANG standard mod provider alias.
 	 */
 	final public static String GOLANG_STANDARD = "Golang";
 
