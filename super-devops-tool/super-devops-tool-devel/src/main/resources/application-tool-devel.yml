@@ -17,6 +17,6 @@ spring:
       tool:
         devel:
           mybatis-loader: # Mybatis mappers autoloader for development only(Note: production disabled)
-            enable: false # Default by: false
+            enable: false  # Default with: auto(enable jdwp?)
             fast-fail: false
             monitor-loader-interval-ms: 1000
