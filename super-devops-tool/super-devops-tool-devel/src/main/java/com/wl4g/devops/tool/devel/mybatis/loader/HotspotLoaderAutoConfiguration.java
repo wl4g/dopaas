@@ -17,11 +17,11 @@ package com.wl4g.devops.tool.devel.mybatis.loader;
 
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.wl4g.devops.common.annotation.conditional.ConditionalOnJdwpDebug;
 import com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotLoader.MapperHotspotLoaderProperties;
 import static com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotLoader.MapperHotspotLoaderProperties.*;
 
@@ -36,7 +36,7 @@ import static com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotL
 public class HotspotLoaderAutoConfiguration {
 
 	@Bean
-	@ConditionalOnProperty(name = CONF_P + ".enable", matchIfMissing = false)
+	@ConditionalOnJdwpDebug(enableProperty = CONF_P + ".enable")
 	@ConfigurationProperties(prefix = CONF_P)
 	public MapperHotspotLoaderProperties mapperHotspotLoaderProperties() {
 		return new MapperHotspotLoaderProperties();

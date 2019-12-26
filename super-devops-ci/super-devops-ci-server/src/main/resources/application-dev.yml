@@ -31,10 +31,6 @@ spring:
           server-uri: http://localhost:14040/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://localhost:8080/#/ci/taskhis
-      tool:
-        devel:
-          mybatis-loader: # Mybatis mappers autoloader for development only(Note: production disabled)
-            enable: true  # Default by: false
       ci:
         pipeline: # Pipeline configuration.
           #workspace: # Default by to {user.home}/.ci-workspace
