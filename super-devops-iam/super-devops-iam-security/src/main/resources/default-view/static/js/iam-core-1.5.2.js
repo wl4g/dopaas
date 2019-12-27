@@ -730,8 +730,11 @@
 			clientRef = "IOS";
 		} else if (platformType.MAC) {
 			clientRef = "MAC";
+		} else if (platformType.Linux) {
+			clientRef = "Linux";
 		} else {
-			throw "Unsupported browser types ["+ navigator.appVersion +"]";
+			clientRef = "Unknown";
+			console.warn("Unknown platform browser ["+ navigator.appVersion +"]");
 		}
 		return clientRef;
 	};

@@ -55,20 +55,23 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 
 		// Execution command. TODO timeoutMs?
 		String defaultNpmBuildCmd = String.format("cd %s\nrm -Rf dist\nnpm install\nnpm run build\n", projectDir);
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), defaultNpmBuildCmd, tmpCmdFile,
-				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), defaultNpmBuildCmd,
+				tmpCmdFile, 300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
 
 	/**
+	 * Handling the NPM built installation package asset file, and convert the dist
+	 * directory to a formal tar compressed package.
+	 * 
+	 * </br>
 	 * For example:
 	 * 
 	 * <pre>
-	 * $ cd /root/.ci-workspace/sources/super-devops-view/dist
-	 * $ mkdir super-devops-view-master-bin
-	 * $ mv `ls -A|grep -v super-devops-view-master-bin`
-	 * $ super-devops-view-master-bin/
-	 * $ tar -cvf /root/.ci-workspace/jobs/job.936/super-devops-view-master-bin.tar *
+	 * $ cd /root/.ci-workspace/sources/portal-view/dist
+	 * $ mkdir portal-view-1.0.0-bin
+	 * $ mv `ls -A|grep -v portal-view-1.0.0-bin` portal-view-1.0.0-bin/
+	 * $ tar -cvf /root/.ci-workspace/jobs/job.2/portal-view-1.0.0-bin.tar *
 	 * </pre>
 	 */
 	@Override
@@ -80,13 +83,13 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
 
-		String tarCommand = String.format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/%s.tar *", projectDir,
-				prgramInstallFileName, prgramInstallFileName, prgramInstallFileName,
+		String tarCommand = String.format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/%s.tar *",
+				projectDir, prgramInstallFileName, prgramInstallFileName, prgramInstallFileName,
 				config.getJobBackupDir(getContext().getTaskHistory().getId()), prgramInstallFileName);
 
 		// Execution command. TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
-				.setStdout(jobLogFile).setStderr(jobLogFile);
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile,
+				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
 
