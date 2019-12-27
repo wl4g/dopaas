@@ -17,6 +17,7 @@ package com.wl4g.devops.tool.opencv.library;
 
 import java.io.IOException;
 
+import com.wl4g.devops.tool.common.natives.NoFoundArchNativeLibraryException;
 import com.wl4g.devops.tool.common.natives.PathPatternNativeLibraryLoader;
 
 /**
@@ -33,7 +34,7 @@ public final class OpenCvNativeLibraryLoader {
 	/**
 	 * Opencv native librarys location patterns.
 	 */
-	final private static String[] OPENCV_LIBS_PATTERN = { //
+	final private static String[] OPENCV_LIBS_PATTERN = { // supported OS archs dylib locations defintions.
 			"/com/wl4g/devops/tool/opencv/library/natives/**/*.dll",
 			"/com/wl4g/devops/tool/opencv/library/natives/**/*.so",
 			"/com/wl4g/devops/tool/opencv/library/natives/**/*.dylib",
@@ -53,6 +54,13 @@ public final class OpenCvNativeLibraryLoader {
 			loader.loadLibrarys();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
+		} catch (NoFoundArchNativeLibraryException e) {
+			throw new NoFoundArchNativeLibraryException(
+					"Failed to load opencv dylib. The project does not include dynamic chain library by "
+							+ "default (e.g. MAC/Windows/Linux). If you want to run it, you can download and "
+							+ "install it see: https://github.com/wl4g/super-devops-tool-opencv-native"
+							+ " or https://gitee.com/wl4g/super-devops-tool-opencv-native",
+					e);
 		}
 	}
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.log;
+package com.wl4g.devops.tool.common.log;
 
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;

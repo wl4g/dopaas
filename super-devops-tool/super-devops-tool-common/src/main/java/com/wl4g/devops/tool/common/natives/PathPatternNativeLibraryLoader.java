@@ -16,6 +16,7 @@
 package com.wl4g.devops.tool.common.natives;
 
 import static com.wl4g.devops.tool.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
+import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
@@ -33,16 +34,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.wl4g.devops.tool.common.lang.StringUtils2.*;
 
+import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 import com.wl4g.devops.tool.common.resource.Resource;
 import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
 
@@ -64,7 +64,7 @@ import static com.wl4g.devops.tool.common.lang.ClassUtils2.getDefaultClassLoader
  * @since
  */
 public class PathPatternNativeLibraryLoader {
-	final protected static Logger log = LoggerFactory.getLogger(PathPatternNativeLibraryLoader.class);
+	final protected Logger log = SmartLoggerFactory.getLogger(getClass());
 
 	/**
 	 * Loaded state flag.
@@ -89,7 +89,7 @@ public class PathPatternNativeLibraryLoader {
 	/**
 	 * Matched load native library file resources.
 	 */
-	final private List<File> loadLibFiles = new ArrayList<>(4);
+	final private List<File> loadLibFiles = new ArrayList<>(8);
 
 	public PathPatternNativeLibraryLoader(String... libLocationPatterns) {
 		this(getDefaultClassLoader(), libLocationPatterns);
@@ -164,11 +164,11 @@ public class PathPatternNativeLibraryLoader {
 	 * as filename because the pathname is "abstract", not system-dependent.
 	 * 
 	 * @param classLoader {@link ClassLoader} for loading native class library
-	 * @throws IOException           Dynamic library read write error
-	 * @throws FileNotFoundException The specified file was not found in the jar
-	 *                               package.
+	 * @throws IOException                       Dynamic library read write error
+	 * @throws NoFoundArchNativeLibraryException The specified file was not found in
+	 *                                           the jar package.
 	 */
-	public final synchronized void loadLibrarys() throws IOException {
+	public final synchronized void loadLibrarys() throws IOException, NoFoundArchNativeLibraryException {
 		if (!loadedState.compareAndSet(false, true)) { // Loaded?
 			return;
 		}
@@ -211,9 +211,12 @@ public class PathPatternNativeLibraryLoader {
 		}
 
 		// Check any loaded library?
-		state(!loadLibFiles.isEmpty(),
-				String.format("Failed to load native library, of os: %s arch: %s, was found resources: %s", OS_NAME,
-						OS_ARCH, Arrays.asList(loadLibFiles)));
+		if (loadLibFiles.isEmpty()) {
+			throw new NoFoundArchNativeLibraryException("No match native library of os: '" + OS_NAME + "', arch: '"
+					+ OS_ARCH + "', Please check whether the dynamic chain library exists in the specification"
+					+ " path(e.g: natives/Linux/x64/xxx.so), Paths that can be candidate matches: "
+					+ osArchDefineSupports + ", \nall was found resources: " + resoruces);
+		}
 
 		// Cleanup temporary lib files.
 		/*
@@ -251,28 +254,29 @@ public class PathPatternNativeLibraryLoader {
 		// Skip non current OS platform.
 		// e.g. Windows/Windows 7/Windows XP, Mac/Mac OS X/Mac OS X 10.0
 		if (!startsWithIgnoreCase(OS_NAME, osName)) {
+			log.debug("No match native library of os: {}, arch: {}, local os: {}", osName, osArch, OS_NAME);
 			return false;
 		}
 
-		// Shared fuzzy matching OS architecture.
-		List<String> archs = null;
+		// List of architectures supported by the current OS.
+		List<String> supportArchs = null;
 		ok: for (OSArchSupport support : osArchDefineSupports) {
 			// e.g. Windows/Windows 7/Windows XP, Mac/Mac OS X/Mac OS X 10.0
 			if (startsWithIgnoreCase(OS_NAME, support.getOsName())) {
 				for (String arch : support.getOsArchs()) {
 					if (equalsIgnoreCase(arch, OS_ARCH)) {
-						archs = support.getOsArchs();
+						supportArchs = support.getOsArchs();
+						log.debug("Matched native library of os: {}, arch: {}, local os: {}", osName, osArch, OS_NAME);
 						break ok;
 					}
 				}
 			}
 		}
-		if (Objects.isNull(archs)) {
-			throw new IllegalArgumentException(
-					String.format("Not found current OS: %s arch support. Supported archs:\n%s", OS_NAME, archs));
-		}
+		notNull(supportArchs,
+				format("Native library not found to support local os: %s, arch: %s. All supported arch list:\n%s",
+						OS_NAME, supportArchs));
 
-		return archs.stream().filter(arch -> equalsIgnoreCase(arch, osArch)).count() > 0;
+		return supportArchs.stream().filter(arch -> equalsIgnoreCase(arch, osArch)).count() > 0;
 	}
 
 	/**
@@ -399,6 +403,22 @@ public class PathPatternNativeLibraryLoader {
 
 		public List<String> getOsArchs() {
 			return osArchs;
+		}
+
+		@Override
+		public String toString() {
+			StringBuffer paths = new StringBuffer();
+			Iterator<String> it = osArchs.iterator();
+			while (it.hasNext()) {
+				String arch = it.next();
+				paths.append(osName);
+				paths.append("/");
+				paths.append(arch);
+				if (it.hasNext()) {
+					paths.append(", ");
+				}
+			}
+			return paths.toString();
 		}
 
 	}
