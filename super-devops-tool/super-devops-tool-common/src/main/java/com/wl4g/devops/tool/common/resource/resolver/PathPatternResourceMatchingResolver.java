@@ -205,7 +205,7 @@ import com.wl4g.devops.tool.common.resource.match.PathMatcher;
  * @see {@link org.springframework.core.io.ResourceLoader#getResource(String)}
  * @see {@link ClassLoader#getResources(String)}
  */
-public class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
+class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 
 	private static final Log logger = LogFactory.getLog(PathPatternResourceMatchingResolver.class);
 
@@ -301,7 +301,7 @@ public class PathPatternResourceMatchingResolver implements ResourcePatternResol
 	}
 
 	@Override
-	public Resource[] getResources(String locationPattern) throws IOException {
+	public Set<Resource> getResources(String locationPattern) throws IOException {
 		Assert.notNull(locationPattern, "Location pattern must not be null");
 		if (locationPattern.startsWith(CLASSPATH_ALL_URL_PREFIX)) {
 			// a class path resource (multiple resources for same name possible)
@@ -323,7 +323,12 @@ public class PathPatternResourceMatchingResolver implements ResourcePatternResol
 				return findPathMatchingResources(locationPattern);
 			} else {
 				// a single resource with the given name
-				return new Resource[] { getResourceLoader().getResource(locationPattern) };
+				return new LinkedHashSet<Resource>() {
+					private static final long serialVersionUID = 1L;
+					{
+						add(getResourceLoader().getResource(locationPattern));
+					}
+				};
 			}
 		}
 	}
@@ -338,7 +343,7 @@ public class PathPatternResourceMatchingResolver implements ResourcePatternResol
 	 * @see java.lang.ClassLoader#getResources
 	 * @see #convertClassLoaderURL
 	 */
-	protected Resource[] findAllClassPathResources(String location) throws IOException {
+	protected Set<Resource> findAllClassPathResources(String location) throws IOException {
 		String path = location;
 		if (path.startsWith("/")) {
 			path = path.substring(1);
@@ -347,7 +352,7 @@ public class PathPatternResourceMatchingResolver implements ResourcePatternResol
 		if (logger.isDebugEnabled()) {
 			logger.debug("Resolved classpath location [" + location + "] to resources " + result);
 		}
-		return result.toArray(new Resource[result.size()]);
+		return result;
 	}
 
 	/**
@@ -521,10 +526,10 @@ public class PathPatternResourceMatchingResolver implements ResourcePatternResol
 	 * @see #doFindPathMatchingFileResources
 	 * @see com.wl4g.devops.tool.common.resources.match.springframework.util.PathMatcher
 	 */
-	protected Resource[] findPathMatchingResources(String locationPattern) throws IOException {
+	protected Set<Resource> findPathMatchingResources(String locationPattern) throws IOException {
 		String rootDirPath = determineRootDir(locationPattern);
 		String subPattern = locationPattern.substring(rootDirPath.length());
-		Resource[] rootDirResources = getResources(rootDirPath);
+		Set<Resource> rootDirResources = getResources(rootDirPath);
 		Set<Resource> result = new LinkedHashSet<Resource>(16);
 		for (Resource rootDirResource : rootDirResources) {
 			rootDirResource = resolveRootDirResource(rootDirResource);
@@ -547,7 +552,7 @@ public class PathPatternResourceMatchingResolver implements ResourcePatternResol
 		if (logger.isDebugEnabled()) {
 			logger.debug("Resolved location pattern [" + locationPattern + "] to resources " + result);
 		}
-		return result.toArray(new Resource[result.size()]);
+		return result;
 	}
 
 	/**
@@ -758,7 +763,6 @@ public class PathPatternResourceMatchingResolver implements ResourcePatternResol
 	 */
 	protected Set<Resource> doFindPathMatchingFileResources(Resource rootDirResource, String subPattern)
 			throws IOException {
-
 		File rootDir;
 		try {
 			rootDir = rootDirResource.getFile().getAbsoluteFile();

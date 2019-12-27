@@ -103,16 +103,17 @@
 		    var mua = {
 		        WECHAT: /micromessenger/.test(ua), //WeChat MicroMessenger
 		        IOS: /ipod|iphone|ipad/.test(ua), //iOS
-		       	MAC: /macintosh|mac os/.test(ua), // Mac
-		        IPHONE: /iphone/.test(ua), //iPhone
-		        IPAD: /ipad/.test(ua), //iPad
-		        ANDROID: /android/.test(ua), //Android Device
-		        WINDOWS: /windows/.test(ua), //Windows Device
-		        TOUCH_DEVICE: ('ontouchstart' in window) || /touch/.test(ua), //Touch Device
-		        MOBILE: /mobile/.test(ua), //Mobile Device (iPad)
-		        ANDROID_TABLET: false, //Android Tablet
-		        WINDOWS_TABLET: false, //Windows Tablet
-		        TABLET: false, //Tablet (iPad, Android, Windows)
+		       	MAC: /macintosh|mac os|mac/.test(ua), // Mac
+		        IPHONE: /iphone/.test(ua), // iPhone
+		        IPAD: /ipad/.test(ua), // iPad
+		        ANDROID: /android/.test(ua), // Android Device
+		        WINDOWS: /windows/.test(ua), // Windows Device
+		        Linux: /unix|linux/.test(ua), // Unux/Linux Device
+		        TOUCH_DEVICE: ('ontouchstart' in window) || /touch/.test(ua), // Touch Device
+		        MOBILE: /mobile/.test(ua), // Mobile Device (iPad)
+		        ANDROID_TABLET: false, // Android Tablet
+		        WINDOWS_TABLET: false, // Windows Tablet
+		        TABLET: false, // Tablet (iPad, Android, Windows)
 		        SMART_PHONE: false //Smart Phone (iPhone, Android)
 		    };
 		    mua.ANDROID_TABLET = mua.ANDROID && !mua.MOBILE;
