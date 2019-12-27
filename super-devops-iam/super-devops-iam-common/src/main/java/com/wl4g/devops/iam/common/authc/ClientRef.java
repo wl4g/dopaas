@@ -25,42 +25,47 @@ package com.wl4g.devops.iam.common.authc;
 public enum ClientRef {
 
 	/**
-	 * Client android type.
+	 * Client android platform.
 	 */
 	Android("Android"),
 
 	/**
-	 * Client iOS type.
+	 * Client iOS platform.
 	 */
 	iOS("iOS"),
 
 	/**
-	 * Client MAC type.
+	 * Client MAC platform.
 	 */
 	Mac("Mac"),
 
 	/**
-	 * Client iPad type.
+	 * Client iPad platform.
 	 */
 	IPad("IPad"),
 
 	/**
-	 * Client WeChat official platform type.
+	 * Client WeChat official platform.
 	 */
 	WeChatMp("wechatMp"),
 
 	/**
-	 * Client WeChat applet type.
+	 * Client WeChat applet platform.
 	 */
 	WeChatApplet("wechatApplet"),
 
 	/**
-	 * Client windows type.
+	 * Client windows platform.
 	 */
 	Windows("Windows"),
 
 	/**
-	 * Client unknown type.
+	 * Client linux platform.
+	 */
+	Linux("Linux"),
+
+	/**
+	 * Client unknown platform.
 	 */
 	Unknown("Unknown");
 

@@ -37,8 +37,9 @@ server:
   contextPath: /${spring.application.name}
   tomcat:
     uri-encoding: UTF-8
-    basedir: /var/log/${spring.application.name}
+    basedir: /tmp/${spring.application.name}
     access-log-enabled: false
     accesslog.directory: logs/
     backgroundProcessorDelay: 30 #seconds
     max-thread: 50 # Max worker threads(default:200).
+    

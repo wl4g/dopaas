@@ -14,7 +14,7 @@ banner:
 
 # ### Logging configuration. ###
 logging:
-  file: ${spring.application.name}.log
+  file: ${server.tomcat.basedir}/logs/${spring.application.name}.log
   root: INFO
   level:
     org:

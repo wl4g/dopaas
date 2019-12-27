@@ -1,11 +1,11 @@
 package com.wl4g.devops.tool.common.resource;
 
-import com.wl4g.devops.tool.common.resource.resolver.PathPatternResourceMatchingResolver;
+import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
 
 public class PathPatternResourceMatchingResolverTests {
 
 	public static void main(String[] args) throws Exception {
-		PathPatternResourceMatchingResolver resolver = new PathPatternResourceMatchingResolver();
+		GenericPathPatternResourceMatchingResolver resolver = new GenericPathPatternResourceMatchingResolver();
 		System.out.println("start scanning ...");
 		for (Resource r : resolver.getResources("com/wl4g/devops/tool/common/resource/**/*.*")) {
 			System.out.println(r);
