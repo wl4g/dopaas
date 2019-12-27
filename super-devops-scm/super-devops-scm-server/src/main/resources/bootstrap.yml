@@ -36,7 +36,7 @@ server:
     uri-encoding: UTF-8
     protocolHeader: x-forwarded-proto
     remoteIpHeader: x-forwarded-for
-    basedir: /usr/local/${spring.application.name}
+    basedir: /tmp/${spring.application.name}
     access-log-enabled: false
     accesslog.directory: logs/
     backgroundProcessorDelay: 30 #seconds
