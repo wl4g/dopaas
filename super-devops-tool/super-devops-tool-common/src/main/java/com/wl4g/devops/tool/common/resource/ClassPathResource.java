@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.ClassUtils2;
 import com.wl4g.devops.tool.common.lang.ObjectUtils;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
@@ -80,7 +80,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 * @see ClassLoader#getResourceAsStream(String)
 	 */
 	public ClassPathResource(String path, ClassLoader classLoader) {
-		Assert.notNull(path, "Path must not be null");
+		Assert2.notNull(path, "Path must not be null");
 		String pathToUse = StringUtils2.cleanPath(path);
 		if (pathToUse.startsWith("/")) {
 			pathToUse = pathToUse.substring(1);
@@ -99,7 +99,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 * @see java.lang.Class#getResourceAsStream
 	 */
 	public ClassPathResource(String path, Class<?> clazz) {
-		Assert.notNull(path, "Path must not be null");
+		Assert2.notNull(path, "Path must not be null");
 		this.path = StringUtils2.cleanPath(path);
 		this.clazz = clazz;
 	}

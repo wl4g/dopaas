@@ -31,7 +31,7 @@ import java.net.URLConnection;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.ClassUtils2;
 
 /**
@@ -139,7 +139,7 @@ public abstract class ResourceUtils {
 	 * @throws FileNotFoundException if the resource cannot be resolved to a URL
 	 */
 	public static URL getURL(String resourceLocation) throws FileNotFoundException {
-		Assert.notNull(resourceLocation, "Resource location must not be null");
+		Assert2.notNull(resourceLocation, "Resource location must not be null");
 		if (resourceLocation.startsWith(CLASSPATH_URL_PREFIX)) {
 			String path = resourceLocation.substring(CLASSPATH_URL_PREFIX.length());
 			ClassLoader cl = ClassUtils2.getDefaultClassLoader();
@@ -179,7 +179,7 @@ public abstract class ResourceUtils {
 	 *                               the file system
 	 */
 	public static File getFile(String resourceLocation) throws FileNotFoundException {
-		Assert.notNull(resourceLocation, "Resource location must not be null");
+		Assert2.notNull(resourceLocation, "Resource location must not be null");
 		if (resourceLocation.startsWith(CLASSPATH_URL_PREFIX)) {
 			String path = resourceLocation.substring(CLASSPATH_URL_PREFIX.length());
 			String description = "class path resource [" + path + "]";
@@ -225,7 +225,7 @@ public abstract class ResourceUtils {
 	 *                               file system
 	 */
 	public static File getFile(URL resourceUrl, String description) throws FileNotFoundException {
-		Assert.notNull(resourceUrl, "Resource URL must not be null");
+		Assert2.notNull(resourceUrl, "Resource URL must not be null");
 		if (!URL_PROTOCOL_FILE.equals(resourceUrl.getProtocol())) {
 			throw new FileNotFoundException(description + " cannot be resolved to absolute file path "
 					+ "because it does not reside in the file system: " + resourceUrl);
@@ -266,7 +266,7 @@ public abstract class ResourceUtils {
 	 * @since 2.5
 	 */
 	public static File getFile(URI resourceUri, String description) throws FileNotFoundException {
-		Assert.notNull(resourceUri, "Resource URI must not be null");
+		Assert2.notNull(resourceUri, "Resource URI must not be null");
 		if (!URL_PROTOCOL_FILE.equals(resourceUri.getScheme())) {
 			throw new FileNotFoundException(description + " cannot be resolved to absolute file path "
 					+ "because it does not reside in the file system: " + resourceUri);

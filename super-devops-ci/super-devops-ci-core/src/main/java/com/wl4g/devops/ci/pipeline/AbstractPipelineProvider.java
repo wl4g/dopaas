@@ -33,7 +33,7 @@ import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.cli.SshUtils.CommandResult;
-import com.wl4g.devops.tool.common.crypto.AES;
+import com.wl4g.devops.tool.common.crypto.AesEncryptor;
 import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 
 import org.slf4j.Logger;
@@ -226,7 +226,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	public char[] getUsableCipherSshKey(String sshkey) throws Exception {
 		// Obtain text-plain privateKey(RSA)
 		String cipherKey = config.getDeploy().getCipherKey();
-		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
+		char[] sshkeyPlain = new AesEncryptor(cipherKey).decrypt(sshkey).toCharArray();
 
 		log.info(writeBuildLog("Decryption plain sshkey: %s => %s", cipherKey, "******"));
 		return sshkeyPlain;

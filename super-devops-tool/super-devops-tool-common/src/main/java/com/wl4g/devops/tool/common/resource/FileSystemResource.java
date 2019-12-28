@@ -30,7 +30,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 
 /**
@@ -62,7 +62,7 @@ public class FileSystemResource extends AbstractResource implements WritableReso
 	 * @param file a File handle
 	 */
 	public FileSystemResource(File file) {
-		Assert.notNull(file, "File must not be null");
+		Assert2.notNull(file, "File must not be null");
 		this.file = file;
 		this.path = StringUtils2.cleanPath(file.getPath());
 	}
@@ -80,7 +80,7 @@ public class FileSystemResource extends AbstractResource implements WritableReso
 	 * @param path a file path
 	 */
 	public FileSystemResource(String path) {
-		Assert.notNull(path, "Path must not be null");
+		Assert2.notNull(path, "Path must not be null");
 		this.file = new File(path);
 		this.path = StringUtils2.cleanPath(path);
 	}

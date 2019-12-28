@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import static com.wl4g.devops.tool.common.io.FileIOUtils.ensureFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeFile;
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
 
 /**

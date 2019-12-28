@@ -18,7 +18,7 @@ package com.wl4g.devops.tool.common.log;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
  * Enhanced logger for intelligent/dynamic/humanized wrapper.
@@ -35,7 +35,7 @@ public class SmartLogger implements Logger {
 	final private Logger orig;
 
 	public SmartLogger(Logger orig) {
-		Assert.notNull(orig, "Origin logger can't null.");
+		Assert2.notNull(orig, "Origin logger can't null.");
 		this.orig = orig;
 	}
 

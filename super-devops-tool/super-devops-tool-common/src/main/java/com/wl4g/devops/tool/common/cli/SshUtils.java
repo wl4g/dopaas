@@ -28,7 +28,7 @@ import static ch.ethz.ssh2.ChannelCondition.*;
 import static com.wl4g.devops.tool.common.io.ByteStreams2.readFullyToString;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * SSH connection utility tools.

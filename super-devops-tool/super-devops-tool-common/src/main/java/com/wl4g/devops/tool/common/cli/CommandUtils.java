@@ -29,7 +29,7 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 
 @SuppressWarnings("deprecation")
 public class CommandUtils {
@@ -60,7 +60,7 @@ public class CommandUtils {
 		 * @return
 		 */
 		public Builder option(String opt, String longOpt, boolean required, String description) {
-			Assert.notNull(options, "Options did not initialize creation");
+			Assert2.notNull(options, "Options did not initialize creation");
 			Option option = new Option(opt, longOpt, true, description);
 			option.setRequired(required);
 			options.addOption(option);

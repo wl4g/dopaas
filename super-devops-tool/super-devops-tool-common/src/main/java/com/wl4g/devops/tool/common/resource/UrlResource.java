@@ -31,7 +31,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 
 /**
@@ -68,7 +68,7 @@ public class UrlResource extends AbstractFileResolvingResource {
 	 * @since 2.5
 	 */
 	public UrlResource(URI uri) throws MalformedURLException {
-		Assert.notNull(uri, "URI must not be null");
+		Assert2.notNull(uri, "URI must not be null");
 		this.uri = uri;
 		this.url = uri.toURL();
 		this.cleanedUrl = getCleanedUrl(this.url, uri.toString());
@@ -80,7 +80,7 @@ public class UrlResource extends AbstractFileResolvingResource {
 	 * @param url a URL
 	 */
 	public UrlResource(URL url) {
-		Assert.notNull(url, "URL must not be null");
+		Assert2.notNull(url, "URL must not be null");
 		this.url = url;
 		this.cleanedUrl = getCleanedUrl(this.url, url.toString());
 		this.uri = null;
@@ -96,7 +96,7 @@ public class UrlResource extends AbstractFileResolvingResource {
 	 * @see java.net.URL#URL(String)
 	 */
 	public UrlResource(String path) throws MalformedURLException {
-		Assert.notNull(path, "Path must not be null");
+		Assert2.notNull(path, "Path must not be null");
 		this.uri = null;
 		this.url = new URL(path);
 		this.cleanedUrl = getCleanedUrl(this.url, path);
