@@ -244,8 +244,9 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 * <p>
 	 * ClassLoader access will happen via the thread context class loader.
 	 * 
-	 * @param resourceLoader the ResourceLoader to load root directories and actual
-	 *                       resources with
+	 * @param resourceLoader
+	 *            the ResourceLoader to load root directories and actual
+	 *            resources with
 	 */
 	public PathPatternResourceMatchingResolver(ResourceLoader resourceLoader) {
 		Assert2.notNull(resourceLoader, "ResourceLoader must not be null");
@@ -256,9 +257,10 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 * Create a new PathMatchingResourcePatternResolver with a
 	 * DefaultResourceLoader.
 	 * 
-	 * @param classLoader the ClassLoader to load classpath resources with, or
-	 *                    {@code null} for using the thread context class loader at
-	 *                    the time of actual resource access
+	 * @param classLoader
+	 *            the ClassLoader to load classpath resources with, or
+	 *            {@code null} for using the thread context class loader at the
+	 *            time of actual resource access
 	 * @see com.wl4g.devops.tool.common.resources.resolver.springframework.core.io.DefaultResourceLoader
 	 */
 	public PathPatternResourceMatchingResolver(ClassLoader classLoader) {
@@ -278,8 +280,8 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Set the PathMatcher implementation to use for this resource pattern resolver.
-	 * Default is AntPathMatcher.
+	 * Set the PathMatcher implementation to use for this resource pattern
+	 * resolver. Default is AntPathMatcher.
 	 * 
 	 * @see com.wl4g.devops.tool.common.resources.match.springframework.util.AntPathMatcher
 	 */
@@ -337,9 +339,11 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 * Find all class location resources with the given location via the
 	 * ClassLoader. Delegates to {@link #doFindAllClassPathResources(String)}.
 	 * 
-	 * @param location the absolute path within the classpath
+	 * @param location
+	 *            the absolute path within the classpath
 	 * @return the result as Resource array
-	 * @throws IOException in case of I/O errors
+	 * @throws IOException
+	 *             in case of I/O errors
 	 * @see java.lang.ClassLoader#getResources
 	 * @see #convertClassLoaderURL
 	 */
@@ -356,10 +360,11 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Find all class location resources with the given path via the ClassLoader.
-	 * Called by {@link #findAllClassPathResources(String)}.
+	 * Find all class location resources with the given path via the
+	 * ClassLoader. Called by {@link #findAllClassPathResources(String)}.
 	 * 
-	 * @param path the absolute path within the classpath (never a leading slash)
+	 * @param path
+	 *            the absolute path within the classpath (never a leading slash)
 	 * @return a mutable Set of matching Resource instances
 	 * @since 4.1.1
 	 */
@@ -387,7 +392,8 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 * <p>
 	 * The default implementation simply creates a {@link UrlResource} instance.
 	 * 
-	 * @param url a URL as returned from the ClassLoader
+	 * @param url
+	 *            a URL as returned from the ClassLoader
 	 * @return the corresponding Resource object
 	 * @see java.lang.ClassLoader#getResources
 	 * @see org.springframework.core.io.Resource
@@ -397,12 +403,14 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Search all {@link URLClassLoader} URLs for jar file references and add them
-	 * to the given set of resources in the form of pointers to the root of the jar
-	 * file content.
+	 * Search all {@link URLClassLoader} URLs for jar file references and add
+	 * them to the given set of resources in the form of pointers to the root of
+	 * the jar file content.
 	 * 
-	 * @param classLoader the ClassLoader to search (including its ancestors)
-	 * @param result      the set of resources to add jar roots to
+	 * @param classLoader
+	 *            the ClassLoader to search (including its ancestors)
+	 * @param result
+	 *            the set of resources to add jar roots to
 	 * @since 4.1.1
 	 */
 	protected void addAllClassLoaderJarRoots(ClassLoader classLoader, Set<Resource> result) {
@@ -449,11 +457,12 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Determine jar file references from the "java.class.path." manifest property
-	 * and add them to the given set of resources in the form of pointers to the
-	 * root of the jar file content.
+	 * Determine jar file references from the "java.class.path." manifest
+	 * property and add them to the given set of resources in the form of
+	 * pointers to the root of the jar file content.
 	 * 
-	 * @param result the set of resources to add jar roots to
+	 * @param result
+	 *            the set of resources to add jar roots to
 	 * @since 4.3
 	 */
 	protected void addClassPathManifestEntries(Set<Resource> result) {
@@ -469,8 +478,8 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 						// upper-cased for proper duplicate detection
 						filePath = StringUtils.capitalize(filePath);
 					}
-					UrlResource jarResource = new UrlResource(ResourceUtils.JAR_URL_PREFIX
-							+ ResourceUtils.FILE_URL_PREFIX + filePath + ResourceUtils.JAR_URL_SEPARATOR);
+					UrlResource jarResource = new UrlResource(ResourceUtils.JAR_URL_PREFIX + ResourceUtils.FILE_URL_PREFIX
+							+ filePath + ResourceUtils.JAR_URL_SEPARATOR);
 					// Potentially overlapping with URLClassLoader.getURLs()
 					// result above!
 					if (!result.contains(jarResource) && !hasDuplicate(filePath, result) && jarResource.exists()) {
@@ -491,14 +500,17 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Check whether the given file path has a duplicate but differently structured
-	 * entry in the existing result, i.e. with or without a leading slash.
+	 * Check whether the given file path has a duplicate but differently
+	 * structured entry in the existing result, i.e. with or without a leading
+	 * slash.
 	 * 
-	 * @param filePath the file path (with or without a leading slash)
-	 * @param result   the current result
-	 * @return {@code true} if there is a duplicate (i.e. to ignore the given file
-	 *         path), {@code false} to proceed with adding a corresponding resource
-	 *         to the current result
+	 * @param filePath
+	 *            the file path (with or without a leading slash)
+	 * @param result
+	 *            the current result
+	 * @return {@code true} if there is a duplicate (i.e. to ignore the given
+	 *         file path), {@code false} to proceed with adding a corresponding
+	 *         resource to the current result
 	 */
 	private boolean hasDuplicate(String filePath, Set<Resource> result) {
 		if (result.isEmpty()) {
@@ -506,8 +518,8 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 		}
 		String duplicatePath = (filePath.startsWith("/") ? filePath.substring(1) : "/" + filePath);
 		try {
-			return result.contains(new UrlResource(ResourceUtils.JAR_URL_PREFIX + ResourceUtils.FILE_URL_PREFIX
-					+ duplicatePath + ResourceUtils.JAR_URL_SEPARATOR));
+			return result.contains(new UrlResource(ResourceUtils.JAR_URL_PREFIX + ResourceUtils.FILE_URL_PREFIX + duplicatePath
+					+ ResourceUtils.JAR_URL_SEPARATOR));
 		} catch (MalformedURLException ex) {
 			// Ignore: just for testing against duplicate.
 			return false;
@@ -515,13 +527,15 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Find all resources that match the given location pattern via the Ant-style
-	 * PathMatcher. Supports resources in jar files and zip files and in the file
-	 * system.
+	 * Find all resources that match the given location pattern via the
+	 * Ant-style PathMatcher. Supports resources in jar files and zip files and
+	 * in the file system.
 	 * 
-	 * @param locationPattern the location pattern to match
+	 * @param locationPattern
+	 *            the location pattern to match
 	 * @return the result as Resource array
-	 * @throws IOException in case of I/O errors
+	 * @throws IOException
+	 *             in case of I/O errors
 	 * @see #doFindPathMatchingJarResources
 	 * @see #doFindPathMatchingFileResources
 	 * @see com.wl4g.devops.tool.common.resources.match.springframework.util.PathMatcher
@@ -541,8 +555,7 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 				}
 			}
 			if (rootDirUrl.getProtocol().startsWith(ResourceUtils.URL_PROTOCOL_VFS)) {
-				result.addAll(
-						VfsResourceMatchingDelegate.findMatchingResources(rootDirUrl, subPattern, getPathMatcher()));
+				result.addAll(VfsResourceMatchingDelegate.findMatchingResources(rootDirUrl, subPattern, getPathMatcher()));
 			} else if (ResourceUtils.isJarURL(rootDirUrl) || isJarResource(rootDirResource)) {
 				result.addAll(doFindPathMatchingJarResources(rootDirResource, rootDirUrl, subPattern));
 			} else {
@@ -558,13 +571,15 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	/**
 	 * Determine the root directory for the given location.
 	 * <p>
-	 * Used for determining the starting point for file matching, resolving the root
-	 * directory location to a {@code java.io.File} and passing it into
-	 * {@code retrieveMatchingFiles}, with the remainder of the location as pattern.
+	 * Used for determining the starting point for file matching, resolving the
+	 * root directory location to a {@code java.io.File} and passing it into
+	 * {@code retrieveMatchingFiles}, with the remainder of the location as
+	 * pattern.
 	 * <p>
 	 * Will return "/WEB-INF/" for the pattern "/WEB-INF/*.xml", for example.
 	 * 
-	 * @param location the location to check
+	 * @param location
+	 *            the location to check
 	 * @return the part of the location that denotes the root directory
 	 * @see #retrieveMatchingFiles
 	 */
@@ -585,28 +600,33 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 * <p>
 	 * By default, Equinox OSGi "bundleresource:" / "bundleentry:" URL will be
 	 * resolved into a standard jar file URL that be traversed using Spring's
-	 * standard jar file traversal algorithm. For any preceding custom resolution,
-	 * override this method and replace the resource handle accordingly.
+	 * standard jar file traversal algorithm. For any preceding custom
+	 * resolution, override this method and replace the resource handle
+	 * accordingly.
 	 * 
-	 * @param original the resource to resolve
-	 * @return the resolved resource (may be identical to the passed-in resource)
-	 * @throws IOException in case of resolution failure
+	 * @param original
+	 *            the resource to resolve
+	 * @return the resolved resource (may be identical to the passed-in
+	 *         resource)
+	 * @throws IOException
+	 *             in case of resolution failure
 	 */
 	protected Resource resolveRootDirResource(Resource original) throws IOException {
 		return original;
 	}
 
 	/**
-	 * Return whether the given resource handle indicates a jar resource that the
-	 * {@code doFindPathMatchingJarResources} method can handle.
+	 * Return whether the given resource handle indicates a jar resource that
+	 * the {@code doFindPathMatchingJarResources} method can handle.
 	 * <p>
 	 * By default, the URL protocols "jar", "zip", "vfszip and "wsjar" will be
-	 * treated as jar resources. This template method allows for detecting further
-	 * kinds of jar-like resources, e.g. through {@code instanceof} checks on the
-	 * resource handle type.
+	 * treated as jar resources. This template method allows for detecting
+	 * further kinds of jar-like resources, e.g. through {@code instanceof}
+	 * checks on the resource handle type.
 	 * 
-	 * @param resource the resource handle to check (usually the root directory to
-	 *                 start path matching from)
+	 * @param resource
+	 *            the resource handle to check (usually the root directory to
+	 *            start path matching from)
 	 * @see #doFindPathMatchingJarResources
 	 * @see org.springframework.util.ResourceUtils#isJarURL
 	 */
@@ -615,14 +635,18 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Find all resources in jar files that match the given location pattern via the
-	 * Ant-style PathMatcher.
+	 * Find all resources in jar files that match the given location pattern via
+	 * the Ant-style PathMatcher.
 	 * 
-	 * @param rootDirResource the root directory as Resource
-	 * @param rootDirURL      the pre-resolved root directory URL
-	 * @param subPattern      the sub pattern to match (below the root directory)
+	 * @param rootDirResource
+	 *            the root directory as Resource
+	 * @param rootDirURL
+	 *            the pre-resolved root directory URL
+	 * @param subPattern
+	 *            the sub pattern to match (below the root directory)
 	 * @return a mutable Set of matching Resource instances
-	 * @throws IOException in case of I/O errors
+	 * @throws IOException
+	 *             in case of I/O errors
 	 * @since 4.3
 	 * @see java.net.JarURLConnection
 	 * @see com.wl4g.devops.tool.common.resources.match.springframework.util.PathMatcher
@@ -716,19 +740,21 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Find all resources in jar files that match the given location pattern via the
-	 * Ant-style PathMatcher.
+	 * Find all resources in jar files that match the given location pattern via
+	 * the Ant-style PathMatcher.
 	 * 
-	 * @param rootDirResource the root directory as Resource
-	 * @param subPattern      the sub pattern to match (below the root directory)
+	 * @param rootDirResource
+	 *            the root directory as Resource
+	 * @param subPattern
+	 *            the sub pattern to match (below the root directory)
 	 * @return a mutable Set of matching Resource instances
-	 * @throws IOException in case of I/O errors
+	 * @throws IOException
+	 *             in case of I/O errors
 	 * @deprecated as of Spring 4.3, in favor of
 	 *             {@link #doFindPathMatchingJarResources(Resource, URL, String)}
 	 */
 	@Deprecated
-	protected Set<Resource> doFindPathMatchingJarResources(Resource rootDirResource, String subPattern)
-			throws IOException {
+	protected Set<Resource> doFindPathMatchingJarResources(Resource rootDirResource, String subPattern) throws IOException {
 
 		return null;
 	}
@@ -751,18 +777,20 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Find all resources in the file system that match the given location pattern
-	 * via the Ant-style PathMatcher.
+	 * Find all resources in the file system that match the given location
+	 * pattern via the Ant-style PathMatcher.
 	 * 
-	 * @param rootDirResource the root directory as Resource
-	 * @param subPattern      the sub pattern to match (below the root directory)
+	 * @param rootDirResource
+	 *            the root directory as Resource
+	 * @param subPattern
+	 *            the sub pattern to match (below the root directory)
 	 * @return a mutable Set of matching Resource instances
-	 * @throws IOException in case of I/O errors
+	 * @throws IOException
+	 *             in case of I/O errors
 	 * @see #retrieveMatchingFiles
 	 * @see com.wl4g.devops.tool.common.resources.match.springframework.util.PathMatcher
 	 */
-	protected Set<Resource> doFindPathMatchingFileResources(Resource rootDirResource, String subPattern)
-			throws IOException {
+	protected Set<Resource> doFindPathMatchingFileResources(Resource rootDirResource, String subPattern) throws IOException {
 		File rootDir;
 		try {
 			rootDir = rootDirResource.getFile().getAbsoluteFile();
@@ -777,13 +805,16 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Find all resources in the file system that match the given location pattern
-	 * via the Ant-style PathMatcher.
+	 * Find all resources in the file system that match the given location
+	 * pattern via the Ant-style PathMatcher.
 	 * 
-	 * @param rootDir    the root directory in the file system
-	 * @param subPattern the sub pattern to match (below the root directory)
+	 * @param rootDir
+	 *            the root directory in the file system
+	 * @param subPattern
+	 *            the sub pattern to match (below the root directory)
 	 * @return a mutable Set of matching Resource instances
-	 * @throws IOException in case of I/O errors
+	 * @throws IOException
+	 *             in case of I/O errors
 	 * @see #retrieveMatchingFiles
 	 * @see com.wl4g.devops.tool.common.resources.match.springframework.util.PathMatcher
 	 */
@@ -803,10 +834,13 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 * Retrieve files that match the given path pattern, checking the given
 	 * directory and its subdirectories.
 	 * 
-	 * @param rootDir the directory to start from
-	 * @param pattern the pattern to match against, relative to the root directory
+	 * @param rootDir
+	 *            the directory to start from
+	 * @param pattern
+	 *            the pattern to match against, relative to the root directory
 	 * @return a mutable Set of matching Resource instances
-	 * @throws IOException if directory contents could not be retrieved
+	 * @throws IOException
+	 *             if directory contents could not be retrieved
 	 */
 	protected Set<File> retrieveMatchingFiles(File rootDir, String pattern) throws IOException {
 		if (!rootDir.exists()) {
@@ -841,19 +875,22 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Recursively retrieve files that match the given pattern, adding them to the
-	 * given result list.
+	 * Recursively retrieve files that match the given pattern, adding them to
+	 * the given result list.
 	 * 
-	 * @param fullPattern the pattern to match against, with prepended root
-	 *                    directory path
-	 * @param dir         the current directory
-	 * @param result      the Set of matching File instances to add to
-	 * @throws IOException if directory contents could not be retrieved
+	 * @param fullPattern
+	 *            the pattern to match against, with prepended root directory
+	 *            path
+	 * @param dir
+	 *            the current directory
+	 * @param result
+	 *            the Set of matching File instances to add to
+	 * @throws IOException
+	 *             if directory contents could not be retrieved
 	 */
 	protected void doRetrieveMatchingFiles(String fullPattern, File dir, Set<File> result) throws IOException {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Searching directory [" + dir.getAbsolutePath() + "] for files matching pattern ["
-					+ fullPattern + "]");
+			logger.debug("Searching directory [" + dir.getAbsolutePath() + "] for files matching pattern [" + fullPattern + "]");
 		}
 		File[] dirContents = dir.listFiles();
 		if (dirContents == null) {
@@ -882,16 +919,17 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	/**
-	 * Inner delegate class, avoiding a hard JBoss VFS API dependency at runtime.
+	 * Inner delegate class, avoiding a hard JBoss VFS API dependency at
+	 * runtime.
 	 */
 	private static class VfsResourceMatchingDelegate {
 
-		public static Set<Resource> findMatchingResources(URL rootDirURL, String locationPattern,
-				PathMatcher pathMatcher) throws IOException {
+		public static Set<Resource> findMatchingResources(URL rootDirURL, String locationPattern, PathMatcher pathMatcher)
+				throws IOException {
 
 			Object root = VfsPatternUtils.findRoot(rootDirURL);
-			PatternVirtualFileVisitor visitor = new PatternVirtualFileVisitor(VfsPatternUtils.getPath(root),
-					locationPattern, pathMatcher);
+			PatternVirtualFileVisitor visitor = new PatternVirtualFileVisitor(VfsPatternUtils.getPath(root), locationPattern,
+					pathMatcher);
 			VfsPatternUtils.visit(root, visitor);
 			return visitor.getResources();
 		}
@@ -940,8 +978,7 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 		}
 
 		public void visit(Object vfsResource) {
-			if (this.pathMatcher.match(this.subPattern,
-					VfsPatternUtils.getPath(vfsResource).substring(this.rootPath.length()))) {
+			if (this.pathMatcher.match(this.subPattern, VfsPatternUtils.getPath(vfsResource).substring(this.rootPath.length()))) {
 				this.resources.add(new VfsResource(vfsResource));
 			}
 		}

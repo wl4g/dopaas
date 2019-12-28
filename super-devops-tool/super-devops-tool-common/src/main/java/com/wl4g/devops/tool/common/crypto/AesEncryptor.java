@@ -34,7 +34,7 @@ import org.apache.commons.codec.digest.Crypt;
  * @date 2018年3月15日
  * @since
  */
-public class AesEncryptor  extends Crypt{
+public class AesEncryptor extends Crypt {
 	final private static String KEY_CIPHER_ENV = "DEVOPS_CIPHER_KEY";
 	final private static String KEY_CIPHER_PRINT = "DEVOPS_CIPHER_PRINT";
 

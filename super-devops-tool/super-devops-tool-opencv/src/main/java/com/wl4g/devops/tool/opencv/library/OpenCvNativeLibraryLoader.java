@@ -17,7 +17,7 @@ package com.wl4g.devops.tool.opencv.library;
 
 import java.io.IOException;
 
-import com.wl4g.devops.tool.common.natives.NoFoundArchNativeLibraryException;
+import com.wl4g.devops.tool.common.natives.LoadNativeLibraryError;
 import com.wl4g.devops.tool.common.natives.PathPatternNativeLibraryLoader;
 
 /**
@@ -34,17 +34,17 @@ public final class OpenCvNativeLibraryLoader {
 	/**
 	 * Opencv native librarys location patterns.
 	 */
-	final private static String[] OPENCV_LIBS_PATTERN = { // supported OS archs dylib locations defintions.
-			"/com/wl4g/devops/tool/opencv/library/natives/**/*.dll",
-			"/com/wl4g/devops/tool/opencv/library/natives/**/*.so",
-			"/com/wl4g/devops/tool/opencv/library/natives/**/*.dylib",
-			"/com/wl4g/devops/tool/opencv/library/natives/**/*.jnilib" };
+	final private static String[] OPENCV_LIBS_PATTERN = { //
+			"/com/wl4g/devops/tool/opencv/library/natives/**/*.dll", // Windows
+			"/com/wl4g/devops/tool/opencv/library/natives/**/*.so", // Linux/AIX/FreeBSD
+			"/com/wl4g/devops/tool/opencv/library/natives/**/*.dylib", // Mac
+			"/com/wl4g/devops/tool/opencv/library/natives/**/*.jnilib" // Mac
+	};
 
 	/**
 	 * Opencv native librarys loader.
 	 */
-	private final static PathPatternNativeLibraryLoader loader = new PathPatternNativeLibraryLoader(
-			OPENCV_LIBS_PATTERN);
+	private final static PathPatternNativeLibraryLoader loader = new PathPatternNativeLibraryLoader(OPENCV_LIBS_PATTERN);
 
 	/**
 	 * Loading OpenCv native librarys.
@@ -54,10 +54,9 @@ public final class OpenCvNativeLibraryLoader {
 			loader.loadLibrarys();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
-		} catch (NoFoundArchNativeLibraryException e) {
-			throw new NoFoundArchNativeLibraryException(
-					"Failed to load opencv dylib. The project does not include dynamic chain library by "
-							+ "default (e.g. MAC/Windows/Linux). If you want to run it, you can download and "
+		} catch (LoadNativeLibraryError e) {
+			throw new LoadNativeLibraryError(
+					"Failed to load opencv dylib. Missing native library file to run? you can download and "
 							+ "install it see: https://github.com/wl4g/super-devops-tool-opencv-native"
 							+ " or https://gitee.com/wl4g/super-devops-tool-opencv-native",
 					e);

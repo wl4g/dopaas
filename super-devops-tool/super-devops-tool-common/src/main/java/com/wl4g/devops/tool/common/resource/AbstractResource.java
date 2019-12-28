@@ -47,8 +47,8 @@ public abstract class AbstractResource implements Resource {
 
 	/**
 	 * This implementation checks whether a File can be opened, falling back to
-	 * whether an InputStream can be opened. This will cover both directories and
-	 * content resources.
+	 * whether an InputStream can be opened. This will cover both directories
+	 * and content resources.
 	 */
 	@Override
 	public boolean exists() {
@@ -152,8 +152,8 @@ public abstract class AbstractResource implements Resource {
 	public long lastModified() throws IOException {
 		long lastModified = getFileForLastModifiedCheck().lastModified();
 		if (lastModified == 0L) {
-			throw new FileNotFoundException(getDescription()
-					+ " cannot be resolved in the file system for resolving its last-modified timestamp");
+			throw new FileNotFoundException(
+					getDescription() + " cannot be resolved in the file system for resolving its last-modified timestamp");
 		}
 		return lastModified;
 	}
@@ -164,18 +164,19 @@ public abstract class AbstractResource implements Resource {
 	 * The default implementation delegates to {@link #getFile()}.
 	 * 
 	 * @return the File to use for timestamp checking (never {@code null})
-	 * @throws FileNotFoundException if the resource cannot be resolved as an
-	 *                               absolute file path, i.e. is not available in a
-	 *                               file system
-	 * @throws IOException           in case of general resolution/reading failures
+	 * @throws FileNotFoundException
+	 *             if the resource cannot be resolved as an absolute file path,
+	 *             i.e. is not available in a file system
+	 * @throws IOException
+	 *             in case of general resolution/reading failures
 	 */
 	protected File getFileForLastModifiedCheck() throws IOException {
 		return getFile();
 	}
 
 	/**
-	 * This implementation throws a FileNotFoundException, assuming that relative
-	 * resources cannot be created for this resource.
+	 * This implementation throws a FileNotFoundException, assuming that
+	 * relative resources cannot be created for this resource.
 	 */
 	@Override
 	public Resource createRelative(String relativePath) throws IOException {
@@ -183,8 +184,8 @@ public abstract class AbstractResource implements Resource {
 	}
 
 	/**
-	 * This implementation always returns {@code null}, assuming that this resource
-	 * type does not have a filename.
+	 * This implementation always returns {@code null}, assuming that this
+	 * resource type does not have a filename.
 	 */
 	@Override
 	public String getFilename() {

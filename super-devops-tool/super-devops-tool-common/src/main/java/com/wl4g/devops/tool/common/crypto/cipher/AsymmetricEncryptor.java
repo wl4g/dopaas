@@ -119,13 +119,13 @@ public abstract class AsymmetricEncryptor<I> {
 			byte[] decrypted = cipherPair[1].doFinal(dec);
 			return new String(decrypted, "UTF-8");
 		} catch (Exception e) {
-			throw new IllegalStateException(String.format("The ciphertext string to be decrypted: [%s]", ciphertext),
-					e);
+			throw new IllegalStateException(String.format("The ciphertext string to be decrypted: [%s]", ciphertext), e);
 		}
 	}
 
 	/**
-	 * Initialize the build of a password instance based on the specified key pair
+	 * Initialize the build of a password instance based on the specified key
+	 * pair
 	 *
 	 * @param keySpecEntity
 	 * @return

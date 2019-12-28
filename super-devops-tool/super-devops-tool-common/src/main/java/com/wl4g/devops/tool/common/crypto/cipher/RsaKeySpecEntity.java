@@ -120,8 +120,7 @@ final public class RsaKeySpecEntity extends KeySpecEntity {
 	public String getPubBase64String() {
 		if (isBlank(pubKeyBase64String)) {
 			try {
-				pubKeyBase64String = Base64
-						.encodeBase64String(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
+				pubKeyBase64String = Base64.encodeBase64String(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
