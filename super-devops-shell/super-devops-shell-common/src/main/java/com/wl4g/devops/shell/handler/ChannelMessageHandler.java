@@ -25,7 +25,7 @@ import java.util.function.Function;
 
 import static java.lang.System.err;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * Shell message handler

@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.ClassUtils2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 import com.wl4g.devops.tool.common.resource.ClassPathResource;
@@ -116,7 +116,7 @@ public class DefaultResourceLoader implements ResourceLoader {
 	 * @see #getProtocolResolvers()
 	 */
 	public void addProtocolResolver(ProtocolResolver resolver) {
-		Assert.notNull(resolver, "ProtocolResolver must not be null");
+		Assert2.notNull(resolver, "ProtocolResolver must not be null");
 		this.protocolResolvers.add(resolver);
 	}
 
@@ -132,7 +132,7 @@ public class DefaultResourceLoader implements ResourceLoader {
 
 	@Override
 	public Resource getResource(String location) {
-		Assert.notNull(location, "Location must not be null");
+		Assert2.notNull(location, "Location must not be null");
 
 		for (ProtocolResolver protocolResolver : this.protocolResolvers) {
 			Resource resource = protocolResolver.resolve(location, this);

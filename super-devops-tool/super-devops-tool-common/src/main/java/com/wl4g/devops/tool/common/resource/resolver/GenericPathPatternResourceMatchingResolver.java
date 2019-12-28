@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.resource.Resource;
 
 /**
@@ -63,7 +63,7 @@ public class GenericPathPatternResourceMatchingResolver extends PathPatternResou
 	}
 
 	public Set<Resource> getResources(String... locationPatterns) throws IOException {
-		Assert.notNull(locationPatterns, "Path locationPatterns can't null");
+		Assert2.notNull(locationPatterns, "Path locationPatterns can't null");
 		return Arrays.asList(locationPatterns).stream().map(pattern -> {
 			try {
 				return super.getResources(pattern);

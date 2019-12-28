@@ -41,7 +41,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
 import com.google.common.net.MediaType;
 import com.wl4g.devops.tool.common.collection.CollectionUtils2;
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 
 import static com.wl4g.devops.tool.common.lang.StringUtils2.isDomain;
@@ -469,7 +469,7 @@ public abstract class WebUtils2 {
 		if (slashIndex > 0) {
 			domain = noPrefix.substring(0, slashIndex);
 		}
-		Assert.isTrue(domain.indexOf("*") == domain.lastIndexOf("*"),
+		Assert2.isTrue(domain.indexOf("*") == domain.lastIndexOf("*"),
 				String.format("Illegal domain name format: %s, contains multiple wildcards!", domain));
 		return safeDecodeURL(domain);
 	}
@@ -488,12 +488,12 @@ public abstract class WebUtils2 {
 	 * @return
 	 */
 	public static boolean withInDomain(String domain, String url) {
-		Assert.notNull(domain, "'domain' must not be null");
-		Assert.notNull(url, "'requestUrl' must not be null");
+		Assert2.notNull(domain, "'domain' must not be null");
+		Assert2.notNull(url, "'requestUrl' must not be null");
 		try {
 			String hostname = new URI(safeDecodeURL(cleanURI(url))).getHost();
 			if (!domain.contains("*")) {
-				Assert.isTrue(isDomain(domain), String.format("Illegal domain[%s] name format", domain));
+				Assert2.isTrue(isDomain(domain), String.format("Illegal domain[%s] name format", domain));
 				return equalsIgnoreCase(domain, hostname);
 			}
 			if (domain.startsWith("*")) {
@@ -548,7 +548,7 @@ public abstract class WebUtils2 {
 	public static String getRFCBaseURI(HttpServletRequest request, boolean hasCtxPath) {
 		// Context path
 		String ctxPath = request.getContextPath();
-		Assert.notNull(ctxPath, "Http request contextPath must not be null");
+		Assert2.notNull(ctxPath, "Http request contextPath must not be null");
 		ctxPath = !hasCtxPath ? "" : ctxPath;
 		// Scheme
 		String scheme = request.getScheme();
@@ -599,11 +599,11 @@ public abstract class WebUtils2 {
 	 * @return
 	 */
 	public static String getBaseURIForDefault(String scheme, String serverName, int port) {
-		Assert.notNull(scheme, "Http request scheme must not be empty");
-		Assert.notNull(serverName, "Http request serverName must not be empty");
+		Assert2.notNull(scheme, "Http request scheme must not be empty");
+		Assert2.notNull(serverName, "Http request serverName must not be empty");
 		StringBuffer baseUri = new StringBuffer(scheme).append("://").append(serverName);
 		if (port > 0) {
-			Assert.isTrue((port > 0 && port < 65536), "Http server port must be greater than 0 and less than 65536");
+			Assert2.isTrue((port > 0 && port < 65536), "Http server port must be greater than 0 and less than 65536");
 			if (!((equalsIgnoreCase(scheme, "HTTP") && port == 80) || (equalsIgnoreCase(scheme, "HTTPS") && port == 443))) {
 				baseUri.append(":").append(port);
 			}
@@ -749,7 +749,7 @@ public abstract class WebUtils2 {
 		 * @return
 		 */
 		final public static boolean isJSONResponse(HttpServletRequest request, String respTypeName) {
-			Assert.notNull(request, "Request must not be null");
+			Assert2.notNull(request, "Request must not be null");
 
 			List<String> paramNames = Arrays.asList(RESPTYPE_NAMES);
 			if (!isBlank(respTypeName)) {
@@ -774,7 +774,7 @@ public abstract class WebUtils2 {
 		 * @return
 		 */
 		final public static boolean determineJSONResponse(ResponseType respType, HttpServletRequest request) {
-			Assert.notNull(request, "Request must not be null");
+			Assert2.notNull(request, "Request must not be null");
 			// Using default strategy
 			if (Objects.isNull(respType)) {
 				respType = ResponseType.auto;

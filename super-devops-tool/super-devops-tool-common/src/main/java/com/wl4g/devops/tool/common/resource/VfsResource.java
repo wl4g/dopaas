@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
  * JBoss VFS based {@link Resource} implementation.
@@ -49,7 +49,7 @@ public class VfsResource extends AbstractResource {
 	private final Object resource;
 
 	public VfsResource(Object resource) {
-		Assert.notNull(resource, "VirtualFile must not be null");
+		Assert2.notNull(resource, "VirtualFile must not be null");
 		this.resource = resource;
 	}
 

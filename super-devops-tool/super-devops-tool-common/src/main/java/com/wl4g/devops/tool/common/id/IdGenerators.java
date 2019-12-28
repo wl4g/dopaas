@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
  * ID generator utility tools.
@@ -56,7 +56,7 @@ public class IdGenerators {
 			// Generate random UUID
 			uuids.append(UUID.randomUUID().toString().replaceAll("-", ""));
 		}
-		Assert.isTrue((minLen < (len - 1)), String.format("Minimum length (%s) greater than UUID length (%s)", minLen, len));
+		Assert2.isTrue((minLen < (len - 1)), String.format("Minimum length (%s) greater than UUID length (%s)", minLen, len));
 
 		// Random
 		ThreadLocalRandom current = ThreadLocalRandom.current();

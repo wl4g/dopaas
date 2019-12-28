@@ -45,7 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.ClassUtils2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 import com.wl4g.devops.tool.common.reflect.ReflectionUtils2;
@@ -248,7 +248,7 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 *                       resources with
 	 */
 	public PathPatternResourceMatchingResolver(ResourceLoader resourceLoader) {
-		Assert.notNull(resourceLoader, "ResourceLoader must not be null");
+		Assert2.notNull(resourceLoader, "ResourceLoader must not be null");
 		this.resourceLoader = resourceLoader;
 	}
 
@@ -284,7 +284,7 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 * @see com.wl4g.devops.tool.common.resources.match.springframework.util.AntPathMatcher
 	 */
 	public void setPathMatcher(PathMatcher pathMatcher) {
-		Assert.notNull(pathMatcher, "PathMatcher must not be null");
+		Assert2.notNull(pathMatcher, "PathMatcher must not be null");
 		this.pathMatcher = pathMatcher;
 	}
 
@@ -302,7 +302,7 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 
 	@Override
 	public Set<Resource> getResources(String locationPattern) throws IOException {
-		Assert.notNull(locationPattern, "Location pattern must not be null");
+		Assert2.notNull(locationPattern, "Location pattern must not be null");
 		if (locationPattern.startsWith(CLASSPATH_ALL_URL_PREFIX)) {
 			// a class path resource (multiple resources for same name possible)
 			if (getPathMatcher().isPattern(locationPattern.substring(CLASSPATH_ALL_URL_PREFIX.length()))) {

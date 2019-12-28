@@ -46,7 +46,7 @@ import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 import com.wl4g.devops.tool.common.resource.Resource;
 import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
 
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.ClassUtils2.getDefaultClassLoader;
 
 /**
@@ -84,7 +84,7 @@ public class PathPatternNativeLibraryLoader {
 	/**
 	 * OS arch share supports mapping.
 	 */
-	final private List<OSArchSupport> osArchDefineSupports;
+	final private List<ArchShareLibMapping> shareLibMapping;
 
 	/**
 	 * Matched load native library file resources.
@@ -96,30 +96,30 @@ public class PathPatternNativeLibraryLoader {
 	}
 
 	public PathPatternNativeLibraryLoader(ClassLoader classLoader, String... libLocationPattern) {
-		this(classLoader, new ArrayList<OSArchSupport>(32) {
+		this(classLoader, new ArrayList<ArchShareLibMapping>(32) {
 			private static final long serialVersionUID = 5148648284597551860L;
 			{
-				add(new OSArchSupport("AIX", "ppc"));
-				add(new OSArchSupport("AIX", "ppc64", "amd64", "x64"));
-				add(new OSArchSupport("FreeBSD", "x86_64", "amd64", "x64"));
-				add(new OSArchSupport("Linux", "aarh64", "amd64", "x64"));
-				add(new OSArchSupport("Linux", "android-arm"));
-				add(new OSArchSupport("Linux", "arm"));
-				add(new OSArchSupport("Linux", "armv6"));
-				add(new OSArchSupport("Linux", "armv7"));
-				add(new OSArchSupport("Linux", "ppc"));
-				add(new OSArchSupport("Linux", "ppc64", "amd64", "x64"));
-				add(new OSArchSupport("Linux", "ppc64le", "amd64", "x64"));
-				add(new OSArchSupport("Linux", "s390x"));
-				add(new OSArchSupport("Linux", "x86"));
-				add(new OSArchSupport("Linux", "x86_64", "amd64", "x64"));
-				add(new OSArchSupport("Mac", "x86"));
-				add(new OSArchSupport("Mac", "x86_64", "amd64", "x64"));
-				add(new OSArchSupport("SunOS", "sparc"));
-				add(new OSArchSupport("SunOS", "x86"));
-				add(new OSArchSupport("SunOS", "x86_64", "amd64", "x64"));
-				add(new OSArchSupport("Windows", "x86"));
-				add(new OSArchSupport("Windows", "x86_64", "amd64", "x64"));
+				add(new ArchShareLibMapping("AIX", "ppc"));
+				add(new ArchShareLibMapping("AIX", "ppc64", "amd64", "x64"));
+				add(new ArchShareLibMapping("FreeBSD", "x86_64", "amd64", "x64"));
+				add(new ArchShareLibMapping("Linux", "aarh64", "amd64", "x64"));
+				add(new ArchShareLibMapping("Linux", "android-arm"));
+				add(new ArchShareLibMapping("Linux", "arm"));
+				add(new ArchShareLibMapping("Linux", "armv6"));
+				add(new ArchShareLibMapping("Linux", "armv7"));
+				add(new ArchShareLibMapping("Linux", "ppc"));
+				add(new ArchShareLibMapping("Linux", "ppc64", "amd64", "x64"));
+				add(new ArchShareLibMapping("Linux", "ppc64le", "amd64", "x64"));
+				add(new ArchShareLibMapping("Linux", "s390x"));
+				add(new ArchShareLibMapping("Linux", "x86"));
+				add(new ArchShareLibMapping("Linux", "x86_64", "amd64", "x64"));
+				add(new ArchShareLibMapping("Mac", "x86"));
+				add(new ArchShareLibMapping("Mac", "x86_64", "amd64", "x64"));
+				add(new ArchShareLibMapping("SunOS", "sparc"));
+				add(new ArchShareLibMapping("SunOS", "x86"));
+				add(new ArchShareLibMapping("SunOS", "x86_64", "amd64", "x64"));
+				add(new ArchShareLibMapping("Windows", "x86"));
+				add(new ArchShareLibMapping("Windows", "x86_64", "amd64", "x64"));
 			}
 		}, libLocationPattern);
 	}
@@ -138,7 +138,7 @@ public class PathPatternNativeLibraryLoader {
 	 * @param osArchShareSupports
 	 * @param libLocationPattern
 	 */
-	public PathPatternNativeLibraryLoader(ClassLoader classLoader, List<OSArchSupport> osArchShareSupports,
+	public PathPatternNativeLibraryLoader(ClassLoader classLoader, List<ArchShareLibMapping> osArchShareSupports,
 			String... libLocationPatterns) {
 		notNull(classLoader, "Native library classLoader can't null.");
 		notNull(osArchShareSupports, "OS name and arch support mapping can't null.");
@@ -155,7 +155,7 @@ public class PathPatternNativeLibraryLoader {
 		}
 		this.classLoader = classLoader;
 		this.libLocationPatterns = libLocationPatterns;
-		this.osArchDefineSupports = osArchShareSupports;
+		this.shareLibMapping = osArchShareSupports;
 	}
 
 	/**
@@ -214,8 +214,8 @@ public class PathPatternNativeLibraryLoader {
 		if (loadLibFiles.isEmpty()) {
 			throw new NoFoundArchNativeLibraryException("No match native library of os: '" + OS_NAME + "', arch: '"
 					+ OS_ARCH + "', Please check whether the dynamic chain library exists in the specification"
-					+ " path(e.g: natives/Linux/x64/xxx.so), Paths that can be candidate matches: "
-					+ osArchDefineSupports + ", \nall was found resources: " + resoruces);
+					+ " path(e.g: natives/Linux/x64/xxx.so), Paths that can be candidate matches: " + shareLibMapping
+					+ ", \nall was found resources: " + resoruces);
 		}
 
 		// Cleanup temporary lib files.
@@ -259,24 +259,24 @@ public class PathPatternNativeLibraryLoader {
 		}
 
 		// List of architectures supported by the current OS.
-		List<String> supportArchs = null;
-		ok: for (OSArchSupport support : osArchDefineSupports) {
+		List<String> mappingArchs = null;
+		ok: for (ArchShareLibMapping support : shareLibMapping) {
 			// e.g. Windows/Windows 7/Windows XP, Mac/Mac OS X/Mac OS X 10.0
 			if (startsWithIgnoreCase(OS_NAME, support.getOsName())) {
 				for (String arch : support.getOsArchs()) {
 					if (equalsIgnoreCase(arch, OS_ARCH)) {
-						supportArchs = support.getOsArchs();
+						mappingArchs = support.getOsArchs();
 						log.debug("Matched native library of os: {}, arch: {}, local os: {}", osName, osArch, OS_NAME);
 						break ok;
 					}
 				}
 			}
 		}
-		notNull(supportArchs,
+		notNull(mappingArchs,
 				format("Native library not found to support local os: %s, arch: %s. All supported arch list:\n%s",
-						OS_NAME, supportArchs));
+						OS_NAME, mappingArchs));
 
-		return supportArchs.stream().filter(arch -> equalsIgnoreCase(arch, osArch)).count() > 0;
+		return mappingArchs.stream().filter(arch -> equalsIgnoreCase(arch, osArch)).count() > 0;
 	}
 
 	/**
@@ -384,13 +384,13 @@ public class PathPatternNativeLibraryLoader {
 	 * @version v1.0 2019年12月23日
 	 * @since
 	 */
-	final public static class OSArchSupport implements Serializable {
+	final public static class ArchShareLibMapping implements Serializable {
 		private static final long serialVersionUID = -5552933071556992452L;
 
 		final private String osName;
 		final private List<String> osArchs;
 
-		public OSArchSupport(String osName, String... osArchs) {
+		public ArchShareLibMapping(String osName, String... osArchs) {
 			hasText(osName, "Support OS name can't empty.");
 			isTrue(nonNull(osArchs), String.format("Support osArchs can't empty."));
 			this.osName = osName;

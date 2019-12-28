@@ -31,7 +31,7 @@ import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isGenericModi
 import static java.lang.System.*;
 
 import static org.apache.commons.lang3.StringUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.config.AbstractConfiguration;

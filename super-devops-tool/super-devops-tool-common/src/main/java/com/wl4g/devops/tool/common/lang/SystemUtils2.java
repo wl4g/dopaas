@@ -27,7 +27,7 @@ import java.util.List;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.hash.Hashing.md5;
-import static com.wl4g.devops.tool.common.lang.Assert.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 import static java.net.NetworkInterface.getNetworkInterfaces;
 import static java.util.Collections.list;
 import static java.util.Collections.sort;

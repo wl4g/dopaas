@@ -18,7 +18,7 @@ package com.wl4g.devops.tool.common.lang;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
-import static com.wl4g.devops.tool.common.lang.Assert.notNull;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
