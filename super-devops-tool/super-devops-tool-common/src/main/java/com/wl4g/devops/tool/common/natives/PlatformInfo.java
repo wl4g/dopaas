@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -83,7 +84,31 @@ public abstract class PlatformInfo extends SystemUtils2 {
 	 * @return
 	 */
 	private static Map<String, String> archMapping0() {
-		Map<String, String> archMapping = new HashMap<String, String>();
+		Map<String, String> archMapping = new HashMap<String, String>() {
+			private static final long serialVersionUID = -7501326267627482105L;
+
+			@Override
+			public String toString() {
+				Iterator<Entry<String, String>> i = entrySet().iterator();
+				if (!i.hasNext())
+					return "{}";
+
+				StringBuilder sb = new StringBuilder();
+				sb.append('{');
+				for (;;) {
+					Entry<String, String> e = i.next();
+					String key = e.getKey();
+					String value = e.getValue();
+					sb.append(key);
+					sb.append("=>");
+					sb.append(value);
+					if (!i.hasNext())
+						return sb.append('}').toString();
+					sb.append(',').append(' ');
+				}
+			}
+		};
+
 		// x86 mappings
 		archMapping.put(X86, X86);
 		archMapping.put("i386", X86);
