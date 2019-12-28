@@ -37,8 +37,9 @@ public class GenericPathPatternResourceMatchingResolver extends PathPatternResou
 	 * <p>
 	 * ClassLoader access will happen via the thread context class loader.
 	 * 
-	 * @param resourceLoader the ResourceLoader to load root directories and actual
-	 *                       resources with
+	 * @param resourceLoader
+	 *            the ResourceLoader to load root directories and actual
+	 *            resources with
 	 */
 	public GenericPathPatternResourceMatchingResolver(ResourceLoader resourceLoader) {
 		super(resourceLoader);
@@ -48,9 +49,10 @@ public class GenericPathPatternResourceMatchingResolver extends PathPatternResou
 	 * Create a new PathMatchingResourcePatternResolver with a
 	 * DefaultResourceLoader.
 	 * 
-	 * @param classLoader the ClassLoader to load classpath resources with, or
-	 *                    {@code null} for using the thread context class loader at
-	 *                    the time of actual resource access
+	 * @param classLoader
+	 *            the ClassLoader to load classpath resources with, or
+	 *            {@code null} for using the thread context class loader at the
+	 *            time of actual resource access
 	 * @see com.wl4g.devops.tool.common.resources.resolver.springframework.core.io.DefaultResourceLoader
 	 */
 	public GenericPathPatternResourceMatchingResolver(ClassLoader classLoader) {

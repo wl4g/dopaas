@@ -63,8 +63,10 @@ public class UrlResource extends AbstractFileResolvingResource {
 	/**
 	 * Create a new {@code UrlResource} based on the given URI object.
 	 * 
-	 * @param uri a URI
-	 * @throws MalformedURLException if the given URL path is not valid
+	 * @param uri
+	 *            a URI
+	 * @throws MalformedURLException
+	 *             if the given URL path is not valid
 	 * @since 2.5
 	 */
 	public UrlResource(URI uri) throws MalformedURLException {
@@ -77,7 +79,8 @@ public class UrlResource extends AbstractFileResolvingResource {
 	/**
 	 * Create a new {@code UrlResource} based on the given URL object.
 	 * 
-	 * @param url a URL
+	 * @param url
+	 *            a URL
 	 */
 	public UrlResource(URL url) {
 		Assert2.notNull(url, "URL must not be null");
@@ -91,8 +94,10 @@ public class UrlResource extends AbstractFileResolvingResource {
 	 * <p>
 	 * Note: The given path needs to be pre-encoded if necessary.
 	 * 
-	 * @param path a URL path
-	 * @throws MalformedURLException if the given URL path is not valid
+	 * @param path
+	 *            a URL path
+	 * @throws MalformedURLException
+	 *             if the given URL path is not valid
 	 * @see java.net.URL#URL(String)
 	 */
 	public UrlResource(String path) throws MalformedURLException {
@@ -107,11 +112,14 @@ public class UrlResource extends AbstractFileResolvingResource {
 	 * <p>
 	 * The given parts will automatically get encoded if necessary.
 	 * 
-	 * @param protocol the URL protocol to use (e.g. "jar" or "file" - without
-	 *                 colon); also known as "scheme"
-	 * @param location the location (e.g. the file path within that protocol); also
-	 *                 known as "scheme-specific part"
-	 * @throws MalformedURLException if the given URL specification is not valid
+	 * @param protocol
+	 *            the URL protocol to use (e.g. "jar" or "file" - without
+	 *            colon); also known as "scheme"
+	 * @param location
+	 *            the location (e.g. the file path within that protocol); also
+	 *            known as "scheme-specific part"
+	 * @throws MalformedURLException
+	 *             if the given URL specification is not valid
 	 * @see java.net.URI#URI(String, String, String)
 	 */
 	public UrlResource(String protocol, String location) throws MalformedURLException {
@@ -123,13 +131,17 @@ public class UrlResource extends AbstractFileResolvingResource {
 	 * <p>
 	 * The given parts will automatically get encoded if necessary.
 	 * 
-	 * @param protocol the URL protocol to use (e.g. "jar" or "file" - without
-	 *                 colon); also known as "scheme"
-	 * @param location the location (e.g. the file path within that protocol); also
-	 *                 known as "scheme-specific part"
-	 * @param fragment the fragment within that location (e.g. anchor on an HTML
-	 *                 page, as following after a "#" separator)
-	 * @throws MalformedURLException if the given URL specification is not valid
+	 * @param protocol
+	 *            the URL protocol to use (e.g. "jar" or "file" - without
+	 *            colon); also known as "scheme"
+	 * @param location
+	 *            the location (e.g. the file path within that protocol); also
+	 *            known as "scheme-specific part"
+	 * @param fragment
+	 *            the fragment within that location (e.g. anchor on an HTML
+	 *            page, as following after a "#" separator)
+	 * @throws MalformedURLException
+	 *             if the given URL specification is not valid
 	 * @see java.net.URI#URI(String, String, String)
 	 */
 	public UrlResource(String protocol, String location, String fragment) throws MalformedURLException {
@@ -147,8 +159,10 @@ public class UrlResource extends AbstractFileResolvingResource {
 	/**
 	 * Determine a cleaned URL for the given original URL.
 	 * 
-	 * @param originalUrl  the original URL
-	 * @param originalPath the original URL path
+	 * @param originalUrl
+	 *            the original URL
+	 * @param originalPath
+	 *            the original URL path
 	 * @return the cleaned URL
 	 * @see org.springframework.util.StringUtils#cleanPath
 	 */
@@ -165,8 +179,8 @@ public class UrlResource extends AbstractFileResolvingResource {
 	/**
 	 * This implementation opens an InputStream for the given URL.
 	 * <p>
-	 * It sets the {@code useCaches} flag to {@code false}, mainly to avoid jar file
-	 * locking on Windows.
+	 * It sets the {@code useCaches} flag to {@code false}, mainly to avoid jar
+	 * file locking on Windows.
 	 * 
 	 * @see java.net.URL#openConnection()
 	 * @see java.net.URLConnection#setUseCaches(boolean)
@@ -223,8 +237,9 @@ public class UrlResource extends AbstractFileResolvingResource {
 	}
 
 	/**
-	 * This implementation creates a {@code UrlResource}, applying the given path
-	 * relative to the path of the underlying URL of this resource descriptor.
+	 * This implementation creates a {@code UrlResource}, applying the given
+	 * path relative to the path of the underlying URL of this resource
+	 * descriptor.
 	 * 
 	 * @see java.net.URL#URL(java.net.URL, String)
 	 */
@@ -263,7 +278,8 @@ public class UrlResource extends AbstractFileResolvingResource {
 	}
 
 	/**
-	 * This implementation returns the hash code of the underlying URL reference.
+	 * This implementation returns the hash code of the underlying URL
+	 * reference.
 	 */
 	@Override
 	public int hashCode() {

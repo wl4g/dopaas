@@ -44,8 +44,8 @@ import java.net.URLConnection;
 public abstract class AbstractFileResolvingResource extends AbstractResource {
 
 	/**
-	 * This implementation returns a File reference for the underlying class path
-	 * resource, provided that it refers to a file in the file system.
+	 * This implementation returns a File reference for the underlying class
+	 * path resource, provided that it refers to a file in the file system.
 	 * 
 	 * @see org.springframework.util.ResourceUtils#getFile(java.net.URL, String)
 	 */
@@ -59,8 +59,8 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 	}
 
 	/**
-	 * This implementation determines the underlying File (or jar file, in case of a
-	 * resource in a jar/zip).
+	 * This implementation determines the underlying File (or jar file, in case
+	 * of a resource in a jar/zip).
 	 */
 	@Override
 	protected File getFileForLastModifiedCheck() throws IOException {
@@ -177,14 +177,17 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 
 	/**
 	 * Customize the given {@link URLConnection}, obtained in the course of an
-	 * {@link #exists()}, {@link #contentLength()} or {@link #lastModified()} call.
+	 * {@link #exists()}, {@link #contentLength()} or {@link #lastModified()}
+	 * call.
 	 * <p>
-	 * Calls {@link ResourceUtils#useCachesIfNecessary(URLConnection)} and delegates
-	 * to {@link #customizeConnection(HttpURLConnection)} if possible. Can be
-	 * overridden in subclasses.
+	 * Calls {@link ResourceUtils#useCachesIfNecessary(URLConnection)} and
+	 * delegates to {@link #customizeConnection(HttpURLConnection)} if possible.
+	 * Can be overridden in subclasses.
 	 * 
-	 * @param con the URLConnection to customize
-	 * @throws IOException if thrown from URLConnection methods
+	 * @param con
+	 *            the URLConnection to customize
+	 * @throws IOException
+	 *             if thrown from URLConnection methods
 	 */
 	protected void customizeConnection(URLConnection con) throws IOException {
 		ResourceUtils.useCachesIfNecessary(con);
@@ -194,20 +197,24 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 	}
 
 	/**
-	 * Customize the given {@link HttpURLConnection}, obtained in the course of an
-	 * {@link #exists()}, {@link #contentLength()} or {@link #lastModified()} call.
+	 * Customize the given {@link HttpURLConnection}, obtained in the course of
+	 * an {@link #exists()}, {@link #contentLength()} or {@link #lastModified()}
+	 * call.
 	 * <p>
 	 * Sets request method "HEAD" by default. Can be overridden in subclasses.
 	 * 
-	 * @param con the HttpURLConnection to customize
-	 * @throws IOException if thrown from HttpURLConnection methods
+	 * @param con
+	 *            the HttpURLConnection to customize
+	 * @throws IOException
+	 *             if thrown from HttpURLConnection methods
 	 */
 	protected void customizeConnection(HttpURLConnection con) throws IOException {
 		con.setRequestMethod("HEAD");
 	}
 
 	/**
-	 * Inner delegate class, avoiding a hard JBoss VFS API dependency at runtime.
+	 * Inner delegate class, avoiding a hard JBoss VFS API dependency at
+	 * runtime.
 	 */
 	private static class VfsResourceDelegate {
 
