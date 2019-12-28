@@ -70,11 +70,6 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 	final private ClassLoader classLoader;
 
 	/**
-	 * Native library loader classPath location pattern.
-	 */
-	final private String[] libLocationPatterns;
-
-	/**
 	 * Current OS arch share lib folder path part(lowerCase).</br>
 	 * e.g. Windows/x86, Windows/x86_64, Linux/x86, Linux/x86_64,
 	 */
@@ -85,8 +80,8 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 	 */
 	final private List<File> loadLibFiles = new ArrayList<>(8);
 
-	public PathPatternNativeLibraryLoader(String... libLocationPatterns) {
-		this(getDefaultClassLoader(), libLocationPatterns);
+	public PathPatternNativeLibraryLoader() {
+		this(getDefaultClassLoader());
 	}
 
 	/**
@@ -103,22 +98,19 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 	 * @param archShareMapping
 	 * @param libLocationPattern
 	 */
-	public PathPatternNativeLibraryLoader(ClassLoader classLoader, String... libLocationPatterns) {
+	public PathPatternNativeLibraryLoader(ClassLoader classLoader) {
 		notNull(classLoader, "Native library classLoader can't null.");
-		// Check location pattern.
-		notNull(libLocationPatterns, "Native library location pattern can't null.");
-		for (String pattern : libLocationPatterns) {
-			isTrue(pattern.startsWith("/"), "The path has to be absolute (start with '/').");
-			// Check filename deep hierarchy is okay?
-			int libPathDeep = pattern.split("/").length;
-			if (libPathDeep < NATIVE_LIBS_PATH_LEN_MIN) {
-				throw new IllegalArgumentException(
-						"The filename has to be at least " + NATIVE_LIBS_PATH_LEN_MIN + " characters long.");
-			}
-		}
 		this.classLoader = classLoader;
-		this.libLocationPatterns = libLocationPatterns;
 		this.archShareLibFolderPathLowerCase = getNativeLibFolderPathForCurrentOS().toLowerCase(Locale.US);
+	}
+
+	/**
+	 * Check current {@link PathPatternNativeLibraryLoader} loaded?
+	 * 
+	 * @return
+	 */
+	public boolean isLoaded() {
+		return loadedState.get();
 	}
 
 	/**
@@ -129,14 +121,26 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 	 * 
 	 * @param classLoader
 	 *            {@link ClassLoader} for loading native class library
+	 * @param libLocationPatterns
+	 *            lib Location patterns
 	 * @throws IOException
 	 *             Dynamic library read write error
 	 * @throws LoadNativeLibraryError
 	 *             The specified file was not found in the jar package.
 	 */
-	public final synchronized void loadLibrarys() throws IOException, LoadNativeLibraryError {
+	public final synchronized void loadLibrarys(String... libLocationPatterns) throws IOException, LoadNativeLibraryError {
 		if (!loadedState.compareAndSet(false, true)) { // Loaded?
 			return;
+		}
+		// Check location pattern.
+		notNull(libLocationPatterns, "Native library location pattern can't null.");
+		for (String pattern : libLocationPatterns) {
+			// Check filename deep hierarchy is okay?
+			int libPathDeep = pattern.split("/").length;
+			if (libPathDeep < NATIVE_LIBS_PATH_LEN_MIN) {
+				throw new IllegalArgumentException(
+						"The filename has to be at least " + NATIVE_LIBS_PATH_LEN_MIN + " characters long.");
+			}
 		}
 
 		// Scanning native library resources.
