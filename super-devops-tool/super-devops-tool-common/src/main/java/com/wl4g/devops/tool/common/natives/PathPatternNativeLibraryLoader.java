@@ -16,6 +16,7 @@
 package com.wl4g.devops.tool.common.natives;
 
 import static java.lang.Runtime.*;
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
 import static java.util.Objects.nonNull;
@@ -133,16 +134,7 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 		if (!loadedState.compareAndSet(false, true)) { // Loaded?
 			return;
 		}
-		// Check location pattern.
-		notNull(libLocationPatterns, "Native library location pattern can't null.");
-		for (String pattern : libLocationPatterns) {
-			// Check filename deep hierarchy is okay?
-			int libPathDeep = pattern.split("/").length;
-			if (libPathDeep < NATIVE_LIBS_PATH_LEN_MIN) {
-				throw new IllegalArgumentException(
-						"The filename has to be at least " + NATIVE_LIBS_PATH_LEN_MIN + " characters long.");
-			}
-		}
+		assertLibLocationPatterns(libLocationPatterns);
 
 		// Scanning native library resources.
 		GenericPathPatternResourceMatchingResolver resolver = new GenericPathPatternResourceMatchingResolver(classLoader);
@@ -269,6 +261,30 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Assertion share native library location patterns. patterns and pattern
+	 * cannot be null or empty
+	 * 
+	 * @param libLocationPatterns
+	 */
+	private void assertLibLocationPatterns(String... libLocationPatterns) {
+		// Check location pattern.
+		notNull(libLocationPatterns, "Native library location patterns can't null.");
+
+		for (String pattern : libLocationPatterns) {
+			notNull(pattern,
+					format("Native library location pattern can't null, libLocationPatterns: %s", asList(libLocationPatterns)));
+
+			// Check filename deep hierarchy is okay?
+			int libPathDeep = pattern.split("/").length;
+			if (libPathDeep < NATIVE_LIBS_PATH_LEN_MIN) {
+				throw new IllegalArgumentException(
+						"The filename has to be at least " + NATIVE_LIBS_PATH_LEN_MIN + " characters long.");
+			}
+		}
+
 	}
 
 	/**
