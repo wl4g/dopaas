@@ -34,10 +34,22 @@ public abstract class BasedMavenPipelineProvider extends RestorableDeployPipelin
 		super(context);
 	}
 
+	/**
+	 * Maven build for default command.
+	 * 
+	 * <pre>
+	 * -DskipTests  # Do not execute the test case, but compile the test case class to generate the corresponding class file under target/test classes.
+	 * -Dmaven.test.skip=true  # Do not execute test cases and compile test case classes.
+	 * </pre>
+	 * 
+	 * Note: In order to solve the problem that these two parameters may not be
+	 * compatible in different versions of maven, it is recommended to use them
+	 * at the same time.
+	 */
 	@Override
 	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
-		String defaultMvnBuildCmd = String.format("mvn -f %s/pom.xml clean install -Dmaven.test.skip=true -DskipTests",
-				projectDir);
+		String defaultMvnBuildCmd = String.format(
+				"mvn -f %s/pom.xml clean install -Dmaven.test.skip=true -DskipTests -Dmaven.compile.fork=true -T 2C", projectDir);
 		// TODO timeoutMs/pwdDir?
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultMvnBuildCmd, null, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
