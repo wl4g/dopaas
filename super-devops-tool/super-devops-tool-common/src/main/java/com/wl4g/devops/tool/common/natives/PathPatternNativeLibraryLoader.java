@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -148,13 +149,8 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 		Set<Resource> resources = resolver.getResources(libLocationPatterns);
 		// Sort resources url by ASCII dict.
 		List<Resource> rss = asList(resources.toArray(new Resource[] {}));
-		sort(rss, (r1, r2) -> {
-			try {
-				return r1.getURL().toString().compareTo(r2.getURL().toString());
-			} catch (IOException e1) {
-				throw new IllegalStateException(e1);
-			}
-		});
+		sort(rss, ASC_COMPARATOR);
+
 		// Matching native library by current os arch.
 		for (Resource r : rss) {
 			if (!r.exists() || r.isOpen() || !r.isReadable()) {
@@ -189,20 +185,36 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 
 		// Any loaded library?
 		if (loadLibFiles.isEmpty()) {
-			throw new LoadNativeLibraryError("No match native library, current os/arch: '" + OS_NAME + "/" + OS_ARCH
-					+ "', Please check whether the path of the shared chain file conforms to the specification. "
-					+ "Refer to os arch name transformation mapping: " + archMapping + ", \nall was found resources: "
-					+ resources);
+			throw new LoadNativeLibraryError("No match native library, there is no shared library file of current os/arch: '"
+					+ OS_NAME + "/" + OS_ARCH + "or the path does not meet the specification?"
+					+ "\n\n----- Refer to os arch name transformation mapping: \n" + archMapping
+					+ "\n\n----- Scan matching patterns: \n" + asList(libLocationPatterns)
+					+ "\n\n----- All was found native library resources: \n" + rss);
 		}
 
-		// Cleanup temporary lib files.
-		/*
-		 * It has been proved that when the tmpFile.deleteOnExit() method is
-		 * called, the dynamic library file cannot be deleted after the system
-		 * exits, because the program is occupied, so if you want to unload the
-		 * dynamic library file when the program exits, you can only use hook
-		 * (calling private properties and private methods through reflection)
-		 */
+		// Cleanup nativelib temporary files.
+		cleanupTmpNativeLibs();
+	}
+
+	/**
+	 * Automatically match the current os type and architecture.
+	 * 
+	 * @return
+	 */
+	protected boolean matchCurrentOSArchPath(URL path) {
+		return path.toString().toLowerCase(Locale.US).contains(archShareLibFolderPathLowerCase);
+	}
+
+	/**
+	 * Cleanup temporary nativelib files.
+	 * 
+	 * It has been proved that when the tmpFile.deleteOnExit() method is called,
+	 * the dynamic library file cannot be deleted after the system exits,
+	 * because the program is occupied, so if you want to unload the dynamic
+	 * library file when the program exits, you can only use hook (calling
+	 * private properties and private methods through reflection)
+	 */
+	private void cleanupTmpNativeLibs() {
 		getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
@@ -216,15 +228,6 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 			}
 		});
 
-	}
-
-	/**
-	 * Automatically match the current os type and architecture.
-	 * 
-	 * @return
-	 */
-	protected boolean matchCurrentOSArchPath(URL path) {
-		return path.toString().toLowerCase(Locale.US).contains(archShareLibFolderPathLowerCase);
 	}
 
 	/**
@@ -294,5 +297,16 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 	 */
 	final public static File libNativeTmpDir = libsTmpDirectory0(File.separator + "javanativelibs_" + USER_NAME + File.separator
 			+ LOCAL_PROCESS_ID + "-" + System.currentTimeMillis());
+
+	/**
+	 * {@link Resource} URL path ASC comparator.
+	 */
+	final public static Comparator<Resource> ASC_COMPARATOR = (r1, r2) -> {
+		try {
+			return r1.getURL().toString().compareTo(r2.getURL().toString());
+		} catch (IOException e1) {
+			throw new IllegalStateException(e1);
+		}
+	};
 
 }

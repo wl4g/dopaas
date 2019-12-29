@@ -44,10 +44,10 @@ public final class OpenCvNativeLibraryLoader {
 		{
 			// It's also a non classpath external path
 			// add("file:/home/user1/natives/**/*.so");
-			add("/com/wl4g/devops/tool/opencv/library/natives/**/*.dll"); // Windows
-			add("/com/wl4g/devops/tool/opencv/library/natives/**/*.so"); // Linux/AIX/FreeBSD
-			add("/com/wl4g/devops/tool/opencv/library/natives/**/*.dylib"); // Mac
-			add("/com/wl4g/devops/tool/opencv/library/natives/**/*.jnilib"); // Mac
+			add("opencv/natives/**/*.dll"); // Windows
+			add("opencv/natives/**/*.so"); // Linux/AIX/FreeBSD
+			add("opencv/natives/**/*.jnilib"); // Linux/Mac
+			add("opencv/natives/**/*.dylib"); // Mac
 		}
 	};
 
@@ -75,7 +75,7 @@ public final class OpenCvNativeLibraryLoader {
 				throw new IllegalStateException(e);
 			} catch (LoadNativeLibraryError e) {
 				throw new LoadNativeLibraryError(
-						"Failed to load opencv dylib. missing native library file to run? you can download and "
+						"Failed to load opencv dylib. missing native lib file to run? you can download and "
 								+ "install it see: https://github.com/wl4g/super-devops-tool-opencv-native"
 								+ " or https://gitee.com/wl4g/super-devops-tool-opencv-native",
 						e);
