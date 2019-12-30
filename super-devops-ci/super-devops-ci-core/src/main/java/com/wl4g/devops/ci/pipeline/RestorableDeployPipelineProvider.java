@@ -24,6 +24,7 @@ import java.io.File;
 
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static com.wl4g.devops.tool.common.codec.FingerprintUtils.getMd5Fingerprint;
+import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 
 /**
  * Recoverable deployment pipeline provider based on physical backup (local
@@ -65,8 +66,8 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	@Override
 	public void rollback() throws Exception {
 		// Obtain backup assets file.
-		File backAssetsFile = new File(config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"
-				+ config.getTarFileNameWithTar(getContext().getAppCluster().getName()));
+		String path = config.getJobBackupDir(getContext().getTaskHistory().getRefId()).getAbsolutePath()+"/"+ config.getTarFileNameWithTar(getContext().getAppCluster().getName());
+		File backAssetsFile = new File(path);
 		// Check backup assets file.
 		if (!backAssetsFile.exists()) {
 			throw new NotFoundBackupAssetsFileException(String.format("Not found backup assets file: %s", backAssetsFile));
@@ -100,6 +101,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 
 		// Copy assets files to backup dir.
 		String command = String.format("cp -Rf %s %s", targetPath, backupPath);
+		writeALineFile(config.getJobLog(taskHisId).getAbsoluteFile(),"execute cmd:"+command);
 		File jobLogFile = config.getJobLog(taskHisId);
 		// TODO timeoutMs?
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHisId), command, null, 300000L)
@@ -114,14 +116,13 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	 */
 	protected void rollbackBackupAssets() throws Exception {
 		Integer taskHisRefId = getContext().getRefTaskHistory().getId();
+		Integer taskHisId = getContext().getTaskHistory().getId();
 		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
-		String backupPath = config.getJobBackupDir(taskHisRefId).getAbsolutePath() + tarFileName;
-		String assetsFilename = config.getAssetsFullFilename(getContext().getProject().getAssetsPath(),
-				getContext().getAppCluster().getName());
-		String target = getContext().getProjectSourceDir() + assetsFilename;
-
+		String backupPath = config.getJobBackupDir(taskHisRefId).getAbsolutePath() +"/"+ tarFileName;
+		String newBackupPath = config.getJobBackupDir(taskHisId).getAbsolutePath() +"/"+ tarFileName;
 		// Copy backup assets to build dir.
-		String command = String.format("cp -Rf %s %s", backupPath, target);
+		String command = String.format("cp -Rf %s %s", backupPath, newBackupPath);
+		writeALineFile(config.getJobLog(taskHisId).getAbsoluteFile(),"execute cmd:"+command);
 		// TODO timeoutMs/jobLogFile?
 		File jobLogFile = config.getJobLog(taskHisRefId);
 		DestroableCommand cmd = new LocalDestroableCommand(command, null, 300000L).setStdout(jobLogFile).setStderr(jobLogFile);

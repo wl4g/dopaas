@@ -61,7 +61,7 @@ public abstract class DestroableProcessWrapper {
 	private boolean destroable = true;
 
 	public DestroableProcessWrapper(String processId, DestroableCommand command) {
-		hasText(processId, "Destroable processId can't empty");
+		//hasText(processId, "Destroable processId can't empty");
 		notNull(command, "Destroable command can't null.");
 		this.processId = processId;
 		this.command = command;
