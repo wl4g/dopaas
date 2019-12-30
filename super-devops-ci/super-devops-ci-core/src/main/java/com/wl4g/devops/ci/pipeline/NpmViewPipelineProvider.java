@@ -74,7 +74,7 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 	 * $ cd /root/.ci-workspace/sources/portal-view/dist
 	 * $ mkdir portal-view-1.0.0-bin
 	 * $ mv `ls -A|grep -v portal-view-1.0.0-bin` portal-view-1.0.0-bin/
-	 * $ tar -cvf /root/.ci-workspace/jobs/job.2/portal-view-1.0.0-bin.tar *
+	 * $ tar -cvf /Users/vjay/.ci-workspace/sources/safecloud-view-portal/dist/portal-view-master-bin.tar *
 	 * </pre>
 	 */
 	@Override
