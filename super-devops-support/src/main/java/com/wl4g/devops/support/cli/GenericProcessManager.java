@@ -29,7 +29,6 @@ import com.wl4g.devops.tool.common.task.RunnerProperties;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +42,7 @@ import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
 import static com.wl4g.devops.tool.common.cli.SshUtils.execWaitForCompleteWithSsh2;
 import static com.wl4g.devops.tool.common.io.ByteStreams2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static java.lang.System.arraycopy;
 import static java.lang.Thread.sleep;
@@ -62,7 +62,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	final public static long DEFAULT_DESTROY_TIMEOUTMS = 30 * 1000L;
 	final public static int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	/** Command-line process repository */
 	final protected ProcessRepository repository;
@@ -124,6 +124,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 		} finally {
 			// Destroy process.
 			destroy0(dpw, DEFAULT_DESTROY_TIMEOUTMS);
+
 			// Cleanup if necessary.
 			if (!isBlank(cmd.getProcessId())) {
 				repository.cleanup(cmd.getProcessId());
@@ -177,9 +178,8 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * @throws InterruptedException
 	 */
 	protected DestroableProcessWrapper doExecLocal(LocalDestroableCommand cmd) throws IOException, InterruptedException {
-		if (log.isInfoEnabled()) {
-			log.info("Exec local command: {}", cmd.getCmd());
-		}
+		log.info("Exec local command: {}", cmd.getCmd());
+
 		DelegateProcess ps = execMulti(cmd.getCmd(), cmd.getPwdDir(), cmd.getStdout(), cmd.getStderr(), cmd.isAppend(), false);
 		return new LocalDestroableProcess(cmd.getProcessId(), cmd, ps);
 	}
@@ -192,9 +192,8 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * @throws InterruptedException
 	 */
 	protected DestroableProcessWrapper doExecRemote(RemoteDestroableCommand cmd) throws IOException, InterruptedException {
-		if (log.isInfoEnabled()) {
-			log.info("Exec remote command: {}", cmd.getCmd());
-		}
+		log.info("Exec remote command: {}", cmd.getCmd());
+
 		return execWaitForCompleteWithSsh2(cmd.getHost(), cmd.getUser(), cmd.getPemPrivateKey(), cmd.getCmd(),
 				s -> new RemoteDestroableProcess(cmd.getProcessId(), cmd, s), cmd.getTimeoutMs());
 	}

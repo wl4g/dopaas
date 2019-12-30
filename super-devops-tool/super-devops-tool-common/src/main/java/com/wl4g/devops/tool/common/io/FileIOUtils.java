@@ -95,22 +95,32 @@ public abstract class FileIOUtils extends FileUtils {
 	// -- Writer. ---
 
 	/**
-	 * Write string to file(before + {@link SystemUtils#LINE_SEPARATOR}).
+	 * Write string to file.
 	 * 
-	 * @param file
-	 * @param data
-	 */
-	public static void writeBLineFile(File file, String data) {
-		writeFile(file, LINE_SEPARATOR + data, Charset.forName("UTF-8"), true);
-	}
-
-	/**
-	 * Write string to file(after + {@link SystemUtils#LINE_SEPARATOR}).
+	 * <pre>
+	 * out.write({@link SystemUtils#LINE_SEPARATOR})
+	 * out.write(data)
+	 * </pre>
 	 * 
 	 * @param file
 	 * @param data
 	 */
 	public static void writeALineFile(File file, String data) {
+		writeFile(file, LINE_SEPARATOR + data, Charset.forName("UTF-8"), true);
+	}
+
+	/**
+	 * Write string to file.
+	 * 
+	 * <pre>
+	 * out.write(data)
+	 * out.write({@link SystemUtils#LINE_SEPARATOR})
+	 * </pre>
+	 * 
+	 * @param file
+	 * @param data
+	 */
+	public static void writeBLineFile(File file, String data) {
 		writeFile(file, data + LINE_SEPARATOR, Charset.forName("UTF-8"), true);
 	}
 

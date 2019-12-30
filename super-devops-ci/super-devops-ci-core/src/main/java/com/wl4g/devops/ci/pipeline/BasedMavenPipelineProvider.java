@@ -19,9 +19,9 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
-import java.io.File;
+import static java.lang.String.format;
 
-import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
+import java.io.File;
 
 /**
  * Based MAVEN pipeline provider.
@@ -31,6 +31,11 @@ import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
  * @since
  */
 public abstract class BasedMavenPipelineProvider extends RestorableDeployPipelineProvider {
+
+	/**
+	 * Maven default build command.
+	 */
+	final public static String DEFAULT_MVN_CMD = "mvn -f %s/pom.xml clean install -Dmaven.test.skip=true -DskipTests -Dmaven.compile.fork=true -T 2C";
 
 	public BasedMavenPipelineProvider(PipelineContext context) {
 		super(context);
@@ -50,10 +55,10 @@ public abstract class BasedMavenPipelineProvider extends RestorableDeployPipelin
 	 */
 	@Override
 	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
-		String defaultMvnBuildCmd = String.format(
-				"mvn -f %s/pom.xml clean install -Dmaven.test.skip=true -DskipTests -Dmaven.compile.fork=true -T 2C", projectDir);
+		String defaultMvnBuildCmd = format(DEFAULT_MVN_CMD, projectDir);
+		log.info(writeBuildLog("Building with maven default command: %s", defaultMvnBuildCmd));
+
 		// TODO timeoutMs/pwdDir?
-		writeALineFile(config.getJobLog(taskId).getAbsoluteFile(),"execute cmd:"+defaultMvnBuildCmd);
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultMvnBuildCmd, null, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);

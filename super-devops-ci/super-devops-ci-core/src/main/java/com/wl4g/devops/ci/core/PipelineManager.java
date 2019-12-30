@@ -34,7 +34,7 @@ public abstract interface PipelineManager {
 	 * 
 	 * @param param
 	 */
-	void newPipeline(NewParameter param);
+	void runPipeline(NewParameter param);
 
 	/**
 	 * Roll-back pipeline task job.
@@ -51,7 +51,7 @@ public abstract interface PipelineManager {
 	void hookPipeline(HookParameter param);
 
 	/**
-	 * Reader pipeline task job logs.
+	 * Reader pipeline task building logs.
 	 * 
 	 * @param taskHisId
 	 * @param startPos
@@ -61,7 +61,7 @@ public abstract interface PipelineManager {
 	ReadResult logfile(Integer taskHisId, Long startPos, Integer size);
 
 	/**
-	 * Reader pipeline task job logs.
+	 * Reader pipeline task detail deploying logs.
 	 *
 	 * @param taskHisId
 	 * @param taskHisDetailId
@@ -69,6 +69,6 @@ public abstract interface PipelineManager {
 	 * @param size
 	 * @return
 	 */
-	ReadResult logDetailFile(Integer taskHisId,Integer instanceId, Long startPos, Integer size);
+	ReadResult logDetailFile(Integer taskHisId, Integer instanceId, Long startPos, Integer size);
 
 }
