@@ -53,6 +53,7 @@
 		</developer>
 	</developers>
 	<modules>
+		<module>super-devops-bom</module>
 		<module>super-devops-common</module>
 		<module>super-devops-support</module>
 		<module>super-devops-share</module>

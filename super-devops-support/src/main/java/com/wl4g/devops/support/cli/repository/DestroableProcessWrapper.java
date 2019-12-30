@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.support.cli.repository;
 
-import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 
 import java.io.IOException;
@@ -61,7 +60,7 @@ public abstract class DestroableProcessWrapper {
 	private boolean destroable = true;
 
 	public DestroableProcessWrapper(String processId, DestroableCommand command) {
-		//hasText(processId, "Destroable processId can't empty");
+		// hasText(processId, "Destroable processId can't empty");
 		notNull(command, "Destroable command can't null.");
 		this.processId = processId;
 		this.command = command;
