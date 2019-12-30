@@ -23,7 +23,7 @@ import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.AppClusterService;
-import com.wl4g.devops.tool.common.crypto.AES;
+import com.wl4g.devops.tool.common.crypto.AesEncryptor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +93,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 			appInstance.setClusterId(clusterId);
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
 				try {
-					AES aes = new AES(cipherKey);
+					AesEncryptor aes = new AesEncryptor(cipherKey);
 					String encrypt = aes.encrypt(appInstance.getSshKey());
 					appInstance.setSshKey(encrypt);
 				} catch (Exception e) {
@@ -112,7 +112,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 		for (AppInstance appInstance : appCluster.getInstances()) {
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
 				try {
-					AES aes = new AES(cipherKey);
+					AesEncryptor aes = new AesEncryptor(cipherKey);
 					String encrypt = aes.encrypt(appInstance.getSshKey());
 					appInstance.setSshKey(encrypt);
 				} catch (Exception e) {
@@ -160,7 +160,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 		for (AppInstance appInstance : appInstances) {
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
 				try {
-					char[] sshkeyPlain = new AES(cipherKey).decrypt(appInstance.getSshKey()).toCharArray();
+					char[] sshkeyPlain = new AesEncryptor(cipherKey).decrypt(appInstance.getSshKey()).toCharArray();
 					appInstance.setSshKey(String.valueOf(sshkeyPlain));
 				} catch (Exception e) {
 					e.printStackTrace();

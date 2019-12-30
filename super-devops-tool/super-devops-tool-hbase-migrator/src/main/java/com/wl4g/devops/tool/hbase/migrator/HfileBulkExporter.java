@@ -20,7 +20,7 @@ import static com.wl4g.devops.tool.hbase.migrator.mapred.AbstractTransformHfileM
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
 import com.wl4g.devops.tool.hbase.migrator.mapred.NothingTransformMapper;
 
@@ -118,7 +118,7 @@ public class HfileBulkExporter {
 		// Check directory.
 		String outputDir = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR) + "/" + tabname;
 		FileSystem fs = FileSystem.get(new URI(outputDir), new Configuration(), user);
-		Assert.state(!fs.exists(new Path(outputDir)),
+		Assert2.state(!fs.exists(new Path(outputDir)),
 				String.format("HDFS temporary directory already has data, path: '%s'", outputDir));
 
 		// Set scan condition.(if necessary)
@@ -167,7 +167,7 @@ public class HfileBulkExporter {
 			enabledScan = true;
 		}
 		if (isNotBlank(endRow)) {
-			Assert.hasText(startRow, "Argument for startRow and endRow are used simultaneously");
+			Assert2.hasText(startRow, "Argument for startRow and endRow are used simultaneously");
 			conf.set(TableInputFormat.SCAN_ROW_STOP, endRow);
 			scan.setStopRow(Bytes.toBytes(endRow));
 			enabledScan = true;

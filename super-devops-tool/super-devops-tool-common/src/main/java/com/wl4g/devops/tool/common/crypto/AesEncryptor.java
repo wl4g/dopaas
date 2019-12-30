@@ -22,6 +22,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.codec.digest.Crypt;
+
 /**
  * AES加密算法（解决windows/Linux下加解密不一致问题http://blog.csdn.net/qq_26188423/article/details/60579773）<br/>
  * 
@@ -32,7 +34,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @date 2018年3月15日
  * @since
  */
-public class AES {
+public class AesEncryptor extends Crypt {
 	final private static String KEY_CIPHER_ENV = "DEVOPS_CIPHER_KEY";
 	final private static String KEY_CIPHER_PRINT = "DEVOPS_CIPHER_PRINT";
 
@@ -68,11 +70,11 @@ public class AES {
 
 	private Cipher ecipher, dcipher;
 
-	public AES() throws Exception {
+	public AesEncryptor() throws Exception {
 		this.initialize(getDefaultCipher());
 	}
 
-	public AES(String key) throws Exception {
+	public AesEncryptor(String key) throws Exception {
 		this.initialize(key);
 	}
 
@@ -175,7 +177,7 @@ public class AES {
 	}
 
 	public static void main(String[] args) throws Exception {
-		AES aes = new AES();
+		AesEncryptor aes = new AesEncryptor();
 		String s = "safecloud@#123";
 		System.out.println("cipherText: " + (s = aes.encrypt(s)));
 		System.out.println("plainText: " + aes.decrypt(s));

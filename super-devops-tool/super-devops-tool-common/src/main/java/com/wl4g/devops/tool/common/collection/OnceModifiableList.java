@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
  * Once modifiable list.
@@ -43,7 +43,7 @@ public class OnceModifiableList<E> implements List<E> {
 	final private AtomicBoolean modified = new AtomicBoolean(false);
 
 	public OnceModifiableList(List<E> readOnlyList) {
-		Assert.state(null != readOnlyList, "Once modifiable read only list must not be null.");
+		Assert2.state(null != readOnlyList, "Once modifiable read only list must not be null.");
 		this.readOnlyList = readOnlyList;
 	}
 
@@ -79,7 +79,7 @@ public class OnceModifiableList<E> implements List<E> {
 
 	@Override
 	public boolean add(E e) {
-		Assert.notNull(e, "Once modifiable final list value must not be null.");
+		Assert2.notNull(e, "Once modifiable final list value must not be null.");
 		if (modified.compareAndSet(false, true)) {
 			return readOnlyList.add(e);
 		}
@@ -88,7 +88,7 @@ public class OnceModifiableList<E> implements List<E> {
 
 	@Override
 	public boolean remove(Object o) {
-		Assert.notNull(o, "Once modifiable final list value must not be null.");
+		Assert2.notNull(o, "Once modifiable final list value must not be null.");
 		if (modified.compareAndSet(false, true)) {
 			return readOnlyList.remove(o);
 		}
@@ -102,7 +102,7 @@ public class OnceModifiableList<E> implements List<E> {
 
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
-		Assert.notNull(c, "Once modifiable final list value must not be null.");
+		Assert2.notNull(c, "Once modifiable final list value must not be null.");
 		if (modified.compareAndSet(false, true)) {
 			return readOnlyList.addAll(c);
 		}
@@ -111,7 +111,7 @@ public class OnceModifiableList<E> implements List<E> {
 
 	@Override
 	public boolean addAll(int index, Collection<? extends E> c) {
-		Assert.notNull(c, "Once modifiable final list value must not be null.");
+		Assert2.notNull(c, "Once modifiable final list value must not be null.");
 		if (modified.compareAndSet(false, true)) {
 			return readOnlyList.addAll(index, c);
 		}
@@ -120,7 +120,7 @@ public class OnceModifiableList<E> implements List<E> {
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		Assert.notNull(c, "Once modifiable final list value must not be null.");
+		Assert2.notNull(c, "Once modifiable final list value must not be null.");
 		if (modified.compareAndSet(false, true)) {
 			return readOnlyList.remove(c);
 		}
@@ -129,7 +129,7 @@ public class OnceModifiableList<E> implements List<E> {
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		Assert.notNull(c, "Once modifiable final list value must not be null.");
+		Assert2.notNull(c, "Once modifiable final list value must not be null.");
 		if (modified.compareAndSet(false, true)) {
 			return readOnlyList.retainAll(c);
 		}
@@ -148,8 +148,8 @@ public class OnceModifiableList<E> implements List<E> {
 
 	@Override
 	public E set(int index, E element) {
-		Assert.notNull(index, "Once modifiable final list index must not be null.");
-		Assert.notNull(element, "Once modifiable final list element must not be null.");
+		Assert2.notNull(index, "Once modifiable final list index must not be null.");
+		Assert2.notNull(element, "Once modifiable final list element must not be null.");
 		if (modified.compareAndSet(false, true)) {
 			return readOnlyList.set(index, element);
 		}
@@ -158,8 +158,8 @@ public class OnceModifiableList<E> implements List<E> {
 
 	@Override
 	public void add(int index, E element) {
-		Assert.notNull(index, "Once modifiable final list index must not be null.");
-		Assert.notNull(element, "Once modifiable final list element must not be null.");
+		Assert2.notNull(index, "Once modifiable final list index must not be null.");
+		Assert2.notNull(element, "Once modifiable final list element must not be null.");
 		if (modified.compareAndSet(false, true)) {
 			readOnlyList.add(index, element);
 		}

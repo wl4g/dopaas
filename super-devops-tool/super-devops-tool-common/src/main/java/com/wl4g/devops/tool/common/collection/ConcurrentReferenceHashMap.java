@@ -16,7 +16,7 @@
 
 package com.wl4g.devops.tool.common.collection;
 
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;

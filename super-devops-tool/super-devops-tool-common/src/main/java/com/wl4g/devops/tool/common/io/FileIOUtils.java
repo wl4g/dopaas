@@ -30,7 +30,7 @@ import java.util.function.Function;
 
 import static com.google.common.base.Charsets.ISO_8859_1;
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static java.lang.Math.min;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;

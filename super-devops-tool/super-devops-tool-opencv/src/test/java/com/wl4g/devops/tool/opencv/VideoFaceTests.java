@@ -1,8 +1,12 @@
 package com.wl4g.devops.tool.opencv;
 
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
@@ -13,16 +17,23 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.videoio.VideoCapture;
 
+import com.wl4g.devops.tool.common.cli.CommandUtils;
 import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
 import com.wl4g.devops.tool.opencv.library.OpenCvNativeLibraryLoader;
 
 public class VideoFaceTests {
 
-	static {
-		OpenCvNativeLibraryLoader.loadLibrarys();
-	}
+	public static void main(String[] args) throws IOException, ParseException {
+		if (IS_OS_WINDOWS) { // Already exists in jar file
+			OpenCvNativeLibraryLoader.loadLibrarys();
+		} else { // External lib file needs to be load
+			// Load native library.
+			CommandLine line = CommandUtils.newBuilder()
+					.option("l", "libLocationPattern", true, "Load external native file location match pattern").build(args);
+			OpenCvNativeLibraryLoader.loadLibrarys(line.getOptionValue("libLocationPattern"));
+		}
 
-	public static void main(String[] args) throws IOException {
+		// Video face testing.
 		videoFace();
 	}
 
@@ -54,7 +65,8 @@ public class VideoFaceTests {
 	 * OpenCV-4.0.0 人脸识别
 	 * 
 	 * @date: 2019年5月7日12:16:55
-	 * @param image 待处理Mat图片(视频中的某一帧)
+	 * @param image
+	 *            待处理Mat图片(视频中的某一帧)
 	 * @return 处理后的图片
 	 * @throws IOException
 	 */

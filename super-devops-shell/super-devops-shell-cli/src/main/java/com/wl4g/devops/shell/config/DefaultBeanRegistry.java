@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.config;
 
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -40,8 +40,8 @@ public interface WritableResource extends Resource {
 	 * <p>
 	 * Will be {@code true} for typical resource descriptors; note that actual
 	 * content writing may still fail when attempted. However, a value of
-	 * {@code false} is a definitive indication that the resource content cannot be
-	 * modified.
+	 * {@code false} is a definitive indication that the resource content cannot
+	 * be modified.
 	 * 
 	 * @see #getOutputStream()
 	 * @see #isReadable()
@@ -52,7 +52,8 @@ public interface WritableResource extends Resource {
 	 * Return an {@link OutputStream} for the underlying resource, allowing to
 	 * (over-)write its content.
 	 * 
-	 * @throws IOException if the stream could not be opened
+	 * @throws IOException
+	 *             if the stream could not be opened
 	 * @see #getInputStream()
 	 */
 	OutputStream getOutputStream() throws IOException;

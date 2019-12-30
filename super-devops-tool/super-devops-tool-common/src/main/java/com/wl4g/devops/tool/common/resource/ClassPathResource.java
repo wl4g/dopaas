@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.ClassUtils2;
 import com.wl4g.devops.tool.common.lang.ObjectUtils;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
@@ -61,7 +61,8 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 * <p>
 	 * The thread context class loader will be used for loading the resource.
 	 * 
-	 * @param path the absolute path within the class path
+	 * @param path
+	 *            the absolute path within the class path
 	 * @see java.lang.ClassLoader#getResourceAsStream(String)
 	 * @see com.wl4g.devops.tool.common.lang.ClassUtils2.util.ClassUtils#getDefaultClassLoader()
 	 */
@@ -74,13 +75,15 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 * leading slash will be removed, as the ClassLoader resource access methods
 	 * will not accept it.
 	 * 
-	 * @param path        the absolute path within the classpath
-	 * @param classLoader the class loader to load the resource with, or
-	 *                    {@code null} for the thread context class loader
+	 * @param path
+	 *            the absolute path within the classpath
+	 * @param classLoader
+	 *            the class loader to load the resource with, or {@code null}
+	 *            for the thread context class loader
 	 * @see ClassLoader#getResourceAsStream(String)
 	 */
 	public ClassPathResource(String path, ClassLoader classLoader) {
-		Assert.notNull(path, "Path must not be null");
+		Assert2.notNull(path, "Path must not be null");
 		String pathToUse = StringUtils2.cleanPath(path);
 		if (pathToUse.startsWith("/")) {
 			pathToUse = pathToUse.substring(1);
@@ -90,27 +93,32 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	}
 
 	/**
-	 * Create a new {@code ClassPathResource} for {@code Class} usage. The path can
-	 * be relative to the given class, or absolute within the classpath via a
-	 * leading slash.
+	 * Create a new {@code ClassPathResource} for {@code Class} usage. The path
+	 * can be relative to the given class, or absolute within the classpath via
+	 * a leading slash.
 	 * 
-	 * @param path  relative or absolute path within the class path
-	 * @param clazz the class to load resources with
+	 * @param path
+	 *            relative or absolute path within the class path
+	 * @param clazz
+	 *            the class to load resources with
 	 * @see java.lang.Class#getResourceAsStream
 	 */
 	public ClassPathResource(String path, Class<?> clazz) {
-		Assert.notNull(path, "Path must not be null");
+		Assert2.notNull(path, "Path must not be null");
 		this.path = StringUtils2.cleanPath(path);
 		this.clazz = clazz;
 	}
 
 	/**
-	 * Create a new {@code ClassPathResource} with optional {@code ClassLoader} and
-	 * {@code Class}. Only for internal usage.
+	 * Create a new {@code ClassPathResource} with optional {@code ClassLoader}
+	 * and {@code Class}. Only for internal usage.
 	 * 
-	 * @param path        relative or absolute path within the classpath
-	 * @param classLoader the class loader to load the resource with, if any
-	 * @param clazz       the class to load resources with, if any
+	 * @param path
+	 *            relative or absolute path within the classpath
+	 * @param classLoader
+	 *            the class loader to load the resource with, if any
+	 * @param clazz
+	 *            the class to load resources with, if any
 	 */
 	protected ClassPathResource(String path, ClassLoader classLoader, Class<?> clazz) {
 		this.path = StringUtils2.cleanPath(path);
@@ -119,7 +127,8 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	}
 
 	/**
-	 * Return the path for this resource (as resource path within the class path).
+	 * Return the path for this resource (as resource path within the class
+	 * path).
 	 */
 	public final String getPath() {
 		return this.path;
@@ -159,7 +168,8 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	}
 
 	/**
-	 * This implementation opens an InputStream for the given class path resource.
+	 * This implementation opens an InputStream for the given class path
+	 * resource.
 	 * 
 	 * @see java.lang.ClassLoader#getResourceAsStream(String)
 	 * @see java.lang.Class#getResourceAsStream(String)
@@ -181,8 +191,8 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	}
 
 	/**
-	 * This implementation returns a URL for the underlying class path resource, if
-	 * available.
+	 * This implementation returns a URL for the underlying class path resource,
+	 * if available.
 	 * 
 	 * @see java.lang.ClassLoader#getResource(String)
 	 * @see java.lang.Class#getResource(String)
@@ -200,7 +210,8 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 * This implementation creates a ClassPathResource, applying the given path
 	 * relative to the path of the underlying resource of this descriptor.
 	 * 
-	 * @see org.springframework.util.StringUtils#applyRelativePath(String, String)
+	 * @see org.springframework.util.StringUtils#applyRelativePath(String,
+	 *      String)
 	 */
 	@Override
 	public Resource createRelative(String relativePath) {
@@ -250,8 +261,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 		}
 		if (obj instanceof ClassPathResource) {
 			ClassPathResource otherRes = (ClassPathResource) obj;
-			return (this.path.equals(otherRes.path)
-					&& ObjectUtils.nullSafeEquals(this.classLoader, otherRes.classLoader)
+			return (this.path.equals(otherRes.path) && ObjectUtils.nullSafeEquals(this.classLoader, otherRes.classLoader)
 					&& ObjectUtils.nullSafeEquals(this.clazz, otherRes.clazz));
 		}
 		return false;

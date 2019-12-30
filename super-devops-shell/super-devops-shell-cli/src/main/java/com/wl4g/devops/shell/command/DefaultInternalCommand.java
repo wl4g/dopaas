@@ -42,7 +42,7 @@ import com.wl4g.devops.shell.config.DefaultBeanRegistry;
 import com.wl4g.devops.shell.runner.AbstractRunner;
 import com.wl4g.devops.shell.utils.LineUtils;
 
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * Default internal command.

@@ -15,8 +15,14 @@
  */
 package com.wl4g.devops.tool.opencv.library;
 
-import java.io.IOException;
+import static java.util.Arrays.asList;
+import static java.util.Objects.nonNull;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.wl4g.devops.tool.common.natives.LoadNativeLibraryError;
 import com.wl4g.devops.tool.common.natives.PathPatternNativeLibraryLoader;
 
 /**
@@ -33,27 +39,49 @@ public final class OpenCvNativeLibraryLoader {
 	/**
 	 * Opencv native librarys location patterns.
 	 */
-	final private static String[] OPENCV_LIBS_PATTERN = { //
-			"/com/wl4g/devops/tool/opencv/library/natives/**/*.dll",
-			"/com/wl4g/devops/tool/opencv/library/natives/**/*.so",
-			"/com/wl4g/devops/tool/opencv/library/natives/**/*.dylib",
-			"/com/wl4g/devops/tool/opencv/library/natives/**/*.jnilib" };
+	final private static List<String> DEFAULT_OPENCV_LIBS_PATTERN = new ArrayList<String>() {
+		private static final long serialVersionUID = 5852139544044059530L;
+		{
+			// It's also a non classpath external path
+			// add("file:/home/user1/natives/**/*.so");
+			add("opencv/natives/**/*.dll"); // Windows
+			add("opencv/natives/**/*.so"); // Linux/AIX/FreeBSD
+			add("opencv/natives/**/*.jnilib"); // Linux/Mac
+			add("opencv/natives/**/*.dylib"); // Mac
+		}
+	};
 
 	/**
 	 * Opencv native librarys loader.
 	 */
-	private final static PathPatternNativeLibraryLoader loader = new PathPatternNativeLibraryLoader(
-			OPENCV_LIBS_PATTERN);
+	private final static PathPatternNativeLibraryLoader loader = new PathPatternNativeLibraryLoader();
 
 	/**
 	 * Loading OpenCv native librarys.
+	 * 
+	 * @param libLocationPatterns
 	 */
-	public final static void loadLibrarys() {
-		try {
-			loader.loadLibrarys();
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
+	public final static void loadLibrarys(String... libLocationPatterns) {
+		if (!loader.isLoaded()) {
+			try {
+				List<String> patterns = new ArrayList<>(DEFAULT_OPENCV_LIBS_PATTERN);
+				if (nonNull(libLocationPatterns)) {
+					patterns.addAll(asList(libLocationPatterns));
+				}
+
+				// Loading native library.
+				loader.loadLibrarys(patterns.toArray(new String[] {}));
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			} catch (LoadNativeLibraryError e) {
+				throw new LoadNativeLibraryError(
+						"Failed to load opencv dylib. missing native lib file to run? you can download and "
+								+ "install it see: https://github.com/wl4g/super-devops-tool-opencv-native"
+								+ " or https://gitee.com/wl4g/super-devops-tool-opencv-native",
+						e);
+			}
 		}
+
 	}
 
 }

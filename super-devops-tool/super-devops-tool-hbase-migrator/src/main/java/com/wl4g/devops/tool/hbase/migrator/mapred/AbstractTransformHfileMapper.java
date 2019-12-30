@@ -22,7 +22,7 @@ import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.util.Bytes;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -64,7 +64,7 @@ public abstract class AbstractTransformHfileMapper extends TableMapper<Immutable
 		String row = Bytes.toString(key.get());
 		if (isFilter(row, result)) {
 			Put put = newPut(row);
-			Assert.notNull(put, "Put must not be null");
+			Assert2.notNull(put, "Put must not be null");
 			for (Cell cell : result.listCells()) {
 				byte[] family = extractByteArray(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
 				byte[] qualifier = extractByteArray(cell.getQualifierArray(), cell.getQualifierOffset(),

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
  * Once modifiable map.
@@ -42,7 +42,7 @@ public class OnceModifiableMap<K, V> implements Map<K, V> {
 	final private AtomicBoolean modified = new AtomicBoolean(false);
 
 	public OnceModifiableMap(Map<K, V> readOnlyMap) {
-		Assert.state(null != readOnlyMap, "Once modifiable read only map must not be null.");
+		Assert2.state(null != readOnlyMap, "Once modifiable read only map must not be null.");
 		this.readOnlyMap = readOnlyMap;
 	}
 
@@ -76,8 +76,8 @@ public class OnceModifiableMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public V put(K key, V value) {
-		Assert.notNull(key, "Once modifiable final map key must not be null.");
-		Assert.notNull(value, "Once modifiable final map value must not be null.");
+		Assert2.notNull(key, "Once modifiable final map key must not be null.");
+		Assert2.notNull(value, "Once modifiable final map value must not be null.");
 		if (modified.compareAndSet(false, true)) {
 			return readOnlyMap.put(key, value);
 		}
@@ -86,7 +86,7 @@ public class OnceModifiableMap<K, V> implements Map<K, V> {
 
 	@Override
 	public V remove(Object key) {
-		Assert.notNull(key, "Once modifiable final map key must not be null.");
+		Assert2.notNull(key, "Once modifiable final map key must not be null.");
 		if (modified.compareAndSet(false, true)) {
 			return readOnlyMap.remove(key);
 		}
@@ -98,7 +98,7 @@ public class OnceModifiableMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public void putAll(Map<? extends K, ? extends V> finalMap) {
-		Assert.state(null != finalMap, "Once modifiable final map must not be null.");
+		Assert2.state(null != finalMap, "Once modifiable final map must not be null.");
 		if (modified.compareAndSet(false, true)) {
 			readOnlyMap.putAll(finalMap);
 		} else {

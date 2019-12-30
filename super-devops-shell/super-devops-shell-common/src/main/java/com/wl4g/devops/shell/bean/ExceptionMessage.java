@@ -16,7 +16,7 @@
 package com.wl4g.devops.shell.bean;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * Exception result message

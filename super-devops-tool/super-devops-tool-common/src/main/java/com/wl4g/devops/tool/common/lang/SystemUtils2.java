@@ -27,7 +27,7 @@ import java.util.List;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.hash.Hashing.md5;
-import static com.wl4g.devops.tool.common.lang.Assert.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 import static java.net.NetworkInterface.getNetworkInterfaces;
 import static java.util.Collections.list;
 import static java.util.Collections.sort;
@@ -42,6 +42,22 @@ import static org.apache.commons.lang3.StringUtils.*;
  * @since
  */
 public abstract class SystemUtils2 extends SystemUtils {
+
+	// --- OS platform info. ---
+
+	/**
+	 * Current operating system is Android.
+	 */
+	final public static boolean IS_ANDRIOD = isAndroid0();
+
+	/**
+	 * Check whether the current operating system is Android.
+	 */
+	private static boolean isAndroid0() {
+		return System.getProperty("java.runtime.name", "").toLowerCase().contains("android");
+	}
+
+	// --- Runtime system info. ---
 
 	/**
 	 * Global unique host hardware MAC identification.
@@ -171,16 +187,6 @@ public abstract class SystemUtils2 extends SystemUtils {
 			}
 		}
 		return path.toString();
-	}
-
-	public static void main(String[] args) {
-		System.out.println(DEFAULT_GLOBAL_HOST_SERIAL);
-		System.out.println(GLOBAL_APP_SERIAL);
-		System.out.println(LOCAL_PROCESS_ID);
-		System.out.println(GLOBAL_PROCESS_SERIAL);
-		System.out.println(cleanSystemPath("E:\\dir\\"));
-		System.out.println(cleanSystemPath("E:\\log\\a.log\\"));
-		System.out.println(cleanSystemPath("/var/log//a.log/"));
 	}
 
 }

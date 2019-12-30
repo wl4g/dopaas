@@ -92,8 +92,7 @@ public abstract class VfsUtils {
 			VIRTUAL_FILE_METHOD_GET_CHILD = ReflectionUtils2.findMethod(virtualFile, "getChild", String.class);
 
 			VIRTUAL_FILE_VISITOR_INTERFACE = loader.loadClass(VFS3_PKG + "VirtualFileVisitor");
-			VIRTUAL_FILE_METHOD_VISIT = ReflectionUtils2.findMethod(virtualFile, "visit",
-					VIRTUAL_FILE_VISITOR_INTERFACE);
+			VIRTUAL_FILE_METHOD_VISIT = ReflectionUtils2.findMethod(virtualFile, "visit", VIRTUAL_FILE_VISITOR_INTERFACE);
 
 			Class<?> visitorAttributesClass = loader.loadClass(VFS3_PKG + "VisitorAttributes");
 			VISITOR_ATTRIBUTES_FIELD_RECURSE = ReflectionUtils2.findField(visitorAttributesClass, "RECURSE");
