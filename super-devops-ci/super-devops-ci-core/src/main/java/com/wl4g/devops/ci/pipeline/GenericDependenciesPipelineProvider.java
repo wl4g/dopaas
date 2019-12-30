@@ -30,6 +30,7 @@ import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -186,6 +187,15 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// Obtain project source from VCS.
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 
+		if (getVcsOperator(project).hasLocalRepository(projectDir)) {// 若果目录存在则chekcout分支并pull
+			writeALineFile(config.getJobLog(getContext().getTaskHistory().getId()).getAbsoluteFile(),"check out project......");
+			getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir, branch);
+			writeALineFile(config.getJobLog(getContext().getTaskHistory().getId()).getAbsoluteFile(),"check out project finish.");
+		} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
+			writeALineFile(config.getJobLog(getContext().getTaskHistory().getId()).getAbsoluteFile(),"pull project finish.");
+			getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
+		}
+
 		// Save the SHA of the dependency project.
 		if (isDependency) {
 			TaskSign sign = new TaskSign();
@@ -221,6 +231,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
 			// Resolve placeholder variables.
 			buildCommand = resolveCmdPlaceholderVariables(buildCommand);
+
+			writeALineFile(config.getJobLog(taskHisy.getId()).getAbsoluteFile(),"execute cmd:"+buildCommand);
 
 			// Execute shell file. TODO timeoutMs?
 			DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile,
