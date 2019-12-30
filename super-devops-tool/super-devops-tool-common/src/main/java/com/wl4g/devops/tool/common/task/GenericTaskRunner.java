@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.task;
+package com.wl4g.devops.tool.common.task;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.util.Assert;
+
+import com.wl4g.devops.tool.common.collection.CollectionUtils2;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -36,14 +32,16 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.PostConstruct;
+
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static com.wl4g.devops.tool.common.lang.Assert2.state;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Generic local scheduler & task runner.
@@ -51,11 +49,10 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年6月2日
  * @since
- * @see {@link ThreadPoolTaskScheduler}
+ * @see {@link org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler}
  */
-public abstract class GenericTaskRunner<C extends RunnerProperties>
-		implements DisposableBean, ApplicationRunner, Closeable, Runnable {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+public abstract class GenericTaskRunner<C extends RunnerProperties> implements Closeable, Runnable {
+	final protected Logger log = getLogger(getClass());
 
 	/** Boss running. */
 	final private AtomicBoolean bossState = new AtomicBoolean(false);
@@ -80,7 +77,40 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	}
 
 	@Override
-	public synchronized void run(ApplicationArguments args) throws Exception {
+	public synchronized void close() throws IOException {
+		// Call pre close
+		preCloseProperties();
+
+		if (bossState.compareAndSet(true, false)) {
+			if (worker != null) {
+				try {
+					worker.shutdown();
+					worker = null;
+				} catch (Exception e) {
+					log.error("Runner worker shutdown failed!", e);
+				}
+			}
+			try {
+				if (boss != null) {
+					boss.interrupt();
+					boss = null;
+				}
+			} catch (Exception e) {
+				log.error("Runner boss interrupt failed!", e);
+			}
+		}
+
+		// Call post close
+		postCloseProperties();
+	}
+
+	/**
+	 * Auto initialization on startup. {@link PostConstruct}
+	 * 
+	 * @throws Exception
+	 */
+	@PostConstruct
+	protected synchronized void initRunner() throws Exception {
 		// Call PreStartup
 		preStartupProperties();
 
@@ -110,39 +140,6 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 
 		// Call post startup
 		postStartupProperties();
-	}
-
-	@Override
-	public void destroy() throws Exception {
-		close();
-	}
-
-	@Override
-	public void close() throws IOException {
-		// Call pre close
-		preCloseProperties();
-
-		if (bossState.compareAndSet(true, false)) {
-			if (worker != null) {
-				try {
-					worker.shutdown();
-					worker = null;
-				} catch (Exception e) {
-					log.error("Runner worker shutdown failed!", e);
-				}
-			}
-			try {
-				if (boss != null) {
-					boss.interrupt();
-					boss = null;
-				}
-			} catch (Exception e) {
-				log.error("Runner boss interrupt failed!", e);
-			}
-		}
-
-		// Call post close
-		postCloseProperties();
 	}
 
 	/**
@@ -221,7 +218,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 */
 	public void submitForComplete(List<Runnable> jobs, CompleteTaskListener listener, long timeoutMs)
 			throws IllegalStateException {
-		if (!isEmpty(jobs)) {
+		if (!CollectionUtils2.isEmpty(jobs)) {
 			int total = jobs.size();
 			// Future jobs.
 			Map<Future<?>, Runnable> fjobs = new HashMap<Future<?>, Runnable>(total);
@@ -307,8 +304,8 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		final private Runnable job;
 
 		public FutureDoneTask(CountDownLatch latch, Runnable job) {
-			Assert.notNull(latch, "Job runable latch must not be null.");
-			Assert.notNull(job, "Job runable must not be null.");
+			notNull(latch, "Job runable latch must not be null.");
+			notNull(job, "Job runable must not be null.");
 			this.latch = latch;
 			this.job = job;
 		}

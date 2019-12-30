@@ -26,8 +26,8 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wl4g.devops.common.utils.task.GenericTaskRunner;
-import com.wl4g.devops.common.utils.task.RunnerProperties;
+import com.wl4g.devops.tool.common.task.GenericTaskRunner;
+import com.wl4g.devops.tool.common.task.RunnerProperties;
 
 /**
  * Default Codes analyzing task manager.

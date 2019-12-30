@@ -23,6 +23,22 @@
 - Basic environment dependencies (must): JDK8+、Maven3.5+、MySQL5.6+
 - Other environment dependencies (if necessary): Docker-ce18.06+、Kafka0.10.0+、Zookeeper3.4.6+
 
+
+### Quick start example:
+For the sake of brevity, each service only deploys a single node to the same physical machine, which has been regarded as a pseudo cluster.
+
+- step1, First, prepare a CentOS 6.5 + and MySQL 5.6 + instance, create a new database named Devops (utf8 / utf8_bin), and then use [initial SQL script] (dB /) to initialize it.（Note: this script corresponds to the code version, and we will update it regularly. Please use the latest one according to the named suffix date）
+- step2, Configure local hosts virtual domain name resolution.（C:\Windows\System32\drivers\etc or vim /etc/hosts）：
+```
+10.0.0.160    ci.wl4g.test
+10.0.0.160    iam.wl4g.test
+10.0.0.160    scm.wl4g.test
+10.0.0.160    share.wl4g.test
+10.0.0.160    srm.wl4g.test
+10.0.0.160    umc.wl4g.test
+```
+
+
 ### Docs
 - [CI](super-devops-ci/README.md)             &nbsp;&nbsp;    Continuous integration deployment(Continuous iteration), CICD build flow, etc.
 - [ESM](super-devops-esm/README.md)           &nbsp;&nbsp;    Flexible scalability management, integrated k8s, docker, management based on CPU, network traffic automatic or manual container scaling.

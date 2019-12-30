@@ -18,14 +18,14 @@ package com.wl4g.devops.support.cli;
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 import com.wl4g.devops.common.exception.support.NoSuchProcessException;
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
-import com.wl4g.devops.common.utils.task.GenericTaskRunner;
-import com.wl4g.devops.common.utils.task.RunnerProperties;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.support.cli.repository.DestroableProcessWrapper;
 import com.wl4g.devops.support.cli.repository.DestroableProcessWrapper.*;
+import com.wl4g.devops.tool.common.task.GenericTaskRunner;
+import com.wl4g.devops.tool.common.task.RunnerProperties;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
 
 import org.slf4j.Logger;

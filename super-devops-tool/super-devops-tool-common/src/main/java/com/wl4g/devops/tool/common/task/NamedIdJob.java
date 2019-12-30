@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.task;
+package com.wl4g.devops.tool.common.task;
 
-import static org.springframework.util.Assert.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 
 /**
  * Named ID job runnable.

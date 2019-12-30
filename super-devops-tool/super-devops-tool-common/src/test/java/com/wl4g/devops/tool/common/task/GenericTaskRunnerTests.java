@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.task;
+package com.wl4g.devops.tool.common.task;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wl4g.devops.common.utils.task.GenericTaskRunner;
-import com.wl4g.devops.common.utils.task.NamedIdJob;
-import com.wl4g.devops.common.utils.task.RunnerProperties;
+import com.wl4g.devops.tool.common.task.GenericTaskRunner;
+import com.wl4g.devops.tool.common.task.NamedIdJob;
+import com.wl4g.devops.tool.common.task.RunnerProperties;
 
 /**
  * {@link GenericTaskRunner} tests.
@@ -53,7 +53,7 @@ public class GenericTaskRunnerTests {
 		// Create runner.
 		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
 		};
-		runner.run(null);
+		runner.initRunner();
 		System.out.println(runner);
 
 		// Submit jobs & listen job timeout.
