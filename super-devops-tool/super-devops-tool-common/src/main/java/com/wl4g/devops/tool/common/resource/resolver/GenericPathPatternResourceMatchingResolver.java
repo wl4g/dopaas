@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.resource.Resource;
 
 /**
@@ -37,8 +37,9 @@ public class GenericPathPatternResourceMatchingResolver extends PathPatternResou
 	 * <p>
 	 * ClassLoader access will happen via the thread context class loader.
 	 * 
-	 * @param resourceLoader the ResourceLoader to load root directories and actual
-	 *                       resources with
+	 * @param resourceLoader
+	 *            the ResourceLoader to load root directories and actual
+	 *            resources with
 	 */
 	public GenericPathPatternResourceMatchingResolver(ResourceLoader resourceLoader) {
 		super(resourceLoader);
@@ -48,9 +49,10 @@ public class GenericPathPatternResourceMatchingResolver extends PathPatternResou
 	 * Create a new PathMatchingResourcePatternResolver with a
 	 * DefaultResourceLoader.
 	 * 
-	 * @param classLoader the ClassLoader to load classpath resources with, or
-	 *                    {@code null} for using the thread context class loader at
-	 *                    the time of actual resource access
+	 * @param classLoader
+	 *            the ClassLoader to load classpath resources with, or
+	 *            {@code null} for using the thread context class loader at the
+	 *            time of actual resource access
 	 * @see com.wl4g.devops.tool.common.resources.resolver.springframework.core.io.DefaultResourceLoader
 	 */
 	public GenericPathPatternResourceMatchingResolver(ClassLoader classLoader) {
@@ -63,7 +65,7 @@ public class GenericPathPatternResourceMatchingResolver extends PathPatternResou
 	}
 
 	public Set<Resource> getResources(String... locationPatterns) throws IOException {
-		Assert.notNull(locationPatterns, "Path locationPatterns can't null");
+		Assert2.notNull(locationPatterns, "Path locationPatterns can't null");
 		return Arrays.asList(locationPatterns).stream().map(pattern -> {
 			try {
 				return super.getResources(pattern);

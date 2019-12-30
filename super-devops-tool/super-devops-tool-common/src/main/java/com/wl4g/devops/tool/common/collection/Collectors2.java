@@ -19,16 +19,18 @@ import java.util.stream.Collector.Characteristics;
 public abstract class Collectors2 {
 
 	/**
-	 * Returns a {@code Collector} that accumulates the input elements into a new
-	 * {@code Set}. There are no guarantees on the type, mutability,
+	 * Returns a {@code Collector} that accumulates the input elements into a
+	 * new {@code Set}. There are no guarantees on the type, mutability,
 	 * serializability, or thread-safety of the {@code Set} returned; if more
 	 * control over the returned {@code Set} is required, use
 	 * {@link Collectors#toCollection(Supplier)}.
 	 *
 	 * <p>
-	 * This is an {@link Collector.Characteristics#UNORDERED unordered} Collector.
+	 * This is an {@link Collector.Characteristics#UNORDERED unordered}
+	 * Collector.
 	 *
-	 * @param <T> the type of the input elements
+	 * @param <T>
+	 *            the type of the input elements
 	 * @return a {@code Collector} which collects all the input elements into a
 	 *         {@code Set}
 	 */

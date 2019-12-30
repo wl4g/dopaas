@@ -17,9 +17,8 @@ public class PathPatternNativeLibraryLoaderTests {
 	}
 
 	public static void test2() throws Exception {
-		new PathPatternNativeLibraryLoader("/org/xerial/snappy/native/**/*.*").loadLibrarys();
-		System.out.println(
-				"Simulation waits for execution to complete... For debugging exit and cleanup temporary native library files");
+		new PathPatternNativeLibraryLoader().loadLibrarys("/org/xerial/snappy/native/**/*.*");
+		System.out.println("Demo execution waiting... Observe whether temporary files will be cleared when exiting");
 		Thread.sleep(3000L);
 	}
 

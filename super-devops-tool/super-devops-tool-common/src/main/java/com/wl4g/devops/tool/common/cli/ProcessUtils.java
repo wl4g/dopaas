@@ -33,14 +33,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import static com.wl4g.devops.tool.common.io.FileIOUtils.ensureFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeFile;
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * Execution command line process tools.
@@ -50,7 +50,7 @@ import static com.wl4g.devops.tool.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
  * @since
  */
 public abstract class ProcessUtils {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected static Logger log = getLogger(ProcessUtils.class);
 
 	/**
 	 * Execution multiple row command-line.

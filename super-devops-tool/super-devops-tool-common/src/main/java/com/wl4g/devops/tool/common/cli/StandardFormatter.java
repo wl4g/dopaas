@@ -30,7 +30,7 @@ import com.wl4g.devops.tool.common.cli.annotation.PropertyDescription;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
 import static org.apache.commons.lang3.StringUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * Standard formatter

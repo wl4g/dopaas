@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.wl4g.devops.tool.common.collection.ConcurrentReferenceHashMap;
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleCollectionType;
 

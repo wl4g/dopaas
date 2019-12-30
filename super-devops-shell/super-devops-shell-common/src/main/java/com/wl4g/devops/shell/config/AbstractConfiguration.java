@@ -17,7 +17,7 @@ package com.wl4g.devops.shell.config;
 
 import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
-import static com.wl4g.devops.tool.common.lang.Assert.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 import java.io.Serializable;
 

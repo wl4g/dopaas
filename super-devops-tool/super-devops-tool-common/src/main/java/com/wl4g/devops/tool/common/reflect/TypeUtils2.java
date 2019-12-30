@@ -34,7 +34,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.reflect.TypeUtils;
 
-import com.wl4g.devops.tool.common.lang.Assert;
+import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
  * Java class type processing tool.</br>
@@ -177,8 +177,8 @@ public abstract class TypeUtils2 extends TypeUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T instantiateSimpleType(Object initialValue, Class<T> clazz) {
-		Assert.notNull(initialValue, "initial value must can't null");
-		Assert.isTrue(isSimpleType(clazz), String.format("Cannot instantiate, because %s non simple or primitive type.", clazz));
+		Assert2.notNull(initialValue, "initial value must can't null");
+		Assert2.isTrue(isSimpleType(clazz), String.format("Cannot instantiate, because %s non simple or primitive type.", clazz));
 
 		Object object = null;
 		if (int.class.isAssignableFrom(clazz) || Integer.class.isAssignableFrom(clazz)) {
@@ -238,7 +238,7 @@ public abstract class TypeUtils2 extends TypeUtils {
 
 				// Initialize.
 				if (nonNull(initialValue)) {
-					Assert.isTrue(Map.class.isAssignableFrom(initialValue.getClass()),
+					Assert2.isTrue(Map.class.isAssignableFrom(initialValue.getClass()),
 							String.format("Illegal initialize type, cannot %s convert to map", initialValue));
 					map.putAll((Map) initialValue);
 				}
@@ -258,7 +258,7 @@ public abstract class TypeUtils2 extends TypeUtils {
 
 				// Initialize.
 				if (nonNull(initialValue)) {
-					Assert.isTrue(Collection.class.isAssignableFrom(initialValue.getClass()),
+					Assert2.isTrue(Collection.class.isAssignableFrom(initialValue.getClass()),
 							String.format("Illegal initialize type, cannot %s convert to collection", initialValue));
 					set.addAll((Collection) initialValue);
 				}

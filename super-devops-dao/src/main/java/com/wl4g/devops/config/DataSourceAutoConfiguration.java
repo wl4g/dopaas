@@ -19,7 +19,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.tool.common.crypto.AES;
+import com.wl4g.devops.tool.common.crypto.AesEncryptor;
 
 import org.apache.ibatis.plugin.Interceptor;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -80,7 +80,7 @@ public class DataSourceAutoConfiguration {
 		String plain = prop.getPassword();
 		if (String.valueOf(this.env.getProperty("spring.profiles.active")).equalsIgnoreCase("prod")) {
 			try {
-				plain = new AES().decrypt(prop.getPassword());
+				plain = new AesEncryptor().decrypt(prop.getPassword());
 			} catch (Throwable th) {
 				throw new IllegalStateException(
 						String.format("Unable to decryption database password for '%s'", prop.getPassword()), th);

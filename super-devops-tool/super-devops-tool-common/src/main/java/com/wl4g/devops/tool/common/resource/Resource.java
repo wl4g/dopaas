@@ -55,8 +55,8 @@ public interface Resource extends InputStreamSource {
 	/**
 	 * Determine whether this resource actually exists in physical form.
 	 * <p>
-	 * This method performs a definitive existence check, whereas the existence of a
-	 * {@code Resource} handle only guarantees a valid descriptor handle.
+	 * This method performs a definitive existence check, whereas the existence
+	 * of a {@code Resource} handle only guarantees a valid descriptor handle.
 	 */
 	boolean exists();
 
@@ -66,17 +66,17 @@ public interface Resource extends InputStreamSource {
 	 * <p>
 	 * Will be {@code true} for typical resource descriptors; note that actual
 	 * content reading may still fail when attempted. However, a value of
-	 * {@code false} is a definitive indication that the resource content cannot be
-	 * read.
+	 * {@code false} is a definitive indication that the resource content cannot
+	 * be read.
 	 * 
 	 * @see #getInputStream()
 	 */
 	boolean isReadable();
 
 	/**
-	 * Indicate whether this resource represents a handle with an open stream. If
-	 * {@code true}, the InputStream cannot be read multiple times, and must be read
-	 * and closed to avoid resource leaks.
+	 * Indicate whether this resource represents a handle with an open stream.
+	 * If {@code true}, the InputStream cannot be read multiple times, and must
+	 * be read and closed to avoid resource leaks.
 	 * <p>
 	 * Will be {@code false} for typical resource descriptors.
 	 */
@@ -85,16 +85,18 @@ public interface Resource extends InputStreamSource {
 	/**
 	 * Return a URL handle for this resource.
 	 * 
-	 * @throws IOException if the resource cannot be resolved as URL, i.e. if the
-	 *                     resource is not available as descriptor
+	 * @throws IOException
+	 *             if the resource cannot be resolved as URL, i.e. if the
+	 *             resource is not available as descriptor
 	 */
 	URL getURL() throws IOException;
 
 	/**
 	 * Return a URI handle for this resource.
 	 * 
-	 * @throws IOException if the resource cannot be resolved as URI, i.e. if the
-	 *                     resource is not available as descriptor
+	 * @throws IOException
+	 *             if the resource cannot be resolved as URI, i.e. if the
+	 *             resource is not available as descriptor
 	 * @since 2.5
 	 */
 	URI getURI() throws IOException;
@@ -102,12 +104,11 @@ public interface Resource extends InputStreamSource {
 	/**
 	 * Return a File handle for this resource.
 	 * 
-	 * @throws java.io.FileNotFoundException if the resource cannot be resolved as
-	 *                                       absolute file path, i.e. if the
-	 *                                       resource is not available in a file
-	 *                                       system
-	 * @throws IOException                   in case of general resolution/reading
-	 *                                       failures
+	 * @throws java.io.FileNotFoundException
+	 *             if the resource cannot be resolved as absolute file path,
+	 *             i.e. if the resource is not available in a file system
+	 * @throws IOException
+	 *             in case of general resolution/reading failures
 	 * @see #getInputStream()
 	 */
 	File getFile() throws IOException;
@@ -115,31 +116,35 @@ public interface Resource extends InputStreamSource {
 	/**
 	 * Determine the content length for this resource.
 	 * 
-	 * @throws IOException if the resource cannot be resolved (in the file system or
-	 *                     as some other known physical resource type)
+	 * @throws IOException
+	 *             if the resource cannot be resolved (in the file system or as
+	 *             some other known physical resource type)
 	 */
 	long contentLength() throws IOException;
 
 	/**
 	 * Determine the last-modified timestamp for this resource.
 	 * 
-	 * @throws IOException if the resource cannot be resolved (in the file system or
-	 *                     as some other known physical resource type)
+	 * @throws IOException
+	 *             if the resource cannot be resolved (in the file system or as
+	 *             some other known physical resource type)
 	 */
 	long lastModified() throws IOException;
 
 	/**
 	 * Create a resource relative to this resource.
 	 * 
-	 * @param relativePath the relative path (relative to this resource)
+	 * @param relativePath
+	 *            the relative path (relative to this resource)
 	 * @return the resource handle for the relative resource
-	 * @throws IOException if the relative resource cannot be determined
+	 * @throws IOException
+	 *             if the relative resource cannot be determined
 	 */
 	Resource createRelative(String relativePath) throws IOException;
 
 	/**
-	 * Determine a filename for this resource, i.e. typically the last part of the
-	 * path: for example, "myfile.txt".
+	 * Determine a filename for this resource, i.e. typically the last part of
+	 * the path: for example, "myfile.txt".
 	 * <p>
 	 * Returns {@code null} if this type of resource does not have a filename.
 	 */
