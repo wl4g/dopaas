@@ -23,9 +23,9 @@ import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
-import java.io.File;
+import static java.lang.String.format;
 
-import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
+import java.io.File;
 
 /**
  * Pipeline provider for deployment NPM/(VUE/AngularJS/ReactJS...) standard
@@ -36,6 +36,11 @@ import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
  * @since
  */
 public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
+
+	/**
+	 * NPM default building command.
+	 */
+	final public static String DEFAULT_NPM_CMD = "cd %s\nrm -Rf dist\nnpm install\nnpm run build\n";
 
 	public NpmViewPipelineProvider(PipelineContext context) {
 		super(context);
@@ -55,17 +60,18 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 		TaskHistory taskHistory = getContext().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 
-		// Execution command. TODO timeoutMs?
-		String defaultNpmBuildCmd = String.format("cd %s\nrm -Rf dist\nnpm install\nnpm run build\n", projectDir);
-		writeALineFile(config.getJobLog(taskId).getAbsoluteFile(),"execute cmd:"+defaultNpmBuildCmd);
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), defaultNpmBuildCmd,
-				tmpCmdFile, 300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+		// Execution command.
+		String defaultNpmBuildCmd = format(DEFAULT_NPM_CMD, projectDir);
+		log.info(writeBuildLog("Building with npm default command: %s", defaultNpmBuildCmd));
+		// TODO timeoutMs?
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), defaultNpmBuildCmd, tmpCmdFile,
+				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
 
 	/**
-	 * Handling the NPM built installation package asset file, and convert the dist
-	 * directory to a formal tar compressed package.
+	 * Handling the NPM built installation package asset file, and convert the
+	 * dist directory to a formal tar compressed package.
 	 * 
 	 * </br>
 	 * For example:
@@ -86,15 +92,14 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
 
-		String tarCommand = String.format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/dist/%s.tar *",
-				projectDir, prgramInstallFileName, prgramInstallFileName, prgramInstallFileName,
-				projectDir, prgramInstallFileName);
+		String tarCommand = format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/dist/%s.tar *", projectDir,
+				prgramInstallFileName, prgramInstallFileName, prgramInstallFileName, projectDir, prgramInstallFileName);
+		log.info(writeBuildLog("Npm built, packing the assets file command: %s", tarCommand));
 
-		writeALineFile(config.getJobLog(taskHistory.getId()).getAbsoluteFile(),"execute cmd:"+tarCommand);
-
-		// Execution command. TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile,
-				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+		// Execution command.
+		// TODO timeoutMs?
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
 

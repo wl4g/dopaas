@@ -34,7 +34,6 @@ import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.cli.SshUtils.CommandResult;
 import com.wl4g.devops.tool.common.crypto.AesEncryptor;
-import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
@@ -47,10 +46,11 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_END;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_START;
 import static com.wl4g.devops.tool.common.cli.SshUtils.execWithSsh2;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
-import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
+import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.tool.common.lang.DateUtils2.getDate;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.springframework.util.Assert.hasText;
@@ -65,7 +65,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @date 2019-08-05 17:17:00
  */
 public abstract class AbstractPipelineProvider implements PipelineProvider {
-	final protected Logger log = SmartLoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	/** Pipeline context. */
 	final protected PipelineContext context;
@@ -241,7 +241,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			return (Runnable) () -> {
 				File jobDeployerLog = config.getJobDeployerLog(context.getTaskHistory().getId(), i.getId());
 				try {
-					writeALineFile(jobDeployerLog, LOG_FILE_START);
+					writeBLineFile(jobDeployerLog, LOG_FILE_START);
 
 					// Do deploying.
 					newPipeDeployer(i).run();
@@ -253,7 +253,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 					String logmsg = writeBuildLog("Failed to deployed to remote! Caused by: \n%s", getStackTraceAsString(e));
 					log.error(logmsg);
 				} finally {
-					writeBLineFile(jobDeployerLog, LOG_FILE_END);
+					writeALineFile(jobDeployerLog, LOG_FILE_END);
 				}
 			};
 		}).collect(toList());
@@ -283,7 +283,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		String content = String.format(format, args);
 		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"), getContext().getTaskHistory().getId(),
 				content);
-		writeBLineFile(config.getJobLog(context.getTaskHistory().getId()), message);
+		writeALineFile(config.getJobLog(context.getTaskHistory().getId()), message);
 		return content;
 	}
 

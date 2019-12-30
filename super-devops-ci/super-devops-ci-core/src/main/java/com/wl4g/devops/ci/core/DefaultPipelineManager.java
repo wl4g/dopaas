@@ -104,7 +104,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	private String mailFrom;
 
 	@Override
-	public void newPipeline(NewParameter param) {
+	public void runPipeline(NewParameter param) {
 		log.info("New pipeline job for: {}", param);
 
 		// Obtain task details.
@@ -227,6 +227,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		return seekReadLines(logPath, startPos, size, line -> trimToEmpty(line).equalsIgnoreCase(LOG_FILE_END));
 	}
 
+	@Override
 	public ReadResult logDetailFile(Integer taskHisId, Integer instanceId, Long startPos, Integer size) {
 		if (isNull(startPos)) {
 			startPos = 0l;
@@ -245,7 +246,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param taskId
 	 * @param provider
 	 */
-	protected void doExecutePipeline(Integer taskId, PipelineProvider provider) {
+	private void doExecutePipeline(Integer taskId, PipelineProvider provider) {
 		notNull(taskId, "Pipeline taskId must not be null");
 		notNull(provider, "Pipeline provider must not be null");
 		log.info("Starting pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
@@ -259,7 +260,7 @@ public class DefaultPipelineManager implements PipelineManager {
 			long startTime = System.currentTimeMillis();
 			try {
 				// Pre Pileline Execute
-				prePipelineExecuteSuccess(taskId);
+				prePipelineExecute(taskId);
 
 				// Execution pipeline.
 				provider.execute();
@@ -277,7 +278,7 @@ public class DefaultPipelineManager implements PipelineManager {
 				log.error(String.format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
 				// TODO
-				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), e.getMessage() + getStackTraceAsString(e));
+				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), e.getMessage() + getStackTraceAsString(e));
 
 				// Setup status to failure.
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, getStackTraceAsString(e));
@@ -290,12 +291,35 @@ public class DefaultPipelineManager implements PipelineManager {
 				postPipelineExecuteFailure(taskId, provider, e);
 			} finally {
 				// Log file end EOF.
-				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
+				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 				log.info("Completed for pipeline taskId: {}", taskId);
 				long endTime = System.currentTimeMillis();
 				taskHistoryService.updateCostTime(taskId, endTime - startTime);
 			}
 		});
+	}
+
+	/**
+	 * Pre pipeline job execution successful properties process.
+	 *
+	 * @param taskId
+	 * @param provider
+	 */
+	protected void prePipelineExecute(Integer taskId) {
+		// For example, after the test database is imported into the production
+		// database, because the primary key of the ci_task table is growing
+		// automatically, there may be confusion (the current sequence value is
+		// overwritten, resulting in repeated incrementing). At this time, the
+		// logs of the newly created pipeline task are written additionally. In
+		// order to avoid cleaning the logs, it is necessary to clear the
+		// invalid log files here.
+		File oldLog = config.getJobLog(taskId).getAbsoluteFile();
+		if (oldLog.exists()) {
+			oldLog.delete();
+		}
+
+		// Log file start EOF.
+		writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_START);
 	}
 
 	/**
@@ -335,23 +359,6 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Successful execute job notification.
 		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), "Task Build Success taskId=" + taskId
 				+ " projectName=" + provider.getContext().getProject().getProjectName() + " time=" + (new Date()));
-	}
-
-	/**
-	 * Pre pipeline job execution successful properties process.
-	 *
-	 * @param taskId
-	 * @param provider
-	 */
-	protected void prePipelineExecuteSuccess(Integer taskId) {
-		// remove log file if exist
-		File file = config.getJobLog(taskId).getAbsoluteFile();
-		if (file.exists()) {
-			file.delete();
-		}
-
-		// Log file start EOF.
-		writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_START);
 	}
 
 	/**
@@ -441,7 +448,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		jobExecutor.getWorker().execute(() -> {
 			try {
 				// Pre Pileline Execute
-				prePipelineExecuteSuccess(taskId);
+				prePipelineExecute(taskId);
 
 				// Execution roll-back pipeline.
 				provider.rollback();
@@ -455,15 +462,15 @@ public class DefaultPipelineManager implements PipelineManager {
 			} catch (Exception e) {
 				log.error(String.format("Failed to rollback pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
-				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), e.getMessage() + getStackTraceAsString(e));
-	
+				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), e.getMessage() + getStackTraceAsString(e));
+
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL, e.getMessage());
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_FAIL, taskId);
-				
+
 				postPipelineExecuteFailure(taskId, provider, e);
 			} finally {
 				// Log file end EOF.
-				writeBLineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
+				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 				log.info("Completed for rollback pipeline taskId: {}", taskId);
 			}
 		});

@@ -38,7 +38,7 @@ public class PipelineManagerTests {
 
 	@Test
 	public void createTask() {
-		pipeManager.newPipeline(new NewParameter(152, null, null, null));
+		pipeManager.runPipeline(new NewParameter(152, null, null, null));
 	}
 
 }

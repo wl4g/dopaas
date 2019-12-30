@@ -163,7 +163,7 @@ public class TaskController extends BaseController {
 	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
 	public RespBase<?> create(Integer taskId, String trackId, Integer trackType, String remark) {
 		RespBase<Object> resp = RespBase.create();
-		pipeliner.newPipeline(new NewParameter(taskId, remark, trackId, trackType));
+		pipeliner.runPipeline(new NewParameter(taskId, remark, trackId, trackType));
 		return resp;
 	}
 

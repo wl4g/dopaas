@@ -30,7 +30,6 @@ import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
-import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -66,13 +65,13 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	protected void buildModular() throws Exception {
 		TaskHistory taskHisy = getContext().getTaskHistory();
 		File jobLog = config.getJobLog(taskHisy.getId());
-		if (log.isInfoEnabled()) {
-			log.info("Generic building... stdout to {}", jobLog.getAbsolutePath());
-		}
+		log.info(writeBuildLog("Analyzing pipeline building appcluster dependencies... stdout to '%s'",
+				getContext().getAppCluster().getName(), jobLog.getAbsolutePath()));
 
 		// Resolve project dependencies.
 		LinkedHashSet<Dependency> dependencies = dependencyService.getHierarchyDependencys(taskHisy.getProjectId(), null);
-		log.info("Resolved hierarchy dependencies: {}", dependencies);
+		log.info(writeBuildLog("Analyzed pipeline for hierarchy of appcluster: %s, dependencies: %s",
+				getContext().getAppCluster().getName(), dependencies));
 
 		// Custom dependency commands.
 		List<TaskBuildCommand> commands = taskHistoryBuildCommandDao.selectByTaskHisId(taskHisy.getId());
@@ -187,12 +186,12 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// Obtain project source from VCS.
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 
-		if (getVcsOperator(project).hasLocalRepository(projectDir)) {// 若果目录存在则chekcout分支并pull
-			writeALineFile(config.getJobLog(getContext().getTaskHistory().getId()).getAbsoluteFile(),"check out project......");
+		// Checked out? pull and merge.
+		if (getVcsOperator(project).hasLocalRepository(projectDir)) {
+			log.info(writeBuildLog("Pulling project source to '%s:%s' ...", branch, projectDir));
 			getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir, branch);
-			writeALineFile(config.getJobLog(getContext().getTaskHistory().getId()).getAbsoluteFile(),"check out project finish.");
-		} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-			writeALineFile(config.getJobLog(getContext().getTaskHistory().getId()).getAbsoluteFile(),"pull project finish.");
+		} else { // Unchecked out? new clone & checkout.
+			log.info(writeBuildLog("New checkout project source to '%s:%s' ...", branch, projectDir));
 			getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
 		}
 
@@ -229,12 +228,13 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		} else {
 			// Temporary command file.
 			File tmpCmdFile = config.getJobTmpCommandFile(taskHisy.getId(), project.getId());
+
 			// Resolve placeholder variables.
 			buildCommand = resolveCmdPlaceholderVariables(buildCommand);
+			log.info(writeBuildLog("Building with customizes command: '%s' ...", buildCommand));
 
-			writeALineFile(config.getJobLog(taskHisy.getId()).getAbsoluteFile(),"execute cmd:"+buildCommand);
-
-			// Execute shell file. TODO timeoutMs?
+			// Execute shell file.
+			// TODO timeoutMs?
 			DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHisy.getId()), buildCommand, tmpCmdFile,
 					300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 			pm.execWaitForComplete(cmd);

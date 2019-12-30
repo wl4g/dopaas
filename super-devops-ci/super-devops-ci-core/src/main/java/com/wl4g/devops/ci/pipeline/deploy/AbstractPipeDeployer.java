@@ -38,7 +38,7 @@ import java.util.Optional;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.cli.SshUtils.execWithSsh2;
-import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
+import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.tool.common.lang.DateUtils2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -208,7 +208,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
 
 		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
-		FileIOUtils.writeBLineFile(jobDeployerLog, String.format("Transfer plain sshkey: %s => %s", cipherKey, "******"));
+		FileIOUtils.writeALineFile(jobDeployerLog, String.format("Transfer plain sshkey: %s => %s", cipherKey, "******"));
 		return sshkeyPlain;
 	}
 
@@ -224,7 +224,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 				getContext().getTaskHistory().getId(), instance.getClusterId(), instance.getId(), content);
 
 		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
-		writeBLineFile(jobDeployerLog, message);
+		writeALineFile(jobDeployerLog, message);
 		return content;
 	}
 
