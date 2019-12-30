@@ -21,6 +21,8 @@ import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
 
+import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
+
 /**
  * Based MAVEN pipeline provider.
  * 
@@ -51,6 +53,7 @@ public abstract class BasedMavenPipelineProvider extends RestorableDeployPipelin
 		String defaultMvnBuildCmd = String.format(
 				"mvn -f %s/pom.xml clean install -Dmaven.test.skip=true -DskipTests -Dmaven.compile.fork=true -T 2C", projectDir);
 		// TODO timeoutMs/pwdDir?
+		writeALineFile(config.getJobLog(taskId).getAbsoluteFile(),"execute cmd:"+defaultMvnBuildCmd);
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskId), defaultMvnBuildCmd, null, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);

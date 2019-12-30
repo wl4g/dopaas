@@ -25,6 +25,8 @@ import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
 
+import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
+
 /**
  * Pipeline provider for deployment NPM/(VUE/AngularJS/ReactJS...) standard
  * project.
@@ -55,6 +57,7 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 
 		// Execution command. TODO timeoutMs?
 		String defaultNpmBuildCmd = String.format("cd %s\nrm -Rf dist\nnpm install\nnpm run build\n", projectDir);
+		writeALineFile(config.getJobLog(taskId).getAbsoluteFile(),"execute cmd:"+defaultNpmBuildCmd);
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), defaultNpmBuildCmd,
 				tmpCmdFile, 300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
@@ -83,9 +86,11 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
 		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
 
-		String tarCommand = String.format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/%s.tar *",
+		String tarCommand = String.format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/dist/%s.tar *",
 				projectDir, prgramInstallFileName, prgramInstallFileName, prgramInstallFileName,
-				config.getJobBackupDir(getContext().getTaskHistory().getId()), prgramInstallFileName);
+				projectDir, prgramInstallFileName);
+
+		writeALineFile(config.getJobLog(taskHistory.getId()).getAbsoluteFile(),"execute cmd:"+tarCommand);
 
 		// Execution command. TODO timeoutMs?
 		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile,
