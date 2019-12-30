@@ -292,8 +292,6 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 	public static class HotspotLoadProperties implements Serializable {
 		private static final long serialVersionUID = -2662416556401160389L;
 
-		final public static String CONF_P = "spring.cloud.devops.tool.devel.mybatis-loader";
-
 		/** {@link SqlSessionFactory} watching intervalMs. */
 		private long monitorLoaderIntervalMs = 1000L;
 
