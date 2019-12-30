@@ -32,10 +32,10 @@ import com.wl4g.devops.ci.analyses.config.CiAnalyzerProperties;
 import com.wl4g.devops.ci.analyses.config.ExecutorProperties;
 import com.wl4g.devops.ci.analyses.model.AnalysingModel;
 import com.wl4g.devops.ci.analyses.tasks.TaskManager;
-import com.wl4g.devops.common.utils.task.GenericTaskRunner;
-import com.wl4g.devops.common.utils.task.RunnerProperties;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.tool.common.task.GenericTaskRunner;
+import com.wl4g.devops.tool.common.task.RunnerProperties;
 
 /**
  * Abstract basic codes analyzers.

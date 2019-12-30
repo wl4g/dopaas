@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.task;
+package com.wl4g.devops.tool.common.task;
+
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 
 import java.io.Serializable;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
-
-import org.springframework.util.Assert;
 
 /**
  * Generic task runner properties
@@ -106,7 +106,7 @@ public class RunnerProperties implements Serializable {
 
 	public void setKeepAliveTime(long keepAliveTime) {
 		if (getConcurrency() > 0) {
-			Assert.isTrue(keepAliveTime >= 0, "keepAliveTime must be greater than or equal to 0");
+			isTrue(keepAliveTime >= 0, "keepAliveTime must be greater than or equal to 0");
 		}
 		this.keepAliveTime = keepAliveTime;
 	}
@@ -117,7 +117,7 @@ public class RunnerProperties implements Serializable {
 
 	public void setAcceptQueue(int acceptQueue) {
 		if (getConcurrency() > 0) {
-			Assert.isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
+			isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
 		}
 		this.acceptQueue = acceptQueue;
 	}

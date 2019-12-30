@@ -15,16 +15,13 @@
  */
 package com.wl4g.devops.tool.devel.mybatis.loader;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static com.wl4g.devops.tool.common.lang.Assert2.state;
 import static java.lang.Thread.sleep;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.replace;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.ReflectionUtils.findField;
-import static org.springframework.util.ReflectionUtils.getField;
-import static org.springframework.util.ReflectionUtils.makeAccessible;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,13 +38,11 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-
-import com.wl4g.devops.common.utils.task.GenericTaskRunner;
-import com.wl4g.devops.common.utils.task.RunnerProperties;
+import com.wl4g.devops.tool.common.resource.FileSystemResource;
+import com.wl4g.devops.tool.common.resource.Resource;
+import com.wl4g.devops.tool.common.task.GenericTaskRunner;
+import com.wl4g.devops.tool.common.task.RunnerProperties;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
 
 /**
  * Mybatis {@link SqlSessionFactory} developments hotspot mapper re-loader.
@@ -60,10 +55,8 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 	final public static String TARGET_PART_PATH = "target" + File.separator + "classes";
 	final public static String SRC_PART_PATH = "src" + File.separator + "main" + File.separator + "resources";
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
-
 	/** Refresh configuration properties. */
-	final protected MapperHotspotLoaderProperties config;
+	final protected HotspotLoadProperties config;
 	/** Monitor objectives for {@link SqlSessionFactory} */
 	final protected SqlSessionFactoryBean sessionFactory;
 
@@ -73,7 +66,7 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 	private Configuration configuration;
 	private Resource[] mapperLocations;
 
-	public SqlSessionMapperHotspotLoader(SqlSessionFactoryBean sessionFactory, MapperHotspotLoaderProperties config) {
+	public SqlSessionMapperHotspotLoader(SqlSessionFactoryBean sessionFactory, HotspotLoadProperties config) {
 		super(new RunnerProperties(true));
 		notNull(sessionFactory, "SqlSessionFactory can't is null.");
 		notNull(config, "MapperHotspotLoader properties config can't is null.");
@@ -296,7 +289,7 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 	 * @version v1.0 2019年11月14日
 	 * @since
 	 */
-	public static class MapperHotspotLoaderProperties implements Serializable {
+	public static class HotspotLoadProperties implements Serializable {
 		private static final long serialVersionUID = -2662416556401160389L;
 
 		final public static String CONF_P = "spring.cloud.devops.tool.devel.mybatis-loader";

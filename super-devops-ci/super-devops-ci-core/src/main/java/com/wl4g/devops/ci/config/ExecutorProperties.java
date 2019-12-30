@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.config;
 
-import com.wl4g.devops.common.utils.task.RunnerProperties;
+import com.wl4g.devops.tool.common.task.RunnerProperties;
 
 /**
  * Task executor configuration such as CICD pipeline process

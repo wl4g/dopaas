@@ -19,11 +19,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
-import com.wl4g.devops.common.utils.task.GenericTaskRunner;
-import com.wl4g.devops.common.utils.task.RunnerProperties;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.scm.config.ScmProperties;
+import com.wl4g.devops.tool.common.task.GenericTaskRunner;
+import com.wl4g.devops.tool.common.task.RunnerProperties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

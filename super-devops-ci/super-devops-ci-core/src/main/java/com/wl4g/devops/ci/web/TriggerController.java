@@ -17,10 +17,11 @@ package com.wl4g.devops.ci.web;
 
 import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.utils.task.quartz.CronUtils;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.tool.common.task.quartz.CronUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;

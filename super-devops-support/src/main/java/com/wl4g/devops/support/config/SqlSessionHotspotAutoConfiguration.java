@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.devel.mybatis.loader;
+package com.wl4g.devops.support.config;
 
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -22,8 +22,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.devops.common.annotation.conditional.ConditionalOnJdwpDebug;
-import com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotLoader.MapperHotspotLoaderProperties;
-import static com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotLoader.MapperHotspotLoaderProperties.*;
+import com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotLoader;
+import com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotLoader.HotspotLoadProperties;
+import static com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotLoader.HotspotLoadProperties.*;
 
 /**
  * {@link SqlSessionMapperHotspotLoader} auto configuration.
@@ -33,18 +34,18 @@ import static com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotL
  * @since
  */
 @Configuration
-public class HotspotLoaderAutoConfiguration {
+public class SqlSessionHotspotAutoConfiguration {
 
 	@Bean
 	@ConditionalOnJdwpDebug(enableProperty = CONF_P + ".enable")
 	@ConfigurationProperties(prefix = CONF_P)
-	public MapperHotspotLoaderProperties mapperHotspotLoaderProperties() {
-		return new MapperHotspotLoaderProperties();
+	public HotspotLoadProperties mapperHotspotLoaderProperties() {
+		return new HotspotLoadProperties();
 	}
 
 	@Bean
-	@ConditionalOnBean({ MapperHotspotLoaderProperties.class })
-	public SqlSessionMapperHotspotLoader sqlSessionMapperHotspotLoader(MapperHotspotLoaderProperties config,
+	@ConditionalOnBean({ HotspotLoadProperties.class })
+	public SqlSessionMapperHotspotLoader sqlSessionMapperHotspotLoader(HotspotLoadProperties config,
 			SqlSessionFactoryBean sessionFactory) {
 		return new SqlSessionMapperHotspotLoader(sessionFactory, config);
 	}
