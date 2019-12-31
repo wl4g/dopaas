@@ -14,13 +14,22 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-bom</artifactId>
+				<version>master</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-tool-common</artifactId>
-			<version>master</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -28,7 +37,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>

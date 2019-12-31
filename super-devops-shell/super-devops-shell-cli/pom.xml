@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-shell-cli</artifactId>
@@ -13,20 +14,27 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 		<final-name>shell-cli</final-name>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-bom</artifactId>
+				<version>master</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-shell-common</artifactId>
-			<version>master</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jline</groupId>
 			<artifactId>jline</artifactId>
-			<version>3.9.0</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
@@ -35,7 +43,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -44,7 +51,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>${maven-source-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -71,7 +77,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.0</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -93,10 +98,12 @@
 								</filter>
 							</filters>
 							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>com.wl4g.devops.shell.ShellBootstrap</mainClass>
 								</transformer>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
 									<resource>*.*</resource>
 								</transformer>
 							</transformers>

@@ -31,14 +31,10 @@
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-common</artifactId>
-			<version>master</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-tool-devel</artifactId>
-			<version>master</version>
-			<scope>compile</scope>
 		</dependency>
 		<!-- Redis. -->
 		<dependency>
@@ -68,7 +64,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -77,7 +72,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>${maven-source-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
