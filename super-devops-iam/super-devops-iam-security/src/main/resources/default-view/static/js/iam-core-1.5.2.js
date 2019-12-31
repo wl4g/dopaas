@@ -273,7 +273,7 @@
 		var port = location.port;
 		var protocol = location.protocol;
 	 	// 如果是用IP部署，为了简化操作，则认为所有服务(如：share-manager/ci-server等)都部署于这台机上.
-        if (hostname == 'localhost' || Common.Util.isIp(hostname)) {
+        if (hostname == 'localhost' || Common.Util.isIp(hostname ) || hostname.endsWith('.debug') || hostname.endsWith('.local') || hostname.endsWith('.dev')) {
             settings.deploy.baseUri = protocol+"//"+hostname+":14040"+contextPath;
         } else { // 如果是用域名部署，则认为其他服务(如：share-manager/ci-server等)通过二级子域名访问
         	var topDomainName = hostname.split('.').slice(-2).join('.');
