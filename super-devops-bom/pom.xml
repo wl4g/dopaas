@@ -87,8 +87,8 @@
 		<jedis.version>2.9.0</jedis.version>
 		<!-- Bigdata/Hadoop. -->
 		<hbase.version>1.2.5</hbase.version><!-- 2.1.3 -->
-		<elasticsearch-rest-high-level-client.version>6.2.3</elasticsearch-rest-high-level-client.version>
 		<kafka-clients.version>0.10.1.0</kafka-clients.version>
+		<elasticsearch-client.version>6.2.3</elasticsearch-client.version>
 		<!-- AI. -->
 		<opencv.version>4.1.1</opencv.version>
 		<!-- Testing's. -->
@@ -671,16 +671,48 @@
 				<version>${hbase.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- <dependency>
-				<groupId>org.elasticsearch.client</groupId>
-				<artifactId>elasticsearch-rest-high-level-client</artifactId>
-				<version>${elasticsearch-rest-high-level-client.version}</version>
-				<scope>compile</scope>
-			</dependency> -->
 			<dependency>
 				<groupId>org.apache.kafka</groupId>
 				<artifactId>kafka-clients</artifactId>
 				<version>${kafka-clients.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.elasticsearch.client</groupId>
+				<artifactId>elasticsearch-rest-high-level-client</artifactId>
+				<version>${elasticsearch-client.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<!-- Note: only specified 6.2.3 can be displayed here, otherwise it will 
+				be overwritten by other dependency packages (such as spring dependency BOM) -->
+			<dependency>
+				<groupId>org.elasticsearch</groupId>
+				<artifactId>elasticsearch</artifactId>
+				<version>${elasticsearch-client.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.elasticsearch.client</groupId>
+				<artifactId>elasticsearch-rest-client</artifactId>
+				<version>${elasticsearch-client.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.elasticsearch.plugin</groupId>
+				<artifactId>parent-join-client</artifactId>
+				<version>${elasticsearch-client.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.elasticsearch.plugin</groupId>
+				<artifactId>aggs-matrix-stats-client</artifactId>
+				<version>${elasticsearch-client.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.elasticsearch.plugin</groupId>
+				<artifactId>rank-eval-client</artifactId>
+				<version>${elasticsearch-client.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<!-- AI. -->

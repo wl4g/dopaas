@@ -13,11 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.srm.handler.es.config;
+package com.wl4g.devops.srm.es.handler;
 
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.elasticsearch.action.search.SearchRequest;
 
-public class ElasticsearchClientPoolProperties extends GenericObjectPoolConfig {
-	public static final String PREFIX = "spring.es.pool";
+import java.io.Serializable;
+import java.util.List;
 
+public interface ElasticsearchBasedHandler<T> {
+	// 添加
+	public void add(T t);
+
+	// 删除
+	public void delete(T t);
+
+	// 更新
+	public void update(T t);
+
+	// 根据id查询
+	public T findOne(Serializable id);
+
+	// 查询所有
+	public List<T> findAll(SearchRequest searchRequest) throws Exception;
 }

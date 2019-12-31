@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.srm.handler.es.exception;
+package com.wl4g.devops.srm.es.exception;
 
 /**
  * 从资源池获取活跃客户端异常

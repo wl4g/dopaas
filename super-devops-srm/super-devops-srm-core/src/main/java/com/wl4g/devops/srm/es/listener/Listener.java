@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.srm.handler.listener;
+package com.wl4g.devops.srm.es.listener;
 
 import org.elasticsearch.action.search.ShardSearchFailure;
-import org.springframework.stereotype.Component;
 
-@Component
-public class ShardSearchFailureListener implements Listener {
+public interface Listener {
 
-	@Override
-	public void onFailure(ShardSearchFailure failure) {
-
-	}
+	void onFailure(ShardSearchFailure failure);
 
 }

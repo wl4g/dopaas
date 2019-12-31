@@ -19,7 +19,7 @@ import com.wl4g.devops.common.bean.srm.Log;
 import com.wl4g.devops.common.bean.srm.QueryLogModel;
 import com.wl4g.devops.common.bean.srm.Querycriteria;
 import com.wl4g.devops.common.constants.SRMDevOpsConstants;
-import com.wl4g.devops.srm.handler.LogHandler;
+import com.wl4g.devops.srm.es.handler.LogHandler;
 import com.wl4g.devops.srm.service.LogConsoleService;
 import com.wl4g.devops.tool.common.lang.DateUtils2;
 
@@ -46,95 +46,101 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
 @Service
 public class LogConsoleServiceImpl implements LogConsoleService {
 
-    @Resource
-    private LogHandler logHandler;
+	@Resource
+	private LogHandler logHandler;
 
-    @Override
-    public List<String> console(QueryLogModel model) throws Exception {
-        Assert.notNull(model, "params is error");
-        Assert.hasText(model.getIndex(), "index is null");
+	@Override
+	public List<String> console(QueryLogModel model) throws Exception {
+		Assert.notNull(model, "params is error");
+		Assert.hasText(model.getIndex(), "index is null");
 
-        //set default
-        if (model.getLimit() == null || model.getLimit() == 0) {
-            model.setLimit(100);
-        }
+		// set default
+		if (model.getLimit() == null || model.getLimit() == 0) {
+			model.setLimit(100);
+		}
 
-        //build index
-        String index = model.getIndex();
-        Long startTime = model.getStartTime();
-        Date startTimeD = null;
-        if (null == startTime || startTime == 0) {
-            startTimeD = new Date();
-        } else {
-            startTimeD = new Date(startTime);
-        }
-        index = index + "-" + DateUtils2.formatDate(startTimeD);
+		// build index
+		String index = model.getIndex();
+		Long startTime = model.getStartTime();
+		Date startTimeD = null;
+		if (null == startTime || startTime == 0) {
+			startTimeD = new Date();
+		} else {
+			startTimeD = new Date(startTime);
+		}
+		index = index + "-" + DateUtils2.formatDate(startTimeD);
 
-        List<Log> console = console(index, model.getStartTime(), model.getEndTime(), model.getFrom(), model.getLimit(), model.getQueryList(), model.getLevel());
-        List<String> result = new ArrayList();
-        for (Log log : console) {
-            result.add(log.getMessage());
-        }
-        return result;
-    }
+		List<Log> console = console(index, model.getStartTime(), model.getEndTime(), model.getFrom(), model.getLimit(),
+				model.getQueryList(), model.getLevel());
+		List<String> result = new ArrayList<>();
+		for (Log log : console) {
+			result.add(log.getMessage());
+		}
+		return result;
+	}
 
-    public List<Log> console(String index, Long startTime, Long endTime, Integer from, Integer limit, List<Querycriteria> queryList, Integer level) throws Exception {
+	public List<Log> console(String index, Long startTime, Long endTime, Integer from, Integer limit,
+			List<Querycriteria> queryList, Integer level) throws Exception {
 
-        //create bool query
-        BoolQueryBuilder boolQueryBuilder = boolQuery();
+		// create bool query
+		BoolQueryBuilder boolQueryBuilder = boolQuery();
 
-        //fix key match
-        if (!CollectionUtils.isEmpty(queryList)) {
-            queryList.forEach(u -> {
-                String query = u.getValue().trim();
-                if (StringUtils.isEmpty(query)) {
-                    return;
-                }
-                //con = QueryParser.escape(con);
-                query = "\"" + query + "\"";// for Special characters
-                if (u.isEnable()) {// enable? must match
-                    //boolQueryBuilder.must(fuzzyQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, con));
-                    boolQueryBuilder.must(queryStringQuery(query).field(SRMDevOpsConstants.KEY_DEFAULT_MSG));
-                } else {//not enbale ? must not match
-                    //boolQueryBuilder.mustNot(fuzzyQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, con));
-                    boolQueryBuilder.mustNot(queryStringQuery(query).field(SRMDevOpsConstants.KEY_DEFAULT_MSG));
-                }
-            });
-        }
+		// fix key match
+		if (!CollectionUtils.isEmpty(queryList)) {
+			queryList.forEach(u -> {
+				String query = u.getValue().trim();
+				if (StringUtils.isEmpty(query)) {
+					return;
+				}
+				// con = QueryParser.escape(con);
+				query = "\"" + query + "\"";// for Special characters
+				if (u.isEnable()) {// enable? must match
+					// boolQueryBuilder.must(fuzzyQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG,
+					// con));
+					boolQueryBuilder.must(queryStringQuery(query).field(SRMDevOpsConstants.KEY_DEFAULT_MSG));
+				} else {// not enbale ? must not match
+					// boolQueryBuilder.mustNot(fuzzyQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG,
+					// con));
+					boolQueryBuilder.mustNot(queryStringQuery(query).field(SRMDevOpsConstants.KEY_DEFAULT_MSG));
+				}
+			});
+		}
 
-        //fix log level match
-        if (!Objects.isNull(level) && level > 0) {
-            BoolQueryBuilder boolQueryBuilder1 = boolQuery();
-            for (int i = level - 1; i < SRMDevOpsConstants.LOG_LEVEL.size(); i++) {
-                boolQueryBuilder1.should(matchQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, SRMDevOpsConstants.LOG_LEVEL.get(i)));
-            }
-            boolQueryBuilder.must(boolQueryBuilder1);
-        }
+		// fix log level match
+		if (!Objects.isNull(level) && level > 0) {
+			BoolQueryBuilder boolQueryBuilder1 = boolQuery();
+			for (int i = level - 1; i < SRMDevOpsConstants.LOG_LEVEL.size(); i++) {
+				boolQueryBuilder1.should(matchQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, SRMDevOpsConstants.LOG_LEVEL.get(i)));
+			}
+			boolQueryBuilder.must(boolQueryBuilder1);
+		}
 
-        //fix time range
-        if (null != startTime && null != endTime && (endTime != 0 || startTime != 0)) {
-            RangeQueryBuilder rqb = rangeQuery("@timestamp").timeZone(DateTimeZone.UTC.toString());
-            if (null != startTime) {
-                rqb.gte(DateUtils2.timeStampToUTC(startTime));
-            }
-            if (null != endTime) {
-                rqb.lt(DateUtils2.timeStampToUTC(endTime));
-            }
-            boolQueryBuilder.filter(rqb);
-        }
+		// fix time range
+		if (null != startTime && null != endTime && (endTime != 0 || startTime != 0)) {
+			RangeQueryBuilder rqb = rangeQuery("@timestamp").timeZone(DateTimeZone.UTC.toString());
+			if (null != startTime) {
+				rqb.gte(DateUtils2.timeStampToUTC(startTime));
+			}
+			if (null != endTime) {
+				rqb.lt(DateUtils2.timeStampToUTC(endTime));
+			}
+			boolQueryBuilder.filter(rqb);
+		}
 
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        sourceBuilder.query(boolQueryBuilder);
-        sourceBuilder.from(Objects.isNull(from) ? 0 : from);//from
-        sourceBuilder.size(Objects.isNull(limit) ? 100 : limit);//limit
-        sourceBuilder.sort(new FieldSortBuilder("@timestamp").order(SortOrder.DESC));//order by timestamp desc
+		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+		sourceBuilder.query(boolQueryBuilder);
+		sourceBuilder.from(Objects.isNull(from) ? 0 : from);// from
+		sourceBuilder.size(Objects.isNull(limit) ? 100 : limit);// limit
+		sourceBuilder.sort(new FieldSortBuilder("@timestamp").order(SortOrder.DESC));// order
+																						// by
+																						// timestamp
+																						// desc
 
-        SearchRequest searchRequest = new SearchRequest(index);
-        //searchRequest.types("doc");//useful
-        searchRequest.source(sourceBuilder);
-        List<Log> logList = logHandler.findAll(searchRequest);
-        return logList;
-    }
-
+		SearchRequest searchRequest = new SearchRequest(index);
+		// searchRequest.types("doc");//useful
+		searchRequest.source(sourceBuilder);
+		List<Log> logList = logHandler.findAll(searchRequest);
+		return logList;
+	}
 
 }

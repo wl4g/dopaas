@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.srm.handler;
+package com.wl4g.devops.srm.es.handler;
 
-import com.wl4g.devops.srm.handler.es.RestHighLevelClient;
-import com.wl4g.devops.srm.handler.listener.Listener;
+import com.wl4g.devops.srm.es.EnhancedRestHighLevelClient;
+import com.wl4g.devops.srm.es.listener.Listener;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 import org.elasticsearch.action.search.SearchRequest;
@@ -35,7 +35,7 @@ import java.util.List;
 public class ElasticsearchSupportHandler<T> implements ElasticsearchBasedHandler<T> {
 
 	@Resource
-	private RestHighLevelClient restHighLevelClient;
+	private EnhancedRestHighLevelClient restHighLevelClient;
 
 	private Class<T> clazzP;
 
