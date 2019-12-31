@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.wl4g.devops.tool.common.lang.Assert2;
-import com.wl4g.devops.tool.common.resource.Resource;
+import com.wl4g.devops.tool.common.resource.StreamResource;
 
 /**
  * Enhanced path pattern resource matching resolver, support multiple location
@@ -60,11 +60,11 @@ public class GenericPathPatternResourceMatchingResolver extends PathPatternResou
 	}
 
 	@Override
-	public Resource getResource(String location) {
+	public StreamResource getResource(String location) {
 		return super.getResource(location);
 	}
 
-	public Set<Resource> getResources(String... locationPatterns) throws IOException {
+	public Set<StreamResource> getResources(String... locationPatterns) throws IOException {
 		Assert2.notNull(locationPatterns, "Path locationPatterns can't null");
 		return Arrays.asList(locationPatterns).stream().map(pattern -> {
 			try {

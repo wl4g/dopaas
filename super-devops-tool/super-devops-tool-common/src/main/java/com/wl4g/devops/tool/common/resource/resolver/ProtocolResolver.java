@@ -1,6 +1,6 @@
 package com.wl4g.devops.tool.common.resource.resolver;
 
-import com.wl4g.devops.tool.common.resource.Resource;
+import com.wl4g.devops.tool.common.resource.StreamResource;
 
 /**
  * Retention of upstream license agreement statement:</br>
@@ -49,6 +49,6 @@ public interface ProtocolResolver {
 	 * @return a corresponding {@code Resource} handle if the given location
 	 *         matches this resolver's protocol, or {@code null} otherwise
 	 */
-	Resource resolve(String location, ResourceLoader resourceLoader);
+	StreamResource resolve(String location, ResourceLoader resourceLoader);
 
 }

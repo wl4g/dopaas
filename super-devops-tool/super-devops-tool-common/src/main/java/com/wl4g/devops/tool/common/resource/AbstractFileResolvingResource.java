@@ -32,7 +32,7 @@ import java.net.URLConnection;
 
 /**
  * Abstract base class for resources which resolve URLs into File references,
- * such as {@link UrlResource} or {@link ClassPathResource}.
+ * such as {@link UrlStreamResource} or {@link ClassPathStreamResource}.
  *
  * <p>
  * Detects the "file" protocol as well as the JBoss "vfs" protocol in URLs,
@@ -41,21 +41,21 @@ import java.net.URLConnection;
  * @author Juergen Hoeller
  * @since 3.0
  */
-public abstract class AbstractFileResolvingResource extends AbstractResource {
+public abstract class AbstractFileResolvingResource extends AbstractStreamResource {
 
 	/**
 	 * This implementation returns a File reference for the underlying class
 	 * path resource, provided that it refers to a file in the file system.
 	 * 
-	 * @see org.springframework.util.ResourceUtils#getFile(java.net.URL, String)
+	 * @see org.ResourceUtils2.util.ResourceUtils#getFile(java.net.URL, String)
 	 */
 	@Override
 	public File getFile() throws IOException {
 		URL url = getURL();
-		if (url.getProtocol().startsWith(ResourceUtils.URL_PROTOCOL_VFS)) {
+		if (url.getProtocol().startsWith(ResourceUtils2.URL_PROTOCOL_VFS)) {
 			return VfsResourceDelegate.getResource(url).getFile();
 		}
-		return ResourceUtils.getFile(url, getDescription());
+		return ResourceUtils2.getFile(url, getDescription());
 	}
 
 	/**
@@ -65,12 +65,12 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 	@Override
 	protected File getFileForLastModifiedCheck() throws IOException {
 		URL url = getURL();
-		if (ResourceUtils.isJarURL(url)) {
-			URL actualUrl = ResourceUtils.extractArchiveURL(url);
-			if (actualUrl.getProtocol().startsWith(ResourceUtils.URL_PROTOCOL_VFS)) {
+		if (ResourceUtils2.isJarURL(url)) {
+			URL actualUrl = ResourceUtils2.extractArchiveURL(url);
+			if (actualUrl.getProtocol().startsWith(ResourceUtils2.URL_PROTOCOL_VFS)) {
 				return VfsResourceDelegate.getResource(actualUrl).getFile();
 			}
-			return ResourceUtils.getFile(actualUrl, "Jar URL");
+			return ResourceUtils2.getFile(actualUrl, "Jar URL");
 		} else {
 			return getFile();
 		}
@@ -80,20 +80,20 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 	 * This implementation returns a File reference for the given URI-identified
 	 * resource, provided that it refers to a file in the file system.
 	 * 
-	 * @see org.springframework.util.ResourceUtils#getFile(java.net.URI, String)
+	 * @see org.ResourceUtils2.util.ResourceUtils#getFile(java.net.URI, String)
 	 */
 	protected File getFile(URI uri) throws IOException {
-		if (uri.getScheme().startsWith(ResourceUtils.URL_PROTOCOL_VFS)) {
+		if (uri.getScheme().startsWith(ResourceUtils2.URL_PROTOCOL_VFS)) {
 			return VfsResourceDelegate.getResource(uri).getFile();
 		}
-		return ResourceUtils.getFile(uri, getDescription());
+		return ResourceUtils2.getFile(uri, getDescription());
 	}
 
 	@Override
 	public boolean exists() {
 		try {
 			URL url = getURL();
-			if (ResourceUtils.isFileURL(url)) {
+			if (ResourceUtils2.isFileURL(url)) {
 				// Proceed with file system resolution
 				return getFile().exists();
 			} else {
@@ -132,7 +132,7 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 	public boolean isReadable() {
 		try {
 			URL url = getURL();
-			if (ResourceUtils.isFileURL(url)) {
+			if (ResourceUtils2.isFileURL(url)) {
 				// Proceed with file system resolution
 				File file = getFile();
 				return (file.canRead() && !file.isDirectory());
@@ -147,7 +147,7 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 	@Override
 	public long contentLength() throws IOException {
 		URL url = getURL();
-		if (ResourceUtils.isFileURL(url)) {
+		if (ResourceUtils2.isFileURL(url)) {
 			// Proceed with file system resolution
 			return getFile().length();
 		} else {
@@ -161,7 +161,7 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 	@Override
 	public long lastModified() throws IOException {
 		URL url = getURL();
-		if (ResourceUtils.isFileURL(url) || ResourceUtils.isJarURL(url)) {
+		if (ResourceUtils2.isFileURL(url) || ResourceUtils2.isJarURL(url)) {
 			// Proceed with file system resolution
 			try {
 				return super.lastModified();
@@ -180,7 +180,7 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 	 * {@link #exists()}, {@link #contentLength()} or {@link #lastModified()}
 	 * call.
 	 * <p>
-	 * Calls {@link ResourceUtils#useCachesIfNecessary(URLConnection)} and
+	 * Calls {@link ResourceUtils2#useCachesIfNecessary(URLConnection)} and
 	 * delegates to {@link #customizeConnection(HttpURLConnection)} if possible.
 	 * Can be overridden in subclasses.
 	 * 
@@ -190,7 +190,7 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 	 *             if thrown from URLConnection methods
 	 */
 	protected void customizeConnection(URLConnection con) throws IOException {
-		ResourceUtils.useCachesIfNecessary(con);
+		ResourceUtils2.useCachesIfNecessary(con);
 		if (con instanceof HttpURLConnection) {
 			customizeConnection((HttpURLConnection) con);
 		}
@@ -218,12 +218,12 @@ public abstract class AbstractFileResolvingResource extends AbstractResource {
 	 */
 	private static class VfsResourceDelegate {
 
-		public static Resource getResource(URL url) throws IOException {
-			return new VfsResource(VfsUtils.getRoot(url));
+		public static StreamResource getResource(URL url) throws IOException {
+			return new VfsStreamResource(VfsUtils2.getRoot(url));
 		}
 
-		public static Resource getResource(URI uri) throws IOException {
-			return new VfsResource(VfsUtils.getRoot(uri));
+		public static StreamResource getResource(URI uri) throws IOException {
+			return new VfsStreamResource(VfsUtils2.getRoot(uri));
 		}
 	}
 

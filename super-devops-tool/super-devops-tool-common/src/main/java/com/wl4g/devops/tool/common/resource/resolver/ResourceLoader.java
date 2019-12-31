@@ -1,7 +1,7 @@
 package com.wl4g.devops.tool.common.resource.resolver;
 
-import com.wl4g.devops.tool.common.resource.Resource;
-import com.wl4g.devops.tool.common.resource.ResourceUtils;
+import com.wl4g.devops.tool.common.resource.StreamResource;
+import com.wl4g.devops.tool.common.resource.ResourceUtils2;
 
 /**
  * Retention of upstream license agreement statement:</br>
@@ -43,7 +43,7 @@ import com.wl4g.devops.tool.common.resource.ResourceUtils;
  *
  * @author Juergen Hoeller
  * @since 10.03.2004
- * @see Resource
+ * @see StreamResource
  * @see com.wl4g.devops.tool.common.resources.resovler.springframework.core.io.support.ResourcePatternResolver
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.context.ResourceLoaderAware
@@ -51,13 +51,13 @@ import com.wl4g.devops.tool.common.resource.ResourceUtils;
 public interface ResourceLoader {
 
 	/** Pseudo URL prefix for loading from the class path: "classpath:" */
-	String CLASSPATH_URL_PREFIX = ResourceUtils.CLASSPATH_URL_PREFIX;
+	String CLASSPATH_URL_PREFIX = ResourceUtils2.CLASSPATH_URL_PREFIX;
 
 	/**
 	 * Return a Resource handle for the specified resource location.
 	 * <p>
 	 * The handle should always be a reusable resource descriptor, allowing for
-	 * multiple {@link Resource#getInputStream()} calls.
+	 * multiple {@link StreamResource#getInputStream()} calls.
 	 * <p>
 	 * <ul>
 	 * <li>Must support fully qualified URLs, e.g. "file:C:/test.dat".
@@ -68,16 +68,16 @@ public interface ResourceLoader {
 	 * </ul>
 	 * <p>
 	 * Note that a Resource handle does not imply an existing resource; you need
-	 * to invoke {@link Resource#exists} to check for existence.
+	 * to invoke {@link StreamResource#exists} to check for existence.
 	 * 
 	 * @param location
 	 *            the resource location
 	 * @return a corresponding Resource handle (never {@code null})
 	 * @see #CLASSPATH_URL_PREFIX
-	 * @see Resource#exists()
-	 * @see Resource#getInputStream()
+	 * @see StreamResource#exists()
+	 * @see StreamResource#getInputStream()
 	 */
-	Resource getResource(String location);
+	StreamResource getResource(String location);
 
 	/**
 	 * Expose the ClassLoader used by this ResourceLoader.

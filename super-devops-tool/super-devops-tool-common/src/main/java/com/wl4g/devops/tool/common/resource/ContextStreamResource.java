@@ -25,6 +25,8 @@ import com.wl4g.devops.tool.common.resource.resolver.ResourceLoader;
  */
 
 /**
+ * {@link org.ContextStreamResource.io.ContextResource}
+ * 
  * Extended interface for a resource that is loaded from an enclosing 'context',
  * e.g. from a {@link javax.servlet.ServletContext} or a
  * {@link javax.portlet.PortletContext} but also from plain classpath paths or
@@ -36,7 +38,7 @@ import com.wl4g.devops.tool.common.resource.resolver.ResourceLoader;
  * @see org.springframework.web.context.support.ServletContextResource
  * @see org.springframework.web.portlet.context.PortletContextResource
  */
-public interface ContextResource extends Resource {
+public interface ContextStreamResource extends StreamResource {
 
 	/**
 	 * Return the path within the enclosing 'context'.

@@ -34,15 +34,16 @@ import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 
 /**
- * {@link Resource} implementation for {@code java.io.File} handles. Supports
- * resolution as a {@code File} and also as a {@code URL}. Implements the
- * extended {@link WritableResource} interface.
+ * {@link org.springframework.core.io.FileSystemResource} implementation for
+ * {@code java.io.File} handles. Supports resolution as a {@code File} and also
+ * as a {@code URL}. Implements the extended {@link WritableStreamResource}
+ * interface.
  *
  * @author Juergen Hoeller
  * @since 28.12.2003
  * @see java.io.File
  */
-public class FileSystemResource extends AbstractResource implements WritableResource {
+public class LocalFSStreamResource extends AbstractStreamResource {
 
 	private final File file;
 
@@ -62,7 +63,7 @@ public class FileSystemResource extends AbstractResource implements WritableReso
 	 * @param file
 	 *            a File handle
 	 */
-	public FileSystemResource(File file) {
+	public LocalFSStreamResource(File file) {
 		Assert2.notNull(file, "File must not be null");
 		this.file = file;
 		this.path = StringUtils2.cleanPath(file.getPath());
@@ -81,7 +82,7 @@ public class FileSystemResource extends AbstractResource implements WritableReso
 	 * @param path
 	 *            a file path
 	 */
-	public FileSystemResource(String path) {
+	public LocalFSStreamResource(String path) {
 		Assert2.notNull(path, "Path must not be null");
 		this.file = new File(path);
 		this.path = StringUtils2.cleanPath(path);
@@ -135,7 +136,6 @@ public class FileSystemResource extends AbstractResource implements WritableReso
 	 * @see java.io.File#canWrite()
 	 * @see java.io.File#isDirectory()
 	 */
-	@Override
 	public boolean isWritable() {
 		return (this.file.canWrite() && !this.file.isDirectory());
 	}
@@ -145,7 +145,6 @@ public class FileSystemResource extends AbstractResource implements WritableReso
 	 * 
 	 * @see java.io.FileOutputStream
 	 */
-	@Override
 	public OutputStream getOutputStream() throws IOException {
 		return new FileOutputStream(this.file);
 	}
@@ -194,9 +193,9 @@ public class FileSystemResource extends AbstractResource implements WritableReso
 	 *      String)
 	 */
 	@Override
-	public Resource createRelative(String relativePath) {
+	public StreamResource createRelative(String relativePath) {
 		String pathToUse = StringUtils2.applyRelativePath(this.path, relativePath);
-		return new FileSystemResource(pathToUse);
+		return new LocalFSStreamResource(pathToUse);
 	}
 
 	/**
@@ -225,7 +224,7 @@ public class FileSystemResource extends AbstractResource implements WritableReso
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return (obj == this || (obj instanceof FileSystemResource && this.path.equals(((FileSystemResource) obj).path)));
+		return (obj == this || (obj instanceof LocalFSStreamResource && this.path.equals(((LocalFSStreamResource) obj).path)));
 	}
 
 	/**

@@ -23,6 +23,7 @@ package com.wl4g.devops.tool.common.resource;
  */
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
@@ -41,16 +42,36 @@ import java.net.URL;
  * @see #getURL()
  * @see #getURI()
  * @see #getFile()
- * @see WritableResource
- * @see ContextResource
- * @see UrlResource
- * @see ClassPathResource
- * @see FileSystemResource
+ * @see WritableStreamResource
+ * @see ContextStreamResource
+ * @see UrlStreamResource
+ * @see ClassPathStreamResource
+ * @see LocalFSStreamResource
  * @see PathResource
  * @see ByteArrayResource
- * @see InputStreamResource
+ * @see StreamResource
  */
-public interface Resource extends InputStreamSource {
+public interface StreamResource {
+
+	/**
+	 * Return an {@link InputStream} for the content of an underlying resource.
+	 * <p>
+	 * It is expected that each call creates a <i>fresh</i> stream.
+	 * <p>
+	 * This requirement is particularly important when you consider an API such
+	 * as JavaMail, which needs to be able to read the stream multiple times
+	 * when creating mail attachments. For such a use case, it is
+	 * <i>required</i> that each {@code getInputStream()} call returns a fresh
+	 * stream.
+	 * 
+	 * @return the input stream for the underlying resource (must not be
+	 *         {@code null})
+	 * @throws java.io.FileNotFoundException
+	 *             if the underlying resource doesn't exist
+	 * @throws IOException
+	 *             if the content stream could not be opened
+	 */
+	InputStream getInputStream() throws IOException;
 
 	/**
 	 * Determine whether this resource actually exists in physical form.
@@ -140,7 +161,7 @@ public interface Resource extends InputStreamSource {
 	 * @throws IOException
 	 *             if the relative resource cannot be determined
 	 */
-	Resource createRelative(String relativePath) throws IOException;
+	StreamResource createRelative(String relativePath) throws IOException;
 
 	/**
 	 * Determine a filename for this resource, i.e. typically the last part of

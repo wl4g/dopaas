@@ -30,10 +30,10 @@ import java.util.Set;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.ClassUtils2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
-import com.wl4g.devops.tool.common.resource.ClassPathResource;
-import com.wl4g.devops.tool.common.resource.ContextResource;
-import com.wl4g.devops.tool.common.resource.Resource;
-import com.wl4g.devops.tool.common.resource.UrlResource;
+import com.wl4g.devops.tool.common.resource.ClassPathStreamResource;
+import com.wl4g.devops.tool.common.resource.ContextStreamResource;
+import com.wl4g.devops.tool.common.resource.StreamResource;
+import com.wl4g.devops.tool.common.resource.UrlStreamResource;
 
 /**
  * Default implementation of the {@link ResourceLoader} interface. Used by
@@ -42,8 +42,8 @@ import com.wl4g.devops.tool.common.resource.UrlResource;
  * also be used standalone.
  *
  * <p>
- * Will return a {@link UrlResource} if the location value is a URL, and a
- * {@link ClassPathResource} if it is a non-URL path or a "classpath:"
+ * Will return a {@link UrlStreamResource} if the location value is a URL, and a
+ * {@link ClassPathStreamResource} if it is a non-URL path or a "classpath:"
  * pseudo-URL.
  *
  * @author Juergen Hoeller
@@ -99,7 +99,7 @@ public class DefaultResourceLoader implements ResourceLoader {
 	 * Will get passed to ClassPathResource's constructor for all
 	 * ClassPathResource objects created by this resource loader.
 	 * 
-	 * @see ClassPathResource
+	 * @see ClassPathStreamResource
 	 */
 	@Override
 	public ClassLoader getClassLoader() {
@@ -132,11 +132,11 @@ public class DefaultResourceLoader implements ResourceLoader {
 	}
 
 	@Override
-	public Resource getResource(String location) {
+	public StreamResource getResource(String location) {
 		Assert2.notNull(location, "Location must not be null");
 
 		for (ProtocolResolver protocolResolver : this.protocolResolvers) {
-			Resource resource = protocolResolver.resolve(location, this);
+			StreamResource resource = protocolResolver.resolve(location, this);
 			if (resource != null) {
 				return resource;
 			}
@@ -145,12 +145,12 @@ public class DefaultResourceLoader implements ResourceLoader {
 		if (location.startsWith("/")) {
 			return getResourceByPath(location);
 		} else if (location.startsWith(CLASSPATH_URL_PREFIX)) {
-			return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()), getClassLoader());
+			return new ClassPathStreamResource(location.substring(CLASSPATH_URL_PREFIX.length()), getClassLoader());
 		} else {
 			try {
 				// Try to parse the location as a URL...
 				URL url = new URL(location);
-				return new UrlResource(url);
+				return new UrlStreamResource(url);
 			} catch (MalformedURLException ex) {
 				// No URL -> resolve as resource path.
 				return getResourceByPath(location);
@@ -168,11 +168,11 @@ public class DefaultResourceLoader implements ResourceLoader {
 	 * @param path
 	 *            the path to the resource
 	 * @return the corresponding Resource handle
-	 * @see ClassPathResource
+	 * @see ClassPathStreamResource
 	 * @see org.springframework.context.support.FileSystemXmlApplicationContext#getResourceByPath
 	 * @see org.springframework.web.context.support.XmlWebApplicationContext#getResourceByPath
 	 */
-	protected Resource getResourceByPath(String path) {
+	protected StreamResource getResourceByPath(String path) {
 		return new ClassPathContextResource(path, getClassLoader());
 	}
 
@@ -180,7 +180,7 @@ public class DefaultResourceLoader implements ResourceLoader {
 	 * ClassPathResource that explicitly expresses a context-relative path
 	 * through implementing the ContextResource interface.
 	 */
-	protected static class ClassPathContextResource extends ClassPathResource implements ContextResource {
+	protected static class ClassPathContextResource extends ClassPathStreamResource implements ContextStreamResource {
 
 		public ClassPathContextResource(String path, ClassLoader classLoader) {
 			super(path, classLoader);
@@ -192,7 +192,7 @@ public class DefaultResourceLoader implements ResourceLoader {
 		}
 
 		@Override
-		public Resource createRelative(String relativePath) {
+		public StreamResource createRelative(String relativePath) {
 			String pathToUse = StringUtils2.applyRelativePath(getPath(), relativePath);
 			return new ClassPathContextResource(pathToUse, getClassLoader());
 		}

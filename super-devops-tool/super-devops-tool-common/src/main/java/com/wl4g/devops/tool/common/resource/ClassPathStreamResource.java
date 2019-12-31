@@ -32,8 +32,9 @@ import com.wl4g.devops.tool.common.lang.ObjectUtils;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 
 /**
- * {@link Resource} implementation for class path resources. Uses either a given
- * {@link ClassLoader} or a given {@link Class} for loading resources.
+ * {@link org.ClassPathStreamResource.io.ClassPathResource} implementation for class
+ * path resources. Uses either a given {@link ClassLoader} or a given
+ * {@link Class} for loading resources.
  *
  * <p>
  * Supports resolution as {@code java.io.File} if the class path resource
@@ -46,7 +47,7 @@ import com.wl4g.devops.tool.common.lang.StringUtils2;
  * @see ClassLoader#getResourceAsStream(String)
  * @see Class#getResourceAsStream(String)
  */
-public class ClassPathResource extends AbstractFileResolvingResource {
+public class ClassPathStreamResource extends AbstractFileResolvingResource {
 
 	private final String path;
 
@@ -66,7 +67,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 * @see java.lang.ClassLoader#getResourceAsStream(String)
 	 * @see com.wl4g.devops.tool.common.lang.ClassUtils2.util.ClassUtils#getDefaultClassLoader()
 	 */
-	public ClassPathResource(String path) {
+	public ClassPathStreamResource(String path) {
 		this(path, (ClassLoader) null);
 	}
 
@@ -82,7 +83,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 *            for the thread context class loader
 	 * @see ClassLoader#getResourceAsStream(String)
 	 */
-	public ClassPathResource(String path, ClassLoader classLoader) {
+	public ClassPathStreamResource(String path, ClassLoader classLoader) {
 		Assert2.notNull(path, "Path must not be null");
 		String pathToUse = StringUtils2.cleanPath(path);
 		if (pathToUse.startsWith("/")) {
@@ -103,7 +104,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 *            the class to load resources with
 	 * @see java.lang.Class#getResourceAsStream
 	 */
-	public ClassPathResource(String path, Class<?> clazz) {
+	public ClassPathStreamResource(String path, Class<?> clazz) {
 		Assert2.notNull(path, "Path must not be null");
 		this.path = StringUtils2.cleanPath(path);
 		this.clazz = clazz;
@@ -120,7 +121,7 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 * @param clazz
 	 *            the class to load resources with, if any
 	 */
-	protected ClassPathResource(String path, ClassLoader classLoader, Class<?> clazz) {
+	protected ClassPathStreamResource(String path, ClassLoader classLoader, Class<?> clazz) {
 		this.path = StringUtils2.cleanPath(path);
 		this.classLoader = classLoader;
 		this.clazz = clazz;
@@ -214,10 +215,10 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 	 *      String)
 	 */
 	@Override
-	public Resource createRelative(String relativePath) {
+	public StreamResource createRelative(String relativePath) {
 		String pathToUse = StringUtils2.applyRelativePath(this.path, relativePath);
-		return (this.clazz != null ? new ClassPathResource(pathToUse, this.clazz)
-				: new ClassPathResource(pathToUse, this.classLoader));
+		return (this.clazz != null ? new ClassPathStreamResource(pathToUse, this.clazz)
+				: new ClassPathStreamResource(pathToUse, this.classLoader));
 	}
 
 	/**
@@ -259,8 +260,8 @@ public class ClassPathResource extends AbstractFileResolvingResource {
 		if (obj == this) {
 			return true;
 		}
-		if (obj instanceof ClassPathResource) {
-			ClassPathResource otherRes = (ClassPathResource) obj;
+		if (obj instanceof ClassPathStreamResource) {
+			ClassPathStreamResource otherRes = (ClassPathStreamResource) obj;
 			return (this.path.equals(otherRes.path) && ObjectUtils.nullSafeEquals(this.classLoader, otherRes.classLoader)
 					&& ObjectUtils.nullSafeEquals(this.clazz, otherRes.clazz));
 		}

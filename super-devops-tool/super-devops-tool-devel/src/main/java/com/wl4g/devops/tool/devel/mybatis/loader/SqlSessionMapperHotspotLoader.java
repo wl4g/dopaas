@@ -37,9 +37,9 @@ import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
-import com.wl4g.devops.tool.common.resource.FileSystemResource;
-import com.wl4g.devops.tool.common.resource.Resource;
 import com.wl4g.devops.tool.common.task.GenericTaskRunner;
 import com.wl4g.devops.tool.common.task.RunnerProperties;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;

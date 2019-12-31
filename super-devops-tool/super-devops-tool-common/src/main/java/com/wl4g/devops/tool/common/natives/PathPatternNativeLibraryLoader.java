@@ -38,7 +38,7 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
-import com.wl4g.devops.tool.common.resource.Resource;
+import com.wl4g.devops.tool.common.resource.StreamResource;
 import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
@@ -138,13 +138,13 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 
 		// Scanning native library resources.
 		GenericPathPatternResourceMatchingResolver resolver = new GenericPathPatternResourceMatchingResolver(classLoader);
-		Set<Resource> resources = resolver.getResources(libLocationPatterns);
+		Set<StreamResource> resources = resolver.getResources(libLocationPatterns);
 		// Sort resources url by ASCII dict.
-		List<Resource> rss = asList(resources.toArray(new Resource[] {}));
+		List<StreamResource> rss = asList(resources.toArray(new StreamResource[] {}));
 		sort(rss, ASC_COMPARATOR);
 
 		// Matching native library by current os arch.
-		for (Resource r : rss) {
+		for (StreamResource r : rss) {
 			if (!r.exists() || r.isOpen() || !r.isReadable()) {
 				log.warn("Unable to load native class library file: {}", r.getURL().toString());
 				continue;
@@ -315,9 +315,9 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 			+ LOCAL_PROCESS_ID + "-" + System.currentTimeMillis());
 
 	/**
-	 * {@link Resource} URL path ASC comparator.
+	 * {@link StreamResource} URL path ASC comparator.
 	 */
-	final public static Comparator<Resource> ASC_COMPARATOR = (r1, r2) -> {
+	final public static Comparator<StreamResource> ASC_COMPARATOR = (r1, r2) -> {
 		try {
 			return r1.getURL().toString().compareTo(r2.getURL().toString());
 		} catch (IOException e1) {
