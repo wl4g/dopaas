@@ -228,6 +228,12 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-scm-client</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-scm-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
@@ -665,12 +671,12 @@
 				<version>${hbase.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<dependency>
+			<!-- <dependency>
 				<groupId>org.elasticsearch.client</groupId>
 				<artifactId>elasticsearch-rest-high-level-client</artifactId>
 				<version>${elasticsearch-rest-high-level-client.version}</version>
 				<scope>compile</scope>
-			</dependency>
+			</dependency> -->
 			<dependency>
 				<groupId>org.apache.kafka</groupId>
 				<artifactId>kafka-clients</artifactId>
