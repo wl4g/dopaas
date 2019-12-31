@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.srm.handler.es;
+package com.wl4g.devops.srm.es;
 
-import com.wl4g.devops.srm.handler.es.exception.GetActiveClientException;
-import com.wl4g.devops.srm.handler.es.pool.ElasticsearchClientPool;
+import com.wl4g.devops.srm.es.exception.GetActiveClientException;
+import com.wl4g.devops.srm.es.pool.ElasticsearchClientPool;
+
 import org.apache.http.Header;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -35,12 +36,12 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 
 import java.io.IOException;
 
 /**
- * es 高级客户端连接池版本实现，完全覆盖了官方 ${@link org.elasticsearch.client.RestHighLevelClient}
- * 的public方法.
+ * es 高级客户端连接池版本实现，完全覆盖了官方 ${@link RestHighLevelClient} 的public方法.
  * <p>
  * 使用同步接口的使用方式和官方没有任何区别，同步接口在调用完成后会自动调用 {@link #releaseClient} 方法来释放client
  * 到资源池中<br>
@@ -49,20 +50,20 @@ import java.io.IOException;
  * 在使用同步/异步API的过程中，如果当前线程正在使用client，没有释放，再一次使用API(同步/异步)的时候回主动释放当前线程持有的client资源到连接池，这个请特别注意。
  *
  */
-public class RestHighLevelClient {
-	private final ThreadLocal<org.elasticsearch.client.RestHighLevelClient> threadLocal = new ThreadLocal<>();
-	private ElasticsearchClientPool elasticsearchClientPool;
+public class EnhancedRestHighLevelClient {
+	private final ThreadLocal<RestHighLevelClient> threadLocal = new ThreadLocal<>();
+	private ElasticsearchClientPool esClientPool;
 
-	public RestHighLevelClient(ElasticsearchClientPool elasticsearchClientPool) {
-		this.elasticsearchClientPool = elasticsearchClientPool;
+	public EnhancedRestHighLevelClient(ElasticsearchClientPool esClientPool) {
+		this.esClientPool = esClientPool;
 	}
 
-	private org.elasticsearch.client.RestHighLevelClient getClient() {
+	private RestHighLevelClient getClient() {
 		if (threadLocal.get() != null) {
 			releaseClient();
 		}
 		try {
-			org.elasticsearch.client.RestHighLevelClient restHighLevelClient = elasticsearchClientPool.borrowObject();
+			RestHighLevelClient restHighLevelClient = esClientPool.borrowObject();
 			threadLocal.set(restHighLevelClient);
 			return restHighLevelClient;
 		} catch (Exception e) {
@@ -75,9 +76,9 @@ public class RestHighLevelClient {
 	 * 使用异步api接口的时候需要在使用完成之后主动调用该方法，释放连接池的连接，否则可能导致连接池无可用的新连接
 	 */
 	public void releaseClient() {
-		org.elasticsearch.client.RestHighLevelClient restHighLevelClient = threadLocal.get();
+		RestHighLevelClient restHighLevelClient = threadLocal.get();
 		if (restHighLevelClient != null) {
-			elasticsearchClientPool.returnObject(restHighLevelClient);
+			esClientPool.returnObject(restHighLevelClient);
 			threadLocal.remove();
 		}
 	}
@@ -106,7 +107,7 @@ public class RestHighLevelClient {
 	 */
 
 	public Object exec(Call call, boolean releaseClient) {
-		org.elasticsearch.client.RestHighLevelClient restHighLevelClient = getClient();
+		RestHighLevelClient restHighLevelClient = getClient();
 		try {
 			return call.hanl(restHighLevelClient);
 		} catch (IOException e) {
@@ -137,7 +138,7 @@ public class RestHighLevelClient {
 	 *            该方法执行完成后是否释放client到资源池
 	 */
 	public void execReturnVoid(VoidCall call, boolean releaseClient) {
-		org.elasticsearch.client.RestHighLevelClient restHighLevelClient = getClient();
+		RestHighLevelClient restHighLevelClient = getClient();
 		try {
 			call.hanl(restHighLevelClient);
 		} catch (IOException e) {
@@ -153,14 +154,14 @@ public class RestHighLevelClient {
 	 * 有参数返回的执行接口
 	 */
 	interface Call {
-		public Object hanl(org.elasticsearch.client.RestHighLevelClient restHighLevelClient) throws IOException;
+		public Object hanl(RestHighLevelClient restHighLevelClient) throws IOException;
 	}
 
 	/**
 	 * 无参数返回的执行接口
 	 */
 	interface VoidCall {
-		public void hanl(org.elasticsearch.client.RestHighLevelClient restHighLevelClient) throws IOException;
+		public void hanl(RestHighLevelClient restHighLevelClient) throws IOException;
 	}
 
 	/**

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.srm.handler;
+package com.wl4g.devops.srm.es.handler;
 
 /*
  * Copyright 2015 the original author or authors.

@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.srm.handler;
+package com.wl4g.devops.srm.es.listener;
 
-import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.ShardSearchFailure;
+import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
-import java.util.List;
+@Component
+public class ShardSearchFailureListener implements Listener {
 
-public interface ElasticsearchBasedHandler<T> {
-	// 添加
-	public void add(T t);
+	@Override
+	public void onFailure(ShardSearchFailure failure) {
 
-	// 删除
-	public void delete(T t);
+	}
 
-	// 更新
-	public void update(T t);
-
-	// 根据id查询
-	public T findOne(Serializable id);
-
-	// 查询所有
-	public List<T> findAll(SearchRequest searchRequest) throws Exception;
 }
