@@ -29,13 +29,9 @@ English version goes [here](README.md)
 - step1，首先准备一台CentOS6.5+以及MySQL5.6+实例，新建名为devops(utf8/utf8_bin)的数据库，再使用 [初始sql脚本](db/) 进行初始化它。（注：此脚本与代码版本对应，我们会定期更新，请按命名后缀日期使用最新的即可）
 - step2，配置本地hosts虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
-10.0.0.160    ci.wl4g.test
-10.0.0.160    iam.wl4g.test
-10.0.0.160    scm.wl4g.test
-10.0.0.160    share.wl4g.test
-10.0.0.160    srm.wl4g.test
-10.0.0.160    umc.wl4g.test
+10.0.0.160    wl4g.debug #与数据库app_cluster_config.extranet_base_uri对应
 ```
+
 
 
 ### 更多子模块文档
