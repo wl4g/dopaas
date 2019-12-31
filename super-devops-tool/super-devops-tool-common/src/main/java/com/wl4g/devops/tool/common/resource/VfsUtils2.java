@@ -48,7 +48,7 @@ import com.wl4g.devops.tool.common.reflect.ReflectionUtils2;
  * @author Juergen Hoeller
  * @since 3.0.3
  */
-public abstract class VfsUtils {
+public abstract class VfsUtils2 {
 
 	private static final String VFS3_PKG = "org.jboss.vfs.";
 	private static final String VFS_NAME = "VFS";
@@ -73,7 +73,7 @@ public abstract class VfsUtils {
 	private static final Method GET_PHYSICAL_FILE;
 
 	static {
-		ClassLoader loader = VfsUtils.class.getClassLoader();
+		ClassLoader loader = VfsUtils2.class.getClassLoader();
 		try {
 			Class<?> vfsClass = loader.loadClass(VFS3_PKG + VFS_NAME);
 			VFS_METHOD_GET_ROOT_URL = ReflectionUtils2.findMethod(vfsClass, "getChild", URL.class);

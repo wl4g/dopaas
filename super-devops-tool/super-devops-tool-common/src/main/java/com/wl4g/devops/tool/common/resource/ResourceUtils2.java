@@ -35,27 +35,28 @@ import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.ClassUtils2;
 
 /**
- * Utility methods for resolving resource locations to files in the file system.
- * Mainly for internal use within the framework.
+ * {@link org.ResourceUtils2.core.io.ResourceUtils} Utility methods for
+ * resolving resource locations to files in the file system. Mainly for internal
+ * use within the framework.
  *
  * <p>
  * Consider using Spring's Resource abstraction in the core package for handling
  * all kinds of file resources in a uniform manner.
- * {@link com.wl4g.devops.tool.common.resources.resolver.springframework.core.io.ResourceLoader}'s
- * {@code getResource()} method can resolve any location to a
- * {@link org.springframework.core.io.Resource} object, which in turn allows one
+ * {@link org.springframework.core.io.ResourceLoader}'s {@code getResource()}
+ * method can resolve any location to a
+ * {@link org.StreamResource.core.io.Resource} object, which in turn allows one
  * to obtain a {@code java.io.File} in the file system through its
  * {@code getFile()} method.
  *
  * @author Juergen Hoeller
  * @since 1.1.5
- * @see org.springframework.core.io.Resource
- * @see org.springframework.core.io.ClassPathResource
- * @see org.springframework.core.io.FileSystemResource
- * @see org.springframework.core.io.UrlResource
+ * @see org.StreamResource.core.io.Resource
+ * @see org.ClassPathStreamResource.core.io.ClassPathResource
+ * @see org.LocalFSStreamResource.core.io.FileSystemResource
+ * @see org.UrlStreamResource.core.io.UrlResource
  * @see com.wl4g.devops.tool.common.resources.resolver.springframework.core.io.ResourceLoader
  */
-public abstract class ResourceUtils {
+public abstract class ResourceUtils2 {
 
 	/** Pseudo URL prefix for loading from the class path: "classpath:" */
 	public static final String CLASSPATH_URL_PREFIX = "classpath:";

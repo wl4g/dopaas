@@ -24,7 +24,7 @@ package com.wl4g.devops.tool.common.resource.resolver;
 import java.io.IOException;
 import java.util.Set;
 
-import com.wl4g.devops.tool.common.resource.Resource;
+import com.wl4g.devops.tool.common.resource.StreamResource;
 
 /**
  * Strategy interface for resolving a location pattern (for example, an
@@ -58,7 +58,7 @@ import com.wl4g.devops.tool.common.resource.Resource;
  *
  * @author Juergen Hoeller
  * @since 1.0.2
- * @see org.springframework.core.io.Resource
+ * @see org.StreamResource.core.io.Resource
  * @see com.wl4g.devops.tool.common.resources.resolver.springframework.core.io.ResourceLoader
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.context.ResourceLoaderAware
@@ -88,6 +88,6 @@ public interface ResourcePatternResolver extends ResourceLoader {
 	 * @throws IOException
 	 *             in case of I/O errors
 	 */
-	Set<Resource> getResources(String locationPattern) throws IOException;
+	Set<StreamResource> getResources(String locationPattern) throws IOException;
 
 }

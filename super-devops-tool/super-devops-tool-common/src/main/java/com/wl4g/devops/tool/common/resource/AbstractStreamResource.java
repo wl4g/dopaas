@@ -32,8 +32,8 @@ import java.net.URL;
 import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
- * Convenience base class for {@link Resource} implementations, pre-implementing
- * typical behavior.
+ * Convenience base class for {@link org.AbstractStreamResource.io.AbstractResource}
+ * implementations, pre-implementing typical behavior.
  *
  * <p>
  * The "exists" method will check whether a File or InputStream can be opened;
@@ -43,7 +43,7 @@ import com.wl4g.devops.tool.common.lang.Assert2;
  * @author Juergen Hoeller
  * @since 28.12.2003
  */
-public abstract class AbstractResource implements Resource {
+abstract class AbstractStreamResource implements StreamResource {
 
 	/**
 	 * This implementation checks whether a File can be opened, falling back to
@@ -100,7 +100,7 @@ public abstract class AbstractResource implements Resource {
 	public URI getURI() throws IOException {
 		URL url = getURL();
 		try {
-			return ResourceUtils.toURI(url);
+			return ResourceUtils2.toURI(url);
 		} catch (URISyntaxException ex) {
 			throw new IllegalArgumentException("Invalid URI [" + url + "]", ex);
 		}
@@ -179,7 +179,7 @@ public abstract class AbstractResource implements Resource {
 	 * relative resources cannot be created for this resource.
 	 */
 	@Override
-	public Resource createRelative(String relativePath) throws IOException {
+	public StreamResource createRelative(String relativePath) throws IOException {
 		throw new FileNotFoundException("Cannot create a relative resource for " + getDescription());
 	}
 
@@ -209,7 +209,7 @@ public abstract class AbstractResource implements Resource {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return (obj == this || (obj instanceof Resource && ((Resource) obj).getDescription().equals(getDescription())));
+		return (obj == this || (obj instanceof StreamResource && ((StreamResource) obj).getDescription().equals(getDescription())));
 	}
 
 	/**
