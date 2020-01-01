@@ -178,7 +178,7 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 		// Any loaded library?
 		if (loadLibFiles.isEmpty()) {
 			throw new LoadNativeLibraryError("No match native library, there is no shared library file of current os/arch: '"
-					+ OS_NAME + "/" + OS_ARCH + "or the path does not meet the specification?"
+					+ OS_NAME + "/" + OS_ARCH + "' or the path does not meet the specification?"
 					+ "\n\n----- Refer to os arch name transformation mapping: \n" + archMapping
 					+ "\n\n----- Scan matching patterns: \n" + asList(libLocationPatterns)
 					+ "\n\n----- All was found native library resources: \n" + rss);

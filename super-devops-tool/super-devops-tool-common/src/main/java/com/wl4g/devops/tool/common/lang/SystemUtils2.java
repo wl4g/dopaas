@@ -28,6 +28,7 @@ import java.util.List;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.hash.Hashing.md5;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert2.state;
 import static java.net.NetworkInterface.getNetworkInterfaces;
 import static java.util.Collections.list;
 import static java.util.Collections.sort;
@@ -99,6 +100,7 @@ public abstract class SystemUtils2 extends SystemUtils {
 					}
 				}
 			}
+			state(nonNull(mac), "Failed to get network card info. The OS not configured network card or connected to the network?");
 
 			StringBuffer sb = new StringBuffer(32);
 			for (int i = 0; i < mac.length; i++) {
