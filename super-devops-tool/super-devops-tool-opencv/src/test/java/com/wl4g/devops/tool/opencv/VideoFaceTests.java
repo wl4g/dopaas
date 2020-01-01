@@ -1,5 +1,6 @@
 package com.wl4g.devops.tool.opencv;
 
+import static com.wl4g.devops.tool.common.lang.StringUtils2.startsWithIgnoreCase;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 
 import java.io.File;
@@ -30,7 +31,9 @@ public class VideoFaceTests {
 			// Load native library.
 			CommandLine line = CommandUtils.newBuilder()
 					.option("l", "libLocationPattern", true, "Load external native file location match pattern").build(args);
-			OpenCvNativeLibraryLoader.loadLibrarys(line.getOptionValue("libLocationPattern"));
+			String location = line.getOptionValue("libLocationPattern");
+			location = startsWithIgnoreCase(location, "file://") ? location : ("file://" + location);
+			OpenCvNativeLibraryLoader.loadLibrarys(location);
 		}
 
 		// Video face testing.
