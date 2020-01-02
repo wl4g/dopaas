@@ -138,7 +138,34 @@ public abstract class ProcessUtils {
 	}
 
 	/**
-	 * Build cross platform single row wide fully qualified command line.
+	 * Build cross platform single row wide fully qualified command line.</br>
+	 * Note: Please note the usage order of 2 > & 1 and > out. The following are
+	 * the test results under Ubuntu 19.x/CentOS 7.x/CentOS 6.x testing
+	 * example:</br>
+	 * 
+	 * <table border=\"1\" width=\"800\" height=\"800\" align=\"center\"
+	 * cellpadding=\"0\" cellspacing=\"1\">
+	 * <tr>
+	 * <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Negative
+	 * Command</td>
+	 * <td>&nbsp;&nbsp;Run in Ubuntu 19.x&nbsp;&nbsp;</td>
+	 * <td>&nbsp;&nbsp;Run in CentOS 6.x&nbsp;&nbsp;</td>
+	 * <td>&nbsp;&nbsp;Run in CentOS 7.x&nbsp;&nbsp;</td>
+	 * </tr>
+	 * <tr>
+	 * <td>&nbsp;&nbsp;ech "This a wrong test command" 2>&1 >
+	 * out&nbsp;&nbsp;</td>
+	 * <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×</td>
+	 * <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×</td>
+	 * <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;×</td>
+	 * </tr>
+	 * <tr>
+	 * <td>&nbsp;&nbsp;ech "This a wrong test command" > out 2>&1</td>
+	 * <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✅</td>
+	 * <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✅</td>
+	 * <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✅</td>
+	 * </tr>
+	 * </table>
 	 * 
 	 * @param cmd
 	 *            Execution command string.

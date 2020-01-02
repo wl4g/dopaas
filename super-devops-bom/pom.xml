@@ -90,7 +90,6 @@
 		<kafka-clients.version>0.10.1.0</kafka-clients.version>
 		<elasticsearch-client.version>6.2.3</elasticsearch-client.version>
 		<!-- AI. -->
-		<opencv.version>4.1.1</opencv.version>
 		<!-- Testing's. -->
 		<junit.version>4.12</junit.version>
 		<!-- 3Thirdparty's. -->
@@ -716,12 +715,6 @@
 				<scope>compile</scope>
 			</dependency>
 			<!-- AI. -->
-			<dependency>
-				<groupId>org.opencv</groupId>
-				<artifactId>opencv</artifactId>
-				<version>${opencv.version}</version>
-				<scope>compile</scope>
-			</dependency>
 			<!-- Testing's. -->
 			<dependency>
 				<groupId>junit</groupId>
