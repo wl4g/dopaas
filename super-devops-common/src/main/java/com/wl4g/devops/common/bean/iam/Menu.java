@@ -42,7 +42,9 @@ public class Menu extends BaseBean implements Serializable {
 
 	private String permission;
 
-	private String accessUri;
+	private String pageLocation;
+
+	private String routePath;
 
 	private String icon;
 
@@ -116,12 +118,12 @@ public class Menu extends BaseBean implements Serializable {
 		this.permission = permission == null ? null : permission.trim();
 	}
 
-	public String getAccessUri() {
-		return accessUri;
+	public String getPageLocation() {
+		return pageLocation;
 	}
 
-	public void setAccessUri(String accessUri) {
-		this.accessUri = accessUri == null ? null : accessUri.trim();
+	public void setPageLocation(String pageLocation) {
+		this.pageLocation = pageLocation == null ? null : pageLocation.trim();
 	}
 
 	public String getIcon() {
@@ -154,6 +156,14 @@ public class Menu extends BaseBean implements Serializable {
 
 	public void setLevel(Integer level) {
 		this.level = level;
+	}
+
+	public String getRoutePath() {
+		return routePath;
+	}
+
+	public void setRoutePath(String routePath) {
+		this.routePath = routePath;
 	}
 
 	@Override
