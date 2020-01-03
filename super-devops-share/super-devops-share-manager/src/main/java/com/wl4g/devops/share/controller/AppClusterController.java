@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +93,13 @@ public class AppClusterController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		List<AppInstance> instances = appClusterService.getInstancesByClusterIdAndEnvType(clusterId, envType);
 		resp.forMap().put("instances", instances);
+		return resp;
+	}
+
+	@RequestMapping(value = "/connectTest")
+	public RespBase<?> connectTest(Integer hostId, String sshUser,String sshKey) throws IOException {
+		RespBase<Object> resp = RespBase.create();
+		appClusterService.connectTest(hostId,sshUser,sshKey);
 		return resp;
 	}
 
