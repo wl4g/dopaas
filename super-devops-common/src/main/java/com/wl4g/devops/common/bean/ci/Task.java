@@ -47,6 +47,8 @@ public class Task extends BaseBean implements Serializable {
 
 	private String envType;
 
+	private String pmPlatform;
+
 	private List<AppInstance> instances;
 
 	private List<TaskInstance> taskInstances;
@@ -184,6 +186,14 @@ public class Task extends BaseBean implements Serializable {
 
 	public void setEnvType(String envType) {
 		this.envType = envType;
+	}
+
+	public String getPmPlatform() {
+		return pmPlatform;
+	}
+
+	public void setPmPlatform(String pmPlatform) {
+		this.pmPlatform = pmPlatform;
 	}
 
 	@Override
