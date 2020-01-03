@@ -18,13 +18,15 @@ package com.wl4g.devops.share.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.share.AppCluster;
+import com.wl4g.devops.common.bean.share.AppHost;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.dao.share.AppClusterDao;
+import com.wl4g.devops.dao.share.AppHostDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.AppClusterService;
+import com.wl4g.devops.tool.common.cli.SshUtils;
 import com.wl4g.devops.tool.common.crypto.AesEncryptor;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,10 +34,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
 
@@ -48,6 +48,9 @@ public class AppClueterServiceImpl implements AppClusterService {
 
 	@Autowired
 	private AppInstanceDao appInstanceDao;
+
+	@Autowired
+	private AppHostDao appHostDao;
 
 	@Value("${cipher-key}")
 	protected String cipherKey;
@@ -176,6 +179,17 @@ public class AppClueterServiceImpl implements AppClusterService {
 		Assert.notNull(clusterId, "clusterId is null");
 		Assert.notNull(envType, "envType is null");
 		return appInstanceDao.selectByClusterIdAndEnvType(clusterId, envType);
+	}
+
+	@Override
+	public void connectTest(Integer hostId, String sshUser, String sshKey) throws IOException {
+		AppHost appHost = appHostDao.selectByPrimaryKey(hostId);
+		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+		String command = "echo "+ uuid;
+		SshUtils.CommandResult commandResult = SshUtils.execWithSsh2(appHost.getHostname(), sshUser, sshKey.toCharArray(), command, 10000);
+		if(!uuid.equals(commandResult.getMessage().replaceAll("\n",""))){
+			throw new IOException("Test Connect Fail");
+		}
 	}
 
 }
