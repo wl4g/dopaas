@@ -79,6 +79,8 @@ public class CiCdProperties implements InitializingBean {
 	 */
 	private DeployProperties deploy = new DeployProperties();
 
+	private TestReportProperties testReport = new TestReportProperties();
+
 	/**
 	 * Pipeline log records cleaner configuration.
 	 */
@@ -103,6 +105,14 @@ public class CiCdProperties implements InitializingBean {
 		if (Objects.nonNull(executor)) {
 			this.executor = executor;
 		}
+	}
+
+	public TestReportProperties getTestReport() {
+		return testReport;
+	}
+
+	public void setTestReport(TestReportProperties testReport) {
+		this.testReport = testReport;
 	}
 
 	public VcsSourceProperties getVcs() {

@@ -62,6 +62,8 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private String createByName;
 
+	private String annex;
+
 	public Integer getType() {
 		return type;
 	}
@@ -220,5 +222,13 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	public void setCreateByName(String createByName) {
 		this.createByName = createByName;
+	}
+
+	public String getAnnex() {
+		return annex;
+	}
+
+	public void setAnnex(String annex) {
+		this.annex = annex;
 	}
 }

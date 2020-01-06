@@ -52,6 +52,9 @@ spring:
             docker-native:
               docker-push-username: xburnerair00
               docker-push-password: hwj13535248668
+          test-report:
+            upload-path: /Users/vjay/Downloads/myupload
+            download-url: http://wl4g.debug:14046/ci-server/fs/download
 
   # Datasource configuration.
   datasource:
