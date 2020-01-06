@@ -47,6 +47,8 @@ public class Task extends BaseBean implements Serializable {
 
 	private String envType;
 
+	private Integer pcmId;
+
 	private String pmPlatform;
 
 	private List<AppInstance> instances;
@@ -190,6 +192,14 @@ public class Task extends BaseBean implements Serializable {
 
 	public String getPmPlatform() {
 		return pmPlatform;
+	}
+
+	public Integer getPcmId() {
+		return pcmId;
+	}
+
+	public void setPcmId(Integer pcmId) {
+		this.pcmId = pcmId;
 	}
 
 	public void setPmPlatform(String pmPlatform) {
