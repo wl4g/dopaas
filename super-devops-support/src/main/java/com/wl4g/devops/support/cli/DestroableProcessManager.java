@@ -15,15 +15,15 @@
  */
 package com.wl4g.devops.support.cli;
 
-import java.io.IOException;
-import java.util.concurrent.Executor;
-
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.support.IllegalProcessStateException;
 import com.wl4g.devops.common.exception.support.NoSuchProcessException;
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
+
+import java.io.IOException;
+import java.util.concurrent.Executor;
 
 /**
  * Supports destroable(Interruptible) execution command line process manager.
@@ -39,11 +39,12 @@ public interface DestroableProcessManager {
 	 * Execution command line and blocking wait results.
 	 * 
 	 * @param command
+	 * @return stander output to String
 	 * @throws IllegalProcessStateException
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	void execWaitForComplete(DestroableCommand command) throws IllegalProcessStateException, IOException, InterruptedException;
+	String execWaitForComplete(DestroableCommand command) throws IllegalProcessStateException, IOException, InterruptedException;
 
 	/**
 	 * Non-blocking command line, callback standard or exception output

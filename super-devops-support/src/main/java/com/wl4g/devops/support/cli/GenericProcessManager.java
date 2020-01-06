@@ -74,12 +74,12 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	}
 
 	@Override
-	public void execWaitForComplete(DestroableCommand cmd)
+	public String execWaitForComplete(DestroableCommand cmd)
 			throws IllegalProcessStateException, IOException, InterruptedException {
 		notNull(cmd, "Execution command can't null.");
 
 		DestroableProcessWrapper dpw = null;
-		if (cmd instanceof DestroableCommand) {
+		if (cmd instanceof LocalDestroableCommand) {
 			dpw = doExecLocal((LocalDestroableCommand) cmd);
 		} else if (cmd instanceof RemoteDestroableCommand) {
 			dpw = doExecRemote((RemoteDestroableCommand) cmd);
@@ -117,6 +117,8 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 				}
 				throw new IllegalProcessStateException(exitCode, errmsg);
 			}
+
+			return readFullyToString(dpw.getStdout());
 		} catch (IllegalProcessStateException ex) {
 			throw new IllegalProcessStateException(ex.getExitValue(),
 					String.format("Failed to process(%s), commands:[%s], cause: %s", cmd.getProcessId(),
@@ -236,8 +238,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	}
 
 	/**
-	 * Destroy process streams(IN/ERR {@link InputStream} and
-	 * {@link OutputStream}).
+	 * Destroy process streams(IN/ERR {@link InputStream} and {@link OutputStream}).
 	 * 
 	 * @param timeoutMs
 	 */

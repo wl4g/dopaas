@@ -97,7 +97,7 @@ public class AppClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/connectTest")
-	public RespBase<?> connectTest(Integer hostId, String sshUser,String sshKey) throws IOException {
+	public RespBase<?> connectTest(Integer hostId, String sshUser,String sshKey) throws IOException, InterruptedException {
 		RespBase<Object> resp = RespBase.create();
 		appClusterService.connectTest(hostId,sshUser,sshKey);
 		return resp;
