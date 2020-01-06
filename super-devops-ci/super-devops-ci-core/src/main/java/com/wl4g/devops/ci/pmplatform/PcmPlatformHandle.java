@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * @date 2020-01-03 14:47:00
  */
 @Component
-public class PmPlatformHandle {
+public class PcmPlatformHandle {
 
     @Autowired
     private TaskDao taskDao;
@@ -34,7 +34,7 @@ public class PmPlatformHandle {
 	}
 
 	@Autowired
-	public PmPlatformHandle(List<PmPlatformInterface> pmPlatformInterfaces) {
+	public PcmPlatformHandle(List<PmPlatformInterface> pmPlatformInterfaces) {
 		this.pmPlatformInterfaceMap = Collections.unmodifiableMap(buildPayBizStrategies(pmPlatformInterfaces));
 	}
 
