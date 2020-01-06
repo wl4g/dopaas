@@ -25,7 +25,8 @@ import com.wl4g.devops.dao.share.AppHostDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.AppClusterService;
-import com.wl4g.devops.tool.common.cli.SshUtils;
+import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.tool.common.crypto.AesEncryptor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,9 @@ public class AppClueterServiceImpl implements AppClusterService {
 
 	@Autowired
 	private AppHostDao appHostDao;
+
+	@Autowired
+	private DestroableProcessManager pm;
 
 	@Value("${cipher-key}")
 	protected String cipherKey;
@@ -182,12 +186,13 @@ public class AppClueterServiceImpl implements AppClusterService {
 	}
 
 	@Override
-	public void connectTest(Integer hostId, String sshUser, String sshKey) throws IOException {
+	public void connectTest(Integer hostId, String sshUser, String sshKey) throws IOException, InterruptedException {
 		AppHost appHost = appHostDao.selectByPrimaryKey(hostId);
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-		String command = "echo "+ uuid;
-		SshUtils.CommandResult commandResult = SshUtils.execWithSsh2(appHost.getHostname(), sshUser, sshKey.toCharArray(), command, 10000);
-		if(!uuid.equals(commandResult.getMessage().replaceAll("\n",""))){
+		String command = "echo " + uuid;
+		String echoStr = pm.execWaitForComplete(
+				new RemoteDestroableCommand(command, 10000, sshUser, appHost.getHostname(), sshKey.toCharArray()));
+		if (!uuid.equals(echoStr.replaceAll("\n", ""))) {
 			throw new IOException("Test Connect Fail");
 		}
 	}

@@ -43,6 +43,6 @@ public interface AppClusterService {
 
 	List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType);
 
-	void connectTest(Integer hostId, String sshUser,String sshKey) throws IOException;
+	void connectTest(Integer hostId, String sshUser,String sshKey) throws IOException, InterruptedException;
 
 }
