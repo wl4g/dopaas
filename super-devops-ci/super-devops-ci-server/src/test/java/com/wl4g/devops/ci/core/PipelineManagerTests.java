@@ -16,9 +16,7 @@
 package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.CiServer;
-import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.NewParameter;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +36,7 @@ public class PipelineManagerTests {
 
 	@Test
 	public void createTask() {
-		pipeManager.runPipeline(new NewParameter(152, null, null, null));
+		pipeManager.runPipeline(new NewParameter(152, null, null, null,null));
 	}
 
 }
