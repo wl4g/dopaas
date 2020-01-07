@@ -134,7 +134,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
 				task.getBranchName(), null, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
 				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, param.getTaskTraceId(), param.getTaskTraceType(),
-				param.getRemark(), task.getEnvType());
+				param.getRemark(), task.getEnvType(),param.getAnnex());
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
@@ -171,7 +171,7 @@ public class DefaultPipelineManager implements PipelineManager {
 				TASK_STATUS_CREATE, bakTaskHisy.getBranchName(), bakTaskHisy.getShaGit(), param.getTaskId(),
 				bakTaskHisy.getBuildCommand(), bakTaskHisy.getPreCommand(), bakTaskHisy.getPostCommand(),
 				bakTaskHisy.getProviderKind(), bakTaskHisy.getContactGroupId(), commands, bakTaskHisy.getTrackId(),
-				bakTaskHisy.getTrackType(), bakTaskHisy.getRemark(), bakTaskHisy.getEnvType());
+				bakTaskHisy.getTrackType(), bakTaskHisy.getRemark(), bakTaskHisy.getEnvType(),bakTaskHisy.getAnnex());
 
 		// Do roll-back pipeline job.
 		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
@@ -208,7 +208,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(task.getId());
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
 				param.getBranchName(), sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, null, null, null, task.getEnvType());
+				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, null, null, null, task.getEnvType(),null);
 
 		// Execution pipeline job.
 		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));

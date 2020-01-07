@@ -26,6 +26,7 @@
     <result column="track_type" property="trackType" jdbcType="INTEGER" />
     <result column="cost_time" property="costTime" jdbcType="BIGINT" />
     <result column="env_type" property="envType" jdbcType="VARCHAR" />
+    <result column="annex" property="annex" jdbcType="VARCHAR" />
 
     <!-- other  -->
     <result column="project_name" property="projectName" jdbcType="VARCHAR" />
@@ -37,11 +38,11 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, type, project_id, status, branch_name, sha_git,sha_local, ref_id,provider_kind,build_command,pre_command,post_command, remark, del_flag, create_date,
-    create_by, update_date, update_by,result,contact_group_id,track_id,track_type,cost_time,env_type
+    create_by, update_date, update_by,result,contact_group_id,track_id,track_type,cost_time,env_type,annex
   </sql>
   <sql id="Base_Column_List_t" >
     t.id, t.type, t.project_id, t.status, t.branch_name, t.sha_git,t.sha_local, t.ref_id,t.provider_kind,t.build_command,t.pre_command,t.post_command, t.remark, t.del_flag, t.create_date,
-    t.create_by, t.update_date, t.update_by,t.result,t.contact_group_id,t.track_id,t.track_type,t.cost_time,t.env_type
+    t.create_by, t.update_date, t.update_by,t.result,t.contact_group_id,t.track_id,t.track_type,t.cost_time,t.env_type,t.annex
   </sql>
   <sql id="Blob_Column_List" >
     result
@@ -63,13 +64,13 @@
       status, branch_name, sha_git,sha_local,
       ref_id, provider_kind,build_command,pre_command,post_command,remark, del_flag,
       create_date, create_by, update_date, 
-      update_by, result,contact_group_id,track_id,track_type,cost_time,env_type)
+      update_by, result,contact_group_id,track_id,track_type,cost_time,env_type,annex)
     values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{shaGit,jdbcType=VARCHAR},#{shaLocal,jdbcType=VARCHAR},
       #{refId,jdbcType=INTEGER},#{providerKind,jdbcType=VARCHAR},#{buildCommand,jdbcType=VARCHAR},#{preCommand,jdbcType=VARCHAR},#{postCommand,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR}, #{contactGroupId,jdbcType=INTEGER},
-      #{trackId,jdbcType=VARCHAR},#{trackType,jdbcType=INTEGER},#{costTime,jdbcType=BIGINT},#{envType,jdbcType=VARCHAR})
+      #{trackId,jdbcType=VARCHAR},#{trackType,jdbcType=INTEGER},#{costTime,jdbcType=BIGINT},#{envType,jdbcType=VARCHAR},#{annex,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" useGeneratedKeys="true" keyProperty="id">
     insert into ci_task_history
@@ -144,6 +145,9 @@
       <if test="envType != null" >
         env_type,
       </if>
+      <if test="annex != null" >
+        annex,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
 
@@ -215,6 +219,9 @@
       </if>
       <if test="envType != null" >
         #{envType,jdbcType=VARCHAR},
+      </if>
+      <if test="annex != null" >
+        #{annex,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -290,6 +297,9 @@
       <if test="envType != null" >
         env_type = #{envType,jdbcType=VARCHAR},
       </if>
+      <if test="annex != null" >
+        annex = #{annex,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -318,6 +328,7 @@
       track_type = #{trackType,jdbcType=INTEGER},
       cost_time = #{costTime,jdbcType=INTEGER},
       env_type = #{envType,jdbcType=VARCHAR},
+      annex = #{annex,jdbcType=VARCHAR},
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" >
@@ -345,6 +356,7 @@
       track_type = #{trackType,jdbcType=INTEGER},
       cost_time = #{costTime,jdbcType=INTEGER},
       env_type = #{envType,jdbcType=VARCHAR},
+      annex = #{annex,jdbcType=VARCHAR},
     where id = #{id,jdbcType=INTEGER}
   </update>
 

@@ -91,7 +91,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 
 			// Creating pipeline task.
 			// TODO traceId???
-			pipeManager.runPipeline(new NewParameter(task.getId(), "rollback", "1", 1));
+			pipeManager.runPipeline(new NewParameter(task.getId(), "rollback", "1", 1,null));
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();

@@ -45,14 +45,17 @@ public class NewParameter extends GenericParameter {
 	@NotNull
 	private Integer taskTraceType;
 
+	private String annex;
+
 	public NewParameter() {
 		super();
 	}
 
-	public NewParameter(Integer taskId, String remark, @NotNull String taskTraceId, @NotNull Integer taskTraceType) {
+	public NewParameter(Integer taskId, String remark, @NotNull String taskTraceId, @NotNull Integer taskTraceType,String annex) {
 		super(taskId, remark);
 		setTaskTraceId(taskTraceId);
 		setTaskTraceType(taskTraceType);
+		setAnnex(annex);
 	}
 
 	public String getTaskTraceId() {
@@ -73,4 +76,11 @@ public class NewParameter extends GenericParameter {
 		this.taskTraceType = taskTraceType;
 	}
 
+	public String getAnnex() {
+		return annex;
+	}
+
+	public void setAnnex(String annex) {
+		this.annex = annex;
+	}
 }
