@@ -26,7 +26,6 @@ import static java.util.stream.Collectors.toMap;
 
 import org.slf4j.Logger;
 import org.springframework.core.ResolvableType;
-import org.springframework.util.Assert;
 
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.Assert.state;
@@ -98,7 +97,7 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 * @return
 	 */
 	public O forAdapt(@NotNull String kindName) {
-		K kind = parseKind(kindName);
+		K kind = getParseKind(kindName);
 		O operator = registry.get(kind);
 		notNull(operator, String.format("Unsupported operator for '%s'", kind));
 		delegate.set(operator);
@@ -113,7 +112,7 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 */
 	protected O getAdapted() {
 		O operator = delegate.get();
-		Assert.state(nonNull(operator), "Not adapted to specify actual O, You must use adapted() to adapt before you can.");
+		state(nonNull(operator), "Not adapted to specify actual O, You must use adapted() to adapt before you can.");
 		return operator;
 	}
 
@@ -124,7 +123,7 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private K parseKind(@NotNull String kindName) {
+	private K getParseKind(@NotNull String kindName) {
 		for (Enum<?> kind : kindClass.getEnumConstants()) {
 			if (kind.name().equalsIgnoreCase(kindName)) {
 				return (K) kind;
