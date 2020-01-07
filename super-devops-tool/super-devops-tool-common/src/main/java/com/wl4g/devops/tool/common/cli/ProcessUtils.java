@@ -43,7 +43,7 @@ import static com.wl4g.devops.tool.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 /**
- * Execution command line process tools.
+ * Local command process tools.
  * 
  * @author Wangl.sir
  * @version v1.0.0 2019-09-08

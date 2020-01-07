@@ -47,11 +47,15 @@ public class LocalDestroableCommand extends DestroableCommand {
 	private boolean append = true;
 
 	public LocalDestroableCommand(String command, File pwdDir, long timeoutMs) {
-		this(null, command, pwdDir, timeoutMs);
+		this(null, command, pwdDir, false, timeoutMs);
 	}
 
 	public LocalDestroableCommand(String processId, String command, File pwdDir, long timeoutMs) {
-		super(processId, command, timeoutMs);
+		this(processId, command, pwdDir, true, timeoutMs);
+	}
+
+	public LocalDestroableCommand(String processId, String command, File pwdDir, boolean destroable, long timeoutMs) {
+		super(processId, command, destroable, timeoutMs);
 		// notNull(pwdDir, "Command pwdDir can't null.");
 		this.pwdDir = pwdDir;
 	}

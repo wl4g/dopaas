@@ -48,9 +48,9 @@ public class FsController {
 		String fileName = file.getOriginalFilename();// 文件名
 		String suffixName = fileName.substring(fileName.lastIndexOf("."));// 后缀名
 		fileName = UUID.randomUUID() + suffixName;// 新文件名
-		String path = config.getTestReport().getUploadPath() + "/" + fileName;
+		String path = config.getTestedReport().getUploadPath() + "/" + fileName;
 		saveFile(file, path);
-        resp.setData(config.getTestReport().getDownloadUrl()+"/"+fileName);
+		resp.setData(config.getTestedReport().getDownloadUrl() + "/" + fileName);
 		return resp;
 	}
 
@@ -67,35 +67,30 @@ public class FsController {
 		}
 	}
 
-    @RequestMapping(value = "/download/{fileName:.+}")
-    public ResponseEntity<FileSystemResource> exportXls(@PathVariable String fileName) {
-        File file = new File(config.getTestReport().getUploadPath()+"/"+fileName);
-        return export(file);
-    }
+	@RequestMapping(value = "/download/{fileName:.+}")
+	public ResponseEntity<FileSystemResource> exportXls(@PathVariable String fileName) {
+		File file = new File(config.getTestedReport().getUploadPath() + "/" + fileName);
+		return export(file);
+	}
 
+	public ResponseEntity<FileSystemResource> export(File file) {
+		if (file == null) {
+			return null;
+		}
+		if (!file.exists()) {
+			return null;
+		}
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+		String suffixName = file.getName().substring(file.getName().lastIndexOf("."));// 后缀名
+		headers.add("Content-Disposition", "attachment; filename=" + System.currentTimeMillis() + suffixName);
+		headers.add("Pragma", "no-cache");
+		headers.add("Expires", "0");
+		headers.add("Last-Modified", new Date().toString());
+		headers.add("ETag", String.valueOf(System.currentTimeMillis()));
 
-    public ResponseEntity<FileSystemResource> export(File file) {
-        if (file == null) {
-            return null;
-        }
-        if(!file.exists()){
-            return null;
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        String suffixName = file.getName().substring(file.getName().lastIndexOf("."));// 后缀名
-        headers.add("Content-Disposition", "attachment; filename=" + System.currentTimeMillis() + suffixName);
-        headers.add("Pragma", "no-cache");
-        headers.add("Expires", "0");
-        headers.add("Last-Modified", new Date().toString());
-        headers.add("ETag", String.valueOf(System.currentTimeMillis()));
-
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .contentLength(file.length())
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(new FileSystemResource(file));
-    }
+		return ResponseEntity.ok().headers(headers).contentLength(file.length())
+				.contentType(MediaType.parseMediaType("application/octet-stream")).body(new FileSystemResource(file));
+	}
 
 }

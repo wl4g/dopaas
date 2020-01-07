@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.List;
 
-import static com.wl4g.devops.tool.common.cli.SshUtils.transferFile;
+import static com.wl4g.devops.tool.common.cli.SshUtils.scpPutFile;
 import static org.springframework.util.Assert.hasText;
 
 /**
@@ -97,12 +97,13 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @throws Exception
 	 */
 	protected void transferToRemoteTmpDir(String remoteHost, String user, String sshkey) throws Exception {
-		String localFile = config.getJobBackupDir(getContext().getTaskHistory().getId()) + "/" + getPrgramInstallFileName() + "." + DEFAULT_FILE_SUFFIX;
+		String localFile = config.getJobBackupDir(getContext().getTaskHistory().getId()) + "/" + getPrgramInstallFileName() + "."
+				+ DEFAULT_FILE_SUFFIX;
 
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
 		writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, localFile));
 
-		transferFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey), new File(localFile), remoteTmpDir);
+		scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey), new File(localFile), remoteTmpDir);
 	}
 
 	/**

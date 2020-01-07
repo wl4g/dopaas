@@ -22,6 +22,7 @@ import static org.springframework.util.Assert.isTrue;
 import java.io.Serializable;
 
 import com.wl4g.devops.support.cli.GenericProcessManager;
+import com.wl4g.devops.support.cli.process.DestroableProcess;
 
 /**
  * Basic destroable command's wrapper.
@@ -61,16 +62,29 @@ public class DestroableCommand implements Serializable {
 	/** Command of timeout.(Ms) */
 	final private long timeoutMs;
 
+	/**
+	 * Set whether the current process is allowed to interrupt, for example:
+	 * when processing a lengthy task, when some key steps are executed, it can
+	 * be set as not to interrupt, which is very useful to ensure the security
+	 * of the task.
+	 * 
+	 * @see {@link DestroableProcess}
+	 */
+	final private boolean destroable;
+
 	public DestroableCommand(String cmd, long timeoutMs) {
-		this(null, cmd, timeoutMs);
+		this(null, cmd, false, timeoutMs);
 	}
 
-	public DestroableCommand(String processId, String cmd, long timeoutMs) {
-		// hasText(processId, "Command processId can't empty.");
+	public DestroableCommand(String processId, String cmd, boolean destroable, long timeoutMs) {
+		if (destroable) { // Must be set for a destructable processorId
+			hasText(processId, "Command processId can't empty.");
+		}
 		hasText(cmd, "Command can't empty.");
 		isTrue(timeoutMs > 0, "Command must timeoutMs>0.");
 		this.processId = processId;
 		this.cmd = cmd;
+		this.destroable = destroable;
 		this.timeoutMs = timeoutMs;
 	}
 
@@ -80,6 +94,10 @@ public class DestroableCommand implements Serializable {
 
 	public String getCmd() {
 		return cmd;
+	}
+
+	public boolean isDestroable() {
+		return destroable;
 	}
 
 	public long getTimeoutMs() {

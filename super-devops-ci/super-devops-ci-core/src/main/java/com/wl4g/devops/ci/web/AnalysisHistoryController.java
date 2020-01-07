@@ -32,18 +32,18 @@ import com.wl4g.devops.page.PageModel;
 @RequestMapping("/analysis")
 public class AnalysisHistoryController extends BaseController {
 
-    @Autowired
-    private AnalysisHistoryService analysisHistoryService;
+	@Autowired
+	private AnalysisHistoryService analysisHistoryService;
 
-    @RequestMapping(value = "/list")
-    public RespBase<?> list(String groupName, String projectName, PageModel pm) {
-        if (log.isInfoEnabled()) {
-            log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
-        }
-        RespBase<Object> resp = RespBase.create();
-        analysisHistoryService.list(pm);
-        resp.setData(pm);
-        return resp;
-    }
+	@RequestMapping(value = "/list")
+	public RespBase<?> list(String groupName, String projectName, PageModel pm) {
+		if (log.isInfoEnabled()) {
+			log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
+		}
+		RespBase<Object> resp = RespBase.create();
+		analysisHistoryService.list(pm);
+		resp.setData(pm);
+		return resp;
+	}
 
 }

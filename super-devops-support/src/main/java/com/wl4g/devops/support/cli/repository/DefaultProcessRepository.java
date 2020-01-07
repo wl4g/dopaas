@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.exception.support.NoSuchProcessException;
+import com.wl4g.devops.support.cli.process.DestroableProcess;
 
 /**
  * Default command-line process registration repository.
@@ -37,10 +38,10 @@ public class DefaultProcessRepository implements ProcessRepository {
 	/**
 	 * Command-line process registration repository.
 	 */
-	final protected ConcurrentMap<String, DestroableProcessWrapper> registry = new ConcurrentHashMap<>();
+	final protected ConcurrentMap<String, DestroableProcess> registry = new ConcurrentHashMap<>();
 
 	@Override
-	public void register(String processId, DestroableProcessWrapper dpw) {
+	public void register(String processId, DestroableProcess dpw) {
 		Assert.state(isNull(registry.putIfAbsent(processId, dpw)), "Already command line process");
 	}
 
@@ -50,8 +51,8 @@ public class DefaultProcessRepository implements ProcessRepository {
 	}
 
 	@Override
-	public DestroableProcessWrapper get(String processId) throws NoSuchProcessException {
-		DestroableProcessWrapper process = registry.get(processId);
+	public DestroableProcess get(String processId) throws NoSuchProcessException {
+		DestroableProcess process = registry.get(processId);
 		if (isNull(process)) {
 			throw new NoSuchProcessException(String.format("No such command-line process of '%s'", processId));
 		}
@@ -64,12 +65,12 @@ public class DefaultProcessRepository implements ProcessRepository {
 	}
 
 	@Override
-	public Collection<DestroableProcessWrapper> getProcessRegistry() {
+	public Collection<DestroableProcess> getProcessRegistry() {
 		return registry.values();
 	}
 
 	@Override
-	public DestroableProcessWrapper cleanup(String processId) {
+	public DestroableProcess cleanup(String processId) {
 		return registry.remove(processId);
 	}
 

@@ -38,12 +38,22 @@ public class RemoteDestroableCommand extends DestroableCommand {
 	final private char[] pemPrivateKey;
 
 	public RemoteDestroableCommand(String command, long timeoutMs, String user, String host, char[] pemPrivateKey) {
-		this(null, command, timeoutMs, user, host, pemPrivateKey);
+		this(null, command, false, timeoutMs, user, host, pemPrivateKey);
+	}
+
+	public RemoteDestroableCommand(String command, boolean destroable, long timeoutMs, String user, String host,
+			char[] pemPrivateKey) {
+		this(null, command, destroable, timeoutMs, user, host, pemPrivateKey);
 	}
 
 	public RemoteDestroableCommand(String processId, String command, long timeoutMs, String user, String host,
 			char[] pemPrivateKey) {
-		super(processId, command, timeoutMs);
+		this(processId, command, true, timeoutMs, user, host, pemPrivateKey);
+	}
+
+	public RemoteDestroableCommand(String processId, String command, boolean destroable, long timeoutMs, String user, String host,
+			char[] pemPrivateKey) {
+		super(processId, command, destroable, timeoutMs);
 		hasText(user, "Command remote user can't empty.");
 		hasText(host, "Command remote host can't empty.");
 		notNull(pemPrivateKey, "Command remote ssh pubkey can't empty.");

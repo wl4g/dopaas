@@ -30,13 +30,13 @@ import com.wl4g.devops.page.PageModel;
 @Service
 public class AnalysisHistoryServiceImpl implements AnalysisHistoryService {
 
-    @Autowired
-    private AnalysisHistoryDao analysisHistoryDao;
+	@Autowired
+	private AnalysisHistoryDao analysisHistoryDao;
 
-    @Override
-    public PageModel list(PageModel pm) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(analysisHistoryDao.list());
-        return pm;
-    }
+	@Override
+	public PageModel list(PageModel pm) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(analysisHistoryDao.list());
+		return pm;
+	}
 }

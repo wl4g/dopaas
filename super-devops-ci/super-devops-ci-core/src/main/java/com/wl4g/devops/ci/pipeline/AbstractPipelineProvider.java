@@ -31,8 +31,8 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.tool.common.cli.SshUtils.CommandResult;
 import com.wl4g.devops.tool.common.crypto.AesEncryptor;
 
 import org.slf4j.Logger;
@@ -44,7 +44,6 @@ import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_END;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_START;
-import static com.wl4g.devops.tool.common.cli.SshUtils.execWithSsh2;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
@@ -196,16 +195,16 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
 		writeBuildLog("Execute remote of %s@%s, timeout: %s, command: [%s]", user, remoteHost, timeoutMs, command);
 
-		// Execution command.
-		CommandResult result = execWithSsh2(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
-		if (!isBlank(result.getMessage())) {
-			String logmsg = writeBuildLog("%s@%s, command:[%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command,
-					result.getMessage());
-			log.info(logmsg);
-		}
-		if (!isBlank(result.getErrmsg())) {
-			String logmsg = writeBuildLog("%s@%s, command:[%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
-					result.getErrmsg());
+		try {
+			RemoteDestroableCommand cmd = new RemoteDestroableCommand(command, timeoutMs, user, remoteHost,
+					getUsableCipherSshKey(sshkey));
+			// Execution command.
+			String outmsg = pm.execWaitForComplete(cmd);
+
+			log.info(writeBuildLog("%s@%s, command: [%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command, outmsg));
+		} catch (Exception e) {
+			String logmsg = writeBuildLog("%s@%s, command: [%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
+					e.getMessage());
 			log.info(logmsg);
 
 			// Strictly handle, as long as there is error message in remote

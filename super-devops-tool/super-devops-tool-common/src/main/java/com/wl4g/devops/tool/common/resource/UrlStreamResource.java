@@ -50,9 +50,9 @@ import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 
 /**
- * {@link StreamResource} implementation for {@code java.net.URL} locators. Supports
- * resolution as a {@code URL} and also as a {@code File} in case of the
- * {@code "file:"} protocol.
+ * {@link StreamResource} implementation for {@code java.net.URL} locators.
+ * Supports resolution as a {@code URL} and also as a {@code File} in case of
+ * the {@code "file:"} protocol.
  *
  * @author Juergen Hoeller
  * @since 28.12.2003
@@ -289,7 +289,8 @@ public class UrlStreamResource extends AbstractFileResolvingResource {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return (obj == this || (obj instanceof UrlStreamResource && this.cleanedUrl.equals(((UrlStreamResource) obj).cleanedUrl)));
+		return (obj == this
+				|| (obj instanceof UrlStreamResource && this.cleanedUrl.equals(((UrlStreamResource) obj).cleanedUrl)));
 	}
 
 	/**

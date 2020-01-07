@@ -37,7 +37,6 @@ import java.util.List;
 @RequestMapping("/host")
 public class AppHostController extends BaseController {
 
-
 	@Autowired
 	private HostService hostService;
 
@@ -50,16 +49,15 @@ public class AppHostController extends BaseController {
 	}
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"share:host"})
-	public RespBase<?> list(PageModel pm,String name,String hostname) {
+	@RequiresPermissions(value = { "share:host" })
+	public RespBase<?> list(PageModel pm, String name, String hostname) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(hostService.page(pm,name,hostname,null));
+		resp.setData(hostService.page(pm, name, hostname, null));
 		return resp;
 	}
 
-
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"share:host"})
+	@RequiresPermissions(value = { "share:host" })
 	public RespBase<?> save(AppHost host) {
 		RespBase<Object> resp = RespBase.create();
 		hostService.save(host);
@@ -67,16 +65,15 @@ public class AppHostController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"share:host"})
+	@RequiresPermissions(value = { "share:host" })
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(hostService.detail(id));
 		return resp;
 	}
 
-
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"share:host"})
+	@RequiresPermissions(value = { "share:host" })
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		hostService.del(id);

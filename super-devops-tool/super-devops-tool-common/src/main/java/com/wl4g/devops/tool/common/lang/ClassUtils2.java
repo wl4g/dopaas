@@ -564,8 +564,8 @@ public abstract class ClassUtils2 {
 	 * this. <br/>
 	 * As such, this function may be used to build a path suitable for loading a
 	 * resource file that is in the same package as a class file, although
-	 * {@link org.ClassPathStreamResource.core.io.ClassPathResource} is usually even
-	 * more convenient.
+	 * {@link org.ClassPathStreamResource.core.io.ClassPathResource} is usually
+	 * even more convenient.
 	 * 
 	 * @param clazz
 	 *            the Class whose package will be used as the base

@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.ci.config.CiCdAutoConfiguration;
+import com.wl4g.devops.ci.config.CiCdProperties;
 
 /**
  * Abstract PCM operator.
@@ -40,7 +40,7 @@ public abstract class AbstractPcmOperator implements PcmOperator, InitializingBe
 	 * CICD PCM configuration.
 	 */
 	@Autowired
-	protected CiCdAutoConfiguration config;
+	protected CiCdProperties config;
 
 	/**
 	 * {@link RestTemplate} of PCM API provider.
@@ -50,6 +50,9 @@ public abstract class AbstractPcmOperator implements PcmOperator, InitializingBe
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+		factory.setConnectTimeout(config.getPcm().getConnectTimeout());
+		factory.setReadTimeout(config.getPcm().getReadTimeout());
+		factory.setMaxResponseSize(config.getPcm().getMaxResponseSize());
 		this.restTemplate = new RestTemplate(factory);
 	}
 

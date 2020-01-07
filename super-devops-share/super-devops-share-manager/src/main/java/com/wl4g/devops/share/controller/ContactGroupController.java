@@ -40,7 +40,7 @@ public class ContactGroupController extends BaseController {
 	private ContactGroupService contactGroupService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"share:contact"})
+	@RequiresPermissions(value = { "share:contact" })
 	public RespBase<?> list(String name, PageModel pm) {
 		log.info("into ContactGroupController.list prarms::" + "name = {} , pm = {} ", name, pm);
 		RespBase<Object> resp = RespBase.create();
@@ -49,7 +49,7 @@ public class ContactGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"share:contact"})
+	@RequiresPermissions(value = { "share:contact" })
 	public RespBase<?> save(AlarmContactGroup alarmContactGroup) {
 		log.info("into ContactGroupController.save prarms::" + "alarmContactGroup = {} ", alarmContactGroup);
 		Assert.notNull(alarmContactGroup, "group is null");
@@ -60,7 +60,7 @@ public class ContactGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"share:contact"})
+	@RequiresPermissions(value = { "share:contact" })
 	public RespBase<?> del(Integer id) {
 		log.info("into ContactController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -69,7 +69,7 @@ public class ContactGroupController extends BaseController {
 	}
 
 	@RequestMapping(value = "/groupList")
-	@RequiresPermissions(value = {"share:contact"})
+	@RequiresPermissions(value = { "share:contact" })
 	public RespBase<?> groupList() {
 		RespBase<Object> resp = RespBase.create();
 		List<AlarmContactGroup> alarmContactGroups = contactGroupService.contactGroups(null);

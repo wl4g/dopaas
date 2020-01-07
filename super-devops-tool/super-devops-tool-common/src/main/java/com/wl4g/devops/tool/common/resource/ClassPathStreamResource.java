@@ -47,8 +47,8 @@ import com.wl4g.devops.tool.common.lang.ObjectUtils;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 
 /**
- * {@link org.ClassPathStreamResource.io.ClassPathResource} implementation for class
- * path resources. Uses either a given {@link ClassLoader} or a given
+ * {@link org.ClassPathStreamResource.io.ClassPathResource} implementation for
+ * class path resources. Uses either a given {@link ClassLoader} or a given
  * {@link Class} for loading resources.
  *
  * <p>

@@ -16,28 +16,32 @@
 package com.wl4g.devops.ci.config;
 
 /**
+ * Test and inspection report configuration.
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2020-01-06 17:25:00
+ * @version 2020年1月7日 v1.0.0
+ * @see
  */
-public class TestReportProperties {
+public class TestedReportProperties {
 
-    private String uploadPath;
+	private String uploadPath;
 
-    private String downloadUrl;
+	private String downloadUrl;
 
-    public String getUploadPath() {
-        return uploadPath;
-    }
+	public String getUploadPath() {
+		return uploadPath;
+	}
 
-    public void setUploadPath(String uploadPath) {
-        this.uploadPath = uploadPath;
-    }
+	public void setUploadPath(String uploadPath) {
+		this.uploadPath = uploadPath;
+	}
 
-    public String getDownloadUrl() {
-        return downloadUrl;
-    }
+	public String getDownloadUrl() {
+		return downloadUrl;
+	}
 
-    public void setDownloadUrl(String downloadUrl) {
-        this.downloadUrl = downloadUrl;
-    }
+	public void setDownloadUrl(String downloadUrl) {
+		this.downloadUrl = downloadUrl;
+	}
 }

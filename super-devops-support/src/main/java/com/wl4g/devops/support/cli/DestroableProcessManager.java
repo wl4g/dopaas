@@ -41,10 +41,10 @@ public interface DestroableProcessManager {
 	 * @param command
 	 * @return stander output to String
 	 * @throws IllegalProcessStateException
-	 * @throws IOException
 	 * @throws InterruptedException
+	 * @throws Exception
 	 */
-	String execWaitForComplete(DestroableCommand command) throws IllegalProcessStateException, IOException, InterruptedException;
+	String execWaitForComplete(DestroableCommand command) throws IllegalProcessStateException, InterruptedException, Exception;
 
 	/**
 	 * Non-blocking command line, callback standard or exception output
@@ -55,10 +55,11 @@ public interface DestroableProcessManager {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	void exec(DestroableCommand command, Executor executor, ProcessCallback callback) throws IOException, InterruptedException;
+	void exec(DestroableCommand command, Executor executor, ProcessCallback callback) throws Exception, InterruptedException;
 
 	/**
-	 *Destroy command processing process guidance complete (success or failure).</br>
+	 * Destroy command processing process guidance complete (success or
+	 * failure).</br>
 	 * <font color=red>There's no guarantee that it will be killed.</font>
 	 * 
 	 * @param signal

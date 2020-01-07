@@ -17,140 +17,178 @@ package com.wl4g.devops.tool.common.cli;
 
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
+import ch.ethz.ssh2.SCPInputStream;
 import ch.ethz.ssh2.SCPOutputStream;
 import ch.ethz.ssh2.Session;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.wl4g.devops.tool.common.function.CallbackFunction;
+import com.wl4g.devops.tool.common.function.ProcessFunction;
 
 import java.io.*;
 
 import static ch.ethz.ssh2.ChannelCondition.*;
 import static com.wl4g.devops.tool.common.io.ByteStreams2.readFullyToString;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 /**
- * SSH connection utility tools.
+ * Remote SSH command process tools.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月24日
  * @since
  */
 public abstract class SshUtils {
-	final protected static Logger log = LoggerFactory.getLogger(SshUtils.class);
+	final protected static Logger log = getLogger(SshUtils.class);
+	final public static int DEFAULT_TRANSFER_BUFFER = 1024 * 6;
 
-	final public static int DEFAULT_TRANSFER_BUF = 1024 * 8;
+	// --- Transfer files. ---
 
 	/**
-	 * Transfer file to remote host directory.
+	 * Transfer get file from remote host.
 	 * 
 	 * @param host
 	 * @param user
+	 * @param pemPrivateKey
 	 * @param localFile
-	 * @param remoteDir
-	 * @throws IOException
+	 * @param remoteFilePath
+	 * @throws Exception
 	 */
-	public static void transferFile(String host, String user, File localFile, String remoteDir) throws IOException {
-		hasText(host, "Transfer host must not be empty.");
-		hasText(user, "Transfer user must not be empty.");
+	public static void scpGetFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteFilePath)
+			throws Exception {
 		notNull(localFile, "Transfer localFile must not be null.");
-		hasText(remoteDir, "Transfer remoteDir must not be empty.");
+		hasText(remoteFilePath, "Transfer remoteDir can't empty.");
+		log.debug("SSH2 transfer file from {} to {}@{}:{}", localFile.getAbsolutePath(), user, host, remoteFilePath);
 
-		// Check private key.
-		File defaultKey = new File(USER_HOME + "/.ssh/id_rsa");
-		isTrue(defaultKey.exists(), String.format("Not found privateKey for %s", defaultKey));
-
-		try (CharArrayWriter cw = new CharArrayWriter(); FileReader fr = new FileReader(defaultKey.getAbsolutePath())) {
-			char[] buff = new char[256];
-			int len = 0;
-			while ((len = fr.read(buff)) != -1) {
-				cw.write(buff, 0, len);
-			}
-
-			// Transfer file.
-			transferFile(host, user, cw.toCharArray(), localFile, remoteDir);
+		// Use local current user private key for fallback.
+		if (isNull(pemPrivateKey)) {
+			pemPrivateKey = getLocalUserSshPrivateKey(host, user);
 		}
+
+		try {
+			// Transfer get file.
+			doSCPTransfer0(host, user, pemPrivateKey, scp -> {
+				try (SCPInputStream sis = scp.get(remoteFilePath); FileOutputStream fos = new FileOutputStream(localFile);) {
+					int i = 0;
+					byte[] buf = new byte[DEFAULT_TRANSFER_BUFFER];
+					while ((i = sis.read(buf)) != -1) {
+						fos.write(buf, 0, i);
+					}
+					fos.flush();
+				}
+			});
+
+			log.debug("SCP get transfered: '{}' from '{}@{}:{}'", localFile.getAbsolutePath(), user, host, remoteFilePath);
+		} catch (IOException e) {
+			throw e;
+		}
+
 	}
 
 	/**
-	 * Transfer file to remote host directory.
+	 * Transfer put file to remote host directory.
 	 * 
 	 * @param host
 	 * @param user
 	 * @param pemPrivateKey
 	 * @param localFile
 	 * @param remoteDir
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public static void transferFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteDir)
-			throws IOException {
-		hasText(host, "Transfer host must not be empty.");
-		hasText(user, "Transfer user must not be empty.");
-		notNull(pemPrivateKey, "Transfer pemPrivateKey must not be null.");
+	public static void scpPutFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteDir)
+			throws Exception {
 		notNull(localFile, "Transfer localFile must not be null.");
-		hasText(remoteDir, "Transfer remoteDir must not be empty.");
-		if (log.isDebugEnabled()) {
-			log.debug("Ssh2 transfer file from {} to {}@{}:{}", localFile.getAbsolutePath(), user, host, remoteDir);
+		hasText(remoteDir, "Transfer remoteDir can't empty.");
+		log.debug("SSH2 transfer file from {} to {}@{}:{}", localFile.getAbsolutePath(), user, host, remoteDir);
+
+		// Use local current user private key for fallback.
+		if (isNull(pemPrivateKey)) {
+			pemPrivateKey = getLocalUserSshPrivateKey(host, user);
 		}
 
-		Connection conn = null;
-		SCPOutputStream sos = null;
-		FileInputStream fis = null;
 		try {
-			conn = new Connection(host);
-			if (log.isDebugEnabled()) {
-				log.debug("SSH2 scp connect to {}@{}", user, host);
-			}
-			// Connect.
-			conn.connect();
-
-			// Authentication with pub-key.
-			isTrue(conn.authenticateWithPublicKey(user, pemPrivateKey, null), String
-					.format("Failed to SSH2 authenticate with %s@%s privateKey(%s)", user, host, new String(pemPrivateKey)));
-
 			// Transfer send file.
-			SCPClient scp = new SCPClient(conn);
-			sos = scp.put(localFile.getName(), localFile.length(), remoteDir, "0744");
+			doSCPTransfer0(host, user, pemPrivateKey, scp -> {
+				try (SCPOutputStream sos = scp.put(localFile.getName(), localFile.length(), remoteDir, "0744");
+						FileInputStream fis = new FileInputStream(localFile);) {
+					int i = 0;
+					byte[] buf = new byte[DEFAULT_TRANSFER_BUFFER];
+					while ((i = fis.read(buf)) != -1) {
+						sos.write(buf, 0, i);
+					}
+					sos.flush();
+				}
+			});
 
-			fis = new FileInputStream(localFile);
-			int i = 0;
-			byte[] buf = new byte[DEFAULT_TRANSFER_BUF];
-			while ((i = fis.read(buf)) != -1) {
-				sos.write(buf, 0, i);
-			}
-			sos.flush();
-
-			if (log.isDebugEnabled()) {
-				log.debug("SSH2 scp successful for => {} to {}", localFile.getAbsolutePath(), remoteDir);
-			}
+			log.debug("SCP put transfered: '{}' to '{}@{}:{}'", localFile.getAbsolutePath(), user, host, remoteDir);
 		} catch (IOException e) {
+			throw e;
+		}
+
+	}
+
+	/**
+	 * Get local current user ssh authentication private key.
+	 * 
+	 * @param host
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
+	private final static char[] getLocalUserSshPrivateKey(String host, String user) throws Exception {
+		// Check private key.
+		File privateKey = new File(USER_HOME + "/.ssh/id_rsa");
+		isTrue(privateKey.exists(), String.format("Not found privateKey for %s", privateKey));
+
+		try (CharArrayWriter cw = new CharArrayWriter(); FileReader fr = new FileReader(privateKey.getAbsolutePath())) {
+			char[] buff = new char[256];
+			int len = 0;
+			while ((len = fr.read(buff)) != -1) {
+				cw.write(buff, 0, len);
+			}
+			return cw.toCharArray();
+		}
+	}
+
+	/**
+	 * Perform file transfer with remote host, including scp.put/upload or
+	 * scp.get/download.
+	 * 
+	 * @param host
+	 * @param user
+	 * @param pemPrivateKey
+	 * @param processor
+	 * @throws IOException
+	 */
+	private final static void doSCPTransfer0(String host, String user, char[] pemPrivateKey,
+			CallbackFunction<SCPClient> processor) throws Exception {
+		hasText(host, "Transfer host can't empty.");
+		hasText(user, "Transfer user can't empty.");
+		notNull(pemPrivateKey, "Transfer pemPrivateKey can't null.");
+		notNull(processor, "Transfer processor can't null.");
+
+		Connection conn = null;
+		try {
+			// Transfer file(put/get).
+			processor.process(new SCPClient(conn = createSsh2Connection(host, user, pemPrivateKey)));
+		} catch (Exception e) {
 			throw e;
 		} finally {
 			try {
-				if (nonNull(fis)) {
-					fis.close();
-				}
-			} catch (Exception e) {
-				log.error("", e);
-			}
-			try {
-				if (nonNull(sos)) {
-					sos.close();
-				}
-			} catch (Exception e) {
-				log.error("", e);
-			}
-			try {
-				if (nonNull(conn)) {
+				if (nonNull(conn))
 					conn.close();
-				}
 			} catch (Exception e) {
 				log.error("", e);
 			}
 		}
 
 	}
+
+	// --- Execution commands. ---
 
 	/**
 	 * Execution commands with SSH2.
@@ -163,8 +201,8 @@ public abstract class SshUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static CommandResult execWithSsh2(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
-			throws IOException {
+	public static SshExecResponse execWithSsh2(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
+			throws Exception {
 		return execWaitForCompleteWithSsh2(host, user, pemPrivateKey, command, session -> {
 			String message = null, errmsg = null;
 			if (nonNull(session.getStdout())) {
@@ -173,7 +211,7 @@ public abstract class SshUtils {
 			if (nonNull(session.getStderr())) {
 				errmsg = readFullyToString(session.getStderr());
 			}
-			return new CommandResult(session.getExitSignal(), session.getExitStatus(), message, errmsg);
+			return new SshExecResponse(session.getExitSignal(), session.getExitStatus(), message, errmsg);
 		}, timeoutMs);
 	}
 
@@ -191,8 +229,8 @@ public abstract class SshUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
-			CommandProcessor processor, long timeoutMs) throws IOException {
-		return execWithSsh2(host, user, pemPrivateKey, command, session -> {
+			ProcessFunction<Session, Object> processor, long timeoutMs) throws Exception {
+		return doExecSsh2Command0(host, user, pemPrivateKey, command, session -> {
 			// Wait for completed by condition.
 			session.waitForCondition((CLOSED | EOF | TIMEOUT), timeoutMs);
 			return (T) processor.process(session);
@@ -212,29 +250,18 @@ public abstract class SshUtils {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T execWithSsh2(String host, String user, char[] pemPrivateKey, String command, CommandProcessor processor,
-			long timeoutMs) throws IOException {
-		hasText(host, "SSH2 command host must not be empty.");
-		hasText(user, "SSH2 command user must not be empty.");
+	private final static <T> T doExecSsh2Command0(String host, String user, char[] pemPrivateKey, String command,
+			ProcessFunction<Session, Object> processor, long timeoutMs) throws Exception {
+		hasText(host, "SSH2 command host can't empty.");
+		hasText(user, "SSH2 command user can't empty.");
 		notNull(pemPrivateKey, "SSH2 command pemPrivateKey must not be null.");
 		notNull(processor, "SSH2 command processor must not be null.");
 
 		Connection conn = null;
 		Session session = null;
 		try {
-			conn = new Connection(host);
-			if (log.isDebugEnabled()) {
-				log.debug("SSH2 command connect to {}@{}", user, host);
-			}
-			// Connect.
-			conn.connect();
-
-			// Authentication with pub-key.
-			isTrue(conn.authenticateWithPublicKey(user, pemPrivateKey, null), String
-					.format("Failed to SSH2 authenticate with %s@%s privateKey(%s)", user, host, new String(pemPrivateKey)));
-
 			// Session & send command.
-			session = conn.openSession();
+			session = (conn = createSsh2Connection(host, user, pemPrivateKey)).openSession();
 			if (log.isInfoEnabled()) {
 				log.info("SSH2 sending command to {}@{}, ({})", user, host, command);
 			}
@@ -246,16 +273,14 @@ public abstract class SshUtils {
 			throw e;
 		} finally {
 			try {
-				if (nonNull(session)) {
+				if (nonNull(session))
 					session.close();
-				}
 			} catch (Exception e2) {
 				log.error("", e2);
 			}
 			try {
-				if (nonNull(conn)) {
+				if (nonNull(conn))
 					conn.close();
-				}
 			} catch (Exception e2) {
 				log.error("", e2);
 			}
@@ -263,33 +288,30 @@ public abstract class SshUtils {
 	}
 
 	/**
-	 * SSH2 commands processor
+	 * create ssh2 connection.
 	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年10月23日
-	 * @since
+	 * @param host
+	 * @param user
+	 * @param pemPrivateKey
+	 * @return
+	 * @throws IOException
 	 */
-	public static interface CommandProcessor {
+	private final static Connection createSsh2Connection(String host, String user, char[] pemPrivateKey) throws IOException {
+		hasText(host, "SSH2 command host can't empty.");
+		hasText(user, "SSH2 command user can't empty.");
+		notNull(pemPrivateKey, "SSH2 command pemPrivateKey must not be null.");
 
-		/**
-		 * SSH command process.
-		 * 
-		 * @param session
-		 * @return
-		 * @throws IOException
-		 */
-		Object process(Session session) throws IOException;
+		Connection conn = new Connection(host);
+		conn.connect();
+		// Authentication with pub-key.
+		isTrue(conn.authenticateWithPublicKey(user, pemPrivateKey, null),
+				String.format("Failed to SSH2 authenticate with %s@%s privateKey(%s)", user, host, new String(pemPrivateKey)));
 
+		log.debug("SSH2 connected to {}@{}", user, host);
+		return conn;
 	}
 
-	/**
-	 * Commands result wrapper.
-	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年10月23日
-	 * @since
-	 */
-	public static class CommandResult {
+	public static class SshExecResponse {
 
 		/** Remote commands exit signal. */
 		final private String exitSignal;
@@ -303,7 +325,7 @@ public abstract class SshUtils {
 		/** Error message */
 		final private String errmsg;
 
-		public CommandResult(String exitSignal, Integer exitCode, String message, String errmsg) {
+		public SshExecResponse(String exitSignal, Integer exitCode, String message, String errmsg) {
 			super();
 			this.exitSignal = exitSignal;
 			this.exitCode = exitCode;

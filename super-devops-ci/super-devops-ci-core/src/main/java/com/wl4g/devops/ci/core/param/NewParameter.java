@@ -51,7 +51,8 @@ public class NewParameter extends GenericParameter {
 		super();
 	}
 
-	public NewParameter(Integer taskId, String remark, @NotNull String taskTraceId, @NotNull Integer taskTraceType,String annex) {
+	public NewParameter(Integer taskId, String remark, @NotNull String taskTraceId, @NotNull Integer taskTraceType,
+			String annex) {
 		super(taskId, remark);
 		setTaskTraceId(taskTraceId);
 		setTaskTraceType(taskTraceType);

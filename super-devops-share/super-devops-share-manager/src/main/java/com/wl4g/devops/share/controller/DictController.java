@@ -48,23 +48,23 @@ public class DictController extends BaseController {
 	private JedisService jedisService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"share:dict"})
+	@RequiresPermissions(value = { "share:dict" })
 	public RespBase<?> list(PageModel pm, String key, String label, String type, String description) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(dictService.list(pm,key,label,type,description));
+		resp.setData(dictService.list(pm, key, label, type, description));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"share:dict"})
+	@RequiresPermissions(value = { "share:dict" })
 	public RespBase<?> save(Dict dict, Boolean isEdit) {
 		RespBase<Object> resp = RespBase.create();
-		dictService.save(dict,isEdit);
+		dictService.save(dict, isEdit);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"share:dict"})
+	@RequiresPermissions(value = { "share:dict" })
 	public RespBase<?> detail(String key) {
 		RespBase<Object> resp = RespBase.create();
 		Dict dict = dictService.detail(key);
@@ -73,7 +73,7 @@ public class DictController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"share:dict"})
+	@RequiresPermissions(value = { "share:dict" })
 	public RespBase<?> del(String key) {
 		RespBase<Object> resp = RespBase.create();
 		dictService.del(key);
