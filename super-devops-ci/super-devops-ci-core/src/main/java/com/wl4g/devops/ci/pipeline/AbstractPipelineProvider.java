@@ -22,7 +22,6 @@ import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.ci.vcs.VcsOperator;
-import com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
@@ -34,7 +33,6 @@ import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.cli.SshUtils.CommandResult;
 import com.wl4g.devops.tool.common.crypto.AesEncryptor;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +44,8 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_END;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_START;
 import static com.wl4g.devops.tool.common.cli.SshUtils.execWithSsh2;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
-import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
+import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.tool.common.lang.DateUtils2.getDate;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
@@ -134,8 +132,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @param vcsProvider
 	 * @return
 	 */
-	protected VcsOperator getVcsOperator(Integer vcsProvider) {
-		return vcsAdapter.forAdapt(VcsProvider.of(vcsProvider));
+	protected VcsOperator getVcsOperator(String vcsProvider) {
+		return vcsAdapter.forAdapt(vcsProvider);
 	}
 
 	// --- Fingerprint's. ---
