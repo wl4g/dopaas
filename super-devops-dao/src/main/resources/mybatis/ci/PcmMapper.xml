@@ -7,7 +7,7 @@
     <result column="provider_kind" jdbcType="VARCHAR" property="providerKind" />
     <result column="base_url" jdbcType="VARCHAR" property="baseUrl" />
     <result column="auth_type" jdbcType="INTEGER" property="authType" />
-    <result column="access_key" jdbcType="VARCHAR" property="accessKey" />
+    <result column="access_token" jdbcType="VARCHAR" property="accessToken" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -18,7 +18,7 @@
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, provider_kind, base_url, auth_type, access_key, username, password, remark, 
+    id, name, provider_kind, base_url, auth_type, access_token, username, password, remark,
     del_flag, create_date, create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -50,12 +50,12 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Pcm">
     insert into ci_pcm (id, name, provider_kind,
-      base_url, auth_type, access_key, 
+      base_url, auth_type, access_token,
       username, password, remark, 
       del_flag, create_date, create_by, 
       update_date, update_by)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{providerKind,jdbcType=VARCHAR}, 
-      #{baseUrl,jdbcType=VARCHAR}, #{authType,jdbcType=INTEGER}, #{accessKey,jdbcType=VARCHAR}, 
+      #{baseUrl,jdbcType=VARCHAR}, #{authType,jdbcType=INTEGER}, #{accessToken,jdbcType=VARCHAR},
       #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
@@ -78,8 +78,8 @@
       <if test="authType != null">
         auth_type,
       </if>
-      <if test="accessKey != null">
-        access_key,
+      <if test="accessToken != null">
+        access_token,
       </if>
       <if test="username != null">
         username,
@@ -122,8 +122,8 @@
       <if test="authType != null">
         #{authType,jdbcType=INTEGER},
       </if>
-      <if test="accessKey != null">
-        #{accessKey,jdbcType=VARCHAR},
+      <if test="accessToken != null">
+        #{accessToken,jdbcType=VARCHAR},
       </if>
       <if test="username != null">
         #{username,jdbcType=VARCHAR},
@@ -166,8 +166,8 @@
       <if test="authType != null">
         auth_type = #{authType,jdbcType=INTEGER},
       </if>
-      <if test="accessKey != null">
-        access_key = #{accessKey,jdbcType=VARCHAR},
+      <if test="accessToken != null">
+        access_token = #{accessToken,jdbcType=VARCHAR},
       </if>
       <if test="username != null">
         username = #{username,jdbcType=VARCHAR},
@@ -202,7 +202,7 @@
       provider_kind = #{providerKind,jdbcType=VARCHAR},
       base_url = #{baseUrl,jdbcType=VARCHAR},
       auth_type = #{authType,jdbcType=INTEGER},
-      access_key = #{accessKey,jdbcType=VARCHAR},
+      access_token = #{accessToken,jdbcType=VARCHAR},
       username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},

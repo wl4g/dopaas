@@ -32,6 +32,6 @@ public interface VcsDao {
 
 	int updateByPrimaryKey(Vcs record);
 
-	Page<Vcs> list(@Param("name")String name,@Param("provider")Integer provider,@Param("authType")Integer authType);
+	Page<Vcs> list(@Param("name")String name,@Param("providerKind")String providerKind,@Param("authType")Integer authType);
 
 }

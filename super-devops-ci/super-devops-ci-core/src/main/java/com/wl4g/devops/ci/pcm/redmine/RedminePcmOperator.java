@@ -20,9 +20,10 @@ import com.wl4g.devops.ci.pcm.redmine.model.RedmineIssues;
 import com.wl4g.devops.ci.pcm.redmine.model.RedmineIssues.RedmineIssue;
 import com.wl4g.devops.ci.pcm.redmine.model.RedmineProjects;
 import com.wl4g.devops.ci.pcm.redmine.model.RedmineUsers;
+import com.wl4g.devops.common.bean.ci.Pcm;
 import com.wl4g.devops.common.web.model.SelectionModel;
-
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,18 +38,15 @@ import java.util.List;
  */
 public class RedminePcmOperator extends AbstractPcmOperator {
 
-	// TODO config in file
-	final private static String baseUrl = "http://redmine.anjiancloud.repo/redmine";
-	final private static String key = "049c9528c9a11903e6b7dbdc046bc1ccac82d1aa";
-
 	@Override
 	public PcmKind kind() {
 		return PcmKind.Redmine;
 	}
 
 	@Override
-	public List<SelectionModel> getProjects(Integer trackId) {
-		String url = baseUrl + "/projects.json?key=" + key;
+	public List<SelectionModel> getProjects(Pcm pcm) {
+		check(pcm);
+		String url = pcm.getBaseUrl() + "/projects.json?key=" + pcm.getAccessToken();
 		RedmineProjects projects = restTemplate.getForObject(url, RedmineProjects.class);
 		List<SelectionModel> result = new ArrayList<>();
 		for (RedmineProjects.Project project : projects.getProjects()) {
@@ -61,8 +59,9 @@ public class RedminePcmOperator extends AbstractPcmOperator {
 	}
 
 	@Override
-	public List<SelectionModel> getUsers(Integer trackId) {
-		String url = baseUrl + "/users.json?key=" + key;
+	public List<SelectionModel> getUsers(Pcm pcm) {
+		check(pcm);
+		String url = pcm.getBaseUrl() + "/users.json?key=" + pcm.getAccessToken();
 		RedmineUsers users = restTemplate.getForObject(url, RedmineUsers.class);
 		List<SelectionModel> result = new ArrayList<>();
 		for (RedmineUsers.User user : users.getUsers()) {
@@ -75,8 +74,9 @@ public class RedminePcmOperator extends AbstractPcmOperator {
 	}
 
 	@Override
-	public List<SelectionModel> getIssues(Integer trackId, String userId, String projectId, String searchSubject) {
-		String url = baseUrl + "/issues.json?limit=100&key=" + key;
+	public List<SelectionModel> getIssues(Pcm pcm, String userId, String projectId, String searchSubject) {
+		check(pcm);
+		String url = pcm.getBaseUrl() + "/issues.json?limit=100&key=" + pcm.getAccessToken();
 		if (StringUtils.isNotBlank(userId)) {
 			url += "&assigned_to_id=" + userId;
 		}
@@ -95,6 +95,13 @@ public class RedminePcmOperator extends AbstractPcmOperator {
 			result.add(selectInfo);
 		}
 		return result;
+	}
+
+	private void check(Pcm pcm) {
+		Assert.notNull(pcm, "pcm is null");
+		Assert.hasText(pcm.getAccessToken(), "access token is null");
+		Assert.hasText(pcm.getBaseUrl(), "base url is null");
+
 	}
 
 }

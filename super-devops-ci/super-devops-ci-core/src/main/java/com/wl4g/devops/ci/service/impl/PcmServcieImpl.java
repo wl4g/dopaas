@@ -16,13 +16,18 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.ci.pcm.CompositePcmOperatorAdapter;
 import com.wl4g.devops.ci.service.PcmService;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Pcm;
+import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.web.model.SelectionModel;
 import com.wl4g.devops.dao.ci.PcmDao;
+import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -35,6 +40,12 @@ public class PcmServcieImpl implements PcmService {
 
 	@Autowired
 	private PcmDao pcmDao;
+
+	@Autowired
+	private TaskDao taskDao;
+
+	@Autowired
+	private CompositePcmOperatorAdapter pcmOperatorAdapter;
 
 	@Override
 	public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
@@ -78,6 +89,36 @@ public class PcmServcieImpl implements PcmService {
 	@Override
 	public List<Pcm> all() {
 		return pcmDao.list(null, null, null);
+	}
+
+	@Override
+	public List<SelectionModel> getUsers(Integer taskId) {
+		Pcm pcm = getPcmKind(taskId);
+		return pcmOperatorAdapter.forAdapt(pcm.getProviderKind()).getUsers(pcm);
+	}
+
+	@Override
+	public List<SelectionModel> getProjects(Integer taskId) {
+		Pcm pcm = getPcmKind(taskId);
+		return pcmOperatorAdapter.forAdapt(pcm.getProviderKind()).getProjects(pcm);
+	}
+
+	@Override
+	public List<SelectionModel> getIssues(Integer taskId, String userId, String projectId, String search) {
+		Pcm pcm = getPcmKind(taskId);
+		return pcmOperatorAdapter.forAdapt(pcm.getProviderKind()).getIssues(pcm,userId,projectId,search);
+	}
+
+	private Pcm getPcmKind(Integer taskId){
+		Assert.notNull(taskId,"taskId is null");
+		Task task = taskDao.selectByPrimaryKey(taskId);
+		Assert.notNull(task,"task is null");
+		Assert.notNull(task.getPcmId(),"pcmId is null");
+		Assert.notNull(task.getPcmId(),"pcmId is null");
+		Pcm pcm = pcmDao.selectByPrimaryKey(task.getPcmId());
+		Assert.notNull(pcm,"pcm is null");
+		Assert.hasText(pcm.getProviderKind(),"provide kind is null");
+		return pcm;
 	}
 
 }

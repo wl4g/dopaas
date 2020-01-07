@@ -23,12 +23,12 @@
     <association property="vcs" javaType="com.wl4g.devops.common.bean.ci.Vcs">
       <id column="v.id" property="id" jdbcType="INTEGER" />
       <result column="v.name" property="name" jdbcType="VARCHAR" />
-      <result column="v.provider" property="provider" jdbcType="INTEGER" />
+      <result column="v.provider_kind" property="providerKind" jdbcType="INTEGER" />
       <result column="v.auth_type" property="authType" jdbcType="INTEGER" />
       <result column="v.base_uri" property="baseUri" jdbcType="VARCHAR" />
       <result column="v.ssh_key_pub" property="sshKeyPub" jdbcType="VARCHAR" />
       <result column="v.ssh_key" property="sshKey" jdbcType="VARCHAR" />
-      <result column="v.token" property="token" jdbcType="VARCHAR" />
+      <result column="v.access_token" property="accessToken" jdbcType="VARCHAR" />
       <result column="v.username" property="username" jdbcType="VARCHAR" />
       <result column="v.password" property="password" jdbcType="VARCHAR" />
       <result column="v.remark" property="remark" jdbcType="VARCHAR" />
@@ -51,8 +51,8 @@
   </sql>
 
   <sql id="vcs_alias" >
-    v.id as "v.id",v.name as "v.name",v.provider as "v.provider", v.auth_type as "v.auth_type", v.base_uri as "v.base_uri", v.ssh_key_pub as "v.ssh_key_pub", v.ssh_key as "v.ssh_key",
-    v.token as "v.token", v.username as "v.username", v.password as "v.password",
+    v.id as "v.id",v.name as "v.name",v.provider_kind as "v.provider_kind", v.auth_type as "v.auth_type", v.base_uri as "v.base_uri", v.ssh_key_pub as "v.ssh_key_pub", v.ssh_key as "v.ssh_key",
+    v.access_token as "v.access_token", v.username as "v.username", v.password as "v.password",
     v.remark as "v.remark", v.enable as "v.enable", v.del_flag as "v.del_flag", v.create_date as "v.create_date", v.create_by as "v.create_by", v.update_date as "v.update_date", v.update_by as "v.update_by"
   </sql>
 

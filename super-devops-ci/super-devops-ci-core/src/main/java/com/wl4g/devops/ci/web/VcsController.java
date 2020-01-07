@@ -39,15 +39,15 @@ public class VcsController extends BaseController {
 	private VcsService vcsService;
 
 	@RequestMapping("/list")
-	@RequiresPermissions(value = { "ci", "ci:vcs" }, logical = AND)
-	public RespBase<?> list(PageModel pm, String name, Integer provider, Integer authType) {
+	@RequiresPermissions(value = {"ci","ci:vcs"},logical = AND)
+	public RespBase<?> list(PageModel pm, String name, String providerKind, Integer authType) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(vcsService.list(pm, name, provider, authType));
+		resp.setData(vcsService.list(pm, name, providerKind, authType));
 		return resp;
 	}
 
 	@RequestMapping("/save")
-	@RequiresPermissions(value = { "ci", "ci:vcs" }, logical = AND)
+	@RequiresPermissions(value = {"ci","ci:vcs"},logical = AND)
 	public RespBase<?> save(Vcs vcs) {
 		RespBase<Object> resp = RespBase.create();
 		vcsService.save(vcs);
@@ -55,7 +55,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping("/del")
-	@RequiresPermissions(value = { "ci", "ci:vcs" }, logical = AND)
+	@RequiresPermissions(value = {"ci","ci:vcs"},logical = AND)
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		vcsService.del(id);
@@ -63,7 +63,7 @@ public class VcsController extends BaseController {
 	}
 
 	@RequestMapping("/detail")
-	@RequiresPermissions(value = { "ci", "ci:vcs" }, logical = AND)
+	@RequiresPermissions(value = {"ci","ci:vcs"},logical = AND)
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		Vcs vcs = vcsService.detail(id);

@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.web;
 
-import com.wl4g.devops.ci.pcm.CompositePcmOperatorAdapter;
 import com.wl4g.devops.ci.service.PcmService;
 import com.wl4g.devops.common.bean.ci.Pcm;
 import com.wl4g.devops.common.web.RespBase;
@@ -41,23 +40,20 @@ import static org.apache.shiro.authz.annotation.Logical.AND;
 public class PcmController {
 
 	@Autowired
-	private CompositePcmOperatorAdapter pcmPlatformHandle;
-
-	@Autowired
 	private PcmService pcmService;
 
 	@RequestMapping(value = "/getUsers")
 	public RespBase<?> getUsers(Integer taskId) {
 		RespBase<Object> resp = RespBase.create();
-		List<SelectionModel> selectInfos = pcmPlatformHandle.getUsers(taskId);
-		resp.setData(selectInfos);
+		List<SelectionModel> users = pcmService.getUsers(taskId);
+		resp.setData(users);
 		return resp;
 	}
 
 	@RequestMapping(value = "/getProjects")
 	public RespBase<?> getProjects(Integer taskId) {
 		RespBase<Object> resp = RespBase.create();
-		List<SelectionModel> selectInfos = pcmPlatformHandle.getProjects(taskId);
+		List<SelectionModel> selectInfos = pcmService.getProjects(taskId);
 		resp.setData(selectInfos);
 		return resp;
 	}
@@ -65,7 +61,7 @@ public class PcmController {
 	@RequestMapping(value = "/getIssues")
 	public RespBase<?> getIssues(Integer taskId, String userId, String projectId, String search) {
 		RespBase<Object> resp = RespBase.create();
-		List<SelectionModel> selectInfos = pcmPlatformHandle.getIssues(taskId, userId, projectId, search);
+		List<SelectionModel> selectInfos = pcmService.getIssues(taskId, userId, projectId, search);
 		resp.setData(selectInfos);
 		return resp;
 	}

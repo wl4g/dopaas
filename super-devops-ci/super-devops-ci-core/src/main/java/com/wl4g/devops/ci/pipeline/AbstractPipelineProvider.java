@@ -22,7 +22,6 @@ import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.ci.vcs.VcsOperator;
-import com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
@@ -130,11 +129,11 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	/**
 	 * Get VCS operator for specific provider.
 	 * 
-	 * @param vcsProvider
+	 * @param vcsProviderKind
 	 * @return
 	 */
-	protected VcsOperator getVcsOperator(Integer vcsProvider) {
-		return vcsAdapter.forAdapt(VcsProvider.of(vcsProvider));
+	protected VcsOperator getVcsOperator(String vcsProviderKind) {
+		return vcsAdapter.forAdapt(vcsProviderKind);
 	}
 
 	// --- Fingerprint's. ---
