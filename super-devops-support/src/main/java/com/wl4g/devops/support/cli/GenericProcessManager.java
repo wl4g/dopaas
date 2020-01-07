@@ -122,7 +122,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			return readFullyToString(dpw.getStdout());
 		} catch (IllegalProcessStateException ex) {
 			throw new IllegalProcessStateException(ex.getExitValue(),
-					String.format("Failed to process(%s), commands:[%s], cause: %s", cmd.getProcessId(),
+					String.format("Failed to processId(%s), commands:[%s], cause: %s", cmd.getProcessId(),
 							dpw.getCommand().getCmd(), getRootCausesString(ex)));
 		} finally {
 			// Destroy process.
