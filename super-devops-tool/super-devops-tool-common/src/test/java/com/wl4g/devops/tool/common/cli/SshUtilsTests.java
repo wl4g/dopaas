@@ -9,6 +9,7 @@ public class SshUtilsTests {
 		SshUtils.execWaitForCompleteWithSsh2("localhost", "wanglsir", null, command, s -> {
 			System.err.println(ByteStreams2.readFullyToString(s.getStderr()));
 			System.out.println(ByteStreams2.readFullyToString(s.getStdout()));
+			s.close();
 			System.err.println("signal:" + s.getExitSignal() + ", state:" + s.getState() + ", status:" + s.getExitStatus());
 			return null;
 		}, 30_000);
