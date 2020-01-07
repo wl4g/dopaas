@@ -259,7 +259,7 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 	@Override
 	protected HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials) {
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("PRIVATE-TOKEN", credentials.getToken());
+		headers.add("PRIVATE-TOKEN", credentials.getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<>(null, headers);
 		return entity;
 	}

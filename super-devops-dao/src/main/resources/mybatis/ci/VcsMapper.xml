@@ -4,12 +4,12 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Vcs" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="provider" property="provider" jdbcType="INTEGER" />
+    <result column="provider_kind" property="providerKind" jdbcType="VARCHAR" />
     <result column="auth_type" property="authType" jdbcType="INTEGER" />
     <result column="base_uri" property="baseUri" jdbcType="VARCHAR" />
     <result column="ssh_key_pub" property="sshKeyPub" jdbcType="VARCHAR" />
     <result column="ssh_key" property="sshKey" jdbcType="VARCHAR" />
-    <result column="token" property="token" jdbcType="VARCHAR" />
+    <result column="access_token" property="accessToken" jdbcType="VARCHAR" />
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -21,7 +21,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id,name,provider, auth_type, base_uri, ssh_key_pub, ssh_key, token, username, password,
+    id,name,provider_kind, auth_type, base_uri, ssh_key_pub, ssh_key, access_token, username, password,
     remark, enable, del_flag, create_date, create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -39,8 +39,8 @@
     <if test="name != null and name != '' " >
       AND name LIKE CONCAT('%','${name}','%')
     </if>
-    <if test="provider != null" >
-      AND provider = #{provider,jdbcType=INTEGER}
+    <if test="providerKind != null and name != '' " >
+      AND provider_kind = #{providerKind,jdbcType=VARCHAR}
     </if>
     <if test="authType != null" >
       AND auth_type = #{authType,jdbcType=INTEGER}
@@ -52,15 +52,15 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Vcs" >
-    insert into ci_vcs (id,name, provider, auth_type,
+    insert into ci_vcs (id,name, provider_kind, auth_type,
       base_uri, ssh_key_pub, ssh_key, 
-      token, username, password, 
+      access_token, username, password,
       remark, enable, del_flag, 
       create_date, create_by, update_date, 
       update_by)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},#{provider,jdbcType=INTEGER}, #{authType,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},#{providerKind,jdbcType=VARCHAR}, #{authType,jdbcType=INTEGER},
       #{baseUri,jdbcType=VARCHAR}, #{sshKeyPub,jdbcType=VARCHAR}, #{sshKey,jdbcType=VARCHAR}, 
-      #{token,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{accessToken,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
       #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{delFlag,jdbcType=CHAR}, 
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR})
@@ -74,8 +74,8 @@
       <if test="name != null" >
         name,
       </if>
-      <if test="provider != null" >
-        provider,
+      <if test="providerKind != null" >
+        provider_kind,
       </if>
       <if test="authType != null" >
         auth_type,
@@ -89,8 +89,8 @@
       <if test="sshKey != null" >
         ssh_key,
       </if>
-      <if test="token != null" >
-        token,
+      <if test="accessToken != null" >
+        access_token,
       </if>
       <if test="username != null" >
         username,
@@ -127,8 +127,8 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="provider != null" >
-        #{provider,jdbcType=INTEGER},
+      <if test="providerKind != null" >
+        #{providerKind,jdbcType=VARCHAR},
       </if>
       <if test="authType != null" >
         #{authType,jdbcType=INTEGER},
@@ -142,8 +142,8 @@
       <if test="sshKey != null" >
         #{sshKey,jdbcType=VARCHAR},
       </if>
-      <if test="token != null" >
-        #{token,jdbcType=VARCHAR},
+      <if test="accessToken != null" >
+        #{accessToken,jdbcType=VARCHAR},
       </if>
       <if test="username != null" >
         #{username,jdbcType=VARCHAR},
@@ -180,8 +180,8 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="provider != null" >
-        provider = #{provider,jdbcType=INTEGER},
+      <if test="providerKind != null" >
+        provider_kind = #{providerKind,jdbcType=VARCHAR},
       </if>
       <if test="authType != null" >
         auth_type = #{authType,jdbcType=INTEGER},
@@ -195,8 +195,8 @@
       <if test="sshKey != null" >
         ssh_key = #{sshKey,jdbcType=VARCHAR},
       </if>
-      <if test="token != null" >
-        token = #{token,jdbcType=VARCHAR},
+      <if test="accessToken != null" >
+        access_token = #{accessToken,jdbcType=VARCHAR},
       </if>
       <if test="username != null" >
         username = #{username,jdbcType=VARCHAR},
@@ -231,12 +231,12 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Vcs" >
     update ci_vcs
     set name = #{name,jdbcType=VARCHAR},
-      provider = #{provider,jdbcType=INTEGER},
+      provider_kind = #{providerKind,jdbcType=VARCHAR},
       auth_type = #{authType,jdbcType=INTEGER},
       base_uri = #{baseUri,jdbcType=VARCHAR},
       ssh_key_pub = #{sshKeyPub,jdbcType=VARCHAR},
       ssh_key = #{sshKey,jdbcType=VARCHAR},
-      token = #{token,jdbcType=VARCHAR},
+      access_token = #{accessToken,jdbcType=VARCHAR},
       username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},

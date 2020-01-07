@@ -13,34 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.service;
+package com.wl4g.devops.doc.controller;
 
-import com.wl4g.devops.common.bean.ci.Pcm;
-import com.wl4g.devops.common.web.model.SelectionModel;
-import com.wl4g.devops.page.PageModel;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.RespBase;
 
 /**
+ * Dictionaries controller
+ * 
  * @author vjay
- * @date 2019-11-12 11:05:00
+ * @date 2019-06-24 14:23:00
  */
-public interface PcmService {
+@RestController
+@RequestMapping("/test")
+public class TestController extends BaseController {
 
-	PageModel list(PageModel pm, String name, String providerKind, Integer authType);
-
-	void save(Pcm pcm);
-
-	void del(Integer id);
-
-	Pcm detail(Integer id);
-
-	List<Pcm> all();
-
-	List<SelectionModel> getUsers(Integer taskId);
-
-	List<SelectionModel> getProjects(Integer taskId);
-
-	List<SelectionModel> getIssues(Integer taskId,String userId, String projectId,String search);
+	@RequestMapping(value = "/test")
+	public RespBase<?> test() {
+		RespBase<Object> resp = RespBase.create();
+		return resp;
+	}
 
 }
