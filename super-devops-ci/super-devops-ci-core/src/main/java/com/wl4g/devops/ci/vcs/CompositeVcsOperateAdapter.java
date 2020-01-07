@@ -17,20 +17,16 @@ package com.wl4g.devops.ci.vcs;
 
 import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.lib.Ref;
-import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.*;
 
-import static java.util.stream.Collectors.toMap;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import static com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
 
 /**
  * Composite VCS operator adapter.
@@ -39,30 +35,10 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @version v1.0 2019年11月1日
  * @since
  */
-public class CompositeVcsOperateAdapter implements VcsOperator {
-
-	/**
-	 * Vcs operator.
-	 */
-	final protected Map<VcsProvider, VcsOperator> registry = new RegisteredUnmodifiableMap<>(new HashMap<>());
-
-	/**
-	 * Real delegate VcsOperator.
-	 */
-	final private ThreadLocal<VcsOperator> delegate = new InheritableThreadLocal<>();
+public class CompositeVcsOperateAdapter extends GenericOperatorAdapter<VcsProvider, VcsOperator> implements VcsOperator {
 
 	public CompositeVcsOperateAdapter(List<VcsOperator> operators) {
-		Assert.state(!isEmpty(operators), "Vcs operators has at least one.");
-		// Duplicate checks.
-		Set<VcsProvider> vcsProviders = new HashSet<>();
-		operators.forEach(o -> {
-			notNull(o.vcsProvider(), String.format("Vcs provider must not be empty for VcsOperator %s", o));
-			state(!vcsProviders.contains(o.vcsProvider()),
-					String.format("Repeated definition VcsOperator with %s", o.vcsProvider()));
-			vcsProviders.add(o.vcsProvider());
-		});
-		// Register.
-		this.registry.putAll(operators.stream().collect(toMap(VcsOperator::vcsProvider, oper -> oper)));
+		super(operators);
 	}
 
 	/**
@@ -72,30 +48,7 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	 * @return
 	 */
 	public VcsOperator forAdapt(@NotNull Vcs vcs) {
-		return forAdapt(vcs.getProvider());
-	}
-
-	/**
-	 * Making the adaptation actually execute {@link VcsOperator}.
-	 * 
-	 * @param vcsProvider
-	 * @return
-	 */
-	public VcsOperator forAdapt(@NotNull VcsProvider vcsProvider) {
-		VcsOperator operator = registry.get(vcsProvider);
-		notNull(operator, String.format("Unsupported VcsOperator for '%s'", vcsProvider));
-		delegate.set(operator);
-		return operator;
-	}
-
-	/**
-	 * Making the adaptation actually execute {@link VcsOperator}.
-	 *
-	 * @param vcsProvider
-	 * @return
-	 */
-	public VcsOperator forAdapt(@NotNull Integer vcsProvider) {
-		return forAdapt(VcsProvider.of(vcsProvider));
+		return forAdapt(String.valueOf(vcs.getProviderKind()));
 	}
 
 	@Override
@@ -116,19 +69,6 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	@Override
 	public <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
 		return getAdapted().searchRemoteProjects(credentials, projectName, 0);
-	}
-
-	/**
-	 * Get adapted {@link VcsOperator}.
-	 * 
-	 * @param type
-	 * @return
-	 */
-	private VcsOperator getAdapted() {
-		VcsOperator operator = delegate.get();
-		Assert.state(operator != null,
-				"Not adapted to specify actual VcsOperator, You must use adapted() to adapt before you can.");
-		return operator;
 	}
 
 	@Override

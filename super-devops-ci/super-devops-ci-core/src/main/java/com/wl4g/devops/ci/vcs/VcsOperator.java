@@ -16,8 +16,11 @@
 package com.wl4g.devops.ci.vcs;
 
 import com.google.common.annotations.Beta;
+
+import static com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
 import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.common.framework.operator.Operator;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,85 +36,7 @@ import static org.springframework.util.Assert.notNull;
  * @since
  */
 @Beta
-public interface VcsOperator {
-
-	/**
-	 * VCS type definitions.
-	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年11月5日
-	 * @since
-	 */
-	public static enum VcsProvider {
-
-		/** Vcs for GITLAB. */
-		GITLAB(1),
-
-		/** Vcs for github. */
-		GITHUB(2),
-
-		/** Vcs for gitee. */
-		GITEE(3),
-
-		/** Vcs for alicode. */
-		ALICODE(4),
-
-		/** Vcs for bitbucket. */
-		BITBUCKET(5),
-
-		/** Vcs for coding. */
-		CODING(6);
-
-		final private int value;
-
-		private VcsProvider(int value) {
-			this.value = value;
-		}
-
-		public int getValue() {
-			return value;
-		}
-
-		/**
-		 * Safe converter string to {@link VcsProvider}
-		 * 
-		 * @param vcsProvider
-		 * @return
-		 */
-		final public static VcsProvider safeOf(Integer vcsProvider) {
-			if (isNull(vcsProvider)) {
-				return null;
-			}
-			for (VcsProvider t : values()) {
-				if (vcsProvider.intValue() == t.getValue()) {
-					return t;
-				}
-			}
-			return null;
-		}
-
-		/**
-		 * Converter string to {@link VcsProvider}
-		 * 
-		 * @param vcsProvider
-		 * @return
-		 */
-		final public static VcsProvider of(Integer vcsProvider) {
-			VcsProvider type = safeOf(vcsProvider);
-			notNull(type, String.format("Unsupported VCS provider for %s", vcsProvider));
-			return type;
-		}
-
-	}
-
-	/**
-	 * VCS provider type definition.
-	 * 
-	 * @return
-	 */
-	default VcsProvider vcsProvider() {
-		throw new UnsupportedOperationException();
-	}
+public interface VcsOperator extends Operator<VcsProvider> {
 
 	// --- APIs operator. ---
 
@@ -258,5 +183,74 @@ public interface VcsOperator {
 	 * @return
 	 */
 	<T> T rollback(Vcs credentials, String projecDir, String sign);
+
+	/**
+	 * VCS type definitions.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月5日
+	 * @since
+	 */
+	public static enum VcsProvider {
+
+		/** Vcs for GITLAB. */
+		GITLAB(1),
+
+		/** Vcs for github. */
+		GITHUB(2),
+
+		/** Vcs for gitee. */
+		GITEE(3),
+
+		/** Vcs for alicode. */
+		ALICODE(4),
+
+		/** Vcs for bitbucket. */
+		BITBUCKET(5),
+
+		/** Vcs for coding. */
+		CODING(6);
+
+		final private int value;
+
+		private VcsProvider(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
+
+		/**
+		 * Safe converter string to {@link VcsProvider}
+		 * 
+		 * @param vcsProvider
+		 * @return
+		 */
+		final public static VcsProvider safeOf(Integer vcsProvider) {
+			if (isNull(vcsProvider)) {
+				return null;
+			}
+			for (VcsProvider t : values()) {
+				if (vcsProvider.intValue() == t.getValue()) {
+					return t;
+				}
+			}
+			return null;
+		}
+
+		/**
+		 * Converter string to {@link VcsProvider}
+		 * 
+		 * @param vcsProvider
+		 * @return
+		 */
+		final public static VcsProvider of(Integer vcsProvider) {
+			VcsProvider type = safeOf(vcsProvider);
+			notNull(type, String.format("Unsupported VCS provider for %s", vcsProvider));
+			return type;
+		}
+
+	}
 
 }
