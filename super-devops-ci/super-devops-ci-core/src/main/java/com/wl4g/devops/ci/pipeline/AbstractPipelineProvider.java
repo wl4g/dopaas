@@ -125,7 +125,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected VcsOperator getVcsOperator(Project project) {
 		notNull(project, "Project can't be null.");
 		notNull(project.getVcs(), "Project.vcs can't be null.");
-		return getVcsOperator(project.getVcs().getProvider());
+		return getVcsOperator(project.getVcs().getProviderKind());
 	}
 
 	/**

@@ -81,8 +81,8 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 
 		trigger = triggerDao.selectByPrimaryKey(trigger.getId());
 
-		vcsAdapter.forAdapt(project.getVcsId());
-
+		// Set VCS provider.
+		vcsAdapter.forAdapt(project.getVcs());
 		try {
 			if (!checkCommittedChanged()) { // Changed?
 				log.info("Skip timing tasks pipeline, because commit unchanged, with project:{}, task:{}, trigger:{}", project,
@@ -91,7 +91,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 
 			// Creating pipeline task.
 			// TODO traceId???
-			pipeManager.runPipeline(new NewParameter(task.getId(), "rollback", "1", 1,null));
+			pipeManager.runPipeline(new NewParameter(task.getId(), "rollback", "1", 1, null));
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();

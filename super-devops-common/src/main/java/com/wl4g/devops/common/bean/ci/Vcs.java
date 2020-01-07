@@ -37,7 +37,7 @@ public class Vcs extends BaseBean {
 	private String name;
 
 	@NotNull
-	private Integer provider;
+	private Integer providerKind;
 
 	@NotNull
 	private Integer authType;
@@ -63,12 +63,12 @@ public class Vcs extends BaseBean {
 		this.name = name;
 	}
 
-	public Integer getProvider() {
-		return provider;
+	public Integer getProviderKind() {
+		return providerKind;
 	}
 
-	public void setProvider(Integer provider) {
-		this.provider = provider;
+	public void setProviderKind(Integer provider) {
+		this.providerKind = provider;
 	}
 
 	public Integer getAuthType() {
@@ -129,9 +129,9 @@ public class Vcs extends BaseBean {
 
 	@Override
 	public String toString() {
-		return "Vcs [name=" + name + ", provider=" + provider + ", authType=" + authType + ", baseUri=" + baseUri + ", sshKeyPub="
-				+ sshKeyPub + ", sshKey=" + sshKey + ", token=" + token + ", username=" + username + ", password=" + password
-				+ "]";
+		return "Vcs [name=" + name + ", provider=" + providerKind + ", authType=" + authType + ", baseUri=" + baseUri
+				+ ", sshKeyPub=" + sshKeyPub + ", sshKey=" + sshKey + ", token=" + token + ", username=" + username
+				+ ", password=" + password + "]";
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class Vcs extends BaseBean {
 				return null;
 			}
 			for (VcsAuthType t : values()) {
-				if (vcsAuthType.intValue()==t.getValue()) {
+				if (vcsAuthType.intValue() == t.getValue()) {
 					return t;
 				}
 			}

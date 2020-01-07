@@ -36,7 +36,7 @@ import com.wl4g.devops.common.bean.ci.Vcs;
 public class AlicodeVcsOperator extends AbstractVcsOperator {
 
 	@Override
-	public VcsProvider vcsProvider() {
+	public VcsProvider kind() {
 		return VcsProvider.ALICODE;
 	}
 

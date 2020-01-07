@@ -33,7 +33,7 @@ import java.util.List;
 public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
-	public VcsProvider vcsProvider() {
+	public VcsProvider kind() {
 		return VcsProvider.GITEE;
 	}
 
