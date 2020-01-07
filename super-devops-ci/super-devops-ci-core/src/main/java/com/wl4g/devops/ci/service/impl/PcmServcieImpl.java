@@ -17,7 +17,6 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.pcm.CompositePcmOperatorAdapter;
-import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.service.PcmService;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Pcm;
@@ -31,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author vjay
@@ -47,7 +45,7 @@ public class PcmServcieImpl implements PcmService {
 	private TaskDao taskDao;
 
 	@Autowired
-	private CompositePcmOperatorAdapter pcm;
+	private CompositePcmOperatorAdapter pcmOperatorAdapter;
 
 	@Override
 	public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
@@ -95,32 +93,32 @@ public class PcmServcieImpl implements PcmService {
 
 	@Override
 	public List<SelectionModel> getUsers(Integer taskId) {
-		String pcmKind = getPcmKind(taskId);
-		List<SelectionModel> selectInfos = pcm.forAdapt(pcmKind).getUsers(taskId);
-		return selectInfos;
+		Pcm pcm = getPcmKind(taskId);
+		return pcmOperatorAdapter.forAdapt(pcm.getProviderKind()).getUsers(pcm);
 	}
 
 	@Override
 	public List<SelectionModel> getProjects(Integer taskId) {
-		return null;
+		Pcm pcm = getPcmKind(taskId);
+		return pcmOperatorAdapter.forAdapt(pcm.getProviderKind()).getProjects(pcm);
 	}
 
 	@Override
 	public List<SelectionModel> getIssues(Integer taskId, String userId, String projectId, String search) {
-		return null;
+		Pcm pcm = getPcmKind(taskId);
+		return pcmOperatorAdapter.forAdapt(pcm.getProviderKind()).getIssues(pcm,userId,projectId,search);
 	}
 
-	private String getPcmKind(Integer taskId){
+	private Pcm getPcmKind(Integer taskId){
 		Assert.notNull(taskId,"taskId is null");
 		Task task = taskDao.selectByPrimaryKey(taskId);
 		Assert.notNull(task,"task is null");
-		if(Objects.nonNull(task.getPcmId())){
-			Pcm pcm = pcmDao.selectByPrimaryKey(task.getPcmId());
-			if(Objects.nonNull(pcm.getProviderKind())){
-				return pcm.getProviderKind();
-			}
-		}
-		return PcmOperator.PcmKind.Redmine.toString();
+		Assert.notNull(task.getPcmId(),"pcmId is null");
+		Assert.notNull(task.getPcmId(),"pcmId is null");
+		Pcm pcm = pcmDao.selectByPrimaryKey(task.getPcmId());
+		Assert.notNull(pcm,"pcm is null");
+		Assert.hasText(pcm.getProviderKind(),"provide kind is null");
+		return pcm;
 	}
 
 }
