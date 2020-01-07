@@ -15,10 +15,11 @@
  */
 package com.wl4g.devops.ci.pcm.jira;
 
-import java.util.List;
-
 import com.wl4g.devops.ci.pcm.AbstractPcmOperator;
+import com.wl4g.devops.common.bean.ci.Pcm;
 import com.wl4g.devops.common.web.model.SelectionModel;
+
+import java.util.List;
 
 /**
  * PCM API operator of jira.
@@ -35,17 +36,17 @@ public class JiraPcmOperator extends AbstractPcmOperator {
 	}
 
 	@Override
-	public List<SelectionModel> getProjects(Integer trackId) {
+	public List<SelectionModel> getProjects(Pcm pcm) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<SelectionModel> getUsers(Integer trackId) {
+	public List<SelectionModel> getUsers(Pcm pcm) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<SelectionModel> getIssues(Integer trackId, String userId, String projectId, String searchSubject) {
+	public List<SelectionModel> getIssues(Pcm pcm, String userId, String projectId, String searchSubject) {
 		throw new UnsupportedOperationException();
 	}
 

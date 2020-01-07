@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.pcm;
 
 import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
+import com.wl4g.devops.common.bean.ci.Pcm;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.model.SelectionModel;
 
@@ -38,18 +39,18 @@ public class CompositePcmOperatorAdapter extends GenericOperatorAdapter<PcmKind,
 	}
 
 	@Override
-	public List<SelectionModel> getProjects(Integer trackId) {
-		return getAdapted().getProjects(trackId);
+	public List<SelectionModel> getProjects(Pcm pcm) {
+		return getAdapted().getProjects(pcm);
 	}
 
 	@Override
-	public List<SelectionModel> getUsers(Integer trackId) {
-		return getAdapted().getUsers(trackId);
+	public List<SelectionModel> getUsers(Pcm pcm) {
+		return getAdapted().getUsers(pcm);
 	}
 
 	@Override
-	public List<SelectionModel> getIssues(Integer trackId, String userId, String projectId, String search) {
-		return getAdapted().getIssues(trackId, userId, projectId, search);
+	public List<SelectionModel> getIssues(Pcm pcm, String userId, String projectId, String search) {
+		return getAdapted().getIssues(pcm, userId, projectId, search);
 	}
 
 }
