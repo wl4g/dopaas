@@ -15,11 +15,12 @@
  */
 package com.wl4g.devops.ci.pcm;
 
-import java.util.List;
-
 import com.google.common.annotations.Beta;
+import com.wl4g.devops.common.bean.ci.Pcm;
 import com.wl4g.devops.common.framework.operator.Operator;
 import com.wl4g.devops.common.web.model.SelectionModel;
+
+import java.util.List;
 
 import static com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
 
@@ -39,7 +40,7 @@ public interface PcmOperator extends Operator<PcmKind> {
 	 * @param trackId
 	 * @return
 	 */
-	List<SelectionModel> getProjects(Integer trackId);
+	List<SelectionModel> getProjects(Pcm pcm);
 
 	/**
 	 * Get PCM user list.
@@ -47,7 +48,7 @@ public interface PcmOperator extends Operator<PcmKind> {
 	 * @param trackId
 	 * @return
 	 */
-	List<SelectionModel> getUsers(Integer trackId);
+	List<SelectionModel> getUsers(Pcm pcm);
 
 	/**
 	 * 
@@ -59,7 +60,7 @@ public interface PcmOperator extends Operator<PcmKind> {
 	 * @param searchSubject
 	 * @return
 	 */
-	List<SelectionModel> getIssues(Integer trackId, String userId, String projectId, String searchSubject);
+	List<SelectionModel> getIssues(Pcm pcm, String userId, String projectId, String searchSubject);
 
 	/**
 	 * Project collaboration management operator kind.
