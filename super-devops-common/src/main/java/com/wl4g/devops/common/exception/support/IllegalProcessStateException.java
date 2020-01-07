@@ -80,11 +80,11 @@ public class IllegalProcessStateException extends DevOpsException {
 
 	@Override
 	public String getMessage() {
-		return getExitValue() + ":" + super.getMessage();
+		return "exitValue="+getExitValue() + ":" + super.getMessage();
 	}
 
 	@Override
 	public String getLocalizedMessage() {
-		return getExitValue() + ":" + super.getLocalizedMessage();
+		return "exitValue="+getExitValue() + ":" + super.getLocalizedMessage();
 	}
 }
