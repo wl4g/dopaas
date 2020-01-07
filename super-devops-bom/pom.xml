@@ -285,6 +285,18 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-doc-core</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-doc-manager</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
 			<!-- Spring's. -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>

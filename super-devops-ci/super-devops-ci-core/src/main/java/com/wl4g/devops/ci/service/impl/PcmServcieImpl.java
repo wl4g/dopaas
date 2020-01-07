@@ -16,15 +16,22 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.ci.pcm.CompositePcmOperatorAdapter;
+import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.service.PcmService;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Pcm;
+import com.wl4g.devops.common.bean.ci.Task;
+import com.wl4g.devops.common.web.model.SelectionModel;
 import com.wl4g.devops.dao.ci.PcmDao;
+import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author vjay
@@ -35,6 +42,12 @@ public class PcmServcieImpl implements PcmService {
 
 	@Autowired
 	private PcmDao pcmDao;
+
+	@Autowired
+	private TaskDao taskDao;
+
+	@Autowired
+	private CompositePcmOperatorAdapter pcm;
 
 	@Override
 	public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
@@ -78,6 +91,36 @@ public class PcmServcieImpl implements PcmService {
 	@Override
 	public List<Pcm> all() {
 		return pcmDao.list(null,null,null);
+	}
+
+	@Override
+	public List<SelectionModel> getUsers(Integer taskId) {
+		String pcmKind = getPcmKind(taskId);
+		List<SelectionModel> selectInfos = pcm.forAdapt(pcmKind).getUsers(taskId);
+		return selectInfos;
+	}
+
+	@Override
+	public List<SelectionModel> getProjects(Integer taskId) {
+		return null;
+	}
+
+	@Override
+	public List<SelectionModel> getIssues(Integer taskId, String userId, String projectId, String search) {
+		return null;
+	}
+
+	private String getPcmKind(Integer taskId){
+		Assert.notNull(taskId,"taskId is null");
+		Task task = taskDao.selectByPrimaryKey(taskId);
+		Assert.notNull(task,"task is null");
+		if(Objects.nonNull(task.getPcmId())){
+			Pcm pcm = pcmDao.selectByPrimaryKey(task.getPcmId());
+			if(Objects.nonNull(pcm.getProviderKind())){
+				return pcm.getProviderKind();
+			}
+		}
+		return PcmOperator.PcmKind.Redmine.toString();
 	}
 
 }
