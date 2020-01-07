@@ -96,7 +96,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
 			String sha, Integer refId, String buildCommand, String preCommand, String postCommand, String tarType,
-			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, Integer trackType, String remark, String envType) {
+			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, Integer trackType, String remark, String envType,String annex) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preInsert();
@@ -125,6 +125,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setTrackType(trackType);
 		taskHistory.setRemark(remark);
 		taskHistory.setEnvType(envType);
+		taskHistory.setAnnex(annex);
 		taskHistoryDao.insertSelective(taskHistory);
 		for (AppInstance instance : instances) {
 			TaskHistoryInstance taskHistoryInstance = new TaskHistoryInstance();
