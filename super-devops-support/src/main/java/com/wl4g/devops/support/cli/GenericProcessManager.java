@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -79,29 +78,29 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			throws IllegalProcessStateException, InterruptedException, Exception {
 		notNull(cmd, "Execution command can't null.");
 
-		DestroableProcess dpw = null;
+		DestroableProcess dp = null;
 		if (cmd instanceof LocalDestroableCommand) {
-			dpw = doExecLocal((LocalDestroableCommand) cmd);
+			dp = doExecLocal((LocalDestroableCommand) cmd);
 		} else if (cmd instanceof RemoteDestroableCommand) {
-			dpw = doExecRemote((RemoteDestroableCommand) cmd);
+			dp = doExecRemote((RemoteDestroableCommand) cmd);
 		} else {
 			throw new UnsupportedOperationException(String.format("Unsupported DestroableCommand[%s]", cmd));
 		}
-		notNull(dpw, "Process not created? An unexpected error!");
+		notNull(dp, "Process not created? An unexpected error!");
 
 		// Register process if necessary.
 		if (!isBlank(cmd.getProcessId())) {
-			repository.register(cmd.getProcessId(), dpw);
+			repository.register(cmd.getProcessId(), dp);
 		}
 
 		// Check exited?
 		try {
 			// Wait for completed.
-			dpw.waitFor(cmd.getTimeoutMs(), TimeUnit.MILLISECONDS);
+			dp.waitFor(cmd.getTimeoutMs(), TimeUnit.MILLISECONDS);
 
-			Integer exitCode = dpw.exitValue();
+			Integer exitCode = dp.exitValue();
 			// e.g. destroy() was called.
-			if (Objects.isNull(exitCode) || (Objects.nonNull(exitCode) && exitCode != 0)) {
+			if (/* isNull(exitCode) || */ (nonNull(exitCode) && exitCode != 0)) {
 				String errmsg = EMPTY;
 				// Obtain process error message.
 				try {
@@ -111,7 +110,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 						errmsg = String.format("Failed to exec command, more error info refer to: '%s'",
 								((LocalDestroableCommand) cmd).getStderr());
 					} else {
-						errmsg = readFullyToString(dpw.getStderr());
+						errmsg = readFullyToString(dp.getStderr());
 					}
 				} catch (Exception e) {
 					errmsg = getRootCausesString(e);
@@ -119,14 +118,14 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 				throw new IllegalProcessStateException(exitCode, errmsg);
 			}
 
-			return readFullyToString(dpw.getStdout());
+			return readFullyToString(dp.getStdout());
 		} catch (IllegalProcessStateException ex) {
 			throw new IllegalProcessStateException(ex.getExitValue(),
-					String.format("Failed to process(%s), commands:[%s], cause: %s", cmd.getProcessId(),
-							dpw.getCommand().getCmd(), getRootCausesString(ex)));
+					String.format("Failed to process(%s), commands:[%s], cause: %s", cmd.getProcessId(), dp.getCommand().getCmd(),
+							getRootCausesString(ex)));
 		} finally {
 			// Destroy process.
-			destroy0(dpw, DEFAULT_DESTROY_TIMEOUTMS);
+			destroy0(dp, DEFAULT_DESTROY_TIMEOUTMS);
 
 			// Cleanup if necessary.
 			if (!isBlank(cmd.getProcessId())) {
