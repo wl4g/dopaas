@@ -28,7 +28,7 @@ public class Pcm extends BaseBean {
 
 	private Integer authType;
 
-	private String accessKey;
+	private String accessToken;
 
 	private String username;
 
@@ -66,12 +66,12 @@ public class Pcm extends BaseBean {
 		this.authType = authType;
 	}
 
-	public String getAccessKey() {
-		return accessKey;
+	public String getAccessToken() {
+		return accessToken;
 	}
 
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey == null ? null : accessKey.trim();
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken == null ? null : accessToken.trim();
 	}
 
 	public String getUsername() {
