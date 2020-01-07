@@ -84,6 +84,7 @@ public class TaskHistoryController extends BaseController {
 		TaskHistory taskHistory = taskHistoryService.getById(taskId);
 		List<TaskHistoryInstance> taskHistoryInstances = taskHistoryService.getDetailByTaskId(taskId);
 		resp.forMap().put("group", taskHistory.getGroupName());
+		resp.forMap().put("annex", taskHistory.getAnnex());
 		resp.forMap().put("branch", taskHistory.getBranchName());
 		resp.forMap().put("result", taskHistory.getResult());
 		resp.forMap().put("taskInstances", taskHistoryInstances);

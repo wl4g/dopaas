@@ -8,10 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -38,7 +35,7 @@ public class FsController {
 		fileName = UUID.randomUUID() + suffixName;// 新文件名
 		String path = config.getTestReport().getUploadPath() + "/" + fileName;
 		saveFile(file, path);
-        resp.setData(config.getTestReport().getDownloadUrl()+"?fileName="+fileName);
+        resp.setData(config.getTestReport().getDownloadUrl()+"/"+fileName);
 		return resp;
 	}
 
@@ -55,8 +52,8 @@ public class FsController {
 		}
 	}
 
-    @RequestMapping(value = "download")
-    public ResponseEntity<FileSystemResource> exportXls(String fileName) {
+    @RequestMapping(value = "/download/{fileName:.+}")
+    public ResponseEntity<FileSystemResource> exportXls(@PathVariable String fileName) {
         File file = new File(config.getTestReport().getUploadPath()+"/"+fileName);
         return export(file);
     }
