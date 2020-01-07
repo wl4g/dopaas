@@ -79,7 +79,15 @@ public class CiCdProperties implements InitializingBean {
 	 */
 	private DeployProperties deploy = new DeployProperties();
 
-	private TestReportProperties testReport = new TestReportProperties();
+	/**
+	 * Test and inspection report configuration.
+	 */
+	private TestedReportProperties testedReport = new TestedReportProperties();
+
+	/**
+	 * project collaboration management configuration.
+	 */
+	private PcmProperties pcm = new PcmProperties();
 
 	/**
 	 * Pipeline log records cleaner configuration.
@@ -105,14 +113,6 @@ public class CiCdProperties implements InitializingBean {
 		if (Objects.nonNull(executor)) {
 			this.executor = executor;
 		}
-	}
-
-	public TestReportProperties getTestReport() {
-		return testReport;
-	}
-
-	public void setTestReport(TestReportProperties testReport) {
-		this.testReport = testReport;
 	}
 
 	public VcsSourceProperties getVcs() {
@@ -143,6 +143,22 @@ public class CiCdProperties implements InitializingBean {
 		if (Objects.nonNull(deploy)) {
 			this.deploy = deploy;
 		}
+	}
+
+	public TestedReportProperties getTestedReport() {
+		return testedReport;
+	}
+
+	public void setTestedReport(TestedReportProperties testReport) {
+		this.testedReport = testReport;
+	}
+
+	public PcmProperties getPcm() {
+		return pcm;
+	}
+
+	public void setPcm(PcmProperties pcm) {
+		this.pcm = pcm;
 	}
 
 	public LogCleanerProperties getLogCleaner() {

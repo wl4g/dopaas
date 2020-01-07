@@ -22,8 +22,9 @@ import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
-import com.wl4g.devops.support.cli.repository.DestroableProcessWrapper;
-import com.wl4g.devops.support.cli.repository.DestroableProcessWrapper.*;
+import com.wl4g.devops.support.cli.process.DestroableProcess;
+import com.wl4g.devops.support.cli.process.LocalDestroableProcess;
+import com.wl4g.devops.support.cli.process.RemoteDestroableProcess;
 import com.wl4g.devops.tool.common.task.GenericTaskRunner;
 import com.wl4g.devops.tool.common.task.RunnerProperties;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
@@ -75,10 +76,10 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 
 	@Override
 	public String execWaitForComplete(DestroableCommand cmd)
-			throws IllegalProcessStateException, IOException, InterruptedException {
+			throws IllegalProcessStateException, InterruptedException, Exception {
 		notNull(cmd, "Execution command can't null.");
 
-		DestroableProcessWrapper dpw = null;
+		DestroableProcess dpw = null;
 		if (cmd instanceof LocalDestroableCommand) {
 			dpw = doExecLocal((LocalDestroableCommand) cmd);
 		} else if (cmd instanceof RemoteDestroableCommand) {
@@ -135,13 +136,12 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	}
 
 	@Override
-	public void exec(DestroableCommand cmd, Executor executor, ProcessCallback callback)
-			throws IOException, InterruptedException {
+	public void exec(DestroableCommand cmd, Executor executor, ProcessCallback callback) throws Exception, InterruptedException {
 		notNull(cmd, "Execution command can't null.");
 		notNull(executor, "Process excutor can't null.");
 		notNull(callback, "Process callback can't null.");
 
-		DestroableProcessWrapper dpw = null;
+		DestroableProcess dpw = null;
 		if (cmd instanceof DestroableCommand) {
 			dpw = doExecLocal((LocalDestroableCommand) cmd);
 		} else if (cmd instanceof RemoteDestroableCommand) {
@@ -176,10 +176,10 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * Execution local command line, callback standard or exception output
 	 * 
 	 * @param cmd
-	 * @throws IOException
 	 * @throws InterruptedException
+	 * @throws Exception
 	 */
-	protected DestroableProcessWrapper doExecLocal(LocalDestroableCommand cmd) throws IOException, InterruptedException {
+	protected DestroableProcess doExecLocal(LocalDestroableCommand cmd) throws InterruptedException, Exception {
 		log.info("Exec local command: {}", cmd.getCmd());
 
 		DelegateProcess ps = execMulti(cmd.getCmd(), cmd.getPwdDir(), cmd.getStdout(), cmd.getStderr(), cmd.isAppend(), false);
@@ -190,10 +190,10 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * Execution remote command line, callback standard or exception output
 	 * 
 	 * @param cmd
-	 * @throws IOException
 	 * @throws InterruptedException
+	 * @throws Exception
 	 */
-	protected DestroableProcessWrapper doExecRemote(RemoteDestroableCommand cmd) throws IOException, InterruptedException {
+	protected DestroableProcess doExecRemote(RemoteDestroableCommand cmd) throws InterruptedException, Exception {
 		log.info("Exec remote command: {}", cmd.getCmd());
 
 		return execWaitForCompleteWithSsh2(cmd.getHost(), cmd.getUser(), cmd.getPemPrivateKey(), cmd.getCmd(),
@@ -221,7 +221,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 				String.format("Destroy timeoutMs must be less than or equal to %s", DEFAULT_DESTROY_INTERVALMS));
 
 		// Process wrapper.
-		DestroableProcessWrapper dpw = repository.get(signal.getProcessId());
+		DestroableProcess dpw = repository.get(signal.getProcessId());
 		// Check destroable.
 		state(dpw.isDestroable(),
 				String.format("Failed to destroy command process: (%s), because the current destroable state: %s",
@@ -238,11 +238,12 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	}
 
 	/**
-	 * Destroy process streams(IN/ERR {@link InputStream} and {@link OutputStream}).
+	 * Destroy process streams(IN/ERR {@link InputStream} and
+	 * {@link OutputStream}).
 	 * 
 	 * @param timeoutMs
 	 */
-	private void destroy0(DestroableProcessWrapper dpw, long timeoutMs) {
+	private void destroy0(DestroableProcess dpw, long timeoutMs) {
 		notNull(dpw, "Destroable process can't null.");
 		try {
 			dpw.getStdin().close();
@@ -292,7 +293,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	 * @throws IOException
 	 */
 	private void inputStreamRead0(InputStream in, Executor executor, CountDownLatch latch, ProcessCallback callback,
-			DestroableProcessWrapper dpw, boolean iserr) {
+			DestroableProcess dpw, boolean iserr) {
 		notNull(dpw, "DestroableProcess can't null.");
 		notNull(in, "Process inputStream can't null");
 		notNull(callback, "Process callback can't null");

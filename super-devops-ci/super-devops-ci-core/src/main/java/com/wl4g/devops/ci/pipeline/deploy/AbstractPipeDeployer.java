@@ -23,8 +23,9 @@ import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.PipelineDeployingException;
+import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
-import com.wl4g.devops.tool.common.cli.SshUtils.CommandResult;
+import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.tool.common.crypto.AesEncryptor;
 import com.wl4g.devops.tool.common.io.FileIOUtils;
 import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
@@ -37,7 +38,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
-import static com.wl4g.devops.tool.common.cli.SshUtils.execWithSsh2;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.tool.common.lang.DateUtils2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
@@ -61,7 +61,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
 	/** Command-line process manager. */
 	@Autowired
-	protected DestroableProcessManager processManager;
+	protected DestroableProcessManager pm;
 
 	/** Task history service. */
 	@Autowired
@@ -175,21 +175,21 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
 		writeDeployLog("Execute remote of %s@%s, timeout: %s, command: [%s]", user, remoteHost, timeoutMs, command);
 
-		// Do execution.
-		CommandResult result = execWithSsh2(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
-		if (!isBlank(result.getMessage())) {
-			String logmsg = writeDeployLog("%s@%s, command:[%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command,
-					result.getMessage());
-			log.info(logmsg);
-		}
-		if (!isBlank(result.getErrmsg())) {
-			String logmsg = writeDeployLog("%s@%s, command:[%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
-					result.getErrmsg());
+		try {
+			RemoteDestroableCommand cmd = new RemoteDestroableCommand(command, timeoutMs, user, remoteHost,
+					getUsableCipherSshKey(sshkey));
+			// Execution command.
+			String outmsg = pm.execWaitForComplete(cmd);
+
+			log.info(writeDeployLog("%s@%s, command: [%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command, outmsg));
+		} catch (Exception e) {
+			String logmsg = writeDeployLog("%s@%s, command: [%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
+					e.getMessage());
 			log.info(logmsg);
 
 			// Strictly handle, as long as there is error message in remote
 			// command execution, throw error.
-			throw new PipelineDeployingException(logmsg);
+			throw new PipelineIntegrationBuildingException(logmsg);
 		}
 
 	}

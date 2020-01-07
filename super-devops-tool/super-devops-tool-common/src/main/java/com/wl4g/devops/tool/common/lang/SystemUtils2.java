@@ -100,7 +100,8 @@ public abstract class SystemUtils2 extends SystemUtils {
 					}
 				}
 			}
-			state(nonNull(mac), "Failed to get network card info. The OS not configured network card or connected to the network?");
+			state(nonNull(mac),
+					"Failed to get network card info. The OS not configured network card or connected to the network?");
 
 			StringBuffer sb = new StringBuffer(32);
 			for (int i = 0; i < mac.length; i++) {

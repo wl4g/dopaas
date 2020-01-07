@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.support.NoSuchProcessException;
+import com.wl4g.devops.support.cli.process.DestroableProcess;
 
 /**
  * Command-line process repository interface.
@@ -36,7 +37,7 @@ public interface ProcessRepository {
 	 * @param processId
 	 * @param dpw
 	 */
-	void register(String processId, DestroableProcessWrapper dpw);
+	void register(String processId, DestroableProcess dpw);
 
 	/**
 	 * Set whether the current process is allowed to interrupt, for example:
@@ -56,7 +57,7 @@ public interface ProcessRepository {
 	 * @param processId
 	 * @return
 	 */
-	DestroableProcessWrapper get(String processId) throws NoSuchProcessException;
+	DestroableProcess get(String processId) throws NoSuchProcessException;
 
 	/**
 	 * Check local has command-line process.
@@ -72,13 +73,13 @@ public interface ProcessRepository {
 	 * @param processId
 	 * @return
 	 */
-	DestroableProcessWrapper cleanup(String processId);
+	DestroableProcess cleanup(String processId);
 
 	/**
 	 * Obtain processes list all.
 	 * 
 	 * @return
 	 */
-	Collection<DestroableProcessWrapper> getProcessRegistry();
+	Collection<DestroableProcess> getProcessRegistry();
 
 }

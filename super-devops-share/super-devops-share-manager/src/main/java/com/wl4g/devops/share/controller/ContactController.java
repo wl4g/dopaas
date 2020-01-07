@@ -40,7 +40,7 @@ public class ContactController extends BaseController {
 	private ContactService contactService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"share:contact"})
+	@RequiresPermissions(value = { "share:contact" })
 	public RespBase<?> list(String name, String email, String phone, PageModel pm) {
 		log.info("into ContactController.list prarms::" + "name = {} , email = {} , phone = {} , pm = {} ", name, email, phone,
 				pm);
@@ -51,7 +51,7 @@ public class ContactController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"share:contact"})
+	@RequiresPermissions(value = { "share:contact" })
 	public RespBase<?> save(@RequestBody AlarmContact alarmContact) {
 		log.info("into ProjectController.save prarms::" + "alarmContact = {} ", alarmContact);
 		RespBase<Object> resp = RespBase.create();
@@ -64,7 +64,7 @@ public class ContactController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"share:contact"})
+	@RequiresPermissions(value = { "share:contact" })
 	public RespBase<?> detail(Integer id) {
 		log.info("into ContactController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -74,7 +74,7 @@ public class ContactController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"share:contact"})
+	@RequiresPermissions(value = { "share:contact" })
 	public RespBase<?> del(Integer id) {
 		log.info("into ContactController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

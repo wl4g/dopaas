@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +45,6 @@ public class AppClusterController extends BaseController {
 	@Autowired
 	private AppClusterService appClusterService;
 
-
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String clusterName) {
 		RespBase<Object> resp = RespBase.create();
@@ -56,7 +54,7 @@ public class AppClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"share:cluster"})
+	@RequiresPermissions(value = { "share:cluster" })
 	public RespBase<?> save(@RequestBody AppCluster appCluster) {
 		RespBase<Object> resp = RespBase.create();
 		appClusterService.save(appCluster);
@@ -64,7 +62,7 @@ public class AppClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"share:cluster"})
+	@RequiresPermissions(value = { "share:cluster" })
 	public RespBase<?> del(Integer clusterId) {
 		RespBase<Object> resp = RespBase.create();
 		appClusterService.del(clusterId);
@@ -72,7 +70,7 @@ public class AppClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"share:cluster"})
+	@RequiresPermissions(value = { "share:cluster" })
 	public RespBase<?> detail(Integer clusterId) {
 		RespBase<Object> resp = RespBase.create();
 		AppCluster detail = appClusterService.detail(clusterId);
@@ -97,9 +95,9 @@ public class AppClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/connectTest")
-	public RespBase<?> connectTest(Integer hostId, String sshUser,String sshKey) throws IOException, InterruptedException {
+	public RespBase<?> testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException {
 		RespBase<Object> resp = RespBase.create();
-		appClusterService.connectTest(hostId,sshUser,sshKey);
+		appClusterService.testSSHConnect(hostId, sshUser, sshKey);
 		return resp;
 	}
 

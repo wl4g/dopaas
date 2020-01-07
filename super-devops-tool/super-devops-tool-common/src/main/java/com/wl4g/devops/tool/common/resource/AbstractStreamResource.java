@@ -47,8 +47,9 @@ import java.net.URL;
 import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
- * Convenience base class for {@link org.AbstractStreamResource.io.AbstractResource}
- * implementations, pre-implementing typical behavior.
+ * Convenience base class for
+ * {@link org.AbstractStreamResource.io.AbstractResource} implementations,
+ * pre-implementing typical behavior.
  *
  * <p>
  * The "exists" method will check whether a File or InputStream can be opened;
@@ -224,7 +225,8 @@ abstract class AbstractStreamResource implements StreamResource {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return (obj == this || (obj instanceof StreamResource && ((StreamResource) obj).getDescription().equals(getDescription())));
+		return (obj == this
+				|| (obj instanceof StreamResource && ((StreamResource) obj).getDescription().equals(getDescription())));
 	}
 
 	/**

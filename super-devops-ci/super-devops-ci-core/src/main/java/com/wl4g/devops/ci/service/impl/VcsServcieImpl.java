@@ -78,7 +78,7 @@ public class VcsServcieImpl implements VcsService {
 
 	@Override
 	public List<Vcs> all() {
-		return vcsDao.list(null,null,null);
+		return vcsDao.list(null, null, null);
 	}
 
 }

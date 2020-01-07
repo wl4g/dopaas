@@ -186,7 +186,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 	}
 
 	@Override
-	public void connectTest(Integer hostId, String sshUser, String sshKey) throws IOException, InterruptedException {
+	public void testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException {
 		AppHost appHost = appHostDao.selectByPrimaryKey(hostId);
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 		String command = "echo " + uuid;

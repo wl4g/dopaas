@@ -15,14 +15,55 @@
  */
 package com.wl4g.devops.ci.config;
 
+import static java.util.Objects.nonNull;
+
 /**
- * CICD pipeline process, acquiring project source code-related configuration.
+ * Project collaboration management system configuration.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-10-13
  * @since
  */
 public class PcmProperties {
+
+	/**
+	 * Request PCM server read timeout.
+	 */
+	private Integer readTimeout = 60_000;
+
+	/**
+	 * Request PCM server connect timeout.
+	 */
+	private Integer connectTimeout = 10_000;
+
+	/**
+	 * Request PCM server read max body bytes.
+	 */
+	private Integer maxResponseSize = 1024 * 1024 * 10;
+
+	public Integer getReadTimeout() {
+		return readTimeout;
+	}
+
+	public void setReadTimeout(Integer readTimeout) {
+		this.readTimeout = readTimeout;
+	}
+
+	public Integer getConnectTimeout() {
+		return connectTimeout;
+	}
+
+	public void setConnectTimeout(Integer connectTimeout) {
+		this.connectTimeout = connectTimeout;
+	}
+
+	public Integer getMaxResponseSize() {
+		return maxResponseSize;
+	}
+
+	public void setMaxResponseSize(Integer maxResponseSize) {
+		this.maxResponseSize = maxResponseSize;
+	}
 
 	/** Jira properties. */
 	private JiraProperties jira = new JiraProperties();
@@ -65,6 +106,21 @@ public class PcmProperties {
 	 * @since
 	 */
 	public static class RedmineProperties {
+
+		/**
+		 * Search projects pages limit size.
+		 */
+		private Integer searchProjectsDefaultPageLimit = 200;
+
+		public Integer getSearchProjectsDefaultPageLimit() {
+			return searchProjectsDefaultPageLimit;
+		}
+
+		public void setSearchProjectsDefaultPageLimit(Integer searchProjectsDefaultPageLimit) {
+			if (nonNull(searchProjectsDefaultPageLimit)) {
+				this.searchProjectsDefaultPageLimit = searchProjectsDefaultPageLimit;
+			}
+		}
 
 	}
 

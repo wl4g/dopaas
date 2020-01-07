@@ -33,7 +33,7 @@ import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.support.cli.destroy.DestroySignalMessage;
-import com.wl4g.devops.support.cli.repository.DestroableProcessWrapper;
+import com.wl4g.devops.support.cli.process.DestroableProcess;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import static com.wl4g.devops.support.cli.destroy.DestroySignalMessage.DestroyState.*;
@@ -122,11 +122,11 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 				// Let cluster this node process destroy, nodes that do not
 				// acquire lock are on ready in place.
 				if (lock.tryLock()) {
-					Collection<DestroableProcessWrapper> pss = repository.getProcessRegistry();
+					Collection<DestroableProcess> pss = repository.getProcessRegistry();
 					if (log.isDebugEnabled()) {
 						log.debug("Destroable processes: {}", pss);
 					}
-					for (DestroableProcessWrapper ps : pss) {
+					for (DestroableProcess ps : pss) {
 						String signalKey = getDestroySignalKey(ps.getProcessId());
 						// Match & destroy process. See:[MARK1]
 						DestroySignal signal = jedisService.getObjectAsJson(signalKey, DestroySignal.class);

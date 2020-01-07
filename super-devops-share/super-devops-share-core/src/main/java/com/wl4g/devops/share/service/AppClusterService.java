@@ -19,7 +19,6 @@ import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.page.PageModel;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +42,6 @@ public interface AppClusterService {
 
 	List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType);
 
-	void connectTest(Integer hostId, String sshUser,String sshKey) throws IOException, InterruptedException;
+	void testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException;
 
 }

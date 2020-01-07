@@ -92,6 +92,9 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+		factory.setConnectTimeout(config.getVcs().getConnectTimeout());
+		factory.setReadTimeout(config.getVcs().getReadTimeout());
+		factory.setMaxResponseSize(config.getVcs().getMaxResponseSize());
 		this.restTemplate = new RestTemplate(factory);
 	}
 

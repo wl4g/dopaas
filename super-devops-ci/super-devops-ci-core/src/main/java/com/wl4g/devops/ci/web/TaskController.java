@@ -65,14 +65,14 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
 	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String providerKind,
 			String startDate, String endDate, String envType) {
 		log.info("into TaskController.list prarms::"
 				+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , providerKind = {} , startDate = {} , endDate = {} ",
 				pm, id, taskName, groupName, branchName, providerKind, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = taskService.list(pm, id, taskName, groupName, branchName, providerKind, startDate, endDate,envType);
+		PageModel list = taskService.list(pm, id, taskName, groupName, branchName, providerKind, startDate, endDate, envType);
 		resp.setData(list);
 		return resp;
 	}
@@ -85,7 +85,7 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
 	public RespBase<?> save(@RequestBody Task task) {
 		log.info("into TaskController.save prarms::" + "task = {} ", task);
 		Assert.notNull(task, "task can not be null");
@@ -103,7 +103,7 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
 	public RespBase<?> detail(Integer id) {
 		log.info("into TaskController.detail prarms::" + "id = {} ", id);
 		Assert.notNull(id, "id can not be null");
@@ -119,7 +119,7 @@ public class TaskController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
 	public RespBase<?> del(Integer id) {
 		Assert.notNull(id, "id can not be null");
 		RespBase<Object> resp = RespBase.create();
@@ -145,7 +145,7 @@ public class TaskController extends BaseController {
 	 * @param appClusterId
 	 */
 	@RequestMapping(value = "/getListByAppClusterId")
-	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
 	public RespBase<?> getListByAppClusterId(Integer appClusterId) {
 		Assert.notNull(appClusterId, "appClusterId can not be null");
 		RespBase<Object> resp = RespBase.create();
@@ -160,15 +160,15 @@ public class TaskController extends BaseController {
 	 * @param taskId
 	 */
 	@RequestMapping(value = "/create")
-	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
-	public RespBase<?> create(Integer taskId, String trackId, Integer trackType, String remark,String annex) {
+	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
+	public RespBase<?> create(Integer taskId, String trackId, Integer trackType, String remark, String annex) {
 		RespBase<Object> resp = RespBase.create();
-		pipeliner.runPipeline(new NewParameter(taskId, remark, trackId, trackType,annex));
+		pipeliner.runPipeline(new NewParameter(taskId, remark, trackId, trackType, annex));
 		return resp;
 	}
 
 	@RequestMapping(value = "/getDependencys")
-	@RequiresPermissions(value = {"ci","ci:task"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
 	public RespBase<?> getDependencys(Integer appClusterId) {
 		Assert.notNull(appClusterId, "appClusterId is null");
 		RespBase<Object> resp = RespBase.create();

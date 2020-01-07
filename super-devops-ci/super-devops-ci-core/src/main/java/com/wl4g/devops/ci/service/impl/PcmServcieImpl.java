@@ -77,7 +77,7 @@ public class PcmServcieImpl implements PcmService {
 
 	@Override
 	public List<Pcm> all() {
-		return pcmDao.list(null,null,null);
+		return pcmDao.list(null, null, null);
 	}
 
 }

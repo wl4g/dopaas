@@ -26,6 +26,16 @@ import static java.util.Objects.nonNull;
  */
 public class VcsSourceProperties {
 
+	/**
+	 * Request VCS server read timeout.
+	 */
+	private Integer readTimeout = 60_000;
+
+	/**
+	 * Request VCS server connect timeout.
+	 */
+	private Integer connectTimeout = 10_000;
+
 	/** Gitlab properties. */
 	private GitlabProperties gitlab = new GitlabProperties();
 
@@ -43,6 +53,35 @@ public class VcsSourceProperties {
 
 	/** Alicode properties. */
 	private AlicodeProperties alicode = new AlicodeProperties();
+
+	/**
+	 * Request VCS server read max body bytes.
+	 */
+	private Integer maxResponseSize = 1024 * 1024 * 10;
+
+	public Integer getReadTimeout() {
+		return readTimeout;
+	}
+
+	public void setReadTimeout(Integer readTimeout) {
+		this.readTimeout = readTimeout;
+	}
+
+	public Integer getConnectTimeout() {
+		return connectTimeout;
+	}
+
+	public void setConnectTimeout(Integer connectTimeout) {
+		this.connectTimeout = connectTimeout;
+	}
+
+	public Integer getMaxResponseSize() {
+		return maxResponseSize;
+	}
+
+	public void setMaxResponseSize(Integer maxResponseSize) {
+		this.maxResponseSize = maxResponseSize;
+	}
 
 	public GitlabProperties getGitlab() {
 		return gitlab;
@@ -101,6 +140,9 @@ public class VcsSourceProperties {
 	 */
 	public static class GitlabProperties {
 
+		/**
+		 * Search projects pages limit size.
+		 */
 		private Integer searchProjectsDefaultPageLimit = 20;
 
 		public Integer getSearchProjectsDefaultPageLimit() {

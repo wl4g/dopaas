@@ -77,8 +77,8 @@ import com.wl4g.devops.tool.common.resource.match.PathMatcher;
  * A {@link ResourcePatternResolver} implementation that is able to resolve a
  * specified resource location path into one or more matching Resources. The
  * source path may be a simple path which has a one-to-one mapping to a target
- * {@link org.StreamResource.core.io.Resource}, or alternatively may contain
- * the special "{@code classpath*:}" prefix and/or internal Ant-style regular
+ * {@link org.StreamResource.core.io.Resource}, or alternatively may contain the
+ * special "{@code classpath*:}" prefix and/or internal Ant-style regular
  * expressions (matched using Spring's
  * {@link org.springframework.util.AntPathMatcher} utility). Both of the latter
  * are effectively wildcards.
@@ -405,7 +405,8 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 * Convert the given URL as returned from the ClassLoader into a
 	 * {@link StreamResource}.
 	 * <p>
-	 * The default implementation simply creates a {@link UrlStreamResource} instance.
+	 * The default implementation simply creates a {@link UrlStreamResource}
+	 * instance.
 	 * 
 	 * @param url
 	 *            a URL as returned from the ClassLoader
@@ -493,8 +494,8 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 						// upper-cased for proper duplicate detection
 						filePath = StringUtils.capitalize(filePath);
 					}
-					UrlStreamResource jarResource = new UrlStreamResource(ResourceUtils2.JAR_URL_PREFIX + ResourceUtils2.FILE_URL_PREFIX
-							+ filePath + ResourceUtils2.JAR_URL_SEPARATOR);
+					UrlStreamResource jarResource = new UrlStreamResource(ResourceUtils2.JAR_URL_PREFIX
+							+ ResourceUtils2.FILE_URL_PREFIX + filePath + ResourceUtils2.JAR_URL_SEPARATOR);
 					// Potentially overlapping with URLClassLoader.getURLs()
 					// result above!
 					if (!result.contains(jarResource) && !hasDuplicate(filePath, result) && jarResource.exists()) {
@@ -533,8 +534,8 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 		}
 		String duplicatePath = (filePath.startsWith("/") ? filePath.substring(1) : "/" + filePath);
 		try {
-			return result.contains(new UrlStreamResource(ResourceUtils2.JAR_URL_PREFIX + ResourceUtils2.FILE_URL_PREFIX + duplicatePath
-					+ ResourceUtils2.JAR_URL_SEPARATOR));
+			return result.contains(new UrlStreamResource(ResourceUtils2.JAR_URL_PREFIX + ResourceUtils2.FILE_URL_PREFIX
+					+ duplicatePath + ResourceUtils2.JAR_URL_SEPARATOR));
 		} catch (MalformedURLException ex) {
 			// Ignore: just for testing against duplicate.
 			return false;
@@ -666,8 +667,8 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 * @see java.net.JarURLConnection
 	 * @see com.wl4g.devops.tool.common.resources.match.springframework.util.PathMatcher
 	 */
-	protected Set<StreamResource> doFindPathMatchingJarResources(StreamResource rootDirResource, URL rootDirURL, String subPattern)
-			throws IOException {
+	protected Set<StreamResource> doFindPathMatchingJarResources(StreamResource rootDirResource, URL rootDirURL,
+			String subPattern) throws IOException {
 
 		// Check deprecated variant for potential overriding first...
 		Set<StreamResource> result = doFindPathMatchingJarResources(rootDirResource, subPattern);
@@ -769,7 +770,8 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 *             {@link #doFindPathMatchingJarResources(StreamResource, URL, String)}
 	 */
 	@Deprecated
-	protected Set<StreamResource> doFindPathMatchingJarResources(StreamResource rootDirResource, String subPattern) throws IOException {
+	protected Set<StreamResource> doFindPathMatchingJarResources(StreamResource rootDirResource, String subPattern)
+			throws IOException {
 
 		return null;
 	}
@@ -805,7 +807,8 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 * @see #retrieveMatchingFiles
 	 * @see com.wl4g.devops.tool.common.resources.match.springframework.util.PathMatcher
 	 */
-	protected Set<StreamResource> doFindPathMatchingFileResources(StreamResource rootDirResource, String subPattern) throws IOException {
+	protected Set<StreamResource> doFindPathMatchingFileResources(StreamResource rootDirResource, String subPattern)
+			throws IOException {
 		File rootDir;
 		try {
 			rootDir = rootDirResource.getFile().getAbsoluteFile();

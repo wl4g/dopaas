@@ -56,7 +56,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
 	public RespBase<?> list(String groupName, String projectName, PageModel pm) {
 		if (log.isInfoEnabled()) {
 			log.info("Query projects for groupName: {}, projectName: {}, {} ", groupName, projectName, pm);
@@ -74,7 +74,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
 	public RespBase<?> save(@RequestBody Project project) {
 		log.info("into ProjectController.save prarms::" + "project = {} ", project);
 		RespBase<Object> resp = RespBase.create();
@@ -89,7 +89,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
 	public RespBase<?> detail(Integer id) {
 		log.info("into ProjectController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -106,7 +106,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
 	public RespBase<?> del(Integer id) {
 		log.info("into ProjectController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -146,7 +146,7 @@ public class ProjectController extends BaseController {
 	}
 
 	@RequestMapping(value = "/vcsProjects")
-	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
 	public RespBase<?> searchVcsProjects(Integer vcsId, String projectName) {
 		RespBase<Object> resp = RespBase.create();
 		List<CompositeBasicVcsProjectModel> remoteProjects = projectService.vcsProjects(vcsId, projectName);
@@ -163,7 +163,7 @@ public class ProjectController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/getBranchs")
-	@RequiresPermissions(value = {"ci","ci:project"},logical = AND)
+	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
 	public RespBase<?> getBranchs(Integer appClusterId, Integer tarOrBranch) {
 		RespBase<Object> resp = RespBase.create();
 		List<String> branchs = projectService.getBranchs(appClusterId, tarOrBranch);
