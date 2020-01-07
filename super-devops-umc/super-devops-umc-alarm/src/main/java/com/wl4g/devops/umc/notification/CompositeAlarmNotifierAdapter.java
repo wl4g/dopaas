@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.tool.common.collection.OnceModifiableMap;
+import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
 
 /**
  * Alarm notifier adapter.
@@ -41,7 +41,7 @@ public class CompositeAlarmNotifierAdapter extends AbstractAlarmNotifier {
 	/**
 	 * Alarm notifiers.
 	 */
-	final protected Map<AlarmType, AlarmNotifier> alarmNotifiers = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<AlarmType, AlarmNotifier> alarmNotifiers = new RegisteredUnmodifiableMap<>(new HashMap<>());
 
 	public CompositeAlarmNotifierAdapter(List<AlarmNotifier> notifiers) {
 		Assert.state(!isEmpty(notifiers), "Alarm Notifier has at least one.");

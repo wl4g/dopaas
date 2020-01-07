@@ -886,7 +886,7 @@ public abstract class ReflectionUtils2 {
 	 * @return the cached array of fields
 	 * @see Class#getDeclaredFields()
 	 */
-	private static Field[] getDeclaredFields(Class<?> clazz) {
+	public static Field[] getDeclaredFields(Class<?> clazz) {
 		notNull(clazz, "Class must not be null");
 		Field[] result = declaredFieldsCache.get(clazz);
 		if (result == null) {

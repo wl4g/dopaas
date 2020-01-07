@@ -19,6 +19,10 @@ import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.core.DefaultPipelineManager;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.pcm.CompositePcmOperatorAdapter;
+import com.wl4g.devops.ci.pcm.PcmOperator;
+import com.wl4g.devops.ci.pcm.jira.JiraPcmOperator;
+import com.wl4g.devops.ci.pcm.redmine.RedminePcmOperator;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
@@ -64,7 +68,7 @@ import java.util.List;
 @Configuration
 public class CiCdAutoConfiguration {
 
-	// --- BASIC ---
+	// --- Basic's ---
 
 	@Bean
 	@ConfigurationProperties(prefix = "spring.cloud.devops.ci.pipeline")
@@ -92,14 +96,14 @@ public class CiCdAutoConfiguration {
 		return new GlobalTimeoutJobCleanupCoordinator();
 	}
 
-	// --- CONSOLE ---
+	// --- Console's. ---
 
 	@Bean
 	public CiCdConsole cicdConsole() {
 		return new CiCdConsole();
 	}
 
-	// --- VCS ---
+	// --- VCS's ---
 
 	@Bean
 	public VcsOperator gitlabV4VcsOperator() {
@@ -238,7 +242,7 @@ public class CiCdAutoConfiguration {
 		return new RktNativePipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
-	// --- TIMING SCHEDULE. ---
+	// --- Timing scheduling's. ---
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -252,11 +256,28 @@ public class CiCdAutoConfiguration {
 		return new PipelineTaskScheduler();
 	}
 
-	// --- OPERATOR TOOL's. ---
+	// --- Tool's. ---
 
 	@Bean
 	public LogPipelineCleaner logPipelineCleaner() {
 		return new LogPipelineCleaner();
+	}
+
+	// --- PCM's. ---
+
+	@Bean
+	public JiraPcmOperator jiraPcmOperator() {
+		return new JiraPcmOperator();
+	}
+
+	@Bean
+	public RedminePcmOperator redminePcmOperator() {
+		return new RedminePcmOperator();
+	}
+
+	@Bean
+	public CompositePcmOperatorAdapter compositePcmOperatorAdapter(List<PcmOperator> operators) {
+		return new CompositePcmOperatorAdapter(operators);
 	}
 
 }

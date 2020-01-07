@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.web;
 
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.HookParameter;
-import com.wl4g.devops.common.bean.ci.dto.HookInfo;
+import com.wl4g.devops.common.bean.ci.model.HookInfo;
 import com.wl4g.devops.common.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

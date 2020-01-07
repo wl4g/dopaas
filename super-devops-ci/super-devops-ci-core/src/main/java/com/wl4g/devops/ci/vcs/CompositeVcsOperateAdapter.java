@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.vcs;
 
 import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.tool.common.collection.OnceModifiableMap;
+import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
 
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.lib.Ref;
@@ -44,7 +44,7 @@ public class CompositeVcsOperateAdapter implements VcsOperator {
 	/**
 	 * Vcs operator.
 	 */
-	final protected Map<VcsProvider, VcsOperator> registry = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<VcsProvider, VcsOperator> registry = new RegisteredUnmodifiableMap<>(new HashMap<>());
 
 	/**
 	 * Real delegate VcsOperator.

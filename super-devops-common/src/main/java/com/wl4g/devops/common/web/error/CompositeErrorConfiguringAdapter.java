@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.web.error;
 
 import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.tool.common.collection.OnceModifiableList;
+import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableList;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.util.Assert;
@@ -47,7 +47,7 @@ public class CompositeErrorConfiguringAdapter implements ErrorConfiguring {
 	/**
 	 * Error configures.
 	 */
-	final protected List<ErrorConfiguring> errorConfigures = new OnceModifiableList<>(new ArrayList<>());
+	final protected List<ErrorConfiguring> errorConfigures = new RegisteredUnmodifiableList<>(new ArrayList<>());
 
 	public CompositeErrorConfiguringAdapter(List<ErrorConfiguring> configures) {
 		Assert.state(!isEmpty(configures), "Error configures has at least one.");

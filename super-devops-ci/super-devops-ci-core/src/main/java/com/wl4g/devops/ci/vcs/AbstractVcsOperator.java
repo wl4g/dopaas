@@ -20,7 +20,6 @@ import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -33,6 +32,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.List;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static org.springframework.util.Assert.*;
 
@@ -44,7 +44,7 @@ import static org.springframework.util.Assert.*;
  * @since
  */
 public abstract class AbstractVcsOperator implements VcsOperator, InitializingBean {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	/**
 	 * CICD configuration.

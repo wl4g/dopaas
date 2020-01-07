@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.analyses.coordinate;
 import com.wl4g.devops.ci.analyses.model.AnalysingModel;
 import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
 import com.wl4g.devops.ci.analyses.model.AnalysisResultModel;
-import com.wl4g.devops.tool.common.collection.OnceModifiableMap;
+import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
 
 import org.springframework.util.Assert;
 
@@ -42,7 +42,7 @@ public class CompositeAnalysisCoordinatorAdapter implements AnalysisCoordinator<
 	/**
 	 * Codes analyzers.
 	 */
-	final protected Map<AnalyzerKind, AnalysisCoordinator<AnalysingModel>> registry = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<AnalyzerKind, AnalysisCoordinator<AnalysingModel>> registry = new RegisteredUnmodifiableMap<>(new HashMap<>());
 
 	/**
 	 * Real delegate CodeAnalyzer.
