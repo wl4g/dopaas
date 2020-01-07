@@ -1,0 +1,181 @@
+/**
+  * Copyright 2020 bejson.com 
+  */
+package com.wl4g.devops.ci.pcm.redmine.model;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Auto-generated: 2020-01-03 14:7:34
+ *
+ * @author
+ * @website
+ */
+public class RedmineIssues extends BaseRedmine {
+
+	private List<RedmineIssue> issues;
+
+	public List<RedmineIssue> getIssues() {
+		return issues;
+	}
+
+	public void setIssues(List<RedmineIssue> issues) {
+		this.issues = issues;
+	}
+
+	public static class RedmineIssue {
+
+		private int id;
+		private RedmineField project;
+		private RedmineField tracker;
+		private RedmineField status;
+		private RedmineField priority;
+		private RedmineField author;
+		private RedmineField assigned_to;
+		private String subject;
+		private String description;
+		private Date start_date;
+		private Date due_date;
+		private int done_ratio;
+		private Date created_on;
+		private Date updated_on;
+
+		public void setId(int id) {
+			this.id = id;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public RedmineField getProject() {
+			return project;
+		}
+
+		public void setProject(RedmineField project) {
+			this.project = project;
+		}
+
+		public RedmineField getTracker() {
+			return tracker;
+		}
+
+		public void setTracker(RedmineField tracker) {
+			this.tracker = tracker;
+		}
+
+		public RedmineField getStatus() {
+			return status;
+		}
+
+		public void setStatus(RedmineField status) {
+			this.status = status;
+		}
+
+		public RedmineField getPriority() {
+			return priority;
+		}
+
+		public void setPriority(RedmineField priority) {
+			this.priority = priority;
+		}
+
+		public RedmineField getAuthor() {
+			return author;
+		}
+
+		public void setAuthor(RedmineField author) {
+			this.author = author;
+		}
+
+		public RedmineField getAssigned_to() {
+			return assigned_to;
+		}
+
+		public void setAssigned_to(RedmineField assigned_to) {
+			this.assigned_to = assigned_to;
+		}
+
+		public void setSubject(String subject) {
+			this.subject = subject;
+		}
+
+		public String getSubject() {
+			return subject;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setStart_date(Date start_date) {
+			this.start_date = start_date;
+		}
+
+		public Date getStart_date() {
+			return start_date;
+		}
+
+		public void setDue_date(Date due_date) {
+			this.due_date = due_date;
+		}
+
+		public Date getDue_date() {
+			return due_date;
+		}
+
+		public void setDone_ratio(int done_ratio) {
+			this.done_ratio = done_ratio;
+		}
+
+		public int getDone_ratio() {
+			return done_ratio;
+		}
+
+		public void setCreated_on(Date created_on) {
+			this.created_on = created_on;
+		}
+
+		public Date getCreated_on() {
+			return created_on;
+		}
+
+		public void setUpdated_on(Date updated_on) {
+			this.updated_on = updated_on;
+		}
+
+		public Date getUpdated_on() {
+			return updated_on;
+		}
+
+	}
+
+	public static class RedmineField {
+
+		private int id;
+		private String name;
+
+		public void setId(int id) {
+			this.id = id;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+	}
+
+}

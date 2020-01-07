@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.tool.common.collection;
 
+import static java.util.Collections.synchronizedList;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -24,13 +26,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
- * Once modifiable list.
+ * The {@link List} is applicable to the registration of framework instances.
+ * Its feature is that after the registration is successful, it cannot be
+ * modified.
  * 
  * @author Wangl.sir
  * @version v1.0 2019年8月1日
  * @since
  */
-public class OnceModifiableList<E> implements List<E> {
+public class RegisteredUnmodifiableList<E> implements List<E> {
 
 	/**
 	 * Read only list.
@@ -42,9 +46,9 @@ public class OnceModifiableList<E> implements List<E> {
 	 */
 	final private AtomicBoolean modified = new AtomicBoolean(false);
 
-	public OnceModifiableList(List<E> readOnlyList) {
+	public RegisteredUnmodifiableList(List<E> readOnlyList) {
 		Assert2.state(null != readOnlyList, "Once modifiable read only list must not be null.");
-		this.readOnlyList = readOnlyList;
+		this.readOnlyList = synchronizedList(readOnlyList);
 	}
 
 	@Override

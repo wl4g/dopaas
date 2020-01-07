@@ -15,21 +15,25 @@
  */
 package com.wl4g.devops.tool.common.collection;
 
+import static java.util.Collections.synchronizedMap;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
- * Once modifiable map.
+ * The {@link Map} is applicable to the registration of framework instances. Its
+ * feature is that after the registration is successful, it cannot be modified.
  * 
  * @author Wangl.sir
  * @version v1.0 2019年8月1日
  * @since
  */
-public class OnceModifiableMap<K, V> implements Map<K, V> {
+public class RegisteredUnmodifiableMap<K, V> implements Map<K, V> {
 
 	/**
 	 * Read only map.
@@ -41,8 +45,11 @@ public class OnceModifiableMap<K, V> implements Map<K, V> {
 	 */
 	final private AtomicBoolean modified = new AtomicBoolean(false);
 
-	public OnceModifiableMap(Map<K, V> readOnlyMap) {
+	public RegisteredUnmodifiableMap(Map<K, V> readOnlyMap) {
 		Assert2.state(null != readOnlyMap, "Once modifiable read only map must not be null.");
+		if (!(readOnlyMap instanceof ConcurrentMap)) {
+			readOnlyMap = synchronizedMap(readOnlyMap);
+		}
 		this.readOnlyMap = readOnlyMap;
 	}
 
