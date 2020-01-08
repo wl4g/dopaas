@@ -93,8 +93,11 @@ public class SshdUtil {
 			//String s1 = session.executeRemoteCommand("cd /root/git/vjay\nmvn clean");
             //ChannelExec execChannel = session.createExecChannel("cd /root/git/vjay\nmvn clean");
 
-            ChannelExec ec=session.createExecChannel("cd /root/git/vjay\nmvn install");
+            ChannelExec ec=session.createExecChannel("source /etc/profile\ncd /root/git/vjay\nmvn install");
             OutputStream out = new FileOutputStream("/Users/vjay/Downloads/test2.txt");
+
+
+            ec.getExitStatus();
 
             ec.setErr(out);
             ec.setOut(out);
