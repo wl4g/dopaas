@@ -97,7 +97,7 @@ public class SshdUtil {
             OutputStream out = new FileOutputStream("/Users/vjay/Downloads/test2.txt");
 
             ec.setErr(out);
-            //ec.setOut(out);
+            ec.setOut(out);
             out.flush();
             ec.open();
             ec.waitFor(Collections.singleton(ClientChannelEvent.CLOSED), 0);
