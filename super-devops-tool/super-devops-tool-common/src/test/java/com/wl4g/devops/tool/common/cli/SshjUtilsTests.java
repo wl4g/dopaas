@@ -15,10 +15,12 @@ public class SshjUtilsTests {
 //		System.out.println("success="+sshExecResponse.getMessage());
 //		System.out.println("fail="+sshExecResponse.getErrmsg());
 //		System.out.println("exitCode="+sshExecResponse.getExitCode());
-
+        long t1 = System.currentTimeMillis();
         // Test upload file
         SshjUtils.scpPutFile("10.0.0.160","root",privateKey.toCharArray(),
                 new File("/Users/vjay/Downloads/devops-0107.sql"),"/root/testssh/devops-0107.sql");
+        long t2 = System.currentTimeMillis();
+        System.out.println(t2-t1);
     }
 
 
