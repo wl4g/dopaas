@@ -1,5 +1,6 @@
 package com.wl4g.devops.tool.common.cli;
 
+import com.wl4g.devops.tool.common.cli.ssh2.SshUtils;
 import com.wl4g.devops.tool.common.io.ByteStreams2;
 
 public class SshUtilsTests {

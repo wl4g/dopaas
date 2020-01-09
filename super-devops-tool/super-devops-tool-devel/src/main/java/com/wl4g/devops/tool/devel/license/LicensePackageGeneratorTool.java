@@ -111,9 +111,9 @@ public final class LicensePackageGeneratorTool {
 			}
 		});
 
-		JPanel contentPane = (JPanel) frame.getContentPane();
-		JPanel centerPane = new JPanel(new BorderLayout(10, 10));
-		centerPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+		// Center panel
+		JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
+		centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 		JPanel pathPane = new JPanel(new BorderLayout());
 		JTextField txtPath = new JTextField();
 		txtPath.setText(SystemUtils.USER_DIR);
@@ -129,22 +129,32 @@ public final class LicensePackageGeneratorTool {
 		});
 		btnSelectPath.setMnemonic('B');
 		pathPane.add(btnSelectPath, BorderLayout.EAST);
-		centerPane.add(pathPane, BorderLayout.NORTH);
+		centerPanel.add(pathPane, BorderLayout.NORTH);
 		JTextArea txtComments = new JTextArea();
 		txtComments.setText(DEFAULT_COPYRIGHT);
-		centerPane.add(new JScrollPane(txtComments), BorderLayout.CENTER);
-		contentPane.add(centerPane, BorderLayout.CENTER);
+		centerPanel.add(new JScrollPane(txtComments), BorderLayout.CENTER);
 
-		JComboBox selectBox = new JComboBox();
-		selectBox.setToolTipText("使用内置Lisence");
-		LisenceRegistryFactory.getCopyrights().forEach((name, content) -> selectBox.addItem(name));
-		contentPane.add(selectBox, BorderLayout.PAGE_START);
-		selectBox.addActionListener(e -> {
-			String name = selectBox.getSelectedItem().toString();
+		// Content panel
+		JPanel contentPanel = (JPanel) frame.getContentPane();
+		contentPanel.add(centerPanel, BorderLayout.CENTER);
+
+		// Lisence selection.
+		JComboBox selectLisence = new JComboBox();
+		selectLisence.setToolTipText("使用内置Lisence");
+		LisenceRegistryFactory.getCopyrights().forEach((name, content) -> selectLisence.addItem(name));
+		contentPanel.add(selectLisence, BorderLayout.PAGE_START);
+		selectLisence.addActionListener(e -> {
+			String name = selectLisence.getSelectedItem().toString();
 			txtComments.setText(LisenceRegistryFactory.getCopyrights().get(name));
 		});
 
-		JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+		// Lisence file type.
+		// JComboBox selectFileType = new JComboBox();
+		// selectFileType.setToolTipText("文件类型");
+		// contentPanel.add(selectFileType, BorderLayout.NORTH);
+
+		// Buttom panel
+		JPanel buttomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 		JButton btnOK = new JButton("Generate Go");
 		btnOK.addActionListener(e -> {
 			String path = txtPath.getText();
@@ -163,9 +173,9 @@ public final class LicensePackageGeneratorTool {
 			System.exit(0);
 		});
 		btnClose.setMnemonic('C');
-		buttonPane.add(btnOK);
-		buttonPane.add(btnClose);
-		contentPane.add(buttonPane, BorderLayout.SOUTH);
+		buttomPanel.add(btnOK);
+		buttomPanel.add(btnClose);
+		contentPanel.add(buttomPanel, BorderLayout.SOUTH);
 
 		frame.setSize(800, 650);
 		frame.show(true);

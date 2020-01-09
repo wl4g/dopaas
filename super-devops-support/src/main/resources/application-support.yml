@@ -28,16 +28,17 @@ spring:
           enable: false # Default[false]
           # Some configuration...
         mail:
-          enable: false # Default[false]
-          #host: smtp.sina.com
-          #port: 465
-          #username: safec7782@sina.com
-          #password: safec7782
+          enable: true # Default[false]
 
           #host: smtp.anosi.cn
           #port: 465
           #username: syslog@anosi.cn
           #password: Abc.cn123
+
+          host: smtp.sina.com
+          port: 465
+          username: safec7782@sina.com
+          password: safec7782
 
           #host: smtp.exmail.qq.com
           #port: 465
@@ -66,6 +67,7 @@ spring:
           enable: false # Default[false]
           # Some configuration...
         sms:
+          enable: false # Default[false]
           aliyun:
             product: Dysmsapi
             domain: dysmsapi.aliyuncs.com
