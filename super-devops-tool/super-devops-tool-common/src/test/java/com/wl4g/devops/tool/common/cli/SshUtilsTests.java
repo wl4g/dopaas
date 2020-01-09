@@ -5,8 +5,8 @@ import com.wl4g.devops.tool.common.io.ByteStreams2;
 public class SshUtilsTests {
 
 	public static void main(String[] args) throws Exception {
-		String command = "sleep 3;echo 'abcd123';";
-		SshUtils.execWaitForCompleteWithSsh2("localhost", "wanglsir", null, command, s -> {
+		String command = "sleep 10";
+		SshUtils.execWaitForCompleteWithSsh2("10.0.0.160", "root", null, command, s -> {
 			System.err.println(ByteStreams2.readFullyToString(s.getStderr()));
 			System.out.println(ByteStreams2.readFullyToString(s.getStdout()));
 			s.close();
