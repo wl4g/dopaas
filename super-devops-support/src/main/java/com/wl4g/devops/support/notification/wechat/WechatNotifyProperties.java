@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.support.notification.wechat;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
-
-public class WechatNotifyProperties extends NotifyProperties {
+public class WechatNotifyProperties {
 
 }

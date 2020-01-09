@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.support.notification.bark;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
-
-public class BarkNotifyProperties extends NotifyProperties {
+public class BarkNotifyProperties {
 
 }

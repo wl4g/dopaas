@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.support.notification.qq;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
-
-public class QqNotifyProperties extends NotifyProperties {
+public class QqNotifyProperties {
 
 }

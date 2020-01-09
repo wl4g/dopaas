@@ -15,18 +15,15 @@
  */
 package com.wl4g.devops.support.notification.mail;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
 
-public class MailNotifyProperties extends NotifyProperties {
-
-	private String fromUser;
-
-	public String getFromUser() {
-		return fromUser;
-	}
-
-	public void setFromUser(String fromUser) {
-		this.fromUser = fromUser;
-	}
+/**
+ * {@link MailNotifyProperties}, Full compatibility with native spring mail!
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年1月9日 v1.0.0
+ * @see
+ */
+public class MailNotifyProperties extends MailProperties {
 
 }

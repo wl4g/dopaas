@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.support.notification.facebook;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
+import org.springframework.boot.autoconfigure.social.FacebookProperties;
 
-public class FacebookNotifyProperties extends NotifyProperties {
+public class FacebookNotifyProperties  extends FacebookProperties {
 
 }

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.support.notification.twitter;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
+import org.springframework.boot.autoconfigure.social.TwitterProperties;
 
-public class TwitterNotifyProperties extends NotifyProperties {
+public class TwitterNotifyProperties extends TwitterProperties {
 
 }

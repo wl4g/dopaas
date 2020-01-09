@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.support.notification.apns;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
-
-public class ApnsNotifyProperties extends NotifyProperties {
+public class ApnsNotifyProperties {
 
 }

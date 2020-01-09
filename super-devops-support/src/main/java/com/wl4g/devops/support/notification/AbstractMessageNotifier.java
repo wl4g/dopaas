@@ -16,7 +16,6 @@
 package com.wl4g.devops.support.notification;
 
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,31 +29,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
-public abstract class AbstractMessageNotifier<C extends NotifyProperties, T extends NotifyMessage> implements MessageNotifier<T> {
+public abstract class AbstractMessageNotifier<C, T extends NotifyMessage> implements MessageNotifier<T> {
 	final protected Logger log = getLogger(getClass());
 
 	@Autowired
 	protected C config;
-
-	/**
-	 * Base message notify properties configuration.
-	 * 
-	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version 2020年1月8日 v1.0.0
-	 * @see
-	 */
-	public abstract static class NotifyProperties {
-
-		private String serverEndpoint;
-
-		public String getServerEndpoint() {
-			return serverEndpoint;
-		}
-
-		public void setServerEndpoint(String serverEndpoint) {
-			this.serverEndpoint = serverEndpoint;
-		}
-
-	}
 
 }
