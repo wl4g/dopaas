@@ -148,7 +148,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.sshd</groupId>
-			<artifactId>sshd-sftp</artifactId>
+			<artifactId>sshd-scp</artifactId>
 			<version>2.3.0</version>
 		</dependency>
 		<!--sshj-->
