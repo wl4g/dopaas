@@ -13,20 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.notification;
+package com.wl4g.devops.support.notification.qq;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.wl4g.devops.support.notification.NotifyMessage;
 
-/**
- * Based multiple channel notifier.
- * 
- * @author wangl.sir
- * @version v1.0 2019年7月5日
- * @since
- */
-public abstract class AbstractAlarmNotifier implements AlarmNotifier {
-
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+public class QqMessage implements NotifyMessage {
+	private static final long serialVersionUID = 1303039928183495028L;
 
 }

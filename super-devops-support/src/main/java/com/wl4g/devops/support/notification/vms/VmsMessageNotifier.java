@@ -13,38 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.notification;
+package com.wl4g.devops.support.notification.vms;
 
-import org.apache.commons.lang3.StringUtils;
+import com.wl4g.devops.support.notification.AbstractMessageNotifier;
 
-/**
- * Alarm type definition.
- * 
- * @author Wangl.sir
- * @author vjay
- * @date 2019-07-05 10:13:00
- */
-public enum AlarmType {
+public class VmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyProperties, VmsMessage> {
 
-	EMAIL("1"), SMS("2"), WECHAT("3"), BARK("4"), DINGTALK("5"), FACEBOOK("6"), TWITTER("7");
-
-	private String value;
-
-	public String getValue() {
-		return value;
+	@Override
+	public NotifierKind kind() {
+		return NotifierKind.Apns;
 	}
 
-	AlarmType(String value) {
-		this.value = value;
+	@Override
+	public void send(VmsMessage message) {
+		throw new UnsupportedOperationException();
 	}
 
-	public static AlarmType safeOf(String type) {
-		for (AlarmType t : values()) {
-			if (StringUtils.equals(t.getValue(), type)) {
-				return t;
-			}
-		}
-		return null;
+	@SuppressWarnings({ "unchecked" })
+	@Override
+	public Object sendForReply(VmsMessage message) {
+		throw new UnsupportedOperationException();
 	}
 
 }

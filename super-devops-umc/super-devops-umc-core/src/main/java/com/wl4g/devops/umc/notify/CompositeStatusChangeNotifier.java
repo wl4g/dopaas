@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.umc.notify;
 
-import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
+import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
+import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
 import com.wl4g.devops.umc.handle.SmsNotificationHandle;
 import com.wl4g.devops.umc.model.StatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,20 +37,19 @@ public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 
 	@Autowired
 	private SmsNotificationHandle smsHandle;
+
 	@Autowired
-	private MailSenderTemplate mailHandle;
+	private CompositeMessageNotifier notifier;
 
 	@Override
 	protected void doNotify(StatusMessage status) {
 		// 1.1 SMS notifier.
 		try {
-			if (logger.isDebugEnabled())
-				logger.debug("SMS通知... {}", status);
-
-			this.smsHandle.send(status.getPhoneTo(), status.getAppInfo(), status.getFromStatus(), status.getToStatus(),
+			log.debug("SMS通知... {}", status);
+			smsHandle.send(status.getPhoneTo(), status.getAppInfo(), status.getFromStatus(), status.getToStatus(),
 					status.getMsgId());
 		} catch (Exception e) {
-			logger.error("SMS notification failed.", e);
+			log.error("SMS notification failed.", e);
 		}
 
 		// 1.2 Mail notifier.
@@ -68,12 +69,10 @@ public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 			msg.setText(content.toString());
 			msg.setSentDate(new Date());
 
-			if (logger.isDebugEnabled())
-				logger.debug("Mail通知... {}", status);
-
-			this.mailHandle.send(msg);
+			log.debug("Mail通知... {}", status);
+			notifier.forAdapt(MailMessageNotifier.class).send(new MailMessageWrapper(msg));
 		} catch (Exception e) {
-			logger.error("Mail notification failed.", e);
+			log.error("Mail notification failed.", e);
 		}
 	}
 

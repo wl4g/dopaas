@@ -1,5 +1,5 @@
 ![DevSecOps](shots/logo.jpg)
-## 一站式面向微服务轻量级DevSecOps解决方案，支持CI/CD、统一监控、统一认证、统一配置、日志分析、弹性伸缩、调度中心、控制台服务、HBase运维工具、文档管理、版本控制等
+## 一站式面向微服务轻量级DevSecOps解决方案，支持CI/CD、统一监控、链路追踪、统一认证、统一配置、日志分析、弹性伸缩、调度中心、控制台服务、HBase运维工具、文档管理、版本控制等
 
 [![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)

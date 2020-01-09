@@ -32,7 +32,9 @@ import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
-import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
+import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
+import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
 import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 
@@ -77,7 +79,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired
-	protected MailSenderTemplate mailSender;
+	protected CompositeMessageNotifier notifier;
 
 	@Autowired
 	protected AppInstanceDao appInstanceDao;
@@ -385,11 +387,11 @@ public class DefaultPipelineManager implements PipelineManager {
 		for (AlarmContact contact : contactByGroupIds) {
 			SimpleMailMessage msg = new SimpleMailMessage();
 			msg.setFrom(mailFrom);
-			msg.setSubject("CI Build Report");
+			msg.setSubject("CI Built Result");
 			msg.setTo(contact.getEmail());
 			msg.setText(message);
 			msg.setSentDate(new Date());
-			mailSender.send(msg);
+			notifier.forAdapt(MailMessageNotifier.class).send(new MailMessageWrapper(msg));
 		}
 	}
 

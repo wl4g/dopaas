@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ParserContext;
@@ -31,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wl4g.devops.common.constants.UMCDevOpsConstants;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.model.StatusMessage;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.*;
 
 import de.codecentric.boot.admin.event.ClientApplicationEvent;
 import de.codecentric.boot.admin.model.StatusInfo;
@@ -52,7 +52,7 @@ import de.codecentric.boot.admin.notify.AbstractStatusChangeNotifier;
  * @since
  */
 public abstract class AbstractAdvancedNotifier extends AbstractStatusChangeNotifier {
-	final protected Logger logger = LoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 	final private static String DEFAULT_APPINFO = "#{application.name}-#{application.id}";
 	final private static String DEFAULT_APPHEALTHURL = "#{application.healthUrl}";
 	final private static String DEFAULT_FROMSTATUS = "#{from.status}";
@@ -84,8 +84,8 @@ public abstract class AbstractAdvancedNotifier extends AbstractStatusChangeNotif
 
 	@Override
 	protected void doNotify(ClientApplicationEvent e) throws Exception {
-		if (logger.isInfoEnabled())
-			logger.info("Application event. {}", e.getApplication());
+		if (log.isInfoEnabled())
+			log.info("Application event. {}", e.getApplication());
 
 		StatusInfo info = e.getApplication().getStatusInfo();
 		// Get info.
@@ -104,8 +104,8 @@ public abstract class AbstractAdvancedNotifier extends AbstractStatusChangeNotif
 		String msgStr = this.mapper.writeValueAsString(msg);
 		this.jedisService.set((INFO_PREFIX + msgId), msgStr, this.getExpireSec());
 
-		if (logger.isInfoEnabled())
-			logger.info("Notifier status message. {}", msgStr);
+		if (log.isInfoEnabled())
+			log.info("Notifier status message. {}", msgStr);
 
 		// Notifier processing.
 		this.doNotify(msg);

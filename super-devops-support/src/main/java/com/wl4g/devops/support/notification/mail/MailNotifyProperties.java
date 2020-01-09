@@ -13,32 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.notification.sms;
+package com.wl4g.devops.support.notification.mail;
 
-import com.wl4g.devops.umc.notification.AbstractAlarmNotifier;
-import com.wl4g.devops.umc.notification.AlarmType;
+import com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
 
-/**
- * @author vjay
- * @date 2019-06-10 15:10:00
- */
-public class SmsNotifier extends AbstractAlarmNotifier {
+public class MailNotifyProperties extends NotifyProperties {
 
-	@Override
-	public AlarmType alarmType() {
-		return AlarmType.SMS;
+	private String fromUser;
+
+	public String getFromUser() {
+		return fromUser;
 	}
 
-	@Override
-	public void simpleNotify(SimpleAlarmMessage message) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void templateNotify(TeampleAlarmMessage message) {
-		// TODO Auto-generated method stub
-
+	public void setFromUser(String fromUser) {
+		this.fromUser = fromUser;
 	}
 
 }
