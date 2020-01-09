@@ -46,6 +46,7 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static java.lang.System.arraycopy;
 import static java.lang.Thread.sleep;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -98,20 +99,25 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			// Wait for completed.
 			dp.waitFor(cmd.getTimeoutMs(), TimeUnit.MILLISECONDS);
 
+			// [Note]: exitCode may be null
 			Integer exitCode = dp.exitValue();
-			// e.g. destroy() was called.
-			if (/* isNull(exitCode) || */ (nonNull(exitCode) && exitCode != 0)) {
+			if (isNull(exitCode)) {
+				// [Fallback]: If the output is not redirected to the local
+				// file, the execution fails if there is an stderr message
+				String errmsg = readFullyToString(dp.getStderr());
+				if (!isLocalStderr(cmd) && !isBlank(errmsg)) {
+					throw new IllegalProcessStateException(exitCode, errmsg);
+				}
+			} else if (exitCode != 0) {
 				String errmsg = EMPTY;
-				// Obtain process error message.
 				try {
 					// stderr redirected? (e.g: mvn install >/mvn.out 2>&1)
 					// and will not get the message.
-					if ((cmd instanceof LocalDestroableCommand) && ((LocalDestroableCommand) cmd).hasStderr()) {
+					if (isLocalStderr(cmd))
 						errmsg = String.format("Failed to exec command, more error info refer to: '%s'",
 								((LocalDestroableCommand) cmd).getStderr());
-					} else {
+					else
 						errmsg = readFullyToString(dp.getStderr());
-					}
 				} catch (Exception e) {
 					errmsg = getRootCausesString(e);
 				}
@@ -140,30 +146,30 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 		notNull(executor, "Process excutor can't null.");
 		notNull(callback, "Process callback can't null.");
 
-		DestroableProcess dpw = null;
+		DestroableProcess dp = null;
 		if (cmd instanceof DestroableCommand) {
-			dpw = doExecLocal((LocalDestroableCommand) cmd);
+			dp = doExecLocal((LocalDestroableCommand) cmd);
 		} else if (cmd instanceof RemoteDestroableCommand) {
-			dpw = doExecRemote((RemoteDestroableCommand) cmd);
+			dp = doExecRemote((RemoteDestroableCommand) cmd);
 		} else {
 			throw new UnsupportedOperationException(String.format("Unsupported DestroableCommand[%s]", cmd));
 		}
-		notNull(dpw, "Process not created? An unexpected error!");
+		notNull(dp, "Process not created? An unexpected error!");
 
 		// Register process if necessary.
 		if (!isBlank(cmd.getProcessId())) {
-			repository.register(cmd.getProcessId(), dpw);
+			repository.register(cmd.getProcessId(), dp);
 		}
 
 		// Stderr/Stdout stream process.
 		CountDownLatch latch = new CountDownLatch(2);
 		try {
-			inputStreamRead0(dpw.getStderr(), executor, latch, callback, dpw, true);
-			inputStreamRead0(dpw.getStdout(), executor, latch, callback, dpw, false);
+			inputStreamRead0(dp.getStderr(), executor, latch, callback, dp, true);
+			inputStreamRead0(dp.getStdout(), executor, latch, callback, dp, false);
 			latch.await(cmd.getTimeoutMs(), TimeUnit.MILLISECONDS); // Await-done
 		} finally {
 			// Destroy process.
-			destroy0(dpw, DEFAULT_DESTROY_TIMEOUTMS);
+			destroy0(dp, DEFAULT_DESTROY_TIMEOUTMS);
 			// Cleanup if necessary.
 			if (!isBlank(cmd.getProcessId())) {
 				repository.cleanup(cmd.getProcessId());
@@ -316,6 +322,16 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 				latch.countDown();
 			}
 		});
+	}
+
+	/**
+	 * Check {@link LocalDestroableCommand} and has stderr file.
+	 * 
+	 * @param command
+	 * @return
+	 */
+	private boolean isLocalStderr(DestroableCommand command) {
+		return (command instanceof LocalDestroableCommand) && ((LocalDestroableCommand) command).hasStderr();
 	}
 
 }
