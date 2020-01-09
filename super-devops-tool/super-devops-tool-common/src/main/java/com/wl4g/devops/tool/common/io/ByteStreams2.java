@@ -58,9 +58,13 @@ public abstract class ByteStreams2 {
 	 */
 	public static String readFullyToString(InputStream in, String charset) throws IllegalStateException {
 		try {
-			byte[] buf = new byte[in.available()];
-			ByteStreams.readFully(in, buf);
-			return new String(buf, charset);
+			StringBuffer msg = new StringBuffer();
+			byte[] buf = new byte[4096];
+			int n = 0;
+			while ((n = in.read(buf)) > 0) {
+				msg.append(new String(buf, 0, n));
+			}
+			return msg.toString();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
