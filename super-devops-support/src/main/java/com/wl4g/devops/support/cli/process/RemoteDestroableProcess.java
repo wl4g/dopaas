@@ -1,17 +1,16 @@
 package com.wl4g.devops.support.cli.process;
 
-import static org.springframework.util.Assert.notNull;
+import ch.ethz.ssh2.Session;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
-import com.wl4g.devops.support.cli.command.DestroableCommand;
-
-import ch.ethz.ssh2.Session;
-import static ch.ethz.ssh2.ChannelCondition.*;
-import static ch.ethz.ssh2.channel.Channel.*;
+import static ch.ethz.ssh2.ChannelCondition.CLOSED;
+import static ch.ethz.ssh2.channel.Channel.STATE_OPEN;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * Remote destroable process implements.
@@ -61,7 +60,7 @@ public final class RemoteDestroableProcess extends DestroableProcess {
 	@Override
 	public void waitFor(long timeout, TimeUnit unit) throws IOException, InterruptedException {
 		// Wait for completed by condition.
-		session.waitForCondition((CLOSED | EOF | TIMEOUT), timeout);
+		session.waitForCondition((CLOSED), timeout);
 	}
 
 	@Override

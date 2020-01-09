@@ -227,7 +227,7 @@ public abstract class SshUtils {
 			ProcessFunction<Session, T> processor, long timeoutMs) throws Exception {
 		return doExecSsh2Command0(host, user, pemPrivateKey, command, session -> {
 			// Wait for completed by condition.
-			session.waitForCondition((CLOSED | EOF | TIMEOUT), timeoutMs);
+			session.waitForCondition((CLOSED), timeoutMs);
 			return processor.process(session);
 		}, timeoutMs);
 	}
