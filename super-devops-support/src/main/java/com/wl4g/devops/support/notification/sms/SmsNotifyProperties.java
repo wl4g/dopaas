@@ -15,86 +15,106 @@
  */
 package com.wl4g.devops.support.notification.sms;
 
+/**
+ * {@link SmsNotifyProperties}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年1月9日 v1.0.0
+ * @see
+ */
 public class SmsNotifyProperties {
 
-	private String product;
+	private AliyunSmsNotifyProperties aliyun = new AliyunSmsNotifyProperties();
 
-	private String domain;
-
-	private String accessKeyId;
-
-	private String accessKeySecret;
-
-	private String signName;
-
-	private String templateCode;
-
-	private String defaultConnectTimeout;
-
-	private String defaultReadTimeout;
-
-	public String getProduct() {
-		return product;
+	public AliyunSmsNotifyProperties getAliyun() {
+		return aliyun;
 	}
 
-	public void setProduct(String product) {
-		this.product = product;
+	public void setAliyun(AliyunSmsNotifyProperties aliyun) {
+		this.aliyun = aliyun;
 	}
 
-	public String getDomain() {
-		return domain;
-	}
+	public static class AliyunSmsNotifyProperties {
 
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
+		private String product;
 
-	public String getAccessKeyId() {
-		return accessKeyId;
-	}
+		private String domain;
 
-	public void setAccessKeyId(String accessKeyId) {
-		this.accessKeyId = accessKeyId;
-	}
+		private String accessKeyId;
 
-	public String getAccessKeySecret() {
-		return accessKeySecret;
-	}
+		private String accessKeySecret;
 
-	public void setAccessKeySecret(String accessKeySecret) {
-		this.accessKeySecret = accessKeySecret;
-	}
+		private String signName;
 
-	public String getSignName() {
-		return signName;
-	}
+		private String templateCode;
 
-	public void setSignName(String signName) {
-		this.signName = signName;
-	}
+		private String defaultConnectTimeout;
 
-	public String getTemplateCode() {
-		return templateCode;
-	}
+		private String defaultReadTimeout;
 
-	public void setTemplateCode(String templateCode) {
-		this.templateCode = templateCode;
-	}
+		public String getProduct() {
+			return product;
+		}
 
-	public String getDefaultConnectTimeout() {
-		return defaultConnectTimeout;
-	}
+		public void setProduct(String product) {
+			this.product = product;
+		}
 
-	public void setDefaultConnectTimeout(String defaultConnectTimeout) {
-		this.defaultConnectTimeout = defaultConnectTimeout;
-	}
+		public String getDomain() {
+			return domain;
+		}
 
-	public String getDefaultReadTimeout() {
-		return defaultReadTimeout;
-	}
+		public void setDomain(String domain) {
+			this.domain = domain;
+		}
 
-	public void setDefaultReadTimeout(String defaultReadTimeout) {
-		this.defaultReadTimeout = defaultReadTimeout;
+		public String getAccessKeyId() {
+			return accessKeyId;
+		}
+
+		public void setAccessKeyId(String accessKeyId) {
+			this.accessKeyId = accessKeyId;
+		}
+
+		public String getAccessKeySecret() {
+			return accessKeySecret;
+		}
+
+		public void setAccessKeySecret(String accessKeySecret) {
+			this.accessKeySecret = accessKeySecret;
+		}
+
+		public String getSignName() {
+			return signName;
+		}
+
+		public void setSignName(String signName) {
+			this.signName = signName;
+		}
+
+		public String getTemplateCode() {
+			return templateCode;
+		}
+
+		public void setTemplateCode(String templateCode) {
+			this.templateCode = templateCode;
+		}
+
+		public String getDefaultConnectTimeout() {
+			return defaultConnectTimeout;
+		}
+
+		public void setDefaultConnectTimeout(String defaultConnectTimeout) {
+			this.defaultConnectTimeout = defaultConnectTimeout;
+		}
+
+		public String getDefaultReadTimeout() {
+			return defaultReadTimeout;
+		}
+
+		public void setDefaultReadTimeout(String defaultReadTimeout) {
+			this.defaultReadTimeout = defaultReadTimeout;
+		}
 	}
 
 }

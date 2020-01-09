@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.cli;
+package com.wl4g.devops.tool.common.cli.ssh2;
 
 import com.wl4g.devops.tool.common.function.CallbackFunction;
 import com.wl4g.devops.tool.common.function.ProcessFunction;
@@ -71,7 +71,7 @@ public abstract class SshdUtils {
 		try {
 			// Transfer get file.
 			doScpTransfer0(host, user, pemPrivateKey, scp -> {
-				scp.download(remoteFilePath,localFile.getAbsolutePath());
+				scp.download(remoteFilePath, localFile.getAbsolutePath());
 			});
 
 			log.debug("SCP get transfered: '{}' from '{}@{}:{}'", localFile.getAbsolutePath(), user, host, remoteFilePath);
@@ -162,7 +162,7 @@ public abstract class SshdUtils {
 		try {
 			client = SshClient.setUpDefaultClient();
 			client.start();
-			session = authWithPrivateKey(client,host,null,user,pemPrivateKey);
+			session = authWithPrivateKey(client, host, null, user, pemPrivateKey);
 			scpClient = DefaultScpClientCreator.INSTANCE.createScpClient(session);
 			processor.process(scpClient);
 		} catch (Exception e) {
@@ -170,14 +170,14 @@ public abstract class SshdUtils {
 			throw e;
 		} finally {
 			try {
-				if (nonNull(session)){
+				if (nonNull(session)) {
 					session.close();
 				}
 			} catch (Exception e) {
 				log.error("", e);
 			}
 			try {
-				if (nonNull(client)){
+				if (nonNull(client)) {
 					client.stop();
 					client.close();
 				}
@@ -186,8 +186,6 @@ public abstract class SshdUtils {
 			}
 		}
 	}
-
-
 
 	// --- Execution commands. ---
 
@@ -207,7 +205,7 @@ public abstract class SshdUtils {
 		return execWaitForCompleteWithSsh2(host, user, pemPrivateKey, command, channelExec -> {
 			String message = null, errmsg = null;
 			if (nonNull(channelExec.getOut())) {
-				//message = readFullyToString();
+				// message = readFullyToString();
 				message = channelExec.getOut().toString();
 			}
 			if (nonNull(channelExec.getErr())) {
@@ -251,7 +249,7 @@ public abstract class SshdUtils {
 	 * @throws IOException
 	 */
 	private final static <T> T doExecSsh2Command0(String host, String user, char[] pemPrivateKey, String command,
-												  ProcessFunction<ChannelExec, T> processor, long timeoutMs) throws Exception {
+			ProcessFunction<ChannelExec, T> processor, long timeoutMs) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
 		notNull(processor, "SSH2 command processor can't null.");
@@ -270,7 +268,7 @@ public abstract class SshdUtils {
 		try {
 			client = SshClient.setUpDefaultClient();
 			client.start();
-			session = authWithPrivateKey(client,host,null,user,pemPrivateKey);
+			session = authWithPrivateKey(client, host, null, user, pemPrivateKey);
 			String proCommond = "source /etc/profile\nsource /etc/bashrc\n";
 			channelExec = session.createExecChannel(proCommond + command);
 			channelExec.setErr(err);
@@ -282,21 +280,21 @@ public abstract class SshdUtils {
 		} finally {
 			out.close();
 			try {
-				if (nonNull(channelExec)){
+				if (nonNull(channelExec)) {
 					channelExec.close();
 				}
 			} catch (Exception e) {
 				log.error("", e);
 			}
 			try {
-				if (nonNull(session)){
+				if (nonNull(session)) {
 					session.close();
 				}
 			} catch (Exception e) {
 				log.error("", e);
 			}
 			try {
-				if (nonNull(client)){
+				if (nonNull(client)) {
 					client.stop();
 					client.close();
 				}
@@ -306,9 +304,9 @@ public abstract class SshdUtils {
 		}
 	}
 
-
 	/**
 	 * auth with password (unused now)
+	 * 
 	 * @param host
 	 * @param port
 	 * @param user
@@ -317,9 +315,11 @@ public abstract class SshdUtils {
 	 * @throws IOException
 	 * @throws GeneralSecurityException
 	 */
-	private static ClientSession authWithPassword(SshClient client,String host,Integer port, String user, String password) throws IOException, GeneralSecurityException {
-		ClientSession session = client.connect(user, host, Objects.isNull(port)?22:port).verify(10000).getSession();
-		session.addPasswordIdentity(password); // for password-based authentication
+	private static ClientSession authWithPassword(SshClient client, String host, Integer port, String user, String password)
+			throws IOException, GeneralSecurityException {
+		ClientSession session = client.connect(user, host, Objects.isNull(port) ? 22 : port).verify(10000).getSession();
+		session.addPasswordIdentity(password); // for password-based
+												// authentication
 		AuthFuture verify = session.auth().verify(10000);
 		if (!verify.isSuccess()) {
 			throw new GeneralSecurityException("auth fail");
@@ -327,13 +327,16 @@ public abstract class SshdUtils {
 		return session;
 	}
 
-	private static ClientSession authWithPrivateKey(SshClient client,String host,Integer port, String user, char[] pemPrivateKey) throws IOException, GeneralSecurityException {
-		ClientSession session = client.connect(user, host, Objects.isNull(port)?22:port).verify(10000).getSession();
-		Iterable<KeyPair> keyPairs = SecurityUtils.loadKeyPairIdentities(session, null, getStrToStream(new String(pemPrivateKey)), null);
+	private static ClientSession authWithPrivateKey(SshClient client, String host, Integer port, String user,
+			char[] pemPrivateKey) throws IOException, GeneralSecurityException {
+		ClientSession session = client.connect(user, host, Objects.isNull(port) ? 22 : port).verify(10000).getSession();
+		Iterable<KeyPair> keyPairs = SecurityUtils.loadKeyPairIdentities(session, null, getStrToStream(new String(pemPrivateKey)),
+				null);
 		Iterator<KeyPair> iterator = keyPairs.iterator();
 		if (iterator.hasNext()) {
 			KeyPair next = iterator.next();
-			session.addPublicKeyIdentity(next);// for password-less authentication
+			session.addPublicKeyIdentity(next);// for password-less
+												// authentication
 		}
 		AuthFuture verify = session.auth().verify(10000);
 		if (!verify.isSuccess()) {
@@ -348,7 +351,6 @@ public abstract class SshdUtils {
 		}
 		return null;
 	}
-
 
 	public static class SshExecResponse {
 

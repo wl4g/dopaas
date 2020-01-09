@@ -39,7 +39,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
-import static com.wl4g.devops.tool.common.cli.SshUtils.execWaitForCompleteWithSsh2;
+import static com.wl4g.devops.tool.common.cli.ssh2.SshUtils.execWaitForCompleteWithSsh2;
 import static com.wl4g.devops.tool.common.io.ByteStreams2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;

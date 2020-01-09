@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.cli;
+package com.wl4g.devops.tool.common.cli.ssh2;
 
 import com.wl4g.devops.tool.common.function.CallbackFunction;
 import com.wl4g.devops.tool.common.function.ProcessFunction;
@@ -163,7 +163,7 @@ public abstract class SshjUtils {
 			ssh.addHostKeyVerifier(new PromiscuousVerifier());
 			ssh.connect(host);
 			KeyProvider keyProvider = ssh.loadKeys(new String(pemPrivateKey), null, null);
-			ssh.authPublickey(user,keyProvider);
+			ssh.authPublickey(user, keyProvider);
 
 			scpFileTransfer = ssh.newSCPFileTransfer();
 
@@ -173,7 +173,7 @@ public abstract class SshjUtils {
 			throw e;
 		} finally {
 			try {
-				if (nonNull(ssh)){
+				if (nonNull(ssh)) {
 					ssh.disconnect();
 					ssh.close();
 				}
@@ -206,7 +206,8 @@ public abstract class SshjUtils {
 			if (nonNull(cmd.getErrorStream())) {
 				errmsg = readFullyToString(cmd.getErrorStream());
 			}
-			return new SshExecResponse(Objects.nonNull(cmd.getExitSignal())?cmd.getExitSignal().toString():null, cmd.getExitStatus(), message, errmsg);
+			return new SshExecResponse(Objects.nonNull(cmd.getExitSignal()) ? cmd.getExitSignal().toString() : null,
+					cmd.getExitStatus(), message, errmsg);
 		}, timeoutMs);
 	}
 
@@ -244,7 +245,7 @@ public abstract class SshjUtils {
 	 * @throws IOException
 	 */
 	private final static <T> T doExecSsh2Command0(String host, String user, char[] pemPrivateKey, String command,
-												  ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception {
+			ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
 		notNull(processor, "SSH2 command processor can't null.");
@@ -263,24 +264,24 @@ public abstract class SshjUtils {
 			ssh.addHostKeyVerifier(new PromiscuousVerifier());
 			ssh.connect(host);
 			KeyProvider keyProvider = ssh.loadKeys(new String(pemPrivateKey), null, null);
-			ssh.authPublickey(user,keyProvider);
+			ssh.authPublickey(user, keyProvider);
 			session = ssh.startSession();
-			//TODO
+			// TODO
 			String proCommond = "source /etc/profile\nsource /etc/bashrc\n";
-			cmd = session.exec(proCommond+command);
+			cmd = session.exec(proCommond + command);
 			return processor.process(cmd);
 		} catch (Exception e) {
 			throw e;
 		} finally {
 			try {
-				if (nonNull(session)){
+				if (nonNull(session)) {
 					session.close();
 				}
 			} catch (Exception e) {
 				log.error("", e);
 			}
 			try {
-				if (nonNull(ssh)){
+				if (nonNull(ssh)) {
 					ssh.disconnect();
 					ssh.close();
 				}
@@ -289,7 +290,6 @@ public abstract class SshjUtils {
 			}
 		}
 	}
-
 
 	public static class SshExecResponse {
 

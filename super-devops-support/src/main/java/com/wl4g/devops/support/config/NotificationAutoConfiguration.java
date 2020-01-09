@@ -37,7 +37,9 @@ import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.support.notification.mail.MailNotifyProperties;
 import com.wl4g.devops.support.notification.qq.QqMessageNotifier;
 import com.wl4g.devops.support.notification.qq.QqNotifyProperties;
+import com.wl4g.devops.support.notification.sms.AliyunSmsMessageNotifier;
 import com.wl4g.devops.support.notification.sms.SmsNotifyProperties;
+import com.wl4g.devops.support.notification.twitter.TwitterMessageNotifier;
 import com.wl4g.devops.support.notification.twitter.TwitterNotifyProperties;
 import com.wl4g.devops.support.notification.vms.VmsMessageNotifier;
 import com.wl4g.devops.support.notification.vms.VmsNotifyProperties;
@@ -120,6 +122,7 @@ public class NotificationAutoConfiguration {
 	// --- Notifier configuration. ---
 
 	@Bean
+	@ConditionalOnBean({ MessageNotifier.class })
 	public CompositeMessageNotifier compositeMessageNotifier(List<MessageNotifier<NotifyMessage>> operators) {
 		return new CompositeMessageNotifier(operators);
 	}
@@ -161,6 +164,12 @@ public class NotificationAutoConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnBean(SmsNotifyProperties.class)
+	public AliyunSmsMessageNotifier aliyunSmsMessageNotifier(SmsNotifyProperties config) {
+		return new AliyunSmsMessageNotifier();
+	}
+
+	@Bean
 	@ConditionalOnBean(VmsMessageNotifier.class)
 	public VmsMessageNotifier vmsMessageNotifier() {
 		return new VmsMessageNotifier();
@@ -170,6 +179,12 @@ public class NotificationAutoConfiguration {
 	@ConditionalOnBean(WechatMessageNotifier.class)
 	public WechatMessageNotifier wechatMessageNotifier() {
 		return new WechatMessageNotifier();
+	}
+
+	@Bean
+	@ConditionalOnBean(TwitterNotifyProperties.class)
+	public TwitterMessageNotifier twitterMessageNotifier() {
+		return new TwitterMessageNotifier();
 	}
 
 }

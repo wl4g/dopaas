@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.List;
 
-import static com.wl4g.devops.tool.common.cli.SshUtils.scpPutFile;
+import static com.wl4g.devops.tool.common.cli.ssh2.SshUtils.scpPutFile;
 import static org.springframework.util.Assert.hasText;
 
 /**
