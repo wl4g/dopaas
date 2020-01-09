@@ -1,6 +1,8 @@
 package com.wl4g.devops.tool.common.cli;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import com.wl4g.devops.tool.common.cli.ssh2.SshdUtils;
 
@@ -11,7 +13,21 @@ import com.wl4g.devops.tool.common.cli.ssh2.SshdUtils;
 public class SshdUtilsTests {
 
 
+	private static void makeFile(String fileName) throws IOException {
+		if(!new File(fileName).exists()){
+			FileWriter fileWriter = new FileWriter(fileName);
+			for(int i = 0;i <=999;i++){
+				fileWriter.write("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
+			}
+		}
+	}
+
+
+
+
 	public static void main(String[] args) throws Exception {
+
+
 		// Test execute command
 //		SshdUtils.SshExecResponse sshExecResponse = SshdUtils.execWithSsh2("10.0.0.160", "root", privateKey.toCharArray(), "ls", 60000);
 //		System.out.println("success="+sshExecResponse.getMessage());
@@ -20,8 +36,10 @@ public class SshdUtilsTests {
 
 		long t1 = System.currentTimeMillis();
 		// Test upload file
+		String loaclFile = "/Users/vjay/Downloads/devops-0107.sql";
+		makeFile(loaclFile);
 		SshdUtils.scpPutFile("10.0.0.160","root",privateKey.toCharArray(),
-				new File("/Users/vjay/Downloads/devops-0107.sql"),"/root/testssh/devops-0107.sql");
+				new File(loaclFile),"/root/testssh/devops-0107.sql");
 		long t2 = System.currentTimeMillis();
 		System.out.println(t2-t1);
 	}
