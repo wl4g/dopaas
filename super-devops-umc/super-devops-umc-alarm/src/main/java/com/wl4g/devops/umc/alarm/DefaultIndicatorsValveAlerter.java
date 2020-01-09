@@ -19,17 +19,17 @@ import com.wl4g.devops.common.bean.umc.*;
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
+import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
-import com.wl4g.devops.umc.notification.AlarmNotifier;
-import com.wl4g.devops.umc.notification.AlarmNotifier.SimpleAlarmMessage;
-import com.wl4g.devops.umc.notification.AlarmType;
-import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -63,11 +63,11 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	final protected CompositeRuleInspectorAdapter inspector;
 
 	/** Alarm notifier */
-	final protected CompositeAlarmNotifierAdapter notifier;
+	final protected CompositeMessageNotifier notifier;
 
 	public DefaultIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager, AlarmProperties config,
 			AlarmConfigurer configurer, RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector,
-			CompositeAlarmNotifierAdapter notifier) {
+			CompositeMessageNotifier notifier) {
 		super(jedisService, lockManager, config);
 		Assert.notNull(configurer, "AlarmConfigurer is null, please check config.");
 		Assert.notNull(ruleManager, "RuleManager is null, please check config.");
@@ -338,9 +338,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		log.info("into DefaultIndicatorsValveAlerter.notification prarms::" + "alarmContacts = {} , alarmNote = {} ",
 				alarmContacts, alarmRecord.getAlarmNote());
 
-		// TODO just for test
-		notifier.simpleNotify(new SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.BARK.getValue(), ""));
-
+		// TODO using dynamic notifier call.
 		for (AlarmContact alarmContact : alarmContacts) {
 			// save notification
 			AlarmNotificationContact alarmNotificationContact = new AlarmNotificationContact();
@@ -351,49 +349,67 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 
 			// email
 			if (alarmContact.getEmailEnable() == 1) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.EMAIL.getValue(),
-						alarmContact.getEmail()));
+				SimpleMailMessage msg = new SimpleMailMessage();
+				msg.setText(alarmRecord.getAlarmNote());
+				msg.setTo(alarmContact.getEmail());
+				notifier.forAdapt(MailMessageNotifier.class).send(new MailMessageWrapper(msg));
 			}
 
-			// phone
-			if (alarmContact.getPhoneEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(), alarmContact.getPhoneNumOfFreq())) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.SMS.getValue(),
-						alarmContact.getPhone()));
-				handleRateLimit(ALARM_LIMIT_PHONE + alarmContact.getPhone(), alarmContact.getPhoneTimeOfFreq());
-			}
-
-			// dingtalk
-			if (alarmContact.getDingtalkEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkNumOfFreq())) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-						AlarmType.DINGTALK.getValue(), alarmContact.getDingtalk()));
-				handleRateLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkTimeOfFreq());
-			}
-
-			// facebook
-			if (alarmContact.getFacebookEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookNumOfFreq())) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-						AlarmType.FACEBOOK.getValue(), alarmContact.getFacebook()));
-				handleRateLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookTimeOfFreq());
-			}
-
-			// twitter
-			if (alarmContact.getTwitterEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterNumOfFreq())) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-						AlarmType.TWITTER.getValue(), alarmContact.getTwitter()));
-				handleRateLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterTimeOfFreq());
-			}
-
-			// wechat
-			if (alarmContact.getWechatEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatNumOfFreq())) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-						AlarmType.WECHAT.getValue(), alarmContact.getWechat()));
-				handleRateLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatTimeOfFreq());
-			}
+			// // phone
+			// if (alarmContact.getPhoneEnable() == 1
+			// && checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(),
+			// alarmContact.getPhoneNumOfFreq())) {
+			// notifier.simpleNotify(new
+			// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+			// AlarmType.SMS.getValue(),
+			// alarmContact.getPhone()));
+			// handleRateLimit(ALARM_LIMIT_PHONE + alarmContact.getPhone(),
+			// alarmContact.getPhoneTimeOfFreq());
+			// }
+			//
+			// // dingtalk
+			// if (alarmContact.getDingtalkEnable() == 1
+			// && checkNotifyLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(),
+			// alarmContact.getDingtalkNumOfFreq())) {
+			// notifier.simpleNotify(new
+			// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+			// AlarmType.DINGTALK.getValue(), alarmContact.getDingtalk()));
+			// handleRateLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(),
+			// alarmContact.getDingtalkTimeOfFreq());
+			// }
+			//
+			// // facebook
+			// if (alarmContact.getFacebookEnable() == 1
+			// && checkNotifyLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(),
+			// alarmContact.getFacebookNumOfFreq())) {
+			// notifier.simpleNotify(new
+			// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+			// AlarmType.FACEBOOK.getValue(), alarmContact.getFacebook()));
+			// handleRateLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(),
+			// alarmContact.getFacebookTimeOfFreq());
+			// }
+			//
+			// // twitter
+			// if (alarmContact.getTwitterEnable() == 1
+			// && checkNotifyLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(),
+			// alarmContact.getTwitterNumOfFreq())) {
+			// notifier.simpleNotify(new
+			// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+			// AlarmType.TWITTER.getValue(), alarmContact.getTwitter()));
+			// handleRateLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(),
+			// alarmContact.getTwitterTimeOfFreq());
+			// }
+			//
+			// // wechat
+			// if (alarmContact.getWechatEnable() == 1
+			// && checkNotifyLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(),
+			// alarmContact.getWechatNumOfFreq())) {
+			// notifier.simpleNotify(new
+			// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+			// AlarmType.WECHAT.getValue(), alarmContact.getWechat()));
+			// handleRateLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(),
+			// alarmContact.getWechatTimeOfFreq());
+			// }
 
 		}
 

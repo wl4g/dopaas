@@ -42,9 +42,14 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	final protected Logger log = getLogger(getClass());
 
 	/**
-	 * Generic operator.
+	 * Generic registrar of operator alias names.
 	 */
-	final protected Map<K, O> registry = new RegisteredUnmodifiableMap<>(new HashMap<>());
+	final protected Map<K, O> operatorAliasRegistry = new RegisteredUnmodifiableMap<>(new HashMap<>());
+
+	/**
+	 * Generic registrar of operator classes.
+	 */
+	final protected Map<Class<?>, O> operatorClassRegistry = new RegisteredUnmodifiableMap<>(new HashMap<>());
 
 	/**
 	 * Real delegate {@link O}
@@ -66,8 +71,10 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 			state(!kinds.contains(o.kind()), String.format("Repeated definition operator with kind: %s", o.kind()));
 			kinds.add(o.kind());
 		});
-		// Register.
-		this.registry.putAll(operators.stream().collect(toMap(O::kind, oper -> oper)));
+		// Register of kind aliases.
+		this.operatorAliasRegistry.putAll(operators.stream().collect(toMap(O::kind, o -> o)));
+		// Register of kind classes.
+		this.operatorClassRegistry.putAll(operators.stream().collect(toMap(O::getClass, o -> o)));
 
 		// Resolving real Kind class.
 		ResolvableType resolveType = ResolvableType.forClass(getClass());
@@ -78,6 +85,20 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	public K kind() {
 		// No such situation, It must be ignored.
 		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Making the adaptation actually execute {@link O}.
+	 * 
+	 * @param vcs
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T forAdapt(@NotNull Class<T> operatorClass) {
+		O operator = operatorClassRegistry.get(operatorClass);
+		notNull(operator, String.format("No such operator bean instance of class: '%s'", operatorClass));
+		delegate.set(operator);
+		return (T) operator;
 	}
 
 	/**
@@ -98,8 +119,8 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 */
 	public O forAdapt(@NotNull String kindName) {
 		K kind = getParseKind(kindName);
-		O operator = registry.get(kind);
-		notNull(operator, String.format("Unsupported operator for '%s'", kind));
+		O operator = operatorAliasRegistry.get(kind);
+		notNull(operator, String.format("No such operator bean instance for kind name: '%s'", kind));
 		delegate.set(operator);
 		return operator;
 	}
@@ -112,7 +133,9 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 */
 	protected O getAdapted() {
 		O operator = delegate.get();
-		state(nonNull(operator), "Not adapted to specify actual O, You must use adapted() to adapt before you can.");
+		state(nonNull(operator), String.format(
+				"No such to the specific operator(kind class: %s). Please configure the operator instance before calling the specific function method",
+				kindClass));
 		return operator;
 	}
 

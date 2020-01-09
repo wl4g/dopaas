@@ -13,4 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.notification;
+package com.wl4g.devops.support.notification.vms;
+
+import com.wl4g.devops.support.notification.NotifyMessage;
+
+public class VmsMessage implements NotifyMessage {
+	private static final long serialVersionUID = 1303039928183495028L;
+
+}
