@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * @author vjay
  * @date 2020-01-08 17:16:00
  */
-public class SshjUtil {
+public class SshjUtilTest {
 
 
     public static void main(String... args)
@@ -60,49 +60,6 @@ public class SshjUtil {
         }
     }
 
-
-    public static void execute(String command, String user, String host, char[] pemPrivateKey) throws IOException {
-        SSHClient ssh = new SSHClient();
-        //ssh.loadKnownHosts();
-        ssh.addHostKeyVerifier(new PromiscuousVerifier());
-        ssh.connect(host,22);
-
-        //ssh.authPassword("root","hwj13535248668");
-        //or
-        KeyProvider keyProvider = ssh.loadKeys(new String(pemPrivateKey), null, null);
-        ssh.authPublickey(user,keyProvider);
-
-
-        if(!ssh.isAuthenticated()){
-            System.out.println("auth fail");
-            return;
-        }
-
-        Session session = null;
-        try {
-            session = ssh.startSession();
-            //Session.Shell shell = session.startShell();
-
-            //ssh.authPublickey(System.getProperty("user.name"));
-            Session.Command cmd = session.exec("source /etc/bashrc\nsource /etc/profile\n"+command);
-
-            //Session.Command cmd = session.exec("ls");
-            System.out.println("successStr=\n"+IOUtils.readFully(cmd.getInputStream()).toString());
-            System.out.println("failStr=\n"+IOUtils.readFully(cmd.getErrorStream()).toString());
-            cmd.join(5, TimeUnit.SECONDS);
-            System.out.println("\n** exit status: " + cmd.getExitStatus());
-        } finally {
-            try {
-                if (session != null) {
-                    session.close();
-                }
-            } catch (IOException e) {
-                // Do Nothing
-            }
-
-            ssh.disconnect();
-        }
-    }
 
 
 
