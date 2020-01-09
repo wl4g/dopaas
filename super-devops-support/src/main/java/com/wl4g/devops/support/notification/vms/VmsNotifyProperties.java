@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.support.notification.vms;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
-
-public class VmsNotifyProperties extends NotifyProperties {
+public class VmsNotifyProperties {
 
 }

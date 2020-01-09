@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.support.notification.dingtalk;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
-
-public class DingtalkNotifyProperties extends NotifyProperties {
+public class DingtalkNotifyProperties {
 
 }

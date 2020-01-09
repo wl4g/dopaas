@@ -15,9 +15,7 @@
  */
 package com.wl4g.devops.support.notification.sms;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier.NotifyProperties;
-
-public class SmsNotifyProperties extends NotifyProperties {
+public class SmsNotifyProperties {
 
 	private String product;
 

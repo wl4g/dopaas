@@ -23,6 +23,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import com.wl4g.devops.support.notification.AbstractMessageNotifier;
 
+/**
+ * {@link MailMessageNotifier}, Full compatibility with native spring mail!
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年1月9日 v1.0.0
+ * @see
+ */
 public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyProperties, MailMessageWrapper> {
 
 	/**
@@ -51,7 +58,7 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
 				 * Preset from account, otherwise it would be wrong: 501 mail
 				 * from address must be same as authorization user.
 				 */
-				msg.setFrom(msg.getFrom() + "<" + config.getFromUser() + ">");
+				msg.setFrom(msg.getFrom() + "<" + config.getUsername() + ">");
 				mailSender.send(msg);
 			} catch (Exception e) {
 				log.error(String.format("Failed to sent mail. message - %s", message), ExceptionUtils.getRootCauseMessage(e));
