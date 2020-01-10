@@ -41,6 +41,16 @@ public interface MessageNotifier<T extends NotifyMessage> extends Operator<Notif
 	 */
 	public static enum NotifierKind {
 
+		/**
+		 * MessageNotifier that must be instantiated. The default implementation
+		 * when all other message notifiers are not available solves the spring
+		 * bean injection problem.
+		 * 
+		 * @see {@link com.wl4g.devops.support.config.NotificationAutoConfiguration.EmptyMessageNotifier}
+		 * @see {@link com.wl4g.devops.support.config.NotificationAutoConfiguration#emptyForMustCheckImplMessageNotifier()ptyForMustCheckImplMessageNotifier}
+		 */
+		Empty,
+
 		Apns,
 
 		Bark,

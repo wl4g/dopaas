@@ -25,6 +25,8 @@ import com.wl4g.devops.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.support.cli.process.DestroableProcess;
 import com.wl4g.devops.support.cli.process.LocalDestroableProcess;
 import com.wl4g.devops.support.cli.process.RemoteDestroableProcess;
+import com.wl4g.devops.tool.common.cli.ssh2.EthzUtils;
+import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Clients;
 import com.wl4g.devops.tool.common.task.GenericTaskRunner;
 import com.wl4g.devops.tool.common.task.RunnerProperties;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
@@ -39,7 +41,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
-import static com.wl4g.devops.tool.common.cli.ssh2.SshUtils.execWaitForCompleteWithSsh2;
 import static com.wl4g.devops.tool.common.io.ByteStreams2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
@@ -201,8 +202,9 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	protected DestroableProcess doExecRemote(RemoteDestroableCommand cmd) throws InterruptedException, Exception {
 		log.info("Exec remote command: {}", cmd.getCmd());
 
-		return execWaitForCompleteWithSsh2(cmd.getHost(), cmd.getUser(), cmd.getPemPrivateKey(), cmd.getCmd(),
-				s -> new RemoteDestroableProcess(cmd.getProcessId(), cmd, s), cmd.getTimeoutMs());
+		return Ssh2Clients.getInstance(EthzUtils.class).execWaitForCompleteWithSsh2(cmd.getHost(), cmd.getUser(),
+				cmd.getPemPrivateKey(), cmd.getCmd(), s -> new RemoteDestroableProcess(cmd.getProcessId(), cmd, s),
+				cmd.getTimeoutMs());
 	}
 
 	@Override
