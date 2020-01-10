@@ -18,13 +18,15 @@ package com.wl4g.devops.ci.pipeline.deploy;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.tool.common.cli.ssh2.EthzUtils;
+import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Clients;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
 
-import static com.wl4g.devops.tool.common.cli.ssh2.SshUtils.scpPutFile;
 import static org.springframework.util.Assert.hasText;
 
 /**
@@ -103,7 +105,8 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
 		writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, localFile));
 
-		scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey), new File(localFile), remoteTmpDir);
+		Ssh2Clients.getInstance(EthzUtils.class).scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey),
+				new File(localFile), remoteTmpDir);
 	}
 
 	/**

@@ -20,7 +20,6 @@ import ch.ethz.ssh2.SCPClient;
 import ch.ethz.ssh2.SCPInputStream;
 import ch.ethz.ssh2.SCPOutputStream;
 import ch.ethz.ssh2.Session;
-import org.slf4j.Logger;
 
 import com.wl4g.devops.tool.common.function.CallbackFunction;
 import com.wl4g.devops.tool.common.function.ProcessFunction;
@@ -31,9 +30,7 @@ import static ch.ethz.ssh2.ChannelCondition.*;
 import static com.wl4g.devops.tool.common.io.ByteStreams2.readFullyToString;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * Remote SSH command process tools.
@@ -42,9 +39,7 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
  * @version v1.0 2019年5月24日
  * @since
  */
-public abstract class SshUtils {
-	final protected static Logger log = getLogger(SshUtils.class);
-	final public static int DEFAULT_TRANSFER_BUFFER = 1024 * 6;
+public class EthzUtils extends Ssh2Clients<Session, SCPClient> {
 
 	// --- Transfer files. ---
 
@@ -58,7 +53,8 @@ public abstract class SshUtils {
 	 * @param remoteFilePath
 	 * @throws Exception
 	 */
-	public static void scpGetFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteFilePath)
+	@Override
+	public void scpGetFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteFilePath)
 			throws Exception {
 		notNull(localFile, "Transfer localFile must not be null.");
 		hasText(remoteFilePath, "Transfer remoteDir can't empty.");
@@ -66,7 +62,7 @@ public abstract class SshUtils {
 
 		try {
 			// Transfer get file.
-			doScpTransfer0(host, user, pemPrivateKey, scp -> {
+			doScpTransfer(host, user, pemPrivateKey, scp -> {
 				try (SCPInputStream sis = scp.get(remoteFilePath); FileOutputStream fos = new FileOutputStream(localFile);) {
 					int i = 0;
 					byte[] buf = new byte[DEFAULT_TRANSFER_BUFFER];
@@ -94,15 +90,15 @@ public abstract class SshUtils {
 	 * @param remoteDir
 	 * @throws Exception
 	 */
-	public static void scpPutFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteDir)
-			throws Exception {
+	@Override
+	public void scpPutFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteDir) throws Exception {
 		notNull(localFile, "Transfer localFile must not be null.");
 		hasText(remoteDir, "Transfer remoteDir can't empty.");
 		log.debug("SSH2 transfer file from {} to {}@{}:{}", localFile.getAbsolutePath(), user, host, remoteDir);
 
 		try {
 			// Transfer send file.
-			doScpTransfer0(host, user, pemPrivateKey, scp -> {
+			doScpTransfer(host, user, pemPrivateKey, scp -> {
 				try (SCPOutputStream sos = scp.put(localFile.getName(), localFile.length(), remoteDir, "0744");
 						FileInputStream fis = new FileInputStream(localFile);) {
 					int i = 0;
@@ -122,30 +118,6 @@ public abstract class SshUtils {
 	}
 
 	/**
-	 * Get local current user ssh authentication private key of default.
-	 * 
-	 * @param host
-	 * @param user
-	 * @return
-	 * @throws Exception
-	 */
-	private final static char[] getDefaultLocalUserPrivateKey(String host, String user) throws Exception {
-		// Check private key.
-		File privateKeyFile = new File(USER_HOME + "/.ssh/id_rsa");
-		isTrue(privateKeyFile.exists(), String.format("Not found privateKey for %s", privateKeyFile));
-
-		log.warn("Fallback use local user pemPrivateKey of: {}", privateKeyFile);
-		try (CharArrayWriter cw = new CharArrayWriter(); FileReader fr = new FileReader(privateKeyFile.getAbsolutePath())) {
-			char[] buff = new char[256];
-			int len = 0;
-			while ((len = fr.read(buff)) != -1) {
-				cw.write(buff, 0, len);
-			}
-			return cw.toCharArray();
-		}
-	}
-
-	/**
 	 * Perform file transfer with remote host, including scp.put/upload or
 	 * scp.get/download.
 	 * 
@@ -155,15 +127,15 @@ public abstract class SshUtils {
 	 * @param processor
 	 * @throws IOException
 	 */
-	private final static void doScpTransfer0(String host, String user, char[] pemPrivateKey,
-			CallbackFunction<SCPClient> processor) throws Exception {
+	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, CallbackFunction<SCPClient> processor)
+			throws Exception {
 		hasText(host, "Transfer host can't empty.");
 		hasText(user, "Transfer user can't empty.");
 		notNull(processor, "Transfer processor can't null.");
 
 		// Fallback uses the local current user private key by default.
 		if (isNull(pemPrivateKey)) {
-			pemPrivateKey = getDefaultLocalUserPrivateKey(host, user);
+			pemPrivateKey = getDefaultLocalUserPrivateKey();
 		}
 		notNull(pemPrivateKey, "Transfer pemPrivateKey can't null.");
 
@@ -197,7 +169,7 @@ public abstract class SshUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static SshExecResponse execWithSsh2(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
+	public SshExecResponse execWithSsh2(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
 			throws Exception {
 		return execWaitForCompleteWithSsh2(host, user, pemPrivateKey, command, session -> {
 			String message = null, errmsg = null;
@@ -223,9 +195,9 @@ public abstract class SshUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
+	public <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<Session, T> processor, long timeoutMs) throws Exception {
-		return doExecSsh2Command0(host, user, pemPrivateKey, command, session -> {
+		return doExecCommandWIthSsh2(host, user, pemPrivateKey, command, session -> {
 			// Wait for completed by condition.
 			session.waitForCondition((CLOSED), timeoutMs);
 			return processor.process(session);
@@ -244,7 +216,7 @@ public abstract class SshUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	private final static <T> T doExecSsh2Command0(String host, String user, char[] pemPrivateKey, String command,
+	protected final <T> T doExecCommandWIthSsh2(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<Session, T> processor, long timeoutMs) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
@@ -252,7 +224,7 @@ public abstract class SshUtils {
 
 		// Fallback uses the local current user private key by default.
 		if (isNull(pemPrivateKey)) {
-			pemPrivateKey = getDefaultLocalUserPrivateKey(host, user);
+			pemPrivateKey = getDefaultLocalUserPrivateKey();
 		}
 		notNull(pemPrivateKey, "Transfer pemPrivateKey can't null.");
 
@@ -295,7 +267,7 @@ public abstract class SshUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	private final static Connection createSsh2Connection(String host, String user, char[] pemPrivateKey) throws IOException {
+	private final Connection createSsh2Connection(String host, String user, char[] pemPrivateKey) throws IOException {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
 		notNull(pemPrivateKey, "SSH2 command pemPrivateKey must not be null.");
@@ -308,46 +280,6 @@ public abstract class SshUtils {
 
 		log.debug("SSH2 connected to {}@{}", user, host);
 		return conn;
-	}
-
-	public static class SshExecResponse {
-
-		/** Remote commands exit signal. */
-		final private String exitSignal;
-
-		/** Remote commands exit code. */
-		final private Integer exitCode;
-
-		/** Standard message */
-		final private String message;
-
-		/** Error message */
-		final private String errmsg;
-
-		public SshExecResponse(String exitSignal, Integer exitCode, String message, String errmsg) {
-			super();
-			this.exitSignal = exitSignal;
-			this.exitCode = exitCode;
-			this.message = message;
-			this.errmsg = errmsg;
-		}
-
-		public String getExitSignal() {
-			return exitSignal;
-		}
-
-		public Integer getExitCode() {
-			return exitCode;
-		}
-
-		public String getMessage() {
-			return message;
-		}
-
-		public String getErrmsg() {
-			return errmsg;
-		}
-
 	}
 
 }

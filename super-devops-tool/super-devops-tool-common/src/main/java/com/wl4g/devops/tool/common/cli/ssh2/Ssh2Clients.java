@@ -23,14 +23,14 @@ import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 
+import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
 import com.wl4g.devops.tool.common.function.CallbackFunction;
 import com.wl4g.devops.tool.common.function.ProcessFunction;
-
-import net.schmizz.sshj.connection.channel.direct.Session;
-import net.schmizz.sshj.xfer.scp.SCPFileTransfer;
 
 /**
  * {@link Ssh2Clients}, generic SSH2 client wrapper tool. </br>
@@ -40,12 +40,30 @@ import net.schmizz.sshj.xfer.scp.SCPFileTransfer;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
-public abstract class Ssh2Clients {
+public abstract class Ssh2Clients<S, F> {
 	final protected Logger log = getLogger(getClass());
 
-	// TODO
-	public final static Ssh2Clients getInstance() {
-		return null;
+	/**
+	 * Get default {@link Ssh2Clients} instance by provider class.
+	 * 
+	 * @param <T>
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public final static <T extends Ssh2Clients> T getDefault() {
+		return (T) providerRegistry.get(EthzUtils.class);
+	}
+
+	/**
+	 * Get {@link Ssh2Clients} instance by provider class.
+	 * 
+	 * @param <T>
+	 * @param providerClass
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public final static <T extends Ssh2Clients> T getInstance(Class<T> providerClass) {
+		return (T) providerRegistry.get(providerClass);
 	}
 
 	/**
@@ -84,8 +102,8 @@ public abstract class Ssh2Clients {
 	 * @param processor
 	 * @throws IOException
 	 */
-	protected abstract void doScpTransfer0(String host, String user, char[] pemPrivateKey,
-			CallbackFunction<SCPFileTransfer> processor) throws Exception;
+	protected abstract void doScpTransfer(String host, String user, char[] pemPrivateKey, CallbackFunction<F> processor)
+			throws Exception;
 
 	/**
 	 * Execution commands wait for complete with SSH2
@@ -100,7 +118,7 @@ public abstract class Ssh2Clients {
 	 * @throws IOException
 	 */
 	public abstract <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
-			ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception;
+			ProcessFunction<S, T> processor, long timeoutMs) throws Exception;
 
 	/**
 	 * Execution commands with SSH2
@@ -114,8 +132,8 @@ public abstract class Ssh2Clients {
 	 * @return
 	 * @throws IOException
 	 */
-	protected abstract <T> T doExecSsh2Command0(String host, String user, char[] pemPrivateKey, String command,
-			ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception;
+	protected abstract <T> T doExecCommandWIthSsh2(String host, String user, char[] pemPrivateKey, String command,
+			ProcessFunction<S, T> processor, long timeoutMs) throws Exception;
 
 	/**
 	 * Get local current user ssh authentication private key of default.
@@ -140,6 +158,29 @@ public abstract class Ssh2Clients {
 			return cw.toCharArray();
 		}
 	}
+
+	/**
+	 * {@link Ssh2Clients} provider registry.
+	 */
+	@SuppressWarnings("rawtypes")
+	private final static Map<Class<? extends Ssh2Clients>, Ssh2Clients> providerRegistry = new RegisteredUnmodifiableMap<Class<? extends Ssh2Clients>, Ssh2Clients>(
+			new HashMap<>()) {
+		{
+			putAll(new HashMap<Class<? extends Ssh2Clients>, Ssh2Clients>() {
+				private static final long serialVersionUID = 6854310693801773032L;
+				{
+					put(EthzUtils.class, new EthzUtils());
+					put(SshjUtils.class, new SshjUtils());
+					put(SshdUtils.class, new SshdUtils());
+				}
+			});
+		}
+	};
+
+	/**
+	 * Default IO buffer size.
+	 */
+	final public static int DEFAULT_TRANSFER_BUFFER = 1024 * 6;
 
 	/**
 	 * {@link SshExecResponse}
