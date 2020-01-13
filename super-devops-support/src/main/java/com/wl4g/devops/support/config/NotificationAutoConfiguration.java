@@ -198,6 +198,28 @@ public class NotificationAutoConfiguration {
 		return new TwitterMessageNotifier(config);
 	}
 
+	/**
+	 * 1, Cannot inject at this time:
+	 * 
+	 * <pre>
+	 * &#64;Bean
+	 * public CompositeMessageNotifier compositeMessageNotifier(List&lt;MessageNotifier&lt;NotifyMessage&gt;&gt; notifiers) {
+	 *   ...
+	 * }
+	 * </pre>
+	 * 
+	 * 2, Can operate correctly:
+	 * 
+	 * <pre>
+	 * &#64;Bean
+	 * public CompositeMessageNotifier compositeMessageNotifier(List&lt;MessageNotifier&lt;? extends NotifyMessage&gt;&gt; notifiers) {
+	 *   ...
+	 * }
+	 * </pre>
+	 * 
+	 * @param notifiers
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	@Bean
 	public CompositeMessageNotifier compositeMessageNotifier(List<MessageNotifier<? extends NotifyMessage>> notifiers) {
