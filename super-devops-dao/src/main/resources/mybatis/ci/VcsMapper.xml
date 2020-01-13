@@ -14,7 +14,7 @@
     <result column="password" property="password" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
@@ -61,7 +61,7 @@
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},#{providerKind,jdbcType=VARCHAR}, #{authType,jdbcType=INTEGER},
       #{baseUri,jdbcType=VARCHAR}, #{sshKeyPub,jdbcType=VARCHAR}, #{sshKey,jdbcType=VARCHAR}, 
       #{accessToken,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-      #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{delFlag,jdbcType=CHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{delFlag,jdbcType=INTEGER},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR})
   </insert>
@@ -158,7 +158,7 @@
         #{enable,jdbcType=INTEGER},
       </if>
       <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null" >
         #{createDate,jdbcType=TIMESTAMP},
@@ -211,7 +211,7 @@
         enable = #{enable,jdbcType=INTEGER},
       </if>
       <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null" >
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -241,7 +241,7 @@
       password = #{password,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       enable = #{enable,jdbcType=INTEGER},
-      del_flag = #{delFlag,jdbcType=CHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},

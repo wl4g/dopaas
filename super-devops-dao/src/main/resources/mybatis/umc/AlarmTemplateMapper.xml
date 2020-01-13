@@ -13,7 +13,7 @@
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
 
     <!-- other -->
     <result column="metric" property="metric" jdbcType="VARCHAR" />
@@ -66,7 +66,7 @@
       #{tags,jdbcType=VARCHAR}, #{notifyLevel,jdbcType=INTEGER},
       #{enable,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
-      #{delFlag,jdbcType=CHAR})
+      #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmTemplate" useGeneratedKeys="true" keyProperty="id">
     insert into umc_alarm_template
@@ -143,7 +143,7 @@
         #{updateBy,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -181,7 +181,7 @@
         update_by = #{updateBy,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -198,7 +198,7 @@
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR}
+      del_flag = #{delFlag,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
