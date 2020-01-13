@@ -20,7 +20,7 @@ import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.tool.common.task.quartz.CronUtils;
+import com.wl4g.devops.tool.common.task.QuartzCronUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -131,7 +131,7 @@ public class TriggerController extends BaseController {
 	public RespBase<?> checkCronExpression(String expression) {
 		log.debug("into TriggerController.checkCronExpression prarms::" + "expression = {} ", expression);
 		RespBase<Object> resp = RespBase.create();
-		boolean isValid = CronUtils.isValidExpression(expression);
+		boolean isValid = QuartzCronUtils.isValidExpression(expression);
 		resp.forMap().put("validExpression", isValid);
 		return resp;
 	}
@@ -150,13 +150,13 @@ public class TriggerController extends BaseController {
 		if (null == numTimes || numTimes <= 0) {
 			numTimes = 5;
 		}
-		boolean isValid = CronUtils.isValidExpression(expression);
+		boolean isValid = QuartzCronUtils.isValidExpression(expression);
 		resp.forMap().put("validExpression", isValid);
 		if (!isValid) {
 			return resp;
 		}
 		try {
-			List<String> nextExecTime = CronUtils.getNextExecTime(expression, numTimes);
+			List<String> nextExecTime = QuartzCronUtils.getNextExecTime(expression, numTimes);
 			resp.forMap().put("nextExecTime", StringUtils.join(nextExecTime, "\n"));
 		} catch (Exception e) {
 			resp.forMap().put("validExpression", false);

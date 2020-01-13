@@ -41,6 +41,10 @@ public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyP
 
 	private IAcsClient acsClient;
 
+	public AliyunSmsMessageNotifier(SmsNotifyProperties config) {
+		super(config);
+	}
+
 	@Override
 	public NotifierKind kind() {
 		return NotifierKind.Apns;

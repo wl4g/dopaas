@@ -19,6 +19,10 @@ import com.wl4g.devops.support.notification.AbstractMessageNotifier;
 
 public class ApnsMessageNotifier extends AbstractMessageNotifier<ApnsNotifyProperties, ApnsMessage> {
 
+	public ApnsMessageNotifier(ApnsNotifyProperties config) {
+		super(config);
+	}
+
 	@Override
 	public NotifierKind kind() {
 		return NotifierKind.Apns;

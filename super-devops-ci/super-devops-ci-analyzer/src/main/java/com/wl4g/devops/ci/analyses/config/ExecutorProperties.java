@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.analyses.config;
 
-import com.wl4g.devops.tool.common.task.RunnerProperties;
+import com.wl4g.devops.support.task.RunnerProperties;
 
 /**
  * Task executor configuration such as codes analyzing tasks.

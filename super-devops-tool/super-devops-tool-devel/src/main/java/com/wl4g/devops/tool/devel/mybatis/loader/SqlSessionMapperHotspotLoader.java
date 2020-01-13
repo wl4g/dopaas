@@ -18,6 +18,7 @@ package com.wl4g.devops.tool.devel.mybatis.loader;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.lang.Assert2.state;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.Thread.sleep;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -37,11 +38,12 @@ import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.slf4j.Logger;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import com.wl4g.devops.tool.common.task.GenericTaskRunner;
-import com.wl4g.devops.tool.common.task.RunnerProperties;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
 
 /**
@@ -51,9 +53,11 @@ import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
  * @version v1.0 2019年11月14日
  * @since
  */
-public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerProperties> {
+public class SqlSessionMapperHotspotLoader implements ApplicationRunner {
 	final public static String TARGET_PART_PATH = "target" + File.separator + "classes";
 	final public static String SRC_PART_PATH = "src" + File.separator + "main" + File.separator + "resources";
+
+	final protected Logger log = getLogger(getClass());
 
 	/** Refresh configuration properties. */
 	final protected HotspotLoadProperties config;
@@ -62,12 +66,13 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 
 	/** Refresher of last timestamp. */
 	final private AtomicLong lastRefreshTime = new AtomicLong(0L);
+	/** Runner thread boss. */
+	private Thread boss;
 
 	private Configuration configuration;
 	private Resource[] mapperLocations;
 
 	public SqlSessionMapperHotspotLoader(SqlSessionFactoryBean sessionFactory, HotspotLoadProperties config) {
-		super(new RunnerProperties(true));
 		notNull(sessionFactory, "SqlSessionFactory can't is null.");
 		notNull(config, "MapperHotspotLoader properties config can't is null.");
 		this.sessionFactory = sessionFactory;
@@ -90,26 +95,30 @@ public class SqlSessionMapperHotspotLoader extends GenericTaskRunner<RunnerPrope
 	 * twice, resulting in clear mybatis Sqlelements error.)
 	 */
 	@Override
-	public void run() {
+	public void run(ApplicationArguments args) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Starting to SqlSession mappers hotspot loader...");
 		}
 
-		boolean stop = false;
-		while (!stop && isActive()) {
-			try {
-				sleep(config.getMonitorLoaderIntervalMs());
-				if (isChanged()) {
-					refresh(configuration);
-					stop = false;
-				}
-			} catch (Exception e) {
-				if (config.isFastFail()) {
-					stop = true;
-					log.error("", e);
+		boss = new Thread(() -> {
+			boolean stopped = false;
+			while (!stopped && !boss.isInterrupted()) {
+				try {
+					sleep(config.getMonitorLoaderIntervalMs());
+					if (isChanged()) {
+						refresh(configuration);
+						stopped = false;
+					}
+				} catch (Exception e) {
+					if (config.isFastFail()) {
+						stopped = true;
+						log.error("", e);
+					}
 				}
 			}
-		}
+		});
+		boss.start();
+
 		log.warn("Stopped SqlSession mappers hotspot loader monitor!");
 	}
 

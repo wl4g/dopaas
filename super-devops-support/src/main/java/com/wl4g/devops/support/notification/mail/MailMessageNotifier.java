@@ -15,11 +15,14 @@
  */
 package com.wl4g.devops.support.notification.mail;
 
+import static java.util.Objects.isNull;
+
+import java.util.Properties;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.wl4g.devops.support.notification.AbstractMessageNotifier;
 
@@ -35,8 +38,26 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
 	/**
 	 * Java mail sender.
 	 */
-	@Autowired
-	protected JavaMailSender mailSender;
+	final protected JavaMailSenderImpl mailSender;
+
+	public MailMessageNotifier(MailNotifyProperties config) {
+		super(config);
+		this.mailSender = new JavaMailSenderImpl();
+		if (!isNull(config.getProperties())) {
+			this.mailSender.setJavaMailProperties(new Properties() {
+				private static final long serialVersionUID = 1395782904610029089L;
+				{
+					putAll(config.getProperties());
+				}
+			});
+		}
+		this.mailSender.setDefaultEncoding(config.getDefaultEncoding().name());
+		this.mailSender.setProtocol(config.getProtocol());
+		this.mailSender.setHost(config.getHost());
+		this.mailSender.setPort(config.getPort());
+		this.mailSender.setUsername(config.getUsername());
+		this.mailSender.setPassword(config.getPassword());
+	}
 
 	@Override
 	public NotifierKind kind() {

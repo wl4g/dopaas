@@ -19,6 +19,10 @@ import com.wl4g.devops.support.notification.AbstractMessageNotifier;
 
 public class VmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyProperties, VmsMessage> {
 
+	public VmsMessageNotifier(VmsNotifyProperties config) {
+		super(config);
+	}
+
 	@Override
 	public NotifierKind kind() {
 		return NotifierKind.Apns;

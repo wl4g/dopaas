@@ -22,8 +22,8 @@ import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.scm.config.ScmProperties;
-import com.wl4g.devops.tool.common.task.GenericTaskRunner;
-import com.wl4g.devops.tool.common.task.RunnerProperties;
+import com.wl4g.devops.support.task.GenericTaskRunner;
+import com.wl4g.devops.support.task.RunnerProperties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

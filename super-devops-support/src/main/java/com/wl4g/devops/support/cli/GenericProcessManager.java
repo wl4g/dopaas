@@ -27,9 +27,9 @@ import com.wl4g.devops.support.cli.process.LocalDestroableProcess;
 import com.wl4g.devops.support.cli.process.RemoteDestroableProcess;
 import com.wl4g.devops.tool.common.cli.ssh2.EthzUtils;
 import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Clients;
-import com.wl4g.devops.tool.common.task.GenericTaskRunner;
-import com.wl4g.devops.tool.common.task.RunnerProperties;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
+import com.wl4g.devops.support.task.GenericTaskRunner;
+import com.wl4g.devops.support.task.RunnerProperties;
 
 import org.slf4j.Logger;
 

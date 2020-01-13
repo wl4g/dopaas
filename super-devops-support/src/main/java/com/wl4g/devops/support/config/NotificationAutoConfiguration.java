@@ -18,13 +18,13 @@ package com.wl4g.devops.support.config;
 import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.support.config.NotificationAutoConfiguration.EmptyMessageNotifier.EmptyMessage;
-import com.wl4g.devops.support.notification.AbstractMessageNotifier;
 import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.support.notification.EmptyForMustCheckImplMessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.apns.ApnsMessageNotifier;
@@ -59,180 +59,146 @@ import com.wl4g.devops.support.notification.wechat.WechatNotifyProperties;
 public class NotificationAutoConfiguration {
 	final public static String KEY_NOTIFY_PREFIX = "spring.cloud.devops.support.notification";
 
-	// --- Notify configuration properties. ---
+	// --- Notify properties. ---
 
-	@Bean
+	@Bean(name = "apnsNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".apns.enable", matchIfMissing = false)
 	public ApnsNotifyProperties apnsNotifyProperties() {
 		return new ApnsNotifyProperties();
 	}
 
-	@Bean
+	@Bean(name = "barkNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".bark.enable", matchIfMissing = false)
 	public BarkNotifyProperties barkNotifyProperties() {
 		return new BarkNotifyProperties();
 	}
 
-	@Bean
+	@Bean(name = "dingtalkNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".dingtalk.enable", matchIfMissing = false)
 	public DingtalkNotifyProperties dingtalkNotifyProperties() {
 		return new DingtalkNotifyProperties();
 	}
 
-	@Bean
+	@Bean(name = "facebookNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".facebook.enable", matchIfMissing = false)
 	public FacebookNotifyProperties facebookNotifyProperties() {
 		return new FacebookNotifyProperties();
 	}
 
-	@Bean
+	@Bean(name = "mailNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".mail.enable", matchIfMissing = false)
 	public MailNotifyProperties mailNotifyProperties() {
 		return new MailNotifyProperties();
 	}
 
-	@Bean
+	@Bean(name = "qqNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".qq.enable", matchIfMissing = false)
 	public QqNotifyProperties qqNotifyProperties() {
 		return new QqNotifyProperties();
 	}
 
-	@Bean
+	@Bean(name = "smsNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".sms.enable", matchIfMissing = false)
 	public SmsNotifyProperties smsNotifyProperties() {
 		return new SmsNotifyProperties();
 	}
 
-	@Bean
+	@Bean(name = "vmsNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".vms.enable", matchIfMissing = false)
 	public VmsNotifyProperties vmsNotifyProperties() {
 		return new VmsNotifyProperties();
 	}
 
-	@Bean
+	@Bean(name = "wechatNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".wechat.enable", matchIfMissing = false)
 	public WechatNotifyProperties wechatNotifyProperties() {
 		return new WechatNotifyProperties();
 	}
 
-	@Bean
+	@Bean(name = "twitterNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".twitter.enable", matchIfMissing = false)
 	public TwitterNotifyProperties twitterNotifyProperties() {
 		return new TwitterNotifyProperties();
 	}
 
-	// --- Notifier configuration. ---
-
-	@Bean
-	@ConditionalOnBean({ MessageNotifier.class })
-	public CompositeMessageNotifier compositeMessageNotifier(List<MessageNotifier<NotifyMessage>> operators) {
-		return new CompositeMessageNotifier(operators);
-	}
+	// --- Message notifier. ---
 
 	/**
-	 * MessageNotifier that must be instantiated.</br>
+	 * {@link MessageNotifier} that must be instantiated.</br>
 	 * The default implementation when all other message notifiers are not
 	 * available solves the spring bean injection problem.
 	 * 
 	 * @return
 	 */
 	@Bean
-	public EmptyMessageNotifier emptyForMustCheckImplMessageNotifier() {
-		return new EmptyMessageNotifier();
+	@ConditionalOnMissingBean({ MessageNotifier.class })
+	public EmptyForMustCheckImplMessageNotifier emptyForMustCheckImplMessageNotifier() {
+		return new EmptyForMustCheckImplMessageNotifier();
 	}
 
 	@Bean
 	@ConditionalOnBean(ApnsNotifyProperties.class)
-	public ApnsMessageNotifier apnsMessageNotifier() {
-		return new ApnsMessageNotifier();
+	public ApnsMessageNotifier apnsMessageNotifier(ApnsNotifyProperties config) {
+		return new ApnsMessageNotifier(config);
 	}
 
 	@Bean
-	@ConditionalOnBean(BarkMessageNotifier.class)
-	public BarkMessageNotifier barkMessageNotifier() {
-		return new BarkMessageNotifier();
+	@ConditionalOnBean(BarkNotifyProperties.class)
+	public BarkMessageNotifier barkMessageNotifier(BarkNotifyProperties config) {
+		return new BarkMessageNotifier(config);
 	}
 
 	@Bean
-	@ConditionalOnBean(DingtalkMessageNotifier.class)
-	public DingtalkMessageNotifier dingtalkMessageNotifier() {
-		return new DingtalkMessageNotifier();
+	@ConditionalOnBean(DingtalkNotifyProperties.class)
+	public DingtalkMessageNotifier dingtalkMessageNotifier(DingtalkNotifyProperties config) {
+		return new DingtalkMessageNotifier(config);
 	}
 
 	@Bean
-	@ConditionalOnBean(FacebookMessageNotifier.class)
-	public FacebookMessageNotifier facebookMessageNotifier() {
-		return new FacebookMessageNotifier();
+	@ConditionalOnBean(FacebookNotifyProperties.class)
+	public FacebookMessageNotifier facebookMessageNotifier(FacebookNotifyProperties config) {
+		return new FacebookMessageNotifier(config);
 	}
 
 	@Bean
 	@ConditionalOnBean(MailNotifyProperties.class)
-	public MailMessageNotifier mailMessageNotifier() {
-		return new MailMessageNotifier();
+	public MailMessageNotifier mailMessageNotifier(MailNotifyProperties config) {
+		return new MailMessageNotifier(config);
 	}
 
 	@Bean
-	@ConditionalOnBean(QqMessageNotifier.class)
-	public QqMessageNotifier qqMessageNotifier() {
-		return new QqMessageNotifier();
+	@ConditionalOnBean(QqNotifyProperties.class)
+	public QqMessageNotifier qqMessageNotifier(QqNotifyProperties config) {
+		return new QqMessageNotifier(config);
 	}
 
 	@Bean
 	@ConditionalOnBean(SmsNotifyProperties.class)
 	public AliyunSmsMessageNotifier aliyunSmsMessageNotifier(SmsNotifyProperties config) {
-		return new AliyunSmsMessageNotifier();
+		return new AliyunSmsMessageNotifier(config);
 	}
 
 	@Bean
-	@ConditionalOnBean(VmsMessageNotifier.class)
-	public VmsMessageNotifier vmsMessageNotifier() {
-		return new VmsMessageNotifier();
+	@ConditionalOnBean(VmsNotifyProperties.class)
+	public VmsMessageNotifier vmsMessageNotifier(VmsNotifyProperties config) {
+		return new VmsMessageNotifier(config);
 	}
 
 	@Bean
-	@ConditionalOnBean(WechatMessageNotifier.class)
-	public WechatMessageNotifier wechatMessageNotifier() {
-		return new WechatMessageNotifier();
+	@ConditionalOnBean(WechatNotifyProperties.class)
+	public WechatMessageNotifier wechatMessageNotifier(WechatNotifyProperties config) {
+		return new WechatMessageNotifier(config);
 	}
 
 	@Bean
 	@ConditionalOnBean(TwitterNotifyProperties.class)
-	public TwitterMessageNotifier twitterMessageNotifier() {
-		return new TwitterMessageNotifier();
+	public TwitterMessageNotifier twitterMessageNotifier(TwitterNotifyProperties config) {
+		return new TwitterMessageNotifier(config);
 	}
 
-	/**
-	 * MessageNotifier that must be instantiated.</br>
-	 * The default implementation when all other message notifiers are not
-	 * available solves the spring bean injection problem.
-	 * 
-	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version 2020年1月10日 v1.0.0
-	 * @see
-	 */
-	public static class EmptyMessageNotifier extends AbstractMessageNotifier<Object, EmptyMessage> {
-
-		@Override
-		public NotifierKind kind() {
-			return NotifierKind.Empty;
-		}
-
-		@Override
-		public void send(EmptyMessage message) {
-			throw new UnsupportedOperationException(
-					"This is an empty message notifier implementation. Please check whether the real message notifier is configured correctly!");
-		}
-
-		@Override
-		public <R> R sendForReply(EmptyMessage message) {
-			throw new UnsupportedOperationException(
-					"This is an empty message notifier implementation. Please check whether the real message notifier is configured correctly!");
-		}
-
-		public static class EmptyMessage implements NotifyMessage {
-			private static final long serialVersionUID = 1690080474866719945L;
-		}
-
+	@Bean
+	public CompositeMessageNotifier compositeMessageNotifier(List<MessageNotifier<NotifyMessage>> notifiers) {
+		return new CompositeMessageNotifier(notifiers);
 	}
 
 }

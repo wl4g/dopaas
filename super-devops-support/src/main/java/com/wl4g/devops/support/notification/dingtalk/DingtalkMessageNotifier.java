@@ -26,6 +26,10 @@ import com.wl4g.devops.support.notification.AbstractMessageNotifier;
  */
 public class DingtalkMessageNotifier extends AbstractMessageNotifier<DingtalkNotifyProperties, DingtalkMessage> {
 
+	public DingtalkMessageNotifier(DingtalkNotifyProperties config) {
+		super(config);
+	}
+
 	@Override
 	public NotifierKind kind() {
 		return NotifierKind.Apns;

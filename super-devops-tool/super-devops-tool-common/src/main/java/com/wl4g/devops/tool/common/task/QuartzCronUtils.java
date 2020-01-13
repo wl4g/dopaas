@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.task.quartz;
+package com.wl4g.devops.tool.common.task;
 
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.lang.DateUtils2.formatDate;
@@ -32,7 +32,7 @@ import java.util.List;
  * @version v1.0 2019年8月2日
  * @since
  */
-public abstract class CronUtils {
+public abstract class QuartzCronUtils {
 
 	/**
 	 * Check the expression is Valid

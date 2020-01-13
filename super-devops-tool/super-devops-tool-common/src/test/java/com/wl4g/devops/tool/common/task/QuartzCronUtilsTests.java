@@ -13,30 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.notification.qq;
+package com.wl4g.devops.tool.common.task;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier;
-
-public class QqMessageNotifier extends AbstractMessageNotifier<QqNotifyProperties, QqMessage> {
-
-	public QqMessageNotifier(QqNotifyProperties config) {
-		super(config);
-	}
-
-	@Override
-	public NotifierKind kind() {
-		return NotifierKind.Apns;
-	}
-
-	@Override
-	public void send(QqMessage message) {
-		throw new UnsupportedOperationException();
-	}
-
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public Object sendForReply(QqMessage message) {
-		throw new UnsupportedOperationException();
-	}
+public class QuartzCronUtilsTests {
 
 }
