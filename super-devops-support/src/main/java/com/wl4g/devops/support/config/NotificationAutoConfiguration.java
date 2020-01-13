@@ -198,7 +198,8 @@ public class NotificationAutoConfiguration {
 
 	@Bean
 	public CompositeMessageNotifier compositeMessageNotifier(List<MessageNotifier<NotifyMessage>> notifiers) {
-		return new CompositeMessageNotifier(notifiers);
+		// TODO
+		return new CompositeMessageNotifier(null);
 	}
 
 }
