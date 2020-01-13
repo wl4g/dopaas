@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.support.notification;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * {@link AbstractMessageNotifier}
@@ -32,7 +32,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AbstractMessageNotifier<C, T extends NotifyMessage> implements MessageNotifier<T> {
 	final protected Logger log = getLogger(getClass());
 
-	@Autowired
-	protected C config;
+	final protected C config;
+
+	public AbstractMessageNotifier(C config) {
+		notNullOf(config, "config");
+		this.config = config;
+	}
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.task;
+package com.wl4g.devops.support.task;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 

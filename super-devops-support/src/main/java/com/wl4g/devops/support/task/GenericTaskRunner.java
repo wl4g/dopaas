@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.task;
+package com.wl4g.devops.support.task;
 
 import org.slf4j.Logger;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 
 import com.wl4g.devops.tool.common.collection.CollectionUtils2;
 
@@ -31,8 +33,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.annotation.PostConstruct;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.lang.Assert2.state;
@@ -51,7 +51,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @since
  * @see {@link org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler}
  */
-public abstract class GenericTaskRunner<C extends RunnerProperties> implements Closeable, Runnable {
+public abstract class GenericTaskRunner<C extends RunnerProperties> implements Closeable, Runnable, ApplicationRunner {
 	final protected Logger log = getLogger(getClass());
 
 	/** Boss running. */
@@ -105,12 +105,12 @@ public abstract class GenericTaskRunner<C extends RunnerProperties> implements C
 	}
 
 	/**
-	 * Auto initialization on startup. {@link PostConstruct}
+	 * Auto initialization on startup.
 	 * 
 	 * @throws Exception
 	 */
-	@PostConstruct
-	protected synchronized void initRunner() throws Exception {
+	@Override
+	public synchronized void run(ApplicationArguments args) throws Exception {
 		// Call PreStartup
 		preStartupProperties();
 

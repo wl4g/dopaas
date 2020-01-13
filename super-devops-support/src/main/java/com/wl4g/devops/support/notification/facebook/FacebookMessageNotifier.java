@@ -19,11 +19,16 @@ import com.wl4g.devops.support.notification.AbstractMessageNotifier;
 
 /**
  * {@link FacebookMessageNotifier}
+ * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
 public class FacebookMessageNotifier extends AbstractMessageNotifier<FacebookNotifyProperties, FacebookMessage> {
+
+	public FacebookMessageNotifier(FacebookNotifyProperties config) {
+		super(config);
+	}
 
 	@Override
 	public NotifierKind kind() {

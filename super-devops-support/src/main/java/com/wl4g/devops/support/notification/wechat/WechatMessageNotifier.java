@@ -19,6 +19,10 @@ import com.wl4g.devops.support.notification.AbstractMessageNotifier;
 
 public class WechatMessageNotifier extends AbstractMessageNotifier<WechatNotifyProperties, WechatMessage> {
 
+	public WechatMessageNotifier(WechatNotifyProperties config) {
+		super(config);
+	}
+
 	@Override
 	public NotifierKind kind() {
 		return NotifierKind.Wechat;

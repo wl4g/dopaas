@@ -19,6 +19,10 @@ import com.wl4g.devops.support.notification.AbstractMessageNotifier;
 
 public class TwitterMessageNotifier extends AbstractMessageNotifier<TwitterNotifyProperties, TwitterMessage> {
 
+	public TwitterMessageNotifier(TwitterNotifyProperties config) {
+		super(config);
+	}
+
 	@Override
 	public NotifierKind kind() {
 		return NotifierKind.Twitter;

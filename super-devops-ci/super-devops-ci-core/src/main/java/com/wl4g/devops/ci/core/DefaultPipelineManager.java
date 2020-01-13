@@ -78,7 +78,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected DelegatePrototypeBeanFactory beanFactory;
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
-	@Autowired
+//	@Autowired
 	protected CompositeMessageNotifier notifier;
 
 	@Autowired
