@@ -44,7 +44,7 @@
       <result column="t.create_by" property="createBy" jdbcType="VARCHAR" />
       <result column="t.update_date" property="updateDate" jdbcType="TIMESTAMP" />
       <result column="t.update_by" property="updateBy" jdbcType="VARCHAR" />
-      <result column="t.del_flag" property="delFlag" jdbcType="CHAR" />
+      <result column="t.del_flag" property="delFlag" jdbcType="INTEGER" />
 
       <!-- other -->
       <result column="m.metric" property="metric" jdbcType="VARCHAR" />
@@ -59,7 +59,7 @@
         <result column="r.queue_time_window" property="queueTimeWindow" jdbcType="BIGINT" />
         <result column="r.value" property="value" jdbcType="DOUBLE" />
         <result column="r.alarm_level" property="alarmLevel" jdbcType="INTEGER" />
-        <result column="r.del_flag" property="delFlag" jdbcType="CHAR" />
+        <result column="r.del_flag" property="delFlag" jdbcType="INTEGER" />
       </collection>
 
     </association>
