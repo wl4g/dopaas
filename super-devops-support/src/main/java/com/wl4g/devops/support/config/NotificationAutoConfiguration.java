@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.support.config;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -196,10 +198,10 @@ public class NotificationAutoConfiguration {
 		return new TwitterMessageNotifier(config);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Bean
-	public CompositeMessageNotifier compositeMessageNotifier(List<MessageNotifier<NotifyMessage>> notifiers) {
-		// TODO
-		return new CompositeMessageNotifier(null);
+	public CompositeMessageNotifier compositeMessageNotifier(List<MessageNotifier<? extends NotifyMessage>> notifiers) {
+		return new CompositeMessageNotifier(notifiers.stream().map(n -> ((MessageNotifier<NotifyMessage>) n)).collect(toList()));
 	}
 
 }
