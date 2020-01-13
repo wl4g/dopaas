@@ -11,7 +11,7 @@
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
@@ -57,7 +57,7 @@
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{providerKind,jdbcType=VARCHAR}, 
       #{baseUrl,jdbcType=VARCHAR}, #{authType,jdbcType=INTEGER}, #{accessToken,jdbcType=VARCHAR},
       #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
-      #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Pcm">
@@ -135,7 +135,7 @@
         #{remark,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null">
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
@@ -179,7 +179,7 @@
         remark = #{remark,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null">
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -206,7 +206,7 @@
       username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},

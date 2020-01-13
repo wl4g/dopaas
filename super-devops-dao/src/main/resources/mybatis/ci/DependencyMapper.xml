@@ -6,7 +6,7 @@
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="dependent_id" property="dependentId" jdbcType="INTEGER" />
     <result column="branch" property="branch" jdbcType="VARCHAR" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
@@ -35,7 +35,7 @@
       create_by, update_date, update_by
       )
     values (#{id,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, #{dependentId,jdbcType=INTEGER},
-      #{branch,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP},
+      #{branch,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
       )
   </insert>
@@ -84,7 +84,7 @@
         #{branch,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null" >
         #{createDate,jdbcType=TIMESTAMP},
@@ -113,7 +113,7 @@
         branch = #{branch,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null" >
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -135,7 +135,7 @@
     set project_id = #{projectId,jdbcType=INTEGER},
       dependent_id = #{dependentId,jdbcType=INTEGER},
       branch = #{branch,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},

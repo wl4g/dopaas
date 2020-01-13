@@ -15,7 +15,7 @@
     <result column="pre_command" property="preCommand" jdbcType="VARCHAR" />
     <result column="post_command" property="postCommand" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
@@ -67,7 +67,7 @@
       update_by, result,contact_group_id,track_id,track_type,cost_time,env_type,annex)
     values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{shaGit,jdbcType=VARCHAR},#{shaLocal,jdbcType=VARCHAR},
-      #{refId,jdbcType=INTEGER},#{providerKind,jdbcType=VARCHAR},#{buildCommand,jdbcType=VARCHAR},#{preCommand,jdbcType=VARCHAR},#{postCommand,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
+      #{refId,jdbcType=INTEGER},#{providerKind,jdbcType=VARCHAR},#{buildCommand,jdbcType=VARCHAR},#{preCommand,jdbcType=VARCHAR},#{postCommand,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR}, #{contactGroupId,jdbcType=INTEGER},
       #{trackId,jdbcType=VARCHAR},#{trackType,jdbcType=INTEGER},#{costTime,jdbcType=BIGINT},#{envType,jdbcType=VARCHAR},#{annex,jdbcType=VARCHAR})
@@ -188,7 +188,7 @@
         #{remark,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null" >
         #{createDate,jdbcType=TIMESTAMP},
@@ -265,7 +265,7 @@
         remark = #{remark,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null" >
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -317,7 +317,7 @@
       pre_command = #{preCommand,jdbcType=VARCHAR},
       post_command = #{postCommand,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
@@ -345,7 +345,7 @@
       pre_command = #{preCommand,jdbcType=VARCHAR},
       post_command = #{postCommand,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},

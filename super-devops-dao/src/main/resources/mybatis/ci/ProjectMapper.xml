@@ -12,7 +12,7 @@
     <result column="parent_app_home" jdbcType="VARCHAR" property="parentAppHome" />
     <result column="lock_status" jdbcType="INTEGER" property="lockStatus" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
@@ -33,7 +33,7 @@
       <result column="v.password" property="password" jdbcType="VARCHAR" />
       <result column="v.remark" property="remark" jdbcType="VARCHAR" />
       <result column="v.enable" property="enable" jdbcType="INTEGER" />
-      <result column="v.del_flag" property="delFlag" jdbcType="CHAR" />
+      <result column="v.del_flag" property="delFlag" jdbcType="INTEGER" />
       <result column="v.create_date" property="createDate" jdbcType="TIMESTAMP" />
       <result column="v.create_by" property="createBy" jdbcType="VARCHAR" />
       <result column="v.update_date" property="updateDate" jdbcType="TIMESTAMP" />
@@ -76,7 +76,7 @@
       update_by)
     values (#{id,jdbcType=INTEGER}, #{vcs_id,jdbcType=INTEGER},#{projectName,jdbcType=VARCHAR},#{httpUrl,jdbcType=VARCHAR},#{sshUrl,jdbcType=VARCHAR},
       #{appClusterId,jdbcType=INTEGER}, #{assetsPath,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR},
-      #{lockStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
+      #{lockStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR})
   </insert>
@@ -161,7 +161,7 @@
         #{remark,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null">
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
@@ -208,7 +208,7 @@
         remark = #{remark,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null">
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -237,7 +237,7 @@
       parent_app_home = #{parentAppHome,jdbcType=VARCHAR},
       lock_status = #{lockStatus,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
