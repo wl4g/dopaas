@@ -78,11 +78,6 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
-  mail:
-    host: smtp.sina.com
-    port: 465
-    username: safec7782@sina.com
-    password: safec7782
 
 # Redis configuration.
 redis:

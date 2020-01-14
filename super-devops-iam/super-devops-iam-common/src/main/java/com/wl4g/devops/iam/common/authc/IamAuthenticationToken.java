@@ -19,6 +19,8 @@ import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 
 import java.io.Serializable;
 
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.HostAuthenticationToken;
 
 /**
@@ -55,11 +57,31 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 		 */
 		private String redirectUrl;
 
+		/**
+		 * Whether to enable backoff redirection address. For example, when the
+		 * client's incoming redirecturl is not accessible, the default
+		 * application's redirecturl will be used.</br>
+		 * </br>
+		 * Generally speaking, the client needs to be enabled when it is a web
+		 * PC, but it does not need to be enabled when it is a non web client
+		 * such as Android and iOS
+		 * 
+		 * @see {@link com.wl4g.devops.iam.realm.AbstractAuthorizingRealm#assertCredentialsMatch(AuthenticationToken, AuthenticationInfo)}
+		 * @see {@link com.wl4g.devops.iam.handler.AuthenticationHandler#assertApplicationAccessAuthorized(String, String)}
+		 */
+		private boolean fallbackRedirect = true;
+
 		public RedirectInfo(String fromAppName, String redirectUrl) {
+			this.fromAppName = fromAppName;
+			this.redirectUrl = redirectUrl;
+		}
+
+		public RedirectInfo(String fromAppName, String redirectUrl, boolean fallbackRedirect) {
 			// hasText(fromAppName, "Application name must not be empty.");
 			// hasText(redirectUrl, "Redirect url must not be empty.");
 			this.fromAppName = fromAppName;
 			this.redirectUrl = redirectUrl;
+			this.fallbackRedirect = fallbackRedirect;
 		}
 
 		public String getFromAppName() {
@@ -76,6 +98,14 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 
 		public void setRedirectUrl(String redirectUrl) {
 			this.redirectUrl = redirectUrl;
+		}
+
+		public boolean isFallbackRedirect() {
+			return fallbackRedirect;
+		}
+
+		public void setFallbackRedirect(boolean useFallback) {
+			this.fallbackRedirect = useFallback;
 		}
 
 		@Override

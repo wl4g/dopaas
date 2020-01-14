@@ -20,6 +20,9 @@ spring:
       support:
         cli:
           enabled: true
+        notification:
+          mail:
+            enable: true
       iam: # IAM client configuration.
         client: # IAM client configuration.
           service-name: ${spring.application.name}

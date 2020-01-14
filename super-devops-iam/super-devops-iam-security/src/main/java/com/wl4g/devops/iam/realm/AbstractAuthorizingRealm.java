@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.realm;
 
-import javax.annotation.PostConstruct; 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.Validator;
 
@@ -34,7 +34,7 @@ import static com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
-import static java.util.Objects.nonNull;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
@@ -194,52 +194,56 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 		IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
 		CredentialsMatcher matcher = getCredentialsMatcher();
-		if (nonNull(matcher)) {
-			if (!matcher.doCredentialsMatch(tk, info)) {
-				throw new IncorrectCredentialsException(bundle.getMessage("AbstractIamAuthorizingRealm.credential.mismatch"));
-			}
-
-			// Check whether the login user has access to the target IAM-client
-			// application. (Check only when access application).
-			String fromAppName = tk.getRedirectInfo().getFromAppName();
-			if (!isBlank(fromAppName)) {
-				isTrue(!info.getPrincipals().isEmpty(),
-						String.format("Authentication info principals is empty, please check the configure. [%s]", info));
-
-				// Note: for example, when using wechat scanning code (oauth2)
-				// to log in, token.getPrincipal() is empty,
-				// info.getPrimaryPrincipal() will not be empty.
-				String principal = (String) info.getPrincipals().getPrimaryPrincipal();
-				try {
-					authHandler.assertApplicationAccessAuthorized(principal, fromAppName);
-				} catch (IllegalApplicationAccessException ex) {
-					// For example: first login to manager service(mp) with
-					// 'admin', then logout, and then login to portal
-					// service(portal) with user01. At this time, the check will
-					// return that 'user01' has no permission to access manager
-					// service(mp).
-					// e.g.->https://sso.wl4g.com/login.html?service=mp&redirect_url=https%3A%2F%2Fmp.wl4g.com%2Fmp%2Fauthenticator
-
-					// Fallback determine redirect to application.
-					RedirectInfo fallbackRedirect = coprocessor.fallbackGetRedirectInfo(tk,
-							new RedirectInfo(config.getSuccessService(), config.getSuccessUri()));
-					/**
-					 * See:{@link AuthenticatorAuthenticationFilter#savedRequestParameters()}
-					 * See:{@link AbstractIamAuthenticationFilter#getRedirectInfo()}
-					 */
-					bindKVParameters(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT, fallbackRedirect);
-					if (log.isWarnEnabled()) {
-						log.info("The principal({}) no access to '{}', fallback redirect to:{}, caused by: {}", principal,
-								fromAppName, fallbackRedirect, getRootCausesString(ex));
-					}
-				}
-			}
-
-		} else {
+		if (isNull(matcher)) {
 			throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify "
 					+ "credentials during authentication.  If you do not wish for credentials to be examined, you "
 					+ "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
 		}
+		if (!matcher.doCredentialsMatch(tk, info)) {
+			throw new IncorrectCredentialsException(bundle.getMessage("AbstractIamAuthorizingRealm.credential.mismatch"));
+		}
+
+		// Check whether the login user has access to the target IAM-client
+		// application. (Check only when access application).
+		String fromAppName = tk.getRedirectInfo().getFromAppName();
+		if (!isBlank(fromAppName)) {
+			isTrue(!info.getPrincipals().isEmpty(),
+					String.format("Authentication info principals is empty, please check the configure. [%s]", info));
+
+			// Note: for example, when using wechat scanning code (oauth2)
+			// to log in, token.getPrincipal() is empty,
+			// info.getPrimaryPrincipal() will not be empty.
+			String principal = (String) info.getPrincipals().getPrimaryPrincipal();
+			try {
+				authHandler.assertApplicationAccessAuthorized(principal, fromAppName);
+			} catch (IllegalApplicationAccessException ex) {
+				// Disable of fallback redirect?
+				if (!tk.getRedirectInfo().isFallbackRedirect()) {
+					throw ex;
+				}
+
+				// For example: first login to manager service(mp) with
+				// 'admin', then logout, and then login to portal
+				// service(portal) with user01. At this time, the check will
+				// return that 'user01' has no permission to access manager
+				// service(mp).
+				// e.g.->https://sso.wl4g.com/login.html?service=mp&redirect_url=https%3A%2F%2Fmp.wl4g.com%2Fmp%2Fauthenticator
+
+				// Fallback determine redirect to application.
+				RedirectInfo fallbackRedirect = coprocessor.fallbackGetRedirectInfo(tk,
+						new RedirectInfo(config.getSuccessService(), config.getSuccessUri()));
+				notNull(fallbackRedirect, "Fallback redirect info cannot be null");
+
+				/**
+				 * See:{@link AuthenticatorAuthenticationFilter#savedRequestParameters()}
+				 * See:{@link AbstractIamAuthenticationFilter#getRedirectInfo()}
+				 */
+				bindKVParameters(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT, fallbackRedirect);
+				log.warn("The principal({}) no access to '{}', fallback redirect to:{}, caused by: {}", principal, fromAppName,
+						fallbackRedirect, getRootCausesString(ex));
+			}
+		}
+
 	}
 
 }
