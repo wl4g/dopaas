@@ -22,10 +22,10 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static org.apache.shiro.util.Assert.notNull;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ import java.util.Map;
  * @since
  */
 public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingRealm {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	final public static String KEY_ROLES_ATTRIBUTE_NAME = "rolesAttribute";
 	final public static String KEY_PERMITS_ATTRIBUTE_NAME = "permissionsAttribute";

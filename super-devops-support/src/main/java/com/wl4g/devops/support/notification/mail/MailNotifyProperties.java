@@ -22,7 +22,7 @@ import org.springframework.boot.autoconfigure.mail.MailProperties;
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年1月9日 v1.0.0
- * @see
+ * @see {@link org.springframework.boot.autoconfigure.mail.MailProperties}
  */
 public class MailNotifyProperties extends MailProperties {
 

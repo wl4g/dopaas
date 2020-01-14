@@ -28,7 +28,7 @@ spring:
           enable: false # Default[false]
           # Some configuration...
         mail:
-          enable: true # Default[false]
+          enable: false # Default[false]
 
           #host: smtp.anosi.cn
           #port: 465

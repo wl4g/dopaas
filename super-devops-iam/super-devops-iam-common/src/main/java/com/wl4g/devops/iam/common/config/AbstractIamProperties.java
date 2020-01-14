@@ -341,6 +341,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		private String redirectUrl = "redirect_url";
 
 		/**
+		 * {@link com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo#fallbackRedirect}
+		 */
+		private String fallbackRedirect = "fallback";
+
+		/**
 		 * Name of 'which' parameter of SNS OAuth authentication API
 		 */
 		private String which = "which";
@@ -430,6 +435,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public void setRedirectUrl(String redirectUrl) {
 			this.redirectUrl = redirectUrl;
+		}
+
+		public String getFallbackRedirect() {
+			return fallbackRedirect;
+		}
+
+		public void setFallbackRedirect(String fallbackRedirect) {
+			this.fallbackRedirect = fallbackRedirect;
 		}
 
 		public String getWhich() {
