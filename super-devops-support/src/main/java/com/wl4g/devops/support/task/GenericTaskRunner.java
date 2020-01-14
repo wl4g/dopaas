@@ -122,7 +122,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties> implements C
 						MICROSECONDS, new LinkedBlockingQueue<>(config.getAcceptQueue()),
 						new NamedThreadFactory(getClass().getSimpleName()), config.getReject());
 			} else {
-				log.warn("No workthread pool for started, because the number of workthread is less than 0");
+				log.warn("No start of thread pool worker, because the number of workthread is less than 0");
 			}
 
 			// Boss asynchronously execution.(if necessary)

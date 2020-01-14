@@ -33,14 +33,13 @@ import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.dao.umc.AlarmContactDao;
 import com.wl4g.devops.support.notification.CompositeMessageNotifier;
-import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
+import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
 import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 
 import java.io.File;
@@ -78,7 +77,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected DelegatePrototypeBeanFactory beanFactory;
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
-//	@Autowired
+	@Autowired
 	protected CompositeMessageNotifier notifier;
 
 	@Autowired
@@ -101,9 +100,6 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected TaskBuildCommandDao taskBuildCmdDao;
 	@Autowired
 	protected TaskHistoryDetailDao taskHistoryDetailDao;
-
-	@Value("${spring.mail.username}")
-	private String mailFrom;
 
 	@Override
 	public void runPipeline(NewParameter param) {
@@ -279,8 +275,7 @@ public class DefaultPipelineManager implements PipelineManager {
 			} catch (Throwable e) {
 				log.error(String.format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
-				// TODO
-				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), e.getMessage() + getStackTraceAsString(e));
+				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), getStackTraceAsString(e));
 
 				// Setup status to failure.
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, getStackTraceAsString(e));
@@ -383,15 +378,15 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param message
 	 */
 	protected void notificationResult(Integer contactGroupId, String message) {
-		List<AlarmContact> contactByGroupIds = alarmContactDao.getContactByGroupIds(asList(contactGroupId));
-		for (AlarmContact contact : contactByGroupIds) {
+		List<AlarmContact> contacts = alarmContactDao.getContactByGroupIds(asList(contactGroupId));
+		for (AlarmContact contact : contacts) {
 			SimpleMailMessage msg = new SimpleMailMessage();
-			msg.setFrom(mailFrom);
 			msg.setSubject("CI Built Result");
 			msg.setTo(contact.getEmail());
 			msg.setText(message);
 			msg.setSentDate(new Date());
-			notifier.forAdapt(MailMessageNotifier.class).send(new MailMessageWrapper(msg));
+			// TODO using dynamic kind?
+			notifier.forAdapt(NotifierKind.Mail).send(new MailMessageWrapper(msg));
 		}
 	}
 

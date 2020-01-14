@@ -15,18 +15,19 @@
  */
 package com.wl4g.devops.support.config;
 
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.devops.support.notification.CompositeMessageNotifier;
-import com.wl4g.devops.support.notification.EmptyForMustCheckImplMessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.apns.ApnsMessageNotifier;
@@ -65,78 +66,75 @@ public class NotificationAutoConfiguration {
 
 	@Bean(name = "apnsNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".apns.enable", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_NOTIFY_PREFIX + ".apns")
 	public ApnsNotifyProperties apnsNotifyProperties() {
 		return new ApnsNotifyProperties();
 	}
 
 	@Bean(name = "barkNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".bark.enable", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_NOTIFY_PREFIX + ".bark")
 	public BarkNotifyProperties barkNotifyProperties() {
 		return new BarkNotifyProperties();
 	}
 
 	@Bean(name = "dingtalkNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".dingtalk.enable", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_NOTIFY_PREFIX + ".dingtalk")
 	public DingtalkNotifyProperties dingtalkNotifyProperties() {
 		return new DingtalkNotifyProperties();
 	}
 
 	@Bean(name = "facebookNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".facebook.enable", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_NOTIFY_PREFIX + ".facebook")
 	public FacebookNotifyProperties facebookNotifyProperties() {
 		return new FacebookNotifyProperties();
 	}
 
 	@Bean(name = "mailNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".mail.enable", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_NOTIFY_PREFIX + ".mail")
 	public MailNotifyProperties mailNotifyProperties() {
 		return new MailNotifyProperties();
 	}
 
 	@Bean(name = "qqNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".qq.enable", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_NOTIFY_PREFIX + ".qq")
 	public QqNotifyProperties qqNotifyProperties() {
 		return new QqNotifyProperties();
 	}
 
 	@Bean(name = "smsNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".sms.enable", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_NOTIFY_PREFIX + ".sms")
 	public SmsNotifyProperties smsNotifyProperties() {
 		return new SmsNotifyProperties();
 	}
 
 	@Bean(name = "vmsNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".vms.enable", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_NOTIFY_PREFIX + ".vms")
 	public VmsNotifyProperties vmsNotifyProperties() {
 		return new VmsNotifyProperties();
 	}
 
 	@Bean(name = "wechatNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".wechat.enable", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_NOTIFY_PREFIX + ".wechat")
 	public WechatNotifyProperties wechatNotifyProperties() {
 		return new WechatNotifyProperties();
 	}
 
 	@Bean(name = "twitterNotifyProperties")
 	@ConditionalOnProperty(name = KEY_NOTIFY_PREFIX + ".twitter.enable", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_NOTIFY_PREFIX + ".twitter")
 	public TwitterNotifyProperties twitterNotifyProperties() {
 		return new TwitterNotifyProperties();
 	}
 
 	// --- Message notifier. ---
-
-	/**
-	 * {@link MessageNotifier} that must be instantiated.</br>
-	 * The default implementation when all other message notifiers are not
-	 * available solves the spring bean injection problem.
-	 * 
-	 * @return
-	 */
-	@Bean
-	@ConditionalOnMissingBean({ MessageNotifier.class })
-	public EmptyForMustCheckImplMessageNotifier emptyForMustCheckImplMessageNotifier() {
-		return new EmptyForMustCheckImplMessageNotifier();
-	}
 
 	@Bean
 	@ConditionalOnBean(ApnsNotifyProperties.class)
@@ -222,7 +220,11 @@ public class NotificationAutoConfiguration {
 	 */
 	@SuppressWarnings("unchecked")
 	@Bean
-	public CompositeMessageNotifier compositeMessageNotifier(List<MessageNotifier<? extends NotifyMessage>> notifiers) {
+	public CompositeMessageNotifier compositeMessageNotifier(
+			@Autowired(required = false) List<MessageNotifier<? extends NotifyMessage>> notifiers) {
+		if (isNull(notifiers)) {
+			return new CompositeMessageNotifier();
+		}
 		return new CompositeMessageNotifier(notifiers.stream().map(n -> ((MessageNotifier<NotifyMessage>) n)).collect(toList()));
 	}
 

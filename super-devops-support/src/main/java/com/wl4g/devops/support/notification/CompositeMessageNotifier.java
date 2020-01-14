@@ -15,6 +15,10 @@ import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 public class CompositeMessageNotifier extends GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>>
 		implements MessageNotifier<NotifyMessage> {
 
+	public CompositeMessageNotifier() {
+		super();
+	}
+
 	public CompositeMessageNotifier(List<MessageNotifier<NotifyMessage>> operators) {
 		super(operators);
 	}

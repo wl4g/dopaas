@@ -17,7 +17,7 @@ spring:
       - path: /**
         allowCredentials: true
         allowsOrigins:
-           - '*'
+          - '*'
         allowsHeaders: '*'
         allowsMethods: GET,POST
   cloud:
@@ -55,6 +55,14 @@ spring:
           test-report:
             upload-path: /Users/vjay/Downloads/myupload
             download-url: http://wl4g.debug:14046/ci-server/fs/download
+      support:
+        notification:
+          mail:
+            protocol: smtp
+            host: smtp.sina.com
+            port: 465
+            username: safec7782@sina.com
+            password: safec7782
 
   # Datasource configuration.
   datasource:

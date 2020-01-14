@@ -22,7 +22,13 @@ spring:
           enabled: true
         notification:
           mail:
-            enable: true
+            enable: true # Default[false]
+            properties:
+              mail.smtp.auth: true
+              mail.smtp.ssl.enable: true
+              mail.smtp.timeout: 15000
+              mail.smtp.starttls.enable: true
+              mail.smtp.starttls.required: true
       iam: # IAM client configuration.
         client: # IAM client configuration.
           service-name: ${spring.application.name}
