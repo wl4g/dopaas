@@ -71,9 +71,9 @@ spring:
           aliyun:
             product: Dysmsapi
             domain: dysmsapi.aliyuncs.com
-            accessKeyId: LTAIyF0dussltest
-            accessKeySecret: kxk4jznkdKQG7rFZ9Ix4rx1h3Btest
-            signName: XXX Platform
+            accessKeyId: your's keyId
+            accessKeySecret: your's keySecret
+            signName: Super DevOps
             templateCode: SMS_140726862
             defaultConnectTimeout: 10000
             defaultReadTimeout: 10000
