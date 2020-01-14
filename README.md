@@ -38,7 +38,7 @@ For the sake of brevity, each service only deploys a single node to the same phy
 - [CI](super-devops-ci/README.md)             &nbsp;&nbsp;    Continuous integration deployment(Continuous iteration), CICD build flow, etc.
 - [ESM](super-devops-esm/README.md)           &nbsp;&nbsp;    Flexible scalability management, integrated k8s, docker, management based on CPU, network traffic automatic or manual container scaling.
 - [SCM](super-devops-scm/README.md)           &nbsp;&nbsp;    Configure the service center to support online configuration of hot updates such as DataSource, RedisClient, etc.
-- [SRM](super-devops-srm/README.md)           &nbsp;&nbsp;    Service resource management, such as integrated ELK log system, etc.
+- [SRM](super-devops-srm/README.md)           &nbsp;&nbsp;    Software resource environment management, such as elk log analysis, binary compilation assets, etc
 - [SHELL](super-devops-shell/README.md)       &nbsp;&nbsp;    Shell Cli, adding a hbase-shell-like console to your app
 - [DOC](super-devops-doc/README.md)           &nbsp;&nbsp;    API documentation service, online API documentation
 - [IAM](super-devops-iam/README.md)           &nbsp;&nbsp;    Unified identity and access management services, supporting SSO/CAS, oauth2, opensaml, etc.
