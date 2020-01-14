@@ -92,11 +92,12 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 				// Cleanup timeout jobs on this node, nodes that do not
 				// acquire lock are on ready in place.
 				if (lock.tryLock()) {
+					long begin = System.currentTimeMillis();
 					int count = taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
 					if (count > 0) {
 						log.info(
-								"Updated pipeline timeout jobs, with jobTimeoutSec:{}, global jobCleanMaxIntervalMs:{}, count:{}",
-								config.getBuild().getJobTimeoutSec(), maxIntervalMs, count);
+								"Updated pipeline timeout jobs, with jobTimeoutSec:{}, global jobCleanMaxIntervalMs:{}, count:{}, cost: {}ms",
+								config.getBuild().getJobTimeoutSec(), maxIntervalMs, count, (System.currentTimeMillis() - begin));
 					}
 				} else {
 					log.debug("Skip cleanup jobs ... jobTimeoutSec:{}, global jobCleanMaxIntervalMs:{}",

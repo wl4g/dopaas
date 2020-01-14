@@ -61,24 +61,35 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 */
 	final Class<? extends Enum<?>> kindClass;
 
+	public GenericOperatorAdapter() {
+		this(null);
+	}
+
 	@SuppressWarnings("unchecked")
 	public GenericOperatorAdapter(List<O> operators) {
-		state(!isEmpty(operators), "Vcs operators has at least one.");
-		// Duplicate checks.
-		Set<K> kinds = new HashSet<>();
-		operators.forEach(o -> {
-			notNull(o.kind(), String.format("Provider kind can't empty, operator: %s", o));
-			state(!kinds.contains(o.kind()), String.format("Repeated definition operator with kind: %s", o.kind()));
-			kinds.add(o.kind());
-		});
-		// Register of kind aliases.
-		this.operatorAliasRegistry.putAll(operators.stream().collect(toMap(O::kind, o -> o)));
-		// Register of kind classes.
-		this.operatorClassRegistry.putAll(operators.stream().collect(toMap(O::getClass, o -> o)));
-
 		// Resolving real Kind class.
 		ResolvableType resolveType = ResolvableType.forClass(getClass());
 		this.kindClass = (Class<? extends Enum<?>>) resolveType.getSuperType().getGeneric(0).resolve();
+		Class<?> adapterInterfaceClass = resolveType.getSuperType().getGeneric(1).resolve();
+
+		// Maybe none of the specific operators has been instantiated.
+		if (!isEmpty(operators)) {
+			// Duplicate checks.
+			Set<K> kinds = new HashSet<>();
+			operators.forEach(o -> {
+				notNull(o.kind(), String.format("Provider kind can't empty, operator: %s", o));
+				state(!kinds.contains(o.kind()), String.format("Repeated definition operator with kind: %s", o.kind()));
+				kinds.add(o.kind());
+			});
+			// Register of kind aliases.
+			this.operatorAliasRegistry.putAll(operators.stream().collect(toMap(O::kind, o -> o)));
+			// Register of kind classes.
+			this.operatorClassRegistry.putAll(operators.stream().collect(toMap(O::getClass, o -> o)));
+			log.info("Registered operator '{}' instances of: {}", adapterInterfaceClass, operators);
+		} else {
+			log.warn("Skip '{}' composite adapter registered, because inject operators is empty.", adapterInterfaceClass);
+		}
+
 	}
 
 	@Override
@@ -133,9 +144,10 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 */
 	protected O getAdapted() {
 		O operator = delegate.get();
-		state(nonNull(operator), String.format(
-				"No such to the specific operator(kind class: %s). Please configure the operator instance before calling the specific function method",
-				kindClass));
+		state(nonNull(operator),
+				String.format(
+						"No such to the specific operator(kind class: %s). Please configure the operator instance before calling the specific function method",
+						kindClass));
 		return operator;
 	}
 

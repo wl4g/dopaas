@@ -83,10 +83,6 @@ public class SqlSessionMapperHotspotLoader implements ApplicationRunner {
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
-
-		if (log.isInfoEnabled()) {
-			log.info("\n\n>> Initialized mappers hotspot loader for: {}\n", sessionFactory.toString());
-		}
 	}
 
 	/**
@@ -96,10 +92,6 @@ public class SqlSessionMapperHotspotLoader implements ApplicationRunner {
 	 */
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		if (log.isInfoEnabled()) {
-			log.info("Starting to SqlSession mappers hotspot loader...");
-		}
-
 		boss = new Thread(() -> {
 			boolean stopped = false;
 			while (!stopped && !boss.isInterrupted()) {
@@ -116,10 +108,11 @@ public class SqlSessionMapperHotspotLoader implements ApplicationRunner {
 					}
 				}
 			}
+			log.warn("Stopped SqlSession mappers hotspot loader monitor!");
 		});
 		boss.start();
 
-		log.warn("Stopped SqlSession mappers hotspot loader monitor!");
+		log.info("Started SqlSession mappers hotspot loader of {}", sessionFactory.toString());
 	}
 
 	/**
