@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-bom</artifactId>
@@ -69,6 +68,8 @@
 		<!-- Ssh/git & command's. -->
 		<jline.version>3.9.0</jline.version>
 		<ganymed-ssh2.version>262</ganymed-ssh2.version>
+		<sshd.version>2.3.0</sshd.version>
+		<sshj.version>0.27.0</sshj.version>
 		<eclipse.jgit.version>5.5.1.201910021850-r</eclipse.jgit.version>
 		<!-- Web tool's. -->
 		<user-agent.version>1.2.4</user-agent.version>
@@ -541,6 +542,35 @@
 				<groupId>ch.ethz.ganymed</groupId>
 				<artifactId>ganymed-ssh2</artifactId>
 				<version>${ganymed-ssh2.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<!-- SSHD for netty -->
+			<dependency>
+				<groupId>org.apache.sshd</groupId>
+				<artifactId>sshd-netty</artifactId>
+				<version>${sshd.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-transport</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-handler</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.sshd</groupId>
+				<artifactId>sshd-scp</artifactId>
+				<version>${sshd.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<!-- SSHJ -->
+			<dependency>
+				<groupId>com.hierynomus</groupId>
+				<artifactId>sshj</artifactId>
+				<version>${sshj.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
