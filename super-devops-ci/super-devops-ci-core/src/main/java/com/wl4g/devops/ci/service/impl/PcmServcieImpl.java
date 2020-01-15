@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author vjay
@@ -94,18 +95,27 @@ public class PcmServcieImpl implements PcmService {
 	@Override
 	public List<SelectionModel> getUsers(Integer taskId) {
 		Pcm pcm = getPcmKind(taskId);
+		if(Objects.isNull(pcm)){
+			return null;
+		}
 		return pcmOperatorAdapter.forAdapt(pcm.getProviderKind()).getUsers(pcm);
 	}
 
 	@Override
 	public List<SelectionModel> getProjects(Integer taskId) {
 		Pcm pcm = getPcmKind(taskId);
+		if(Objects.isNull(pcm)){
+			return null;
+		}
 		return pcmOperatorAdapter.forAdapt(pcm.getProviderKind()).getProjects(pcm);
 	}
 
 	@Override
 	public List<SelectionModel> getIssues(Integer taskId, String userId, String projectId, String search) {
 		Pcm pcm = getPcmKind(taskId);
+		if(Objects.isNull(pcm)){
+			return null;
+		}
 		return pcmOperatorAdapter.forAdapt(pcm.getProviderKind()).getIssues(pcm,userId,projectId,search);
 	}
 
@@ -113,10 +123,13 @@ public class PcmServcieImpl implements PcmService {
 		Assert.notNull(taskId,"taskId is null");
 		Task task = taskDao.selectByPrimaryKey(taskId);
 		Assert.notNull(task,"task is null");
-		Assert.notNull(task.getPcmId(),"pcmId is null");
-		Assert.notNull(task.getPcmId(),"pcmId is null");
+		if(Objects.isNull(task.getPcmId())){
+			return null;
+		}
 		Pcm pcm = pcmDao.selectByPrimaryKey(task.getPcmId());
-		Assert.notNull(pcm,"pcm is null");
+		if(Objects.isNull(pcm)){
+			return null;
+		}
 		Assert.hasText(pcm.getProviderKind(),"provide kind is null");
 		return pcm;
 	}

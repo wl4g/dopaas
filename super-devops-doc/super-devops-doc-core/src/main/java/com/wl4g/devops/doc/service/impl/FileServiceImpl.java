@@ -68,16 +68,7 @@ public class FileServiceImpl implements FileService {
         fileChanges.setLabelIds(labelIds);
 
         //read content from file
-        File file = new File(docProperties.getFilePath(fileChanges.getContent()));
-        if(file.exists()){
-            try {
-                String s = FileIOUtils.readFileToString(file, "UTF-8");
-                fileChanges.setContent(s);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
+        file2String(fileChanges);
 
         return fileChanges;
     }
@@ -144,15 +135,31 @@ public class FileServiceImpl implements FileService {
     public Map<String, FileChanges> compareWith(Integer oldChangesId, Integer newChangesId) {
         Map<String, FileChanges> result = new HashMap<>();
         FileChanges oldFileChanges = fileChangesDao.selectByPrimaryKey(oldChangesId);
+        file2String(oldFileChanges);
         result.put("oldFileChanges",oldFileChanges);
         if(Objects.nonNull(newChangesId)){
             FileChanges newFileChanges = fileChangesDao.selectByPrimaryKey(newChangesId);
+            file2String(newFileChanges);
             result.put("newFileChanges",newFileChanges);
         }else{
             FileChanges newFileChanges = fileChangesDao.selectLastByFileCode(oldFileChanges.getFileCode());
+            file2String(newFileChanges);
             result.put("newFileChanges",newFileChanges);
         }
         return result;
+    }
+
+
+    private void file2String(FileChanges fileChanges){
+        File file1 = new File(docProperties.getFilePath(fileChanges.getContent()));
+        if(file1.exists()){
+            try {
+                String s = FileIOUtils.readFileToString(file1, "UTF-8");
+                fileChanges.setContent(s);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
