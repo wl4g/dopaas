@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.doc.controller;
+package com.wl4g.devops.doc.config;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Dictionaries controller
- * 
- * @author vjay
- * @date 2019-06-24 14:23:00
+ * Doc auto configuration.
+ *
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月21日
+ * @since
  */
-@RestController
-@RequestMapping("/test")
-public class TestController extends BaseController {
+@Configuration
+public class DocAutoConfiguration {
 
-	@RequestMapping(value = "/test")
-	public RespBase<?> test() {
-		RespBase<Object> resp = RespBase.create();
-		return resp;
+	// --- Basic's ---
+
+	@Bean
+	@ConfigurationProperties(prefix = "doc")
+	public DocProperties docProperties() {
+		return new DocProperties();
 	}
+
 
 }
