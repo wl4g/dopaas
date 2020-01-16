@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.cli;
+package com.wl4g.devops.shell.handler;
 
 public interface CliShellHandler {
 

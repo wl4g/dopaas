@@ -20,7 +20,6 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.lang.Runtime.*;
 import static java.lang.System.currentTimeMillis;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
 import static org.apache.commons.lang3.SystemUtils.USER_NAME;
@@ -83,7 +82,7 @@ public abstract class ProcessUtils {
 		writeFile(tmpScript, multiCmd, false);
 
 		// Processing windows permission is not implemented yet!!!
-		String callTmpScriptCmd = EMPTY;
+		String callTmpScriptCmd = tmpScript.getAbsolutePath();
 		if (!IS_OS_WINDOWS) {
 			callTmpScriptCmd = String.format("chmod 700 %s && %s", tmpScript.getAbsolutePath(), tmpScript.getAbsolutePath());
 		}

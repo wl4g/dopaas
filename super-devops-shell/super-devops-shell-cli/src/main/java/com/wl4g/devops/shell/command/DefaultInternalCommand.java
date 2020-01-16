@@ -36,10 +36,10 @@ import static org.apache.commons.lang3.SystemUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.shell.cli.AbstractClientShellHandler;
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.InternalCommand;
 import com.wl4g.devops.shell.config.DefaultCommandHandlerRegistrar;
+import com.wl4g.devops.shell.handler.AbstractClientShellHandler;
 import com.wl4g.devops.shell.utils.LineUtils;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
