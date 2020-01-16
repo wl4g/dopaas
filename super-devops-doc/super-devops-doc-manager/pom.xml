@@ -31,10 +31,6 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-doc-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-iam-client</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${final.name}</finalName>
