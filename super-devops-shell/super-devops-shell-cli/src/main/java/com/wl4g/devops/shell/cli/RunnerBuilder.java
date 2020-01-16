@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.runner;
+package com.wl4g.devops.shell.cli;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
@@ -34,7 +34,7 @@ public abstract class RunnerBuilder {
 
 	private String conf;
 
-	private Class<? extends Runner> provider;
+	private Class<? extends CliShellHandler> provider;
 
 	private RunnerBuilder() {
 	}
@@ -50,13 +50,13 @@ public abstract class RunnerBuilder {
 		return this;
 	}
 
-	public RunnerBuilder provider(Class<? extends Runner> provider) {
+	public RunnerBuilder provider(Class<? extends CliShellHandler> provider) {
 		notNull(provider, "provider is null, please check configure");
 		this.provider = provider;
 		return this;
 	}
 
-	public Runner build() {
+	public CliShellHandler build() {
 		try {
 			Configuration config = Configuration.create();
 			if (isNotBlank(conf)) {
@@ -65,7 +65,7 @@ public abstract class RunnerBuilder {
 			notNull(provider, "provider is null, please check configure");
 			notNull(config, "config is null, please check configure");
 
-			Constructor<? extends Runner> constr = provider.getConstructor(Configuration.class);
+			Constructor<? extends CliShellHandler> constr = provider.getConstructor(Configuration.class);
 			return constr.newInstance(new Object[] { config });
 		} catch (Exception e) {
 			throw new IllegalStateException(e);

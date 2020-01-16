@@ -36,10 +36,10 @@ import static org.apache.commons.lang3.SystemUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
+import com.wl4g.devops.shell.cli.AbstractClientShellHandler;
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.InternalCommand;
-import com.wl4g.devops.shell.config.DefaultBeanRegistry;
-import com.wl4g.devops.shell.runner.AbstractRunner;
+import com.wl4g.devops.shell.config.DefaultCommandHandlerRegistrar;
 import com.wl4g.devops.shell.utils.LineUtils;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
@@ -66,17 +66,17 @@ public class DefaultInternalCommand extends InternalCommand {
 	/**
 	 * Shell handler bean registry
 	 */
-	final protected DefaultBeanRegistry registry;
+	final protected DefaultCommandHandlerRegistrar registry;
 
 	/**
 	 * Line process runner.
 	 */
-	final protected AbstractRunner runner;
+	final protected AbstractClientShellHandler runner;
 
-	public DefaultInternalCommand(AbstractRunner runner) {
+	public DefaultInternalCommand(AbstractClientShellHandler runner) {
 		notNull(runner, "runner is null, please check configure");
 		this.runner = runner;
-		this.registry = (DefaultBeanRegistry) runner.getRegistry();
+		this.registry = (DefaultCommandHandlerRegistrar) runner.getRegistry();
 		notNull(registry, "Registry must not be null");
 	}
 
@@ -116,7 +116,7 @@ public class DefaultInternalCommand extends InternalCommand {
 	}
 
 	/**
-	 * See:[{@link AbstractRunner#submit}.MARK0]
+	 * See:[{@link AbstractClientShellHandler#submit}.MARK0]
 	 * 
 	 * @return
 	 */

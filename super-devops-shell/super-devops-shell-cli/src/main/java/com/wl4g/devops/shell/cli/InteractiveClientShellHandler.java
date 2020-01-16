@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.runner;
+package com.wl4g.devops.shell.cli;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -25,9 +25,9 @@ import com.wl4g.devops.shell.bean.MetaMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.Configuration;
 import static com.wl4g.devops.shell.bean.RunState.*;
-import static com.wl4g.devops.shell.config.DefaultBeanRegistry.getSingle;
-import static com.wl4g.devops.shell.handler.ChannelMessageHandler.BOF;
-import static com.wl4g.devops.shell.handler.ChannelMessageHandler.EOF;
+import static com.wl4g.devops.shell.config.DefaultCommandHandlerRegistrar.getSingle;
+import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.BOF;
+import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.EOF;
 import static java.lang.System.*;
 
 import org.jline.reader.UserInterruptException;
@@ -39,7 +39,7 @@ import org.jline.reader.UserInterruptException;
  * @version v1.0 2019年4月14日
  * @since
  */
-public class InteractiveRunner extends AbstractRunner {
+public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 
 	/** Mark the current processing completion status. */
 	private volatile boolean completed = true;
@@ -53,7 +53,7 @@ public class InteractiveRunner extends AbstractRunner {
 	/** Record command send time-stamp, waiting for timeout processing. */
 	private long sentTime = 0L;
 
-	public InteractiveRunner(Configuration config) {
+	public InteractiveClientShellHandler(Configuration config) {
 		super(config);
 	}
 
@@ -140,7 +140,7 @@ public class InteractiveRunner extends AbstractRunner {
 
 	/**
 	 * Wait for completed. </br>
-	 * {@link AbstractRunner#wakeup()}
+	 * {@link AbstractClientShellHandler#wakeup()}
 	 * 
 	 * @param line
 	 * @throws InterruptedException
@@ -154,7 +154,7 @@ public class InteractiveRunner extends AbstractRunner {
 
 	/**
 	 * Wake-up for wait lineReader. </br>
-	 * {@link AbstractRunner#waitForComplished()}
+	 * {@link AbstractClientShellHandler#waitForComplished()}
 	 */
 	private void wakeup() {
 		if (DEBUG) {

@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.devops.shell.processor.EmbeddedServerProcessor;
+import com.wl4g.devops.shell.processor.EmbeddedServerShellHandler;
 
 /**
  * Shell component services auto configuration
@@ -38,15 +38,15 @@ public class ShellAutoConfiguration {
 	}
 
 	@Bean
-	public AnnotationBeanRegistry annotationBeanRegistry() {
-		return new AnnotationBeanRegistry();
+	public AnnotationShellHandlerRegistrar annotationBeanRegistry() {
+		return new AnnotationShellHandlerRegistrar();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public EmbeddedServerProcessor embeddedServerProcessor(@Value("${spring.application.name}") String appName,
-			ShellProperties config, AnnotationBeanRegistry registry) {
-		return new EmbeddedServerProcessor(config, appName, registry);
+	public EmbeddedServerShellHandler embeddedServerProcessor(@Value("${spring.application.name}") String appName,
+			ShellProperties config, AnnotationShellHandlerRegistrar registry) {
+		return new EmbeddedServerShellHandler(config, appName, registry);
 	}
 
 }
