@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.shell;
 
-import com.wl4g.devops.shell.cli.InteractiveClientShellHandler;
-import com.wl4g.devops.shell.cli.RunnerBuilder;
+import com.wl4g.devops.shell.handler.InteractiveClientShellHandler;
+import com.wl4g.devops.shell.handler.RunnerBuilder;
 
 /**
  * Shell bootstrap program for client.
