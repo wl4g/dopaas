@@ -35,7 +35,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.config.AbstractConfiguration;
-import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
 import com.wl4g.devops.shell.utils.LineUtils;
@@ -43,13 +43,13 @@ import com.wl4g.devops.tool.common.reflect.TypeUtils2;
 import static com.wl4g.devops.shell.utils.ShellUtils.*;
 
 /**
- * Abstract shell component actuator
+ * Abstract shell component actuator handler.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年4月14日
  * @since
  */
-public abstract class AbstractActuator implements Actuator {
+public abstract class AbstractShellHandler implements ShellHandler {
 
 	/**
 	 * Enable shell console debug.
@@ -59,14 +59,14 @@ public abstract class AbstractActuator implements Actuator {
 	/**
 	 * Shell handler bean registry
 	 */
-	final protected ShellBeanRegistry registry;
+	final protected ShellHandlerRegistrar registry;
 
 	/**
 	 * Shell configuration
 	 */
 	final protected AbstractConfiguration config;
 
-	public AbstractActuator(AbstractConfiguration config, ShellBeanRegistry registry) {
+	public AbstractShellHandler(AbstractConfiguration config, ShellHandlerRegistrar registry) {
 		notNull(registry, "Registry must not be null");
 		notNull(config, "Registry must not be null");
 		this.registry = registry;

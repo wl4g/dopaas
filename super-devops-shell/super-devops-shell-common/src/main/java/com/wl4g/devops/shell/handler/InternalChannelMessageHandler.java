@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.handler;
 
-import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 
 import java.io.*;
 import java.net.Socket;
@@ -28,13 +28,13 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
- * Shell message handler
+ * Internal shell channel message handler
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月2日
  * @since
  */
-public abstract class ChannelMessageHandler implements Runnable, Closeable {
+public abstract class InternalChannelMessageHandler implements Runnable, Closeable {
 
 	/** Begin of file */
 	final public static String BOF = "<<EOF>";
@@ -50,7 +50,7 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	/**
 	 * Local shell component registry.
 	 */
-	final protected ShellBeanRegistry registry;
+	final protected ShellHandlerRegistrar registry;
 
 	/**
 	 * Client socket
@@ -72,7 +72,7 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 	 */
 	protected OutputStream _out;
 
-	public ChannelMessageHandler(ShellBeanRegistry registry, Socket client, Function<String, Object> function) {
+	public InternalChannelMessageHandler(ShellHandlerRegistrar registry, Socket client, Function<String, Object> function) {
 		notNull(client, "Socket client is null, please check configure");
 		notNull(function, "Function is null, please check configure");
 		notNull(registry, "Registry must not be null");
@@ -163,7 +163,7 @@ public abstract class ChannelMessageHandler implements Runnable, Closeable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ChannelMessageHandler other = (ChannelMessageHandler) obj;
+		InternalChannelMessageHandler other = (InternalChannelMessageHandler) obj;
 		if (client == null) {
 			if (other.client != null)
 				return false;

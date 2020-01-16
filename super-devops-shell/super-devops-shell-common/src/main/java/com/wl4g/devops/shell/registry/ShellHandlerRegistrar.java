@@ -26,13 +26,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 
 /**
- * Shell bean registry
+ * Shell command handler registry
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年4月14日
  * @since
  */
-public abstract class ShellBeanRegistry implements Serializable {
+public abstract class ShellHandlerRegistrar implements Serializable {
 	final private static long serialVersionUID = -8763772555086222131L;
 
 	/**
@@ -57,7 +57,7 @@ public abstract class ShellBeanRegistry implements Serializable {
 	 * 
 	 * @param bean
 	 */
-	public ShellBeanRegistry register(Object bean) {
+	public ShellHandlerRegistrar register(Object bean) {
 		notNull(bean, "bean is null, please check configure");
 
 		for (Method m : bean.getClass().getDeclaredMethods()) {

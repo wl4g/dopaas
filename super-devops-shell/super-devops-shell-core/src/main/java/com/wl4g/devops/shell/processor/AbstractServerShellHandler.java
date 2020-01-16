@@ -15,16 +15,17 @@
  */
 package com.wl4g.devops.shell.processor;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.shell.AbstractActuator;
+import com.wl4g.devops.shell.AbstractShellHandler;
 import com.wl4g.devops.shell.config.ShellProperties;
-import com.wl4g.devops.shell.handler.ChannelMessageHandler;
-import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
-import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.handler.InternalChannelMessageHandler;
+import com.wl4g.devops.shell.processor.EmbeddedServerShellHandler.ShellHandler;
+import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 
 /**
  * Abstract shell component processor
@@ -33,14 +34,13 @@ import com.wl4g.devops.shell.registry.ShellBeanRegistry;
  * @version v1.0 2019年4月14日
  * @since
  */
-public abstract class BasicShellProcessor extends AbstractActuator implements DisposableBean {
+public abstract class AbstractServerShellHandler extends AbstractShellHandler implements DisposableBean {
+	final protected Logger log = getLogger(getClass());
 
 	/**
 	 * Accept socket client handlers.
 	 */
-	final private ThreadLocal<ChannelMessageHandler> clientContext = new InheritableThreadLocal<>();
-
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final private ThreadLocal<InternalChannelMessageHandler> clientContext = new InheritableThreadLocal<>();
 
 	/**
 	 * Shell properties configuration
@@ -52,7 +52,7 @@ public abstract class BasicShellProcessor extends AbstractActuator implements Di
 	 */
 	final private String appName;
 
-	public BasicShellProcessor(ShellProperties config, String appName, ShellBeanRegistry registry) {
+	public AbstractServerShellHandler(ShellProperties config, String appName, ShellHandlerRegistrar registry) {
 		super(config, registry);
 		Assert.notNull(config, "config must not be null");
 		Assert.hasText(appName, "appName must not be null");
@@ -75,7 +75,7 @@ public abstract class BasicShellProcessor extends AbstractActuator implements Di
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T extends ShellHandler> T bind(ChannelMessageHandler client) {
+	protected <T extends ShellHandler> T bind(InternalChannelMessageHandler client) {
 		clientContext.set(client);
 		return (T) client;
 	}

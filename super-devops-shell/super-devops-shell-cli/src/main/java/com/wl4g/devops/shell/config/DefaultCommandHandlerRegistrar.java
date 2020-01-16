@@ -16,12 +16,13 @@
 package com.wl4g.devops.shell.config;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static java.lang.String.format;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.wl4g.devops.shell.cli.HelpOptions;
-import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 
 /**
@@ -31,11 +32,11 @@ import com.wl4g.devops.shell.registry.TargetMethodWrapper;
  * @version v1.0 2019年5月3日
  * @since
  */
-public class DefaultBeanRegistry extends ShellBeanRegistry {
+public class DefaultCommandHandlerRegistrar extends ShellHandlerRegistrar {
 	final private static long serialVersionUID = -6852880158146389409L;
 
 	private static class Holder {
-		final private static DefaultBeanRegistry INSTANCE = new DefaultBeanRegistry();
+		final private static DefaultCommandHandlerRegistrar INSTANCE = new DefaultCommandHandlerRegistrar();
 	}
 
 	/**
@@ -43,7 +44,7 @@ public class DefaultBeanRegistry extends ShellBeanRegistry {
 	 */
 	final private Map<String, HelpOptions> helpOptions = new ConcurrentHashMap<>(16);
 
-	public final static DefaultBeanRegistry getSingle() {
+	public final static DefaultCommandHandlerRegistrar getSingle() {
 		return Holder.INSTANCE;
 	}
 
@@ -53,20 +54,20 @@ public class DefaultBeanRegistry extends ShellBeanRegistry {
 	 * @param registed
 	 * @return
 	 */
-	public DefaultBeanRegistry merge(Map<String, TargetMethodWrapper> registed) {
+	public DefaultCommandHandlerRegistrar merge(Map<String, TargetMethodWrapper> registed) {
 		state(helpOptions.isEmpty(), "Remote server registed target methods is null");
 
 		// Registion from local.
 		getTargetMethods().forEach((argname, tm) -> {
 			state(helpOptions.putIfAbsent(argname, tm.getOptions()) == null,
-					String.format("Already local registed commands: '%s'", argname));
+					format("Already local registed commands: '%s'", argname));
 		});
 
 		// Registion from remote registed.
 		registed.forEach((argname, tm) -> {
-			state(helpOptions.putIfAbsent(argname, tm.getOptions()) == null, String.format(
-					"Already remote registed commands: '%s', It is recommended to replace the shell definition @ShellMethod(name=xx)",
-					argname));
+			state(helpOptions.putIfAbsent(argname, tm.getOptions()) == null,
+					format("Already remote registed commands: '%s', It is recommended to replace the shell definition @ShellMethod(name=xx)",
+							argname));
 		});
 
 		return this;

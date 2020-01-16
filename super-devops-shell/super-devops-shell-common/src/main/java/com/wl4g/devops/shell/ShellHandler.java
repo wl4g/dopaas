@@ -16,13 +16,13 @@
 package com.wl4g.devops.shell;
 
 /**
- * Shell actuator
+ * Shell handler actuator.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年4月21日
  * @since
  */
-public interface Actuator {
+public interface ShellHandler {
 
 	/**
 	 * Read commands to processing

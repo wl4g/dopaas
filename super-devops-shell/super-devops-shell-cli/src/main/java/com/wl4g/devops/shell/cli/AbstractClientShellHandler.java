@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.runner;
+package com.wl4g.devops.shell.cli;
 
 import org.jline.reader.LineReader; 
 import org.jline.reader.LineReaderBuilder;
@@ -32,17 +32,17 @@ import java.util.List;
 import java.util.function.Function;
 import static java.lang.System.*;
 
-import com.wl4g.devops.shell.AbstractActuator;
+import com.wl4g.devops.shell.AbstractShellHandler;
 import com.wl4g.devops.shell.bean.*;
 import com.wl4g.devops.shell.command.DefaultInternalCommand;
 import com.wl4g.devops.shell.config.Configuration;
 import com.wl4g.devops.shell.config.DynamicCompleter;
-import com.wl4g.devops.shell.handler.ChannelMessageHandler;
-import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.handler.InternalChannelMessageHandler;
+import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import static com.wl4g.devops.shell.annotation.ShellOption.GNU_CMD_LONG;
 import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HE;
 import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HELP;
-import static com.wl4g.devops.shell.config.DefaultBeanRegistry.*;
+import static com.wl4g.devops.shell.config.DefaultCommandHandlerRegistrar.*;
 import static com.wl4g.devops.shell.utils.LineUtils.clean;
 import static com.wl4g.devops.shell.utils.LineUtils.parse;
 
@@ -60,7 +60,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
  * @version v1.0 2019年4月14日
  * @since
  */
-public abstract class AbstractRunner extends AbstractActuator implements Runner {
+public abstract class AbstractClientShellHandler extends AbstractShellHandler implements CliShellHandler {
 
 	/**
 	 * Used to get the name of the set target service (that is, the server that
@@ -114,7 +114,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 */
 	private String stacktraceAsString;
 
-	public AbstractRunner(Configuration config) {
+	public AbstractClientShellHandler(Configuration config) {
 		super(config, getSingle());
 		notNull(config, "configuration is null, please check configure");
 		this.config = config;
@@ -136,7 +136,7 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 		}
 	}
 
-	public ShellBeanRegistry getRegistry() {
+	public ShellHandlerRegistrar getRegistry() {
 		return registry;
 	}
 
@@ -377,19 +377,19 @@ public abstract class AbstractRunner extends AbstractActuator implements Runner 
 	 * @version v1.0 2019年5月2日
 	 * @since
 	 */
-	class ClientHandler extends ChannelMessageHandler {
+	class ClientHandler extends InternalChannelMessageHandler {
 
 		/**
 		 * Line process runner.
 		 */
-		final private AbstractRunner runner;
+		final private AbstractClientShellHandler runner;
 
 		/**
 		 * Boot boss thread
 		 */
 		private Thread boss;
 
-		public ClientHandler(AbstractRunner runner, Socket client, Function<String, Object> function) {
+		public ClientHandler(AbstractClientShellHandler runner, Socket client, Function<String, Object> function) {
 			super(runner.getRegistry(), client, function);
 			this.runner = runner;
 		}

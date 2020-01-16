@@ -19,7 +19,7 @@ import com.wl4g.devops.shell.bean.ExceptionMessage;
 import com.wl4g.devops.shell.bean.RunState;
 import com.wl4g.devops.shell.bean.Message;
 import com.wl4g.devops.shell.bean.ResultMessage;
-import com.wl4g.devops.shell.processor.EmbeddedServerProcessor.ShellHandler;
+import com.wl4g.devops.shell.processor.EmbeddedServerShellHandler.ShellHandler;
 import com.wl4g.devops.shell.processor.event.EventListener;
 import com.wl4g.devops.shell.processor.event.InterruptEventListener;
 import com.wl4g.devops.shell.registry.InternalInjectable;
@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wl4g.devops.shell.handler.ChannelMessageHandler.*;
+import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.*;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static com.wl4g.devops.shell.bean.RunState.*;

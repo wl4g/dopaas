@@ -50,10 +50,10 @@ import com.wl4g.devops.shell.bean.InterruptMessage;
 import com.wl4g.devops.shell.bean.LineMessage;
 import com.wl4g.devops.shell.bean.ResultMessage;
 import com.wl4g.devops.shell.config.ShellProperties;
-import com.wl4g.devops.shell.handler.ChannelMessageHandler;
+import com.wl4g.devops.shell.handler.InternalChannelMessageHandler;
 import com.wl4g.devops.shell.processor.event.CommandEventListener;
 import com.wl4g.devops.shell.processor.event.InterruptEventListener;
-import com.wl4g.devops.shell.registry.ShellBeanRegistry;
+import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 
 /**
@@ -63,7 +63,7 @@ import com.wl4g.devops.shell.registry.TargetMethodWrapper;
  * @version v1.0 2019年5月1日
  * @since
  */
-public class EmbeddedServerProcessor extends BasicShellProcessor implements ApplicationRunner, Runnable {
+public class EmbeddedServerShellHandler extends AbstractServerShellHandler implements ApplicationRunner, Runnable {
 
 	/**
 	 * Current server running status.
@@ -83,7 +83,7 @@ public class EmbeddedServerProcessor extends BasicShellProcessor implements Appl
 	 */
 	private Thread boss;
 
-	public EmbeddedServerProcessor(ShellProperties config, String appName, ShellBeanRegistry registry) {
+	public EmbeddedServerShellHandler(ShellProperties config, String appName, ShellHandlerRegistrar registry) {
 		super(config, appName, registry);
 	}
 
@@ -222,7 +222,7 @@ public class EmbeddedServerProcessor extends BasicShellProcessor implements Appl
 	 * @version v1.0 2019年5月2日
 	 * @since
 	 */
-	class ShellHandler extends ChannelMessageHandler {
+	class ShellHandler extends InternalChannelMessageHandler {
 
 		final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -232,7 +232,7 @@ public class EmbeddedServerProcessor extends BasicShellProcessor implements Appl
 		/** Execution worker */
 		final private ExecutorService worker;
 
-		public ShellHandler(ShellBeanRegistry registry, Socket client, Function<String, Object> function) {
+		public ShellHandler(ShellHandlerRegistrar registry, Socket client, Function<String, Object> function) {
 			super(registry, client, function);
 			this.context = new ShellContext(this);
 
