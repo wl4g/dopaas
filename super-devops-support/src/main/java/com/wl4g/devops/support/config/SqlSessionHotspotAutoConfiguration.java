@@ -34,8 +34,7 @@ import com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotLoader.H
  */
 @Configuration
 public class SqlSessionHotspotAutoConfiguration {
-
-	final public static String CONF_P = "spring.cloud.devops.tool.devel.mybatis-loader";
+	final public static String CONF_P = "spring.cloud.devops.support.devel.mybatis-loader";
 
 	@Bean
 	@ConditionalOnJdwpDebug(enableProperty = CONF_P + ".enable")

@@ -14,6 +14,8 @@
 spring:
   devops:
     support:
+      devel:
+        mybatis-loader: false
       notification:
         apns:
           enable: false # Default[false]
