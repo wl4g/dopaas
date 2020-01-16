@@ -8,10 +8,12 @@ import com.wl4g.devops.dao.doc.FileLabelDao;
 import com.wl4g.devops.dao.doc.LabelDao;
 import com.wl4g.devops.doc.config.DocProperties;
 import com.wl4g.devops.doc.service.FileService;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.tool.common.io.FileIOUtils;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.DateUtils2;
+import com.wl4g.devops.tool.common.lang.TypeConverts;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 /**
@@ -54,6 +57,7 @@ public class FileServiceImpl implements FileService {
     public void save(FileChanges fileChanges) {
         Assert2.notNullOf(fileChanges,"fileChanges");
         Assert2.hasTextOf(fileChanges.getName(),"name");
+
         if (fileChanges.getId() == null) {
             insert(fileChanges);
         } else {
@@ -66,15 +70,16 @@ public class FileServiceImpl implements FileService {
         FileChanges fileChanges = fileChangesDao.selectByPrimaryKey(id);
         List<Integer> labelIds = labelDao.selectLabelIdsByFileId(fileChanges.getId());
         fileChanges.setLabelIds(labelIds);
-
         //read content from file
         file2String(fileChanges);
-
         return fileChanges;
     }
 
     private void insert(FileChanges fileChanges) {
+        IamPrincipalInfo info = getPrincipalInfo();
         fileChanges.preInsert();
+        fileChanges.setCreateBy(TypeConverts.parseIntOrNull(info.getPrincipalId()));
+        fileChanges.setUpdateBy(TypeConverts.parseIntOrNull(info.getPrincipalId()));
         fileChanges.setIsLatest(1);
         fileChanges.setAction("add");
         fileChanges.setFileCode(UUID.randomUUID().toString().replaceAll("-", ""));
