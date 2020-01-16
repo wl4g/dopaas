@@ -14,6 +14,7 @@
     <result column="is_latest" jdbcType="INTEGER" property="isLatest" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_by_str" jdbcType="VARCHAR" property="createByStr" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
@@ -35,10 +36,10 @@
 
   <select id="selectByFileCode" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
-    from doc_file_changes
-    where del_flag!=1 and file_code = #{fileCode,jdbcType=INTEGER}
-    order by update_date desc
+    <include refid="Base_Column_List" />,(select user_name from sys_user where id=fc.create_by) create_by_str
+    from doc_file_changes fc
+    where fc.del_flag!=1 and fc.file_code = #{fileCode,jdbcType=INTEGER}
+    order by fc.update_date desc
   </select>
 
   <select id="selectLastByFileCode" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -63,7 +64,7 @@
     <if test="labelId != null and labelId != ''">
       AND EXISTS (select 1 from doc_file_label fl where fc.id=fl.file_id and fl.label_id=#{labelId,jdbcType=INTEGER})
     </if>
-    order by update_date desc
+    order by fc.update_date desc
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

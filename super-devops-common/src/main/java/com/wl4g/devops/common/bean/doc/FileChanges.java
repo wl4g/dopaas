@@ -25,10 +25,13 @@ public class FileChanges extends BaseBean {
 
 	private Integer isLatest;
 
-	// other
+	// --- Temporary ---
+
 	private List<Label> labels;
 
 	private List<Integer> labelIds;
+
+	private String createByStr;
 
 	public String getName() {
 		return name;
@@ -116,5 +119,13 @@ public class FileChanges extends BaseBean {
 
 	public void setLabelIds(List<Integer> labelIds) {
 		this.labelIds = labelIds;
+	}
+
+	public String getCreateByStr() {
+		return createByStr;
+	}
+
+	public void setCreateByStr(String createByStr) {
+		this.createByStr = createByStr;
 	}
 }
