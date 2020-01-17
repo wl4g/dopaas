@@ -124,6 +124,19 @@ public abstract class ProcessUtils {
 	}
 
 	/**
+	 * Execution single row command-line.
+	 * 
+	 * @param singleCmd
+	 *            Single row command string.
+	 * @return
+	 * @throws IOException
+	 */
+	public final static Process execSingle(final String singleCmd) throws IOException {
+		String[] cmdarray = buildCrossSingleCommands(singleCmd, null, null, false, false);
+		return getRuntime().exec(cmdarray);
+	}
+
+	/**
 	 * Build cross platform single row wide fully qualified command line.
 	 * 
 	 * @param cmd
