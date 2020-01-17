@@ -25,7 +25,7 @@ import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.processor.ShellHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.devops.shell.processor.ShellHolder.printf;
+import static com.wl4g.devops.shell.processor.ShellHolder.currentPrintf;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.tool.common.lang.TableFormatters.*;
 
@@ -57,17 +57,17 @@ public class CiCdConsole {
 	 */
 	@ShellMethod(keys = "modifyCleanupInterval", group = GROUP, help = "Modifying global jobs timeout finalizer max-interval")
 	public String modifyCleanupInterval(TimeoutCleanupIntervalArgument arg) {
-		ShellHolder.open();
+		ShellHolder.currentOpen();
 		try {
-			printf(String.format("Modifying timeout cleanup finalizer intervalMs: <%s>", arg.getMaxIntervalMs()));
+			currentPrintf(String.format("Modifying timeout cleanup finalizer intervalMs: <%s>", arg.getMaxIntervalMs()));
 			// Refreshing global timeoutCleanupFinalizer
 			tjcCoordinator.refreshGlobalJobCleanMaxIntervalMs(arg.getMaxIntervalMs());
 
-			printf(String.format("Modifyed timeoutCleanup finalizer of intervalMs:<%s>", arg.getMaxIntervalMs()));
+			currentPrintf(String.format("Modifyed timeoutCleanup finalizer of intervalMs:<%s>", arg.getMaxIntervalMs()));
 		} catch (Exception e) {
-			printf(String.format("Failed to timeoutCleanup finalizer intervalMs. cause by: %s", getStackTraceAsString(e)));
+			currentPrintf(String.format("Failed to timeoutCleanup finalizer intervalMs. cause by: %s", getStackTraceAsString(e)));
 		} finally {
-			ShellHolder.close();
+			ShellHolder.currentClose();
 		}
 		return "Reset timeoutCleanupFinalizer expression completed!";
 	}
@@ -80,7 +80,7 @@ public class CiCdConsole {
 	 */
 	@ShellMethod(keys = "pipelineList", group = GROUP, help = "Pipeline tasks list.")
 	public String pipelineList(TasksArgument arg) {
-		ShellHolder.open();
+		ShellHolder.currentOpen();
 		try {
 			// Find tasks.
 			PageModel pm = new PageModel(arg.getPageNum(), arg.getPageSize());
@@ -88,11 +88,11 @@ public class CiCdConsole {
 					arg.getStartDate(), arg.getEndDate(), null);
 
 			// Print write to console.
-			printf(build(pm.getRecords()).setH('=').setV('!').getTableString());
+			currentPrintf(build(pm.getRecords()).setH('=').setV('!').getTableString());
 		} catch (Exception e) {
-			printf(String.format("Failed to find taskList. cause by: %s", getStackTraceAsString(e)));
+			currentPrintf(String.format("Failed to find taskList. cause by: %s", getStackTraceAsString(e)));
 		} finally {
-			ShellHolder.close();
+			ShellHolder.currentClose();
 		}
 
 		return "Load pipeline task list completed!";

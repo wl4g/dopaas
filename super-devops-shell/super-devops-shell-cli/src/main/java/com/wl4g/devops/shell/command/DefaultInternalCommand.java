@@ -54,9 +54,9 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
 public class DefaultInternalCommand extends InternalCommand {
 
 	/**
-	 * Default internal commands.
+	 * Built-in Default internal commands group name.
 	 */
-	final public static String DEFAULT_GROUP = "Default Internal Commands";
+	final public static String DEFAULT_GROUP = "Built-in commands";
 
 	/**
 	 * Current read line strings.

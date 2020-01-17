@@ -13,44 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.bean;
+package com.wl4g.devops.shell.message;
+
+import static org.apache.commons.lang3.exception.ExceptionUtils.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
- * Progress bar message
+ * Exception result message
  * 
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2020年1月4日
+ * @version v1.0 2019年5月4日
  * @since
  */
-public class ProgressMessage extends Message {
-	private static final long serialVersionUID = -8574315246731906685L;
+public class ExceptionMessage extends Message {
+	private static final long serialVersionUID = -8574315277731909685L;
 
-	/**
-	 * Total number.
-	 */
-	final private int whole;
+	final private Throwable throwable;
 
-	/**
-	 * Current progress number.
-	 */
-	final private int progress;
-
-	public ProgressMessage(int whole, int progress) {
-		this.whole = whole;
-		this.progress = progress;
+	public ExceptionMessage(Throwable throwable) {
+		notNull(throwable, "throwable must not be null");
+		this.throwable = throwable;
 	}
 
-	public int getWhole() {
-		return whole;
-	}
-
-	public int getProgress() {
-		return progress;
+	public Throwable getThrowable() {
+		return throwable;
 	}
 
 	@Override
 	public String toString() {
-		return "ProgressMessage [whole=" + whole + ", progress=" + progress + "]";
+		return "Exception [" + getRootCauseMessage(throwable) + "]";
 	}
 
 }

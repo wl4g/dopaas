@@ -150,6 +150,24 @@ public class TargetMethodWrapper implements Serializable {
 		return argname;
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer strs = new StringBuffer(ShellMethod.class.getName());
+		strs.append("(");
+		String[] keys = shellMethod.keys();
+		for (int i = 0; i < keys.length; i++) {
+			strs.append("keys=");
+			strs.append(keys[i]);
+			if (keys.length <= i) {
+				strs.append("|");
+			}
+		}
+		strs.append(", group=");
+		strs.append(shellMethod.group());
+		strs.append(")");
+		return strs.toString();
+	}
+
 	/**
 	 * Initialization
 	 * 

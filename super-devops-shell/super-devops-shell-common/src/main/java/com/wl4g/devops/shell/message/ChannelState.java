@@ -13,34 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.bean;
-
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
+package com.wl4g.devops.shell.message;
 
 /**
- * Line commands message
+ * Line result message state
  * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月4日
+ * @author wangl.sir
+ * @version v1.0 2019年5月24日
  * @since
  */
-public class LineMessage extends Message {
-	private static final long serialVersionUID = -8574315246731906685L;
+public enum ChannelState {
 
-	final private String line;
+	NONCE,
 
-	public LineMessage(String line) {
-		hasText(line, "line must not be empty");
-		this.line = line;
-	}
+	READY,
 
-	public String getLine() {
-		return line;
-	}
+	RUNNING,
 
-	@Override
-	public String toString() {
-		return "LineMessage [line=" + line + "]";
-	}
+	RUNNING_WAIT,
+
+	INTERRUPTED,
+
+	COMPLATED;
 
 }
