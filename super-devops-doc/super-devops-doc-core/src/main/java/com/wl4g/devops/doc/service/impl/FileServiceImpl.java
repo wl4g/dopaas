@@ -10,6 +10,9 @@ import com.wl4g.devops.doc.config.DocProperties;
 import com.wl4g.devops.doc.service.FileService;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.tool.common.io.FileIOUtils;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.DateUtils2;
@@ -17,6 +20,8 @@ import com.wl4g.devops.tool.common.lang.TypeConverts;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +50,9 @@ public class FileServiceImpl implements FileService {
     @Autowired
     private FileLabelDao fileLabelDao;
 
+    @Autowired
+    protected DestroableProcessManager pm;
+
     @Override
     public PageModel list(PageModel pm, String name, String lang, Integer labelId) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
@@ -62,6 +70,26 @@ public class FileServiceImpl implements FileService {
             insert(fileChanges);
         } else {
             update(fileChanges);
+        }
+    }
+
+    @Override
+    public void saveUpload(FileChanges fileChanges) {
+        Assert2.notNullOf(fileChanges,"fileChanges");
+        Assert2.hasTextOf(fileChanges.getFileCode(),"fileCode");
+        Assert2.hasTextOf(fileChanges.getContent(),"content");
+        IamPrincipalInfo info = getPrincipalInfo();
+        fileChanges.preInsert();
+        fileChanges.setCreateBy(TypeConverts.parseIntOrNull(info.getPrincipalId()));
+        fileChanges.setUpdateBy(TypeConverts.parseIntOrNull(info.getPrincipalId()));
+        fileChanges.setIsLatest(1);
+        fileChanges.setAction("add");
+        fileChanges.setType("md");
+        fileChangesDao.insertSelective(fileChanges);
+        //label
+        List<Integer> labelIds = fileChanges.getLabelIds();
+        if(Objects.nonNull(labelIds)&&labelIds.size()>0){
+            fileLabelDao.insertBatch(labelIds,fileChanges.getId());
         }
     }
 
@@ -154,6 +182,59 @@ public class FileServiceImpl implements FileService {
         return result;
     }
 
+    @Override
+    public Map<String, Object> upload(MultipartFile file) {
+        Map<String, Object> result = new HashMap<>();
+        Date now  = new Date();
+        String fileCode = UUID.randomUUID().toString().replaceAll("-", "");
+
+        String fileName = file.getOriginalFilename();// 文件名
+        String suffixName = fileName.substring(fileName.lastIndexOf("."));// 后缀名
+
+        String newFileName = DateUtils2.formatDate(now,"yyyyMMddHHmmss");
+        String subPath = "/"+fileCode+"/";
+        String path = "";
+        if(".md".equalsIgnoreCase(suffixName)){
+            newFileName = newFileName+suffixName;
+            path = subPath + newFileName;
+            saveFile(file, docProperties.getFilePath(path));
+        }else if(".docx".equalsIgnoreCase(suffixName)){
+            String tempFilePath = subPath + newFileName + suffixName;
+            path = subPath + newFileName + ".md";
+            saveFile(file, docProperties.getFilePath(tempFilePath));
+            // pandoc
+            String command = "pandoc "+docProperties.getFilePath(tempFilePath) + " -o " + docProperties.getFilePath(path);
+
+            DestroableCommand cmd = new LocalDestroableCommand(command, null, 300000L);
+            try {
+                pm.execWaitForComplete(cmd);
+            } catch (Exception e) {
+                throw new UnsupportedOperationException(String.format("execute pandoc fail: suffix=%s , fileName=%s", suffixName, fileName));
+            }
+
+        }else{
+            throw new UnsupportedOperationException("Unsupport file type:"+suffixName);
+        }
+
+
+        result.put("path",path);
+        result.put("fileCode",fileCode);
+
+        return result;
+    }
+
+    private void saveFile(MultipartFile file, String localPath) {
+        Assert.notNull(file, "文件为空");
+        File dest = new File(localPath);
+        if (!dest.getParentFile().exists()) {
+            dest.getParentFile().mkdirs();
+        }
+        try {
+            file.transferTo(dest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void file2String(FileChanges fileChanges){
         File file1 = new File(docProperties.getFilePath(fileChanges.getContent()));

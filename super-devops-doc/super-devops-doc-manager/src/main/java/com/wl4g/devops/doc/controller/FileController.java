@@ -21,9 +21,8 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.doc.service.FileService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -51,6 +50,13 @@ public class FileController extends BaseController {
 	public RespBase<?> save(@RequestBody FileChanges file) {
 		RespBase<Object> resp = RespBase.create();
 		fileService.save(file);
+		return resp;
+	}
+
+	@RequestMapping(value = "/saveUpload")
+	public RespBase<?> saveUpload(@RequestBody FileChanges file) {
+		RespBase<Object> resp = RespBase.create();
+		fileService.saveUpload(file);
 		return resp;
 	}
 
@@ -83,6 +89,15 @@ public class FileController extends BaseController {
 		resp.setData(fileService.compareWith(oldChangesId,newChangesId));
 		return resp;
 	}
+
+	@PostMapping(value = "/upload")
+	public RespBase<?> upload(@RequestParam(value = "file") MultipartFile file) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(fileService.upload(file));
+		return resp;
+	}
+
+
 
 
 }

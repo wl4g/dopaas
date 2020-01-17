@@ -26,7 +26,10 @@ spring:
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
-
+  http:
+    multipart:
+      max-file-size: 5000Mb
+      max-request-size: 5000Mb
 # ### Server configuration. ###
 server:
   port: 14060
