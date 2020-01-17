@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.shell.processor;
 
-import com.wl4g.devops.shell.bean.ExceptionMessage;
-import com.wl4g.devops.shell.bean.RunState;
-import com.wl4g.devops.shell.bean.Message;
-import com.wl4g.devops.shell.bean.ResultMessage;
+import com.wl4g.devops.shell.message.ChannelState;
+import com.wl4g.devops.shell.message.ExceptionMessage;
+import com.wl4g.devops.shell.message.Message;
+import com.wl4g.devops.shell.message.OutputMessage;
 import com.wl4g.devops.shell.processor.EmbeddedServerShellHandler.ShellHandler;
 import com.wl4g.devops.shell.processor.event.EventListener;
 import com.wl4g.devops.shell.processor.event.InterruptEventListener;
@@ -33,9 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.*;
+import static com.wl4g.devops.shell.message.ChannelState.*;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
-import static com.wl4g.devops.shell.bean.RunState.*;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
@@ -63,13 +63,13 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	/**
 	 * Line result message state.
 	 */
-	private volatile RunState state;
+	private volatile ChannelState state;
 
 	public ShellContext(ShellHandler client) {
 		this(client, NONCE);
 	}
 
-	public ShellContext(ShellHandler client, RunState state) {
+	public ShellContext(ShellHandler client, ChannelState state) {
 		Assert.notNull(client, "Client must not be null");
 		this.client = client;
 		this.state = state;
@@ -78,7 +78,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 		addEventListener((InterruptEventListener) () -> this.state = INTERRUPTED);
 	}
 
-	RunState getState() {
+	ChannelState getState() {
 		return state;
 	}
 
@@ -119,7 +119,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 		if (client != null && client.isActive()) {
 			try {
 				if (message instanceof CharSequence) {
-					client.writeAndFlush(new ResultMessage(getState(), message.toString()));
+					client.writeAndFlush(new OutputMessage(getState(), message.toString()));
 				} else if (message instanceof Throwable) {
 					client.writeAndFlush(new ExceptionMessage((Throwable) message));
 				} else {

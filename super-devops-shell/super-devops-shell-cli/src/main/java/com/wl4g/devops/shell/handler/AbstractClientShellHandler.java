@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.handler;
 
-import org.jline.reader.LineReader; 
+import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedString;
@@ -33,11 +33,11 @@ import java.util.function.Function;
 import static java.lang.System.*;
 
 import com.wl4g.devops.shell.AbstractShellHandler;
-import com.wl4g.devops.shell.bean.*;
 import com.wl4g.devops.shell.command.DefaultInternalCommand;
 import com.wl4g.devops.shell.config.Configuration;
 import com.wl4g.devops.shell.config.DynamicCompleter;
 import com.wl4g.devops.shell.handler.InternalChannelMessageHandler;
+import com.wl4g.devops.shell.message.*;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import static com.wl4g.devops.shell.annotation.ShellOption.GNU_CMD_LONG;
 import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HE;
@@ -98,11 +98,6 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 * Line reader
 	 */
 	final protected LineReader lineReader;
-
-	/**
-	 * Response wait lock.
-	 */
-	final protected Object lock = new Object();
 
 	/**
 	 * Shell client handler
@@ -166,7 +161,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 * @param th
 	 * @param details
 	 */
-	public void printErr(String abnormal, Throwable th) {
+	protected void printErr(String abnormal, Throwable th) {
 		this.stacktraceAsString = getStackTrace(th);
 		err.println(String.format("%s %s", abnormal, getRootCauseMessage(th)));
 	}
@@ -190,17 +185,17 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	}
 
 	/**
-	 * Submission task to remote
+	 * Submission stdin message to remote
 	 * 
 	 * @param line
 	 * @throws IOException
 	 */
-	protected void submit(Object message) throws IOException {
+	protected void submitStdin(Object stdin) throws IOException {
 		// Ensure client
 		ensureClient();
 
-		if (message instanceof String) {
-			String line = (String) message;
+		if (stdin instanceof String) {
+			String line = (String) stdin;
 			List<String> cmds = parse(line);
 			if (!cmds.isEmpty()) {
 				// $> [help|clear|history...]
@@ -223,9 +218,9 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 			}
 
 			// Submission remote commands line
-			client.writeAndFlush(new LineMessage(line));
+			client.writeAndFlush(new StdinMessage(line));
 		} else {
-			client.writeAndFlush(message);
+			client.writeAndFlush(stdin);
 		}
 
 	}
@@ -251,7 +246,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 		this.registry.register(new DefaultInternalCommand(this));
 
 		// Initialize remote register commands
-		submit(new MetaMessage());
+		submitStdin(new MetaMessage());
 
 		// Set history persist file
 		File file = new File(USER_HOME + "/.devops/shell/history");
@@ -290,32 +285,30 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 */
 	@SuppressWarnings("resource")
 	private void ensureClient() throws IOException {
-		synchronized (this) {
-			boolean create = false;
-			if (client == null) {
-				create = true;
-			} else if (!client.isActive()) {
-				create = true;
-				closeQuietly();
+		boolean create = false;
+		if (client == null) {
+			create = true;
+		} else if (!client.isActive()) {
+			create = true;
+			closeQuietly();
+		}
+
+		if (create) {
+			Object[] point = determineServPoint();
+			if (DEBUG) {
+				out.print(String.format("Connecting to %s:%s ... \n", point[0], point[1]));
 			}
 
-			if (create) {
-				Object[] point = determineServPoint();
-				if (DEBUG) {
-					out.print(String.format("Connecting to %s:%s ... \n", point[0], point[1]));
-				}
-
-				Socket s = null;
-				try {
-					s = new Socket((String) point[0], (int) point[1]);
-				} catch (IOException e) {
-					String errmsg = String.format("Connecting to '%s'(%s) failure! cause by: %s", getProperty(ARG_SERV_NAME),
-							point[1], getRootCauseMessage(e));
-					throw new IllegalStateException(errmsg);
-				}
-
-				client = new ClientHandler(this, s, result -> null).starting();
+			Socket s = null;
+			try {
+				s = new Socket((String) point[0], (int) point[1]);
+			} catch (IOException e) {
+				String errmsg = String.format("Connecting to '%s'(%s) failure! cause by: %s", getProperty(ARG_SERV_NAME),
+						point[1], getRootCauseMessage(e));
+				throw new IllegalStateException(errmsg);
 			}
+
+			client = new ClientHandler(this, s, result -> null).starting();
 		}
 
 	}
@@ -408,7 +401,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 					Object input = new ObjectInputStream(_in).readObject();
 
 					// Post process
-					postProcessResult(input);
+					postProcessStdout(input);
 
 				} catch (SocketException | EOFException e) {
 					err.println("Connection tunnel closed!");

@@ -21,6 +21,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * {@link ShellMethod}
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年04月17日
+ * @since
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 @Documented
@@ -28,7 +35,7 @@ public @interface ShellMethod {
 
 	String[] keys();
 
-	String group() default "Default command group";
+	String group() default "Built-In Commands";
 
 	String help();
 

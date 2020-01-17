@@ -46,8 +46,8 @@ public abstract class ShellHolder {
 	 * 
 	 * @return
 	 */
-	public static ShellContext getContext() {
-		return getContext(false);
+	public static ShellContext currentShell() {
+		return currentShell(false);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public abstract class ShellHolder {
 	 * @param assertion
 	 * @return
 	 */
-	public static ShellContext getContext(boolean assertion) {
+	public static ShellContext currentShell(boolean assertion) {
 		ShellContext context = contextCache.get();
 		if (assertion && isNull(context)) {
 			throw new IllegalStateException("The context object was not retrieved. first use bind()");
@@ -69,22 +69,22 @@ public abstract class ShellHolder {
 	 * 
 	 * @param message
 	 */
-	public static ShellContext printf(String message) {
-		return getContext(true).printf(message);
+	public static ShellContext currentPrintf(String message) {
+		return currentShell(true).printf(message);
 	}
 
 	/**
 	 * Manually open data flow message transaction output.
 	 */
-	public static ShellContext open() {
-		return getContext(true).open();
+	public static ShellContext currentOpen() {
+		return currentShell(true).open();
 	}
 
 	/**
 	 * Manually end data flow message transaction output.
 	 */
-	public static void close() {
-		getContext(true).close();
+	public static void currentClose() {
+		currentShell(true).close();
 	}
 
 	/**
@@ -94,7 +94,7 @@ public abstract class ShellHolder {
 	 * @return
 	 */
 	public static boolean isInterruptIfNecessary() {
-		ShellContext context = getContext();
+		ShellContext context = currentShell();
 		return context != null ? context.isInterruptIfNecessary() : false;
 	}
 

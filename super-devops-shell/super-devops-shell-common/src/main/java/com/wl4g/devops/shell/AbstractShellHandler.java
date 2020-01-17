@@ -83,7 +83,7 @@ public abstract class AbstractShellHandler implements ShellHandler {
 		Object result = doProcess(resolveCommands(line));
 
 		// Post processing result
-		postProcessResult(result);
+		postProcessStdout(result);
 
 		return result;
 	}
@@ -226,11 +226,11 @@ public abstract class AbstractShellHandler implements ShellHandler {
 	}
 
 	/**
-	 * Post invocation result processing.
+	 * Post invocation stdout result message.
 	 * 
-	 * @param result
+	 * @param stdout
 	 */
-	protected void postProcessResult(Object result) {
+	protected void postProcessStdout(Object stdout) {
 
 	}
 

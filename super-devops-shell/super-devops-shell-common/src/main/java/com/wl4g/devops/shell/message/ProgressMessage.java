@@ -13,35 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.handler;
-
-import static java.lang.System.err;
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-import org.apache.commons.lang3.StringUtils;
-import com.wl4g.devops.shell.config.Configuration;
+package com.wl4g.devops.shell.message;
 
 /**
- * Script command line(client) shell handler.
- *
+ * Progress bar message
+ * 
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年4月14日
+ * @version v1.0 2020年1月4日
  * @since
  */
-public class ScriptClientShellHandler extends AbstractClientShellHandler {
+public class ProgressMessage extends Message {
+	private static final long serialVersionUID = -8574315246731906685L;
 
-	public ScriptClientShellHandler(Configuration config) {
-		super(config);
+	/**
+	 * Total number.
+	 */
+	final private int whole;
+
+	/**
+	 * Current progress number.
+	 */
+	final private int progress;
+
+	public ProgressMessage(int whole, int progress) {
+		this.whole = whole;
+		this.progress = progress;
+	}
+
+	public int getWhole() {
+		return whole;
+	}
+
+	public int getProgress() {
+		return progress;
 	}
 
 	@Override
-	public void run(String[] args) {
-		String line = StringUtils.join(args, " ");
-		try {
-			submitStdin(line);
-		} catch (Throwable e) {
-			err.println(getStackTrace(e));
-			shutdown();
-		}
+	public String toString() {
+		return "Progress [" + progress + "/" + whole + "]";
 	}
 
 }

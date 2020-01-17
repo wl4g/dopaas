@@ -13,27 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.bean;
+package com.wl4g.devops.shell.message;
+
+import java.io.Serializable;
 
 /**
- * Line result message state
+ * Shell transport message
  * 
- * @author wangl.sir
- * @version v1.0 2019年5月24日
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月4日
  * @since
  */
-public enum RunState {
-
-	NONCE,
-
-	READY,
-
-	RUNNING,
-
-	RUNNING_WAIT,
-
-	INTERRUPTED,
-
-	COMPLATED;
+public abstract class Message implements Serializable {
+	private static final long serialVersionUID = 771621623117425564L;
 
 }

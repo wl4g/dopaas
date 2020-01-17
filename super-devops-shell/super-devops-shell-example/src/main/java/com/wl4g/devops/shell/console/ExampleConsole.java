@@ -83,7 +83,8 @@ public class ExampleConsole {
 	}
 
 	/**
-	 * For example: $> mixed -l x1,x2 -m a1=b1,a2=b2 -p aa1=bb1,aa2=bb2 -s x3,x4 -e false -E true
+	 * For example: $> mixed -l x1,x2 -m a1=b1,a2=b2 -p aa1=bb1,aa2=bb2 -s x3,x4
+	 * -e false -E true
 	 */
 	@ShellMethod(keys = "mixed", group = GROUP_NAME, help = "Mixed set type parameter injection testing")
 	public String mixed(MixedArgument arg) {
@@ -99,7 +100,7 @@ public class ExampleConsole {
 
 		// Open the flow message output, and the client will always be
 		// blocked waiting until ShellConsoles.end() is called.
-		ShellHolder.open();
+		ShellHolder.currentOpen();
 
 		// Used to simulate an asynchronous task, constantly outputting logs
 		new Thread(() -> {
@@ -109,13 +110,13 @@ public class ExampleConsole {
 					System.out.println(message);
 
 					// Print stream message
-					ShellHolder.printf(message);
+					ShellHolder.currentPrintf(message);
 				}
-				ShellHolder.printf("Print successfully completed!");
+				ShellHolder.currentPrintf("Print successfully completed!");
 
 			} finally {
 				// Must end, and must be after ShellConsoles.begin()
-				ShellHolder.close();
+				ShellHolder.currentClose();
 			}
 		}).start();
 
@@ -132,7 +133,7 @@ public class ExampleConsole {
 
 		// Open the flow message output, and the client will always be
 		// blocked waiting until ShellConsoles.end() is called.
-		ShellHolder.open();
+		ShellHolder.currentOpen();
 
 		new Thread(() -> {
 			try {
@@ -141,7 +142,7 @@ public class ExampleConsole {
 					System.out.println(message);
 
 					// Print stream message
-					ShellHolder.printf(message);
+					ShellHolder.currentPrintf(message);
 
 					try {
 						Thread.sleep(sleep);
@@ -149,11 +150,11 @@ public class ExampleConsole {
 						e.printStackTrace();
 					}
 				}
-				ShellHolder.printf("Print finished!");
+				ShellHolder.currentPrintf("Print finished!");
 
 			} finally {
 				// Must end, and must be after ShellConsoles.begin()
-				ShellHolder.close();
+				ShellHolder.currentClose();
 			}
 		}).start();
 

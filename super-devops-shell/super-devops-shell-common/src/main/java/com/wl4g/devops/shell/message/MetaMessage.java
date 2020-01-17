@@ -13,46 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.bean;
+package com.wl4g.devops.shell.message;
 
-import static com.wl4g.devops.shell.bean.RunState.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 
 /**
- * Result transform message
+ * Meta configuration/commands message
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月4日
  * @since
  */
-public class ResultMessage extends Message {
-	private static final long serialVersionUID = -8574311246731909685L;
+public class MetaMessage extends Message {
+	private static final long serialVersionUID = -8574315248835509685L;
 
-	final private RunState state;
+	/**
+	 * Shell component target methods
+	 */
+	final private Map<String, TargetMethodWrapper> registedMethods = new ConcurrentHashMap<>(16);
 
-	final private String content;
-
-	public ResultMessage(String content) {
-		this(NONCE, content);
+	public MetaMessage() {
 	}
 
-	public ResultMessage(RunState state, String content) {
-		notNull(state, "State must not be empty");
-		this.state = state;
-		this.content = content;
+	public MetaMessage(Map<String, TargetMethodWrapper> wrapper) {
+		if (wrapper != null) {
+			this.registedMethods.putAll(wrapper);
+		}
 	}
 
-	public RunState getState() {
-		return state;
-	}
-
-	public String getContent() {
-		return content;
+	public Map<String, TargetMethodWrapper> getRegistedMethods() {
+		return registedMethods;
 	}
 
 	@Override
 	public String toString() {
-		return "ResultMessage [state=" + state + ", content=" + content + "]";
+		return "Meta " + registedMethods.values();
 	}
 
 }
