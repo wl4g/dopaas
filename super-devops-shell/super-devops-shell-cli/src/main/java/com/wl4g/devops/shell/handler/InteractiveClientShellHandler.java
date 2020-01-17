@@ -28,6 +28,7 @@ import com.wl4g.devops.shell.message.MetaMessage;
 import com.wl4g.devops.shell.message.OutputMessage;
 import com.wl4g.devops.shell.message.ProgressMessage;
 
+import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
 import static com.wl4g.devops.shell.config.DefaultCommandHandlerRegistrar.getSingle;
 import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.BOF;
 import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.EOF;
@@ -136,7 +137,11 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 				printErr(EMPTY, ex.getThrowable());
 				isWakeup = true;
 			} else if (stdout instanceof ProgressMessage) {
-
+				try {
+					execSingle("printf '[%-100s][%d%%][%3d/%3d][\\e[43;46;1m%c\\e[0m]\\r' '=========>' 90 10 100 '/'");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			} else if (stdout instanceof OutputMessage) {
 				OutputMessage ret = (OutputMessage) stdout;
 				if (ret.getState() == NONCE || ret.getState() == COMPLATED) {
