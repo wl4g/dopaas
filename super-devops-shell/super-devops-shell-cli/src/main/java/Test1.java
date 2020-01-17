@@ -1,8 +1,12 @@
 public class Test1 {
 
 	public static void main(String[] args) throws Exception {
-		Process ps = Runtime.getRuntime()
-				.exec("printf '[%-100s][%d%%][%3d/%3d][\\e[43;46;1m%c\\e[0m]' '=========>' 90 10 100 '/'");
+		progress("=========>");
+		progress("==============>");
+	}
+
+	static void progress(String bar) throws Exception {
+		Process ps = Runtime.getRuntime().exec("printf '[%-50s][%d%%][%3d/%3d][%c]\r' '" + bar + "' 90 10 100 '/'");
 		ps.waitFor();
 		int n = 0;
 		byte[] buffer = new byte[1024];
@@ -10,12 +14,11 @@ public class Test1 {
 			System.out.write(buffer, 0, n);
 		}
 	}
-
 }
 
-
-/*
-
+/**
+ * 
+ * <pre>
 
 #!/bin/bash
 
@@ -49,5 +52,6 @@ printf "\n"
 
 
 [=================================================>][100%][200/200][|]
-
-*/
+ * 
+ * </pre>
+ */
