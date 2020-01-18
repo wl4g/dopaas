@@ -15,9 +15,9 @@
   </delete>
 
   <delete id="cleanUmcAlarmRecordSublist" parameterType="java.util.Map">
-    DELETE umc_alarm_notification_contact,umc_alarm_record_rule
+    DELETE sys_notification_contact,umc_alarm_record_rule
     FROM umc_alarm_record
-    LEFT JOIN umc_alarm_notification_contact ON umc_alarm_record.id=umc_alarm_notification_contact.record_id
+    LEFT JOIN sys_notification_contact ON umc_alarm_record.id=sys_notification_contact.record_id
     LEFT JOIN umc_alarm_record_rule ON umc_alarm_record.id=umc_alarm_record_rule.record_id
     WHERE
     <![CDATA[ umc_alarm_record.create_time <= #{createTime} ]]>

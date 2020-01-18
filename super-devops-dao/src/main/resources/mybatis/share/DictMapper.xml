@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.share.DictDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.share.Dict" >
+<mapper namespace="com.wl4g.devops.dao.iam.DictDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.iam.Dict" >
     <result column="key" property="key" jdbcType="VARCHAR" />
     <result column="value" property="value" jdbcType="VARCHAR" />
     <result column="label" property="label" jdbcType="VARCHAR" />
@@ -38,7 +38,7 @@
     delete from sys_dict
     where `key` = #{key,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.share.Dict" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.Dict" >
     insert into sys_dict ( `key`, value,
       label,label_en, type,
       themes, icon, sort, 
@@ -52,7 +52,7 @@
       #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.share.Dict" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.Dict" >
     insert into sys_dict
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="key != null" >
@@ -155,7 +155,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.share.Dict" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.iam.Dict" >
     update sys_dict
     <set >
       <if test="value != null" >
@@ -203,7 +203,7 @@
     </set>
     where `key` = #{key,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.share.Dict" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.iam.Dict" >
     update sys_dict
     set value = #{value,jdbcType=VARCHAR},
       label = #{label,jdbcType=VARCHAR},
