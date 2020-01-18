@@ -24,7 +24,8 @@ public class ProcessUtilsTests {
 
 	public static void main(String[] args) throws Exception {
 		// buildCrossSingleCommandsTest1();
-		execMultiTest2();
+		// execMultiTest2();
+		execProgressTest3();
 	}
 
 	public static void buildCrossSingleCommandsTest1() throws Exception {
@@ -33,8 +34,14 @@ public class ProcessUtilsTests {
 	}
 
 	public static void execMultiTest2() throws Exception {
-		execMulti("echo \"start...\"\njps \necho \"end\"", new File("d:\\"), new File("c:\\out"), new File("c:\\err"),
-				true, false);
+		execMulti("echo \"start...\"\njps \necho \"end\"", new File("d:\\"), new File("c:\\out"), new File("c:\\err"), true,
+				false);
+	}
+
+	public static void execProgressTest3() throws Exception {
+		ProcessUtils.printProgress("正在分析...", 50, 100, '#');
+		ProcessUtils.printProgress("正在分析...", 70, 100, '#');
+		ProcessUtils.printProgress("正在分析...", 90, 100, '#');
 	}
 
 }

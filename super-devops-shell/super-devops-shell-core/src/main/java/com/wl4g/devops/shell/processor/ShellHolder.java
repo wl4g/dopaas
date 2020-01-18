@@ -17,6 +17,8 @@ package com.wl4g.devops.shell.processor;
 
 import static java.util.Objects.isNull;
 
+import com.wl4g.devops.shell.message.ProgressMessage;
+
 /**
  * Shell console utility tools.
  * 
@@ -47,7 +49,7 @@ public abstract class ShellHolder {
 	 * @return
 	 */
 	public static ShellContext currentShell() {
-		return currentShell(false);
+		return currentShell(true);
 	}
 
 	/**
@@ -74,6 +76,15 @@ public abstract class ShellHolder {
 	}
 
 	/**
+	 * Print message to client console
+	 * 
+	 * @param message
+	 */
+	public static ShellContext currentPrintf(String title, int whole, int progress) {
+		return currentShell(true).printf(new ProgressMessage(title, whole, progress));
+	}
+
+	/**
 	 * Manually open data flow message transaction output.
 	 */
 	public static ShellContext currentOpen() {
@@ -93,9 +104,9 @@ public abstract class ShellHolder {
 	 * 
 	 * @return
 	 */
-	public static boolean isInterruptIfNecessary() {
+	public static boolean currentInterrupted() {
 		ShellContext context = currentShell();
-		return context != null ? context.isInterruptIfNecessary() : false;
+		return context != null ? context.isInterrupted() : false;
 	}
 
 }

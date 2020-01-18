@@ -142,7 +142,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	 * 
 	 * @return
 	 */
-	public boolean isInterruptIfNecessary() {
+	public boolean isInterrupted() {
 		return nonNull(state) ? (state == INTERRUPTED) : false;
 	}
 

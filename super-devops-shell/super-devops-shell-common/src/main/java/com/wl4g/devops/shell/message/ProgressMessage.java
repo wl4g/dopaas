@@ -15,6 +15,10 @@
  */
 package com.wl4g.devops.shell.message;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static java.lang.String.format;
+
 /**
  * Progress bar message
  * 
@@ -26,6 +30,11 @@ public class ProgressMessage extends Message {
 	private static final long serialVersionUID = -8574315246731906685L;
 
 	/**
+	 * Current progress title.
+	 */
+	final private String title;
+
+	/**
 	 * Total number.
 	 */
 	final private int whole;
@@ -35,9 +44,17 @@ public class ProgressMessage extends Message {
 	 */
 	final private int progress;
 
-	public ProgressMessage(int whole, int progress) {
+	public ProgressMessage(String title, int whole, int progress) {
+		hasTextOf(title, "title");
+		isTrue(progress >= 0 && whole >= 0, format("Illegal arguments, progress: %s, whole: %s", progress, whole));
+		isTrue(progress <= whole, format("Progress number out of bounds, current progress: %s, whole: %s", progress, whole));
+		this.title = title;
 		this.whole = whole;
 		this.progress = progress;
+	}
+
+	public String getTitle() {
+		return title;
 	}
 
 	public int getWhole() {

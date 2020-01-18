@@ -19,7 +19,9 @@ import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.lang.Runtime.*;
+import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_LINUX;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
 import static org.apache.commons.lang3.SystemUtils.USER_NAME;
@@ -28,8 +30,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import static java.lang.System.*;
 
 import org.slf4j.Logger;
 
@@ -50,6 +54,82 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
  */
 public abstract class ProcessUtils {
 	final protected static Logger log = getLogger(ProcessUtils.class);
+
+	/**
+	 * Print progress bar.
+	 * 
+	 * [progress_demo.sh]:
+	 * 
+	 * <pre>
+	 * #!/bin/bash
+	 * 
+	 * processBar() {
+	 *     process=$1 # 当前进度
+	 *     whole=$2 # 总进度数
+	 *     # 百分比比值(小数)
+	 *     percent_ratio=`awk BEGIN'{printf "%.2f", ('$process'/'$whole')}'`
+	 *     # 百分比数值
+	 *     percent=`awk BEGIN'{printf "%d", (100*'$percent_ratio')}'`
+	 *     let index=$((${process}%4))
+	 *     arr=( "|" "/" "-" "\\" )
+	 *     bar='>'
+	 *     for((i=0;i<($percent-1)/2;i++))
+	 *     do
+	 *         bar="="$bar
+	 *     done
+	 *     printf "[%-50s][%d%%][%3d/%03d][%c]\r" $bar $percent $process $whole "${arr[$index]}"
+	 * }
+	 * 
+	 * whole=200
+	 * process=0
+	 * while [ $process -lt $whole ]
+	 * do
+	 *     let process++
+	 *     processBar $process $whole
+	 *     sleep 0.1
+	 * done
+	 * printf "\n"
+	 * 
+	 * [Output]:
+	 * [=================================================>][100%][200/200][|]
+	 * 
+	 * </pre>
+	 * 
+	 * @param title
+	 *            Current process show title.
+	 * @param progress
+	 *            Current processed number.
+	 * @param whole
+	 *            Total process number.
+	 * @param barChar
+	 *            Progress bar char.
+	 */
+	public final static void printProgress(final String title, final int progress, final int whole, final char barChar) {
+		hasTextOf(title, "title");
+		notNullOf(barChar, "barChar");
+		isTrue(progress >= 0 && whole >= 0, format("Illegal arguments, progress: %s, whole: %s", progress, whole));
+		isTrue(progress <= whole, format("Progress number out of bounds, current progress: %s, whole: %s", progress, whole));
+
+		// Progress bar.
+		String bar = ">";
+		for (int j = 0; j < progress; j++) {
+			bar = barChar + bar;
+		}
+		// Progress percent .
+		String percent = new DecimalFormat("00.0").format((float) progress / whole * 100);
+
+		// (Linux shell) Use char '\r' beautiful to draw progress
+		if (IS_OS_LINUX) {
+			out.printf("[%s][%s][%s%%][%s/%s]\r", title, bar, percent, progress, whole);
+		} else { // (Windows doc/Mac) Simple output progress
+			out.println(format("[%s][%s%%]", title, percent));
+		}
+
+		if (progress == whole) { // Completed?
+			out.println();
+		}
+
+	}
 
 	/**
 	 * Execution multiple row command-line.

@@ -97,11 +97,13 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 
 	@Override
 	public void run() {
-		try {
-			loopWatchProcessesDestroy(getDestroyLockName());
-		} catch (InterruptedException e) {
-			log.error("Critical error!!! Killed node process watcher, commands process on this node will not be manual cancel.",
-					e);
+		if (isActive()) {
+			try {
+				loopWatchProcessesDestroy(getDestroyLockName());
+			} catch (InterruptedException e) {
+				log.error("Critical error! Killed node process watcher, commands process on this node will not be manual cancel.",
+						e);
+			}
 		}
 	}
 
@@ -114,7 +116,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	 * @throws InterruptedException
 	 */
 	private synchronized void loopWatchProcessesDestroy(String destroyLockName) throws InterruptedException {
-		while (true) {
+		while (isActive()) {
 			sleepRandom(DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS);
 
 			Lock lock = lockManager.getLock(destroyLockName);
@@ -134,7 +136,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 							if (nonNull(signal)) {
 								doDestroy(signal);
 								publishDestroyMessage(signal, null);
-								return;
+								break;
 							}
 						} catch (Exception e) {
 							log.error("Failed to destroy process.", e);
