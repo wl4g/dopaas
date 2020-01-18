@@ -24,12 +24,12 @@ import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
  * @version v1.0 2019年10月17日
  * @since
  */
-public class NamedIdJob implements Runnable {
+public class NamedJob implements Runnable {
 
 	/** Job namedId. */
 	final private String id;
 
-	public NamedIdJob(String id) {
+	public NamedJob(String id) {
 		hasText(id, "Named ID must not be empty.");
 		this.id = id;
 	}

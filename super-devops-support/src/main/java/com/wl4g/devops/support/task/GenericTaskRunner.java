@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeoutException;
@@ -127,7 +128,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		if (bossState.compareAndSet(false, true)) {
 			if (config.getConcurrency() > 0) {
 				// See:https://www.jianshu.com/p/e7ab1ac8eb4c
-				worker = new LimitScheduledThreadPoolExecutor(config.getConcurrency(),
+				worker = new SafeLimitScheduledExecutor(config.getConcurrency(),
 						new NamedThreadFactory(getClass().getSimpleName()), config.getAcceptQueue(), config.getReject());
 				worker.setMaximumPoolSize(config.getConcurrency());
 				worker.setKeepAliveTime(config.getKeepAliveTime(), MICROSECONDS);
@@ -145,7 +146,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 				run(); // Sync execution.
 			}
 		} else {
-			log.warn("Already runner!, already builders are read-only and do not allow task modification");
+			log.warn("Already runner! already builders are read-only and do not allow task modification");
 		}
 
 		// Call post startup
@@ -194,7 +195,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * 
 	 * @return
 	 */
-	public C getConfig() {
+	protected C getConfig() {
 		return config;
 	}
 
@@ -265,7 +266,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * 
 	 * @return
 	 */
-	protected ScheduledThreadPoolExecutor getWorker() {
+	protected ScheduledExecutorService getWorker() {
 		state(nonNull(worker), "Worker thread group is not enabled and can be enabled with concurrency >0");
 		return worker;
 	}
@@ -331,26 +332,6 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 			}
 		}
 
-	}
-
-	/**
-	 * Wait completion task listener.
-	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年10月17日
-	 * @since
-	 */
-	public static interface CompleteTaskListener {
-
-		/**
-		 * Call-back completion listener.
-		 * 
-		 * @param ex
-		 * @param completed
-		 * @param uncompleted
-		 * @throws Exception
-		 */
-		void onComplete(TimeoutException ex, long completed, Collection<Runnable> uncompleted) throws Exception;
 	}
 
 }

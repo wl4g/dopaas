@@ -15,19 +15,13 @@
  */
 package com.wl4g.devops.support.task;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
  * As the default {@link java.util.concurrent.ScheduledThreadPoolExecutor} and
@@ -39,11 +33,10 @@ import com.wl4g.devops.tool.common.lang.Assert2;
  * @version v1.0 2020年1月18日
  * @since
  * @see {@link org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler}
- * @see <a href=
- *      "http://www.doc88.com/p-3922316178617.html">ScheduledThreadPoolExecutor
- *      Retry task OOM resolution</a>
+ * @see <a href= "http://www.doc88.com/p-3922316178617.html"> Resolution
+ *      ScheduledThreadPoolExecutor for retry task OOM</a>
  */
-class LimitScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor {
+class SafeLimitScheduledExecutor extends ScheduledThreadPoolExecutor {
 
 	/**
 	 * Maximum allowed waiting execution queue size.
@@ -55,7 +48,7 @@ class LimitScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor {
 	 */
 	final private RejectedExecutionHandler rejectHandler;
 
-	public LimitScheduledThreadPoolExecutor(int corePoolSize, ThreadFactory threadFactory, int accessQueue,
+	public SafeLimitScheduledExecutor(int corePoolSize, ThreadFactory threadFactory, int accessQueue,
 			RejectedExecutionHandler handler) {
 		super(corePoolSize, threadFactory, handler);
 		this.accessQueue = accessQueue;
@@ -64,86 +57,87 @@ class LimitScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor {
 
 	@Override
 	public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-		checkAccessQueueLimit(command);
+		if (checkRejectedQueueLimit(command))
+			return null;
 		return super.schedule(command, delay, unit);
 	}
 
 	@Override
 	public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-		checkAccessQueueLimit(callable);
+		if (checkRejectedQueueLimit(callable))
+			return null;
 		return super.schedule(callable, delay, unit);
 	}
 
 	@Override
 	public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
-		checkAccessQueueLimit(command);
+		if (checkRejectedQueueLimit(command))
+			return null;
 		return super.scheduleAtFixedRate(command, initialDelay, period, unit);
 	}
 
+	/**
+	 * The invokeall() related methods also call execute() in the end. For
+	 * details, see:
+	 * 
+	 * @see {@link java.util.concurrent.AbstractExecutorService#doInvokeAny()#176}
+	 * @see {@link java.util.concurrent.ExecutorCompletionService#submit()}
+	 */
 	@Override
 	public void execute(Runnable command) {
-		checkAccessQueueLimit(command);
+		if (checkRejectedQueueLimit(command))
+			return;
 		super.execute(command);
 	}
 
 	@Override
 	public Future<?> submit(Runnable task) {
-		checkAccessQueueLimit(task);
+		if (checkRejectedQueueLimit(task))
+			return null;
 		return super.submit(task);
 	}
 
 	@Override
 	public <T> Future<T> submit(Runnable task, T result) {
-		checkAccessQueueLimit(task);
+		if (checkRejectedQueueLimit(task))
+			return null;
 		return super.submit(task, result);
 	}
 
-	@Override
-	public <T> Future<T> submit(Callable<T> task) {
-		checkAccessQueueLimit(task);
-		return super.submit(task);
+	/**
+	 * Check whether the entry queue is rejected
+	 * 
+	 * @param command
+	 * @return
+	 */
+	private boolean checkRejectedQueueLimit(Callable<?> command) {
+		if (getQueue().size() > accessQueue) {
+			rejectHandler.rejectedExecution(() -> {
+				try {
+					command.call();
+				} catch (Exception e) {
+					throw new IllegalStateException();
+				}
+			}, this);
+			return true;
+		}
+		return false;
 	}
 
-	@Override
-	public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
-		checkAccessQueueLimit(tasks);
-		return super.invokeAny(tasks);
-	}
-
-	@Override
-	public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-			throws InterruptedException, ExecutionException, TimeoutException {
-		checkAccessQueueLimit(tasks);
-		return super.invokeAny(tasks, timeout, unit);
-	}
-
-	@Override
-	public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
-		checkAccessQueueLimit(tasks);
-		return super.invokeAll(tasks);
-	}
-
-	@Override
-	public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-			throws InterruptedException {
-		checkAccessQueueLimit(tasks);
-		return super.invokeAll(tasks, timeout, unit);
-	}
-
-	private void checkAccessQueueLimit(Collection<? extends Callable<?>> tasks) {
-		// TODO 使用异常处理器
-		Assert2.state(getQueue().size() > accessQueue, "");
-	}
-
-	private void checkAccessQueueLimit(Callable<?> command) {
-		// TODO 使用异常处理器
-		Assert2.state(getQueue().size() > accessQueue, "");
-	}
-
-	private void checkAccessQueueLimit(Runnable command) {
-		// TODO 使用异常处理器
-		rejectHandler.rejectedExecution(command, this);
-		Assert2.state(getQueue().size() > accessQueue, "");
+	/**
+	 * Check whether the entry queue is rejected
+	 * 
+	 * @param command
+	 * @return
+	 */
+	private boolean checkRejectedQueueLimit(Runnable command) {
+		if (getQueue().size() > accessQueue) {
+			rejectHandler.rejectedExecution(command, this);
+			// throw new RejectedExecutionException("Rejected execution of " + r
+			// + " on " + executor, executor.isShutdown());
+			return true;
+		}
+		return false;
 	}
 
 }
