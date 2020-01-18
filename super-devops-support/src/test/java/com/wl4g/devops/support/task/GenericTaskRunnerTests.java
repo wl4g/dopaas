@@ -31,8 +31,12 @@ import com.wl4g.devops.support.task.RunnerProperties;
  */
 public class GenericTaskRunnerTests {
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) throws Exception {
+		taskTest1();
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void taskTest1() throws Exception {
 		// Add testing jobs.
 		List<NamedIdJob> jobs = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
@@ -61,7 +65,6 @@ public class GenericTaskRunnerTests {
 			ex.printStackTrace();
 			System.out.println(String.format("Completed: %s, uncompleted sets: %s", completed, uncompleted));
 		}, 4 * 1000l); // > 3*3000
-
 	}
 
 }

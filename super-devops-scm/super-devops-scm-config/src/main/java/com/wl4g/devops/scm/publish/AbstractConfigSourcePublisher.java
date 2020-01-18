@@ -25,8 +25,6 @@ import com.wl4g.devops.scm.config.ScmProperties;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -36,9 +34,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.state;
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.HttpStatus.NOT_MODIFIED;
 import static org.springframework.http.HttpStatus.OK;
@@ -54,13 +53,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  */
 public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<RunnerProperties> implements ConfigSourcePublisher {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
-
 	/** SCM properties configuration */
 	final protected ScmProperties config;
-
-	/** Deferred watch controller */
-	final private AtomicBoolean watchController = new AtomicBoolean(false);
 
 	/**
 	 * Save all client monitors configuration requests globally (Using:
@@ -75,37 +69,19 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 	}
 
 	@Override
-	protected void postStartupProperties() {
-		if (watchController.compareAndSet(false, true)) {
-			if (log.isInfoEnabled()) {
-				log.info("Starting config source watchRequests: {}", watchRequests.size());
-			}
-		}
-	}
-
-	@Override
-	protected void postCloseProperties() {
-		if (watchController.compareAndSet(true, false)) {
-			if (log.isInfoEnabled()) {
-				log.info("Closing configSource watcher, watchRequests: {}", watchRequests.size());
-			}
-		}
-	}
-
-	@Override
 	public void run() {
-		while (watchController.get() && isActive()) {
-			// Scan poll published configuration
+		// Scan poll published configuration
+		while (isActive()) {
 			try {
 				Collection<PublishConfigWrapper> next = null;
-				while (watchController.get() && !isEmpty(next = pollNextPublishedConfig())) {
+				while (isActive() && !isEmpty(next = pollNextPublishedConfig())) {
 					if (log.isInfoEnabled()) {
 						log.info("Scan published config for - {}", next);
 					}
 
 					for (PublishConfigWrapper wrap : next) {
-						Assert.state((wrap != null && isNotBlank(wrap.getCluster())),
-								String.format("Published config group must not be blank! - %s", wrap));
+						state((wrap != null && isNotBlank(wrap.getCluster())),
+								format("Published config group must not be blank! - %s", wrap));
 
 						getCreateWithDeferreds(wrap.getCluster()).values().stream().filter(deferred -> {
 							if (deferred != null) {

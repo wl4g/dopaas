@@ -28,9 +28,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,6 +50,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version v1.0 2019年6月2日
  * @since
  * @see {@link org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler}
+ * @see <a href=
+ *      "http://www.doc88.com/p-3922316178617.html">ScheduledThreadPoolExecutor
+ *      Retry task OOM resolution</a>
  */
 public abstract class GenericTaskRunner<C extends RunnerProperties>
 		implements Closeable, Runnable, ApplicationRunner, DisposableBean {
@@ -66,7 +68,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	private Thread boss;
 
 	/** Runner worker thread group pool. */
-	private ThreadPoolExecutor worker;
+	private ScheduledThreadPoolExecutor worker;
 
 	@SuppressWarnings("unchecked")
 	public GenericTaskRunner() {
@@ -125,9 +127,10 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		if (bossState.compareAndSet(false, true)) {
 			if (config.getConcurrency() > 0) {
 				// See:https://www.jianshu.com/p/e7ab1ac8eb4c
-				worker = new ThreadPoolExecutor(config.getConcurrency(), config.getConcurrency(), config.getKeepAliveTime(),
-						MICROSECONDS, new LinkedBlockingQueue<>(config.getAcceptQueue()),
-						new NamedThreadFactory(getClass().getSimpleName()), config.getReject());
+				worker = new LimitScheduledThreadPoolExecutor(config.getConcurrency(),
+						new NamedThreadFactory(getClass().getSimpleName()), config.getAcceptQueue(), config.getReject());
+				worker.setMaximumPoolSize(config.getConcurrency());
+				worker.setKeepAliveTime(config.getKeepAliveTime(), MICROSECONDS);
 			} else {
 				log.warn("No start of thread pool worker, because the number of workthread is less than 0");
 			}
@@ -262,7 +265,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * 
 	 * @return
 	 */
-	protected ThreadPoolExecutor getWorker() {
+	protected ScheduledThreadPoolExecutor getWorker() {
 		state(nonNull(worker), "Worker thread group is not enabled and can be enabled with concurrency >0");
 		return worker;
 	}
