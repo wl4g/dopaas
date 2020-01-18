@@ -15,7 +15,11 @@
  */
 package com.wl4g.devops.umc.alarm;
 
+import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
 import com.wl4g.devops.common.bean.umc.*;
+import com.wl4g.devops.dao.iam.AlarmContactDao;
+import com.wl4g.devops.dao.iam.AlarmNotificationContactDao;
 import com.wl4g.devops.dao.umc.*;
 import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;

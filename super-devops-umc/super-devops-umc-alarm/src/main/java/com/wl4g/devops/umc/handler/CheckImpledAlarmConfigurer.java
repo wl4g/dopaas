@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.umc.handler;
 
+import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
 import com.wl4g.devops.common.bean.umc.*;
 import org.springframework.beans.factory.InitializingBean;
 
