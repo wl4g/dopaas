@@ -82,7 +82,7 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 	 * @throws InterruptedException
 	 */
 	private void loopWatchTimeoutCleanupFinalizer(String cleanupFinalizerLockName) throws InterruptedException {
-		while (true) {
+		while (isActive()) {
 			long maxIntervalMs = getGlobalJobCleanMaxIntervalMs();
 			sleepRandom(DEFAULT_MIN_WATCH_MS, maxIntervalMs);
 			log.info("Global jobs timeout cleanup for maxIntervalMs: {}ms ... ", maxIntervalMs);

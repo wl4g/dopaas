@@ -92,14 +92,14 @@ public class ExampleConsole {
 	}
 
 	/**
-	 * For example: $> logs -n 100
+	 * For example: $> log -n 100
 	 */
-	@ShellMethod(keys = "logs", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is not supported)")
-	public String logs(
+	@ShellMethod(keys = "log", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is not supported)")
+	public String log(
 			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Physical number of printed items") int num) {
 
 		// Open the flow message output, and the client will always be
-		// blocked waiting until ShellConsoles.end() is called.
+		// blocked waiting until ShellConsoles.currentClose() is called.
 		ShellHolder.currentOpen();
 
 		// Used to simulate an asynchronous task, constantly outputting logs
@@ -115,7 +115,7 @@ public class ExampleConsole {
 				ShellHolder.currentPrintf("Print successfully completed!");
 
 			} finally {
-				// Must end, and must be after ShellConsoles.begin()
+				// Must end, and must be after ShellConsoles.currentOpen()
 				ShellHolder.currentClose();
 			}
 		}).start();
@@ -124,25 +124,26 @@ public class ExampleConsole {
 	}
 
 	/**
-	 * For example: $> logs2 -n 100
+	 * For example: $> log2 -n 100
 	 */
 	@ShellMethod(keys = "logs2", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is supported)")
-	public String logs2(
-			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Physical number of printed items(default:5)") int num,
-			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print sleep interval(default:100ms)") long sleep) {
+	public String log2(
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Physical number of printed items") int num,
+			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print sleep interval(ms)") long sleep) {
 
 		// Open the flow message output, and the client will always be
-		// blocked waiting until ShellConsoles.end() is called.
+		// blocked waiting until ShellConsoles.currentClose() is called.
 		ShellHolder.currentOpen();
 
 		new Thread(() -> {
 			try {
-				for (int i = 1; !ShellHolder.isInterruptIfNecessary() && i <= num; i++) {
+				for (int i = 1; !ShellHolder.currentInterrupted() && i <= num; i++) {
 					String message = "This is the " + i + "th message!";
 					System.out.println(message);
 
-					// Print stream message
-					ShellHolder.currentPrintf(message);
+					// Print message to client.
+					// ShellHolder.currentPrintf(message);
+					ShellHolder.currentPrintf(message, 100, i);
 
 					try {
 						Thread.sleep(sleep);
@@ -153,7 +154,7 @@ public class ExampleConsole {
 				ShellHolder.currentPrintf("Print finished!");
 
 			} finally {
-				// Must end, and must be after ShellConsoles.begin()
+				// Must end, and must be after ShellConsoles.currentOpen()
 				ShellHolder.currentClose();
 			}
 		}).start();

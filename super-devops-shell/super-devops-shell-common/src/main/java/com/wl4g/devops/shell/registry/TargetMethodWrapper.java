@@ -35,10 +35,10 @@ import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.cli.HelpOption;
 import com.wl4g.devops.shell.cli.HelpOptions;
-import com.wl4g.devops.shell.cli.InternalCommand;
+import com.wl4g.devops.shell.cli.BuiltInCommand;
 
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isGenericModifier;
-import static com.wl4g.devops.shell.cli.InternalCommand.*;
+import static com.wl4g.devops.shell.cli.BuiltInCommand.*;
 import static com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter.*;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleCollectionType;
@@ -93,7 +93,7 @@ public class TargetMethodWrapper implements Serializable {
 		this.target = target;
 
 		// Check whether there is a keyword.(if not an internal command)
-		if (!(target instanceof InternalCommand)) {
+		if (!(target instanceof BuiltInCommand)) {
 			isTrue(!contains(sm.keys()),
 					String.format(
 							"The shell method: '%s' definition exists in conflict with the keywords: '%s' and is recommended to be renamed.",

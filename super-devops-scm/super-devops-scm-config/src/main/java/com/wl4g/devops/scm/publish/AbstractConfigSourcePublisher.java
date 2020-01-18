@@ -93,7 +93,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 
 	@Override
 	public void run() {
-		while (watchController.get()) {
+		while (watchController.get() && isActive()) {
 			// Scan poll published configuration
 			try {
 				Collection<PublishConfigWrapper> next = null;

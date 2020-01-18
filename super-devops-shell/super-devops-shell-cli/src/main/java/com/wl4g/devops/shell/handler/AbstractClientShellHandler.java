@@ -33,15 +33,15 @@ import java.util.function.Function;
 import static java.lang.System.*;
 
 import com.wl4g.devops.shell.AbstractShellHandler;
-import com.wl4g.devops.shell.command.DefaultInternalCommand;
+import com.wl4g.devops.shell.command.DefaultBuiltInCommand;
 import com.wl4g.devops.shell.config.Configuration;
 import com.wl4g.devops.shell.config.DynamicCompleter;
 import com.wl4g.devops.shell.handler.InternalChannelMessageHandler;
 import com.wl4g.devops.shell.message.*;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import static com.wl4g.devops.shell.annotation.ShellOption.GNU_CMD_LONG;
-import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HE;
-import static com.wl4g.devops.shell.cli.InternalCommand.INTERNAL_HELP;
+import static com.wl4g.devops.shell.cli.BuiltInCommand.INTERNAL_HE;
+import static com.wl4g.devops.shell.cli.BuiltInCommand.INTERNAL_HELP;
 import static com.wl4g.devops.shell.config.DefaultCommandHandlerRegistrar.*;
 import static com.wl4g.devops.shell.utils.LineUtils.clean;
 import static com.wl4g.devops.shell.utils.LineUtils.parse;
@@ -199,8 +199,8 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 			List<String> cmds = parse(line);
 			if (!cmds.isEmpty()) {
 				// $> [help|clear|history...]
-				if (registry.contains(cmds.get(0))) { // Internal commands?
-					DefaultInternalCommand.senseLine(line);
+				if (registry.contains(cmds.get(0))) { // Built-in command?
+					DefaultBuiltInCommand.senseLine(line);
 					process(line);
 					return;
 				}
@@ -211,7 +211,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 					// Equivalent to: '$> help add'
 					line = clean(INTERNAL_HELP) + " " + cmds.get(0);
 					// Set current line
-					DefaultInternalCommand.senseLine(line);
+					DefaultBuiltInCommand.senseLine(line);
 					process(line);
 					return;
 				}
@@ -243,7 +243,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 */
 	private void initialize() throws IOException {
 		// Register commands
-		this.registry.register(new DefaultInternalCommand(this));
+		this.registry.register(new DefaultBuiltInCommand(this));
 
 		// Initialize remote register commands
 		submitStdin(new MetaMessage());

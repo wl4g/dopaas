@@ -37,7 +37,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.cli.HelpOptions;
-import com.wl4g.devops.shell.cli.InternalCommand;
+import com.wl4g.devops.shell.cli.BuiltInCommand;
 import com.wl4g.devops.shell.config.DefaultCommandHandlerRegistrar;
 import com.wl4g.devops.shell.handler.AbstractClientShellHandler;
 import com.wl4g.devops.shell.utils.LineUtils;
@@ -51,7 +51,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
  * @version v1.0 2019年5月8日
  * @since
  */
-public class DefaultInternalCommand extends InternalCommand {
+public class DefaultBuiltInCommand extends BuiltInCommand {
 
 	/**
 	 * Built-in Default internal commands group name.
@@ -73,7 +73,7 @@ public class DefaultInternalCommand extends InternalCommand {
 	 */
 	final protected AbstractClientShellHandler runner;
 
-	public DefaultInternalCommand(AbstractClientShellHandler runner) {
+	public DefaultBuiltInCommand(AbstractClientShellHandler runner) {
 		notNull(runner, "runner is null, please check configure");
 		this.runner = runner;
 		this.registry = (DefaultCommandHandlerRegistrar) runner.getRegistry();
@@ -307,8 +307,8 @@ public class DefaultInternalCommand extends InternalCommand {
 			return "HelpMethod [argname=" + argname + ", options=" + options + ", help=" + help + "]";
 		}
 
-		private DefaultInternalCommand getOuterType() {
-			return DefaultInternalCommand.this;
+		private DefaultBuiltInCommand getOuterType() {
+			return DefaultBuiltInCommand.this;
 		}
 
 	}

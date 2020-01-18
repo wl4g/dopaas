@@ -97,8 +97,9 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 				// No running tasks at present, shutdown directly.
 				if (isLastComplated()) {
 					shutdown();
-				} else {
-					// There are still unfinished tasks. Shut down gracefully.
+				}
+				// There are still unfinished tasks. Shutdown gracefully.
+				else {
 					submitStdin(new InterruptMessage(true));
 				}
 			} catch (Throwable e) {
@@ -137,11 +138,8 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 				printErr(EMPTY, ex.getThrowable());
 				isWakeup = true;
 			} else if (stdout instanceof ProgressMessage) {
-				try {
-					execSingle("printf '[%-100s][%d%%][%3d/%3d][\\e[43;46;1m%c\\e[0m]\\r' '=========>' 90 10 100 '/'");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				ProgressMessage pro = (ProgressMessage) stdout;
+				printProgress(pro.getTitle(), pro.getProgress(), pro.getWhole(), '=');
 			} else if (stdout instanceof OutputMessage) {
 				OutputMessage ret = (OutputMessage) stdout;
 				if (ret.getState() == NONCE || ret.getState() == COMPLATED) {

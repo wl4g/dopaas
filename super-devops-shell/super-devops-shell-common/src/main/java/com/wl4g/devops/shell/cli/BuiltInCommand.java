@@ -25,13 +25,13 @@ import static org.apache.commons.lang3.StringUtils.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
- * Internal commands
+ * Internal built-in commands
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月4日
  * @since
  */
-public abstract class InternalCommand {
+public abstract class BuiltInCommand {
 
 	/**
 	 * Default long help method suffix.
@@ -96,7 +96,7 @@ public abstract class InternalCommand {
 	final private static List<String> CMDS = new ArrayList<>();
 
 	static {
-		Field[] fields = InternalCommand.class.getDeclaredFields();
+		Field[] fields = BuiltInCommand.class.getDeclaredFields();
 		for (Field f : fields) {
 			f.setAccessible(true);
 			if (startsWithAny(f.getName(), "INTERNAL")) {

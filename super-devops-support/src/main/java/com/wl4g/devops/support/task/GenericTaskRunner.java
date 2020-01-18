@@ -16,6 +16,7 @@
 package com.wl4g.devops.support.task;
 
 import org.slf4j.Logger;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
@@ -51,7 +52,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @since
  * @see {@link org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler}
  */
-public abstract class GenericTaskRunner<C extends RunnerProperties> implements Closeable, Runnable, ApplicationRunner {
+public abstract class GenericTaskRunner<C extends RunnerProperties>
+		implements Closeable, Runnable, ApplicationRunner, DisposableBean {
 	final protected Logger log = getLogger(getClass());
 
 	/** Boss running. */
@@ -74,6 +76,11 @@ public abstract class GenericTaskRunner<C extends RunnerProperties> implements C
 	public GenericTaskRunner(C config) {
 		notNull(config, "GenericTaskRunner properties can't null");
 		this.config = config;
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		close();
 	}
 
 	@Override
