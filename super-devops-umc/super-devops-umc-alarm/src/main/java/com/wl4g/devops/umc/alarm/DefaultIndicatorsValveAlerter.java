@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.umc.alarm;
 
+import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
 import com.wl4g.devops.common.bean.umc.*;
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.support.cache.JedisService;

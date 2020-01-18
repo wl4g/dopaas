@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.umc.AlarmContactGroupDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmContactGroup" >
+<mapper namespace="com.wl4g.devops.dao.iam.AlarmContactGroupDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.iam.AlarmContactGroup" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
@@ -16,23 +16,23 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from umc_alarm_contact_group
+    from sys_contact_group
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from umc_alarm_contact_group
+    delete from sys_contact_group
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmContactGroup" >
-    insert into umc_alarm_contact_group (id, name, create_date, 
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.AlarmContactGroup" >
+    insert into sys_contact_group (id, name, create_date,
       create_by, update_date, update_by, 
       del_flag)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmContactGroup" useGeneratedKeys="true" keyProperty="id">
-    insert into umc_alarm_contact_group
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.AlarmContactGroup" useGeneratedKeys="true" keyProperty="id">
+    insert into sys_contact_group
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -80,8 +80,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmContactGroup" >
-    update umc_alarm_contact_group
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.iam.AlarmContactGroup" >
+    update sys_contact_group
     <set >
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -104,8 +104,8 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmContactGroup" >
-    update umc_alarm_contact_group
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.iam.AlarmContactGroup" >
+    update sys_contact_group
     set name = #{name,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
@@ -118,7 +118,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from umc_alarm_contact_group
+    from sys_contact_group
     where del_flag != 1
     <if test="name != null and name != ''" >
       AND name LIKE CONCAT('%','${name}','%')

@@ -16,6 +16,7 @@
 package com.wl4g.devops.common.bean.umc;
 
 import com.wl4g.devops.common.bean.BaseBean;
+import com.wl4g.devops.common.bean.iam.AlarmContact;
 
 import java.io.Serializable;
 import java.util.List;
