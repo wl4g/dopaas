@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.NamedIdJob;
+import com.wl4g.devops.support.task.NamedJob;
 import com.wl4g.devops.support.task.RunnerProperties;
 
 /**
@@ -38,9 +38,9 @@ public class GenericTaskRunnerTests {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void taskTest1() throws Exception {
 		// Add testing jobs.
-		List<NamedIdJob> jobs = new ArrayList<>();
+		List<NamedJob> jobs = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
-			jobs.add(new NamedIdJob("testjob-" + i) {
+			jobs.add(new NamedJob("testjob-" + i) {
 				@Override
 				public void run() {
 					try {
