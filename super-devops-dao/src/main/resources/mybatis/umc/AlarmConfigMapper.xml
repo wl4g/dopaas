@@ -65,7 +65,7 @@
     </association>
 
     <!-- contacts -->
-    <collection property="alarmContacts" ofType="com.wl4g.devops.common.bean.umc.AlarmContact" javaType="list">
+    <collection property="alarmContacts" ofType="com.wl4g.devops.common.bean.iam.AlarmContact" javaType="list">
       <id column="ct.id" property="id" jdbcType="INTEGER" />
       <result column="ct.name" property="name" jdbcType="VARCHAR" />
       <result column="ct.email" property="email" jdbcType="VARCHAR" />
@@ -314,7 +314,7 @@
     <include refid="Base_Column_List_c"/>,t.name template_name,cg.name contact_group_name
     from umc_alarm_config c
     left join umc_alarm_template t on t.id=c.template_id
-    left join umc_alarm_contact_group cg on c.contact_group_id=cg.id
+    left join sys_contact_group cg on c.contact_group_id=cg.id
     where c.del_flag!=1
     <if test="templateId != null" >
       and c.template_id=#{templateId,jdbcType=INTEGER}
@@ -333,8 +333,8 @@
     left join umc_alarm_template t on c.template_id = t.id
     left join umc_metric_template m on m.id=t.metric_id
     left join umc_alarm_rule r on t.id = r.template_id
-    left join umc_alarm_contact_group_ref gr on gr.contact_group_id = c.contact_group_id
-    left join umc_alarm_contact ct on gr.contact_id = ct.id
+    left join sys_contact_group_ref gr on gr.contact_group_id = c.contact_group_id
+    left join sys_contact ct on gr.contact_id = ct.id
     left join app_instance i on c.collect_id = i.id
     left join app_host h on i.host_id=h.id where i.endpoint = #{endpoint,jdbcType=VARCHAR} and h.hostname = #{host,jdbcType=VARCHAR} and t.del_flag!=1 and c.del_flag!=1 and r.del_flag!=1
   </select>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.umc.AlarmContactDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.AlarmContact" >
+<mapper namespace="com.wl4g.devops.dao.iam.AlarmContactDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.iam.AlarmContact" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="email" property="email" jdbcType="VARCHAR" />
@@ -51,15 +51,15 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from umc_alarm_contact
+    from sys_contact
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from umc_alarm_contact
+    delete from sys_contact
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.AlarmContact" >
-    insert into umc_alarm_contact (id, name, email, 
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.AlarmContact" >
+    insert into sys_contact (id, name, email,
       phone, dingtalk, wechat, 
       twitter, facebook, email_enable, 
       phone_enable, dingtalk_enable, wechat_enable, 
@@ -80,8 +80,8 @@
       #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmContact" useGeneratedKeys="true" keyProperty="id">
-    insert into umc_alarm_contact
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.AlarmContact" useGeneratedKeys="true" keyProperty="id">
+    insert into sys_contact
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -261,8 +261,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmContact" >
-    update umc_alarm_contact
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.iam.AlarmContact" >
+    update sys_contact
     <set >
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -351,8 +351,8 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.AlarmContact" >
-    update umc_alarm_contact
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.iam.AlarmContact" >
+    update sys_contact
     set name = #{name,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
@@ -387,7 +387,7 @@
   <select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List_c" />
-    from umc_alarm_contact c
+    from sys_contact c
     where c.del_flag!=1
     <if test="name != null and name != ''" >
       AND c.name LIKE CONCAT('%','${name}','%')
@@ -401,8 +401,8 @@
   </select>
 
   <select id="getContactByGroupIds" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select * from umc_alarm_contact c
-    where exists(select 1 from umc_alarm_contact_group_ref gr
+    select * from sys_contact c
+    where exists(select 1 from sys_contact_group_ref gr
     where gr.contact_group_id IN <foreach item="item" index="index" collection="groupIds" open="(" separator="," close=")">#{item}</foreach>
     and gr.contact_id=c.id);
   </select>
