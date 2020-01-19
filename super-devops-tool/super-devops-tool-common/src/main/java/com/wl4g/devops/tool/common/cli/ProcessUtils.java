@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static java.lang.System.*;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -110,8 +111,10 @@ public abstract class ProcessUtils {
 		isTrue(progress >= 0 && whole >= 0, format("Illegal arguments, progress: %s, whole: %s", progress, whole));
 		isTrue(progress <= whole, format("Progress number out of bounds, current progress: %s, whole: %s", progress, whole));
 
-		// Progress bar.
-		String bar = ">";
+		String bar = ">";// Progress bar.
+		// TODO
+		String[] animation = { "/", "|", "\\", "-" }; // Progress animation.
+
 		for (int j = 0; j < progress; j++) {
 			bar = barChar + bar;
 		}
@@ -120,9 +123,9 @@ public abstract class ProcessUtils {
 
 		// (Linux shell) Use char '\r' beautiful to draw progress
 		if (IS_OS_LINUX) {
-			out.printf("[%s][%s][%s%%][%s/%s]\r", title, bar, percent, progress, whole);
+			out.printf("[%s][%s][%s%%][%s/%s][%s]\r", title, bar, percent, progress, whole, animation[RandomUtils.nextInt(0, 4)]);
 		} else { // (Windows doc/Mac) Simple output progress
-			out.println(format("[%s][%s%%]", title, percent));
+			out.println(format("[%s][%s%%][%s]", title, percent, animation[RandomUtils.nextInt(0, 4)]));
 		}
 
 		if (progress == whole) { // Completed?

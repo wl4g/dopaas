@@ -126,7 +126,7 @@ public class ExampleConsole {
 	/**
 	 * For example: $> log2 -n 100
 	 */
-	@ShellMethod(keys = "logs2", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is supported)")
+	@ShellMethod(keys = "log2", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is supported)")
 	public String log2(
 			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Physical number of printed items") int num,
 			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print sleep interval(ms)") long sleep) {
