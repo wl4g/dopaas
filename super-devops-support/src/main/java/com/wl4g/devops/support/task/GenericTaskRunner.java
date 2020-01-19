@@ -232,13 +232,14 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		if (!CollectionUtils2.isEmpty(jobs)) {
 			int total = jobs.size();
 			// Future jobs.
-			Map<Future<?>, Runnable> fjobs = new HashMap<Future<?>, Runnable>(total);
+			Map<Future<?>, Runnable> futures = new HashMap<Future<?>, Runnable>(total);
 			try {
-				CountDownLatch latch = new CountDownLatch(total); // Submit.
-				jobs.stream().forEach(job -> fjobs.put(getWorker().submit(new FutureDoneTask(latch, job)), job));
+				CountDownLatch latch = new CountDownLatch(total);
+				// Submit job.
+				jobs.stream().forEach(job -> futures.put(getWorker().submit(new FutureDoneTask(latch, job)), job));
 
 				if (!latch.await(timeoutMs, MILLISECONDS)) { // Timeout?
-					Iterator<Entry<Future<?>, Runnable>> it = fjobs.entrySet().iterator();
+					Iterator<Entry<Future<?>, Runnable>> it = futures.entrySet().iterator();
 					while (it.hasNext()) {
 						Entry<Future<?>, Runnable> entry = it.next();
 						if (!entry.getKey().isCancelled() && !entry.getKey().isDone()) {
@@ -251,7 +252,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 					TimeoutException ex = new TimeoutException(
 							String.format("Failed to job execution timeout, %s -> completed(%s)/total(%s)",
 									jobs.get(0).getClass().getName(), (total - latch.getCount()), total));
-					listener.onComplete(ex, (total - latch.getCount()), fjobs.values());
+					listener.onComplete(ex, (total - latch.getCount()), futures.values());
 				} else {
 					listener.onComplete(null, total, emptyList());
 				}

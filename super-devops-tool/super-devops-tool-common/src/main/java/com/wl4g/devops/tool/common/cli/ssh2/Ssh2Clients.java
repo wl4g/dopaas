@@ -132,7 +132,7 @@ public abstract class Ssh2Clients<S, F> {
 	 * @return
 	 * @throws IOException
 	 */
-	protected abstract <T> T doExecCommandWIthSsh2(String host, String user, char[] pemPrivateKey, String command,
+	protected abstract <T> T doExecCommandWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<S, T> processor, long timeoutMs) throws Exception;
 
 	/**

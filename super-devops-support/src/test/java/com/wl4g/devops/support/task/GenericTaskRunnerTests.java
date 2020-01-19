@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.NamedJob;
 import com.wl4g.devops.support.task.RunnerProperties;
 
 /**
@@ -32,21 +31,25 @@ import com.wl4g.devops.support.task.RunnerProperties;
 public class GenericTaskRunnerTests {
 
 	public static void main(String[] args) throws Exception {
-		taskTest1();
+		// taskTest1();
+		scheduleTest2();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void taskTest1() throws Exception {
 		// Add testing jobs.
-		List<NamedJob> jobs = new ArrayList<>();
+		List<Runnable> jobs = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
-			jobs.add(new NamedJob("testjob-" + i) {
+			final String idStr = "testjob-" + i;
+			jobs.add(new Runnable() {
+				private String id = idStr;
+
 				@Override
 				public void run() {
 					try {
-						System.out.println("Starting... testjob-" + getId());
+						System.out.println("Starting... testjob-" + id);
 						Thread.sleep(3000L);
-						System.out.println("Completed. testjob-" + getId());
+						System.out.println("Completed. testjob-" + id);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -65,6 +68,34 @@ public class GenericTaskRunnerTests {
 			ex.printStackTrace();
 			System.out.println(String.format("Completed: %s, uncompleted sets: %s", completed, uncompleted));
 		}, 4 * 1000l); // > 3*3000
+	}
+
+	@SuppressWarnings({ "rawtypes" })
+	public static void scheduleTest2() throws Exception {
+		// Create runner.
+		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
+		};
+		runner.run(null);
+
+		for (int i = 0; i < 100; i++) {
+			final String idStr = "testjob-" + i;
+			runner.getWorker().submit(new Runnable() {
+				private String id = idStr;
+
+				@Override
+				public void run() {
+					try {
+						System.out.println("Starting... testjob-" + id);
+						Thread.sleep(3000L);
+						System.out.println("Completed. testjob-" + id);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		runner.close();
+
 	}
 
 }
