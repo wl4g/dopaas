@@ -24,20 +24,29 @@ import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
+import com.wl4g.devops.common.bean.iam.AlarmContact;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.bean.iam.AlarmContact;
 import com.wl4g.devops.common.context.DelegatePrototypeBeanFactory;
 import com.wl4g.devops.dao.ci.*;
+import com.wl4g.devops.dao.iam.AlarmContactDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
-import com.wl4g.devops.dao.iam.AlarmContactDao;
 import com.wl4g.devops.support.notification.CompositeMessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.devops.support.notification.dingtalk.DingtalkMessage;
+import com.wl4g.devops.support.notification.dingtalk.DingtalkMessageNotifier;
+import com.wl4g.devops.support.notification.facebook.FacebookMessage;
+import com.wl4g.devops.support.notification.facebook.FacebookMessageNotifier;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
+import com.wl4g.devops.support.notification.sms.AliyunSmsMessageNotifier;
+import com.wl4g.devops.support.notification.sms.SmsMessage;
+import com.wl4g.devops.support.notification.twitter.TwitterMessage;
+import com.wl4g.devops.support.notification.twitter.TwitterMessageNotifier;
+import com.wl4g.devops.support.notification.wechat.WechatMessage;
+import com.wl4g.devops.support.notification.wechat.WechatMessageNotifier;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
 import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -49,16 +58,14 @@ import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
-import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.*;
+import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notEmpty;
-import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.*;
 
 /**
  * Default CI/CD pipeline management implements.
@@ -379,14 +386,53 @@ public class DefaultPipelineManager implements PipelineManager {
 	 */
 	protected void notificationResult(Integer contactGroupId, String message) {
 		List<AlarmContact> contacts = alarmContactDao.getContactByGroupIds(asList(contactGroupId));
-		for (AlarmContact contact : contacts) {
+		for (AlarmContact alarmContact : contacts) {
 			SimpleMailMessage msg = new SimpleMailMessage();
 			msg.setSubject("CI Built Result");
-			msg.setTo(contact.getEmail());
+			msg.setTo(alarmContact.getEmail());
 			msg.setText(message);
 			msg.setSentDate(new Date());
 			// TODO using dynamic kind?
 			notifier.forAdapt(NotifierKind.Mail).send(new MailMessageWrapper(msg));
+
+			// phone
+			if (alarmContact.getPhoneEnable() == 1) {
+				SmsMessage smsMessage = new SmsMessage();
+				smsMessage.setContent(message);
+				List<String> numbers = new ArrayList<>();
+				numbers.add(alarmContact.getPhone());
+				smsMessage.setNumbers(numbers);
+				notifier.forAdapt(AliyunSmsMessageNotifier.class).send(smsMessage);
+			}
+
+			// dingtalk
+			if (alarmContact.getDingtalkEnable() == 1) {
+				DingtalkMessage dingtalkMessage = new DingtalkMessage();
+				//TODO set dingtalkMessage
+				notifier.forAdapt(DingtalkMessageNotifier.class).send(dingtalkMessage);
+			}
+
+			// facebook
+			if (alarmContact.getFacebookEnable() == 1) {
+				FacebookMessage facebookMessage = new FacebookMessage();
+				//TODO set facebookMessage
+				notifier.forAdapt(FacebookMessageNotifier.class).send(facebookMessage);
+			}
+
+			// twitter
+			if (alarmContact.getTwitterEnable() == 1) {
+				TwitterMessage twitterMessage = new TwitterMessage();
+				//TODO set twitterMessage
+				notifier.forAdapt(TwitterMessageNotifier.class).send(twitterMessage);
+			}
+
+			// wechat
+			if (alarmContact.getWechatEnable() == 1) {
+				WechatMessage wechatMessage = new WechatMessage();
+				//TODO set wechatMessage
+				notifier.forAdapt(WechatMessageNotifier.class).send(wechatMessage);
+			}
+
 		}
 	}
 
