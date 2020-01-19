@@ -15,6 +15,19 @@
  */
 package com.wl4g.devops.shell.processor;
 
+import com.wl4g.devops.shell.config.ShellProperties;
+import com.wl4g.devops.shell.handler.InternalChannelMessageHandler;
+import com.wl4g.devops.shell.message.*;
+import com.wl4g.devops.shell.processor.event.CommandEventListener;
+import com.wl4g.devops.shell.processor.event.InterruptEventListener;
+import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
+import com.wl4g.devops.shell.registry.TargetMethodWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.util.Assert;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -23,38 +36,14 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 import static org.springframework.util.Assert.state;
-import static org.apache.commons.lang3.StringUtils.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.util.Assert;
-
-import com.wl4g.devops.shell.config.ShellProperties;
-import com.wl4g.devops.shell.handler.InternalChannelMessageHandler;
-import com.wl4g.devops.shell.message.ExceptionMessage;
-import com.wl4g.devops.shell.message.InterruptMessage;
-import com.wl4g.devops.shell.message.StdinMessage;
-import com.wl4g.devops.shell.message.MetaMessage;
-import com.wl4g.devops.shell.message.OutputMessage;
-import com.wl4g.devops.shell.processor.event.CommandEventListener;
-import com.wl4g.devops.shell.processor.event.InterruptEventListener;
-import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
-import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 
 /**
  * Socket server shell processor
@@ -66,9 +55,9 @@ import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 public class EmbeddedServerShellHandler extends AbstractServerShellHandler implements ApplicationRunner, Runnable {
 
 	/**
-	 * Current server running status.
+	 * Current server shellRunning status.
 	 */
-	final private AtomicBoolean running = new AtomicBoolean(false);
+	final private AtomicBoolean shellRunning = new AtomicBoolean(false);
 
 	/** Execution workers */
 	final private ConcurrentMap<ShellHandler, Thread> workers = new ConcurrentHashMap<>();
@@ -89,7 +78,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		if (running.compareAndSet(false, true)) {
+		if (shellRunning.compareAndSet(false, true)) {
 			Assert.state(ss == null, "server socket already listen ?");
 
 			int bindPort = ensureDetermineServPort(getAppName());
@@ -112,7 +101,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	}
 
 	protected void close() {
-		if (running.compareAndSet(true, false)) {
+		if (shellRunning.compareAndSet(true, false)) {
 			try {
 				boss.interrupt();
 			} catch (Exception e) {
@@ -144,7 +133,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 
 	@Override
 	public void run() {
-		while (!boss.isInterrupted() && running.get()) {
+		while (!boss.isInterrupted() && shellRunning.get()) {
 			try {
 				// Receiving client socket(blocking)
 				Socket s = ss.accept();

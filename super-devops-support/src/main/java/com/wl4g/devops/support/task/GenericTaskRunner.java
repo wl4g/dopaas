@@ -87,7 +87,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	}
 
 	@Override
-	public void close() throws IOException {
+	public synchronized void close() throws IOException {
 		// Call pre close
 		preCloseProperties();
 

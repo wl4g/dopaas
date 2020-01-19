@@ -115,7 +115,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	 * @param destroyLockName
 	 * @throws InterruptedException
 	 */
-	private synchronized void loopWatchProcessesDestroy(String destroyLockName) throws InterruptedException {
+	private void loopWatchProcessesDestroy(String destroyLockName) throws InterruptedException {
 		while (isActive()) {
 			sleepRandom(DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS);
 
