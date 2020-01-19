@@ -39,9 +39,10 @@ public class ProcessUtilsTests {
 	}
 
 	public static void execProgressTest3() throws Exception {
-		ProcessUtils.printProgress("正在分析...", 50, 100, '#');
-		ProcessUtils.printProgress("正在分析...", 70, 100, '#');
-		ProcessUtils.printProgress("正在分析...", 90, 100, '#');
+		int whole = 120;
+		for (int i = 0; i < whole; i++) {
+			ProcessUtils.printProgress("正在分析...", i, whole, '#');
+		}
 	}
 
 }

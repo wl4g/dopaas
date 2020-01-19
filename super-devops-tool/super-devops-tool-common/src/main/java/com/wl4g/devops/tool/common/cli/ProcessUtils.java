@@ -22,6 +22,7 @@ import static java.lang.Runtime.*;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_LINUX;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
 import static org.apache.commons.lang3.SystemUtils.USER_NAME;
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import static java.lang.System.*;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -55,6 +55,11 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
  */
 public abstract class ProcessUtils {
 	final protected static Logger log = getLogger(ProcessUtils.class);
+
+	/**
+	 * Progress animations chars.
+	 */
+	final protected static String[] ANIMATIONS = { "|", "/", "-", "\\" };
 
 	/**
 	 * Print progress bar.
@@ -111,21 +116,21 @@ public abstract class ProcessUtils {
 		isTrue(progress >= 0 && whole >= 0, format("Illegal arguments, progress: %s, whole: %s", progress, whole));
 		isTrue(progress <= whole, format("Progress number out of bounds, current progress: %s, whole: %s", progress, whole));
 
+		// TODO get $COLUMNS
+		
+		// Progress bar/percent/animation.
 		String bar = ">";// Progress bar.
-		// TODO
-		String[] animation = { "/", "|", "\\", "-" }; // Progress animation.
-
 		for (int j = 0; j < progress; j++) {
 			bar = barChar + bar;
 		}
-		// Progress percent .
-		String percent = new DecimalFormat("00.0").format((float) progress / whole * 100);
+		String percent = new DecimalFormat("0.0").format((float) progress / whole * 100);
+		String animation = ANIMATIONS[progress % 4];
 
 		// (Linux shell) Use char '\r' beautiful to draw progress
-		if (IS_OS_LINUX) {
-			out.printf("[%s][%s][%s%%][%s/%s][%s]\r", title, bar, percent, progress, whole, animation[RandomUtils.nextInt(0, 4)]);
-		} else { // (Windows doc/Mac) Simple output progress
-			out.println(format("[%s][%s%%][%s]", title, percent, animation[RandomUtils.nextInt(0, 4)]));
+		if (IS_OS_LINUX || IS_OS_MAC) {
+			out.printf("[%s][%s][%s%%][%s/%s][%s]\r", title, bar, percent, progress, whole, animation);
+		} else { // (Windows) Simple output progress
+			out.printf("[%s][%s%%][%s]\r\n", title, percent, animation);
 		}
 
 		if (progress == whole) { // Completed?
