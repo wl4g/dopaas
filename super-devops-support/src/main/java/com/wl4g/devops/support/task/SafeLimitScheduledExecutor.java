@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.support.task;
 
+import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -44,7 +45,7 @@ class SafeLimitScheduledExecutor extends ScheduledThreadPoolExecutor {
 	final private int accessQueue;
 
 	/**
-	 * .{@link RejectedExecutionHandler}
+	 * {@link RejectedExecutionHandler}
 	 */
 	final private RejectedExecutionHandler rejectHandler;
 
@@ -77,8 +78,9 @@ class SafeLimitScheduledExecutor extends ScheduledThreadPoolExecutor {
 	}
 
 	/**
-	 * The invokeall() related methods also call execute() in the end. For
-	 * details, see:
+	 * The {@link #invokeAll(Collection, long, TimeUnit)} or
+	 * {@link #invokeAny(Collection, long, TimeUnit)} related methods also call
+	 * {@link #execute(Runnable)} in the end. For details, see:
 	 * 
 	 * @see {@link java.util.concurrent.AbstractExecutorService#doInvokeAny()#176}
 	 * @see {@link java.util.concurrent.ExecutorCompletionService#submit()}

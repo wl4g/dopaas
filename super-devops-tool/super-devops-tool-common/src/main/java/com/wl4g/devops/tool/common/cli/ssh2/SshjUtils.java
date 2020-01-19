@@ -193,7 +193,7 @@ public class SshjUtils extends Ssh2Clients<Session.Command, SCPFileTransfer> {
 	 */
 	public <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception {
-		return doExecCommandWIthSsh2(host, user, pemPrivateKey, command, cmd -> {
+		return doExecCommandWithSsh2(host, user, pemPrivateKey, command, cmd -> {
 			// Wait for completed by condition.
 			cmd.join(timeoutMs, TimeUnit.MILLISECONDS);
 			return processor.process(cmd);
@@ -212,7 +212,7 @@ public class SshjUtils extends Ssh2Clients<Session.Command, SCPFileTransfer> {
 	 * @return
 	 * @throws IOException
 	 */
-	protected <T> T doExecCommandWIthSsh2(String host, String user, char[] pemPrivateKey, String command,
+	protected <T> T doExecCommandWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");

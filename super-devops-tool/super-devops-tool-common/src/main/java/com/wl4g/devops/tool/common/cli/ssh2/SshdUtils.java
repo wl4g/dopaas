@@ -203,7 +203,7 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 	 */
 	public <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<ChannelExec, T> processor, long timeoutMs) throws Exception {
-		return doExecCommandWIthSsh2(host, user, pemPrivateKey, command, channelExec -> {
+		return doExecCommandWithSsh2(host, user, pemPrivateKey, command, channelExec -> {
 			// Wait for completed by condition.
 			channelExec.waitFor(Collections.singleton(ClientChannelEvent.CLOSED), timeoutMs);
 			return processor.process(channelExec);
@@ -222,7 +222,7 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 	 * @return
 	 * @throws IOException
 	 */
-	protected <T> T doExecCommandWIthSsh2(String host, String user, char[] pemPrivateKey, String command,
+	protected <T> T doExecCommandWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<ChannelExec, T> processor, long timeoutMs) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");

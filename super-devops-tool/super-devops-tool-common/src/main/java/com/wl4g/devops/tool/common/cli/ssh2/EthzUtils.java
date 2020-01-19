@@ -197,7 +197,7 @@ public class EthzUtils extends Ssh2Clients<Session, SCPClient> {
 	 */
 	public <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<Session, T> processor, long timeoutMs) throws Exception {
-		return doExecCommandWIthSsh2(host, user, pemPrivateKey, command, session -> {
+		return doExecCommandWithSsh2(host, user, pemPrivateKey, command, session -> {
 			// Wait for completed by condition.
 			session.waitForCondition((CLOSED), timeoutMs);
 			return processor.process(session);
@@ -216,7 +216,7 @@ public class EthzUtils extends Ssh2Clients<Session, SCPClient> {
 	 * @return
 	 * @throws IOException
 	 */
-	protected final <T> T doExecCommandWIthSsh2(String host, String user, char[] pemPrivateKey, String command,
+	protected final <T> T doExecCommandWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<Session, T> processor, long timeoutMs) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
