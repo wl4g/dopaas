@@ -20,6 +20,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
+import com.wl4g.devops.support.task.SafeLimitTaskScheduledExecutor.RandomScheduleRunnable;
 import com.wl4g.devops.tool.common.collection.CollectionUtils2;
 
 import java.io.Closeable;
@@ -29,8 +30,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,7 +41,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.lang.Assert2.state;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.format;
 import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -59,8 +64,8 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		implements Closeable, Runnable, ApplicationRunner, DisposableBean {
 	final protected Logger log = getLogger(getClass());
 
-	/** Boss running. */
-	final private AtomicBoolean bossState = new AtomicBoolean(false);
+	/** Running state. */
+	final private AtomicBoolean running = new AtomicBoolean(false);
 
 	/** Runner task properties configuration. */
 	final C config;
@@ -86,13 +91,38 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		close();
 	}
 
+	/**
+	 * Note: It is recommended to use the {@link AtomicBoolean} mechanism to
+	 * avoid using synchronized. </br>
+	 * Error example:
+	 * 
+	 * <pre>
+	 * public abstract class ParentClass implements Closeable, Runnable {
+	 * 	public synchronized void close() {
+	 * 		// Some close or release ...
+	 * 	}
+	 * }
+	 * 
+	 * public class SubClass extends ParentClass {
+	 * 	public synchronized void run() {
+	 * 		// Time consuming jobs ...
+	 * 	}
+	 * }
+	 * </pre>
+	 * 
+	 * At this time, it may lead to deadlock, because SubClass.run() has not
+	 * been executed and is not locked, resulting in the call to
+	 * ParentClass.close() always waiting. </br>
+	 * </br>
+	 */
 	@Override
-	public synchronized void close() throws IOException {
-		// Call pre close
-		preCloseProperties();
+	public void close() throws IOException {
+		if (running.compareAndSet(true, false)) {
+			// Call pre close
+			preCloseProperties();
 
-		if (bossState.compareAndSet(true, false)) {
-			if (worker != null) {
+			// Close for thread pool worker.
+			if (!isNull(worker)) {
 				try {
 					worker.shutdown();
 					worker = null;
@@ -100,18 +130,20 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 					log.error("Runner worker shutdown failed!", e);
 				}
 			}
+
+			// Close for thread-boss.
 			try {
-				if (boss != null) {
+				if (!isNull(boss)) {
 					boss.interrupt();
 					boss = null;
 				}
 			} catch (Exception e) {
 				log.error("Runner boss interrupt failed!", e);
 			}
-		}
 
-		// Call post close
-		postCloseProperties();
+			// Call post close
+			postCloseProperties();
+		}
 	}
 
 	/**
@@ -120,20 +152,20 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * @throws Exception
 	 */
 	@Override
-	public synchronized void run(ApplicationArguments args) throws Exception {
-		// Call PreStartup
-		preStartupProperties();
+	public void run(ApplicationArguments args) throws Exception {
+		if (running.compareAndSet(false, true)) {
+			// Call PreStartup
+			preStartupProperties();
 
-		// Create worker(if necessary)
-		if (bossState.compareAndSet(false, true)) {
+			// Create worker(if necessary)
 			if (config.getConcurrency() > 0) {
 				// See:https://www.jianshu.com/p/e7ab1ac8eb4c
-				worker = new SafeLimitScheduledExecutor(config.getConcurrency(),
+				worker = new SafeLimitTaskScheduledExecutor(config.getConcurrency(),
 						new NamedThreadFactory(getClass().getSimpleName()), config.getAcceptQueue(), config.getReject());
 				worker.setMaximumPoolSize(config.getConcurrency());
 				worker.setKeepAliveTime(config.getKeepAliveTime(), MICROSECONDS);
 			} else {
-				log.warn("No start of thread pool worker, because the number of workthread is less than 0");
+				log.warn("No start threads worker, because the number of workthreads is less than 0");
 			}
 
 			// Boss asynchronously execution.(if necessary)
@@ -145,40 +177,40 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 			} else {
 				run(); // Sync execution.
 			}
-		} else {
-			log.warn("Already runner! already builders are read-only and do not allow task modification");
-		}
 
-		// Call post startup
-		postStartupProperties();
+			// Call post startup
+			postStartupProperties();
+		} else {
+			log.warn("Could not startup runner! because already builders are read-only and do not allow task modification");
+		}
 	}
 
 	/**
 	 * Pre startup properties
 	 */
 	protected void preStartupProperties() throws Exception {
-
+		// Ignore
 	}
 
 	/**
 	 * Post startup properties
 	 */
 	protected void postStartupProperties() throws Exception {
-
+		// Ignore
 	}
 
 	/**
 	 * Pre close properties
 	 */
 	protected void preCloseProperties() throws IOException {
-
+		// Ignore
 	}
 
 	/**
 	 * Post close properties
 	 */
 	protected void postCloseProperties() throws IOException {
-
+		// Ignore
 	}
 
 	/**
@@ -187,7 +219,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * @return
 	 */
 	protected boolean isActive() {
-		return boss != null && !boss.isInterrupted() && bossState.get();
+		return boss != null && !boss.isInterrupted() && running.get();
 	}
 
 	/**
@@ -202,6 +234,40 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	@Override
 	public void run() {
 		// Ignore
+	}
+
+	/**
+	 * Random interval scheduling based on dynamic schedule.
+	 * 
+	 * @see {@link java.util.concurrent.ScheduledThreadPoolExecutor#scheduleAtFixedRate(Runnable, long, long, TimeUnit)}
+	 * 
+	 * @param command
+	 * @param initialDelay
+	 * @param minDelay
+	 * @param maxDelay
+	 * @param unit
+	 * @return
+	 */
+	public ScheduledFuture<?> scheduleAtRandomRate(Runnable command, long initialDelay, long minDelay, long maxDelay,
+			TimeUnit unit) {
+		return getWorker().scheduleAtFixedRate(new RandomScheduleRunnable(minDelay, maxDelay, command), initialDelay, 0, unit);
+	}
+
+	/**
+	 * Random interval scheduling based on fixed schedule.
+	 * 
+	 * @see {@link java.util.concurrent.ScheduledThreadPoolExecutor#scheduleWithFixedDelay(Runnable, long, long, TimeUnit)}
+	 * 
+	 * @param command
+	 * @param initialDelay
+	 * @param minDelay
+	 * @param maxDelay
+	 * @param unit
+	 * @return
+	 */
+	public ScheduledFuture<?> scheduleWithRandomDelay(Runnable command, long initialDelay, long minDelay, long maxDelay,
+			TimeUnit unit) {
+		return getWorker().scheduleWithFixedDelay(new RandomScheduleRunnable(minDelay, maxDelay, command), initialDelay, 0, unit);
 	}
 
 	/**
@@ -250,7 +316,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 					}
 
 					TimeoutException ex = new TimeoutException(
-							String.format("Failed to job execution timeout, %s -> completed(%s)/total(%s)",
+							format("Failed to job execution timeout, %s -> completed(%s)/total(%s)",
 									jobs.get(0).getClass().getName(), (total - latch.getCount()), total));
 					listener.onComplete(ex, (total - latch.getCount()), futures.values());
 				} else {

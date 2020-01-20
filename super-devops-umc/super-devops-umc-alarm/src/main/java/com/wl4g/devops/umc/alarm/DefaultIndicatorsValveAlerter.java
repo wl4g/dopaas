@@ -96,16 +96,12 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 
 	@Override
 	protected void doHandleAlarm(MetricAggregateWrapper agwrap) {
-		if (log.isInfoEnabled()) {
-			log.info("Alarm handling for host: {} endpoint:{}", agwrap.getHost(), agwrap.getEndpoint());
-		}
+		log.info("Alarm handling for host: {} endpoint:{}", agwrap.getHost(), agwrap.getEndpoint());
 
 		// Load alarm templates by collectId.
 		List<AlarmConfig> alarmConfigs = ruleManager.loadAlarmRuleTpls(agwrap.getHost(), agwrap.getEndpoint());
 		if (isEmpty(alarmConfigs)) {
-			if (log.isInfoEnabled()) {
-				log.info("No found alarm templates for host: {} endpoint:{}", agwrap.getHost(), agwrap.getEndpoint());
-			}
+			log.info("No found alarm templates for host: {} endpoint:{}", agwrap.getHost(), agwrap.getEndpoint());
 			return;
 		}
 
@@ -167,10 +163,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			return Optional.empty();
 		}
 
-		if (log.isInfoEnabled()) {
-			log.info("Matched to metric: {} and alarm template: {}, timeWindowQueue: {}", mwrap.getMetric(),
-					alarmConfig.getAlarmTemplate().getId(), toJSONString(metricVals));
-		}
+		log.info("Matched to metric: {} and alarm template: {}, timeWindowQueue: {}", mwrap.getMetric(),
+				alarmConfig.getAlarmTemplate().getId(), toJSONString(metricVals));
 		return Optional.of(new AlarmResult(agwrap, alarmConfig, matchedTag, matchedRules));
 	}
 
@@ -352,8 +346,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	protected void notification(List<AlarmContact> alarmContacts, AlarmRecord alarmRecord) {
 		log.info("into DefaultIndicatorsValveAlerter.notification prarms::" + "alarmContacts = {} , alarmNote = {} ",
 				alarmContacts, alarmRecord.getAlarmNote());
-		
-		
+
 		// TODO using dynamic notifier call.
 		for (AlarmContact alarmContact : alarmContacts) {
 			// save notification
@@ -371,51 +364,66 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 				notifier.forAdapt(MailMessageNotifier.class).send(new MailMessageWrapper(msg));
 			}
 
-			 // phone
-			if (alarmContact.getPhoneEnable() == 1 && checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(), alarmContact.getPhoneNumOfFreq())) {
+			// phone
+			if (alarmContact.getPhoneEnable() == 1
+					&& checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(), alarmContact.getPhoneNumOfFreq())) {
 				SmsMessage smsMessage = new SmsMessage();
 				smsMessage.setContent(alarmRecord.getAlarmNote());
 				List<String> numbers = new ArrayList<>();
 				numbers.add(alarmContact.getPhone());
 				smsMessage.setNumbers(numbers);
 				notifier.forAdapt(AliyunSmsMessageNotifier.class).send(smsMessage);
-				//notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.SMS.getValue(), alarmContact.getPhone()));
+				// notifier.simpleNotify(new
+				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+				// AlarmType.SMS.getValue(), alarmContact.getPhone()));
 				handleRateLimit(ALARM_LIMIT_PHONE + alarmContact.getPhone(), alarmContact.getPhoneTimeOfFreq());
 			}
 
 			// dingtalk
-			if (alarmContact.getDingtalkEnable() == 1 && checkNotifyLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkNumOfFreq())) {
+			if (alarmContact.getDingtalkEnable() == 1
+					&& checkNotifyLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkNumOfFreq())) {
 				DingtalkMessage dingtalkMessage = new DingtalkMessage();
-				//TODO set dingtalkMessage
+				// TODO set dingtalkMessage
 				notifier.forAdapt(DingtalkMessageNotifier.class).send(dingtalkMessage);
-				//notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.DINGTALK.getValue(), alarmContact.getDingtalk()));
+				// notifier.simpleNotify(new
+				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+				// AlarmType.DINGTALK.getValue(), alarmContact.getDingtalk()));
 				handleRateLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkTimeOfFreq());
 			}
 
 			// facebook
-			if (alarmContact.getFacebookEnable() == 1 && checkNotifyLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookNumOfFreq())) {
+			if (alarmContact.getFacebookEnable() == 1
+					&& checkNotifyLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookNumOfFreq())) {
 				FacebookMessage facebookMessage = new FacebookMessage();
-				//TODO set facebookMessage
+				// TODO set facebookMessage
 				notifier.forAdapt(FacebookMessageNotifier.class).send(facebookMessage);
-				// notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.FACEBOOK.getValue(), alarmContact.getFacebook()));
+				// notifier.simpleNotify(new
+				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+				// AlarmType.FACEBOOK.getValue(), alarmContact.getFacebook()));
 				handleRateLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookTimeOfFreq());
 			}
 
 			// twitter
-			if (alarmContact.getTwitterEnable() == 1 && checkNotifyLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterNumOfFreq())) {
+			if (alarmContact.getTwitterEnable() == 1
+					&& checkNotifyLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterNumOfFreq())) {
 				TwitterMessage twitterMessage = new TwitterMessage();
-				//TODO set twitterMessage
+				// TODO set twitterMessage
 				notifier.forAdapt(TwitterMessageNotifier.class).send(twitterMessage);
-				// notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.TWITTER.getValue(), alarmContact.getTwitter()));
+				// notifier.simpleNotify(new
+				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+				// AlarmType.TWITTER.getValue(), alarmContact.getTwitter()));
 				handleRateLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterTimeOfFreq());
 			}
 
 			// wechat
-			if (alarmContact.getWechatEnable() == 1 && checkNotifyLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatNumOfFreq())) {
+			if (alarmContact.getWechatEnable() == 1
+					&& checkNotifyLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatNumOfFreq())) {
 				WechatMessage wechatMessage = new WechatMessage();
-				//TODO set wechatMessage
+				// TODO set wechatMessage
 				notifier.forAdapt(WechatMessageNotifier.class).send(wechatMessage);
-				// notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.WECHAT.getValue(), alarmContact.getWechat()));
+				// notifier.simpleNotify(new
+				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+				// AlarmType.WECHAT.getValue(), alarmContact.getWechat()));
 				handleRateLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatTimeOfFreq());
 			}
 
