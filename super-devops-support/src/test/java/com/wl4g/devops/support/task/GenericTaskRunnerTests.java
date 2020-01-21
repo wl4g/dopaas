@@ -15,8 +15,11 @@
  */
 package com.wl4g.devops.support.task;
 
+import static java.lang.System.currentTimeMillis;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
@@ -31,12 +34,14 @@ import com.wl4g.devops.support.task.RunnerProperties;
 public class GenericTaskRunnerTests {
 
 	public static void main(String[] args) throws Exception {
-		// taskTest1();
-		scheduleTest2();
+		// submitForCompleteTest1();
+		// scheduleQueueRejectedTest2();
+		// scheduleWithFixedTest3();
+		scheduleWithRandomTest4();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void taskTest1() throws Exception {
+	public static void submitForCompleteTest1() throws Exception {
 		// Add testing jobs.
 		List<Runnable> jobs = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
@@ -68,10 +73,12 @@ public class GenericTaskRunnerTests {
 			ex.printStackTrace();
 			System.out.println(String.format("Completed: %s, uncompleted sets: %s", completed, uncompleted));
 		}, 4 * 1000l); // > 3*3000
+
+		// runner.close();
 	}
 
-	@SuppressWarnings({ "rawtypes" })
-	public static void scheduleTest2() throws Exception {
+	@SuppressWarnings({ "rawtypes", "resource" })
+	public static void scheduleQueueRejectedTest2() throws Exception {
 		// Create runner.
 		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
 		};
@@ -94,8 +101,36 @@ public class GenericTaskRunnerTests {
 				}
 			});
 		}
-		runner.close();
 
+		// runner.close();
+	}
+
+	@SuppressWarnings({ "rawtypes", "resource" })
+	public static void scheduleWithFixedTest3() throws Exception {
+		// Create runner.
+		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
+		};
+		runner.run(null);
+
+		runner.getWorker().scheduleAtFixedRate(() -> {
+			System.out.println(currentTimeMillis() + " - Fixed time task...");
+		}, 500, 1000, TimeUnit.MILLISECONDS);
+
+		// runner.close();
+	}
+
+	@SuppressWarnings({ "rawtypes", "resource" })
+	public static void scheduleWithRandomTest4() throws Exception {
+		// Create runner.
+		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
+		};
+		runner.run(null);
+
+		runner.scheduleAtRandomRate(() -> {
+			System.out.println(currentTimeMillis() + " - Random time task...");
+		}, 500, 1, 6, TimeUnit.SECONDS);
+
+		// runner.close();
 	}
 
 }

@@ -20,7 +20,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
-import com.wl4g.devops.support.task.SafeLimitTaskScheduledExecutor.RandomScheduleRunnable;
+import com.wl4g.devops.support.task.SafeEnhancedScheduledExecutor.RandomScheduleRunnable;
 import com.wl4g.devops.tool.common.collection.CollectionUtils2;
 
 import java.io.Closeable;
@@ -47,6 +47,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.lang.Integer.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -160,7 +161,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 			// Create worker(if necessary)
 			if (config.getConcurrency() > 0) {
 				// See:https://www.jianshu.com/p/e7ab1ac8eb4c
-				worker = new SafeLimitTaskScheduledExecutor(config.getConcurrency(),
+				worker = new SafeEnhancedScheduledExecutor(config.getConcurrency(),
 						new NamedThreadFactory(getClass().getSimpleName()), config.getAcceptQueue(), config.getReject());
 				worker.setMaximumPoolSize(config.getConcurrency());
 				worker.setKeepAliveTime(config.getKeepAliveTime(), MICROSECONDS);
@@ -250,7 +251,9 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 */
 	public ScheduledFuture<?> scheduleAtRandomRate(Runnable command, long initialDelay, long minDelay, long maxDelay,
 			TimeUnit unit) {
-		return getWorker().scheduleAtFixedRate(new RandomScheduleRunnable(minDelay, maxDelay, command), initialDelay, 0, unit);
+		return getWorker().scheduleAtFixedRate(
+				new RandomScheduleRunnable(unit.toMillis(minDelay), unit.toMillis(maxDelay), command), initialDelay, MAX_VALUE,
+				MILLISECONDS);
 	}
 
 	/**
@@ -267,7 +270,9 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 */
 	public ScheduledFuture<?> scheduleWithRandomDelay(Runnable command, long initialDelay, long minDelay, long maxDelay,
 			TimeUnit unit) {
-		return getWorker().scheduleWithFixedDelay(new RandomScheduleRunnable(minDelay, maxDelay, command), initialDelay, 0, unit);
+		return getWorker().scheduleWithFixedDelay(
+				new RandomScheduleRunnable(unit.toMillis(minDelay), unit.toMillis(maxDelay), command), initialDelay, MAX_VALUE,
+				MILLISECONDS);
 	}
 
 	/**
