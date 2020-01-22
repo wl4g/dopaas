@@ -83,11 +83,13 @@ public class SafeEnhancedScheduledTaskExecutor extends ScheduledThreadPoolExecut
 	 */
 	final private RejectedExecutionHandler rejectHandler;
 
-	public SafeEnhancedScheduledTaskExecutor(int corePoolSize, ThreadFactory threadFactory, int acceptQueue,
-			RejectedExecutionHandler rejectHandler) {
-		super(corePoolSize, threadFactory, rejectHandler);
+	public SafeEnhancedScheduledTaskExecutor(int coreMaximumPoolSize, long keepAliveTimeMs, ThreadFactory threadFactory,
+			int acceptQueue, RejectedExecutionHandler rejectHandler) {
+		super(coreMaximumPoolSize, threadFactory, rejectHandler);
 		isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
 		notNullOf(rejectHandler, "rejectHandler");
+		setMaximumPoolSize(coreMaximumPoolSize); // corePoolSize==maximumPoolSize
+		setKeepAliveTime(keepAliveTimeMs, MILLISECONDS);
 		this.acceptQueue = acceptQueue;
 		this.rejectHandler = rejectHandler;
 	}
