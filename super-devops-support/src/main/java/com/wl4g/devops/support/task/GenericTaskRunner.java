@@ -293,7 +293,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * 
 	 * @return
 	 */
-	protected SafeEnhancedScheduledExecutor getWorker() {
+	public SafeEnhancedScheduledExecutor getWorker() {
 		state(nonNull(worker), "Worker thread group is not enabled and can be enabled with concurrency >0");
 		return worker;
 	}
