@@ -70,7 +70,6 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	final protected ProcessRepository repository;
 
 	public GenericProcessManager(ProcessRepository repository) {
-		super(new RunnerProperties(true));
 		notNull(repository, "Process repository can't null");
 		this.repository = repository;
 	}

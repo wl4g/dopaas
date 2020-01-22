@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.support.task;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static java.lang.Integer.MAX_VALUE;
 import static java.lang.System.nanoTime;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -52,23 +54,25 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see <a href= "http://www.doc88.com/p-3922316178617.html"> Resolution
  *      ScheduledThreadPoolExecutor for retry task OOM</a>
  */
-class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
+public class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
 
 	/**
 	 * Maximum allowed waiting execution queue size.
 	 */
-	final private int accessQueue;
+	final private int acceptQueue;
 
 	/**
 	 * {@link RejectedExecutionHandler}
 	 */
 	final private RejectedExecutionHandler rejectHandler;
 
-	public SafeEnhancedScheduledExecutor(int corePoolSize, ThreadFactory threadFactory, int accessQueue,
-			RejectedExecutionHandler handler) {
-		super(corePoolSize, threadFactory, handler);
-		this.accessQueue = accessQueue;
-		this.rejectHandler = handler;
+	public SafeEnhancedScheduledExecutor(int corePoolSize, ThreadFactory threadFactory, int acceptQueue,
+			RejectedExecutionHandler rejectHandler) {
+		super(corePoolSize, threadFactory, rejectHandler);
+		isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
+		notNullOf(rejectHandler, "rejectHandler");
+		this.acceptQueue = acceptQueue;
+		this.rejectHandler = rejectHandler;
 	}
 
 	@Override
@@ -83,6 +87,42 @@ class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
 		if (checkRejectedQueueLimit(callable))
 			return null;
 		return super.schedule(callable, delay, unit);
+	}
+
+	/**
+	 * Random interval scheduling based on dynamic schedule.
+	 * 
+	 * @see {@link java.util.concurrent.ScheduledThreadPoolExecutor#scheduleAtFixedRate(Runnable, long, long, TimeUnit)}
+	 * 
+	 * @param runnable
+	 * @param initialDelay
+	 * @param minDelay
+	 * @param maxDelay
+	 * @param unit
+	 * @return
+	 */
+	public ScheduledFuture<?> scheduleAtRandomRate(Runnable runnable, long initialDelay, long minDelay, long maxDelay,
+			TimeUnit unit) {
+		return scheduleAtFixedRate(new RandomScheduleRunnable(unit.toMillis(minDelay), unit.toMillis(maxDelay), runnable),
+				unit.toMillis(initialDelay), MAX_VALUE, MILLISECONDS);
+	}
+
+	/**
+	 * Random interval scheduling based on fixed schedule.
+	 * 
+	 * @see {@link java.util.concurrent.ScheduledThreadPoolExecutor#scheduleWithFixedDelay(Runnable, long, long, TimeUnit)}
+	 * 
+	 * @param runnable
+	 * @param initialDelay
+	 * @param minDelay
+	 * @param maxDelay
+	 * @param unit
+	 * @return
+	 */
+	public ScheduledFuture<?> scheduleWithRandomDelay(Runnable runnable, long initialDelay, long minDelay, long maxDelay,
+			TimeUnit unit) {
+		return scheduleWithFixedDelay(new RandomScheduleRunnable(unit.toMillis(minDelay), unit.toMillis(maxDelay), runnable),
+				unit.toMillis(initialDelay), MAX_VALUE, MILLISECONDS);
 	}
 
 	@Override
@@ -164,7 +204,7 @@ class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
 	 * @return
 	 */
 	private boolean checkRejectedQueueLimit(Callable<?> command) {
-		if (getQueue().size() > accessQueue) {
+		if (getQueue().size() > acceptQueue) {
 			rejectHandler.rejectedExecution(() -> {
 				try {
 					command.call();
@@ -184,7 +224,7 @@ class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
 	 * @return
 	 */
 	private boolean checkRejectedQueueLimit(Runnable command) {
-		if (getQueue().size() > accessQueue) {
+		if (getQueue().size() > acceptQueue) {
 			rejectHandler.rejectedExecution(command, this);
 			// throw new RejectedExecutionException("Rejected execution of " + r
 			// + " on " + executor, executor.isShutdown());
@@ -204,6 +244,9 @@ class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
 	 */
 	private class CustomScheduledFutureTask<V> extends FutureTask<V> implements RunnableScheduledFuture<V> {
 
+		/**
+		 * {@link ScheduledThreadPoolExecutor} instance object.
+		 */
 		private ScheduledThreadPoolExecutor executor;
 
 		/** Sequence number to break ties FIFO */
@@ -211,13 +254,6 @@ class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
 
 		/** The time the task is enabled to execute in nanoTime units */
 		private long time;
-
-		/**
-		 * Period in nanoseconds for repeating tasks. A positive value indicates
-		 * fixed-rate execution. A negative value indicates fixed-delay
-		 * execution. A value of 0 indicates a non-repeating task.
-		 */
-		private long period = 0;
 
 		/** The actual task to be re-enqueued by reExecutePeriodic */
 		RunnableScheduledFuture<V> outerTask = this;
@@ -269,8 +305,13 @@ class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
 			return getPeriod() != 0;
 		}
 
+		/**
+		 * Period in nanoseconds for repeating tasks. A positive value indicates
+		 * fixed-rate execution. A negative value indicates fixed-delay
+		 * execution. A value of 0 indicates a non-repeating task.
+		 */
 		public long getPeriod() {
-			return period;
+			return 0;
 		}
 
 		@Override

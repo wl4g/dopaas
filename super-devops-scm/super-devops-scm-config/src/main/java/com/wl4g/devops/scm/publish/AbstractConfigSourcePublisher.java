@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.publish;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.HashMultimap; 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
@@ -36,9 +36,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.state;
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.http.HttpStatus.NOT_MODIFIED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -63,16 +62,15 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 	final private Map<String, Multimap<String, WatchDeferredResult<ResponseEntity<?>>>> watchRequests;
 
 	public AbstractConfigSourcePublisher(ScmProperties config) {
-		super(new RunnerProperties(true));
 		this.config = config;
 		this.watchRequests = new ConcurrentHashMap<>(32);
 	}
 
 	@Override
 	public void run() {
-		// Scan poll published configuration
-		while (isActive()) {
+		getWorker().scheduleWithFixedDelay(() -> {
 			try {
+				// Scan poll published configuration.
 				Collection<PublishConfigWrapper> next = null;
 				while (isActive() && !isEmpty(next = pollNextPublishedConfig())) {
 					if (log.isInfoEnabled()) {
@@ -80,16 +78,18 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 					}
 
 					for (PublishConfigWrapper wrap : next) {
-						state((wrap != null && isNotBlank(wrap.getCluster())),
-								format("Published config group must not be blank! - %s", wrap));
+						if (wrap == null || isBlank(wrap.getCluster())) {
+							log.warn("Published config group must not be blank! - %s", wrap);
+							continue;
+						}
 
 						getCreateWithDeferreds(wrap.getCluster()).values().stream().filter(deferred -> {
 							if (deferred != null) {
 								GetRelease watch = deferred.getWatch();
-								// Filters name space
+								// Filter namespace
 								wrap.getNamespaces().retainAll(watch.getNamespaces());
 								if (!CollectionUtils.isEmpty(wrap.getNamespaces())) {
-									// Filters instance
+									// Filter instance
 									return wrap.getInstances().contains(watch.getInstance());
 								}
 							}
@@ -104,12 +104,11 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 						});
 					}
 				}
-
-				Thread.sleep(config.getWatchDelay());
 			} catch (Throwable th) {
 				log.error("Watching error!", th);
 			}
-		}
+		}, 3000L, config.getWatchDelay(), MILLISECONDS);
+
 	}
 
 	@Override
