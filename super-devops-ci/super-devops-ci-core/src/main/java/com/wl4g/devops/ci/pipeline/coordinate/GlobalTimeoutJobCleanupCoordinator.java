@@ -67,7 +67,7 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 	protected ScheduledFuture<?> future;
 
 	public GlobalTimeoutJobCleanupCoordinator() {
-		super(new RunnerProperties(true));
+		super(new RunnerProperties(false, 1));
 	}
 
 	@Override

@@ -264,7 +264,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			log.info(writeBuildLog("Start to deploying cluster: '%s' to remote instances: '%s' ... ",
 					getContext().getAppCluster().getName(), instanceStrs));
 
-			jobExecutor.submitForComplete(jobs, config.getDeploy().getTransferTimeoutMs());
+			jobExecutor.getWorker().submitForComplete(jobs, config.getDeploy().getTransferTimeoutMs());
 		}
 
 	}
