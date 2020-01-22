@@ -219,6 +219,38 @@ public abstract class TypeConverts {
 	 *            int value, otherwise return null
 	 * @return
 	 */
+	public static Double parseDoubleOrNull(final String value) {
+		try {
+			return isBlank(value) ? null : Double.parseDouble(value);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Parse int of string value.
+	 * 
+	 * @param value
+	 *            If the value int to the number type, return to convert to the
+	 *            int value, otherwise return null
+	 * @return
+	 */
+	public static Float parseFloatOrNull(final String value) {
+		try {
+			return isBlank(value) ? null : Float.parseFloat(value);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Parse int of string value.
+	 * 
+	 * @param value
+	 *            If the value int to the number type, return to convert to the
+	 *            int value, otherwise return null
+	 * @return
+	 */
 	public static Integer parseIntOrNull(final String value) {
 		return isBlank(value) ? null : (isNumeric(value) ? Integer.parseInt(value) : null);
 	}
