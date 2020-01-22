@@ -100,7 +100,12 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * 
 	 * public class SubClass extends ParentClass {
 	 * 	public synchronized void run() {
-	 * 		// Time consuming jobs ...
+	 * 		// Long-time jobs ...
+	 * 
+	 * 		// For example:
+	 * 		// while(true) {
+	 * 		// ...
+	 * 		// }
 	 * 	}
 	 * }
 	 * </pre>
