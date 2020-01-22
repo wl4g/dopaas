@@ -21,11 +21,13 @@ import static java.util.Objects.nonNull;
 import static java.lang.Runtime.*;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_LINUX;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
 import static org.apache.commons.lang3.SystemUtils.USER_NAME;
+import static com.wl4g.devops.tool.common.io.ByteStreams2.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +36,8 @@ import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import static java.lang.System.*;
 
 import org.slf4j.Logger;
@@ -60,6 +64,11 @@ public abstract class ProcessUtils {
 	 * Progress animations chars.
 	 */
 	final protected static String[] ANIMATIONS = { "|", "/", "-", "\\" };
+
+	/**
+	 * Progress show whole.
+	 */
+	final protected static int SHOW_WHOLE = 50;
 
 	/**
 	 * Print progress bar.
@@ -109,6 +118,7 @@ public abstract class ProcessUtils {
 	 *            Total process number.
 	 * @param barChar
 	 *            Progress bar char.
+	 * @throws Exception
 	 */
 	public final static void printProgress(final String title, final int progress, final int whole, final char barChar) {
 		hasTextOf(title, "title");
@@ -116,27 +126,34 @@ public abstract class ProcessUtils {
 		isTrue(progress >= 0 && whole >= 0, format("Illegal arguments, progress: %s, whole: %s", progress, whole));
 		isTrue(progress <= whole, format("Progress number out of bounds, current progress: %s, whole: %s", progress, whole));
 
-		// TODO get $COLUMNS
-		
-		// Progress bar/percent/animation.
-		String bar = ">";// Progress bar.
-		for (int j = 0; j < progress; j++) {
-			bar = barChar + bar;
-		}
-		String percent = new DecimalFormat("0.0").format((float) progress / whole * 100);
-		String animation = ANIMATIONS[progress % 4];
+		try {
+			// Progress percent/animation.
+			Float percent = (float) progress / whole;
+			String percentStr = new DecimalFormat("0.0").format(percent * 100);
+			String animation = ANIMATIONS[progress % 4];
 
-		// (Linux shell) Use char '\r' beautiful to draw progress
-		if (IS_OS_LINUX || IS_OS_MAC) {
-			out.printf("[%s][%s][%s%%][%s/%s][%s]\r", title, bar, percent, progress, whole, animation);
-		} else { // (Windows) Simple output progress
-			out.printf("[%s][%s%%][%s]\r\n", title, percent, animation);
-		}
+			// (Linux shell) Use char '\r' beautiful to draw progress
+			if (IS_OS_LINUX || IS_OS_MAC) {
+				String bar = ">"; // Progress bar
+				int showProgress = (int) (percent * SHOW_WHOLE);
+				for (int i = 0; i < SHOW_WHOLE; i++) {
+					if (i <= showProgress) {
+						bar = barChar + bar;
+					} else {
+						bar = bar + " ";
+					}
+				}
+				out.printf("[%s][%s][%s%%][%s/%s][%s]\r", title, bar, percentStr, progress, whole, animation);
+			} else { // (Windows) Simple output progress
+				out.printf("[%s][%s%%][%s]\r\n", title, percentStr, animation);
+			}
 
-		if (progress == whole) { // Completed?
-			out.println();
+			if (progress == whole) { // Completed?
+				out.println();
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
 		}
-
 	}
 
 	/**
@@ -209,6 +226,24 @@ public abstract class ProcessUtils {
 			ps = getRuntime().exec(cmdarray);
 		}
 		return new DelegateProcess(pwdDir, asList(cmdarray), stdout, stderr, ps);
+	}
+
+	/**
+	 * Execution simple single row command-line get stdout to string.
+	 * 
+	 * @param cmdarray
+	 * @param timeoutMs
+	 * @return
+	 * @throws Exception
+	 */
+	public final static String execSimpleString(final String[] cmdarray, long timeoutMs) throws Exception {
+		Process ps = getRuntime().exec(cmdarray);
+		ps.waitFor(timeoutMs, TimeUnit.MILLISECONDS);
+		String errmsg = readFullyToString(ps.getErrorStream());
+		if (!isBlank(errmsg)) {
+			throw new IllegalStateException(errmsg);
+		}
+		return readFullyToString(ps.getInputStream());
 	}
 
 	/**
@@ -321,18 +356,18 @@ public abstract class ProcessUtils {
 			if (nonNull(stdout)) {
 				ensureFile(stdout);
 				// e.g: echo "hello" 1>out.log
-				cmdStr.append(String.format(" 1%s%s", mode, stdout.getAbsolutePath()));
+				cmdStr.append(format(" 1%s%s", mode, stdout.getAbsolutePath()));
 				redirectToNullIfNecessary = false;
 			}
 			if (nonNull(stderr)) {
 				ensureFile(stderr);
 				// e.g: echo "hello" 2>err.log
-				cmdStr.append(String.format(" 2%s%s", mode, stderr.getAbsolutePath()));
+				cmdStr.append(format(" 2%s%s", mode, stderr.getAbsolutePath()));
 				redirectToNullIfNecessary = false;
 			}
 			if (redirectToNullIfNecessary) {
 				// e.g: echo "hello" >>/dev/null
-				cmdStr.append(String.format(" %s /dev/null", mode));
+				cmdStr.append(format(" %s /dev/null", mode));
 			}
 		}
 		cmdarray.add(cmdStr.toString());
