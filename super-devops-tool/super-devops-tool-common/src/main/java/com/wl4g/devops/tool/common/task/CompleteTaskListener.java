@@ -1,4 +1,4 @@
-package com.wl4g.devops.support.task;
+package com.wl4g.devops.tool.common.task;
 
 import java.util.Collection;
 import java.util.concurrent.TimeoutException;
@@ -17,9 +17,9 @@ public interface CompleteTaskListener {
 	 * 
 	 * @param ex
 	 * @param completed
-	 * @param uncompleted
+	 * @param uncompleteds
 	 * @throws Exception
 	 */
-	void onComplete(TimeoutException ex, long completed, Collection<Runnable> uncompleted) throws Exception;
+	void onComplete(TimeoutException ex, long completed, Collection<Runnable> uncompleteds) throws Exception;
 
 }

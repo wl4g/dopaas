@@ -20,28 +20,20 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
-import com.wl4g.devops.tool.common.collection.CollectionUtils2;
+import com.wl4g.devops.tool.common.task.SafeEnhancedScheduledTaskExecutor;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.lang.Assert2.state;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static java.lang.String.format;
-import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -69,7 +61,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	private Thread boss;
 
 	/** Runner worker thread group pool. */
-	private SafeEnhancedScheduledExecutor worker;
+	private SafeEnhancedScheduledTaskExecutor worker;
 
 	@SuppressWarnings("unchecked")
 	public GenericTaskRunner() {
@@ -161,7 +153,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 			if (config.getConcurrency() > 0) {
 				// See:https://www.jianshu.com/p/e7ab1ac8eb4c
 				ThreadFactory tf = new NamedThreadFactory(getClass().getSimpleName() + "-worker");
-				worker = new SafeEnhancedScheduledExecutor(config.getConcurrency(), tf, config.getAcceptQueue(),
+				worker = new SafeEnhancedScheduledTaskExecutor(config.getConcurrency(), tf, config.getAcceptQueue(),
 						config.getReject());
 				worker.setMaximumPoolSize(config.getConcurrency());
 				worker.setKeepAliveTime(config.getKeepAliveTime(), MICROSECONDS);
@@ -236,69 +228,11 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	}
 
 	/**
-	 * Submitted job wait for completed.
-	 * 
-	 * @param jobs
-	 * @param timeoutMs
-	 * @throws IllegalStateException
-	 */
-	public void submitForComplete(List<Runnable> jobs, long timeoutMs) throws IllegalStateException {
-		submitForComplete(jobs, (ex, completed, uncompleted) -> {
-			if (nonNull(ex)) {
-				throw ex;
-			}
-		}, timeoutMs);
-	}
-
-	/**
-	 * Submitted job wait for completed.
-	 * 
-	 * @param jobs
-	 * @param listener
-	 * @param timeoutMs
-	 * @throws IllegalStateException
-	 */
-	public void submitForComplete(List<Runnable> jobs, CompleteTaskListener listener, long timeoutMs)
-			throws IllegalStateException {
-		if (!CollectionUtils2.isEmpty(jobs)) {
-			int total = jobs.size();
-			// Future jobs.
-			Map<Future<?>, Runnable> futures = new HashMap<Future<?>, Runnable>(total);
-			try {
-				CountDownLatch latch = new CountDownLatch(total);
-				// Submit job.
-				jobs.stream().forEach(job -> futures.put(getWorker().submit(new FutureDoneTask(latch, job)), job));
-
-				if (!latch.await(timeoutMs, MILLISECONDS)) { // Timeout?
-					Iterator<Entry<Future<?>, Runnable>> it = futures.entrySet().iterator();
-					while (it.hasNext()) {
-						Entry<Future<?>, Runnable> entry = it.next();
-						if (!entry.getKey().isCancelled() && !entry.getKey().isDone()) {
-							entry.getKey().cancel(true);
-						} else {
-							it.remove(); // Cleanup cancelled or isDone
-						}
-					}
-
-					TimeoutException ex = new TimeoutException(
-							format("Failed to job execution timeout, %s -> completed(%s)/total(%s)",
-									jobs.get(0).getClass().getName(), (total - latch.getCount()), total));
-					listener.onComplete(ex, (total - latch.getCount()), futures.values());
-				} else {
-					listener.onComplete(null, total, emptyList());
-				}
-			} catch (Exception e) {
-				throw new IllegalStateException(e);
-			}
-		}
-	}
-
-	/**
 	 * Thread pool executor worker.
 	 * 
 	 * @return
 	 */
-	public SafeEnhancedScheduledExecutor getWorker() {
+	public SafeEnhancedScheduledTaskExecutor getWorker() {
 		state(nonNull(worker), "Worker thread group is not enabled and can be enabled with concurrency >0");
 		return worker;
 	}
@@ -329,41 +263,6 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 				t.setPriority(Thread.NORM_PRIORITY);
 			return t;
 		}
-	}
-
-	/**
-	 * Future done runnable wrapper.
-	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年10月17日
-	 * @since
-	 */
-	private class FutureDoneTask implements Runnable {
-
-		/** {@link CountDownLatch} */
-		final private CountDownLatch latch;
-
-		/** Real runner job. */
-		final private Runnable job;
-
-		public FutureDoneTask(CountDownLatch latch, Runnable job) {
-			notNull(latch, "Job runable latch must not be null.");
-			notNull(job, "Job runable must not be null.");
-			this.latch = latch;
-			this.job = job;
-		}
-
-		@Override
-		public void run() {
-			try {
-				job.run();
-			} catch (Exception e) {
-				log.error("Execution failure task", e);
-			} finally {
-				latch.countDown();
-			}
-		}
-
 	}
 
 }

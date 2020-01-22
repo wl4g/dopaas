@@ -13,22 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.task;
+package com.wl4g.devops.tool.common.task;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.Integer.MAX_VALUE;
+import static java.lang.String.format;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
+
 import static java.lang.System.nanoTime;
+import static java.util.Collections.emptyList;
+import static java.util.Objects.nonNull;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
-import static org.springframework.util.ReflectionUtils.findField;
-import static org.springframework.util.ReflectionUtils.makeAccessible;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
@@ -38,7 +49,12 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.slf4j.Logger;
+
+import com.wl4g.devops.tool.common.collection.CollectionUtils2;
 
 /**
  * An enhanced security and flexible scheduling executor.</br>
@@ -54,7 +70,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see <a href= "http://www.doc88.com/p-3922316178617.html"> Resolution
  *      ScheduledThreadPoolExecutor for retry task OOM</a>
  */
-public class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
+public class SafeEnhancedScheduledTaskExecutor extends ScheduledThreadPoolExecutor {
+	final protected Logger log = getLogger(getClass());
 
 	/**
 	 * Maximum allowed waiting execution queue size.
@@ -66,13 +83,100 @@ public class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
 	 */
 	final private RejectedExecutionHandler rejectHandler;
 
-	public SafeEnhancedScheduledExecutor(int corePoolSize, ThreadFactory threadFactory, int acceptQueue,
+	public SafeEnhancedScheduledTaskExecutor(int corePoolSize, ThreadFactory threadFactory, int acceptQueue,
 			RejectedExecutionHandler rejectHandler) {
 		super(corePoolSize, threadFactory, rejectHandler);
 		isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");
 		notNullOf(rejectHandler, "rejectHandler");
 		this.acceptQueue = acceptQueue;
 		this.rejectHandler = rejectHandler;
+	}
+
+	/**
+	 * The {@link #invokeAll(Collection, long, TimeUnit)} or
+	 * {@link #invokeAny(Collection, long, TimeUnit)} related methods also call
+	 * {@link #execute(Runnable)} in the end. For details, see:
+	 * 
+	 * @see {@link java.util.concurrent.AbstractExecutorService#doInvokeAny()#176}
+	 * @see {@link java.util.concurrent.ExecutorCompletionService#submit()}
+	 */
+	@Override
+	public void execute(Runnable command) {
+		if (checkRejectedQueueLimit(command))
+			return;
+		super.execute(command);
+	}
+
+	@Override
+	public Future<?> submit(Runnable task) {
+		if (checkRejectedQueueLimit(task))
+			return null;
+		return super.submit(task);
+	}
+
+	@Override
+	public <T> Future<T> submit(Runnable task, T result) {
+		if (checkRejectedQueueLimit(task))
+			return null;
+		return super.submit(task, result);
+	}
+
+	/**
+	 * Submitted job wait for completed.
+	 * 
+	 * @param jobs
+	 * @param timeoutMs
+	 * @throws IllegalStateException
+	 */
+	public void submitForComplete(List<Runnable> jobs, long timeoutMs) throws IllegalStateException {
+		submitForComplete(jobs, (ex, completed, uncompleted) -> {
+			if (nonNull(ex)) {
+				throw ex;
+			}
+		}, timeoutMs);
+	}
+
+	/**
+	 * Submitted job wait for completed.
+	 * 
+	 * @param jobs
+	 * @param listener
+	 * @param timeoutMs
+	 * @throws IllegalStateException
+	 */
+	public void submitForComplete(List<Runnable> jobs, CompleteTaskListener listener, long timeoutMs)
+			throws IllegalStateException {
+		if (!CollectionUtils2.isEmpty(jobs)) {
+			int total = jobs.size();
+			// Future jobs.
+			Map<Future<?>, Runnable> futures = new HashMap<Future<?>, Runnable>(total);
+			try {
+				CountDownLatch latch = new CountDownLatch(total);
+				// Submit job.
+				jobs.stream().forEach(job -> futures.put(submit(new FutureDoneTask(latch, job)), job));
+
+				if (!latch.await(timeoutMs, MILLISECONDS)) { // Timeout?
+					Iterator<Entry<Future<?>, Runnable>> it = futures.entrySet().iterator();
+					while (it.hasNext()) {
+						Entry<Future<?>, Runnable> entry = it.next();
+						if (!entry.getKey().isCancelled() && !entry.getKey().isDone()) {
+							entry.getKey().cancel(true);
+						} else {
+							it.remove(); // Cleanup cancelled or isDone
+						}
+					}
+
+					TimeoutException ex = new TimeoutException(
+							format("Failed to job execution timeout, %s -> completed(%s)/total(%s)",
+									jobs.get(0).getClass().getName(), (total - latch.getCount()), total));
+					listener.onComplete(ex, (total - latch.getCount()), futures.values());
+				} else {
+					listener.onComplete(null, total, emptyList());
+				}
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
+			}
+		}
 	}
 
 	@Override
@@ -137,35 +241,6 @@ public class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
 		if (checkRejectedQueueLimit(command))
 			return null;
 		return super.scheduleWithFixedDelay(command, initialDelay, delay, unit);
-	}
-
-	/**
-	 * The {@link #invokeAll(Collection, long, TimeUnit)} or
-	 * {@link #invokeAny(Collection, long, TimeUnit)} related methods also call
-	 * {@link #execute(Runnable)} in the end. For details, see:
-	 * 
-	 * @see {@link java.util.concurrent.AbstractExecutorService#doInvokeAny()#176}
-	 * @see {@link java.util.concurrent.ExecutorCompletionService#submit()}
-	 */
-	@Override
-	public void execute(Runnable command) {
-		if (checkRejectedQueueLimit(command))
-			return;
-		super.execute(command);
-	}
-
-	@Override
-	public Future<?> submit(Runnable task) {
-		if (checkRejectedQueueLimit(task))
-			return null;
-		return super.submit(task);
-	}
-
-	@Override
-	public <T> Future<T> submit(Runnable task, T result) {
-		if (checkRejectedQueueLimit(task))
-			return null;
-		return super.submit(task, result);
 	}
 
 	/**
@@ -391,6 +466,41 @@ public class SafeEnhancedScheduledExecutor extends ScheduledThreadPoolExecutor {
 				return (boolean) canRunInCurrentRunStateMethod.invoke(executor, periodic);
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
+			}
+		}
+
+	}
+
+	/**
+	 * Future done runnable wrapper.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年10月17日
+	 * @since
+	 */
+	private class FutureDoneTask implements Runnable {
+
+		/** {@link CountDownLatch} */
+		final private CountDownLatch latch;
+
+		/** Real runner job. */
+		final private Runnable job;
+
+		public FutureDoneTask(CountDownLatch latch, Runnable job) {
+			notNull(latch, "Job runable latch must not be null.");
+			notNull(job, "Job runable must not be null.");
+			this.latch = latch;
+			this.job = job;
+		}
+
+		@Override
+		public void run() {
+			try {
+				job.run();
+			} catch (Exception e) {
+				log.error("Execution failure task", e);
+			} finally {
+				latch.countDown();
 			}
 		}
 

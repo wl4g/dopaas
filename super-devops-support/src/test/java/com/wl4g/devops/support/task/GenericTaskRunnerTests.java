@@ -40,7 +40,7 @@ public class GenericTaskRunnerTests {
 		// scheduleWithRandomErrorInterruptedTest4();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	public static void submitForCompleteTest1() throws Exception {
 		// Add testing jobs.
 		List<Runnable> jobs = new ArrayList<>();
@@ -67,7 +67,7 @@ public class GenericTaskRunnerTests {
 		System.out.println(runner);
 
 		// Submit jobs & listen job timeout.
-		runner.submitForComplete(jobs, (ex, completed, uncompleted) -> {
+		runner.getWorker().submitForComplete(jobs, (ex, completed, uncompleted) -> {
 			ex.printStackTrace();
 			System.out.println(String.format("Completed: %s, uncompleted sets: %s", completed, uncompleted));
 		}, 4 * 1000l); // > 3*3000
