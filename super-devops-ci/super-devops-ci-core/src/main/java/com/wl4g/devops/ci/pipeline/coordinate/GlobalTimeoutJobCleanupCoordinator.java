@@ -21,17 +21,21 @@ import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
-import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.KEY_FINALIZER_INTERVALMS;
-import static com.wl4g.devops.tool.common.lang.ThreadUtils2.sleepRandom;
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.System.currentTimeMillis;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
@@ -44,7 +48,7 @@ import static java.util.Objects.nonNull;
 public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<RunnerProperties> {
 	final public static long DEFAULT_MIN_WATCH_MS = 2_000L;
 
-	final protected Logger log = SmartLoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	@Autowired
 	protected ThreadPoolTaskScheduler scheduler;
@@ -60,54 +64,49 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 	@Autowired
 	protected TaskHistoryDao taskHistoryDao;
 
+	protected ScheduledFuture<?> future;
+
 	public GlobalTimeoutJobCleanupCoordinator() {
 		super(new RunnerProperties(true));
 	}
 
 	@Override
 	public void run() {
-		if (isActive()) {
+		future = getWorker().scheduleWithRandomDelay(() -> {
 			try {
-				loopWatchTimeoutCleanupFinalizer(getCleanupFinalizerLockName());
-			} catch (InterruptedException e) {
-				log.error("Critical error!!! Global timeout cleanup watcher interrupted, timeout jobs will not be cleanup.", e);
+				doInspectForTimeoutStopAndCleanup(getCleanupFinalizerLockName());
+			} catch (Exception e) {
+				throw new IllegalStateException(
+						"Critical error!!! Global timeout cleanup watcher interrupted, timeout jobs will not be cleanup.", e);
 			}
-		}
+		}, 5000, DEFAULT_MIN_WATCH_MS, getGlobalJobCleanMaxIntervalMs(), TimeUnit.MILLISECONDS);
 	}
 
 	/**
-	 * Watch timeout jobs, updating their status to failure.
+	 * Inspecting timeout jobs, updating their status to failure.
 	 * 
 	 * @param cleanupFinalizerLockName
 	 * @throws InterruptedException
 	 */
-	private void loopWatchTimeoutCleanupFinalizer(String cleanupFinalizerLockName) throws InterruptedException {
-		while (isActive()) {
-			long maxIntervalMs = getGlobalJobCleanMaxIntervalMs();
-			sleepRandom(DEFAULT_MIN_WATCH_MS, maxIntervalMs);
-			log.info("Global jobs timeout cleanup for maxIntervalMs: {}ms ... ", maxIntervalMs);
-
-			Lock lock = lockManager.getLock(cleanupFinalizerLockName);
-			try {
-				// Cleanup timeout jobs on this node, nodes that do not
-				// acquire lock are on ready in place.
-				if (lock.tryLock()) {
-					long begin = System.currentTimeMillis();
-					int count = taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
-					if (count > 0) {
-						log.info(
-								"Updated pipeline timeout jobs, with jobTimeoutSec:{}, global jobCleanMaxIntervalMs:{}, count:{}, cost: {}ms",
-								config.getBuild().getJobTimeoutSec(), maxIntervalMs, count, (System.currentTimeMillis() - begin));
-					}
-				} else {
-					log.debug("Skip cleanup jobs ... jobTimeoutSec:{}, global jobCleanMaxIntervalMs:{}",
-							config.getBuild().getJobTimeoutSec(), maxIntervalMs);
+	private void doInspectForTimeoutStopAndCleanup(String cleanupFinalizerLockName) throws InterruptedException {
+		Lock lock = lockManager.getLock(cleanupFinalizerLockName);
+		try {
+			// Cleanup timeout jobs on this node, nodes that do not
+			// acquire lock are on ready in place.
+			if (lock.tryLock()) {
+				long begin = System.currentTimeMillis();
+				int count = taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
+				if (count > 0) {
+					log.info("Updated pipeline timeout jobs, with jobTimeoutSec:{}, count:{}, cost: {}ms",
+							config.getBuild().getJobTimeoutSec(), count, (currentTimeMillis() - begin));
 				}
-			} catch (Throwable ex) {
-				log.error("Failed to timeout jobs cleanup", ex);
-			} finally {
-				lock.unlock();
+			} else {
+				log.debug("Skip cleanup jobs ... jobTimeoutSec:{}", config.getBuild().getJobTimeoutSec());
 			}
+		} catch (Throwable ex) {
+			log.error("Failed to timeout jobs cleanup", ex);
+		} finally {
+			lock.unlock();
 		}
 
 	}
@@ -123,6 +122,13 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 		// Distributed global intervalMs.
 		jedisService.setObjectT(KEY_FINALIZER_INTERVALMS, globalJobCleanMaxIntervalMs, -1);
 		log.info("Refreshed global timeoutCleanupFinalizer of intervalMs:<%s>", globalJobCleanMaxIntervalMs);
+
+		// Cancel older task.
+		if (!isNull(future) && !future.isCancelled() && !future.isDone()) {
+			isTrue(future.cancel(true), "Failed to cancel older task of %s", future);
+		}
+
+		run(); // Restart
 
 		// Get available global intervalMs.
 		return getGlobalJobCleanMaxIntervalMs();

@@ -17,6 +17,7 @@ package com.wl4g.devops.tool.common.lang;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -75,14 +76,14 @@ public abstract class Assert2 {
 	 * 
 	 * @param expression
 	 *            a boolean expression
-	 * @param message
+	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @throws IllegalStateException
 	 *             if {@code expression} is {@code false}
 	 */
-	public static void state(boolean expression, String message) {
+	public static void state(boolean expression, String fmtMessage, Object... args) {
 		if (!expression) {
-			throw new IllegalStateException("[Assertion failed] - " + message);
+			throw new IllegalStateException("[Assertion failed] - " + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -108,14 +109,14 @@ public abstract class Assert2 {
 	 * 
 	 * @param expression
 	 *            a boolean expression
-	 * @param message
+	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @throws IllegalArgumentException
 	 *             if {@code expression} is {@code false}
 	 */
-	public static void isTrue(boolean expression, String message) {
+	public static void isTrue(boolean expression, String fmtMessage, Object... args) {
 		if (!expression) {
-			throw new IllegalArgumentException("[Assertion failed] - " + message);
+			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -140,14 +141,14 @@ public abstract class Assert2 {
 	 * 
 	 * @param object
 	 *            the object to check
-	 * @param message
+	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @throws IllegalArgumentException
 	 *             if the object is not {@code null}
 	 */
-	public static void isNull(Object object, String message) {
+	public static void isNull(Object object, String fmtMessage, Object... args) {
 		if (object != null) {
-			throw new IllegalArgumentException("[Assertion failed] - " + message);
+			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -171,14 +172,14 @@ public abstract class Assert2 {
 	 * 
 	 * @param object
 	 *            the object to check
-	 * @param message
+	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @throws IllegalArgumentException
 	 *             if the object is {@code null}
 	 */
-	public static void notNull(Object object, String message) {
+	public static void notNull(Object object, String fmtMessage, Object... args) {
 		if (object == null) {
-			throw new IllegalArgumentException("[Assertion failed] - " + message);
+			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -203,15 +204,15 @@ public abstract class Assert2 {
 	 * 
 	 * @param text
 	 *            the String to check
-	 * @param message
+	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @see StringUtils#hasLength
 	 * @throws IllegalArgumentException
 	 *             if the text is empty
 	 */
-	public static void hasLength(String text, String message) {
+	public static void hasLength(String text, String fmtMessage, Object... args) {
 		if (!isNotBlank(text)) {
-			throw new IllegalArgumentException("[Assertion failed] - " + message);
+			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -238,15 +239,15 @@ public abstract class Assert2 {
 	 * 
 	 * @param text
 	 *            the String to check
-	 * @param message
+	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @see StringUtils#hasText
 	 * @throws IllegalArgumentException
 	 *             if the text does not contain valid text content
 	 */
-	public static void hasText(String text, String message) {
+	public static void hasText(String text, String fmtMessage, Object... args) {
 		if (!isNotBlank(text)) {
-			throw new IllegalArgumentException("[Assertion failed] - " + message);
+			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -274,14 +275,14 @@ public abstract class Assert2 {
 	 *            the text to search
 	 * @param substring
 	 *            the substring to find within the text
-	 * @param message
+	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @throws IllegalArgumentException
 	 *             if the text contains the substring
 	 */
-	public static void doesNotContain(String textToSearch, String substring, String message) {
+	public static void doesNotContain(String textToSearch, String substring, String fmtMessage, Object... args) {
 		if (isNotBlank(textToSearch) && isNotBlank(substring) && textToSearch.contains(substring)) {
-			throw new IllegalArgumentException("[Assertion failed] - " + message);
+			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -308,14 +309,14 @@ public abstract class Assert2 {
 	 * 
 	 * @param array
 	 *            the array to check
-	 * @param message
+	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @throws IllegalArgumentException
 	 *             if the object array is {@code null} or contains no elements
 	 */
-	public static void notEmpty(Object[] array, String message) {
+	public static void notEmpty(Object[] array, String fmtMessage, Object... args) {
 		if (array == null || array.length == 0) {
-			throw new IllegalArgumentException(message);
+			throw new IllegalArgumentException(doFormat(fmtMessage, args));
 		}
 	}
 
@@ -342,16 +343,16 @@ public abstract class Assert2 {
 	 * 
 	 * @param array
 	 *            the array to check
-	 * @param message
+	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @throws IllegalArgumentException
 	 *             if the object array contains a {@code null} element
 	 */
-	public static void noNullElements(Object[] array, String message) {
+	public static void noNullElements(Object[] array, String fmtMessage, Object... args) {
 		if (array != null) {
 			for (Object element : array) {
 				if (element == null) {
-					throw new IllegalArgumentException("[Assertion failed] - " + message);
+					throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
 				}
 			}
 		}
@@ -378,14 +379,14 @@ public abstract class Assert2 {
 	 * 
 	 * @param collection
 	 *            the collection to check
-	 * @param message
+	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @throws IllegalArgumentException
 	 *             if the collection is {@code null} or contains no elements
 	 */
-	public static void notEmpty(Collection<?> collection, String message) {
+	public static void notEmpty(Collection<?> collection, String fmtMessage, Object... args) {
 		if (collection == null || collection.isEmpty()) {
-			throw new IllegalArgumentException("[Assertion failed] - " + message);
+			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -411,14 +412,14 @@ public abstract class Assert2 {
 	 * 
 	 * @param map
 	 *            the map to check
-	 * @param message
+	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @throws IllegalArgumentException
 	 *             if the map is {@code null} or contains no entries
 	 */
-	public static void notEmpty(Map<?, ?> map, String message) {
+	public static void notEmpty(Map<?, ?> map, String fmtMessage, Object... args) {
 		if (map == null || map.isEmpty()) {
-			throw new IllegalArgumentException("[Assertion failed] - " + message);
+			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -445,7 +446,7 @@ public abstract class Assert2 {
 	 *            the type to check against
 	 * @param obj
 	 *            the object to check
-	 * @param message
+	 * @param fmtMessage
 	 *            a message which will be prepended to provide further context.
 	 *            If it is empty or ends in ":" or ";" or "," or ".", a full
 	 *            exception message will be appended. If it ends in a space, the
@@ -455,10 +456,10 @@ public abstract class Assert2 {
 	 * @throws IllegalArgumentException
 	 *             if the object is not an instance of type
 	 */
-	public static void isInstanceOf(Class<?> type, Object obj, String message) {
+	public static void isInstanceOf(Class<?> type, Object obj, String fmtMessage, Object... args) {
 		notNull(type, "Type to check against must not be null");
 		if (!type.isInstance(obj)) {
-			instanceCheckFailed(type, obj, message);
+			instanceCheckFailed(type, obj, doFormat(fmtMessage, args));
 		}
 	}
 
@@ -491,7 +492,7 @@ public abstract class Assert2 {
 	 *            the super type to check against
 	 * @param subType
 	 *            the sub type to check
-	 * @param message
+	 * @param fmtMessage
 	 *            a message which will be prepended to provide further context.
 	 *            If it is empty or ends in ":" or ";" or "," or ".", a full
 	 *            exception message will be appended. If it ends in a space, the
@@ -501,10 +502,10 @@ public abstract class Assert2 {
 	 * @throws IllegalArgumentException
 	 *             if the classes are not assignable
 	 */
-	public static void isAssignable(Class<?> superType, Class<?> subType, String message) {
+	public static void isAssignable(Class<?> superType, Class<?> subType, String fmtMessage, Object... args) {
 		notNull(superType, "Super type to check against must not be null");
 		if (subType == null || !superType.isAssignableFrom(subType)) {
-			assignableCheckFailed(superType, subType, message);
+			assignableCheckFailed(superType, subType, doFormat(fmtMessage, args));
 		}
 	}
 
@@ -567,6 +568,13 @@ public abstract class Assert2 {
 
 	private static String messageWithTypeName(String msg, Object typeName) {
 		return msg + (msg.endsWith(" ") ? "" : ": ") + typeName;
+	}
+
+	private static String doFormat(String format, Object... args) {
+		if (Objects.nonNull(args) && args.length > 0) {
+			return String.format(format, args);
+		}
+		return format;
 	}
 
 }

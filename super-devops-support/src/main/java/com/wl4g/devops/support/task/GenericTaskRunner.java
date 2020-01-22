@@ -20,7 +20,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
-import com.wl4g.devops.support.task.SafeEnhancedScheduledExecutor.RandomScheduleRunnable;
 import com.wl4g.devops.tool.common.collection.CollectionUtils2;
 
 import java.io.Closeable;
@@ -29,11 +28,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,7 +42,6 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.lang.Integer.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -75,7 +69,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	private Thread boss;
 
 	/** Runner worker thread group pool. */
-	private ScheduledThreadPoolExecutor worker;
+	private SafeEnhancedScheduledExecutor worker;
 
 	@SuppressWarnings("unchecked")
 	public GenericTaskRunner() {
@@ -161,8 +155,9 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 			// Create worker(if necessary)
 			if (config.getConcurrency() > 0) {
 				// See:https://www.jianshu.com/p/e7ab1ac8eb4c
-				worker = new SafeEnhancedScheduledExecutor(config.getConcurrency(),
-						new NamedThreadFactory(getClass().getSimpleName()), config.getAcceptQueue(), config.getReject());
+				ThreadFactory tf = new NamedThreadFactory(getClass().getSimpleName() + "-worker");
+				worker = new SafeEnhancedScheduledExecutor(config.getConcurrency(), tf, config.getAcceptQueue(),
+						config.getReject());
 				worker.setMaximumPoolSize(config.getConcurrency());
 				worker.setKeepAliveTime(config.getKeepAliveTime(), MICROSECONDS);
 			} else {
@@ -171,9 +166,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 
 			// Boss asynchronously execution.(if necessary)
 			if (config.isAsyncStartup()) {
-				String name = getClass().getSimpleName() + "-boss";
-				boss = new Thread(this, name);
-				boss.setDaemon(false);
+				boss = new NamedThreadFactory(getClass().getSimpleName() + "-boss").newThread(this);
 				boss.start();
 			} else {
 				run(); // Sync execution.
@@ -235,44 +228,6 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	@Override
 	public void run() {
 		// Ignore
-	}
-
-	/**
-	 * Random interval scheduling based on dynamic schedule.
-	 * 
-	 * @see {@link java.util.concurrent.ScheduledThreadPoolExecutor#scheduleAtFixedRate(Runnable, long, long, TimeUnit)}
-	 * 
-	 * @param command
-	 * @param initialDelay
-	 * @param minDelay
-	 * @param maxDelay
-	 * @param unit
-	 * @return
-	 */
-	public ScheduledFuture<?> scheduleAtRandomRate(Runnable command, long initialDelay, long minDelay, long maxDelay,
-			TimeUnit unit) {
-		return getWorker().scheduleAtFixedRate(
-				new RandomScheduleRunnable(unit.toMillis(minDelay), unit.toMillis(maxDelay), command), initialDelay, MAX_VALUE,
-				MILLISECONDS);
-	}
-
-	/**
-	 * Random interval scheduling based on fixed schedule.
-	 * 
-	 * @see {@link java.util.concurrent.ScheduledThreadPoolExecutor#scheduleWithFixedDelay(Runnable, long, long, TimeUnit)}
-	 * 
-	 * @param command
-	 * @param initialDelay
-	 * @param minDelay
-	 * @param maxDelay
-	 * @param unit
-	 * @return
-	 */
-	public ScheduledFuture<?> scheduleWithRandomDelay(Runnable command, long initialDelay, long minDelay, long maxDelay,
-			TimeUnit unit) {
-		return getWorker().scheduleWithFixedDelay(
-				new RandomScheduleRunnable(unit.toMillis(minDelay), unit.toMillis(maxDelay), command), initialDelay, MAX_VALUE,
-				MILLISECONDS);
 	}
 
 	/**
@@ -338,7 +293,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * 
 	 * @return
 	 */
-	protected ScheduledExecutorService getWorker() {
+	protected SafeEnhancedScheduledExecutor getWorker() {
 		state(nonNull(worker), "Worker thread group is not enabled and can be enabled with concurrency >0");
 		return worker;
 	}
@@ -355,7 +310,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 			SecurityManager s = System.getSecurityManager();
 			this.group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
 			if (isBlank(prefix)) {
-				prefix = GenericTaskRunner.class.getSimpleName() + "-Default";
+				prefix = GenericTaskRunner.class.getSimpleName() + "-default";
 			}
 			this.prefix = prefix;
 		}

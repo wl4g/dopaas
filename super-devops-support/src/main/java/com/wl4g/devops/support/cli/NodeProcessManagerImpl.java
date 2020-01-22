@@ -97,63 +97,60 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 
 	@Override
 	public void run() {
-		if (isActive()) {
+		getWorker().scheduleWithRandomDelay(() -> {
 			try {
-				loopWatchProcessesDestroy(getDestroyLockName());
-			} catch (InterruptedException e) {
-				log.error("Critical error! Killed node process watcher, commands process on this node will not be manual cancel.",
+				doInspectForProcessesDestroy(getDestroyLockName());
+			} catch (Exception e) {
+				throw new IllegalStateException(
+						"Critical error! Killed node process watcher, commands process on this node will not be manual cancel.",
 						e);
 			}
-		}
+		}, 5000, DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS, TimeUnit.MILLISECONDS);
 	}
 
 	/**
-	 * Watching process destroy all.</br>
+	 * Inspecting process destroy all.</br>
 	 * Akka can be used instead of distributed message transmission. This is for
 	 * a more lightweight implementation, so redis scanning is used
 	 * 
 	 * @param destroyLockName
 	 * @throws InterruptedException
 	 */
-	private void loopWatchProcessesDestroy(String destroyLockName) throws InterruptedException {
-		while (isActive()) {
-			sleepRandom(DEFAULT_MIN_WATCH_MS, DEFAULT_MAX_WATCH_MS);
-
-			Lock lock = lockManager.getLock(destroyLockName);
-			try {
-				// Let cluster this node process destroy, nodes that do not
-				// acquire lock are on ready in place.
-				if (lock.tryLock()) {
-					Collection<DestroableProcess> pss = repository.getProcessRegistry();
-					if (log.isDebugEnabled()) {
-						log.debug("Destroable processes: {}", pss);
-					}
-					for (DestroableProcess ps : pss) {
-						String signalKey = getDestroySignalKey(ps.getProcessId());
-						// Match & destroy process. See:[MARK1]
-						DestroySignal signal = jedisService.getObjectAsJson(signalKey, DestroySignal.class);
-						try {
-							if (nonNull(signal)) {
-								doDestroy(signal);
-								publishDestroyMessage(signal, null);
-								break;
-							}
-						} catch (Exception e) {
-							log.error("Failed to destroy process.", e);
-							publishDestroyMessage(signal, e);
-						} finally {
-							jedisService.del(signalKey); // Cleanup.
-						}
-					}
-
-				} else if (log.isDebugEnabled()) {
-					log.debug("Skip destroy processes ...");
+	private void doInspectForProcessesDestroy(String destroyLockName) throws InterruptedException {
+		Lock lock = lockManager.getLock(destroyLockName);
+		try {
+			// Let cluster this node process destroy, nodes that do not
+			// acquire lock are on ready in place.
+			if (lock.tryLock()) {
+				Collection<DestroableProcess> pss = repository.getProcessRegistry();
+				if (log.isDebugEnabled()) {
+					log.debug("Destroable processes: {}", pss);
 				}
-			} catch (Throwable ex) {
-				log.error("Destruction error", ex);
-			} finally {
-				lock.unlock();
+				for (DestroableProcess ps : pss) {
+					String signalKey = getDestroySignalKey(ps.getProcessId());
+					// Match & destroy process. See:[MARK1]
+					DestroySignal signal = jedisService.getObjectAsJson(signalKey, DestroySignal.class);
+					try {
+						if (nonNull(signal)) {
+							doDestroy(signal);
+							publishDestroyMessage(signal, null);
+							break;
+						}
+					} catch (Exception e) {
+						log.error("Failed to destroy process.", e);
+						publishDestroyMessage(signal, e);
+					} finally {
+						jedisService.del(signalKey); // Cleanup.
+					}
+				}
+
+			} else if (log.isDebugEnabled()) {
+				log.debug("Skip destroy processes ...");
 			}
+		} catch (Throwable ex) {
+			log.error("Destruction error", ex);
+		} finally {
+			lock.unlock();
 		}
 
 	}

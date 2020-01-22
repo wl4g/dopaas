@@ -36,8 +36,8 @@ public class GenericTaskRunnerTests {
 	public static void main(String[] args) throws Exception {
 		// submitForCompleteTest1();
 		// scheduleQueueRejectedTest2();
-		// scheduleWithFixedTest3();
-		scheduleWithRandomTest4();
+		scheduleWithFixedErrorInterruptedTest3();
+		// scheduleWithRandomErrorInterruptedTest4();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -63,9 +63,7 @@ public class GenericTaskRunnerTests {
 		}
 
 		// Create runner.
-		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
-		};
-		runner.run(null);
+		GenericTaskRunner runner = createGenericTaskRunner(2);
 		System.out.println(runner);
 
 		// Submit jobs & listen job timeout.
@@ -77,12 +75,10 @@ public class GenericTaskRunnerTests {
 		// runner.close();
 	}
 
-	@SuppressWarnings({ "rawtypes", "resource" })
+	@SuppressWarnings({ "rawtypes" })
 	public static void scheduleQueueRejectedTest2() throws Exception {
 		// Create runner.
-		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
-		};
-		runner.run(null);
+		GenericTaskRunner runner = createGenericTaskRunner(2);
 
 		for (int i = 0; i < 100; i++) {
 			final String idStr = "testjob-" + i;
@@ -105,32 +101,60 @@ public class GenericTaskRunnerTests {
 		// runner.close();
 	}
 
-	@SuppressWarnings({ "rawtypes", "resource" })
-	public static void scheduleWithFixedTest3() throws Exception {
+	@SuppressWarnings({ "rawtypes" })
+	public static void scheduleWithFixedErrorInterruptedTest3() throws Exception {
 		// Create runner.
-		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
-		};
-		runner.run(null);
+		GenericTaskRunner runner = createGenericTaskRunner(2);
 
+		// Task1(Error):
 		runner.getWorker().scheduleAtFixedRate(() -> {
-			System.out.println(currentTimeMillis() + " - Fixed time task...");
-		}, 500, 1000, TimeUnit.MILLISECONDS);
+			System.out.println(currentTimeMillis() + " - Error of task1..." + runner.getWorker());
+			throw new RuntimeException(currentTimeMillis() + " - Error of task1...");
+		}, 1, 2, TimeUnit.SECONDS);
+
+		// Task2(Normal):
+		runner.getWorker().scheduleAtFixedRate(() -> {
+			System.out.println(currentTimeMillis() + " - Normal of task2..." + runner.getWorker());
+		}, 1, 2, TimeUnit.SECONDS);
+
+		// Task3(Normal):
+		runner.getWorker().scheduleAtFixedRate(() -> {
+			System.out.println(currentTimeMillis() + " - Normal of task3..." + runner.getWorker());
+		}, 1, 2, TimeUnit.SECONDS);
 
 		// runner.close();
 	}
 
-	@SuppressWarnings({ "rawtypes", "resource" })
-	public static void scheduleWithRandomTest4() throws Exception {
+	@SuppressWarnings({ "rawtypes" })
+	public static void scheduleWithRandomErrorInterruptedTest4() throws Exception {
 		// Create runner.
-		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
-		};
-		runner.run(null);
+		GenericTaskRunner runner = createGenericTaskRunner(2);
 
-		runner.scheduleAtRandomRate(() -> {
-			System.out.println(currentTimeMillis() + " - Random time task...");
-		}, 500, 1, 6, TimeUnit.SECONDS);
+		// Task1(Error):
+		runner.getWorker().scheduleAtRandomRate(() -> {
+			System.out.println(currentTimeMillis() + " - Error of task1..." + runner.getWorker());
+			throw new RuntimeException(currentTimeMillis() + " - Error of task1...");
+		}, 1, 1, 2, TimeUnit.SECONDS);
+
+		// Task2(Normal):
+		runner.getWorker().scheduleAtRandomRate(() -> {
+			System.out.println(currentTimeMillis() + " - Normal of task2..." + runner.getWorker());
+		}, 1, 1, 6, TimeUnit.SECONDS);
+
+		// Task3(Normal):
+		runner.getWorker().scheduleAtRandomRate(() -> {
+			System.out.println(currentTimeMillis() + " - Normal of task3..." + runner.getWorker());
+		}, 1, 1, 6, TimeUnit.SECONDS);
 
 		// runner.close();
+	}
+
+	private static GenericTaskRunner<RunnerProperties> createGenericTaskRunner(int concurrencyPoolSize) throws Exception {
+		GenericTaskRunner<RunnerProperties> runner = new GenericTaskRunner<RunnerProperties>(
+				new RunnerProperties(false, concurrencyPoolSize)) {
+		};
+		runner.run(null);
+		return runner;
 	}
 
 }
