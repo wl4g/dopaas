@@ -33,7 +33,6 @@ import static com.wl4g.devops.tool.common.lang.Assert2.state;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -153,10 +152,8 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 			if (config.getConcurrency() > 0) {
 				// See:https://www.jianshu.com/p/e7ab1ac8eb4c
 				ThreadFactory tf = new NamedThreadFactory(getClass().getSimpleName() + "-worker");
-				worker = new SafeEnhancedScheduledTaskExecutor(config.getConcurrency(), tf, config.getAcceptQueue(),
-						config.getReject());
-				worker.setMaximumPoolSize(config.getConcurrency());
-				worker.setKeepAliveTime(config.getKeepAliveTime(), MICROSECONDS);
+				worker = new SafeEnhancedScheduledTaskExecutor(config.getConcurrency(), config.getKeepAliveTime(), tf,
+						config.getAcceptQueue(), config.getReject());
 			} else {
 				log.warn("No start threads worker, because the number of workthreads is less than 0");
 			}
