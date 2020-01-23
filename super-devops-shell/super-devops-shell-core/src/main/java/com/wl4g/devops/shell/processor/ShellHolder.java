@@ -27,6 +27,8 @@ import com.wl4g.devops.shell.message.ProgressMessage;
  * @since
  */
 public abstract class ShellHolder {
+	final private static int DEFAULT_WHOLE = 100;
+
 	/** Shell context cache. */
 	final private static ThreadLocal<ShellContext> contextCache = new InheritableThreadLocal<>();
 
@@ -76,9 +78,23 @@ public abstract class ShellHolder {
 	}
 
 	/**
-	 * Print message to client console
+	 * Print progress message to client console.
 	 * 
-	 * @param message
+	 * @param title
+	 * @param progressPercent
+	 * @return
+	 */
+	public static ShellContext currentPrintf(String title, float progressPercent) {
+		return currentShell(true).printf(new ProgressMessage(title, DEFAULT_WHOLE, (int) (DEFAULT_WHOLE * progressPercent)));
+	}
+
+	/**
+	 * Print progress message to client console.
+	 * 
+	 * @param title
+	 * @param whole
+	 * @param progress
+	 * @return
 	 */
 	public static ShellContext currentPrintf(String title, int whole, int progress) {
 		return currentShell(true).printf(new ProgressMessage(title, whole, progress));

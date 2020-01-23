@@ -32,20 +32,10 @@ spring:
         mail:
           enable: false # Default[false]
 
-          #host: smtp.anosi.cn
-          #port: 465
-          #username: syslog@anosi.cn
-          #password: Abc.cn123
-
           host: smtp.sina.com
           port: 465
           username: safec7782@sina.com
           password: safec7782
-
-          #host: smtp.exmail.qq.com
-          #port: 465
-          #username: syslog@7782.co
-          #password: Sm#1234
 
           #host: smtp.163.com
           #port: 465
