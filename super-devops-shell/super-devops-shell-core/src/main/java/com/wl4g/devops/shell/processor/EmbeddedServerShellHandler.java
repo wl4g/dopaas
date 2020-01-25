@@ -172,7 +172,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 		ShellContext context = getClient().getContext();
 
 		// Bind initialize
-		ShellHolder.bind(context);
+		// ShellHolder.bind(context);
 
 		// Find ShellContext parameter index
 		int index = findShellContextForParameterIndex(tm);
