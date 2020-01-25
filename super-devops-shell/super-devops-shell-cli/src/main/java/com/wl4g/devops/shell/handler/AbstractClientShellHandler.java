@@ -42,7 +42,7 @@ import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import static com.wl4g.devops.shell.annotation.ShellOption.GNU_CMD_LONG;
 import static com.wl4g.devops.shell.cli.BuiltInCommand.INTERNAL_HE;
 import static com.wl4g.devops.shell.cli.BuiltInCommand.INTERNAL_HELP;
-import static com.wl4g.devops.shell.config.DefaultCommandHandlerRegistrar.*;
+import static com.wl4g.devops.shell.config.DefaultShellHandlerRegistrar.*;
 import static com.wl4g.devops.shell.utils.LineUtils.clean;
 import static com.wl4g.devops.shell.utils.LineUtils.parse;
 

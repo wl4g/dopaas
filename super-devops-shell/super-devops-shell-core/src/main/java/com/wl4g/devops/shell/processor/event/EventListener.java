@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.shell.processor.event;
 
+import com.wl4g.devops.shell.processor.ShellContext;
+
 /**
  * Event listener
  * 
@@ -22,6 +24,17 @@ package com.wl4g.devops.shell.processor.event;
  * @version v1.0 2019年5月25日
  * @since
  */
-public interface EventListener {
+public abstract class EventListener implements java.util.EventListener {
+
+	final private ShellContext context;
+
+	public EventListener(ShellContext context) {
+		super();
+		this.context = context;
+	}
+
+	public ShellContext getContext() {
+		return context;
+	}
 
 }

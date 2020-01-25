@@ -122,7 +122,7 @@ public abstract class ShellHolder {
 	 */
 	public static boolean currentInterrupted() {
 		ShellContext context = currentShell();
-		return context != null ? context.isInterrupted() : false;
+		return !isNull(context) ? context.isInterrupted() : false;
 	}
 
 }

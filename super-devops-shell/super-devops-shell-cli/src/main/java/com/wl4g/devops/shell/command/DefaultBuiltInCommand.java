@@ -38,7 +38,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.cli.HelpOptions;
 import com.wl4g.devops.shell.cli.BuiltInCommand;
-import com.wl4g.devops.shell.config.DefaultCommandHandlerRegistrar;
+import com.wl4g.devops.shell.config.DefaultShellHandlerRegistrar;
 import com.wl4g.devops.shell.handler.AbstractClientShellHandler;
 import com.wl4g.devops.shell.utils.LineUtils;
 
@@ -66,7 +66,7 @@ public class DefaultBuiltInCommand extends BuiltInCommand {
 	/**
 	 * Shell handler bean registry
 	 */
-	final protected DefaultCommandHandlerRegistrar registry;
+	final protected DefaultShellHandlerRegistrar registry;
 
 	/**
 	 * Line process runner.
@@ -76,7 +76,7 @@ public class DefaultBuiltInCommand extends BuiltInCommand {
 	public DefaultBuiltInCommand(AbstractClientShellHandler runner) {
 		notNull(runner, "runner is null, please check configure");
 		this.runner = runner;
-		this.registry = (DefaultCommandHandlerRegistrar) runner.getRegistry();
+		this.registry = (DefaultShellHandlerRegistrar) runner.getRegistry();
 		notNull(registry, "Registry must not be null");
 	}
 

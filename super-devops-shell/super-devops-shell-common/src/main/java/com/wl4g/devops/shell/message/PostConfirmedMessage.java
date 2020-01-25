@@ -13,23 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.processor.event;
+package com.wl4g.devops.shell.message;
 
-import com.wl4g.devops.shell.processor.ShellContext;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 /**
- * Command event listener
+ * Post confirmed message
  * 
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月25日
+ * @version v1.0 2020年1月4日
  * @since
  */
-public abstract class CommandEventListener extends EventListener {
+public class PostConfirmedMessage extends Message {
+	private static final long serialVersionUID = -8574315246731906685L;
 
-	public CommandEventListener(ShellContext context) {
-		super(context);
+	/**
+	 * Current confirmed state.
+	 */
+	final private Boolean confirmed;
+
+	public PostConfirmedMessage(Boolean confirmed) {
+		notNullOf(confirmed, "confirmed");
+		this.confirmed = confirmed;
 	}
 
-	public abstract void onCommand(String command);
+	public Boolean getConfirmed() {
+		return confirmed;
+	}
+
+	@Override
+	public String toString() {
+		return "PostConfirmedMessage [confirmed=" + confirmed + "]";
+	}
 
 }

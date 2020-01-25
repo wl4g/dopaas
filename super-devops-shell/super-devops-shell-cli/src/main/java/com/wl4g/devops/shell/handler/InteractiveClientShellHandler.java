@@ -29,7 +29,7 @@ import com.wl4g.devops.shell.message.OutputMessage;
 import com.wl4g.devops.shell.message.ProgressMessage;
 
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
-import static com.wl4g.devops.shell.config.DefaultCommandHandlerRegistrar.getSingle;
+import static com.wl4g.devops.shell.config.DefaultShellHandlerRegistrar.getSingle;
 import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.BOF;
 import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.EOF;
 import static com.wl4g.devops.shell.message.ChannelState.*;

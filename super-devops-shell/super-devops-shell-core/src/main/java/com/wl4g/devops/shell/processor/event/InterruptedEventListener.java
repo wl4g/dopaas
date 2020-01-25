@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.shell.processor.event;
 
+import com.wl4g.devops.shell.message.ChannelState;
+import com.wl4g.devops.shell.processor.ShellContext;
+
 /**
  * Interrupt event listener
  * 
@@ -22,8 +25,14 @@ package com.wl4g.devops.shell.processor.event;
  * @version v1.0 2019年5月25日
  * @since
  */
-public interface InterruptEventListener extends EventListener {
+public class InterruptedEventListener extends EventListener {
 
-	void onInterrupt();
+	public InterruptedEventListener(ShellContext context) {
+		super(context);
+	}
+
+	public void onInterrupt() {
+		getContext().setState(ChannelState.INTERRUPTED);
+	}
 
 }
