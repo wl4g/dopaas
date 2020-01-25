@@ -19,6 +19,7 @@ import com.wl4g.devops.shell.message.ChannelState;
 import com.wl4g.devops.shell.message.ExceptionMessage;
 import com.wl4g.devops.shell.message.Message;
 import com.wl4g.devops.shell.message.OutputMessage;
+import com.wl4g.devops.shell.message.ProgressMessage;
 import com.wl4g.devops.shell.processor.EmbeddedServerShellHandler.ShellHandler;
 import com.wl4g.devops.shell.processor.event.EventListener;
 import com.wl4g.devops.shell.processor.event.InterruptedEventListener;
@@ -50,6 +51,8 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
  * @since
  */
 public final class ShellContext implements InternalInjectable, Closeable {
+	final public static int DEFAULT_WHOLE = 100;
+
 	final protected Logger log = getLogger(getClass());
 
 	/**
@@ -143,6 +146,29 @@ public final class ShellContext implements InternalInjectable, Closeable {
 			throw new IllegalStateException("The current console channel may be closed!");
 		}
 		return this;
+	}
+
+	/**
+	 * Print progress message to client console.
+	 *
+	 * @param title
+	 * @param progressPercent
+	 * @return
+	 */
+	public ShellContext printf(String title, float progressPercent) {
+		return printf(new ProgressMessage(title, DEFAULT_WHOLE, (int) (DEFAULT_WHOLE * progressPercent)));
+	}
+
+	/**
+	 * Print progress message to client console.
+	 *
+	 * @param title
+	 * @param whole
+	 * @param progress
+	 * @return
+	 */
+	public ShellContext printf(String title, int whole, int progress) {
+		return printf(new ProgressMessage(title, whole, progress));
 	}
 
 	/**

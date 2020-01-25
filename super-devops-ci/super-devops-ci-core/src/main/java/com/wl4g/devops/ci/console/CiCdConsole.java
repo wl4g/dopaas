@@ -22,10 +22,10 @@ import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.shell.processor.ShellHolder;
+import com.wl4g.devops.shell.processor.ShellContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.devops.shell.processor.ShellHolder.currentPrintf;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.tool.common.lang.TableFormatters.*;
 
@@ -56,18 +56,19 @@ public class CiCdConsole {
 	 * @return
 	 */
 	@ShellMethod(keys = "modifyCleanupInterval", group = GROUP, help = "Modifying global jobs timeout finalizer max-interval")
-	public String modifyCleanupInterval(TimeoutCleanupIntervalArgument arg) {
-		ShellHolder.currentOpen();
+	public String modifyCleanupInterval(TimeoutCleanupIntervalArgument arg, ShellContext context) {
 		try {
-			currentPrintf(String.format("Modifying timeout cleanup finalizer intervalMs: <%s>", arg.getMaxIntervalMs()));
+			context.open();
+			context.printf(String.format("Modifying timeout cleanup finalizer intervalMs: <%s>", arg.getMaxIntervalMs()));
 			// Refreshing global timeoutCleanupFinalizer
 			tjcCoordinator.refreshGlobalJobCleanMaxIntervalMs(arg.getMaxIntervalMs());
 
-			currentPrintf(String.format("Modifyed timeoutCleanup finalizer of intervalMs:<%s>", arg.getMaxIntervalMs()));
+			context.printf(String.format("Modifyed timeoutCleanup finalizer of intervalMs:<%s>", arg.getMaxIntervalMs()));
 		} catch (Exception e) {
-			currentPrintf(String.format("Failed to timeoutCleanup finalizer intervalMs. cause by: %s", getStackTraceAsString(e)));
+			context.printf(
+					String.format("Failed to timeoutCleanup finalizer intervalMs. cause by: %s", getStackTraceAsString(e)));
 		} finally {
-			ShellHolder.currentClose();
+			context.close();
 		}
 		return "Reset timeoutCleanupFinalizer expression completed!";
 	}
@@ -79,20 +80,20 @@ public class CiCdConsole {
 	 * @return
 	 */
 	@ShellMethod(keys = "pipelineList", group = GROUP, help = "Pipeline tasks list.")
-	public String pipelineList(TasksArgument arg) {
-		ShellHolder.currentOpen();
+	public String pipelineList(TasksArgument arg, ShellContext context) {
 		try {
+			context.open();
 			// Find tasks.
 			PageModel pm = new PageModel(arg.getPageNum(), arg.getPageSize());
 			taskService.list(pm, arg.getId(), arg.getTaskName(), arg.getGroupName(), arg.getBranchName(), arg.getTarType(),
 					arg.getStartDate(), arg.getEndDate(), null);
 
 			// Print write to console.
-			currentPrintf(build(pm.getRecords()).setH('=').setV('!').getTableString());
+			context.printf(build(pm.getRecords()).setH('=').setV('!').getTableString());
 		} catch (Exception e) {
-			currentPrintf(String.format("Failed to find taskList. cause by: %s", getStackTraceAsString(e)));
+			context.printf(String.format("Failed to find taskList. cause by: %s", getStackTraceAsString(e)));
 		} finally {
-			ShellHolder.currentClose();
+			context.close();
 		}
 
 		return "Load pipeline task list completed!";

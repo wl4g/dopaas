@@ -32,7 +32,7 @@ import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.console.args.MixedArgument;
 import com.wl4g.devops.shell.console.args.SumArgument;
 import com.wl4g.devops.shell.console.args.SumResult;
-import com.wl4g.devops.shell.processor.ShellHolder;
+import com.wl4g.devops.shell.processor.ShellContext;
 import com.wl4g.devops.shell.service.ExampleService;
 
 /**
@@ -96,11 +96,12 @@ public class ExampleConsole {
 	 */
 	@ShellMethod(keys = "log", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is not supported)")
 	public String log(
-			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Physical number of printed items") int num) {
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Physical number of printed items") int num,
+			ShellContext context) {
 
 		// Open the flow message output, and the client will always be
-		// blocked waiting until ShellConsoles.currentClose() is called.
-		ShellHolder.currentOpen();
+		// blocked waiting until ShellContext.close() is called.
+		context.open();
 
 		// Used to simulate an asynchronous task, constantly outputting logs
 		new Thread(() -> {
@@ -110,13 +111,13 @@ public class ExampleConsole {
 					System.out.println(message);
 
 					// Print stream message
-					ShellHolder.currentPrintf(message);
+					context.printf(message);
 				}
-				ShellHolder.currentPrintf("Print successfully completed!");
+				context.printf("Print successfully completed!");
 
 			} finally {
-				// Must end, and must be after ShellConsoles.currentOpen()
-				ShellHolder.currentClose();
+				// Must end, and must be after ShellContext.open()
+				context.close();
 			}
 		}).start();
 
@@ -129,21 +130,22 @@ public class ExampleConsole {
 	@ShellMethod(keys = "log2", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is supported)")
 	public String log2(
 			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Physical number of printed items") int num,
-			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print sleep interval(ms)") long sleep) {
+			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print sleep interval(ms)") long sleep,
+			ShellContext context) {
 
 		// Open the flow message output, and the client will always be
-		// blocked waiting until ShellConsoles.currentClose() is called.
-		ShellHolder.currentOpen();
+		// blocked waiting until ShellContext.close() is called.
+		context.open();
 
 		new Thread(() -> {
 			try {
-				for (int i = 1; !ShellHolder.currentInterrupted() && i <= num; i++) {
+				for (int i = 1; !context.isInterrupted() && i <= num; i++) {
 					String message = "This is the " + i + "th message!";
 					System.out.println(message);
 
 					// Print message to client.
 					// ShellHolder.currentPrintf(message);
-					ShellHolder.currentPrintf(message, num, i);
+					context.printf(message, num, i);
 
 					try {
 						Thread.sleep(sleep);
@@ -151,11 +153,11 @@ public class ExampleConsole {
 						e.printStackTrace();
 					}
 				}
-				ShellHolder.currentPrintf("Print finished!");
+				context.printf("Print finished!");
 
 			} finally {
-				// Must end, and must be after ShellConsoles.currentOpen()
-				ShellHolder.currentClose();
+				// Must end, and must be after ShellContext.open()
+				context.close();
 			}
 		}).start();
 
