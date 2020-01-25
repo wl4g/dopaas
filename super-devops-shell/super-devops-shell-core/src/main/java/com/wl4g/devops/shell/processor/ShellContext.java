@@ -21,19 +21,21 @@ import com.wl4g.devops.shell.message.Message;
 import com.wl4g.devops.shell.message.OutputMessage;
 import com.wl4g.devops.shell.processor.EmbeddedServerShellHandler.ShellHandler;
 import com.wl4g.devops.shell.processor.event.EventListener;
-import com.wl4g.devops.shell.processor.event.InterruptEventListener;
+import com.wl4g.devops.shell.processor.event.InterruptedEventListener;
 import com.wl4g.devops.shell.registry.InternalInjectable;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.*;
 import static com.wl4g.devops.shell.message.ChannelState.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -48,12 +50,12 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
  * @since
  */
 public final class ShellContext implements InternalInjectable, Closeable {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	/**
 	 * Event listeners
 	 */
-	final private List<EventListener> eventListeners = new ArrayList<>(4);
+	final private Set<EventListener> eventListeners = new LinkedHashSet<>(4);
 
 	/**
 	 * Shell handler client.
@@ -63,23 +65,30 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	/**
 	 * Line result message state.
 	 */
-	private volatile ChannelState state;
+	private ChannelState state;
 
 	public ShellContext(ShellHandler client) {
 		this(client, NONCE);
 	}
 
 	public ShellContext(ShellHandler client, ChannelState state) {
-		Assert.notNull(client, "Client must not be null");
+		notNull(client, "Client must not be null");
+		notNull(client, "State must not be null");
 		this.client = client;
 		this.state = state;
 
 		// Register default listener.
-		addEventListener((InterruptEventListener) () -> this.state = INTERRUPTED);
+		addEventListener(new InterruptedEventListener(this));
 	}
 
-	ChannelState getState() {
+	public ChannelState getState() {
 		return state;
+	}
+
+	public ShellContext setState(ChannelState state) {
+		notNull(client, "State must not be null");
+		this.state = state;
+		return this;
 	}
 
 	/**
@@ -98,7 +107,7 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	@Override
 	public synchronized void close() {
 		this.state = COMPLATED;
-		printf(EOF); // Print end mark
+		printf(EOF); // Ouput end mark
 	}
 
 	/**
@@ -147,12 +156,12 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	}
 
 	/**
-	 * Get event listeners
+	 * Invoke event listeners
 	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> List<T> getEventListeners(Class<? extends EventListener> clazz) {
+	<T extends EventListener> List<T> publishEvent(Class<T> clazz) {
 		return (List<T>) eventListeners.stream().filter(l -> l.getClass() == clazz).collect(toList());
 	}
 

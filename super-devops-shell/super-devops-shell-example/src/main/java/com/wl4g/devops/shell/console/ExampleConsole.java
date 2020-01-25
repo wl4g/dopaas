@@ -143,7 +143,7 @@ public class ExampleConsole {
 
 					// Print message to client.
 					// ShellHolder.currentPrintf(message);
-					ShellHolder.currentPrintf(message, 100, i);
+					ShellHolder.currentPrintf(message, num, i);
 
 					try {
 						Thread.sleep(sleep);
@@ -159,7 +159,7 @@ public class ExampleConsole {
 			}
 		}).start();
 
-		return "Logs printer starting-up ...";
+		return "Print log start...";
 	}
 
 }

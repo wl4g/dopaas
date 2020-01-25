@@ -32,11 +32,11 @@ import com.wl4g.devops.shell.registry.TargetMethodWrapper;
  * @version v1.0 2019年5月3日
  * @since
  */
-public class DefaultCommandHandlerRegistrar extends ShellHandlerRegistrar {
+public class DefaultShellHandlerRegistrar extends ShellHandlerRegistrar {
 	final private static long serialVersionUID = -6852880158146389409L;
 
 	private static class Holder {
-		final private static DefaultCommandHandlerRegistrar INSTANCE = new DefaultCommandHandlerRegistrar();
+		final private static DefaultShellHandlerRegistrar INSTANCE = new DefaultShellHandlerRegistrar();
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class DefaultCommandHandlerRegistrar extends ShellHandlerRegistrar {
 	 */
 	final private Map<String, HelpOptions> helpOptions = new ConcurrentHashMap<>(16);
 
-	public final static DefaultCommandHandlerRegistrar getSingle() {
+	public final static DefaultShellHandlerRegistrar getSingle() {
 		return Holder.INSTANCE;
 	}
 
@@ -54,7 +54,7 @@ public class DefaultCommandHandlerRegistrar extends ShellHandlerRegistrar {
 	 * @param registed
 	 * @return
 	 */
-	public DefaultCommandHandlerRegistrar merge(Map<String, TargetMethodWrapper> registed) {
+	public DefaultShellHandlerRegistrar merge(Map<String, TargetMethodWrapper> registed) {
 		state(helpOptions.isEmpty(), "Remote server registed target methods is null");
 
 		// Registion from local.

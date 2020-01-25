@@ -19,11 +19,10 @@ import com.wl4g.devops.shell.config.ShellProperties;
 import com.wl4g.devops.shell.handler.InternalChannelMessageHandler;
 import com.wl4g.devops.shell.message.*;
 import com.wl4g.devops.shell.processor.event.CommandEventListener;
-import com.wl4g.devops.shell.processor.event.InterruptEventListener;
+import com.wl4g.devops.shell.processor.event.InterruptedEventListener;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.Assert;
@@ -41,6 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 import static org.springframework.util.Assert.state;
@@ -170,11 +170,12 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	protected void preProcessParameters(TargetMethodWrapper tm, List<Object> args) {
 		// Get shellContext
 		ShellContext context = getClient().getContext();
-		// Default initialize
+
+		// Bind initialize
 		ShellHolder.bind(context);
 
 		// Find ShellContext parameter index
-		int index = getShellContextParameterIndex(tm);
+		int index = findShellContextForParameterIndex(tm);
 		if (index >= 0) {
 			// Overwrite parameters
 			if (index < args.size()) {
@@ -192,7 +193,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	 * @param clazz
 	 * @return
 	 */
-	private int getShellContextParameterIndex(TargetMethodWrapper tm) {
+	private int findShellContextForParameterIndex(TargetMethodWrapper tm) {
 		int index = -1, i = 0;
 		for (Class<?> cls : tm.getMethod().getParameterTypes()) {
 			if (cls == ShellContext.class) {
@@ -212,8 +213,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	 * @since
 	 */
 	class ShellHandler extends InternalChannelMessageHandler {
-
-		final protected Logger log = LoggerFactory.getLogger(getClass());
+		final protected Logger log = getLogger(getClass());
 
 		/** Shell context */
 		final ShellContext context;
@@ -262,16 +262,14 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 					// Interrupt message
 					else if (input instanceof InterruptMessage) {
 						// Call interrupt events.
-						context.getEventListeners(InterruptEventListener.class)
-								.forEach(l -> ((InterruptEventListener) l).onInterrupt());
+						context.publishEvent(InterruptedEventListener.class).forEach(l -> l.onInterrupt());
 					}
 					// Commands message
 					else if (input instanceof StdinMessage) {
 						StdinMessage line = (StdinMessage) input;
 
 						// Call command events.
-						context.getEventListeners(CommandEventListener.class)
-								.forEach(l -> ((CommandEventListener) l).onCommand(line.getLine()));
+						context.publishEvent(CommandEventListener.class).forEach(l -> l.onCommand(line.getLine()));
 
 						// Resolve that client input cannot be received during
 						// blocking execution.
