@@ -22,12 +22,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.support.notification.EmptyMessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.apns.ApnsMessageNotifier;
@@ -135,6 +137,12 @@ public class NotificationAutoConfiguration {
 	}
 
 	// --- Message notifier. ---
+
+	@Bean
+	@ConditionalOnMissingBean(MessageNotifier.class)
+	public EmptyMessageNotifier emptyForMustImplMessageNotifier() {
+		return new EmptyMessageNotifier(new Object());
+	}
 
 	@Bean
 	@ConditionalOnBean(ApnsNotifyProperties.class)
