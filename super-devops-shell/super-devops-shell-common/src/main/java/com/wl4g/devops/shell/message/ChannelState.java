@@ -24,16 +24,21 @@ package com.wl4g.devops.shell.message;
  */
 public enum ChannelState {
 
-	NONCE,
+	NEW,
 
-	READY,
-
+	/**
+	 * Currently processing command line task waiting.
+	 */
 	RUNNING,
 
-	RUNNING_WAIT,
-
+	/**
+	 * The current processing command line task has been interrupted.
+	 */
 	INTERRUPTED,
 
-	COMPLATED;
+	/**
+	 * Command line task currently processed completed.
+	 */
+	COMPLETED;
 
 }

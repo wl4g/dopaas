@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.handler;
+package com.wl4g.devops.shell;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
@@ -22,6 +22,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 import com.wl4g.devops.shell.config.Configuration;
+import com.wl4g.devops.shell.handler.CliShellHandler;
 
 /**
  * Runner builder

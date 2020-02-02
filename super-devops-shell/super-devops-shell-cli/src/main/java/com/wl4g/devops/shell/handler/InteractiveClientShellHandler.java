@@ -30,8 +30,8 @@ import com.wl4g.devops.shell.message.ProgressMessage;
 
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
 import static com.wl4g.devops.shell.config.DefaultShellHandlerRegistrar.getSingle;
-import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.BOF;
-import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.EOF;
+import static com.wl4g.devops.shell.handler.ShellMessageChannel.BOF;
+import static com.wl4g.devops.shell.handler.ShellMessageChannel.EOF;
 import static com.wl4g.devops.shell.message.ChannelState.*;
 import static java.lang.System.*;
 
@@ -90,7 +90,7 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 					task.start();
 
 					// Wait completed.
-					waitForCompleted(stdin);
+					waitForComplete(stdin);
 				}
 
 			} catch (UserInterruptException e) { // e.g. Ctrl+C interrupt event.
@@ -124,7 +124,7 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	}
 
 	@Override
-	protected void postProcessStdout(Object stdout) {
+	protected void postHandleOutput(Object stdout) {
 		sentTime = currentTimeMillis();
 		boolean isWakeup = false;
 
@@ -141,14 +141,14 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 				ProgressMessage pro = (ProgressMessage) stdout;
 				printProgress(pro.getTitle(), pro.getProgress(), pro.getWhole(), '=');
 			} else if (stdout instanceof OutputMessage) {
-				OutputMessage ret = (OutputMessage) stdout;
-				if (ret.getState() == NONCE || ret.getState() == COMPLATED) {
+				OutputMessage output = (OutputMessage) stdout;
+				if (output.getState() == NEW || output.getState() == COMPLETED) {
 					// Wake up lineReader required when output is complete.
 					isWakeup = true;
 				}
-				// Print server result message.
-				if (!equalsAny(ret.getContent(), BOF, EOF)) {
-					out.println(ret.getContent());
+				// Print from server result message.
+				if (!equalsAny(output.getContent(), BOF, EOF)) {
+					out.println(output.getContent());
 				}
 			}
 		} else { // Local command stdout?
@@ -174,7 +174,7 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	 * @param stdin
 	 * @throws InterruptedException
 	 */
-	private void waitForCompleted(String stdin) {
+	private void waitForComplete(String stdin) {
 		if (DEBUG) {
 			out.println(String.format("waitForCompleted: %s, completed: %s", this, completed));
 		}

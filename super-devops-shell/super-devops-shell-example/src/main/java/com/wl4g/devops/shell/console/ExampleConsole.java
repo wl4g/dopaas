@@ -17,6 +17,7 @@ package com.wl4g.devops.shell.console;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +32,7 @@ import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.console.args.MixedArgument;
 import com.wl4g.devops.shell.console.args.SumArgument;
-import com.wl4g.devops.shell.console.args.SumResult;
-import com.wl4g.devops.shell.processor.ShellContext;
+import com.wl4g.devops.shell.handler.ShellContext;
 import com.wl4g.devops.shell.service.ExampleService;
 
 /**
@@ -59,27 +59,28 @@ public class ExampleConsole {
 	/**
 	 * For example: $> sum -a 1 -b 123
 	 */
-	@ShellMethod(keys = "sum", group = GROUP_NAME, help = "This is an example method of summation. The parameter list is not the base type.")
-	public SumResult sum(SumArgument arg) {
-		return exampleService.add(arg);
+	@ShellMethod(keys = "sum", group = GROUP_NAME, help = "Simple sum shell method, no need to print the execution result")
+	public void sum(SumArgument arg) {
+		exampleService.add(arg);
 	}
 
 	/**
 	 * For example: $> sum2 -a 1 -b 123
 	 */
-	@ShellMethod(keys = "sum2", group = GROUP_NAME, help = "This is an example method of summation. The parameter list is the basic type.")
-	public SumResult sum2(@ShellOption(opt = "a", lopt = "add1", help = "Add number") int a,
+	@ShellMethod(keys = "sum2", group = GROUP_NAME, help = "Simple sum shell method, the execution result will return")
+	public void sum2(ShellContext context, @ShellOption(opt = "a", lopt = "add1", help = "Add number") int a,
 			@ShellOption(opt = "b", lopt = "add2", help = "Added number", defaultValue = "1") int b) {
-		return exampleService.add(new SumArgument(a, b));
+		context.printf(exampleService.add(new SumArgument(a, b)).toString()).completed();
 	}
 
 	/**
 	 * For example: $> set -l 1,2 -s x3,x4
 	 */
 	@ShellMethod(keys = "set", group = GROUP_NAME, help = "Direct set parameter injection testing")
-	public String set(@ShellOption(opt = "s", lopt = "set", help = "Set<String> type argument field") Set<String> set1,
+	public void set(ShellContext context,
+			@ShellOption(opt = "s", lopt = "set", help = "Set<String> type argument field") Set<String> set1,
 			@ShellOption(opt = "l", lopt = "list", help = "List<Integer> type argument field") List<Integer> list) {
-		return "Direct mixed set parameter injection results: set=" + set1 + ", list=" + list;
+		context.printf("Direct mixed set parameter injection results: set=" + set1 + ", list=" + list).completed();
 	}
 
 	/**
@@ -87,58 +88,58 @@ public class ExampleConsole {
 	 * -e false -E true
 	 */
 	@ShellMethod(keys = "mixed", group = GROUP_NAME, help = "Mixed set type parameter injection testing")
-	public String mixed(MixedArgument arg) {
-		return "Bean field mixed set parameter injection test results: " + arg.toString();
+	public void mixed(ShellContext context, MixedArgument arg) {
+		context.printf("Bean field mixed set parameter injection test results: " + arg.toString()).completed();
 	}
 
 	/**
-	 * For example: $> log -n 100
+	 * For example: $> log -n 20
 	 */
-	@ShellMethod(keys = "log", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is not supported)")
-	public String log(
-			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Physical number of printed items") int num,
+	@ShellMethod(keys = "log", group = GROUP_NAME, help = "This is a shell method for printing logs asynchronously.(Not support interrupt)")
+	public void log(
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Number of printed messages") int num,
 			ShellContext context) {
 
-		// Open the flow message output, and the client will always be
-		// blocked waiting until ShellContext.close() is called.
-		context.open();
-
-		// Used to simulate an asynchronous task, constantly outputting logs
-		new Thread(() -> {
+		Executors.newSingleThreadExecutor().execute(() -> {
 			try {
+				context.printf("Log print...");
+
 				for (int i = 1; i <= num; i++) {
 					String message = "This is the " + i + "th message!";
 					System.out.println(message);
 
 					// Print stream message
 					context.printf(message);
+
+					try {
+						Thread.sleep(200L);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 				context.printf("Print successfully completed!");
 
 			} finally {
-				// Must end, and must be after ShellContext.open()
-				context.close();
+				// After execution, the client console will automatically
+				// refresh the prompt.
+				context.completed();
 			}
-		}).start();
-
-		return "Logs printer starting-up ...";
+		});
 	}
 
 	/**
-	 * For example: $> log2 -n 100
+	 * For example: $> log2 -n 20
 	 */
-	@ShellMethod(keys = "log2", group = GROUP_NAME, help = "This is a shell command that print logs in real-time.(Interruption is supported)")
-	public String log2(
-			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Physical number of printed items") int num,
-			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print sleep interval(ms)") long sleep,
+	@ShellMethod(keys = "log2", group = GROUP_NAME, help = "This is a shell method for printing logs asynchronously.(Support interrupt)")
+	public void log2(
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Number of printed messages") int num,
+			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print message delay(ms)") long sleep,
 			ShellContext context) {
 
-		// Open the flow message output, and the client will always be
-		// blocked waiting until ShellContext.close() is called.
-		context.open();
-
-		new Thread(() -> {
+		Executors.newSingleThreadExecutor().execute(() -> {
 			try {
+				context.printf("Log2 print...");
+
 				for (int i = 1; !context.isInterrupted() && i <= num; i++) {
 					String message = "This is the " + i + "th message!";
 					System.out.println(message);
@@ -153,15 +154,42 @@ public class ExampleConsole {
 						e.printStackTrace();
 					}
 				}
-				context.printf("Print finished!");
+				context.printf("Log2 print finished!");
 
 			} finally {
-				// Must end, and must be after ShellContext.open()
-				context.close();
+				// After execution, the client console will automatically
+				// refresh the prompt.
+				context.completed();
 			}
-		}).start();
+		});
+	}
 
-		return "Print log start...";
+	/**
+	 * For example: $> log3 -n 20
+	 */
+	@ShellMethod(keys = "log3", group = GROUP_NAME, help = "This is a simple shell method for printing logs synchronously.(Support interrupt)")
+	public void log3(
+			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Number of printed messages") int num,
+			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print message delay(ms)") long sleep,
+			ShellContext context) {
+
+		context.printf("Log3 print...");
+
+		for (int i = 1; !context.isInterrupted() && i <= num; i++) {
+			String message = "This is the " + i + "th message!";
+			System.out.println(message);
+
+			// Print message to client.
+			// ShellHolder.currentPrintf(message);
+			context.printf(message, num, i);
+
+			try {
+				Thread.sleep(sleep);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		context.printf("Log3 print finished!").completed(); // MARK1
 	}
 
 }

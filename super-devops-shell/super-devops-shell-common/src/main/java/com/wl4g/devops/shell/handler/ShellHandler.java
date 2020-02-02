@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.processor.event;
-
-import com.wl4g.devops.shell.message.ChannelState;
-import com.wl4g.devops.shell.processor.ShellContext;
+package com.wl4g.devops.shell.handler;
 
 /**
- * Interrupt event listener
+ * Shell handler actuator.
  * 
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月25日
+ * @version v1.0 2019年4月21日
  * @since
  */
-public class InterruptedEventListener extends EventListener {
+public interface ShellHandler {
 
-	public InterruptedEventListener(ShellContext context) {
-		super(context);
-	}
-
-	public void onInterrupt() {
-		getContext().setState(ChannelState.INTERRUPTED);
-	}
+	/**
+	 * Read commands to processing
+	 * 
+	 * @param line
+	 * @Exception
+	 */
+	Object process(String line) throws Exception;
 
 }

@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.processor;
+package com.wl4g.devops.shell.handler;
 
 import com.wl4g.devops.shell.config.ShellProperties;
-import com.wl4g.devops.shell.handler.InternalChannelMessageHandler;
+import com.wl4g.devops.shell.handler.ShellMessageChannel;
 import com.wl4g.devops.shell.message.*;
-import com.wl4g.devops.shell.processor.event.CommandEventListener;
-import com.wl4g.devops.shell.processor.event.InterruptedEventListener;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
+
 import org.slf4j.Logger;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -41,6 +40,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.shell.message.ChannelState.*;
+import static java.lang.String.format;
+import static java.lang.Thread.sleep;
+import static java.util.Objects.nonNull;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 import static org.springframework.util.Assert.state;
@@ -59,8 +63,8 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	 */
 	final private AtomicBoolean shellRunning = new AtomicBoolean(false);
 
-	/** Execution workers */
-	final private ConcurrentMap<ShellHandler, Thread> workers = new ConcurrentHashMap<>();
+	/** Command channel workers. */
+	final private ConcurrentMap<ServerShellMessageChannel, Thread> channels = new ConcurrentHashMap<>();
 
 	/**
 	 * Server sockets
@@ -68,7 +72,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	private ServerSocket ss;
 
 	/**
-	 * Boss boot threads
+	 * Boss thread
 	 */
 	private Thread boss;
 
@@ -76,18 +80,18 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 		super(config, appName, registry);
 	}
 
+	// Start server
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		if (shellRunning.compareAndSet(false, true)) {
 			Assert.state(ss == null, "server socket already listen ?");
 
+			// Determine server port.
 			int bindPort = ensureDetermineServPort(getAppName());
 
 			ss = new ServerSocket(bindPort, getConfig().getBacklog(), getConfig().getInetBindAddr());
 			ss.setSoTimeout(0); // Infinite timeout
-			if (log.isInfoEnabled()) {
-				log.info("Shell Console started on port(s): {}", bindPort);
-			}
+			log.info("Shell Console started on port(s): {}", bindPort);
 
 			this.boss = new Thread(this, getClass().getSimpleName() + "-boss");
 			this.boss.setDaemon(true);
@@ -117,10 +121,10 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 			}
 
 			try {
-				Iterator<ShellHandler> it = workers.keySet().iterator();
+				Iterator<ServerShellMessageChannel> it = channels.keySet().iterator();
 				while (it.hasNext()) {
-					ShellHandler h = it.next();
-					Thread t = workers.get(h);
+					ServerShellMessageChannel h = it.next();
+					Thread t = channels.get(h);
 					t.interrupt();
 					t = null;
 					it.remove();
@@ -131,6 +135,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 		}
 	}
 
+	// Accepting channel connect
 	@Override
 	public void run() {
 		while (!boss.isInterrupted() && shellRunning.get()) {
@@ -138,27 +143,29 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 				// Receiving client socket(blocking)
 				Socket s = ss.accept();
 				if (log.isDebugEnabled()) {
-					log.debug("On accept socket: {}, maximum: {}, actual: {}", s, getConfig().getMaxClients(), workers.size());
+					log.debug("On accept socket: {}, maximum: {}, actual: {}", s, getConfig().getMaxClients(), channels.size());
 				}
 
 				// Check many connections.
-				if (workers.size() >= getConfig().getMaxClients()) {
+				if (channels.size() >= getConfig().getMaxClients()) {
 					log.warn(String.format("There are too many parallel shell connections. maximum: %s, actual: %s",
-							getConfig().getMaxClients(), workers.size()));
+							getConfig().getMaxClients(), channels.size()));
 					s.close();
 					continue;
 				}
 
-				// Processing
-				ShellHandler handler = bind(new ShellHandler(registry, s, line -> process(line)));
+				// Create shell channel
+				ServerShellMessageChannel channel = new ServerShellMessageChannel(registrar, s, line -> process(line));
 
+				// MARK1:
 				// The worker thread may not be the parent thread of Runnable,
 				// so you need to display bind to the thread in the afternoon
 				// again.
-				Thread channel = new Thread(() -> bind(handler).run(), getClass().getSimpleName() + "-channel-" + workers.size());
-				channel.setDaemon(true);
-				workers.put(handler, channel);
-				channel.start();
+				Thread channelTask = new Thread(() -> bind(channel).run(),
+						getClass().getSimpleName() + "-channel-" + channels.size());
+				channelTask.setDaemon(true);
+				channels.put(channel, channelTask);
+				channelTask.start();
 
 			} catch (Throwable e) {
 				log.warn("Shell boss thread shutdown. cause: {}", getStackTrace(e));
@@ -167,22 +174,24 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	}
 
 	@Override
-	protected void preProcessParameters(TargetMethodWrapper tm, List<Object> args) {
-		// Get shellContext
+	protected void preHandle(TargetMethodWrapper tm, List<Object> args) {
+		// Get current context
 		ShellContext context = getClient().getContext();
 
-		// Bind initialize
-		// ShellHolder.bind(context);
-
-		// Find ShellContext parameter index
-		int index = findShellContextForParameterIndex(tm);
+		// Find arg:ShellContext index
+		int index = findIndexOfParameterShellContext(tm);
 		if (index >= 0) {
-			// Overwrite parameters
-			if (index < args.size()) {
+			if (index < args.size()) { // Correct parameter index
 				args.add(index, context);
 			} else {
 				args.add(context);
 			}
+
+			/**
+			 * When injection {@link ShellContext} is used, the auto open
+			 * channel status is wait.
+			 */
+			context.begin(); // MARK2
 		}
 	}
 
@@ -193,11 +202,11 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	 * @param clazz
 	 * @return
 	 */
-	private int findShellContextForParameterIndex(TargetMethodWrapper tm) {
+	private int findIndexOfParameterShellContext(TargetMethodWrapper tm) {
 		int index = -1, i = 0;
 		for (Class<?> cls : tm.getMethod().getParameterTypes()) {
 			if (cls == ShellContext.class) {
-				state(index < 0, String.format("Multiple shellcontext type parameters are unsupported. %s", tm.getMethod()));
+				state(index < 0, format("Multiple shellcontext type parameters are unsupported. %s", tm.getMethod()));
 				index = i;
 			}
 			++i;
@@ -206,13 +215,13 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	}
 
 	/**
-	 * Server shell handler
+	 * Server shell message channel handler
 	 * 
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年5月2日
 	 * @since
 	 */
-	class ShellHandler extends InternalChannelMessageHandler {
+	class ServerShellMessageChannel extends ShellMessageChannel {
 		final protected Logger log = getLogger(getClass());
 
 		/** Shell context */
@@ -221,17 +230,18 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 		/** Execution worker */
 		final private ExecutorService worker;
 
-		public ShellHandler(ShellHandlerRegistrar registry, Socket client, Function<String, Object> function) {
-			super(registry, client, function);
+		public ServerShellMessageChannel(ShellHandlerRegistrar registrar, Socket client, Function<String, Object> func) {
+			super(registrar, client, func);
 			this.context = new ShellContext(this);
 
-			this.worker = new ThreadPoolExecutor(1, getConfig().getConcurrently(), 0, TimeUnit.SECONDS,
-					new LinkedBlockingDeque<>(64), new ThreadFactory() {
+			this.worker = new ThreadPoolExecutor(1, getConfig().getConcurrently(), 0, SECONDS, new LinkedBlockingDeque<>(2),
+					new ThreadFactory() {
 						final private AtomicInteger counter = new AtomicInteger(0);
 
 						@Override
 						public Thread newThread(Runnable r) {
-							String prefix = ShellHandler.class.getSimpleName() + "-channel-worker-" + counter.incrementAndGet();
+							String prefix = ServerShellMessageChannel.class.getSimpleName() + "-channel-worker-"
+									+ counter.incrementAndGet();
 							Thread t = new Thread(r, prefix);
 							t.setDaemon(true);
 							return t;
@@ -249,57 +259,57 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 				try {
 					// To a string command line
 					Object input = new ObjectInputStream(_in).readObject();
-					if (log.isInfoEnabled()) {
-						log.info("<= {}", input);
-					}
+					log.info("<= {}", input);
 
-					Object result = null;
-					// Register message
-					if (input instanceof MetaMessage) {
-						// Target methods
-						result = new MetaMessage(registry.getTargetMethods());
-					}
-					// Interrupt message
-					else if (input instanceof InterruptMessage) {
+					Object ret = null;
+					if (input instanceof MetaMessage) { // Register
+						// Register target methods
+						ret = new MetaMessage(registrar.getTargetMethods());
+					} else if (input instanceof InterruptMessage) { // Interrupt
 						// Call interrupt events.
-						context.publishEvent(InterruptedEventListener.class).forEach(l -> l.onInterrupt());
-					}
-					// Commands message
-					else if (input instanceof StdinMessage) {
+						context.getEventListeners().forEach(l -> l.onInterrupt(context));
+					} else if (input instanceof StdinMessage) { // Command
 						StdinMessage line = (StdinMessage) input;
 
 						// Call command events.
-						context.publishEvent(CommandEventListener.class).forEach(l -> l.onCommand(line.getLine()));
+						context.getEventListeners().forEach(l -> l.onCommand(context, line.getLine()));
 
 						// Resolve that client input cannot be received during
 						// blocking execution.
 						worker.execute(() -> {
+							boolean isComplete = false;
 							try {
-								Object ret = function.apply(line.getLine());
-								if (ret != null) {
-									if (log.isInfoEnabled()) {
-										log.info("=> {}", ret);
-									}
-									writeAndFlush(new OutputMessage(context.getState(), ret.toString()));
+								/**
+								 * Only {@link ShellContext} printouts are
+								 * supported, and return value is no longer
+								 * supported (otherwise it will be ignored)
+								 */
+								function.apply(line.getLine());
+
+								// see:EmbeddedServerShellHandler#preHandle()}#MARK2
+								if (context.getState() != RUNNING) {
+									isComplete = true;
 								}
 							} catch (Throwable e) {
-								handleThorws(e);
+								log.error(format("Failed to handle shell command: [%s]", line.getLine()), e);
+								isComplete = true;
+								handleError(e);
+							}
+							if (isComplete) {
+								context.completed();
 							}
 						});
 					}
 
-					if (result != null) { // Echo
-						if (log.isInfoEnabled()) {
-							log.info("=> {}", result);
-						}
-						writeAndFlush(result);
+					if (nonNull(ret)) { // Echo
+						log.info("=> {}", ret);
+						writeFlush(ret);
 					}
-
 				} catch (Throwable th) {
-					handleThorws(th);
+					handleError(th);
 				} finally {
 					try {
-						Thread.sleep(100L);
+						sleep(100L);
 					} catch (InterruptedException e) {
 					}
 				}
@@ -315,26 +325,22 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 			super.close();
 
 			// Clear the current channel
-			Thread t = workers.remove(this);
+			Thread t = channels.remove(this);
 			if (t != null) {
 				t.interrupt();
 				t = null;
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("Remove shellHandler: {}, actual: {}", this, workers.size());
-			}
+			log.debug("Remove shellHandler: {}, actual: {}", this, channels.size());
 		}
 
 		/**
-		 * Handling throws
+		 * Error handling
 		 * 
 		 * @param th
 		 */
-		private void handleThorws(Throwable th) {
+		private void handleError(Throwable th) {
 			if ((th instanceof SocketException) || (th instanceof EOFException) || !isActive()) {
-				if (log.isWarnEnabled()) {
-					log.warn("Disconnect for client: {}", client);
-				}
+				log.warn("Disconnect for client : {}", socket);
 				try {
 					close();
 				} catch (IOException e) {
@@ -344,12 +350,10 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 				try {
 					String errmsg = getRootCauseMessage(th);
 					errmsg = isBlank(errmsg) ? getMessage(th) : errmsg;
-					if (log.isWarnEnabled()) {
-						log.warn("{}", errmsg);
-					}
-					writeAndFlush(new ExceptionMessage(th));
+					log.warn("{}", errmsg);
+					writeFlush(new ExceptionMessage(th));
 				} catch (IOException e) {
-					log.warn("Echo failure", e);
+					log.warn("Write failure", e);
 				}
 			}
 		}

@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.devops.shell.processor.EmbeddedServerShellHandler;
+import com.wl4g.devops.shell.handler.EmbeddedServerShellHandler;
 
 /**
  * Shell component services auto configuration
