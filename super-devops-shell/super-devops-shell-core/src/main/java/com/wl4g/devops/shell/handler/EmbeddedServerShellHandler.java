@@ -234,7 +234,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 			super(registrar, client, func);
 			this.context = new ShellContext(this);
 
-			this.worker = new ThreadPoolExecutor(1, getConfig().getConcurrently(), 0, SECONDS, new LinkedBlockingDeque<>(2),
+			this.worker = new ThreadPoolExecutor(1, getConfig().getConcurrently(), 0, SECONDS, new LinkedBlockingDeque<>(8),
 					new ThreadFactory() {
 						final private AtomicInteger counter = new AtomicInteger(0);
 
@@ -262,15 +262,28 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 					log.info("<= {}", input);
 
 					Object ret = null;
-					if (input instanceof MetaMessage) { // Register
+					// Register
+					if (input instanceof MetaMessage) {
 						// Register target methods
 						ret = new MetaMessage(registrar.getTargetMethods());
-					} else if (input instanceof InterruptMessage) { // Interrupt
+					}
+					// Confirm interrupt
+					else if (input instanceof ConfirmInterruptMessage) {
+						ConfirmInterruptMessage confirm = (ConfirmInterruptMessage) input;
 						// Call interrupt events.
-						context.getEventListeners().forEach(l -> l.onInterrupt(context));
-					} else if (input instanceof StdinMessage) { // Command
-						StdinMessage line = (StdinMessage) input;
+						context.getEventListeners().forEach(l -> l.onInterrupt(context, confirm.getConfirmed()));
+					}
+					// Ask interrupt
+					else if (input instanceof InterruptMessage) {
+						// Call pre-interrupt events.
+						context.getEventListeners().forEach(l -> l.onPreInterrupt(context));
 
+						// Ask interrupt to client console.
+						writeFlush(new AskInterruptMessage("Are you sure you want to cancel the execution?"));
+					}
+					// Command
+					else if (input instanceof StdinMessage) {
+						StdinMessage line = (StdinMessage) input;
 						// Call command events.
 						context.getEventListeners().forEach(l -> l.onCommand(context, line.getLine()));
 

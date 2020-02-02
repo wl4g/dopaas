@@ -113,13 +113,8 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 		notNull(config, "configuration is null, please check configure");
 		this.config = config;
 
-		// Build lineReader
-		try {
-			this.lineReader = LineReaderBuilder.builder().appName("Devops Shell Cli").completer(new DynamicCompleter(getSingle()))
-					.terminal(TerminalBuilder.terminal()).build();
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
+		// Init create lineReader
+		this.lineReader = createLineReader();
 
 		// Initialization
 		try {
@@ -233,6 +228,20 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 		String prompt = getProperty(ARG_PROMPT);
 		prompt = isBlank(prompt) ? getProperty(ARG_SERV_NAME) : prompt;
 		return isBlank(prompt) ? DEFAULT_ATTRIBUTED : new AttributedString(String.format("%s> ", prompt));
+	}
+
+	/**
+	 * Create {@link LineReader}.
+	 * 
+	 * @return
+	 */
+	protected LineReader createLineReader() {
+		try {
+			return LineReaderBuilder.builder().appName("Devops Shell Cli").completer(new DynamicCompleter(getSingle()))
+					.terminal(TerminalBuilder.terminal()).build();
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	/**

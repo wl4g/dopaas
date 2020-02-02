@@ -39,12 +39,23 @@ public interface ShellEventListener extends EventListener {
 	}
 
 	/**
-	 * On interrupt event.
+	 * On pre-interrupt event.
 	 * 
 	 * @param context
 	 */
-	default void onInterrupt(ShellContext context) {
-		context.setState(ChannelState.INTERRUPTED);
+	default void onPreInterrupt(ShellContext context) {
+	}
+
+	/**
+	 * On interrupt event.
+	 * 
+	 * @param context
+	 * @param confirm
+	 */
+	default void onInterrupt(ShellContext context, boolean confirm) {
+		if (confirm) {
+			context.setState(ChannelState.INTERRUPTED);
+		}
 	}
 
 }

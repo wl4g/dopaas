@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.handler;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.*; 
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,8 +26,11 @@ import com.wl4g.devops.shell.message.InterruptMessage;
 import com.wl4g.devops.shell.message.Message;
 import com.wl4g.devops.shell.message.MetaMessage;
 import com.wl4g.devops.shell.message.OutputMessage;
+import com.wl4g.devops.shell.message.ConfirmInterruptMessage;
+import com.wl4g.devops.shell.message.AskInterruptMessage;
 import com.wl4g.devops.shell.message.ProgressMessage;
 
+import static com.wl4g.devops.shell.utils.ShellUtils.*;
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
 import static com.wl4g.devops.shell.config.DefaultShellHandlerRegistrar.getSingle;
 import static com.wl4g.devops.shell.handler.ShellMessageChannel.BOF;
@@ -46,8 +49,8 @@ import org.jline.reader.UserInterruptException;
  */
 public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 
-	/** Running statue. */
-	private AtomicBoolean running = new AtomicBoolean(false);
+	/** Running status. */
+	final private AtomicBoolean running = new AtomicBoolean(false);
 
 	/** Mark the current processing completion status. */
 	private volatile boolean completed = true;
@@ -129,18 +132,32 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 		boolean isWakeup = false;
 
 		if (stdout instanceof Message) { // Remote command stdout?
+			// Meta
 			if (stdout instanceof MetaMessage) {
 				MetaMessage meta = (MetaMessage) stdout;
 				getSingle().merge(meta.getRegistedMethods());
 				isWakeup = true;
-			} else if (stdout instanceof ExceptionMessage) {
+			}
+			// Exception
+			else if (stdout instanceof ExceptionMessage) {
 				ExceptionMessage ex = (ExceptionMessage) stdout;
 				printErr(EMPTY, ex.getThrowable());
 				isWakeup = true;
-			} else if (stdout instanceof ProgressMessage) {
+			}
+			// Progress
+			else if (stdout instanceof ProgressMessage) {
 				ProgressMessage pro = (ProgressMessage) stdout;
 				printProgress(pro.getTitle(), pro.getProgress(), pro.getWhole(), '=');
-			} else if (stdout instanceof OutputMessage) {
+			}
+			// Ask interrupt
+			else if (stdout instanceof AskInterruptMessage) {
+				AskInterruptMessage ask = (AskInterruptMessage) stdout;
+				String confirmed = createLineReader().readLine(ask.getSubject());
+				System.out.println(")))confirmed=" + confirmed);
+				submitStdin(new ConfirmInterruptMessage(isTrue(trimToEmpty(confirmed), false)));
+			}
+			// Output result
+			else if (stdout instanceof OutputMessage) {
 				OutputMessage output = (OutputMessage) stdout;
 				if (output.getState() == NEW || output.getState() == COMPLETED) {
 					// Wake up lineReader required when output is complete.

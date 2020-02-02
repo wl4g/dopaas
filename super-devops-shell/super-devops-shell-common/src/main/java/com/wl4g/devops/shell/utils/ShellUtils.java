@@ -36,6 +36,22 @@ import java.util.Map;
 public abstract class ShellUtils extends BeanUtils2 {
 
 	/**
+	 * Is true <br/>
+	 * 
+	 * @param value
+	 * @param defaultValue
+	 * @return Return TRUE with true/t/y/yes/on/1/enabled
+	 */
+	public static boolean isTrue(String value, boolean defaultValue) {
+		if (isBlank(value)) {
+			return defaultValue;
+		}
+		return (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("t") || value.equalsIgnoreCase("1")
+				|| value.equalsIgnoreCase("enabled") || value.equalsIgnoreCase("y") || value.equalsIgnoreCase("yes")
+				|| value.equalsIgnoreCase("on"));
+	}
+
+	/**
 	 * Execute a copy from the source object to the target object. Note that it
 	 * will deeply recurse all parent or superclass and application property
 	 * fields, and only contain fields annotated with {@link ShellOption}
