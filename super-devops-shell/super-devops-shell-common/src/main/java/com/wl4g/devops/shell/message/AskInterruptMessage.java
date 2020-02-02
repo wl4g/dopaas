@@ -15,35 +15,35 @@
  */
 package com.wl4g.devops.shell.message;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 
 /**
- * Post confirmed message
+ * Pre-Confirm interrupt message
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2020年1月4日
  * @since
  */
-public class PostConfirmedMessage extends Message {
+public class AskInterruptMessage extends Message {
 	private static final long serialVersionUID = -8574315246731906685L;
 
 	/**
-	 * Current confirmed state.
+	 * Current confirm message subject.
 	 */
-	final private Boolean confirmed;
+	final private String subject;
 
-	public PostConfirmedMessage(Boolean confirmed) {
-		notNullOf(confirmed, "confirmed");
-		this.confirmed = confirmed;
+	public AskInterruptMessage(String subject) {
+		hasTextOf(subject, "subject");
+		this.subject = subject;
 	}
 
-	public Boolean getConfirmed() {
-		return confirmed;
+	public String getSubject() {
+		return subject;
 	}
 
 	@Override
 	public String toString() {
-		return "PostConfirmedMessage [confirmed=" + confirmed + "]";
+		return "PreConfirmMessage [subject=" + subject + "]";
 	}
 
 }
