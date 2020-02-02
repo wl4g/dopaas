@@ -32,11 +32,10 @@ import java.util.List;
 import java.util.function.Function;
 import static java.lang.System.*;
 
-import com.wl4g.devops.shell.AbstractShellHandler;
 import com.wl4g.devops.shell.command.DefaultBuiltInCommand;
 import com.wl4g.devops.shell.config.Configuration;
 import com.wl4g.devops.shell.config.DynamicCompleter;
-import com.wl4g.devops.shell.handler.InternalChannelMessageHandler;
+import com.wl4g.devops.shell.handler.ShellMessageChannel;
 import com.wl4g.devops.shell.message.*;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import static com.wl4g.devops.shell.annotation.ShellOption.GNU_CMD_LONG;
@@ -102,7 +101,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	/**
 	 * Shell client handler
 	 */
-	private ClientHandler client;
+	private ClientShellMessageChannel clientChannel;
 
 	/**
 	 * Current process exception statcktrace as strings.
@@ -132,7 +131,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	}
 
 	public ShellHandlerRegistrar getRegistry() {
-		return registry;
+		return registrar;
 	}
 
 	public LineReader getLineReader() {
@@ -180,8 +179,8 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 * 
 	 * @return
 	 */
-	public ClientHandler getClient() {
-		return client;
+	public ClientShellMessageChannel getClient() {
+		return clientChannel;
 	}
 
 	/**
@@ -199,7 +198,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 			List<String> cmds = parse(line);
 			if (!cmds.isEmpty()) {
 				// $> [help|clear|history...]
-				if (registry.contains(cmds.get(0))) { // Built-in command?
+				if (registrar.contains(cmds.get(0))) { // Built-in command?
 					DefaultBuiltInCommand.senseLine(line);
 					process(line);
 					return;
@@ -218,9 +217,9 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 			}
 
 			// Submission remote commands line
-			client.writeAndFlush(new StdinMessage(line));
+			clientChannel.writeFlush(new StdinMessage(line));
 		} else {
-			client.writeAndFlush(stdin);
+			clientChannel.writeFlush(stdin);
 		}
 
 	}
@@ -243,7 +242,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 */
 	private void initialize() throws IOException {
 		// Register commands
-		this.registry.register(new DefaultBuiltInCommand(this));
+		this.registrar.register(new DefaultBuiltInCommand(this));
 
 		// Initialize remote register commands
 		submitStdin(new MetaMessage());
@@ -286,9 +285,9 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	@SuppressWarnings("resource")
 	private void ensureClient() throws IOException {
 		boolean create = false;
-		if (client == null) {
+		if (clientChannel == null) {
 			create = true;
-		} else if (!client.isActive()) {
+		} else if (!clientChannel.isActive()) {
 			create = true;
 			closeQuietly();
 		}
@@ -308,7 +307,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 				throw new IllegalStateException(errmsg);
 			}
 
-			client = new ClientHandler(this, s, result -> null).starting();
+			clientChannel = new ClientShellMessageChannel(this, s, result -> null).starting();
 		}
 
 	}
@@ -358,19 +357,19 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 * @throws IOException
 	 */
 	private void closeQuietly() throws IOException {
-		if (client != null) {
-			client.close();
+		if (clientChannel != null) {
+			clientChannel.close();
 		}
 	}
 
 	/**
-	 * Shell client handler
+	 * Client shell message channel handler
 	 * 
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0 2019年5月2日
 	 * @since
 	 */
-	class ClientHandler extends InternalChannelMessageHandler {
+	class ClientShellMessageChannel extends ShellMessageChannel {
 
 		/**
 		 * Line process runner.
@@ -382,12 +381,12 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 		 */
 		private Thread boss;
 
-		public ClientHandler(AbstractClientShellHandler runner, Socket client, Function<String, Object> function) {
+		public ClientShellMessageChannel(AbstractClientShellHandler runner, Socket client, Function<String, Object> function) {
 			super(runner.getRegistry(), client, function);
 			this.runner = runner;
 		}
 
-		public ClientHandler starting() {
+		public ClientShellMessageChannel starting() {
 			this.boss = new Thread(this);
 			this.boss.start();
 			return this;
@@ -401,7 +400,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 					Object input = new ObjectInputStream(_in).readObject();
 
 					// Post process
-					postProcessStdout(input);
+					postHandleOutput(input);
 
 				} catch (SocketException | EOFException e) {
 					err.println("Connection tunnel closed!");

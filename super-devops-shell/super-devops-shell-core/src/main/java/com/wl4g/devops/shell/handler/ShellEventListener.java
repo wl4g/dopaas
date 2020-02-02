@@ -13,23 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.processor.event;
+package com.wl4g.devops.shell.handler;
 
-import com.wl4g.devops.shell.processor.ShellContext;
+import java.util.EventListener;
+
+import com.wl4g.devops.shell.message.ChannelState;
 
 /**
- * Command event listener
+ * {@link ShellEventListener}
  * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月25日
- * @since
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年2月2日 v1.0.0
+ * @see
  */
-public abstract class CommandEventListener extends EventListener {
+public interface ShellEventListener extends EventListener {
 
-	public CommandEventListener(ShellContext context) {
-		super(context);
+	/**
+	 * On accpet command event.
+	 * 
+	 * @param context
+	 * @param command
+	 */
+	default void onCommand(ShellContext context, String command) {
+		// Ignore
 	}
 
-	public abstract void onCommand(String command);
+	/**
+	 * On interrupt event.
+	 * 
+	 * @param context
+	 */
+	default void onInterrupt(ShellContext context) {
+		context.setState(ChannelState.INTERRUPTED);
+	}
 
 }

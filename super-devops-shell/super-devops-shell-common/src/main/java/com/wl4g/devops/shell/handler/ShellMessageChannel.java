@@ -28,13 +28,13 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
- * Internal shell channel message handler
+ * Built-in shell channel message handler
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月2日
  * @since
  */
-public abstract class InternalChannelMessageHandler implements Runnable, Closeable {
+public abstract class ShellMessageChannel implements Runnable, Closeable {
 
 	/** Begin of file */
 	final public static String BOF = "<<EOF>";
@@ -50,12 +50,12 @@ public abstract class InternalChannelMessageHandler implements Runnable, Closeab
 	/**
 	 * Local shell component registry.
 	 */
-	final protected ShellHandlerRegistrar registry;
+	final protected ShellHandlerRegistrar registrar;
 
 	/**
 	 * Client socket
 	 */
-	final protected Socket client;
+	final protected Socket socket;
 
 	/**
 	 * Callback function
@@ -72,12 +72,12 @@ public abstract class InternalChannelMessageHandler implements Runnable, Closeab
 	 */
 	protected OutputStream _out;
 
-	public InternalChannelMessageHandler(ShellHandlerRegistrar registry, Socket client, Function<String, Object> function) {
+	public ShellMessageChannel(ShellHandlerRegistrar registrar, Socket client, Function<String, Object> function) {
 		notNull(client, "Socket client is null, please check configure");
 		notNull(function, "Function is null, please check configure");
-		notNull(registry, "Registry must not be null");
-		this.registry = registry;
-		this.client = client;
+		notNull(registrar, "Registry must not be null");
+		this.registrar = registrar;
+		this.socket = client;
 		this.function = function;
 		if (running.compareAndSet(false, true)) {
 			try {
@@ -95,7 +95,7 @@ public abstract class InternalChannelMessageHandler implements Runnable, Closeab
 	 * @param message
 	 * @throws IOException
 	 */
-	public synchronized void writeAndFlush(Object message) throws IOException {
+	public synchronized void writeFlush(Object message) throws IOException {
 		notNull(message, "Message is null, please check configure");
 		if (!isActive()) {
 			throw new SocketException("No socket active!");
@@ -112,7 +112,7 @@ public abstract class InternalChannelMessageHandler implements Runnable, Closeab
 	 * @return
 	 */
 	public boolean isActive() {
-		return client.isConnected() && !client.isClosed();
+		return socket.isConnected() && !socket.isClosed();
 	}
 
 	/**
@@ -121,9 +121,9 @@ public abstract class InternalChannelMessageHandler implements Runnable, Closeab
 	@Override
 	public synchronized void close() throws IOException {
 		if (running.compareAndSet(true, false)) {
-			if (client != null && !client.isClosed()) {
+			if (socket != null && !socket.isClosed()) {
 				try {
-					client.close();
+					socket.close();
 				} catch (IOException e) {
 					err.println(String.format("Closing client failure", getStackTrace(e)));
 				}
@@ -151,7 +151,7 @@ public abstract class InternalChannelMessageHandler implements Runnable, Closeab
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((client == null) ? 0 : client.getRemoteSocketAddress().toString().hashCode());
+		result = prime * result + ((socket == null) ? 0 : socket.getRemoteSocketAddress().toString().hashCode());
 		return result;
 	}
 
@@ -163,18 +163,18 @@ public abstract class InternalChannelMessageHandler implements Runnable, Closeab
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		InternalChannelMessageHandler other = (InternalChannelMessageHandler) obj;
-		if (client == null) {
-			if (other.client != null)
+		ShellMessageChannel other = (ShellMessageChannel) obj;
+		if (socket == null) {
+			if (other.socket != null)
 				return false;
-		} else if (!client.getRemoteSocketAddress().toString().equals(other.client.getRemoteSocketAddress().toString()))
+		} else if (!socket.getRemoteSocketAddress().toString().equals(other.socket.getRemoteSocketAddress().toString()))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "ChannelMessageHandler [client=" + client.getRemoteSocketAddress().toString() + "]";
+		return getClass().getSimpleName() + " [client=" + socket.getRemoteSocketAddress().toString() + "]";
 	}
 
 }

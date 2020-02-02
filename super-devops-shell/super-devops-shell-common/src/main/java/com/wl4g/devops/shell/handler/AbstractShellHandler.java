@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell;
+package com.wl4g.devops.shell.handler;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public abstract class AbstractShellHandler implements ShellHandler {
 	/**
 	 * Shell handler bean registry
 	 */
-	final protected ShellHandlerRegistrar registry;
+	final protected ShellHandlerRegistrar registrar;
 
 	/**
 	 * Shell configuration
@@ -69,7 +69,7 @@ public abstract class AbstractShellHandler implements ShellHandler {
 	public AbstractShellHandler(AbstractConfiguration config, ShellHandlerRegistrar registry) {
 		notNull(registry, "Registry must not be null");
 		notNull(config, "Registry must not be null");
-		this.registry = registry;
+		this.registrar = registry;
 		this.config = config;
 	}
 
@@ -83,7 +83,7 @@ public abstract class AbstractShellHandler implements ShellHandler {
 		Object result = doProcess(resolveCommands(line));
 
 		// Post processing result
-		postProcessStdout(result);
+		postHandleOutput(result);
 
 		return result;
 	}
@@ -102,15 +102,15 @@ public abstract class AbstractShellHandler implements ShellHandler {
 		String mainArg = commands.remove(0);
 
 		// Target method wrap
-		isTrue(registry.contains(mainArg), String.format("'%s': command not found", mainArg));
-		TargetMethodWrapper tm = registry.getTargetMethods().get(mainArg);
+		isTrue(registrar.contains(mainArg), String.format("'%s': command not found", mainArg));
+		TargetMethodWrapper tm = registrar.getTargetMethods().get(mainArg);
 
 		try {
 			// Resolve method parameters
 			List<Object> args = resolveArguments(commands, tm);
 
 			// PreProcessing
-			preProcessParameters(tm, args);
+			preHandle(tm, args);
 
 			// Invocation
 			return tm.getMethod().invoke(tm.getTarget(), args.toArray());
@@ -216,12 +216,12 @@ public abstract class AbstractShellHandler implements ShellHandler {
 	}
 
 	/**
-	 * Pre-process parameters.
+	 * It the resolving parameters before handle.
 	 * 
 	 * @param tm
 	 * @param args
 	 */
-	protected void preProcessParameters(TargetMethodWrapper tm, List<Object> args) {
+	protected void preHandle(TargetMethodWrapper tm, List<Object> args) {
 
 	}
 
@@ -230,7 +230,7 @@ public abstract class AbstractShellHandler implements ShellHandler {
 	 * 
 	 * @param stdout
 	 */
-	protected void postProcessStdout(Object stdout) {
+	protected void postHandleOutput(Object stdout) {
 
 	}
 

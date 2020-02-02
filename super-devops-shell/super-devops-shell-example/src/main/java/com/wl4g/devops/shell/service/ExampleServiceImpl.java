@@ -30,7 +30,7 @@ public class ExampleServiceImpl implements ExampleService {
 	@Override
 	public SumResult add(SumArgument add) {
 		int sum = add.getAdd1() + add.getAdd2();
-		log.info("计算结果>>>... {}", sum);
+		System.out.println("计算结果>>>... +" + sum);
 		return new SumResult(sum);
 	}
 

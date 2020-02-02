@@ -13,32 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.processor;
+package com.wl4g.devops.shell.handler;
 
+import com.wl4g.devops.shell.handler.EmbeddedServerShellHandler.ServerShellMessageChannel;
 import com.wl4g.devops.shell.message.ChannelState;
 import com.wl4g.devops.shell.message.ExceptionMessage;
 import com.wl4g.devops.shell.message.Message;
 import com.wl4g.devops.shell.message.OutputMessage;
 import com.wl4g.devops.shell.message.ProgressMessage;
-import com.wl4g.devops.shell.processor.EmbeddedServerShellHandler.ShellHandler;
-import com.wl4g.devops.shell.processor.event.EventListener;
-import com.wl4g.devops.shell.processor.event.InterruptedEventListener;
 import com.wl4g.devops.shell.registry.InternalInjectable;
 import org.slf4j.Logger;
 import org.springframework.util.Assert;
 
-import java.io.Closeable;
 import java.io.IOException;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Vector;
 
-import static com.wl4g.devops.shell.handler.InternalChannelMessageHandler.*;
+import static com.wl4g.devops.shell.handler.ShellMessageChannel.*;
 import static com.wl4g.devops.shell.message.ChannelState.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
@@ -50,7 +46,7 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
  * @version v1.0 2019年5月24日
  * @since
  */
-public final class ShellContext implements InternalInjectable, Closeable {
+public final class ShellContext implements InternalInjectable {
 	final public static int DEFAULT_WHOLE = 100;
 
 	final protected Logger log = getLogger(getClass());
@@ -58,59 +54,92 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	/**
 	 * Event listeners
 	 */
-	final private Set<EventListener> eventListeners = new LinkedHashSet<>(4);
+	final private List<ShellEventListener> eventListeners = new Vector<>(4);
 
 	/**
-	 * Shell handler client.
+	 * Shell message channel.
 	 */
-	final private ShellHandler client;
+	final private ServerShellMessageChannel channel;
 
 	/**
 	 * Line result message state.
 	 */
 	private ChannelState state;
 
-	public ShellContext(ShellHandler client) {
-		this(client, NONCE);
+	ShellContext(ServerShellMessageChannel client) {
+		this(client, NEW);
 	}
 
-	public ShellContext(ShellHandler client, ChannelState state) {
-		notNull(client, "Client must not be null");
-		notNull(client, "State must not be null");
-		this.client = client;
+	ShellContext(ServerShellMessageChannel channel, ChannelState state) {
+		notNull(channel, "Shell channel must not be null");
+		notNull(channel, "State must not be null");
+		this.channel = channel;
 		this.state = state;
 
 		// Register default listener.
-		addEventListener(new InterruptedEventListener(this));
+		addEventListener(new ShellEventListener() {
+			// Ignore
+		});
+	}
+
+	ShellContext setState(ChannelState state) {
+		notNull(channel, "State must not be null");
+		this.state = state;
+		return this;
 	}
 
 	public ChannelState getState() {
 		return state;
 	}
 
-	public ShellContext setState(ChannelState state) {
-		notNull(client, "State must not be null");
-		this.state = state;
-		return this;
-	}
-
 	/**
-	 * Open console stream channel.
+	 * Open the channel of the current command line, effect: at this time, the
+	 * client console will wait for execution to complete (until the
+	 * {@link #completed()} method is called).
 	 */
-	public synchronized ShellContext open() {
-		this.state = RUNNING_WAIT;
-		// Print start mark
+	synchronized ShellContext begin() {
+		state = RUNNING;
+		// Print begin mark
 		printf(BOF);
 		return this;
 	}
 
 	/**
-	 * End console stream channel.
+	 * Complete processing the current command line channel, effect: the client
+	 * will reopen the console prompt.
 	 */
-	@Override
-	public synchronized void close() {
-		this.state = COMPLATED;
+	public synchronized void completed() {
+		state = COMPLETED;
 		printf(EOF); // Ouput end mark
+	}
+
+	/**
+	 * Are you currently in an interrupt state? (if the current thread does not
+	 * open the shell channel, it will return false, that is, uninterrupted)
+	 * 
+	 * @return
+	 */
+	public final boolean isInterrupted() {
+		return nonNull(state) ? (state == INTERRUPTED) : false;
+	}
+
+	/**
+	 * Get target event listeners.
+	 * 
+	 * @return
+	 */
+	public List<ShellEventListener> getEventListeners() {
+		return unmodifiableList(eventListeners);
+	}
+
+	/**
+	 * Add event listener
+	 * 
+	 * @param eventListener
+	 */
+	public void addEventListener(ShellEventListener eventListener) {
+		Assert.notNull(eventListener, "eventListener must not be null");
+		eventListeners.add(eventListener);
 	}
 
 	/**
@@ -124,18 +153,22 @@ public final class ShellContext implements InternalInjectable, Closeable {
 		Assert.isTrue((message instanceof Message || message instanceof CharSequence || message instanceof Throwable),
 				String.format("Unsupported print message types: %s", message.getClass()));
 		// Check channel state.
-		if (getState() != RUNNING_WAIT && !equalsAny(message.toString(), BOF, EOF)) {
-			throw new IllegalStateException("The shell is not printable in the afternoon, has it not been opened or closed?");
-		}
+		// To solve: com.wl4g.devops.shell.console.ExampleConsole#log3()#MARK1
+		//
+		// if (getState() != WAITING && !equalsAny(message.toString(), BOF,
+		// EOF)) {
+		// throw new IllegalStateException("Shell channel is not writable, has
+		// it not opened or interrupted/closed?");
+		// }
 
-		if (client != null && client.isActive()) {
+		if (nonNull(channel) && channel.isActive()) {
 			try {
 				if (message instanceof CharSequence) {
-					client.writeAndFlush(new OutputMessage(getState(), message.toString()));
+					channel.writeFlush(new OutputMessage(getState(), message.toString()));
 				} else if (message instanceof Throwable) {
-					client.writeAndFlush(new ExceptionMessage((Throwable) message));
+					channel.writeFlush(new ExceptionMessage((Throwable) message));
 				} else {
-					client.writeAndFlush(message);
+					channel.writeFlush(message);
 				}
 			} catch (IOException e) {
 				String errmsg = getRootCauseMessage(e);
@@ -169,36 +202,6 @@ public final class ShellContext implements InternalInjectable, Closeable {
 	 */
 	public ShellContext printf(String title, int whole, int progress) {
 		return printf(new ProgressMessage(title, whole, progress));
-	}
-
-	/**
-	 * Are you currently in an interrupt state? (if the current thread does not
-	 * open the shell channel, it will return false, that is, uninterrupted)
-	 * 
-	 * @return
-	 */
-	public boolean isInterrupted() {
-		return nonNull(state) ? (state == INTERRUPTED) : false;
-	}
-
-	/**
-	 * Invoke event listeners
-	 * 
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	<T extends EventListener> List<T> publishEvent(Class<T> clazz) {
-		return (List<T>) eventListeners.stream().filter(l -> l.getClass() == clazz).collect(toList());
-	}
-
-	/**
-	 * Add event listener
-	 * 
-	 * @param eventListener
-	 */
-	public void addEventListener(EventListener eventListener) {
-		Assert.notNull(eventListener, "eventListener must not be null");
-		this.eventListeners.add(eventListener);
 	}
 
 }

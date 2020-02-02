@@ -33,7 +33,7 @@ public class OutputMessage extends Message {
 	final private String content;
 
 	public OutputMessage(String content) {
-		this(NONCE, content);
+		this(NEW, content);
 	}
 
 	public OutputMessage(ChannelState state, String content) {

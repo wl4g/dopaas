@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.processor;
+package com.wl4g.devops.shell.handler;
 
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
@@ -21,10 +21,10 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.shell.AbstractShellHandler;
 import com.wl4g.devops.shell.config.ShellProperties;
-import com.wl4g.devops.shell.handler.InternalChannelMessageHandler;
-import com.wl4g.devops.shell.processor.EmbeddedServerShellHandler.ShellHandler;
+import com.wl4g.devops.shell.handler.AbstractShellHandler;
+import com.wl4g.devops.shell.handler.ShellMessageChannel;
+import com.wl4g.devops.shell.handler.EmbeddedServerShellHandler.ServerShellMessageChannel;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 
 /**
@@ -40,7 +40,7 @@ public abstract class AbstractServerShellHandler extends AbstractShellHandler im
 	/**
 	 * Accept socket client handlers.
 	 */
-	final private ThreadLocal<InternalChannelMessageHandler> clientContext = new InheritableThreadLocal<>();
+	final private ThreadLocal<ShellMessageChannel> clientContext = new InheritableThreadLocal<>();
 
 	/**
 	 * Shell properties configuration
@@ -75,7 +75,7 @@ public abstract class AbstractServerShellHandler extends AbstractShellHandler im
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T extends ShellHandler> T bind(InternalChannelMessageHandler client) {
+	protected <T extends ServerShellMessageChannel> T bind(ShellMessageChannel client) {
 		clientContext.set(client);
 		return (T) client;
 	}
@@ -86,7 +86,7 @@ public abstract class AbstractServerShellHandler extends AbstractShellHandler im
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T extends ShellHandler> T getClient() {
+	protected <T extends ServerShellMessageChannel> T getClient() {
 		return (T) clientContext.get();
 	}
 
