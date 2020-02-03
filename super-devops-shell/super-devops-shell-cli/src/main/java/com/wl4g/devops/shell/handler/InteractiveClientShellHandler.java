@@ -17,8 +17,6 @@ package com.wl4g.devops.shell.handler;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
-import java.io.IOException;
-import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.wl4g.devops.shell.config.Configuration;
@@ -28,18 +26,18 @@ import com.wl4g.devops.shell.message.Message;
 import com.wl4g.devops.shell.message.MetaMessage;
 import com.wl4g.devops.shell.message.StdoutMessage;
 import com.wl4g.devops.shell.message.ConfirmInterruptMessage;
+import com.wl4g.devops.shell.message.EOFStdoutMessage;
 import com.wl4g.devops.shell.message.AskInterruptMessage;
+import com.wl4g.devops.shell.message.BOFStdoutMessage;
 import com.wl4g.devops.shell.message.ProgressMessage;
 
 import static com.wl4g.devops.shell.utils.ShellUtils.*;
+import static com.wl4g.devops.shell.cli.BuiltInCommand.*;
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
 import static com.wl4g.devops.shell.config.DefaultShellHandlerRegistrar.getSingle;
-import static com.wl4g.devops.shell.handler.ShellMessageChannel.BOF;
-import static com.wl4g.devops.shell.handler.ShellMessageChannel.EOF;
 import static com.wl4g.devops.shell.message.ChannelState.*;
 import static java.lang.String.format;
 import static java.lang.System.*;
-import static java.util.Objects.nonNull;
 
 import org.jline.reader.UserInterruptException;
 
@@ -56,16 +54,13 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	final private AtomicBoolean running = new AtomicBoolean(false);
 
 	/** Mark the current processing completion status. */
-	private volatile boolean completed = true;
-
-	/** Current processing tasks. */
-	private Thread stdinTask;
+	private volatile boolean lastCompleted = true;
 
 	/** Current command line stdin string. */
 	private String stdin;
 
-	/** Record command send time-stamp, waiting for timeout processing. */
-	private long lastPayloadCmdWriteTime = 0L;
+	/** Payload command last sent timestamp, for timeout check. */
+	private long lastCmdSentTime = 0L;
 
 	public InteractiveClientShellHandler(Configuration config) {
 		super(config);
@@ -80,106 +75,105 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 
 		while (true) {
 			try {
+				printDebug("readLine...");
 				stdin = lineReader.readLine(getPrompt());
+				printDebug("readLine: " + stdin);
+				synchronized (this) { // MARK2
+					notifyAll(); // see:MARK3
+				}
 
-				// Stdin 'E' simulates interrupt events, for secondary
+				// Simulates interrupt events, for secondary
 				// development, it is convenient to debug in IDE environment.
 				if (DEBUG && "E".equals(trimToEmpty(stdin))) {
 					throw new UserInterruptException(stdin);
 				}
 
+				// Payload command?
 				if (!isBlank(stdin) && isLastComplated()) {
-					// Write command.
-					stdinTask = new Thread(() -> {
-						lastPayloadCmdWriteTime = currentTimeMillis();
-						writeStdin(stdin);
-					});
-					stdinTask.start();
-
+					lastCmdSentTime = currentTimeMillis();
+					writeStdin(stdin); // Do send command
 					waitForComplete(stdin);
 				}
-			} catch (UserInterruptException e) { // e.g. Ctrl+C interrupt event.
-				// No running tasks at present, shutdown directly.
+			} catch (UserInterruptException e) { // e.g: Ctrl+C
+				// Last command completed, interrupt allowed
 				if (isLastComplated()) {
-					shutdown();
+					out.println(format("Command canceled, exit use the command: %s|%s|%s|%s", INTERNAL_EXIT, INTERNAL_EX,
+							INTERNAL_QUIT, INTERNAL_QU));
 				} else {
-					// There are still unfinished tasks. shutdown gracefully.
+					// Last command is not completed, send interrupt signal
+					// stop gracefully
 					writeStdin(new InterruptMessage(true));
 				}
 			} catch (Throwable e) {
-				printErr(EMPTY, e);
-			} finally {
-				if (nonNull(stdinTask)) {
-					stdinTask.interrupt();
-					stdinTask = null;
-				}
+				printError(EMPTY, e);
 			}
 		}
 
 	}
 
 	@Override
-	protected void writeStdin(Object stdin) {
-		try {
-			super.writeStdin(stdin);
-		} catch (IOException e) {
-			printErr(EMPTY, e);
-		}
-	}
-
-	@SuppressWarnings("resource")
-	@Override
-	protected void postHandleOutput(Object msg) {
+	protected void postHandleOutput(Object output) throws Exception {
 		boolean isWakeup = false;
 
-		if (msg instanceof Message) { // Remote command stdout?
+		if (output instanceof Message) { // Remote command stdout?
 			// Meta
-			if (msg instanceof MetaMessage) {
-				MetaMessage meta = (MetaMessage) msg;
+			if (output instanceof MetaMessage) {
+				MetaMessage meta = (MetaMessage) output;
 				getSingle().merge(meta.getRegistedMethods());
 				isWakeup = true;
 			}
 			// Exception
-			else if (msg instanceof StderrMessage) {
-				StderrMessage stderr = (StderrMessage) msg;
-				printErr(EMPTY, stderr.getThrowable());
+			else if (output instanceof StderrMessage) {
+				StderrMessage stderr = (StderrMessage) output;
+				printError(EMPTY, stderr.getThrowable());
 				isWakeup = true;
 			}
 			// Progress
-			else if (msg instanceof ProgressMessage) {
-				ProgressMessage pro = (ProgressMessage) msg;
+			else if (output instanceof ProgressMessage) {
+				ProgressMessage pro = (ProgressMessage) output;
 				printProgress(pro.getTitle(), pro.getProgress(), pro.getWhole(), '=');
 			}
 			// Ask interrupt
-			else if (msg instanceof AskInterruptMessage) {
-				AskInterruptMessage ask = (AskInterruptMessage) msg;
-				// Ask for interrupt?
+			else if (output instanceof AskInterruptMessage) {
+				AskInterruptMessage ask = (AskInterruptMessage) output;
+				printDebug("readLine ask ...");
+
+				// Print ask prompt
 				lineReader.printAbove(ask.getSubject());
-				String confirm = new Scanner(in).next();
-				if (DEBUG) {
-					out.println("stdin interrupt confirm: " + confirm);
+				synchronized (this) { // MARK3
+					wait(TIMEOUT); // see:MARK2
 				}
+				String confirm = stdin;
+				printDebug("readLine ask interrupt confirm: " + confirm);
+
+				// Echo interrupt
 				writeStdin(new ConfirmInterruptMessage(isTrue(trimToEmpty(confirm), false)));
 			}
-			// Output result
-			else if (msg instanceof StdoutMessage) {
-				StdoutMessage stdout = (StdoutMessage) msg;
+			// BOF stdout
+			else if (output instanceof BOFStdoutMessage) {
+				// Ignore
+			}
+			// EOF stdout
+			else if (output instanceof EOFStdoutMessage) {
+				isWakeup = true;
+			}
+			// Stdout
+			else if (output instanceof StdoutMessage) {
+				StdoutMessage stdout = (StdoutMessage) output;
 				if (stdout.getState() == NEW || stdout.getState() == COMPLETED) {
 					// Wakeup lineReader required when output is complete.
 					isWakeup = true;
 				}
-				// Print from server result message.
-				if (!equalsAny(stdout.getContent(), BOF, EOF)) {
-					out.println(stdout.getContent());
-				}
+				// Print stdout message.
+				out.println(stdout.getContent());
 			}
 		} else { // Local command stdout?
 			isWakeup = true;
 		}
 
 		// Direct print of local command stdout.
-		if (msg instanceof CharSequence) {
-			out.println(msg);
+		if (output instanceof CharSequence) {
+			out.println(output);
 		}
 
 		// Wakeup for lineReader watching.
@@ -198,9 +192,9 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	 */
 	private void waitForComplete(String stdin) {
 		if (DEBUG) {
-			out.println(format("waitForCompleted: %s, completed: %s", this, completed));
+			out.println(format("waitForCompleted: %s, completed: %s", this, lastCompleted));
 		}
-		completed = false;
+		lastCompleted = false;
 	}
 
 	/**
@@ -209,10 +203,8 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	 * {@link AbstractClientShellHandler#waitForComplished()}
 	 */
 	private void wakeup() {
-		if (DEBUG) {
-			out.println(format("Wakeup: %s, completed: %s", this, completed));
-		}
-		completed = true;
+		printDebug(format("Wakeup: %s, completed: %s", this, lastCompleted));
+		lastCompleted = true;
 	}
 
 	/**
@@ -221,10 +213,8 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	 * @return
 	 */
 	private String getPrompt() {
-		if (DEBUG) {
-			out.println(format("getPrompt: %s, completed: %s", this, completed));
-		}
-		return completed ? getAttributed().toAnsi(lineReader.getTerminal()) : EMPTY;
+		printDebug(format("getPrompt: %s, completed: %s", this, lastCompleted));
+		return lastCompleted ? getAttributed().toAnsi(lineReader.getTerminal()) : EMPTY;
 	}
 
 	/**
@@ -234,7 +224,7 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	 * @return
 	 */
 	private boolean isLastComplated() {
-		return completed || (currentTimeMillis() - lastPayloadCmdWriteTime) >= TIMEOUT;
+		return lastCompleted || (currentTimeMillis() - lastCmdSentTime) >= TIMEOUT;
 	}
 
 }

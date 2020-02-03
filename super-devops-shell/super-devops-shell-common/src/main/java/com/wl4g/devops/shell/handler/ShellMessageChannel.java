@@ -23,6 +23,7 @@ import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
+import static java.lang.String.format;
 import static java.lang.System.err;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
@@ -35,12 +36,6 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
  * @since
  */
 public abstract class ShellMessageChannel implements Runnable, Closeable {
-
-	/** Begin of file */
-	final public static String BOF = "<<EOF>";
-
-	/** End of file */
-	final public static String EOF = "EOF";
 
 	/**
 	 * Currently running?
@@ -95,7 +90,7 @@ public abstract class ShellMessageChannel implements Runnable, Closeable {
 	 * @param message
 	 * @throws IOException
 	 */
-	public synchronized void writeFlush(Object message) throws IOException {
+	public void writeFlush(Object message) throws IOException {
 		notNull(message, "Message is null, please check configure");
 		if (!isActive()) {
 			throw new SocketException("No socket active!");
@@ -119,13 +114,13 @@ public abstract class ShellMessageChannel implements Runnable, Closeable {
 	 * Disconnect client socket
 	 */
 	@Override
-	public synchronized void close() throws IOException {
+	public void close() throws IOException {
 		if (running.compareAndSet(true, false)) {
 			if (socket != null && !socket.isClosed()) {
 				try {
 					socket.close();
 				} catch (IOException e) {
-					err.println(String.format("Closing client failure", getStackTrace(e)));
+					err.println(format("Closing client failure", getStackTrace(e)));
 				}
 			}
 
@@ -133,7 +128,7 @@ public abstract class ShellMessageChannel implements Runnable, Closeable {
 				try {
 					_in.close();
 				} catch (IOException e) {
-					err.println(String.format("Closing data input failure", getStackTrace(e)));
+					err.println(format("Closing data input failure", getStackTrace(e)));
 				}
 			}
 
@@ -141,7 +136,7 @@ public abstract class ShellMessageChannel implements Runnable, Closeable {
 				try {
 					_out.close();
 				} catch (IOException e) {
-					err.println(String.format("Closing data output failure", getStackTrace(e)));
+					err.println(format("Closing data output failure", getStackTrace(e)));
 				}
 			}
 		}

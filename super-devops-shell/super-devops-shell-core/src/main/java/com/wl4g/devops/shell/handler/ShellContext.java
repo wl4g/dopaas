@@ -16,7 +16,9 @@
 package com.wl4g.devops.shell.handler;
 
 import com.wl4g.devops.shell.handler.EmbeddedServerShellHandler.ServerShellMessageChannel;
+import com.wl4g.devops.shell.message.BOFStdoutMessage;
 import com.wl4g.devops.shell.message.ChannelState;
+import com.wl4g.devops.shell.message.EOFStdoutMessage;
 import com.wl4g.devops.shell.message.StderrMessage;
 import com.wl4g.devops.shell.message.Message;
 import com.wl4g.devops.shell.message.StdoutMessage;
@@ -26,15 +28,17 @@ import org.slf4j.Logger;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
-import static com.wl4g.devops.shell.handler.ShellMessageChannel.*;
 import static com.wl4g.devops.shell.message.ChannelState.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
@@ -48,13 +52,14 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
  */
 public final class ShellContext implements InternalInjectable {
 	final public static int DEFAULT_WHOLE = 100;
+	final public static String DEFAULT_INTERRUPT_LISTENER = "defaultInterruptListener";
 
 	final protected Logger log = getLogger(getClass());
 
 	/**
 	 * Event listeners
 	 */
-	final private List<ShellEventListener> eventListeners = new Vector<>(4);
+	final private Map<String, ShellEventListener> eventListeners = synchronizedMap(new LinkedHashMap<>(4));
 
 	/**
 	 * Shell message channel.
@@ -77,7 +82,7 @@ public final class ShellContext implements InternalInjectable {
 		this.state = state;
 
 		// Register default listener.
-		addEventListener(new ShellEventListener() {
+		addEventListener(DEFAULT_INTERRUPT_LISTENER, new ShellEventListener() {
 			// Ignore
 		});
 	}
@@ -100,7 +105,7 @@ public final class ShellContext implements InternalInjectable {
 	synchronized ShellContext begin() {
 		state = RUNNING;
 		// Print begin mark
-		printf(BOF);
+		printf(new BOFStdoutMessage());
 		return this;
 	}
 
@@ -110,7 +115,7 @@ public final class ShellContext implements InternalInjectable {
 	 */
 	public synchronized void completed() {
 		state = COMPLETED;
-		printf(EOF); // Ouput end mark
+		printf(new EOFStdoutMessage()); // Ouput end mark
 	}
 
 	/**
@@ -129,17 +134,18 @@ public final class ShellContext implements InternalInjectable {
 	 * @return
 	 */
 	public List<ShellEventListener> getEventListeners() {
-		return unmodifiableList(eventListeners);
+		return unmodifiableList(eventListeners.values().stream().collect(toList()));
 	}
 
 	/**
 	 * Add event listener
 	 * 
+	 * @param name
 	 * @param eventListener
 	 */
-	public void addEventListener(ShellEventListener eventListener) {
+	public void addEventListener(String name, ShellEventListener eventListener) {
 		Assert.notNull(eventListener, "eventListener must not be null");
-		eventListeners.add(eventListener);
+		eventListeners.put(name, eventListener);
 	}
 
 	/**

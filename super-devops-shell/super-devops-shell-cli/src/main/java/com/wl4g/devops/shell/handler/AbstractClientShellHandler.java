@@ -122,16 +122,16 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 		try {
 			initialize();
 		} catch (Throwable t) {
-			printErr(EMPTY, t);
+			printError(EMPTY, t);
 			shutdown();
 		}
 	}
 
-	public ShellHandlerRegistrar getRegistry() {
+	public final ShellHandlerRegistrar getRegistrar() {
 		return registrar;
 	}
 
-	public LineReader getLineReader() {
+	public final LineReader getLineReader() {
 		return lineReader;
 	}
 
@@ -142,28 +142,18 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 
 			// Close client
 			closeQuietly();
-
-			// Gracefully halt
-			exit(0);
-
 		} catch (Throwable e) {
-			printErr("Shutdown failure.", e);
+			printError("Shutdown failure.", e);
 		}
+
+		// Gracefully halt
+		exit(0);
 	}
 
-	/**
-	 * Print exceptions
-	 * 
-	 * @param th
-	 * @param details
-	 */
-	protected void printErr(String abnormal, Throwable th) {
+	@Override
+	protected void printError(String abnormal, Throwable th) {
 		stacktraceAsString = getStackTrace(th);
-		if (DEBUG) {
-			th.printStackTrace();
-		} else {
-			err.println(format("%s %s", abnormal, getRootCauseMessage(th)));
-		}
+		super.printError(abnormal, th);
 	}
 
 	/**
@@ -176,53 +166,50 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	}
 
 	/**
-	 * Client handler.
-	 * 
-	 * @return
-	 */
-	public ClientShellMessageChannel getClient() {
-		return clientChannel;
-	}
-
-	/**
 	 * Submission stdin message to remote
 	 * 
 	 * @param line
 	 * @throws IOException
 	 */
-	protected void writeStdin(Object stdin) throws IOException {
-		// Ensure client
-		ensureClient();
-
-		if (stdin instanceof String) {
-			String line = (String) stdin;
-			List<String> cmds = parse(line);
-			if (!cmds.isEmpty()) {
-				// $> [help|clear|history...]
-				if (registrar.contains(cmds.get(0))) { // Built-in command?
-					DefaultBuiltInCommand.senseLine(line);
-					process(line);
-					return;
+	protected void writeStdin(Object stdin) {
+		try {
+			boolean isRemoteCommand = true;
+			if (stdin instanceof String) {
+				String cmd = (String) stdin;
+				List<String> cmds = parse(cmd);
+				if (!cmds.isEmpty()) {
+					// $> [help|clear|history...]
+					if (registrar.contains(cmds.get(0))) { // Local command?
+						isRemoteCommand = false;
+						DefaultBuiltInCommand.senseLine(cmd);
+						process(cmd);
+						return;
+					}
+					// help command? [MARK0] $> add --help
+					else if (cmds.size() > 1
+							&& equalsAny(cmds.get(1), (GNU_CMD_LONG + INTERNAL_HELP), (GNU_CMD_LONG + INTERNAL_HE))) {
+						isRemoteCommand = false;
+						// e.g: '$> help add'
+						cmd = clean(INTERNAL_HELP) + " " + cmds.get(0);
+						// Set current line
+						DefaultBuiltInCommand.senseLine(cmd);
+						process(cmd);
+						return;
+					}
 				}
-				// help command? [MARK0] $> add --help
-				else if (cmds.size() > 1
-						&& equalsAny(cmds.get(1), (GNU_CMD_LONG + INTERNAL_HELP), (GNU_CMD_LONG + INTERNAL_HE))) {
 
-					// Equivalent to: '$> help add'
-					line = clean(INTERNAL_HELP) + " " + cmds.get(0);
-					// Set current line
-					DefaultBuiltInCommand.senseLine(line);
-					process(line);
-					return;
-				}
+				// Wrap string command
+				stdin = new StdinMessage(cmd);
 			}
 
-			// Submission remote commands line
-			clientChannel.writeFlush(new StdinMessage(line));
-		} else {
-			clientChannel.writeFlush(stdin);
+			// Check connect & send to server.
+			if (isRemoteCommand) {
+				ensureClient();
+				clientChannel.writeFlush(stdin);
+			}
+		} catch (IOException e) {
+			printError(EMPTY, e);
 		}
-
 	}
 
 	/**
@@ -241,7 +228,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 * 
 	 * @return
 	 */
-	protected LineReader createLineReader() {
+	private LineReader createLineReader() {
 		try {
 			return LineReaderBuilder.builder().appName("Devops Shell Cli").completer(new DynamicCompleter(getSingle()))
 					.terminal(TerminalBuilder.terminal()).build();
@@ -278,7 +265,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 		}
 		lineReader.setVariable(HISTORY_FILE, file.getAbsolutePath());
 
-		// Print banner
+		// Print banners
 		banner();
 	}
 
@@ -397,7 +384,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 		private Thread boss;
 
 		public ClientShellMessageChannel(AbstractClientShellHandler runner, Socket client, Function<String, Object> function) {
-			super(runner.getRegistry(), client, function);
+			super(runner.getRegistrar(), client, function);
 			this.runner = runner;
 		}
 
@@ -423,10 +410,10 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 					try {
 						close();
 					} catch (IOException e1) {
-						runner.printErr(EMPTY, e);
+						runner.printError(EMPTY, e);
 					}
 				} catch (Throwable e) {
-					runner.printErr(EMPTY, e);
+					runner.printError(EMPTY, e);
 				}
 			}
 		}
