@@ -41,6 +41,8 @@ the time-out for waiting results to return (default: 10_000ms), and can print de
 ![help](shots/use_help.jpg)
 - Forced interruption of tasks running
 ![Forced interruption of tasks running](shots/force_interrupt.jpg)
+- Support interactive operation of real-time progress bar and interrupt confirmation
+![progress and interrupt confirm](shots/progress_interrupt.jpg)
 
 ## Built-in commands:
 - clear/cls    Cleaning console

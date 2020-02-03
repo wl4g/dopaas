@@ -43,6 +43,9 @@ java -Dservname=shell-example -Dprompt=my-shell -Dtimeout=5000 -jar shell-cli-ma
 ![help帮助](shots/use_help.jpg)
 - 強制中断运行中的任务
 ![強制中断运行中的任务](shots/force_interrupt.jpg)
+- 支持实时进度条与中断确认交互操作
+![实时进度条与中断确认](shots/progress_interrupt.jpg)
+
 
 ## 内置命令 
 - clear/cls    清理控制台
