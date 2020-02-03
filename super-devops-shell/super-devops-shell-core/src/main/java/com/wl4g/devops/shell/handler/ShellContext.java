@@ -17,9 +17,9 @@ package com.wl4g.devops.shell.handler;
 
 import com.wl4g.devops.shell.handler.EmbeddedServerShellHandler.ServerShellMessageChannel;
 import com.wl4g.devops.shell.message.ChannelState;
-import com.wl4g.devops.shell.message.ExceptionMessage;
+import com.wl4g.devops.shell.message.StderrMessage;
 import com.wl4g.devops.shell.message.Message;
-import com.wl4g.devops.shell.message.OutputMessage;
+import com.wl4g.devops.shell.message.StdoutMessage;
 import com.wl4g.devops.shell.message.ProgressMessage;
 import com.wl4g.devops.shell.registry.InternalInjectable;
 import org.slf4j.Logger;
@@ -164,9 +164,9 @@ public final class ShellContext implements InternalInjectable {
 		if (nonNull(channel) && channel.isActive()) {
 			try {
 				if (message instanceof CharSequence) {
-					channel.writeFlush(new OutputMessage(getState(), message.toString()));
+					channel.writeFlush(new StdoutMessage(getState(), message.toString()));
 				} else if (message instanceof Throwable) {
-					channel.writeFlush(new ExceptionMessage((Throwable) message));
+					channel.writeFlush(new StderrMessage((Throwable) message));
 				} else {
 					channel.writeFlush(message);
 				}

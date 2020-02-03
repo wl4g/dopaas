@@ -257,33 +257,31 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 		public void run() {
 			while (running.get() && isActive()) {
 				try {
-					// To a string command line
-					Object input = new ObjectInputStream(_in).readObject();
-					log.info("<= {}", input);
+					Object stdin = new ObjectInputStream(_in).readObject();
+					log.info("<= {}", stdin);
 
-					Object ret = null;
-					// Register
-					if (input instanceof MetaMessage) {
-						// Register target methods
-						ret = new MetaMessage(registrar.getTargetMethods());
+					Object output = null;
+					// Register shell methods
+					if (stdin instanceof MetaMessage) {
+						output = new MetaMessage(registrar.getTargetMethods());
 					}
-					// Confirm interrupt
-					else if (input instanceof ConfirmInterruptMessage) {
-						ConfirmInterruptMessage confirm = (ConfirmInterruptMessage) input;
-						// Call interrupt events.
-						context.getEventListeners().forEach(l -> l.onInterrupt(context, confirm.getConfirmed()));
-					}
-					// Ask interrupt
-					else if (input instanceof InterruptMessage) {
+					// Ask interruption
+					else if (stdin instanceof InterruptMessage) {
 						// Call pre-interrupt events.
 						context.getEventListeners().forEach(l -> l.onPreInterrupt(context));
 
-						// Ask interrupt to client console.
-						writeFlush(new AskInterruptMessage("Are you sure you want to cancel the execution?"));
+						// Ask if the client is interrupt.
+						output = new AskInterruptMessage("Are you sure you want to cancel the execution?");
 					}
-					// Command
-					else if (input instanceof StdinMessage) {
-						StdinMessage line = (StdinMessage) input;
+					// Confirm interruption
+					else if (stdin instanceof ConfirmInterruptMessage) {
+						ConfirmInterruptMessage confirm = (ConfirmInterruptMessage) stdin;
+						// Call interrupt events.
+						context.getEventListeners().forEach(l -> l.onInterrupt(context, confirm.getConfirm()));
+					}
+					// Stdin of commands
+					else if (stdin instanceof StdinMessage) {
+						StdinMessage line = (StdinMessage) stdin;
 						// Call command events.
 						context.getEventListeners().forEach(l -> l.onCommand(context, line.getLine()));
 
@@ -314,9 +312,9 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 						});
 					}
 
-					if (nonNull(ret)) { // Echo
-						log.info("=> {}", ret);
-						writeFlush(ret);
+					if (nonNull(output)) { // Write to console.
+						log.info("=> {}", output);
+						writeFlush(output);
 					}
 				} catch (Throwable th) {
 					handleError(th);
@@ -364,7 +362,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 					String errmsg = getRootCauseMessage(th);
 					errmsg = isBlank(errmsg) ? getMessage(th) : errmsg;
 					log.warn("{}", errmsg);
-					writeFlush(new ExceptionMessage(th));
+					writeFlush(new StderrMessage(th));
 				} catch (IOException e) {
 					log.warn("Write failure", e);
 				}

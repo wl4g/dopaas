@@ -15,44 +15,33 @@
  */
 package com.wl4g.devops.shell.message;
 
-import static com.wl4g.devops.shell.message.ChannelState.*;
+import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
- * Result output message.
+ * Stderr exception message.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月4日
  * @since
  */
-public class OutputMessage extends Message {
-	private static final long serialVersionUID = -8574311246731909685L;
+public class StderrMessage extends Message {
+	private static final long serialVersionUID = -8574315277731909685L;
 
-	final private ChannelState state;
+	final private Throwable throwable;
 
-	final private String content;
-
-	public OutputMessage(String content) {
-		this(NEW, content);
+	public StderrMessage(Throwable throwable) {
+		notNull(throwable, "throwable must not be null");
+		this.throwable = throwable;
 	}
 
-	public OutputMessage(ChannelState state, String content) {
-		notNull(state, "State must not be empty");
-		this.state = state;
-		this.content = content;
-	}
-
-	public ChannelState getState() {
-		return state;
-	}
-
-	public String getContent() {
-		return content;
+	public Throwable getThrowable() {
+		return throwable;
 	}
 
 	@Override
 	public String toString() {
-		return "Output [" + state + " - " + content + "]";
+		return "stderr [" + getRootCauseMessage(throwable) + "]";
 	}
 
 }

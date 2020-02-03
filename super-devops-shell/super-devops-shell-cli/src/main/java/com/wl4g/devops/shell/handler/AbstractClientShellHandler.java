@@ -30,6 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
+
+import static java.lang.String.format;
 import static java.lang.System.*;
 
 import com.wl4g.devops.shell.command.DefaultBuiltInCommand;
@@ -156,8 +158,12 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 * @param details
 	 */
 	protected void printErr(String abnormal, Throwable th) {
-		this.stacktraceAsString = getStackTrace(th);
-		err.println(String.format("%s %s", abnormal, getRootCauseMessage(th)));
+		stacktraceAsString = getStackTrace(th);
+		if (DEBUG) {
+			th.printStackTrace();
+		} else {
+			err.println(format("%s %s", abnormal, getRootCauseMessage(th)));
+		}
 	}
 
 	/**
@@ -166,7 +172,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 * @return
 	 */
 	public String getLastStacktrace() {
-		return this.stacktraceAsString;
+		return stacktraceAsString;
 	}
 
 	/**
@@ -184,7 +190,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 * @param line
 	 * @throws IOException
 	 */
-	protected void submitStdin(Object stdin) throws IOException {
+	protected void writeStdin(Object stdin) throws IOException {
 		// Ensure client
 		ensureClient();
 
@@ -227,7 +233,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	protected AttributedString getAttributed() {
 		String prompt = getProperty(ARG_PROMPT);
 		prompt = isBlank(prompt) ? getProperty(ARG_SERV_NAME) : prompt;
-		return isBlank(prompt) ? DEFAULT_ATTRIBUTED : new AttributedString(String.format("%s> ", prompt));
+		return isBlank(prompt) ? DEFAULT_ATTRIBUTED : new AttributedString(format("%s> ", prompt));
 	}
 
 	/**
@@ -251,39 +257,40 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 */
 	private void initialize() throws IOException {
 		// Register commands
-		this.registrar.register(new DefaultBuiltInCommand(this));
+		registrar.register(new DefaultBuiltInCommand(this));
 
 		// Initialize remote register commands
-		submitStdin(new MetaMessage());
+		writeStdin(new MetaMessage());
 
 		// Set history persist file
 		File file = new File(USER_HOME + "/.devops/shell/history");
 		if (!file.getParentFile().exists()) {
 			state(file.getParentFile().mkdirs(),
-					String.format("Failed to create, for directory: '%s'", file.getParentFile().getAbsolutePath()));
+					format("Failed to create, for directory: '%s'", file.getParentFile().getAbsolutePath()));
 		}
 		if (!file.exists()) {
-			String errmsg = String.format("Failed to create, for file: '%s'", file.getAbsolutePath());
+			String errmsg = format("Failed to create, for file: '%s'", file.getAbsolutePath());
 			try {
 				state(file.createNewFile(), errmsg);
 			} catch (IOException e) {
 				throw new IllegalStateException(errmsg);
 			}
 		}
-		this.lineReader.setVariable(HISTORY_FILE, file.getAbsolutePath());
+		lineReader.setVariable(HISTORY_FILE, file.getAbsolutePath());
 
 		// Print banner
-		this.banner();
+		banner();
 	}
 
 	/**
 	 * Print banner
 	 */
 	private void banner() {
-		out.println(String.format("%s", config.getBanner()));
-		String v = this.getClass().getPackage().getImplementationVersion();
-		out.println(String.format("version: %s", isBlank(v) ? "unknown" : v));
-		out.println(String.format("time: %s", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())));
+		out.println(format("%s", config.getBanner()));
+		String v = getClass().getPackage().getImplementationVersion();
+		out.println(format("version: %s", isBlank(v) ? "unknown" : v));
+		out.println(format("time: %s", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())));
+		out.println();
 	}
 
 	/**
@@ -304,15 +311,15 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 		if (create) {
 			Object[] point = determineServPoint();
 			if (DEBUG) {
-				out.print(String.format("Connecting to %s:%s ... \n", point[0], point[1]));
+				out.print(format("Connecting to %s:%s ... \n", point[0], point[1]));
 			}
 
 			Socket s = null;
 			try {
 				s = new Socket((String) point[0], (int) point[1]);
 			} catch (IOException e) {
-				String errmsg = String.format("Connecting to '%s'(%s) failure! cause by: %s", getProperty(ARG_SERV_NAME),
-						point[1], getRootCauseMessage(e));
+				String errmsg = format("Connecting to '%s'(%s) failure! cause by: %s", getProperty(ARG_SERV_NAME), point[1],
+						getRootCauseMessage(e));
 				throw new IllegalStateException(errmsg);
 			}
 
@@ -332,7 +339,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 		String servPoint = getProperty(ARG_SERV_POINT);
 
 		if (isBlank(servName) && isBlank(servPoint)) {
-			throw new IllegalArgumentException(String.format(
+			throw new IllegalArgumentException(format(
 					"JVM startup argument -D%s(e.g. -D%s=8080) and -D%s(e.g. -D%s=myapp1) must be one of the two, and only -D%s are adopted when both exist",
 					ARG_SERV_POINT, ARG_SERV_POINT, ARG_SERV_NAME, ARG_SERV_NAME, ARG_SERV_POINT));
 		}
@@ -343,12 +350,11 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 		//
 		if (isNotBlank(servPoint)) {
 			isTrue(contains(servPoint, ":") && servPoint.length() > 8,
-					String.format("Invalid server point. e.g. -D%s=10.0.0.11", ARG_SERV_POINT));
+					format("Invalid server point. e.g. -D%s=10.0.0.11", ARG_SERV_POINT));
 			String[] parts = servPoint.split(":");
-			isTrue(isNumeric(parts[1]), String.format("Invalid server port is %s", servPoint));
+			isTrue(isNumeric(parts[1]), format("Invalid server port is %s", servPoint));
 			int port = Integer.parseInt(parts[1]);
-			isTrue((port > 1024 && port < 65535),
-					String.format("Server port must be between 1024 and 65535, actual is %s", servPoint));
+			isTrue((port > 1024 && port < 65535), format("Server port must be between 1024 and 65535, actual is %s", servPoint));
 			return new Object[] { parts[0], port };
 		}
 

@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.shell.message;
 
+import static com.wl4g.devops.shell.utils.ShellUtils.isTrue;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
  * Post confirm interrupt message
@@ -30,20 +32,24 @@ public class ConfirmInterruptMessage extends Message {
 	/**
 	 * Current confirmed state.
 	 */
-	final private Boolean confirmed;
+	final private Boolean confirm;
 
-	public ConfirmInterruptMessage(Boolean confirmed) {
-		notNullOf(confirmed, "confirmed");
-		this.confirmed = confirmed;
+	public ConfirmInterruptMessage(String confirm) {
+		this(isTrue(trimToEmpty(confirm), false));
 	}
 
-	public Boolean getConfirmed() {
-		return confirmed;
+	public ConfirmInterruptMessage(Boolean confirm) {
+		notNullOf(confirm, "confirm");
+		this.confirm = confirm;
+	}
+
+	public Boolean getConfirm() {
+		return confirm;
 	}
 
 	@Override
 	public String toString() {
-		return "PostConfirmedMessage [confirmed=" + confirmed + "]";
+		return "PostConfirmedMessage [confirm=" + confirm + "]";
 	}
 
 }
