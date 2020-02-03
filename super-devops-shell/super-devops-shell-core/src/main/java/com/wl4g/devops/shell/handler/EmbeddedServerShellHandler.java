@@ -269,7 +269,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 						context.getEventListeners().forEach(l -> l.onPreInterrupt(context));
 
 						// Ask if the client is interrupt.
-						output = new AskInterruptMessage("Are you sure you want to cancel the execution?");
+						output = new AskInterruptMessage("Are you sure you want to cancel execution? (y|n)");
 					}
 					// Confirm interruption
 					else if (stdin instanceof ConfirmInterruptMessage) {

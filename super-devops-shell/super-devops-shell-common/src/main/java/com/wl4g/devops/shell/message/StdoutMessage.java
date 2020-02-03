@@ -15,9 +15,6 @@
  */
 package com.wl4g.devops.shell.message;
 
-import static com.wl4g.devops.shell.message.ChannelState.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
-
 /**
  * Stdout result message.
  * 
@@ -28,22 +25,10 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
 public class StdoutMessage extends Message {
 	private static final long serialVersionUID = -8574311246731909685L;
 
-	final private ChannelState state;
-
 	final private String content;
 
 	public StdoutMessage(String content) {
-		this(NEW, content);
-	}
-
-	public StdoutMessage(ChannelState state, String content) {
-		notNull(state, "State must not be empty");
-		this.state = state;
 		this.content = content;
-	}
-
-	public ChannelState getState() {
-		return state;
 	}
 
 	public String getContent() {
@@ -52,7 +37,7 @@ public class StdoutMessage extends Message {
 
 	@Override
 	public String toString() {
-		return "stdout [" + state + " - " + content + "]";
+		return "stdout [" + content + "]";
 	}
 
 }
