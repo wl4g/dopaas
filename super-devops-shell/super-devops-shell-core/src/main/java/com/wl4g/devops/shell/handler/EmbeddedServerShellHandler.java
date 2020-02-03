@@ -142,9 +142,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 			try {
 				// Receiving client socket(blocking)
 				Socket s = ss.accept();
-				if (log.isDebugEnabled()) {
-					log.debug("On accept socket: {}, maximum: {}, actual: {}", s, getConfig().getMaxClients(), channels.size());
-				}
+				log.debug("On accept socket: {}, maximum: {}, actual: {}", s, getConfig().getMaxClients(), channels.size());
 
 				// Check many connections.
 				if (channels.size() >= getConfig().getMaxClients()) {
@@ -174,7 +172,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	}
 
 	@Override
-	protected void preHandle(TargetMethodWrapper tm, List<Object> args) {
+	protected void preHandleInput(TargetMethodWrapper tm, List<Object> args) {
 		// Get current context
 		ShellContext context = getClient().getContext();
 
@@ -278,6 +276,9 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 						ConfirmInterruptMessage confirm = (ConfirmInterruptMessage) stdin;
 						// Call interrupt events.
 						context.getEventListeners().forEach(l -> l.onInterrupt(context, confirm.getConfirm()));
+						if (confirm.getConfirm()) {
+							context.completed();
+						}
 					}
 					// Stdin of commands
 					else if (stdin instanceof StdinMessage) {

@@ -42,6 +42,8 @@ import static com.wl4g.devops.shell.cli.BuiltInCommand.*;
 import static com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter.*;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
 import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleCollectionType;
+import static java.lang.String.format;
+import static java.lang.System.err;
 import static java.util.Objects.nonNull;
 
 /**
@@ -94,10 +96,9 @@ public class TargetMethodWrapper implements Serializable {
 
 		// Check whether there is a keyword.(if not an internal command)
 		if (!(target instanceof BuiltInCommand)) {
-			isTrue(!contains(sm.keys()),
-					String.format(
-							"The shell method: '%s' definition exists in conflict with the keywords: '%s' and is recommended to be renamed.",
-							method, asCmdsString()));
+			isTrue(!contains(sm.keys()), String.format(
+					"The shell method: '%s' definition exists in conflict with the keywords: '%s' and is recommended to be renamed.",
+					method, asCmdsString()));
 		}
 
 		// Initialization
@@ -407,7 +408,7 @@ public class TargetMethodWrapper implements Serializable {
 										shOpt.required(), shOpt.help());
 								parameter.addAttribute(option, fname);
 							} else {
-								System.err.println(String.format(
+								err.println(format(
 										"WARNINGS: Although the @%s annotation option has been used, it has not been registered in the parameter list because field: '%s' has modifiers final/static/transient/volatile/native/synchronized, etc.",
 										ShellOption.class.getSimpleName(), f));
 							}

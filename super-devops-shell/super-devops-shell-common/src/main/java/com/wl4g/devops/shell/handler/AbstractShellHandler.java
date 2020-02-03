@@ -16,7 +16,9 @@
 package com.wl4g.devops.shell.handler;
 
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -28,10 +30,13 @@ import java.util.Optional;
 
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.doFullWithFields;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isGenericModifier;
+import static java.lang.String.format;
 import static java.lang.System.*;
 
 import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
 
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.config.AbstractConfiguration;
@@ -78,14 +83,17 @@ public abstract class AbstractShellHandler implements ShellHandler {
 		if (isEmpty(line)) {
 			return null;
 		}
+		try {
+			// Invocation
+			Object output = doProcess(resolveCommands(line));
 
-		// Invocation and result processing
-		Object result = doProcess(resolveCommands(line));
+			// Post output result processing
+			postHandleOutput(output);
 
-		// Post processing result
-		postHandleOutput(result);
-
-		return result;
+			return output;
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	/**
@@ -95,7 +103,7 @@ public abstract class AbstractShellHandler implements ShellHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	protected Object doProcess(List<String> commands) {
+	protected Object doProcess(List<String> commands) throws Exception {
 		notNull(commands, "Console input commands must not be null");
 
 		// Main argument option.(remove)
@@ -105,18 +113,14 @@ public abstract class AbstractShellHandler implements ShellHandler {
 		isTrue(registrar.contains(mainArg), String.format("'%s': command not found", mainArg));
 		TargetMethodWrapper tm = registrar.getTargetMethods().get(mainArg);
 
-		try {
-			// Resolve method parameters
-			List<Object> args = resolveArguments(commands, tm);
+		// Resolve method parameters
+		List<Object> args = resolveArguments(commands, tm);
 
-			// PreProcessing
-			preHandle(tm, args);
+		// Pre handling
+		preHandleInput(tm, args);
 
-			// Invocation
-			return tm.getMethod().invoke(tm.getTarget(), args.toArray());
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
+		// Invocation
+		return tm.getMethod().invoke(tm.getTarget(), args.toArray());
 	}
 
 	/**
@@ -221,16 +225,17 @@ public abstract class AbstractShellHandler implements ShellHandler {
 	 * @param tm
 	 * @param args
 	 */
-	protected void preHandle(TargetMethodWrapper tm, List<Object> args) {
+	protected void preHandleInput(TargetMethodWrapper tm, List<Object> args) {
 
 	}
 
 	/**
-	 * Post invocation stdout result message.
+	 * Post invocation stdout message.
 	 * 
-	 * @param stdout
+	 * @param output
+	 * @throws Exception
 	 */
-	protected void postHandleOutput(Object stdout) {
+	protected void postHandleOutput(Object output) throws Exception {
 
 	}
 
@@ -273,10 +278,38 @@ public abstract class AbstractShellHandler implements ShellHandler {
 		int servport = (int) (config.getBeginPort() + (crc32.getValue() % mod & (mod - 1)));
 
 		if (DEBUG) {
-			out.println(String.format("Shell servports (%s ~ %s), origin(%s), sign(%s), determine(%s)", config.getBeginPort(),
+			out.println(format("Shell servports (%s ~ %s), origin(%s), sign(%s), determine(%s)", config.getBeginPort(),
 					config.getEndPort(), origin, crc32.getValue(), servport));
 		}
 		return servport;
+	}
+
+	// --- Function's ---
+
+	/**
+	 * Print errors info.
+	 * 
+	 * @param abnormal
+	 * @param th
+	 */
+	protected void printError(String abnormal, Throwable th) {
+		if (DEBUG) {
+			th.printStackTrace();
+		} else {
+			err.println(format("%s %s", abnormal, getRootCauseMessage(th)));
+		}
+	}
+
+	/**
+	 * Print debug info.
+	 * 
+	 * @param msg
+	 */
+	protected void printDebug(String msg) {
+		if (DEBUG) {
+			String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+			out.println(format("%s %s DEBUG - %s", date, LOCAL_PROCESS_ID, msg));
+		}
 	}
 
 }

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.shell.exception;
 
-public class TooManyConnectionsException extends RuntimeException {
+public class ShellException extends RuntimeException {
 	private static final long serialVersionUID = 515355075449844111L;
 
 	/**
@@ -23,7 +23,7 @@ public class TooManyConnectionsException extends RuntimeException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public TooManyConnectionsException() {
+	public ShellException() {
 		super();
 	}
 
@@ -36,7 +36,7 @@ public class TooManyConnectionsException extends RuntimeException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public TooManyConnectionsException(String message) {
+	public ShellException(String message) {
 		super(message);
 	}
 
@@ -57,7 +57,7 @@ public class TooManyConnectionsException extends RuntimeException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public TooManyConnectionsException(String message, Throwable cause) {
+	public ShellException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -75,7 +75,7 @@ public class TooManyConnectionsException extends RuntimeException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public TooManyConnectionsException(Throwable cause) {
+	public ShellException(Throwable cause) {
 		super(cause);
 	}
 
@@ -96,7 +96,7 @@ public class TooManyConnectionsException extends RuntimeException {
 	 *
 	 * @since 1.7
 	 */
-	protected TooManyConnectionsException(String message, Throwable cause, boolean enableSuppression,
+	protected ShellException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}

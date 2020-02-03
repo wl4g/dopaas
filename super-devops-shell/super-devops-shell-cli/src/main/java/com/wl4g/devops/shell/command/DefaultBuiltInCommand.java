@@ -76,7 +76,7 @@ public class DefaultBuiltInCommand extends BuiltInCommand {
 	public DefaultBuiltInCommand(AbstractClientShellHandler runner) {
 		notNull(runner, "runner is null, please check configure");
 		this.runner = runner;
-		this.registry = (DefaultShellHandlerRegistrar) runner.getRegistry();
+		this.registry = (DefaultShellHandlerRegistrar) runner.getRegistrar();
 		notNull(registry, "Registry must not be null");
 	}
 
