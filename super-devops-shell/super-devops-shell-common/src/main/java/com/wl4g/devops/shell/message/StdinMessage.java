@@ -40,7 +40,7 @@ public class StdinMessage extends Message {
 
 	@Override
 	public String toString() {
-		return "Stdin [" + line + "]";
+		return "stdin [" + line + "]";
 	}
 
 }

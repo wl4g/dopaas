@@ -37,7 +37,7 @@ public class ScriptClientShellHandler extends AbstractClientShellHandler {
 	public void run(String[] args) {
 		String line = StringUtils.join(args, " ");
 		try {
-			submitStdin(line);
+			writeStdin(line);
 		} catch (Throwable e) {
 			err.println(getStackTrace(e));
 			shutdown();
