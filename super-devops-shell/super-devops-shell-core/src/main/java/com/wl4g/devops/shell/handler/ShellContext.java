@@ -125,7 +125,7 @@ public final class ShellContext implements InternalInjectable {
 	 * @return
 	 */
 	public final boolean isInterrupted() {
-		return nonNull(state) ? (state == INTERRUPTED) : false;
+		return nonNull(state) ? (state == INTERRUPTED || state == COMPLETED) : false;
 	}
 
 	/**
@@ -170,7 +170,7 @@ public final class ShellContext implements InternalInjectable {
 		if (nonNull(channel) && channel.isActive()) {
 			try {
 				if (message instanceof CharSequence) {
-					channel.writeFlush(new StdoutMessage(getState(), message.toString()));
+					channel.writeFlush(new StdoutMessage(message.toString()));
 				} else if (message instanceof Throwable) {
 					channel.writeFlush(new StderrMessage((Throwable) message));
 				} else {

@@ -15,9 +15,7 @@
  */
 package com.wl4g.devops.shell.message;
 
-import static com.wl4g.devops.shell.utils.ShellUtils.isTrue;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
  * Post confirm interrupt message
@@ -33,10 +31,6 @@ public class ConfirmInterruptMessage extends Message {
 	 * Current confirmed state.
 	 */
 	final private Boolean confirm;
-
-	public ConfirmInterruptMessage(String confirm) {
-		this(isTrue(trimToEmpty(confirm), false));
-	}
 
 	public ConfirmInterruptMessage(Boolean confirm) {
 		notNullOf(confirm, "confirm");

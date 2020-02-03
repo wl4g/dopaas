@@ -17,6 +17,8 @@ package com.wl4g.devops.shell.handler;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.wl4g.devops.shell.config.Configuration;
@@ -31,11 +33,10 @@ import com.wl4g.devops.shell.message.AskInterruptMessage;
 import com.wl4g.devops.shell.message.BOFStdoutMessage;
 import com.wl4g.devops.shell.message.ProgressMessage;
 
-import static com.wl4g.devops.shell.utils.ShellUtils.*;
 import static com.wl4g.devops.shell.cli.BuiltInCommand.*;
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
 import static com.wl4g.devops.shell.config.DefaultShellHandlerRegistrar.getSingle;
-import static com.wl4g.devops.shell.message.ChannelState.*;
+import static com.wl4g.devops.shell.utils.ShellUtils.isTrue;
 import static java.lang.String.format;
 import static java.lang.System.*;
 
@@ -52,6 +53,9 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 
 	/** Running status. */
 	final private AtomicBoolean running = new AtomicBoolean(false);
+
+	/** Current stdin executor. */
+	final private Executor stdinExecutor = Executors.newSingleThreadExecutor();
 
 	/** Mark the current processing completion status. */
 	private volatile boolean lastCompleted = true;
@@ -78,6 +82,7 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 				printDebug("readLine...");
 				stdin = lineReader.readLine(getPrompt());
 				printDebug("readLine: " + stdin);
+
 				synchronized (this) { // MARK2
 					notifyAll(); // see:MARK3
 				}
@@ -90,19 +95,21 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 
 				// Payload command?
 				if (!isBlank(stdin) && isLastComplated()) {
-					lastCmdSentTime = currentTimeMillis();
-					writeStdin(stdin); // Do send command
+					stdinExecutor.execute(() -> {
+						lastCmdSentTime = currentTimeMillis();
+						writeStdin(stdin); // Do send command
+					});
 					waitForComplete(stdin);
 				}
 			} catch (UserInterruptException e) { // e.g: Ctrl+C
 				// Last command completed, interrupt allowed
 				if (isLastComplated()) {
-					out.println(format("Command canceled, exit use the command: %s|%s|%s|%s", INTERNAL_EXIT, INTERNAL_EX,
+					out.println(format("Command is cancelled. to exit please use: %s|%s|%s|%s", INTERNAL_EXIT, INTERNAL_EX,
 							INTERNAL_QUIT, INTERNAL_QU));
 				} else {
 					// Last command is not completed, send interrupt signal
 					// stop gracefully
-					writeStdin(new InterruptMessage(true));
+					stdinExecutor.execute(() -> writeStdin(new InterruptMessage(true)));
 				}
 			} catch (Throwable e) {
 				printError(EMPTY, e);
@@ -136,18 +143,24 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 			// Ask interrupt
 			else if (output instanceof AskInterruptMessage) {
 				AskInterruptMessage ask = (AskInterruptMessage) output;
-				printDebug("readLine ask ...");
+				printDebug("ask interrupt ...");
 
-				// Print ask prompt
-				lineReader.printAbove(ask.getSubject());
-				synchronized (this) { // MARK3
-					wait(TIMEOUT); // see:MARK2
+				do {
+					// Print ask prompt
+					lineReader.printAbove(ask.getSubject());
+					synchronized (this) { // MARK3
+						wait(TIMEOUT); // see:MARK2
+					}
+				} while (isBlank(stdin));
+
+				ConfirmInterruptMessage confirmMsg = new ConfirmInterruptMessage(isTrue(trimToEmpty(stdin), false));
+				if (confirmMsg.getConfirm()) {
+					out.println("Command execution interrupting...");
+				} else {
+					out.println("Cancel interrupt!");
 				}
-				String confirm = stdin;
-				printDebug("readLine ask interrupt confirm: " + confirm);
-
 				// Echo interrupt
-				writeStdin(new ConfirmInterruptMessage(isTrue(trimToEmpty(confirm), false)));
+				writeStdin(confirmMsg);
 			}
 			// BOF stdout
 			else if (output instanceof BOFStdoutMessage) {
@@ -160,10 +173,6 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 			// Stdout
 			else if (output instanceof StdoutMessage) {
 				StdoutMessage stdout = (StdoutMessage) output;
-				if (stdout.getState() == NEW || stdout.getState() == COMPLETED) {
-					// Wakeup lineReader required when output is complete.
-					isWakeup = true;
-				}
 				// Print stdout message.
 				out.println(stdout.getContent());
 			}
