@@ -59,7 +59,7 @@ public class ExampleConsole {
 	/**
 	 * For example: $> sum -a 1 -b 123
 	 */
-	@ShellMethod(keys = "sum", group = GROUP_NAME, help = "Simple sum shell method, no need to print the execution result")
+	@ShellMethod(keys = "sum", group = GROUP_NAME, help = "Shell method tests that do not output results")
 	public void sum(SumArgument arg) {
 		exampleService.add(arg);
 	}
@@ -67,7 +67,7 @@ public class ExampleConsole {
 	/**
 	 * For example: $> sum2 -a 1 -b 123
 	 */
-	@ShellMethod(keys = "sum2", group = GROUP_NAME, help = "Simple sum shell method, the execution result will return")
+	@ShellMethod(keys = "sum2", group = GROUP_NAME, help = "Test of shell method that can output results")
 	public void sum2(ShellContext context, @ShellOption(opt = "a", lopt = "add1", help = "Add number") int a,
 			@ShellOption(opt = "b", lopt = "add2", help = "Added number", defaultValue = "1") int b) {
 		context.printf(exampleService.add(new SumArgument(a, b)).toString()).completed();
@@ -76,7 +76,7 @@ public class ExampleConsole {
 	/**
 	 * For example: $> set -l 1,2 -s x3,x4
 	 */
-	@ShellMethod(keys = "set", group = GROUP_NAME, help = "Direct set parameter injection testing")
+	@ShellMethod(keys = "set", group = GROUP_NAME, help = "Complex parameter injection testing")
 	public void set(ShellContext context,
 			@ShellOption(opt = "s", lopt = "set", help = "Set<String> type argument field") Set<String> set1,
 			@ShellOption(opt = "l", lopt = "list", help = "List<Integer> type argument field") List<Integer> list) {
@@ -87,7 +87,7 @@ public class ExampleConsole {
 	 * For example: $> mixed -l x1,x2 -m a1=b1,a2=b2 -p aa1=bb1,aa2=bb2 -s x3,x4
 	 * -e false -E true
 	 */
-	@ShellMethod(keys = "mixed", group = GROUP_NAME, help = "Mixed set type parameter injection testing")
+	@ShellMethod(keys = "mixed", group = GROUP_NAME, help = "Mixed parameter injection testing")
 	public void mixed(ShellContext context, MixedArgument arg) {
 		context.printf("Bean field mixed set parameter injection test results: " + arg.toString()).completed();
 	}
