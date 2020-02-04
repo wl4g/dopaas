@@ -33,13 +33,13 @@ import static java.util.Objects.nonNull;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
- * Remote SSH command process tools.
+ * Ethz based SSH2 tools.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月24日
  * @since
  */
-public class EthzUtils extends Ssh2Clients<Session, SCPClient> {
+public class EthzHolder extends Ssh2Holders<Session, SCPClient> {
 
 	// --- Transfer files. ---
 
@@ -127,6 +127,7 @@ public class EthzUtils extends Ssh2Clients<Session, SCPClient> {
 	 * @param processor
 	 * @throws IOException
 	 */
+	@Override
 	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, CallbackFunction<SCPClient> processor)
 			throws Exception {
 		hasText(host, "Transfer host can't empty.");
@@ -195,6 +196,7 @@ public class EthzUtils extends Ssh2Clients<Session, SCPClient> {
 	 * @return
 	 * @throws IOException
 	 */
+	@Override
 	public <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<Session, T> processor, long timeoutMs) throws Exception {
 		return doExecCommandWithSsh2(host, user, pemPrivateKey, command, session -> {
@@ -216,6 +218,7 @@ public class EthzUtils extends Ssh2Clients<Session, SCPClient> {
 	 * @return
 	 * @throws IOException
 	 */
+	@Override
 	protected final <T> T doExecCommandWithSsh2(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<Session, T> processor, long timeoutMs) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
@@ -280,6 +283,13 @@ public class EthzUtils extends Ssh2Clients<Session, SCPClient> {
 
 		log.debug("SSH2 connected to {}@{}", user, host);
 		return conn;
+	}
+
+	// --- Tool function's. ---
+
+	@Override
+	public SSH2KeyPair generateKeypair(AlgorithmType type, String comment) throws Exception {
+		throw new UnsupportedOperationException();
 	}
 
 }

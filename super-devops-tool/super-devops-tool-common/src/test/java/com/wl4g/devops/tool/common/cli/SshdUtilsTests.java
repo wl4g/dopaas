@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Clients;
-import com.wl4g.devops.tool.common.cli.ssh2.SshdUtils;
+import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
+import com.wl4g.devops.tool.common.cli.ssh2.SshdHolder;
 
 /**
  * @author vjay
@@ -38,7 +38,7 @@ public class SshdUtilsTests {
 		// Test upload file
 		String loaclFile = "/Users/vjay/Downloads/devops-0107.sql";
 		makeFile(loaclFile);
-		Ssh2Clients.getInstance(SshdUtils.class).scpPutFile("10.0.0.160", "root", privateKey.toCharArray(), new File(loaclFile),
+		Ssh2Holders.getInstance(SshdHolder.class).scpPutFile("10.0.0.160", "root", privateKey.toCharArray(), new File(loaclFile),
 				"/root/testssh/devops-0107.sql");
 		long t2 = System.currentTimeMillis();
 		System.out.println(t2 - t1);

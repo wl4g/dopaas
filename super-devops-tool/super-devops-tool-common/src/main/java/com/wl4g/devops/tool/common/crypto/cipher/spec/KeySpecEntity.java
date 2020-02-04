@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.crypto.cipher;
+package com.wl4g.devops.tool.common.crypto.cipher.spec;
 
 import java.io.Serializable;
 import java.security.spec.KeySpec;
