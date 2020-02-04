@@ -13,14 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.message;
+package com.wl4g.devops.shell.signal;
 
-public class EOFStdoutMessage extends Message {
-	private static final long serialVersionUID = -5574318886731906685L;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+
+/**
+ * Pre-Confirm interrupt message
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2020年1月4日
+ * @since
+ */
+public class AskInterruptSignal extends Signal {
+	private static final long serialVersionUID = -8574315246731906685L;
+
+	/**
+	 * Current confirm message subject.
+	 */
+	final private String subject;
+
+	public AskInterruptSignal(String subject) {
+		hasTextOf(subject, "subject");
+		this.subject = subject;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
 
 	@Override
 	public String toString() {
-		return "EOF []";
+		return "PreConfirmMessage [subject=" + subject + "]";
 	}
 
 }

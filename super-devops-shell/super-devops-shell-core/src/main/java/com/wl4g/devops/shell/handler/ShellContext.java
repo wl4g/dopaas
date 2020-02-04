@@ -15,15 +15,17 @@
  */
 package com.wl4g.devops.shell.handler;
 
+import com.wl4g.devops.shell.exception.ShellException;
 import com.wl4g.devops.shell.handler.EmbeddedServerShellHandler.ServerShellMessageChannel;
-import com.wl4g.devops.shell.message.BOFStdoutMessage;
-import com.wl4g.devops.shell.message.ChannelState;
-import com.wl4g.devops.shell.message.EOFStdoutMessage;
-import com.wl4g.devops.shell.message.StderrMessage;
-import com.wl4g.devops.shell.message.Message;
-import com.wl4g.devops.shell.message.StdoutMessage;
-import com.wl4g.devops.shell.message.ProgressMessage;
 import com.wl4g.devops.shell.registry.InternalInjectable;
+import com.wl4g.devops.shell.signal.BOFStdoutSignal;
+import com.wl4g.devops.shell.signal.ChannelState;
+import com.wl4g.devops.shell.signal.EOFStdoutSignal;
+import com.wl4g.devops.shell.signal.Signal;
+import com.wl4g.devops.shell.signal.ProgressSignal;
+import com.wl4g.devops.shell.signal.StderrSignal;
+import com.wl4g.devops.shell.signal.StdoutSignal;
+
 import org.slf4j.Logger;
 import org.springframework.util.Assert;
 
@@ -32,9 +34,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.shell.message.ChannelState.*;
+import static com.wl4g.devops.shell.signal.ChannelState.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.format;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.nonNull;
@@ -105,17 +108,20 @@ public final class ShellContext implements InternalInjectable {
 	synchronized ShellContext begin() {
 		state = RUNNING;
 		// Print begin mark
-		printf(new BOFStdoutMessage());
+		printf(new BOFStdoutSignal());
 		return this;
 	}
 
 	/**
 	 * Complete processing the current command line channel, effect: the client
-	 * will reopen the console prompt.
+	 * will reopen the console prompt.</br>
+	 * </br>
+	 * <b><font color=red>Note: Don't forget to execute it, or the client
+	 * console will pause until it timesout.</font><b>
 	 */
 	public synchronized void completed() {
 		state = COMPLETED;
-		printf(new EOFStdoutMessage()); // Ouput end mark
+		printf(new EOFStdoutSignal()); // Ouput end mark
 	}
 
 	/**
@@ -125,7 +131,7 @@ public final class ShellContext implements InternalInjectable {
 	 * @return
 	 */
 	public final boolean isInterrupted() {
-		return nonNull(state) ? (state == INTERRUPTED || state == COMPLETED) : false;
+		return nonNull(state) ? (state == INTERRUPTED) : false;
 	}
 
 	/**
@@ -151,17 +157,17 @@ public final class ShellContext implements InternalInjectable {
 	/**
 	 * Print message to the client console.
 	 *
-	 * @param message
+	 * @param output
 	 * @throws IllegalStateException
 	 */
-	public ShellContext printf(Object message) throws IllegalStateException {
-		Assert.notNull(message, "Printf message must not be null.");
-		Assert.isTrue((message instanceof Message || message instanceof CharSequence || message instanceof Throwable),
-				String.format("Unsupported print message types: %s", message.getClass()));
+	public ShellContext printf(Object output) throws IllegalStateException {
+		Assert.notNull(output, "Printf message must not be null.");
+		Assert.isTrue((output instanceof Signal || output instanceof CharSequence || output instanceof Throwable),
+				format("Unsupported print message types: %s", output.getClass()));
+
 		// Check channel state.
 		// To solve: com.wl4g.devops.shell.console.ExampleConsole#log3()#MARK1
-		//
-		// if (getState() != WAITING && !equalsAny(message.toString(), BOF,
+		// if (getState() != WAITING && !equalsAny(output.toString(), BOF,
 		// EOF)) {
 		// throw new IllegalStateException("Shell channel is not writable, has
 		// it not opened or interrupted/closed?");
@@ -169,12 +175,14 @@ public final class ShellContext implements InternalInjectable {
 
 		if (nonNull(channel) && channel.isActive()) {
 			try {
-				if (message instanceof CharSequence) {
-					channel.writeFlush(new StdoutMessage(message.toString()));
-				} else if (message instanceof Throwable) {
-					channel.writeFlush(new StderrMessage((Throwable) message));
+				if (output instanceof CharSequence) {
+					channel.writeFlush(new StdoutSignal(output.toString()));
+				} else if (output instanceof Throwable) {
+					channel.writeFlush(new StderrSignal((Throwable) output));
+				} else if (output instanceof Signal) {
+					channel.writeFlush(output);
 				} else {
-					channel.writeFlush(message);
+					throw new ShellException(format("Unsupported printf message type of '%s'", output));
 				}
 			} catch (IOException e) {
 				String errmsg = getRootCauseMessage(e);
@@ -195,7 +203,7 @@ public final class ShellContext implements InternalInjectable {
 	 * @return
 	 */
 	public ShellContext printf(String title, float progressPercent) {
-		return printf(new ProgressMessage(title, DEFAULT_WHOLE, (int) (DEFAULT_WHOLE * progressPercent)));
+		return printf(new ProgressSignal(title, DEFAULT_WHOLE, (int) (DEFAULT_WHOLE * progressPercent)));
 	}
 
 	/**
@@ -207,7 +215,7 @@ public final class ShellContext implements InternalInjectable {
 	 * @return
 	 */
 	public ShellContext printf(String title, int whole, int progress) {
-		return printf(new ProgressMessage(title, whole, progress));
+		return printf(new ProgressSignal(title, whole, progress));
 	}
 
 }

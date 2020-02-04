@@ -17,21 +17,19 @@ package com.wl4g.devops.shell.handler;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.wl4g.devops.shell.config.Configuration;
-import com.wl4g.devops.shell.message.StderrMessage;
-import com.wl4g.devops.shell.message.InterruptMessage;
-import com.wl4g.devops.shell.message.Message;
-import com.wl4g.devops.shell.message.MetaMessage;
-import com.wl4g.devops.shell.message.StdoutMessage;
-import com.wl4g.devops.shell.message.ConfirmInterruptMessage;
-import com.wl4g.devops.shell.message.EOFStdoutMessage;
-import com.wl4g.devops.shell.message.AskInterruptMessage;
-import com.wl4g.devops.shell.message.BOFStdoutMessage;
-import com.wl4g.devops.shell.message.ProgressMessage;
+import com.wl4g.devops.shell.signal.AskInterruptSignal;
+import com.wl4g.devops.shell.signal.BOFStdoutSignal;
+import com.wl4g.devops.shell.signal.AckInterruptSignal;
+import com.wl4g.devops.shell.signal.EOFStdoutSignal;
+import com.wl4g.devops.shell.signal.InterruptSignal;
+import com.wl4g.devops.shell.signal.Signal;
+import com.wl4g.devops.shell.signal.MetaSignal;
+import com.wl4g.devops.shell.signal.ProgressSignal;
+import com.wl4g.devops.shell.signal.StderrSignal;
+import com.wl4g.devops.shell.signal.StdoutSignal;
 
 import static com.wl4g.devops.shell.cli.BuiltInCommand.*;
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
@@ -53,9 +51,6 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 
 	/** Running status. */
 	final private AtomicBoolean running = new AtomicBoolean(false);
-
-	/** Current stdin executor. */
-	final private Executor stdinExecutor = Executors.newSingleThreadExecutor();
 
 	/** Mark the current processing completion status. */
 	private volatile boolean lastCompleted = true;
@@ -95,11 +90,9 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 
 				// Payload command?
 				if (!isBlank(stdin) && isLastComplated()) {
-					stdinExecutor.execute(() -> {
-						lastCmdSentTime = currentTimeMillis();
-						writeStdin(stdin); // Do send command
-					});
-					waitForComplete(stdin);
+					paused(); // Paused wait complete
+					lastCmdSentTime = currentTimeMillis();
+					writeStdin(stdin); // Do send command
 				}
 			} catch (UserInterruptException e) { // e.g: Ctrl+C
 				// Last command completed, interrupt allowed
@@ -109,7 +102,7 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 				} else {
 					// Last command is not completed, send interrupt signal
 					// stop gracefully
-					stdinExecutor.execute(() -> writeStdin(new InterruptMessage(true)));
+					writeStdin(new InterruptSignal(true));
 				}
 			} catch (Throwable e) {
 				printError(EMPTY, e);
@@ -120,86 +113,74 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 
 	@Override
 	protected void postHandleOutput(Object output) throws Exception {
-		boolean isWakeup = false;
-
-		if (output instanceof Message) { // Remote command stdout?
+		if (output instanceof Signal) { // Remote command stdout?
 			// Meta
-			if (output instanceof MetaMessage) {
-				MetaMessage meta = (MetaMessage) output;
+			if (output instanceof MetaSignal) {
+				MetaSignal meta = (MetaSignal) output;
 				getSingle().merge(meta.getRegistedMethods());
-				isWakeup = true;
-			}
-			// Exception
-			else if (output instanceof StderrMessage) {
-				StderrMessage stderr = (StderrMessage) output;
-				printError(EMPTY, stderr.getThrowable());
-				isWakeup = true;
+				wakeup();
 			}
 			// Progress
-			else if (output instanceof ProgressMessage) {
-				ProgressMessage pro = (ProgressMessage) output;
+			else if (output instanceof ProgressSignal) {
+				ProgressSignal pro = (ProgressSignal) output;
 				printProgress(pro.getTitle(), pro.getProgress(), pro.getWhole(), '=');
 			}
 			// Ask interrupt
-			else if (output instanceof AskInterruptMessage) {
-				AskInterruptMessage ask = (AskInterruptMessage) output;
+			else if (output instanceof AskInterruptSignal) {
+				AskInterruptSignal ask = (AskInterruptSignal) output;
 				printDebug("ask interrupt ...");
 
+				// Print retry ask prompt
 				do {
-					// Print ask prompt
 					lineReader.printAbove(ask.getSubject());
 					synchronized (this) { // MARK3
 						wait(TIMEOUT); // see:MARK2
 					}
 				} while (isBlank(stdin));
 
-				ConfirmInterruptMessage confirmMsg = new ConfirmInterruptMessage(isTrue(trimToEmpty(stdin), false));
-				if (confirmMsg.getConfirm()) {
-					out.println("Command execution interrupting...");
+				AckInterruptSignal confirm = new AckInterruptSignal(isTrue(trimToEmpty(stdin), false));
+				if (confirm.getConfirm()) {
+					out.println("Command interrupting...");
 				} else {
 					out.println("Cancel interrupt!");
 				}
 				// Echo interrupt
-				writeStdin(confirmMsg);
+				writeStdin(confirm);
+			}
+			// Stderr
+			else if (output instanceof StderrSignal) {
+				StderrSignal stderr = (StderrSignal) output;
+				printError(EMPTY, stderr.getThrowable());
+				wakeup();
 			}
 			// BOF stdout
-			else if (output instanceof BOFStdoutMessage) {
+			else if (output instanceof BOFStdoutSignal) {
 				// Ignore
 			}
 			// EOF stdout
-			else if (output instanceof EOFStdoutMessage) {
-				isWakeup = true;
+			else if (output instanceof EOFStdoutSignal) {
+				wakeup();
 			}
 			// Stdout
-			else if (output instanceof StdoutMessage) {
-				StdoutMessage stdout = (StdoutMessage) output;
-				// Print stdout message.
-				out.println(stdout.getContent());
+			else if (output instanceof StdoutSignal) {
+				out.println(((StdoutSignal) output).getContent());
 			}
 		} else { // Local command stdout?
-			isWakeup = true;
+			wakeup();
 		}
 
-		// Direct print of local command stdout.
+		// Print of local command stdout.
 		if (output instanceof CharSequence) {
 			out.println(output);
-		}
-
-		// Wakeup for lineReader watching.
-		if (isWakeup) {
-			wakeup();
 		}
 
 	}
 
 	/**
-	 * Wait for completed. </br>
+	 * Pause wait for completed. </br>
 	 * {@link AbstractClientShellHandler#wakeup()}
-	 * 
-	 * @param stdin
-	 * @throws InterruptedException
 	 */
-	private void waitForComplete(String stdin) {
+	private void paused() {
 		if (DEBUG) {
 			out.println(format("waitForCompleted: %s, completed: %s", this, lastCompleted));
 		}

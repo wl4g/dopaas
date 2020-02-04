@@ -13,35 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.message;
+package com.wl4g.devops.shell.signal;
 
-import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
-
-/**
- * Stderr exception message.
- * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月4日
- * @since
- */
-public class StderrMessage extends Message {
-	private static final long serialVersionUID = -8574315277731909685L;
-
-	final private Throwable throwable;
-
-	public StderrMessage(Throwable throwable) {
-		notNull(throwable, "throwable must not be null");
-		this.throwable = throwable;
-	}
-
-	public Throwable getThrowable() {
-		return throwable;
-	}
+public class BOFStdoutSignal extends Signal {
+	private static final long serialVersionUID = -5574318886731906685L;
 
 	@Override
 	public String toString() {
-		return "stderr [" + getRootCauseMessage(throwable) + "]";
+		return "BOF []";
 	}
 
 }

@@ -13,37 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.message;
-
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+package com.wl4g.devops.shell.signal;
 
 /**
- * Post confirm interrupt message
+ * Stdout result message.
  * 
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2020年1月4日
+ * @version v1.0 2019年5月4日
  * @since
  */
-public class ConfirmInterruptMessage extends Message {
-	private static final long serialVersionUID = -8574315246731906685L;
+public class StdoutSignal extends Signal {
+	private static final long serialVersionUID = -8574311246731909685L;
 
-	/**
-	 * Current confirmed state.
-	 */
-	final private Boolean confirm;
+	final private String content;
 
-	public ConfirmInterruptMessage(Boolean confirm) {
-		notNullOf(confirm, "confirm");
-		this.confirm = confirm;
+	public StdoutSignal(String content) {
+		this.content = content;
 	}
 
-	public Boolean getConfirm() {
-		return confirm;
+	public String getContent() {
+		return content;
 	}
 
 	@Override
 	public String toString() {
-		return "PostConfirmedMessage [confirm=" + confirm + "]";
+		return "stdout [" + content + "]";
 	}
 
 }

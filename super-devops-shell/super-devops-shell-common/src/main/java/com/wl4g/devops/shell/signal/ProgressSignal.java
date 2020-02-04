@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.message;
+package com.wl4g.devops.shell.signal;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
@@ -26,7 +26,7 @@ import static java.lang.String.format;
  * @version v1.0 2020年1月4日
  * @since
  */
-public class ProgressMessage extends Message {
+public class ProgressSignal extends Signal {
 	private static final long serialVersionUID = -8574315246731906685L;
 
 	/**
@@ -44,7 +44,7 @@ public class ProgressMessage extends Message {
 	 */
 	final private int progress;
 
-	public ProgressMessage(String title, int whole, int progress) {
+	public ProgressSignal(String title, int whole, int progress) {
 		hasTextOf(title, "title");
 		isTrue(progress >= 0 && whole >= 0, format("Illegal arguments, progress: %s, whole: %s", progress, whole));
 		isTrue(progress <= whole, format("Progress number out of bounds, current progress: %s, whole: %s", progress, whole));

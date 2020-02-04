@@ -13,37 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.message;
+package com.wl4g.devops.shell.signal;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 
 /**
- * Pre-Confirm interrupt message
+ * Meta configuration/commands message
  * 
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2020年1月4日
+ * @version v1.0 2019年5月4日
  * @since
  */
-public class AskInterruptMessage extends Message {
-	private static final long serialVersionUID = -8574315246731906685L;
+public class MetaSignal extends Signal {
+	private static final long serialVersionUID = -8574315248835509685L;
 
 	/**
-	 * Current confirm message subject.
+	 * Shell component target methods
 	 */
-	final private String subject;
+	final private Map<String, TargetMethodWrapper> registedMethods = new ConcurrentHashMap<>(16);
 
-	public AskInterruptMessage(String subject) {
-		hasTextOf(subject, "subject");
-		this.subject = subject;
+	public MetaSignal() {
 	}
 
-	public String getSubject() {
-		return subject;
+	public MetaSignal(Map<String, TargetMethodWrapper> wrapper) {
+		if (wrapper != null) {
+			this.registedMethods.putAll(wrapper);
+		}
+	}
+
+	public Map<String, TargetMethodWrapper> getRegistedMethods() {
+		return registedMethods;
 	}
 
 	@Override
 	public String toString() {
-		return "PreConfirmMessage [subject=" + subject + "]";
+		return "Meta " + registedMethods.values();
 	}
 
 }

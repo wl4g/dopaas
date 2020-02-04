@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.message;
+package com.wl4g.devops.shell.signal;
 
 import java.io.Serializable;
 
@@ -24,7 +24,7 @@ import java.io.Serializable;
  * @version v1.0 2019年5月4日
  * @since
  */
-public abstract class Message implements Serializable {
+public abstract class Signal implements Serializable {
 	private static final long serialVersionUID = 771621623117425564L;
 
 }
