@@ -277,8 +277,8 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	private void banner() {
 		out.println(format("%s", config.getBanner()));
 		String v = getClass().getPackage().getImplementationVersion();
-		out.println(format("version: %s", isBlank(v) ? "unknown" : v));
-		out.println(format("time: %s", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())));
+		out.println(format("Version: %s", isBlank(v) ? "unknown" : v));
+		out.println(format("Time: %s", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())));
 		out.println();
 	}
 

@@ -72,7 +72,8 @@ public class ExampleConsole {
 	@ShellMethod(keys = "sum2", group = GROUP_NAME, help = "Test of shell method that can output results")
 	public void sum2(SimpleShellContext context, @ShellOption(opt = "a", lopt = "add1", help = "Add number") int a,
 			@ShellOption(opt = "b", lopt = "add2", help = "Added number", defaultValue = "1") int b) {
-		context.printf(exampleService.add(new SumArgument(a, b)).toString()).completed();
+		context.printf(exampleService.add(new SumArgument(a, b)).toString());
+		context.completed();
 	}
 
 	/**
@@ -82,7 +83,8 @@ public class ExampleConsole {
 	public void set(SimpleShellContext context,
 			@ShellOption(opt = "s", lopt = "set", help = "Set<String> type argument field") Set<String> set1,
 			@ShellOption(opt = "l", lopt = "list", help = "List<Integer> type argument field") List<Integer> list) {
-		context.printf("Direct mixed set parameter injection results: set=" + set1 + ", list=" + list).completed();
+		context.printf("Direct mixed set parameter injection results: set=" + set1 + ", list=" + list);
+		context.completed();
 	}
 
 	/**
@@ -90,8 +92,9 @@ public class ExampleConsole {
 	 * -e false -E true
 	 */
 	@ShellMethod(keys = "mixed", group = GROUP_NAME, help = "Mixed parameter injection testing")
-	public void mixed(SimpleShellContext context, MixedArgument arg) {
-		context.printf("Bean field mixed set parameter injection test results: " + arg.toString()).completed();
+	public void mixed(MixedArgument arg, SimpleShellContext context) {
+		context.printf("The input parameters are: " + arg.toString());
+		context.completed();
 	}
 
 	/**
@@ -119,7 +122,6 @@ public class ExampleConsole {
 					}
 				}
 				context.printf("Log print finished!");
-
 			} finally {
 				// *** Note: Don't forget to execute it, or the client console
 				// will pause until it timesout.
@@ -134,7 +136,6 @@ public class ExampleConsole {
 	@ShellMethod(keys = "log2", group = GROUP_NAME, interruptible = InterruptType.ALLOW, help = "This is a shell method for printing logs asynchronously.(Support interrupt)")
 	public void log2(
 			@ShellOption(opt = "n", lopt = "num", required = false, defaultValue = "5", help = "Number of printed messages") int num,
-			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print message delay(ms)") long sleep,
 			ProgressShellContext context) {
 
 		Executors.newSingleThreadExecutor().execute(() -> {
@@ -148,16 +149,15 @@ public class ExampleConsole {
 					context.printf(message, num, i);
 
 					try {
-						Thread.sleep(sleep);
+						Thread.sleep(200L);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
-				context.printf("Log2 print finished!", 1f);
 			} finally {
 				// *** Note: Don't forget to execute it, or the client console
 				// will pause until it timesout.
-				context.completed();
+				context.completed("Log2 print finished!");
 			}
 		});
 	}
@@ -186,11 +186,10 @@ public class ExampleConsole {
 					e.printStackTrace();
 				}
 			}
-			context.printf("Log3 print finished!", 1f);
 		} finally {
 			// *** Note: Don't forget to execute it, or the client console
 			// will pause until it timesout.
-			context.completed();
+			context.completed("Log3 print finished!");
 		}
 	}
 

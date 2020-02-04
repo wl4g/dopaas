@@ -15,9 +15,11 @@
  */
 package com.wl4g.devops.shell.config;
 
+import static java.util.Objects.nonNull;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.core.annotation.AnnotationUtils;
+import static org.springframework.core.annotation.AnnotationUtils.*;
 
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
@@ -39,8 +41,8 @@ public class AnnotationShellHandlerRegistrar extends ShellHandlerRegistrar imple
 
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		ShellComponent component = AnnotationUtils.findAnnotation(bean.getClass(), ShellComponent.class);
-		if (component != null) {
+		ShellComponent component = findAnnotation(bean.getClass(), ShellComponent.class);
+		if (nonNull(component)) {
 			register(bean);
 		}
 		return bean;

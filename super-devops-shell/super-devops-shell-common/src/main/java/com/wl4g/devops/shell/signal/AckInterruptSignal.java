@@ -43,7 +43,7 @@ public class AckInterruptSignal extends Signal {
 
 	@Override
 	public String toString() {
-		return "PostConfirmedMessage [confirm=" + confirm + "]";
+		return "Ack signal [" + confirm + "]";
 	}
 
 }

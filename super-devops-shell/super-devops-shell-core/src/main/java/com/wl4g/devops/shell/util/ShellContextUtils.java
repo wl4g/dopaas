@@ -52,7 +52,7 @@ public abstract class ShellContextUtils {
 	public final static <T> T getContext() {
 		Object context = contextCache.get();
 		if (isNull(context)) {
-			throw new IllegalStateException("The context object was not retrieved. first use bind()");
+			throw new IllegalStateException("The shell context object was not retrieved. first use bind()");
 		}
 		return (T) context;
 	}

@@ -38,15 +38,15 @@ public class ShellAutoConfiguration {
 	}
 
 	@Bean
-	public AnnotationShellHandlerRegistrar annotationBeanRegistry() {
+	public AnnotationShellHandlerRegistrar annotationShellHandlerRegistrar() {
 		return new AnnotationShellHandlerRegistrar();
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public EmbeddedServerShellHandler embeddedServerProcessor(@Value("${spring.application.name}") String appName,
-			ShellProperties config, AnnotationShellHandlerRegistrar registry) {
-		return new EmbeddedServerShellHandler(config, appName, registry);
+	public EmbeddedServerShellHandler embeddedServerShellHandler(@Value("${spring.application.name}") String appName,
+			ShellProperties config, AnnotationShellHandlerRegistrar registrar) {
+		return new EmbeddedServerShellHandler(config, appName, registrar);
 	}
 
 }

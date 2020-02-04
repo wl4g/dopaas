@@ -43,7 +43,7 @@ public class AskInterruptSignal extends Signal {
 
 	@Override
 	public String toString() {
-		return "PreConfirmMessage [subject=" + subject + "]";
+		return "Ask signal [" + subject + "]";
 	}
 
 }
