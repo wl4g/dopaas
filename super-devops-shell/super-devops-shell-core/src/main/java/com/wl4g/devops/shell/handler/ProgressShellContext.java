@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.shell.handler;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+
 import com.wl4g.devops.shell.signal.ProgressSignal;
 
 public class ProgressShellContext extends ShellContext {
@@ -32,6 +34,7 @@ public class ProgressShellContext extends ShellContext {
 	 * @return
 	 */
 	public ProgressShellContext printf(String title, float progressPercent) {
+		isTrue(progressPercent >= 0 && progressPercent <= 1, "Progress percentage must be between 0 and 1");
 		return (ProgressShellContext) printf0(new ProgressSignal(title, DEFAULT_WHOLE, (int) (DEFAULT_WHOLE * progressPercent)));
 	}
 
