@@ -1,10 +1,10 @@
-package com.wl4g.devops.tool.common.cli;
+package com.wl4g.devops.tool.common.cli.ssh2;
 
 import com.wl4g.devops.tool.common.cli.ssh2.EthzHolder;
 import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
 import com.wl4g.devops.tool.common.io.ByteStreams2;
 
-public class EthzUtilsTests {
+public class EthzHolderTests {
 
 	public static void main(String[] args) throws Exception {
 		String command = "sleep 10";

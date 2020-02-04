@@ -1,22 +1,34 @@
-package com.wl4g.devops.tool.common.cli;
+package com.wl4g.devops.tool.common.cli.ssh2;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
-import com.wl4g.devops.tool.common.cli.ssh2.SshjHolder;
+import com.wl4g.devops.tool.common.cli.ssh2.SshdHolder;
 
 /**
  * @author vjay
- * @date 2020-01-08 17:16:00
+ * @date 2020-01-08 09:59:00
  */
-public class SshjUtilsTests {
+public class SshdHolderTests {
+
+	private static void makeFile(String fileName) throws IOException {
+		if (!new File(fileName).exists()) {
+			try (FileWriter fileWriter = new FileWriter(fileName);) {
+				for (int i = 0; i <= 999; i++) {
+					fileWriter.write(
+							"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
+				}
+			}
+		}
+	}
 
 	public static void main(String[] args) throws Exception {
+
 		// Test execute command
-		// SshjUtils.SshExecResponse sshExecResponse =
-		// SshjUtils.execWithSsh2("10.0.0.160", "root",
+		// SshdUtils.SshExecResponse sshExecResponse =
+		// SshdUtils.execWithSsh2("10.0.0.160", "root",
 		// privateKey.toCharArray(), "ls", 60000);
 		// System.out.println("success="+sshExecResponse.getMessage());
 		// System.out.println("fail="+sshExecResponse.getErrmsg());
@@ -24,23 +36,12 @@ public class SshjUtilsTests {
 
 		long t1 = System.currentTimeMillis();
 		// Test upload file
-		String loaclFile = "/Users/vjay/Downloads/bigFile.txt";
+		String loaclFile = "/Users/vjay/Downloads/devops-0107.sql";
 		makeFile(loaclFile);
-		Ssh2Holders.getInstance(SshjHolder.class).scpPutFile("10.0.0.160", "root", privateKey.toCharArray(), new File(loaclFile),
+		Ssh2Holders.getInstance(SshdHolder.class).scpPutFile("10.0.0.160", "root", privateKey.toCharArray(), new File(loaclFile),
 				"/root/testssh/devops-0107.sql");
 		long t2 = System.currentTimeMillis();
 		System.out.println(t2 - t1);
-	}
-
-	private static void makeFile(String fileName) throws IOException {
-		if (!new File(fileName).exists()) {
-			try (FileWriter fileWriter = new FileWriter(fileName);) {
-				for (int i = 0; i <= 999999; i++) {
-					fileWriter.write(
-							"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-				}
-			}
-		}
 	}
 
 	private static final String privateKey = "-----BEGIN RSA PRIVATE KEY-----\n"

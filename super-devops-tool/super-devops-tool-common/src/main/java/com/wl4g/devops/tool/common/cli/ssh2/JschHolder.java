@@ -67,7 +67,7 @@ public class JschHolder extends Ssh2Holders<Void, Void> {
 	// --- Tool function's. ---
 
 	@Override
-	public SSH2KeyPair generateKeypair(AlgorithmType type, String comment) throws Exception {
+	public Ssh2KeyPair generateKeypair(AlgorithmType type, String comment) throws Exception {
 		int algType = KeyPair.RSA;
 		if (type == AlgorithmType.DSA) {
 			algType = KeyPair.DSA;
@@ -98,7 +98,7 @@ public class JschHolder extends Ssh2Holders<Void, Void> {
 		// System.out.println(privateKeyString.length());
 		// System.out.println(privateKeyString);
 
-		return new SSH2KeyPair(privateKey, publicKey);
+		return new Ssh2KeyPair(privateKey, publicKey);
 	}
 
 }
