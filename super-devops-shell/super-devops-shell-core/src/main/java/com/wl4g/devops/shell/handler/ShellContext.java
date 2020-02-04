@@ -127,7 +127,7 @@ class ShellContext implements InternalInjectable {
 	 * client console will wait for execution to complete (until the
 	 * {@link #completed()} method is called).
 	 */
-	synchronized ShellContext begin() {
+	final synchronized ShellContext begin() {
 		state = RUNNING;
 		// Print begin mark
 		printf0(new BOFStdoutSignal());
@@ -139,9 +139,9 @@ class ShellContext implements InternalInjectable {
 	 * will reopen the console prompt.</br>
 	 * </br>
 	 * <b><font color=red>Note: Don't forget to execute it, or the client
-	 * console will pause until it timesout.</font><b>
+	 * console will pause until it timeout.</font><b>
 	 */
-	public synchronized void completed() {
+	public final synchronized void completed() {
 		state = COMPLETED;
 		printf0(new EOFStdoutSignal()); // Ouput end mark
 	}

@@ -34,6 +34,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -65,7 +66,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	final private AtomicBoolean shellRunning = new AtomicBoolean(false);
 
 	/** Command channel workers. */
-	final private ConcurrentMap<ServerShellMessageChannel, Thread> channels = new ConcurrentHashMap<>();
+	final private Map<ServerShellMessageChannel, Thread> channels = new ConcurrentHashMap<>();
 
 	/**
 	 * Server sockets
@@ -193,15 +194,15 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	 * @param args
 	 */
 	private ShellContext resolveActualShellContextIfNecceary(ShellContext context, TargetMethodWrapper tm, List<Object> args) {
-		// Find arg:ShellContext index & class
+		// Find parameter: ShellContext index and class
 		Object[] ret = findParameterForShellContext(tm);
 		int index = (int) ret[0];
-		Class<?> contextCls = (Class<?>) ret[1];
+		Class<?> contextClass = (Class<?>) ret[1];
 
 		// Convert to specific shellContext
-		if (SimpleShellContext.class.isAssignableFrom(contextCls)) {
+		if (SimpleShellContext.class.isAssignableFrom(contextClass)) {
 			context = new SimpleShellContext(context);
-		} else if (ProgressShellContext.class.isAssignableFrom(contextCls)) {
+		} else if (ProgressShellContext.class.isAssignableFrom(contextClass)) {
 			context = new ProgressShellContext(context);
 		}
 		if (index >= 0) {

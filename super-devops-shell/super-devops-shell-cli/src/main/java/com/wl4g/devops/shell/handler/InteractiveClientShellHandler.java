@@ -52,8 +52,8 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	/** Running status. */
 	final private AtomicBoolean running = new AtomicBoolean(false);
 
-	/** Mark the current processing completion status. */
-	private volatile boolean lastCompleted = true;
+	/** Mark the current console pending state. */
+	private volatile boolean pauseState = false;
 
 	/** Current command line stdin string. */
 	private String stdin;
@@ -89,14 +89,14 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 				}
 
 				// Payload command?
-				if (!isBlank(stdin) && isLastComplated()) {
+				if (!isBlank(stdin) && !isPaused()) {
 					paused(); // Paused wait complete
 					lastCmdSentTime = currentTimeMillis();
 					writeStdin(stdin); // Do send command
 				}
 			} catch (UserInterruptException e) { // e.g: Ctrl+C
 				// Last command completed, interrupt allowed
-				if (isLastComplated()) {
+				if (!isPaused()) {
 					out.println(format("Command is cancelled. to exit please use: %s|%s|%s|%s", INTERNAL_EXIT, INTERNAL_EX,
 							INTERNAL_QUIT, INTERNAL_QU));
 				} else {
@@ -181,9 +181,9 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	 */
 	private void paused() {
 		if (DEBUG) {
-			out.println(format("waitForCompleted: %s, completed: %s", this, lastCompleted));
+			out.println(format("waitForCompleted: %s, completed: %s", this, pauseState));
 		}
-		lastCompleted = false;
+		pauseState = true;
 	}
 
 	/**
@@ -192,8 +192,8 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	 * {@link AbstractClientShellHandler#waitForComplished()}
 	 */
 	private void wakeup() {
-		printDebug(format("Wakeup: %s, completed: %s", this, lastCompleted));
-		lastCompleted = true;
+		printDebug(format("Wakeup: %s, completed: %s", this, pauseState));
+		pauseState = false;
 	}
 
 	/**
@@ -202,18 +202,18 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	 * @return
 	 */
 	private String getPrompt() {
-		printDebug(format("getPrompt: %s, completed: %s", this, lastCompleted));
-		return lastCompleted ? getAttributed().toAnsi(lineReader.getTerminal()) : EMPTY;
+		printDebug(format("getPrompt: %s, pauseState: %s", this, pauseState));
+		return isPaused() ? EMPTY : getAttributed().toAnsi(lineReader.getTerminal());
 	}
 
 	/**
-	 * Gets the current execution return completion status (waiting for
-	 * expiration also indicates completion)
+	 * Check whether it is currently paused? (if the last command is not
+	 * completed, it is paused)
 	 * 
 	 * @return
 	 */
-	private boolean isLastComplated() {
-		return lastCompleted || (currentTimeMillis() - lastCmdSentTime) >= TIMEOUT;
+	private boolean isPaused() {
+		return pauseState && (currentTimeMillis() - lastCmdSentTime) < TIMEOUT;
 	}
 
 }
