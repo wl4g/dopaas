@@ -139,7 +139,7 @@ public class ExampleConsole {
 
 		Executors.newSingleThreadExecutor().execute(() -> {
 			try {
-				context.printf("Log2 print...", 0.1f);
+				context.printf("Log2 print...", 0.05f);
 				for (int i = 1; !context.isInterrupted() && i <= num; i++) {
 					String message = "This is the " + i + "th message!";
 					log.info(message);
@@ -172,7 +172,7 @@ public class ExampleConsole {
 			ProgressShellContext context) {
 
 		try {
-			context.printf("Log3 print...", 0.1f);
+			context.printf("Log3 print...", 0.05f);
 			for (int i = 1; !context.isInterrupted() && i <= num; i++) {
 				String message = "This is the " + i + "th message!";
 				log.info(message);
