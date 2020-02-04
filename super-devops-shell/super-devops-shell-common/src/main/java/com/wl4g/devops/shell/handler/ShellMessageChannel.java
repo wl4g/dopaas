@@ -67,17 +67,17 @@ public abstract class ShellMessageChannel implements Runnable, Closeable {
 	 */
 	protected OutputStream _out;
 
-	public ShellMessageChannel(ShellHandlerRegistrar registrar, Socket client, Function<String, Object> function) {
-		notNull(client, "Socket client is null, please check configure");
+	public ShellMessageChannel(ShellHandlerRegistrar registrar, Socket socket, Function<String, Object> function) {
+		notNull(socket, "Socket client is null, please check configure");
 		notNull(function, "Function is null, please check configure");
 		notNull(registrar, "Registry must not be null");
 		this.registrar = registrar;
-		this.socket = client;
+		this.socket = socket;
 		this.function = function;
 		if (running.compareAndSet(false, true)) {
 			try {
-				this._in = client.getInputStream();
-				this._out = client.getOutputStream();
+				this._in = socket.getInputStream();
+				this._out = socket.getOutputStream();
 			} catch (IOException e) {
 				throw new IllegalStateException(e);
 			}

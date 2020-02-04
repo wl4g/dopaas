@@ -23,7 +23,6 @@ import org.springframework.util.Assert;
 
 import com.wl4g.devops.shell.config.ShellProperties;
 import com.wl4g.devops.shell.handler.AbstractShellHandler;
-import com.wl4g.devops.shell.handler.ShellMessageChannel;
 import com.wl4g.devops.shell.handler.EmbeddedServerShellHandler.ServerShellMessageChannel;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 
@@ -40,7 +39,7 @@ public abstract class AbstractServerShellHandler extends AbstractShellHandler im
 	/**
 	 * Accept socket client handlers.
 	 */
-	final private ThreadLocal<ShellMessageChannel> clientContext = new InheritableThreadLocal<>();
+	final private ThreadLocal<ServerShellMessageChannel> clientContext = new InheritableThreadLocal<>();
 
 	/**
 	 * Shell properties configuration
@@ -74,10 +73,9 @@ public abstract class AbstractServerShellHandler extends AbstractShellHandler im
 	 * @param client
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	protected <T extends ServerShellMessageChannel> T bind(ShellMessageChannel client) {
+	protected ServerShellMessageChannel bind(ServerShellMessageChannel client) {
 		clientContext.set(client);
-		return (T) client;
+		return client;
 	}
 
 	/**
@@ -85,9 +83,8 @@ public abstract class AbstractServerShellHandler extends AbstractShellHandler im
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	protected <T extends ServerShellMessageChannel> T getClient() {
-		return (T) clientContext.get();
+	protected ServerShellMessageChannel getClient() {
+		return clientContext.get();
 	}
 
 	/**

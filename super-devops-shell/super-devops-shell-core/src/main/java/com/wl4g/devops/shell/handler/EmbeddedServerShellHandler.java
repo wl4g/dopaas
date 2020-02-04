@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import static com.wl4g.devops.shell.signal.ChannelState.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.lang.Thread.sleep;
@@ -174,23 +175,48 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	@Override
 	protected void preHandleInput(TargetMethodWrapper tm, List<Object> args) {
 		// Get current context
-		ShellContext context = getClient().getContext();
+		ShellContext context = getClient().getCurrentContext();
 
-		// Find arg:ShellContext index
-		int index = findIndexOfParameterShellContext(tm);
+		// Bind target method
+		context.setTarget(tm);
+
+		// Resolving parameter shellContext
+		ShellContext updateContext = resolveActualShellContextIfNecceary(context, tm, args);
+		getClient().setCurrentContext(updateContext); // Update actual context
+	}
+
+	/**
+	 * Resolving specific parameter {@link ShellContext} if necceary
+	 * 
+	 * @param context
+	 * @param tm
+	 * @param args
+	 */
+	private ShellContext resolveActualShellContextIfNecceary(ShellContext context, TargetMethodWrapper tm, List<Object> args) {
+		// Find arg:ShellContext index & class
+		Object[] ret = findParameterForShellContext(tm);
+		int index = (int) ret[0];
+		Class<?> contextCls = (Class<?>) ret[1];
+
+		// Convert to specific shellContext
+		if (SimpleShellContext.class.isAssignableFrom(contextCls)) {
+			context = new SimpleShellContext(context);
+		} else if (ProgressShellContext.class.isAssignableFrom(contextCls)) {
+			context = new ProgressShellContext(context);
+		}
 		if (index >= 0) {
 			if (index < args.size()) { // Correct parameter index
 				args.add(index, context);
 			} else {
 				args.add(context);
 			}
-
 			/**
 			 * When injection {@link ShellContext} is used, the auto open
 			 * channel status is wait.
 			 */
 			context.begin(); // MARK2
 		}
+		return context;
 	}
 
 	/**
@@ -200,16 +226,18 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	 * @param clazz
 	 * @return
 	 */
-	private int findIndexOfParameterShellContext(TargetMethodWrapper tm) {
+	private Object[] findParameterForShellContext(TargetMethodWrapper tm) {
 		int index = -1, i = 0;
+		Class<?> contextCls = null;
 		for (Class<?> cls : tm.getMethod().getParameterTypes()) {
-			if (cls == ShellContext.class) {
+			if (ShellContext.class.isAssignableFrom(cls)) {
 				state(index < 0, format("Multiple shellcontext type parameters are unsupported. %s", tm.getMethod()));
 				index = i;
+				contextCls = cls;
 			}
 			++i;
 		}
-		return index;
+		return new Object[] { index, contextCls };
 	}
 
 	/**
@@ -222,33 +250,35 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	class ServerShellMessageChannel extends ShellMessageChannel {
 		final protected Logger log = getLogger(getClass());
 
-		/** Shell context */
-		final ShellContext context;
+		/** Current shell context */
+		ShellContext currentContext;
 
-		/** Execution worker */
-		final private ExecutorService worker;
+		/** Single execution worker */
+		final private ExecutorService singleWorker;
 
 		public ServerShellMessageChannel(ShellHandlerRegistrar registrar, Socket client, Function<String, Object> func) {
 			super(registrar, client, func);
-			this.context = new ShellContext(this);
+			this.currentContext = new ShellContext(this);
+			this.singleWorker = new ThreadPoolExecutor(1, 1, 0, SECONDS, new LinkedBlockingDeque<>(1), new ThreadFactory() {
+				final private AtomicInteger counter = new AtomicInteger(0);
 
-			this.worker = new ThreadPoolExecutor(1, getConfig().getConcurrently(), 0, SECONDS, new LinkedBlockingDeque<>(8),
-					new ThreadFactory() {
-						final private AtomicInteger counter = new AtomicInteger(0);
-
-						@Override
-						public Thread newThread(Runnable r) {
-							String prefix = ServerShellMessageChannel.class.getSimpleName() + "-channel-worker-"
-									+ counter.incrementAndGet();
-							Thread t = new Thread(r, prefix);
-							t.setDaemon(true);
-							return t;
-						}
-					});
+				@Override
+				public Thread newThread(Runnable r) {
+					String prefix = getClass().getSimpleName() + "-worker-" + counter.incrementAndGet();
+					Thread t = new Thread(r, prefix);
+					t.setDaemon(true);
+					return t;
+				}
+			});
 		}
 
-		public ShellContext getContext() {
-			return context;
+		ShellContext getCurrentContext() {
+			return currentContext;
+		}
+
+		void setCurrentContext(ShellContext context) {
+			notNullOf(context, "ShellContext");
+			this.currentContext = context;
 		}
 
 		@Override
@@ -264,9 +294,9 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 						output = new MetaSignal(registrar.getTargetMethods());
 					}
 					// Ask interruption
-					else if (stdin instanceof InterruptSignal) {
+					else if (stdin instanceof PreInterruptSignal) {
 						// Call pre-interrupt events.
-						context.getEventListeners().forEach(l -> l.onPreInterrupt(context));
+						currentContext.getUnmodifiableEventListeners().forEach(l -> l.onPreInterrupt(currentContext));
 						// Ask if the client is interrupt.
 						output = new AskInterruptSignal("Are you sure you want to cancel execution? (y|n)");
 					}
@@ -274,18 +304,18 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 					else if (stdin instanceof AckInterruptSignal) {
 						AckInterruptSignal ack = (AckInterruptSignal) stdin;
 						// Call interrupt events.
-						context.getEventListeners().forEach(l -> l.onInterrupt(context, ack.getConfirm()));
+						currentContext.getUnmodifiableEventListeners()
+								.forEach(l -> l.onInterrupt(currentContext, ack.getConfirm()));
 					}
 					// Stdin of commands
 					else if (stdin instanceof StdinSignal) {
 						StdinSignal cmd = (StdinSignal) stdin;
 						// Call command events.
-						context.getEventListeners().forEach(l -> l.onCommand(context, cmd.getLine()));
+						currentContext.getUnmodifiableEventListeners().forEach(l -> l.onCommand(currentContext, cmd.getLine()));
 
 						// Resolve that client input cannot be received during
 						// blocking execution.
-						worker.execute(() -> {
-							boolean isComplete = false;
+						singleWorker.execute(() -> {
 							try {
 								/**
 								 * Only {@link ShellContext} printouts are
@@ -297,16 +327,12 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 								/**
 								 * see:{@link EmbeddedServerShellHandler#preHandleInput()}#MARK2
 								 */
-								if (context.getState() != RUNNING) {
-									isComplete = true;
+								if (currentContext.getState() != RUNNING) {
+									currentContext.completed();
 								}
 							} catch (Throwable e) {
 								log.error(format("Failed to handle shell command: [%s]", cmd.getLine()), e);
-								isComplete = true;
 								handleError(e);
-							}
-							if (isComplete) {
-								context.completed();
 							}
 						});
 					}

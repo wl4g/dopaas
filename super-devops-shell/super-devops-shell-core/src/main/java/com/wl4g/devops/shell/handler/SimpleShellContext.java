@@ -13,32 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.signal;
+package com.wl4g.devops.shell.handler;
 
-/**
- * Client user interrupt commands message
- * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月4日
- * @since
- */
-public class InterruptSignal extends Signal {
-	private static final long serialVersionUID = -5574318886731906685L;
+public class SimpleShellContext extends ShellContext {
+	final public static int DEFAULT_WHOLE = 100;
 
-	final private boolean force;
-
-	public InterruptSignal(boolean force) {
-		super();
-		this.force = force;
+	SimpleShellContext(ShellContext context) {
+		super(context);
 	}
 
-	public boolean isForce() {
-		return force;
-	}
-
-	@Override
-	public String toString() {
-		return "Interrupted [" + force + "]";
+	/**
+	 * Print simple message to client console.
+	 *
+	 * @param message
+	 * @return
+	 */
+	public SimpleShellContext printf(String message) {
+		return (SimpleShellContext) printf0(message);
 	}
 
 }
