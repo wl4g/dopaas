@@ -33,10 +33,49 @@ import java.lang.annotation.Target;
 @Documented
 public @interface ShellMethod {
 
+	/**
+	 * Command names definition.</br>
+	 * 
+	 * e.g:
+	 * 
+	 * <pre>
+	 * $ > mylist
+	 * </pre>
+	 * 
+	 * @return
+	 */
 	String[] keys();
 
-	String group() default "Built-In Commands";
+	/**
+	 * Command group name.
+	 * 
+	 * @return
+	 */
+	String group();
 
+	/**
+	 * Whether to allow command line execution to be interrupted.
+	 * 
+	 * @return
+	 */
+	InterruptType interruptible() default InterruptType.NOT_ALLOW;
+
+	/**
+	 * Command help description.
+	 * 
+	 * @return
+	 */
 	String help();
+
+	/**
+	 * {@link InterruptType}
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年2月4日 v1.0.0
+	 * @see
+	 */
+	public static enum InterruptType {
+		ALLOW, NOT_ALLOW
+	}
 
 }

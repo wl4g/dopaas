@@ -24,7 +24,7 @@ import com.wl4g.devops.shell.signal.AskInterruptSignal;
 import com.wl4g.devops.shell.signal.BOFStdoutSignal;
 import com.wl4g.devops.shell.signal.AckInterruptSignal;
 import com.wl4g.devops.shell.signal.EOFStdoutSignal;
-import com.wl4g.devops.shell.signal.InterruptSignal;
+import com.wl4g.devops.shell.signal.PreInterruptSignal;
 import com.wl4g.devops.shell.signal.Signal;
 import com.wl4g.devops.shell.signal.MetaSignal;
 import com.wl4g.devops.shell.signal.ProgressSignal;
@@ -102,7 +102,7 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 				} else {
 					// Last command is not completed, send interrupt signal
 					// stop gracefully
-					writeStdin(new InterruptSignal(true));
+					writeStdin(new PreInterruptSignal(true));
 				}
 			} catch (Throwable e) {
 				printError(EMPTY, e);
@@ -118,7 +118,6 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 			if (output instanceof MetaSignal) {
 				MetaSignal meta = (MetaSignal) output;
 				getSingle().merge(meta.getRegistedMethods());
-				wakeup();
 			}
 			// Progress
 			else if (output instanceof ProgressSignal) {

@@ -46,11 +46,6 @@ public class ShellProperties extends AbstractConfiguration {
 	 */
 	private int maxClients = 2;
 
-	/**
-	 * Simultaneous processing of command-line tasks by the same client.
-	 */
-	private int concurrently = 2;
-
 	public int getBacklog() {
 		return backlog;
 	}
@@ -84,15 +79,6 @@ public class ShellProperties extends AbstractConfiguration {
 	public void setMaxClients(int maxClients) {
 		Assert.isTrue(maxClients > 0, String.format("maxClients must greater than 0, actual is %s", backlog));
 		this.maxClients = maxClients;
-	}
-
-	public int getConcurrently() {
-		return concurrently;
-	}
-
-	public void setConcurrently(int concurrently) {
-		Assert.isTrue(concurrently > 0, String.format("concurrently must greater than 0, actual is %s", backlog));
-		this.concurrently = concurrently;
 	}
 
 }

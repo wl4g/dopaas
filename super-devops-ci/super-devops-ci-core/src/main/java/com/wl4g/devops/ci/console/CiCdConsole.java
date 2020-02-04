@@ -22,7 +22,7 @@ import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.shell.handler.ShellContext;
+import com.wl4g.devops.shell.handler.SimpleShellContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -57,7 +57,7 @@ public class CiCdConsole {
 	 * @return
 	 */
 	@ShellMethod(keys = "modifyCleanupInterval", group = GROUP, help = "Modifying global jobs timeout finalizer max-interval")
-	public void modifyCleanupInterval(TimeoutCleanupIntervalArgument arg, ShellContext context) {
+	public void modifyCleanupInterval(TimeoutCleanupIntervalArgument arg, SimpleShellContext context) {
 		try {
 			context.printf(format("Modifying timeout cleanup finalizer intervalMs: <%s>", arg.getMaxIntervalMs()));
 
@@ -79,7 +79,7 @@ public class CiCdConsole {
 	 * @return
 	 */
 	@ShellMethod(keys = "pipelineList", group = GROUP, help = "Pipeline tasks list.")
-	public void pipelineList(TasksArgument arg, ShellContext context) {
+	public void pipelineList(TasksArgument arg, SimpleShellContext context) {
 		try {
 			// Find tasks.
 			PageModel pm = new PageModel(arg.getPageNum(), arg.getPageSize());

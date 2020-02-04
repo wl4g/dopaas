@@ -15,14 +15,17 @@
  */
 package com.wl4g.devops.shell.handler;
 
+import com.wl4g.devops.shell.annotation.ShellMethod;
+import com.wl4g.devops.shell.annotation.ShellMethod.InterruptType;
+import com.wl4g.devops.shell.exception.NoSupportedInterruptShellException;
 import com.wl4g.devops.shell.exception.ShellException;
 import com.wl4g.devops.shell.handler.EmbeddedServerShellHandler.ServerShellMessageChannel;
 import com.wl4g.devops.shell.registry.InternalInjectable;
+import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 import com.wl4g.devops.shell.signal.BOFStdoutSignal;
 import com.wl4g.devops.shell.signal.ChannelState;
 import com.wl4g.devops.shell.signal.EOFStdoutSignal;
 import com.wl4g.devops.shell.signal.Signal;
-import com.wl4g.devops.shell.signal.ProgressSignal;
 import com.wl4g.devops.shell.signal.StderrSignal;
 import com.wl4g.devops.shell.signal.StdoutSignal;
 
@@ -30,18 +33,19 @@ import org.slf4j.Logger;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
+import static com.wl4g.devops.shell.annotation.ShellMethod.InterruptType.*;
 import static com.wl4g.devops.shell.signal.ChannelState.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.util.Collections.synchronizedMap;
-import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableCollection;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
@@ -53,8 +57,7 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
  * @version v1.0 2019年5月24日
  * @since
  */
-public final class ShellContext implements InternalInjectable {
-	final public static int DEFAULT_WHOLE = 100;
+class ShellContext implements InternalInjectable {
 	final public static String DEFAULT_INTERRUPT_LISTENER = "defaultInterruptListener";
 
 	final protected Logger log = getLogger(getClass());
@@ -72,32 +75,51 @@ public final class ShellContext implements InternalInjectable {
 	/**
 	 * Line result message state.
 	 */
-	private ChannelState state;
+	private ChannelState state = NEW;
 
-	ShellContext(ServerShellMessageChannel client) {
-		this(client, NEW);
+	/**
+	 * Shell target wrapper object currently executing.
+	 * {@link TargetMethodWrapper}
+	 */
+	private TargetMethodWrapper target;
+
+	ShellContext(ShellContext context) {
+		this(context.channel);
+		setState(context.state);
+		setTarget(context.target);
+		// Copy event listeners.
+		context.eventListeners.forEach((name, l) -> eventListeners.putIfAbsent(name, l));
 	}
 
-	ShellContext(ServerShellMessageChannel channel, ChannelState state) {
+	ShellContext(ServerShellMessageChannel channel) {
 		notNull(channel, "Shell channel must not be null");
-		notNull(channel, "State must not be null");
 		this.channel = channel;
-		this.state = state;
-
-		// Register default listener.
-		addEventListener(DEFAULT_INTERRUPT_LISTENER, new ShellEventListener() {
+		// Default listener register.
+		eventListeners.putIfAbsent(DEFAULT_INTERRUPT_LISTENER, new ShellEventListener() {
 			// Ignore
 		});
 	}
 
 	ShellContext setState(ChannelState state) {
-		notNull(channel, "State must not be null");
+		notNull(state, "State must not be null");
 		this.state = state;
 		return this;
 	}
 
-	public ChannelState getState() {
+	ChannelState getState() {
 		return state;
+	}
+
+	void setTarget(TargetMethodWrapper target) {
+		notNull(target, "Target method must not be null");
+		this.target = target;
+	}
+
+	TargetMethodWrapper getTarget() {
+		if (isNull(target)) {
+			throw new Error("The shell target method should not be null???");
+		}
+		return target;
 	}
 
 	/**
@@ -108,7 +130,7 @@ public final class ShellContext implements InternalInjectable {
 	synchronized ShellContext begin() {
 		state = RUNNING;
 		// Print begin mark
-		printf(new BOFStdoutSignal());
+		printf0(new BOFStdoutSignal());
 		return this;
 	}
 
@@ -121,7 +143,7 @@ public final class ShellContext implements InternalInjectable {
 	 */
 	public synchronized void completed() {
 		state = COMPLETED;
-		printf(new EOFStdoutSignal()); // Ouput end mark
+		printf0(new EOFStdoutSignal()); // Ouput end mark
 	}
 
 	/**
@@ -129,18 +151,25 @@ public final class ShellContext implements InternalInjectable {
 	 * open the shell channel, it will return false, that is, uninterrupted)
 	 * 
 	 * @return
+	 * @throws NoSupportedInterruptShellException
 	 */
-	public final boolean isInterrupted() {
+	public final boolean isInterrupted() throws NoSupportedInterruptShellException {
+		// Check if the current shell method supports interrupts.
+		if (getTarget().getShellMethod().interruptible() == NOT_ALLOW) {
+			throw new NoSupportedInterruptShellException(
+					format("Interruptible is not supported. You can set @%s(interruptible=%s.%s)",
+							ShellMethod.class.getSimpleName(), InterruptType.class.getSimpleName(), ALLOW.name()));
+		}
 		return nonNull(state) ? (state == INTERRUPTED) : false;
 	}
 
 	/**
-	 * Get target event listeners.
+	 * Get unmodifiable event listeners.
 	 * 
 	 * @return
 	 */
-	public List<ShellEventListener> getEventListeners() {
-		return unmodifiableList(eventListeners.values().stream().collect(toList()));
+	public Collection<ShellEventListener> getUnmodifiableEventListeners() {
+		return unmodifiableCollection(eventListeners.values());
 	}
 
 	/**
@@ -148,10 +177,28 @@ public final class ShellContext implements InternalInjectable {
 	 * 
 	 * @param name
 	 * @param eventListener
+	 * @return
 	 */
-	public void addEventListener(String name, ShellEventListener eventListener) {
+	public boolean addEventListener(String name, ShellEventListener eventListener) {
 		Assert.notNull(eventListener, "eventListener must not be null");
-		eventListeners.put(name, eventListener);
+		if (nonNull(eventListeners.putIfAbsent(name, eventListener))) {
+			throw new ShellException(format("Add an existed event listener: %s", name));
+		}
+		return eventListeners.get(name) == eventListener;
+	}
+
+	/**
+	 * Remove event listener
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public boolean removeEventListener(String name) {
+		// Check built-in event listener.
+		if (equalsAny(name, DEFAULT_INTERRUPT_LISTENER)) {
+			throw new ShellException(format("built-in listener is not allowed to be remove, %s", name));
+		}
+		return nonNull(eventListeners.remove(name));
 	}
 
 	/**
@@ -160,7 +207,7 @@ public final class ShellContext implements InternalInjectable {
 	 * @param output
 	 * @throws IllegalStateException
 	 */
-	public ShellContext printf(Object output) throws IllegalStateException {
+	protected ShellContext printf0(Object output) throws IllegalStateException {
 		Assert.notNull(output, "Printf message must not be null.");
 		Assert.isTrue((output instanceof Signal || output instanceof CharSequence || output instanceof Throwable),
 				format("Unsupported print message types: %s", output.getClass()));
@@ -193,29 +240,6 @@ public final class ShellContext implements InternalInjectable {
 			throw new IllegalStateException("The current console channel may be closed!");
 		}
 		return this;
-	}
-
-	/**
-	 * Print progress message to client console.
-	 *
-	 * @param title
-	 * @param progressPercent
-	 * @return
-	 */
-	public ShellContext printf(String title, float progressPercent) {
-		return printf(new ProgressSignal(title, DEFAULT_WHOLE, (int) (DEFAULT_WHOLE * progressPercent)));
-	}
-
-	/**
-	 * Print progress message to client console.
-	 *
-	 * @param title
-	 * @param whole
-	 * @param progress
-	 * @return
-	 */
-	public ShellContext printf(String title, int whole, int progress) {
-		return printf(new ProgressSignal(title, whole, progress));
 	}
 
 }

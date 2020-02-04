@@ -17,8 +17,6 @@ package com.wl4g.devops.shell.util;
 
 import static java.util.Objects.isNull;
 
-import com.wl4g.devops.shell.handler.ShellContext;
-
 /**
  * {@link ShellContextUtils}
  * 
@@ -29,7 +27,7 @@ import com.wl4g.devops.shell.handler.ShellContext;
 public abstract class ShellContextUtils {
 
 	/** Shell context cache. */
-	final private static ThreadLocal<ShellContext> contextCache = new InheritableThreadLocal<>();
+	final private static ThreadLocal<Object> contextCache = new InheritableThreadLocal<>();
 
 	/**
 	 * Bind shell context.
@@ -37,7 +35,7 @@ public abstract class ShellContextUtils {
 	 * @param context
 	 * @return
 	 */
-	public final static ShellContext bind(ShellContext context) {
+	public final static <T> T bind(T context) {
 		if (context != null) {
 			contextCache.set(context);
 		}
@@ -50,12 +48,13 @@ public abstract class ShellContextUtils {
 	 * @see {@link EmbeddedServerShellHandler#run()#MARK1}
 	 * @return
 	 */
-	public final static ShellContext getContext() {
-		ShellContext context = contextCache.get();
+	@SuppressWarnings("unchecked")
+	public final static <T> T getContext() {
+		Object context = contextCache.get();
 		if (isNull(context)) {
 			throw new IllegalStateException("The context object was not retrieved. first use bind()");
 		}
-		return context;
+		return (T) context;
 	}
 
 }
