@@ -17,6 +17,8 @@ package com.wl4g.devops.tool.common.crypto.cipher;
 
 import java.security.spec.KeySpec;
 
+import com.wl4g.devops.tool.common.crypto.cipher.spec.KeySpecEntity;
+
 public final class DsaEncryptor extends AsymmetricEncryptor<KeySpecEntity> {
 
 	@Override

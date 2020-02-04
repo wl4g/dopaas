@@ -16,6 +16,7 @@
 package com.wl4g.devops.tool.common.cli.ssh2;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 
@@ -33,38 +34,40 @@ import com.wl4g.devops.tool.common.function.CallbackFunction;
 import com.wl4g.devops.tool.common.function.ProcessFunction;
 
 /**
- * {@link Ssh2Clients}, generic SSH2 client wrapper tool. </br>
+ * {@link Ssh2Holders}, generic SSH2 client wrapper tool. </br>
  * Including the implementation of ethz/ssj/ssd.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
-public abstract class Ssh2Clients<S, F> {
+public abstract class Ssh2Holders<S, F> {
 	final protected Logger log = getLogger(getClass());
 
 	/**
-	 * Get default {@link Ssh2Clients} instance by provider class.
+	 * Get default {@link Ssh2Holders} instance by provider class.
 	 * 
 	 * @param <T>
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public final static <T extends Ssh2Clients> T getDefault() {
-		return (T) providerRegistry.get(EthzUtils.class);
+	public final static <T extends Ssh2Holders> T getDefault() {
+		return (T) providerRegistry.get(EthzHolder.class);
 	}
 
 	/**
-	 * Get {@link Ssh2Clients} instance by provider class.
+	 * Get {@link Ssh2Holders} instance by provider class.
 	 * 
 	 * @param <T>
 	 * @param providerClass
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public final static <T extends Ssh2Clients> T getInstance(Class<T> providerClass) {
+	public final static <T extends Ssh2Holders> T getInstance(Class<T> providerClass) {
 		return (T) providerRegistry.get(providerClass);
 	}
+
+	// --- Transfer files. ---
 
 	/**
 	 * Transfer get file from remote host.(user sftp)
@@ -104,6 +107,8 @@ public abstract class Ssh2Clients<S, F> {
 	 */
 	protected abstract void doScpTransfer(String host, String user, char[] pemPrivateKey, CallbackFunction<F> processor)
 			throws Exception;
+
+	// --- Execution commands. ---
 
 	/**
 	 * Execution commands wait for complete with SSH2
@@ -159,19 +164,33 @@ public abstract class Ssh2Clients<S, F> {
 		}
 	}
 
+	// --- Tool function's. ---
+
 	/**
-	 * {@link Ssh2Clients} provider registry.
+	 * Generate keypair of SSH2 based on RSA/DSA/ECDSA.
+	 * 
+	 * @param type
+	 *            Algorithm type(RSA/DSA/ECDSA).
+	 * @param comment
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract SSH2KeyPair generateKeypair(AlgorithmType type, String comment) throws Exception;
+
+	/**
+	 * {@link Ssh2Holders} provider registry.
 	 */
 	@SuppressWarnings("rawtypes")
-	private final static Map<Class<? extends Ssh2Clients>, Ssh2Clients> providerRegistry = new RegisteredUnmodifiableMap<Class<? extends Ssh2Clients>, Ssh2Clients>(
+	private final static Map<Class<? extends Ssh2Holders>, Ssh2Holders> providerRegistry = new RegisteredUnmodifiableMap<Class<? extends Ssh2Holders>, Ssh2Holders>(
 			new HashMap<>()) {
 		{
-			putAll(new HashMap<Class<? extends Ssh2Clients>, Ssh2Clients>() {
+			putAll(new HashMap<Class<? extends Ssh2Holders>, Ssh2Holders>() {
 				private static final long serialVersionUID = 6854310693801773032L;
 				{
-					put(EthzUtils.class, new EthzUtils());
-					put(SshjUtils.class, new SshjUtils());
-					put(SshdUtils.class, new SshdUtils());
+					put(EthzHolder.class, new EthzHolder());
+					put(SshjHolder.class, new SshjHolder());
+					put(SshdHolder.class, new SshdHolder());
+					put(JschHolder.class, new JschHolder());
 				}
 			});
 		}
@@ -189,7 +208,7 @@ public abstract class Ssh2Clients<S, F> {
 	 * @version 2020年1月9日 v1.0.0
 	 * @see
 	 */
-	public static class SshExecResponse {
+	public final static class SshExecResponse {
 
 		/** Remote commands exit signal. */
 		final private String exitSignal;
@@ -227,6 +246,49 @@ public abstract class Ssh2Clients<S, F> {
 			return errmsg;
 		}
 
+	}
+
+	/**
+	 * {@link SSH2KeyPair}
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年2月4日 v1.0.0
+	 * @see
+	 */
+	public final static class SSH2KeyPair {
+
+		/** Generate ssh2 privateKey. */
+		final private String privateKey;
+
+		/** Generate ssh2 publicKey. */
+		final private String publicKey;
+
+		public SSH2KeyPair(String privateKey, String publicKey) {
+			notNullOf(privateKey, "privateKey");
+			notNullOf(publicKey, "publicKey");
+			this.privateKey = privateKey;
+			this.publicKey = publicKey;
+		}
+
+		public String getPrivateKey() {
+			return privateKey;
+		}
+
+		public String getPublicKey() {
+			return publicKey;
+		}
+
+	}
+
+	/**
+	 * {@link AlgorithmType}
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年2月4日 v1.0.0
+	 * @see
+	 */
+	public static enum AlgorithmType {
+		RSA, DSA, ECDSA
 	}
 
 }

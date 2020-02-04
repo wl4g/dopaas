@@ -17,37 +17,31 @@ package com.wl4g.devops.tool.common.cli.ssh2;
 
 import com.wl4g.devops.tool.common.function.CallbackFunction;
 import com.wl4g.devops.tool.common.function.ProcessFunction;
-import org.apache.sshd.client.SshClient;
-import org.apache.sshd.client.channel.ChannelExec;
-import org.apache.sshd.client.channel.ClientChannelEvent;
-import org.apache.sshd.client.future.AuthFuture;
-import org.apache.sshd.client.scp.DefaultScpClientCreator;
-import org.apache.sshd.client.scp.ScpClient;
-import org.apache.sshd.client.session.ClientSession;
-import org.apache.sshd.common.util.security.SecurityUtils;
-import org.slf4j.Logger;
+import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.connection.channel.direct.Session;
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
+import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
+import net.schmizz.sshj.xfer.FileSystemFile;
+import net.schmizz.sshj.xfer.scp.SCPFileTransfer;
 
-import java.io.*;
-import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.util.Collections;
-import java.util.Iterator;
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
+import static com.wl4g.devops.tool.common.io.ByteStreams2.readFullyToString;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 /**
- * Remote SSH command process tools.
+ * SSHJ based SSH2 tools.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月24日
  * @since
  */
-public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
-	final protected static Logger log = getLogger(SshdUtils.class);
+public class SshjHolder extends Ssh2Holders<Session.Command, SCPFileTransfer> {
 
 	// --- Transfer files. ---
 
@@ -61,6 +55,7 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 	 * @param remoteFilePath
 	 * @throws Exception
 	 */
+	@Override
 	public void scpGetFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteFilePath)
 			throws Exception {
 		notNull(localFile, "Transfer localFile must not be null.");
@@ -70,7 +65,7 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 		try {
 			// Transfer get file.
 			doScpTransfer(host, user, pemPrivateKey, scp -> {
-				scp.download(remoteFilePath, localFile.getAbsolutePath());
+				scp.download(remoteFilePath, new FileSystemFile(localFile));
 			});
 
 			log.debug("SCP get transfered: '{}' from '{}@{}:{}'", localFile.getAbsolutePath(), user, host, remoteFilePath);
@@ -90,6 +85,7 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 	 * @param remoteDir
 	 * @throws Exception
 	 */
+	@Override
 	public void scpPutFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteDir) throws Exception {
 		notNull(localFile, "Transfer localFile must not be null.");
 		hasText(remoteDir, "Transfer remoteDir can't empty.");
@@ -98,7 +94,7 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 		try {
 			// Transfer send file.
 			doScpTransfer(host, user, pemPrivateKey, scp -> {
-				scp.upload(localFile.getAbsolutePath(), remoteDir);
+				scp.upload(new FileSystemFile(localFile), remoteDir);
 			});
 
 			log.debug("SCP put transfered: '{}' to '{}@{}:{}'", localFile.getAbsolutePath(), user, host, remoteDir);
@@ -118,7 +114,8 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 	 * @param processor
 	 * @throws IOException
 	 */
-	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, CallbackFunction<ScpClient> processor)
+	@Override
+	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, CallbackFunction<SCPFileTransfer> processor)
 			throws Exception {
 		hasText(host, "Transfer host can't empty.");
 		hasText(user, "Transfer user can't empty.");
@@ -130,30 +127,26 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 		}
 		notNull(pemPrivateKey, "Transfer pemPrivateKey can't null.");
 
-		SshClient client = null;
-		ClientSession session = null;
-		ScpClient scpClient = null;
+		SSHClient ssh = null;
+		SCPFileTransfer scpFileTransfer = null;
 		try {
-			client = SshClient.setUpDefaultClient();
-			client.start();
-			session = authWithPrivateKey(client, host, null, user, pemPrivateKey);
-			scpClient = DefaultScpClientCreator.INSTANCE.createScpClient(session);
-			processor.process(scpClient);
+			ssh = new SSHClient();
+			ssh.addHostKeyVerifier(new PromiscuousVerifier());
+			ssh.connect(host);
+			KeyProvider keyProvider = ssh.loadKeys(new String(pemPrivateKey), null, null);
+			ssh.authPublickey(user, keyProvider);
+
+			scpFileTransfer = ssh.newSCPFileTransfer();
+
+			// Transfer file(put/get).
+			processor.process(scpFileTransfer);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw e;
 		} finally {
 			try {
-				if (nonNull(session)) {
-					session.close();
-				}
-			} catch (Exception e) {
-				log.error("", e);
-			}
-			try {
-				if (nonNull(client)) {
-					client.stop();
-					client.close();
+				if (nonNull(ssh)) {
+					ssh.disconnect();
+					ssh.close();
 				}
 			} catch (Exception e) {
 				log.error("", e);
@@ -176,16 +169,16 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 	 */
 	public SshExecResponse execWithSsh2(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
 			throws Exception {
-		return execWaitForCompleteWithSsh2(host, user, pemPrivateKey, command, channelExec -> {
+		return execWaitForCompleteWithSsh2(host, user, pemPrivateKey, command, cmd -> {
 			String message = null, errmsg = null;
-			if (nonNull(channelExec.getOut())) {
-				// message = readFullyToString();
-				message = channelExec.getOut().toString();
+			if (nonNull(cmd.getInputStream())) {
+				message = readFullyToString(cmd.getInputStream());
 			}
-			if (nonNull(channelExec.getErr())) {
-				errmsg = channelExec.getErr().toString();
+			if (nonNull(cmd.getErrorStream())) {
+				errmsg = readFullyToString(cmd.getErrorStream());
 			}
-			return new SshExecResponse(channelExec.getExitSignal(), channelExec.getExitStatus(), message, errmsg);
+			return new SshExecResponse(Objects.nonNull(cmd.getExitSignal()) ? cmd.getExitSignal().toString() : null,
+					cmd.getExitStatus(), message, errmsg);
 		}, timeoutMs);
 	}
 
@@ -201,12 +194,13 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 	 * @return
 	 * @throws IOException
 	 */
+	@Override
 	public <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
-			ProcessFunction<ChannelExec, T> processor, long timeoutMs) throws Exception {
-		return doExecCommandWithSsh2(host, user, pemPrivateKey, command, channelExec -> {
+			ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception {
+		return doExecCommandWithSsh2(host, user, pemPrivateKey, command, cmd -> {
 			// Wait for completed by condition.
-			channelExec.waitFor(Collections.singleton(ClientChannelEvent.CLOSED), timeoutMs);
-			return processor.process(channelExec);
+			cmd.join(timeoutMs, TimeUnit.MILLISECONDS);
+			return processor.process(cmd);
 		}, timeoutMs);
 	}
 
@@ -222,8 +216,9 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 	 * @return
 	 * @throws IOException
 	 */
+	@Override
 	protected <T> T doExecCommandWithSsh2(String host, String user, char[] pemPrivateKey, String command,
-			ProcessFunction<ChannelExec, T> processor, long timeoutMs) throws Exception {
+			ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
 		notNull(processor, "SSH2 command processor can't null.");
@@ -234,32 +229,23 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 		}
 		notNull(pemPrivateKey, "Transfer pemPrivateKey can't null.");
 
-		ClientSession session = null;
-		ChannelExec channelExec = null;
-		SshClient client = null;
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ByteArrayOutputStream err = new ByteArrayOutputStream();
+		SSHClient ssh = null;
+		Session session = null;
+		Session.Command cmd = null;
 		try {
-			client = SshClient.setUpDefaultClient();
-			client.start();
-			session = authWithPrivateKey(client, host, null, user, pemPrivateKey);
+			ssh = new SSHClient();
+			ssh.addHostKeyVerifier(new PromiscuousVerifier());
+			ssh.connect(host);
+			KeyProvider keyProvider = ssh.loadKeys(new String(pemPrivateKey), null, null);
+			ssh.authPublickey(user, keyProvider);
+			session = ssh.startSession();
+			// TODO
 			String proCommond = "source /etc/profile\nsource /etc/bashrc\n";
-			channelExec = session.createExecChannel(proCommond + command);
-			channelExec.setErr(err);
-			channelExec.setOut(out);
-			channelExec.open();
-			return processor.process(channelExec);
+			cmd = session.exec(proCommond + command);
+			return processor.process(cmd);
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			out.close();
-			try {
-				if (nonNull(channelExec)) {
-					channelExec.close();
-				}
-			} catch (Exception e) {
-				log.error("", e);
-			}
 			try {
 				if (nonNull(session)) {
 					session.close();
@@ -268,9 +254,9 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 				log.error("", e);
 			}
 			try {
-				if (nonNull(client)) {
-					client.stop();
-					client.close();
+				if (nonNull(ssh)) {
+					ssh.disconnect();
+					ssh.close();
 				}
 			} catch (Exception e) {
 				log.error("", e);
@@ -278,54 +264,11 @@ public class SshdUtils extends Ssh2Clients<ChannelExec, ScpClient> {
 		}
 	}
 
-	private InputStream getStrToStream(String sInputString) {
-		if (sInputString != null && !sInputString.trim().equals("")) {
-			return new ByteArrayInputStream(sInputString.getBytes());
-		}
-		return null;
-	}
+	// --- Tool function's. ---
 
-	private ClientSession authWithPrivateKey(SshClient client, String host, Integer port, String user, char[] pemPrivateKey)
-			throws IOException, GeneralSecurityException {
-		ClientSession session = client.connect(user, host, Objects.isNull(port) ? 22 : port).verify(10000).getSession();
-		Iterable<KeyPair> keyPairs = SecurityUtils.loadKeyPairIdentities(session, null, getStrToStream(new String(pemPrivateKey)),
-				null);
-		Iterator<KeyPair> iterator = keyPairs.iterator();
-		if (iterator.hasNext()) {
-			KeyPair next = iterator.next();
-			session.addPublicKeyIdentity(next);// for password-less
-												// authentication
-		}
-		AuthFuture verify = session.auth().verify(10000);
-		if (!verify.isSuccess()) {
-			throw new GeneralSecurityException("auth fail");
-		}
-		return session;
+	@Override
+	public SSH2KeyPair generateKeypair(AlgorithmType type, String comment) throws Exception {
+		throw new UnsupportedOperationException();
 	}
-
-	/**
-	 * auth with password (unused now)
-	 * 
-	 * @param host
-	 * @param port
-	 * @param user
-	 * @param password
-	 * @return
-	 * @throws IOException
-	 * @throws GeneralSecurityException
-	 */
-	// private ClientSession authWithPassword(SshClient client, String host,
-	// Integer port, String user, String password)
-	// throws IOException, GeneralSecurityException {
-	// ClientSession session = client.connect(user, host, Objects.isNull(port) ?
-	// 22 : port).verify(10000).getSession();
-	// session.addPasswordIdentity(password); // for password-based
-	// // authentication
-	// AuthFuture verify = session.auth().verify(10000);
-	// if (!verify.isSuccess()) {
-	// throw new GeneralSecurityException("auth fail");
-	// }
-	// return session;
-	// }
 
 }

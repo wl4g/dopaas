@@ -19,6 +19,9 @@ import java.security.spec.KeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
+import com.wl4g.devops.tool.common.crypto.cipher.spec.KeySpecEntity;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.RsaKeySpecEntity;
+
 /**
  * RivestShamirAdleman algorithm
  *

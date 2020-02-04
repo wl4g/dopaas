@@ -27,6 +27,7 @@ import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Hex;
 
+import com.wl4g.devops.tool.common.crypto.cipher.spec.KeySpecEntity;
 import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**

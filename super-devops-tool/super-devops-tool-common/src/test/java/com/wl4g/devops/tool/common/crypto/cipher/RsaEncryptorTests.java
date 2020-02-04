@@ -16,6 +16,7 @@
 package com.wl4g.devops.tool.common.crypto.cipher;
 
 import com.wl4g.devops.tool.common.crypto.cipher.RsaEncryptor;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.KeySpecEntity;
 
 //import java.security.KeyFactory;
 //import java.security.KeyPair;
