@@ -333,7 +333,7 @@ public class SshdHolder extends Ssh2Holders<ChannelExec, ScpClient> {
 	// --- Tool function's. ---
 
 	@Override
-	public SSH2KeyPair generateKeypair(AlgorithmType type, String comment) throws Exception {
+	public Ssh2KeyPair generateKeypair(AlgorithmType type, String comment) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 

@@ -175,7 +175,7 @@ public abstract class Ssh2Holders<S, F> {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract SSH2KeyPair generateKeypair(AlgorithmType type, String comment) throws Exception;
+	public abstract Ssh2KeyPair generateKeypair(AlgorithmType type, String comment) throws Exception;
 
 	/**
 	 * {@link Ssh2Holders} provider registry.
@@ -249,13 +249,13 @@ public abstract class Ssh2Holders<S, F> {
 	}
 
 	/**
-	 * {@link SSH2KeyPair}
+	 * {@link Ssh2KeyPair}
 	 * 
 	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
 	 * @version 2020年2月4日 v1.0.0
 	 * @see
 	 */
-	public final static class SSH2KeyPair {
+	public final static class Ssh2KeyPair {
 
 		/** Generate ssh2 privateKey. */
 		final private String privateKey;
@@ -263,7 +263,7 @@ public abstract class Ssh2Holders<S, F> {
 		/** Generate ssh2 publicKey. */
 		final private String publicKey;
 
-		public SSH2KeyPair(String privateKey, String publicKey) {
+		public Ssh2KeyPair(String privateKey, String publicKey) {
 			notNullOf(privateKey, "privateKey");
 			notNullOf(publicKey, "publicKey");
 			this.privateKey = privateKey;
