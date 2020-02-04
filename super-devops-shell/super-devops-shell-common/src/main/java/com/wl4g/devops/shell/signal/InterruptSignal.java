@@ -13,14 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.message;
+package com.wl4g.devops.shell.signal;
 
-public class BOFStdoutMessage extends Message {
+/**
+ * Client user interrupt commands message
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年5月4日
+ * @since
+ */
+public class InterruptSignal extends Signal {
 	private static final long serialVersionUID = -5574318886731906685L;
+
+	final private boolean force;
+
+	public InterruptSignal(boolean force) {
+		super();
+		this.force = force;
+	}
+
+	public boolean isForce() {
+		return force;
+	}
 
 	@Override
 	public String toString() {
-		return "BOF []";
+		return "Interrupted [" + force + "]";
 	}
 
 }

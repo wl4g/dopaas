@@ -17,7 +17,7 @@ package com.wl4g.devops.shell.handler;
 
 import java.util.EventListener;
 
-import com.wl4g.devops.shell.message.ChannelState;
+import com.wl4g.devops.shell.signal.ChannelState;
 
 /**
  * {@link ShellEventListener}

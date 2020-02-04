@@ -30,7 +30,7 @@ In the above command, the -Dservname represents the Spring Cloud application nam
 (corresponding to 'spring.application.name'), which automatically finds the service port locally based on the servname
 and establishes the connection (pay attention to case). You can also use Mode 1 (#Way1) to display the specified service
 endpoint with -Dservpoint, where -Dprompt is used to set the command line prompt of the shell console. -Dtimeout specifies
-the time-out for waiting results to return (default: 10_000ms), and can print debugging information using -Dxdebug.
+the time-out for waiting results to return (default: 180_000ms), and can print debugging information using -Dxdebug.
 
 ## Features
 - Ctrl+A cursor jumps to the beginning of the line, Ctrl+E cursor jumps to the end of the line, Ctrl+C exits the console (follow GNU)

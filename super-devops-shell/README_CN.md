@@ -30,7 +30,7 @@ java -Dservname=shell-example -Dprompt=my-shell -Dtimeout=5000 -jar shell-cli-ma
 
 上面的命令中 -Dservname 表示服务端SpringBoot/Cloud应用名称（对应spring.application.name），它会依据servname在本地自动查
 找服务端口建立连接（注意大小写）.也可使用 [方式一](#方式一) 以-Dservpoint 来显示指定服务端点，其中使用 -Dprompt 来设置shell
-控制台的命令行提示符，-Dtimeout 指定等待结果返回超时时间（默认:10_000ms），还可使用-Dxdebug打印调试信息。
+控制台的命令行提示符，-Dtimeout 指定等待结果返回超时时间（默认:180_000ms），还可使用-Dxdebug打印调试信息。
 
 
 ## 特性

@@ -32,14 +32,16 @@ import java.util.List;
 import java.util.function.Function;
 
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.lang.System.*;
 
 import com.wl4g.devops.shell.command.DefaultBuiltInCommand;
 import com.wl4g.devops.shell.config.Configuration;
 import com.wl4g.devops.shell.config.DynamicCompleter;
 import com.wl4g.devops.shell.handler.ShellMessageChannel;
-import com.wl4g.devops.shell.message.*;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
+import com.wl4g.devops.shell.signal.*;
+
 import static com.wl4g.devops.shell.annotation.ShellOption.GNU_CMD_LONG;
 import static com.wl4g.devops.shell.cli.BuiltInCommand.INTERNAL_HE;
 import static com.wl4g.devops.shell.cli.BuiltInCommand.INTERNAL_HELP;
@@ -83,7 +85,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	/**
 	 * Enable debugging
 	 */
-	final public static long TIMEOUT = Long.parseLong(getProperty("timeout", "10000"));
+	final public static long TIMEOUT = Long.parseLong(getProperty("timeout", valueOf(180_000L)));
 
 	/**
 	 * Attributed string
@@ -199,7 +201,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 				}
 
 				// Wrap string command
-				stdin = new StdinMessage(cmd);
+				stdin = new StdinSignal(cmd);
 			}
 
 			// Check connect & send to server.
@@ -247,7 +249,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 		registrar.register(new DefaultBuiltInCommand(this));
 
 		// Initialize remote register commands
-		writeStdin(new MetaMessage());
+		writeStdin(new MetaSignal());
 
 		// Set history persist file
 		File file = new File(USER_HOME + "/.devops/shell/history");

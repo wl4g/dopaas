@@ -13,32 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.message;
+package com.wl4g.devops.shell.signal;
+
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 /**
- * Client user interrupt commands message
+ * Post confirm interrupt message
  * 
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月4日
+ * @version v1.0 2020年1月4日
  * @since
  */
-public class InterruptMessage extends Message {
-	private static final long serialVersionUID = -5574318886731906685L;
+public class AckInterruptSignal extends Signal {
+	private static final long serialVersionUID = -8574315246731906685L;
 
-	final private boolean force;
+	/**
+	 * Current confirmed state.
+	 */
+	final private boolean confirm;
 
-	public InterruptMessage(boolean force) {
-		super();
-		this.force = force;
+	public AckInterruptSignal(boolean confirm) {
+		notNullOf(confirm, "confirm");
+		this.confirm = confirm;
 	}
 
-	public boolean isForce() {
-		return force;
+	public boolean getConfirm() {
+		return confirm;
 	}
 
 	@Override
 	public String toString() {
-		return "Interrupted [" + force + "]";
+		return "PostConfirmedMessage [confirm=" + confirm + "]";
 	}
 
 }

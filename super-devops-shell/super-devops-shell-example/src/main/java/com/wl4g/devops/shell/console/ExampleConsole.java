@@ -103,13 +103,12 @@ public class ExampleConsole {
 		Executors.newSingleThreadExecutor().execute(() -> {
 			try {
 				context.printf("Log print...");
-
 				for (int i = 1; i <= num; i++) {
 					String message = "This is the " + i + "th message!";
-					System.out.println(message);
+					log.info(message);
 
-					// Print stream message
-					context.printf(message);
+					// Print to console
+					context.printf(message, num, i);
 
 					try {
 						Thread.sleep(200L);
@@ -117,11 +116,11 @@ public class ExampleConsole {
 						e.printStackTrace();
 					}
 				}
-				context.printf("Print successfully completed!");
+				context.printf("Log print finished!");
 
 			} finally {
-				// After execution, the client console will automatically
-				// refresh the prompt.
+				// *** Note: Don't forget to execute it, or the client console
+				// will pause until it timesout.
 				context.completed();
 			}
 		});
@@ -139,13 +138,11 @@ public class ExampleConsole {
 		Executors.newSingleThreadExecutor().execute(() -> {
 			try {
 				context.printf("Log2 print...");
-
 				for (int i = 1; !context.isInterrupted() && i <= num; i++) {
 					String message = "This is the " + i + "th message!";
-					System.out.println(message);
+					log.info(message);
 
-					// Print message to client.
-					// ShellHolder.currentPrintf(message);
+					// Print to console
 					context.printf(message, num, i);
 
 					try {
@@ -155,10 +152,9 @@ public class ExampleConsole {
 					}
 				}
 				context.printf("Log2 print finished!");
-
 			} finally {
-				// After execution, the client console will automatically
-				// refresh the prompt.
+				// *** Note: Don't forget to execute it, or the client console
+				// will pause until it timesout.
 				context.completed();
 			}
 		});
@@ -173,23 +169,27 @@ public class ExampleConsole {
 			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print message delay(ms)") long sleep,
 			ShellContext context) {
 
-		context.printf("Log3 print...");
+		try {
+			context.printf("Log3 print...");
+			for (int i = 1; !context.isInterrupted() && i <= num; i++) {
+				String message = "This is the " + i + "th message!";
+				log.info(message);
 
-		for (int i = 1; !context.isInterrupted() && i <= num; i++) {
-			String message = "This is the " + i + "th message!";
-			System.out.println(message);
+				// Print to console
+				context.printf(message, num, i);
 
-			// Print message to client.
-			// ShellHolder.currentPrintf(message);
-			context.printf(message, num, i);
-
-			try {
-				Thread.sleep(sleep);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+				try {
+					Thread.sleep(sleep);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
+			context.printf("Log3 print finished!");
+		} finally {
+			// *** Note: Don't forget to execute it, or the client console
+			// will pause until it timesout.
+			context.completed();
 		}
-		context.printf("Log3 print finished!").completed(); // MARK1
 	}
 
 }

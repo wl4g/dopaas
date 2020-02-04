@@ -17,9 +17,9 @@ package com.wl4g.devops.shell.handler;
 
 import com.wl4g.devops.shell.config.ShellProperties;
 import com.wl4g.devops.shell.handler.ShellMessageChannel;
-import com.wl4g.devops.shell.message.*;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
+import com.wl4g.devops.shell.signal.*;
 
 import org.slf4j.Logger;
 import org.springframework.boot.ApplicationArguments;
@@ -39,8 +39,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import static com.wl4g.devops.shell.signal.ChannelState.*;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.shell.message.ChannelState.*;
 import static java.lang.String.format;
 import static java.lang.Thread.sleep;
 import static java.util.Objects.nonNull;
@@ -260,31 +260,27 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 
 					Object output = null;
 					// Register shell methods
-					if (stdin instanceof MetaMessage) {
-						output = new MetaMessage(registrar.getTargetMethods());
+					if (stdin instanceof MetaSignal) {
+						output = new MetaSignal(registrar.getTargetMethods());
 					}
 					// Ask interruption
-					else if (stdin instanceof InterruptMessage) {
+					else if (stdin instanceof InterruptSignal) {
 						// Call pre-interrupt events.
 						context.getEventListeners().forEach(l -> l.onPreInterrupt(context));
-
 						// Ask if the client is interrupt.
-						output = new AskInterruptMessage("Are you sure you want to cancel execution? (y|n)");
+						output = new AskInterruptSignal("Are you sure you want to cancel execution? (y|n)");
 					}
 					// Confirm interruption
-					else if (stdin instanceof ConfirmInterruptMessage) {
-						ConfirmInterruptMessage confirm = (ConfirmInterruptMessage) stdin;
+					else if (stdin instanceof AckInterruptSignal) {
+						AckInterruptSignal ack = (AckInterruptSignal) stdin;
 						// Call interrupt events.
-						context.getEventListeners().forEach(l -> l.onInterrupt(context, confirm.getConfirm()));
-						if (confirm.getConfirm()) {
-							context.completed();
-						}
+						context.getEventListeners().forEach(l -> l.onInterrupt(context, ack.getConfirm()));
 					}
 					// Stdin of commands
-					else if (stdin instanceof StdinMessage) {
-						StdinMessage line = (StdinMessage) stdin;
+					else if (stdin instanceof StdinSignal) {
+						StdinSignal cmd = (StdinSignal) stdin;
 						// Call command events.
-						context.getEventListeners().forEach(l -> l.onCommand(context, line.getLine()));
+						context.getEventListeners().forEach(l -> l.onCommand(context, cmd.getLine()));
 
 						// Resolve that client input cannot be received during
 						// blocking execution.
@@ -296,14 +292,16 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 								 * supported, and return value is no longer
 								 * supported (otherwise it will be ignored)
 								 */
-								function.apply(line.getLine());
+								function.apply(cmd.getLine());
 
-								// see:EmbeddedServerShellHandler#preHandle()}#MARK2
+								/**
+								 * see:{@link EmbeddedServerShellHandler#preHandleInput()}#MARK2
+								 */
 								if (context.getState() != RUNNING) {
 									isComplete = true;
 								}
 							} catch (Throwable e) {
-								log.error(format("Failed to handle shell command: [%s]", line.getLine()), e);
+								log.error(format("Failed to handle shell command: [%s]", cmd.getLine()), e);
 								isComplete = true;
 								handleError(e);
 							}
@@ -363,7 +361,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 					String errmsg = getRootCauseMessage(th);
 					errmsg = isBlank(errmsg) ? getMessage(th) : errmsg;
 					log.warn("{}", errmsg);
-					writeFlush(new StderrMessage(th));
+					writeFlush(new StderrSignal(th));
 				} catch (IOException e) {
 					log.warn("Write failure", e);
 				}

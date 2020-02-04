@@ -13,34 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.shell.message;
+package com.wl4g.devops.shell.signal;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
-
-/**
- * Line commands message
- * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年5月4日
- * @since
- */
-public class StdinMessage extends Message {
-	private static final long serialVersionUID = -8574315246731906685L;
-
-	final private String line;
-
-	public StdinMessage(String line) {
-		hasText(line, "line must not be empty");
-		this.line = line;
-	}
-
-	public String getLine() {
-		return line;
-	}
+public class EOFStdoutSignal extends Signal {
+	private static final long serialVersionUID = -5574318886731906685L;
 
 	@Override
 	public String toString() {
-		return "stdin [" + line + "]";
+		return "EOF []";
 	}
 
 }
