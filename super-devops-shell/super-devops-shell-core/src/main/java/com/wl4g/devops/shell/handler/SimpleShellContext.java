@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.shell.handler;
 
+import com.wl4g.devops.shell.exception.ChannelShellException;
+
 public class SimpleShellContext extends ShellContext {
 	final public static int DEFAULT_WHOLE = 100;
 
@@ -27,8 +29,9 @@ public class SimpleShellContext extends ShellContext {
 	 *
 	 * @param message
 	 * @return
+	 * @throws ChannelShellException
 	 */
-	public SimpleShellContext printf(String message) {
+	public SimpleShellContext printf(String message) throws ChannelShellException {
 		return (SimpleShellContext) printf0(message);
 	}
 

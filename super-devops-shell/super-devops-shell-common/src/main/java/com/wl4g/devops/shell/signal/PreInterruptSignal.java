@@ -38,7 +38,7 @@ public class PreInterruptSignal extends Signal {
 
 	@Override
 	public String toString() {
-		return "Pre interrupted signal [" + force + "]";
+		return "Pre interrupted [" + force + "]";
 	}
 
 }

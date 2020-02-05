@@ -17,10 +17,11 @@ package com.wl4g.devops.shell.handler;
 
 import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.annotation.ShellMethod.InterruptType;
+import com.wl4g.devops.shell.exception.ChannelShellException;
 import com.wl4g.devops.shell.exception.NoSupportedInterruptShellException;
 import com.wl4g.devops.shell.exception.ShellException;
 import com.wl4g.devops.shell.handler.EmbeddedServerShellHandler.ServerShellMessageChannel;
-import com.wl4g.devops.shell.registry.InternalInjectable;
+import com.wl4g.devops.shell.registry.ShellAware;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 import com.wl4g.devops.shell.signal.BOFStdoutSignal;
 import com.wl4g.devops.shell.signal.ChannelState;
@@ -39,7 +40,9 @@ import java.util.Map;
 
 import static com.wl4g.devops.shell.annotation.ShellMethod.InterruptType.*;
 import static com.wl4g.devops.shell.signal.ChannelState.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.util.Collections.synchronizedMap;
@@ -47,8 +50,6 @@ import static java.util.Collections.unmodifiableCollection;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getMessage;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 /**
  * Shell handler context
@@ -57,8 +58,8 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
  * @version v1.0 2019年5月24日
  * @since
  */
-class ShellContext implements InternalInjectable {
-	final public static String DEFAULT_INTERRUPT_LISTENER = "defaultInterruptListener";
+class ShellContext implements ShellAware {
+	final public static String DEFAULT_INTERRUPT_LISTENER = "defaultInterruptEventListener";
 
 	final protected Logger log = getLogger(getClass());
 
@@ -140,8 +141,10 @@ class ShellContext implements InternalInjectable {
 	 * </br>
 	 * <b><font color=red>Note: Don't forget to execute it, or the client
 	 * console will pause until it timeout.</font><b>
+	 * 
+	 * @throws ChannelShellException
 	 */
-	public final synchronized void completed() {
+	public final synchronized void completed() throws ChannelShellException {
 		state = COMPLETED;
 		printf0(new EOFStdoutSignal()); // Ouput end mark
 	}
@@ -205,11 +208,11 @@ class ShellContext implements InternalInjectable {
 	 * Print message to the client console.
 	 *
 	 * @param output
-	 * @throws IllegalStateException
+	 * @throws ChannelShellException
 	 */
-	protected ShellContext printf0(Object output) throws IllegalStateException {
-		Assert.notNull(output, "Printf message must not be null.");
-		Assert.isTrue((output instanceof Signal || output instanceof CharSequence || output instanceof Throwable),
+	protected ShellContext printf0(Object output) throws ChannelShellException {
+		notNull(output, "Printf message must not be null.");
+		isTrue((output instanceof Signal || output instanceof CharSequence || output instanceof Throwable),
 				format("Unsupported print message types: %s", output.getClass()));
 
 		// Check channel state.
@@ -222,6 +225,7 @@ class ShellContext implements InternalInjectable {
 
 		if (nonNull(channel) && channel.isActive()) {
 			try {
+				log.info("=> {}", output.toString());
 				if (output instanceof CharSequence) {
 					channel.writeFlush(new StdoutSignal(output.toString()));
 				} else if (output instanceof Throwable) {
@@ -229,15 +233,13 @@ class ShellContext implements InternalInjectable {
 				} else if (output instanceof Signal) {
 					channel.writeFlush(output);
 				} else {
-					throw new ShellException(format("Unsupported printf message type of '%s'", output));
+					throw new ChannelShellException(format("Unsupported printf shell message of '%s'", output));
 				}
 			} catch (IOException e) {
-				String errmsg = getRootCauseMessage(e);
-				errmsg = isBlank(errmsg) ? getMessage(e) : errmsg;
-				log.error("=> {}", errmsg);
+				log.error("Failed to printf shell message", getRootCausesString(e));
 			}
 		} else {
-			throw new IllegalStateException("The current console channel may be closed!");
+			throw new ChannelShellException("The current console channel may be closed!");
 		}
 		return this;
 	}

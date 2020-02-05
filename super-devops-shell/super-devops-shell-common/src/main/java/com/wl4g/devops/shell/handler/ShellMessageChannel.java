@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.shell.handler;
 
+import com.wl4g.devops.shell.exception.ChannelShellException;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -93,7 +93,7 @@ public abstract class ShellMessageChannel implements Runnable, Closeable {
 	public void writeFlush(Object message) throws IOException {
 		notNull(message, "Message is null, please check configure");
 		if (!isActive()) {
-			throw new SocketException("No socket active!");
+			throw new ChannelShellException("No socket active!");
 		}
 		ObjectOutputStream out = new ObjectOutputStream(_out);
 		out.writeObject(message);

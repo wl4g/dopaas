@@ -188,7 +188,7 @@ public class TargetMethodWrapper implements Serializable {
 			Class<?> paramType = paramTypes[i];
 			// Eliminate built-in injection parameters to prevent dead
 			// cycle.
-			if (InternalInjectable.class.isAssignableFrom(paramType)) {
+			if (ShellAware.class.isAssignableFrom(paramType)) {
 				continue;
 			}
 
@@ -394,7 +394,7 @@ public class TargetMethodWrapper implements Serializable {
 					Class<?> ftype = f.getType();
 					// Eliminate built-in injection parameters to prevent dead
 					// cycle.
-					if (InternalInjectable.class.isAssignableFrom(ftype)) {
+					if (ShellAware.class.isAssignableFrom(ftype)) {
 						continue;
 					}
 

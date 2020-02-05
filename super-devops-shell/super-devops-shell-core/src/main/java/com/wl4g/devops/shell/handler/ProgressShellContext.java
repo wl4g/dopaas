@@ -18,6 +18,7 @@ package com.wl4g.devops.shell.handler;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static java.util.Objects.isNull;
 
+import com.wl4g.devops.shell.exception.ChannelShellException;
 import com.wl4g.devops.shell.signal.ProgressSignal;
 import com.wl4g.devops.tool.common.math.Maths;
 
@@ -47,7 +48,7 @@ public class ProgressShellContext extends ShellContext {
 	 * @param progressPercent
 	 * @return
 	 */
-	public ProgressShellContext printf(String title, float progressPercent) {
+	public ProgressShellContext printf(String title, float progressPercent) throws ChannelShellException {
 		isTrue(progressPercent >= 0 && progressPercent <= 1, "Progress percentage must be between 0 and 1");
 		int progressWithDefault = Maths.multiply(DEFAULT_WHOLE, progressPercent).intValue();
 		return (ProgressShellContext) printf0(lastProgress = new ProgressSignal(title, DEFAULT_WHOLE, progressWithDefault));
@@ -61,7 +62,7 @@ public class ProgressShellContext extends ShellContext {
 	 * @param progress
 	 * @return
 	 */
-	public ProgressShellContext printf(String title, int whole, int progress) {
+	public ProgressShellContext printf(String title, int whole, int progress) throws ChannelShellException {
 		return (ProgressShellContext) printf0(lastProgress = new ProgressSignal(title, whole, progress));
 	}
 
@@ -75,7 +76,7 @@ public class ProgressShellContext extends ShellContext {
 	 * @param message
 	 * @see {@link #completed()}
 	 */
-	public void completed(String message) {
+	public void completed(String message) throws ChannelShellException {
 		printf(message, getProgressed());
 		super.completed();
 	}

@@ -47,7 +47,6 @@ import static java.lang.String.format;
 import static java.lang.Thread.sleep;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 import static org.springframework.util.Assert.state;
 
@@ -176,14 +175,15 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	@Override
 	protected void preHandleInput(TargetMethodWrapper tm, List<Object> args) {
 		// Get current context
-		ShellContext context = getClient().getCurrentContext();
+		ShellContext context = getClient().getContext();
 
 		// Bind target method
 		context.setTarget(tm);
 
 		// Resolving parameter shellContext
 		ShellContext updateContext = resolveActualShellContextIfNecceary(context, tm, args);
-		getClient().setCurrentContext(updateContext); // Update actual context
+		// Update actual context
+		getClient().setContext(updateContext);
 	}
 
 	/**
@@ -251,16 +251,16 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	class ServerShellMessageChannel extends ShellMessageChannel {
 		final protected Logger log = getLogger(getClass());
 
+		/** Current single command worker */
+		final private ExecutorService currentWorker;
+
 		/** Current shell context */
 		ShellContext currentContext;
-
-		/** Single execution worker */
-		final private ExecutorService singleWorker;
 
 		public ServerShellMessageChannel(ShellHandlerRegistrar registrar, Socket client, Function<String, Object> func) {
 			super(registrar, client, func);
 			this.currentContext = new ShellContext(this);
-			this.singleWorker = new ThreadPoolExecutor(1, 1, 0, SECONDS, new LinkedBlockingDeque<>(1), new ThreadFactory() {
+			this.currentWorker = new ThreadPoolExecutor(1, 1, 0, SECONDS, new LinkedBlockingDeque<>(1), new ThreadFactory() {
 				final private AtomicInteger counter = new AtomicInteger(0);
 
 				@Override
@@ -273,11 +273,11 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 			});
 		}
 
-		ShellContext getCurrentContext() {
+		ShellContext getContext() {
 			return currentContext;
 		}
 
-		void setCurrentContext(ShellContext context) {
+		void setContext(ShellContext context) {
 			notNullOf(context, "ShellContext");
 			this.currentContext = context;
 		}
@@ -316,7 +316,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 
 						// Resolve that client input cannot be received during
 						// blocking execution.
-						singleWorker.execute(() -> {
+						currentWorker.execute(() -> {
 							try {
 								/**
 								 * Only {@link ShellContext} printouts are
@@ -339,8 +339,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 					}
 
 					if (nonNull(output)) { // Write to console.
-						log.info("=> {}", output);
-						writeFlush(output);
+						currentContext.printf0(output);
 					}
 				} catch (Throwable th) {
 					handleError(th);
@@ -384,14 +383,7 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 					log.error("Close failure.", e);
 				}
 			} else {
-				try {
-					String errmsg = getRootCauseMessage(th);
-					errmsg = isBlank(errmsg) ? getMessage(th) : errmsg;
-					log.warn("{}", errmsg);
-					writeFlush(new StderrSignal(th));
-				} catch (IOException e) {
-					log.warn("Write failure", e);
-				}
+				currentContext.printf0(th);
 			}
 		}
 
