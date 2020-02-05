@@ -16,11 +16,17 @@
 package com.wl4g.devops.shell.handler;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 
+import java.util.Collection;
+
+import org.slf4j.Logger;
+
 import com.wl4g.devops.common.annotation.Unused;
 import com.wl4g.devops.shell.exception.ChannelShellException;
+import com.wl4g.devops.shell.exception.NoSupportedInterruptShellException;
 import com.wl4g.devops.shell.exception.ProgressShellException;
 import com.wl4g.devops.shell.signal.ProgressSignal;
 import com.wl4g.devops.tool.common.math.Maths;
@@ -32,7 +38,7 @@ import com.wl4g.devops.tool.common.math.Maths;
  * @version 2020年2月3日 v1.0.0
  * @see
  */
-public class ProgressShellContext extends ShellContext {
+public class ProgressShellContext extends AbstractShellContext {
 	final public static int DEFAULT_WHOLE = 100;
 
 	/**
@@ -40,7 +46,10 @@ public class ProgressShellContext extends ShellContext {
 	 */
 	protected ProgressSignal lastProgressed = new ProgressSignal(getClass().getSimpleName(), DEFAULT_WHOLE, 0);
 
-	ProgressShellContext(ShellContext context) {
+	private ProgressShellContext() {
+	}
+
+	ProgressShellContext(AbstractShellContext context) {
 		super(context);
 	}
 
@@ -126,16 +135,20 @@ public class ProgressShellContext extends ShellContext {
 	}
 
 	/**
-	 * {@link ProgressUtil}
+	 * {@link Util}
 	 * 
 	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
 	 * @version 2020年2月2日 v1.0.0
 	 * @see
 	 */
-	public static abstract class ProgressUtil {
+	public static abstract class Util {
+		final private static Logger log = getLogger(Util.class);
 
 		/** Shell context cache. */
 		final private static ThreadLocal<ProgressShellContext> contextCache = new InheritableThreadLocal<>();
+
+		private Util() {
+		}
 
 		/**
 		 * Bind shell context.
@@ -143,7 +156,7 @@ public class ProgressShellContext extends ShellContext {
 		 * @param context
 		 * @return
 		 */
-		public final static ProgressShellContext bind(ProgressShellContext context) {
+		public static ProgressShellContext bind(ProgressShellContext context) {
 			if (context != null) {
 				contextCache.set(context);
 			}
@@ -151,22 +164,88 @@ public class ProgressShellContext extends ShellContext {
 		}
 
 		/**
-		 * Got current bind {@link ShellContext}. </br>
+		 * Got current bind {@link ProgressShellContext}. </br>
 		 * 
 		 * @see {@link EmbeddedServerShellHandler#run()#MARK1}
 		 * @return
 		 */
-		public final static ProgressShellContext getContext() {
+		public static ProgressShellContext getContext() {
 			ProgressShellContext context = contextCache.get();
 			if (isNull(context)) {
-				throw new IllegalStateException("The progress shell context object was not retrieved. first use bind()");
-				// return emptyProgressShellContext;
+				log.debug("The progress shell context was not retrieved. first use bind()");
+				return notOpProgressShellContext;
 			}
 			return context;
 		}
 
-		// TODO
-		final private static ProgressShellContext emptyProgressShellContext = null;
+		/**
+		 * Empty implements {@link ProgressShellContext}
+		 */
+		final private static ProgressShellContext notOpProgressShellContext = new NoOpProgressShellContext();
+
+	}
+
+	/**
+	 * {@link NoOpProgressShellContext}
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年2月5日 v1.0.0
+	 * @see
+	 */
+	public static class NoOpProgressShellContext extends ProgressShellContext {
+
+		private NoOpProgressShellContext() {
+		}
+
+		@Override
+		public NoOpProgressShellContext printf(String title, float currentProgressPercent) throws ChannelShellException { // Ignore
+			return this;
+		}
+
+		@Override
+		public NoOpProgressShellContext printf(String title, int whole, int currentProgress) throws ChannelShellException { // Ignore
+			return this;
+		}
+
+		@Override
+		public void completed(String message) throws ChannelShellException { // Ignore
+		}
+
+		@Override
+		public float getProgressed() { // Ignore
+			return 0f;
+		}
+
+		// --- Parent. ---
+
+		@Override
+		public boolean isInterrupted() throws NoSupportedInterruptShellException { // Ignore
+			return false;
+		}
+
+		@Override
+		public void completed() throws ChannelShellException { // Ignore
+		}
+
+		@Override
+		public Collection<ShellEventListener> getUnmodifiableEventListeners() {
+			return null; // Ignore
+		}
+
+		@Override
+		public boolean addEventListener(String name, ShellEventListener eventListener) { // Ignore
+			return false;
+		}
+
+		@Override
+		public boolean removeEventListener(String name) {
+			return false; // Ignore
+		}
+
+		@Override
+		protected NoOpProgressShellContext printf0(Object output) throws ChannelShellException {
+			return this; // Ignore
+		}
 
 	}
 

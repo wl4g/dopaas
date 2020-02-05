@@ -175,25 +175,26 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 	@Override
 	protected void preHandleInput(TargetMethodWrapper tm, List<Object> args) {
 		// Get current context
-		ShellContext context = getClient().getContext();
+		AbstractShellContext context = getClient().getContext();
 
 		// Bind target method
 		context.setTarget(tm);
 
 		// Resolving parameter shellContext
-		ShellContext updateContext = resolveActualShellContextIfNecceary(context, tm, args);
+		AbstractShellContext updateContext = resolveActualShellContextIfNecceary(context, tm, args);
 		// Update actual context
 		getClient().setContext(updateContext);
 	}
 
 	/**
-	 * Resolving specific parameter {@link ShellContext} if necceary
+	 * Resolving specific parameter {@link AbstractShellContext} if necceary
 	 * 
 	 * @param context
 	 * @param tm
 	 * @param args
 	 */
-	private ShellContext resolveActualShellContextIfNecceary(ShellContext context, TargetMethodWrapper tm, List<Object> args) {
+	private AbstractShellContext resolveActualShellContextIfNecceary(AbstractShellContext context, TargetMethodWrapper tm,
+			List<Object> args) {
 		// Find parameter: ShellContext index and class
 		Object[] ret = findParameterForShellContext(tm);
 		int index = (int) ret[0];
@@ -255,11 +256,12 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 		final private ExecutorService currentWorker;
 
 		/** Current shell context */
-		ShellContext currentContext;
+		AbstractShellContext currentContext;
 
 		public ServerShellMessageChannel(ShellHandlerRegistrar registrar, Socket client, Function<String, Object> func) {
 			super(registrar, client, func);
-			this.currentContext = new ShellContext(this);
+			this.currentContext = new AbstractShellContext(this) {
+			};
 			this.currentWorker = new ThreadPoolExecutor(1, 1, 0, SECONDS, new LinkedBlockingDeque<>(1), new ThreadFactory() {
 				final private AtomicInteger counter = new AtomicInteger(0);
 
@@ -273,11 +275,11 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 			});
 		}
 
-		ShellContext getContext() {
+		AbstractShellContext getContext() {
 			return currentContext;
 		}
 
-		void setContext(ShellContext context) {
+		void setContext(AbstractShellContext context) {
 			notNullOf(context, "ShellContext");
 			this.currentContext = context;
 		}
