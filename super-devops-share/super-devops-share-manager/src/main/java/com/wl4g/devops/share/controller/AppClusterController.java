@@ -15,12 +15,14 @@
  */
 package com.wl4g.devops.share.controller;
 
+import com.jcraft.jsch.JSchException;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.AppClusterService;
+import com.wl4g.devops.tool.common.cli.ssh2.GenKeyPairUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -98,6 +100,14 @@ public class AppClusterController extends BaseController {
 	public RespBase<?> testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException {
 		RespBase<Object> resp = RespBase.create();
 		appClusterService.testSSHConnect(hostId, sshUser, sshKey);
+		return resp;
+	}
+
+	@RequestMapping(value = "/generateSshKeyPair")
+	public RespBase<?> generateSshKeyPair() throws JSchException {
+		RespBase<Object> resp = RespBase.create();
+		GenKeyPairUtil.SSHKeyPair sshKeyPair = GenKeyPairUtil.generate();
+		resp.setData(sshKeyPair);
 		return resp;
 	}
 
