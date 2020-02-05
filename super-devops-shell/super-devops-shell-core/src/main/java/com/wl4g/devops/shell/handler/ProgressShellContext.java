@@ -16,9 +16,12 @@
 package com.wl4g.devops.shell.handler;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 
+import com.wl4g.devops.common.annotation.Unused;
 import com.wl4g.devops.shell.exception.ChannelShellException;
+import com.wl4g.devops.shell.exception.ProgressShellException;
 import com.wl4g.devops.shell.signal.ProgressSignal;
 import com.wl4g.devops.tool.common.math.Maths;
 
@@ -35,7 +38,7 @@ public class ProgressShellContext extends ShellContext {
 	/**
 	 * Last progress signal.
 	 */
-	protected ProgressSignal lastProgress;
+	protected ProgressSignal lastProgressed = new ProgressSignal(getClass().getSimpleName(), DEFAULT_WHOLE, 0);
 
 	ProgressShellContext(ShellContext context) {
 		super(context);
@@ -45,13 +48,15 @@ public class ProgressShellContext extends ShellContext {
 	 * Output current progress percentage to client console.
 	 *
 	 * @param title
-	 * @param progressPercent
+	 * @param currentProgressPercent
 	 * @return
 	 */
-	public ProgressShellContext printf(String title, float progressPercent) throws ChannelShellException {
-		isTrue(progressPercent >= 0 && progressPercent <= 1, "Progress percentage must be between 0 and 1");
-		int progressWithDefault = Maths.multiply(DEFAULT_WHOLE, progressPercent).intValue();
-		return (ProgressShellContext) printf0(lastProgress = new ProgressSignal(title, DEFAULT_WHOLE, progressWithDefault));
+	public ProgressShellContext printf(String title, float currentProgressPercent) throws ChannelShellException {
+		isTrue(currentProgressPercent >= 0 && currentProgressPercent <= 1, "Progress percentage must be between 0 and 1");
+		// checkCurrentProgressRight(currentProgressPercent);
+
+		int curProgressWithDefault = Maths.multiply(DEFAULT_WHOLE, currentProgressPercent).intValue();
+		return (ProgressShellContext) printf0(lastProgressed = new ProgressSignal(title, DEFAULT_WHOLE, curProgressWithDefault));
 	}
 
 	/**
@@ -59,11 +64,12 @@ public class ProgressShellContext extends ShellContext {
 	 *
 	 * @param title
 	 * @param whole
-	 * @param progress
+	 * @param currentProgress
 	 * @return
 	 */
-	public ProgressShellContext printf(String title, int whole, int progress) throws ChannelShellException {
-		return (ProgressShellContext) printf0(lastProgress = new ProgressSignal(title, whole, progress));
+	public ProgressShellContext printf(String title, int whole, int currentProgress) throws ChannelShellException {
+		// checkCurrentProgressRight(currentProgress);
+		return (ProgressShellContext) printf0(lastProgressed = new ProgressSignal(title, whole, currentProgress));
 	}
 
 	/**
@@ -87,10 +93,81 @@ public class ProgressShellContext extends ShellContext {
 	 * @return
 	 */
 	public float getProgressed() {
-		if (isNull(lastProgress)) {
-			return 0f;
+		return Maths.divide(lastProgressed.getProgress(), lastProgressed.getWhole()).floatValue();
+	}
+
+	/**
+	 * Check the forward percentage of current progress.
+	 * 
+	 * @param currentProgress
+	 * @throws ProgressShellException
+	 */
+	@Unused
+	private void checkCurrentProgressRight(int currentProgress) throws ProgressShellException {
+		if (lastProgressed.getProgress() > currentProgress) {
+			throw new ProgressShellException(format("Progress cannot be reduced, progressed made: %s, current progress: %s",
+					lastProgressed.getProgress(), currentProgress));
 		}
-		return Maths.divide(lastProgress.getProgress(), lastProgress.getWhole()).floatValue();
+	}
+
+	/**
+	 * Check the forward percentage of current progress.
+	 * 
+	 * @param currentProgress
+	 * @throws ProgressShellException
+	 */
+	@Unused
+	private void checkCurrentProgressRight(float currentProgress) throws ProgressShellException {
+		float last = getProgressed();
+		if (last > currentProgress) {
+			throw new ProgressShellException(
+					format("Progress cannot be reduced, progressed made: %s%%, current progress: %s%%", last, currentProgress));
+		}
+	}
+
+	/**
+	 * {@link ProgressUtil}
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年2月2日 v1.0.0
+	 * @see
+	 */
+	public static abstract class ProgressUtil {
+
+		/** Shell context cache. */
+		final private static ThreadLocal<ProgressShellContext> contextCache = new InheritableThreadLocal<>();
+
+		/**
+		 * Bind shell context.
+		 *
+		 * @param context
+		 * @return
+		 */
+		public final static ProgressShellContext bind(ProgressShellContext context) {
+			if (context != null) {
+				contextCache.set(context);
+			}
+			return context;
+		}
+
+		/**
+		 * Got current bind {@link ShellContext}. </br>
+		 * 
+		 * @see {@link EmbeddedServerShellHandler#run()#MARK1}
+		 * @return
+		 */
+		public final static ProgressShellContext getContext() {
+			ProgressShellContext context = contextCache.get();
+			if (isNull(context)) {
+				throw new IllegalStateException("The progress shell context object was not retrieved. first use bind()");
+				// return emptyProgressShellContext;
+			}
+			return context;
+		}
+
+		// TODO
+		final private static ProgressShellContext emptyProgressShellContext = null;
+
 	}
 
 }

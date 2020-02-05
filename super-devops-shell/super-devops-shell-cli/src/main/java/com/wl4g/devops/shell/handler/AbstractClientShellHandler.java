@@ -34,6 +34,7 @@ import java.util.function.Function;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.System.*;
+import static java.util.Objects.nonNull;
 
 import com.wl4g.devops.shell.command.DefaultBuiltInCommand;
 import com.wl4g.devops.shell.config.Configuration;
@@ -299,9 +300,7 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 
 		if (create) {
 			Object[] point = determineServPoint();
-			if (DEBUG) {
-				out.print(format("Connecting to %s:%s ... \n", point[0], point[1]));
-			}
+			printDebug(format("Connecting to %s:%s ... \n", point[0], point[1]));
 
 			Socket s = null;
 			try {
@@ -360,10 +359,23 @@ public abstract class AbstractClientShellHandler extends AbstractShellHandler im
 	 * 
 	 * @throws IOException
 	 */
-	private void closeQuietly() throws IOException {
-		if (clientChannel != null) {
-			clientChannel.close();
+	private void closeQuietly() {
+		try {
+			if (clientChannel != null) {
+				clientChannel.close();
+			}
+		} catch (IOException e) {
+			printError("Failed to close channel", e);
 		}
+	}
+
+	/**
+	 * Check client channel is active.
+	 * 
+	 * @return
+	 */
+	protected boolean isActive() {
+		return nonNull(clientChannel) && clientChannel.isActive();
 	}
 
 	/**

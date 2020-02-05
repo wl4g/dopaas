@@ -94,6 +94,13 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 					lastCmdSentTime = currentTimeMillis();
 					writeStdin(stdin); // Do send command
 				}
+
+				// e.g: when the last execution is not completed, the channel
+				// has been interrupted, need wakeup the console prompt to
+				// resume reading.
+				if (isPaused() && !isActive()) {
+					wakeup();
+				}
 			} catch (UserInterruptException e) { // e.g: Ctrl+C
 				// Last command completed, interrupt allowed
 				if (!isPaused()) {
@@ -180,9 +187,7 @@ public class InteractiveClientShellHandler extends AbstractClientShellHandler {
 	 * {@link AbstractClientShellHandler#wakeup()}
 	 */
 	private void paused() {
-		if (DEBUG) {
-			out.println(format("waitForCompleted: %s, completed: %s", this, pauseState));
-		}
+		printDebug(format("waitForCompleted: %s, completed: %s", this, pauseState));
 		pauseState = true;
 	}
 
