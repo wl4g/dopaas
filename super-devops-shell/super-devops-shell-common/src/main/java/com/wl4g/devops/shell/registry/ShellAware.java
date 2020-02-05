@@ -25,6 +25,6 @@ import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
  * @version v1.0 2019年5月24日
  * @since
  */
-public interface InternalInjectable {
+public interface ShellAware {
 
 }

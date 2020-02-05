@@ -40,6 +40,7 @@ import static com.wl4g.devops.tool.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
 
 import com.wl4g.devops.shell.annotation.ShellOption;
 import com.wl4g.devops.shell.config.AbstractConfiguration;
+import com.wl4g.devops.shell.exception.ShellException;
 import com.wl4g.devops.shell.registry.ShellHandlerRegistrar;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper;
 import com.wl4g.devops.shell.registry.TargetMethodWrapper.TargetParameter;
@@ -83,6 +84,7 @@ public abstract class AbstractShellHandler implements ShellHandler {
 		if (isEmpty(line)) {
 			return null;
 		}
+
 		try {
 			// Invocation
 			Object output = doProcess(resolveCommands(line));
@@ -92,7 +94,7 @@ public abstract class AbstractShellHandler implements ShellHandler {
 
 			return output;
 		} catch (Exception e) {
-			throw new IllegalStateException(e);
+			throw new ShellException(e);
 		}
 	}
 
@@ -110,7 +112,7 @@ public abstract class AbstractShellHandler implements ShellHandler {
 		String mainArg = commands.remove(0);
 
 		// Target method wrap
-		isTrue(registrar.contains(mainArg), String.format("'%s': command not found", mainArg));
+		isTrue(registrar.contains(mainArg), format("'%s': command not found", mainArg));
 		TargetMethodWrapper tm = registrar.getTargetMethods().get(mainArg);
 
 		// Resolve method parameters
