@@ -50,10 +50,8 @@ import com.wl4g.devops.shell.service.ExampleService;
 @Component
 @ShellComponent
 public class ExampleConsole {
-
-	final public static String GROUP_NAME = "Example commands";
-
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final private static String GROUP_NAME = "Example commands";
+	final private static Logger log = LoggerFactory.getLogger(ExampleConsole.class);
 
 	@Autowired
 	private ExampleService exampleService;
@@ -171,6 +169,15 @@ public class ExampleConsole {
 			@ShellOption(opt = "s", lopt = "sleep", required = false, defaultValue = "100", help = "Print message delay(ms)") long sleep,
 			ProgressShellContext context) {
 
+		// For testing the bind passed progress context
+		ProgressShellContext.Util.bind(context);
+
+		// Call real execution
+		doLog3(num, sleep);
+	}
+
+	private static void doLog3(int num, long sleep) {
+		ProgressShellContext context = ProgressShellContext.Util.getContext();
 		try {
 			context.printf("Log3 print...", 0.05f);
 			for (int i = 1; !context.isInterrupted() && i <= num; i++) {
@@ -191,6 +198,10 @@ public class ExampleConsole {
 			// will pause until it timesout.
 			context.completed("Log3 print finished!");
 		}
+	}
+
+	public static void main(String[] args) {
+		doLog3(30, 200L);
 	}
 
 }

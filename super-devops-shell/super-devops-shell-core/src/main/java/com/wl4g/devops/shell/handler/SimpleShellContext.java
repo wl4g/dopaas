@@ -17,10 +17,16 @@ package com.wl4g.devops.shell.handler;
 
 import com.wl4g.devops.shell.exception.ChannelShellException;
 
-public class SimpleShellContext extends ShellContext {
-	final public static int DEFAULT_WHOLE = 100;
+/**
+ * {@link SimpleShellContext}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年2月4日 v1.0.0
+ * @see
+ */
+public class SimpleShellContext extends AbstractShellContext {
 
-	SimpleShellContext(ShellContext context) {
+	SimpleShellContext(AbstractShellContext context) {
 		super(context);
 	}
 
