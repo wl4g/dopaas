@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.share.controller;
 
-import com.jcraft.jsch.JSchException;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.share.service.AppClusterService;
-import com.wl4g.devops.tool.common.cli.ssh2.GenKeyPairUtil;
+import com.wl4g.devops.tool.common.cli.ssh2.JschHolder;
+import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -104,10 +104,10 @@ public class AppClusterController extends BaseController {
 	}
 
 	@RequestMapping(value = "/generateSshKeyPair")
-	public RespBase<?> generateSshKeyPair() throws JSchException {
+	public RespBase<?> generateSshKeyPair() throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		GenKeyPairUtil.SSHKeyPair sshKeyPair = GenKeyPairUtil.generate();
-		resp.setData(sshKeyPair);
+		Ssh2Holders.Ssh2KeyPair ssh2KeyPair = Ssh2Holders.getInstance(JschHolder.class).generateKeypair(Ssh2Holders.AlgorithmType.RSA, "generateBySystem");
+		resp.setData(ssh2KeyPair);
 		return resp;
 	}
 
