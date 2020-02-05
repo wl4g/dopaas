@@ -17,6 +17,7 @@ import com.wl4g.devops.tool.common.io.FileIOUtils;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.DateUtils2;
 import com.wl4g.devops.tool.common.lang.TypeConverts;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -221,6 +223,35 @@ public class FileServiceImpl implements FileService {
         result.put("fileCode",fileCode);
 
         return result;
+    }
+
+    @Override
+    public String uploadImg(MultipartFile img) {
+        Date now = new Date();
+        String fileCode = UUID.randomUUID().toString().replaceAll("-", "");
+
+        String fileName = img.getOriginalFilename();// 文件名
+        String suffixName = fileName.substring(fileName.lastIndexOf("."));// 后缀名
+
+        String newFileName = DateUtils2.formatDate(now,"yyyyMMddHHmmss");
+        String subPath = "/"+fileCode+"/";
+        String path = "";
+        newFileName = newFileName+suffixName;
+        path = subPath + newFileName;
+        saveFile(img, docProperties.getFilePath(path));
+        return path;
+    }
+
+    public byte[] downloadImg(String path) throws IOException {
+        Assert2.hasTextOf(path,"path");
+        File file = new File(docProperties.getFilePath(path));
+        if(!file.exists() || !file.isFile()){
+            return null;
+        }
+        FileInputStream inputStream = new FileInputStream(file);
+        byte[] bytes = new byte[inputStream.available()];
+        inputStream.read(bytes, 0, inputStream.available());
+        return bytes;
     }
 
     private void saveFile(MultipartFile file, String localPath) {
