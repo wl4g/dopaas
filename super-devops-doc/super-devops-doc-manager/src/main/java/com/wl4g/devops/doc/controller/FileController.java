@@ -21,9 +21,11 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.doc.service.FileService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -95,6 +97,18 @@ public class FileController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(fileService.upload(file));
 		return resp;
+	}
+
+	@PostMapping(value = "/uploadImg")
+	public RespBase<?> uploadImg(@RequestParam(value = "img") MultipartFile img) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(fileService.uploadImg(img));
+		return resp;
+	}
+
+	@RequestMapping(value = "/downloadImg",produces = MediaType.IMAGE_JPEG_VALUE)//produces = MediaType.TEXT_HTML
+	public byte[] getAvatar(String path) throws IOException {
+		return fileService.downloadImg(path);
 	}
 
 
