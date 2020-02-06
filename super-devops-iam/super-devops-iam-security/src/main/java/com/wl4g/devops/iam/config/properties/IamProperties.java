@@ -20,7 +20,6 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BA
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.correctAuthenticaitorURI;
-import static com.wl4g.devops.iam.web.DefaultViewController.URI_STATIC;
 import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -48,7 +47,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	/**
 	 * Default view loader path
 	 */
-	final public static String DEFAULT_VIEW_LOADER_PATH = "classpath:/default-view";
+	final public static String DEFAULT_VIEW_LOADER_PATH = "/default-webapps";
 
 	/**
 	 * Default view login URI.
@@ -203,7 +202,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	 */
 	final private void addDefaultFilterChain() {
 		// Default view access files request rules.
-		getFilterChain().put(DEFAULT_VIEW_BASE_URI + URI_STATIC + "/**", "anon");
+		getFilterChain().put(DEFAULT_VIEW_BASE_URI + "/**", "anon");
 		// SNS authenticator rules.
 		getFilterChain().put(URI_S_SNS_BASE + "/**", "anon");
 		// Login authenticator rules.

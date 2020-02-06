@@ -15,13 +15,14 @@
  */
 package com.wl4g.devops.common.web;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Validator;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.tool.common.web.WebUtils2;
@@ -40,7 +41,7 @@ public abstract class BaseController {
 	 */
 	final public static String REDIRECT_PREFIX = "redirect:";
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	@Autowired
 	protected Validator validator;
