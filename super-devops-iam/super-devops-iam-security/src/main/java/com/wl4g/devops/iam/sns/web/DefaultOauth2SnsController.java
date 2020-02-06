@@ -17,7 +17,6 @@ package com.wl4g.devops.iam.sns.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,6 +37,7 @@ import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.safeDecodeURL;
@@ -91,9 +91,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 	@GetMapping("/" + URI_S_SNS_CONNECT + "/{" + PARAM_SNS_PRIVIDER + "}")
 	public void connect(@PathVariable(PARAM_SNS_PRIVIDER) String provider, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
-		if (log.isInfoEnabled()) {
-			log.info("Connecting SNS url[{}]", WebUtils2.getFullRequestURI(request));
-		}
+		log.info("Connecting SNS url[{}]", WebUtils2.getFullRequestURI(request));
 
 		// Basic parameters
 		String which = getCleanParam(request, config.getParam().getWhich());
@@ -137,9 +135,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 	@GetMapping("/{" + PARAM_SNS_PRIVIDER + "}/" + URI_S_SNS_CALLBACK)
 	public void callback(@PathVariable(PARAM_SNS_PRIVIDER) String provider, @NotBlank @RequestParam(PARAM_SNS_CODE) String code,
 			HttpServletRequest request, HttpServletResponse response) throws IOException {
-		if (log.isInfoEnabled()) {
-			log.info("Sns callback url[{}]", getFullRequestURI(request));
-		}
+		log.info("Sns callback url[{}]", getFullRequestURI(request));
 
 		// Basic parameters
 		String which = getCleanParam(request, config.getParam().getWhich());
@@ -147,13 +143,11 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 
 		// Which
 		Which wh = Which.safeOf(which);
-		Assert.notNull(wh, String.format("'%s' must not be null", config.getParam().getWhich()));
+		notNull(wh, "'%s' must not be null", config.getParam().getWhich());
 
 		// Delegate getting redirect refreshUrl
 		String redirectRefreshUrl = delegate.callback(wh, provider, state, code, request);
-		if (log.isInfoEnabled()) {
-			log.info("Callback provider[{}], state[{}], url[{}]", provider, state, redirectRefreshUrl);
-		}
+		log.info("Callback provider[{}], state[{}], url[{}]", provider, state, redirectRefreshUrl);
 
 		/*
 		 * Refresh redirection URL is empty, indicating that no redirection is

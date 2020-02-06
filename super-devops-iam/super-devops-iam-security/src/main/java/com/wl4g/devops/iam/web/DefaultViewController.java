@@ -16,30 +16,26 @@
 package com.wl4g.devops.iam.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 
+import static com.wl4g.devops.iam.config.properties.IamProperties.*;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-import static com.wl4g.devops.iam.config.properties.IamProperties.*;
 import static com.wl4g.devops.tool.common.jvm.JvmRuntimeKit.*;
-import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.http.HttpStatus.*;
 
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,17 +55,10 @@ import com.google.common.io.ByteStreams;
 @com.wl4g.devops.iam.annotation.DefaultViewController
 public class DefaultViewController extends BaseController {
 
-	final public static String URI_STATIC = "/static";
-
 	/**
 	 * Default view page file cache buffer
 	 */
 	final private Map<String, byte[]> bufferCache = new ConcurrentHashMap<>();
-
-	/**
-	 * Resource loader
-	 */
-	final private ResourceLoader loader = new DefaultResourceLoader();
 
 	/**
 	 * IAM server configuration
@@ -84,50 +73,35 @@ public class DefaultViewController extends BaseController {
 	protected SessionDelegateMessageBundle bundle;
 
 	/**
-	 * Reader view files
-	 *
-	 * @param filename
-	 * @param response
-	 */
-	@GetMapping(path = "**/{filename:.+}")
-	public void readerView(@PathVariable("filename") String filename, HttpServletResponse response) throws Exception {
-		responseFile(null, filename, response);
-	}
-
-	/**
 	 * Reader static resource files
 	 *
 	 * @param filename
 	 * @param response
 	 */
-	@GetMapping(path = URI_STATIC + "/**")
+	@GetMapping(path = "/**")
 	public void readerResource(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String uri = request.getRequestURI();
-		String filepath = uri.substring(uri.indexOf(URI_STATIC) + URI_STATIC.length());
-		responseFile(URI_STATIC, filepath, response);
+		String filepath = uri.substring(uri.indexOf(DEFAULT_VIEW_BASE_URI) + DEFAULT_VIEW_BASE_URI.length());
+		responseFile(filepath, response);
 	}
 
 	/**
 	 * Response file
 	 *
-	 * @param basePath
 	 * @param filepath
 	 * @param response
 	 * @throws Exception
 	 */
-	protected void responseFile(String basePath, String filepath, HttpServletResponse response) throws Exception {
+	protected void responseFile(String filepath, HttpServletResponse response) throws Exception {
 		notNull(filepath, "'filename' must not be null");
-		basePath = trimToEmpty(basePath);
 
 		// Get buffer cache
 		byte[] buf = bufferCache.get(filepath);
 		if (isNull(buf)) {
-			Resource resource = getResource(basePath, filepath);
-			if (resource.exists()) {
-				if (log.isDebugEnabled()) {
-					log.debug("Read file path:[{}]", resource.getURL());
-				}
-				buf = ByteStreams.toByteArray(resource.getInputStream());
+			InputStream in = getResource(filepath);
+			if (nonNull(in)) {
+				log.debug("Read file path:[{}]", filepath);
+				buf = ByteStreams.toByteArray(in);
 				// Caching is enabled when in non-debug mode.
 				if (!isJVMDebugging) {
 					bufferCache.put(filepath, buf);
@@ -137,7 +111,7 @@ public class DefaultViewController extends BaseController {
 				return;
 			}
 		}
-		response.setDateHeader("expires", System.currentTimeMillis() + 600_000);
+		response.setDateHeader("Expires", System.currentTimeMillis() + 600_000);
 		response.addHeader("Pragma", "Pragma");
 		response.addHeader("Cache-Control", "public");
 		response.addHeader("Last-Modified", String.valueOf(System.currentTimeMillis()));
@@ -147,15 +121,14 @@ public class DefaultViewController extends BaseController {
 	}
 
 	/**
-	 * Load resource file
+	 * Load resource file.
 	 *
-	 * @param basePath
 	 * @param filepath
 	 * @return
 	 */
-	private Resource getResource(String basePath, String filepath) {
-		String location = new StringBuffer(DEFAULT_VIEW_LOADER_PATH).append(basePath).append("/").append(filepath).toString();
-		return loader.getResource(cleanURI(location));
+	private InputStream getResource(String filepath) {
+		String location = DEFAULT_VIEW_LOADER_PATH + "/" + filepath;
+		return getClass().getResourceAsStream(location);
 	}
 
 	/**
