@@ -4,6 +4,7 @@ import com.wl4g.devops.common.bean.doc.FileChanges;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -28,5 +29,9 @@ public interface FileService {
 	Map<String, FileChanges> compareWith(Integer oldChangesId, Integer newChangesId);
 
 	Map<String, Object> upload(MultipartFile file);
+
+	String uploadImg(MultipartFile img);
+
+	byte[] downloadImg(String path) throws IOException;
 
 }
