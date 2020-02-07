@@ -99,17 +99,6 @@ public class FileController extends BaseController {
 		return resp;
 	}
 
-	@PostMapping(value = "/uploadImg")
-	public RespBase<?> uploadImg(@RequestParam(value = "img") MultipartFile img) {
-		RespBase<Object> resp = RespBase.create();
-		resp.setData(fileService.uploadImg(img));
-		return resp;
-	}
-
-	@RequestMapping(value = "/downloadImg",produces = MediaType.IMAGE_JPEG_VALUE)//produces = MediaType.TEXT_HTML
-	public byte[] getAvatar(String path) throws IOException {
-		return fileService.downloadImg(path);
-	}
 
 
 

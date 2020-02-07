@@ -225,34 +225,6 @@ public class FileServiceImpl implements FileService {
         return result;
     }
 
-    @Override
-    public String uploadImg(MultipartFile img) {
-        Date now = new Date();
-        String fileCode = UUID.randomUUID().toString().replaceAll("-", "");
-
-        String fileName = img.getOriginalFilename();// 文件名
-        String suffixName = fileName.substring(fileName.lastIndexOf("."));// 后缀名
-
-        String newFileName = DateUtils2.formatDate(now,"yyyyMMddHHmmss");
-        String subPath = "/"+fileCode+"/";
-        String path = "";
-        newFileName = newFileName+suffixName;
-        path = subPath + newFileName;
-        saveFile(img, docProperties.getFilePath(path));
-        return path;
-    }
-
-    public byte[] downloadImg(String path) throws IOException {
-        Assert2.hasTextOf(path,"path");
-        File file = new File(docProperties.getFilePath(path));
-        if(!file.exists() || !file.isFile()){
-            return null;
-        }
-        FileInputStream inputStream = new FileInputStream(file);
-        byte[] bytes = new byte[inputStream.available()];
-        inputStream.read(bytes, 0, inputStream.available());
-        return bytes;
-    }
 
     private void saveFile(MultipartFile file, String localPath) {
         Assert.notNull(file, "文件为空");

@@ -30,8 +30,4 @@ public interface FileService {
 
 	Map<String, Object> upload(MultipartFile file);
 
-	String uploadImg(MultipartFile img);
-
-	byte[] downloadImg(String path) throws IOException;
-
 }
