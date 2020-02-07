@@ -21,7 +21,17 @@ import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
 
-public interface BindConnection<T extends Oauth2AccessToken, O extends Oauth2OpenId, U extends Oauth2UserProfile> {
+/**
+ * {@link OAuth2ApiBinding}
+ * 
+ * @param <T>
+ * @param <O>
+ * @param <U>
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年2月7日 v1.0.0
+ * @see
+ */
+public interface OAuth2ApiBinding<T extends Oauth2AccessToken, O extends Oauth2OpenId, U extends Oauth2UserProfile> {
 
 	String providerId();
 

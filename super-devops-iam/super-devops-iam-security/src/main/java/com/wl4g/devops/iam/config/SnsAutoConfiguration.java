@@ -31,10 +31,9 @@ import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
-import com.wl4g.devops.iam.sns.BindConnection;
-import com.wl4g.devops.iam.sns.DefaultSocialConnectionFactory;
-import com.wl4g.devops.iam.sns.SocialConfigureRepository;
-import com.wl4g.devops.iam.sns.SocialConnectionFactory;
+import com.wl4g.devops.iam.sns.DefaultOAuth2ApiBindingFactory;
+import com.wl4g.devops.iam.sns.OAuth2ApiBinding;
+import com.wl4g.devops.iam.sns.OAuth2ApiBindingFactory;
 import com.wl4g.devops.iam.sns.handler.BindingSnsHandler;
 import com.wl4g.devops.iam.sns.handler.ClientAuthcSnsHandler;
 import com.wl4g.devops.iam.sns.handler.DelegateSnsHandler;
@@ -83,13 +82,8 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
 
 	@SuppressWarnings("rawtypes")
 	@Bean
-	public SocialConfigureRepository socialConfigureRepository(List<BindConnection> binds) {
-		return new SocialConfigureRepository(binds);
-	}
-
-	@Bean
-	public SocialConnectionFactory socialConnectFactory(SocialConfigureRepository repository) {
-		return new DefaultSocialConnectionFactory(repository);
+	public OAuth2ApiBindingFactory oAuth2ApiBindingFactory(List<OAuth2ApiBinding> apis) {
+		return new DefaultOAuth2ApiBindingFactory(apis);
 	}
 
 	//
@@ -102,32 +96,32 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public LoginSnsHandler loginSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
+	public LoginSnsHandler loginSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
 			ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
 		return new LoginSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public ClientAuthcSnsHandler clientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+			OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
 		return new ClientAuthcSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public BindingSnsHandler bindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+			OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
 		return new BindingSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public UnBindingSnsHandler unBindingSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+			OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
 		return new UnBindingSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	@Bean
 	public SecondAuthcSnsHandler secondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
-			SocialConnectionFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
+			OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
 		return new SecondAuthcSnsHandler(config, snsConfig, connectFactory, context);
 	}
 

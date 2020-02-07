@@ -21,7 +21,7 @@ import org.apache.shiro.cache.CacheManager;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.devops.iam.config.properties.SnsProperties.QQSocialProperties;
-import com.wl4g.devops.iam.sns.AbstractBindConnection;
+import com.wl4g.devops.iam.sns.GenericOAuth2ApiBinding;
 import com.wl4g.devops.iam.sns.qq.model.QQAccessToken;
 import com.wl4g.devops.iam.sns.qq.model.QQOpenId;
 import com.wl4g.devops.iam.sns.qq.model.QQUserInfo;
@@ -33,7 +33,7 @@ import com.wl4g.devops.iam.sns.qq.model.QQUserInfo;
  * @version v1.0 2019年2月18日
  * @since
  */
-public class QQOauth2Template extends AbstractBindConnection<QQSocialProperties, QQAccessToken, QQOpenId, QQUserInfo> {
+public class QQOauth2Template extends GenericOAuth2ApiBinding<QQSocialProperties, QQAccessToken, QQOpenId, QQUserInfo> {
 
 	final public static String PROVIDER_ID = "qq";
 	/**
@@ -54,49 +54,49 @@ public class QQOauth2Template extends AbstractBindConnection<QQSocialProperties,
 	}
 
 	@Override
-	public void postGetAuthorizationCodeUrl(Map<String, String> parameters) {
+	protected void postGetAuthorizationCodeUrl(Map<String, String> parameters) {
 		parameters.put("which", "login");
 		parameters.put("display", "pc");
 	}
 
 	@Override
-	public void postGetAccessTokenUrl(Map<String, String> parameters) {
+	protected void postGetAccessTokenUrl(Map<String, String> parameters) {
 
 	}
 
 	@Override
-	public void postGetOpenIdUrl(Map<String, String> parameters) {
+	protected void postGetOpenIdUrl(Map<String, String> parameters) {
 
 	}
 
 	@Override
-	public void postGetUserInfoUrl(Map<String, String> parameters) {
+	protected void postGetUserInfoUrl(Map<String, String> parameters) {
 		parameters.remove(DEFAULT_PARAM_CLIENT_ID);
 		parameters.put("oauth_consumer_key", config.getAppId());
 	}
 
 	@Override
-	public String scope() {
+	protected String scope() {
 		return Scope.get_user_info.name();
 	}
 
 	@Override
-	public String getAuthorizationCodeUriEndpoint() {
+	protected String getAuthorizationCodeUriEndpoint() {
 		return URI_AUTH_CODE;
 	}
 
 	@Override
-	public String getAccessTokenUriEndpoint() {
+	protected String getAccessTokenUriEndpoint() {
 		return URI_ACCESS_TOKEN;
 	}
 
 	@Override
-	public String getOpenIdUriEndpoint() {
+	protected String getOpenIdUriEndpoint() {
 		return URI_OPEN_ID;
 	}
 
 	@Override
-	public String getUserInfoUriEndpoint() {
+	protected String getUserInfoUriEndpoint() {
 		return URI_USER_INFO;
 	}
 

@@ -83,7 +83,7 @@ public abstract class AbstractSnsController extends BaseController {
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle messages;
+	protected SessionDelegateMessageBundle bundle;
 
 	public AbstractSnsController(IamProperties config, SnsProperties snsConfig, DelegateSnsHandler delegate) {
 		Assert.notNull(delegate, "'delegateSnsHandlerFactory' must not be null");

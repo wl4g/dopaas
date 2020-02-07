@@ -40,15 +40,15 @@ import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
 import com.wl4g.devops.tool.common.web.WebUtils2;
 
 /**
- * Abstract based social networking connection binding implement
+ * Abstract generic based social networking connection binding implement
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2019年1月7日
  * @since
  */
-public abstract class AbstractBindConnection<C extends AbstractSocialProperties, T extends Oauth2AccessToken, O extends Oauth2OpenId, U extends Oauth2UserProfile>
-		implements BindConnection<T, O, U> {
+public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties, T extends Oauth2AccessToken, O extends Oauth2OpenId, U extends Oauth2UserProfile>
+		implements OAuth2ApiBinding<T, O, U> {
 	final public static String DEFAULT_CACHE_NAME = "social_";
 
 	final public static String DEFAULT_PARAM_CLIENT_ID = "client_id";
@@ -68,7 +68,7 @@ public abstract class AbstractBindConnection<C extends AbstractSocialProperties,
 	final protected RestTemplate restTemplate;
 	final protected EnhancedCache cache;
 
-	public AbstractBindConnection(C config, RestTemplate restTemplate, CacheManager cacheManager) {
+	public GenericOAuth2ApiBinding(C config, RestTemplate restTemplate, CacheManager cacheManager) {
 		Assert.notNull(config, "'config' is null, please check the configure");
 		Assert.notNull(restTemplate, "'restTemplate' is null, please check the configure");
 		Assert.notNull(cacheManager, "'cacheManager' is null, please check the configure");
@@ -79,6 +79,10 @@ public abstract class AbstractBindConnection<C extends AbstractSocialProperties,
 		Assert.isInstanceOf(EnhancedCache.class, cacheObject);
 		this.cache = (EnhancedCache) cacheObject;
 	}
+
+	//
+	// P R E _ O A U T H 2 _ M E T H O D
+	//
 
 	@Override
 	public String getAuthorizeCodeUrl(String state, Map<String, String> queryParams) {
@@ -229,29 +233,29 @@ public abstract class AbstractBindConnection<C extends AbstractSocialProperties,
 	// U R I _ E N D P O I N T _ M E T H O D
 	//
 
-	public abstract String getAuthorizationCodeUriEndpoint();
+	protected abstract String getAuthorizationCodeUriEndpoint();
 
-	public abstract String getAccessTokenUriEndpoint();
+	protected abstract String getAccessTokenUriEndpoint();
 
-	public abstract String getOpenIdUriEndpoint();
+	protected abstract String getOpenIdUriEndpoint();
 
-	public abstract String getUserInfoUriEndpoint();
+	protected abstract String getUserInfoUriEndpoint();
 
 	//
 	// C O N F I G U E _ M E T H O D
 	//
 
-	public String state() {
+	protected String state() {
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
-	public abstract String scope();
+	protected abstract String scope();
 
-	public OAuth2GrantType grantType() {
+	protected OAuth2GrantType grantType() {
 		return OAuth2GrantType.getDefault();
 	}
 
-	public OAuth2ResponseType responseType() {
+	protected OAuth2ResponseType responseType() {
 		return OAuth2ResponseType.getDefault();
 	}
 
@@ -259,13 +263,13 @@ public abstract class AbstractBindConnection<C extends AbstractSocialProperties,
 	// P O S T _ P R O C E S S _ M E T H O D
 	//
 
-	public abstract void postGetAuthorizationCodeUrl(Map<String, String> parameters);
+	protected abstract void postGetAuthorizationCodeUrl(Map<String, String> parameters);
 
-	public abstract void postGetAccessTokenUrl(Map<String, String> parameters);
+	protected abstract void postGetAccessTokenUrl(Map<String, String> parameters);
 
-	public abstract void postGetOpenIdUrl(Map<String, String> parameters);
+	protected abstract void postGetOpenIdUrl(Map<String, String> parameters);
 
-	public abstract void postGetUserInfoUrl(Map<String, String> parameters);
+	protected abstract void postGetUserInfoUrl(Map<String, String> parameters);
 
 	//
 	// O T H T E R _ M E T H O D

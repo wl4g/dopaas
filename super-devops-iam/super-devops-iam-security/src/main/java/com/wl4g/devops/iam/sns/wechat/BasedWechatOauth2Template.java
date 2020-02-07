@@ -21,7 +21,7 @@ import org.apache.shiro.cache.CacheManager;
 import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.devops.iam.config.properties.SnsProperties.AbstractSocialProperties;
-import com.wl4g.devops.iam.sns.AbstractBindConnection;
+import com.wl4g.devops.iam.sns.GenericOAuth2ApiBinding;
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
 import com.wl4g.devops.iam.sns.wechat.model.WxBasedAccessToken;
 import com.wl4g.devops.iam.sns.wechat.model.WxBasedOpenId;
@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.sns.wechat.model.WxBasedOpenId;
  * @since
  */
 public abstract class BasedWechatOauth2Template<C extends AbstractSocialProperties, T extends WxBasedAccessToken, O extends WxBasedOpenId, U extends Oauth2UserProfile>
-		extends AbstractBindConnection<C, T, O, U> {
+		extends GenericOAuth2ApiBinding<C, T, O, U> {
 
 	final public static String URI_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token";
 
@@ -85,7 +85,7 @@ public abstract class BasedWechatOauth2Template<C extends AbstractSocialProperti
 	}
 
 	@Override
-	public String getOpenIdUriEndpoint() {
+	protected String getOpenIdUriEndpoint() {
 		throw new UnsupportedOperationException();
 	}
 

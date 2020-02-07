@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.sns.web;
 
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,12 +25,11 @@ import com.google.common.io.CharStreams;
 import com.google.common.net.MediaType;
 import com.wl4g.devops.common.exception.iam.IllegalRequestException;
 import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.tool.common.web.WebUtils2;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_WECHAT_MP_RECEIVE;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURI;
 import static java.lang.String.format;
 
 import java.io.IOException;
@@ -43,7 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
 /**
- * Annotation to enabled WechatMp controller configuration.<br/>
+ * WechatMp controller configuration.<br/>
  * See:<a href=
  * "https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1472017492_58YV5">https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1472017492_58YV5</a>
  *
@@ -84,13 +82,10 @@ public abstract class WechatMpMessageController extends BaseController {
 			@NotBlank @RequestParam(name = "timestamp") String timestamp, @NotBlank @RequestParam(name = "nonce") String nonce,
 			@NotBlank @RequestParam(name = "echostr") String echostr, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-		if (log.isInfoEnabled()) {
-			log.info("Verify from wechat get request. [{}]", WebUtils2.getFullRequestURI(request));
-		}
-		isTrue(!StringUtils.isEmpty(echostr), "'echostr' must not be empty");
-
-		// Validation
-		signatureValidate(signature, timestamp, nonce);
+		log.info("Verify from wechat get request. [{}]", getFullRequestURI(request));
+		hasTextOf(echostr, "echostr");
+		// Assertion signature
+		assertionSignature(signature, timestamp, nonce);
 
 		write(response, HttpServletResponse.SC_OK, MediaType.PLAIN_TEXT_UTF_8.toString(), echostr.getBytes(Charsets.UTF_8));
 	}
@@ -109,24 +104,25 @@ public abstract class WechatMpMessageController extends BaseController {
 			@NotBlank @RequestParam(name = "timestamp") String timestamp, @NotBlank @RequestParam(name = "nonce") String nonce,
 			@RequestParam(name = "openid", required = false) String openId, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
-
-		if (log.isInfoEnabled()) {
-			log.info("Receive from wechat post request. [{}]", WebUtils2.getFullRequestURI(request));
-		}
-
+		log.info("Receive from WeChat post [{}]", getFullRequestURI(request));
 		// Validation
-		signatureValidate(signature, timestamp, nonce);
+		assertionSignature(signature, timestamp, nonce);
 
 		// Processing
-		System.out.println(CharStreams.toString(new InputStreamReader(request.getInputStream(), Charsets.UTF_8)));
-		String respMsg = ""/* wechatService.processRequest(request) */;
-		if (log.isInfoEnabled()) {
-			log.info("Reply to wechat as: {}", respMsg);
-		}
+		String input = CharStreams.toString(new InputStreamReader(request.getInputStream(), Charsets.UTF_8));
+		String output = onReceive(input);
+		log.info("Reply to WeChat Server => {}", output);
 
-		// Response
-		write(response, HttpServletResponse.SC_OK, MediaType.APPLICATION_XML_UTF_8.toString(), respMsg.getBytes(Charsets.UTF_8));
+		write(response, HttpServletResponse.SC_OK, MediaType.APPLICATION_XML_UTF_8.toString(), output.getBytes(Charsets.UTF_8));
 	}
+
+	/**
+	 * Receive processing from WeChat message.
+	 * 
+	 * @param msg
+	 * @return
+	 */
+	protected abstract String onReceive(String msg);
 
 	/**
 	 * WeChat platform signature validation
@@ -135,7 +131,7 @@ public abstract class WechatMpMessageController extends BaseController {
 	 * @param timestamp
 	 * @param nonce
 	 */
-	private void signatureValidate(String signature, String timestamp, String nonce) {
+	private void assertionSignature(String signature, String timestamp, String nonce) {
 		hasTextOf(signature, "signature");
 		hasTextOf(timestamp, "timestamp");
 		hasTextOf(nonce, "nonce");
