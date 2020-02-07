@@ -64,3 +64,7 @@ redis:
   nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
 
 cipher-key: 03DE18C2FC4E605F
+
+fs:
+  base-path: j:\myupload
+  base-url: http://wl4g.debug:14051/share-manager
