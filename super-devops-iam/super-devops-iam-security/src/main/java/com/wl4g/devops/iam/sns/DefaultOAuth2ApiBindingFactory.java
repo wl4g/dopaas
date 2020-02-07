@@ -15,11 +15,12 @@
  */
 package com.wl4g.devops.iam.sns;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notEmptyOf;
+import static java.util.Objects.nonNull;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.shiro.util.Assert;
 
 import com.wl4g.devops.common.exception.iam.NoSuchSocialProviderException;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
@@ -27,31 +28,32 @@ import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
 
 /**
- * Social configure repository
+ * Default IAM Social connection factory
  *
- * @author wangl.sir
- * @version v1.0 2019年2月25日
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0
+ * @date 2019年1月4日
  * @since
  */
-public class SocialConfigureRepository implements SocialRepository {
+public class DefaultOAuth2ApiBindingFactory implements OAuth2ApiBindingFactory {
 
 	/**
 	 * Binding connection repository
 	 */
-	final private Map<String, BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile>> repository = new ConcurrentHashMap<>();
+	final private Map<String, OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile>> repository = new ConcurrentHashMap<>();
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public SocialConfigureRepository(List<BindConnection> binds) {
-		Assert.notEmpty(binds, "'binds' must not be empty");
-		for (BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> bind : binds) {
-			if (this.repository.putIfAbsent(bind.providerId(), bind) != null) {
-				throw new IllegalStateException(String.format("Already provider register", bind.providerId()));
+	public DefaultOAuth2ApiBindingFactory(List<OAuth2ApiBinding> apis) {
+		notEmptyOf(apis, "OAuth2ApiBindings");
+		for (OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> api : apis) {
+			if (nonNull(repository.putIfAbsent(api.providerId(), api))) {
+				throw new IllegalStateException(String.format("Already provider register", api.providerId()));
 			}
 		}
 	}
 
 	@Override
-	public BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getBindConnection(String provider) {
+	public OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getApiBinding(String provider) {
 		if (!this.repository.containsKey(provider)) {
 			throw new NoSuchSocialProviderException(String.format("No such social provider [%s]", provider));
 		}

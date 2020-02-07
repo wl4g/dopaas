@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SnsAuthorizingParameter;
 import com.wl4g.devops.iam.filter.ProviderSupport;
-import com.wl4g.devops.iam.sns.SocialConnectionFactory;
+import com.wl4g.devops.iam.sns.OAuth2ApiBindingFactory;
 
 /**
  * Default SNS oauth2 authorizing realm
@@ -50,7 +50,7 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 	 * IAM Social connection factory
 	 */
 	@Autowired
-	protected SocialConnectionFactory connectFactory;
+	protected OAuth2ApiBindingFactory connectFactory;
 
 	public Oauth2SnsAuthorizingRealm(IamBasedMatcher matcher) {
 		super(matcher);

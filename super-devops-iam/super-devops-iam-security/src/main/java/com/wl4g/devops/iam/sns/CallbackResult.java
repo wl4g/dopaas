@@ -15,22 +15,39 @@
  */
 package com.wl4g.devops.iam.sns;
 
-import com.wl4g.devops.common.exception.iam.NoSuchSocialProviderException;
-import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
-import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
-import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * IAM Social connection factory
- *
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2019年1月4日
- * @since
+ * {@link CallbackResult}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年2月7日 v1.0.0
+ * @see
  */
-public interface SocialConnectionFactory {
+public class CallbackResult {
 
-	BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getBindConnection(String provider)
-			throws NoSuchSocialProviderException;
+	/**
+	 * OAuth2 callback refreshUrl
+	 */
+	final private String refreshUrl;
+
+	public CallbackResult(String refreshUrl) {
+		hasTextOf(refreshUrl, "SNS oauth2 refreshUrl");
+		this.refreshUrl = refreshUrl;
+	}
+
+	public boolean hasRefreshUrl() {
+		return !isBlank(getRefreshUrl());
+	}
+
+	public String getRefreshUrl() {
+		return refreshUrl;
+	}
+
+	@Override
+	public String toString() {
+		return refreshUrl;
+	}
 
 }

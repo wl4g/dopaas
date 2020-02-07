@@ -21,29 +21,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.base.Charsets;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.annotation.SnsController;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.config.properties.SnsProperties;
+import com.wl4g.devops.iam.sns.CallbackResult;
 import com.wl4g.devops.iam.sns.handler.DelegateSnsHandler;
-import com.wl4g.devops.tool.common.serialize.JacksonUtils;
-import com.wl4g.devops.tool.common.web.WebUtils2;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.safeDecodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
+import static java.lang.String.format;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CALLBACK;
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
 
 import java.io.IOException;
@@ -72,10 +70,18 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 	}
 
 	/**
-	 * Connection social networking
-	 *
+	 * Request to connect to social service provider preprocessing.</br>
+	 * 
+	 * <pre>
+	 * 示例1：(获取配置微信公众号view类型菜单的URL)
+	 * 请求此接口(工具接口)：http://sso.wl4g.com/sso/sns/connect/wechatmp?which=client_auth&service=wechatMp
+	 * 
+	 * 返回：
+	 * https://open.weixin.qq.com/connect/oauth2/authorize?state=a7d2e06d3c05483a8feeaa0bdf37455a&scope=snsapi_userinfo&redirect_uri=http%3A%2F%2Fsso.wl4g.com%2Fsso%2Fsns%2Fwechatmp%2Fcallback%3Fwhich%3Dclient_auth%26service%3DwechatMp&response_type=code&appid=wxec3f74a4062d650f#wechat_redirect
+	 * </pre>
+	 * 
 	 * @param provider
-	 *            social platform name
+	 *            social networking provider id
 	 * @param which
 	 *            action
 	 * @param state
@@ -89,9 +95,9 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 	 * @throws IOException
 	 */
 	@GetMapping("/" + URI_S_SNS_CONNECT + "/{" + PARAM_SNS_PRIVIDER + "}")
-	public void connect(@PathVariable(PARAM_SNS_PRIVIDER) String provider, HttpServletRequest request,
-			HttpServletResponse response) throws IOException {
-		log.info("Connecting SNS url[{}]", WebUtils2.getFullRequestURI(request));
+	public void preOAuth2Connect(@PathVariable(PARAM_SNS_PRIVIDER) String provider, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		log.info("Connecting SNS url[{}]", getFullRequestURI(request));
 
 		// Basic parameters
 		String which = getCleanParam(request, config.getParam().getWhich());
@@ -102,7 +108,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 		Map<String, String> connectParams = toQueryParams(request.getQueryString());
 
 		// Getting SNS authorizingUrl
-		String authorizingUrl = delegate.connect(Which.of(which), provider, state, connectParams);
+		String authorizingUrl = delegate.doOAuth2GetAuthorizingUrl(Which.of(which), provider, state, connectParams);
 
 		// Response type
 		if (isJSONResponse(request)) {
@@ -111,65 +117,80 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 					.setMessage("Obtain the SNS authorization code is ready.");
 			writeJson(response, toJSONString(resp));
 		} else {
-			/**
-			 * Some handler have carried the 'redirect:' prefix
-			 */
+			// Some handler have carried the 'redirect:' prefix
 			if (startsWithIgnoreCase(authorizingUrl, REDIRECT_PREFIX)) {
 				issueRedirect(request, response, authorizingUrl.substring(REDIRECT_PREFIX.length()), null, false);
 			} else {
-				// Return the URL string directly without redirection
-				String msg = String.format(
-						"<div>Please configure the callback URL on the social network platform <b>%s</b> as follows (note: it's the Wechat official public platform, not an open platform):</div><br/><a style=\"word-break:break-all;\" href=\"%s\" target=\"_blank\">%s</a>",
+				// Return the URL string directly without redirect
+				String msg = format(
+						"<p style='text-align:center'>The following is the OAuth2 configuration address, Please configure this URL to the platform.</p><hr/>"
+								+ "<p><b>Social Service Provider:</b>&nbsp;%s</p>"
+								+ "<p><b>OAuth2 URL:</b>&nbsp;<a style='word-break:break-all;' href='%s' target='_blank'>%s</a></p>",
 						provider, authorizingUrl, authorizingUrl);
-				write(response, HttpServletResponse.SC_OK, MediaType.TEXT_HTML_VALUE, msg.getBytes(Charsets.UTF_8));
+				write(response, HttpServletResponse.SC_OK, MediaType.TEXT_HTML_VALUE, msg.getBytes(UTF_8));
 			}
 		}
+
 	}
 
 	/**
-	 * Unified callback address for social service providers
-	 *
+	 * Used to process callback request after social service provider completes
+	 * oauth2 authorization.</br>
+	 * 
+	 * <pre>
+	 * 示例1：
+	 * 
+	 * step1: 设置微信公众号view类型菜单的URL，如：
+	 * APPID=yours appid
+	 * REDIRECT_URL=https://sso.wl4g.com/sso/sns/wechatmp/callback?which=client_auth&state=1
+	 * https://open.weixin.qq.com/connect/oauth2/authorize?appid={APPID}&redirect_uri={REDIRECT_URL}&response_type=code&scope=snsapi_base#wechat_redirect
+	 * 
+	 * step2: 点击它，此时微信将发起回调请求，如：
+	 * https://sso.wl4g.com/sso/sns/wechatmp/callback?which=client_auth&state=1&code=011Z9B7G1SkEh60IE38G1jpG7G1Z9B71
+	 * 
+	 * </pre>
+	 * 
 	 * @param provider
-	 * @param state
+	 *            social networking provider id
+	 * @param code
+	 *            oauth2 callback authorization code
+	 * @param request
+	 * @param response
+	 * @throws Exception
 	 */
 	@GetMapping("/{" + PARAM_SNS_PRIVIDER + "}/" + URI_S_SNS_CALLBACK)
-	public void callback(@PathVariable(PARAM_SNS_PRIVIDER) String provider, @NotBlank @RequestParam(PARAM_SNS_CODE) String code,
-			HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void postOAuth2Callback(@PathVariable(PARAM_SNS_PRIVIDER) String provider,
+			@NotBlank @RequestParam(PARAM_SNS_CODE) String code, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		log.info("Sns callback url[{}]", getFullRequestURI(request));
 
-		// Basic parameters
-		String which = getCleanParam(request, config.getParam().getWhich());
+		// Get required parameters
+		Which which = Which.of(getCleanParam(request, config.getParam().getWhich()));
 		String state = getCleanParam(request, config.getParam().getState());
 
-		// Which
-		Which wh = Which.safeOf(which);
-		notNull(wh, "'%s' must not be null", config.getParam().getWhich());
-
-		// Delegate getting redirect refreshUrl
-		String redirectRefreshUrl = delegate.callback(wh, provider, state, code, request);
-		log.info("Callback provider[{}], state[{}], url[{}]", provider, state, redirectRefreshUrl);
+		// Do oauth2 callback
+		CallbackResult ret = delegate.doOAuth2Callback(which, provider, state, code, request);
+		log.info("Callback provider[{}], state[{}], refreshUrl[{}]", provider, state, ret);
 
 		/*
-		 * Refresh redirection URL is empty, indicating that no redirection is
+		 * When refresh redirectUrl is blank, indicating that no redirect is
 		 * required for this operation.
 		 */
-		if (isBlank(redirectRefreshUrl)) {
-			// Response JSON of redirection.
+		if (ret.hasRefreshUrl()) {
+			issueRedirect(request, response, safeDecodeURL(ret.getRefreshUrl()), null, false);
+		} else {
 			RespBase<String> resp = RespBase.create(DEFAULT_SECOND_AUTHC_STATUS);
 			resp.setCode(RetCode.OK).setMessage("Second authenticate successfully.");
 			// resp.setData(singletonMap(config.getParam().getRefreshUrl(),
 			// redirectRefreshUrl));
 			writeJson(response, toJSONString(resp));
 		}
-		// Redirection to refresh URL
-		else {
-			issueRedirect(request, response, safeDecodeURL(redirectRefreshUrl), null, false);
-		}
 
 	}
 
 	/**
-	 * Intermediate pages handled by agents after SNS callback
+	 * After the SNS callback, it is used to jump to the middle page of the home
+	 * page.
 	 * <p>
 	 * {@link com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController#callback()}
 	 *
@@ -179,15 +200,13 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 	 * @throws IOException
 	 */
 	@GetMapping(URI_S_AFTER_CALLBACK_AGENT)
-	public void afterCallbackAgent(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		// Get callback parameters
-		Map<String, String> callbackParams = WebUtils2.toQueryParams(request.getQueryString());
-		// To JSON text plain
-		String attributeJSONString = JacksonUtils.toJSONString(callbackParams).replaceAll("\\\"", "\\\\\"");
+	public void afterOAuth2CallbackAgent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		Map<String, String> callbackParams = toQueryParams(request.getQueryString());
+		String attributeJsonstr = toJSONString(callbackParams).replaceAll("\\\"", "\\\\\"");
 
-		// Build agent HTML
-		byte[] agentHtml = String.format(TEMPLATE_CALLBACK_AGENT, attributeJSONString).getBytes(Charsets.UTF_8);
-		write(response, HttpStatus.OK.value(), MediaType.TEXT_HTML_VALUE, agentHtml);
+		// Readering agent page
+		byte[] agentPageHtml = format(TEMPLATE_CALLBACK_AGENT, attributeJsonstr).getBytes(UTF_8);
+		write(response, HttpStatus.OK.value(), MediaType.TEXT_HTML_VALUE, agentPageHtml);
 	}
 
 }

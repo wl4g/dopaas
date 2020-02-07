@@ -15,12 +15,22 @@
  */
 package com.wl4g.devops.iam.sns;
 
+import com.wl4g.devops.common.exception.iam.NoSuchSocialProviderException;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
 
-public interface SocialRepository {
+/**
+ * IAM Social connection factory
+ *
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0
+ * @date 2019年1月4日
+ * @since
+ */
+public interface OAuth2ApiBindingFactory {
 
-	BindConnection<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getBindConnection(String providerId);
+	OAuth2ApiBinding<Oauth2AccessToken, Oauth2OpenId, Oauth2UserProfile> getApiBinding(String provider)
+			throws NoSuchSocialProviderException;
 
 }
