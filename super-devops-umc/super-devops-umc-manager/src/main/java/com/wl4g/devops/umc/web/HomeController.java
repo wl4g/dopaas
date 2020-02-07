@@ -45,8 +45,8 @@ public class HomeController extends BaseController {
 	@Autowired
 	private CompositeMessageNotifier notifier;
 
-	@Autowired
-	private SmsNotificationHandle smsHandle;
+	//@Autowired
+	//private SmsNotificationHandle smsHandle;
 
 	@RequestMapping("{msgId}")
 	public Object details(@PathVariable("msgId") String msgId, Model model) {
@@ -63,8 +63,8 @@ public class HomeController extends BaseController {
 
 	// @RequestMapping("smsSend")
 	public String smsSendTest() {
-		this.smsHandle.send(Arrays.asList(new String[] { "18127968606" }), "transport-404e4c6d", "UP", "DOWN",
-				"120.79.3.227:64/s/1");
+//		this.smsHandle.send(Arrays.asList(new String[] { "18127968606" }), "transport-404e4c6d", "UP", "DOWN",
+//				"120.79.3.227:64/s/1");
 		return "ok";
 	}
 
