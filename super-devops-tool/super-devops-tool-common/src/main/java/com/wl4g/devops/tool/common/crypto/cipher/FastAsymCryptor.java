@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.tool.common.crypto.cipher;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.security.KeyFactory;
@@ -27,17 +28,17 @@ import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Hex;
 
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeySpecEntity;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
 import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
- * Asymmetric cryptic encrypting utility.
+ * Fast asymmetric cryptic encrypting utility.
  *
  * @author wangl.sir
  * @version v1.0 2019年1月21日
  * @since
  */
-public abstract class AsymmetricEncryptor<I> {
+abstract class FastAsymCryptor<C, K> {
 
 	/*
 	 * Current used encryption and decryption cipher
@@ -54,7 +55,7 @@ public abstract class AsymmetricEncryptor<I> {
 	 *
 	 * @param keyWrap
 	 */
-	public AsymmetricEncryptor() {
+	public FastAsymCryptor() {
 		try {
 			keyFactory = KeyFactory.getInstance(getAlgorithmPrimary());
 		} catch (Exception e) {
@@ -67,7 +68,7 @@ public abstract class AsymmetricEncryptor<I> {
 	 *
 	 * @return
 	 */
-	final public KeySpecEntity generateKeySpecPair() {
+	final public K generateKeySpecPair() {
 		try {
 			// Generate keyPair.
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance(getAlgorithmPrimary());
@@ -77,7 +78,7 @@ public abstract class AsymmetricEncryptor<I> {
 			// New create keySpec pair.
 			KeySpec pubKeySepc = keyFactory.getKeySpec(keyPair.getPublic(), getPublicKeySpecClass());
 			KeySpec privKeySepc = keyFactory.getKeySpec(keyPair.getPrivate(), getPrivateKeySpecClass());
-			return newKeySpecEntity(getAlgorithmPrimary(), pubKeySepc, privKeySepc);
+			return newKeySpec(getAlgorithmPrimary(), pubKeySepc, privKeySepc);
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
@@ -128,17 +129,16 @@ public abstract class AsymmetricEncryptor<I> {
 	 * Initialize the build of a password instance based on the specified key
 	 * pair
 	 *
-	 * @param keySpecEntity
+	 * @param keyspec
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	final public I build(KeySpecEntity keySpecEntity) {
-		Assert2.notNull(keySpecEntity, "'keySpecPair' must not be null");
-
+	final public C build(KeyPairSpec keyspec) {
+		notNullOf(keyspec, "keyspec");
 		try {
 			// Get keyPair caching by publicKey and privateKey
-			PrivateKey key = keyFactory.generatePrivate(keySpecEntity.getKeySpec());
-			PublicKey pubKey = keyFactory.generatePublic(keySpecEntity.getPubKeySpec());
+			PrivateKey key = keyFactory.generatePrivate(keyspec.getKeySpec());
+			PublicKey pubKey = keyFactory.generatePublic(keyspec.getPubKeySpec());
 
 			// Get current use cipherPair
 			Cipher[] cipherPair = currentCipherPairCache.get();
@@ -159,7 +159,7 @@ public abstract class AsymmetricEncryptor<I> {
 			throw new IllegalStateException(e);
 		}
 
-		return (I) this;
+		return (C) this;
 	}
 
 	/**
@@ -198,13 +198,13 @@ public abstract class AsymmetricEncryptor<I> {
 	protected abstract Class<? extends KeySpec> getPrivateKeySpecClass();
 
 	/**
-	 * New create keySpecEntity {@link KeySpecEntity}
+	 * New create keySpecEntity {@link KeySpec}
 	 * 
 	 * @param algorithm
 	 * @param pubKeySpec
 	 * @param keySpec
 	 * @return
 	 */
-	protected abstract KeySpecEntity newKeySpecEntity(String algorithm, KeySpec pubKeySpec, KeySpec keySpec);
+	protected abstract K newKeySpec(String algorithm, KeySpec pubKeySpec, KeySpec keySpec);
 
 }

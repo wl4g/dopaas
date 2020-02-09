@@ -23,7 +23,9 @@ import org.apache.commons.codec.digest.DigestUtils;
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月20日
  * @since
+ * @see {@link org.apache.commons.codec.digest.DigestUtils}
+ * @see {@link com.google.common.hash.Hashing}
  */
-public class HashingEncrypting extends DigestUtils {
+public class DigestUtils2 extends DigestUtils {
 
 }

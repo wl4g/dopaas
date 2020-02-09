@@ -28,7 +28,6 @@ import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.ByteSource.Util;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -38,13 +37,14 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.tool.common.codec.CheckSums.*;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.configure.SecureConfig;
-import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
-import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
+import com.wl4g.devops.iam.crypto.CryptService;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
 
 /**
  * Abstract credentials securer adapter
@@ -55,7 +55,7 @@ import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
  * @since
  */
 abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements IamCredentialsSecurer {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	/**
 	 * Secure configuration.
@@ -76,7 +76,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * Cryptic service.
 	 */
 	@Autowired
-	protected RSACryptographicService rsaCryptoService;
+	protected CryptService cryptoService;
 
 	/**
 	 * Delegate message source.
@@ -147,18 +147,15 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		if (index == null) {
 			index = current().nextInt(0, config.getPreCryptPoolSize());
 		}
-		if (log.isDebugEnabled()) {
-			log.debug("Apply secretkey of indx: {}", index);
-		}
+		log.debug("Apply secretkey of indx: {}", index);
 
-		RSAKeySpecWrapper keyPair = rsaCryptoService.borrow(index);
+		KeyPairSpec keyPair = cryptoService.borrow(index);
 		// Save the applied keyPair index.
 		bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
 
-		if (log.isInfoEnabled()) {
-			log.info("Apply secretkey of sessionId: {}, index: {}, publicKeyHexString: {}, privateKeyHexString: {}",
-					getSessionId(), index, keyPair.getPubHexString(), keyPair.getHexString());
-		}
+		log.info("Apply secretkey of sessionId: {}, index: {}, publicKeyHexString: {}, privateKeyHexString: {}", getSessionId(),
+				index, keyPair.getPubHexString(), keyPair.getHexString());
+
 		return keyPair.getPubHexString();
 	}
 
@@ -198,9 +195,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	protected String doCredentialsHash(@NotNull CredentialsToken token, @NotNull Hasher hasher) {
 		// Merge salt
 		ByteSource salt = merge(privateSalt, getPublicSalt(token.getPrincipal()));
-		if (log.isDebugEnabled()) {
-			log.debug("Merge salt. principal:[{}], salt:[{}]", token.getPrincipal(), salt);
-		}
+		log.debug("Merge salt. principal:[{}], salt:[{}]", token.getPrincipal(), salt);
 
 		// Determine which hashing algorithm to use
 		final String[] hashAlgorithms = config.getHashAlgorithms();
@@ -221,7 +216,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 */
 	protected CredentialsToken resolves(@NotNull CredentialsToken token) {
 		// Determine keyPairSpec
-		RSAKeySpecWrapper keySpec = determineSecretKeySpecPair(token.getPrincipal());
+		KeyPairSpec keySpec = determineSecretKeySpecPair(token.getPrincipal());
 
 		if (log.isInfoEnabled()) {
 			String publicBase64String = keySpec.getPubHexString();
@@ -235,7 +230,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		}
 
 		// Mysterious DECRYPT them.
-		final String plainCredentials = rsaCryptoService.decryptWithHex(keySpec, token.getCredentials());
+		final String plainCredentials = cryptoService.decryptWithHex(keySpec, token.getCredentials());
 		return new CredentialsToken(token.getPrincipal(), plainCredentials, true);
 	}
 
@@ -245,16 +240,14 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @param checkCode
 	 * @return
 	 */
-	private RSAKeySpecWrapper determineSecretKeySpecPair(@NotNull String principal) {
+	private KeyPairSpec determineSecretKeySpecPair(@NotNull String principal) {
 		// Choose the best one from the candidate key pair
 		Integer index = getBindValue(KEY_SECRET_INDEX, true);
 		if (index != null) {
-			return rsaCryptoService.borrow(index);
+			return cryptoService.borrow(index);
 		}
 
-		if (log.isWarnEnabled()) {
-			log.warn("Failed to decrypt, secretKey expired. seesionId:[{}], principal:[{}]", getSessionId(), principal);
-		}
+		log.warn("Failed to decrypt, secretKey expired. seesionId:[{}], principal:[{}]", getSessionId(), principal);
 		throw new IllegalStateException(String.format("Invalid applied secretKey or expired. principal:[%s]", principal));
 	}
 

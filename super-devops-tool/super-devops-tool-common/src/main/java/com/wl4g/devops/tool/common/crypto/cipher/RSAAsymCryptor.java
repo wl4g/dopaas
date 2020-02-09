@@ -16,39 +16,48 @@
 package com.wl4g.devops.tool.common.crypto.cipher;
 
 import java.security.spec.KeySpec;
+import java.security.spec.RSAPrivateCrtKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeySpecEntity;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.RSAKeyPairSpec;
 
-public final class DsaEncryptor extends AsymmetricEncryptor<KeySpecEntity> {
+/**
+ * RivestShamirAdleman algorithm
+ *
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年1月20日
+ * @since
+ */
+public class RSAAsymCryptor extends FastAsymCryptor<RSAAsymCryptor, RSAKeyPairSpec> {
 
 	@Override
 	protected String getAlgorithmPrimary() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected String getPadAlgorithm() {
-		throw new UnsupportedOperationException();
+		return "RSA";
 	}
 
 	@Override
 	protected int getKeyBit() {
-		throw new UnsupportedOperationException();
+		return 1024;
 	}
 
 	@Override
 	protected Class<? extends KeySpec> getPublicKeySpecClass() {
-		throw new UnsupportedOperationException();
+		return RSAPublicKeySpec.class;
 	}
 
 	@Override
-	protected Class<? extends KeySpec> getPrivateKeySpecClass() {
-		throw new UnsupportedOperationException();
+	public Class<? extends KeySpec> getPrivateKeySpecClass() {
+		return RSAPrivateCrtKeySpec.class;
 	}
 
 	@Override
-	protected KeySpecEntity newKeySpecEntity(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
-		throw new UnsupportedOperationException();
+	protected String getPadAlgorithm() {
+		return "RSA/ECB/PKCS1Padding";
+	}
+
+	@Override
+	protected RSAKeyPairSpec newKeySpec(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+		return new RSAKeyPairSpec(algorithm, pubKeySpec, keySpec);
 	}
 
 }

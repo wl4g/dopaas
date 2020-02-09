@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.crypto.keypair;
+package com.wl4g.devops.iam.crypto;
 
-import com.wl4g.devops.iam.crypto.AbstractCryptographicService;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.tool.common.crypto.cipher.RSAAsymCryptor;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.RSAKeyPairSpec;
 
 /**
  * RSA cryptographic service.
@@ -25,38 +27,44 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
  * @version v1.0 2019-08-30
  * @since
  */
-public final class RSACryptographicService extends AbstractCryptographicService<RSAKeySpecWrapper> {
+public final class RSACryptService extends AbstractCryptService<RSAKeyPairSpec> {
 
 	/**
 	 * Cryptic algorithm.
 	 */
-	final protected CryptoHolder crypto;
+	final protected RSAAsymCryptor rsa = new RSAAsymCryptor();
 
-	public RSACryptographicService(JedisLockManager lockManager) {
+	public RSACryptService(JedisLockManager lockManager) {
 		super(lockManager);
-		this.crypto = CryptoHolder.getInstance("RSA");
 	}
 
-	/*
-	 * Encryption from hex.
+	/**
+	 * Encryption with hex plain.
 	 *
-	 * @see
-	 * com.wl4g.devops.iam.crypto.CryptographicService#encryptWithHex(com.wl4g.
-	 * devops.iam.crypto.Cryptos.KeySpecPair, java.lang.String)
+	 * @param keySpec
+	 * @param hexPlain
+	 * @return
 	 */
 	@Override
-	public String encryptWithHex(RSAKeySpecWrapper keySpec, String hexPlain) {
-		return crypto.build(keySpec).encrypt(hexPlain);
+	public String encryptWithHex(KeyPairSpec keySpec, String hexPlain) {
+		return rsa.build(keySpec).encrypt(hexPlain);
+	}
+
+	/**
+	 * Decryption with hex cipher.
+	 *
+	 * @param keySpec
+	 * @param hexCipher
+	 * @return
+	 */
+	@Override
+	public String decryptWithHex(KeyPairSpec keySpec, String hexCipher) {
+		return rsa.build(keySpec).decrypt(hexCipher);
 	}
 
 	@Override
-	public String decryptWithHex(RSAKeySpecWrapper keySpec, String hexCipher) {
-		return crypto.build(keySpec).decrypt(hexCipher);
-	}
-
-	@Override
-	protected RSAKeySpecWrapper generateKeySpec() {
-		return crypto.generateKeySpecPair();
+	protected RSAKeyPairSpec generateKeySpec() {
+		return rsa.generateKeySpecPair();
 	}
 
 }

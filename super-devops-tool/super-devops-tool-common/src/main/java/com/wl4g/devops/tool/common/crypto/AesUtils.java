@@ -34,7 +34,7 @@ import org.apache.commons.codec.digest.Crypt;
  * @date 2018年3月15日
  * @since
  */
-public class AesEncryptor extends Crypt {
+public class AesUtils extends Crypt {
 	final private static String KEY_CIPHER_ENV = "DEVOPS_CIPHER_KEY";
 	final private static String KEY_CIPHER_PRINT = "DEVOPS_CIPHER_PRINT";
 
@@ -70,20 +70,20 @@ public class AesEncryptor extends Crypt {
 
 	private Cipher ecipher, dcipher;
 
-	public AesEncryptor() throws Exception {
-		this.initialize(getDefaultCipher());
+	public AesUtils() throws Exception {
+		initialize(getDefaultCipher());
 	}
 
-	public AesEncryptor(String key) throws Exception {
-		this.initialize(key);
+	public AesUtils(String key) throws Exception {
+		initialize(key);
 	}
 
 	public String encrypt(String src) throws Exception {
-		return byte2hex(this.ecipher.doFinal(src.getBytes(DEFAULT_ENCODING)));
+		return byte2hex(ecipher.doFinal(src.getBytes(DEFAULT_ENCODING)));
 	}
 
 	public String decrypt(String src) throws Exception {
-		return new String(this.dcipher.doFinal(hex2byte(src)), DEFAULT_ENCODING);
+		return new String(dcipher.doFinal(hex2byte(src)), DEFAULT_ENCODING);
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class AesEncryptor extends Crypt {
 	}
 
 	public static void main(String[] args) throws Exception {
-		AesEncryptor aes = new AesEncryptor();
+		AesUtils aes = new AesUtils();
 		String s = "safecloud@#123";
 		System.out.println("cipherText: " + (s = aes.encrypt(s)));
 		System.out.println("plainText: " + aes.decrypt(s));
