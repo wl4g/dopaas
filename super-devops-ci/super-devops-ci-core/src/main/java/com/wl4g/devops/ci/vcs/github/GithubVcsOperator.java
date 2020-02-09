@@ -17,8 +17,8 @@ package com.wl4g.devops.ci.vcs.github;
 
 import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
 import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.common.annotation.Reserve;
 import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.tool.common.annotation.Reserved;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ import java.util.List;
  * @version v1.0 2019年11月5日
  * @since
  */
-@Reserve
+@Reserved
 public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override

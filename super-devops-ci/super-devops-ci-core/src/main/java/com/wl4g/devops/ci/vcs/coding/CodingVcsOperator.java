@@ -17,8 +17,9 @@ package com.wl4g.devops.ci.vcs.coding;
 
 import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
 import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.common.annotation.Reserve;
 import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.tool.common.annotation.Reserved;
+
 import org.springframework.http.HttpEntity;
 
 import java.io.IOException;
@@ -31,7 +32,7 @@ import java.util.List;
  * @version v1.0 2019年11月5日
  * @since
  */
-@Reserve
+@Reserved
 public class CodingVcsOperator extends AbstractVcsOperator {
 
 	@Override

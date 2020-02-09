@@ -22,8 +22,8 @@ import org.springframework.http.HttpEntity;
 
 import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
 import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.common.annotation.Reserve;
 import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.tool.common.annotation.Reserved;
 
 /**
  * VCS operator for ALICODE.
@@ -32,7 +32,7 @@ import com.wl4g.devops.common.bean.ci.Vcs;
  * @version v1.0 2019年11月5日
  * @since
  */
-@Reserve
+@Reserved
 public class AlicodeVcsOperator extends AbstractVcsOperator {
 
 	@Override
