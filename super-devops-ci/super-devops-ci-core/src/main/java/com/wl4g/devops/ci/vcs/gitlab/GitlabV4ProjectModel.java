@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.vcs.gitlab;
 
 import java.util.List;
 
-import com.wl4g.devops.common.annotation.Reserve;
+import com.wl4g.devops.tool.common.annotation.Reserved;
 
 /**
  * Gitlab API-v4 for projects model.
@@ -26,7 +26,7 @@ import com.wl4g.devops.common.annotation.Reserve;
  * @version v1.0 2019年11月13日
  * @since
  */
-@Reserve
+@Reserved
 public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 	private static final long serialVersionUID = 614084533443846624L;
 

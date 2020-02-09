@@ -34,8 +34,8 @@ import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperRegistryCenter;
 import static com.dangdang.ddframe.job.lite.config.LiteJobConfiguration.*;
 import static com.dangdang.ddframe.job.config.JobCoreConfiguration.*;
 
-import com.wl4g.devops.common.annotation.Reserve;
 import com.wl4g.devops.umc.fetch.ServiceIndicatorsMetaFetcher;
+import com.wl4g.devops.tool.common.annotation.Reserved;
 import com.wl4g.devops.umc.fetch.IndicatorsMetaFetcher;
 import com.wl4g.devops.umc.fetch.IndicatorsMetaInfo;
 import com.wl4g.devops.umc.watch.ServiceIndicatorsStateWatcher;
@@ -91,7 +91,7 @@ public class UmcWatchAutoConfiguration {
 		return new WatchScheduler(job, regCenter, jobConfig, eventConfig, watchJobListener());
 	}
 
-	@Reserve
+	@Reserved
 	private LiteJobConfiguration getLiteJobConfiguration(final Class<? extends SimpleJob> jobClass, final String cron,
 			final int shardingTotalCount, final String shardingItemParameters) {
 		return LiteJobConfiguration
