@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.config;
 
-import javax.sql.DataSource;
+import javax.sql.DataSource; 
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -34,7 +34,7 @@ import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperRegistryCenter;
 import static com.dangdang.ddframe.job.lite.config.LiteJobConfiguration.*;
 import static com.dangdang.ddframe.job.config.JobCoreConfiguration.*;
 
-import com.wl4g.devops.common.annotation.Unused;
+import com.wl4g.devops.common.annotation.Reserve;
 import com.wl4g.devops.umc.fetch.ServiceIndicatorsMetaFetcher;
 import com.wl4g.devops.umc.fetch.IndicatorsMetaFetcher;
 import com.wl4g.devops.umc.fetch.IndicatorsMetaInfo;
@@ -91,7 +91,7 @@ public class UmcWatchAutoConfiguration {
 		return new WatchScheduler(job, regCenter, jobConfig, eventConfig, watchJobListener());
 	}
 
-	@Unused
+	@Reserve
 	private LiteJobConfiguration getLiteJobConfiguration(final Class<? extends SimpleJob> jobClass, final String cron,
 			final int shardingTotalCount, final String shardingItemParameters) {
 		return LiteJobConfiguration

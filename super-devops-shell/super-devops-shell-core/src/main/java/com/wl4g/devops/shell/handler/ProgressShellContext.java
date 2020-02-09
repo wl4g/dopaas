@@ -24,7 +24,7 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 
-import com.wl4g.devops.common.annotation.Unused;
+import com.wl4g.devops.common.annotation.Reserve;
 import com.wl4g.devops.shell.exception.ChannelShellException;
 import com.wl4g.devops.shell.exception.NoSupportedInterruptShellException;
 import com.wl4g.devops.shell.exception.ProgressShellException;
@@ -111,7 +111,7 @@ public class ProgressShellContext extends AbstractShellContext {
 	 * @param currentProgress
 	 * @throws ProgressShellException
 	 */
-	@Unused
+	@Reserve
 	private void checkCurrentProgressRight(int currentProgress) throws ProgressShellException {
 		if (lastProgressed.getProgress() > currentProgress) {
 			throw new ProgressShellException(format("Progress cannot be reduced, progressed made: %s, current progress: %s",
@@ -125,7 +125,7 @@ public class ProgressShellContext extends AbstractShellContext {
 	 * @param currentProgress
 	 * @throws ProgressShellException
 	 */
-	@Unused
+	@Reserve
 	private void checkCurrentProgressRight(float currentProgress) throws ProgressShellException {
 		float last = getProgressed();
 		if (last > currentProgress) {
