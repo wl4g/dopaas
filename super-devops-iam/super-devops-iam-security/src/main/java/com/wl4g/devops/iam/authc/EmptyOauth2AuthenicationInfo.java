@@ -21,13 +21,20 @@ import org.apache.shiro.subject.SimplePrincipalMap;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
-public class EmptyOauth2AuthorizationInfo implements IamAuthenticationInfo {
+/**
+ * {@link EmptyOauth2AuthenicationInfo}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2019年07月9日 v1.0.0
+ * @see
+ */
+public class EmptyOauth2AuthenicationInfo implements IamAuthenticationInfo {
 	private static final long serialVersionUID = -1824494219125412412L;
 
 	/**
 	 * Default only instance
 	 */
-	final public static EmptyOauth2AuthorizationInfo EMPTY = new EmptyOauth2AuthorizationInfo();
+	final public static EmptyOauth2AuthenicationInfo EMPTY = new EmptyOauth2AuthenicationInfo();
 
 	/**
 	 * Empty principal collection
