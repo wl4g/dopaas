@@ -15,6 +15,11 @@
  */
 package com.wl4g.devops.iam.sns;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static java.lang.String.format;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -26,10 +31,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Charsets;
+import com.wl4g.devops.common.exception.iam.SnsApiBindingException;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.config.properties.SnsProperties.AbstractSocialProperties;
 import com.wl4g.devops.iam.sns.support.OAuth2GrantType;
@@ -69,14 +74,14 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 	final protected EnhancedCache cache;
 
 	public GenericOAuth2ApiBinding(C config, RestTemplate restTemplate, CacheManager cacheManager) {
-		Assert.notNull(config, "'config' is null, please check the configure");
-		Assert.notNull(restTemplate, "'restTemplate' is null, please check the configure");
-		Assert.notNull(cacheManager, "'cacheManager' is null, please check the configure");
+		notNull(config, "'config' is null, please check the configure");
+		notNull(restTemplate, "'restTemplate' is null, please check the configure");
+		notNull(cacheManager, "'cacheManager' is null, please check the configure");
 		this.config = config;
 		this.restTemplate = restTemplate;
 		Object cacheObject = cacheManager.getCache(DEFAULT_CACHE_NAME);
-		Assert.notNull(cacheObject, "'cacheObject' is null, please check the configure");
-		Assert.isInstanceOf(EnhancedCache.class, cacheObject);
+		notNull(cacheObject, "'cacheObject' is null, please check the configure");
+		isInstanceOf(EnhancedCache.class, cacheObject);
 		this.cache = (EnhancedCache) cacheObject;
 	}
 
@@ -86,10 +91,10 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 
 	@Override
 	public String getAuthorizeCodeUrl(String state, Map<String, String> queryParams) {
-		Map<String, String> parameters = this.createParameters();
+		Map<String, String> parameters = createParameters();
 
 		// Client ID
-		Assert.hasText(config.getAppId(), "'appId' is empty, please check the configure");
+		hasText(config.getAppId(), "'appId' is empty, please check the configure");
 		parameters.put(DEFAULT_PARAM_CLIENT_ID, config.getAppId());
 
 		// State
@@ -102,7 +107,7 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 		}
 
 		// Redirect URL
-		Assert.hasText(config.getRedirectUrl(), "'redirect_url' is empty, please check the configure");
+		hasText(config.getRedirectUrl(), "'redirect_url' is empty, please check the configure");
 		// Extra query parameters
 		String redirectUrl = config.getRedirectUrl();
 		if (queryParams != null && !queryParams.isEmpty()) {
@@ -115,12 +120,10 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 		parameters.put(DEFAULT_PARAM_RESPONSE_TYPE, rt.name().toLowerCase());
 
 		// Post process
-		this.postGetAuthorizationCodeUrl(parameters);
+		postGetAuthorizationCodeUrl(parameters);
 
-		String url = this.parametersToUrl(getAuthorizationCodeUriEndpoint(), parameters);
-		if (log.isInfoEnabled()) {
-			log.info("Get authorization code url: '{}'", url);
-		}
+		String url = parametersToUrl(getAuthorizationCodeUriEndpoint(), parameters);
+		log.info("Get authorization code url: '{}'", url);
 
 		return url.toString();
 	}
@@ -131,16 +134,16 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 
 	@Override
 	public T getAccessToken(String code) {
-		Map<String, String> parameters = this.createParameters();
+		Map<String, String> parameters = createParameters();
 
-		Assert.hasText(config.getAppId(), "'appId' is empty, please check the configure");
+		hasText(config.getAppId(), "'appId' is empty, please check the configure");
 		parameters.put(DEFAULT_PARAM_CLIENT_ID, config.getAppId());
 
-		Assert.hasText(config.getAppSecret(), "'appSecret' is empty, please check the configure");
+		hasText(config.getAppSecret(), "'appSecret' is empty, please check the configure");
 		parameters.put(DEFAULT_PARAM_CLIENT_SECRET, config.getAppSecret());
 
 		// Consistent with the previous getAuthorizeCodeUrl step
-		Assert.hasText(config.getRedirectUrl(), "'redirect_url' is empty, please check the configure");
+		hasText(config.getRedirectUrl(), "'redirect_url' is empty, please check the configure");
 		parameters.put(DEFAULT_PARAM_REDIRECT_URI, config.getRedirectUrl());
 
 		// grant_type
@@ -148,85 +151,81 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 		parameters.put(DEFAULT_PARAM_GRANT_TYPE, gt.name().toLowerCase());
 
 		if (gt == OAuth2GrantType.AUTHORIZATION_CODE) {
-			Assert.isTrue(StringUtils.hasText(code), "'code' is empty, please check the configure");
+			isTrue(StringUtils.hasText(code), "'code' is empty, please check the configure");
 			parameters.put(DEFAULT_PARAM_AUTH_CODE, code);
 		}
 
 		// Post process
-		this.postGetAccessTokenUrl(parameters);
+		postGetAccessTokenUrl(parameters);
 
-		String url = this.parametersToUrl(getAccessTokenUriEndpoint(), parameters);
-		if (log.isInfoEnabled()) {
-			log.info("Get accessToken url: '{}'", url);
-		}
+		String url = parametersToUrl(getAccessTokenUriEndpoint(), parameters);
+		log.info("Get accessToken url: '{}'", url);
 
 		// Send request
-		String accessTokenText = this.restTemplate.getForObject(url.toString(), String.class);
-		Assert.hasText(accessTokenText, "Response accessToken info is empty");
-		if (log.isInfoEnabled()) {
-			log.info("Response accessToken: {}", accessTokenText);
+		String accessTokenText = restTemplate.getForObject(url.toString(), String.class);
+		if (isBlank(accessTokenText)) {
+			throw new SnsApiBindingException("OAuth2 response accessToken empty");
 		}
-		return ((Oauth2AccessToken) this.newResponseInstance(1)).build(accessTokenText);
+
+		log.info("Response accessToken: {}", accessTokenText);
+		return ((Oauth2AccessToken) newResponseInstance(1)).build(accessTokenText);
 	}
 
 	@Override
 	public O getUserOpenId(T accessToken) {
-		Map<String, String> parameters = this.createParameters();
+		Map<String, String> parameters = createParameters();
 
-		Assert.notNull(accessToken, "'accessToken' is empty, please check the configure");
-		Assert.hasText(accessToken.accessToken(), "'accessToken' is empty, please check the configure");
+		notNull(accessToken, "'accessToken' is empty, please check the configure");
+		hasText(accessToken.accessToken(), "'accessToken' is empty, please check the configure");
 		parameters.put(DEFAULT_PARAM_ACCESS_TOKEN, accessToken.accessToken());
 
 		// Post process
-		this.postGetOpenIdUrl(parameters);
+		postGetOpenIdUrl(parameters);
 
-		String url = this.parametersToUrl(getOpenIdUriEndpoint(), parameters);
-		if (log.isInfoEnabled()) {
-			log.info("Get openId url: '{}'", url);
-		}
+		String url = parametersToUrl(getOpenIdUriEndpoint(), parameters);
+		log.info("Get openId url: '{}'", url);
 
 		// Send request
-		String openIdText = this.restTemplate.getForObject(url.toString(), String.class);
-		Assert.hasText(openIdText, "Response openId info is empty");
-		if (log.isInfoEnabled()) {
-			log.info("Response openId: {}", openIdText);
+		String openIdText = restTemplate.getForObject(url.toString(), String.class);
+		if (isBlank(openIdText)) {
+			throw new SnsApiBindingException("OAuth2 response openId empty");
 		}
-		return ((Oauth2OpenId) this.newResponseInstance(2)).build(openIdText);
+
+		log.info("Response openId: {}", openIdText);
+		return ((Oauth2OpenId) newResponseInstance(2)).build(openIdText);
 	}
 
 	@Override
 	public U getUserInfo(String accessToken, String openId) {
-		Map<String, String> parameters = this.createParameters();
+		Map<String, String> parameters = createParameters();
 
-		Assert.hasText(config.getAppId(), "'appId' is empty, please check the configure");
+		hasText(config.getAppId(), "'appId' is empty, please check the configure");
 		parameters.put(DEFAULT_PARAM_CLIENT_ID, config.getAppId());
 
-		Assert.hasText(accessToken, "'accessToken' is empty, please check the configure");
+		hasText(accessToken, "'accessToken' is empty, please check the configure");
 		parameters.put(DEFAULT_PARAM_ACCESS_TOKEN, accessToken);
 
-		Assert.hasText(openId, "'openId' is empty, please check the configure");
+		hasText(openId, "'openId' is empty, please check the configure");
 		parameters.put(DEFAULT_PARAM_OPEN_ID, openId);
 
 		// Post process
-		this.postGetUserInfoUrl(parameters);
+		postGetUserInfoUrl(parameters);
 
-		String url = this.parametersToUrl(getUserInfoUriEndpoint(), parameters);
-		if (log.isInfoEnabled()) {
-			log.info("Get userInfo url: '{}'", url);
-		}
+		String url = parametersToUrl(getUserInfoUriEndpoint(), parameters);
+		log.info("Get userInfo url: '{}'", url);
 
 		// Send request
-		ResponseEntity<String> resp = this.restTemplate.getForEntity(url.toString(), String.class);
-		if (resp != null && resp.getStatusCode() == HttpStatus.OK) {
+		ResponseEntity<String> resp = restTemplate.getForEntity(url.toString(), String.class);
+		if (nonNull(resp) && resp.getStatusCode() == HttpStatus.OK) {
 			String body = resp.getBody();
-			Assert.hasText(body, "Response user info is empty");
+			hasText(body, "Response user info is empty");
 			body = new String(body.getBytes(Charsets.ISO_8859_1), Charsets.UTF_8);
-			if (log.isInfoEnabled()) {
-				log.info("Response userInfo: {}", body);
-			}
-			return ((Oauth2UserProfile) this.newResponseInstance(3)).build(body);
+			log.info("Response userInfo: {}", body);
+
+			return ((Oauth2UserProfile) newResponseInstance(3)).build(body);
 		}
-		return null;
+
+		throw new SnsApiBindingException(format("Failed to receiving OAuth2 userinfo of - %s", resp));
 	}
 
 	//
@@ -276,8 +275,8 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 	//
 
 	private String parametersToUrl(String baseUri, Map<String, String> parameters) {
-		Assert.notNull(baseUri, "'baseUri' is empty, please check the configure");
-		Assert.notEmpty(parameters, "'parameters' is empty, please check the configure");
+		notNull(baseUri, "'baseUri' is empty, please check the configure");
+		notEmpty(parameters, "'parameters' is empty, please check the configure");
 
 		/*
 		 * https://open.weixin.qq.com/connect/qrconnect?appid=APPID&redirect_uri
@@ -297,7 +296,7 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 	@SuppressWarnings("unchecked")
 	private <E> E newResponseInstance(int index) {
 		try {
-			ResolvableType resolveType = ResolvableType.forClass(this.getClass());
+			ResolvableType resolveType = ResolvableType.forClass(getClass());
 			return (E) resolveType.getSuperType().getGeneric(index).resolve().newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);

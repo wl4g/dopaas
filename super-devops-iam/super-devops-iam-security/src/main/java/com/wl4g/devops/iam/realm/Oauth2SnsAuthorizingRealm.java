@@ -25,7 +25,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.iam.authc.EmptyOauth2AuthorizationInfo;
+import com.wl4g.devops.iam.authc.EmptyOauth2AuthenicationInfo;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationInfo;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
@@ -85,7 +85,7 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 			PrincipalCollection principals = createPermitPrincipalCollection(info);
 			return new Oauth2SnsAuthenticationInfo(info, principals, getName());
 		}
-		return EmptyOauth2AuthorizationInfo.EMPTY;
+		return EmptyOauth2AuthenicationInfo.EMPTY;
 	}
 
 	/**
