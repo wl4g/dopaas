@@ -30,7 +30,7 @@ import com.wl4g.devops.tool.common.lang.Assert2;
  * @version v1.0 2019年1月20日
  * @since
  */
-public class Pbkdf2Encrypting {
+public class Pbkdf2Utils {
 
 	/**
 	 * Calculate pbkdf2 value.
@@ -57,7 +57,7 @@ public class Pbkdf2Encrypting {
 
 		byte[] _password = password.getBytes();
 		byte[] _salt = salt.getBytes();
-		byte[] key = Pbkdf2Encrypting.deriveKey(_password, _salt, iterationCount, dkLen);
+		byte[] key = Pbkdf2Utils.deriveKey(_password, _salt, iterationCount, dkLen);
 		return new String(key);
 	}
 

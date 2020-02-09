@@ -19,8 +19,8 @@ import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.config.properties.MatcherProperties;
-import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
-import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
+import com.wl4g.devops.iam.crypto.CryptService;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +73,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * RSA cryptoGrapic service.
 	 */
 	@Autowired
-	protected RSACryptographicService rsaCryptoService;
+	protected CryptService cryptService;
 
 	/**
 	 * Matching attempts accumulator
@@ -105,7 +105,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		Assert.state(Objects.nonNull(wrap), "Failed to apply captcha.");
 
 		// Get RSA key.(Used to encrypt sliding X position)
-		RSAKeySpecWrapper keySpec = rsaCryptoService.borrow();
+		KeyPairSpec keySpec = cryptService.borrow();
 		String applyToken = "capt" + randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
 		bind(applyToken, keySpec, DEFAULT_APPLY_TOKEN_EXPIREMS);
 		if (log.isDebugEnabled()) {
@@ -154,11 +154,11 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 *
 	 * @param applyToken
 	 * @param codeWrap
-	 * @param keySpec
+	 * @param keyspec
 	 * @return
 	 * @throws IOException
 	 */
-	protected abstract Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec)
+	protected abstract Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, KeyPairSpec keyspec)
 			throws IOException;
 
 	@Override

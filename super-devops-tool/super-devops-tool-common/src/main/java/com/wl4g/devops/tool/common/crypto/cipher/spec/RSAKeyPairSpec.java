@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.crypto.keypair;
+package com.wl4g.devops.tool.common.crypto.cipher.spec;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.security.KeyFactory;
@@ -25,10 +24,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.shiro.codec.Hex;
-import org.springframework.util.Assert;
+import org.apache.commons.codec.binary.Hex;
 
-import com.wl4g.devops.iam.crypto.KeySpecWrapper;
+import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
  * Packaging classes of asymmetric algorithmic key pairs
@@ -37,7 +35,7 @@ import com.wl4g.devops.iam.crypto.KeySpecWrapper;
  * @version v1.0 2019年1月22日
  * @since
  */
-final public class RSAKeySpecWrapper extends KeySpecWrapper implements Serializable {
+final public class RSAKeyPairSpec extends KeyPairSpec {
 	final private static long serialVersionUID = -6748188131949785684L;
 	final transient private static Map<String, KeyFactory> keyFactoryCache = new ConcurrentHashMap<>();
 
@@ -53,20 +51,20 @@ final public class RSAKeySpecWrapper extends KeySpecWrapper implements Serializa
 	private transient String keyBase64String;
 	private transient String pubKeyBase64String;
 
-	public RSAKeySpecWrapper(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
-		Assert.notNull(algorithm, "'algorithm' must not be null");
-		Assert.notNull(pubKeySpec, "'publicKeySpec' must not be null");
-		Assert.notNull(keySpec, "'privateKeySpec' must not be null");
+	public RSAKeyPairSpec(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+		Assert2.notNull(algorithm, "'algorithm' must not be null");
+		Assert2.notNull(pubKeySpec, "'publicKeySpec' must not be null");
+		Assert2.notNull(keySpec, "'privateKeySpec' must not be null");
 		this.algorithm = algorithm;
 		this.pubKeySpec = pubKeySpec;
 		this.keySpec = keySpec;
 	}
 
-	public RSAKeySpecWrapper(String keySpecId, String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+	public RSAKeyPairSpec(String keySpecId, String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
 		super(keySpecId);
-		Assert.notNull(algorithm, "'algorithm' must not be null");
-		Assert.notNull(pubKeySpec, "'publicKeySpec' must not be null");
-		Assert.notNull(keySpec, "'privateKeySpec' must not be null");
+		Assert2.notNull(algorithm, "'algorithm' must not be null");
+		Assert2.notNull(pubKeySpec, "'publicKeySpec' must not be null");
+		Assert2.notNull(keySpec, "'privateKeySpec' must not be null");
 		this.algorithm = algorithm;
 		this.pubKeySpec = pubKeySpec;
 		this.keySpec = keySpec;
@@ -76,18 +74,21 @@ final public class RSAKeySpecWrapper extends KeySpecWrapper implements Serializa
 		return algorithm;
 	}
 
+	@Override
 	public KeySpec getKeySpec() {
 		return keySpec;
 	}
 
+	@Override
 	public KeySpec getPubKeySpec() {
 		return pubKeySpec;
 	}
 
+	@Override
 	public String getHexString() {
 		if (isBlank(keyHexString)) {
 			try {
-				keyHexString = Hex.encodeToString(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
+				keyHexString = Hex.encodeHexString(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
@@ -95,10 +96,11 @@ final public class RSAKeySpecWrapper extends KeySpecWrapper implements Serializa
 		return keyHexString;
 	}
 
+	@Override
 	public String getPubHexString() {
 		if (isBlank(pubKeyHexString)) {
 			try {
-				pubKeyHexString = Hex.encodeToString(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
+				pubKeyHexString = Hex.encodeHexString(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
@@ -106,6 +108,7 @@ final public class RSAKeySpecWrapper extends KeySpecWrapper implements Serializa
 		return pubKeyHexString;
 	}
 
+	@Override
 	public String getBase64String() {
 		if (isBlank(keyBase64String)) {
 			try {
@@ -117,6 +120,7 @@ final public class RSAKeySpecWrapper extends KeySpecWrapper implements Serializa
 		return keyBase64String;
 	}
 
+	@Override
 	public String getPubBase64String() {
 		if (isBlank(pubKeyBase64String)) {
 			try {

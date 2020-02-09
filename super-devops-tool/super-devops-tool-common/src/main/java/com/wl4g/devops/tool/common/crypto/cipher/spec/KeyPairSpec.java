@@ -29,7 +29,7 @@ import com.wl4g.devops.tool.common.lang.Assert2;
  * @version v1.0 2019-08-28
  * @since
  */
-public abstract class KeySpecEntity implements Serializable {
+public abstract class KeyPairSpec implements Serializable {
 	private static final long serialVersionUID = -4466016486932734335L;
 
 	/**
@@ -37,11 +37,11 @@ public abstract class KeySpecEntity implements Serializable {
 	 */
 	private String keySpecId;
 
-	public KeySpecEntity() {
+	public KeyPairSpec() {
 		setKeySpecId("keySpec" + UUID.randomUUID().toString().replaceAll("-", "").substring(12));
 	}
 
-	public KeySpecEntity(String keySpecId) {
+	public KeyPairSpec(String keySpecId) {
 		Assert2.hasText(keySpecId, "KeySpecId must not be empty.");
 		this.keySpecId = keySpecId;
 	}
@@ -57,5 +57,13 @@ public abstract class KeySpecEntity implements Serializable {
 	public abstract KeySpec getKeySpec();
 
 	public abstract KeySpec getPubKeySpec();
+
+	public abstract String getHexString();
+
+	public abstract String getPubHexString();
+
+	public abstract String getBase64String();
+
+	public abstract String getPubBase64String();
 
 }

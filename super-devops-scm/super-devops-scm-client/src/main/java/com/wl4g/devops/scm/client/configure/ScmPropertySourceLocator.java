@@ -24,7 +24,7 @@ import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.InstanceHolder;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.tool.common.crypto.AesEncryptor;
+import com.wl4g.devops.tool.common.crypto.AesUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,7 +162,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 				String cipher = String.valueOf(value);
 				if (cipher.startsWith(CIPHER_PREFIX)) {
 					try {
-						String plain = new AesEncryptor().decrypt(cipher.substring(CIPHER_PREFIX.length()));
+						String plain = new AesUtils().decrypt(cipher.substring(CIPHER_PREFIX.length()));
 						ps.getSource().put(key, plain);
 
 						if (log.isDebugEnabled()) {

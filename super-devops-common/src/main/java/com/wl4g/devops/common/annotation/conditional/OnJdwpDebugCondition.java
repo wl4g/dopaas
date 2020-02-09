@@ -39,7 +39,7 @@ import static java.util.Objects.nonNull;
  * @since
  */
 @Order(Ordered.HIGHEST_PRECEDENCE + 50)
-class OnJdwpDebugCondition implements Condition {
+public class OnJdwpDebugCondition implements Condition {
 
 	@Override
 	public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {

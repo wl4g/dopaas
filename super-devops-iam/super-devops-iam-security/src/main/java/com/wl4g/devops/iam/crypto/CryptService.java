@@ -15,40 +15,48 @@
  */
 package com.wl4g.devops.iam.crypto;
 
-import java.util.UUID;
-
-import org.springframework.util.Assert;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
 
 /**
- * KeySpec wrapper, include e.g.: RSA key pair algorithm and AES single key
- * algorithm key packaging.
+ * Cryptographic Services.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2019-08-28
+ * @version v1.0 2019-08-30
  * @since
  */
-public abstract class KeySpecWrapper {
+public interface CryptService {
 
 	/**
-	 * KeySpec unique identification.
+	 * Encryption with hex plain.
+	 *
+	 * @param keySpec
+	 * @param hexPlain
+	 * @return
 	 */
-	private String keySpecId;
+	String encryptWithHex(KeyPairSpec keySpec, String hexPlain);
 
-	public KeySpecWrapper() {
-		setKeySpecId("keySpec" + UUID.randomUUID().toString().replaceAll("-", "").substring(12));
-	}
+	/**
+	 * Decryption with hex cipher.
+	 *
+	 * @param keySpec
+	 * @param hexCipher
+	 * @return
+	 */
+	String decryptWithHex(KeyPairSpec keySpec, String hexCipher);
 
-	public KeySpecWrapper(String keySpecId) {
-		Assert.hasText(keySpecId, "KeySpecId must not be empty.");
-		this.keySpecId = keySpecId;
-	}
+	/**
+	 * Apply keySpec resource.
+	 *
+	 * @return
+	 */
+	KeyPairSpec borrow();
 
-	public String getKeySpecId() {
-		return keySpecId;
-	}
-
-	public void setKeySpecId(String keySpecId) {
-		this.keySpecId = keySpecId;
-	}
+	/**
+	 * Apply keySpec resource.
+	 *
+	 * @param index
+	 * @return
+	 */
+	KeyPairSpec borrow(int index);
 
 }

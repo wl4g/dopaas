@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.apache.shiro.util.Assert;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +39,7 @@ import com.wl4g.devops.tool.common.lang.Exceptions;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VALIDATE;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
@@ -94,15 +94,13 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	@PostMapping(URI_S_LOGOUT)
 	@ResponseBody
 	public RespBase<LogoutModel> logout(HttpServletRequest request, HttpServletResponse response) {
-		if (log.isInfoEnabled()) {
-			log.info("Sessions logout <= {}", getFullRequestURL(request));
-		}
+		log.info("Sessions logout <= {}", getFullRequestURL(request));
 
 		RespBase<LogoutModel> resp = new RespBase<>();
 		try {
 			// Source application logout processing
 			String fromAppName = getCleanParam(request, config.getParam().getApplication());
-			Assert.hasText(fromAppName, String.format("'%s' must not be empty", config.getParam().getApplication()));
+			hasTextOf(fromAppName, config.getParam().getApplication());
 
 			// Using coercion ignores remote exit failures
 			boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
