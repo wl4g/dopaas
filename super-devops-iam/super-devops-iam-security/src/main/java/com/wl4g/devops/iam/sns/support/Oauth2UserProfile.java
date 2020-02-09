@@ -15,9 +15,7 @@
  */
 package com.wl4g.devops.iam.sns.support;
 
-import java.io.Serializable;
-
-public interface Oauth2UserProfile extends Serializable {
+public interface Oauth2UserProfile extends AssertionOAuth2Result {
 
 	<U extends Oauth2UserProfile> U build(String message);
 

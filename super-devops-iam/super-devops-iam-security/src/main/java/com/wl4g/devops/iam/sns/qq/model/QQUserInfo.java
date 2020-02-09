@@ -121,4 +121,11 @@ public class QQUserInfo implements Oauth2UserProfile {
 		return JacksonUtils.parseJSON(message, QQUserInfo.class);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public QQUserInfo validate() {
+		// TODO
+		return this;
+	}
+
 }

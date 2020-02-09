@@ -15,7 +15,10 @@
  */
 package com.wl4g.devops.iam.sns.wechat.model;
 
+import static java.lang.String.format;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wl4g.devops.common.exception.iam.SnsApiBindingException;
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 
 public class WxBasedOpenId extends WxBasedResponse implements Oauth2OpenId {
@@ -66,6 +69,15 @@ public class WxBasedOpenId extends WxBasedResponse implements Oauth2OpenId {
 	@Override
 	public <O extends Oauth2OpenId> O build(String message) {
 		throw new UnsupportedOperationException();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public WxBasedOpenId validate() {
+		if (getErrcode() != DEFAULT_WX_OK) {
+			throw new SnsApiBindingException(format("[Assertion failed] - WeChat openid of %s", toString()));
+		}
+		return this;
 	}
 
 }

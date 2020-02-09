@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.sns;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -27,7 +28,6 @@ import java.util.UUID;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +67,7 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 	final public static String DEFAULT_PARAM_GRANT_TYPE = "grant_type";
 	final public static String DEFAULT_PARAM_RESPONSE_TYPE = "response_type";
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	final protected C config;
 	final protected RestTemplate restTemplate;
@@ -162,13 +162,13 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 		log.info("Get accessToken url: '{}'", url);
 
 		// Send request
-		String accessTokenText = restTemplate.getForObject(url.toString(), String.class);
-		if (isBlank(accessTokenText)) {
+		String accessTokenJson = restTemplate.getForObject(url.toString(), String.class);
+		if (isBlank(accessTokenJson)) {
 			throw new SnsApiBindingException("OAuth2 response accessToken empty");
 		}
 
-		log.info("Response accessToken: {}", accessTokenText);
-		return ((Oauth2AccessToken) newResponseInstance(1)).build(accessTokenText);
+		log.info("Response accessToken: {}", accessTokenJson);
+		return ((Oauth2AccessToken) newResponseMessage(1)).build(accessTokenJson).validate();
 	}
 
 	@Override
@@ -186,13 +186,13 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 		log.info("Get openId url: '{}'", url);
 
 		// Send request
-		String openIdText = restTemplate.getForObject(url.toString(), String.class);
-		if (isBlank(openIdText)) {
+		String openIdJson = restTemplate.getForObject(url.toString(), String.class);
+		if (isBlank(openIdJson)) {
 			throw new SnsApiBindingException("OAuth2 response openId empty");
 		}
 
-		log.info("Response openId: {}", openIdText);
-		return ((Oauth2OpenId) newResponseInstance(2)).build(openIdText);
+		log.info("Response openId: {}", openIdJson);
+		return ((Oauth2OpenId) newResponseMessage(2)).build(openIdJson).validate();
 	}
 
 	@Override
@@ -218,11 +218,11 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 		ResponseEntity<String> resp = restTemplate.getForEntity(url.toString(), String.class);
 		if (nonNull(resp) && resp.getStatusCode() == HttpStatus.OK) {
 			String body = resp.getBody();
-			hasText(body, "Response user info is empty");
+			hasText(body, "OAuth2 response userinfo empty");
 			body = new String(body.getBytes(Charsets.ISO_8859_1), Charsets.UTF_8);
-			log.info("Response userInfo: {}", body);
+			log.info("OAuth2 response userInfo: {}", body);
 
-			return ((Oauth2UserProfile) newResponseInstance(3)).build(body);
+			return ((Oauth2UserProfile) newResponseMessage(3)).build(body).validate();
 		}
 
 		throw new SnsApiBindingException(format("Failed to receiving OAuth2 userinfo of - %s", resp));
@@ -294,7 +294,7 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 	}
 
 	@SuppressWarnings("unchecked")
-	private <E> E newResponseInstance(int index) {
+	private <E> E newResponseMessage(int index) {
 		try {
 			ResolvableType resolveType = ResolvableType.forClass(getClass());
 			return (E) resolveType.getSuperType().getGeneric(index).resolve().newInstance();
