@@ -15,12 +15,23 @@
  */
 package com.wl4g.devops.iam.sns.support;
 
-public interface Oauth2OpenId extends AssertionOAuth2Result {
+import java.io.Serializable;
 
-	String openId();
+/**
+ * {@link AssertionOAuth2Result}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年2月9日 v1.0.0
+ * @see
+ */
+public interface AssertionOAuth2Result extends Serializable {
 
-	String unionId();
-
-	<O extends Oauth2OpenId> O build(String message);
+	/**
+	 * Used to assert the correctness of oauth2 authorization information.
+	 * 
+	 * @param <R>
+	 * @return
+	 */
+	<R extends AssertionOAuth2Result> R validate();
 
 }

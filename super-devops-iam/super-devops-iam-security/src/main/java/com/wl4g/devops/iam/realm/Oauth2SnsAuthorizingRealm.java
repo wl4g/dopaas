@@ -66,7 +66,6 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 	 */
 	@Override
 	protected IamAuthenticationInfo doAuthenticationInfo(Oauth2SnsAuthenticationToken token) throws AuthenticationException {
-		// Check provider
 		ProviderSupport.checkSupport(token.getSocial().getProvider());
 
 		/**
@@ -76,9 +75,7 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 		Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
 				token.getSocial().getUnionId());
 		IamPrincipalInfo info = configurer.getIamAccount(parameter);
-		if (log.isInfoEnabled()) {
-			log.info("The accountInfo obtained through {} -> {}", toJSONString(parameter), toJSONString(info));
-		}
+		log.info("Get authenticate accountInfo: {}, by sns parameter: {}", toJSONString(info), toJSONString(parameter));
 
 		if (nonNull(info) && !isBlank(info.getPrincipal())) {
 			// Authenticate attributes.(roles/permissions/rememberMe)
