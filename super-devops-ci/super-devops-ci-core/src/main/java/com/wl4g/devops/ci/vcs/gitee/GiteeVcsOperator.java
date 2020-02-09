@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.vcs.gitee;
 
 import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
 import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.common.annotation.Reserved;
+import com.wl4g.devops.common.annotation.Reserve;
 import com.wl4g.devops.common.bean.ci.Vcs;
 
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
  * @version v1.0 2019年11月5日
  * @since
  */
-@Reserved
+@Reserve
 public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
