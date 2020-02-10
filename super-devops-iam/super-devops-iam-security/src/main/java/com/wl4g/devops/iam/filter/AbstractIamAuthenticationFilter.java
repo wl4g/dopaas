@@ -29,6 +29,7 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bindKVParameters;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.extParameterValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
@@ -42,12 +43,12 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
+import static java.lang.Boolean.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
-import static org.apache.shiro.web.util.WebUtils.isTrue;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static org.springframework.util.Assert.notNull;
@@ -55,9 +56,11 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.common.exception.iam.IllegalRequestException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import static com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo.*;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
@@ -185,8 +188,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		// Remote client host.
 		String remoteHost = getHttpRemoteAddr(toHttp(request));
-		// Authenticate success redirectInfo.
+
+		// After success redirectInfo.
 		RedirectInfo redirect = getRedirectInfo(request, false);
+		// Check redirect appName
+		if (isValidity(redirect) && isNull(configurer.getApplicationInfo(redirect.getFromAppName()))) {
+			throw new IllegalRequestException(format("Invalid redirect application of '%s'", redirect.getFromAppName()));
+		}
 
 		/**
 		 * Remember request protocol parameters.</br>
@@ -215,19 +223,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			 */
 			// bind(KEY_AUTHC_TOKEN, tk);
 
-			// Get redirection.
-			RedirectInfo redirect = getRedirectInfo(request, true);
-			// Unvalidity using to default?
-			if (!RedirectInfo.isValidity(redirect)) {
-				redirect.setFromAppName(config.getSuccessService());
-				redirect.setRedirectUrl(getSuccessUrl());
-			}
-
 			// Determine redirectUrl(authenticator URL).
-			String successRedirectUrl = determineSuccessUrl(tk, subject, request, response, redirect.getRedirectUrl());
-			redirect.setRedirectUrl(correctAuthenticaitorURI(successRedirectUrl));
-			hasText(redirect.getFromAppName(), "Successful redirect application can't empty.");
-			hasText(redirect.getRedirectUrl(), "Successful redirect URL can't empty.");
+			RedirectInfo redirect = determineSuccessRedirect(tk, subject, request, response);
 
 			// Granting ticket.
 			String grantTicket = authHandler.loggedin(redirect.getFromAppName(), subject).getGrantTicket();
@@ -301,33 +298,32 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			 */
 			bind(KEY_ERR_SESSION_SAVED, errmsg);
 		}
-		// Failure redirect URI
-		String failRedirectUrl = determineFailureUrl(tk, ae, request, response);
+		// Failure redirect
+		RedirectInfo redirect = determineFailureRedirect(tk, ae, request, response);
 
 		// Post handling of authentication failure.
 		coprocessor.postAuthenticatingFailure(tk, ae, request, response);
 
 		// Obtain bound parameters.
 		Map params = new HashMap();
-		RedirectInfo redirect = getRedirectInfo(request, false);
 		params.put(config.getParam().getApplication(), redirect.getFromAppName());
 		params.put(config.getParam().getRedirectUrl(), redirect.getRedirectUrl());
 
 		// Response JSON message.
 		if (isJSONResponse(request)) {
 			try {
-				String failed = makeFailedResponse(failRedirectUrl, request, params, errmsg);
+				String failed = makeFailedResponse(redirect.getRedirectUrl(), request, params, errmsg);
 				log.info("Resp unauth: {}", failed);
 				writeJson(toHttp(response), failed);
 			} catch (IOException e) {
 				log.error("Error resp unauth", e);
 			}
 		}
-		// Redirects the login page directly.
+		// Redirect the login page directly.
 		else {
 			try {
-				log.info("Redirect to login: {}", failRedirectUrl);
-				issueRedirect(request, response, failRedirectUrl, params, true);
+				log.info("Redirect to login: {}", redirect);
+				issueRedirect(request, response, redirect.getRedirectUrl(), params, true);
 			} catch (IOException e1) {
 				log.error("Redirect to login failed.", e1);
 			}
@@ -369,9 +365,15 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		} else {
 			String fromAppName = getCleanParam(request, config.getParam().getApplication());
 			String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl());
-			boolean fallbackRedirect = isTrue(request, config.getParam().getFallbackRedirect());
-			redirect = new RedirectInfo(fromAppName, redirectUrl, fallbackRedirect);
-			if (!RedirectInfo.isValidity(redirect)) {
+			String fallbackRedirect = getCleanParam(request, config.getParam().getFallbackRedirect());
+			if (isBlank(fallbackRedirect)) {
+				redirect = new RedirectInfo(fromAppName, redirectUrl);
+			} else {
+				redirect = new RedirectInfo(fromAppName, redirectUrl, parseBoolean(fallbackRedirect));
+			}
+
+			// Fallback get redirect
+			if (!isValidity(redirect)) {
 				redirect = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
 			}
 		}
@@ -550,15 +552,26 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @param subject
 	 * @param request
 	 * @param response
-	 * @param successUrl
 	 * @return
 	 */
-	private String determineSuccessUrl(IamAuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response, String successUrl) {
-		// Call determine successUrl.
-		successUrl = configurer.determineLoginSuccessUrl(successUrl, token, subject, request, response);
-		hasText(successUrl, "Success redirectUrl is empty, please check the configure");
-		return URI.create(successUrl).toString(); // Check symbol
+	private RedirectInfo determineSuccessRedirect(IamAuthenticationToken token, Subject subject, ServletRequest request,
+			ServletResponse response) {
+
+		// before get bind redirect.
+		RedirectInfo redirect = getRedirectInfo(request, true);
+		// Unvalidity using to default?
+		if (!isValidity(redirect)) {
+			redirect.setFromAppName(config.getSuccessService());
+			redirect.setRedirectUrl(getSuccessUrl());
+		}
+
+		// after expand determine successUrl.
+		String determinedRedirectUrl = configurer.determineLoginSuccessUrl(redirect.getRedirectUrl(), token, subject, request,
+				response);
+		redirect.setRedirectUrl(correctAuthenticaitorURI(URI.create(determinedRedirectUrl).toString())); // Check-symbol
+		hasText(redirect.getRedirectUrl(), "Success redirectUrl empty, please check the configure");
+		hasText(redirect.getFromAppName(), "Success application empty, please check the configure");
+		return redirect;
 	}
 
 	/**
@@ -571,21 +584,25 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @param response
 	 * @return
 	 */
-	private String determineFailureUrl(IamAuthenticationToken token, AuthenticationException ae, ServletRequest request,
-			ServletResponse response) {
-		// Callback fail redirect URI
-		String failRedirectUrl = getRedirectInfo(request, true).getRedirectUrl();
+	private RedirectInfo determineFailureRedirect(IamAuthenticationToken token, AuthenticationException ae,
+			ServletRequest request, ServletResponse response) {
+
+		// before get bind redirect.
+		RedirectInfo redirect = getRedirectInfo(request, false);
 
 		// Fix Infinite redirection,AuthenticatorAuthenticationFilter may
 		// redirect to loginUrl,if failRedirectUrl==getLoginUrl,it will happen
 		// infinite redirection.
-		if (this instanceof AuthenticatorAuthenticationFilter || isBlank(failRedirectUrl)) {
-			failRedirectUrl = getLoginUrl();
+		if (this instanceof AuthenticatorAuthenticationFilter || isBlank(redirect.getRedirectUrl())) {
+			redirect.setRedirectUrl(getLoginUrl());
 		}
 
-		String loginUrl = configurer.determineLoginFailureUrl(failRedirectUrl, token, ae, request, response);
-		hasText(loginUrl, "'loginUrl' is empty, please check the configure");
-		return cleanURI(loginUrl); // symbol check
+		// after expand determine failure loginUrl.
+		String determinedLoginUrl = configurer.determineLoginFailureUrl(redirect.getRedirectUrl(), token, ae, request, response);
+		redirect.setRedirectUrl(cleanURI(determinedLoginUrl)); // Check-symbol
+		// hasTextOf(redirect.getFromAppName(), "application"); //Probably-empty
+		hasText(redirect.getRedirectUrl(), "Failure redirectUrl empty, please check the configure");
+		return redirect;
 	}
 
 	/**

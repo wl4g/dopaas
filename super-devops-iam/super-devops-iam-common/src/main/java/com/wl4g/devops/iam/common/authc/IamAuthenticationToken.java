@@ -78,8 +78,7 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 		private boolean fallbackRedirect = true;
 
 		public RedirectInfo(String fromAppName, String redirectUrl) {
-			this.fromAppName = fromAppName;
-			this.redirectUrl = redirectUrl;
+			this(fromAppName, redirectUrl, true);
 		}
 
 		public RedirectInfo(String fromAppName, String redirectUrl, boolean fallbackRedirect) {
