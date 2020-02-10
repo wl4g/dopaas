@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.sns.handler;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Objects.nonNull;
 
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanMap;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
+import com.wl4g.devops.common.exception.iam.SnsApiBindingException;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
@@ -47,6 +49,7 @@ import static com.wl4g.devops.iam.sns.web.AbstractSnsController.PARAM_SNS_PRIVID
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
@@ -258,19 +261,25 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	protected String doHandleOAuth2Callback(String provider, String code, OAuth2ApiBinding api, Map<String, String> connectParams,
 			HttpServletRequest request) {
 		// Access token
-		Oauth2AccessToken ast = api.getAccessToken(code);
+		Oauth2AccessToken at = api.getAccessToken(code);
 		// User openId
-		Oauth2OpenId openId = api.getUserOpenId(ast);
+		Oauth2OpenId openId = api.getUserOpenId(at);
 		// User info
-		Oauth2UserProfile profile = api.getUserInfo(ast.accessToken(), openId.openId());
+		Map<String, Object> userProfile = emptyMap();
+		try {
+			Oauth2UserProfile profile = api.getUserInfo(at.accessToken(), openId.openId());
+			userProfile = BeanMap.create(profile);
+		} catch (SnsApiBindingException e) { // Ignore?
+			log.warn("Could't get OAuth2 userInfo, provider: %s, accessToken: %s, openId: %s, caused by: %s", provider,
+					at.accessToken(), openId.openId(), getRootCausesString(e));
+		}
 
 		/*
 		 * Caching social callback user openId information.(Applicable only to
 		 * which=login/client_auth)<br/>
 		 * See:xx.realm.Oauth2SnsAuthorizingRealm#doAuthenticationInfo()
 		 */
-		SocialAuthorizeInfo authInfo = new SocialAuthorizeInfo(provider, openId.openId(), openId.unionId(),
-				BeanMap.create(profile));
+		SocialAuthorizeInfo authInfo = new SocialAuthorizeInfo(provider, openId.openId(), openId.unionId(), userProfile);
 		String callbackId = generateCallbackId();
 		cacheManager.getEnhancedCache(CACHE_SNSAUTH).put(new EnhancedKey(KEY_SNS_CALLBACK_PARAMS + callbackId, 30), authInfo);
 		return callbackId;
