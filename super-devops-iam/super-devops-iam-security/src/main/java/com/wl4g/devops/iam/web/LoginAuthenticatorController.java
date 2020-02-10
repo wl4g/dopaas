@@ -46,6 +46,7 @@ import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -164,7 +165,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 
 			// SMS apply owner(mobile number).
 			Long mobileNum = null;
-			if (code != null && code.getOwner() != null && isNumeric(code.getOwner())) {
+			if (nonNull(code) && nonNull(code.getOwner()) && isNumeric(code.getOwner())) {
 				mobileNum = Long.parseLong(code.getOwner());
 			}
 
@@ -173,8 +174,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			if (Objects.nonNull(code)) {
 				remainDelay = code.getRemainDelay(config.getMatcher().getFailFastSmsDelay());
 			}
-			resp.forMap().put(KEY_SMS_CHECK, new SmsCheckModel(mobileNum != null, mobileNum, remainDelay));
-
+			resp.forMap().put(KEY_SMS_CHECK, new SmsCheckModel(nonNull(mobileNum), mobileNum, remainDelay));
 		} catch (Exception e) {
 			if (e instanceof IamException) {
 				resp.setCode(RetCode.BIZ_ERR);

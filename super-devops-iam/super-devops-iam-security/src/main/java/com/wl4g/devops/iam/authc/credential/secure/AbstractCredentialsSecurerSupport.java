@@ -76,7 +76,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * Cryptic service.
 	 */
 	@Autowired
-	protected CryptService cryptoService;
+	protected CryptService cryptService;
 
 	/**
 	 * Delegate message source.
@@ -149,7 +149,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		}
 		log.debug("Apply secretkey of indx: {}", index);
 
-		KeyPairSpec keyPair = cryptoService.borrow(index);
+		KeyPairSpec keyPair = cryptService.borrow(index);
 		// Save the applied keyPair index.
 		bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
 
@@ -230,7 +230,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		}
 
 		// Mysterious DECRYPT them.
-		final String plainCredentials = cryptoService.decryptWithHex(keySpec, token.getCredentials());
+		final String plainCredentials = cryptService.decryptWithHex(keySpec, token.getCredentials());
 		return new CredentialsToken(token.getPrincipal(), plainCredentials, true);
 	}
 
@@ -244,7 +244,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		// Choose the best one from the candidate key pair
 		Integer index = getBindValue(KEY_SECRET_INDEX, true);
 		if (index != null) {
-			return cryptoService.borrow(index);
+			return cryptService.borrow(index);
 		}
 
 		log.warn("Failed to decrypt, secretKey expired. seesionId:[{}], principal:[{}]", getSessionId(), principal);
