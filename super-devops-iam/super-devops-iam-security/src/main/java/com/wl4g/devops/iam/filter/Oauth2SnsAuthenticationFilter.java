@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import static org.apache.shiro.web.util.WebUtils.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.ResolvableType;
-import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
@@ -34,6 +33,7 @@ import com.wl4g.devops.iam.sns.handler.AbstractSnsHandler;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SNSAUTH;
 import static com.wl4g.devops.iam.sns.web.AbstractSnsController.PARAM_SNS_CALLBACK_ID;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.state;
 
 /**
  * SNS oauth2 authentication abstract filter
@@ -55,7 +55,7 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 	public void afterPropertiesSet() throws Exception {
 		try {
 			initialize();
-			Assert.state(authenticationTokenConstructor != null, "'authenticationTokenConstructor' is null");
+			state(authenticationTokenConstructor != null, "'authenticationTokenConstructor' is null");
 		} catch (NoSuchMethodException | SecurityException e) {
 			throw new IllegalStateException(e);
 		}

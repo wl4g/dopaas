@@ -19,6 +19,7 @@ import static com.wl4g.devops.common.web.RespBase.RetCode.newCode;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.convertBean;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static java.lang.String.format;
 import static java.lang.reflect.Modifier.isFinal;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Collections.emptyMap;
@@ -749,7 +750,7 @@ public class RespBase<D> implements Serializable {
 			if (isBlank(errmsg)) {
 				return errmsg;
 			}
-			String prefixString = String.format("[%s-%s], ", CodePrefixString, retCode.getErrcode());
+			String prefixString = format("[%s-%s], ", CodePrefixString, retCode.getErrcode());
 			if (contains(errmsg, CODE_PREFIX_SEPAR)) {
 				int index = errmsg.indexOf(CODE_PREFIX_SEPAR);
 				if (errmsg.length() > index) {
