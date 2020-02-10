@@ -13,6 +13,7 @@
     <result column="permission" property="permission" jdbcType="VARCHAR" />
     <result column="page_location" property="pageLocation" jdbcType="VARCHAR" />
     <result column="route_path" property="routePath" jdbcType="VARCHAR" />
+    <result column="classify" property="classify" jdbcType="VARCHAR" />
     <result column="icon" property="icon" jdbcType="VARCHAR" />
     <result column="sort" property="sort" jdbcType="INTEGER" />
     <result column="create_by" property="createBy" jdbcType="INTEGER" />
@@ -23,11 +24,11 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, name, display_name, type, level, status, parent_id, parent_ids, permission,
-    page_location, route_path, icon, sort,create_by, create_date, update_by, update_date, del_flag
+    page_location, route_path,classify, icon, sort,create_by, create_date, update_by, update_date, del_flag
   </sql>
   <sql id="Base_Column_List_m" >
     m.id, m.name, m.display_name, m.type, m.level, m.status, m.parent_id, m.parent_ids, m.permission,
-    m.page_location,m.route_path, m.icon, m.sort,m.create_by, m.create_date, m.update_by, m.update_date, m.del_flag
+    m.page_location,m.route_path,m.classify, m.icon, m.sort,m.create_by, m.create_date, m.update_by, m.update_date, m.del_flag
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -79,13 +80,13 @@
     insert into sys_menu (id, name, display_name, 
       type, level, status,
       parent_id, parent_ids, permission, 
-      page_location, route_path, icon,sort, create_by,
+      page_location, route_path,classify, icon,sort, create_by,
       create_date, update_by, update_date, 
       del_flag)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
       #{type,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{status,jdbcType=INTEGER},
       #{parentId,jdbcType=INTEGER}, #{parentIds,jdbcType=VARCHAR}, #{permission,jdbcType=VARCHAR}, 
-      #{pageLocation,jdbcType=VARCHAR}, #{routePath,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR},#{sort,jdbcType=INTEGER},  #{createBy,jdbcType=INTEGER},
+      #{pageLocation,jdbcType=VARCHAR}, #{routePath,jdbcType=VARCHAR},#{classify,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR},#{sort,jdbcType=INTEGER},  #{createBy,jdbcType=INTEGER},
       #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
@@ -124,6 +125,9 @@
       </if>
       <if test="routePath != null" >
         route_path,
+      </if>
+      <if test="classify != null" >
+        classify,
       </if>
       <if test="icon != null" >
         icon,
@@ -181,6 +185,9 @@
       <if test="routePath != null" >
         #{routePath,jdbcType=VARCHAR},
       </if>
+      <if test="classify != null" >
+        #{classify,jdbcType=VARCHAR},
+      </if>
       <if test="icon != null" >
         #{icon,jdbcType=VARCHAR},
       </if>
@@ -237,6 +244,9 @@
       <if test="routePath != null" >
         route_path = #{routePath,jdbcType=VARCHAR},
       </if>
+      <if test="classify != null" >
+        classify = #{classify,jdbcType=VARCHAR},
+      </if>
       <if test="icon != null" >
         icon = #{icon,jdbcType=VARCHAR},
       </if>
@@ -273,6 +283,7 @@
       permission = #{permission,jdbcType=VARCHAR},
       page_location = #{pageLocation,jdbcType=VARCHAR},
       route_path = #{routePath,jdbcType=VARCHAR},
+      classify = #{classify,jdbcType=VARCHAR},
       icon = #{icon,jdbcType=VARCHAR},
       sort = #{sort,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=INTEGER},
