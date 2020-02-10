@@ -46,6 +46,8 @@ public class Menu extends BaseBean implements Serializable {
 
 	private String routePath;
 
+	private String classify;
+
 	private String icon;
 
 	private Integer sort;
@@ -164,6 +166,14 @@ public class Menu extends BaseBean implements Serializable {
 
 	public void setRoutePath(String routePath) {
 		this.routePath = routePath;
+	}
+
+	public String getClassify() {
+		return classify;
+	}
+
+	public void setClassify(String classify) {
+		this.classify = classify;
 	}
 
 	@Override
