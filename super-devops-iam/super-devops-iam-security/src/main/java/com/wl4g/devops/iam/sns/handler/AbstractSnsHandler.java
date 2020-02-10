@@ -281,7 +281,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 		 */
 		SocialAuthorizeInfo authInfo = new SocialAuthorizeInfo(provider, openId.openId(), openId.unionId(), userProfile);
 		String callbackId = generateCallbackId();
-		cacheManager.getEnhancedCache(CACHE_SNSAUTH).put(new EnhancedKey(KEY_SNS_CALLBACK_PARAMS + callbackId, 30), authInfo);
+		cacheManager.getEnhancedCache(CACHE_SNSAUTH).put(new EnhancedKey(getOAuth2CallbackKey(callbackId), 30), authInfo);
 		return callbackId;
 	}
 
@@ -371,6 +371,16 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	 */
 	private String generateCallbackId() {
 		return UUID.randomUUID().toString().replaceAll("-", "");
+	}
+
+	/**
+	 * Get OAuth2 callbackId key.
+	 * 
+	 * @param callbackId
+	 * @return
+	 */
+	public static String getOAuth2CallbackKey(String callbackId) {
+		return KEY_SNS_CALLBACK_PARAMS + callbackId;
 	}
 
 }

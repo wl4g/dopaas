@@ -34,6 +34,7 @@ import static com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.isTrue;
@@ -209,7 +210,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 		String fromAppName = tk.getRedirectInfo().getFromAppName();
 		if (!isBlank(fromAppName)) {
 			isTrue(!info.getPrincipals().isEmpty(),
-					String.format("Authentication info principals is empty, please check the configure. [%s]", info));
+					format("Authentication info principals is empty, please check the configure. [%s]", info));
 
 			// Note: for example, when using wechat scanning code (oauth2)
 			// to log in, token.getPrincipal() is empty,

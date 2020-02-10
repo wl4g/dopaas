@@ -40,6 +40,7 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -64,7 +65,6 @@ import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
-import com.wl4g.devops.tool.common.web.WebUtils2;
 import com.wl4g.devops.tool.common.web.WebUtils2.ResponseType;
 
 import java.io.IOException;
@@ -180,13 +180,12 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		 * number of submission login requests.
 		 */
 		if (!coprocessor.preAuthentication(this, request, response)) {
-			throw new AccessRejectedException(
-					String.format("Access rejected for remote IP:%s", WebUtils2.getHttpRemoteAddr(toHttp(request))));
+			throw new AccessRejectedException(format("Access rejected for remote IP:%s", getHttpRemoteAddr(toHttp(request))));
 		}
 
 		// Remote client host.
 		String remoteHost = getHttpRemoteAddr(toHttp(request));
-		// Redirection.
+		// Authenticate success redirectInfo.
 		RedirectInfo redirect = getRedirectInfo(request, false);
 
 		/**
@@ -194,7 +193,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		 * e.g. Android submit login will bring redirectUrl and application,
 		 * which will be used for successful login redirection.
 		 */
-		rememberProtocolParameters(redirect, request, response);
+		rememberRequestParameters(redirect, request, response);
 
 		// Create authentication token
 		return postCreateToken(remoteHost, redirect, toHttp(request), toHttp(response));
@@ -218,7 +217,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 			// Get redirection.
 			RedirectInfo redirect = getRedirectInfo(request, true);
-			if (!redirect.isValidity()) { // Unvalidity using to default?
+			// Unvalidity using to default?
+			if (!RedirectInfo.isValidity(redirect)) {
 				redirect.setFromAppName(config.getSuccessService());
 				redirect.setRedirectUrl(getSuccessUrl());
 			}
@@ -353,7 +353,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 	/**
 	 * Get redirect information bound from authentication request
-	 * {@link AuthenticatorAuthenticationFilter#rememberProtocolParameters(ServletRequest, ServletResponse)}
+	 * {@link AuthenticatorAuthenticationFilter#rememberRequestParameters(ServletRequest, ServletResponse)}
 	 * </br>
 	 * {@link AbstractIamAuthenticationFilter#createToken(ServletRequest, ServletResponse)}
 	 *
@@ -367,10 +367,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		if (useBindOnly) {
 			redirect = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
 		} else {
-			redirect = new RedirectInfo(getCleanParam(request, config.getParam().getApplication()),
-					getCleanParam(request, config.getParam().getRedirectUrl()),
-					isTrue(request, config.getParam().getFallbackRedirect()));
-			if (!redirect.isValidity()) {
+			String fromAppName = getCleanParam(request, config.getParam().getApplication());
+			String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl());
+			boolean fallbackRedirect = isTrue(request, config.getParam().getFallbackRedirect());
+			redirect = new RedirectInfo(fromAppName, redirectUrl, fallbackRedirect);
+			if (!RedirectInfo.isValidity(redirect)) {
 				redirect = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
 			}
 		}
@@ -401,10 +402,10 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @param request
 	 * @param response
 	 */
-	protected void rememberProtocolParameters(RedirectInfo redirect, ServletRequest request, ServletResponse response) {
+	private void rememberRequestParameters(RedirectInfo redirect, ServletRequest request, ServletResponse response) {
 		notNull(redirect, "Redirect info must not be null.");
 		// Safety encoding for URL fragment.
-		redirect.setRedirectUrl(safeEncodeHierarchyRedirectUrl(redirect.getRedirectUrl()));
+		redirect.setRedirectUrl(safeEncodeParameterRedirectUrl(redirect.getRedirectUrl()));
 
 		// Response type.
 		String respTypeKey = ResponseType.DEFAULT_RESPTYPE_NAME;
@@ -413,14 +414,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Overlay to save the latest parameters.
 		bindKVParameters(KEY_REQ_AUTH_PARAMS, respTypeKey, respType, KEY_REQ_AUTH_REDIRECT, redirect);
 		log.debug("Binding for respType[{}], redirect[{}]", respType, redirect);
-
 	}
 
 	/**
 	 * The redirection URI of the secure encoding loop is mainly used to prevent
-	 * the loss of fragments such as for example "/#/index".
-	 *
-	 * </br>
+	 * the loss of fragments such as for example "/#/index". </br>
 	 * e.g.
 	 *
 	 * <pre>
@@ -428,13 +426,14 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * => http://mydomain.com/iam-example/authenticator?redirect_url=http%3A%2F%2Fmydomain.com%2F%23%2Findex
 	 * </pre>
 	 *
-	 * @param redirectUrl
+	 * @param fullRedirectUrl
+	 *            Full redirect URL
 	 * @return
 	 */
-	protected String safeEncodeHierarchyRedirectUrl(String redirectUrl) {
-		if (!isBlank(redirectUrl)) {
+	private String safeEncodeParameterRedirectUrl(String fullRedirectUrl) {
+		if (!isBlank(fullRedirectUrl)) {
 			// To prevent automatic loss, such as the anchor part of "#".
-			URI uri = URI.create(redirectUrl);
+			URI uri = URI.create(fullRedirectUrl);
 			Map<String, String> params = toQueryParams(uri.getQuery() + "#" + uri.getFragment());
 			if (!isEmpty(params)) {
 				String clientRedirectUrl = params.get(config.getParam().getRedirectUrl());
@@ -442,11 +441,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 					params.remove(config.getParam().getRedirectUrl());
 					params.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
 					String newRedirectUrl = getBaseURIForDefault(uri.getScheme(), uri.getHost(), uri.getPort()) + uri.getPath();
-					redirectUrl = applyQueryURL(newRedirectUrl, params);
+					fullRedirectUrl = applyQueryURL(newRedirectUrl, params);
 				}
 			}
 		}
-		return redirectUrl;
+		return fullRedirectUrl;
 	}
 
 	/**
