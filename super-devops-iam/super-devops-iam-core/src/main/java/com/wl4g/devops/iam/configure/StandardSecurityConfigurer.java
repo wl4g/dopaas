@@ -76,13 +76,13 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	private String active;
 
 	@Override
-	public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response) {
+	public String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
+			ServletRequest request, ServletResponse response) {
 		return successUrl;
 	}
 
 	@Override
-	public String determineLoginFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
+	public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
 			ServletRequest request, ServletResponse response) {
 		return loginUrl;
 	}
@@ -213,9 +213,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		User user = userDao.selectByUserName(principal);
 		// TODO cache
 		List<Role> list;
-		if(DEFAULT_USER_ROOT.equals(principal)){
-			list = roleDao.selectWithRoot(null,null);
-		}else{
+		if (DEFAULT_USER_ROOT.equals(principal)) {
+			list = roleDao.selectWithRoot(null, null);
+		} else {
 			list = roleDao.selectByUserId(user.getId());
 		}
 		StringBuilder sb = new StringBuilder();
@@ -242,7 +242,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		List<Menu> list;
 		if (DEFAULT_USER_ROOT.equals(principal)) {
 			list = menuDao.selectWithRoot();
-		}else{
+		} else {
 			list = menuDao.selectByUserId(user.getId());
 		}
 		StringBuilder sb = new StringBuilder();
