@@ -379,7 +379,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			}
 			return redirect;
 		}
-		return RedirectInfo.EMPTY;
+		return new RedirectInfo();
 	}
 
 	/**
@@ -569,8 +569,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		}
 
 		// after expand determine successUrl.
-		String determinedRedirectUrl = configurer.decorateAuthenticateSuccessUrl(redirect.getRedirectUrl(), token, subject, request,
-				response);
+		String determinedRedirectUrl = configurer.decorateAuthenticateSuccessUrl(redirect.getRedirectUrl(), token, subject,
+				request, response);
 		redirect.setRedirectUrl(correctAuthenticaitorURI(URI.create(determinedRedirectUrl).toString())); // Check-symbol
 		hasText(redirect.getRedirectUrl(), "Success redirectUrl empty, please check the configure");
 		hasText(redirect.getFromAppName(), "Success application empty, please check the configure");
@@ -601,7 +601,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		}
 
 		// after expand determine failure loginUrl.
-		String determinedLoginUrl = configurer.decorateAuthenticateFailureUrl(redirect.getRedirectUrl(), token, ae, request, response);
+		String determinedLoginUrl = configurer.decorateAuthenticateFailureUrl(redirect.getRedirectUrl(), token, ae, request,
+				response);
 		redirect.setRedirectUrl(cleanURI(determinedLoginUrl)); // Check-symbol
 		// hasTextOf(redirect.getFromAppName(), "application"); //Probably-empty
 		hasText(redirect.getRedirectUrl(), "Failure redirectUrl empty, please check the configure");
