@@ -52,7 +52,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 
 		try {
 			// Check authenticate redirect URL validity.
-			RedirectInfo redirect = getRedirectInfo(request, false);
+			RedirectInfo redirect = getRedirectInfo(request);
 			authHandler.checkAuthenticateRedirectValidity(redirect.getFromAppName(), redirect.getRedirectUrl());
 		} catch (IllegalCallbackDomainException e) {
 			log.warn("Using default redirect URI. caused by: {}", getRootCausesString(e));

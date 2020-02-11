@@ -39,14 +39,15 @@ public class SqlSessionHotspotAutoConfiguration {
 	@Bean
 	@ConditionalOnJdwpDebug(enableProperty = CONF_P + ".enable")
 	@ConfigurationProperties(prefix = CONF_P)
-	public HotspotLoadProperties mapperHotspotLoaderProperties() {
+	@ConditionalOnBean(SqlSessionFactoryBean.class)
+	public HotspotLoadProperties hotspotLoaderProperties() {
 		return new HotspotLoadProperties();
 	}
 
 	@Bean
-	@ConditionalOnBean({ HotspotLoadProperties.class })
-	public SqlSessionMapperHotspotLoader sqlSessionMapperHotspotLoader(HotspotLoadProperties config,
-			SqlSessionFactoryBean sessionFactory) {
+	@ConditionalOnBean(value = { HotspotLoadProperties.class })
+	public SqlSessionMapperHotspotLoader sqlSessionMapperHotspotLoader(SqlSessionFactoryBean sessionFactory,
+			HotspotLoadProperties config) {
 		return new SqlSessionMapperHotspotLoader(sessionFactory, config);
 	}
 

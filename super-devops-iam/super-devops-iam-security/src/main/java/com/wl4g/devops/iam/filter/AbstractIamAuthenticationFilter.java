@@ -43,7 +43,7 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
-import static java.lang.Boolean.*;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.startsWith;
@@ -54,13 +54,13 @@ import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.IllegalRequestException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
-import static com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo.*;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
@@ -186,25 +186,20 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			throw new AccessRejectedException(format("Access rejected for remote IP:%s", getHttpRemoteAddr(toHttp(request))));
 		}
 
-		// Remote client host.
-		String remoteHost = getHttpRemoteAddr(toHttp(request));
-
-		// After success redirectInfo.
-		RedirectInfo redirect = getRedirectInfo(request, false);
-		// Check redirect appName
-		if (isValidity(redirect) && isNull(configurer.getApplicationInfo(redirect.getFromAppName()))) {
-			throw new IllegalRequestException(format("Invalid redirect application of '%s'", redirect.getFromAppName()));
-		}
-
+		// Success redirection.
+		RedirectInfo redirect = getRedirectInfo(request);
 		/**
-		 * Remember request protocol parameters.</br>
+		 * Remember redirect parameters.</br>
 		 * e.g. Android submit login will bring redirectUrl and application,
 		 * which will be used for successful login redirection.
 		 */
-		rememberRequestParameters(redirect, request, response);
+		rememberRedirectInfo(redirect, request, response);
+
+		// Remote client address.
+		String clientRemoteAddr = getHttpRemoteAddr(toHttp(request));
 
 		// Create authentication token
-		return postCreateToken(remoteHost, redirect, toHttp(request), toHttp(response));
+		return postCreateToken(clientRemoteAddr, redirect, toHttp(request), toHttp(response));
 	}
 
 	protected abstract T postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
@@ -349,40 +344,47 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 	/**
 	 * Get redirect information bound from authentication request
-	 * {@link AuthenticatorAuthenticationFilter#rememberRequestParameters(ServletRequest, ServletResponse)}
+	 * {@link AuthenticatorAuthenticationFilter#rememberRedirectInfo(ServletRequest, ServletResponse)}
 	 * </br>
 	 * {@link AbstractIamAuthenticationFilter#createToken(ServletRequest, ServletResponse)}
 	 *
 	 * @param request
-	 * @param useBindOnly
 	 *            Whether to get only the redirection information of the binding
 	 * @return
 	 */
-	protected RedirectInfo getRedirectInfo(ServletRequest request, boolean useBindOnly) {
-		RedirectInfo redirect = null;
-		if (useBindOnly) {
-			redirect = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
-		} else {
-			String fromAppName = getCleanParam(request, config.getParam().getApplication());
-			String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl());
-			String fallbackRedirect = getCleanParam(request, config.getParam().getFallbackRedirect());
-			if (isBlank(fallbackRedirect)) {
-				redirect = new RedirectInfo(fromAppName, redirectUrl);
-			} else {
-				redirect = new RedirectInfo(fromAppName, redirectUrl, parseBoolean(fallbackRedirect));
-			}
+	protected RedirectInfo getRedirectInfo(ServletRequest request) {
+		// Get request redirect
+		String fromAppName = getCleanParam(request, config.getParam().getApplication());
+		String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl());
+		String fallbackRedirect = getCleanParam(request, config.getParam().getFallbackRedirect());
+		RedirectInfo redirect = RedirectInfo.build(fromAppName, redirectUrl, fallbackRedirect);
 
-			// Fallback get redirect
-			if (!isValidity(redirect)) {
-				redirect = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
+		// Get fallback redirect
+		if (isBlank(redirect.getFromAppName())) {
+			RedirectInfo bind = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
+			if (nonNull(bind)) {
+				redirect = bind;
 			}
 		}
-		return isNull(redirect) ? RedirectInfo.EMPTY : redirect;
+
+		// Check and use default redirectUrl
+		if (!isBlank(redirect.getFromAppName())) {
+			ApplicationInfo appInfo = configurer.getApplicationInfo(redirect.getFromAppName());
+			if (isNull(appInfo)) {
+				throw new IllegalRequestException(format("Invalid redirected application '%s'", redirect.getFromAppName()));
+			}
+			if (isBlank(redirect.getRedirectUrl())) {
+				// Use default redirectUrl
+				redirect.setRedirectUrl(appInfo.getViewExtranetBaseUri());
+			}
+			return redirect;
+		}
+		return RedirectInfo.EMPTY;
 	}
 
 	/**
-	 * Saved the latest request protocol configuration, such as response_type,
-	 * source application, etc.</br>
+	 * Saved the latest redirect info, such as response_type, source
+	 * application, etc.</br>
 	 * E.G.:</br>
 	 * </br>
 	 *
@@ -404,7 +406,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @param request
 	 * @param response
 	 */
-	private void rememberRequestParameters(RedirectInfo redirect, ServletRequest request, ServletResponse response) {
+	private void rememberRedirectInfo(RedirectInfo redirect, ServletRequest request, ServletResponse response) {
 		notNull(redirect, "Redirect info must not be null.");
 		// Safety encoding for URL fragment.
 		redirect.setRedirectUrl(safeEncodeParameterRedirectUrl(redirect.getRedirectUrl()));
@@ -415,6 +417,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		// Overlay to save the latest parameters.
 		bindKVParameters(KEY_REQ_AUTH_PARAMS, respTypeKey, respType, KEY_REQ_AUTH_REDIRECT, redirect);
+
 		log.debug("Binding for respType[{}], redirect[{}]", respType, redirect);
 	}
 
@@ -558,9 +561,9 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			ServletResponse response) {
 
 		// before get bind redirect.
-		RedirectInfo redirect = getRedirectInfo(request, true);
-		// Unvalidity using to default?
-		if (!isValidity(redirect)) {
+		RedirectInfo redirect = getRedirectInfo(request);
+		// Unvalidity using to default
+		if (isBlank(redirect.getFromAppName())) {
 			redirect.setFromAppName(config.getSuccessService());
 			redirect.setRedirectUrl(getSuccessUrl());
 		}
@@ -588,7 +591,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			ServletRequest request, ServletResponse response) {
 
 		// before get bind redirect.
-		RedirectInfo redirect = getRedirectInfo(request, false);
+		RedirectInfo redirect = getRedirectInfo(request);
 
 		// Fix Infinite redirection,AuthenticatorAuthenticationFilter may
 		// redirect to loginUrl,if failRedirectUrl==getLoginUrl,it will happen
