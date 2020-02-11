@@ -377,7 +377,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		}
 
 		// Determine successUrl.
-		successUrl = configurer.determineLoginSuccessUrl(successUrl, token, subject, request, response);
+		successUrl = configurer.decorateAuthenticateSuccessUrl(successUrl, token, subject, request, response);
 		notNull(successUrl, "'successUrl' must not be null");
 		return cleanURI(successUrl); // Check & cleanup.
 	}

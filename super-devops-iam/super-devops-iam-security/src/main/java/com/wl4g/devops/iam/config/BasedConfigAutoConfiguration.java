@@ -63,13 +63,13 @@ public class BasedConfigAutoConfiguration {
 	public final static class CheckImpledServerSecurityConfigurer implements ServerSecurityConfigurer, InitializingBean {
 
 		@Override
-		public String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
+		public String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
 				ServletRequest request, ServletResponse response) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public String determineLoginFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
+		public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
 				ServletRequest request, ServletResponse response) {
 			throw new UnsupportedOperationException();
 		}
