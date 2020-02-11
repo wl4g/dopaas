@@ -51,8 +51,6 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 	public static class RedirectInfo implements Serializable {
 		private static final long serialVersionUID = -7747661274396168460L;
 
-		final public static RedirectInfo EMPTY = new RedirectInfo(null, null);
-
 		/**
 		 * Client authentication redirection application.
 		 */
@@ -77,16 +75,18 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 		 */
 		private boolean fallbackRedirect = true;
 
+		public RedirectInfo() {
+			this(null, null, true);
+		}
+
 		public RedirectInfo(String fromAppName, String redirectUrl) {
 			this(fromAppName, redirectUrl, true);
 		}
 
 		public RedirectInfo(String fromAppName, String redirectUrl, boolean fallbackRedirect) {
-			// hasText(fromAppName, "Application name must not be empty.");
-			// hasText(redirectUrl, "Redirect url must not be empty.");
-			this.fromAppName = fromAppName;
-			this.redirectUrl = redirectUrl;
-			this.fallbackRedirect = fallbackRedirect;
+			setFromAppName(fromAppName);
+			setRedirectUrl(redirectUrl);
+			setFallbackRedirect(fallbackRedirect);
 		}
 
 		public String getFromAppName() {
@@ -94,6 +94,7 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 		}
 
 		public void setFromAppName(String fromAppName) {
+			// hasText(fromAppName, "Application name must not be empty.");
 			this.fromAppName = fromAppName;
 		}
 
@@ -102,6 +103,7 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 		}
 
 		public void setRedirectUrl(String redirectUrl) {
+			// hasText(redirectUrl, "Redirect url must not be empty.");
 			this.redirectUrl = redirectUrl;
 		}
 
@@ -109,8 +111,8 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 			return fallbackRedirect;
 		}
 
-		public void setFallbackRedirect(boolean useFallback) {
-			this.fallbackRedirect = useFallback;
+		public void setFallbackRedirect(boolean fallbackRedirect) {
+			this.fallbackRedirect = fallbackRedirect;
 		}
 
 		@Override
