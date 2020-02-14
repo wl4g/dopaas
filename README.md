@@ -30,7 +30,45 @@ For the sake of brevity, each service only deploys a single node to the same phy
 - step1, First, prepare a CentOS 6.5 + and MySQL 5.6 + instance, create a new database named Devops (utf8 / utf8_bin), and then use [initial SQL script] (dB /) to initialize it.（Note: this script corresponds to the code version, and we will update it regularly. Please use the latest one according to the named suffix date）
 - step2, Configure local hosts virtual domain name resolution.（C:\Windows\System32\drivers\etc or vim /etc/hosts）：
 ```
-10.0.0.160    wl4g.debug # Corresponding to app_cluster_config.extranet_base_uri
+10.0.0.160	wl4g.debug # Corresponding to app_cluster_config.extranet_base_uri
+```
+
+- step3：Quickly build a redis cluster (docker)
+```
+mkdir -p /mnt/disk1/redis/
+
+docker run -itd \
+-e LISTEN_IP='127.0.0.1' \
+-e REDIS_PASSWORD='123456' \
+-p 16379:16379/tcp \
+-p 16380:16380/tcp \
+-p 16381:16381/tcp \
+-p 17379:17379/tcp \
+-p 17380:17380/tcp \
+-p 17381:17381/tcp \
+-p 6379:6379/tcp \
+-p 6380:6380/tcp \
+-p 6381:6381/tcp \
+-p 7379:7379/tcp \
+-p 7380:7380/tcp \
+-p 7381:7381/tcp \
+-v /mnt/disk1/redis/:/mnt/disk1/redis/ \
+--privileged \
+--name=redis_cluster \
+redis_cluster:0.0.13 /sbin/init --entrypoint /wrapper
+```
+
+Domestic friends, if need to speed up(Must>=1.10.0):
+You can use the accelerator by modifying the daemon configuration file /etc/docker/daemon.json
+```
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": ["https://hjbu3ivg.mirror.aliyuncs.com"]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
 ```
 
 
