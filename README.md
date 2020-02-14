@@ -32,11 +32,9 @@ For the sake of brevity, each service only deploys a single node to the same phy
 ```
 10.0.0.160	wl4g.debug # Corresponding to app_cluster_config.extranet_base_uri
 ```
-
 - step3：Quickly build a redis cluster (docker)
 ```
 mkdir -p /mnt/disk1/redis/
-
 docker run -itd \
 -e LISTEN_IP='127.0.0.1' \
 -e REDIS_PASSWORD='zzx!@#$%' \
@@ -55,11 +53,9 @@ docker run -itd \
 -v /mnt/disk1/redis/:/mnt/disk1/redis/ \
 --privileged \
 --name=redis_cluster \
-redis_cluster:0.0.13 /sbin/init --entrypoint /wrapper
+wl4g/redis_cluster:0.0.13 /sbin/init --entrypoint /wrapper
 ```
-
 Domestic friends, if need to speed up(Must>=1.10.0):
-You can use the accelerator by modifying the daemon configuration file /etc/docker/daemon.json
 ```
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json <<-'EOF'
@@ -70,6 +66,8 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
+(Aliyun VPC)Use mirror1: registry-vpc.cn-shenzhen.aliyuncs.com/wl4g/redis_cluster:0.0.13
+Use mirror2: registry.cn-shenzhen.aliyuncs.com/wl4g/redis_cluster:0.0.13
 
 
 ### Docs
