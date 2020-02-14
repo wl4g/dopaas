@@ -40,7 +40,7 @@ mkdir -p /mnt/disk1/redis/
 
 docker run -itd \
 -e LISTEN_IP='127.0.0.1' \
--e REDIS_PASSWORD='123456' \
+-e REDIS_PASSWORD='zzx!@#$%' \
 -p 16379:16379/tcp \
 -p 16380:16380/tcp \
 -p 16381:16381/tcp \
