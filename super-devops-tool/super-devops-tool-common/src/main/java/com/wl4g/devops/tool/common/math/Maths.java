@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * {@link Maths}
+ * Simple math utility {@link Maths} tools.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年2月4日 v1.0.0
@@ -350,7 +350,7 @@ public abstract class Maths {
 		return String.valueOf(divide(b1, b2, scale));
 	}
 
-	// --- Set mathematical function's. ---
+	// --- Array mathematical function's. ---
 
 	/**
 	 * Precise addition operation to calculate the sum of multiple values. If

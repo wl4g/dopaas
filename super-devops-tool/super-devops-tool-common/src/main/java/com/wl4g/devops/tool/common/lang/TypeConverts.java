@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.tool.common.lang;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.state;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
@@ -228,6 +230,22 @@ public abstract class TypeConverts {
 	}
 
 	/**
+	 * Parse int of string value or 0d.
+	 * 
+	 * @param value
+	 *            If the value int to the number type, return to convert to the
+	 *            int value, otherwise return null
+	 * @return
+	 */
+	public static double parseDoubleOrDefault(final String value) {
+		Double ret = parseDoubleOrNull(value);
+		if (nonNull(ret)) {
+			return ret.doubleValue();
+		}
+		return 0d;
+	}
+
+	/**
 	 * Parse int of string value.
 	 * 
 	 * @param value
@@ -244,6 +262,22 @@ public abstract class TypeConverts {
 	}
 
 	/**
+	 * Parse int of string value or 0f.
+	 * 
+	 * @param value
+	 *            If the value int to the number type, return to convert to the
+	 *            int value, otherwise return null
+	 * @return
+	 */
+	public static float parseFloatOrDefault(final String value) {
+		Float ret = parseFloatOrNull(value);
+		if (nonNull(ret)) {
+			return ret.floatValue();
+		}
+		return 0f;
+	}
+
+	/**
 	 * Parse int of string value.
 	 * 
 	 * @param value
@@ -256,15 +290,73 @@ public abstract class TypeConverts {
 	}
 
 	/**
+	 * Parse int of string value or 0.
+	 * 
+	 * @param value
+	 *            If the value int to the number type, return to convert to the
+	 *            int value, otherwise return null
+	 * @return
+	 */
+	public static int parseIntOrDefault(final String value) {
+		Integer ret = parseIntOrNull(value);
+		if (nonNull(ret)) {
+			return ret.intValue();
+		}
+		return 0;
+	}
+
+	/**
 	 * Parse long of string value.
 	 * 
-	 * @param If
+	 * @param value
 	 *            the value long to the number type, return to convert to the
 	 *            long value, otherwise return null.
 	 * @return
 	 */
 	public static Long parseLongOrNull(final String value) {
 		return isBlank(value) ? null : (isNumeric(value) ? Long.parseLong(value) : null);
+	}
+
+	/**
+	 * Parse long of string value or 0L.
+	 * 
+	 * @param value
+	 *            the value long to the number type, return to convert to the
+	 *            long value, otherwise return null.
+	 * @return
+	 */
+	public static long parseLongOrDefault(final String value) {
+		Long ret = parseLongOrNull(value);
+		if (nonNull(ret)) {
+			return ret.longValue();
+		}
+		return 0;
+	}
+
+	/**
+	 * Safety convert long to int.
+	 * 
+	 * @param value
+	 *            the value long to the number type.
+	 * @return
+	 */
+	public static int safeLongToInt(final long value) {
+		int ret = (int) (value);
+		state((ret == value), "Could't convert long(%s) to int(%s), int storage stack overflow", value, ret);
+		return ret;
+	}
+
+	/**
+	 * Safety convert int to short.
+	 * 
+	 * @param value
+	 *            the value long to the number type.
+	 * @return
+	 */
+	public static short safeIntToShort(final int value) {
+		short ret = (short) (value);
+		state((ret == value), "Could't convert int(%s) to short(%s), short storage stack overflow", value, ret);
+		return ret;
 	}
 
 }
