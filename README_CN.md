@@ -36,8 +36,6 @@ English version goes [here](README.md)
 ```
 mkdir -p /mnt/disk1/redis/
 docker run -itd \
--e LISTEN_IP='127.0.0.1' \
--e REDIS_PASSWORD='zzx!@#$%' \
 -p 16379:16379/tcp \
 -p 16380:16380/tcp \
 -p 16381:16381/tcp \
@@ -53,7 +51,7 @@ docker run -itd \
 -v /mnt/disk1/redis/:/mnt/disk1/redis/ \
 --privileged \
 --name=redis_cluster \
-wl4g/redis_cluster:0.0.13 /sbin/init --entrypoint /wrapper
+wl4g/redis-cluster:latest /sbin/init -XlistenIp='127.0.0.1' -XredisPassword='zzx!@#$%'
 ```
 国内的朋友, 如果需要加速(需>=1.10.0):
 您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器
@@ -67,8 +65,8 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
-(阿里VPC)使用镜像1: registry-vpc.cn-shenzhen.aliyuncs.com/wl4g/redis_cluster:0.0.13
-或使用镜像2: registry.cn-shenzhen.aliyuncs.com/wl4g/redis_cluster:0.0.13
+(阿里VPC)使用镜像1: registry-vpc.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
+或使用镜像2: registry.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
 
 ### 更多子模块文档
 - [CI](super-devops-ci/README_CN.md)            &nbsp;&nbsp;    持续集成部署模块（持续迭代）, CICD构建流等
