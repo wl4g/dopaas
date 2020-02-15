@@ -36,8 +36,6 @@ For the sake of brevity, each service only deploys a single node to the same phy
 ```
 mkdir -p /mnt/disk1/redis/
 docker run -itd \
--e LISTEN_IP='127.0.0.1' \
--e REDIS_PASSWORD='zzx!@#$%' \
 -p 16379:16379/tcp \
 -p 16380:16380/tcp \
 -p 16381:16381/tcp \
@@ -53,7 +51,7 @@ docker run -itd \
 -v /mnt/disk1/redis/:/mnt/disk1/redis/ \
 --privileged \
 --name=redis_cluster \
-wl4g/redis_cluster:0.0.13 /sbin/init --entrypoint /wrapper
+wl4g/redis-cluster:latest /sbin/init -XlistenIp='127.0.0.1' -XredisPassword='zzx!@#$%'
 ```
 Domestic friends, if need to speed up(Must>=1.10.0):
 ```
@@ -66,8 +64,8 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
-(Aliyun VPC)Use mirror1: registry-vpc.cn-shenzhen.aliyuncs.com/wl4g/redis_cluster:0.0.13
-Use mirror2: registry.cn-shenzhen.aliyuncs.com/wl4g/redis_cluster:0.0.13
+(Aliyun VPC)Use mirror1: registry-vpc.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
+Use mirror2: registry.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
 
 
 ### Docs
