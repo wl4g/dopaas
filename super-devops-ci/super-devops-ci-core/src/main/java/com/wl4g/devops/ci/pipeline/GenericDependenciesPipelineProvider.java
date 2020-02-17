@@ -30,6 +30,7 @@ import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -153,8 +154,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 					String waitCostMsg = writeBuildLog("Wait for dependency build to be skipped successful! cost: %sms", cost);
 					log.info(waitCostMsg);
 				} else {
-					throw new DependencyCurrentlyInBuildingException(String
-							.format("Failed to build, timeout waiting for dependency building, for projectId: %s", projectId));
+					throw new DependencyCurrentlyInBuildingException(
+							format("Failed to build, timeout waiting for dependency building, for projectId: %s", projectId));
 				}
 			} finally {
 				lock.unlock();
