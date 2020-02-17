@@ -17,7 +17,6 @@ import com.wl4g.devops.tool.common.io.FileIOUtils;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.DateUtils2;
 import com.wl4g.devops.tool.common.lang.TypeConverts;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,6 @@ import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -165,6 +163,12 @@ public class FileServiceImpl implements FileService {
         return fileChangesDao.selectByFileCode(fileCode);
     }
 
+    @Override
+    public FileChanges getLastByFileCode(String fileCode) {
+        FileChanges fileChange = fileChangesDao.selectLastByFileCode(fileCode);
+        file2String(fileChange);
+        return fileChange;
+    }
 
     @Override
     public Map<String, FileChanges> compareWith(Integer oldChangesId, Integer newChangesId) {
@@ -225,6 +229,15 @@ public class FileServiceImpl implements FileService {
         return result;
     }
 
+	public String encryptFile(Integer id) {
+		String passwd = generatePasswd();
+		FileChanges fileChanges = new FileChanges();
+		fileChanges.setId(id);
+		fileChanges.setPasswd(passwd);
+		fileChangesDao.updateByPrimaryKeySelective(fileChanges);
+		return passwd;
+	}
+
 
     private void saveFile(MultipartFile file, String localPath) {
         Assert.notNull(file, "文件为空");
@@ -251,5 +264,16 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+    private static String generatePasswd(){
+        String str="abcdefghijklmnopqrstuvwxyz0123456789";
+        String uuid=new String();
+        for(int i=0;i<4;i++)
+        {
+            char ch=str.charAt(new Random().nextInt(str.length()));
+            uuid+=ch;
+        }
+
+        return uuid;
+    }
 
 }
