@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.common.exception.support;
 
+import static java.lang.String.format;
+
 import com.wl4g.devops.common.exception.DevOpsException;
 
 public class IllegalProcessStateException extends DevOpsException {
@@ -24,12 +26,30 @@ public class IllegalProcessStateException extends DevOpsException {
 
 	/**
 	 * Constructs a new runtime exception with the specified detail message. The
-	 * cause is not initialized, and may subsequently be initialized by a call to
-	 * {@link #initCause}.
+	 * cause is not initialized, and may subsequently be initialized by a call
+	 * to {@link #initCause}.
 	 *
 	 * @param message
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
+	 */
+	public IllegalProcessStateException(String message) {
+		this(null, message, null);
+	}
+
+	/**
+	 * Constructs a new runtime exception with the specified cause and a detail
+	 * message of <tt>(cause==null ? null : cause.toString())</tt> (which
+	 * typically contains the class and detail message of <tt>cause</tt>). This
+	 * constructor is useful for runtime exceptions that are little more than
+	 * wrappers for other throwables.
+	 *
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the
+	 *            {@link #getCause()} method). (A <tt>null</tt> value is
+	 *            permitted, and indicates that the cause is nonexistent or
+	 *            unknown.)
+	 * @since 1.4
 	 */
 	public IllegalProcessStateException(Integer exitValue, String message) {
 		this(exitValue, message, null);
@@ -47,8 +67,30 @@ public class IllegalProcessStateException extends DevOpsException {
 	 *            {@link #getMessage()} method).
 	 * @param cause
 	 *            the cause (which is saved for later retrieval by the
-	 *            {@link #getCause()} method). (A <tt>null</tt> value is permitted,
-	 *            and indicates that the cause is nonexistent or unknown.)
+	 *            {@link #getCause()} method). (A <tt>null</tt> value is
+	 *            permitted, and indicates that the cause is nonexistent or
+	 *            unknown.)
+	 * @since 1.4
+	 */
+	public IllegalProcessStateException(String message, Throwable cause) {
+		this(null, message, cause);
+	}
+
+	/**
+	 * Constructs a new runtime exception with the specified detail message and
+	 * cause.
+	 * <p>
+	 * Note that the detail message associated with {@code cause} is <i>not</i>
+	 * automatically incorporated in this runtime exception's detail message.
+	 *
+	 * @param message
+	 *            the detail message (which is saved for later retrieval by the
+	 *            {@link #getMessage()} method).
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the
+	 *            {@link #getCause()} method). (A <tt>null</tt> value is
+	 *            permitted, and indicates that the cause is nonexistent or
+	 *            unknown.)
 	 * @since 1.4
 	 */
 	public IllegalProcessStateException(Integer exitValue, String message, Throwable cause) {
@@ -58,15 +100,16 @@ public class IllegalProcessStateException extends DevOpsException {
 
 	/**
 	 * Constructs a new runtime exception with the specified cause and a detail
-	 * message of <tt>(cause==null ? null : cause.toString())</tt> (which typically
-	 * contains the class and detail message of <tt>cause</tt>). This constructor is
-	 * useful for runtime exceptions that are little more than wrappers for other
-	 * throwables.
+	 * message of <tt>(cause==null ? null : cause.toString())</tt> (which
+	 * typically contains the class and detail message of <tt>cause</tt>). This
+	 * constructor is useful for runtime exceptions that are little more than
+	 * wrappers for other throwables.
 	 *
 	 * @param cause
 	 *            the cause (which is saved for later retrieval by the
-	 *            {@link #getCause()} method). (A <tt>null</tt> value is permitted,
-	 *            and indicates that the cause is nonexistent or unknown.)
+	 *            {@link #getCause()} method). (A <tt>null</tt> value is
+	 *            permitted, and indicates that the cause is nonexistent or
+	 *            unknown.)
 	 * @since 1.4
 	 */
 	public IllegalProcessStateException(Integer exitValue, Throwable cause) {
@@ -80,11 +123,12 @@ public class IllegalProcessStateException extends DevOpsException {
 
 	@Override
 	public String getMessage() {
-		return "exitValue="+getExitValue() + ":" + super.getMessage();
+		return format("exitCode=%s %s", getExitValue(), super.getMessage());
 	}
 
 	@Override
 	public String getLocalizedMessage() {
-		return "exitValue="+getExitValue() + ":" + super.getLocalizedMessage();
+		return format("exitCode=%s %s", getExitValue(), super.getLocalizedMessage());
 	}
+
 }
