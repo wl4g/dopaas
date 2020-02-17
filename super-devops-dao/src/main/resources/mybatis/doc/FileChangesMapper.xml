@@ -10,6 +10,7 @@
     <result column="lang" jdbcType="VARCHAR" property="lang" />
     <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="sha" jdbcType="VARCHAR" property="sha" />
+    <result column="passwd" jdbcType="VARCHAR" property="passwd" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="is_latest" jdbcType="INTEGER" property="isLatest" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
@@ -20,11 +21,11 @@
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, file_code, type, action, lang, content, sha, description, is_latest, create_date, 
+    id, name, file_code, type, action, lang, content, sha, passwd, description, is_latest, create_date,
     create_by, update_date, update_by, del_flag
   </sql>
   <sql id="Base_Column_List_fc">
-    fc.id, fc.name, fc.file_code, fc.type, fc.action, fc.lang, fc.content, fc.sha, fc.description, fc.is_latest, fc.create_date,
+    fc.id, fc.name, fc.file_code, fc.type, fc.action, fc.lang, fc.content, fc.sha, fc.passwd, fc.description, fc.is_latest, fc.create_date,
     fc.create_by, fc.update_date, fc.update_by, fc.del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -74,13 +75,13 @@
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.doc.FileChanges">
     insert into doc_file_changes (id, name, file_code, 
       type, action, lang, 
-      content, sha, description, 
+      content, sha, passwd, description,
       is_latest, create_date, create_by, 
       update_date, update_by, del_flag
       )
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{fileCode,jdbcType=VARCHAR}, 
       #{type,jdbcType=VARCHAR}, #{action,jdbcType=VARCHAR}, #{lang,jdbcType=VARCHAR}, 
-      #{content,jdbcType=VARCHAR}, #{sha,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{content,jdbcType=VARCHAR}, #{sha,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
       #{isLatest,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}
       )
@@ -111,6 +112,9 @@
       </if>
       <if test="sha != null">
         sha,
+      </if>
+      <if test="passwd != null">
+        passwd,
       </if>
       <if test="description != null">
         description,
@@ -159,6 +163,9 @@
       <if test="sha != null">
         #{sha,jdbcType=VARCHAR},
       </if>
+      <if test="passwd != null">
+        #{passwd,jdbcType=VARCHAR},
+      </if>
       <if test="description != null">
         #{description,jdbcType=VARCHAR},
       </if>
@@ -206,6 +213,9 @@
       <if test="sha != null">
         sha = #{sha,jdbcType=VARCHAR},
       </if>
+      <if test="passwd != null">
+        passwd = #{passwd,jdbcType=VARCHAR},
+      </if>
       <if test="description != null">
         description = #{description,jdbcType=VARCHAR},
       </if>
@@ -239,6 +249,7 @@
       lang = #{lang,jdbcType=VARCHAR},
       content = #{content,jdbcType=VARCHAR},
       sha = #{sha,jdbcType=VARCHAR},
+      passwd = #{passwd,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       is_latest = #{isLatest,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},

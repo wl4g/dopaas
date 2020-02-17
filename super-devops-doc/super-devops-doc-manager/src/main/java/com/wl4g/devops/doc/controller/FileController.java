@@ -21,11 +21,9 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.doc.service.FileService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -96,6 +94,15 @@ public class FileController extends BaseController {
 	public RespBase<?> upload(@RequestParam(value = "file") MultipartFile file) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(fileService.upload(file));
+		return resp;
+	}
+
+
+	@RequestMapping(value = "/encryptFile")
+	public RespBase<?> encryptFile(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		String passwd = fileService.encryptFile(id);
+		resp.setData(passwd);
 		return resp;
 	}
 
