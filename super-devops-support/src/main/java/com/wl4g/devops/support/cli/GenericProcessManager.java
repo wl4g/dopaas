@@ -45,6 +45,7 @@ import static com.wl4g.devops.tool.common.io.ByteStreams2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static java.lang.String.format;
 import static java.lang.System.arraycopy;
 import static java.lang.Thread.sleep;
 import static java.util.Objects.isNull;
@@ -105,9 +106,11 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			if (isNull(exitCode)) {
 				// [Fallback]: If the output is not redirected to the local
 				// file, the execution fails if there is an stderr message
-				String errmsg = readFullyToString(dp.getStderr());
-				if (!isLocalStderr(cmd) && !isBlank(errmsg)) {
-					throw new IllegalProcessStateException(exitCode, errmsg);
+				if (!isLocalStderr(cmd)) {
+					String errmsg = readFullyToString(dp.getStderr());
+					if (!isBlank(errmsg)) {
+						throw new IllegalProcessStateException(errmsg);
+					}
 				}
 			} else if (exitCode != 0) {
 				String errmsg = EMPTY;
@@ -115,7 +118,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 					// stderr redirected? (e.g: mvn install >/mvn.out 2>&1)
 					// and will not get the message.
 					if (isLocalStderr(cmd))
-						errmsg = String.format("Failed to exec command, more error info refer to: '%s'",
+						errmsg = format("Could't exec command, more error info refer to: '%s'",
 								((LocalDestroableCommand) cmd).getStderr());
 					else
 						errmsg = readFullyToString(dp.getStderr());
@@ -127,9 +130,8 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 
 			return readFullyToString(dp.getStdout());
 		} catch (IllegalProcessStateException ex) {
-			throw new IllegalProcessStateException(ex.getExitValue(),
-					String.format("Failed to process(%s), commands:[%s], cause: %s", cmd.getProcessId(), dp.getCommand().getCmd(),
-							getRootCausesString(ex)));
+			throw new IllegalProcessStateException(
+					format("Failed to process(%s), commands: [%s], cause: %s", cmd.getProcessId(), dp.getCommand().getCmd()), ex);
 		} finally {
 			// Destroy process.
 			destroy0(dp, DEFAULT_DESTROY_TIMEOUTMS);

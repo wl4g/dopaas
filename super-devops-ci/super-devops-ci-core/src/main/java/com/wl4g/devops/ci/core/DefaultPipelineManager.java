@@ -46,7 +46,6 @@ import com.wl4g.devops.support.notification.twitter.TwitterMessageNotifier;
 import com.wl4g.devops.support.notification.wechat.WechatMessage;
 import com.wl4g.devops.support.notification.wechat.WechatMessageNotifier;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
-import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -60,6 +59,9 @@ import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -76,7 +78,7 @@ import static org.springframework.util.Assert.*;
  * @since
  */
 public class DefaultPipelineManager implements PipelineManager {
-	final protected Logger log = SmartLoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	@Autowired
 	protected CiCdProperties config;
@@ -262,43 +264,35 @@ public class DefaultPipelineManager implements PipelineManager {
 
 		// Starting pipeline job.
 		jobExecutor.getWorker().execute(() -> {
-			long startTime = System.currentTimeMillis();
+			long startTime = currentTimeMillis();
 			try {
 				// Pre Pileline Execute
+				log.info("Pre pipeline executing of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
 				prePipelineExecute(taskId);
 
 				// Execution pipeline.
 				provider.execute();
-
-				// Pipeline success.
-				log.info(String.format("Pipeline job successful for taskId: %s, provider: %s", taskId,
-						provider.getClass().getSimpleName()));
-
-				// Successful process.
-				log.info("Process pipeline job success properties for taskId: {}, provider: {}", taskId,
-						provider.getClass().getSimpleName());
+				log.info("Pipeline execute completed of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
 
 				postPipelineExecuteSuccess(taskId, provider);
 			} catch (Throwable e) {
-				log.error(String.format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
+				log.error(format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
 				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), getStackTraceAsString(e));
 
-				// Setup status to failure.
+				// Update status.
+				log.info("Updating pipeline job status to {} of taskId: {}", TASK_STATUS_STOP, taskId);
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, getStackTraceAsString(e));
-				log.info("Updated pipeline job status to {} for {}", TASK_STATUS_STOP, taskId);
 
-				// Failure process.
-				log.info("Process pipeline job failure properties for taskId: {}, provider: {}", taskId,
+				// Failed process.
+				log.info("Post pipeline executeing of taskId: {}, provider: {}", taskId,
 						provider.getClass().getSimpleName());
-
 				postPipelineExecuteFailure(taskId, provider, e);
 			} finally {
 				// Log file end EOF.
 				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 				log.info("Completed for pipeline taskId: {}", taskId);
-				long endTime = System.currentTimeMillis();
-				taskHistoryService.updateCostTime(taskId, endTime - startTime);
+				taskHistoryService.updateCostTime(taskId, (currentTimeMillis() - startTime));
 			}
 		});
 	}
@@ -408,28 +402,28 @@ public class DefaultPipelineManager implements PipelineManager {
 			// dingtalk
 			if (alarmContact.getDingtalkEnable() == 1) {
 				DingtalkMessage dingtalkMessage = new DingtalkMessage();
-				//TODO set dingtalkMessage
+				// TODO set dingtalkMessage
 				notifier.forAdapt(DingtalkMessageNotifier.class).send(dingtalkMessage);
 			}
 
 			// facebook
 			if (alarmContact.getFacebookEnable() == 1) {
 				FacebookMessage facebookMessage = new FacebookMessage();
-				//TODO set facebookMessage
+				// TODO set facebookMessage
 				notifier.forAdapt(FacebookMessageNotifier.class).send(facebookMessage);
 			}
 
 			// twitter
 			if (alarmContact.getTwitterEnable() == 1) {
 				TwitterMessage twitterMessage = new TwitterMessage();
-				//TODO set twitterMessage
+				// TODO set twitterMessage
 				notifier.forAdapt(TwitterMessageNotifier.class).send(twitterMessage);
 			}
 
 			// wechat
 			if (alarmContact.getWechatEnable() == 1) {
 				WechatMessage wechatMessage = new WechatMessage();
-				//TODO set wechatMessage
+				// TODO set wechatMessage
 				notifier.forAdapt(WechatMessageNotifier.class).send(wechatMessage);
 			}
 
@@ -497,13 +491,13 @@ public class DefaultPipelineManager implements PipelineManager {
 				provider.rollback();
 
 				// Success.
-				log.info(String.format("Rollback pipeline job successful for taskId: %s, provider: %s", taskId,
+				log.info(format("Rollback pipeline job successful for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()));
 
 				postPipelineExecuteSuccess(taskId, provider);
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 			} catch (Exception e) {
-				log.error(String.format("Failed to rollback pipeline job for taskId: %s, provider: %s", taskId,
+				log.error(format("Failed to rollback pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
 				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), e.getMessage() + getStackTraceAsString(e));
 
