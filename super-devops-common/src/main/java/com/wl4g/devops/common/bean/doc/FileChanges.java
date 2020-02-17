@@ -21,6 +21,8 @@ public class FileChanges extends BaseBean {
 
 	private String sha;
 
+	private String passwd;
+
 	private String description;
 
 	private Integer isLatest;
@@ -87,6 +89,14 @@ public class FileChanges extends BaseBean {
 
 	public void setSha(String sha) {
 		this.sha = sha == null ? null : sha.trim();
+	}
+
+	public String getPasswd() {
+		return passwd;
+	}
+
+	public void setPasswd(String passwd) {
+		this.passwd = passwd;
 	}
 
 	public String getDescription() {

@@ -66,4 +66,4 @@ redis:
 cipher-key: 03DE18C2FC4E605F
 
 doc:
-  basePath: J:\myupload
+  basePath: /Users/vjay/Downloads/myupload

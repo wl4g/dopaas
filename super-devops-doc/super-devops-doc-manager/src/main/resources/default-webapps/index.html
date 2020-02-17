@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Marked in the browser</title>
+    <script src="marked.min.js"></script>
+    <script src="jquery-3.4.1.min.js"></script>
+</head>
+<body>
+<div id="content"></div>
+<script>
+    var getContext = function () {
+        const code = getQueryString('code');
+        if(!code){
+            window.location.href = "403.html";
+        }
+        let passwd = getQueryString('passwd');
+
+        $.getJSON("http://localhost:14060/doc-manager/doc/read", {code: code,passwd: passwd},
+            function (data) {
+                if(!data || !data.code){
+                    alert('服务器请求失败,请联系管理员');
+                }
+                if(data.code==200){//success
+                    $("#content").html(marked(data.data));
+                }else if(data.code==401){
+                    getContextByPasswd(code,"请输入密码：");
+                }else{
+                    alert('服务器请求失败,请联系管理员');
+                }
+            }
+        );
+    };
+
+    function getContextByPasswd(code,text){
+        const passwd = prompt(text);
+        $.getJSON("http://localhost:14060/doc-manager/doc/read", {code: code,passwd: passwd},
+            function (data) {
+                if(!data || !data.code){
+                    alert('服务器请求失败,请联系管理员');
+                }
+                if(data.code==200){//success
+                    $("#content").html(marked(data.data));
+                }else if(data.code==401){
+                    getContextByPasswd(code,"密码错误，请重新输入密码：");
+                }else{
+                    alert('服务器请求失败,请联系管理员');
+                }
+            }
+        );
+    }
+
+    function getQueryString(name) {
+        var t = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"),
+            n = window.location.search.substr(1).match(t);
+        return null != n ? unescape(n[2]) : null
+    }
+
+    getContext();
+</script>
+<style>
+    #content table,#content tr th,#content tr td{
+        border:2px solid #ccc;
+    }
+    #content table{
+        border-collapse: collapse;
+    }
+</style>
+
+</body>
+</html>
