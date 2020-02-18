@@ -37,5 +37,4 @@ public class DocAutoConfiguration {
 		return new DocProperties();
 	}
 
-
 }

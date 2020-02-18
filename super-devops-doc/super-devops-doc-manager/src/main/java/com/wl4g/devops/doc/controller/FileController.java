@@ -35,14 +35,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/file")
 public class FileController extends BaseController {
-	
+
 	@Autowired
 	private FileService fileService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String name, String lang,Integer labelId) {
+	public RespBase<?> list(PageModel pm, String name, String lang, Integer labelId) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(fileService.list(pm, name, lang,labelId));
+		resp.setData(fileService.list(pm, name, lang, labelId));
 		return resp;
 	}
 
@@ -84,9 +84,9 @@ public class FileController extends BaseController {
 	}
 
 	@RequestMapping(value = "/compareWith")
-	public RespBase<?> compareWith(Integer oldChangesId,Integer newChangesId) {
+	public RespBase<?> compareWith(Integer oldChangesId, Integer newChangesId) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(fileService.compareWith(oldChangesId,newChangesId));
+		resp.setData(fileService.compareWith(oldChangesId, newChangesId));
 		return resp;
 	}
 
@@ -97,7 +97,6 @@ public class FileController extends BaseController {
 		return resp;
 	}
 
-
 	@RequestMapping(value = "/shareFile")
 	public RespBase<?> shareFile(Integer id, Boolean isEncrypt) {
 		RespBase<Object> resp = RespBase.create();
@@ -105,9 +104,5 @@ public class FileController extends BaseController {
 		resp.setData(passwd);
 		return resp;
 	}
-
-
-
-
 
 }

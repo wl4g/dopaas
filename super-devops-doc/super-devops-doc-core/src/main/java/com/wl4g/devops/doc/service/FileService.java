@@ -29,7 +29,7 @@ public interface FileService {
 
 	Map<String, Object> upload(MultipartFile file);
 
-	String shareFile(Integer id,boolean isEncrypt);
+	String shareFile(Integer id, boolean isEncrypt);
 
 	FileChanges getLastByFileCode(String fileCode);
 
