@@ -17,12 +17,17 @@ package com.wl4g.devops.doc.controller;
 
 import com.google.common.io.ByteStreams;
 import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.doc.config.DocProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.Map;
@@ -51,6 +56,9 @@ import static org.springframework.util.Assert.notNull;
 @Controller
 @RequestMapping("/view")
 public class DefaultViewController extends BaseController {
+
+	@Autowired
+	private DocProperties docProperties;
 
 	/**
 	 * Default view page file cache buffer
@@ -111,9 +119,16 @@ public class DefaultViewController extends BaseController {
 	 * @param filepath
 	 * @return
 	 */
-	private InputStream getResource(String filepath) {
+	private InputStream getResource(String filepath) throws FileNotFoundException {
 		String location = "/default-webapps/" + filepath;
-		return getClass().getResourceAsStream(location);
+
+		//return getClass().getResourceAsStream(location);
+		//TODO just for now
+		location = docProperties.getBasePath()+location;
+		log.info("get static file from location, path={}",location);
+		File file = new File(location);
+		InputStream input = new FileInputStream(file);
+		return input;
 	}
 
 	/**
