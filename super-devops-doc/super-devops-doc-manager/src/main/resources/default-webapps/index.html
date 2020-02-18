@@ -42,7 +42,13 @@
     };
 
     function getContextByPasswd(code,text){
-        const passwd = prompt(text);
+        let passwd = sessionStorage.getItem("share_doc_" + code);
+        if(!passwd){
+            passwd = prompt(text);
+        }
+        if(!passwd){
+            return;
+        }
         $.getJSON(renderingUrl, {code: code,passwd: passwd},
             function (data) {
                 if(!data || !data.code){
@@ -50,7 +56,9 @@
                 }
                 if(data.code==200){//success
                     $("#content").html(marked(data.data));
+                    sessionStorage.setItem("share_doc_" + code, passwd);
                 }else if(data.code==401){
+                    sessionStorage.removeItem("share_doc_" + code);
                     getContextByPasswd(code,"密码错误，请重新输入密码：");
                 }else{
                     alert('服务器请求失败,请联系管理员');
