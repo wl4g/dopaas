@@ -27,6 +27,8 @@ public class FileChanges extends BaseBean {
 
 	private Integer isLatest;
 
+	private Integer shareType;
+
 	// --- Temporary ---
 
 	private List<Label> labels;
@@ -137,5 +139,13 @@ public class FileChanges extends BaseBean {
 
 	public void setCreateByStr(String createByStr) {
 		this.createByStr = createByStr;
+	}
+
+	public Integer getShareType() {
+		return shareType;
+	}
+
+	public void setShareType(Integer shareType) {
+		this.shareType = shareType;
 	}
 }

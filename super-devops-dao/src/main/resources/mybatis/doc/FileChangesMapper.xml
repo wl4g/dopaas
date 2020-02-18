@@ -13,6 +13,7 @@
     <result column="passwd" jdbcType="VARCHAR" property="passwd" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="is_latest" jdbcType="INTEGER" property="isLatest" />
+    <result column="share_type" jdbcType="INTEGER" property="shareType" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="create_by_str" jdbcType="VARCHAR" property="createByStr" />
@@ -21,11 +22,11 @@
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, file_code, type, action, lang, content, sha, passwd, description, is_latest, create_date,
+    id, name, file_code, type, action, lang, content, sha, passwd, description, is_latest, share_type,  create_date,
     create_by, update_date, update_by, del_flag
   </sql>
   <sql id="Base_Column_List_fc">
-    fc.id, fc.name, fc.file_code, fc.type, fc.action, fc.lang, fc.content, fc.sha, fc.passwd, fc.description, fc.is_latest, fc.create_date,
+    fc.id, fc.name, fc.file_code, fc.type, fc.action, fc.lang, fc.content, fc.sha, fc.passwd, fc.description, fc.is_latest, share_type, fc.create_date,
     fc.create_by, fc.update_date, fc.update_by, fc.del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -76,13 +77,13 @@
     insert into doc_file_changes (id, name, file_code, 
       type, action, lang, 
       content, sha, passwd, description,
-      is_latest, create_date, create_by, 
+      is_latest, share_type, create_date, create_by,
       update_date, update_by, del_flag
       )
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{fileCode,jdbcType=VARCHAR}, 
       #{type,jdbcType=VARCHAR}, #{action,jdbcType=VARCHAR}, #{lang,jdbcType=VARCHAR}, 
       #{content,jdbcType=VARCHAR}, #{sha,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
-      #{isLatest,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{isLatest,jdbcType=INTEGER}, #{shareType,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}
       )
   </insert>
@@ -121,6 +122,9 @@
       </if>
       <if test="isLatest != null">
         is_latest,
+      </if>
+      <if test="shareType != null">
+        share_type,
       </if>
       <if test="createDate != null">
         create_date,
@@ -172,6 +176,9 @@
       <if test="isLatest != null">
         #{isLatest,jdbcType=INTEGER},
       </if>
+      <if test="shareType != null">
+        #{shareType,jdbcType=INTEGER},
+      </if>
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
       </if>
@@ -222,6 +229,9 @@
       <if test="isLatest != null">
         is_latest = #{isLatest,jdbcType=INTEGER},
       </if>
+      <if test="shareType != null">
+        share_type = #{shareType,jdbcType=INTEGER},
+      </if>
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
@@ -252,6 +262,7 @@
       passwd = #{passwd,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       is_latest = #{isLatest,jdbcType=INTEGER},
+      share_type = #{shareType,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},

@@ -16,7 +16,7 @@
         }
         let passwd = getQueryString('passwd');
 
-        $.getJSON("http://localhost:14060/doc-manager/doc/read", {code: code,passwd: passwd},
+        $.getJSON("http://localhost:14060/doc-manager/doc/rendering", {code: code,passwd: passwd},
             function (data) {
                 if(!data || !data.code){
                     alert('服务器请求失败,请联系管理员');
@@ -25,6 +25,8 @@
                     $("#content").html(marked(data.data));
                 }else if(data.code==401){
                     getContextByPasswd(code,"请输入密码：");
+                }else if(data.code==404){
+                    window.location.href = "403.html";
                 }else{
                     alert('服务器请求失败,请联系管理员');
                 }
@@ -34,7 +36,7 @@
 
     function getContextByPasswd(code,text){
         const passwd = prompt(text);
-        $.getJSON("http://localhost:14060/doc-manager/doc/read", {code: code,passwd: passwd},
+        $.getJSON("http://localhost:14060/doc-manager/doc/rendering", {code: code,passwd: passwd},
             function (data) {
                 if(!data || !data.code){
                     alert('服务器请求失败,请联系管理员');

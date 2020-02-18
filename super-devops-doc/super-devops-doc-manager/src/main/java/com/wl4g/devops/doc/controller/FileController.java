@@ -98,10 +98,10 @@ public class FileController extends BaseController {
 	}
 
 
-	@RequestMapping(value = "/encryptFile")
-	public RespBase<?> encryptFile(Integer id) {
+	@RequestMapping(value = "/shareFile")
+	public RespBase<?> shareFile(Integer id, Boolean isEncrypt) {
 		RespBase<Object> resp = RespBase.create();
-		String passwd = fileService.encryptFile(id);
+		String passwd = fileService.shareFile(id, isEncrypt);
 		resp.setData(passwd);
 		return resp;
 	}

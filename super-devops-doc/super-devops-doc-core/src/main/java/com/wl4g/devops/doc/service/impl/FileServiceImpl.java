@@ -85,6 +85,7 @@ public class FileServiceImpl implements FileService {
         fileChanges.setIsLatest(1);
         fileChanges.setAction("add");
         fileChanges.setType("md");
+        fileChanges.setShareType(-1);
         fileChangesDao.insertSelective(fileChanges);
         //label
         List<Integer> labelIds = fileChanges.getLabelIds();
@@ -110,12 +111,11 @@ public class FileServiceImpl implements FileService {
         fileChanges.setUpdateBy(TypeConverts.parseIntOrNull(info.getPrincipalId()));
         fileChanges.setIsLatest(1);
         fileChanges.setAction("add");
+        fileChanges.setShareType(-1);
         fileChanges.setFileCode(UUID.randomUUID().toString().replaceAll("-", ""));
         String path = writeContentIntoFile(fileChanges);
         fileChanges.setContent(path);
         fileChangesDao.insertSelective(fileChanges);
-
-
         //label
         List<Integer> labelIds = fileChanges.getLabelIds();
         if(Objects.nonNull(labelIds)&&labelIds.size()>0){
@@ -124,15 +124,17 @@ public class FileServiceImpl implements FileService {
     }
 
     private void update(FileChanges fileChanges) {
+        FileChanges oldFileChanges = fileChangesDao.selectLastByFileCode(fileChanges.getFileCode());
         fileChangesDao.updateIsLatest(fileChanges.getFileCode());
         fileChanges.setId(null);
         fileChanges.preInsert();
         fileChanges.setIsLatest(1);
         fileChanges.setAction("edit");
+        fileChanges.setPasswd(oldFileChanges.getPasswd());
+        fileChanges.setShareType(oldFileChanges.getShareType());
         String path = writeContentIntoFile(fileChanges);
         fileChanges.setContent(path);
         fileChangesDao.insertSelective(fileChanges);
-
         //label
         List<Integer> labelIds = fileChanges.getLabelIds();
         if(Objects.nonNull(labelIds)&&labelIds.size()>0){
@@ -193,10 +195,8 @@ public class FileServiceImpl implements FileService {
         Map<String, Object> result = new HashMap<>();
         Date now  = new Date();
         String fileCode = UUID.randomUUID().toString().replaceAll("-", "");
-
         String fileName = file.getOriginalFilename();// 文件名
         String suffixName = fileName.substring(fileName.lastIndexOf("."));// 后缀名
-
         String newFileName = DateUtils2.formatDate(now,"yyyyMMddHHmmss");
         String subPath = "/"+fileCode+"/";
         String path = "";
@@ -217,23 +217,25 @@ public class FileServiceImpl implements FileService {
             } catch (Exception e) {
                 throw new UnsupportedOperationException(String.format("execute pandoc fail: suffix=%s , fileName=%s", suffixName, fileName));
             }
-
         }else{
             throw new UnsupportedOperationException("Unsupport file type:"+suffixName);
         }
-
-
         result.put("path",path);
         result.put("fileCode",fileCode);
-
         return result;
     }
 
-	public String encryptFile(Integer id) {
+    @Override
+	public String shareFile(Integer id,boolean isEncrypt) {
 		String passwd = generatePasswd();
 		FileChanges fileChanges = new FileChanges();
 		fileChanges.setId(id);
-		fileChanges.setPasswd(passwd);
+		if(isEncrypt){// Encrypt File
+            fileChanges.setShareType(1);
+            fileChanges.setPasswd(passwd);
+        }else{// not Encrypt File
+            fileChanges.setShareType(0);
+        }
 		fileChangesDao.updateByPrimaryKeySelective(fileChanges);
 		return passwd;
 	}
@@ -272,7 +274,6 @@ public class FileServiceImpl implements FileService {
             char ch=str.charAt(new Random().nextInt(str.length()));
             uuid+=ch;
         }
-
         return uuid;
     }
 

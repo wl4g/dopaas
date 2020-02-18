@@ -15,6 +15,22 @@
  */
 package com.wl4g.devops.common.web;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.annotations.Beta;
+import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
+import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
+import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.CollectionUtils;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import static com.wl4g.devops.common.web.RespBase.RetCode.newCode;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.convertBean;
@@ -26,36 +42,10 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.contains;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.EXPECTATION_FAILED;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.LOCKED;
-import static org.springframework.http.HttpStatus.PRECONDITION_FAILED;
-import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.state;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.util.CollectionUtils;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.annotations.Beta;
-import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
-import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
-import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
 
 /**
  * Generic restful response base model wrapper.
@@ -543,6 +533,12 @@ public class RespBase<D> implements Serializable {
 		 * {@link HttpStatus.BAD_REQUEST}
 		 */
 		final public static RetCode PARAM_ERR = new RetCode(BAD_REQUEST.value(), "Parameter error");
+
+		/**
+		 * Parameter error<br/>
+		 * {@link HttpStatus.NOT_FOUND}
+		 */
+		final public static RetCode NOT_FOUND_ERR = new RetCode(NOT_FOUND.value(), "Parameter error");
 
 		/**
 		 * Business constraints<br/>
