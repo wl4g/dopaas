@@ -11,14 +11,14 @@ import java.util.List;
  */
 public interface LabelService {
 
-    PageModel list(PageModel pm, String name);
+	PageModel list(PageModel pm, String name);
 
-    void save(Label label);
+	void save(Label label);
 
-    Label detail(Integer id);
+	Label detail(Integer id);
 
-    void del(Integer id);
+	void del(Integer id);
 
-    List<Label> allLabel();
+	List<Label> allLabel();
 
 }

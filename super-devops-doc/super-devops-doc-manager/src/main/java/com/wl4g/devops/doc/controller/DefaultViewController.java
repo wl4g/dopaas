@@ -87,7 +87,7 @@ public class DefaultViewController extends BaseController {
 	 */
 	protected void responseFile(String filepath, HttpServletResponse response) throws Exception {
 		notNull(filepath, "'filename' must not be null");
-		log.info("responseFile filepath={}",filepath);
+		log.info("responseFile filepath={}", filepath);
 		// Get buffer cache
 		byte[] buf = bufferCache.get(filepath);
 		if (isNull(buf)) {
@@ -122,10 +122,10 @@ public class DefaultViewController extends BaseController {
 	private InputStream getResource(String filepath) throws FileNotFoundException {
 		String location = "/default-webapps/" + filepath;
 
-		//return getClass().getResourceAsStream(location);
-		//TODO just for now
-		location = docProperties.getBasePath()+location;
-		log.info("get static file from location, path={}",location);
+		// return getClass().getResourceAsStream(location);
+		// TODO just for now
+		location = docProperties.getBasePath() + location;
+		log.info("get static file from location, path={}", location);
 		File file = new File(location);
 		InputStream input = new FileInputStream(file);
 		return input;
