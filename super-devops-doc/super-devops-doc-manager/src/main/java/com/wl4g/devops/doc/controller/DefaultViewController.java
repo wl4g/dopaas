@@ -87,7 +87,6 @@ public class DefaultViewController extends BaseController {
 	 */
 	protected void responseFile(String filepath, HttpServletResponse response) throws Exception {
 		notNull(filepath, "'filename' must not be null");
-		log.info("responseFile filepath={}", filepath);
 		// Get buffer cache
 		byte[] buf = bufferCache.get(filepath);
 		if (isNull(buf)) {
