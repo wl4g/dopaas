@@ -9,6 +9,13 @@
 <body>
 <div id="content"></div>
 <script>
+    //TODO Rendering Url should be config, not like this
+    let renderingUrl = location.protocol + '//' + location.hostname;
+    if(location.port){
+        renderingUrl = renderingUrl + ':' + location.port;
+    }
+    renderingUrl = renderingUrl + '/doc-manager/doc/rendering';
+
     var getContext = function () {
         const code = getQueryString('code');
         if(!code){
@@ -16,7 +23,7 @@
         }
         let passwd = getQueryString('passwd');
 
-        $.getJSON("http://localhost:14060/doc-manager/doc/rendering", {code: code,passwd: passwd},
+        $.getJSON(renderingUrl, {code: code,passwd: passwd},
             function (data) {
                 if(!data || !data.code){
                     alert('服务器请求失败,请联系管理员');
@@ -36,7 +43,7 @@
 
     function getContextByPasswd(code,text){
         const passwd = prompt(text);
-        $.getJSON("http://localhost:14060/doc-manager/doc/rendering", {code: code,passwd: passwd},
+        $.getJSON(renderingUrl, {code: code,passwd: passwd},
             function (data) {
                 if(!data || !data.code){
                     alert('服务器请求失败,请联系管理员');
