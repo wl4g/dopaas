@@ -50,7 +50,7 @@ import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.ClassUtils2;
 
 /**
- * {@link org.ResourceUtils2.core.io.ResourceUtils} Utility methods for
+ * {@link org.springframework.core.io.ResourceUtils} Utility methods for
  * resolving resource locations to files in the file system. Mainly for internal
  * use within the framework.
  *
@@ -67,7 +67,7 @@ import com.wl4g.devops.tool.common.lang.ClassUtils2;
  * @since 1.1.5
  * @see org.StreamResource.core.io.Resource
  * @see org.ClassPathStreamResource.core.io.ClassPathResource
- * @see org.LocalFSStreamResource.core.io.FileSystemResource
+ * @see org.FileStreamResource.core.io.FileSystemResource
  * @see org.UrlStreamResource.core.io.UrlResource
  * @see com.wl4g.devops.tool.common.resources.resolver.springframework.core.io.ResourceLoader
  */

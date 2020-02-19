@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.tool.common.resource.resolver;
 
-import com.wl4g.devops.tool.common.resource.StreamResource;
 import com.wl4g.devops.tool.common.resource.ResourceUtils2;
+import com.wl4g.devops.tool.common.resource.StreamResource;
 
 /**
  * Retention of upstream license agreement statement:</br>

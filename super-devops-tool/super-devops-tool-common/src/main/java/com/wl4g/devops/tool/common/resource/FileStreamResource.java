@@ -58,7 +58,7 @@ import com.wl4g.devops.tool.common.lang.StringUtils2;
  * @since 28.12.2003
  * @see java.io.File
  */
-public class LocalFSStreamResource extends AbstractStreamResource {
+public class FileStreamResource extends AbstractStreamResource {
 
 	private final File file;
 
@@ -78,7 +78,7 @@ public class LocalFSStreamResource extends AbstractStreamResource {
 	 * @param file
 	 *            a File handle
 	 */
-	public LocalFSStreamResource(File file) {
+	public FileStreamResource(File file) {
 		Assert2.notNull(file, "File must not be null");
 		this.file = file;
 		this.path = StringUtils2.cleanPath(file.getPath());
@@ -97,7 +97,7 @@ public class LocalFSStreamResource extends AbstractStreamResource {
 	 * @param path
 	 *            a file path
 	 */
-	public LocalFSStreamResource(String path) {
+	public FileStreamResource(String path) {
 		Assert2.notNull(path, "Path must not be null");
 		this.file = new File(path);
 		this.path = StringUtils2.cleanPath(path);
@@ -210,7 +210,7 @@ public class LocalFSStreamResource extends AbstractStreamResource {
 	@Override
 	public StreamResource createRelative(String relativePath) {
 		String pathToUse = StringUtils2.applyRelativePath(this.path, relativePath);
-		return new LocalFSStreamResource(pathToUse);
+		return new FileStreamResource(pathToUse);
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class LocalFSStreamResource extends AbstractStreamResource {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return (obj == this || (obj instanceof LocalFSStreamResource && this.path.equals(((LocalFSStreamResource) obj).path)));
+		return (obj == this || (obj instanceof FileStreamResource && this.path.equals(((FileStreamResource) obj).path)));
 	}
 
 	/**

@@ -34,7 +34,7 @@ import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.videoio.VideoCapture;
 
 import com.wl4g.devops.tool.common.cli.CommandUtils;
-import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
+import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
 import com.wl4g.devops.tool.opencv.library.OpenCvNativeLibraryLoader;
 
 public class VideoFaceTests {
@@ -90,7 +90,7 @@ public class VideoFaceTests {
 	 */
 	public static Mat getFace(Mat image) throws IOException {
 		// 1 读取OpenCV自带的人脸识别特征XML文件
-		File faceFile = new GenericPathPatternResourceMatchingResolver()
+		File faceFile = new ClassPathResourcePatternResolver()
 				.getResource("opencv/data/haarcascade_frontalface_alt.xml").getFile();
 		CascadeClassifier facebook = new CascadeClassifier(faceFile.getAbsolutePath());
 		// 2 特征匹配类
