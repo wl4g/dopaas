@@ -21,7 +21,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
 import com.wl4g.devops.tool.common.lang.Assert2;
-import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
+import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
 import com.wl4g.devops.tool.hbase.migrator.mapred.NothingTransformMapper;
 
 import org.apache.commons.cli.CommandLine;
@@ -87,7 +87,7 @@ public class HfileBulkExporter {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) throws Exception {
 		System.out.println(Resources.toString(
-				new GenericPathPatternResourceMatchingResolver().getResource("classpath:banner.txt").getURL(),
+				new ClassPathResourcePatternResolver().getResource("classpath:banner.txt").getURL(),
 				Charsets.UTF_8));
 
 		Builder builder = new Builder();

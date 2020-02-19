@@ -46,7 +46,6 @@ import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.ClassUtils2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 import com.wl4g.devops.tool.common.resource.ClassPathStreamResource;
-import com.wl4g.devops.tool.common.resource.ContextStreamResource;
 import com.wl4g.devops.tool.common.resource.StreamResource;
 import com.wl4g.devops.tool.common.resource.UrlStreamResource;
 
@@ -188,20 +187,19 @@ public class DefaultResourceLoader implements ResourceLoader {
 	 * @see org.springframework.web.context.support.XmlWebApplicationContext#getResourceByPath
 	 */
 	protected StreamResource getResourceByPath(String path) {
-		return new ClassPathContextResource(path, getClassLoader());
+		return new ContextClassPathStreamResource(path, getClassLoader());
 	}
 
 	/**
 	 * ClassPathResource that explicitly expresses a context-relative path
 	 * through implementing the ContextResource interface.
 	 */
-	protected static class ClassPathContextResource extends ClassPathStreamResource implements ContextStreamResource {
+	protected static class ContextClassPathStreamResource extends ClassPathStreamResource {
 
-		public ClassPathContextResource(String path, ClassLoader classLoader) {
+		public ContextClassPathStreamResource(String path, ClassLoader classLoader) {
 			super(path, classLoader);
 		}
 
-		@Override
 		public String getPathWithinContext() {
 			return getPath();
 		}
@@ -209,8 +207,9 @@ public class DefaultResourceLoader implements ResourceLoader {
 		@Override
 		public StreamResource createRelative(String relativePath) {
 			String pathToUse = StringUtils2.applyRelativePath(getPath(), relativePath);
-			return new ClassPathContextResource(pathToUse, getClassLoader());
+			return new ContextClassPathStreamResource(pathToUse, getClassLoader());
 		}
+
 	}
 
 }

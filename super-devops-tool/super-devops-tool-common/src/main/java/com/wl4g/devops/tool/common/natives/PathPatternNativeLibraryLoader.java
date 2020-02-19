@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import com.wl4g.devops.tool.common.resource.StreamResource;
-import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
+import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.ClassUtils2.getDefaultClassLoader;
@@ -137,7 +137,7 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 		assertLibLocationPatterns(libLocationPatterns);
 
 		// Scanning native library resources.
-		GenericPathPatternResourceMatchingResolver resolver = new GenericPathPatternResourceMatchingResolver(classLoader);
+		ClassPathResourcePatternResolver resolver = new ClassPathResourcePatternResolver(classLoader);
 		Set<StreamResource> resources = resolver.getResources(libLocationPatterns);
 		// Sort resources url by ASCII dict.
 		List<StreamResource> rss = asList(resources.toArray(new StreamResource[] {}));
