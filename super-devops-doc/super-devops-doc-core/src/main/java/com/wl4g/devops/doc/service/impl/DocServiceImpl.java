@@ -3,11 +3,13 @@ package com.wl4g.devops.doc.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.doc.FileChanges;
+import com.wl4g.devops.common.bean.doc.Share;
 import com.wl4g.devops.dao.doc.FileChangesDao;
 import com.wl4g.devops.dao.doc.FileLabelDao;
 import com.wl4g.devops.dao.doc.LabelDao;
+import com.wl4g.devops.dao.doc.ShareDao;
 import com.wl4g.devops.doc.config.DocProperties;
-import com.wl4g.devops.doc.service.FileService;
+import com.wl4g.devops.doc.service.DocService;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.*;
 
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
@@ -35,7 +38,7 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
  * @date 2020-01-14 11:49:00
  */
 @Service
-public class FileServiceImpl implements FileService {
+public class DocServiceImpl implements DocService {
 	final protected Logger log = getLogger(getClass());
 
 	@Autowired
@@ -49,6 +52,9 @@ public class FileServiceImpl implements FileService {
 
 	@Autowired
 	private FileLabelDao fileLabelDao;
+
+	@Autowired
+	private ShareDao shareDao;
 
 	@Autowired
 	protected DestroableProcessManager pm;
@@ -76,7 +82,7 @@ public class FileServiceImpl implements FileService {
 	@Override
 	public void saveUpload(FileChanges fileChanges) {
 		Assert2.notNullOf(fileChanges, "fileChanges");
-		Assert2.hasTextOf(fileChanges.getFileCode(), "fileCode");
+		Assert2.hasTextOf(fileChanges.getDocCode(), "fileCode");
 		Assert2.hasTextOf(fileChanges.getContent(), "content");
 		IamPrincipalInfo info = getPrincipalInfo();
 		fileChanges.preInsert();
@@ -85,7 +91,6 @@ public class FileServiceImpl implements FileService {
 		fileChanges.setIsLatest(1);
 		fileChanges.setAction("add");
 		fileChanges.setType("md");
-		fileChanges.setShareType(-1);
 		fileChangesDao.insertSelective(fileChanges);
 		// label
 		List<Integer> labelIds = fileChanges.getLabelIds();
@@ -111,8 +116,7 @@ public class FileServiceImpl implements FileService {
 		fileChanges.setUpdateBy(TypeConverts.parseIntOrNull(info.getPrincipalId()));
 		fileChanges.setIsLatest(1);
 		fileChanges.setAction("add");
-		fileChanges.setShareType(-1);
-		fileChanges.setFileCode(UUID.randomUUID().toString().replaceAll("-", ""));
+		fileChanges.setDocCode(UUID.randomUUID().toString().replaceAll("-", ""));
 		String path = writeContentIntoFile(fileChanges);
 		fileChanges.setContent(path);
 		fileChangesDao.insertSelective(fileChanges);
@@ -124,14 +128,12 @@ public class FileServiceImpl implements FileService {
 	}
 
 	private void update(FileChanges fileChanges) {
-		FileChanges oldFileChanges = fileChangesDao.selectLastByFileCode(fileChanges.getFileCode());
-		fileChangesDao.updateIsLatest(fileChanges.getFileCode());
+		FileChanges oldFileChanges = fileChangesDao.selectLastByDocCode(fileChanges.getDocCode());
+		fileChangesDao.updateIsLatest(fileChanges.getDocCode());
 		fileChanges.setId(null);
 		fileChanges.preInsert();
 		fileChanges.setIsLatest(1);
 		fileChanges.setAction("edit");
-		fileChanges.setPasswd(oldFileChanges.getPasswd());
-		fileChanges.setShareType(oldFileChanges.getShareType());
 		String path = writeContentIntoFile(fileChanges);
 		fileChanges.setContent(path);
 		fileChangesDao.insertSelective(fileChanges);
@@ -143,7 +145,7 @@ public class FileServiceImpl implements FileService {
 	}
 
 	private String writeContentIntoFile(FileChanges fileChanges) {
-		String subPath = "/" + fileChanges.getFileCode() + "/";
+		String subPath = "/" + fileChanges.getDocCode() + "/";
 		String fileName = DateUtils2.formatDate(fileChanges.getUpdateDate(), "yyyyMMddHHmmss") + "." + fileChanges.getType();
 		File file = new File(docProperties.getFilePath(subPath + fileName));
 		FileIOUtils.ensureFile(file);
@@ -160,13 +162,13 @@ public class FileServiceImpl implements FileService {
 	}
 
 	@Override
-	public List<FileChanges> getHistoryByFileCode(String fileCode) {
-		return fileChangesDao.selectByFileCode(fileCode);
+	public List<FileChanges> getHistoryByDocCode(String docCode) {
+		return fileChangesDao.selectByDocCode(docCode);
 	}
 
 	@Override
-	public FileChanges getLastByFileCode(String fileCode) {
-		FileChanges fileChange = fileChangesDao.selectLastByFileCode(fileCode);
+	public FileChanges getLastByDocCode(String docCode) {
+		FileChanges fileChange = fileChangesDao.selectLastByDocCode(docCode);
 		file2String(fileChange);
 		return fileChange;
 	}
@@ -182,7 +184,7 @@ public class FileServiceImpl implements FileService {
 			file2String(newFileChanges);
 			result.put("newFileChanges", newFileChanges);
 		} else {
-			FileChanges newFileChanges = fileChangesDao.selectLastByFileCode(oldFileChanges.getFileCode());
+			FileChanges newFileChanges = fileChangesDao.selectLastByDocCode(oldFileChanges.getDocCode());
 			file2String(newFileChanges);
 			result.put("newFileChanges", newFileChanges);
 		}
@@ -226,18 +228,39 @@ public class FileServiceImpl implements FileService {
 	}
 
 	@Override
-	public String shareFile(Integer id, boolean isEncrypt) {
-		String passwd = generatePasswd();
-		FileChanges fileChanges = new FileChanges();
-		fileChanges.setId(id);
-		if (isEncrypt) {// Encrypt File
-			fileChanges.setShareType(1);
-			fileChanges.setPasswd(passwd);
-		} else {// not Encrypt File
-			fileChanges.setShareType(0);
+	public Share shareFile(Integer id, boolean isEncrypt, boolean isForever, Integer day, Date expireTime) {
+		log.info("DocServiceImpl.shareFile prarms::"+ "id = {} , isEncrypt = {} , isForever = {} , day = {} , expireTime = {} ", id, isEncrypt, isForever, day, expireTime );
+		Assert2.notNullOf(id,"id");
+		FileChanges fileChanges = fileChangesDao.selectByPrimaryKey(id);
+		Assert2.notNullOf(id,"fileChanges");
+		Share share = new Share();
+		share.setDocCode(fileChanges.getDocCode());
+		share.setShareCode(UUID.randomUUID().toString().replaceAll("-", ""));
+
+		if (isEncrypt) {// Encrypt Doc
+			String passwd = generatePasswd();
+			share.setShareType(1);
+			share.setPasswd(passwd);
+		} else {// not Encrypt Doc
+			share.setShareType(0);
 		}
-		fileChangesDao.updateByPrimaryKeySelective(fileChanges);
-		return passwd;
+
+		if(isForever){
+			share.setExpireType(1);// forever
+		}else{
+			share.setExpireType(2);// not forever
+			Date now = new Date();
+			if(Objects.nonNull(day) && day>0){
+				expireTime = DateUtils2.addDays(now, day);
+				share.setExpireTime(expireTime);
+			}else if(Objects.nonNull(expireTime)){
+				share.setExpireTime(expireTime);
+			}else{
+				throw new InvalidParameterException("error request params");
+			}
+		}
+		shareDao.insertSelective(share);
+		return share;
 	}
 
 	private void saveFile(MultipartFile file, String localPath) {

@@ -9,7 +9,7 @@ public class FileChanges extends BaseBean {
 
 	private String name;
 
-	private String fileCode;
+	private String docCode;
 
 	private String type;
 
@@ -21,13 +21,9 @@ public class FileChanges extends BaseBean {
 
 	private String sha;
 
-	private String passwd;
-
 	private String description;
 
 	private Integer isLatest;
-
-	private Integer shareType;
 
 	// --- Temporary ---
 
@@ -45,12 +41,12 @@ public class FileChanges extends BaseBean {
 		this.name = name == null ? null : name.trim();
 	}
 
-	public String getFileCode() {
-		return fileCode;
+	public String getDocCode() {
+		return docCode;
 	}
 
-	public void setFileCode(String fileCode) {
-		this.fileCode = fileCode == null ? null : fileCode.trim();
+	public void setDocCode(String docCode) {
+		this.docCode = docCode == null ? null : docCode.trim();
 	}
 
 	public String getType() {
@@ -93,14 +89,6 @@ public class FileChanges extends BaseBean {
 		this.sha = sha == null ? null : sha.trim();
 	}
 
-	public String getPasswd() {
-		return passwd;
-	}
-
-	public void setPasswd(String passwd) {
-		this.passwd = passwd;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -141,11 +129,4 @@ public class FileChanges extends BaseBean {
 		this.createByStr = createByStr;
 	}
 
-	public Integer getShareType() {
-		return shareType;
-	}
-
-	public void setShareType(Integer shareType) {
-		this.shareType = shareType;
-	}
 }

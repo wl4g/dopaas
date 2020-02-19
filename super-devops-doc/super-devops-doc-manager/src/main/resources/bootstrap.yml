@@ -27,7 +27,7 @@ spring:
           filter-chain:
             /public/**: anon # Public rule release
             /view/**: anon # Public rule release
-            /doc/**: anon # Public rule release
+            /external/**: anon # Public rule release
   http:
     multipart:
       max-file-size: 5000Mb

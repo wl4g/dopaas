@@ -4,16 +4,14 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.doc.FileChanges">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="file_code" jdbcType="VARCHAR" property="fileCode" />
+    <result column="doc_code" jdbcType="VARCHAR" property="docCode" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="action" jdbcType="VARCHAR" property="action" />
     <result column="lang" jdbcType="VARCHAR" property="lang" />
     <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="sha" jdbcType="VARCHAR" property="sha" />
-    <result column="passwd" jdbcType="VARCHAR" property="passwd" />
     <result column="description" jdbcType="VARCHAR" property="description" />
     <result column="is_latest" jdbcType="INTEGER" property="isLatest" />
-    <result column="share_type" jdbcType="INTEGER" property="shareType" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="create_by_str" jdbcType="VARCHAR" property="createByStr" />
@@ -22,11 +20,11 @@
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, file_code, type, action, lang, content, sha, passwd, description, is_latest, share_type,  create_date,
+    id, name, doc_code, type, action, lang, content, sha, description, is_latest, create_date,
     create_by, update_date, update_by, del_flag
   </sql>
   <sql id="Base_Column_List_fc">
-    fc.id, fc.name, fc.file_code, fc.type, fc.action, fc.lang, fc.content, fc.sha, fc.passwd, fc.description, fc.is_latest, share_type, fc.create_date,
+    fc.id, fc.name, fc.doc_code, fc.type, fc.action, fc.lang, fc.content, fc.sha, fc.description, fc.is_latest, fc.create_date,
     fc.create_by, fc.update_date, fc.update_by, fc.del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -36,19 +34,19 @@
     where id = #{id,jdbcType=INTEGER}
   </select>
 
-  <select id="selectByFileCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectByDocCode" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />,(select user_name from sys_user where id=fc.create_by) create_by_str
     from doc_file_changes fc
-    where fc.del_flag!=1 and fc.file_code = #{fileCode,jdbcType=INTEGER}
+    where fc.del_flag!=1 and fc.doc_code = #{docCode,jdbcType=INTEGER}
     order by fc.update_date desc
   </select>
 
-  <select id="selectLastByFileCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectLastByDocCode" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from doc_file_changes
-    where del_flag!=1 and is_latest=1 and file_code = #{fileCode,jdbcType=INTEGER}
+    where del_flag!=1 and is_latest=1 and doc_code = #{docCode,jdbcType=INTEGER}
     limit 1
   </select>
 
@@ -74,16 +72,16 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.doc.FileChanges">
-    insert into doc_file_changes (id, name, file_code, 
+    insert into doc_file_changes (id, name, doc_code,
       type, action, lang, 
-      content, sha, passwd, description,
-      is_latest, share_type, create_date, create_by,
+      content, sha, description,
+      is_latest, create_date, create_by,
       update_date, update_by, del_flag
       )
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{fileCode,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{docCode,jdbcType=VARCHAR},
       #{type,jdbcType=VARCHAR}, #{action,jdbcType=VARCHAR}, #{lang,jdbcType=VARCHAR}, 
-      #{content,jdbcType=VARCHAR}, #{sha,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
-      #{isLatest,jdbcType=INTEGER}, #{shareType,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
+      #{content,jdbcType=VARCHAR}, #{sha,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+      #{isLatest,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}
       )
   </insert>
@@ -96,8 +94,8 @@
       <if test="name != null">
         name,
       </if>
-      <if test="fileCode != null">
-        file_code,
+      <if test="docCode != null">
+        doc_code,
       </if>
       <if test="type != null">
         type,
@@ -114,17 +112,11 @@
       <if test="sha != null">
         sha,
       </if>
-      <if test="passwd != null">
-        passwd,
-      </if>
       <if test="description != null">
         description,
       </if>
       <if test="isLatest != null">
         is_latest,
-      </if>
-      <if test="shareType != null">
-        share_type,
       </if>
       <if test="createDate != null">
         create_date,
@@ -149,8 +141,8 @@
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="fileCode != null">
-        #{fileCode,jdbcType=VARCHAR},
+      <if test="docCode != null">
+        #{docCode,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
         #{type,jdbcType=VARCHAR},
@@ -167,17 +159,11 @@
       <if test="sha != null">
         #{sha,jdbcType=VARCHAR},
       </if>
-      <if test="passwd != null">
-        #{passwd,jdbcType=VARCHAR},
-      </if>
       <if test="description != null">
         #{description,jdbcType=VARCHAR},
       </if>
       <if test="isLatest != null">
         #{isLatest,jdbcType=INTEGER},
-      </if>
-      <if test="shareType != null">
-        #{shareType,jdbcType=INTEGER},
       </if>
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
@@ -202,8 +188,8 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="fileCode != null">
-        file_code = #{fileCode,jdbcType=VARCHAR},
+      <if test="docCode != null">
+        doc_code = #{docCode,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
         type = #{type,jdbcType=VARCHAR},
@@ -220,17 +206,11 @@
       <if test="sha != null">
         sha = #{sha,jdbcType=VARCHAR},
       </if>
-      <if test="passwd != null">
-        passwd = #{passwd,jdbcType=VARCHAR},
-      </if>
       <if test="description != null">
         description = #{description,jdbcType=VARCHAR},
       </if>
       <if test="isLatest != null">
         is_latest = #{isLatest,jdbcType=INTEGER},
-      </if>
-      <if test="shareType != null">
-        share_type = #{shareType,jdbcType=INTEGER},
       </if>
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -253,16 +233,14 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.doc.FileChanges">
     update doc_file_changes
     set name = #{name,jdbcType=VARCHAR},
-      file_code = #{fileCode,jdbcType=VARCHAR},
+      doc_code = #{docCode,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},
       action = #{action,jdbcType=VARCHAR},
       lang = #{lang,jdbcType=VARCHAR},
       content = #{content,jdbcType=VARCHAR},
       sha = #{sha,jdbcType=VARCHAR},
-      passwd = #{passwd,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       is_latest = #{isLatest,jdbcType=INTEGER},
-      share_type = #{shareType,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
@@ -274,7 +252,7 @@
   <update id="updateIsLatest" parameterType="java.lang.String">
     update doc_file_changes
     set is_latest = 0
-    where file_code = #{fileCode,jdbcType=VARCHAR}
+    where doc_code = #{docCode,jdbcType=VARCHAR}
   </update>
 
 </mapper>

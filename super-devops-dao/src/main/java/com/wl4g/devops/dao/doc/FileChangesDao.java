@@ -20,9 +20,9 @@ public interface FileChangesDao {
 
     List<FileChanges> list(@Param("name")String name, @Param("lang")String lang,@Param("labelId")Integer labelId);
 
-    List<FileChanges> selectByFileCode(String fileCode);
+    List<FileChanges> selectByDocCode(String fileCode);
 
-    FileChanges selectLastByFileCode(String fileCode);
+    FileChanges selectLastByDocCode(String fileCode);
 
     void updateIsLatest(String fileCode);
 }
