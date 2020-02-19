@@ -8,6 +8,10 @@ public class DocProperties {
 
 	private String basePath;
 
+	private String shareBaseUrl;
+
+	private String docBaseUrl;
+
 	public String getBasePath() {
 		return basePath;
 	}
@@ -18,5 +22,21 @@ public class DocProperties {
 
 	public String getFilePath(String subPath) {
 		return basePath + subPath;
+	}
+
+	public String getShareBaseUrl() {
+		return shareBaseUrl;
+	}
+
+	public void setShareBaseUrl(String shareBaseUrl) {
+		this.shareBaseUrl = shareBaseUrl;
+	}
+
+	public String getDocBaseUrl() {
+		return docBaseUrl;
+	}
+
+	public void setDocBaseUrl(String docBaseUrl) {
+		this.docBaseUrl = docBaseUrl;
 	}
 }

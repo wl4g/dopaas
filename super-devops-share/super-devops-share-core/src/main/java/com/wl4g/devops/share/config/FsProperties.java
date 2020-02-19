@@ -1,5 +1,7 @@
 package com.wl4g.devops.share.config;
 
+import com.wl4g.devops.common.constants.DocDevOpsConstants;
+
 public class FsProperties {
 
     private String basePath;
@@ -19,7 +21,8 @@ public class FsProperties {
     }
 
     public String getBaseImgUrl(){
-        return getBaseUrl()+"/fs/downloadImg";
+        //return getBaseUrl()+"/fs/downloadImg";
+        return DocDevOpsConstants.SHARE_BASE_URL+"/fs/downloadImg";
     }
 
     public String getBasePath() {
