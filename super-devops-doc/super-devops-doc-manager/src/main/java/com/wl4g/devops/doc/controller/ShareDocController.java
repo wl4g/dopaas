@@ -1,7 +1,9 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.devops.common.bean.doc.FileChanges;
+import com.wl4g.devops.common.constants.DocDevOpsConstants;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.doc.config.DocProperties;
 import com.wl4g.devops.doc.service.FileService;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class ShareDocController {
 	@Autowired
 	private FileService fileService;
 
+	@Autowired
+	private DocProperties docProperties;
+
 	@CrossOrigin
 	@RequestMapping(value = "/rendering")
 	public RespBase<?> rendering(String code, String passwd) {
@@ -38,8 +43,16 @@ public class ShareDocController {
 			resp.setCode(UNAUTHC);
 			return resp;
 		}
-		resp.setData(lastByFileCode.getContent());
+		resp.setData(parse(lastByFileCode.getContent()));
 		return resp;
+	}
+
+	private String parse(String content){
+		content = content.replaceAll(DocDevOpsConstants.SHARE_BASE_URL,docProperties.getShareBaseUrl());
+		content = content.replaceAll(DocDevOpsConstants.SHARE_BASE_URL_TRAN,docProperties.getShareBaseUrl());
+		content = content.replaceAll(DocDevOpsConstants.DOC_BASE_URL,docProperties.getDocBaseUrl());
+		content = content.replaceAll(DocDevOpsConstants.DOC_BASE_URL_TRAN,docProperties.getDocBaseUrl());
+		return content;
 	}
 
 }

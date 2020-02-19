@@ -66,4 +66,7 @@ redis:
 cipher-key: 03DE18C2FC4E605F
 
 doc:
-  basePath: /Users/vjay/Downloads/myupload
+  base-path: /Users/vjay/Downloads/myupload
+  share-base-url: http://wl4g.debug:14051/share-manager
+  doc-base-url: http://wl4g.debug:14060/doc-manager
+
