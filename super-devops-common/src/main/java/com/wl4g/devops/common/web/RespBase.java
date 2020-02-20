@@ -29,6 +29,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.wl4g.devops.common.web.RespBase.RetCode.newCode;
@@ -36,6 +37,7 @@ import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.convertBean;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
+import static java.lang.System.getProperty;
 import static java.lang.reflect.Modifier.isFinal;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Collections.emptyMap;
@@ -162,7 +164,7 @@ public class RespBase<D> implements Serializable {
 	 * @return
 	 */
 	public RespBase<D> setMessage(String message) {
-		this.message = ErrorMessagePrefixBuilder.build(code, !isBlank(message) ? message : this.message);
+		this.message = ErrorPromptMessageBuilder.build(code, !isBlank(message) ? message : this.message);
 		return this;
 	}
 
@@ -520,62 +522,71 @@ public class RespBase<D> implements Serializable {
 	 * @version v1.0 2019年1月10日
 	 * @since
 	 */
-	public static class RetCode {
+	public abstract static class RetCode {
 
 		/**
 		 * Successful code<br/>
 		 * {@link HttpStatus.OK}
 		 */
-		final public static RetCode OK = new RetCode(HttpStatus.OK.value(), "Ok");
+		final public static RetCode OK = new RetCode(HttpStatus.OK.value(), "Ok") {
+		};
 
 		/**
 		 * Parameter error<br/>
 		 * {@link HttpStatus.BAD_REQUEST}
 		 */
-		final public static RetCode PARAM_ERR = new RetCode(BAD_REQUEST.value(), "Parameter error");
+		final public static RetCode PARAM_ERR = new RetCode(BAD_REQUEST.value(), "Parameter error") {
+		};
 
 		/**
 		 * Parameter error<br/>
 		 * {@link HttpStatus.NOT_FOUND}
 		 */
-		final public static RetCode NOT_FOUND_ERR = new RetCode(NOT_FOUND.value(), "Parameter error");
+		final public static RetCode NOT_FOUND_ERR = new RetCode(NOT_FOUND.value(), "Parameter error") {
+		};
 
 		/**
 		 * Business constraints<br/>
 		 * {@link HttpStatus.NOT_IMPLEMENTED}
 		 */
-		final public static RetCode BIZ_ERR = new RetCode(EXPECTATION_FAILED.value(), "Business restricted");
+		final public static RetCode BIZ_ERR = new RetCode(EXPECTATION_FAILED.value(), "Business restricted") {
+		};
 
 		/**
 		 * Business locked constraints<br/>
 		 * {@link HttpStatus.LOCKED}
 		 */
-		final public static RetCode LOCKD_ERR = new RetCode(LOCKED.value(), "Locked");
+		final public static RetCode LOCKD_ERR = new RetCode(LOCKED.value(), "Locked") {
+		};
 
 		/**
 		 * Unauthenticated<br/>
 		 * {@link HttpStatus.UNAUTHORIZED}
 		 */
-		final public static RetCode UNAUTHC = new RetCode(UNAUTHORIZED.value(), "Unauthenticated");
+		final public static RetCode UNAUTHC = new RetCode(UNAUTHORIZED.value(), "Unauthenticated") {
+		};
 
 		/**
 		 * Second Uncertified<br/>
 		 * {@link HttpStatus.PRECONDITION_FAILED}
 		 */
-		final public static RetCode SECOND_UNAUTH = new RetCode(PRECONDITION_FAILED.value(), "Second uncertified");
+		final public static RetCode SECOND_UNAUTH = new RetCode(PRECONDITION_FAILED.value(), "Second uncertified") {
+		};
 
 		/**
 		 * Unauthorized<br/>
 		 * {@link HttpStatus.FORBIDDEN}
 		 */
-		final public static RetCode UNAUTHZ = new RetCode(FORBIDDEN.value(), "Unauthorized");
+		final public static RetCode UNAUTHZ = new RetCode(FORBIDDEN.value(), "Unauthorized") {
+		};
 
 		/**
 		 * System abnormality<br/>
 		 * {@link HttpStatus.SERVICE_UNAVAILABLE}
 		 */
 		final public static RetCode SYS_ERR = new RetCode(SERVICE_UNAVAILABLE.value(),
-				"Service unavailable, please try again later");
+				"Service unavailable, please try again later") {
+		};
 
 		/**
 		 * Name to {@link RetCode} value definitions.
@@ -665,7 +676,8 @@ public class RespBase<D> implements Serializable {
 		 * @return
 		 */
 		final public static RetCode newCode(int errcode) {
-			return new RetCode(errcode, null);
+			return new RetCode(errcode, null) {
+			};
 		}
 
 		/**
@@ -676,7 +688,8 @@ public class RespBase<D> implements Serializable {
 		 * @return
 		 */
 		final public static RetCode newCode(int errcode, String errmsg) {
-			return new RetCode(errcode, errmsg);
+			return new RetCode(errcode, errmsg) {
+			};
 		}
 
 		/**
@@ -723,17 +736,17 @@ public class RespBase<D> implements Serializable {
 	 * @version v1.0 2019年11月7日
 	 * @since
 	 */
-	final static class ErrorMessagePrefixBuilder {
+	final public static class ErrorPromptMessageBuilder {
 
 		/** Errors code and message separator. */
-		final public static String CODE_PREFIX_SEPAR = ",";
+		final private static String CODE_PROMPT_SEPAR = ": ";
 
 		/**
 		 * Errors prefix definition.
 		 * 
 		 * @see {@link com.wl4g.devops.common.web.RespBase#globalErrPrefix()}
 		 */
-		private static String CodePrefixString = "API"; // by-default.
+		private static String errorPromptString = getProperty("spring.cloud.devops.global.respbase.error-prompt", "API");
 
 		/**
 		 * Building error message with prefix.
@@ -746,12 +759,10 @@ public class RespBase<D> implements Serializable {
 			if (isBlank(errmsg)) {
 				return errmsg;
 			}
-			String prefixString = format("[%s-%s], ", CodePrefixString, retCode.getErrcode());
-			if (contains(errmsg, CODE_PREFIX_SEPAR)) {
-				int index = errmsg.indexOf(CODE_PREFIX_SEPAR);
-				if (errmsg.length() > index) {
-					return (prefixString + errmsg.substring(errmsg.indexOf(CODE_PREFIX_SEPAR) + 1));
-				}
+			String prefixString = format("%s-%s%s", errorPromptString, retCode.getErrcode(), CODE_PROMPT_SEPAR);
+			int index = errmsg.indexOf(CODE_PROMPT_SEPAR);
+			if (index >= 0) {
+				return (prefixString + errmsg.substring(index + CODE_PROMPT_SEPAR.length()));
 			}
 			return (prefixString + errmsg);
 		}
@@ -759,11 +770,13 @@ public class RespBase<D> implements Serializable {
 		/**
 		 * Setup global error message prefix.
 		 * 
-		 * @param errorPrefix
+		 * @param errorPrompt
 		 */
-		final public synchronized static void setup(String errorPrefix) {
-			hasText(errorPrefix, "Global errors prefix can't be empty.");
-			CodePrefixString = errorPrefix;
+		final public synchronized static void setPrompt(String errorPrompt) {
+			// hasText(errorPrompt, "Global error prompt can't be empty.");
+			if (!isBlank(errorPrompt)) {
+				errorPromptString = errorPrompt.replaceAll("-", "").toUpperCase(Locale.US);
+			}
 		}
 
 	}
