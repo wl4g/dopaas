@@ -17,6 +17,10 @@ spring:
     active: dev
   cloud:
     devops:
+      default-webapps:
+        enabled: true
+        webapp-location: classpath*:/default-webapps
+        base-uri: /view
       support:
         cli:
           enabled: true

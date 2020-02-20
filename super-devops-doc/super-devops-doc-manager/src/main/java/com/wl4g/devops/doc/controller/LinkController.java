@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 @RestController
-@RequestMapping("/external")
-public class ExternalController {
+@RequestMapping("/link")
+public class LinkController {
 
 	final protected Logger log = getLogger(getClass());
 
