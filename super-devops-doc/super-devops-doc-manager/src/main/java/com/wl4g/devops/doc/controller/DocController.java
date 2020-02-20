@@ -21,11 +21,11 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.doc.service.DocService;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.tool.common.lang.DateUtils2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -99,10 +99,10 @@ public class DocController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/shareFile")
-	public RespBase<?> shareFile(Integer id, Boolean isEncrypt, Boolean isForever, Integer day, Date expireTime) {
+	@RequestMapping(value = "/shareDoc")
+	public RespBase<?> shareDoc(Integer id, Boolean isEncrypt, Boolean isForever, Integer day, String expireTime) {
 		RespBase<Object> resp = RespBase.create();
-		Share share = docService.shareFile(id, isEncrypt, isForever, day, expireTime);
+		Share share = docService.shareDoc(id, isEncrypt, isForever, day, DateUtils2.parseDate(expireTime));
 		resp.setData(share);
 		return resp;
 	}
