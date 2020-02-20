@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.tool.common.resource.resolver;
 
+import static java.util.stream.Collectors.toCollection;
+
 /**
  * Retention of upstream license agreement statement:</br>
  * Thank you very much spring framework, We fully comply with and support the open license
@@ -63,15 +65,15 @@ import org.apache.commons.logging.LogFactory;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.ClassUtils2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
+import com.wl4g.devops.tool.common.matching.AntPathMatcher;
+import com.wl4g.devops.tool.common.matching.PathMatcher;
 import com.wl4g.devops.tool.common.reflect.ReflectionUtils2;
-import com.wl4g.devops.tool.common.resource.LocalFSStreamResource;
-import com.wl4g.devops.tool.common.resource.StreamResource;
+import com.wl4g.devops.tool.common.resource.FileStreamResource;
 import com.wl4g.devops.tool.common.resource.ResourceUtils2;
+import com.wl4g.devops.tool.common.resource.StreamResource;
 import com.wl4g.devops.tool.common.resource.UrlStreamResource;
 import com.wl4g.devops.tool.common.resource.VfsStreamResource;
 import com.wl4g.devops.tool.common.resource.VfsUtils2;
-import com.wl4g.devops.tool.common.resource.match.AntPathMatcher;
-import com.wl4g.devops.tool.common.resource.match.PathMatcher;
 
 /**
  * A {@link ResourcePatternResolver} implementation that is able to resolve a
@@ -220,9 +222,9 @@ import com.wl4g.devops.tool.common.resource.match.PathMatcher;
  * @see {@link org.springframework.core.io.ResourceLoader#getResource(String)}
  * @see {@link ClassLoader#getResources(String)}
  */
-class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
+public class ClassPathResourcePatternResolver implements ResourcePatternResolver {
 
-	private static final Log logger = LogFactory.getLog(PathPatternResourceMatchingResolver.class);
+	private static final Log logger = LogFactory.getLog(ClassPathResourcePatternResolver.class);
 
 	private static Method equinoxResolveMethod;
 
@@ -230,7 +232,7 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 		try {
 			// Detect Equinox OSGi (e.g. on WebSphere 6.1)
 			Class<?> fileLocatorClass = ClassUtils2.forName("org.eclipse.core.runtime.FileLocator",
-					PathPatternResourceMatchingResolver.class.getClassLoader());
+					ClassPathResourcePatternResolver.class.getClassLoader());
 			equinoxResolveMethod = fileLocatorClass.getMethod("resolve", URL.class);
 			logger.debug("Found Equinox FileLocator for OSGi bundle URL resolution");
 		} catch (Throwable ex) {
@@ -248,9 +250,9 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 * <p>
 	 * ClassLoader access will happen via the thread context class loader.
 	 * 
-	 * @see com.wl4g.devops.tool.common.resources.resolver.springframework.core.io.DefaultResourceLoader
+	 * @see org.springframework.core.io.DefaultResourceLoader
 	 */
-	public PathPatternResourceMatchingResolver() {
+	public ClassPathResourcePatternResolver() {
 		this.resourceLoader = new DefaultResourceLoader();
 	}
 
@@ -263,7 +265,7 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 *            the ResourceLoader to load root directories and actual
 	 *            resources with
 	 */
-	public PathPatternResourceMatchingResolver(ResourceLoader resourceLoader) {
+	public ClassPathResourcePatternResolver(ResourceLoader resourceLoader) {
 		Assert2.notNull(resourceLoader, "ResourceLoader must not be null");
 		this.resourceLoader = resourceLoader;
 	}
@@ -276,9 +278,9 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 *            the ClassLoader to load classpath resources with, or
 	 *            {@code null} for using the thread context class loader at the
 	 *            time of actual resource access
-	 * @see com.wl4g.devops.tool.common.resources.resolver.springframework.core.io.DefaultResourceLoader
+	 * @see org.springframework.core.io.DefaultResourceLoader
 	 */
-	public PathPatternResourceMatchingResolver(ClassLoader classLoader) {
+	public ClassPathResourcePatternResolver(ClassLoader classLoader) {
 		this.resourceLoader = new DefaultResourceLoader(classLoader);
 	}
 
@@ -318,7 +320,24 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	}
 
 	@Override
-	public Set<StreamResource> getResources(String locationPattern) throws IOException {
+	public Set<StreamResource> getResources(String... locationPatterns) throws IOException {
+		Assert2.notNull(locationPatterns, "Path locationPatterns can't null");
+		return Arrays.asList(locationPatterns).stream().map(pattern -> {
+			try {
+				return doGetResources(pattern);
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+		}).flatMap(rss -> rss.stream()).collect(toCollection(LinkedHashSet::new));
+	}
+
+	/**
+	 * Resolve the given location pattern into Resource objects.
+	 * 
+	 * @param locationPattern
+	 * @return
+	 */
+	protected Set<StreamResource> doGetResources(String locationPattern) throws IOException {
 		Assert2.notNull(locationPattern, "Location pattern must not be null");
 		if (locationPattern.startsWith(CLASSPATH_ALL_URL_PREFIX)) {
 			// a class path resource (multiple resources for same name possible)
@@ -559,7 +578,7 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	protected Set<StreamResource> findPathMatchingResources(String locationPattern) throws IOException {
 		String rootDirPath = determineRootDir(locationPattern);
 		String subPattern = locationPattern.substring(rootDirPath.length());
-		Set<StreamResource> rootDirResources = getResources(rootDirPath);
+		Set<StreamResource> rootDirResources = doGetResources(rootDirPath);
 		Set<StreamResource> result = new LinkedHashSet<StreamResource>(16);
 		for (StreamResource rootDirResource : rootDirResources) {
 			rootDirResource = resolveRootDirResource(rootDirResource);
@@ -644,7 +663,7 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 	 *            the resource handle to check (usually the root directory to
 	 *            start path matching from)
 	 * @see #doFindPathMatchingJarResources
-	 * @see org.ResourceUtils2.util.ResourceUtils#isJarURL
+	 * @see com.wl4g.devops.tool.common.resource.resolver.ResourceUtils2.util.ResourceUtils#isJarURL
 	 */
 	protected boolean isJarResource(StreamResource resource) throws IOException {
 		return false;
@@ -843,7 +862,7 @@ class PathPatternResourceMatchingResolver implements ResourcePatternResolver {
 		Set<File> matchingFiles = retrieveMatchingFiles(rootDir, subPattern);
 		Set<StreamResource> result = new LinkedHashSet<StreamResource>(matchingFiles.size());
 		for (File file : matchingFiles) {
-			result.add(new LocalFSStreamResource(file));
+			result.add(new FileStreamResource(file));
 		}
 		return result;
 	}

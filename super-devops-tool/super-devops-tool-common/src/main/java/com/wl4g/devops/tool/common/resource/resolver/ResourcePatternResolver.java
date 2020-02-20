@@ -54,7 +54,7 @@ import com.wl4g.devops.tool.common.resource.StreamResource;
  * context) can be checked whether it implements this extended interface too.
  *
  * <p>
- * {@link PathPatternResourceMatchingResolver} is a standalone implementation
+ * {@link ClassPathResourcePatternResolver} is a standalone implementation
  * that is usable outside an ApplicationContext, also used by
  * {@link ResourceArrayPropertyEditor} for populating Resource array bean
  * properties.
@@ -97,12 +97,12 @@ public interface ResourcePatternResolver extends ResourceLoader {
 	 * should be avoided, as far as possible. The result should have set
 	 * semantics.
 	 * 
-	 * @param locationPattern
+	 * @param locationPatterns
 	 *            the location pattern to resolve
 	 * @return the corresponding Resource objects
 	 * @throws IOException
 	 *             in case of I/O errors
 	 */
-	Set<StreamResource> getResources(String locationPattern) throws IOException;
+	Set<StreamResource> getResources(String... locationPatterns) throws IOException;
 
 }

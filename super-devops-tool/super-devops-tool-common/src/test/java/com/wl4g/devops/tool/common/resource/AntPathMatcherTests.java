@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.tool.common.resource;
 
-import com.wl4g.devops.tool.common.resource.match.AntPathMatcher;
+import com.wl4g.devops.tool.common.matching.AntPathMatcher;
 
 public class AntPathMatcherTests {
 
