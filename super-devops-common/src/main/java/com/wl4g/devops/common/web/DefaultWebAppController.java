@@ -13,31 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.web;
+package com.wl4g.devops.common.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.springframework.util.StringUtils.*;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.wl4g.devops.common.config.DefaultWebAppAutoConfiguration.DefaultWebAppControllerProperties;
 import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
-import com.wl4g.devops.iam.config.properties.IamProperties;
+import com.wl4g.devops.tool.common.resource.StreamResource;
+import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
+import com.wl4g.devops.tool.common.resource.resolver.ResourcePatternResolver;
 
-import static com.wl4g.devops.iam.config.properties.IamProperties.*;
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.tool.common.jvm.JvmRuntimeKit.*;
-import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.web.WebUtils2.*;
+import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.endsWithAny;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.springframework.http.HttpStatus.*;
 
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,8 +56,7 @@ import com.google.common.io.ByteStreams;
  * @version v1.0 2019年1月9日
  * @since
  */
-@com.wl4g.devops.iam.annotation.DefaultViewController
-public class DefaultViewController extends BaseController {
+public class DefaultWebAppController extends BaseController {
 
 	/**
 	 * Default view page file cache buffer
@@ -61,16 +64,19 @@ public class DefaultViewController extends BaseController {
 	final private Map<String, byte[]> bufferCache = new ConcurrentHashMap<>();
 
 	/**
-	 * IAM server configuration
+	 * {@link ResourcePatternResolver}
 	 */
-	@Autowired
-	protected IamProperties config;
+	final private ResourcePatternResolver resolver = new ClassPathResourcePatternResolver();
 
 	/**
-	 * Session delegate message source bundle.
+	 * {@link DefaultWebAppControllerProperties}
 	 */
-	@javax.annotation.Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
+	protected DefaultWebAppControllerProperties config;
+
+	public DefaultWebAppController(DefaultWebAppControllerProperties config) {
+		notNullOf(config, "defaultWebappControllerProperties");
+		this.config = config;
+	}
 
 	/**
 	 * Reader static resource files
@@ -81,7 +87,7 @@ public class DefaultViewController extends BaseController {
 	@GetMapping(path = "/**")
 	public void readerResource(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String uri = request.getRequestURI();
-		String filepath = uri.substring(uri.indexOf(DEFAULT_VIEW_BASE_URI) + DEFAULT_VIEW_BASE_URI.length());
+		String filepath = uri.substring(uri.indexOf(config.getBaseUri()) + config.getBaseUri().length() + 1);
 		responseFile(filepath, response);
 	}
 
@@ -93,17 +99,16 @@ public class DefaultViewController extends BaseController {
 	 * @throws Exception
 	 */
 	protected void responseFile(String filepath, HttpServletResponse response) throws Exception {
-		notNull(filepath, "'filename' must not be null");
+		notNull(filepath, "'filepath' must can't empty");
 
 		// Get buffer cache
 		byte[] buf = bufferCache.get(filepath);
 		if (isNull(buf)) {
-			InputStream in = getResource(filepath);
+			InputStream in = getResourceAsStream(filepath);
 			if (nonNull(in)) {
-				log.debug("Read file path:[{}]", filepath);
+				log.debug("Request access file: {}", filepath);
 				buf = ByteStreams.toByteArray(in);
-				// Caching is enabled when in non-debug mode.
-				if (!isJVMDebugging) {
+				if (!isJVMDebugging) { // Debug mode is enabled
 					bufferCache.put(filepath, buf);
 				}
 			} else { // Not found
@@ -111,45 +116,40 @@ public class DefaultViewController extends BaseController {
 				return;
 			}
 		}
-		response.setDateHeader("Expires", System.currentTimeMillis() + 600_000);
+		response.setDateHeader("Expires", currentTimeMillis() + 600_000);
 		response.addHeader("Pragma", "Pragma");
 		response.addHeader("Cache-Control", "public");
-		response.addHeader("Last-Modified", String.valueOf(System.currentTimeMillis()));
+		response.addHeader("Last-Modified", valueOf(currentTimeMillis()));
 
-		// Response file buffer.
+		// Response file.
 		write(response, OK.value(), getContentType(filepath), buf);
-	}
-
-	/**
-	 * Load resource file.
-	 *
-	 * @param filepath
-	 * @return
-	 */
-	private InputStream getResource(String filepath) {
-		String location = DEFAULT_VIEW_LOADER_PATH + "/" + filepath;
-		return getClass().getResourceAsStream(location);
 	}
 
 	/**
 	 * Get content type by file path.
 	 *
-	 * @param filepath
+	 * @param ext
 	 * @return
 	 */
-	private String getContentType(String filepath) {
-		filepath = filepath.toLowerCase(Locale.US);
-		String contentType = EMPTY;
-		if (endsWithAny(filepath, "html", "shtml", "htm")) {
-			contentType = TEXT_HTML_VALUE;
-		} else if (endsWithAny(filepath, "css")) {
-			contentType = "text/css";
-		} else if (endsWithAny(filepath, "js")) {
-			contentType = "application/javascript";
-		} else if (isMediaRequest(filepath)) {
-			contentType = "image/" + org.springframework.util.StringUtils.getFilenameExtension(filepath);
+	protected String getContentType(String ext) {
+		ext = getFilenameExtension(ext.toLowerCase(Locale.US));
+		return config.getMimeMapping().getProperty(ext);
+	}
+
+	/**
+	 * Load resource input stream.
+	 *
+	 * @param path
+	 * @return
+	 * @throws Exception
+	 */
+	private InputStream getResourceAsStream(String path) throws Exception {
+		if (startsWith(path, "/")) {
+			path = path.substring(1);
 		}
-		return contentType;
+		String location = config.getWebappLocation() + "/" + cleanURI(path);
+		Set<StreamResource> ress = resolver.getResources(location);
+		return !isEmpty(ress) ? ress.iterator().next().getInputStream() : null;
 	}
 
 }

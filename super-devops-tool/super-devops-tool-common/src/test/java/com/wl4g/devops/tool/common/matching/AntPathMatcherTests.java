@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.resource;
+package com.wl4g.devops.tool.common.matching;
 
 import com.wl4g.devops.tool.common.matching.AntPathMatcher;
 

@@ -37,6 +37,7 @@ public class WebUtils2Tests {
 		System.out.println(getBaseURIForDefault("http", "my.com", 80));
 		System.out.println(getBaseURIForDefault("https", "my.com", 443));
 		System.out.println(getBaseURIForDefault("http", "my.com", -1));
+		System.out.println(getBaseURIForDefault("https", "my.com", -1));
 
 		System.out.println(URI.create("http://my.com/index/#/me").getQuery());
 		System.out.println(toQueryParams("application=iam-example&gt=aaa&redirect_url=http://my.com/index"));
@@ -50,6 +51,10 @@ public class WebUtils2Tests {
 		System.out.println(isSameWithOrigin("http://bb.*.domain.com", "https://bb.aa.domain.com", false));
 		System.out.println(isSameWithOrigin("http://*.aa.domain.com", "https://bb.aa.domain.com", true));
 		System.out.println(isSameWithOrigin("http://*.aa.domain.com:8080", "http://bb.aa.domain.com:8080/", true));
+
+		System.out.println("------------------------");
+		System.out.println(cleanURI("https://my.domain.com//myapp///index?t=123"));
+		System.out.println(cleanURI("https://my.domain.com///myapp/////index?t=123"));
 	}
 
 }

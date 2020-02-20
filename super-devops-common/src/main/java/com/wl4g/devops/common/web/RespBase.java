@@ -755,7 +755,7 @@ public class RespBase<D> implements Serializable {
 		 * @param errmsg
 		 * @return
 		 */
-		final public static String build(RetCode retCode, String errmsg) {
+		final static String build(RetCode retCode, String errmsg) {
 			if (isBlank(errmsg)) {
 				return errmsg;
 			}
