@@ -31,6 +31,11 @@ import com.wl4g.devops.common.web.RespBase.ErrorPromptMessageBuilder;
 @Configuration
 public class SystemPropertiesAutoConfiguration implements EnvironmentAware {
 
+	/**
+	 * API prompt max length.
+	 */
+	final private static int PROMPT_MAX_LEN = 4;
+
 	@Override
 	public void setEnvironment(Environment environment) {
 		initSystemProperties(environment);
@@ -42,9 +47,23 @@ public class SystemPropertiesAutoConfiguration implements EnvironmentAware {
 	 * @param env
 	 */
 	protected void initSystemProperties(Environment env) {
-		// 1.1 Setup api message prompt
+		// Setup api message prompt
+		initErrorPrompt(env);
+	}
+
+	/**
+	 * Initializing error prompt.
+	 * 
+	 * @param env
+	 */
+	protected void initErrorPrompt(Environment env) {
 		String appName = env.getRequiredProperty("spring.application.name");
-		ErrorPromptMessageBuilder.setPrompt(appName.substring(0, 4));
+		if (appName.length() < PROMPT_MAX_LEN) {
+			ErrorPromptMessageBuilder.setPrompt(appName);
+		} else {
+			ErrorPromptMessageBuilder.setPrompt(appName.substring(0, 4));
+		}
+
 	}
 
 }
