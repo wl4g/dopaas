@@ -59,6 +59,22 @@ public abstract class OptionalPrefixControllerAutoConfiguration implements Appli
 	 * New create prefix handler mapping.
 	 * 
 	 * @param mappingPrefix
+	 * @param handlers
+	 * @return
+	 */
+	protected PrefixHandlerMapping newPrefixHandlerMapping(@NotBlank String mappingPrefix, @NotNull Object... handlers) {
+		hasText(mappingPrefix, "empty mappingPrefix");
+		notNull(handlers, "null handlers.");
+
+		PrefixHandlerMapping mapping = new PrefixHandlerMapping(handlers);
+		mapping.setPrefix(mappingPrefix);
+		return mapping;
+	}
+
+	/**
+	 * New create prefix handler mapping.
+	 * 
+	 * @param mappingPrefix
 	 * @param annotationClass
 	 * @return
 	 */

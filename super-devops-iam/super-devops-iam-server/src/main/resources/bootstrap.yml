@@ -16,6 +16,10 @@ spring:
     active: dev
   cloud: # Spring cloud configuration.
     devops:
+      default-webapps:
+        enabled: true
+        webapp-location: classpath*:/default-webapps
+        base-uri: /view
       iam: # IAM configuration.
 #        login-uri: /view/login.html
 #        unauthorized-uri: /view/403.html

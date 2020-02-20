@@ -23,14 +23,12 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import com.wl4g.devops.iam.config.DefaultViewAutoConfiguration;
 import com.wl4g.devops.iam.config.IamServerApiV1AutoConfiguration;
 import com.wl4g.devops.iam.config.LoginAutoConfiguration;
 import com.wl4g.devops.iam.config.IamAutoConfiguration;
 import com.wl4g.devops.iam.config.BasedConfigAutoConfiguration;
 import com.wl4g.devops.iam.config.SnsAutoConfiguration;
 import com.wl4g.devops.iam.config.VerifyAutoConfiguration;
-//import com.wl4g.devops.iam.config.WechatMpSnsConfiguration;
 
 /**
  * Controls whether IAM servers are enabled
@@ -44,8 +42,7 @@ import com.wl4g.devops.iam.config.VerifyAutoConfiguration;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
 @Import({ BasedConfigAutoConfiguration.class, IamAutoConfiguration.class, LoginAutoConfiguration.class,
-		VerifyAutoConfiguration.class, SnsAutoConfiguration.class, DefaultViewAutoConfiguration.class,
-		IamServerApiV1AutoConfiguration.class })
+		VerifyAutoConfiguration.class, SnsAutoConfiguration.class, IamServerApiV1AutoConfiguration.class })
 public @interface EnableIamServer {
 
 }

@@ -54,12 +54,13 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.replaceIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.split;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
- * WEB tools
+ * WEB generic tools .
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
@@ -327,7 +328,7 @@ public abstract class WebUtils2 {
 	 */
 	public static String safeEncodeURL(String url) {
 		try {
-			if (!contains(trimToEmpty(url).toLowerCase(Locale.ENGLISH), URL_SEPAR_SLASH)) {
+			if (!contains(trimToEmpty(url).toLowerCase(Locale.US), URL_SEPAR_SLASH)) {
 				return URLEncoder.encode(url, "UTF-8");
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -345,7 +346,7 @@ public abstract class WebUtils2 {
 	 */
 	public static String safeDecodeURL(String url) {
 		try {
-			if (contains(trimToEmpty(url).toLowerCase(Locale.ENGLISH), URL_SEPAR_SLASH)) {
+			if (contains(trimToEmpty(url).toLowerCase(Locale.US), URL_SEPAR_SLASH)) {
 				return URLDecoder.decode(url, "UTF-8");
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -462,7 +463,7 @@ public abstract class WebUtils2 {
 		if (isEmpty(url)) {
 			return EMPTY;
 		}
-		url = trimToEmpty(safeEncodeURL(url)).toLowerCase(Locale.ENGLISH);
+		url = trimToEmpty(safeEncodeURL(url)).toLowerCase(Locale.US);
 		String noPrefix = url.substring(url.indexOf(URL_SEPAR_PROTO) + URL_SEPAR_PROTO.length());
 		int slashIndex = noPrefix.indexOf(URL_SEPAR_SLASH);
 		String domain = noPrefix;
@@ -591,6 +592,7 @@ public abstract class WebUtils2 {
 	 * getBaseURIForDefault("http", "my.com", 8080) == "http://my.com:8080"
 	 * getBaseURIForDefault("http", "my.com", 80) == "http://my.com"
 	 * getBaseURIForDefault("https", "my.com", 443) == "https://my.com"
+	 * getBaseURIForDefault("https", "my.com", -1) == "https://my.com"
 	 * </pre>
 	 * 
 	 * @param scheme
@@ -612,8 +614,11 @@ public abstract class WebUtils2 {
 	}
 
 	/**
-	 * Clean request URI. <br/>
-	 * cleanURI("https://my.domain.com//myapp///index?t=123")=>"https://my.domain.com/myapp/index?t=123"
+	 * Clean request URI. </br>
+	 * 
+	 * <pre>
+	 * cleanURI("https://my.domain.com//myapp///index?t=123") => "https://my.domain.com/myapp/index?t=123"
+	 * </pre>
 	 * 
 	 * @param uri
 	 * @return
@@ -624,33 +629,37 @@ public abstract class WebUtils2 {
 			return uri;
 		}
 
-		// Checking
-		try {
-			uri = new URI(uri).toString();
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(String.format("Error syntax uri for %s", uri), e);
-		}
+		// Check syntax
+		uri = URI.create(uri).toString();
 
 		/**
 		 * Cleaning.</br>
 		 * Note: that you cannot change the original URI case.
 		 */
 		try {
-			String uri0 = safeEncodeURL(uri);
-			String path = uri0, schema = "";
-			if (uri0.toLowerCase(Locale.ENGLISH).contains(URL_SEPAR_PROTO)) {
-				// Starting from "://"
-				int startIndex = uri0.toLowerCase(Locale.ENGLISH).indexOf(URL_SEPAR_PROTO);
-				schema = uri0.substring(0, startIndex) + URL_SEPAR_PROTO;
-				path = uri0.substring(startIndex + URL_SEPAR_PROTO.length());
+			String encodeUrl = safeEncodeURL(uri);
+			String pathUrl = encodeUrl, schema = EMPTY;
+			if (encodeUrl.toLowerCase(Locale.US).contains(URL_SEPAR_PROTO)) {
+				// Start from "://"
+				int startIndex = encodeUrl.toLowerCase(Locale.US).indexOf(URL_SEPAR_PROTO);
+				schema = encodeUrl.substring(0, startIndex) + URL_SEPAR_PROTO;
+				pathUrl = encodeUrl.substring(startIndex + URL_SEPAR_PROTO.length());
 			}
-			// '/shopping/order//list' => '/shopping/order/list'
-			uri = safeDecodeURL(schema + path.replaceAll(URL_SEPAR_SLASH + URL_SEPAR_SLASH + URL_SEPAR_SLASH, URL_SEPAR_SLASH)
-					.replaceAll(URL_SEPAR_SLASH + URL_SEPAR_SLASH, URL_SEPAR_SLASH));
+
+			// Cleanup for: '/shopping/order//list' => '/shopping/order/list'
+			String lastCleanUrl = pathUrl;
+			for (int i = 0; i < 256; i++) { // https://www.ietf.org/rfc/rfc2616.txt#3.2.1
+				String cleanUrl = replaceIgnoreCase(lastCleanUrl, (URL_SEPAR_SLASH2).toUpperCase(), URL_SEPAR_SLASH);
+				if (StringUtils.equals(cleanUrl, lastCleanUrl)) {
+					break;
+				} else {
+					lastCleanUrl = cleanUrl;
+				}
+			}
+			return safeDecodeURL(schema + lastCleanUrl);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
-		return uri;
 	}
 
 	/**
@@ -829,6 +838,11 @@ public abstract class WebUtils2 {
 	 * URL separator(/)
 	 */
 	final public static String URL_SEPAR_SLASH = "%2f";
+
+	/**
+	 * URL double separator(//)
+	 */
+	final public static String URL_SEPAR_SLASH2 = URL_SEPAR_SLASH + URL_SEPAR_SLASH;
 
 	/**
 	 * URL separator(?)
