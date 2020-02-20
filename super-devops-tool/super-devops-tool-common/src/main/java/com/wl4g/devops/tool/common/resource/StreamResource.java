@@ -58,10 +58,10 @@ import java.net.URL;
  * @see #getURI()
  * @see #getFile()
  * @see WritableStreamResource
- * @see ContextStreamResource
+ * @see ContextResource
  * @see UrlStreamResource
  * @see ClassPathStreamResource
- * @see LocalFSStreamResource
+ * @see FileStreamResource
  * @see PathResource
  * @see ByteArrayResource
  * @see StreamResource

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.wl4g.devops.common.web.RespBase.ErrorPromptMessageBuilder;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 
 public class RespBaseTest {
@@ -125,6 +126,9 @@ public class RespBaseTest {
 	}
 
 	public static void main(String[] args) {
+		respBasePromptTest1();
+		System.out.println("--------------------------");
+
 		// for controller output(map).
 		RespBase<TestModel> resp11 = new RespBase<>(RetCode.newCode(4001, "message1"));
 		resp11.forMap().put("testModel11", new TestModel("jack11"));
@@ -171,6 +175,12 @@ public class RespBaseTest {
 		System.out.println(tm3);
 		System.out.println("-------------------------");
 
+	}
+
+	public static void respBasePromptTest1() {
+		String errmsg = ErrorPromptMessageBuilder.build(RetCode.PARAM_ERR, "参数错误");
+		System.out.println(errmsg);
+		System.out.println(ErrorPromptMessageBuilder.build(RetCode.SYS_ERR, errmsg));
 	}
 
 }

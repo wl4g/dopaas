@@ -31,7 +31,7 @@ import org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
-import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
+import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
 
 /**
  * HASE hfile bulk importer.
@@ -59,7 +59,7 @@ public class HfileBulkImporter {
 	 */
 	public static void main(String[] args) throws Exception {
 		System.out.println(Resources.toString(
-				new GenericPathPatternResourceMatchingResolver().getResource("classpath:banner.txt").getURL(),
+				new ClassPathResourcePatternResolver().getResource("classpath:banner.txt").getURL(),
 				Charsets.UTF_8));
 
 		CommandLine line = new Builder().option("z", "zkaddr", true, "Zookeeper address.")

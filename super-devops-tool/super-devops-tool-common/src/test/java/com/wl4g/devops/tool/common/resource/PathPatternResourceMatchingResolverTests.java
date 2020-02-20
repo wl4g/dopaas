@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.tool.common.resource;
 
-import com.wl4g.devops.tool.common.resource.resolver.GenericPathPatternResourceMatchingResolver;
+import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
 
 public class PathPatternResourceMatchingResolverTests {
 
 	public static void main(String[] args) throws Exception {
-		GenericPathPatternResourceMatchingResolver resolver = new GenericPathPatternResourceMatchingResolver();
+		ClassPathResourcePatternResolver resolver = new ClassPathResourcePatternResolver();
 		System.out.println("start scanning ...");
 		for (StreamResource r : resolver.getResources("com/wl4g/devops/tool/common/resource/**/*.*")) {
 			System.out.println(r);
