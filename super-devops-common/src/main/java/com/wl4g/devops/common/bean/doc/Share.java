@@ -1,8 +1,9 @@
 package com.wl4g.devops.common.bean.doc;
 
-import com.wl4g.devops.common.bean.BaseBean;
-
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wl4g.devops.common.bean.BaseBean;
 
 public class Share extends BaseBean {
 
@@ -16,9 +17,13 @@ public class Share extends BaseBean {
 
     private String passwd;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date expireTime;
 
     private Integer expireType;
+
+    //other
+    private String name;
 
     public String getShareCode() {
         return shareCode;
@@ -68,4 +73,11 @@ public class Share extends BaseBean {
         this.expireType = expireType;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

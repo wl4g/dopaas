@@ -31,7 +31,7 @@ public interface DocService {
 
 	Map<String, Object> upload(MultipartFile file);
 
-	Share shareFile(Integer id, boolean isEncrypt, boolean isForever, Integer day, Date expireTime);
+	Share shareDoc(Integer id, boolean isEncrypt, boolean isForever, Integer day, Date expireTime);
 
 	FileChanges getLastByDocCode(String docCode);
 

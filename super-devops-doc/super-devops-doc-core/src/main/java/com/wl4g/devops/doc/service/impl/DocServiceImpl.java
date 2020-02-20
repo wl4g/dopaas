@@ -228,12 +228,13 @@ public class DocServiceImpl implements DocService {
 	}
 
 	@Override
-	public Share shareFile(Integer id, boolean isEncrypt, boolean isForever, Integer day, Date expireTime) {
-		log.info("DocServiceImpl.shareFile prarms::"+ "id = {} , isEncrypt = {} , isForever = {} , day = {} , expireTime = {} ", id, isEncrypt, isForever, day, expireTime );
+	public Share shareDoc(Integer id, boolean isEncrypt, boolean isForever, Integer day, Date expireTime) {
+		log.info("DocServiceImpl.shareDoc prarms::"+ "id = {} , isEncrypt = {} , isForever = {} , day = {} , expireTime = {} ", id, isEncrypt, isForever, day, expireTime );
 		Assert2.notNullOf(id,"id");
 		FileChanges fileChanges = fileChangesDao.selectByPrimaryKey(id);
 		Assert2.notNullOf(id,"fileChanges");
 		Share share = new Share();
+		share.preInsert();
 		share.setDocCode(fileChanges.getDocCode());
 		share.setShareCode(UUID.randomUUID().toString().replaceAll("-", ""));
 

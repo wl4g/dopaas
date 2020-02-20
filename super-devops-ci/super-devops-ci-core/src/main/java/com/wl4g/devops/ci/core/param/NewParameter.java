@@ -17,8 +17,6 @@ package com.wl4g.devops.ci.core.param;
 
 import javax.validation.constraints.NotNull;
 
-import static org.springframework.util.Assert.notNull;
-
 /**
  * New create pipeline handle parameter.
  * 
@@ -64,7 +62,8 @@ public class NewParameter extends GenericParameter {
 	}
 
 	public void setTaskTraceId(String taskTraceId) {
-		notNull(taskTraceId, "Pipeline taskTraceId can't be null.");
+		//when pcm not config, this params can be null
+		//notNull(taskTraceId, "Pipeline taskTraceId can't be null.");
 		this.taskTraceId = taskTraceId;
 	}
 
@@ -73,7 +72,8 @@ public class NewParameter extends GenericParameter {
 	}
 
 	public void setTaskTraceType(Integer taskTraceType) {
-		notNull(taskTraceType, "Pipeline taskTraceType can't be null.");
+		//when pcm not config, this params can be null
+		//notNull(taskTraceType, "Pipeline taskTraceType can't be null.");
 		this.taskTraceType = taskTraceType;
 	}
 
