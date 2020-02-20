@@ -30,7 +30,7 @@
     select
     <include refid="Base_Column_List" />
     from doc_share
-    where share_code = #{shareCode,jdbcType=VARCHAR} where del_falg!=1 limit 1
+    where share_code = #{shareCode,jdbcType=VARCHAR} and del_flag!=1 limit 1
   </select>
 
   <select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">

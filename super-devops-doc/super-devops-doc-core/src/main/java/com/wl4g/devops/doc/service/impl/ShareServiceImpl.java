@@ -5,13 +5,15 @@ import com.wl4g.devops.common.bean.doc.FileChanges;
 import com.wl4g.devops.common.bean.doc.Share;
 import com.wl4g.devops.common.constants.DocDevOpsConstants;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.doc.FileChangesDao;
 import com.wl4g.devops.dao.doc.ShareDao;
 import com.wl4g.devops.doc.config.DocProperties;
+import com.wl4g.devops.doc.service.DocService;
 import com.wl4g.devops.doc.service.ShareService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.wl4g.devops.common.web.RespBase.RetCode.NOT_FOUND_ERR;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
@@ -29,7 +31,7 @@ public class ShareServiceImpl implements ShareService {
     private ShareDao shareDao;
 
     @Autowired
-    private FileChangesDao fileChangesDao;
+    private DocService docService;
 
     @Autowired
     private DocProperties docProperties;
@@ -37,7 +39,12 @@ public class ShareServiceImpl implements ShareService {
     @Override
     public PageModel list(PageModel pm) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(shareDao.list());
+        List<Share> list = shareDao.list();
+        for(Share share : list){
+            FileChanges fileChanges = docService.getLastByDocCode(share.getDocCode());
+            share.setName(fileChanges.getName());
+        }
+        pm.setRecords(list);
         return pm;
     }
 
@@ -64,13 +71,13 @@ public class ShareServiceImpl implements ShareService {
                 resp.setCode(UNAUTHC);
                 return resp;
             }
-            FileChanges lastByFileCode = fileChangesDao.selectLastByDocCode(share.getDocCode());
+            FileChanges lastByFileCode = docService.getLastByDocCode(share.getDocCode());
             resp.setData(parse(lastByFileCode.getContent()));
             return resp;
         }
 
         //for manager
-        FileChanges lastByFileCode = fileChangesDao.selectLastByDocCode(code);
+        FileChanges lastByFileCode = docService.getLastByDocCode(code);
         if(nonNull(lastByFileCode)){
             resp.setData(parse(lastByFileCode.getContent()));
             return resp;
