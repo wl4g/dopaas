@@ -25,7 +25,8 @@ import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
-import com.wl4g.devops.support.cache.ScanCursor;
+import com.wl4g.devops.support.redis.ScanCursor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,12 +38,12 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-import static com.wl4g.devops.support.cache.ScanCursor.CursorWrapper.*;
 import static com.wl4g.devops.tool.common.lang.DateUtils2.formatDate;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
 import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.CursorIndex;
 import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribute;
+import static com.wl4g.devops.support.redis.ScanCursor.CursorWrapper.*;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
