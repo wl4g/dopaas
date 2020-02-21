@@ -35,7 +35,7 @@ import com.wl4g.devops.iam.client.validation.IamValidator;
 import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager;
-import com.wl4g.devops.support.cache.ScanCursor;
+import com.wl4g.devops.support.redis.ScanCursor;
 
 /**
  * IAM client session manager

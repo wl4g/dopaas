@@ -31,8 +31,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.support.cache.JedisClusterFactoryBean;
-import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.redis.JedisClusterFactoryBean;
+import com.wl4g.devops.support.redis.JedisService;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;

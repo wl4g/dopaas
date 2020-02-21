@@ -19,9 +19,9 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALAR
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import com.wl4g.devops.umc.rule.RuleConfigManager;

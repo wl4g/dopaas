@@ -28,7 +28,7 @@ import com.wl4g.devops.scm.context.CheckImpledConfigContextHandler;
 import com.wl4g.devops.scm.endpoint.ScmServerEndpoint;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
 import com.wl4g.devops.scm.publish.DefaultRedisConfigSourcePublisher;
-import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.redis.JedisService;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 

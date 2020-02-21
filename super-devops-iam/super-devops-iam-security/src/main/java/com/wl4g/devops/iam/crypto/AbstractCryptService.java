@@ -35,8 +35,8 @@ import org.springframework.core.ResolvableType;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.config.properties.CryptoProperties;
-import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
 
 import redis.clients.jedis.JedisCluster;

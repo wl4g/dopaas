@@ -30,12 +30,13 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
-import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.support.cli.destroy.DestroySignalMessage;
 import com.wl4g.devops.support.cli.process.DestroableProcess;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.support.redis.JedisService;
+
 import static com.wl4g.devops.support.cli.destroy.DestroySignalMessage.DestroyState.*;
 
 /**

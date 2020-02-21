@@ -28,7 +28,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wl4g.devops.common.constants.UMCDevOpsConstants;
-import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.model.StatusMessage;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.*;
 

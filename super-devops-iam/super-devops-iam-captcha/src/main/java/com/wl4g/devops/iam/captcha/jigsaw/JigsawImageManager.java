@@ -17,8 +17,8 @@ package com.wl4g.devops.iam.captcha.jigsaw;
 
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.ImageTailor.TailoredImage;
-import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.support.redis.JedisService;
 
 import redis.clients.jedis.JedisCluster;
 
