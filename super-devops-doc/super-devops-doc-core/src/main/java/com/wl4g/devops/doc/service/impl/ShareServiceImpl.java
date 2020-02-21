@@ -67,11 +67,7 @@ public class ShareServiceImpl implements ShareService {
 				resp.setCode(NOT_FOUND_ERR);
 				return resp;
 			}
-			if (nonNull(share.getShareType()) && share.getShareType() == 1 && !equalsIgnoreCase(share.getPasswd(), passwd)) {// need
-																																// password
-																																// but
-																																// not
-																																// match
+			if (nonNull(share.getShareType()) && share.getShareType() == 1 && !equalsIgnoreCase(share.getPasswd(), passwd)) {
 				resp.setCode(UNAUTHC);
 				return resp;
 			}
@@ -94,15 +90,15 @@ public class ShareServiceImpl implements ShareService {
 
 	/**
 	 * parse base url
-	 * 
+	 *
 	 * @param content
 	 * @return
 	 */
 	private String parse(String content) {
-		content = content.replaceAll(DocDevOpsConstants.SHARE_BASE_URL, docProperties.getShareBaseUrl());
-		content = content.replaceAll(DocDevOpsConstants.SHARE_BASE_URL_TRAN, docProperties.getShareBaseUrl());
-		content = content.replaceAll(DocDevOpsConstants.DOC_BASE_URL, docProperties.getDocBaseUrl());
-		content = content.replaceAll(DocDevOpsConstants.DOC_BASE_URL_TRAN, docProperties.getDocBaseUrl());
+		content = content.replaceAll(DocDevOpsConstants.SHARE_LINK_BASEURI, docProperties.getShareBaseUrl());
+		content = content.replaceAll(DocDevOpsConstants.SHARE_LINK_BASEURI_TRAN, docProperties.getShareBaseUrl());
+		content = content.replaceAll(DocDevOpsConstants.DOC_LINK_BASEURI, docProperties.getDocBaseUrl());
+		content = content.replaceAll(DocDevOpsConstants.DOC_LINK_BASEURI_TRAN, docProperties.getDocBaseUrl());
 		return content;
 	}
 
