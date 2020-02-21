@@ -127,15 +127,15 @@ public class DocServiceImpl implements DocService {
 		}
 	}
 
+
 	private void update(FileChanges fileChanges) {
-		FileChanges oldFileChanges = fileChangesDao.selectLastByDocCode(fileChanges.getDocCode());
-		fileChangesDao.updateIsLatest(fileChanges.getDocCode());
 		fileChanges.setId(null);
 		fileChanges.preInsert();
 		fileChanges.setIsLatest(1);
 		fileChanges.setAction("edit");
 		String path = writeContentIntoFile(fileChanges);
 		fileChanges.setContent(path);
+		fileChangesDao.updateIsLatest(fileChanges.getDocCode());
 		fileChangesDao.insertSelective(fileChanges);
 		// label
 		List<Integer> labelIds = fileChanges.getLabelIds();

@@ -22,7 +22,7 @@ public class FsProperties {
 
     public String getBaseImgUrl(){
         //return getBaseUrl()+"/fs/downloadImg";
-        return DocDevOpsConstants.SHARE_BASE_URL+"/fs/downloadImg";
+        return DocDevOpsConstants.SHARE_LINK_BASEURI +"/fs/downloadImg";
     }
 
     public String getBasePath() {

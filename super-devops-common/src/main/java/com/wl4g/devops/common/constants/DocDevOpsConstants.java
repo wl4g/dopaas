@@ -25,10 +25,10 @@ package com.wl4g.devops.common.constants;
 public abstract class DocDevOpsConstants extends DevOpsConstants {
 
 
-	public static final String DOC_BASE_URL = "₤docBaseUrl₤";
-	public static final String DOC_BASE_URL_TRAN = "%E2%82%A4docBaseUrl%E2%82%A4";
-	public static final String SHARE_BASE_URL = "₤shareBaseUrl₤";
-	public static final String SHARE_BASE_URL_TRAN = "%E2%82%A4shareBaseUrl%E2%82%A4";
+	public static final String DOC_LINK_BASEURI = "₤DOC_LINK_BASEURI₤";
+	public static final String DOC_LINK_BASEURI_TRAN = "%E2%82%A4DOC_LINK_BASEURI%E2%82%A4";
+	public static final String SHARE_LINK_BASEURI = "₤SHARE_LINK_BASEURI₤";
+	public static final String SHARE_LINK_BASEURI_TRAN = "%E2%82%A4SHARE_LINK_BASEURI%E2%82%A4";
 
 
 
