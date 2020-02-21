@@ -4,7 +4,7 @@
 
 [Client Docs](https://github.com/wl4g/umc-agent/blob/master/README.md)
 
-####编译客户端GO
+#### 编译客户端GO
 - 直接运行客户端
 ```
 go run watch.go mynet.go
@@ -18,7 +18,7 @@ GOOS=windows GOARCH=amd64 go build watch.go mynet.go
 GOOS=linux GOARCH=amd64 go build watch.go mynet.go
 ```
 
-####配置文件
+#### 配置文件
 
 - netCommand.txt
 
@@ -62,7 +62,7 @@ gatherPort:网络信息采集的端口，逗号分割
 ```
 
 
-####服务端
+#### 服务端
 - 配置
 ```
 opentsdb:
@@ -76,13 +76,21 @@ port:opentsdb服务请求端口
 ```
 
 
-####opentsdb部署相关
+#### opentsdb部署相关
 ```
 注：尝试过从官网下tar包，也尝试过从github上拉代码，都出现些许问题，自己编译有一定的风险
 最终使用下载rpm包来安装
 ```
 - 参考资料:
 
-
+#### grafana安装相关
+注意：
+```
+由于umc模块的前端嵌入grafana，但嵌入grafana有跨域问题，导致无法登录，所以暂时配置grafana允许匿名登录
+修改/etc/grafana/grafana.ini
+把[auth.anonymous]下的enabled注释解开并改为true
+把allow_embedding的注释解开并改为true
+参考：https://blog.csdn.net/weixin_41621706/article/details/100815603
+```
 
 
