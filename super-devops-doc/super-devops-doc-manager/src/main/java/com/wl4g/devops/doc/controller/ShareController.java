@@ -49,7 +49,4 @@ public class ShareController extends BaseController {
 		return resp;
 	}
 
-
-
-
 }

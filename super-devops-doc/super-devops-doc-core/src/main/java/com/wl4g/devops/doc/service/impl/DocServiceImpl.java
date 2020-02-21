@@ -127,15 +127,15 @@ public class DocServiceImpl implements DocService {
 		}
 	}
 
+
 	private void update(FileChanges fileChanges) {
-		FileChanges oldFileChanges = fileChangesDao.selectLastByDocCode(fileChanges.getDocCode());
-		fileChangesDao.updateIsLatest(fileChanges.getDocCode());
 		fileChanges.setId(null);
 		fileChanges.preInsert();
 		fileChanges.setIsLatest(1);
 		fileChanges.setAction("edit");
 		String path = writeContentIntoFile(fileChanges);
 		fileChanges.setContent(path);
+		fileChangesDao.updateIsLatest(fileChanges.getDocCode());
 		fileChangesDao.insertSelective(fileChanges);
 		// label
 		List<Integer> labelIds = fileChanges.getLabelIds();
@@ -229,10 +229,11 @@ public class DocServiceImpl implements DocService {
 
 	@Override
 	public Share shareDoc(Integer id, boolean isEncrypt, boolean isForever, Integer day, Date expireTime) {
-		log.info("DocServiceImpl.shareDoc prarms::"+ "id = {} , isEncrypt = {} , isForever = {} , day = {} , expireTime = {} ", id, isEncrypt, isForever, day, expireTime );
-		Assert2.notNullOf(id,"id");
+		log.info("DocServiceImpl.shareDoc prarms::" + "id = {} , isEncrypt = {} , isForever = {} , day = {} , expireTime = {} ",
+				id, isEncrypt, isForever, day, expireTime);
+		Assert2.notNullOf(id, "id");
 		FileChanges fileChanges = fileChangesDao.selectByPrimaryKey(id);
-		Assert2.notNullOf(id,"fileChanges");
+		Assert2.notNullOf(id, "fileChanges");
 		Share share = new Share();
 		share.preInsert();
 		share.setDocCode(fileChanges.getDocCode());
@@ -246,17 +247,17 @@ public class DocServiceImpl implements DocService {
 			share.setShareType(0);
 		}
 
-		if(isForever){
+		if (isForever) {
 			share.setExpireType(1);// forever
-		}else{
+		} else {
 			share.setExpireType(2);// not forever
 			Date now = new Date();
-			if(Objects.nonNull(day) && day>0){
+			if (Objects.nonNull(day) && day > 0) {
 				expireTime = DateUtils2.addDays(now, day);
 				share.setExpireTime(expireTime);
-			}else if(Objects.nonNull(expireTime)){
+			} else if (Objects.nonNull(expireTime)) {
 				share.setExpireTime(expireTime);
-			}else{
+			} else {
 				throw new InvalidParameterException("error request params");
 			}
 		}

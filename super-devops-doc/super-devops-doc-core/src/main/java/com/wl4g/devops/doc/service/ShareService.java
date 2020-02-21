@@ -9,10 +9,10 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface ShareService {
 
-    PageModel list(PageModel pm);
+	PageModel list(PageModel pm);
 
-    void cancelShare(Integer id);
+	void cancelShare(Integer id);
 
-    RespBase<?> rendering(String code, String passwd);
+	RespBase<?> rendering(String code, String passwd);
 
 }
