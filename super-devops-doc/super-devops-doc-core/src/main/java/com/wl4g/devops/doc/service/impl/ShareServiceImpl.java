@@ -27,80 +27,83 @@ import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 @Service
 public class ShareServiceImpl implements ShareService {
 
-    @Autowired
-    private ShareDao shareDao;
+	@Autowired
+	private ShareDao shareDao;
 
-    @Autowired
-    private DocService docService;
+	@Autowired
+	private DocService docService;
 
-    @Autowired
-    private DocProperties docProperties;
+	@Autowired
+	private DocProperties docProperties;
 
-    @Override
-    public PageModel list(PageModel pm) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        List<Share> list = shareDao.list();
-        for(Share share : list){
-            FileChanges fileChanges = docService.getLastByDocCode(share.getDocCode());
-            share.setName(fileChanges.getName());
-        }
-        pm.setRecords(list);
-        return pm;
-    }
+	@Override
+	public PageModel list(PageModel pm) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		List<Share> list = shareDao.list();
+		for (Share share : list) {
+			FileChanges fileChanges = docService.getLastByDocCode(share.getDocCode());
+			share.setName(fileChanges.getName());
+		}
+		pm.setRecords(list);
+		return pm;
+	}
 
-    @Override
-    public void cancelShare(Integer id) {
-        Share share = new Share();
-        share.setId(id);
-        share.setDelFlag(1);
-        shareDao.updateByPrimaryKeySelective(share);
-    }
+	@Override
+	public void cancelShare(Integer id) {
+		Share share = new Share();
+		share.setId(id);
+		share.setDelFlag(1);
+		shareDao.updateByPrimaryKeySelective(share);
+	}
 
-    @Override
-    public RespBase<?> rendering(String code, String passwd) {
-        RespBase<Object> resp = RespBase.create();
+	@Override
+	public RespBase<?> rendering(String code, String passwd) {
+		RespBase<Object> resp = RespBase.create();
 
-        //for external
-        Share share = shareDao.selectByShareCode(code);
-        if(nonNull(share)) {
-            if(System.currentTimeMillis()>=share.getExpireTime().getTime()){
-                resp.setCode(NOT_FOUND_ERR);
-                return resp;
-            }
-            if(nonNull(share.getShareType()) && share.getShareType()==1 && !equalsIgnoreCase(share.getPasswd(), passwd)){// need password but not match
-                resp.setCode(UNAUTHC);
-                return resp;
-            }
-            FileChanges lastByFileCode = docService.getLastByDocCode(share.getDocCode());
-            resp.setData(parse(lastByFileCode.getContent()));
-            return resp;
-        }
+		// for external
+		Share share = shareDao.selectByShareCode(code);
+		if (nonNull(share)) {
+			if (System.currentTimeMillis() >= share.getExpireTime().getTime()) {
+				resp.setCode(NOT_FOUND_ERR);
+				return resp;
+			}
+			if (nonNull(share.getShareType()) && share.getShareType() == 1 && !equalsIgnoreCase(share.getPasswd(), passwd)) {// need
+																																// password
+																																// but
+																																// not
+																																// match
+				resp.setCode(UNAUTHC);
+				return resp;
+			}
+			FileChanges lastByFileCode = docService.getLastByDocCode(share.getDocCode());
+			resp.setData(parse(lastByFileCode.getContent()));
+			return resp;
+		}
 
-        //for manager
-        FileChanges lastByFileCode = docService.getLastByDocCode(code);
-        if(nonNull(lastByFileCode)){
-            resp.setData(parse(lastByFileCode.getContent()));
-            return resp;
-        }else{
-            resp.setCode(NOT_FOUND_ERR);
-            return resp;
-        }
+		// for manager
+		FileChanges lastByFileCode = docService.getLastByDocCode(code);
+		if (nonNull(lastByFileCode)) {
+			resp.setData(parse(lastByFileCode.getContent()));
+			return resp;
+		} else {
+			resp.setCode(NOT_FOUND_ERR);
+			return resp;
+		}
 
-    }
+	}
 
-
-    /**
-     * parse base url
-     * @param content
-     * @return
-     */
-    private String parse(String content){
-        content = content.replaceAll(DocDevOpsConstants.SHARE_BASE_URL,docProperties.getShareBaseUrl());
-        content = content.replaceAll(DocDevOpsConstants.SHARE_BASE_URL_TRAN,docProperties.getShareBaseUrl());
-        content = content.replaceAll(DocDevOpsConstants.DOC_BASE_URL,docProperties.getDocBaseUrl());
-        content = content.replaceAll(DocDevOpsConstants.DOC_BASE_URL_TRAN,docProperties.getDocBaseUrl());
-        return content;
-    }
-
+	/**
+	 * parse base url
+	 * 
+	 * @param content
+	 * @return
+	 */
+	private String parse(String content) {
+		content = content.replaceAll(DocDevOpsConstants.SHARE_BASE_URL, docProperties.getShareBaseUrl());
+		content = content.replaceAll(DocDevOpsConstants.SHARE_BASE_URL_TRAN, docProperties.getShareBaseUrl());
+		content = content.replaceAll(DocDevOpsConstants.DOC_BASE_URL, docProperties.getDocBaseUrl());
+		content = content.replaceAll(DocDevOpsConstants.DOC_BASE_URL_TRAN, docProperties.getDocBaseUrl());
+		return content;
+	}
 
 }

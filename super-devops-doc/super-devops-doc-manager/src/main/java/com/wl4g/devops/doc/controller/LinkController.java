@@ -23,9 +23,7 @@ public class LinkController {
 	@RequestMapping(value = "/rendering")
 	public RespBase<?> rendering(String code, String passwd) {
 		log.info("rendering file code={} passwd={}", code, passwd);
-		return shareService.rendering(code,passwd);
+		return shareService.rendering(code, passwd);
 	}
-
-
 
 }
