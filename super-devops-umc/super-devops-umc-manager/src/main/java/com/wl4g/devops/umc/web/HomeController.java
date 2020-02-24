@@ -22,7 +22,6 @@ import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import com.wl4g.devops.umc.handle.DashboardHandle;
-import com.wl4g.devops.umc.handle.SmsNotificationHandle;
 import com.wl4g.devops.umc.model.StatusMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.Date;
 
 @RestController
@@ -45,8 +43,8 @@ public class HomeController extends BaseController {
 	@Autowired
 	private CompositeMessageNotifier notifier;
 
-	//@Autowired
-	//private SmsNotificationHandle smsHandle;
+	// @Autowired
+	// private SmsNotificationHandle smsHandle;
 
 	@RequestMapping("{msgId}")
 	public Object details(@PathVariable("msgId") String msgId, Model model) {
@@ -63,8 +61,9 @@ public class HomeController extends BaseController {
 
 	// @RequestMapping("smsSend")
 	public String smsSendTest() {
-//		this.smsHandle.send(Arrays.asList(new String[] { "18127968606" }), "transport-404e4c6d", "UP", "DOWN",
-//				"120.79.3.227:64/s/1");
+		// this.smsHandle.send(Arrays.asList(new String[] { "18127968606" }),
+		// "transport-404e4c6d", "UP", "DOWN",
+		// "120.79.3.227:64/s/1");
 		return "ok";
 	}
 

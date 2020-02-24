@@ -19,6 +19,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.support.mybatis.session.MultipleSqlSessionFactoryBean;
 import com.wl4g.devops.tool.common.crypto.AesUtils;
 
 import org.apache.ibatis.plugin.Interceptor;
@@ -112,7 +113,7 @@ public class DataSourceAutoConfiguration {
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
 		// SqlSessionFactory
-		SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
+		SqlSessionFactoryBean factory = new MultipleSqlSessionFactoryBean();
 		factory.setDataSource(dataSource);
 		factory.setTypeAliases(getTypeAliases(resolver));
 		factory.setConfigLocation(new ClassPathResource(configLocation));

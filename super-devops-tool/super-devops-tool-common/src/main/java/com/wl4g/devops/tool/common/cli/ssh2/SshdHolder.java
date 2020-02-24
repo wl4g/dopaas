@@ -140,7 +140,6 @@ public class SshdHolder extends Ssh2Holders<ChannelExec, ScpClient> {
 			scpClient = DefaultScpClientCreator.INSTANCE.createScpClient(session);
 			processor.process(scpClient);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw e;
 		} finally {
 			try {

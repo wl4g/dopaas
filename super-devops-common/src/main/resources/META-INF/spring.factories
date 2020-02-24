@@ -1,0 +1,3 @@
+# Application Listeners
+org.springframework.context.ApplicationListener=\
+com.wl4g.devops.common.logging.CustomLoggingApplicationListener

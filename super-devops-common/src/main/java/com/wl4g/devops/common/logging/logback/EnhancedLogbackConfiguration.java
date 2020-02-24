@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.internal.logback;
+package com.wl4g.devops.common.logging.logback;
 
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
@@ -83,7 +83,7 @@ import org.springframework.util.ReflectionUtils;
  * @author Phillip Webb
  * @since 1.1.2
  */
-public class CustomLogbackConfiguration {
+public class EnhancedLogbackConfiguration {
 
 	private static final String CONSOLE_LOG_PATTERN = "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} "
 			+ "%clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} "
@@ -99,7 +99,7 @@ public class CustomLogbackConfiguration {
 
 	private final LogFile logFile;
 
-	CustomLogbackConfiguration(LoggingInitializationContext initializationContext, LogFile logFile) {
+	EnhancedLogbackConfiguration(LoggingInitializationContext initializationContext, LogFile logFile) {
 		this.logging = getPatternsResolver(initializationContext.getEnvironment());
 		this.logFile = logFile;
 	}
