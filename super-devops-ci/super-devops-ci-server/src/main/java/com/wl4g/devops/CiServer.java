@@ -17,11 +17,9 @@ package com.wl4g.devops;
 
 import com.wl4g.devops.iam.client.annotation.EnableIamClient;
 import com.wl4g.devops.shell.annotation.EnableShellServer;
-import com.wl4g.devops.support.config.internal.logback.LogbackLoggingSystem;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableIamClient
@@ -30,10 +28,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableTransactionManagement
 public class CiServer {
-
-	static {
-		System.setProperty(LoggingSystem.SYSTEM_PROPERTY, LogbackLoggingSystem.class.getName());
-	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(CiServer.class, args);

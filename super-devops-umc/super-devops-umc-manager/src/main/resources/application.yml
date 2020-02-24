@@ -36,3 +36,5 @@ logging:
     org:
       springframework: INFO
       apache: INFO
+    com:
+      wl4g.dao: DEBUG

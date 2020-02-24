@@ -3,7 +3,7 @@
 <configuration>
 	<settings>
 		<!-- SLF4J | LOG4J | LOG4J2 | JDK_LOGGING | COMMONS_LOGGING | STDOUT_LOGGING | NO_LOGGING -->
-		<setting name="logImpl" value="SLF4J" />
+		<setting name="logImpl" value="LOGBACK" />
 		<!-- 当DAO方法返回类型映射时，若值(value)为null时是否将key加入到map。 -->
 		<setting name="callSettersOnNulls" value="true" />
 		<!-- 全局的映射器启用或禁用缓存。 -->

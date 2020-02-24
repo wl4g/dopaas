@@ -15,13 +15,12 @@
  */
 package com.wl4g.devops;
 
-import com.wl4g.devops.common.internal.logback.LogbackLoggingSystem;
 import com.wl4g.devops.iam.client.annotation.EnableIamClient;
 
 import org.mybatis.spring.annotation.MapperScan;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @EnableIamClient
@@ -29,10 +28,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication
 public class UmcManager {
-
-	static {
-		System.setProperty(LoggingSystem.SYSTEM_PROPERTY, LogbackLoggingSystem.class.getName());
-	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(UmcManager.class, args);

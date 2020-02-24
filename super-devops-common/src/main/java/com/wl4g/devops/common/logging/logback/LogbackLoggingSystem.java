@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.internal.logback;
+package com.wl4g.devops.common.logging.logback;
 
 import java.net.URL;
 import java.security.CodeSource;
@@ -124,7 +124,7 @@ public class LogbackLoggingSystem extends Slf4JLoggingSystem {
 		LogbackConfigurator configurator = new LogbackConfigurator(context);
 		context.putProperty("LOG_LEVEL_PATTERN",
 				initializationContext.getEnvironment().resolvePlaceholders("${logging.pattern.level:${LOG_LEVEL_PATTERN:%5p}}"));
-		new CustomLogbackConfiguration(initializationContext, logFile).apply(configurator);
+		new EnhancedLogbackConfiguration(initializationContext, logFile).apply(configurator);
 		context.setPackagingDataEnabled(true);
 	}
 

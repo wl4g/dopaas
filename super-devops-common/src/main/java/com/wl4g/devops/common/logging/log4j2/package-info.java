@@ -13,4 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.internal.log4j2;
+package com.wl4g.devops.common.logging.log4j2;
