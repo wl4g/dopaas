@@ -32,7 +32,7 @@ logging:
       springframework: INFO
       apache: INFO
     com:
-      wl4g.dao: DEBUG
+      wl4g.devops.dao: DEBUG
 
 # Mybatis configuration.
 mybatis:
