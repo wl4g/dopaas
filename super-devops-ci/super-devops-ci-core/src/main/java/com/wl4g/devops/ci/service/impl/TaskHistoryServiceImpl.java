@@ -29,19 +29,15 @@ import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
-import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOP;
 
@@ -102,15 +98,6 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preInsert();
-		try {
-			if (Objects.nonNull(IamSecurityHolder.getPrincipalInfo())
-					&& StringUtils.hasText(IamSecurityHolder.getPrincipalInfo().getPrincipalId())) {
-				Integer principalId = Integer.valueOf(IamSecurityHolder.getPrincipalInfo().getPrincipalId());
-				taskHistory.setCreateBy(principalId);
-			}
-		} catch (Exception e) {
-
-		}
 		taskHistory.setType(type);
 		taskHistory.setProjectId(project.getId());
 		taskHistory.setStatus(status);

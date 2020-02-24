@@ -75,7 +75,9 @@
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" useGeneratedKeys="true" keyProperty="id">
     insert into ci_task_history
     <trim prefix="(" suffix=")" suffixOverrides="," >
-
+      <if test="id != null" >
+        id,
+      </if>
       <if test="type != null" >
         type,
       </if>
@@ -150,7 +152,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="type != null" >
         #{type,jdbcType=INTEGER},
       </if>
