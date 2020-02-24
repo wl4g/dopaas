@@ -84,7 +84,7 @@ public abstract class BaseBean implements Serializable {
 		setCreateBy(DEFAULT_USER_ID);
 		setUpdateDate(getCreateDate());
 		setUpdateBy(DEFAULT_USER_ID);
-		setDelFlag(DEL_FLAG_DELETE);
+		setDelFlag(DEL_FLAG_NORMAL);
 	}
 
 	/**
