@@ -1,0 +1,1 @@
+### COSS(Composite Object Storage Service) A composite object storage service based on spring cloud. By default, the local file system or NFS file system is used as the storage medium. It supports HDFS, aliyun OSS and aws-s3 proxy storage.
