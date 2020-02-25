@@ -28,6 +28,7 @@ import com.wl4g.devops.share.service.AppClusterService;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.tool.common.crypto.AesUtils;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.*;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
@@ -95,6 +97,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 		appClusterDao.insertSelective(appCluster);
 		Integer clusterId = appCluster.getId();
 		List<AppInstance> instances = appCluster.getInstances();
+		checkRepeat(instances);
 		for (AppInstance appInstance : instances) {
 			appInstance.preInsert();
 			appInstance.setClusterId(clusterId);
@@ -109,6 +112,32 @@ public class AppClueterServiceImpl implements AppClusterService {
 			}
 			appInstanceDao.insertSelective(appInstance);
 		}
+	}
+
+	private void checkRepeat(List<AppInstance> instances){
+		Assert2.notEmptyOf(instances,"instances");
+		for(int i = 0; i< instances.size();i++){
+			for(int j = i+1; j<instances.size()-1;j++){
+				isRepeatBetweenTwo(instances.get(i),instances.get(j));
+			}
+		}
+	}
+
+	private void isRepeatBetweenTwo(AppInstance instance1,AppInstance instance2){
+		if(Objects.isNull(instance1) || Objects.isNull(instance2)){
+			return;
+		}
+		if(!StringUtils.equals(instance1.getEndpoint(),instance2.getEndpoint())){
+			return;
+		}
+		if(!StringUtils.equals(instance1.getEnvType(),instance2.getEnvType())){
+			return;
+		}
+		if(instance1.getHostId().intValue() != instance2.getHostId().intValue()){
+			return;
+		}
+		throw new InvalidParameterException(String.format("Instances is repeat;instance1=%s instance2=%s",instance1.toString(),instance2.toString()));
+
 	}
 
 	private void update(AppCluster appCluster, String cipherKey) {
