@@ -40,6 +40,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
 
+import com.wl4g.devops.common.exception.iam.AccessPermissionDeniedException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
@@ -194,6 +195,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 	@Override
 	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
 		IamAuthenticationToken tk = (IamAuthenticationToken) token;
+		IamAuthenticationInfo info0 = (IamAuthenticationInfo) info;
 
 		CredentialsMatcher matcher = getCredentialsMatcher();
 		if (isNull(matcher)) {
@@ -201,25 +203,31 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 					+ "credentials during authentication.  If you do not wish for credentials to be examined, you "
 					+ "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
 		}
+
+		// Assert credentials match.
 		if (!matcher.doCredentialsMatch(tk, info)) {
 			throw new IncorrectCredentialsException(bundle.getMessage("AbstractIamAuthorizingRealm.credential.mismatch"));
 		}
 
-		// Check whether the login user has access to the target IAM-client
-		// application. (Check only when access application).
+		// Assert when that no permissions are configured, forbid login.
+		if (isBlank(info0.getAccountInfo().getPermissions())) {
+			throw new AccessPermissionDeniedException(bundle.getMessage("AbstractIamAuthorizingRealm.permission.denied"));
+		}
+
+		// Check if have access to the client application.
 		String fromAppName = tk.getRedirectInfo().getFromAppName();
 		if (!isBlank(fromAppName)) {
 			isTrue(!info.getPrincipals().isEmpty(),
 					format("Authentication info principals is empty, please check the configure. [%s]", info));
 
-			// Note: for example, when using wechat scanning code (oauth2)
+			// For example: when using wechat scanning code (oauth2)
 			// to log in, token.getPrincipal() is empty,
 			// info.getPrimaryPrincipal() will not be empty.
 			String principal = (String) info.getPrincipals().getPrimaryPrincipal();
 			try {
 				authHandler.assertApplicationAccessAuthorized(principal, fromAppName);
 			} catch (IllegalApplicationAccessException ex) {
-				// Disable of fallback redirect?
+				// Disable fallback redirect?
 				if (!tk.getRedirectInfo().isFallbackRedirect()) {
 					throw ex;
 				}
