@@ -66,10 +66,10 @@
 		<module>super-devops-iam</module>
 		<module>super-devops-umc</module>
 		<module>super-devops-djob</module>
-		<!-- <module>super-devops-esm</module> -->
+		<module>super-devops-coss</module>
 		<module>super-devops-doc</module>
+		<!-- <module>super-devops-esm</module> -->
 		<!-- <module>super-devops-im</module> -->
-		<!-- <module>super-devops-vcs</module> -->
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

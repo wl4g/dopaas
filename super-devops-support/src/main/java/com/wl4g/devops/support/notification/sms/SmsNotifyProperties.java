@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.support.notification.sms;
 
+import com.wl4g.devops.support.notification.NotifyProperties;
+
 /**
  * {@link SmsNotifyProperties}
  * 
@@ -22,7 +24,7 @@ package com.wl4g.devops.support.notification.sms;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
-public class SmsNotifyProperties {
+public class SmsNotifyProperties implements NotifyProperties {
 
 	private AliyunSmsNotifyProperties aliyun = new AliyunSmsNotifyProperties();
 
@@ -32,6 +34,11 @@ public class SmsNotifyProperties {
 
 	public void setAliyun(AliyunSmsNotifyProperties aliyun) {
 		this.aliyun = aliyun;
+	}
+
+	@Override
+	public void validate() {
+
 	}
 
 	public static class AliyunSmsNotifyProperties {

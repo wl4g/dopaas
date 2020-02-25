@@ -15,6 +15,13 @@
  */
 package com.wl4g.devops.support.notification.qq;
 
-public class QqNotifyProperties {
+import com.wl4g.devops.support.notification.NotifyProperties;
+
+public class QqNotifyProperties implements NotifyProperties {
+
+	@Override
+	public void validate() {
+
+	}
 
 }

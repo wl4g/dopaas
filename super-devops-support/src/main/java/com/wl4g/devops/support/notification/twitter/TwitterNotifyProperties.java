@@ -17,6 +17,14 @@ package com.wl4g.devops.support.notification.twitter;
 
 import org.springframework.boot.autoconfigure.social.TwitterProperties;
 
-public class TwitterNotifyProperties extends TwitterProperties {
+import com.wl4g.devops.support.notification.NotifyProperties;
+
+public class TwitterNotifyProperties extends TwitterProperties implements NotifyProperties {
+
+	@Override
+	public void validate() {
+
+	}
+
 
 }

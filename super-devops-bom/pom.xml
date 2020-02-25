@@ -299,6 +299,18 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-coss-core</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-coss-client</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
 			<!-- Spring's. -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
@@ -372,9 +384,9 @@
 				<version>${javax-servlet-api.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			<!-- Validation, Note: that the use of '$NO-MVN-MAN-VER$' is valid for 
-				the current dependency. When this project is referenced externally, the indirect 
-				dependency will fail, possibly leading to dependency incompatible versions. -->
+			<!-- Validation, Note: that the use of '$NO-MVN-MAN-VER$' is valid for the current dependency. 
+				When this project is referenced externally, the indirect dependency will fail, possibly leading 
+				to dependency incompatible versions. -->
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator</artifactId>
@@ -523,8 +535,7 @@
 				<version>${spotbugs.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- Using metrics package, spring-actual will use DropwizardMetricServices 
-				implementation. -->
+			<!-- Using metrics package, spring-actual will use DropwizardMetricServices implementation. -->
 			<dependency>
 				<groupId>com.codahale.metrics</groupId>
 				<artifactId>metrics-core</artifactId>
@@ -725,8 +736,8 @@
 				<version>${elasticsearch-client.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- Note: only specified 6.2.3 can be displayed here, otherwise it will 
-				be overwritten by other dependency packages (such as spring dependency BOM) -->
+			<!-- Note: only specified 6.2.3 can be displayed here, otherwise it will be overwritten by 
+				other dependency packages (such as spring dependency BOM) -->
 			<dependency>
 				<groupId>org.elasticsearch</groupId>
 				<artifactId>elasticsearch</artifactId>

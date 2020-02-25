@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.support.notification;
 
-public class EmptyMessageNotifier extends AbstractMessageNotifier<Object, NotifyMessage> {
+public class EmptyMessageNotifier extends AbstractMessageNotifier<NotifyProperties, NotifyMessage> {
 
-	public EmptyMessageNotifier(Object config) {
+	public EmptyMessageNotifier(NotifyProperties config) {
 		super(config);
 	}
 

@@ -15,6 +15,13 @@
  */
 package com.wl4g.devops.support.notification.apns;
 
-public class ApnsNotifyProperties {
+import com.wl4g.devops.support.notification.NotifyProperties;
+
+public class ApnsNotifyProperties implements NotifyProperties {
+
+	@Override
+	public void validate() {
+
+	}
 
 }

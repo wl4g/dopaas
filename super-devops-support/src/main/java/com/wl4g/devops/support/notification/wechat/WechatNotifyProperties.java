@@ -15,6 +15,13 @@
  */
 package com.wl4g.devops.support.notification.wechat;
 
-public class WechatNotifyProperties {
+import com.wl4g.devops.support.notification.NotifyProperties;
+
+public class WechatNotifyProperties implements NotifyProperties {
+
+	@Override
+	public void validate() {
+
+	}
 
 }
