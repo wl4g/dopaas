@@ -143,4 +143,21 @@ public class AppInstance extends BaseBean {
 	public void setHostname(String hostname) {
 		this.hostname = hostname;
 	}
+
+	@Override
+	public String toString() {
+		return "AppInstance{" +
+				"clusterId=" + clusterId +
+				", versionId=" + versionId +
+				", hostId=" + hostId +
+				", envType='" + envType + '\'' +
+				", enable=" + enable +
+				", endpoint='" + endpoint + '\'' +
+				", remark='" + remark + '\'' +
+				", sshUser='" + sshUser + '\'' +
+				", sshKey='" + sshKey + '\'' +
+				", sshKeyPub='" + sshKeyPub + '\'' +
+				", hostname='" + hostname + '\'' +
+				'}';
+	}
 }
