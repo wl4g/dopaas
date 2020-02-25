@@ -26,13 +26,17 @@ English version goes [here](README.md)
 
 ### 快速开始示例：
 为了更简洁起见，每个服务仅部署单节点到同一台物理机，作为伪集群。
-
-- step1：初始化数据库，首先准备一台CentOS6.5+以及MySQL5.6+实例，新建名为devops(utf8/utf8_bin)的数据库，再使用 [初始sql脚本](db/) 进行初始化它。（注：此脚本与代码版本对应，我们会定期更新，请按命名后缀日期使用最新的即可）
-- step2：配置hosts，添加本地虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
+- step1：编译
+```
+cd super-devops
+mvn clean install -DskipTests -T 2C
+```
+- step2：初始化数据库，首先准备一台CentOS6.5+以及MySQL5.6+实例，新建名为devops(utf8/utf8_bin)的数据库，再使用 [初始sql脚本](db/) 进行初始化它。（注：此脚本与代码版本对应，我们会定期更新，请按命名后缀日期使用最新的即可）
+- step3：配置hosts，添加本地虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
 10.0.0.160	wl4g.debug #与数据库app_cluster_config.extranet_base_uri对应
 ```
-- step3：快速搭建redis集群(docker)
+- step4：快速搭建redis集群(docker)
 ```
 mkdir -p /mnt/disk1/redis/
 docker run -itd \
