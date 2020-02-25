@@ -27,12 +27,17 @@
 ### Quick start example:
 For the sake of brevity, each service only deploys a single node to the same physical machine, which has been regarded as a pseudo cluster.
 
-- step1, Initialize the db, First prepare a CentOS 6.5 + and MySQL 5.6 + instance, create a new database named Devops (utf8 / utf8_bin), and then use [initial SQL script] (dB /) to initialize it.（Note: this script corresponds to the code version, and we will update it regularly. Please use the latest one according to the named suffix date）
-- step2, Configure hosts, Add local domain name resolution.（C:\Windows\System32\drivers\etc or vim /etc/hosts）：
+- step1：Compile
+```
+cd super-devops
+mvn clean install -DskipTests -T 2C
+```
+- step2, Initialize the db, First prepare a CentOS 6.5 + and MySQL 5.6 + instance, create a new database named Devops (utf8 / utf8_bin), and then use [initial SQL script] (dB /) to initialize it.（Note: this script corresponds to the code version, and we will update it regularly. Please use the latest one according to the named suffix date）
+- step3, Configure hosts, Add local domain name resolution.（C:\Windows\System32\drivers\etc or vim /etc/hosts）：
 ```
 10.0.0.160	wl4g.debug # Corresponding to app_cluster_config.extranet_base_uri
 ```
-- step3：Quickly build a redis cluster (docker)
+- step4：Quickly build a redis cluster (docker)
 ```
 mkdir -p /mnt/disk1/redis/
 docker run -itd \
