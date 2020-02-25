@@ -127,6 +127,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		}
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			taskBuildCommand.setId(null);
+			taskBuildCommand.preInsert();
 			taskBuildCommand.setTaskId(taskHistory.getId());
 			taskHistoryBuildCommandDao.insertSelective(taskBuildCommand);
 		}

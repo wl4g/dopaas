@@ -195,6 +195,7 @@ public class GroupServiceImpl implements GroupService {
 		IamPrincipalInfo info = getPrincipalInfo();
 		if (!DEFAULT_USER_ROOT.equals(info.getPrincipal()) && Objects.nonNull(info) && Objects.nonNull(info.getPrincipalId())) {
 			GroupUser groupUser = new GroupUser();
+			groupUser.preInsert();
 			groupUser.setGroupId(group.getId());
 			groupUser.setUserId(parseIntOrNull(info.getPrincipalId()));
 			groupUserDao.insertSelective(groupUser);
@@ -246,16 +247,19 @@ public class GroupServiceImpl implements GroupService {
 				Park park = new Park();
 				BeanUtils.copyProperties(group.getGroupExt(), park);
 				park.setGroupId(group.getId());
+				park.preInsert();
 				parkDao.insertSelective(park);
 			} else if (GroupExt.GroupType.Company.getValue() == group.getType()) {
 				Company company = new Company();
 				BeanUtils.copyProperties(group.getGroupExt(), company);
 				company.setGroupId(group.getId());
+				company.preInsert();
 				companyDao.insertSelective(company);
 			} else if (GroupExt.GroupType.Department.getValue() == group.getType()) {
 				Department department = new Department();
 				BeanUtils.copyProperties(group.getGroupExt(), department);
 				department.setGroupId(group.getId());
+				department.preInsert();
 				departmentDao.insertSelective(department);
 			}
 		} else {// update
