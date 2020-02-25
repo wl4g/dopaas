@@ -52,6 +52,8 @@ public class Project extends BaseBean implements Serializable {
 
 	private Integer lockStatus;
 
+	private Integer isBoot;
+
 	private List<Dependency> dependencies;
 
 	/**
@@ -148,6 +150,14 @@ public class Project extends BaseBean implements Serializable {
 		if (nonNull(vcs)) {
 			this.vcs = vcs;
 		}
+	}
+
+	public Integer getIsBoot() {
+		return isBoot;
+	}
+
+	public void setIsBoot(Integer isBoot) {
+		this.isBoot = isBoot;
 	}
 
 	@Override

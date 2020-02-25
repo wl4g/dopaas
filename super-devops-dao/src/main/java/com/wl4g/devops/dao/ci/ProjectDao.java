@@ -33,7 +33,7 @@ public interface ProjectDao {
 
 	int updateByPrimaryKey(Project record);
 
-	List<Project> list(@Param("groupName") String groupName, @Param("projectName") String projectName);
+	List<Project> list(@Param("groupName") String groupName, @Param("projectName") String projectName,@Param("isBoot") Integer isBoot);
 
 	Project getByProjectName(String projectName);
 
