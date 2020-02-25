@@ -9,6 +9,10 @@
   <sql id="Base_Column_List" >
     id, contact_group_id, contact_id
   </sql>
+  <sql id="Base_Column_List_r" >
+    r.id, r.contact_group_id, r.contact_id
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -76,9 +80,10 @@
 
   <select id="selectByContactId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
-    <include refid="Base_Column_List" />
-    from sys_contact_group_ref
+    <include refid="Base_Column_List_r" />
+    from sys_contact_group_ref r
     where contact_id = #{id,jdbcType=INTEGER}
+    and EXISTS(select 1 from sys_contact_group g where g.del_flag!=1 and r.contact_group_id=g.id)
   </select>
 
 </mapper>
