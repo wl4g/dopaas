@@ -78,7 +78,7 @@ public abstract class BaseBean implements Serializable {
 	 */
 	public void preInsert() {
 		// TODO Use random number just for now
-		setId(RandomUtils.nextInt(10000, 2147483647));
+		setId(RandomUtils.nextInt(1_0000, 10_0000));
 
 		setCreateDate(new Date());
 		setCreateBy(DEFAULT_USER_ID);
