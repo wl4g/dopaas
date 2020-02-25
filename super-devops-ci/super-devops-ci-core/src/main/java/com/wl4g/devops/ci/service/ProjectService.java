@@ -35,7 +35,7 @@ public interface ProjectService {
 
 	PageModel list(PageModel pm, String groupName, String projectName);
 
-	List<Project> all();
+	List<Project> getBySelect(Integer isBoot);
 
 	Project selectByPrimaryKey(Integer id);
 

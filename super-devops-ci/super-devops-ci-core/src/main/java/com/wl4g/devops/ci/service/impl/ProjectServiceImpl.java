@@ -135,7 +135,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public PageModel list(PageModel pm, String groupName, String projectName) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		List<Project> list = projectDao.list(groupName, projectName);
+		List<Project> list = projectDao.list(groupName, projectName,null);
 		for (Project project : list) {
 			project.setVcs(null);
 		}
@@ -144,8 +144,8 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<Project> all() {
-		return projectDao.list(null, null);
+	public List<Project> getBySelect(Integer isBoot) {
+		return projectDao.list(null, null,isBoot);
 	}
 
 	@Override

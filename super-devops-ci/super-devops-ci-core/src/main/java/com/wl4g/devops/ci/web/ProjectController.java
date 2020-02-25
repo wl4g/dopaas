@@ -120,10 +120,10 @@ public class ProjectController extends BaseController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/all")
-	public RespBase<?> all() {
+	@RequestMapping(value = "/getBySelect")
+	public RespBase<?> getBySelect(Integer isBoot) {
 		RespBase<Object> resp = RespBase.create();
-		List<Project> list = projectService.all();
+		List<Project> list = projectService.getBySelect(isBoot);
 		resp.forMap().put("list", list);
 		return resp;
 	}
