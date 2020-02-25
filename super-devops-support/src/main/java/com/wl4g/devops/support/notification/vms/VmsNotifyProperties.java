@@ -15,6 +15,13 @@
  */
 package com.wl4g.devops.support.notification.vms;
 
-public class VmsNotifyProperties {
+import com.wl4g.devops.support.notification.NotifyProperties;
+
+public class VmsNotifyProperties implements NotifyProperties {
+
+	@Override
+	public void validate() {
+
+	}
 
 }

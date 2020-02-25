@@ -29,9 +29,12 @@ import org.slf4j.Logger;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
-public abstract class AbstractMessageNotifier<C, T extends NotifyMessage> implements MessageNotifier<T> {
+public abstract class AbstractMessageNotifier<C extends NotifyProperties, T extends NotifyMessage> implements MessageNotifier<T> {
 	final protected Logger log = getLogger(getClass());
 
+	/**
+	 * Notify properties.
+	 */
 	final protected C config;
 
 	public AbstractMessageNotifier(C config) {

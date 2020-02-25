@@ -15,6 +15,13 @@
  */
 package com.wl4g.devops.support.notification.bark;
 
-public class BarkNotifyProperties {
+import com.wl4g.devops.support.notification.NotifyProperties;
+
+public class BarkNotifyProperties implements NotifyProperties {
+
+	@Override
+	public void validate() {
+
+	}
 
 }

@@ -15,9 +15,15 @@
  */
 package com.wl4g.devops.support.notification.mail;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.stateOf;
+
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.wl4g.devops.support.notification.NotifyProperties;
 
 /**
  * {@link MailNotifyProperties}, Full compatibility with native spring mail!
@@ -26,7 +32,7 @@ import java.util.Map;
  * @version 2020年1月9日 v1.0.0
  * @see {@link org.springframework.boot.autoconfigure.mail.MailProperties}
  */
-public class MailNotifyProperties {
+public class MailNotifyProperties implements NotifyProperties {
 	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 	/**
@@ -140,6 +146,17 @@ public class MailNotifyProperties {
 
 	public void setTestConnection(boolean testConnection) {
 		this.testConnection = testConnection;
+	}
+
+	@Override
+	public void validate() {
+		hasTextOf(getHost(), "host");
+		notNullOf(getPort(), "port");
+		stateOf(getPort() > 0, "port must >0");
+		hasTextOf(getUsername(), "username");
+		hasTextOf(getPassword(), "password");
+		hasTextOf(getProtocol(), "protocol");
+		notNullOf(getDefaultEncoding(), "defaultEncoding");
 	}
 
 }

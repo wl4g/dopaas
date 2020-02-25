@@ -15,6 +15,13 @@
  */
 package com.wl4g.devops.support.notification.dingtalk;
 
-public class DingtalkNotifyProperties {
+import com.wl4g.devops.support.notification.NotifyProperties;
+
+public class DingtalkNotifyProperties implements NotifyProperties {
+
+	@Override
+	public void validate() {
+
+	}
 
 }

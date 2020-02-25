@@ -17,6 +17,13 @@ package com.wl4g.devops.support.notification.facebook;
 
 import org.springframework.boot.autoconfigure.social.FacebookProperties;
 
-public class FacebookNotifyProperties  extends FacebookProperties {
+import com.wl4g.devops.support.notification.NotifyProperties;
+
+public class FacebookNotifyProperties extends FacebookProperties implements NotifyProperties {
+
+	@Override
+	public void validate() {
+
+	}
 
 }

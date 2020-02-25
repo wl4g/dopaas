@@ -2,26 +2,27 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
-	<artifactId>super-devops-vcs</artifactId>
+	<artifactId>super-devops-coss</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>Super DevOps VCS</name>
+	<name>Super DevOps Composite Object Storage Service</name>
+	<url>https://coss.super-devops.wl4g.com</url>
+	<description>COSS - A open source composite object storage system based on spring cloud.</description>
 	<modules>
-		<module>super-devops-vcs-rest</module>
-		<module>super-devops-vcs-core</module>
-		<module>super-devops-vcs-starter</module>
+		<module>super-devops-coss-client</module>
+		<module>super-devops-coss-core</module>
+		<module>super-devops-coss-server</module>
+		<module>super-devops-coss-example</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<project.parent.version>master</project.parent.version>
 	</properties>
 	<repositories>
 		<repository>
-			<id>nexus-senior-plugin</id>
-			<name>Team Nexus jar Repository</name>
-			<url>http://47.107.57.204/m2-repository/</url>
+			<id>aliyun-public</id>
+			<name>Aliyun public</name>
+			<url>https://maven.aliyun.com/repository/public</url>
 		</repository>
 		<repository>
 			<id>spring-snapshots</id>
@@ -32,6 +33,17 @@
 			</snapshots>
 		</repository>
 	</repositories>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-bom</artifactId>
+				<version>master</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>
@@ -47,7 +59,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>${maven-source-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>

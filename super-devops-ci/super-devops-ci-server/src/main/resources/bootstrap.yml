@@ -35,10 +35,11 @@ spring:
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
-  http:
+  http: # Upload file limit
     multipart:
       max-file-size: 50Mb
       max-request-size: 50Mb
+
 # ### Server configuration. ###
 server:
   port: 14046
