@@ -73,9 +73,9 @@ public class AppClusterController extends BaseController {
 
 	@RequestMapping(value = "/detail")
 	@RequiresPermissions(value = { "share:cluster" })
-	public RespBase<?> detail(Integer clusterId) {
+	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		AppCluster detail = appClusterService.detail(clusterId);
+		AppCluster detail = appClusterService.detail(id);
 		resp.forMap().put("data", detail);
 		return resp;
 	}
