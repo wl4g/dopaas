@@ -137,6 +137,7 @@ public class HistoryServiceImpl implements HistoryService {
 		} else if (versionselect.getDelFlag() == Version.DEL_FLAG_DELETE) {
 			throw new RuntimeException("版本已删除");
 		}
+		historyOfDetail.preInsert();
 		historyOfDetail.setVersionid(agl.getId());
 		historyOfDetail.setCreateDate(agl.getCreateDate());
 		historyOfDetail.setCreateBy(agl.getCreateBy());
@@ -144,6 +145,7 @@ public class HistoryServiceImpl implements HistoryService {
 		historyOfDetail.setType(HistoryOfDetail.type.ROLLBACK.getValue());
 		historyDao.insert(historyOfDetail);
 		ReleaseDetail releaseDetail = new ReleaseDetail();
+		releaseDetail.preInsert();
 		releaseDetail.setReleaseId(historyOfDetail.getId());
 		releaseDetail.setInstanceId(Integer.parseInt(agl.getInstanceId()));
 		releaseDetail.setResult("暂无结果");

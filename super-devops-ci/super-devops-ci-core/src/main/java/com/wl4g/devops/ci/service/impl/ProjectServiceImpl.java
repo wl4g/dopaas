@@ -90,6 +90,7 @@ public class ProjectServiceImpl implements ProjectService {
 			for (Dependency dependency : project.getDependencies()) {
 				if (dependency.getDependentId() != null && StringUtils.isNotBlank(dependency.getBranch())) {
 					dependency.setProjectId(project.getId());
+					dependency.preInsert();
 					dependencyDao.insertSelective(dependency);
 				}
 			}
@@ -109,6 +110,7 @@ public class ProjectServiceImpl implements ProjectService {
 			for (Dependency dependency : project.getDependencies()) {
 				if (dependency.getDependentId() != null && StringUtils.isNotBlank(dependency.getBranch())) {
 					dependency.setProjectId(project.getId());
+					dependency.preInsert();
 					dependencyDao.insertSelective(dependency);
 				}
 			}

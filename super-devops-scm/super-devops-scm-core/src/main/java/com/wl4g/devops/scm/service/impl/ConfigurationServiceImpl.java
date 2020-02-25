@@ -105,12 +105,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		if (null != vd.getConfigGurations() && !vd.getConfigGurations().isEmpty()) {
 			Map<String, Object> vMap = new HashMap<>();
 			vMap.put("vid", vd.getId());
+			for(VersionContentBean versionContentBean : vd.getConfigGurations()){
+				versionContentBean.preInsert();
+			}
 			vMap.put("configGurations", vd.getConfigGurations());
 			this.configurationDao.insertDetail(vMap);
 		}
 
 		// Save release history information.
 		HistoryOfDetail historyOfDetail = new HistoryOfDetail();
+		historyOfDetail.preInsert();
 		historyOfDetail.setVersionid(versionId);
 		historyOfDetail.setRemark(vd.getRemark());
 		historyOfDetail.setCreateBy(vd.getCreateBy());
@@ -122,6 +126,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		for (AppInstance instance : nodeList) {
 			// Save release history details information.
 			ReleaseDetail releaseDetail = new ReleaseDetail();
+			releaseDetail.preInsert();
 			releaseDetail.setReleaseId(historyOfDetail.getId());
 			releaseDetail.setResult("暂无结果");
 			releaseDetail.setInstanceId(instance.getId());

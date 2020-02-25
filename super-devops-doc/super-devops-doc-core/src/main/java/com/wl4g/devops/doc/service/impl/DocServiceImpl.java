@@ -3,6 +3,7 @@ package com.wl4g.devops.doc.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.doc.FileChanges;
+import com.wl4g.devops.common.bean.doc.FileLabel;
 import com.wl4g.devops.common.bean.doc.Share;
 import com.wl4g.devops.dao.doc.FileChangesDao;
 import com.wl4g.devops.dao.doc.FileLabelDao;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -94,8 +96,16 @@ public class DocServiceImpl implements DocService {
 		fileChangesDao.insertSelective(fileChanges);
 		// label
 		List<Integer> labelIds = fileChanges.getLabelIds();
-		if (Objects.nonNull(labelIds) && labelIds.size() > 0) {
-			fileLabelDao.insertBatch(labelIds, fileChanges.getId());
+		if(!CollectionUtils.isEmpty(labelIds)){
+			List<FileLabel> fileLabels = new ArrayList<>();
+			for(Integer labelId : labelIds){
+				FileLabel fileLabel = new FileLabel();
+				fileLabel.preInsert();
+				fileLabel.setFileId(fileChanges.getId());
+				fileLabel.setLabelId(labelId);
+				fileLabels.add(fileLabel);
+			}
+			fileLabelDao.insertBatch(fileLabels);
 		}
 	}
 
@@ -122,8 +132,16 @@ public class DocServiceImpl implements DocService {
 		fileChangesDao.insertSelective(fileChanges);
 		// label
 		List<Integer> labelIds = fileChanges.getLabelIds();
-		if (Objects.nonNull(labelIds) && labelIds.size() > 0) {
-			fileLabelDao.insertBatch(labelIds, fileChanges.getId());
+		if(!CollectionUtils.isEmpty(labelIds)){
+			List<FileLabel> fileLabels = new ArrayList<>();
+			for(Integer labelId : labelIds){
+				FileLabel fileLabel = new FileLabel();
+				fileLabel.preInsert();
+				fileLabel.setFileId(fileChanges.getId());
+				fileLabel.setLabelId(labelId);
+				fileLabels.add(fileLabel);
+			}
+			fileLabelDao.insertBatch(fileLabels);
 		}
 	}
 
@@ -139,8 +157,16 @@ public class DocServiceImpl implements DocService {
 		fileChangesDao.insertSelective(fileChanges);
 		// label
 		List<Integer> labelIds = fileChanges.getLabelIds();
-		if (Objects.nonNull(labelIds) && labelIds.size() > 0) {
-			fileLabelDao.insertBatch(labelIds, fileChanges.getId());
+		if(!CollectionUtils.isEmpty(labelIds)){
+			List<FileLabel> fileLabels = new ArrayList<>();
+			for(Integer labelId : labelIds){
+				FileLabel fileLabel = new FileLabel();
+				fileLabel.preInsert();
+				fileLabel.setFileId(fileChanges.getId());
+				fileLabel.setLabelId(labelId);
+				fileLabels.add(fileLabel);
+			}
+			fileLabelDao.insertBatch(fileLabels);
 		}
 	}
 
