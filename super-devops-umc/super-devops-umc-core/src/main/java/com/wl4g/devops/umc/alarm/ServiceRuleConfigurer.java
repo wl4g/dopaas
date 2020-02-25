@@ -73,6 +73,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	// @Transactional
 	public AlarmRecord saveAlarmRecord(AlarmTemplate alarmTemplate, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
 		AlarmRecord record = new AlarmRecord();
+		record.preInsert();
 		record.setName(alarmTemplate.getMetric());
 		record.setTemplateId(alarmTemplate.getId());
 		record.setGatherTime(new Date(gatherTime));
@@ -82,6 +83,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 		// Alarm matched rules.
 		for (AlarmRule rule : rules) {
 			AlarmRecordRule recordRule = new AlarmRecordRule();
+			recordRule.preInsert();
 			recordRule.setRecordId(record.getId());
 			recordRule.setRuleId(rule.getId());
 			recordRule.setCompareValue(rule.getCompareValue());
@@ -97,6 +99,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 
 	@Override
 	public AlarmNotificationContact saveNotificationContact(AlarmNotificationContact alarmNotificationContact) {
+		alarmNotificationContact.preInsert();
 		alarmNotificationContactDao.insertSelective(alarmNotificationContact);
 		return alarmNotificationContact;
 	}

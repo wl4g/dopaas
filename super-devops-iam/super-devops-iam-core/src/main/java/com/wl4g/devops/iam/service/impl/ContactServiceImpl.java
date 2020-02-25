@@ -64,6 +64,7 @@ public class ContactServiceImpl implements ContactService {
 		if (null != groups) {
 			for (Integer group : groups) {
 				AlarmContactGroupRef alarmContactGroupRef = new AlarmContactGroupRef();
+				alarmContactGroupRef.preInsert();
 				alarmContactGroupRef.setContactGroupId(group);
 				alarmContactGroupRef.setContactId(alarmContact.getId());
 				alarmContactGroupRefDao.insertSelective(alarmContactGroupRef);

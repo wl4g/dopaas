@@ -96,6 +96,7 @@ public class TaskServiceImpl implements TaskService {
 		List<TaskInstance> taskInstances = new ArrayList<>();
 		for (Integer instanceId : instanceIds) {
 			TaskInstance taskInstance = new TaskInstance();
+			taskInstance.preInsert();
 			taskInstance.setTaskId(taskId);
 			taskInstance.setInstanceId(instanceId);
 			taskDetailDao.insertSelective(taskInstance);
@@ -103,6 +104,7 @@ public class TaskServiceImpl implements TaskService {
 		}
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			taskBuildCommand.setTaskId(taskId);
+			taskBuildCommand.preInsert();
 			taskBuildCommandDao.insertSelective(taskBuildCommand);
 		}
 		task.setTaskInstances(taskInstances);
@@ -117,6 +119,7 @@ public class TaskServiceImpl implements TaskService {
 		taskDetailDao.deleteByTaskId(task.getId());
 		for (Integer instanceId : instanceIds) {
 			TaskInstance taskInstance = new TaskInstance();
+			taskInstance.preInsert();
 			taskInstance.setTaskId(task.getId());
 			taskInstance.setInstanceId(instanceId);
 			taskDetailDao.insertSelective(taskInstance);
@@ -125,6 +128,7 @@ public class TaskServiceImpl implements TaskService {
 		taskBuildCommandDao.deleteByTaskId(task.getId());
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			taskBuildCommand.setTaskId(task.getId());
+			taskBuildCommand.preInsert();
 			taskBuildCommandDao.insertSelective(taskBuildCommand);
 		}
 		task.setTaskInstances(taskInstances);
