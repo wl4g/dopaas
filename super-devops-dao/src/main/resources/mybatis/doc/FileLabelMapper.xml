@@ -33,11 +33,11 @@
       )
   </insert>
 
-  <insert id="insertBatch" parameterType="com.wl4g.devops.common.bean.doc.Label">
-    insert into doc_file_label (label_id, file_id)
+  <insert id="insertBatch" parameterType="java.util.Map">
+    insert into doc_file_label (id, label_id, file_id)
     VALUES
-    <foreach collection="labelIds" item="labelId" separator=",">
-      (#{labelId,jdbcType=INTEGER}, #{fileId,jdbcType=INTEGER})
+    <foreach collection="fileLabels" item="fileLabel" separator=",">
+      (#{fileLabel.id,jdbcType=INTEGER}, #{fileLabel.labelId,jdbcType=INTEGER}, #{fileLabel.fileId,jdbcType=INTEGER})
     </foreach>
   </insert>
 

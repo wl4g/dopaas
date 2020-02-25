@@ -199,6 +199,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// Save the SHA of the dependency project.
 		if (isDependency) {
 			TaskSign sign = new TaskSign();
+			sign.preInsert();
 			sign.setTaskId(taskHisy.getId());
 			sign.setDependenvyId(dependencyId);
 			sign.setShaGit(getVcsOperator(project).getLatestCommitted(projectDir));

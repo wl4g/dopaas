@@ -12,7 +12,7 @@ public interface FileLabelDao {
 
     int insert(FileLabel record);
 
-    int insertBatch(@Param("labelIds") List<Integer> labelIds,@Param("fileId") Integer fileId);
+    int insertBatch(@Param("fileLabels") List<FileLabel> fileLabels);
 
     int insertSelective(FileLabel record);
 

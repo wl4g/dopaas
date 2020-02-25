@@ -20,8 +20,6 @@ import com.wl4g.devops.common.bean.BaseBean;
 public class Company extends BaseBean {
 	private static final long serialVersionUID = 6055405466492698537L;
 
-	private Integer id;
-
 	private Integer groupId;
 
 	private String displayName;
@@ -31,14 +29,6 @@ public class Company extends BaseBean {
 	private String contactPhone;
 
 	private String address;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	public Integer getGroupId() {
 		return groupId;
