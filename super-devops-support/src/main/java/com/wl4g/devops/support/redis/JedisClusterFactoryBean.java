@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.support.redis;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notEmpty;
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Set;
@@ -69,11 +71,11 @@ public class JedisClusterFactoryBean implements FactoryBean<JedisCluster>, Initi
 		// Parse cluster node's
 		Set<HostAndPort> haps = config.parseHostAndPort();
 		if (log.isInfoEnabled()) {
-			haps.forEach(n -> log.info("=> Connect to redis cluster node: {}", n));
+			haps.forEach(n -> log.info("=> Connecting to redis cluster node: {}", n));
 		}
+		notEmpty(haps, "Redis nodes is empty.");
 
 		try {
-			Assert.notEmpty(haps, "Redis nodes is empty.");
 			// Create REDIS cluster
 			if (isBlank(config.getPasswd())) {
 				jedisCluster = new JedisCluster(haps, config.getConnTimeout(), config.getSoTimeout(), config.getMaxAttempts(),
@@ -83,8 +85,9 @@ public class JedisClusterFactoryBean implements FactoryBean<JedisCluster>, Initi
 						config.getPasswd(), config.getPoolConfig());
 			}
 		} catch (Exception e) {
-			throw new IllegalStateException(String.format("Can't connect to redis cluster: %s", haps), e);
+			throw new IllegalStateException(format("Can't connect to redis cluster: %s", haps), e);
 		}
+
 	}
 
 }

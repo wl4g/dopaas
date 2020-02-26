@@ -300,7 +300,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public FilterRegistrationBean authenticateFilterRegistrationBean(
+	public FilterRegistrationBean authenticatorFilterRegistrationBean(
 			@Qualifier(BEAN_AUTH_FILTER) AuthenticatorAuthenticationFilter filter) {
 		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
 		registration.setEnabled(false);
