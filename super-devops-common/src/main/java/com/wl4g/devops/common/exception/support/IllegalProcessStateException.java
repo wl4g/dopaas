@@ -123,12 +123,12 @@ public class IllegalProcessStateException extends DevOpsException {
 
 	@Override
 	public String getMessage() {
-		return format("exitCode=%s %s", getExitValue(), super.getMessage());
+		return format("exitCode(%s) - %s", getExitValue(), super.getMessage());
 	}
 
 	@Override
 	public String getLocalizedMessage() {
-		return format("exitCode=%s %s", getExitValue(), super.getLocalizedMessage());
+		return format("exitCode(%s) - %s", getExitValue(), super.getLocalizedMessage());
 	}
 
 }
