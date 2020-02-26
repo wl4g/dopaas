@@ -43,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
 import static com.wl4g.devops.tool.common.io.ByteStreams2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static java.lang.String.format;
@@ -130,8 +131,9 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 
 			return readFullyToString(dp.getStdout());
 		} catch (IllegalProcessStateException ex) {
-			throw new IllegalProcessStateException(
-					format("Failed to process(%s), commands: [%s], cause: %s", cmd.getProcessId(), dp.getCommand().getCmd()), ex);
+			throw new IllegalProcessStateException(ex.getExitValue(),
+					format("Failed to process(%s), commands: [%s], cause by: %s", cmd.getProcessId(), dp.getCommand().getCmd(),
+							getStackTraceAsString(ex)));
 		} finally {
 			// Destroy process.
 			destroy0(dp, DEFAULT_DESTROY_TIMEOUTMS);

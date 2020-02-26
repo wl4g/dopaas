@@ -18,7 +18,7 @@ package com.wl4g.devops.oss.core;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class OssFileInputStream extends InputStream {
+public class CossFileInputStream extends InputStream {
 
 	@Override
 	public int read() throws IOException {
