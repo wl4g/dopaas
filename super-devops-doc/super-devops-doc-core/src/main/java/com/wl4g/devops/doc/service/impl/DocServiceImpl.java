@@ -84,7 +84,7 @@ public class DocServiceImpl implements DocService {
 	@Override
 	public void saveUpload(FileChanges fileChanges) {
 		Assert2.notNullOf(fileChanges, "fileChanges");
-		Assert2.hasTextOf(fileChanges.getDocCode(), "fileCode");
+		Assert2.hasTextOf(fileChanges.getDocCode(), "docCode");
 		Assert2.hasTextOf(fileChanges.getContent(), "content");
 		IamPrincipalInfo info = getPrincipalInfo();
 		fileChanges.preInsert();
@@ -221,11 +221,11 @@ public class DocServiceImpl implements DocService {
 	public Map<String, Object> upload(MultipartFile file) {
 		Map<String, Object> result = new HashMap<>();
 		Date now = new Date();
-		String fileCode = UUID.randomUUID().toString().replaceAll("-", "");
+		String docCode = UUID.randomUUID().toString().replaceAll("-", "");
 		String fileName = file.getOriginalFilename();// 文件名
 		String suffixName = fileName.substring(fileName.lastIndexOf("."));// 后缀名
 		String newFileName = DateUtils2.formatDate(now, "yyyyMMddHHmmss");
-		String subPath = "/" + fileCode + "/";
+		String subPath = "/" + docCode + "/";
 		String path = "";
 		if (".md".equalsIgnoreCase(suffixName)) {
 			newFileName = newFileName + suffixName;
@@ -249,7 +249,7 @@ public class DocServiceImpl implements DocService {
 			throw new UnsupportedOperationException("Unsupport file type:" + suffixName);
 		}
 		result.put("path", path);
-		result.put("fileCode", fileCode);
+		result.put("docCode", docCode);
 		return result;
 	}
 
