@@ -62,6 +62,7 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 	final private Map<String, Multimap<String, WatchDeferredResult<ResponseEntity<?>>>> watchRequests;
 
 	public AbstractConfigSourcePublisher(ScmProperties config) {
+		super(new RunnerProperties(false,1));
 		this.config = config;
 		this.watchRequests = new ConcurrentHashMap<>(32);
 	}
