@@ -165,10 +165,10 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<String> getBranchs(Integer appClusterId, Integer tarOrBranch) {
-		Assert.notNull(appClusterId, "id can not be null");
+	public List<String> getBranchs(Integer projectId, Integer tarOrBranch) {
+		Assert.notNull(projectId, "id can not be null");
 
-		Project project = projectDao.getByAppClusterId(appClusterId);
+		Project project = projectDao.selectByPrimaryKey(projectId);
 		Assert.notNull(project, "not found project ,please check you project config");
 		String url = project.getHttpUrl();
 

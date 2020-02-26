@@ -39,7 +39,7 @@ public interface TaskService {
 
 	Task getTaskDetailById(Integer triggerId);
 
-	List<TaskBuildCommand> getDependency(Integer clustomId);
+	List<TaskBuildCommand> getDependency(Integer projectId);
 
 	List<Task> getListByAppClusterId(Integer appClusterId);
 
