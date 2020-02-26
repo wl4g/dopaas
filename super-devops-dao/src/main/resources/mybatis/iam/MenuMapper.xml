@@ -127,7 +127,7 @@
         route_path,
       </if>
       <if test="renderTarget != null" >
-        renderTarget,
+        render_target,
       </if>
       <if test="icon != null" >
         icon,
@@ -245,7 +245,7 @@
         route_path = #{routePath,jdbcType=VARCHAR},
       </if>
       <if test="renderTarget != null" >
-        renderTarget = #{renderTarget,jdbcType=VARCHAR},
+        render_target = #{renderTarget,jdbcType=VARCHAR},
       </if>
       <if test="icon != null" >
         icon = #{icon,jdbcType=VARCHAR},
