@@ -94,6 +94,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 
 	private void insert(AppCluster appCluster, String cipherKey) {
 		appCluster.preInsert();
+		appCluster.setDeptId(1);
 		appClusterDao.insertSelective(appCluster);
 		Integer clusterId = appCluster.getId();
 		List<AppInstance> instances = appCluster.getInstances();
