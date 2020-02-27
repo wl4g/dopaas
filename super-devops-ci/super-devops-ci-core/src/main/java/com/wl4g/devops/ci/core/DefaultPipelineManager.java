@@ -35,16 +35,11 @@ import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.support.notification.CompositeMessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.dingtalk.DingtalkMessage;
-import com.wl4g.devops.support.notification.dingtalk.DingtalkMessageNotifier;
 import com.wl4g.devops.support.notification.facebook.FacebookMessage;
-import com.wl4g.devops.support.notification.facebook.FacebookMessageNotifier;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
-import com.wl4g.devops.support.notification.sms.AliyunSmsMessageNotifier;
 import com.wl4g.devops.support.notification.sms.SmsMessage;
 import com.wl4g.devops.support.notification.twitter.TwitterMessage;
-import com.wl4g.devops.support.notification.twitter.TwitterMessageNotifier;
 import com.wl4g.devops.support.notification.wechat.WechatMessage;
-import com.wl4g.devops.support.notification.wechat.WechatMessageNotifier;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -396,35 +391,35 @@ public class DefaultPipelineManager implements PipelineManager {
 				List<String> numbers = new ArrayList<>();
 				numbers.add(alarmContact.getPhone());
 				smsMessage.setNumbers(numbers);
-				notifier.forAdapt(AliyunSmsMessageNotifier.class).send(smsMessage);
+				//notifier.forAdapt(AliyunSmsMessageNotifier.class).send(smsMessage);
 			}
 
 			// dingtalk
 			if (alarmContact.getDingtalkEnable() == 1) {
 				DingtalkMessage dingtalkMessage = new DingtalkMessage();
 				// TODO set dingtalkMessage
-				notifier.forAdapt(DingtalkMessageNotifier.class).send(dingtalkMessage);
+				//notifier.forAdapt(DingtalkMessageNotifier.class).send(dingtalkMessage);
 			}
 
 			// facebook
 			if (alarmContact.getFacebookEnable() == 1) {
 				FacebookMessage facebookMessage = new FacebookMessage();
 				// TODO set facebookMessage
-				notifier.forAdapt(FacebookMessageNotifier.class).send(facebookMessage);
+				//notifier.forAdapt(FacebookMessageNotifier.class).send(facebookMessage);
 			}
 
 			// twitter
 			if (alarmContact.getTwitterEnable() == 1) {
 				TwitterMessage twitterMessage = new TwitterMessage();
 				// TODO set twitterMessage
-				notifier.forAdapt(TwitterMessageNotifier.class).send(twitterMessage);
+				//notifier.forAdapt(TwitterMessageNotifier.class).send(twitterMessage);
 			}
 
 			// wechat
 			if (alarmContact.getWechatEnable() == 1) {
 				WechatMessage wechatMessage = new WechatMessage();
 				// TODO set wechatMessage
-				notifier.forAdapt(WechatMessageNotifier.class).send(wechatMessage);
+				//notifier.forAdapt(WechatMessageNotifier.class).send(wechatMessage);
 			}
 
 		}
