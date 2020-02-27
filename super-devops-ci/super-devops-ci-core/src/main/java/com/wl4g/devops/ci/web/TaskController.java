@@ -134,7 +134,7 @@ public class TaskController extends BaseController {
 	 */
 	private void checkTask(Task task) {
 		Assert.hasText(task.getTaskName(), "taskName is null");
-		Assert.notNull(task.getAppClusterId(), "clusterId is null");
+		Assert.notNull(task.getProjectId(), "projectId is null");
 		Assert.notNull(task.getProviderKind(), "packType is null");
 		Assert.hasText(task.getBranchName(), "branchName is null");
 	}
