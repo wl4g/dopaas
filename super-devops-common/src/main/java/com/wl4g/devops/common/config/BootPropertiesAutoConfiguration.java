@@ -26,14 +26,20 @@ import org.apache.tomcat.util.threads.TaskQueue;
 import org.apache.tomcat.util.threads.TaskThreadFactory;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.slf4j.Logger;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 
+import com.wl4g.devops.common.logging.TraceLoggingMDCFilter;
 import com.wl4g.devops.common.web.RespBase.ErrorPromptMessageBuilder;
 
 /**
@@ -81,6 +87,24 @@ public class BootPropertiesAutoConfiguration implements EnvironmentAware {
 			ErrorPromptMessageBuilder.setPrompt(appName.substring(0, 4));
 		}
 
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(TraceLoggingMDCFilter.class)
+	public TraceLoggingMDCFilter defaultTraceLoggingMDCFilter(ApplicationContext context) {
+		return new TraceLoggingMDCFilter(context) {
+		};
+	}
+
+	@Bean
+	@ConditionalOnBean(TraceLoggingMDCFilter.class)
+	public FilterRegistrationBean defaultTraceLoggingMDCFilterBean(TraceLoggingMDCFilter filter) {
+		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		// Cannot use '/*' or it will not be added to the container chain (only
+		// '/**')
+		filterBean.addUrlPatterns("/*");
+		return filterBean;
 	}
 
 	// --- C U S T O M A T I O N _ S E R V L E T _ C O N T A I N E R. ---
