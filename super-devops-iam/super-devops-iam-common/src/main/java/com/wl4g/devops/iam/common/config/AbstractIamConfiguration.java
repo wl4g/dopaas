@@ -288,7 +288,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	@ConditionalOnBean({ XssProperties.class, XssSecurityResolver.class })
+	@ConditionalOnBean({ XssSecurityResolver.class })
 	public XssSecurityResolveInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
 		return new XssSecurityResolveInterceptor(config, resolver);
 	}
@@ -357,10 +357,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 		// Register CORS filter
 		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
 		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 10);
-		/*
-		 * Cannot use '/*' or it will not be added to the container chain (only
-		 * '/**').
-		 */
+		// Cannot use '/*' or it will not be added to the container chain (only
+		// '/**')
 		filterBean.addUrlPatterns("/*");
 		return filterBean;
 	}
