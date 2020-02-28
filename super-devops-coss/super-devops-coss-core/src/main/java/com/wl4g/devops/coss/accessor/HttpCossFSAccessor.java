@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.oss.core;
+package com.wl4g.devops.coss.accessor;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.wl4g.devops.common.web.BaseController;
 
-public class CossFileInputStream extends InputStream {
-
-	@Override
-	public int read() throws IOException {
-		return 0;
-	}
+public class HttpCossFSAccessor extends BaseController implements CossFSAccessor {
 
 }

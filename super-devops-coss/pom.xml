@@ -11,6 +11,11 @@
 	<modules>
 		<module>super-devops-coss-client</module>
 		<module>super-devops-coss-core</module>
+		<module>super-devops-coss-hdfs</module>
+		<module>super-devops-coss-aliyunoss</module>
+		<module>super-devops-coss-huaweiobs</module>
+		<module>super-devops-coss-tencentcos</module>
+		<module>super-devops-coss-awss3</module>
 		<module>super-devops-coss-server</module>
 		<module>super-devops-coss-example</module>
 	</modules>
