@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
-import com.wl4g.devops.tool.common.cli.ssh2.SshdHolder;
-
 /**
  * @author vjay
  * @date 2020-01-08 09:59:00
@@ -36,8 +33,7 @@ public class SshdHolderTests {
 
 		long t1 = System.currentTimeMillis();
 		// Test upload file
-		String loaclFile = "/Users/vjay/Downloads/devops-0107.sql";
-		makeFile(loaclFile);
+		String loaclFile = "/Users/vjay/Downloads/zipkin.jar";
 		Ssh2Holders.getInstance(SshdHolder.class).scpPutFile("10.0.0.160", "root", privateKey.toCharArray(), new File(loaclFile),
 				"/root/testssh/devops-0107.sql");
 		long t2 = System.currentTimeMillis();
