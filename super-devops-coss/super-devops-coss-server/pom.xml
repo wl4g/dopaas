@@ -31,6 +31,22 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-coss-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-coss-aliyunoss</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-coss-huaweiobs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-coss-tencentcos</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-coss-hdfs</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${final.name}</finalName>
