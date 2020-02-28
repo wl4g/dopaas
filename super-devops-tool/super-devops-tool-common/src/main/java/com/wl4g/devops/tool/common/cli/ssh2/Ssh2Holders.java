@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.tool.common.cli.ssh2;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static org.apache.commons.lang3.SystemUtils.USER_HOME;
+import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
+import com.wl4g.devops.tool.common.function.CallbackFunction;
+import com.wl4g.devops.tool.common.function.ProcessFunction;
+import org.slf4j.Logger;
 
 import java.io.CharArrayWriter;
 import java.io.File;
@@ -27,11 +27,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-
-import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
-import com.wl4g.devops.tool.common.function.CallbackFunction;
-import com.wl4g.devops.tool.common.function.ProcessFunction;
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 
 /**
  * {@link Ssh2Holders}, generic SSH2 client wrapper tool. </br>
@@ -52,7 +51,7 @@ public abstract class Ssh2Holders<S, F> {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public final static <T extends Ssh2Holders> T getDefault() {
-		return (T) providerRegistry.get(EthzHolder.class);
+		return (T) providerRegistry.get(SshdHolder.class);
 	}
 
 	/**

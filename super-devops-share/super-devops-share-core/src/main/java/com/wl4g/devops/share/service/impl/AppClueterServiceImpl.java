@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.security.InvalidParameterException;
 import java.util.*;
 
@@ -220,9 +221,14 @@ public class AppClueterServiceImpl implements AppClusterService {
 		AppHost appHost = appHostDao.selectByPrimaryKey(hostId);
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 		String command = "echo " + uuid;
-		String echoStr = pm.execWaitForComplete(
-				new RemoteDestroableCommand(command, 10000, sshUser, appHost.getHostname(), sshKey.toCharArray()));
-		if (!uuid.equals(echoStr.replaceAll("\n", ""))) {
+		String echoStr = null;
+		try{
+			echoStr = pm.execWaitForComplete(
+					new RemoteDestroableCommand(command, 10000, sshUser, appHost.getHostname(), sshKey.toCharArray()));
+		}catch (UnknownHostException e){
+			throw new UnknownHostException(appHost.getHostname()+": Name or service not known");
+		}
+		if (Objects.isNull(echoStr) || !uuid.equals(echoStr.replaceAll("\n", ""))) {
 			throw new IOException("Test Connect Fail");
 		}
 	}
