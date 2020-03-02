@@ -33,9 +33,9 @@ public class SshdHolderTests {
 
 		long t1 = System.currentTimeMillis();
 		// Test upload file
-		String loaclFile = "/Users/vjay/Downloads/zipkin.jar";
+		String loaclFile = "/Users/vjay/Downloads/safecloud-0203.sql";
 		Ssh2Holders.getInstance(SshdHolder.class).scpPutFile("10.0.0.160", "root", privateKey.toCharArray(), new File(loaclFile),
-				"/root/testssh/devops-0107.sql");
+				"/root/testssh/safecloud-0203.sql");
 		long t2 = System.currentTimeMillis();
 		System.out.println(t2 - t1);
 	}
