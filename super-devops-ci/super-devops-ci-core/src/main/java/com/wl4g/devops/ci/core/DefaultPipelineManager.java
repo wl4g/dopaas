@@ -107,7 +107,7 @@ public class DefaultPipelineManager implements PipelineManager {
 
 	@Override
 	public void runPipeline(NewParameter param) {
-		log.info("New pipeline job for: {}", param);
+		log.info("Running pipeline job for: {}", param);
 
 		// Obtain task details.
 		List<String> instanceIds = safeList(taskDetailDao.selectByTaskId(param.getTaskId())).stream()
@@ -144,7 +144,7 @@ public class DefaultPipelineManager implements PipelineManager {
 
 	@Override
 	public void rollbackPipeline(RollbackParameter param) {
-		log.info("On rollback pipeline job for: {}", param);
+		log.info("Rollback pipeline job for: {}", param);
 
 		// Task
 		TaskHistory bakTaskHisy = taskHistoryService.getById(param.getTaskId());
@@ -269,7 +269,7 @@ public class DefaultPipelineManager implements PipelineManager {
 				provider.execute();
 				log.info("Pipeline execute completed of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
 
-				postPipelineExecuteSuccess(taskId, provider);
+				postPipelineRunSuccess(taskId, provider);
 			} catch (Throwable e) {
 				log.error(format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
@@ -280,9 +280,8 @@ public class DefaultPipelineManager implements PipelineManager {
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, getStackTraceAsString(e));
 
 				// Failed process.
-				log.info("Post pipeline executeing of taskId: {}, provider: {}", taskId,
-						provider.getClass().getSimpleName());
-				postPipelineExecuteFailure(taskId, provider, e);
+				log.info("Post pipeline executeing of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
+				postPipelineRunFailure(taskId, provider, e);
 			} finally {
 				// Log file end EOF.
 				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
@@ -321,7 +320,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param taskId
 	 * @param provider
 	 */
-	protected void postPipelineExecuteSuccess(Integer taskId, PipelineProvider provider) {
+	protected void postPipelineRunSuccess(Integer taskId, PipelineProvider provider) {
 		List<TaskHistoryInstance> taskHistoryInstances = taskHistoryDetailDao.getDetailByTaskId(taskId);
 		boolean allSuccess = true;
 		boolean allFail = true;
@@ -361,7 +360,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param provider
 	 * @param e
 	 */
-	protected void postPipelineExecuteFailure(Integer taskId, PipelineProvider provider, Throwable e) {
+	protected void postPipelineRunFailure(Integer taskId, PipelineProvider provider, Throwable e) {
 		// Failure execute job notification.
 		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
 				+ " projectName=" + provider.getContext().getProject().getProjectName() + " time=" + (new Date()) + "\n");
@@ -391,35 +390,35 @@ public class DefaultPipelineManager implements PipelineManager {
 				List<String> numbers = new ArrayList<>();
 				numbers.add(alarmContact.getPhone());
 				smsMessage.setNumbers(numbers);
-				//notifier.forAdapt(AliyunSmsMessageNotifier.class).send(smsMessage);
+				// notifier.forAdapt(AliyunSmsMessageNotifier.class).send(smsMessage);
 			}
 
 			// dingtalk
 			if (alarmContact.getDingtalkEnable() == 1) {
 				DingtalkMessage dingtalkMessage = new DingtalkMessage();
 				// TODO set dingtalkMessage
-				//notifier.forAdapt(DingtalkMessageNotifier.class).send(dingtalkMessage);
+				// notifier.forAdapt(DingtalkMessageNotifier.class).send(dingtalkMessage);
 			}
 
 			// facebook
 			if (alarmContact.getFacebookEnable() == 1) {
 				FacebookMessage facebookMessage = new FacebookMessage();
 				// TODO set facebookMessage
-				//notifier.forAdapt(FacebookMessageNotifier.class).send(facebookMessage);
+				// notifier.forAdapt(FacebookMessageNotifier.class).send(facebookMessage);
 			}
 
 			// twitter
 			if (alarmContact.getTwitterEnable() == 1) {
 				TwitterMessage twitterMessage = new TwitterMessage();
 				// TODO set twitterMessage
-				//notifier.forAdapt(TwitterMessageNotifier.class).send(twitterMessage);
+				// notifier.forAdapt(TwitterMessageNotifier.class).send(twitterMessage);
 			}
 
 			// wechat
 			if (alarmContact.getWechatEnable() == 1) {
 				WechatMessage wechatMessage = new WechatMessage();
 				// TODO set wechatMessage
-				//notifier.forAdapt(WechatMessageNotifier.class).send(wechatMessage);
+				// notifier.forAdapt(WechatMessageNotifier.class).send(wechatMessage);
 			}
 
 		}
@@ -489,7 +488,7 @@ public class DefaultPipelineManager implements PipelineManager {
 				log.info(format("Rollback pipeline job successful for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()));
 
-				postPipelineExecuteSuccess(taskId, provider);
+				postPipelineRunSuccess(taskId, provider);
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_SUCCESS, taskId);
 			} catch (Exception e) {
 				log.error(format("Failed to rollback pipeline job for taskId: %s, provider: %s", taskId,
@@ -499,7 +498,7 @@ public class DefaultPipelineManager implements PipelineManager {
 				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL, e.getMessage());
 				log.info("Updated rollback pipeline job status to {} for {}", TASK_STATUS_FAIL, taskId);
 
-				postPipelineExecuteFailure(taskId, provider, e);
+				postPipelineRunFailure(taskId, provider, e);
 			} finally {
 				// Log file end EOF.
 				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);

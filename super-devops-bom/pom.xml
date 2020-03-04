@@ -101,6 +101,7 @@
 		<aliyun-sdk-dysmsapi.version>1.0.0</aliyun-sdk-dysmsapi.version>
 		<aliyun-sdk-core.version>3.3.1</aliyun-sdk-core.version>
 		<aliyun-sdk-oss.version>3.8.0</aliyun-sdk-oss.version>
+		<aws-sdk-s3.version>1.11.734</aws-sdk-s3.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -306,6 +307,30 @@
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-coss-core</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-coss-aliyunoss</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-coss-awss3</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-coss-hdfs</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-coss-glusterfs</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
@@ -815,6 +840,12 @@
 				<groupId>com.aliyun.oss</groupId>
 				<artifactId>aliyun-sdk-oss</artifactId>
 				<version>${aliyun-sdk-oss.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-java-sdk-s3</artifactId>
+				<version>${aws-sdk-s3.version}</version>
 				<scope>compile</scope>
 			</dependency>
 		</dependencies>
