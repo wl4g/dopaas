@@ -63,9 +63,9 @@ public interface MessageNotifier<T extends NotifyMessage> extends Operator<Notif
 
 		Qq,
 
-		Sms,
+		AliyunSms,
 
-		Vms,
+		AliyunVms,
 
 		Wechat,
 

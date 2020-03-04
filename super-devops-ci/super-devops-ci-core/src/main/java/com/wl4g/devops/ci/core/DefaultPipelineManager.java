@@ -37,6 +37,7 @@ import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.dingtalk.DingtalkMessage;
 import com.wl4g.devops.support.notification.facebook.FacebookMessage;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
+import com.wl4g.devops.support.notification.sms.AliyunSmsMessage;
 import com.wl4g.devops.support.notification.sms.SmsMessage;
 import com.wl4g.devops.support.notification.twitter.TwitterMessage;
 import com.wl4g.devops.support.notification.wechat.WechatMessage;
@@ -385,7 +386,7 @@ public class DefaultPipelineManager implements PipelineManager {
 
 			// phone
 			if (alarmContact.getPhoneEnable() == 1) {
-				SmsMessage smsMessage = new SmsMessage();
+				AliyunSmsMessage smsMessage = new AliyunSmsMessage();
 				smsMessage.setContent(message);
 				List<String> numbers = new ArrayList<>();
 				numbers.add(alarmContact.getPhone());

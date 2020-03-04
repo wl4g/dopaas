@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-bom</artifactId>
 	<packaging>pom</packaging>
-	<name>Super DevOps Dependencies</name>
-	<url>http://maven.apache.org</url>
+	<name>Super DevOps Dependencies Bill Of Material </name>
+	<url>https://bom.super-devops.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>super-devops</artifactId>
@@ -98,9 +98,9 @@
 		<!-- Testing's. -->
 		<junit.version>4.12</junit.version>
 		<!-- 3Thirdparty's. -->
-		<aliyun-sdk-dysmsapi.version>1.0.0</aliyun-sdk-dysmsapi.version>
-		<aliyun-sdk-core.version>3.3.1</aliyun-sdk-core.version>
-		<aliyun-sdk-oss.version>3.8.0</aliyun-sdk-oss.version>
+		<aliyun-sdk-dysmsapi.version>2.1.0</aliyun-sdk-dysmsapi.version>
+		<aliyun-sdk-core.version>4.5.0</aliyun-sdk-core.version>
+		<aliyun-sdk-oss.version>3.8.1</aliyun-sdk-oss.version>
 		<aws-sdk-s3.version>1.11.734</aws-sdk-s3.version>
 	</properties>
 	<dependencyManagement>

@@ -43,6 +43,12 @@
 			<artifactId>jedis</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		<!-- Notification. -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<scope>compile</scope>
+		</dependency>
 		<!-- Aliyun. -->
 		<dependency>
 			<groupId>com.aliyun</groupId>
@@ -52,11 +58,6 @@
 		<dependency>
 			<groupId>com.aliyun</groupId>
 			<artifactId>aliyun-java-sdk-core</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

@@ -19,6 +19,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import org.slf4j.Logger;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * {@link AbstractMessageNotifier}
@@ -29,7 +30,9 @@ import org.slf4j.Logger;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
-public abstract class AbstractMessageNotifier<C extends NotifyProperties, T extends NotifyMessage> implements MessageNotifier<T> {
+public abstract class AbstractMessageNotifier<C extends NotifyProperties, T extends NotifyMessage>
+		implements MessageNotifier<T>, InitializingBean {
+
 	final protected Logger log = getLogger(getClass());
 
 	/**
@@ -40,6 +43,11 @@ public abstract class AbstractMessageNotifier<C extends NotifyProperties, T exte
 	public AbstractMessageNotifier(C config) {
 		notNullOf(config, "config");
 		this.config = config;
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+
 	}
 
 }

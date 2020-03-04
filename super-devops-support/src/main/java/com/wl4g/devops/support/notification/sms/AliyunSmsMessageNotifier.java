@@ -18,9 +18,6 @@ package com.wl4g.devops.support.notification.sms;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -36,7 +33,7 @@ import com.wl4g.devops.support.notification.AbstractMessageNotifier;
 import com.wl4g.devops.support.notification.sms.SmsNotifyProperties;
 import com.wl4g.devops.support.notification.sms.SmsNotifyProperties.AliyunSmsNotifyProperties;
 
-public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyProperties, SmsMessage>
+public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyProperties, AliyunSmsMessage>
 		implements InitializingBean {
 
 	private IAcsClient acsClient;
@@ -47,7 +44,7 @@ public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyP
 
 	@Override
 	public NotifierKind kind() {
-		return NotifierKind.Apns;
+		return NotifierKind.AliyunSms;
 	}
 
 	@Override
@@ -70,7 +67,7 @@ public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyP
 	}
 
 	@Override
-	public void send(SmsMessage message) {
+	public void send(AliyunSmsMessage message) {
 		SendSmsResponse resp = null;
 		try {
 			if (message.getNumbers().size() > 999) {
@@ -81,7 +78,7 @@ public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyP
 			// 组装请求对象
 			SendSmsRequest req = new SendSmsRequest();
 			// 使用post提交
-			req.setMethod(MethodType.POST);
+			req.setSysMethod(MethodType.POST);
 			// 必填:待发送手机号。支持以逗号分隔的形式进行批量调用，批量上限为1000个手机号码,批量调用相对于单条调用及时性稍有延迟,验证码类型的短信推荐使用单条调用的方式
 			req.setPhoneNumbers(StringUtils.join(message.getNumbers(), ','));
 			// 必填:短信签名-可在短信控制台中找到
@@ -90,12 +87,7 @@ public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyP
 			req.setTemplateCode(aliConfig.getTemplateCode());
 			// 可选:模板中的变量替换JSON串,如模板内容为"亲爱的${name},您的验证码为${code}"时,此处的值为
 			// 友情提示:如果JSON中需要带换行符,请参照标准的JSON协议对换行符的要求,比如短信内容中包含\r\n的情况在JSON中需要表示成\\r\\n,否则会导致JSON在服务端解析失败
-			Map<String, String> param = new HashMap<>();
-			param.put("appInfo", message.getAppInfo());
-			param.put("fstatus", message.getFromStatus());
-			param.put("tstatus", message.getToStatus());
-			param.put("msg", message.getContent());
-			req.setTemplateParam(toJSONString(param));
+			req.setTemplateParam(toJSONString(message.getParameters()));
 			// 可选-上行短信扩展码(扩展码字段控制在7位或以下，无特殊需求用户请忽略此字段)
 			// request.setSmsUpExtendCode("90997");
 			// 可选:outId为提供给业务方扩展字段,最终在短信回执消息中将此值带回给调用者
@@ -105,8 +97,8 @@ public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyP
 			if (resp.getCode() != null && resp.getCode().equals("OK")) {
 				log.info("Send of aliyun sms message for: {}", toJSONString(req));
 			} else {
-				log.error("Failed to aliyun sms! req.templateCode: {}, req.content: {}, resp.bizId: {}, resp.msg: {}",
-						req.getTemplateCode(), message.getContent(), resp.getBizId(), resp.getMessage());
+				log.error("Failed to aliyun sms! req.templateCode: {}, resp.bizId: {}, resp.msg: {}", req.getTemplateCode(),
+						resp.getBizId(), resp.getMessage());
 			}
 		} catch (Exception e) {
 			log.error("Failed to sent aliyun-sms message. {}", getRootCausesString(e));
@@ -116,7 +108,7 @@ public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyP
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Object sendForReply(SmsMessage message) {
+	public Object sendForReply(AliyunSmsMessage message) {
 		throw new UnsupportedOperationException();
 	}
 
