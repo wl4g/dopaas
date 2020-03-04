@@ -18,7 +18,6 @@ package com.wl4g.devops.umc.notify;
 import com.wl4g.devops.support.notification.CompositeMessageNotifier;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
-import com.wl4g.devops.umc.handle.SmsNotificationHandle;
 import com.wl4g.devops.umc.model.StatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -36,21 +35,18 @@ import java.util.Date;
 public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 
 	@Autowired
-	private SmsNotificationHandle smsHandle;
-
-	@Autowired
 	private CompositeMessageNotifier notifier;
 
 	@Override
 	protected void doNotify(StatusMessage status) {
 		// 1.1 SMS notifier.
-		try {
+		/*try {
 			log.debug("SMS通知... {}", status);
 			smsHandle.send(status.getPhoneTo(), status.getAppInfo(), status.getFromStatus(), status.getToStatus(),
 					status.getMsgId());
 		} catch (Exception e) {
 			log.error("SMS notification failed.", e);
-		}
+		}*/
 
 		// 1.2 Mail notifier.
 		try {
