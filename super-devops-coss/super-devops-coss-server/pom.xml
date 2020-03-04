@@ -29,6 +29,26 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-dao</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-shell-cli</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-shell-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-iam-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-coss-core</artifactId>
 		</dependency>
 		<dependency>
@@ -37,15 +57,15 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-coss-huaweiobs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-coss-tencentcos</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-coss-hdfs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-coss-awss3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-coss-glusterfs</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
