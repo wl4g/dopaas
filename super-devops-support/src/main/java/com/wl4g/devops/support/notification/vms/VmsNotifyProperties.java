@@ -15,12 +15,72 @@
  */
 package com.wl4g.devops.support.notification.vms;
 
+import javax.validation.constraints.NotBlank;
+
 import com.wl4g.devops.support.notification.NotifyProperties;
 
 public class VmsNotifyProperties implements NotifyProperties {
 
+	private AliyunVmsProperties aliyun = new AliyunVmsProperties();
+
+	public AliyunVmsProperties getAliyun() {
+		return aliyun;
+	}
+
+	public void setAliyun(AliyunVmsProperties aliyun) {
+		this.aliyun = aliyun;
+	}
+
 	@Override
 	public void validate() {
+
+	}
+
+	public static class AliyunVmsProperties {
+
+		/**
+		 * e.g. cn-hangzhou
+		 */
+		@NotBlank
+		private String regionId;
+		@NotBlank
+		private String accessKeyId;
+		@NotBlank
+		private String secret;
+		@NotBlank
+		private String ttsCode; // 文本转语音（TTS）模板ID
+
+		public String getRegionId() {
+			return regionId;
+		}
+
+		public void setRegionId(String regionId) {
+			this.regionId = regionId;
+		}
+
+		public String getAccessKeyId() {
+			return accessKeyId;
+		}
+
+		public void setAccessKeyId(String accessKeyId) {
+			this.accessKeyId = accessKeyId;
+		}
+
+		public String getSecret() {
+			return secret;
+		}
+
+		public void setSecret(String secret) {
+			this.secret = secret;
+		}
+
+		public String getTtsCode() {
+			return ttsCode;
+		}
+
+		public void setTtsCode(String ttsCode) {
+			this.ttsCode = ttsCode;
+		}
 
 	}
 

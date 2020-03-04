@@ -5,7 +5,7 @@
 	<artifactId>super-devops-srm</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>Super DevOps SRM</name>
+	<name>Super DevOps Software Resources Management</name>
 	<url>https://srm.super-devops.wl4g.com</url>
 	<description>SRM - A Spring cloud-based software resource management service that integrates EFK distributed log centralized collection and analysis</description>
 	<modules>

@@ -17,7 +17,36 @@ package com.wl4g.devops.support.notification.vms;
 
 import com.wl4g.devops.support.notification.NotifyMessage;
 
-public class VmsMessage implements NotifyMessage {
+public abstract class VmsMessage implements NotifyMessage {
 	private static final long serialVersionUID = 1303039928183495028L;
+
+	private String calledShowNumber;
+	private String calledNumber;
+
+	public VmsMessage(String calledNumber) {
+		this(calledNumber, calledNumber);
+	}
+
+	public VmsMessage(String calledShowNumber, String calledNumber) {
+		super();
+		this.calledShowNumber = calledShowNumber;
+		this.calledNumber = calledNumber;
+	}
+
+	public String getCalledShowNumber() {
+		return calledShowNumber;
+	}
+
+	public void setCalledShowNumber(String calledShowNumber) {
+		this.calledShowNumber = calledShowNumber;
+	}
+
+	public String getCalledNumber() {
+		return calledNumber;
+	}
+
+	public void setCalledNumber(String calledNumber) {
+		this.calledNumber = calledNumber;
+	}
 
 }

@@ -13,30 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.notification.vms;
+package com.wl4g.devops.support.notification.sms;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier;
-
-public class VmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyProperties, VmsMessage> {
-
-	public VmsMessageNotifier(VmsNotifyProperties config) {
-		super(config);
-	}
-
-	@Override
-	public NotifierKind kind() {
-		return NotifierKind.Apns;
-	}
-
-	@Override
-	public void send(VmsMessage message) {
-		throw new UnsupportedOperationException();
-	}
-
-	@SuppressWarnings({ "unchecked" })
-	@Override
-	public Object sendForReply(VmsMessage message) {
-		throw new UnsupportedOperationException();
-	}
+/**
+ * {@link AliyunSmsMessage}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年1月9日 v1.0.0
+ * @see https://help.aliyun.com/document_detail/101341.html?spm=a2c4g.11174283.6.616.2f3f2c42FhJEGc
+ */
+public class AliyunSmsMessage extends SmsMessage {
+	private static final long serialVersionUID = 1303039928183495028L;
 
 }

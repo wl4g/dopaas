@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.support.notification.sms;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.wl4g.devops.support.notification.NotifyMessage;
 
@@ -30,9 +32,9 @@ public class SmsMessage implements NotifyMessage {
 	private static final long serialVersionUID = 1303039928183495028L;
 
 	private List<String> numbers;
-	private String appInfo;
-	private String fromStatus;
-	private String toStatus;
+
+	private Map<String, String> parameters = new HashMap<>();
+
 	private String content;
 
 	public List<String> getNumbers() {
@@ -43,28 +45,12 @@ public class SmsMessage implements NotifyMessage {
 		this.numbers = numbers;
 	}
 
-	public String getAppInfo() {
-		return appInfo;
+	public Map<String, String> getParameters() {
+		return parameters;
 	}
 
-	public void setAppInfo(String appInfo) {
-		this.appInfo = appInfo;
-	}
-
-	public String getFromStatus() {
-		return fromStatus;
-	}
-
-	public void setFromStatus(String fromStatus) {
-		this.fromStatus = fromStatus;
-	}
-
-	public String getToStatus() {
-		return toStatus;
-	}
-
-	public void setToStatus(String toStatus) {
-		this.toStatus = toStatus;
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters.putAll(parameters);
 	}
 
 	public String getContent() {

@@ -7,11 +7,11 @@ import java.io.File;
 public class EthzHolderTests {
 
 	public static void main(String[] args) throws Exception {
-		//executeCommand();
+		// executeCommand();
 		transation();
 	}
 
-	private static void executeCommand() throws Exception {
+	public static void executeCommand() throws Exception {
 		String command = "sleep 10";
 		Ssh2Holders.getInstance(EthzHolder.class).execWaitForCompleteWithSsh2("10.0.0.160", "root", null, command, s -> {
 			System.err.println(ByteStreams2.readFullyToString(s.getStderr()));
@@ -22,7 +22,7 @@ public class EthzHolderTests {
 		}, 30_000);
 	}
 
-	private static void transation() throws Exception {
+	public static void transation() throws Exception {
 		long t1 = System.currentTimeMillis();
 		// Test upload file
 		String loaclFile = "/Users/vjay/Downloads/safecloud-0203.sql";
@@ -32,7 +32,7 @@ public class EthzHolderTests {
 		System.out.println(t2 - t1);
 	}
 
-	private static final String privateKey = "-----BEGIN RSA PRIVATE KEY-----\n"
+	public static final String privateKey = "-----BEGIN RSA PRIVATE KEY-----\n"
 			+ "MIIEpQIBAAKCAQEAwawifYZlHNdmkdMmXdi6wslkfvvAVjGo4cBPtrOFonD0Paex\n"
 			+ "tVRckfkj6rCu4IkKOq6HFBBf1peYVHojLFUm4FGC+YatxoLcdExBj8A/oMVsWN8a\n"
 			+ "ZWv5RH0lqUPZyuefqIrD+pos0R1hJtEDh5cKKT+Ae7kOP2+pX0QeGu0F/z9jozPo\n"

@@ -30,8 +30,8 @@ import com.wl4g.devops.support.notification.facebook.FacebookMessage;
 import com.wl4g.devops.support.notification.facebook.FacebookMessageNotifier;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
+import com.wl4g.devops.support.notification.sms.AliyunSmsMessage;
 import com.wl4g.devops.support.notification.sms.AliyunSmsMessageNotifier;
-import com.wl4g.devops.support.notification.sms.SmsMessage;
 import com.wl4g.devops.support.notification.twitter.TwitterMessage;
 import com.wl4g.devops.support.notification.twitter.TwitterMessageNotifier;
 import com.wl4g.devops.support.notification.wechat.WechatMessage;
@@ -367,7 +367,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			// phone
 			if (alarmContact.getPhoneEnable() == 1
 					&& checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(), alarmContact.getPhoneNumOfFreq())) {
-				SmsMessage smsMessage = new SmsMessage();
+				AliyunSmsMessage smsMessage = new AliyunSmsMessage();
 				smsMessage.setContent(alarmRecord.getAlarmNote());
 				List<String> numbers = new ArrayList<>();
 				numbers.add(alarmContact.getPhone());

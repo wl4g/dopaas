@@ -5,7 +5,7 @@
 	<artifactId>super-devops-umc</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>Super DevOps UMC</name>
+	<name>Super DevOps Unified Monitoring Center</name>
 	<description>UMC - An open source unified monitoring center based on SpringBoot Cloud that supports real-time link tracking, real-time resource monitoring, and alarms.</description>
 	<url>https://umc.super-devops.wl4g.com</url>
 	<modules>
