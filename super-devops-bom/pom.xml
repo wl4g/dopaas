@@ -80,6 +80,7 @@
 		<!-- Task scheduler's -->
 		<quartz.version>2.2.2</quartz.version>
 		<elastic-job.version>2.1.5</elastic-job.version>
+		<curator.version>2.10.0</curator.version>
 		<!-- Serialized's -->
 		<fastjson.version>1.2.56</fastjson.version>
 		<jackson.version>2.9.8</jackson.version>
@@ -669,6 +670,16 @@
 				<artifactId>elastic-job-lite-spring</artifactId>
 				<version>${elastic-job.version}</version>
 				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-recipes</artifactId>
+				<version>${curator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-framework</artifactId>
+				<version>${curator.version}</version>
 			</dependency>
 			<!-- Serialized's -->
 			<dependency>
