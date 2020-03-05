@@ -21,14 +21,14 @@ import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static java.util.Objects.nonNull;
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toMap;
 
 import org.slf4j.Logger;
 import org.springframework.core.ResolvableType;
 
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -59,14 +59,25 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	/**
 	 * Kind type class of operator provider.
 	 */
-	final Class<? extends Enum<?>> kindClass;
+	final private Class<? extends Enum<?>> kindClass;
+
+	/**
+	 * Fallback no operation of operator.
+	 */
+	final private O fallbackNoOp;
 
 	public GenericOperatorAdapter() {
-		this(null);
+		this(null, null);
+	}
+
+	public GenericOperatorAdapter(List<O> operators) {
+		this(operators, null);
 	}
 
 	@SuppressWarnings("unchecked")
-	public GenericOperatorAdapter(List<O> operators) {
+	public GenericOperatorAdapter(List<O> operators, O fallbackNoOp) {
+		this.fallbackNoOp = fallbackNoOp;
+
 		// Resolving real Kind class.
 		ResolvableType resolveType = ResolvableType.forClass(getClass());
 		this.kindClass = (Class<? extends Enum<?>>) resolveType.getSuperType().getGeneric(0).resolve();
@@ -77,8 +88,8 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 			// Duplicate checks.
 			Set<K> kinds = new HashSet<>();
 			operators.forEach(o -> {
-				notNull(o.kind(), String.format("Provider kind can't empty, operator: %s", o));
-				state(!kinds.contains(o.kind()), String.format("Repeated definition operator with kind: %s", o.kind()));
+				notNull(o.kind(), format("Provider kind can't empty, operator: %s", o));
+				state(!kinds.contains(o.kind()), format("Repeated definition operator with kind: %s", o.kind()));
 				kinds.add(o.kind());
 			});
 			// Register of kind aliases.
@@ -103,11 +114,12 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 * 
 	 * @param vcs
 	 * @return
+	 * @throws NoSuchOperatorException
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T forAdapt(@NotNull Class<T> operatorClass) {
-		O operator = operatorClassRegistry.get(operatorClass);
-		notNull(operator, String.format("No such operator bean instance of class: '%s'", operatorClass));
+	public <T> T forAdapt(@NotNull Class<T> operatorClass) throws NoSuchOperatorException {
+		O operator = ensureOperator(operatorClassRegistry.get(operatorClass),
+				format("No such operator instance of class: '%s'", operatorClass));
 		delegate.set(operator);
 		return (T) operator;
 	}
@@ -118,7 +130,7 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 * @param vcs
 	 * @return
 	 */
-	public O forAdapt(@NotNull K k) {
+	public O forAdapt(@NotNull K k) throws NoSuchOperatorException {
 		return forAdapt(k.name());
 	}
 
@@ -127,11 +139,12 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 *
 	 * @param P
 	 * @return
+	 * @throws NoSuchOperatorException
 	 */
-	public O forAdapt(@NotNull String kindName) {
-		K kind = getParseKind(kindName);
-		O operator = operatorAliasRegistry.get(kind);
-		notNull(operator, String.format("No such operator bean instance for kind name: '%s'", kind));
+	public O forAdapt(@NotNull String kindName) throws NoSuchOperatorException {
+		K kind = parseKind(kindName);
+		O operator = ensureOperator(operatorAliasRegistry.get(kind),
+				format("No such operator bean instance for kind name: '%s'", kind));
 		delegate.set(operator);
 		return operator;
 	}
@@ -139,15 +152,33 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	/**
 	 * Get adapted {@link O}.
 	 * 
-	 * @param type
+	 * @return
+	 * @throws NoSuchOperatorException
+	 */
+	protected O getAdapted() throws NoSuchOperatorException {
+		O operator = delegate.get();
+		notNull(operator, NoSuchOperatorException.class,
+				"No such to the specific operator(kind class: %s). Please configure the operator instance before calling the specific function method",
+				kindClass);
+		return operator;
+	}
+
+	/**
+	 * Ensure operator.
+	 * 
+	 * @param operator
+	 * @param assertMsg
 	 * @return
 	 */
-	protected O getAdapted() {
-		O operator = delegate.get();
-		state(nonNull(operator),
-				String.format(
-						"No such to the specific operator(kind class: %s). Please configure the operator instance before calling the specific function method",
-						kindClass));
+	private O ensureOperator(O operator, String assertMsg) {
+		if (isNull(operator)) {
+			if (isNull(fallbackNoOp)) {
+				notNull(operator, NoSuchOperatorException.class, assertMsg);
+			} else {
+				log.warn("Using default fallbackNoOp, caused by: {}", assertMsg);
+				operator = fallbackNoOp;
+			}
+		}
 		return operator;
 	}
 
@@ -156,15 +187,16 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 * 
 	 * @param kindName
 	 * @return
+	 * @throws NoSuchOperatorException
 	 */
 	@SuppressWarnings("unchecked")
-	private K getParseKind(@NotNull String kindName) {
+	private K parseKind(@NotNull String kindName) throws NoSuchOperatorException {
 		for (Enum<?> kind : kindClass.getEnumConstants()) {
 			if (kind.name().equalsIgnoreCase(kindName)) {
 				return (K) kind;
 			}
 		}
-		throw new IllegalArgumentException(String.format("No such kind: %s of kind class: %s", kindName, kindClass));
+		throw new NoSuchOperatorException(format("No such kind: %s of kind class: %s", kindName, kindClass));
 	}
 
 }

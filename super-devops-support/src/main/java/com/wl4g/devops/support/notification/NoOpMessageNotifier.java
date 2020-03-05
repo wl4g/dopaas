@@ -15,28 +15,34 @@
  */
 package com.wl4g.devops.support.notification;
 
-public class EmptyMessageNotifier extends AbstractMessageNotifier<NotifyProperties, NotifyMessage> {
+/**
+ * Not operator message notifier.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年3月5日
+ * @since
+ */
+public class NoOpMessageNotifier extends AbstractMessageNotifier<NotifyProperties, NotifyMessage> {
 
-	public EmptyMessageNotifier(NotifyProperties config) {
+	public NoOpMessageNotifier(NotifyProperties config) {
 		super(config);
 	}
 
 	@Override
 	public NotifierKind kind() {
-		return NotifierKind.Empty;
+		return NotifierKind.NoOp;
 	}
 
 	@Override
 	public void send(NotifyMessage message) {
-		throw new UnsupportedOperationException(
-				"This is an empty message notifier implementation. Please check whether the real message notifier is configured correctly!");
+		log.warn("Lost!!! this is an empty message notifier. Please check if the notifier is configured correctly!");
 	}
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public Object sendForReply(NotifyMessage message) {
-		throw new UnsupportedOperationException(
-				"This is an empty message notifier implementation. Please check whether the real message notifier is configured correctly!");
+		log.warn("Lost!!! this is an empty message notifier. Please check if the notifier is configured correctly!");
+		return null;
 	}
 
 }

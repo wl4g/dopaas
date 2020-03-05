@@ -15,38 +15,90 @@
  */
 package com.wl4g.devops.support.notification.vms;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
 import com.wl4g.devops.support.notification.NotifyMessage;
 
 public abstract class VmsMessage implements NotifyMessage {
 	private static final long serialVersionUID = 1303039928183495028L;
 
+	/**
+	 * Called show number
+	 */
+	@NotBlank
 	private String calledShowNumber;
+
+	/**
+	 * Called number
+	 */
+	@NotBlank
 	private String calledNumber;
 
-	public VmsMessage(String calledNumber) {
-		this(calledNumber, calledNumber);
+	/**
+	 * Vms message template key-name.
+	 */
+	@NotBlank
+	private String templateKey;
+
+	/**
+	 * Vms placeholder message parameters.
+	 */
+	@NotEmpty
+	private Map<String, String> parameters = new HashMap<>();
+
+	public VmsMessage(String calledNumber, String templateKey) {
+		this(calledNumber, calledNumber, templateKey);
 	}
 
-	public VmsMessage(String calledShowNumber, String calledNumber) {
-		super();
-		this.calledShowNumber = calledShowNumber;
-		this.calledNumber = calledNumber;
+	public VmsMessage(String calledShowNumber, String calledNumber, String templateKey) {
+		setCalledShowNumber(calledShowNumber);
+		setCalledNumber(calledNumber);
+		setTemplateKey(templateKey);
 	}
 
 	public String getCalledShowNumber() {
 		return calledShowNumber;
 	}
 
-	public void setCalledShowNumber(String calledShowNumber) {
+	public VmsMessage setCalledShowNumber(String calledShowNumber) {
 		this.calledShowNumber = calledShowNumber;
+		return this;
 	}
 
 	public String getCalledNumber() {
 		return calledNumber;
 	}
 
-	public void setCalledNumber(String calledNumber) {
+	public VmsMessage setCalledNumber(String calledNumber) {
 		this.calledNumber = calledNumber;
+		return this;
+	}
+
+	public String getTemplateKey() {
+		return templateKey;
+	}
+
+	public VmsMessage setTemplateKey(String templateKey) {
+		this.templateKey = templateKey;
+		return this;
+	}
+
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
+
+	public VmsMessage setParameters(Map<String, String> parameters) {
+		this.parameters.putAll(parameters);
+		return this;
+	}
+
+	public VmsMessage addParameter(String key, String value) {
+		this.parameters.put(key, value);
+		return this;
 	}
 
 }
