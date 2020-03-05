@@ -20,7 +20,11 @@ public class CompositeMessageNotifier extends GenericOperatorAdapter<NotifierKin
 	}
 
 	public CompositeMessageNotifier(List<MessageNotifier<NotifyMessage>> operators) {
-		super(operators);
+		super(operators, new NoOpMessageNotifier(new NotifyProperties() {
+			@Override
+			public void validate() {
+			}
+		}));
 	}
 
 	@Override

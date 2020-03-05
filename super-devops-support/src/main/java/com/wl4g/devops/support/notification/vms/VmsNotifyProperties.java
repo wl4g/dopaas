@@ -15,7 +15,10 @@
  */
 package com.wl4g.devops.support.notification.vms;
 
+import java.util.Properties;
+
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 import com.wl4g.devops.support.notification.NotifyProperties;
 
@@ -36,7 +39,22 @@ public class VmsNotifyProperties implements NotifyProperties {
 
 	}
 
-	public static class AliyunVmsProperties {
+	public static class BaseVmsProperties {
+
+		@NotEmpty
+		private Properties templates = new Properties(); // 文本转语音（TTS）模板ID
+
+		public Properties getTemplates() {
+			return templates;
+		}
+
+		public void setTemplates(Properties templates) {
+			this.templates = templates;
+		}
+
+	}
+
+	public static class AliyunVmsProperties extends BaseVmsProperties {
 
 		/**
 		 * e.g. cn-hangzhou
@@ -47,8 +65,6 @@ public class VmsNotifyProperties implements NotifyProperties {
 		private String accessKeyId;
 		@NotBlank
 		private String secret;
-		@NotBlank
-		private String ttsCode; // 文本转语音（TTS）模板ID
 
 		public String getRegionId() {
 			return regionId;
@@ -72,14 +88,6 @@ public class VmsNotifyProperties implements NotifyProperties {
 
 		public void setSecret(String secret) {
 			this.secret = secret;
-		}
-
-		public String getTtsCode() {
-			return ttsCode;
-		}
-
-		public void setTtsCode(String ttsCode) {
-			this.ttsCode = ttsCode;
 		}
 
 	}

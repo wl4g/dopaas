@@ -15,9 +15,14 @@
  */
 package com.wl4g.devops.support.notification.sms;
 
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 import com.wl4g.devops.support.notification.NotifyMessage;
 
@@ -31,18 +36,44 @@ import com.wl4g.devops.support.notification.NotifyMessage;
 public class SmsMessage implements NotifyMessage {
 	private static final long serialVersionUID = 1303039928183495028L;
 
-	private List<String> numbers;
+	/**
+	 * Sms sent target number
+	 */
+	@NotEmpty
+	private Set<String> numbers = new HashSet<>(4);
 
+	/**
+	 * Sms message template key-name.
+	 */
+	@NotBlank
+	private String templateKey;
+
+	/**
+	 * Sms placeholder message parameters.
+	 */
+	@NotEmpty
 	private Map<String, String> parameters = new HashMap<>();
 
-	private String content;
-
-	public List<String> getNumbers() {
+	public Set<String> getNumbers() {
 		return numbers;
 	}
 
-	public void setNumbers(List<String> numbers) {
-		this.numbers = numbers;
+	public void setNumbers(Set<String> numbers) {
+		this.numbers.addAll(numbers);
+	}
+
+	public SmsMessage addNumbers(String... numbers) {
+		this.numbers.addAll(Arrays.asList(numbers));
+		return this;
+	}
+
+	public String getTemplateKey() {
+		return templateKey;
+	}
+
+	public SmsMessage setTemplateKey(String templateKey) {
+		this.templateKey = templateKey;
+		return this;
 	}
 
 	public Map<String, String> getParameters() {
@@ -53,12 +84,9 @@ public class SmsMessage implements NotifyMessage {
 		this.parameters.putAll(parameters);
 	}
 
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
+	public SmsMessage addParameter(String key, String value) {
+		this.parameters.put(key, value);
+		return this;
 	}
 
 }

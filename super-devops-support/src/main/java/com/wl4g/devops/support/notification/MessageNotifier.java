@@ -46,10 +46,9 @@ public interface MessageNotifier<T extends NotifyMessage> extends Operator<Notif
 		 * when all other message notifiers are not available solves the spring
 		 * bean injection problem.
 		 * 
-		 * @see {@link com.wl4g.devops.support.config.NotificationAutoConfiguration.EmptyMessageNotifier}
-		 * @see {@link com.wl4g.devops.support.config.NotificationAutoConfiguration#emptyForMustCheckImplMessageNotifier()ptyForMustCheckImplMessageNotifier}
+		 * @see {@link com.wl4g.devops.support.notification.NoOpMessageNotifier}
 		 */
-		Empty,
+		NoOp,
 
 		Apns,
 
@@ -67,7 +66,7 @@ public interface MessageNotifier<T extends NotifyMessage> extends Operator<Notif
 
 		AliyunVms,
 
-		Wechat,
+		WechatMp,
 
 		Twitter;
 

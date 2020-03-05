@@ -15,6 +15,10 @@
  */
 package com.wl4g.devops.support.notification.sms;
 
+import java.util.Properties;
+
+import javax.validation.constraints.NotEmpty;
+
 import com.wl4g.devops.support.notification.NotifyProperties;
 
 /**
@@ -41,7 +45,22 @@ public class SmsNotifyProperties implements NotifyProperties {
 
 	}
 
-	public static class AliyunSmsNotifyProperties {
+	public static class BaseSmsProperties {
+
+		@NotEmpty
+		private Properties templates = new Properties(); // 文本转语音（TTS）模板ID
+
+		public Properties getTemplates() {
+			return templates;
+		}
+
+		public void setTemplates(Properties templates) {
+			this.templates = templates;
+		}
+
+	}
+
+	public static class AliyunSmsNotifyProperties extends BaseSmsProperties {
 
 		private String product;
 
@@ -52,8 +71,6 @@ public class SmsNotifyProperties implements NotifyProperties {
 		private String accessKeySecret;
 
 		private String signName;
-
-		private String templateCode;
 
 		private String defaultConnectTimeout;
 
@@ -97,14 +114,6 @@ public class SmsNotifyProperties implements NotifyProperties {
 
 		public void setSignName(String signName) {
 			this.signName = signName;
-		}
-
-		public String getTemplateCode() {
-			return templateCode;
-		}
-
-		public void setTemplateCode(String templateCode) {
-			this.templateCode = templateCode;
 		}
 
 		public String getDefaultConnectTimeout() {

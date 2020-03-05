@@ -16,7 +16,6 @@
 package com.wl4g.devops.tool.common.log;
 
 import org.slf4j.ILoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -38,7 +37,7 @@ public class SmartLoggerFactory {
 	 *            The name of the logger.
 	 * @return logger
 	 */
-	public static Logger getLogger(String name) {
+	public static SmartLogger getLogger(String name) {
 		return new SmartLogger(LoggerFactory.getLogger(name));
 	}
 
@@ -63,7 +62,7 @@ public class SmartLoggerFactory {
 	 *      "http://www.slf4j.org/codes.html#loggerNameMismatch">Detected logger
 	 *      name mismatch</a>
 	 */
-	public static Logger getLogger(Class<?> clazz) {
+	public static SmartLogger getLogger(Class<?> clazz) {
 		return new SmartLogger(LoggerFactory.getLogger(clazz));
 	}
 

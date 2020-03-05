@@ -18,8 +18,9 @@ package com.wl4g.devops.support.notification;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * {@link AbstractMessageNotifier}
@@ -33,7 +34,7 @@ import org.springframework.beans.factory.InitializingBean;
 public abstract class AbstractMessageNotifier<C extends NotifyProperties, T extends NotifyMessage>
 		implements MessageNotifier<T>, InitializingBean {
 
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Notify properties.
