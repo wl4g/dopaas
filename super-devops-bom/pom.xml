@@ -82,7 +82,7 @@
 		<elastic-job.version>2.1.5</elastic-job.version>
 		<!-- Serialized's -->
 		<fastjson.version>1.2.56</fastjson.version>
-		<jackson.version>2.9.8</jackson.version>
+		<jackson.version>2.10.3</jackson.version>
 		<protobuf.version>3.8.0</protobuf.version>
 		<protostuff.version>1.6.0</protostuff.version>
 		<!-- Network socket's. -->
