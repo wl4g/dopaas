@@ -65,7 +65,7 @@
 		<module>super-devops-tool</module>
 		<module>super-devops-iam</module>
 		<module>super-devops-umc</module>
-		<module>super-devops-djob</module>
+		<!--<module>super-devops-djob</module>-->
 		<module>super-devops-doc</module>
 		<module>super-devops-coss</module>
 		<!-- <module>super-devops-esm</module> -->
