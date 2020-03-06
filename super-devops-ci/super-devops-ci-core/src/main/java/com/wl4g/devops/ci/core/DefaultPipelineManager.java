@@ -386,11 +386,11 @@ public class DefaultPipelineManager implements PipelineManager {
 
 			// phone
 			if (alarmContact.getPhoneEnable() == 1) {
-				AliyunSmsMessage smsMessage = new AliyunSmsMessage();
-				smsMessage.setContent(message);
-				List<String> numbers = new ArrayList<>();
-				numbers.add(alarmContact.getPhone());
-				smsMessage.setNumbers(numbers);
+				AliyunSmsMessage sms = new AliyunSmsMessage();
+				// TODO
+				sms.setTemplateKey("default");
+				sms.addParameter("msg", message);
+				sms.addNumbers(alarmContact.getPhone());
 				// notifier.forAdapt(AliyunSmsMessageNotifier.class).send(smsMessage);
 			}
 
