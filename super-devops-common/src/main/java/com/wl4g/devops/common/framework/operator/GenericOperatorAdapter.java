@@ -49,7 +49,8 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	/**
 	 * Generic registrar of operator classes.
 	 */
-	final protected Map<Class<?>, O> operatorClassRegistry = new RegisteredUnmodifiableMap<>(new HashMap<>());
+	final protected Map<Class<? extends Operator<Enum<?>>>, O> operatorClassRegistry = new RegisteredUnmodifiableMap<>(
+			new HashMap<>());
 
 	/**
 	 * Real delegate {@link O}
@@ -92,10 +93,13 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 				state(!kinds.contains(o.kind()), format("Repeated definition operator with kind: %s", o.kind()));
 				kinds.add(o.kind());
 			});
+
 			// Register of kind aliases.
 			this.operatorAliasRegistry.putAll(operators.stream().collect(toMap(O::kind, o -> o)));
 			// Register of kind classes.
-			this.operatorClassRegistry.putAll(operators.stream().collect(toMap(O::getClass, o -> o)));
+			this.operatorClassRegistry
+					.putAll(operators.stream().collect(toMap(o -> (Class<Operator<Enum<?>>>) o.getClass(), o -> o)));
+
 			log.info("Registered operator '{}' instances of: {}", adapterInterfaceClass, operators);
 		} else {
 			log.warn("Skip '{}' composite adapter registered, because inject operators is empty.", adapterInterfaceClass);

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.support.notification.vms;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,6 +67,7 @@ public abstract class VmsMessage implements NotifyMessage {
 	}
 
 	public VmsMessage setCalledShowNumber(String calledShowNumber) {
+		hasTextOf(calledShowNumber, "calledShowNumber");
 		this.calledShowNumber = calledShowNumber;
 		return this;
 	}
@@ -74,6 +77,7 @@ public abstract class VmsMessage implements NotifyMessage {
 	}
 
 	public VmsMessage setCalledNumber(String calledNumber) {
+		hasTextOf(calledNumber, "calledNumber");
 		this.calledNumber = calledNumber;
 		return this;
 	}
@@ -83,6 +87,7 @@ public abstract class VmsMessage implements NotifyMessage {
 	}
 
 	public VmsMessage setTemplateKey(String templateKey) {
+		hasTextOf(templateKey, "vmsTemplateKey");
 		this.templateKey = templateKey;
 		return this;
 	}

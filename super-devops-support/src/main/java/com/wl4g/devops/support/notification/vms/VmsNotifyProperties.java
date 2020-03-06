@@ -41,8 +41,11 @@ public class VmsNotifyProperties implements NotifyProperties {
 
 	public static class BaseVmsProperties {
 
+		/**
+		 * Text to speech (TTS) template ID
+		 */
 		@NotEmpty
-		private Properties templates = new Properties(); // 文本转语音（TTS）模板ID
+		private Properties templates = new Properties();
 
 		public Properties getTemplates() {
 			return templates;

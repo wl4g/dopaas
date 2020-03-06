@@ -31,6 +31,11 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-doc-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${final.name}</finalName>

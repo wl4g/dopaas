@@ -22,11 +22,11 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-import org.springframework.util.Assert;
 
 import static com.wl4g.devops.tool.common.jvm.JvmRuntimeKit.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.common.annotation.conditional.ConditionalOnJdwpDebug.*;
-
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -45,8 +45,8 @@ public class OnJdwpDebugCondition implements Condition {
 	public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 		Object enablePropertyName = metadata.getAnnotationAttributes(ConditionalOnJdwpDebug.class.getName())
 				.get(NAME_ENABLE_PROPERTY);
-		Assert.isTrue(nonNull(enablePropertyName) && isNotBlank(enablePropertyName.toString()),
-				String.format("%s.%s It shouldn't be empty", ConditionalOnJdwpDebug.class.getSimpleName(), NAME_ENABLE_PROPERTY));
+		isTrue(nonNull(enablePropertyName) && isNotBlank(enablePropertyName.toString()),
+				format("%s.%s It shouldn't be empty", ConditionalOnJdwpDebug.class.getSimpleName(), NAME_ENABLE_PROPERTY));
 
 		// Obtain environment enable property value.
 		Boolean enable = context.getEnvironment().getProperty(enablePropertyName.toString(), Boolean.class);
