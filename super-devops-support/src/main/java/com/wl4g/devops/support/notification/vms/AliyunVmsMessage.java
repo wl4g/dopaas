@@ -29,6 +29,11 @@ public class AliyunVmsMessage extends VmsMessage {
 	private static final long serialVersionUID = 1303039928183495028L;
 
 	/**
+	 * @see https://help.aliyun.com/document_detail/114036.html?spm=a2c4g.11186623.6.583.28265ad58befcz
+	 */
+	private Action action;
+
+	/**
 	 * 语音文件的播放次数，取值范围为1~3。
 	 */
 	private Integer playTimes = 3;
@@ -48,26 +53,31 @@ public class AliyunVmsMessage extends VmsMessage {
 	 */
 	private String outId;
 
-	public AliyunVmsMessage(String calledNumber) {
-		this(calledNumber, calledNumber, null, null, null, null);
+	public AliyunVmsMessage(Action action, String calledNumber, String templateKey) {
+		this(action, calledNumber, calledNumber, templateKey, null, null, null, null);
 	}
 
-	public AliyunVmsMessage(String calledShowNumber, String calledNumber) {
-		this(calledShowNumber, calledNumber, null, null, null, null);
+	public AliyunVmsMessage(Action action, String calledNumber, String templateKey, Integer playTimes, Integer volume,
+			Integer speed) {
+		this(action, calledNumber, calledNumber, templateKey, playTimes, volume, speed, null);
 	}
 
-	public AliyunVmsMessage(String calledShowNumber, String calledNumber, Integer playTimes, Integer volume, Integer speed) {
-		this(calledShowNumber, calledNumber, playTimes, volume, speed, null);
-	}
-
-	public AliyunVmsMessage(String calledShowNumber, String calledNumber, Integer playTimes, Integer volume, Integer speed,
-			String outId) {
-		super(calledShowNumber, calledNumber);
-		this.playTimes = playTimes;
+	public AliyunVmsMessage(Action action, String calledShowNumber, String calledNumber, String templateKey, Integer playTimes,
+			Integer volume, Integer speed, String outId) {
+		super(calledShowNumber, calledNumber, templateKey);
+		setAction(action);
 		setPlayTimes(playTimes);
 		setVolume(volume);
 		setSpeed(speed);
 		setOutId(outId);
+	}
+
+	public Action getAction() {
+		return action;
+	}
+
+	public void setAction(Action action) {
+		this.action = action;
 	}
 
 	public Integer getPlayTimes() {
@@ -108,6 +118,10 @@ public class AliyunVmsMessage extends VmsMessage {
 		if (!isNull(outId)) {
 			this.outId = outId;
 		}
+	}
+
+	public static enum Action {
+		SingleCallByVoice, SingleCallByTts;
 	}
 
 }
