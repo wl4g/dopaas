@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.support.notification.vms;
 
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.valueOf;
 
 import com.aliyuncs.CommonRequest;
@@ -48,6 +49,7 @@ public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyP
 		this.client = new DefaultAcsClient(profile);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void send(AliyunVmsMessage message) {
 		CommonRequest request = new CommonRequest();
@@ -56,21 +58,22 @@ public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyP
 		// Domain参数的默认值为dyvmsapi.aliyuncs.com
 		request.setSysDomain("dyvmsapi.aliyuncs.com");
 		// 文本转语音（TTS）模板ID
-		request.putQueryParameter("TtsCode", config.getAliyun().getTtsCode());
+		request.putQueryParameter("TtsCode", config.getAliyun().getTemplates().getProperty(message.getTemplateKey()));
 		request.setSysVersion("2017-05-25");
 		request.setSysAction("SingleCallByVoice"); // SingleCallByTts|SingleCallByVoice
 		request.putQueryParameter("CalledShowNumber", message.getCalledShowNumber());
 		request.putQueryParameter("CalledNumber", message.getCalledNumber());
-		request.putQueryParameter("TtsCode", config.getAliyun().getTtsCode());
 		request.putQueryParameter("PlayTimes", valueOf(message.getPlayTimes()));
 		request.putQueryParameter("Volume", valueOf(message.getVolume()));
 
 		try {
+			log.debug("AliyunVms request: {}", () -> toJSONString(request));
 			CommonResponse response = client.getCommonResponse(request);
 			log.debug("AliyunVms result: {}", response.getData());
 		} catch (Exception e) {
 			throw new NotificationException(kind(), e.getMessage(), e);
 		}
+
 	}
 
 	@SuppressWarnings({ "unchecked" })

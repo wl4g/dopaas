@@ -25,7 +25,7 @@ public class WechatMessageNotifier extends AbstractMessageNotifier<WechatNotifyP
 
 	@Override
 	public NotifierKind kind() {
-		return NotifierKind.Wechat;
+		return NotifierKind.WechatMp;
 	}
 
 	@Override

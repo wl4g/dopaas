@@ -367,12 +367,12 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			// phone
 			if (alarmContact.getPhoneEnable() == 1
 					&& checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(), alarmContact.getPhoneNumOfFreq())) {
-				AliyunSmsMessage smsMessage = new AliyunSmsMessage();
-				smsMessage.setContent(alarmRecord.getAlarmNote());
-				List<String> numbers = new ArrayList<>();
-				numbers.add(alarmContact.getPhone());
-				smsMessage.setNumbers(numbers);
-				notifier.forAdapt(AliyunSmsMessageNotifier.class).send(smsMessage);
+				AliyunSmsMessage sms = new AliyunSmsMessage();
+				// TODO
+				sms.setTemplateKey("default");
+				sms.addParameter("note", alarmRecord.getAlarmNote());
+				sms.addNumbers(alarmContact.getPhone());
+				notifier.forAdapt(AliyunSmsMessageNotifier.class).send(sms);
 				// notifier.simpleNotify(new
 				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
 				// AlarmType.SMS.getValue(), alarmContact.getPhone()));

@@ -15,11 +15,19 @@
  */
 package com.wl4g.devops.tool.common.lang;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static com.wl4g.devops.tool.common.lang.ClassUtils2.*;
+import static com.wl4g.devops.tool.common.lang.StringUtils2.*;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
+import static java.lang.Thread.currentThread;
 
 /**
  * Assertion utility class that assists in validating arguments.
@@ -124,6 +132,30 @@ public abstract class Assert2 {
 	 * Assert a boolean expression, throwing an {@code IllegalArgumentException}
 	 * if the expression evaluates to {@code false}.
 	 * 
+	 * <pre class="code">
+	 * Assert.isTrue(i &gt; 0, "The value must be greater than zero");
+	 * </pre>
+	 * 
+	 * @param expression
+	 *            a boolean expression
+	 * @param exceptionClass
+	 *            Throwable class
+	 * @param fmtMessage
+	 *            the exception message to use if the assertion fails
+	 * @throws IllegalArgumentException
+	 *             if {@code expression} is {@code false}
+	 */
+	public static void isTrue(boolean expression, Class<? extends RuntimeException> exceptionClass, String fmtMessage,
+			Object... args) {
+		if (!expression) {
+			doAssertHandle(exceptionClass, fmtMessage, args);
+		}
+	}
+
+	/**
+	 * Assert a boolean expression, throwing an {@code IllegalArgumentException}
+	 * if the expression evaluates to {@code false}.
+	 * 
 	 * @param expression
 	 *            a boolean expression
 	 * @param argName
@@ -180,6 +212,29 @@ public abstract class Assert2 {
 	public static void notNull(Object object, String fmtMessage, Object... args) {
 		if (object == null) {
 			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+		}
+	}
+
+	/**
+	 * Assert that an object is not {@code null}.
+	 * 
+	 * <pre class="code">
+	 * Assert.notNull(clazz, "The class must not be null");
+	 * </pre>
+	 * 
+	 * @param object
+	 *            the object to check
+	 * @param exceptionClass
+	 *            Throwable class
+	 * @param fmtMessage
+	 *            the exception message to use if the assertion fails
+	 * @throws IllegalArgumentException
+	 *             if the object is {@code null}
+	 */
+	public static void notNull(Object object, Class<? extends RuntimeException> exceptionClass, String fmtMessage,
+			Object... args) {
+		if (object == null) {
+			doAssertHandle(exceptionClass, fmtMessage, args);
 		}
 	}
 
@@ -256,6 +311,31 @@ public abstract class Assert2 {
 	 * must not be {@code null} and must contain at least one non-whitespace
 	 * character.
 	 * 
+	 * <pre class="code">
+	 * Assert.hasText(name, "'name' must not be empty");
+	 * </pre>
+	 * 
+	 * @param text
+	 *            the String to check
+	 * @param exceptionClass
+	 *            Throwable class
+	 * @param fmtMessage
+	 *            the exception message to use if the assertion fails
+	 * @see StringUtils#hasText
+	 * @throws IllegalArgumentException
+	 *             if the text does not contain valid text content
+	 */
+	public static void hasText(String text, Class<? extends RuntimeException> exceptionClass, String fmtMessage, Object... args) {
+		if (!isNotBlank(text)) {
+			doAssertHandle(exceptionClass, fmtMessage, args);
+		}
+	}
+
+	/**
+	 * Assert that the given String contains valid text content; that is, it
+	 * must not be {@code null} and must contain at least one non-whitespace
+	 * character.
+	 * 
 	 * @param text
 	 *            the String to check
 	 * @param argName
@@ -322,6 +402,30 @@ public abstract class Assert2 {
 
 	/**
 	 * Assert that an array contains elements; that is, it must not be
+	 * {@code null} and must contain at least one element.
+	 * 
+	 * <pre class="code">
+	 * Assert.notEmpty(array, "The array must contain elements");
+	 * </pre>
+	 * 
+	 * @param array
+	 *            the array to check
+	 * @param exceptionClass
+	 *            Throwable class
+	 * @param fmtMessage
+	 *            the exception message to use if the assertion fails
+	 * @throws IllegalArgumentException
+	 *             if the object array is {@code null} or contains no elements
+	 */
+	public static void notEmpty(Object[] array, Class<? extends RuntimeException> exceptionClass, String fmtMessage,
+			Object... args) {
+		if (array == null || array.length == 0) {
+			doAssertHandle(exceptionClass, fmtMessage, args);
+		}
+	}
+
+	/**
+	 * Assert that an array contains elements; that is, it must not be
 	 * {@code null}
 	 * 
 	 * @param array
@@ -353,6 +457,35 @@ public abstract class Assert2 {
 			for (Object element : array) {
 				if (element == null) {
 					throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+				}
+			}
+		}
+	}
+
+	/**
+	 * Assert that an array contains no {@code null} elements.
+	 * <p>
+	 * Note: Does not complain if the array is empty!
+	 * 
+	 * <pre class="code">
+	 * Assert.noNullElements(array, "The array must contain non-null elements");
+	 * </pre>
+	 * 
+	 * @param array
+	 *            the array to check
+	 * @param exceptionClass
+	 *            Throwable class
+	 * @param fmtMessage
+	 *            the exception message to use if the assertion fails
+	 * @throws IllegalArgumentException
+	 *             if the object array contains a {@code null} element
+	 */
+	public static void noNullElements(Object[] array, Class<? extends RuntimeException> exceptionClass, String fmtMessage,
+			Object... args) {
+		if (array != null) {
+			for (Object element : array) {
+				if (element == null) {
+					doAssertHandle(exceptionClass, fmtMessage, args);
 				}
 			}
 		}
@@ -412,6 +545,30 @@ public abstract class Assert2 {
 	 * 
 	 * @param map
 	 *            the map to check
+	 * @param exceptionClass
+	 *            Throwable class
+	 * @param fmtMessage
+	 *            the exception message to use if the assertion fails
+	 * @throws IllegalArgumentException
+	 *             if the map is {@code null} or contains no entries
+	 */
+	public static void notEmpty(Map<?, ?> map, Class<? extends RuntimeException> exceptionClass, String fmtMessage,
+			Object... args) {
+		if (map == null || map.isEmpty()) {
+			doAssertHandle(exceptionClass, fmtMessage, args);
+		}
+	}
+
+	/**
+	 * Assert that a Map contains entries; that is, it must not be {@code null}
+	 * and must contain at least one entry.
+	 * 
+	 * <pre class="code">
+	 * Assert.notEmpty(map, "Map must contain entries");
+	 * </pre>
+	 * 
+	 * @param map
+	 *            the map to check
 	 * @param fmtMessage
 	 *            the exception message to use if the assertion fails
 	 * @throws IllegalArgumentException
@@ -459,7 +616,38 @@ public abstract class Assert2 {
 	public static void isInstanceOf(Class<?> type, Object obj, String fmtMessage, Object... args) {
 		notNull(type, "Type to check against must not be null");
 		if (!type.isInstance(obj)) {
-			instanceCheckFailed(type, obj, doFormat(fmtMessage, args));
+			instanceCheckFailed(type, obj, IllegalArgumentException.class, doFormat(fmtMessage, args));
+		}
+	}
+
+	/**
+	 * Assert that the provided object is an instance of the provided class.
+	 * 
+	 * <pre class="code">
+	 * Assert.instanceOf(Foo.class, foo, "Foo expected");
+	 * </pre>
+	 * 
+	 * @param type
+	 *            the type to check against
+	 * @param obj
+	 *            the object to check
+	 * @param exceptionClass
+	 *            Throwable class
+	 * @param fmtMessage
+	 *            a message which will be prepended to provide further context.
+	 *            If it is empty or ends in ":" or ";" or "," or ".", a full
+	 *            exception message will be appended. If it ends in a space, the
+	 *            name of the offending object's type will be appended. In any
+	 *            other case, a ":" with a space and the name of the offending
+	 *            object's type will be appended.
+	 * @throws IllegalArgumentException
+	 *             if the object is not an instance of type
+	 */
+	public static void isInstanceOf(Class<?> type, Object obj, Class<? extends RuntimeException> exceptionClass,
+			String fmtMessage, Object... args) {
+		notNull(type, "Type to check against must not be null");
+		if (!type.isInstance(obj)) {
+			instanceCheckFailed(type, obj, exceptionClass, doFormat(fmtMessage, args));
 		}
 	}
 
@@ -505,7 +693,38 @@ public abstract class Assert2 {
 	public static void isAssignable(Class<?> superType, Class<?> subType, String fmtMessage, Object... args) {
 		notNull(superType, "Super type to check against must not be null");
 		if (subType == null || !superType.isAssignableFrom(subType)) {
-			assignableCheckFailed(superType, subType, doFormat(fmtMessage, args));
+			assignableCheckFailed(superType, subType, IllegalArgumentException.class, doFormat(fmtMessage, args));
+		}
+	}
+
+	/**
+	 * Assert that {@code superType.isAssignableFrom(subType)} is {@code true}.
+	 * 
+	 * <pre class="code">
+	 * Assert.isAssignable(Number.class, myClass, "Number expected");
+	 * </pre>
+	 * 
+	 * @param superType
+	 *            the super type to check against
+	 * @param subType
+	 *            the sub type to check
+	 * @param exceptionClass
+	 *            Throwable class
+	 * @param fmtMessage
+	 *            a message which will be prepended to provide further context.
+	 *            If it is empty or ends in ":" or ";" or "," or ".", a full
+	 *            exception message will be appended. If it ends in a space, the
+	 *            name of the offending sub type will be appended. In any other
+	 *            case, a ":" with a space and the name of the offending sub
+	 *            type will be appended.
+	 * @throws IllegalArgumentException
+	 *             if the classes are not assignable
+	 */
+	public static void isAssignable(Class<?> superType, Class<?> subType, Class<? extends RuntimeException> exceptionClass,
+			String fmtMessage, Object... args) {
+		notNull(superType, "Super type to check against must not be null");
+		if (subType == null || !superType.isAssignableFrom(subType)) {
+			assignableCheckFailed(superType, subType, exceptionClass, doFormat(fmtMessage, args));
 		}
 	}
 
@@ -527,7 +746,16 @@ public abstract class Assert2 {
 		isAssignable(superType, subType, "");
 	}
 
-	private static void instanceCheckFailed(Class<?> type, Object obj, String msg) {
+	/**
+	 * Check instance failed
+	 * 
+	 * @param type
+	 * @param obj
+	 * @param exceptionClass
+	 * @param msg
+	 */
+	private static void instanceCheckFailed(Class<?> type, Object obj, Class<? extends RuntimeException> exceptionClass,
+			String msg) {
 		String className = (obj != null ? obj.getClass().getName() : "null");
 		String result = "";
 		boolean defaultMessage = true;
@@ -542,10 +770,20 @@ public abstract class Assert2 {
 		if (defaultMessage) {
 			result = result + ("Object of class [" + className + "] must be an instance of " + type);
 		}
-		throw new IllegalArgumentException(result);
+
+		doAssertHandle(exceptionClass, result);
 	}
 
-	private static void assignableCheckFailed(Class<?> superType, Class<?> subType, String msg) {
+	/**
+	 * Check assignable failed
+	 * 
+	 * @param superType
+	 * @param subType
+	 * @param exceptionClass
+	 * @param msg
+	 */
+	private static void assignableCheckFailed(Class<?> superType, Class<?> subType,
+			Class<? extends RuntimeException> exceptionClass, String msg) {
 		String result = "";
 		boolean defaultMessage = true;
 		if (isNotBlank(msg)) {
@@ -559,7 +797,8 @@ public abstract class Assert2 {
 		if (defaultMessage) {
 			result = result + (subType + " is not assignable to " + superType);
 		}
-		throw new IllegalArgumentException(result);
+
+		doAssertHandle(exceptionClass, result);
 	}
 
 	private static boolean endsWithSeparator(String msg) {
@@ -570,11 +809,98 @@ public abstract class Assert2 {
 		return msg + (msg.endsWith(" ") ? "" : ": ") + typeName;
 	}
 
+	/**
+	 * Do format throwable message.
+	 * 
+	 * @param format
+	 * @param args
+	 * @return
+	 */
 	private static String doFormat(String format, Object... args) {
 		if (Objects.nonNull(args) && args.length > 0) {
 			return String.format(format, args);
 		}
 		return format;
+	}
+
+	/**
+	 * Do assertion handling
+	 * 
+	 * @param exceptionClass
+	 * @param fmtMessage
+	 * @param args
+	 */
+	public static void doAssertHandle(Class<? extends RuntimeException> exceptionClass, String fmtMessage, Object... args) {
+		RuntimeException th = newRuntimeExceptionInstance(exceptionClass);
+		// Init cause message
+		setField(detailMessageField, th, "[Assertion failed] - " + doFormat(fmtMessage, args));
+
+		// Remove useless stack elements
+		StackTraceElement[] stackEles = th.getStackTrace();
+		List<StackTraceElement> availableStackEles = new ArrayList<>(stackEles.length - 4);
+		for (int i = 0, j = 0; i < stackEles.length; i++) {
+			StackTraceElement st = stackEles[i];
+			if (j == 0) {
+				if (NEW_RUNTIMEEXCEPTION_INSTANCE_METHOD.equals(st.getClassName() + "#" + st.getMethodName()))
+					j = i;
+			} else
+				availableStackEles.add(st);
+		}
+		th.setStackTrace(availableStackEles.toArray(new StackTraceElement[] {}));
+
+		throw th;
+	}
+
+	/**
+	 * New create throwable instance.
+	 * 
+	 * @param exceptionClass
+	 * @return
+	 */
+	private static RuntimeException newRuntimeExceptionInstance(Class<? extends RuntimeException> exceptionClass) {
+		try {
+			if (objenesis != null) {
+				return (RuntimeException) invokeMethod(objenesisStdNewInstanceMethod, objenesis, exceptionClass);
+			}
+			return (RuntimeException) exceptionClass.newInstance();
+		} catch (Exception e) {
+			throw new Error(e);
+		}
+	}
+
+	final private static String NEW_RUNTIMEEXCEPTION_INSTANCE_METHOD = Assert2.class.getName() + "#newRuntimeExceptionInstance";
+	final private static String OBJENSIS_CLASS = "org.springframework.objenesis.ObjenesisStd";
+	final private static Object objenesis;
+	final private static Method objenesisStdNewInstanceMethod;
+	final private static Field detailMessageField;
+	final private static Field causeField;
+
+	static {
+		detailMessageField = findField(Throwable.class, "detailMessage", String.class);
+		causeField = findField(Throwable.class, "cause", Throwable.class);
+		makeAccessible(detailMessageField);
+		makeAccessible(causeField);
+
+		Object _objenesis = null;
+		Method _objenesisStdNewInstanceMethod = null;
+		try {
+			Class<?> objenesisClass = forName(OBJENSIS_CLASS, currentThread().getContextClassLoader());
+			if (!Objects.isNull(objenesisClass)) {
+				_objenesisStdNewInstanceMethod = findMethod(objenesisClass, "newInstance", Class.class);
+				// Objenesis object.
+				for (Constructor<?> c : objenesisClass.getConstructors()) {
+					Class<?>[] paramClasses = c.getParameterTypes();
+					if (paramClasses != null && paramClasses.length == 1 && boolean.class.isAssignableFrom(paramClasses[0])) {
+						_objenesis = c.newInstance(new Object[] { true });
+						break;
+					}
+				}
+			}
+		} catch (Exception e) { // Ignore
+		}
+		objenesis = _objenesis;
+		objenesisStdNewInstanceMethod = _objenesisStdNewInstanceMethod;
+
 	}
 
 }
