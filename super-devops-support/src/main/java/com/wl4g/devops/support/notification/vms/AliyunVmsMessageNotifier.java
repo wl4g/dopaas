@@ -35,7 +35,7 @@ import com.wl4g.devops.support.notification.NotificationException;
 
 public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyProperties, AliyunVmsMessage> {
 
-	protected IAcsClient client;
+	protected IAcsClient acsClient;
 
 	public AliyunVmsMessageNotifier(VmsNotifyProperties config) {
 		super(config);
@@ -52,43 +52,51 @@ public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyP
 
 		DefaultProfile profile = DefaultProfile.getProfile(config.getAliyun().getRegionId(), config.getAliyun().getAccessKeyId(),
 				config.getAliyun().getSecret());
-		this.client = new DefaultAcsClient(profile);
+		this.acsClient = new DefaultAcsClient(profile);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void send(AliyunVmsMessage message) {
-		CommonRequest request = new CommonRequest();
+	public void send(AliyunVmsMessage msg) {
+		CommonRequest req = new CommonRequest();
 		// 请求方法分为POST和GET，建议您选择POST方式
-		request.setSysMethod(MethodType.POST);
+		req.setSysMethod(MethodType.POST);
 		// Domain参数的默认值为dyvmsapi.aliyuncs.com
-		request.setSysDomain("dyvmsapi.aliyuncs.com");
-		request.setSysVersion("2017-05-25");
+		req.setSysDomain("dyvmsapi.aliyuncs.com");
+		req.setSysVersion("2017-05-25");
 		// SingleCallByTts|SingleCallByVoice
-		// https://help.aliyun.com/document_detail/114036.html?spm=a2c4g.11186623.6.583.28265ad58befcz
-		request.setSysAction(message.getAction().name());
-		request.putQueryParameter("TtsCode", config.getAliyun().getTemplates().getProperty(message.getTemplateKey()));
-		// 文本转语音（TTS）模板ID
-		request.putQueryParameter("TtsCode", config.getAliyun().getTemplates().getProperty(message.getTemplateKey()));
-		request.putQueryParameter("TtsParam", toJSONString(message.getParameters()));
-		request.putQueryParameter("CalledShowNumber", message.getCalledShowNumber());
-		request.putQueryParameter("CalledNumber", message.getCalledNumber());
-		request.putQueryParameter("PlayTimes", valueOf(message.getPlayTimes()));
-		request.putQueryParameter("Volume", valueOf(message.getVolume()));
-		request.putQueryParameter("Speed", valueOf(message.getSpeed()));
-		request.putQueryParameter("OutId", valueOf(message.getOutId()));
+		req.setSysAction(msg.getAction().name());
+		// VoiceCode和TtsCode二选一即可，前者用于自定义语音文件通知，后者用于标准语音通知，
+		// action都为SingleCallByTts，参考文档：
+		// https://help.aliyun.com/document_detail/114036.html?spm=a2c4g.11186623.6.579.7bc95f33wpPjWM
+		// https://help.aliyun.com/document_detail/114035.html?spm=a2c4g.11186623.6.581.56295ad5EBbcwv#
+		String ttsCodeOrVoiceCode = config.getAliyun().getTemplates().getProperty(msg.getTemplateKey());
+		// 自定义语音文件ID
+		req.putQueryParameter("VoiceCode", ttsCodeOrVoiceCode);
+		// 标准文本转语音模板ID
+		req.putQueryParameter("TtsCode", ttsCodeOrVoiceCode);
+		req.putQueryParameter("TtsParam", toJSONString(msg.getParameters()));
+		req.putQueryParameter("CalledShowNumber", config.getAliyun().getCalledShowNumber());
+		req.putQueryParameter("CalledNumber", msg.getCalledNumber());
+		req.putQueryParameter("PlayTimes", valueOf(msg.getPlayTimes()));
+		req.putQueryParameter("Volume", valueOf(msg.getVolume()));
+		req.putQueryParameter("Speed", valueOf(msg.getSpeed()));
+		req.putQueryParameter("OutId", valueOf(msg.getCallbackId()));
 
 		try {
-			log.debug("Aliyun vms request: {}", () -> toJSONString(request));
-			CommonResponse response = client.getCommonResponse(request);
-			if (!isNull(response) && !isBlank(response.getData())) {
-				Properties body = parseJSON(response.getData(), Properties.class);
-				if (!isNull(body) && "OK".equalsIgnoreCase((String) body.get("Code")))
-					log.debug("Successed aliyun vms request: {}", toJSONString(request));
-				else
-					log.warn("Aliyun vms response: {}", response.getData());
+			log.debug("Aliyun vms request: {}", () -> toJSONString(req));
+			CommonResponse resp = acsClient.getCommonResponse(req);
+			if (!isNull(resp) && !isBlank(resp.getData())) {
+				Properties body = parseJSON(resp.getData(), Properties.class);
+				if (!isNull(body) && "OK".equalsIgnoreCase((String) body.get("Code"))) {
+					if (log.isDebugEnabled())
+						log.debug("Successed response: {}, request: {}", resp.getData(), toJSONString(req));
+					else
+						log.info("Successed calledNumer: {}, message: {}", msg.getCalledNumber(), msg.getParameters());
+				} else
+					log.warn("Failed response: {}, request: {}", resp.getData(), toJSONString(req));
 			} else
-				throw new NotificationException(kind(), format("Failed to vms request", toJSONString(request)));
+				throw new NotificationException(kind(), format("Failed to vms request", toJSONString(req)));
 		} catch (Exception e) {
 			throw new NotificationException(kind(), e.getMessage(), e);
 		}

@@ -18,19 +18,19 @@ public interface MessageNotifier<T extends NotifyMessage> extends Operator<Notif
 	 * Sending notification message.
 	 * 
 	 * @param <T>
-	 * @param message
+	 * @param msg
 	 */
-	void send(T message);
+	void send(T msg);
 
 	/**
 	 * Sending notification message for complete reply.
 	 * 
 	 * @param <T>
 	 * @param <R>
-	 * @param message
+	 * @param msg
 	 * @return
 	 */
-	<R> R sendForReply(T message);
+	<R> R sendForReply(T msg);
 
 	/**
 	 * Notification privoder kind.

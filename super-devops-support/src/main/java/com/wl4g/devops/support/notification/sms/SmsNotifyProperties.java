@@ -47,8 +47,11 @@ public class SmsNotifyProperties implements NotifyProperties {
 
 	public static class BaseSmsProperties {
 
+		/**
+		 * Text template IDS
+		 */
 		@NotEmpty
-		private Properties templates = new Properties(); // 文本转语音（TTS）模板ID
+		private Properties templates = new Properties();
 
 		public Properties getTemplates() {
 			return templates;

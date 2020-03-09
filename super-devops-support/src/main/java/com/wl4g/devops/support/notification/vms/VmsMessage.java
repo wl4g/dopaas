@@ -16,6 +16,7 @@
 package com.wl4g.devops.support.notification.vms;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,12 +28,6 @@ import com.wl4g.devops.support.notification.NotifyMessage;
 
 public abstract class VmsMessage implements NotifyMessage {
 	private static final long serialVersionUID = 1303039928183495028L;
-
-	/**
-	 * Called show number
-	 */
-	@NotBlank
-	private String calledShowNumber;
 
 	/**
 	 * Called number
@@ -52,44 +47,30 @@ public abstract class VmsMessage implements NotifyMessage {
 	@NotEmpty
 	private Map<String, String> parameters = new HashMap<>();
 
+	/**
+	 * The ID reserved for the caller will eventually be brought back to the
+	 * caller through the receipt message. String type, 1-15 bytes in length.
+	 */
+	private String callbackId;
+
 	public VmsMessage(String calledNumber, String templateKey) {
-		this(calledNumber, calledNumber, templateKey);
+		this(calledNumber, templateKey, null);
 	}
 
-	public VmsMessage(String calledShowNumber, String calledNumber, String templateKey) {
-		setCalledShowNumber(calledShowNumber);
-		setCalledNumber(calledNumber);
-		setTemplateKey(templateKey);
-	}
-
-	public String getCalledShowNumber() {
-		return calledShowNumber;
-	}
-
-	public VmsMessage setCalledShowNumber(String calledShowNumber) {
-		hasTextOf(calledShowNumber, "calledShowNumber");
-		this.calledShowNumber = calledShowNumber;
-		return this;
+	public VmsMessage(String calledNumber, String templateKey, String callbackId) {
+		hasTextOf(calledNumber, "calledNumber");
+		hasTextOf(templateKey, "templateKey");
+		this.calledNumber = calledNumber;
+		this.templateKey = templateKey;
+		setCallbackId(callbackId);
 	}
 
 	public String getCalledNumber() {
 		return calledNumber;
 	}
 
-	public VmsMessage setCalledNumber(String calledNumber) {
-		hasTextOf(calledNumber, "calledNumber");
-		this.calledNumber = calledNumber;
-		return this;
-	}
-
 	public String getTemplateKey() {
 		return templateKey;
-	}
-
-	public VmsMessage setTemplateKey(String templateKey) {
-		hasTextOf(templateKey, "vmsTemplateKey");
-		this.templateKey = templateKey;
-		return this;
 	}
 
 	public Map<String, String> getParameters() {
@@ -102,7 +83,20 @@ public abstract class VmsMessage implements NotifyMessage {
 	}
 
 	public VmsMessage addParameter(String key, String value) {
+		hasTextOf(key, "vmsParameterKey");
+		hasTextOf(value, "vmsParameterValue");
 		this.parameters.put(key, value);
+		return this;
+	}
+
+	public String getCallbackId() {
+		return callbackId;
+	}
+
+	public VmsMessage setCallbackId(String callbackId) {
+		if (!isBlank(callbackId)) {
+			this.callbackId = callbackId;
+		}
 		return this;
 	}
 

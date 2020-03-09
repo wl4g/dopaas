@@ -25,7 +25,6 @@ import com.wl4g.devops.IamServer;
 import com.wl4g.devops.support.notification.CompositeMessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.vms.AliyunVmsMessage;
-import com.wl4g.devops.support.notification.vms.AliyunVmsMessage.Action;
 
 import static com.wl4g.devops.support.config.NotificationAutoConfiguration.*;
 
@@ -35,8 +34,9 @@ import static com.wl4g.devops.support.config.NotificationAutoConfiguration.*;
 		KEY_NOTIFY_PREFIX + ".vms.aliyun.accessKeyId=LTAI4Fk9pjU7ezN2yVeiffYm",
 		// Sensitive config, oneself setup
 		KEY_NOTIFY_PREFIX + ".vms.aliyun.secret=${aliyun_vms_secret}",
-		KEY_NOTIFY_PREFIX + ".vms.aliyun.templates.TEST_TTS_184820765=TTS_184820765",
-		KEY_NOTIFY_PREFIX + ".vms.aliyun.templates.TEST_TTS_184825642=TTS_184825642" })
+		KEY_NOTIFY_PREFIX + ".vms.aliyun.calledShowNumber=055162153866",
+		KEY_NOTIFY_PREFIX + ".vms.aliyun.templates.tts1=TTS_184820765",
+		KEY_NOTIFY_PREFIX + ".vms.aliyun.templates.tts2=TTS_184825642" })
 public class CompositeMessageNotifierTests {
 
 	@Autowired
@@ -50,10 +50,10 @@ public class CompositeMessageNotifierTests {
 	 * 您正在进行商物云身份验证，验证码${code}，打死不要告诉别人哦
 	 * </pre>
 	 */
-	@Test
+	// @Test
 	public void aliyunVmsCaptchaTest1() {
 		System.out.println("Send starting...");
-		AliyunVmsMessage msg = new AliyunVmsMessage(Action.SingleCallByTts, "18007448807", "TEST_TTS_184820765");
+		AliyunVmsMessage msg = new AliyunVmsMessage("18007448807", "tts1");
 		// Add placeholder parameters for a specific template
 		msg.addParameter("code", "12345");
 		notifier.forAdapt(NotifierKind.AliyunVms).send(msg);
@@ -67,13 +67,14 @@ public class CompositeMessageNotifierTests {
 	 * 尊敬的客户您好，${product}云监控检测到有异常事件，事件源为${source}，当前状态为${state}，告警等级为${level}，告警内容：${msg}，请尽快登录系统查看具体告警内容并处理。
 	 * </pre>
 	 */
-	// @Test
+	@Test
 	public void aliyunVmsNotificationTest2() {
 		System.out.println("Send starting...");
-		AliyunVmsMessage msg = new AliyunVmsMessage(Action.SingleCallByVoice, "18007448807", "TEST_TTS_184825642");
+		AliyunVmsMessage msg = new AliyunVmsMessage("18007448807", "tts2");
 		// Add placeholder parameters for a specific template
 		msg.addParameter("product", "Devops Cloud");
 		msg.addParameter("source", "测试设备1");
+		msg.addParameter("state", "异常中");
 		msg.addParameter("level", "严重");
 		msg.addParameter("msg", "此条为测试消息");
 		notifier.forAdapt(NotifierKind.AliyunVms).send(msg);

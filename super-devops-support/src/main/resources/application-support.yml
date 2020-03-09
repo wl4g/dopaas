@@ -63,15 +63,22 @@ spring:
           aliyun:
             product: Dysmsapi
             domain: dysmsapi.aliyuncs.com
-            accessKeyId: your's keyId
-            accessKeySecret: your's keySecret
+            accessKeyId: yourAppId
+            accessKeySecret: yourSecret
             signName: Super DevOps
-            templateCode: SMS_140726862
             defaultConnectTimeout: 10000
             defaultReadTimeout: 10000
+            templates:
+              tpl1: SMS_140726862
         vms:
           enable: false # Default[false]
-          # Some configuration...
+          aliyun:
+            regionId: cn-hangzhou
+            accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+            secret: yourSecretString
+            templates: # Template keys
+              tts1: TTS_184820765
+              tts2: TTS_184825642
         wechat:
           enable: false # Default[false]
           # Some configuration...
