@@ -15,7 +15,10 @@
  */
 package com.wl4g.devops.support.notification.vms;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * AliyunVmsMessage
@@ -31,12 +34,13 @@ public class AliyunVmsMessage extends VmsMessage {
 	/**
 	 * @see https://help.aliyun.com/document_detail/114036.html?spm=a2c4g.11186623.6.583.28265ad58befcz
 	 */
+	@NotNull
 	private Action action;
 
 	/**
 	 * 语音文件的播放次数，取值范围为1~3。
 	 */
-	private Integer playTimes = 3;
+	private Integer playTimes = 2;
 
 	/**
 	 * 语音文件播放的音量。取值范围为0~100，默认为100。
@@ -48,80 +52,69 @@ public class AliyunVmsMessage extends VmsMessage {
 	 */
 	private Integer speed = 100;
 
-	/**
-	 * 预留给调用方使用的ID，最终会通过在回执消息中将此ID带回给调用方。 字符串类型，长度为1~15个字节。
-	 */
-	private String outId;
+	public AliyunVmsMessage(String calledNumber, String templateKey) {
+		this(Action.SingleCallByTts, calledNumber, templateKey);
+	}
 
 	public AliyunVmsMessage(Action action, String calledNumber, String templateKey) {
-		this(action, calledNumber, calledNumber, templateKey, null, null, null, null);
+		this(action, calledNumber, templateKey, null);
 	}
 
-	public AliyunVmsMessage(Action action, String calledNumber, String templateKey, Integer playTimes, Integer volume,
-			Integer speed) {
-		this(action, calledNumber, calledNumber, templateKey, playTimes, volume, speed, null);
-	}
-
-	public AliyunVmsMessage(Action action, String calledShowNumber, String calledNumber, String templateKey, Integer playTimes,
-			Integer volume, Integer speed, String outId) {
-		super(calledShowNumber, calledNumber, templateKey);
-		setAction(action);
-		setPlayTimes(playTimes);
-		setVolume(volume);
-		setSpeed(speed);
-		setOutId(outId);
+	public AliyunVmsMessage(Action action, String calledNumber, String templateKey, String callbackId) {
+		super(calledNumber, templateKey, callbackId);
+		notNullOf(action, "aliyunVmsAction");
+		this.action = action;
 	}
 
 	public Action getAction() {
 		return action;
 	}
 
-	public void setAction(Action action) {
-		this.action = action;
-	}
-
 	public Integer getPlayTimes() {
 		return playTimes;
 	}
 
-	public void setPlayTimes(Integer playTimes) {
+	public AliyunVmsMessage setPlayTimes(Integer playTimes) {
 		if (!isNull(playTimes)) {
 			this.playTimes = playTimes;
 		}
+		return this;
 	}
 
 	public Integer getVolume() {
 		return volume;
 	}
 
-	public void setVolume(Integer volume) {
+	public AliyunVmsMessage setVolume(Integer volume) {
 		if (!isNull(volume)) {
 			this.volume = volume;
 		}
+		return this;
 	}
 
 	public Integer getSpeed() {
 		return speed;
 	}
 
-	public void setSpeed(Integer speed) {
+	public AliyunVmsMessage setSpeed(Integer speed) {
 		if (!isNull(speed)) {
 			this.speed = speed;
 		}
-	}
-
-	public String getOutId() {
-		return outId;
-	}
-
-	public void setOutId(String outId) {
-		if (!isNull(outId)) {
-			this.outId = outId;
-		}
+		return this;
 	}
 
 	public static enum Action {
-		SingleCallByVoice, SingleCallByTts;
+
+		/**
+		 * https://help.aliyun.com/document_detail/114036.html?spm=a2c4g.11186623.6.579.7bc95f33wpPjWM
+		 */
+		SingleCallByVoice,
+
+		/**
+		 * https://help.aliyun.com/document_detail/114035.html?spm=a2c4g.11186623.6.581.56295ad5EBbcwv#
+		 */
+		SingleCallByTts;
+
 	}
 
 }

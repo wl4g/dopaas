@@ -54,6 +54,7 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.Math.abs;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -367,15 +368,11 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			// phone
 			if (alarmContact.getPhoneEnable() == 1
 					&& checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(), alarmContact.getPhoneNumOfFreq())) {
-				AliyunSmsMessage sms = new AliyunSmsMessage();
 				// TODO
-				sms.setTemplateKey("default");
+				AliyunSmsMessage sms = new AliyunSmsMessage("default", asList(new String[] { alarmContact.getPhone() }));
 				sms.addParameter("note", alarmRecord.getAlarmNote());
 				sms.addNumbers(alarmContact.getPhone());
 				notifier.forAdapt(AliyunSmsMessageNotifier.class).send(sms);
-				// notifier.simpleNotify(new
-				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-				// AlarmType.SMS.getValue(), alarmContact.getPhone()));
 				handleRateLimit(ALARM_LIMIT_PHONE + alarmContact.getPhone(), alarmContact.getPhoneTimeOfFreq());
 			}
 

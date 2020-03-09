@@ -15,11 +15,15 @@
  */
 package com.wl4g.devops.support.notification.sms;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -40,7 +44,7 @@ public class SmsMessage implements NotifyMessage {
 	 * Sms sent target number
 	 */
 	@NotEmpty
-	private Set<String> numbers = new HashSet<>(4);
+	private List<String> numbers = new ArrayList<>(4);
 
 	/**
 	 * Sms message template key-name.
@@ -54,12 +58,35 @@ public class SmsMessage implements NotifyMessage {
 	@NotEmpty
 	private Map<String, String> parameters = new HashMap<>();
 
-	public Set<String> getNumbers() {
+	/**
+	 * The ID reserved for the caller will eventually be brought back to the
+	 * caller through the receipt message. String type, 1-15 bytes in length.
+	 */
+	private String callbackId;
+
+	public SmsMessage(@NotBlank String templateKey) {
+		this(templateKey, null, null);
+	}
+
+	public SmsMessage(@NotBlank String templateKey, @NotEmpty List<String> numbers) {
+		this(templateKey, null, numbers);
+	}
+
+	public SmsMessage(@NotBlank String templateKey, String callbackId, @NotEmpty List<String> numbers) {
+		setTemplateKey(templateKey);
+		setCallbackId(callbackId);
+		setNumbers(numbers);
+	}
+
+	public List<String> getNumbers() {
 		return numbers;
 	}
 
-	public void setNumbers(Set<String> numbers) {
-		this.numbers.addAll(numbers);
+	public SmsMessage setNumbers(List<String> numbers) {
+		if (!isNull(numbers)) {
+			this.numbers = numbers;
+		}
+		return this;
 	}
 
 	public SmsMessage addNumbers(String... numbers) {
@@ -72,6 +99,7 @@ public class SmsMessage implements NotifyMessage {
 	}
 
 	public SmsMessage setTemplateKey(String templateKey) {
+		hasTextOf(templateKey, "vmsTemplateKey");
 		this.templateKey = templateKey;
 		return this;
 	}
@@ -85,7 +113,20 @@ public class SmsMessage implements NotifyMessage {
 	}
 
 	public SmsMessage addParameter(String key, String value) {
+		hasTextOf(key, "smsParameterKey");
+		hasTextOf(value, "smsParameterValue");
 		this.parameters.put(key, value);
+		return this;
+	}
+
+	public String getCallbackId() {
+		return callbackId;
+	}
+
+	public SmsMessage setCallbackId(String callbackId) {
+		if (!isBlank(callbackId)) {
+			this.callbackId = callbackId;
+		}
 		return this;
 	}
 

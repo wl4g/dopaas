@@ -15,6 +15,11 @@
  */
 package com.wl4g.devops.support.notification.sms;
 
+import java.util.List;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
 /**
  * {@link AliyunSmsMessage}
  * 
@@ -24,5 +29,13 @@ package com.wl4g.devops.support.notification.sms;
  */
 public class AliyunSmsMessage extends SmsMessage {
 	private static final long serialVersionUID = 1303039928183495028L;
+
+	public AliyunSmsMessage(@NotBlank String templateKey, @NotEmpty List<String> numbers) {
+		this(templateKey, null, numbers);
+	}
+
+	public AliyunSmsMessage(@NotBlank String templateKey, String callbackId, @NotEmpty List<String> numbers) {
+		super(templateKey, callbackId, numbers);
+	}
 
 }

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.support.notification.vms;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+
 import java.util.Properties;
 
 import javax.validation.constraints.NotBlank;
@@ -42,10 +44,26 @@ public class VmsNotifyProperties implements NotifyProperties {
 	public static class BaseVmsProperties {
 
 		/**
+		 * Called show number
+		 */
+		@NotBlank
+		private String calledShowNumber;
+
+		/**
 		 * Text to speech (TTS) template ID
 		 */
 		@NotEmpty
 		private Properties templates = new Properties();
+
+		public String getCalledShowNumber() {
+			return calledShowNumber;
+		}
+
+		public BaseVmsProperties setCalledShowNumber(String calledShowNumber) {
+			hasTextOf(calledShowNumber, "calledShowNumber");
+			this.calledShowNumber = calledShowNumber;
+			return this;
+		}
 
 		public Properties getTemplates() {
 			return templates;
@@ -64,8 +82,10 @@ public class VmsNotifyProperties implements NotifyProperties {
 		 */
 		@NotBlank
 		private String regionId;
+
 		@NotBlank
 		private String accessKeyId;
+
 		@NotBlank
 		private String secret;
 
