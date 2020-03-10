@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.core.context;
 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
@@ -44,9 +45,11 @@ public class DefaultPipelineContext implements PipelineContext {
 	final private TaskHistory taskHistory;
 	final private TaskHistory refTaskHistory;
 	final private List<TaskHistoryInstance> taskHistoryInstances;
+	final private PipelineModel pipelineModel;
+
 
 	public DefaultPipelineContext(Project project, String projectSourceDir, AppCluster appCluster, List<AppInstance> instances,
-			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryInstance> taskHistoryInstances) {
+								  TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryInstance> taskHistoryInstances, PipelineModel pipelineModel) {
 		notNull(project, "project must not be null");
 		hasText(projectSourceDir, "projectSourceDir must not be empty");
 		notNull(appCluster, "AppCluster must not be empty");
@@ -59,6 +62,7 @@ public class DefaultPipelineContext implements PipelineContext {
 		this.refTaskHistory = refTaskHistory;
 		this.instances = !isEmpty(instances) ? instances : emptyList();
 		this.taskHistoryInstances = !isEmpty(taskHistoryInstances) ? taskHistoryInstances : emptyList();
+		this.pipelineModel = pipelineModel;
 	}
 
 	@Override
@@ -96,4 +100,8 @@ public class DefaultPipelineContext implements PipelineContext {
 		return taskHistoryInstances;
 	}
 
+	@Override
+	public PipelineModel getPipelineModel() {
+		return pipelineModel;
+	}
 }

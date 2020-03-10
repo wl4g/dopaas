@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.ci.web;
 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
+import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
@@ -49,6 +51,9 @@ public class TaskHistoryController extends BaseController {
 
 	@Autowired
 	private PipelineManager pipe;
+
+	@Autowired
+	private FlowManager flowManager;
 
 	/**
 	 * List
@@ -103,8 +108,8 @@ public class TaskHistoryController extends BaseController {
 	public RespBase<?> rollback(Integer taskId) {
 		log.info("into TaskHistoryController.rollback prarms::" + "taskId = {} ", taskId);
 		RespBase<Object> resp = RespBase.create();
-		// TODO remark???
-		pipe.rollbackPipeline(new RollbackParameter(taskId, "rollback"));
+		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
+		pipe.rollbackPipeline(new RollbackParameter(taskId, "rollback"),pipelineModel);
 		return resp;
 	}
 

@@ -18,6 +18,7 @@ package com.wl4g.devops.ci.pipeline;
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
@@ -33,7 +34,6 @@ import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.crypto.AesUtils;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,8 @@ import java.util.List;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_END;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_START;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
-import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
+import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
 import static com.wl4g.devops.tool.common.lang.DateUtils2.getDate;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
@@ -91,6 +91,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected ProjectDao projectDao;
 	@Autowired
 	protected TaskSignDao taskSignDao;
+	@Autowired
+	protected FlowManager flowManager;
 
 	/**
 	 * Pull project source from VCS files fingerprint.

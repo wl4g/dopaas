@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
@@ -22,13 +23,14 @@ import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_DEPENDENCY_BUILD;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -77,15 +79,42 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// Custom dependency commands.
 		List<TaskBuildCommand> commands = taskHistoryBuildCommandDao.selectByTaskHisId(taskHisy.getId());
 
+		// Pipeline State Change
+		List<String> modules = new ArrayList<>();
+		for (Dependency depd : dependencies) {
+			modules.add(depd.getProjectName());
+		}
+		modules.add(taskHisy.getProjectName());
+		PipelineModel pipelineModel = getContext().getPipelineModel();
+		pipelineModel.setService(taskHisy.getGroupName());
+		pipelineModel.setProvider(getContext().getTaskHistory().getProviderKind());
+		pipelineModel.setModules(modules);
+		flowManager.pipelineStateChange(pipelineModel);
+
 		// Build of dependencies sub-modules.
 		for (Dependency depd : dependencies) {
+
+			// Is dependency Already build
+			if(flowManager.isDependencyBuilded(depd.getProjectName())){
+				continue;
+			}
+
+			pipelineModel.setCurrent(depd.getProjectName());
+			flowManager.pipelineStateChange(pipelineModel);
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
 			doMutexBuildModuleInDependencies(depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, depCmd);
 		}
 
 		// Build for primary(self).
+		pipelineModel.setCurrent(taskHisy.getProjectName());
+		flowManager.pipelineStateChange(pipelineModel);
 		doMutexBuildModuleInDependencies(taskHisy.getProjectId(), null, taskHisy.getBranchName(), false,
 				taskHisy.getBuildCommand());
+
+		// Build Success
+		pipelineModel.setCurrent("Build Finish");
+		pipelineModel.setStatus("SUCCESS");
+		flowManager.pipelineStateChange(pipelineModel);
 
 		// Call after all built dependencies completed handling.
 		postBuiltModulesDependencies();
