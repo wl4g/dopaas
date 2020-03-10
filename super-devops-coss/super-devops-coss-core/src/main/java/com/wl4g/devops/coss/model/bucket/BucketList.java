@@ -15,6 +15,28 @@
  */
 package com.wl4g.devops.coss.model.bucket;
 
-public class BucketList {
+import static java.util.Objects.isNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BucketList<T extends Bucket> {
+
+	private List<T> buckets = new ArrayList<>(8);
+
+	public List<T> getBucketList() {
+		return buckets;
+	}
+
+	public void setBucketList(List<T> buckets) {
+		this.buckets.clear();
+		if (!isNull(buckets) && !buckets.isEmpty()) {
+			this.buckets.addAll(buckets);
+		}
+	}
+
+	public void clearBucketList() {
+		this.buckets.clear();
+	}
 
 }

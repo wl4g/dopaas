@@ -1,8 +1,18 @@
 package com.wl4g.devops.coss.aliyun.model;
 
-import java.util.Map;
-import java.util.TreeMap;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.findField;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.makeAccessible;
+import static java.util.Objects.isNull;
 
+import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Map;
+
+import com.aliyun.oss.internal.OSSHeaders;
+import com.aliyun.oss.model.CannedAccessControlList;
+import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.ObjectMetadata;
 
 /**
@@ -15,37 +25,10 @@ import com.wl4g.devops.coss.model.ObjectMetadata;
 public class OssObjectMetadata extends ObjectMetadata {
 
 	/**
-	 * The user's custom metadata, whose prefix in http header is x-oss-meta-.
-	 */
-	private Map<String, String> userMetadata = new TreeMap<String, String>();
-
-	/**
 	 * The object's storage type, which only supports "normal" and "appendable"
 	 * for now.
 	 */
 	private String objectType;
-
-	/**
-	 * Content MD5
-	 */
-	private String contentMd5;
-
-	/**
-	 * The Content-Encoding header which is to encode the object content.
-	 */
-	private String contentEncoding;
-
-	/**
-	 * The Cache-Control header. This is the standard http header.
-	 */
-	private String cacheControl;
-
-	private String contentDisposition;
-
-	/**
-	 * The ETag of the object. ETag is the 128bit MD5 signature in Hex.
-	 */
-	private String etag;
 
 	/**
 	 * The object's server side encryption key ID.
@@ -63,26 +46,37 @@ public class OssObjectMetadata extends ObjectMetadata {
 	private String requestId;
 
 	/**
-	 * The version ID of the associated OSS object if available. Version IDs are
-	 * only assigned to objects when an object is uploaded to an OSS bucket that
-	 * has object versioning enabled.
-	 */
-	private String versionId;
-
-	/**
 	 * The service crc.
 	 */
-	private String serverCRC;
+	private Long serverCRC;
 
-	public Map<String, String> getUserMetadata() {
-		return userMetadata;
+	public OssObjectMetadata() {
+		super();
 	}
 
-	public void setUserMetadata(Map<String, String> userMetadata) {
-		this.userMetadata.clear();
-		if (userMetadata != null && !userMetadata.isEmpty()) {
-			this.userMetadata.putAll(userMetadata);
+	public OssObjectMetadata(com.aliyun.oss.model.ObjectMetadata metadata) {
+		setUserMetadata(metadata.getUserMetadata());
+		setContentLength(metadata.getContentLength());
+		setContentType(metadata.getContentType());
+		setContentMd5(metadata.getContentMD5());
+		setContentEncoding(metadata.getContentEncoding());
+		setCacheControl(metadata.getCacheControl());
+		setContentDisposition(metadata.getContentDisposition());
+		setEtag(metadata.getETag());
+		setVersionId(metadata.getVersionId());
+		setMtime(metadata.getLastModified().getTime());
+		try {
+			setEtime(metadata.getExpirationTime().getTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
+		setAcl(ACL.parse(getAliyunOssObjectMetadata(metadata, OSSHeaders.OSS_OBJECT_ACL)));
+
+		setObjectType(metadata.getObjectType());
+		setServerSideEncryptionKeyId(metadata.getServerSideEncryptionKeyId());
+		setServerSideEncryption(metadata.getServerSideEncryption());
+		setRequestId(metadata.getRequestId());
+		setServerCRC(metadata.getServerCRC());
 	}
 
 	public String getObjectType() {
@@ -91,46 +85,6 @@ public class OssObjectMetadata extends ObjectMetadata {
 
 	public void setObjectType(String objectType) {
 		this.objectType = objectType;
-	}
-
-	public String getContentMd5() {
-		return contentMd5;
-	}
-
-	public void setContentMd5(String contentMd5) {
-		this.contentMd5 = contentMd5;
-	}
-
-	public String getContentEncoding() {
-		return contentEncoding;
-	}
-
-	public void setContentEncoding(String contentEncoding) {
-		this.contentEncoding = contentEncoding;
-	}
-
-	public String getCacheControl() {
-		return cacheControl;
-	}
-
-	public void setCacheControl(String cacheControl) {
-		this.cacheControl = cacheControl;
-	}
-
-	public String getContentDisposition() {
-		return contentDisposition;
-	}
-
-	public void setContentDisposition(String contentDisposition) {
-		this.contentDisposition = contentDisposition;
-	}
-
-	public String getEtag() {
-		return etag;
-	}
-
-	public void setEtag(String etag) {
-		this.etag = etag;
 	}
 
 	public String getServerSideEncryptionKeyId() {
@@ -157,20 +111,55 @@ public class OssObjectMetadata extends ObjectMetadata {
 		this.requestId = requestId;
 	}
 
-	public String getVersionId() {
-		return versionId;
-	}
-
-	public void setVersionId(String versionId) {
-		this.versionId = versionId;
-	}
-
-	public String getServerCRC() {
+	public Long getServerCRC() {
 		return serverCRC;
 	}
 
-	public void setServerCRC(String serverCRC) {
+	public void setServerCRC(Long serverCRC) {
 		this.serverCRC = serverCRC;
+	}
+
+	/**
+	 * Convert to {@link com.aliyun.oss.model.ObjectMetadata}
+	 * 
+	 * @return
+	 */
+	public com.aliyun.oss.model.ObjectMetadata toAliyunOssObjectMetadata() {
+		com.aliyun.oss.model.ObjectMetadata _metadata = new com.aliyun.oss.model.ObjectMetadata();
+		_metadata.setUserMetadata(getUserMetadata());
+		_metadata.setContentLength(getContentLength());
+		_metadata.setContentType(getContentType());
+		_metadata.setContentMD5(getContentMd5());
+		_metadata.setContentEncoding(getContentEncoding());
+		_metadata.setCacheControl(getCacheControl());
+		_metadata.setContentDisposition(getContentDisposition());
+		_metadata.setLastModified(new Date(getMtime()));
+		_metadata.setExpirationTime(new Date(getEtime()));
+		_metadata.setObjectAcl(CannedAccessControlList.parse(getAcl().toString()));
+
+		_metadata.setServerSideEncryptionKeyId(getServerSideEncryptionKeyId());
+		setServerSideEncryption(getServerSideEncryption());
+		return _metadata;
+	}
+
+	/**
+	 * Gets aliyun oss {@link com.aliyun.oss.model.ObjectMetadata#metadata}
+	 * 
+	 * @param metadata
+	 * @param key
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	final public static String getAliyunOssObjectMetadata(com.aliyun.oss.model.ObjectMetadata metadata, String key) {
+		Map<String, String> aliyunOssObjectMetadata = (Map<String, String>) getField(ossMetadataField, metadata);
+		return !isNull(aliyunOssObjectMetadata) ? aliyunOssObjectMetadata.get(key) : null;
+	}
+
+	final private static Field ossMetadataField;
+
+	static {
+		ossMetadataField = findField(com.aliyun.oss.model.ObjectMetadata.class, "metadata");
+		makeAccessible(ossMetadataField);
 	}
 
 }

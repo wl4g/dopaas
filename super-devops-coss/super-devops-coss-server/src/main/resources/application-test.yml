@@ -34,6 +34,12 @@ spring:
           server-uri: http://iam.${DEVOPS_DOMAIN_TOP:wl4g.test}/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/oss/buckets
+      coss:
+        aliyunoss:
+          enable: true
+          endpoint: oss-cn-shenzhen.aliyuncs.com
+          accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+          accessKeySecret: ${aliyun.secret}
 
   # Datasource configuration.
   datasource:

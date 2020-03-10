@@ -22,6 +22,8 @@ import com.wl4g.devops.coss.model.AccessControlList;
 import com.wl4g.devops.coss.model.ObjectAcl;
 import com.wl4g.devops.coss.model.ObjectListing;
 import com.wl4g.devops.coss.model.ObjectMetadata;
+import com.wl4g.devops.coss.model.ObjectSummary;
+import com.wl4g.devops.coss.model.ObjectSymlink;
 import com.wl4g.devops.coss.model.ObjectValue;
 import com.wl4g.devops.coss.model.PutObjectResult;
 import com.wl4g.devops.coss.model.bucket.Bucket;
@@ -69,7 +71,7 @@ public interface CossEndpoint {
 	 *            default is 100 if it's null.
 	 * @return The list of {@link Bucket} instances.
 	 */
-	BucketList listBuckets(String prefix, String marker, Integer maxKeys);
+	<T extends Bucket> BucketList<T> listBuckets(String prefix, String marker, Integer maxKeys);
 
 	/**
 	 * Deletes the {@link Bucket} instance. A non-empty bucket could not be
@@ -120,7 +122,7 @@ public interface CossEndpoint {
 	 *            Bucket name
 	 * @return {@link ObjectListing} instance that has all objects.
 	 */
-	ObjectListing listObjects(String bucketName);
+	<T extends ObjectSummary> ObjectListing<T> listObjects(String bucketName);
 
 	/**
 	 * Lists all objects under the specified {@link Bucket} with the specified
@@ -134,7 +136,7 @@ public interface CossEndpoint {
 	 * @throws OSSException
 	 * @throws ClientException
 	 */
-	ObjectListing listObjects(String bucketName, String prefix);
+	<T extends ObjectSummary> ObjectListing<T> listObjects(String bucketName, String prefix);
 
 	/**
 	 * Gets a {@link ObjectValue} from {@link Bucket}.
@@ -226,5 +228,30 @@ public interface CossEndpoint {
 	 * @return True if exists; false if not.
 	 */
 	boolean doesObjectExist(String bucketName, String key);
+
+	/**
+	 * Creates a symlink link to a target file under the bucket---this is not
+	 * supported for archive class bucket.
+	 * 
+	 * @param bucketName
+	 *            Bucket name.
+	 * @param symlink
+	 *            symlink name.
+	 * @param target
+	 *            target file key.
+	 */
+	void createSymlink(String bucketName, String symlink, String target);
+
+	/**
+	 * Gets the symlink information for the given symlink name.
+	 * 
+	 * @param bucketName
+	 *            Bucket name.
+	 * @param symlink
+	 *            The symlink name.
+	 * @return The symlink information, including the target file name and its
+	 *         metadata.
+	 */
+	ObjectSymlink getSymlink(String bucketName, String symlink);
 
 }

@@ -15,9 +15,12 @@
  */
 package com.wl4g.devops.coss;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import org.slf4j.Logger;
+
+import com.wl4g.devops.coss.config.CossProperties;
 
 /**
  * Generic composite object storage server file system API.
@@ -29,5 +32,12 @@ import org.slf4j.Logger;
 public abstract class GenericCossEndpoint implements CossEndpoint {
 
 	final protected Logger log = getLogger(getClass());
+
+	final protected CossProperties config;
+
+	public GenericCossEndpoint(CossProperties config) {
+		notNullOf(config, "cossProperties");
+		this.config = config;
+	}
 
 }

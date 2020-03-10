@@ -14,14 +14,16 @@ import com.aliyun.oss.model.UploadFileResult;
  * Examples of uploading with enabling checkpoint file.
  *
  */
-public class NativeOssUploadSample {
+public class OssUploadSample {
 
-	private static String endpoint = "<endpoint, http://oss-cn-hangzhou.aliyuncs.com>";
-	private static String accessKeyId = "<accessKeyId>";
-	private static String accessKeySecret = "<accessKeySecret>";
-	private static String bucketName = "<bucketName>";
-	private static String key = "<downloadKey>";
-	private static String uploadFile = "<uploadFile>";
+	private static String endpoint = "oss-cn-shenzhen.aliyuncs.com";
+	private static String accessKeyId = "LTAI4Fk9pjU7ezN2yVeiffYm";
+	private static String accessKeySecret = System.getenv("aliyun.secret");
+
+	private static String bucketName = "sm-clound";
+	private static String key = "OssUploadSample.txt";
+	// Note: Must exist
+	private static String uploadFile = "/tmp/OssUploadSample.txt";
 
 	public static void main(String[] args) throws IOException {
 		OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);

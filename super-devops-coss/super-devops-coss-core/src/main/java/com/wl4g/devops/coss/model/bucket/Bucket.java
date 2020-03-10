@@ -28,23 +28,8 @@ public class Bucket {
 	/** Bucket owner */
 	private Owner owner;
 
-	/** Bucket location */
-	private String location;
-
 	/** Created date. */
 	private Date creationDate;
-
-	/** Storage class (e.g. aliyun-oss => Standard, IA, Archive) */
-	private String storageType;
-
-	/** External endpoint.It could be accessed from anywhere. */
-	private String extranetEndpoint;
-
-	/**
-	 * Internal endpoint. It could be accessed within AliCloud under the same
-	 * location.
-	 */
-	private String intranetEndpoint;
 
 	/**
 	 * Default constructor.
@@ -60,21 +45,6 @@ public class Bucket {
 	 */
 	public Bucket(String name) {
 		setName(name);
-	}
-
-	/**
-	 * The override of toString(). Returns the bucket name, creation date, owner
-	 * and location, with optional storage class.
-	 */
-	@Override
-	public String toString() {
-		if (storageType == null) {
-			return "OSSBucket [name=" + getName() + ", creationDate=" + getCreationDate() + ", owner=" + getOwner()
-					+ ", location=" + getLocation() + "]";
-		} else {
-			return "OSSBucket [name=" + getName() + ", creationDate=" + getCreationDate() + ", owner=" + getOwner()
-					+ ", location=" + getLocation() + ", storageClass=" + getStorageType() + "]";
-		}
 	}
 
 	/**
@@ -134,78 +104,9 @@ public class Bucket {
 		this.name = name;
 	}
 
-	/**
-	 * Gets the bucket location.
-	 * 
-	 * @return Bucket location.
-	 */
-	public String getLocation() {
-		return location;
-	}
-
-	/**
-	 * Sets the bucket location.
-	 * 
-	 * @param location
-	 */
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	/**
-	 * Gets the storage class
-	 * 
-	 * @return storage class
-	 */
-	public String getStorageType() {
-		return storageType;
-	}
-
-	/**
-	 * Sets the bucket's storage class
-	 * 
-	 * @param storageClass
-	 */
-	public void setStorageType(String storageClass) {
-		this.storageType = storageClass;
-	}
-
-	/**
-	 * Gets the external endpoint.
-	 * 
-	 * @return external endpoint
-	 */
-	public String getExtranetEndpoint() {
-		return extranetEndpoint;
-	}
-
-	/**
-	 * Sets the external endpoint.
-	 * 
-	 * @param endpoint
-	 *            external endpoint
-	 */
-	public void setExtranetEndpoint(String endpoint) {
-		this.extranetEndpoint = endpoint;
-	}
-
-	/**
-	 * Gets the internal endpoint.
-	 * 
-	 * @return Internal endpoint
-	 */
-	public String getIntranetEndpoint() {
-		return intranetEndpoint;
-	}
-
-	/**
-	 * Sets the internal endpoint.
-	 * 
-	 * @param endpoint
-	 *            Internal endpoint
-	 */
-	public void setIntranetEndpoint(String endpoint) {
-		this.intranetEndpoint = endpoint;
+	@Override
+	public String toString() {
+		return "CossBucket [name=" + name + ", owner=" + owner + ", creationDate=" + creationDate + "]";
 	}
 
 }

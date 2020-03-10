@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.hdfs;
+package com.wl4g.devops.coss.hdfs.model;
 
 import com.wl4g.devops.coss.model.ObjectMetadata;
 
@@ -13,7 +13,6 @@ public class HdfsObjectMetadata extends ObjectMetadata {
 
 	private short blockReplication;
 	private long blocksize;
-	private long lastModified;
 
 	public short getBlockReplication() {
 		return blockReplication;
@@ -29,14 +28,6 @@ public class HdfsObjectMetadata extends ObjectMetadata {
 
 	public void setBlocksize(long blocksize) {
 		this.blocksize = blocksize;
-	}
-
-	public long getLastModified() {
-		return lastModified;
-	}
-
-	public void setLastModified(long lastModified) {
-		this.lastModified = lastModified;
 	}
 
 }
