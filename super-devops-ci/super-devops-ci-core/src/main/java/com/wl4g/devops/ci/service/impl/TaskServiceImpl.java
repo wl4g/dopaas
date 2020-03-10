@@ -207,4 +207,9 @@ public class TaskServiceImpl implements TaskService {
 		return tasks;
 	}
 
+	@Override
+	public List<Task> getForSelect() {
+		return taskDao.list(null, null, null, null, null, null, null, null);
+	}
+
 }
