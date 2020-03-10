@@ -65,4 +65,13 @@ public class OrchestrationController extends BaseController {
 		resp.setData(orchestration);
 		return resp;
 	}
+
+	@RequestMapping("/run")
+	public RespBase<?> run(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		orchestrationService.run(id);
+		return resp;
+	}
+
+
 }

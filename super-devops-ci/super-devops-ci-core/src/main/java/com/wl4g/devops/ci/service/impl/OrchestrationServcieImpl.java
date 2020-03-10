@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.OrchestrationService;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Orchestration;
@@ -23,6 +24,7 @@ import com.wl4g.devops.common.bean.ci.OrchestrationPipeline;
 import com.wl4g.devops.dao.ci.OrchestrationDao;
 import com.wl4g.devops.dao.ci.OrchestrationPipelineDao;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +43,9 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 
 	@Autowired
 	private OrchestrationPipelineDao orchestrationPipelineDao;
+
+	@Autowired
+	private FlowManager flowManager;
 
 	@Override
 	public PageModel list(PageModel pm, String name) {
@@ -119,6 +124,14 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 	@Override
 	public Orchestration detail(Integer id) {
 		return orchestrationDao.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public void run(Integer id) {
+		Assert2.notNullOf(id,"id");
+		Orchestration orchestration = orchestrationDao.selectByPrimaryKey(id);
+		Assert2.notNullOf(orchestration,"orchestration");
+		flowManager.gateway(orchestration);
 	}
 
 }

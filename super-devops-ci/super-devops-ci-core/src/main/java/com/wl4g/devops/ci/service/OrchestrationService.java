@@ -32,4 +32,6 @@ public interface OrchestrationService {
 
 	Orchestration detail(Integer id);
 
+	void run(Integer id);
+
 }

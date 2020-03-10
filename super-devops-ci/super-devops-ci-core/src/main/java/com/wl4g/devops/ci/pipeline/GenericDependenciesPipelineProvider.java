@@ -88,6 +88,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		PipelineModel pipelineModel = getContext().getPipelineModel();
 		pipelineModel.setService(taskHisy.getGroupName());
 		pipelineModel.setProvider(getContext().getTaskHistory().getProviderKind());
+		pipelineModel.setStatus("RUNNING");
 		pipelineModel.setModules(modules);
 		flowManager.pipelineStateChange(pipelineModel);
 
