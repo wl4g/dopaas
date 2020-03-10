@@ -18,11 +18,14 @@ package com.wl4g.devops.coss.natives;
 import java.io.InputStream;
 
 import com.wl4g.devops.coss.GenericCossEndpoint;
+import com.wl4g.devops.coss.config.NativeOssProperties;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.AccessControlList;
 import com.wl4g.devops.coss.model.ObjectAcl;
 import com.wl4g.devops.coss.model.ObjectListing;
 import com.wl4g.devops.coss.model.ObjectMetadata;
+import com.wl4g.devops.coss.model.ObjectSummary;
+import com.wl4g.devops.coss.model.ObjectSymlink;
 import com.wl4g.devops.coss.model.ObjectValue;
 import com.wl4g.devops.coss.model.PutObjectResult;
 import com.wl4g.devops.coss.model.bucket.Bucket;
@@ -31,6 +34,10 @@ import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 
 public class NativeCossEndpoint extends GenericCossEndpoint {
 
+	public NativeCossEndpoint(NativeOssProperties config) {
+		super(config);
+	}
+
 	@Override
 	public Bucket createBucket(String bucketName) {
 		// TODO Auto-generated method stub
@@ -38,7 +45,7 @@ public class NativeCossEndpoint extends GenericCossEndpoint {
 	}
 
 	@Override
-	public BucketList listBuckets(String prefix, String marker, Integer maxKeys) {
+	public BucketList<Bucket> listBuckets(String prefix, String marker, Integer maxKeys) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -68,13 +75,13 @@ public class NativeCossEndpoint extends GenericCossEndpoint {
 	}
 
 	@Override
-	public ObjectListing listObjects(String bucketName) {
+	public ObjectListing<ObjectSummary> listObjects(String bucketName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ObjectListing listObjects(String bucketName, String prefix) {
+	public ObjectListing<ObjectSummary> listObjects(String bucketName, String prefix) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -119,6 +126,18 @@ public class NativeCossEndpoint extends GenericCossEndpoint {
 	public boolean doesObjectExist(String bucketName, String key) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void createSymlink(String bucketName, String symlink, String target) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public ObjectSymlink getSymlink(String bucketName, String symlink) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

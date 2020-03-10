@@ -17,6 +17,11 @@ public class ObjectSummary {
 	/** The key under which this object is stored */
 	private String key;
 
+	/**
+	 * The object ETag. ETag is a 128bit MD5 signature about the object in hex.
+	 */
+	private String eTag;
+
 	/** object Size */
 	private long size;
 
@@ -74,6 +79,26 @@ public class ObjectSummary {
 	 */
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	/**
+	 * Gets the object ETag. ETag is a 128bit MD5 signature about the object in
+	 * hex.
+	 * 
+	 * @return ETag value.
+	 */
+	public String getETag() {
+		return eTag;
+	}
+
+	/**
+	 * Sets the object ETag.
+	 * 
+	 * @param eTag
+	 *            ETag value.
+	 */
+	public void setETag(String eTag) {
+		this.eTag = eTag;
 	}
 
 	/**

@@ -1,20 +1,17 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.wl4g.devops.coss.aliyun;
 
@@ -40,14 +37,14 @@ import com.aliyun.oss.model.PutObjectRequest;
  * This sample demonstrates how to upload/download an object to/from Aliyun OSS
  * using the OSS SDK for Java.
  */
-public class NativeOssSimpleGetObjectTests {
+public class OssSimpleGetObjectTests {
 
-	private static String endpoint = "*** Provide OSS endpoint ***";
-	private static String accessKeyId = "*** Provide your AccessKeyId ***";
-	private static String accessKeySecret = "*** Provide your AccessKeySecret ***";
+	private static String endpoint = "oss-cn-shenzhen.aliyuncs.com";
+	private static String accessKeyId = "LTAI4Fk9pjU7ezN2yVeiffYm";
+	private static String accessKeySecret = System.getenv("aliyun.secret");
 
-	private static String bucketName = "*** Provide bucket name ***";
-	private static String key = "*** Provide key ***";
+	private static String bucketName = "sm-clound";
+	private static String key = "OssSimpleGetObjectTests.txt";
 
 	public static void main(String[] args) throws IOException {
 		/*
@@ -81,6 +78,9 @@ public class NativeOssSimpleGetObjectTests {
 			 */
 			System.out.println("Downloading an object");
 			OSSObject object = client.getObject(new GetObjectRequest(bucketName, key));
+			System.out.println("ObjectKey: " + object.getKey());
+			System.out.println("ClientCRC: " + object.getClientCRC());
+			System.out.println("ServerCRC: " + object.getServerCRC());
 			System.out.println("Content-Type: " + object.getObjectMetadata().getContentType());
 			displayTextInputStream(object.getObjectContent());
 
