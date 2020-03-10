@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.ci.web;
 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
@@ -50,6 +52,9 @@ public class TaskController extends BaseController {
 
 	@Autowired
 	private TaskService taskService;
+
+	@Autowired
+	private FlowManager flowManager;
 
 	/**
 	 * Page List
@@ -163,7 +168,8 @@ public class TaskController extends BaseController {
 	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
 	public RespBase<?> create(Integer taskId, String trackId, Integer trackType, String remark, String annex) {
 		RespBase<Object> resp = RespBase.create();
-		pipeliner.runPipeline(new NewParameter(taskId, remark, trackId, trackType, annex));
+		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
+		pipeliner.runPipeline(new NewParameter(taskId, remark, trackId, trackType, annex),pipelineModel);
 		return resp;
 	}
 

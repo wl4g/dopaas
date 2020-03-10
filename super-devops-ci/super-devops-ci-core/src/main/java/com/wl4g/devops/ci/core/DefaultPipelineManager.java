@@ -15,12 +15,14 @@
  */
 package com.wl4g.devops.ci.core;
 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.context.DefaultPipelineContext;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.param.HookParameter;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
+import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
@@ -38,7 +40,6 @@ import com.wl4g.devops.support.notification.dingtalk.DingtalkMessage;
 import com.wl4g.devops.support.notification.facebook.FacebookMessage;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
 import com.wl4g.devops.support.notification.sms.AliyunSmsMessage;
-import com.wl4g.devops.support.notification.sms.SmsMessage;
 import com.wl4g.devops.support.notification.twitter.TwitterMessage;
 import com.wl4g.devops.support.notification.wechat.WechatMessage;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
@@ -105,9 +106,12 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected TaskBuildCommandDao taskBuildCmdDao;
 	@Autowired
 	protected TaskHistoryDetailDao taskHistoryDetailDao;
+	@Autowired
+	protected FlowManager flowManager;
+
 
 	@Override
-	public void runPipeline(NewParameter param) {
+	public void runPipeline(NewParameter param, PipelineModel pipelineModel) {
 		log.info("Running pipeline job for: {}", param);
 
 		// Obtain task details.
@@ -140,11 +144,11 @@ public class DefaultPipelineManager implements PipelineManager {
 				param.getRemark(), task.getEnvType(), param.getAnnex());
 
 		// Execution pipeline job.
-		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
+		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy,pipelineModel));
 	}
 
 	@Override
-	public void rollbackPipeline(RollbackParameter param) {
+	public void rollbackPipeline(RollbackParameter param,PipelineModel pipelineModel) {
 		log.info("Rollback pipeline job for: {}", param);
 
 		// Task
@@ -177,7 +181,7 @@ public class DefaultPipelineManager implements PipelineManager {
 				bakTaskHisy.getTrackType(), bakTaskHisy.getRemark(), bakTaskHisy.getEnvType(), bakTaskHisy.getAnnex());
 
 		// Do roll-back pipeline job.
-		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy));
+		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy,pipelineModel));
 	}
 
 	@Override
@@ -213,8 +217,9 @@ public class DefaultPipelineManager implements PipelineManager {
 				param.getBranchName(), sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
 				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, null, null, null, task.getEnvType(), null);
 
+		PipelineModel pipelineModel = flowManager.buildPipeline(task.getId());
 		// Execution pipeline job.
-		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy));
+		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy,pipelineModel));
 	}
 
 	@Override
@@ -288,6 +293,7 @@ public class DefaultPipelineManager implements PipelineManager {
 				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
 				log.info("Completed for pipeline taskId: {}", taskId);
 				taskHistoryService.updateCostTime(taskId, (currentTimeMillis() - startTime));
+				flowManager.pipelineComplete(provider.getContext().getPipelineModel());
 			}
 		});
 	}
@@ -431,7 +437,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param taskHisy
 	 * @return
 	 */
-	protected PipelineProvider getPipelineProvider(TaskHistory taskHisy) {
+	protected PipelineProvider getPipelineProvider(TaskHistory taskHisy, PipelineModel pipelineModel) {
 		notNull(taskHisy, "TaskHistory can not be null");
 
 		Project project = projectDao.selectByPrimaryKey(taskHisy.getProjectId());
@@ -455,8 +461,10 @@ public class DefaultPipelineManager implements PipelineManager {
 
 		// New pipeline context.
 		String projectSourceDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+
+		//TODO add pipeline status track
 		PipelineContext context = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, taskHisy,
-				refTaskHisy, taskHisyDetails);
+				refTaskHisy, taskHisyDetails,pipelineModel);
 
 		// Get prototype provider.
 		return beanFactory.getPrototypeBean(context.getTaskHistory().getProviderKind(), context);

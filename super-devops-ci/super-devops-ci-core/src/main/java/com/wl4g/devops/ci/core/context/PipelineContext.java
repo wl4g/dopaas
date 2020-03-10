@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.core.context;
 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
@@ -39,6 +40,11 @@ public abstract interface PipelineContext {
 
 		@Override
 		public List<TaskHistoryInstance> getTaskHistoryInstances() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public PipelineModel getPipelineModel() {
 			throw new UnsupportedOperationException();
 		}
 
@@ -121,5 +127,7 @@ public abstract interface PipelineContext {
 	 * @return
 	 */
 	List<TaskHistoryInstance> getTaskHistoryInstances();
+
+	PipelineModel getPipelineModel();
 
 }

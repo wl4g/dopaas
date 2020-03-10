@@ -19,6 +19,7 @@ import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.core.DefaultPipelineManager;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pcm.CompositePcmOperatorAdapter;
 import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.pcm.jira.JiraPcmOperator;
@@ -138,6 +139,12 @@ public class CiCdAutoConfiguration {
 	@Bean
 	public CompositeVcsOperateAdapter compositeVcsOperateAdapter(List<VcsOperator> operators) {
 		return new CompositeVcsOperateAdapter(operators);
+	}
+
+	// --- Flow Manager ---
+	@Bean
+	public FlowManager flowManager() {
+		return new FlowManager();
 	}
 
 	// --- Pipeline provider's. ---
