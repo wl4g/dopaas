@@ -181,6 +181,15 @@ public class TaskController extends BaseController {
 		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(projectId);
 		resp.forMap().put("list", taskBuildCommands);
 		return resp;
+	}
+
+	@RequestMapping(value = "/getForSelect")
+	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
+	public RespBase<?> getForSelect() {
+		RespBase<Object> resp = RespBase.create();
+		List<Task> list = taskService.getForSelect();
+		resp.setData(list);
+		return resp;
 
 	}
 
