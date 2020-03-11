@@ -45,14 +45,14 @@ import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 
 /**
- * Console based coss accessor
+ * Web/HTTP based coss accessor
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月4日
  * @since
  */
 @ShellComponent
-@RequestMapping("/accessor/web/")
+@RequestMapping("/webservice/")
 public class HttpCossAccessor extends BaseController implements CossAccessor {
 
 	/**

@@ -45,7 +45,7 @@ import com.wl4g.devops.shell.annotation.ShellMethod;
 import com.wl4g.devops.shell.annotation.ShellOption;
 
 /**
- * C or access the coss file through SFTP
+ * Console based coss accessor
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月4日
