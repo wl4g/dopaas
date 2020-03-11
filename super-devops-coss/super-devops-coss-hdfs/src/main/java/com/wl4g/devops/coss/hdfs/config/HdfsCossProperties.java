@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.coss.hdfs.config;
 
-import com.wl4g.devops.coss.config.CossProperties;
-
-public class HdfsCossProperties extends CossProperties {
+public class HdfsCossProperties {
 
 }

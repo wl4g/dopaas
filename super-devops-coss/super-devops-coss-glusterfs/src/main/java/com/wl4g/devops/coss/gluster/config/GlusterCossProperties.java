@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.coss.gluster.config;
 
-import com.wl4g.devops.coss.config.CossProperties;
-
-public class GlusterCossProperties extends CossProperties {
+public class GlusterCossProperties {
 
 }

@@ -110,7 +110,7 @@ public abstract class TraceLoggingMDCFilter implements Filter {
 		this.context = context;
 
 		// Initializing mapped MDC configuration
-		refreshMappedConfig();
+		refreshMappedConfigIfNecessary();
 	}
 
 	public boolean isEnableMappedCookies() {
@@ -135,8 +135,8 @@ public abstract class TraceLoggingMDCFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 
 		try {
-			// Refreshing MDC mapped config.
-			refreshMappedConfig();
+			// Refreshing MDC mapped(If necessary).
+			refreshMappedConfigIfNecessary();
 
 			// Set logging MDC
 			setLoggingMDC(req);
@@ -220,7 +220,7 @@ public abstract class TraceLoggingMDCFilter implements Filter {
 	 * 
 	 * @return
 	 */
-	protected boolean refreshMappedConfig() {
+	protected boolean refreshMappedConfigIfNecessary() {
 		long now = currentTimeMillis();
 		if ((now - cacheRefreshLastTime.get()) < DEFAULT_CACHE_REFRESH_MS) {
 			return false;

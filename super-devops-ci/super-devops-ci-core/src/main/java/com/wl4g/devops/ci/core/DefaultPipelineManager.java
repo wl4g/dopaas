@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.config.CiCdProperties;  
 import com.wl4g.devops.ci.core.context.DefaultPipelineContext;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.param.HookParameter;
@@ -28,17 +28,18 @@ import com.wl4g.devops.common.bean.iam.AlarmContact;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.context.DelegatePrototypeBeanFactory;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.iam.AlarmContactDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
-import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.support.notification.MessageNotifier;
+import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.dingtalk.DingtalkMessage;
 import com.wl4g.devops.support.notification.facebook.FacebookMessage;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
 import com.wl4g.devops.support.notification.sms.AliyunSmsMessage;
-import com.wl4g.devops.support.notification.sms.SmsMessage;
 import com.wl4g.devops.support.notification.twitter.TwitterMessage;
 import com.wl4g.devops.support.notification.wechat.WechatMessage;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
@@ -83,7 +84,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired
-	protected CompositeMessageNotifier notifier;
+	protected  GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter;
 
 	@Autowired
 	protected AppInstanceDao appInstanceDao;
@@ -382,7 +383,7 @@ public class DefaultPipelineManager implements PipelineManager {
 			msg.setText(message);
 			msg.setSentDate(new Date());
 			// TODO using dynamic kind?
-			notifier.forAdapt(NotifierKind.Mail).send(new MailMessageWrapper(msg));
+			notifierAdapter.forOperator(NotifierKind.Mail).get().send(new MailMessageWrapper(msg));
 
 			// phone
 			if (alarmContact.getPhoneEnable() == 1) {

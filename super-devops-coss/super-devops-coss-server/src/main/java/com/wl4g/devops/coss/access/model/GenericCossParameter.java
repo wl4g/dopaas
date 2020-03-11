@@ -13,21 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.access;
+package com.wl4g.devops.coss.access.model;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import javax.validation.constraints.NotBlank;
 
-import org.slf4j.Logger;
+import com.wl4g.devops.shell.annotation.ShellOption;
 
 /**
- * Based generic browse or access the coss file viewer.
+ * Generic COSS accessor parameter.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年3月4日
+ * @version v1.0 2020年3月11日
  * @since
  */
-public abstract class GenericCossAccessor implements CossAccessor {
+public class GenericCossParameter {
 
-	final protected Logger log = getLogger(getClass());
+	@ShellOption(opt = "P", lopt = "provider", help = "Real Object Storage Service Provider")
+	@NotBlank
+	private String cossProvider;
+
+	public String getCossProvider() {
+		return cossProvider;
+	}
+
+	public void setCossProvider(String cossProvider) {
+		this.cossProvider = cossProvider;
+	}
 
 }

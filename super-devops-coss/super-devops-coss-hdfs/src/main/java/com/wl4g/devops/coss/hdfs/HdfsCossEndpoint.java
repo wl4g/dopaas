@@ -17,8 +17,8 @@ package com.wl4g.devops.coss.hdfs;
 
 import java.io.InputStream;
 
-import com.wl4g.devops.coss.GenericCossEndpoint;
-import com.wl4g.devops.coss.config.CossProperties;
+import com.wl4g.devops.coss.AbstractCossEndpoint;
+import com.wl4g.devops.coss.hdfs.config.HdfsCossProperties;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.AccessControlList;
 import com.wl4g.devops.coss.model.ObjectAcl;
@@ -31,10 +31,15 @@ import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 
-public class HdfsCossEndpoint extends GenericCossEndpoint {
+public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 
-	public HdfsCossEndpoint(CossProperties config) {
+	public HdfsCossEndpoint(HdfsCossProperties config) {
 		super(config);
+	}
+
+	@Override
+	public CossProvider kind() {
+		return CossProvider.Hdfs;
 	}
 
 	@Override

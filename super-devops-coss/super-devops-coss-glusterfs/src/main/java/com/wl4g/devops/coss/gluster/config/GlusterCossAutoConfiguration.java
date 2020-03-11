@@ -15,9 +15,30 @@
  */
 package com.wl4g.devops.coss.gluster.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.wl4g.devops.coss.CossEndpoint;
+import com.wl4g.devops.coss.gluster.GlusterFsCossEndpoint;
 
 @Configuration
 public class GlusterCossAutoConfiguration {
+	final public static String KEY_PROPERTY_PREFIX = "spring.cloud.devops.coss.glusterfs";
+
+	@Bean
+	@ConditionalOnProperty(name = KEY_PROPERTY_PREFIX + ".enable", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_PROPERTY_PREFIX)
+	public GlusterCossProperties glusterCossProperties() {
+		return new GlusterCossProperties();
+	}
+
+	@Bean
+	@ConditionalOnBean(GlusterCossProperties.class)
+	public CossEndpoint glusterFsCossEndpoint(GlusterCossProperties config) {
+		return new GlusterFsCossEndpoint(config);
+	}
 
 }

@@ -17,13 +17,15 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
-import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
+import com.wl4g.devops.ci.vcs.VcsOperator;
+import com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
 import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.VcsDao;
@@ -42,8 +44,8 @@ import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS_UNLOCK;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.util.stream.Collectors.toList;
-import static org.springframework.util.Assert.notNull;
 
 /**
  * @author vjay
@@ -60,7 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
 	private DependencyDao dependencyDao;
 
 	@Autowired
-	private CompositeVcsOperateAdapter vcsAdapter;
+	private GenericOperatorAdapter<VcsProvider, VcsOperator> vcsOperator;
 
 	@Autowired
 	private VcsDao vcsDao;
@@ -135,7 +137,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public PageModel list(PageModel pm, String groupName, String projectName) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		List<Project> list = projectDao.list(groupName, projectName,null);
+		List<Project> list = projectDao.list(groupName, projectName, null);
 		for (Project project : list) {
 			project.setVcs(null);
 		}
@@ -145,7 +147,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public List<Project> getBySelect(Integer isBoot) {
-		return projectDao.list(null, null,isBoot);
+		return projectDao.list(null, null, isBoot);
 	}
 
 	@Override
@@ -166,36 +168,40 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public List<String> getBranchs(Integer projectId, Integer tarOrBranch) {
-		Assert.notNull(projectId, "id can not be null");
-
+		notNullOf(projectId, "projectId");
 		Project project = projectDao.selectByPrimaryKey(projectId);
-		Assert.notNull(project, "not found project ,please check you project config");
+		notNullOf(project, "project");
 		String url = project.getHttpUrl();
 
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
-		Integer vcsProjectId = vcsAdapter.forAdapt(project.getVcs()).getRemoteProjectId(project.getVcs(), projectName);
-		Assert.notNull(vcsProjectId, String.format("No found projectId of name: %s", projectName));
+		vcsOperator.forOperator(project.getVcs().getProviderKind());
+		Integer vcsProjectId = vcsOperator.forOperator(project.getVcs().getProviderKind()).get()
+				.getRemoteProjectId(project.getVcs(), projectName);
+		notNullOf(vcsProjectId, "vcsProjectId");
 
 		if (tarOrBranch != null && tarOrBranch == 2) { // tag
-			List<String> branchNames = vcsAdapter.forAdapt(project.getVcs()).getRemoteTags(project.getVcs(), vcsProjectId);
+			List<String> branchNames = vcsOperator.forOperator(project.getVcs().getProviderKind()).get()
+					.getRemoteTags(project.getVcs(), vcsProjectId);
 			return branchNames;
 		}
 		// Branch
 		else {
-			List<String> branchNames = vcsAdapter.forAdapt(project.getVcs()).getRemoteBranchNames(project.getVcs(), vcsProjectId);
+			List<String> branchNames = vcsOperator.forOperator(project.getVcs().getProviderKind()).get()
+					.getRemoteBranchNames(project.getVcs(), vcsProjectId);
 			return branchNames;
 		}
 	}
 
 	@Override
 	public List<CompositeBasicVcsProjectModel> vcsProjects(Integer vcsId, String projectName) {
-		notNull(vcsId, "vcsId can not be null");
-		// Get VCS information.
+		notNullOf(vcsId, "vcsId");
+		// Gets VCS information.
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
 
 		// Search remote projects.
-		List<VcsProjectModel> projects = vcsAdapter.forAdapt(vcs).searchRemoteProjects(vcs, projectName);
+		List<VcsProjectModel> projects = vcsOperator.forOperator(vcs.getProviderKind()).get().searchRemoteProjects(vcs,
+				projectName);
 		return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
 	}
 

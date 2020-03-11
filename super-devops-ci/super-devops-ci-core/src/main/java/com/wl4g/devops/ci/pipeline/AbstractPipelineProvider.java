@@ -20,12 +20,13 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
-import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.ci.vcs.VcsOperator;
+import com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
@@ -79,7 +80,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected DestroableProcessManager pm;
 	@Autowired
-	protected CompositeVcsOperateAdapter vcsAdapter;
+	protected GenericOperatorAdapter<VcsProvider, VcsOperator> vcsAdapter;
 
 	@Autowired
 	protected DependencyService dependencyService;
@@ -133,7 +134,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @return
 	 */
 	protected VcsOperator getVcsOperator(String vcsProviderKind) {
-		return vcsAdapter.forAdapt(vcsProviderKind);
+		return vcsAdapter.forOperator(vcsProviderKind).get();
 	}
 
 	// --- Fingerprint's. ---

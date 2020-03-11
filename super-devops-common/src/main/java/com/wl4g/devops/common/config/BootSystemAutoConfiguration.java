@@ -25,7 +25,6 @@ import org.apache.coyote.ProtocolHandler;
 import org.apache.tomcat.util.threads.TaskQueue;
 import org.apache.tomcat.util.threads.TaskThreadFactory;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
-import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
@@ -41,6 +40,7 @@ import org.springframework.core.env.Environment;
 
 import com.wl4g.devops.common.logging.TraceLoggingMDCFilter;
 import com.wl4g.devops.common.web.RespBase.ErrorPromptMessageBuilder;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * System properties auto configuration.
@@ -50,14 +50,14 @@ import com.wl4g.devops.common.web.RespBase.ErrorPromptMessageBuilder;
  * @since
  */
 @Configuration
-public class BootPropertiesAutoConfiguration implements EnvironmentAware {
+public class BootSystemAutoConfiguration implements EnvironmentAware {
 
 	/**
 	 * API prompt max length.
 	 */
 	final private static int PROMPT_MAX_LEN = 4;
 
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	@Override
 	public void setEnvironment(Environment environment) {
@@ -88,6 +88,8 @@ public class BootPropertiesAutoConfiguration implements EnvironmentAware {
 		}
 
 	}
+
+	// --- C U S T O M A T I O N _ L O G G I N G _ M D C. ---
 
 	@Bean
 	@ConditionalOnMissingBean(TraceLoggingMDCFilter.class)
@@ -155,5 +157,7 @@ public class BootPropertiesAutoConfiguration implements EnvironmentAware {
 		taskqueue.setParent((ThreadPoolExecutor) executor);
 		return executor;
 	}
+
+	// --- E N H A N C E D _ F R A M E W O R K. ---
 
 }

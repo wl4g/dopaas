@@ -13,15 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.access;
+package com.wl4g.devops.coss;
+
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+
+import org.slf4j.Logger;
 
 /**
- * Browse or access the coss file through default private protocol based on TCP/IP
+ * Abstract composite object storage server file system API.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年3月4日
+ * @version v1.0 2020年2月28日
  * @since
  */
-public class DefaultCossAccessor extends GenericCossAccessor{
+public abstract class AbstractCossEndpoint<C> implements CossEndpoint {
+
+	final protected Logger log = getLogger(getClass());
+
+	/**
+	 * {@link C}
+	 */
+	final protected C config;
+
+	public AbstractCossEndpoint(C config) {
+		notNullOf(config, "cossProperties");
+		this.config = config;
+	}
 
 }

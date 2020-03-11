@@ -22,7 +22,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.devops.IamServer;
-import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.support.notification.MessageNotifier;
+import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.vms.AliyunVmsMessage;
 
@@ -40,7 +42,7 @@ import static com.wl4g.devops.support.config.NotificationAutoConfiguration.*;
 public class CompositeMessageNotifierTests {
 
 	@Autowired
-	private CompositeMessageNotifier notifier;
+	private  GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter;
 
 	/**
 	 * 
@@ -56,7 +58,7 @@ public class CompositeMessageNotifierTests {
 		AliyunVmsMessage msg = new AliyunVmsMessage("18007448807", "tts1");
 		// Add placeholder parameters for a specific template
 		msg.addParameter("code", "12345");
-		notifier.forAdapt(NotifierKind.AliyunVms).send(msg);
+		notifierAdapter.forOperator(NotifierKind.AliyunVms).get().send(msg);
 		System.out.println("Send end.");
 	}
 
@@ -77,7 +79,7 @@ public class CompositeMessageNotifierTests {
 		msg.addParameter("state", "异常中");
 		msg.addParameter("level", "严重");
 		msg.addParameter("msg", "此条为测试消息");
-		notifier.forAdapt(NotifierKind.AliyunVms).send(msg);
+		notifierAdapter.forOperator(NotifierKind.AliyunVms).get().send(msg);
 		System.out.println("Send end.");
 	}
 

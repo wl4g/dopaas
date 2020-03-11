@@ -19,8 +19,8 @@ import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.core.DefaultPipelineManager;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.pcm.CompositePcmOperatorAdapter;
 import com.wl4g.devops.ci.pcm.PcmOperator;
+import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
 import com.wl4g.devops.ci.pcm.jira.JiraPcmOperator;
 import com.wl4g.devops.ci.pcm.redmine.RedminePcmOperator;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
@@ -34,8 +34,8 @@ import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
 import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
-import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
 import com.wl4g.devops.ci.vcs.VcsOperator;
+import com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
 import com.wl4g.devops.ci.vcs.alicode.AlicodeVcsOperator;
 import com.wl4g.devops.ci.vcs.bitbucket.BitbucketVcsOperator;
 import com.wl4g.devops.ci.vcs.coding.CodingVcsOperator;
@@ -48,6 +48,7 @@ import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.context.DelegateAlias;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -103,7 +104,7 @@ public class CiCdAutoConfiguration {
 		return new CiCdConsole();
 	}
 
-	// --- VCS's ---
+	// --- VCS's (Version Control System) ---
 
 	@Bean
 	public VcsOperator gitlabV4VcsOperator() {
@@ -136,8 +137,9 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
-	public CompositeVcsOperateAdapter compositeVcsOperateAdapter(List<VcsOperator> operators) {
-		return new CompositeVcsOperateAdapter(operators);
+	public GenericOperatorAdapter<VcsProvider, VcsOperator> compositeVcsOperateAdapter(List<VcsOperator> operators) {
+		return new GenericOperatorAdapter<VcsProvider, VcsOperator>(operators) {
+		};
 	}
 
 	// --- Pipeline provider's. ---
@@ -263,21 +265,22 @@ public class CiCdAutoConfiguration {
 		return new LogPipelineCleaner();
 	}
 
-	// --- PCM's. ---
+	// --- PCM's (Project collaboration management). ---
 
 	@Bean
-	public JiraPcmOperator jiraPcmOperator() {
+	public PcmOperator jiraPcmOperator() {
 		return new JiraPcmOperator();
 	}
 
 	@Bean
-	public RedminePcmOperator redminePcmOperator() {
+	public PcmOperator redminePcmOperator() {
 		return new RedminePcmOperator();
 	}
 
 	@Bean
-	public CompositePcmOperatorAdapter compositePcmOperatorAdapter(List<PcmOperator> operators) {
-		return new CompositePcmOperatorAdapter(operators);
+	public GenericOperatorAdapter<PcmKind, PcmOperator> compositePcmOperatorAdapter(List<PcmOperator> operators) {
+		return new GenericOperatorAdapter<PcmKind, PcmOperator>(operators) {
+		};
 	}
 
 }

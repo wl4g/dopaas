@@ -16,17 +16,18 @@
 package com.wl4g.devops.common.framework.operator;
 
 import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import javax.validation.constraints.NotNull;
+
+import org.springframework.core.ResolvableType;
+
 import java.util.*;
 
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toMap;
-
-import org.slf4j.Logger;
-import org.springframework.core.ResolvableType;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -39,7 +40,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @since
  */
 public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operator<K>> implements Operator<K> {
-	final protected Logger log = getLogger(getClass());
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Generic registrar of operator alias names.
@@ -83,6 +85,8 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 		ResolvableType resolveType = ResolvableType.forClass(getClass());
 		this.kindClass = (Class<? extends Enum<?>>) resolveType.getSuperType().getGeneric(0).resolve();
 		Class<?> adapterInterfaceClass = resolveType.getSuperType().getGeneric(1).resolve();
+		notNullOf(kindClass, "kindClass");
+		notNullOf(adapterInterfaceClass, "adapterInterfaceClass");
 
 		// Maybe none of the specific operators has been instantiated.
 		if (!isEmpty(operators)) {
@@ -120,12 +124,11 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 * @return
 	 * @throws NoSuchOperatorException
 	 */
-	@SuppressWarnings("unchecked")
-	public <T> T forAdapt(@NotNull Class<T> operatorClass) throws NoSuchOperatorException {
+	public <T> GenericOperatorAdapter<K, O> forOperator(@NotNull Class<T> operatorClass) throws NoSuchOperatorException {
 		O operator = ensureOperator(operatorClassRegistry.get(operatorClass),
 				format("No such operator instance of class: '%s'", operatorClass));
 		delegate.set(operator);
-		return (T) operator;
+		return this;
 	}
 
 	/**
@@ -134,8 +137,8 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 * @param vcs
 	 * @return
 	 */
-	public O forAdapt(@NotNull K k) throws NoSuchOperatorException {
-		return forAdapt(k.name());
+	public GenericOperatorAdapter<K, O> forOperator(@NotNull K k) throws NoSuchOperatorException {
+		return forOperator(k.name());
 	}
 
 	/**
@@ -145,21 +148,21 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 * @return
 	 * @throws NoSuchOperatorException
 	 */
-	public O forAdapt(@NotNull String kindName) throws NoSuchOperatorException {
+	public GenericOperatorAdapter<K, O> forOperator(@NotNull String kindName) throws NoSuchOperatorException {
 		K kind = parseKind(kindName);
 		O operator = ensureOperator(operatorAliasRegistry.get(kind),
 				format("No such operator bean instance for kind name: '%s'", kind));
 		delegate.set(operator);
-		return operator;
+		return this;
 	}
 
 	/**
-	 * Get adapted {@link O}.
+	 * Gets adapted instance object of {@link O}.
 	 * 
 	 * @return
 	 * @throws NoSuchOperatorException
 	 */
-	protected O getAdapted() throws NoSuchOperatorException {
+	public O get() throws NoSuchOperatorException {
 		O operator = delegate.get();
 		notNull(operator, NoSuchOperatorException.class,
 				"No such to the specific operator(kind class: %s). Please configure the operator instance before calling the specific function method",
