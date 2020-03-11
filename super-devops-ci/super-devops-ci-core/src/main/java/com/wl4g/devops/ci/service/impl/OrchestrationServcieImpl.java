@@ -131,7 +131,10 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 		Assert2.notNullOf(id,"id");
 		Orchestration orchestration = orchestrationDao.selectByPrimaryKey(id);
 		Assert2.notNullOf(orchestration,"orchestration");
+		orchestration.setStatus(1);
+		orchestrationDao.updateByPrimaryKeySelective(orchestration);
 		flowManager.gateway(orchestration);
+
 	}
 
 }

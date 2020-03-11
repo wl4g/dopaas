@@ -18,6 +18,7 @@ package com.wl4g.devops.ci.pipeline;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.common.bean.ci.*;
+import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
@@ -67,6 +68,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 */
 	protected void buildModular() throws Exception {
 		TaskHistory taskHisy = getContext().getTaskHistory();
+		AppCluster appCluster = getContext().getAppCluster();
 		File jobLog = config.getJobLog(taskHisy.getId());
 		log.info(writeBuildLog("Analyzing pipeline building appcluster dependencies... stdout to '%s'",
 				getContext().getAppCluster().getName(), jobLog.getAbsolutePath()));
@@ -82,11 +84,11 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// Pipeline State Change
 		List<String> modules = new ArrayList<>();
 		for (Dependency depd : dependencies) {
-			modules.add(depd.getProjectName());
+			modules.add(depd.getDependentId().toString());
 		}
-		modules.add(taskHisy.getProjectName());
+		modules.add(taskHisy.getProjectId().toString());
 		PipelineModel pipelineModel = getContext().getPipelineModel();
-		pipelineModel.setService(taskHisy.getGroupName());
+		pipelineModel.setService(appCluster.getName());
 		pipelineModel.setProvider(getContext().getTaskHistory().getProviderKind());
 		pipelineModel.setStatus("RUNNING");
 		pipelineModel.setModules(modules);
@@ -96,25 +98,24 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		for (Dependency depd : dependencies) {
 
 			// Is dependency Already build
-			if(flowManager.isDependencyBuilded(depd.getProjectName())){
+			if(flowManager.isDependencyBuilded(depd.getDependentId().toString())){
 				continue;
 			}
 
-			pipelineModel.setCurrent(depd.getProjectName());
+			pipelineModel.setCurrent(depd.getDependentId().toString());
 			flowManager.pipelineStateChange(pipelineModel);
 			String depCmd = extractDependencyBuildCommand(commands, depd.getDependentId());
-			doMutexBuildModuleInDependencies(depd.getDependentId(), depd.getDependentId(), depd.getBranch(), true, depCmd);
+			doMutexBuildModuleInDependencies(depd.getDependentId(), depd.getBranch(), depCmd);
 		}
 
 		// Build for primary(self).
-		pipelineModel.setCurrent(taskHisy.getProjectName());
+		pipelineModel.setCurrent(taskHisy.getProjectId().toString());
 		flowManager.pipelineStateChange(pipelineModel);
-		doMutexBuildModuleInDependencies(taskHisy.getProjectId(), null, taskHisy.getBranchName(), false,
-				taskHisy.getBuildCommand());
+		doMutexBuildModuleInDependencies(taskHisy.getProjectId(),  taskHisy.getBranchName(), taskHisy.getBuildCommand());
 
 		// Build Success
 		pipelineModel.setCurrent("Build Finish");
-		pipelineModel.setStatus("SUCCESS");
+		//pipelineModel.setStatus("SUCCESS"); build complete ==? pipeline complete
 		flowManager.pipelineStateChange(pipelineModel);
 
 		// Call after all built dependencies completed handling.
@@ -158,13 +159,12 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private final void doMutexBuildModuleInDependencies(Integer projectId, Integer dependencyId, String branch,
-			boolean isDependency, String buildCommand) throws Exception {
+	private final void doMutexBuildModuleInDependencies(Integer projectId, String branch, String buildCommand) throws Exception {
 		Lock lock = lockManager.getLock(LOCK_DEPENDENCY_BUILD + projectId, config.getBuild().getSharedDependencyTryTimeoutMs(),
 				TimeUnit.MILLISECONDS);
 		if (lock.tryLock()) { // Dependency build wait?
 			try {
-				pullSourceAndBuild(projectId, dependencyId, branch, isDependency, buildCommand);
+				pullSourceAndBuild(projectId, branch, buildCommand);
 			} catch (Exception e) {
 				throw e;
 			} finally {
@@ -172,8 +172,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			}
 		} else {
 			String buildWaitMsg = writeBuildLog(
-					"Waiting to build dependency, for timeout: %sms, dependencyId: %s, projectId: %s ...",
-					config.getBuild().getJobTimeoutMs(), dependencyId, projectId);
+					"Waiting to build dependency, for timeout: %sms,  projectId: %s ...",
+					config.getBuild().getJobTimeoutMs(), projectId);
 			log.info(buildWaitMsg);
 
 			try {
@@ -206,8 +206,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @param buildCommand
 	 * @throws Exception
 	 */
-	private final void pullSourceAndBuild(Integer projectId, Integer dependencyId, String branch, boolean isDependency,
-			String buildCommand) throws Exception {
+	private void pullSourceAndBuild(Integer projectId, String branch, String buildCommand) throws Exception {
 		log.info("Pipeline building for projectId: {}", projectId);
 
 		TaskHistory taskHisy = getContext().getTaskHistory();
@@ -224,16 +223,6 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		} else { // Unchecked out? new clone & checkout.
 			log.info(writeBuildLog("New checkout project source to '%s:%s' ...", branch, projectDir));
 			getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);
-		}
-
-		// Save the SHA of the dependency project.
-		if (isDependency) {
-			TaskSign sign = new TaskSign();
-			sign.preInsert();
-			sign.setTaskId(taskHisy.getId());
-			sign.setDependenvyId(dependencyId);
-			sign.setShaGit(getVcsOperator(project).getLatestCommitted(projectDir));
-			taskSignDao.insertSelective(sign);
 		}
 
 		// Resolving placeholder & execution.
