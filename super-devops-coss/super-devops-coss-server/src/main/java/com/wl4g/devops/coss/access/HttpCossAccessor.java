@@ -42,7 +42,6 @@ import com.wl4g.devops.coss.model.PutObjectResult;
 import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
-import com.wl4g.devops.shell.annotation.ShellComponent;
 
 /**
  * Web/HTTP based coss accessor
@@ -51,9 +50,9 @@ import com.wl4g.devops.shell.annotation.ShellComponent;
  * @version v1.0 2020年3月4日
  * @since
  */
-@ShellComponent
-@RequestMapping("/webservice/")
 public class HttpCossAccessor extends BaseController implements CossAccessor {
+
+	final public static String URL_BASE = "/webservice/";
 
 	/**
 	 * {@link CossEndpoint}

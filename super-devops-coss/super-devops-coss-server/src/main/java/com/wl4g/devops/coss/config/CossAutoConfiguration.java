@@ -23,9 +23,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.CossEndpoint.CossProvider;
+import com.wl4g.devops.coss.access.ConsoleCossAccessor;
+import com.wl4g.devops.coss.access.CossAccessor;
+import com.wl4g.devops.coss.access.HttpCossAccessor;
 import com.wl4g.devops.coss.natives.NativeCossEndpoint;
 
 /**
@@ -36,7 +40,7 @@ import com.wl4g.devops.coss.natives.NativeCossEndpoint;
  * @since
  */
 @Configuration
-public class CossAutoConfiguration {
+public class CossAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 	final public static String KEY_PROPERTY_PREFIX = "spring.cloud.devops.coss.native";
 
 	@Bean
@@ -56,6 +60,23 @@ public class CossAutoConfiguration {
 	public GenericOperatorAdapter<CossProvider, CossEndpoint> compositeCossEndpoint(List<CossEndpoint> endpoints) {
 		return new GenericOperatorAdapter<CossProvider, CossEndpoint>(endpoints) {
 		};
+	}
+
+	// --- A C C E S S O R'S. ---
+
+	@Bean
+	public CossAccessor consoleCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
+		return new ConsoleCossAccessor(endpointAdapter);
+	}
+
+	@Bean
+	public CossAccessor httpCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
+		return new HttpCossAccessor(endpointAdapter);
+	}
+
+	@Bean
+	public PrefixHandlerMapping httpCossAccessorPrefixHandlerMapping(HttpCossAccessor httpCossAccessor) {
+		return super.newPrefixHandlerMapping(HttpCossAccessor.URL_BASE, httpCossAccessor);
 	}
 
 }
