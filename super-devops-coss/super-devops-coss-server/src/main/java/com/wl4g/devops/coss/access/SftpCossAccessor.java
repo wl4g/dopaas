@@ -39,7 +39,7 @@ import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 
 /**
- * Browse or access the coss file through SFTP
+ * SFTP based coss accessor
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月4日
