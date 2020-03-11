@@ -8,8 +8,6 @@ public class PipelineModel extends RunModel.Pipeline {
 
     private String runId;
 
-    private String node;
-
     public String getRunId() {
         return runId;
     }
@@ -18,11 +16,4 @@ public class PipelineModel extends RunModel.Pipeline {
         this.runId = runId;
     }
 
-    public String getNode() {
-        return node;
-    }
-
-    public void setNode(String node) {
-        this.node = node;
-    }
 }

@@ -68,6 +68,8 @@ public class RunModel implements Serializable {
 
         private int attempting;
 
+        private String node;
+
         List<String> modules;
 
         public Integer getPipeId() {
@@ -140,6 +142,14 @@ public class RunModel implements Serializable {
 
         public void setModules(List<String> modules) {
             this.modules = modules;
+        }
+
+        public String getNode() {
+            return node;
+        }
+
+        public void setNode(String node) {
+            this.node = node;
         }
     }
 
