@@ -17,7 +17,7 @@ package com.wl4g.devops.coss.natives;
 
 import java.io.InputStream;
 
-import com.wl4g.devops.coss.GenericCossEndpoint;
+import com.wl4g.devops.coss.AbstractCossEndpoint;
 import com.wl4g.devops.coss.config.NativeOssProperties;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.AccessControlList;
@@ -32,10 +32,15 @@ import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 
-public class NativeCossEndpoint extends GenericCossEndpoint {
+public class NativeCossEndpoint extends AbstractCossEndpoint<NativeOssProperties> {
 
 	public NativeCossEndpoint(NativeOssProperties config) {
 		super(config);
+	}
+
+	@Override
+	public CossProvider kind() {
+		return CossProvider.NativeFs;
 	}
 
 	@Override

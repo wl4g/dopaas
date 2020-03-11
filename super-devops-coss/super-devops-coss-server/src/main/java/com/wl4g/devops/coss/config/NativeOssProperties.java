@@ -13,26 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.access;
+package com.wl4g.devops.coss.config;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-
-import com.wl4g.devops.common.web.BaseController;
-
-/**
- * Browse or access the coss file through HTTP/HTTPs
- * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年3月4日
- * @since
- */
-public class HttpCossAccessor extends BaseController implements CossAccessor {
-
-	final protected GenericCossAccessor genericCossAccessor;
-
-	public HttpCossAccessor(GenericCossAccessor genericCossAccessor) {
-		notNullOf(genericCossAccessor, "genericCossAccessor");
-		this.genericCossAccessor = genericCossAccessor;
-	}
+public class NativeOssProperties {
 
 }

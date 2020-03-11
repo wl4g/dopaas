@@ -19,9 +19,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.devops.coss.config.CossProperties;
-
-public class AliyunOssProperties extends CossProperties {
+public class AliyunOssProperties {
 
 	/**
 	 * e.g1: oss-cn-shenzhen.aliyuncs.com </br>
@@ -32,6 +30,12 @@ public class AliyunOssProperties extends CossProperties {
 	@NotBlank
 	private String endpoint;
 
+	@NotBlank
+	private String accessKeyId;
+
+	@NotBlank
+	private String accessKeySecret;
+
 	public String getEndpoint() {
 		return endpoint;
 	}
@@ -39,6 +43,24 @@ public class AliyunOssProperties extends CossProperties {
 	public void setEndpoint(String endpoint) {
 		notNullOf(endpoint, "aliyunOssEndpoint");
 		this.endpoint = endpoint;
+	}
+
+	public String getAccessKeyId() {
+		return accessKeyId;
+	}
+
+	public void setAccessKeyId(String accessKeyId) {
+		notNullOf(accessKeyId, "cossAccessKeyId");
+		this.accessKeyId = accessKeyId;
+	}
+
+	public String getAccessKeySecret() {
+		return accessKeySecret;
+	}
+
+	public void setAccessKeySecret(String accessKeySecret) {
+		notNullOf(accessKeySecret, "cossAccessKeySecret");
+		this.accessKeySecret = accessKeySecret;
 	}
 
 }

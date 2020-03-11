@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.coss.aws.config;
+package com.wl4g.devops.coss.config;
+
+import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,24 +23,39 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.CossEndpoint;
-import com.wl4g.devops.coss.aws.S3CossEndpoint;
+import com.wl4g.devops.coss.CossEndpoint.CossProvider;
+import com.wl4g.devops.coss.natives.NativeCossEndpoint;
 
+/**
+ * COSS core auto configuration.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年3月11日
+ * @since
+ */
 @Configuration
-public class S3CossAutoConfiguration {
-	final public static String KEY_PROPERTY_PREFIX = "spring.cloud.devops.coss.s3";
+public class CossAutoConfiguration {
+	final public static String KEY_PROPERTY_PREFIX = "spring.cloud.devops.coss.native";
 
 	@Bean
-	@ConditionalOnProperty(name = KEY_PROPERTY_PREFIX + ".enable", matchIfMissing = false)
+	@ConditionalOnProperty(name = KEY_PROPERTY_PREFIX + ".enable", matchIfMissing = true)
 	@ConfigurationProperties(prefix = KEY_PROPERTY_PREFIX)
-	public S3CossProperties s3CossProperties() {
-		return new S3CossProperties();
+	public NativeOssProperties nativeOssProperties() {
+		return new NativeOssProperties();
 	}
 
 	@Bean
-	@ConditionalOnBean(S3CossProperties.class)
-	public CossEndpoint s3CossEndpoint(S3CossProperties config) {
-		return new S3CossEndpoint(config);
+	@ConditionalOnBean(NativeOssProperties.class)
+	public CossEndpoint nativeCossEndpoint(NativeOssProperties config) {
+		return new NativeCossEndpoint(config);
+	}
+
+	@Bean
+	public GenericOperatorAdapter<CossProvider, CossEndpoint> compositeCossEndpoint(List<CossEndpoint> endpoints) {
+		return new GenericOperatorAdapter<CossProvider, CossEndpoint>(endpoints) {
+		};
 	}
 
 }

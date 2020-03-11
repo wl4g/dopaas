@@ -15,7 +15,10 @@
  */
 package com.wl4g.devops.umc.notify;
 
-import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.support.notification.MessageNotifier;
+import com.wl4g.devops.support.notification.NotifyMessage;
+import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
 import com.wl4g.devops.umc.model.StatusMessage;
@@ -35,7 +38,7 @@ import java.util.Date;
 public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 
 	@Autowired
-	private CompositeMessageNotifier notifier;
+	private  GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter;
 
 	@Override
 	protected void doNotify(StatusMessage status) {
@@ -66,7 +69,7 @@ public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 			msg.setSentDate(new Date());
 
 			log.debug("Mail通知... {}", status);
-			notifier.forAdapt(MailMessageNotifier.class).send(new MailMessageWrapper(msg));
+			notifierAdapter.forOperator(MailMessageNotifier.class).get().send(new MailMessageWrapper(msg));
 		} catch (Exception e) {
 			log.error("Mail notification failed.", e);
 		}

@@ -16,8 +16,11 @@
 package com.wl4g.devops.umc.web;
 
 import com.wl4g.devops.common.constants.UMCDevOpsConstants;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.support.notification.MessageNotifier;
+import com.wl4g.devops.support.notification.NotifyMessage;
+import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
@@ -41,7 +44,7 @@ public class HomeController extends BaseController {
 	private DashboardHandle dashboardService;
 
 	@Autowired
-	private CompositeMessageNotifier notifier;
+	private  GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifier;
 
 	// @Autowired
 	// private SmsNotificationHandle smsHandle;
@@ -76,7 +79,7 @@ public class HomeController extends BaseController {
 		msg.setTo("1154635107@qq.com");
 		msg.setText("test");
 		msg.setSentDate(new Date());
-		notifier.forAdapt(MailMessageNotifier.class).send(new MailMessageWrapper(msg));
+		notifier.forOperator(MailMessageNotifier.class).get().send(new MailMessageWrapper(msg));
 		System.out.println("ok..");
 		return "ok";
 	}

@@ -19,6 +19,8 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
+
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.AccessControlList;
@@ -31,7 +33,7 @@ import com.aliyun.oss.model.OSSSymlink;
 import com.aliyun.oss.model.ObjectAcl;
 import com.aliyun.oss.model.ObjectListing;
 import com.aliyun.oss.model.PutObjectResult;
-import com.wl4g.devops.coss.GenericCossEndpoint;
+import com.wl4g.devops.coss.AbstractCossEndpoint;
 import com.wl4g.devops.coss.aliyun.config.AliyunOssProperties;
 import com.wl4g.devops.coss.aliyun.model.OssAccessControlList;
 import com.wl4g.devops.coss.aliyun.model.OssObjectAcl;
@@ -47,7 +49,7 @@ import com.wl4g.devops.coss.model.ObjectMetadata;
 import com.wl4g.devops.coss.model.ObjectSymlink;
 import com.wl4g.devops.coss.model.Owner;
 
-public class OssCossEndpoint extends GenericCossEndpoint {
+public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 
 	/**
 	 * Aliyun OSS client.
@@ -61,6 +63,17 @@ public class OssCossEndpoint extends GenericCossEndpoint {
 		log.info("Initialized OSS client: {}", client);
 	}
 
+	@Override
+	public CossProvider kind() {
+		return CossProvider.AliyunOss;
+	}
+
+	/**
+	 * The bucket name specified must be globally unique and follow the naming
+	 * rules from
+	 * https://www.alibabacloud.com/help/doc-detail/31827.htm?spm=a3c0i.o32012en
+	 * .a3.1.64ece5e0jPpa2t.
+	 */
 	@Override
 	public OssBucket createBucket(String bucketName) {
 		OssBucket bucket = new OssBucket();
@@ -147,9 +160,14 @@ public class OssCossEndpoint extends GenericCossEndpoint {
 		return objectValue;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public OssPutObjectResult putObject(String bucketName, String key, InputStream input) {
-		return putObject(bucketName, key, input, null);
+		try {
+			return putObject(bucketName, key, input, null);
+		} finally {
+			IOUtils.closeQuietly(input);
+		}
 	}
 
 	@Override

@@ -17,11 +17,11 @@ package com.wl4g.devops.coss.aws;
 
 import java.io.InputStream;
 
-import com.wl4g.devops.coss.GenericCossEndpoint;
+import com.wl4g.devops.coss.AbstractCossEndpoint;
+import com.wl4g.devops.coss.aws.config.S3CossProperties;
 import com.wl4g.devops.coss.aws.model.S3ObjectListing;
 import com.wl4g.devops.coss.aws.model.S3ObjectValue;
 import com.wl4g.devops.coss.aws.model.bucket.S3BucketList;
-import com.wl4g.devops.coss.config.CossProperties;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.AccessControlList;
 import com.wl4g.devops.coss.model.ObjectAcl;
@@ -39,10 +39,15 @@ import com.wl4g.devops.coss.model.bucket.BucketMetadata;
  * @since
  * @see {@link com.amazonaws.services.s3.AbstractAmazonS3}
  */
-public class S3CossEndpoint extends GenericCossEndpoint {
+public class S3CossEndpoint extends AbstractCossEndpoint<S3CossProperties> {
 
-	public S3CossEndpoint(CossProperties config) {
+	public S3CossEndpoint(S3CossProperties config) {
 		super(config);
+	}
+
+	@Override
+	public CossProvider kind() {
+		return CossProvider.AwsS3;
 	}
 
 	@Override

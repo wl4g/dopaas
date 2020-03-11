@@ -15,8 +15,34 @@
  */
 package com.wl4g.devops.coss.aws.config;
 
-import com.wl4g.devops.coss.config.CossProperties;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
-public class S3CossProperties extends CossProperties {
+import javax.validation.constraints.NotBlank;
+
+public class S3CossProperties {
+
+	@NotBlank
+	private String accessKeyId;
+
+	@NotBlank
+	private String accessKeySecret;
+
+	public String getAccessKeyId() {
+		return accessKeyId;
+	}
+
+	public void setAccessKeyId(String accessKeyId) {
+		notNullOf(accessKeyId, "cossAccessKeyId");
+		this.accessKeyId = accessKeyId;
+	}
+
+	public String getAccessKeySecret() {
+		return accessKeySecret;
+	}
+
+	public void setAccessKeySecret(String accessKeySecret) {
+		notNullOf(accessKeySecret, "cossAccessKeySecret");
+		this.accessKeySecret = accessKeySecret;
+	}
 
 }

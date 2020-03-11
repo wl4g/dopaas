@@ -17,8 +17,8 @@ package com.wl4g.devops.coss.gluster;
 
 import java.io.InputStream;
 
-import com.wl4g.devops.coss.GenericCossEndpoint;
-import com.wl4g.devops.coss.config.CossProperties;
+import com.wl4g.devops.coss.AbstractCossEndpoint;
+import com.wl4g.devops.coss.gluster.config.GlusterCossProperties;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.AccessControlList;
 import com.wl4g.devops.coss.model.ObjectAcl;
@@ -31,10 +31,15 @@ import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 
-public class GlusterFsCossEndpoint extends GenericCossEndpoint {
+public class GlusterFsCossEndpoint extends AbstractCossEndpoint<GlusterCossProperties> {
 
-	public GlusterFsCossEndpoint(CossProperties config) {
+	public GlusterFsCossEndpoint(GlusterCossProperties config) {
 		super(config);
+	}
+
+	@Override
+	public CossProvider kind() {
+		return CossProvider.GlusterFs;
 	}
 
 	@Override
