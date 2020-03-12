@@ -68,8 +68,6 @@ public class TaskHistoryController extends BaseController {
 	@RequiresPermissions(value = { "ci", "ci:taskhis" }, logical = AND)
 	public RespBase<?> list(PageModel pm, String groupName, String projectName, String branchName, String startDate,
 			String endDate, String envType) {
-		log.info("into TaskHistoryController.list prarms::" + "groupName = {} , projectName = {} , branchName = {} , pm = {} ",
-				groupName, projectName, branchName, pm);
 		RespBase<Object> resp = RespBase.create();
 		PageModel list = taskHistoryService.list(pm, groupName, projectName, branchName, startDate, endDate, envType);
 		resp.setData(list);

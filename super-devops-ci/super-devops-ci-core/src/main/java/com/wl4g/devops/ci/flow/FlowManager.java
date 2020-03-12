@@ -15,6 +15,8 @@ import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -28,6 +30,8 @@ import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.*;
  * @date 2020-03-09 09:27:00
  */
 public class FlowManager {
+
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private JedisService jedisService;
@@ -118,6 +122,7 @@ public class FlowManager {
                 pipelineModel.setStatus(WAITING.toString());
                 pipelineModel.setCreateTime(currentTimeMillis);
                 pipelineModel.setRunId(runModel.getRunId());
+				pipelineModel.setAttempting(1);
                 pipelineModel.setPriority(orchestrationPipeline.getPriority());
                 pipelines.add(pipelineModel);
                 pipelineModels.add(pipelineModel);
@@ -218,6 +223,7 @@ public class FlowManager {
 		pipelineModel.setStatus(WAITING.toString());
 		pipelineModel.setCreateTime(currentTimeMillis);
 		pipelineModel.setNode(node);
+		pipelineModel.setAttempting(1);
 		RunModel runModel = new RunModel();
 		runModel.setCreateTime(currentTimeMillis);
 		runModel.setRunId(REDIS_CI_RUN_PRE + pipelineId + "-" + currentTimeMillis);
@@ -261,7 +267,7 @@ public class FlowManager {
             }
         }
 		if (isAllComplete) {
-			flowComplete(pipelineModel.getRunId());
+			flowComplete(runModel);
 		}
 	}
 
@@ -270,12 +276,22 @@ public class FlowManager {
 	 * 
 	 * @param runId
 	 */
-	public void flowComplete(String runId) {
+	public void flowComplete(RunModel runModel) {
+		String runId = runModel.getRunId();
+		// remove redis
 		jedisService.del(runId);
 
+		//TODO compute cost time
+		Long createTime = runModel.getCreateTime();
+		if(Objects.nonNull(createTime)){
+			log.info("flow conplete runId={},costTime={}ms",runModel.getRunId(),(System.currentTimeMillis()-createTime));
+		}
+
+		//update db status
+		runId = runId.replaceAll(REDIS_CI_RUN_PRE,"");
 		String[] split = runId.split("-");
 		Orchestration orchestration = new Orchestration();
-		orchestration.setId(Integer.valueOf(split[1]));
+		orchestration.setId(Integer.valueOf(split[0]));
 		orchestration.setStatus(5);
 		orchestrationDao.updateByPrimaryKeySelective(orchestration);
 	}
@@ -336,9 +352,6 @@ public class FlowManager {
 		for (RunModel runModel : runModels) {
 			List<Pipeline> pipelines = runModel.getPipelines();
 			for (Pipeline pipeline : pipelines) {
-				if(!StringUtils.equals(pipeline.getNode(),node)){
-					continue;
-				}
 				getAlreadyBuildModules(pipeline, alreadBuild);
 			}
 		}
@@ -346,6 +359,9 @@ public class FlowManager {
 	}
 
 	private void getAlreadyBuildModules(Pipeline pipeline, Set<String> alreadBuild) {
+		if(!StringUtils.equals(pipeline.getNode(),node)){
+			return;
+		}
 		List<String> modules = pipeline.getModules();
 		if(CollectionUtils.isEmpty(modules)){
 			return;
