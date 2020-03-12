@@ -45,9 +45,9 @@ public class FlowManager {
 	@Autowired
 	private OrchestrationDao orchestrationDao;
 
-	private static final String REDIS_CI_RUN_PRE = "CI-RUN-";//redis key
+	public static final String REDIS_CI_RUN_PRE = "CI-RUN-";//redis key
 
-	private static final int REDIS_CI_RUN_SCAN_BATCH = 10;//redis scan batch
+	public static final int REDIS_CI_RUN_SCAN_BATCH = 10;//redis scan batch
 	
 	//TODO config
 	private static String node = "master-1";
