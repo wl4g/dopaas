@@ -1,6 +1,5 @@
 package com.wl4g.devops.ci.flow;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.bean.RunModel;
 import com.wl4g.devops.ci.bean.RunModel.Pipeline;
@@ -11,6 +10,7 @@ import com.wl4g.devops.common.bean.ci.Orchestration;
 import com.wl4g.devops.common.bean.ci.OrchestrationPipeline;
 import com.wl4g.devops.dao.ci.OrchestrationDao;
 import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.support.redis.ScanCursor;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+
+import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.*;
 
 /**
  * @author vjay
@@ -39,19 +41,24 @@ public class FlowManager {
 	@Autowired
 	private OrchestrationDao orchestrationDao;
 
-	private static final String RUN_FLOW_LIST = "run_flow_list";
+	private static final String REDIS_CI_RUN_PRE = "CI-RUN-";//redis key
+
+	private static final int REDIS_CI_RUN_SCAN_BATCH = 10;//redis scan batch
 	
 	//TODO config
 	private static String node = "master-1";
-	private static int REDIS_SAVE_TIME_S = 30 * 60;//TODO defautl 30 min (300min just for debug)
-	private static long FLOW_TIME_OUT_MS = 300 * 60 * 1000;//TODO defautl 30min (300min just for debug)
-	
+	private static int REDIS_SAVE_TIME_S = 30 * 60;//redis ttl(defautl 30 min)
+	private static long FLOW_TIME_OUT_MS = 30 * 60 * 1000;//flow time out(defautl 30min)
 
-    public void gateway(Orchestration orchestration) {
+
+	/**
+	 * Start to run orchestration
+	 * @param orchestration
+	 */
+    public void runOrchestration(Orchestration orchestration) {
 		List<OrchestrationPipeline> orchestrationPipelines = orchestration.getOrchestrationPipelines();
         List<List<OrchestrationPipeline>> orchestrationPipelinesSort = sortByPriority(orchestrationPipelines);
         List<List<PipelineModel>> pipelineModelSort = buildFlow(orchestration.getId(), orchestrationPipelinesSort);
-
 		jobExecutor.getWorker().execute(() -> {
 			try {
 				handOut(pipelineModelSort);
@@ -59,7 +66,6 @@ public class FlowManager {
 				e.printStackTrace();
 			}
 		});
-
     }
 
 	/**
@@ -97,56 +103,49 @@ public class FlowManager {
      * @return
      */
     public List<List<PipelineModel>> buildFlow(Integer orchestrationId, List<List<OrchestrationPipeline>> list){
-
         long currentTimeMillis = System.currentTimeMillis();
         RunModel runModel = new RunModel();
         runModel.setCreateTime(currentTimeMillis);
-        runModel.setRunId("RUN-" + orchestrationId + "-" + currentTimeMillis);
+        runModel.setRunId(REDIS_CI_RUN_PRE + orchestrationId + "-" + currentTimeMillis);
         runModel.setType("FLOW");
-
         List<List<PipelineModel>> pipelineSort = new ArrayList<>();
         List<Pipeline> pipelines = new ArrayList<>();
-
         for(List<OrchestrationPipeline> orchestrationPipelines : list){
             List<PipelineModel> pipelineModels = new ArrayList<>();
             for(OrchestrationPipeline orchestrationPipeline : orchestrationPipelines){
                 PipelineModel pipelineModel = new PipelineModel();
                 pipelineModel.setPipeId(orchestrationPipeline.getPipelineId());
-                pipelineModel.setStatus("WAITING");
+                pipelineModel.setStatus(WAITING.toString());
                 pipelineModel.setCreateTime(currentTimeMillis);
                 pipelineModel.setRunId(runModel.getRunId());
                 pipelineModel.setPriority(orchestrationPipeline.getPriority());
-
                 pipelines.add(pipelineModel);
                 pipelineModels.add(pipelineModel);
             }
             pipelineSort.add(pipelineModels);
         }
-
         runModel.setPipelines(pipelines);
-        add(runModel);
-
+		saveRunModel(runModel);
         return pipelineSort;
     }
 
     /**
-     * Step 2 : Hand out
+     * Step 3 : Hand out
      * @param lists
      */
     public void handOut(List<List<PipelineModel>> pipelineModelSort) throws Exception {
         // Create runner.
         GenericTaskRunner runner = createGenericTaskRunner(2);
         for(List<PipelineModel> pipelineModels : pipelineModelSort){ // run by batch
-
             List<Runnable> jobs = new ArrayList<>();
             for(PipelineModel pipelineModel : pipelineModels){
                 //pipeliner.runPipeline(new NewParameter(pipelineModel.getPipeId(), null, null, null, null),pipelineModel);
 				//TODO set node, use defaule just now
 				pipelineModel.setNode(node);
 				pipelineStateChange(pipelineModel);
+				//TODO hand out here
                 master2slave(pipelineModel);
             }
-
             //wait for this batch finish;
             jobs.add(new Runnable() {
                 @Override
@@ -159,7 +158,7 @@ public class FlowManager {
                                 // the status get from redis
 								Pipeline pipeline = getPipeline(pipelineModel.getRunId(), pipelineModel.getPipeId());
 
-								if(!Objects.isNull(pipeline)&&!StringUtils.equalsAny(pipeline.getStatus(),"SUCCESS","FAILED")){
+								if(!Objects.isNull(pipeline)&&!StringUtils.equalsAny(pipeline.getStatus(),SUCCESS.toString(),FAILED.toString())){ // RUNNING_DEPLOY
 									batchFinish = false;
                                     break;
                                 }
@@ -171,12 +170,10 @@ public class FlowManager {
                     }
                 }
             });
-
             // Submit jobs & listen job timeout.
             runner.getWorker().submitForComplete(jobs, (ex, completed, uncompleted) -> {
 
             }, FLOW_TIME_OUT_MS);
-
         }
         runner.close();
     }
@@ -190,17 +187,11 @@ public class FlowManager {
         pipeliner.runPipeline(new NewParameter(pipelineModel.getPipeId(), "generate by system", null, null, null),pipelineModel);
     }
 
-
-
     private static GenericTaskRunner<RunnerProperties> createGenericTaskRunner(int concurrencyPoolSize) throws Exception {
-        GenericTaskRunner<RunnerProperties> runner = new GenericTaskRunner<RunnerProperties>(
-                new RunnerProperties(false, concurrencyPoolSize)) {
-        };
+        GenericTaskRunner<RunnerProperties> runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, concurrencyPoolSize)) {};
         runner.run(null);
         return runner;
     }
-
-
 
 	private List<OrchestrationPipeline> getGroup(List<List<OrchestrationPipeline>> groupBy, Integer priority) {
 		if (CollectionUtils.isEmpty(groupBy)) {
@@ -214,7 +205,6 @@ public class FlowManager {
 		return null;
 	}
 
-
 	/**
 	 * for single pipeline
 	 * 
@@ -222,28 +212,21 @@ public class FlowManager {
 	 * @return
 	 */
 	public PipelineModel buildPipeline(Integer pipelineId) {
-
 		long currentTimeMillis = System.currentTimeMillis();
-
 		PipelineModel pipelineModel = new PipelineModel();
 		pipelineModel.setPipeId(pipelineId);
-		pipelineModel.setStatus("RUNNING");
+		pipelineModel.setStatus(WAITING.toString());
 		pipelineModel.setCreateTime(currentTimeMillis);
 		pipelineModel.setNode(node);
-
 		RunModel runModel = new RunModel();
 		runModel.setCreateTime(currentTimeMillis);
-		runModel.setRunId("RUN-" + pipelineId + "-" + currentTimeMillis);
+		runModel.setRunId(REDIS_CI_RUN_PRE + pipelineId + "-" + currentTimeMillis);
 		runModel.setType("PIPE");
-
 		List<Pipeline> pipelines = new ArrayList<>();
 		pipelines.add(pipelineModel);
 		runModel.setPipelines(pipelines);
-
-		add(runModel);
-
+		saveRunModel(runModel);
 		pipelineModel.setRunId(runModel.getRunId());
-
 		return pipelineModel;
 	}
 
@@ -251,19 +234,17 @@ public class FlowManager {
 	 * when pipeline state change , call this method
 	 */
 	public synchronized void pipelineStateChange(PipelineModel pipelineModel) {
-		List<RunModel> list = getRunModels();
-		RunModel runModel = getRunModel(list, pipelineModel.getRunId());
+		RunModel runModel = getRunModel(pipelineModel.getRunId());
 		Pipeline pipeline = getPipeline(runModel.getPipelines(), pipelineModel.getPipeId());
 		BeanUtils.copyProperties(pipelineModel, pipeline);
-		save(list);
+		saveRunModel(runModel);
 	}
 
 	/**
 	 * when pipeline finish, del the pipeline from runModel
 	 */
 	public void pipelineComplete(PipelineModel pipelineModel) {
-		List<RunModel> list = getRunModels();
-		RunModel runModel = getRunModel(list, pipelineModel.getRunId());
+		RunModel runModel = getRunModel(pipelineModel.getRunId());
 		if(Objects.isNull(runModel)){
 		    return;
         }
@@ -271,26 +252,17 @@ public class FlowManager {
 		if (CollectionUtils.isEmpty(pipelines)) {
             return;
         }
-        for (Pipeline pipeline : pipelines) {
-            if (pipelineModel.getPipeId().intValue() == pipeline.getPipeId()) {
-                //pipelines.remove(pipeline);
-                pipeline.setStatus("SUCCESS");
-                break;
-            }
-        }
-        save(list);
 
-        boolean isAllSuccess = true;
-		for(Pipeline pipeline : pipelines){
-            if(!StringUtils.equals(pipeline.getStatus(),"SUCCESS")){
-                isAllSuccess = false;
+        boolean isAllComplete = true;
+		for(Pipeline p : pipelines){
+            if(!StringUtils.equalsAnyIgnoreCase(p.getStatus(),SUCCESS.toString(), FAILED.toString())){
+				isAllComplete = false;
                 break;
             }
         }
-		if (isAllSuccess) {
+		if (isAllComplete) {
 			flowComplete(pipelineModel.getRunId());
 		}
-
 	}
 
 	/**
@@ -299,14 +271,7 @@ public class FlowManager {
 	 * @param runId
 	 */
 	public void flowComplete(String runId) {
-		List<RunModel> list = getRunModels();
-		for (RunModel runModel : list) {
-			if (StringUtils.equals(runModel.getRunId(), runId)) {
-				list.remove(runModel);
-				break;
-			}
-		}
-		save(list);
+		jedisService.del(runId);
 
 		String[] split = runId.split("-");
 		Orchestration orchestration = new Orchestration();
@@ -315,24 +280,12 @@ public class FlowManager {
 		orchestrationDao.updateByPrimaryKeySelective(orchestration);
 	}
 
-	private void add(RunModel runModel) {
-		List<RunModel> list = getRunModels();
-		list.add(runModel);
-		save(list);
-	}
-
-	private RunModel getRunModel(List<RunModel> list, String runId) {
-		for (RunModel runModel : list) {
-			if (StringUtils.equals(runModel.getRunId(), runId)) {
-				return runModel;
-			}
-		}
-		return null;
+	private RunModel getRunModel(String runId) {
+		return jedisService.getObjectAsJson(runId, RunModel.class);
 	}
 
 	private Pipeline getPipeline(String runId,Integer pipelineId){
-		List<RunModel> list = getRunModels();
-		RunModel runModel = getRunModel(list, runId);
+		RunModel runModel = getRunModel(runId);
 		if(runModel == null){
 			return null;
 		}
@@ -351,23 +304,23 @@ public class FlowManager {
 	}
 
 	private List<RunModel> getRunModels() {
-		String s = jedisService.get(RUN_FLOW_LIST);
-		if (StringUtils.isBlank(s)) {
-			return new ArrayList<>();
+		ScanCursor<RunModel> scan = jedisService.scan(REDIS_CI_RUN_PRE, REDIS_CI_RUN_SCAN_BATCH, RunModel.class);
+		List<RunModel> runModels = new ArrayList<>();
+
+		while (scan.hasNext()){
+			RunModel next = scan.next();
+			runModels.add(next);
 		}
-		List<RunModel> runModels = JacksonUtils.parseJSON(s, new TypeReference<List<RunModel>>() {
-		});
+		/*List<RunModel> runModels = JacksonUtils.parseJSON(s, new TypeReference<List<RunModel>>() {
+		});*/
 		if (Objects.isNull(runModels)) {
 			runModels = new ArrayList<>();
 		}
 		return runModels;
 	}
 
-	private void save(List<RunModel> runModels) {
-		if (Objects.isNull(runModels)) {
-			runModels = new ArrayList<>();
-		}
-		jedisService.set(RUN_FLOW_LIST, JacksonUtils.toJSONString(runModels), REDIS_SAVE_TIME_S);
+	private void saveRunModel(RunModel runModel) {
+		jedisService.set(runModel.getRunId(), JacksonUtils.toJSONString(runModel), REDIS_SAVE_TIME_S);
 	}
 
 	/**
@@ -386,13 +339,22 @@ public class FlowManager {
 				if(!StringUtils.equals(pipeline.getNode(),node)){
 					continue;
 				}
-				getAlreadyBuildModules(pipeline.getModules(), pipeline.getCurrent(), alreadBuild);
+				getAlreadyBuildModules(pipeline, alreadBuild);
 			}
 		}
 		return alreadBuild.contains(projectId);
 	}
 
-	private void getAlreadyBuildModules(List<String> modules, String current, Set<String> alreadBuild) {
+	private void getAlreadyBuildModules(Pipeline pipeline, Set<String> alreadBuild) {
+		List<String> modules = pipeline.getModules();
+		if(CollectionUtils.isEmpty(modules)){
+			return;
+		}
+		if(StringUtils.equalsAnyIgnoreCase(pipeline.getStatus(), RUNNING_DEPLOY.toString(),FAILED.toString(),SUCCESS.toString())){
+			alreadBuild.addAll(modules);
+			return;
+		}
+		String current = pipeline.getCurrent();
 		if (StringUtils.isBlank(current)) {// if null ,it mean : not begin build
 			return;
 		}
@@ -403,6 +365,46 @@ public class FlowManager {
 				alreadBuild.add(module);
 			}
 		}
+	}
+
+	public static enum FlowStatus {
+
+		WAITING,
+		RUNNING,
+		RUNNING_BUILD,
+		RUNNING_DEPLOY,
+		FAILED,
+		SUCCESS;
+
+		/**
+		 * Converter string to {@link FlowStatus}
+		 *
+		 * @param stauts
+		 * @return
+		 */
+		public static FlowStatus of(String stauts) {
+			FlowStatus wh = safeOf(stauts);
+			if (wh == null) {
+				throw new IllegalArgumentException(String.format("Illegal action '%s'", stauts));
+			}
+			return wh;
+		}
+
+		/**
+		 * Safe converter string to {@link FlowStatus}
+		 *
+		 * @param stauts
+		 * @return
+		 */
+		public static FlowStatus safeOf(String stauts) {
+			for (FlowStatus t : values()) {
+				if (String.valueOf(stauts).equalsIgnoreCase(t.name())) {
+					return t;
+				}
+			}
+			return null;
+		}
+
 	}
 
 }

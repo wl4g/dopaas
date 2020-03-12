@@ -73,9 +73,6 @@ public class TaskController extends BaseController {
 	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
 	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String providerKind,
 			String startDate, String endDate, String envType) {
-		log.info("into TaskController.list prarms::"
-				+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , providerKind = {} , startDate = {} , endDate = {} ",
-				pm, id, taskName, groupName, branchName, providerKind, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
 		PageModel list = taskService.list(pm, id, taskName, groupName, branchName, providerKind, startDate, endDate, envType);
 		resp.setData(list);

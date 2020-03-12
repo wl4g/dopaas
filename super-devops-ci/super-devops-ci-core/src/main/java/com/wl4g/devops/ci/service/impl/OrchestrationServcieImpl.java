@@ -133,7 +133,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 		Assert2.notNullOf(orchestration,"orchestration");
 		orchestration.setStatus(1);
 		orchestrationDao.updateByPrimaryKeySelective(orchestration);
-		flowManager.gateway(orchestration);
+		flowManager.runOrchestration(orchestration);
 
 	}
 

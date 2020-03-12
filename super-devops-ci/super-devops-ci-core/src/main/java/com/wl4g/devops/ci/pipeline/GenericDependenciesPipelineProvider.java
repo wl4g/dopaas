@@ -31,6 +31,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
+import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.RUNNING_BUILD;
+import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.RUNNING_DEPLOY;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_DEPENDENCY_BUILD;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static java.lang.String.format;
@@ -89,9 +91,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		}
 		modules.add(taskHisy.getProjectId().toString());
 		PipelineModel pipelineModel = getContext().getPipelineModel();
-		pipelineModel.setService(appCluster.getName());
-		pipelineModel.setProvider(getContext().getTaskHistory().getProviderKind());
-		pipelineModel.setStatus("RUNNING");
+		pipelineModel.setStatus(RUNNING_BUILD.toString());
 		pipelineModel.setModules(modules);
 		flowManager.pipelineStateChange(pipelineModel);
 
@@ -115,8 +115,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		doMutexBuildModuleInDependencies(taskHisy.getProjectId(),  taskHisy.getBranchName(), taskHisy.getBuildCommand());
 
 		// Build Success
-		pipelineModel.setCurrent("Build Finish");
-		//pipelineModel.setStatus("SUCCESS"); build complete ==? pipeline complete
+		pipelineModel.setCurrent(null);
+		pipelineModel.setStatus(RUNNING_DEPLOY.toString()); //build complete ==? pipeline complete
 		flowManager.pipelineStateChange(pipelineModel);
 
 		// Call after all built dependencies completed handling.

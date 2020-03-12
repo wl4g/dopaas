@@ -16,7 +16,6 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.exception.ci.NotFoundBackupAssetsFileException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
@@ -45,7 +44,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	protected void postBuiltModulesDependencies() throws Exception {
 		// Source code fingerprint.
 		// TODO  应获取可打包的主项目project对象
-		setSourceFingerprint(getVcsOperator(new Project()).getLatestCommitted(getContext().getProjectSourceDir()));
+		setSourceFingerprint(getVcsOperator(getContext().getProject()).getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// Assets file fingerprint.
 		String assetsFilename = config.getAssetsFullFilename(getContext().getTaskHistory().getAssetsPath(),
