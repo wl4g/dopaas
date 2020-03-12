@@ -27,7 +27,7 @@ import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.iam.AlarmContact;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.context.DelegatePrototypeBeanFactory;
+import com.wl4g.devops.common.framework.beans.AliasPrototypeBeanFactory;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.iam.AlarmContactDao;
@@ -80,7 +80,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected CiCdProperties config;
 	@Autowired
-	protected DelegatePrototypeBeanFactory beanFactory;
+	protected AliasPrototypeBeanFactory beanFactory;
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired

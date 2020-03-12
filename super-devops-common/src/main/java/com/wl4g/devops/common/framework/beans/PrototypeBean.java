@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.context;
+package com.wl4g.devops.common.framework.beans;
 
 /**
  * Delegate alias prototype bean, beans that implements this interface will be
- * automatically assembled into {@link DelegatePrototypeBeanFactory}
+ * automatically assembled into {@link AliasPrototypeBeanFactory}
  * 
  * @author Wangl.sir <Wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0.0 2019-10-09
  * @since
  */
-public interface DelegatePrototypeBean {
+public interface PrototypeBean {
 
 }

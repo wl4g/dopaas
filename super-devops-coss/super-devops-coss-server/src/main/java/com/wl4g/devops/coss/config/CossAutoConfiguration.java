@@ -22,6 +22,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
@@ -44,6 +45,7 @@ public class CossAutoConfiguration extends OptionalPrefixControllerAutoConfigura
 	final public static String KEY_PROPERTY_PREFIX = "spring.cloud.devops.coss.native";
 
 	@Bean
+	@Validated
 	@ConditionalOnProperty(name = KEY_PROPERTY_PREFIX + ".enable", matchIfMissing = true)
 	@ConfigurationProperties(prefix = KEY_PROPERTY_PREFIX)
 	public NativeOssProperties nativeOssProperties() {
