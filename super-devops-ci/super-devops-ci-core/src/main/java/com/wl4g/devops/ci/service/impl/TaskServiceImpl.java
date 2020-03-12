@@ -62,10 +62,11 @@ public class TaskServiceImpl implements TaskService {
 	public Task save(Task task) {
 		Assert.notEmpty(task.getInstance(), "instance can not be null");
 		Assert.notNull(task, "task can not be null");
-		Project project = projectDao.selectByPrimaryKey(task.getProjectId());
+		Integer appClusterId = task.getAppClusterId();
+		Assert.notNull(appClusterId, "appClusterId can not be null");
+		Project project = projectDao.getByAppClusterId(appClusterId);
 		Assert.notNull(project, "Not found project , Please check you project config");
-		task.setAppClusterId(project.getAppClusterId());
-		// TODO filter command
+		task.setProjectId(project.getId());
 
 		if (null != task.getId() && task.getId() > 0) {
 			task.preUpdate();
@@ -178,8 +179,8 @@ public class TaskServiceImpl implements TaskService {
 		return task;
 	}
 
-	public List<TaskBuildCommand> getDependency(Integer projectId) {
-		Project project = projectDao.selectByPrimaryKey(projectId);
+	public List<TaskBuildCommand> getDependency(Integer appClusterId) {
+		Project project = projectDao.getByAppClusterId(appClusterId);
 		if (project == null) {
 			return Collections.emptyList();
 		}
