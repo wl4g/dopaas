@@ -86,7 +86,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 		trigger = triggerDao.selectByPrimaryKey(trigger.getId());
 
 		// Set VCS provider.
-		vcsAdapter.forAdapt(project.getVcs());
+		vcsAdapter.forOperator(project.getVcs().getProviderKind());
 		try {
 			if (!checkCommittedChanged()) { // Changed?
 				log.info("Skip timing tasks pipeline, because commit unchanged, with project:{}, task:{}, trigger:{}", project,
@@ -100,7 +100,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-			String latestSha = vcsAdapter.getLatestCommitted(projectDir);
+			String latestSha = vcsAdapter.get().getLatestCommitted(projectDir);
 			hasText(latestSha, String.format("Trigger latest sha can't be empty for %s", projectDir));
 
 			// Update latest sign.
@@ -127,12 +127,12 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	 */
 	private boolean checkCommittedChanged() throws Exception {
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		if (vcsAdapter.hasLocalRepository(projectDir)) {
-			vcsAdapter.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName());
+		if (vcsAdapter.get().hasLocalRepository(projectDir)) {
+			vcsAdapter.get().checkoutAndPull(project.getVcs(), projectDir, task.getBranchName());
 		} else {
-			vcsAdapter.clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
+			vcsAdapter.get().clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
 		}
-		String newSign = vcsAdapter.getLatestCommitted(projectDir);
+		String newSign = vcsAdapter.get().getLatestCommitted(projectDir);
 		return !equalsIgnoreCase(trigger.getSha(), newSign);
 	}
 

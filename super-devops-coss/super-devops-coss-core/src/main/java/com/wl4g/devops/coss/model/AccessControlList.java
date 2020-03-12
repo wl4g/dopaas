@@ -17,4 +17,23 @@ package com.wl4g.devops.coss.model;
 
 public class AccessControlList {
 
+	private ACL acl;
+	private Owner owner;
+
+	public ACL getAcl() {
+		return acl;
+	}
+
+	public void setAcl(ACL acl) {
+		this.acl = acl;
+	}
+
+	public Owner getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Owner owner) {
+		this.owner = owner;
+	}
+
 }

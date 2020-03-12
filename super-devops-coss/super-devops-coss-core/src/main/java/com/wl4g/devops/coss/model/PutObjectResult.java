@@ -17,4 +17,51 @@ package com.wl4g.devops.coss.model;
 
 public class PutObjectResult {
 
+	/**
+	 * Object ETag
+	 */
+	private String eTag;
+
+	/**
+	 * Object Version Id
+	 */
+	private String versionId;
+
+	/**
+	 * Gets the target {@link ObjectValue}'s ETag.
+	 * 
+	 * @return Target OSSObject's ETag.
+	 */
+	public String getETag() {
+		return eTag;
+	}
+
+	/**
+	 * Sets the target {@link ObjectValue}'s ETag.
+	 * 
+	 * @param eTag
+	 *            Target OSSObject's ETag.
+	 */
+	public void setETag(String eTag) {
+		this.eTag = eTag;
+	}
+
+	/**
+	 * Gets version id.
+	 * 
+	 * @return version id.
+	 */
+	public String getVersionId() {
+		return versionId;
+	}
+
+	/**
+	 * Sets version id.
+	 * 
+	 * @param versionId
+	 */
+	public void setVersionId(String versionId) {
+		this.versionId = versionId;
+	}
+
 }

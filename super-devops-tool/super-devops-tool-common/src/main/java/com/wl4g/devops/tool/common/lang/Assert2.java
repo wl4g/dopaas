@@ -27,6 +27,7 @@ import java.util.Objects;
 import static com.wl4g.devops.tool.common.lang.ClassUtils2.*;
 import static com.wl4g.devops.tool.common.lang.StringUtils2.*;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
+import static java.lang.Math.max;
 import static java.lang.Thread.currentThread;
 
 /**
@@ -837,7 +838,7 @@ public abstract class Assert2 {
 
 		// Remove useless stack elements
 		StackTraceElement[] stackEles = th.getStackTrace();
-		List<StackTraceElement> availableStackEles = new ArrayList<>(stackEles.length - 4);
+		List<StackTraceElement> availableStackEles = new ArrayList<>(max(stackEles.length - 4, 4));
 		for (int i = 0, j = 0; i < stackEles.length; i++) {
 			StackTraceElement st = stackEles[i];
 			if (j == 0) {

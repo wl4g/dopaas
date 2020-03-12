@@ -15,6 +15,52 @@
  */
 package com.wl4g.devops.coss.model.bucket;
 
+import static java.util.Objects.isNull;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class BucketMetadata {
+
+	/**
+	 * Bucket name.
+	 */
+	private String bucketName;
+
+	/**
+	 * Bucket region.
+	 */
+	private String bucketRegion;
+
+	/**
+	 * Other extended properties.
+	 */
+	private Map<String, String> attributes = new HashMap<>();
+
+	public String getBucketName() {
+		return bucketName;
+	}
+
+	public void setBucketName(String bucketName) {
+		this.bucketName = bucketName;
+	}
+
+	public String getBucketRegion() {
+		return bucketRegion;
+	}
+
+	public void setBucketRegion(String bucketRegion) {
+		this.bucketRegion = bucketRegion;
+	}
+
+	public Map<String, String> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Map<String, String> attributes) {
+		if (!isNull(attributes)) {
+			this.attributes.putAll(attributes);
+		}
+	}
 
 }
