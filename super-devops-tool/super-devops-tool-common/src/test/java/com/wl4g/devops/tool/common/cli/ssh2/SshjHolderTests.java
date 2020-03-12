@@ -1,11 +1,17 @@
 package com.wl4g.devops.tool.common.cli.ssh2;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.connection.channel.direct.Session;
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
+import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 
-import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
-import com.wl4g.devops.tool.common.cli.ssh2.SshjHolder;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import static com.wl4g.devops.tool.common.io.ByteStreams2.readFullyToString;
+import static java.util.Objects.nonNull;
 
 /**
  * @author vjay
@@ -13,35 +19,74 @@ import com.wl4g.devops.tool.common.cli.ssh2.SshjHolder;
  */
 public class SshjHolderTests {
 
-	public static void main(String[] args) throws Exception {
-		// Test execute command
-		// SshjUtils.SshExecResponse sshExecResponse =
-		// SshjUtils.execWithSsh2("10.0.0.160", "root",
-		// privateKey.toCharArray(), "ls", 60000);
-		// System.out.println("success="+sshExecResponse.getMessage());
-		// System.out.println("fail="+sshExecResponse.getErrmsg());
-		// System.out.println("exitCode="+sshExecResponse.getExitCode());
+	private String home = "$HOME";
 
+	public static void main(String[] args) throws Exception {
+
+		//exec();
+
+		//scp();
+		test2();
+	}
+
+	private static void exec() throws Exception {
+		// Test execute command
+		Ssh2Holders.SshExecResponse sshExecResponse = Ssh2Holders.getInstance(SshjHolder.class).execWithSsh2("10.0.0.160", "root",
+				privateKey.toCharArray(), "mvn -version", 60000);
+		System.out.println("success="+sshExecResponse.getMessage());
+		 System.out.println("fail="+sshExecResponse.getErrmsg());
+		 System.out.println("exitCode="+sshExecResponse.getExitCode());
+	}
+
+	private static void scp() throws Exception {
 		long t1 = System.currentTimeMillis();
 		// Test upload file
-		String loaclFile = "/Users/vjay/Downloads/bigFile.txt";
-		makeFile(loaclFile);
+		String loaclFile = "/Users/vjay/Downloads/sm_equip_duration_record.sql";
 		Ssh2Holders.getInstance(SshjHolder.class).scpPutFile("10.0.0.160", "root", privateKey.toCharArray(), new File(loaclFile),
-				"/root/testssh/devops-0107.sql");
+				"$HOME/testssh/sm_equip_duration_record.sql");
 		long t2 = System.currentTimeMillis();
 		System.out.println(t2 - t1);
 	}
 
-	private static void makeFile(String fileName) throws IOException {
-		if (!new File(fileName).exists()) {
-			try (FileWriter fileWriter = new FileWriter(fileName);) {
-				for (int i = 0; i <= 999999; i++) {
-					fileWriter.write(
-							"1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
-				}
-			}
+	private static void test2() throws IOException, InterruptedException {
+		SSHClient ssh = new SSHClient();
+		ssh.addHostKeyVerifier(new PromiscuousVerifier());
+		ssh.connect("10.0.0.160");
+		KeyProvider keyProvider = ssh.loadKeys(new String(privateKey), null, null);
+		ssh.authPublickey("root", keyProvider);
+		Session session = ssh.startSession();
+		// TODO
+		//session.allocateDefaultPTY();
+		Session.Shell shell = session.startShell();
+		String command = "mvn -version\n";
+
+		OutputStream outputStream = shell.getOutputStream();
+		outputStream.write(command.getBytes());
+		outputStream.flush();
+		outputStream.close();
+
+
+		InputStream inputStream = shell.getInputStream();
+		InputStream errorStream = shell.getErrorStream();
+
+		Thread.sleep(1000);
+		shell.close();
+		if (nonNull(inputStream)) {
+			String message = readFullyToString(inputStream);
+			System.out.println(message);
 		}
+		if (nonNull(errorStream)) {
+			String errmsg = readFullyToString(errorStream);
+			System.out.println(errmsg);
+		}
+
+
+		session.close();
+		ssh.close();
+
+
 	}
+
 
 	private static final String privateKey = "-----BEGIN RSA PRIVATE KEY-----\n"
 			+ "MIIEpQIBAAKCAQEAwawifYZlHNdmkdMmXdi6wslkfvvAVjGo4cBPtrOFonD0Paex\n"

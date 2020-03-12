@@ -51,7 +51,7 @@ public abstract class Ssh2Holders<S, F> {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public final static <T extends Ssh2Holders> T getDefault() {
-		return (T) providerRegistry.get(SshdHolder.class);
+		return (T) providerRegistry.get(SshjHolder.class);
 	}
 
 	/**

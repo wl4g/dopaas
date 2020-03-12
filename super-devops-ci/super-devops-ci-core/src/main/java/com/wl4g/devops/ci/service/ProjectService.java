@@ -39,9 +39,11 @@ public interface ProjectService {
 
 	Project selectByPrimaryKey(Integer id);
 
+	Project getByAppClusterId(Integer appClusteId);
+
 	int updateLockStatus(Integer id, Integer lockStatus);
 
-	List<String> getBranchs(Integer projectId, Integer tarOrBranch);
+	List<String> getBranchs(Integer appClusterId, Integer tarOrBranch);
 
 	List<CompositeBasicVcsProjectModel> vcsProjects(Integer vcsId, String projectName);
 

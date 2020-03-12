@@ -157,6 +157,11 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
+	public Project getByAppClusterId(Integer appClusteId) {
+		return projectDao.getByAppClusterId(appClusteId);
+	}
+
+	@Override
 	public int updateLockStatus(Integer id, Integer lockStatus) {
 		Project project = new Project();
 		project.setId(id);
@@ -165,10 +170,10 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<String> getBranchs(Integer projectId, Integer tarOrBranch) {
-		Assert.notNull(projectId, "id can not be null");
+	public List<String> getBranchs(Integer appClusterId, Integer tarOrBranch) {
+		Assert.notNull(appClusterId, "id can not be null");
 
-		Project project = projectDao.selectByPrimaryKey(projectId);
+		Project project = projectDao.getByAppClusterId(appClusterId);
 		Assert.notNull(project, "not found project ,please check you project config");
 		String url = project.getHttpUrl();
 

@@ -44,9 +44,9 @@ public class Project extends BaseBean implements Serializable {
 	private Integer appClusterId;
 
 	/** 构建的文件/目录路径（maven项目的target目录，vue项目的dist目录） */
-	private String assetsPath;
+	//private String assetsPath;
 
-	private String parentAppHome;
+	//private String parentAppHome;
 
 	private String groupName;
 
@@ -78,28 +78,12 @@ public class Project extends BaseBean implements Serializable {
 		this.appClusterId = appClusterId;
 	}
 
-	public String getAssetsPath() {
-		return assetsPath;
-	}
-
-	public void setAssetsPath(String tarPath) {
-		this.assetsPath = tarPath;
-	}
-
 	public String getHttpUrl() {
 		return httpUrl;
 	}
 
 	public void setHttpUrl(String httpUrl) {
 		this.httpUrl = httpUrl;
-	}
-
-	public String getParentAppHome() {
-		return parentAppHome;
-	}
-
-	public void setParentAppHome(String parentAppHome) {
-		this.parentAppHome = parentAppHome;
 	}
 
 	public String getGroupName() {
@@ -162,9 +146,17 @@ public class Project extends BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Project [projectName=" + projectName + ", httpUrl=" + httpUrl + ", appClusterId=" + appClusterId + ", tarPath="
-				+ assetsPath + ", parentAppHome=" + parentAppHome + ", groupName=" + groupName + ", lockStatus=" + lockStatus
-				+ ", dependencies=" + dependencies + "]";
+		return "Project{" +
+				"projectName='" + projectName + '\'' +
+				", vcsId=" + vcsId +
+				", httpUrl='" + httpUrl + '\'' +
+				", sshUrl='" + sshUrl + '\'' +
+				", appClusterId=" + appClusterId +
+				", groupName='" + groupName + '\'' +
+				", lockStatus=" + lockStatus +
+				", isBoot=" + isBoot +
+				", dependencies=" + dependencies +
+				", vcs=" + vcs +
+				'}';
 	}
-
 }
