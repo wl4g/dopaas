@@ -20,7 +20,6 @@ import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.config.XssProperties;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -46,7 +45,6 @@ import static org.springframework.util.ReflectionUtils.makeAccessible;
  * @version v1.0 2019年2月28日
  * @since
  */
-@Aspect
 public class XssSecurityResolveInterceptor implements MethodInterceptor {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 

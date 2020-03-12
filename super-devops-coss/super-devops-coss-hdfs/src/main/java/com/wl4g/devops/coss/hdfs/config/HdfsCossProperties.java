@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.coss.hdfs.config;
 
+import org.springframework.validation.annotation.Validated;
+
+@Validated
 public class HdfsCossProperties {
 
 }

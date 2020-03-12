@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.common.context.DelegatePrototypeBean;
+import com.wl4g.devops.common.framework.beans.PrototypeBean;
 import com.wl4g.devops.tool.common.annotation.StableApi;
 
 /**
@@ -27,7 +27,7 @@ import com.wl4g.devops.tool.common.annotation.StableApi;
  * @date 2019-05-05 17:17:00
  */
 @StableApi
-public interface PipelineProvider extends DelegatePrototypeBean {
+public interface PipelineProvider extends PrototypeBean {
 
 	/**
 	 * Execution pipeline with provider process.
