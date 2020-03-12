@@ -60,11 +60,11 @@ public class SshdHolderTests {
 
 		long t1 = System.currentTimeMillis();
 		// Test upload file
-		String loaclFile = "/Users/vjay/Downloads/safecloud-0203.sql";
+		String loaclFile = "/Users/vjay/Downloads/elasticsearch-7.6.0-linux-x86_64.tar";
 		Ssh2Holders.getInstance(SshdHolder.class).scpPutFile("10.0.0.160", "root", privateKey.toCharArray(), new File(loaclFile),
-				"/root/testssh/safecloud-0203.sql");
+				"$HOME/testssh/elasticsearch-7.6.0-linux-x86_64.tar");
 		long t2 = System.currentTimeMillis();
-		System.out.println(t2 - t1);
+		System.out.println("cost:"+(t2 - t1));//80801ms 150<cpu<200
 	}
 
 }

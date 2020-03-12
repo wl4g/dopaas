@@ -25,8 +25,8 @@ public class SshjHolderTests {
 
 		//exec();
 
-		//scp();
-		test2();
+		scp(); //68869ms cpu <30
+		//test2();
 	}
 
 	private static void exec() throws Exception {
@@ -41,9 +41,9 @@ public class SshjHolderTests {
 	private static void scp() throws Exception {
 		long t1 = System.currentTimeMillis();
 		// Test upload file
-		String loaclFile = "/Users/vjay/Downloads/sm_equip_duration_record.sql";
+		String loaclFile = "/Users/vjay/Downloads/elasticsearch-7.6.0-linux-x86_64.tar";
 		Ssh2Holders.getInstance(SshjHolder.class).scpPutFile("10.0.0.160", "root", privateKey.toCharArray(), new File(loaclFile),
-				"$HOME/testssh/sm_equip_duration_record.sql");
+				"$HOME/testssh/elasticsearch-7.6.0-linux-x86_64.tar");
 		long t2 = System.currentTimeMillis();
 		System.out.println(t2 - t1);
 	}
