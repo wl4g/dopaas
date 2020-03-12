@@ -20,7 +20,6 @@ import com.wl4g.devops.ci.core.DefaultPipelineManager;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.flow.FlowManager;
-import com.wl4g.devops.ci.pcm.CompositePcmOperatorAdapter;
 import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
 import com.wl4g.devops.ci.pcm.jira.JiraPcmOperator;
