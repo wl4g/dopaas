@@ -36,8 +36,8 @@ import com.wl4g.devops.dao.iam.AlarmContactDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.support.notification.MessageNotifier;
-import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.dingtalk.DingtalkMessage;
 import com.wl4g.devops.support.notification.facebook.FacebookMessage;
 import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
@@ -54,6 +54,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.FAILED;
+import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.RUNNING;
+import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.SUCCESS;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.*;
@@ -267,6 +270,13 @@ public class DefaultPipelineManager implements PipelineManager {
 		taskHistoryService.updateStatus(taskId, TASK_STATUS_RUNNING);
 		log.info("Updated pipeline job status to {} for {}", TASK_STATUS_RUNNING, taskId);
 
+		// Setup Flow status to running.
+		PipelineModel pipelineModel = provider.getContext().getPipelineModel();
+		pipelineModel.setService(provider.getContext().getAppCluster().getName());
+		pipelineModel.setProvider(provider.getContext().getTaskHistory().getProviderKind());
+		pipelineModel.setStatus(RUNNING.toString());
+		flowManager.pipelineStateChange(pipelineModel);
+
 		// Starting pipeline job.
 		jobExecutor.getWorker().execute(() -> {
 			long startTime = currentTimeMillis();
@@ -280,6 +290,10 @@ public class DefaultPipelineManager implements PipelineManager {
 				log.info("Pipeline execute completed of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
 
 				postPipelineRunSuccess(taskId, provider);
+
+				//flow status
+				pipelineModel.setStatus(SUCCESS.toString());
+				flowManager.pipelineStateChange(pipelineModel);
 			} catch (Throwable e) {
 				log.error(format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
@@ -292,6 +306,10 @@ public class DefaultPipelineManager implements PipelineManager {
 				// Failed process.
 				log.info("Post pipeline executeing of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
 				postPipelineRunFailure(taskId, provider, e);
+
+				//flow status
+				pipelineModel.setStatus(FAILED.toString());
+				flowManager.pipelineStateChange(pipelineModel);
 			} finally {
 				// Log file end EOF.
 				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
