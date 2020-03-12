@@ -24,18 +24,23 @@ import java.io.InputStream;
  */
 public class ObjectValue implements Closeable {
 
-	// Object key (name)
+	/**
+	 * Object key (name)
+	 */
 	private String key;
 
-	// Object's bucket name
+	/**
+	 * Object's bucket name
+	 */
 	private String bucketName;
 
-	// Object's metadata.
-	private ObjectMetadata metadata = new ObjectMetadata() {
-	};
+	/**
+	 * Object's metadata.
+	 */
+	private ObjectMetadata metadata = new ObjectMetadata();
 
 	/** Object's content */
-	private InputStream objectContent;
+	private transient InputStream objectContent;
 
 	/**
 	 * Gets the object's metadata

@@ -27,9 +27,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.NotifyMessage;
+import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.apns.ApnsMessageNotifier;
 import com.wl4g.devops.support.notification.apns.ApnsNotifyProperties;
 import com.wl4g.devops.support.notification.bark.BarkMessageNotifier;
@@ -220,12 +221,15 @@ public class NotificationAutoConfiguration {
 	 */
 	@SuppressWarnings("unchecked")
 	@Bean
-	public CompositeMessageNotifier compositeMessageNotifier(
+	public GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> compositeMessageNotifier(
 			@Autowired(required = false) List<MessageNotifier<? extends NotifyMessage>> notifiers) {
 		if (isNull(notifiers)) {
-			return new CompositeMessageNotifier();
+			return new GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>>() {
+			};
 		}
-		return new CompositeMessageNotifier(notifiers.stream().map(n -> ((MessageNotifier<NotifyMessage>) n)).collect(toList()));
+		return new GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>>(
+				notifiers.stream().map(n -> ((MessageNotifier<NotifyMessage>) n)).collect(toList())) {
+		};
 	}
 
 }

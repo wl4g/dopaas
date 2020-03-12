@@ -15,18 +15,26 @@
  */
 package com.wl4g.devops.coss;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.notNull;
+
 import java.io.InputStream;
 
+import com.wl4g.devops.common.framework.operator.Operator;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.AccessControlList;
 import com.wl4g.devops.coss.model.ObjectAcl;
 import com.wl4g.devops.coss.model.ObjectListing;
 import com.wl4g.devops.coss.model.ObjectMetadata;
+import com.wl4g.devops.coss.model.ObjectSummary;
+import com.wl4g.devops.coss.model.ObjectSymlink;
 import com.wl4g.devops.coss.model.ObjectValue;
 import com.wl4g.devops.coss.model.PutObjectResult;
 import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+import com.wl4g.devops.coss.CossEndpoint.CossProvider;
 
 /**
  * Composite object storage server file system API.
@@ -35,15 +43,12 @@ import com.wl4g.devops.coss.model.bucket.BucketMetadata;
  * @version v1.0 2020年2月28日
  * @since
  */
-public interface CossEndpoint {
+public interface CossEndpoint extends Operator<CossProvider> {
 
 	// --- Bucket's function ---
 
 	/**
-	 * Creates {@link Bucket} instance. The bucket name specified must be
-	 * globally unique and follow the naming rules from
-	 * https://www.alibabacloud.com/help/doc-detail/31827.htm?spm=a3c0i.o32012en
-	 * .a3.1.64ece5e0jPpa2t.
+	 * Creates {@link Bucket} instance.
 	 * 
 	 * @param bucketName
 	 *            bucket name
@@ -69,7 +74,7 @@ public interface CossEndpoint {
 	 *            default is 100 if it's null.
 	 * @return The list of {@link Bucket} instances.
 	 */
-	BucketList listBuckets(String prefix, String marker, Integer maxKeys);
+	<T extends Bucket> BucketList<T> listBuckets(String prefix, String marker, Integer maxKeys);
 
 	/**
 	 * Deletes the {@link Bucket} instance. A non-empty bucket could not be
@@ -120,7 +125,7 @@ public interface CossEndpoint {
 	 *            Bucket name
 	 * @return {@link ObjectListing} instance that has all objects.
 	 */
-	ObjectListing listObjects(String bucketName);
+	<T extends ObjectSummary> ObjectListing<T> listObjects(String bucketName);
 
 	/**
 	 * Lists all objects under the specified {@link Bucket} with the specified
@@ -134,7 +139,7 @@ public interface CossEndpoint {
 	 * @throws OSSException
 	 * @throws ClientException
 	 */
-	ObjectListing listObjects(String bucketName, String prefix);
+	<T extends ObjectSummary> ObjectListing<T> listObjects(String bucketName, String prefix);
 
 	/**
 	 * Gets a {@link ObjectValue} from {@link Bucket}.
@@ -226,5 +231,95 @@ public interface CossEndpoint {
 	 * @return True if exists; false if not.
 	 */
 	boolean doesObjectExist(String bucketName, String key);
+
+	/**
+	 * Creates a symlink link to a target file under the bucket---this is not
+	 * supported for archive class bucket.
+	 * 
+	 * @param bucketName
+	 *            Bucket name.
+	 * @param symlink
+	 *            symlink name.
+	 * @param target
+	 *            target file key.
+	 */
+	void createSymlink(String bucketName, String symlink, String target);
+
+	/**
+	 * Gets the symlink information for the given symlink name.
+	 * 
+	 * @param bucketName
+	 *            Bucket name.
+	 * @param symlink
+	 *            The symlink name.
+	 * @return The symlink information, including the target file name and its
+	 *         metadata.
+	 */
+	ObjectSymlink getSymlink(String bucketName, String symlink);
+
+	/**
+	 * VCS type definitions.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2019年11月5日
+	 * @since
+	 */
+	public static enum CossProvider {
+
+		/** COSS provider for aliyun oss. */
+		AliyunOss("aliyunoss"),
+
+		/** COSS provider for aws s3. */
+		AwsS3("awss3"),
+
+		/** COSS provider for hdfs. */
+		Hdfs("hdfs"),
+
+		/** COSS provider for glusterfs. */
+		GlusterFs("glusterfs"),
+
+		/** COSS provider for native fs. */
+		NativeFs("nativefs");
+
+		final private String value;
+
+		private CossProvider(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		/**
+		 * Safe converter string to {@link CossProvider}
+		 * 
+		 * @param cossProvider
+		 * @return
+		 */
+		final public static CossProvider safeOf(String cossProvider) {
+			if (isBlank(cossProvider))
+				return null;
+
+			for (CossProvider t : values())
+				if (t.getValue().equalsIgnoreCase(cossProvider) || t.name().equalsIgnoreCase(cossProvider))
+					return t;
+
+			return null;
+		}
+
+		/**
+		 * Converter string to {@link CossProvider}
+		 * 
+		 * @param cossProvider
+		 * @return
+		 */
+		final public static CossProvider of(String cossProvider) {
+			CossProvider type = safeOf(cossProvider);
+			notNull(type, format("Unsupported COSS provider for %s", cossProvider));
+			return type;
+		}
+
+	}
 
 }

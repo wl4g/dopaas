@@ -22,8 +22,11 @@ import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.notification.CompositeMessageNotifier;
+import com.wl4g.devops.support.notification.MessageNotifier;
+import com.wl4g.devops.support.notification.NotifyMessage;
+import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.dingtalk.DingtalkMessage;
 import com.wl4g.devops.support.notification.dingtalk.DingtalkMessageNotifier;
 import com.wl4g.devops.support.notification.facebook.FacebookMessage;
@@ -54,6 +57,7 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.Math.abs;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -78,20 +82,20 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	final protected CompositeRuleInspectorAdapter inspector;
 
 	/** Alarm notifier */
-	final protected CompositeMessageNotifier notifier;
+	final protected GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter;
 
 	public DefaultIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager, AlarmProperties config,
 			AlarmConfigurer configurer, RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector,
-			CompositeMessageNotifier notifier) {
+			GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter) {
 		super(jedisService, lockManager, config);
 		Assert.notNull(configurer, "AlarmConfigurer is null, please check config.");
 		Assert.notNull(ruleManager, "RuleManager is null, please check config.");
 		Assert.notNull(inspector, "RuleInspector is null, please check config.");
-		Assert.notNull(notifier, "AlarmNotifier is null, please check config.");
+		Assert.notNull(notifierAdapter, "AlarmNotifierAdapter is null, please check config.");
 		this.configurer = configurer;
 		this.ruleManager = ruleManager;
 		this.inspector = inspector;
-		this.notifier = notifier;
+		this.notifierAdapter = notifierAdapter;
 	}
 
 	@Override
@@ -361,21 +365,17 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 				SimpleMailMessage msg = new SimpleMailMessage();
 				msg.setText(alarmRecord.getAlarmNote());
 				msg.setTo(alarmContact.getEmail());
-				notifier.forAdapt(MailMessageNotifier.class).send(new MailMessageWrapper(msg));
+				notifierAdapter.forOperator(MailMessageNotifier.class).get().send(new MailMessageWrapper(msg));
 			}
 
 			// phone
 			if (alarmContact.getPhoneEnable() == 1
 					&& checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(), alarmContact.getPhoneNumOfFreq())) {
-				AliyunSmsMessage sms = new AliyunSmsMessage();
 				// TODO
-				sms.setTemplateKey("default");
+				AliyunSmsMessage sms = new AliyunSmsMessage("default", asList(new String[] { alarmContact.getPhone() }));
 				sms.addParameter("note", alarmRecord.getAlarmNote());
 				sms.addNumbers(alarmContact.getPhone());
-				notifier.forAdapt(AliyunSmsMessageNotifier.class).send(sms);
-				// notifier.simpleNotify(new
-				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-				// AlarmType.SMS.getValue(), alarmContact.getPhone()));
+				notifierAdapter.forOperator(AliyunSmsMessageNotifier.class).get().send(sms);
 				handleRateLimit(ALARM_LIMIT_PHONE + alarmContact.getPhone(), alarmContact.getPhoneTimeOfFreq());
 			}
 
@@ -384,7 +384,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 					&& checkNotifyLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkNumOfFreq())) {
 				DingtalkMessage dingtalkMessage = new DingtalkMessage();
 				// TODO set dingtalkMessage
-				notifier.forAdapt(DingtalkMessageNotifier.class).send(dingtalkMessage);
+				notifierAdapter.forOperator(DingtalkMessageNotifier.class).get().send(dingtalkMessage);
 				// notifier.simpleNotify(new
 				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
 				// AlarmType.DINGTALK.getValue(), alarmContact.getDingtalk()));
@@ -396,7 +396,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 					&& checkNotifyLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookNumOfFreq())) {
 				FacebookMessage facebookMessage = new FacebookMessage();
 				// TODO set facebookMessage
-				notifier.forAdapt(FacebookMessageNotifier.class).send(facebookMessage);
+				notifierAdapter.forOperator(FacebookMessageNotifier.class).get().send(facebookMessage);
 				// notifier.simpleNotify(new
 				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
 				// AlarmType.FACEBOOK.getValue(), alarmContact.getFacebook()));
@@ -408,7 +408,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 					&& checkNotifyLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterNumOfFreq())) {
 				TwitterMessage twitterMessage = new TwitterMessage();
 				// TODO set twitterMessage
-				notifier.forAdapt(TwitterMessageNotifier.class).send(twitterMessage);
+				notifierAdapter.forOperator(TwitterMessageNotifier.class).get().send(twitterMessage);
 				// notifier.simpleNotify(new
 				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
 				// AlarmType.TWITTER.getValue(), alarmContact.getTwitter()));
@@ -420,7 +420,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 					&& checkNotifyLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatNumOfFreq())) {
 				WechatMessage wechatMessage = new WechatMessage();
 				// TODO set wechatMessage
-				notifier.forAdapt(WechatMessageNotifier.class).send(wechatMessage);
+				notifierAdapter.forOperator(WechatMessageNotifier.class).get().send(wechatMessage);
 				// notifier.simpleNotify(new
 				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
 				// AlarmType.WECHAT.getValue(), alarmContact.getWechat()));

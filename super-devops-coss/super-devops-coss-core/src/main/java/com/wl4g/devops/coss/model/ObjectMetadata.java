@@ -1,6 +1,7 @@
 package com.wl4g.devops.coss.model;
 
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static java.util.Objects.isNull;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -12,16 +13,93 @@ import java.util.TreeMap;
  * @version v1.0 2020年3月2日
  * @since
  */
-public abstract class ObjectMetadata implements Comparable<ObjectMetadata> {
+public class ObjectMetadata implements Comparable<ObjectMetadata> {
 
 	private ObjectKey path;
+
+	/**
+	 * <p>
+	 * Gets the Content-Length HTTP header indicating the size of the associated
+	 * object in bytes.
+	 * </p>
+	 */
 	private long contentLength;
+
+	/**
+	 * <p>
+	 * Gets the Content-Type HTTP header, which indicates the type of content
+	 * stored in the associated object. The value of this header is a standard
+	 * MIME type.
+	 * </p>
+	 */
 	private String contentType;
-	private long mtime; // Last modified time
-	private long atime; // Last access time
-	private long etime; // Expiration time
-	private ACL acl; // Access control List
-	private Map<String, Object> metadata = new TreeMap<>();
+
+	/**
+	 * <p>
+	 * Sets the base64 encoded 128-bit MD5 digest of the associated object
+	 * (content - not including headers) according to RFC 1864. This data is
+	 * used as a message integrity check to verify that the data received by
+	 * Amazon S3 is the same data that the caller sent. If set to null,then the
+	 * MD5 digest is removed from the metadata.
+	 * </p>
+	 */
+	private String contentMd5;
+
+	/**
+	 * The Content-Encoding header which is to encode the object content.
+	 */
+	private String contentEncoding;
+
+	/**
+	 * The Cache-Control header. This is the standard http header.
+	 */
+	private String cacheControl;
+
+	/**
+	 * <p>
+	 * Sets the optional Content-Disposition HTTP header, which specifies
+	 * presentational information such as the recommended filename for the
+	 * object to be saved as.
+	 * </p>
+	 */
+	private String contentDisposition;
+
+	/**
+	 * The ETag of the object. ETag is the 128bit MD5 signature in Hex.
+	 */
+	private String etag;
+
+	/**
+	 * The version ID of the associated OSS object if available. Version IDs are
+	 * only assigned to objects when an object is uploaded to an OSS bucket that
+	 * has object versioning enabled.
+	 */
+	private String versionId;
+
+	/**
+	 * Last modified time
+	 */
+	private Long mtime;
+
+	/**
+	 * Last access time
+	 */
+	private Long atime;
+
+	/**
+	 * Expiration time
+	 */
+	private Long etime;
+
+	/**
+	 * Access control List
+	 */
+	private ACL acl;
+
+	/**
+	 * The user's custom metadata, whose prefix in http header is x-oss-meta-.
+	 */
+	private Map<String, String> userMetadata = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
 	public ObjectKey getPath() {
 		return path;
@@ -47,27 +125,75 @@ public abstract class ObjectMetadata implements Comparable<ObjectMetadata> {
 		this.contentType = contentType;
 	}
 
-	public long getMtime() {
+	public String getContentMd5() {
+		return contentMd5;
+	}
+
+	public void setContentMd5(String contentMd5) {
+		this.contentMd5 = contentMd5;
+	}
+
+	public String getContentEncoding() {
+		return contentEncoding;
+	}
+
+	public void setContentEncoding(String contentEncoding) {
+		this.contentEncoding = contentEncoding;
+	}
+
+	public String getCacheControl() {
+		return cacheControl;
+	}
+
+	public void setCacheControl(String cacheControl) {
+		this.cacheControl = cacheControl;
+	}
+
+	public String getContentDisposition() {
+		return contentDisposition;
+	}
+
+	public void setContentDisposition(String contentDisposition) {
+		this.contentDisposition = contentDisposition;
+	}
+
+	public String getEtag() {
+		return etag;
+	}
+
+	public void setEtag(String etag) {
+		this.etag = etag;
+	}
+
+	public String getVersionId() {
+		return versionId;
+	}
+
+	public void setVersionId(String versionId) {
+		this.versionId = versionId;
+	}
+
+	public Long getMtime() {
 		return mtime;
 	}
 
-	public void setMtime(long mtime) {
+	public void setMtime(Long mtime) {
 		this.mtime = mtime;
 	}
 
-	public long getAtime() {
+	public Long getAtime() {
 		return atime;
 	}
 
-	public void setAtime(long atime) {
+	public void setAtime(Long atime) {
 		this.atime = atime;
 	}
 
-	public long getEtime() {
+	public Long getEtime() {
 		return etime;
 	}
 
-	public void setEtime(long etime) {
+	public void setEtime(Long etime) {
 		this.etime = etime;
 	}
 
@@ -79,14 +205,13 @@ public abstract class ObjectMetadata implements Comparable<ObjectMetadata> {
 		this.acl = acl;
 	}
 
-	public Map<String, Object> getMetadata() {
-		return metadata;
+	public Map<String, String> getUserMetadata() {
+		return userMetadata;
 	}
 
-	public void setMetadata(Map<String, Object> metadata) {
-		this.metadata.clear();
-		if (metadata != null && !metadata.isEmpty()) {
-			this.metadata.putAll(metadata);
+	public void setUserMetadata(Map<String, String> userMetadata) {
+		if (!isNull(userMetadata)) {
+			this.userMetadata.putAll(userMetadata);
 		}
 	}
 
