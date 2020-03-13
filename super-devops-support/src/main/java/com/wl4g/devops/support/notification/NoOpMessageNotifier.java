@@ -24,6 +24,12 @@ package com.wl4g.devops.support.notification;
  */
 public class NoOpMessageNotifier extends AbstractMessageNotifier<NotifyProperties, NotifyMessage> {
 
+	final public static MessageNotifier<NotifyMessage> DEFAULT = new NoOpMessageNotifier(new NotifyProperties() {
+		@Override
+		public void validate() {
+		}
+	});
+
 	public NoOpMessageNotifier(NotifyProperties config) {
 		super(config);
 	}

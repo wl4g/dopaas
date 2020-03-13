@@ -165,7 +165,9 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 *            {@link InputStream} instance to write from. The must be
 	 *            readable.
 	 */
-	PutObjectResult putObject(String bucketName, String key, InputStream input);
+	default PutObjectResult putObject(String bucketName, String key, InputStream input) {
+		return putObject(bucketName, key, input, null);
+	}
 
 	/**
 	 * Uploads the file to the {@link Bucket} from the @{link InputStream} with
@@ -213,11 +215,11 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 *            Bucket name.
 	 * @param key
 	 *            Object Key.
-	 * @param cannedAcl
+	 * @param acl
 	 *            One of the three values: Private, PublicRead or
 	 *            PublicReadWrite.
 	 */
-	void setObjectAcl(String bucketName, String key, ACL cannedAcl);
+	void setObjectAcl(String bucketName, String key, ACL acl);
 
 	/**
 	 * Checks if a specific {@link ObjectValue} exists under the specific

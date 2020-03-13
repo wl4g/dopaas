@@ -51,6 +51,7 @@ import com.wl4g.devops.support.notification.vms.AliyunVmsMessageNotifier;
 import com.wl4g.devops.support.notification.vms.VmsNotifyProperties;
 import com.wl4g.devops.support.notification.wechat.WechatMessageNotifier;
 import com.wl4g.devops.support.notification.wechat.WechatNotifyProperties;
+import static com.wl4g.devops.support.notification.NoOpMessageNotifier.*;
 
 /**
  * Notification message service auto configuration
@@ -223,12 +224,12 @@ public class NotificationAutoConfiguration {
 	@Bean
 	public GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> compositeMessageNotifier(
 			@Autowired(required = false) List<MessageNotifier<? extends NotifyMessage>> notifiers) {
-		if (isNull(notifiers)) {
-			return new GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>>() {
+		if (isNull(notifiers))
+			return new GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>>(DEFAULT) {
 			};
-		}
+
 		return new GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>>(
-				notifiers.stream().map(n -> ((MessageNotifier<NotifyMessage>) n)).collect(toList())) {
+				notifiers.stream().map(n -> ((MessageNotifier<NotifyMessage>) n)).collect(toList()), DEFAULT) {
 		};
 	}
 

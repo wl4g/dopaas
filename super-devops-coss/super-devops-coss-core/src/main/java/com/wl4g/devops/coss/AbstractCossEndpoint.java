@@ -20,6 +20,10 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import org.slf4j.Logger;
 
+import com.wl4g.devops.coss.model.Owner;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
+
 /**
  * Abstract composite object storage server file system API.
  * 
@@ -39,6 +43,23 @@ public abstract class AbstractCossEndpoint<C> implements CossEndpoint {
 	public AbstractCossEndpoint(C config) {
 		notNullOf(config, "cossProperties");
 		this.config = config;
+	}
+
+	/**
+	 * Gets current session user owner. If the Iam service is activated, get the
+	 * current login user of Iam.
+	 * 
+	 * @return
+	 */
+	protected Owner getCurrentOwner() {
+		try {
+			IamPrincipalInfo info = IamSecurityHolder.getPrincipalInfo();
+			return new Owner(info.getPrincipalId(), info.getPrincipal());
+		} catch (Exception e) {
+			log.warn("Unable gets IamPrincipal, cause by: {}", e.getMessage());
+		}
+		// TODO
+		return new Owner(null, null);
 	}
 
 }
