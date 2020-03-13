@@ -19,6 +19,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import org.slf4j.Logger;
+import org.springframework.beans.factory.InitializingBean;
 
 import com.wl4g.devops.coss.model.Owner;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
@@ -31,7 +32,7 @@ import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
  * @version v1.0 2020年2月28日
  * @since
  */
-public abstract class AbstractCossEndpoint<C> implements CossEndpoint {
+public abstract class AbstractCossEndpoint<C> implements CossEndpoint, InitializingBean {
 
 	final protected Logger log = getLogger(getClass());
 
@@ -60,6 +61,10 @@ public abstract class AbstractCossEndpoint<C> implements CossEndpoint {
 		}
 		// TODO
 		return new Owner(null, null);
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
 	}
 
 }

@@ -38,6 +38,10 @@ spring:
           endpoint: oss-cn-shenzhen.aliyuncs.com
           accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
           accessKeySecret: ${aliyun.secret}
+        hdfs:
+          enable: true
+          endpoint-hdfs-root-uri: hdfs://owner-node3:8020/coss-bucket
+          user: root
 
   # Datasource configuration.
   datasource:

@@ -13,30 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.coss;
+package com.wl4g.devops.coss.natives;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.devops.CossServer;
-import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
-import com.wl4g.devops.coss.CossEndpoint.CossProvider;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CossServer.class, properties = {})
-public class CompositeCossEndpointTests {
-
-	@Autowired
-	private GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter;
-
-	@Test
-	public void compositeEndpointTest1() {
-		System.out.println("Starting...");
-		endpointAdapter.forOperator(CossProvider.AliyunOss).get().getBucketAcl("sm-clound");
-		System.out.println("End.");
-	}
+public class NativeCossEndpointTests {
 
 }

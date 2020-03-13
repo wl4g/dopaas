@@ -55,11 +55,6 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 			new HashMap<>());
 
 	/**
-	 * Real delegate {@link O}
-	 */
-	final private ThreadLocal<O> delegate = new InheritableThreadLocal<>();
-
-	/**
 	 * Kind type class of operator provider.
 	 */
 	final private Class<? extends Enum<?>> kindClass;
@@ -128,11 +123,10 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 * @return
 	 * @throws NoSuchOperatorException
 	 */
-	public <T> GenericOperatorAdapter<K, O> forOperator(@NotNull Class<T> operatorClass) throws NoSuchOperatorException {
+	public <T> O forOperator(@NotNull Class<T> operatorClass) throws NoSuchOperatorException {
 		O operator = ensureOperator(operatorClassRegistry.get(operatorClass),
 				format("No such operator instance of class: '%s'", operatorClass));
-		delegate.set(operator);
-		return this;
+		return operator;
 	}
 
 	/**
@@ -141,7 +135,7 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 * @param vcs
 	 * @return
 	 */
-	public GenericOperatorAdapter<K, O> forOperator(@NotNull K k) throws NoSuchOperatorException {
+	public O forOperator(@NotNull K k) throws NoSuchOperatorException {
 		return forOperator(k.name());
 	}
 
@@ -152,25 +146,10 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	 * @return
 	 * @throws NoSuchOperatorException
 	 */
-	public GenericOperatorAdapter<K, O> forOperator(@NotNull String kindName) throws NoSuchOperatorException {
+	public O forOperator(@NotNull String kindName) throws NoSuchOperatorException {
 		K kind = parseKind(kindName);
 		O operator = ensureOperator(operatorAliasRegistry.get(kind),
 				format("No such operator bean instance for kind name: '%s'", kind));
-		delegate.set(operator);
-		return this;
-	}
-
-	/**
-	 * Gets adapted instance object of {@link O}.
-	 * 
-	 * @return
-	 * @throws NoSuchOperatorException
-	 */
-	public O get() throws NoSuchOperatorException {
-		O operator = delegate.get();
-		notNull(operator, NoSuchOperatorException.class,
-				"No such to the specific operator(kind class: %s). Please configure the operator instance before calling the specific function method",
-				kindClass);
 		return operator;
 	}
 

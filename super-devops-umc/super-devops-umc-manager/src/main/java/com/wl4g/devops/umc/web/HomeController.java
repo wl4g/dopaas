@@ -79,7 +79,7 @@ public class HomeController extends BaseController {
 		msg.setTo("1154635107@qq.com");
 		msg.setText("test");
 		msg.setSentDate(new Date());
-		notifier.forOperator(MailMessageNotifier.class).get().send(new MailMessageWrapper(msg));
+		notifier.forOperator(MailMessageNotifier.class).send(new MailMessageWrapper(msg));
 		System.out.println("ok..");
 		return "ok";
 	}
