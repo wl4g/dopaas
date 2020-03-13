@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.context;
+package com.wl4g.devops.common.framework.beans;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 /**
  * Configure aliases for prototype beans to obtain prototype beans at
- * {@link DelegatePrototypeBeanFactory}
+ * {@link AliasPrototypeBeanFactory}
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-10-09
@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface DelegateAlias {
+public @interface PrototypeAlias {
 
 	String[] value();
 

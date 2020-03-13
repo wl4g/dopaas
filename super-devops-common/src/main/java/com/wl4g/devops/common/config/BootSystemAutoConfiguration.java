@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.common.config;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
+import static java.lang.reflect.Modifier.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +27,12 @@ import org.apache.coyote.ProtocolHandler;
 import org.apache.tomcat.util.threads.TaskQueue;
 import org.apache.tomcat.util.threads.TaskThreadFactory;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
+import org.springframework.aop.ClassFilter;
+import org.springframework.aop.MethodMatcher;
+import org.springframework.aop.Pointcut;
+import org.springframework.aop.PointcutAdvisor;
+import org.springframework.aop.support.AbstractGenericPointcutAdvisor;
+import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
@@ -32,12 +40,17 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomi
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.EnvironmentAware;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 
+import com.wl4g.devops.common.framework.operator.AroundAutoHandleOperatorInterceptor;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.common.framework.operator.EmptyOperator;
+import com.wl4g.devops.common.framework.operator.Operator;
 import com.wl4g.devops.common.logging.TraceLoggingMDCFilter;
 import com.wl4g.devops.common.web.RespBase.ErrorPromptMessageBuilder;
 import com.wl4g.devops.tool.common.log.SmartLogger;
@@ -50,18 +63,26 @@ import com.wl4g.devops.tool.common.log.SmartLogger;
  * @since
  */
 @Configuration
-public class BootSystemAutoConfiguration implements EnvironmentAware {
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+public class BootSystemAutoConfiguration implements ApplicationContextAware {
+
+	final private static SmartLogger log = getLogger(BootSystemAutoConfiguration.class);
 
 	/**
 	 * API prompt max length.
 	 */
 	final private static int PROMPT_MAX_LEN = 4;
 
-	final protected SmartLogger log = getLogger(getClass());
+	/**
+	 * {@link ApplicationContext}
+	 */
+	protected ApplicationContext actx;
 
 	@Override
-	public void setEnvironment(Environment environment) {
-		initBootProperties(environment);
+	public void setApplicationContext(ApplicationContext actx) throws BeansException {
+		notNullOf(actx, "applicationContext");
+		this.actx = actx;
+		initBootProperties(actx.getEnvironment());
 	}
 
 	/**
@@ -159,5 +180,50 @@ public class BootSystemAutoConfiguration implements EnvironmentAware {
 	}
 
 	// --- E N H A N C E D _ F R A M E W O R K. ---
+
+	@Bean
+	@ConditionalOnMissingBean(Operator.class)
+	public Operator<Enum<?>> emptyOperator() {
+		return new EmptyOperator();
+	}
+
+	@Bean
+	@ConditionalOnBean(Operator.class)
+	public AroundAutoHandleOperatorInterceptor aroundAutoHandleOperatorInterceptor() {
+		return new AroundAutoHandleOperatorInterceptor();
+	}
+
+	@Bean
+	@ConditionalOnBean(AroundAutoHandleOperatorInterceptor.class)
+	public PointcutAdvisor compositeOperatorAspectJExpressionPointcutAdvisor(AroundAutoHandleOperatorInterceptor advice) {
+		AbstractGenericPointcutAdvisor advisor = new AbstractGenericPointcutAdvisor() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Pointcut getPointcut() {
+				return new Pointcut() {
+
+					@Override
+					public MethodMatcher getMethodMatcher() {
+						return MethodMatcher.TRUE;
+					}
+
+					@Override
+					public ClassFilter getClassFilter() {
+						return new ClassFilter() {
+							@Override
+							public boolean matches(Class<?> clazz) {
+								return Operator.class.isAssignableFrom(clazz)
+										&& !GenericOperatorAdapter.class.isAssignableFrom(clazz)
+										&& !isAbstract(clazz.getModifiers()) && !isInterface(clazz.getModifiers());
+							}
+						};
+					}
+				};
+			}
+		};
+		advisor.setAdvice(advice);
+		return advisor;
+	}
 
 }

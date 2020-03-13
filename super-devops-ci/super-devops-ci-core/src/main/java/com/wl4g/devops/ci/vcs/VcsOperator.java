@@ -41,7 +41,7 @@ public interface VcsOperator extends Operator<VcsProvider> {
 	// --- APIs operator. ---
 
 	/**
-	 * Get VCS remote branch names.
+	 * Gets VCS remote branch names.
 	 * 
 	 * @param credentials
 	 *            VCS authentication credentials
@@ -51,7 +51,7 @@ public interface VcsOperator extends Operator<VcsProvider> {
 	List<String> getRemoteBranchNames(Vcs credentials, int projectId);
 
 	/**
-	 * Get VCS remote tag names.
+	 * Gets VCS remote tag names.
 	 * 
 	 * @param credentials
 	 *            VCS authentication credentials
@@ -61,7 +61,7 @@ public interface VcsOperator extends Operator<VcsProvider> {
 	List<String> getRemoteTags(Vcs credentials, int projectId);
 
 	/**
-	 * Get remote project ID by project name.
+	 * Gets remote project ID by project name.
 	 * 
 	 * @param credentials
 	 *            VCS authentication credentials
@@ -161,7 +161,7 @@ public interface VcsOperator extends Operator<VcsProvider> {
 	boolean hasLocalRepository(String projecDir);
 
 	/**
-	 * Get (local) latest committed ID.
+	 * Gets (local) latest committed ID.
 	 * 
 	 * @param projecDir
 	 *            project local VCS repository directory absolute path.

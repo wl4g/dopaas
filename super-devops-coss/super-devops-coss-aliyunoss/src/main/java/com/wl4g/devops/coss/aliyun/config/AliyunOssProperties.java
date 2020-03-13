@@ -19,6 +19,9 @@ import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 import javax.validation.constraints.NotBlank;
 
+import org.springframework.validation.annotation.Validated;
+
+@Validated
 public class AliyunOssProperties {
 
 	/**

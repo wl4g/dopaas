@@ -30,12 +30,12 @@ import com.wl4g.devops.coss.CossEndpoint.CossProvider;
 public class CompositeCossEndpointTests {
 
 	@Autowired
-	private GenericOperatorAdapter<CossProvider, CossEndpoint> endpoint;
+	private GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter;
 
 	@Test
 	public void compositeEndpointTest1() {
 		System.out.println("Starting...");
-		endpoint.forOperator(CossProvider.AliyunOss).get().getBucketAcl("sm-clound");
+		endpointAdapter.forOperator(CossProvider.AliyunOss).get().getBucketAcl("sm-clound");
 		System.out.println("End.");
 	}
 
