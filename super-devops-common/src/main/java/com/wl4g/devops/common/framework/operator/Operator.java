@@ -32,4 +32,26 @@ public interface Operator<K extends Enum<?>> {
 	 */
 	K kind();
 
+	/**
+	 * Preprocessing, such as checking connections to remote services.
+	 * 
+	 * @param args
+	 *            Input formal parameters
+	 */
+	default void preHandle(Object[] args) {
+
+	}
+
+	/**
+	 * Post processing, such as checking the actual processing results.
+	 * 
+	 * @param args
+	 *            Input formal parameters
+	 * @param returnObj
+	 *            Execute return result object
+	 */
+	default void postHandle(Object[] args, Object returnObj) {
+
+	}
+
 }

@@ -48,7 +48,7 @@ import com.wl4g.devops.ci.tool.LogPipelineCleaner;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.context.DelegateAlias;
+import com.wl4g.devops.common.framework.beans.PrototypeAlias;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -152,49 +152,49 @@ public class CiCdAutoConfiguration {
 	// --- Pipeline provider's. ---
 
 	@Bean
-	@DelegateAlias({ PipelineType.MVN_ASSEMBLE_TAR })
+	@PrototypeAlias({ PipelineType.MVN_ASSEMBLE_TAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineContext context) {
 		return new MvnAssembleTarPipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.SPRING_EXECUTABLE_JAR })
+	@PrototypeAlias({ PipelineType.SPRING_EXECUTABLE_JAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineContext context) {
 		return new SpringExecutableJarPipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.NPM_VIEW })
+	@PrototypeAlias({ PipelineType.NPM_VIEW })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineContext context) {
 		return new NpmViewPipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.PYTHON3_STANDARD })
+	@PrototypeAlias({ PipelineType.PYTHON3_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public Python3PipelineProvider python3StandardPipelineProvider(PipelineContext context) {
 		return new Python3PipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.GOLANG_STANDARD })
+	@PrototypeAlias({ PipelineType.GOLANG_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public GolangModPipelineProvider golangModPipelineProvider(PipelineContext context) {
 		return new GolangModPipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.DOCKER_NATIVE })
+	@PrototypeAlias({ PipelineType.DOCKER_NATIVE })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineContext context) {
 		return new DockerNativePipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.RKT_NATIVE })
+	@PrototypeAlias({ PipelineType.RKT_NATIVE })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public RktNativePipelineProvider rktNativePipelineProvider(PipelineContext context) {
 		return new RktNativePipelineProvider(context);
