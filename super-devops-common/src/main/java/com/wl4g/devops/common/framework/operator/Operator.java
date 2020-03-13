@@ -37,9 +37,10 @@ public interface Operator<K extends Enum<?>> {
 	 * 
 	 * @param args
 	 *            Input formal parameters
+	 * @return
 	 */
-	default void preHandle(Object[] args) {
-
+	default boolean preHandle(Object[] args) {
+		return true;
 	}
 
 	/**

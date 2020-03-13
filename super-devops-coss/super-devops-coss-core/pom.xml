@@ -30,6 +30,10 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-support</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-iam-common</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

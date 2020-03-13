@@ -156,28 +156,23 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 		objectValue.setBucketName(ossObject.getBucketName());
 		objectValue.setKey(ossObject.getKey());
 		objectValue.setObjectContent(ossObject.getObjectContent());
-		objectValue.setObjectMetadata(new OssObjectMetadata(ossObject.getObjectMetadata()));
+		objectValue.setMetadata(new OssObjectMetadata(ossObject.getObjectMetadata()));
 		return objectValue;
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public OssPutObjectResult putObject(String bucketName, String key, InputStream input) {
+	public OssPutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
 		try {
-			return putObject(bucketName, key, input, null);
+			OssPutObjectResult putObjectRes = new OssPutObjectResult();
+			PutObjectResult ossPutObjectRes = client.putObject(bucketName, key, input,
+					((OssObjectMetadata) metadata).toAliyunOssObjectMetadata());
+			putObjectRes.setETag(ossPutObjectRes.getETag());
+			putObjectRes.setVersionId(ossPutObjectRes.getVersionId());
+			return putObjectRes;
 		} finally {
 			IOUtils.closeQuietly(input);
 		}
-	}
-
-	@Override
-	public OssPutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
-		OssPutObjectResult putObjectRes = new OssPutObjectResult();
-		PutObjectResult ossPutObjectRes = client.putObject(bucketName, key, input,
-				((OssObjectMetadata) metadata).toAliyunOssObjectMetadata());
-		putObjectRes.setETag(ossPutObjectRes.getETag());
-		putObjectRes.setVersionId(ossPutObjectRes.getVersionId());
-		return putObjectRes;
 	}
 
 	@Override
@@ -191,7 +186,7 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 		ObjectAcl ossObjectAcl = client.getObjectAcl(bucketName, key);
 		objectAcl.setOwner(new Owner(ossObjectAcl.getOwner().getId(), ossObjectAcl.getOwner().getDisplayName()));
 		objectAcl.setVersionId(ossObjectAcl.getVersionId());
-		objectAcl.setPermission(ACL.parse(ossObjectAcl.getPermission().toString()));
+		objectAcl.setAcl(ACL.parse(ossObjectAcl.getPermission().toString()));
 		return objectAcl;
 	}
 

@@ -6,7 +6,7 @@ package com.wl4g.devops.coss.model;
 public class ObjectAcl {
 
 	private Owner owner;
-	private ACL permission;
+	private ACL acl;
 
 	public Owner getOwner() {
 		return owner;
@@ -16,12 +16,12 @@ public class ObjectAcl {
 		this.owner = owner;
 	}
 
-	public ACL getPermission() {
-		return permission;
+	public ACL getAcl() {
+		return acl;
 	}
 
-	public void setPermission(ACL permission) {
-		this.permission = permission;
+	public void setAcl(ACL acl) {
+		this.acl = acl;
 	}
 
 }

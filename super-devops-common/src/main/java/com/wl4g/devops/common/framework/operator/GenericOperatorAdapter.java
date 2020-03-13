@@ -73,6 +73,10 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 		this(null, null);
 	}
 
+	public GenericOperatorAdapter(O fallbackNoOp) {
+		this(null, fallbackNoOp);
+	}
+
 	public GenericOperatorAdapter(List<O> operators) {
 		this(operators, null);
 	}
