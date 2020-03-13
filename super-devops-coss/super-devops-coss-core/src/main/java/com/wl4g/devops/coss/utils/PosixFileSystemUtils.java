@@ -16,8 +16,10 @@
 package com.wl4g.devops.coss.utils;
 
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 
 import com.wl4g.devops.coss.model.ACL;
+import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
 
 /**
  * {@link PosixFileSystemUtils}
@@ -48,6 +50,18 @@ public class PosixFileSystemUtils {
 	/**
 	 * POSIX style permission to {@link Acl}
 	 * 
+	 * @param posixUser
+	 * @param posixGroup
+	 * @param posixOther
+	 * @return
+	 */
+	final public static int toPosixPermission(int posixUser, int posixGroup, int posixOther) {
+		return parseIntOrDefault(valueOf(posixUser) + valueOf(posixGroup) + valueOf(posixOther));
+	}
+
+	/**
+	 * POSIX style permission to {@link Acl}
+	 * 
 	 * @param fp
 	 * @return
 	 */
@@ -58,7 +72,7 @@ public class PosixFileSystemUtils {
 
 		if (u == 7 && g == 0 && o == 0) {
 			return ACL.Private;
-		} else if (u == 7 && g == 4 && o == 4) {
+		} else if (u == 7 && g == 5 && o == 5) {
 			return ACL.PublicRead;
 		} else if (u == 7 && g == 7 && o == 7) {
 			return ACL.PublicReadWrite;
@@ -72,7 +86,7 @@ public class PosixFileSystemUtils {
 	/**
 	 * Put write default bytes buffer size.
 	 */
-	final public static long DEFAULT_WRITE_BUFFER = 8 * 1024;
+	final public static int DEFAULT_WRITE_BUFFER = 8 * 1024;
 
 	final public static int ACL_PRIVATE_POSIX = 700;
 	final public static int ACL_READ_POSIX = 755;

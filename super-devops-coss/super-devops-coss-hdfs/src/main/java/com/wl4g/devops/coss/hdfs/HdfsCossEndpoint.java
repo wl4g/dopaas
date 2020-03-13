@@ -17,11 +17,13 @@ package com.wl4g.devops.coss.hdfs;
 
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -55,18 +57,28 @@ import static com.wl4g.devops.tool.common.io.FileSizeUtils.*;
 public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 
 	/**
+	 * Cache refresh timestamp.
+	 */
+	final private AtomicLong cacheRefreshLastTime = new AtomicLong(0);
+
+	/**
 	 * {@link FileSystem}
 	 */
 	protected FileSystem hdfs;
 
 	public HdfsCossEndpoint(HdfsCossProperties config) {
 		super(config);
-		checkAndInitializingHdfsFileSystem();
 	}
 
 	@Override
 	public CossProvider kind() {
 		return CossProvider.Hdfs;
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		super.afterPropertiesSet();
+		checkAndInitializingHdfsFileSystem();
 	}
 
 	@Override
@@ -221,7 +233,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 			FSDataOutputStream output = hdfs.create(path, true);
 			IOUtils.copyBytes(input, output, DEFAULT_WRITE_BUFFER, true);
 			// Sets permission
-			if (!isNull(metadata.getAcl())) {
+			if (!isNull(metadata) && !isNull(metadata.getAcl())) {
 				FsPermission fp = toFsPermission(metadata.getAcl());
 				hdfs.setPermission(path, fp);
 			}
@@ -325,18 +337,34 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	 * Check hdfs {@link FileSystem} or re-initializing.
 	 */
 	protected void checkAndInitializingHdfsFileSystem() {
-		// Check current FileSystem status
-		try {
-			hdfs.exists(new Path(config.getBucketRootHdfsUri()));
-		} catch (IOException e1) {
+		long now = currentTimeMillis();
+		if ((now - cacheRefreshLastTime.get()) < DEFAULT_CACHE_REFRESH_MS) {
+			return;
+		}
+
+		boolean isRenew = false;
+		if (!isNull(hdfs)) {
+			// Check current FileSystem status
 			try {
-				FileSystem.closeAll();
-			} catch (IOException e) {
-				log.error("Failed to close hdfs FileSystem", e);
+				hdfs.exists(new Path(config.getEndpointHdfsRootUri()));
+			} catch (Exception e1) {
+				log.warn("Could't check hdfs FileSystem. cause by: {}", e1.getMessage());
+				if (e1 instanceof IOException) {
+					try {
+						FileSystem.closeAll();
+					} catch (IOException e) {
+						log.error("Failed to close hdfs FileSystem", e);
+					}
+					isRenew = true;
+				}
 			}
 		}
-		// Re-initializing FileSystem
-		hdfs = getHdfsFileSystem(config);
+
+		// Initializing FileSystem
+		if (isNull(hdfs) || isRenew) {
+			hdfs = getHdfsFileSystem(config);
+			cacheRefreshLastTime.set(now);
+		}
 	}
 
 	/**
@@ -348,9 +376,9 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	 * @throws IOException
 	 */
 	protected FileSystem getHdfsFileSystem(HdfsCossProperties config) {
-		log.info("Creation hdfs filesystem for user '{}' with root URI: '{}'", config.getUser(), config.getBucketRootHdfsUri());
+		log.info("Creation hdfs filesystem for user '{}' with root URI: '{}'", config.getUser(), config.getEndpointHdfsRootUri());
 		try {
-			return FileSystem.get(config.getBucketRootHdfsUri(), new Configuration(), config.getUser());
+			return FileSystem.get(config.getEndpointHdfsRootUri(), new Configuration(), config.getUser());
 		} catch (IOException | InterruptedException e) {
 			throw new ServerCossException(e);
 		}
@@ -363,7 +391,9 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	 * @return
 	 */
 	final public static ACL toAcl(FsPermission fp) {
-		return toPosixAcl(fp.toShort());
+		int posixPermission = toPosixPermission(fp.getUserAction().ordinal(), fp.getGroupAction().ordinal(),
+				fp.getOtherAction().ordinal());
+		return toPosixAcl(posixPermission);
 	}
 
 	/**
@@ -391,5 +421,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	 * Bucket default permission.(755) {@link FsPermission}
 	 */
 	final public static FsPermission DEFAULT_BUCKET_PERMISSION = ACL_PERMISSSIONS[1];
+
+	public static final long DEFAULT_CACHE_REFRESH_MS = 2000L;
 
 }

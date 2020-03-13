@@ -13,16 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.coss.hdfs;
+package com.wl4g.devops.coss.aliyunoss;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.devops.CossServer;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.coss.CossEndpoint;
+import com.wl4g.devops.coss.CossEndpoint.CossProvider;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CossServer.class, properties = {})
-public class HdfsEndpointTests {
+public class AliyunOssCossEndpointTests {
+
+	@Autowired
+	private GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter;
+
+	@Test
+	public void ossEndpointTest1() {
+		System.out.println("Starting...");
+		CossEndpoint endpoint = endpointAdapter.forOperator(CossProvider.AliyunOss).get();
+		endpoint.getBucketAcl("sm-clound");
+		System.out.println("End.");
+	}
 
 }

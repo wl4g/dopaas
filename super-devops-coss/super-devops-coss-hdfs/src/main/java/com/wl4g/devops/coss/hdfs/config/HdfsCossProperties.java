@@ -20,6 +20,9 @@ import static org.springframework.util.Assert.hasText;
 
 import java.net.URI;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import org.apache.hadoop.fs.Path;
 import org.springframework.validation.annotation.Validated;
 
@@ -29,19 +32,21 @@ public class HdfsCossProperties {
 	/**
 	 * Bucket of hdfs root directory URI.
 	 */
-	private URI bucketRootHdfsUri;
+	@NotNull
+	private URI endpointHdfsRootUri = URI.create("hdfs://localhost:8020/coss-bucket");
 
 	/**
 	 * Bucket of hdfs operation user.
 	 */
+	@NotBlank
 	private String user;
 
-	public URI getBucketRootHdfsUri() {
-		return bucketRootHdfsUri;
+	public URI getEndpointHdfsRootUri() {
+		return endpointHdfsRootUri;
 	}
 
-	public void setBucketRootHdfsUri(URI bucketRootHdfsUri) {
-		this.bucketRootHdfsUri = bucketRootHdfsUri;
+	public void setEndpointHdfsRootUri(URI endpointHdfsRootUri) {
+		this.endpointHdfsRootUri = endpointHdfsRootUri;
 	}
 
 	public String getUser() {
@@ -61,7 +66,7 @@ public class HdfsCossProperties {
 
 	public Path getBucketRootPath() {
 		if (isNull(bucketRootPath)) {
-			bucketRootPath = new Path(getBucketRootHdfsUri());
+			bucketRootPath = new Path(getEndpointHdfsRootUri());
 		}
 		return bucketRootPath;
 	}

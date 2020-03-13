@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.coss.aliyunoss;
+package com.wl4g.devops.coss.awss3;
 
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +23,6 @@ import com.wl4g.devops.CossServer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CossServer.class, properties = {})
-public class AliyunOssEndpointTests {
+public class Awss3CossEndpointTests {
 
 }

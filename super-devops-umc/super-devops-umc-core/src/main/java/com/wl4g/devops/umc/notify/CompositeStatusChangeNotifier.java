@@ -69,7 +69,7 @@ public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 			msg.setSentDate(new Date());
 
 			log.debug("Mail通知... {}", status);
-			notifierAdapter.forOperator(MailMessageNotifier.class).get().send(new MailMessageWrapper(msg));
+			notifierAdapter.forOperator(MailMessageNotifier.class).send(new MailMessageWrapper(msg));
 		} catch (Exception e) {
 			log.error("Mail notification failed.", e);
 		}
