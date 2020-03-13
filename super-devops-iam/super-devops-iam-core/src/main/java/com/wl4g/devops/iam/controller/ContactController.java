@@ -56,9 +56,10 @@ public class ContactController extends BaseController {
 		log.info("into ProjectController.save prarms::" + "alarmContact = {} ", alarmContact);
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(alarmContact, "contact is null");
-		Assert.hasText(alarmContact.getName(), "name is null");
-		Assert.hasText(alarmContact.getEmail(), "email is null");
-		Assert.notEmpty(alarmContact.getGroups(), "contactGroup is null");
+//		Assert.hasText(alarmContact.getName(), "name is null");
+//		Assert.hasText(alarmContact.getEmail(), "email is null");
+//		Assert.notEmpty(alarmContact.getGroups(), "contactGroup is null");
+
 		contactService.save(alarmContact);
 		return resp;
 	}
