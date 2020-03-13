@@ -16,6 +16,7 @@
 package com.wl4g.devops.coss.hdfs;
 
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 
 import java.io.IOException;
@@ -30,7 +31,6 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import static org.apache.hadoop.fs.permission.FsAction.*;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.io.IOUtils;
 
@@ -49,6 +49,7 @@ import com.wl4g.devops.coss.model.PutObjectResult;
 import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+import static com.wl4g.devops.coss.utils.PosixFileSystemUtils.*;
 import static com.wl4g.devops.tool.common.io.FileSizeUtils.*;
 
 public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
@@ -362,14 +363,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	 * @return
 	 */
 	final public static ACL toAcl(FsPermission fp) {
-		if (fp.getUserAction() == ALL && fp.getGroupAction() == NONE && fp.getUserAction() == NONE) {
-			return ACL.Private;
-		} else if (fp.getUserAction() == ALL && fp.getGroupAction() == READ_EXECUTE && fp.getUserAction() == READ_EXECUTE) {
-			return ACL.PublicRead;
-		} else if (fp.getUserAction() == ALL && fp.getGroupAction() == ALL && fp.getUserAction() == ALL) {
-			return ACL.PublicReadWrite;
-		}
-		throw new Error("Should not be wrong ah, is the system set by the outside world to change the permissions?");
+		return toPosixAcl(fp.toShort());
 	}
 
 	/**
@@ -379,28 +373,23 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	 * @return
 	 */
 	final public static FsPermission toFsPermission(ACL acl) {
-		if (ACL.Private == acl) {
-			return ACL_PRIVATE_PERMISSION;
-		} else if (ACL.PublicRead == acl) {
-			return ACL_READ_PERMISSION;
-		} else if (ACL.PublicReadWrite == acl) {
-			return ACL_READ_WRITE_PERMISSION;
+		int posixPermission = toPosixPermission(acl);
+		for (FsPermission fp : ACL_PERMISSSIONS) {
+			if (posixPermission == fp.toShort())
+				return fp;
 		}
-		throw new Error(format("Should not be wrong ah, unsupported acl: %s", acl));
+		throw new IllegalStateException(format("Unkown acl: %s", acl));
 	}
 
 	/**
-	 * Bucket default permission.(0755) {@link FsPermission}
+	 * {@link ACL} <=> POSIX permission.
 	 */
-	final public static FsPermission DEFAULT_BUCKET_PERMISSION = new FsPermission(ALL, READ_EXECUTE, READ_EXECUTE);
-
-	final public static FsPermission ACL_PRIVATE_PERMISSION = new FsPermission(ALL, NONE, NONE);
-	final public static FsPermission ACL_READ_PERMISSION = new FsPermission(ALL, READ_EXECUTE, READ_EXECUTE);
-	final public static FsPermission ACL_READ_WRITE_PERMISSION = new FsPermission(ALL, ALL, ALL);
+	final public static FsPermission[] ACL_PERMISSSIONS = { new FsPermission(valueOf(ACL_PRIVATE_POSIX)),
+			new FsPermission(valueOf(ACL_READ_POSIX)), new FsPermission(valueOf(ACL_READ_WRITE_POSIX)) };
 
 	/**
-	 * Put write default bytes buffer size.
+	 * Bucket default permission.(755) {@link FsPermission}
 	 */
-	final public static long DEFAULT_WRITE_BUFFER = 8 * 1024;
+	final public static FsPermission DEFAULT_BUCKET_PERMISSION = ACL_PERMISSSIONS[1];
 
 }
