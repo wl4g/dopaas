@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.support.notification.mail;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 
@@ -73,7 +74,7 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
 	 */
 	@Override
 	public void send(GenericNotifyMessage msg) {
-		String mailMsgType = msg.getParameterAsString(KEY_MAIL_MSGTYPE, "simple");
+		String mailMsgType = msg.getParameterAsString(KEY_MAILMSG_TYPE, "simple");
 		switch (mailMsgType) {
 		case "simple":
 			SimpleMailMessage simpleMsg = new SimpleMailMessage();
@@ -84,6 +85,11 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
 			 */
 			simpleMsg.setFrom(simpleMsg.getFrom() + "<" + config.getUsername() + ">");
 			simpleMsg.setSentDate(new Date());
+
+			MailMessageBuilder builder = (MailMessageBuilder) msg.getParameter(KEY_MAILMSG_BUILDER, null);
+			notNullOf(builder, "mailMessageBuilder");
+			builder.copyTo(simpleMsg);
+
 			mailSender.send(simpleMsg);
 			break;
 		case "mime": // TODO implements!!!
@@ -108,11 +114,11 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
 	 * <b>mime</b> => {@link MimeMailMessage}
 	 * </pre>
 	 */
-	final public static String KEY_MAIL_MSGTYPE = "mailMsgType";
+	final public static String KEY_MAILMSG_TYPE = "mailMsgType";
 
 	/**
-	 * Mail message content subject keyname.
+	 * Mail message builder keyname.
 	 */
-	final public static String KEY_MAIL_SUBJECT = "mailMsgSubject";
+	final public static String KEY_MAILMSG_BUILDER = "mailMsgBuilder";
 
 }

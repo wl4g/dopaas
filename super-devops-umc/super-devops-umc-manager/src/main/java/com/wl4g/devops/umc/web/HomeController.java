@@ -21,6 +21,7 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.devops.support.notification.mail.MailMessageBuilder;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import com.wl4g.devops.umc.handle.DashboardHandle;
@@ -65,9 +66,10 @@ public class HomeController extends BaseController {
 
 	@RequestMapping("mailSend")
 	public String mailSendTest() {
+		MailMessageBuilder builder = new MailMessageBuilder().setSubject("测试消息");
 		GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "mailTpl1")
 				// .addParameter(MailMessageNotifier.KEY_MAIL_MSGTYPE, "simple")
-				.addParameter(MailMessageNotifier.KEY_MAIL_SUBJECT, "测试消息").addParameter("appName", "bizService1")
+				.addParameter(MailMessageNotifier.KEY_MAILMSG_BUILDER, builder).addParameter("appName", "bizService1")
 				.addParameter("status", "DOWN").addParameter("cause", "Host.cpu.utilization > 200%");
 		notifierAdapter.forOperator(MailMessageNotifier.class).send(msg);
 		System.out.println("ok..");
