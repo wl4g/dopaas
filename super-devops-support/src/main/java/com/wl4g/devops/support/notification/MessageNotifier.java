@@ -12,7 +12,7 @@ import static com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
-public interface MessageNotifier<T extends NotifyMessage> extends Operator<NotifierKind> {
+public interface MessageNotifier extends Operator<NotifierKind> {
 
 	/**
 	 * Sending notification message.
@@ -20,7 +20,7 @@ public interface MessageNotifier<T extends NotifyMessage> extends Operator<Notif
 	 * @param <T>
 	 * @param msg
 	 */
-	void send(T msg);
+	<T extends NotifyMessage> void send(GenericNotifyMessage msg);
 
 	/**
 	 * Sending notification message for complete reply.
@@ -30,7 +30,7 @@ public interface MessageNotifier<T extends NotifyMessage> extends Operator<Notif
 	 * @param msg
 	 * @return
 	 */
-	<R> R sendForReply(T msg);
+	<R> R sendForReply(GenericNotifyMessage msg);
 
 	/**
 	 * Notification privoder kind.

@@ -36,8 +36,8 @@ import com.wl4g.devops.tool.common.annotation.Reserved;
 public class AlicodeVcsOperator extends AbstractVcsOperator {
 
 	@Override
-	public VcsProvider kind() {
-		return VcsProvider.ALICODE;
+	public VcsProviderKind kind() {
+		return VcsProviderKind.ALICODE;
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
 import com.wl4g.devops.ci.service.TriggerService;
+import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskInstance;
@@ -34,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-import static org.springframework.util.Assert.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * Timing scheduling composite pipeline provider.
@@ -81,10 +82,10 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 
 		trigger = triggerDao.selectByPrimaryKey(trigger.getId());
 
-		// Set VCS provider.
-		vcsAdapter.forOperator(project.getVcs().getProviderKind());
+		// Gets VCS operator.
+		VcsOperator vcsOperator = vcsAdapter.forOperator(project.getVcs().getProviderKind());
 		try {
-			if (!checkCommittedChanged()) { // Changed?
+			if (!checkCommittedChanged(vcsOperator)) { // Changed?
 				log.info("Skip timing tasks pipeline, because commit unchanged, with project:{}, task:{}, trigger:{}", project,
 						task, trigger);
 			}
@@ -95,8 +96,8 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-			String latestSha = vcsAdapter.get().getLatestCommitted(projectDir);
-			hasText(latestSha, String.format("Trigger latest sha can't be empty for %s", projectDir));
+			String latestSha = vcsOperator.getLatestCommitted(projectDir);
+			hasText(latestSha, "Trigger latest sha can't be empty for %s", projectDir);
 
 			// Update latest sign.
 			triggerService.updateSha(trigger.getId(), latestSha);
@@ -117,17 +118,18 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	 * When the Sha of the VCS local warehouse is different from the latest Sha
 	 * on the server, it indicates that there is code update
 	 * 
+	 * @param vcsOperator
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean checkCommittedChanged() throws Exception {
+	private boolean checkCommittedChanged(VcsOperator vcsOperator) throws Exception {
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		if (vcsAdapter.get().hasLocalRepository(projectDir)) {
-			vcsAdapter.get().checkoutAndPull(project.getVcs(), projectDir, task.getBranchName());
+		if (vcsOperator.hasLocalRepository(projectDir)) {
+			vcsOperator.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName());
 		} else {
-			vcsAdapter.get().clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
+			vcsOperator.clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
 		}
-		String newSign = vcsAdapter.get().getLatestCommitted(projectDir);
+		String newSign = vcsOperator.getLatestCommitted(projectDir);
 		return !equalsIgnoreCase(trigger.getSha(), newSign);
 	}
 

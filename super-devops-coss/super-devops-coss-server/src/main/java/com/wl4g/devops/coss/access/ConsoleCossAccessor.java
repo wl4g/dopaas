@@ -199,7 +199,7 @@ public class ConsoleCossAccessor implements CossAccessor {
 	 * @return
 	 */
 	private CossEndpoint getCossEndpoint(GenericCossParameter param) {
-		return endpointAdapter.forOperator(param.getCossProvider()).get();
+		return endpointAdapter.forOperator(param.getCossProvider());
 	}
 
 }

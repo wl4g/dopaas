@@ -24,7 +24,6 @@ import org.springframework.context.annotation.Bean;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.notification.MessageNotifier;
-import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.alarm.DefaultIndicatorsValveAlerter;
@@ -68,8 +67,7 @@ public class UmcAlarmAutoConfiguration {
 	@Bean(BEAN_DEFAULT_VALVE_ALERTER)
 	public IndicatorsValveAlerter defaultIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager,
 			AlarmProperties config, AlarmConfigurer configurer, RuleConfigManager ruleManager,
-			CompositeRuleInspectorAdapter inspector,
-			GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter) {
+			CompositeRuleInspectorAdapter inspector, GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter) {
 		return new DefaultIndicatorsValveAlerter(jedisService, lockManager, config, configurer, ruleManager, inspector,
 				notifierAdapter);
 	}
@@ -77,8 +75,7 @@ public class UmcAlarmAutoConfiguration {
 	@Bean(BEAN_SIMULATE_VALVE_ALERTER)
 	public IndicatorsValveAlerter simulateIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager,
 			AlarmProperties config, AlarmConfigurer configurer, RuleConfigManager ruleManager,
-			CompositeRuleInspectorAdapter inspector,
-			GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter) {
+			CompositeRuleInspectorAdapter inspector, GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter) {
 		return new SimulateIndicatorsValveAleter(jedisService, lockManager, config, configurer, ruleManager, inspector,
 				notifierAdapter);
 	}

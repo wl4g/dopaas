@@ -16,6 +16,7 @@
 package com.wl4g.devops.support.notification.facebook;
 
 import com.wl4g.devops.support.notification.AbstractMessageNotifier;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 
 /**
  * {@link FacebookMessageNotifier}
@@ -24,7 +25,7 @@ import com.wl4g.devops.support.notification.AbstractMessageNotifier;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
-public class FacebookMessageNotifier extends AbstractMessageNotifier<FacebookNotifyProperties, FacebookMessage> {
+public class FacebookMessageNotifier extends AbstractMessageNotifier<FacebookNotifyProperties> {
 
 	public FacebookMessageNotifier(FacebookNotifyProperties config) {
 		super(config);
@@ -36,13 +37,12 @@ public class FacebookMessageNotifier extends AbstractMessageNotifier<FacebookNot
 	}
 
 	@Override
-	public void send(FacebookMessage message) {
+	public void send(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Object sendForReply(FacebookMessage message) {
+	public <R> R sendForReply(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 

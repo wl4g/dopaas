@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.vcs;
 
 import com.google.common.annotations.Beta;
 
-import static com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
+import static com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.framework.operator.Operator;
@@ -36,7 +36,7 @@ import static org.springframework.util.Assert.notNull;
  * @since
  */
 @Beta
-public interface VcsOperator extends Operator<VcsProvider> {
+public interface VcsOperator extends Operator<VcsProviderKind> {
 
 	// --- APIs operator. ---
 
@@ -191,7 +191,7 @@ public interface VcsOperator extends Operator<VcsProvider> {
 	 * @version v1.0 2019年11月5日
 	 * @since
 	 */
-	public static enum VcsProvider {
+	public static enum VcsProviderKind {
 
 		/** Vcs for GITLAB. */
 		GITLAB(1),
@@ -213,7 +213,7 @@ public interface VcsOperator extends Operator<VcsProvider> {
 
 		final private int value;
 
-		private VcsProvider(int value) {
+		private VcsProviderKind(int value) {
 			this.value = value;
 		}
 
@@ -222,16 +222,16 @@ public interface VcsOperator extends Operator<VcsProvider> {
 		}
 
 		/**
-		 * Safe converter string to {@link VcsProvider}
+		 * Safe converter string to {@link VcsProviderKind}
 		 * 
 		 * @param vcsProvider
 		 * @return
 		 */
-		final public static VcsProvider safeOf(Integer vcsProvider) {
+		final public static VcsProviderKind safeOf(Integer vcsProvider) {
 			if (isNull(vcsProvider)) {
 				return null;
 			}
-			for (VcsProvider t : values()) {
+			for (VcsProviderKind t : values()) {
 				if (vcsProvider.intValue() == t.getValue()) {
 					return t;
 				}
@@ -240,13 +240,13 @@ public interface VcsOperator extends Operator<VcsProvider> {
 		}
 
 		/**
-		 * Converter string to {@link VcsProvider}
+		 * Converter string to {@link VcsProviderKind}
 		 * 
 		 * @param vcsProvider
 		 * @return
 		 */
-		final public static VcsProvider of(Integer vcsProvider) {
-			VcsProvider type = safeOf(vcsProvider);
+		final public static VcsProviderKind of(Integer vcsProvider) {
+			VcsProviderKind type = safeOf(vcsProvider);
 			notNull(type, String.format("Unsupported VCS provider for %s", vcsProvider));
 			return type;
 		}

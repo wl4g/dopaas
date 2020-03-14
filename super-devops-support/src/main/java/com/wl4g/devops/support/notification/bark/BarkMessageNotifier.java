@@ -16,8 +16,9 @@
 package com.wl4g.devops.support.notification.bark;
 
 import com.wl4g.devops.support.notification.AbstractMessageNotifier;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 
-public class BarkMessageNotifier extends AbstractMessageNotifier<BarkNotifyProperties, BarkMessage> {
+public class BarkMessageNotifier extends AbstractMessageNotifier<BarkNotifyProperties> {
 
 	public BarkMessageNotifier(BarkNotifyProperties config) {
 		super(config);
@@ -29,13 +30,12 @@ public class BarkMessageNotifier extends AbstractMessageNotifier<BarkNotifyPrope
 	}
 
 	@Override
-	public void send(BarkMessage message) {
+	public void send(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Object sendForReply(BarkMessage message) {
+	public <R> R sendForReply(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 

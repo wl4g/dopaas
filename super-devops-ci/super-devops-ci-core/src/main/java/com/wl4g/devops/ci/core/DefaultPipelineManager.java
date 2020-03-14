@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.devops.ci.config.CiCdProperties;  
+import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.context.DefaultPipelineContext;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.param.HookParameter;
@@ -36,12 +36,6 @@ import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.notification.dingtalk.DingtalkMessage;
-import com.wl4g.devops.support.notification.facebook.FacebookMessage;
-import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
-import com.wl4g.devops.support.notification.sms.AliyunSmsMessage;
-import com.wl4g.devops.support.notification.twitter.TwitterMessage;
-import com.wl4g.devops.support.notification.wechat.WechatMessage;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +78,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired
-	protected  GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter;
+	protected GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
 
 	@Autowired
 	protected AppInstanceDao appInstanceDao;
@@ -376,50 +370,52 @@ public class DefaultPipelineManager implements PipelineManager {
 	 */
 	protected void notificationResult(Integer contactGroupId, String message) {
 		List<AlarmContact> contacts = alarmContactDao.getContactByGroupIds(asList(contactGroupId));
+		// See: umc-manager HomeController
+
+		
 		for (AlarmContact alarmContact : contacts) {
-			SimpleMailMessage msg = new SimpleMailMessage();
-			msg.setSubject("CI Built Result");
-			msg.setTo(alarmContact.getEmail());
-			msg.setText(message);
-			msg.setSentDate(new Date());
-			// TODO using dynamic kind?
-			notifierAdapter.forOperator(NotifierKind.Mail).get().send(new MailMessageWrapper(msg));
-
-			// phone
-			if (alarmContact.getPhoneEnable() == 1) {
-				// TODO
-				AliyunSmsMessage sms = new AliyunSmsMessage("tpl1", asList(alarmContact.getPhone()));
-				sms.addParameter("msg", message);
-				// notifier.forAdapt(AliyunSmsMessageNotifier.class).send(smsMessage);
-			}
-
-			// dingtalk
-			if (alarmContact.getDingtalkEnable() == 1) {
-				DingtalkMessage dingtalkMessage = new DingtalkMessage();
-				// TODO set dingtalkMessage
-				// notifier.forAdapt(DingtalkMessageNotifier.class).send(dingtalkMessage);
-			}
-
-			// facebook
-			if (alarmContact.getFacebookEnable() == 1) {
-				FacebookMessage facebookMessage = new FacebookMessage();
-				// TODO set facebookMessage
-				// notifier.forAdapt(FacebookMessageNotifier.class).send(facebookMessage);
-			}
-
-			// twitter
-			if (alarmContact.getTwitterEnable() == 1) {
-				TwitterMessage twitterMessage = new TwitterMessage();
-				// TODO set twitterMessage
-				// notifier.forAdapt(TwitterMessageNotifier.class).send(twitterMessage);
-			}
-
-			// wechat
-			if (alarmContact.getWechatEnable() == 1) {
-				WechatMessage wechatMessage = new WechatMessage();
-				// TODO set wechatMessage
-				// notifier.forAdapt(WechatMessageNotifier.class).send(wechatMessage);
-			}
+//			SimpleMailMessage msg = new SimpleMailMessage();
+//			msg.setSubject("CI Built Result");
+//			msg.setTo(alarmContact.getEmail());
+//			msg.setText(message);
+//			msg.setSentDate(new Date());
+//			// TODO using dynamic kind?
+//			notifierAdapter.forOperator(NotifierKind.Mail).send(new MailMessageWrapper(msg));
+//			
+//			if (alarmContact.getPhoneEnable() == 1) {
+//				// TODO
+//				AliyunSmsMessage sms = new AliyunSmsMessage("tpl1", asList(alarmContact.getPhone()));
+//				sms.addParameter("msg", message);
+//				// notifier.forAdapt(AliyunSmsMessageNotifier.class).send(smsMessage);
+//			}
+//
+//			// dingtalk
+//			if (alarmContact.getDingtalkEnable() == 1) {
+//				DingtalkMessage dingtalkMessage = new DingtalkMessage();
+//				// TODO set dingtalkMessage
+//				// notifier.forAdapt(DingtalkMessageNotifier.class).send(dingtalkMessage);
+//			}
+//
+//			// facebook
+//			if (alarmContact.getFacebookEnable() == 1) {
+//				FacebookMessage facebookMessage = new FacebookMessage();
+//				// TODO set facebookMessage
+//				// notifier.forAdapt(FacebookMessageNotifier.class).send(facebookMessage);
+//			}
+//
+//			// twitter
+//			if (alarmContact.getTwitterEnable() == 1) {
+//				TwitterMessage twitterMessage = new TwitterMessage();
+//				// TODO set twitterMessage
+//				// notifier.forAdapt(TwitterMessageNotifier.class).send(twitterMessage);
+//			}
+//
+//			// wechat
+//			if (alarmContact.getWechatEnable() == 1) {
+//				WechatMessage wechatMessage = new WechatMessage();
+//				// TODO set wechatMessage
+//				// notifier.forAdapt(WechatMessageNotifier.class).send(wechatMessage);
+//			}
 
 		}
 	}
