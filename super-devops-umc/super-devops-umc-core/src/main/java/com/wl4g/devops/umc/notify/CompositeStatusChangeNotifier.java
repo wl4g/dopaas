@@ -19,6 +19,7 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.devops.support.notification.mail.MailMessageBuilder;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.umc.model.StatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,8 @@ public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 		try {
 			GenericNotifyMessage msg = new GenericNotifyMessage();
 			msg.addToObjects(getMailTo()).setTemplateKey("mailTpl1");
-			msg.addParameter(MailMessageNotifier.KEY_MAIL_SUBJECT, getSubject()).addParameter("appName", status.getAppInfo());
+			MailMessageBuilder builder = new MailMessageBuilder().setSubject(getSubject());
+			msg.addParameter(MailMessageNotifier.KEY_MAILMSG_BUILDER, builder).addParameter("appName", status.getAppInfo());
 			msg.addParameter("status", status.getToStatus()).addParameter("detailUrl", status.getDetailsUrl());
 			notifierAdapter.forOperator(MailMessageNotifier.class).send(msg);
 		} catch (Exception e) {
