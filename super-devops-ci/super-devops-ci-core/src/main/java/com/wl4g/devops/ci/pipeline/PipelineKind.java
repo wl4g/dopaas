@@ -22,7 +22,7 @@ package com.wl4g.devops.ci.pipeline;
  * @version v1.0 2019年8月29日
  * @since
  */
-public abstract class PipelineType {
+public abstract class PipelineKind {
 
 	/**
 	 * MAVEN assemble tar provider alias.

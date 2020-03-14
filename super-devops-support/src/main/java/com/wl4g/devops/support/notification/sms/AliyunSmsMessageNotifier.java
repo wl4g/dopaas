@@ -30,12 +30,12 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.wl4g.devops.support.notification.AbstractMessageNotifier;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.NotificationException;
 import com.wl4g.devops.support.notification.sms.SmsNotifyProperties;
 import com.wl4g.devops.support.notification.sms.SmsNotifyProperties.AliyunSmsNotifyProperties;
 
-public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyProperties, AliyunSmsMessage>
-		implements InitializingBean {
+public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyProperties> implements InitializingBean {
 
 	private IAcsClient acsClient;
 
@@ -64,14 +64,14 @@ public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyP
 	}
 
 	@Override
-	public void send(AliyunSmsMessage msg) {
+	public void send(GenericNotifyMessage msg) {
 		try {
-			isTrue(msg.getNumbers().size() < 1000, "Group numbers exceeds the limit (<1000)");
+			isTrue(msg.getToObjects().size() < 1000, "Group numbers exceeds the limit (<1000)");
 
 			SendSmsRequest req = new SendSmsRequest();
 			req.setSysMethod(MethodType.POST);
 			// 必填:待发送手机号。支持以逗号分隔的形式进行批量调用，批量上限为1000个手机号码,批量调用相对于单条调用及时性稍有延迟,验证码类型的短信推荐使用单条调用的方式
-			req.setPhoneNumbers(StringUtils.join(msg.getNumbers(), ','));
+			req.setPhoneNumbers(StringUtils.join(msg.getToObjects(), ','));
 			// 必填:短信签名-可在短信控制台中找到
 			req.setSignName(config.getAliyun().getSignName());
 			// 必填:短信模板-可在短信控制台中找到
@@ -89,7 +89,7 @@ public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyP
 				if (log.isDebugEnabled())
 					log.debug("Successed response: {}, request: {}", toJSONString(resp), toJSONString(req));
 				else
-					log.info("Successed message: {}, numbers: {}", resp.getMessage(), msg.getNumbers());
+					log.info("Successed message: {}, numbers: {}", resp.getMessage(), msg.getToObjects());
 			} else
 				log.warn("Failed response: {}, request: {}", toJSONString(resp), toJSONString(req));
 		} catch (Exception e) {
@@ -98,9 +98,8 @@ public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyP
 
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Object sendForReply(AliyunSmsMessage message) {
+	public <R> R sendForReply(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 

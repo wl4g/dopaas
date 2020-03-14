@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.vcs.VcsOperator;
-import com.wl4g.devops.ci.vcs.VcsOperator.VcsProvider;
+import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.BaseBean;
@@ -62,7 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
 	private DependencyDao dependencyDao;
 
 	@Autowired
-	private GenericOperatorAdapter<VcsProvider, VcsOperator> vcsOperator;
+	private GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsOperator;
 
 	@Autowired
 	private VcsDao vcsDao;
@@ -176,18 +176,18 @@ public class ProjectServiceImpl implements ProjectService {
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
 		vcsOperator.forOperator(project.getVcs().getProviderKind());
-		Integer vcsProjectId = vcsOperator.forOperator(project.getVcs().getProviderKind()).get()
-				.getRemoteProjectId(project.getVcs(), projectName);
+		Integer vcsProjectId = vcsOperator.forOperator(project.getVcs().getProviderKind()).getRemoteProjectId(project.getVcs(),
+				projectName);
 		notNullOf(vcsProjectId, "vcsProjectId");
 
 		if (tarOrBranch != null && tarOrBranch == 2) { // tag
-			List<String> branchNames = vcsOperator.forOperator(project.getVcs().getProviderKind()).get()
-					.getRemoteTags(project.getVcs(), vcsProjectId);
+			List<String> branchNames = vcsOperator.forOperator(project.getVcs().getProviderKind()).getRemoteTags(project.getVcs(),
+					vcsProjectId);
 			return branchNames;
 		}
 		// Branch
 		else {
-			List<String> branchNames = vcsOperator.forOperator(project.getVcs().getProviderKind()).get()
+			List<String> branchNames = vcsOperator.forOperator(project.getVcs().getProviderKind())
 					.getRemoteBranchNames(project.getVcs(), vcsProjectId);
 			return branchNames;
 		}
@@ -200,8 +200,7 @@ public class ProjectServiceImpl implements ProjectService {
 		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
 
 		// Search remote projects.
-		List<VcsProjectModel> projects = vcsOperator.forOperator(vcs.getProviderKind()).get().searchRemoteProjects(vcs,
-				projectName);
+		List<VcsProjectModel> projects = vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, projectName);
 		return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
 	}
 

@@ -36,8 +36,8 @@ public class AliyunOssCossEndpointTests {
 	@Test
 	public void ossEndpointTest1() {
 		System.out.println("Starting...");
-		CossEndpoint endpoint = endpointAdapter.forOperator(CossProvider.AliyunOss).get();
-		endpoint.getBucketAcl("sm-clound");
+		CossEndpoint endpoint = endpointAdapter.forOperator(CossProvider.AliyunOss);
+		System.out.println(endpoint.getBucketAcl("sm-clound"));
 		System.out.println("End.");
 	}
 

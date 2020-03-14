@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.AlarmContact; 
 import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
@@ -25,20 +25,7 @@ import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.notification.MessageNotifier;
-import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.notification.dingtalk.DingtalkMessage;
-import com.wl4g.devops.support.notification.dingtalk.DingtalkMessageNotifier;
-import com.wl4g.devops.support.notification.facebook.FacebookMessage;
-import com.wl4g.devops.support.notification.facebook.FacebookMessageNotifier;
-import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
-import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
-import com.wl4g.devops.support.notification.sms.AliyunSmsMessage;
-import com.wl4g.devops.support.notification.sms.AliyunSmsMessageNotifier;
-import com.wl4g.devops.support.notification.twitter.TwitterMessage;
-import com.wl4g.devops.support.notification.twitter.TwitterMessageNotifier;
-import com.wl4g.devops.support.notification.wechat.WechatMessage;
-import com.wl4g.devops.support.notification.wechat.WechatMessageNotifier;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
@@ -47,7 +34,6 @@ import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -57,7 +43,6 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.Math.abs;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -82,11 +67,11 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	final protected CompositeRuleInspectorAdapter inspector;
 
 	/** Alarm notifier */
-	final protected GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter;
+	final protected GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
 
 	public DefaultIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager, AlarmProperties config,
 			AlarmConfigurer configurer, RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector,
-			GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter) {
+			GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter) {
 		super(jedisService, lockManager, config);
 		Assert.notNull(configurer, "AlarmConfigurer is null, please check config.");
 		Assert.notNull(ruleManager, "RuleManager is null, please check config.");
@@ -360,72 +345,77 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			alarmNotificationContact.setStatus(ALARM_SATUS_SEND);
 			configurer.saveNotificationContact(alarmNotificationContact);
 
+			
+			
+			// See: umc-manager HomController
+			
+			
 			// email
-			if (alarmContact.getEmailEnable() == 1) {
-				SimpleMailMessage msg = new SimpleMailMessage();
-				msg.setText(alarmRecord.getAlarmNote());
-				msg.setTo(alarmContact.getEmail());
-				notifierAdapter.forOperator(MailMessageNotifier.class).get().send(new MailMessageWrapper(msg));
-			}
-
-			// phone
-			if (alarmContact.getPhoneEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(), alarmContact.getPhoneNumOfFreq())) {
-				// TODO
-				AliyunSmsMessage sms = new AliyunSmsMessage("default", asList(new String[] { alarmContact.getPhone() }));
-				sms.addParameter("note", alarmRecord.getAlarmNote());
-				sms.addNumbers(alarmContact.getPhone());
-				notifierAdapter.forOperator(AliyunSmsMessageNotifier.class).get().send(sms);
-				handleRateLimit(ALARM_LIMIT_PHONE + alarmContact.getPhone(), alarmContact.getPhoneTimeOfFreq());
-			}
-
-			// dingtalk
-			if (alarmContact.getDingtalkEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkNumOfFreq())) {
-				DingtalkMessage dingtalkMessage = new DingtalkMessage();
-				// TODO set dingtalkMessage
-				notifierAdapter.forOperator(DingtalkMessageNotifier.class).get().send(dingtalkMessage);
-				// notifier.simpleNotify(new
-				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-				// AlarmType.DINGTALK.getValue(), alarmContact.getDingtalk()));
-				handleRateLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkTimeOfFreq());
-			}
-
-			// facebook
-			if (alarmContact.getFacebookEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookNumOfFreq())) {
-				FacebookMessage facebookMessage = new FacebookMessage();
-				// TODO set facebookMessage
-				notifierAdapter.forOperator(FacebookMessageNotifier.class).get().send(facebookMessage);
-				// notifier.simpleNotify(new
-				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-				// AlarmType.FACEBOOK.getValue(), alarmContact.getFacebook()));
-				handleRateLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookTimeOfFreq());
-			}
-
-			// twitter
-			if (alarmContact.getTwitterEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterNumOfFreq())) {
-				TwitterMessage twitterMessage = new TwitterMessage();
-				// TODO set twitterMessage
-				notifierAdapter.forOperator(TwitterMessageNotifier.class).get().send(twitterMessage);
-				// notifier.simpleNotify(new
-				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-				// AlarmType.TWITTER.getValue(), alarmContact.getTwitter()));
-				handleRateLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterTimeOfFreq());
-			}
-
-			// wechat
-			if (alarmContact.getWechatEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatNumOfFreq())) {
-				WechatMessage wechatMessage = new WechatMessage();
-				// TODO set wechatMessage
-				notifierAdapter.forOperator(WechatMessageNotifier.class).get().send(wechatMessage);
-				// notifier.simpleNotify(new
-				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-				// AlarmType.WECHAT.getValue(), alarmContact.getWechat()));
-				handleRateLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatTimeOfFreq());
-			}
+//			if (alarmContact.getEmailEnable() == 1) {
+//				SimpleMailMessage msg = new SimpleMailMessage();
+//				msg.setText(alarmRecord.getAlarmNote());
+//				msg.setTo(alarmContact.getEmail());
+//				notifierAdapter.forOperator(MailMessageNotifier.class).send(new MailMessageWrapper(msg));
+//			}
+//
+//			// phone
+//			if (alarmContact.getPhoneEnable() == 1
+//					&& checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(), alarmContact.getPhoneNumOfFreq())) {
+//				// TODO
+//				AliyunSmsMessage sms = new AliyunSmsMessage("default", asList(new String[] { alarmContact.getPhone() }));
+//				sms.addParameter("note", alarmRecord.getAlarmNote());
+//				sms.addNumbers(alarmContact.getPhone());
+//				notifierAdapter.forOperator(AliyunSmsMessageNotifier.class).send(sms);
+//				handleRateLimit(ALARM_LIMIT_PHONE + alarmContact.getPhone(), alarmContact.getPhoneTimeOfFreq());
+//			}
+//
+//			// dingtalk
+//			if (alarmContact.getDingtalkEnable() == 1
+//					&& checkNotifyLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkNumOfFreq())) {
+//				DingtalkMessage dingtalkMessage = new DingtalkMessage();
+//				// TODO set dingtalkMessage
+//				notifierAdapter.forOperator(DingtalkMessageNotifier.class).send(dingtalkMessage);
+//				// notifier.simpleNotify(new
+//				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+//				// AlarmType.DINGTALK.getValue(), alarmContact.getDingtalk()));
+//				handleRateLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkTimeOfFreq());
+//			}
+//
+//			// facebook
+//			if (alarmContact.getFacebookEnable() == 1
+//					&& checkNotifyLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookNumOfFreq())) {
+//				FacebookMessage facebookMessage = new FacebookMessage();
+//				// TODO set facebookMessage
+//				notifierAdapter.forOperator(FacebookMessageNotifier.class).send(facebookMessage);
+//				// notifier.simpleNotify(new
+//				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+//				// AlarmType.FACEBOOK.getValue(), alarmContact.getFacebook()));
+//				handleRateLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookTimeOfFreq());
+//			}
+//
+//			// twitter
+//			if (alarmContact.getTwitterEnable() == 1
+//					&& checkNotifyLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterNumOfFreq())) {
+//				TwitterMessage twitterMessage = new TwitterMessage();
+//				// TODO set twitterMessage
+//				notifierAdapter.forOperator(TwitterMessageNotifier.class).send(twitterMessage);
+//				// notifier.simpleNotify(new
+//				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+//				// AlarmType.TWITTER.getValue(), alarmContact.getTwitter()));
+//				handleRateLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterTimeOfFreq());
+//			}
+//
+//			// wechat
+//			if (alarmContact.getWechatEnable() == 1
+//					&& checkNotifyLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatNumOfFreq())) {
+//				WechatMessage wechatMessage = new WechatMessage();
+//				// TODO set wechatMessage
+//				notifierAdapter.forOperator(WechatMessageNotifier.class).send(wechatMessage);
+//				// notifier.simpleNotify(new
+//				// AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
+//				// AlarmType.WECHAT.getValue(), alarmContact.getWechat()));
+//				handleRateLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatTimeOfFreq());
+//			}
 
 		}
 

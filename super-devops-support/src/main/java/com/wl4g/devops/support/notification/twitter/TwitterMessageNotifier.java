@@ -16,8 +16,9 @@
 package com.wl4g.devops.support.notification.twitter;
 
 import com.wl4g.devops.support.notification.AbstractMessageNotifier;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 
-public class TwitterMessageNotifier extends AbstractMessageNotifier<TwitterNotifyProperties, TwitterMessage> {
+public class TwitterMessageNotifier extends AbstractMessageNotifier<TwitterNotifyProperties> {
 
 	public TwitterMessageNotifier(TwitterNotifyProperties config) {
 		super(config);
@@ -29,12 +30,12 @@ public class TwitterMessageNotifier extends AbstractMessageNotifier<TwitterNotif
 	}
 
 	@Override
-	public void send(TwitterMessage message) {
+	public void send(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <R> R sendForReply(TwitterMessage message) {
+	public <R> R sendForReply(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 

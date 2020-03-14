@@ -23,10 +23,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.devops.IamServer;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
-import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.notification.vms.AliyunVmsMessage;
 
 import static com.wl4g.devops.support.config.NotificationAutoConfiguration.*;
 
@@ -42,7 +41,7 @@ import static com.wl4g.devops.support.config.NotificationAutoConfiguration.*;
 public class CompositeMessageNotifierTests {
 
 	@Autowired
-	private  GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter;
+	private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
 
 	/**
 	 * 
@@ -55,10 +54,10 @@ public class CompositeMessageNotifierTests {
 	// @Test
 	public void aliyunVmsCaptchaTest1() {
 		System.out.println("Send starting...");
-		AliyunVmsMessage msg = new AliyunVmsMessage("18007448807", "tts1");
+		GenericNotifyMessage msg = new GenericNotifyMessage("18007448807", "tts1");
 		// Add placeholder parameters for a specific template
 		msg.addParameter("code", "12345");
-		notifierAdapter.forOperator(NotifierKind.AliyunVms).get().send(msg);
+		notifierAdapter.forOperator(NotifierKind.AliyunVms).send(msg);
 		System.out.println("Send end.");
 	}
 
@@ -72,14 +71,14 @@ public class CompositeMessageNotifierTests {
 	@Test
 	public void aliyunVmsNotificationTest2() {
 		System.out.println("Send starting...");
-		AliyunVmsMessage msg = new AliyunVmsMessage("18007448807", "tts2");
+		GenericNotifyMessage msg = new GenericNotifyMessage("18007448807", "tts2");
 		// Add placeholder parameters for a specific template
 		msg.addParameter("product", "Devops Cloud");
 		msg.addParameter("source", "测试设备1");
 		msg.addParameter("state", "异常中");
 		msg.addParameter("level", "严重");
 		msg.addParameter("msg", "此条为测试消息");
-		notifierAdapter.forOperator(NotifierKind.AliyunVms).get().send(msg);
+		notifierAdapter.forOperator(NotifierKind.AliyunVms).send(msg);
 		System.out.println("Send end.");
 	}
 
