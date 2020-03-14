@@ -68,7 +68,7 @@ public class HomeController extends BaseController {
 	public String mailSendTest() {
 		MailMessageBuilder builder = new MailMessageBuilder().setSubject("测试消息");
 		GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "mailTpl1")
-				// .addParameter(MailMessageNotifier.KEY_MAIL_MSGTYPE, "simple")
+				// .addParameter(MailMessageNotifier.KEY_MAILMSG_TYPE, "simple")
 				.addParameter(MailMessageNotifier.KEY_MAILMSG_BUILDER, builder).addParameter("appName", "bizService1")
 				.addParameter("status", "DOWN").addParameter("cause", "Host.cpu.utilization > 200%");
 		notifierAdapter.forOperator(MailMessageNotifier.class).send(msg);
