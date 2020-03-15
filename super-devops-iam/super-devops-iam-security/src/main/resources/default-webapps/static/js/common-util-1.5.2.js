@@ -77,6 +77,15 @@
 				}
 			}
 		},
+		// 获取最顶层window对象(对于嵌套iframe刷新页面跳转非常有用)
+		getRootTopWindow: function(currentWindow) {
+			var _window = currentWindow;
+			while (_window.self.frameElement && _window.self.frameElement.tagName == "IFRAME"
+				|| _window.self != _window.top) {
+			  _window = _window.parent;
+			}
+			return _window;
+		},
 		isEnabled: function(value){
 			if(!Common.Util.isEmpty(value)){
 				value = value.toLowerCase();
