@@ -50,7 +50,7 @@ public class MailMessageBuilder implements Serializable {
 	public MailMessageBuilder() {
 	}
 
-	public MailMessageBuilder setReplyTo(String replyTo) {
+	public MailMessageBuilder replyTo(String replyTo) {
 		this.replyTo = replyTo;
 		return this;
 	}
@@ -59,7 +59,7 @@ public class MailMessageBuilder implements Serializable {
 		return this.replyTo;
 	}
 
-	public MailMessageBuilder setTo(String... to) {
+	public MailMessageBuilder to(String... to) {
 		this.to = to;
 		return this;
 	}
@@ -68,7 +68,7 @@ public class MailMessageBuilder implements Serializable {
 		return this.to;
 	}
 
-	public MailMessageBuilder setCc(String... cc) {
+	public MailMessageBuilder cc(String... cc) {
 		this.cc = cc;
 		return this;
 	}
@@ -77,7 +77,7 @@ public class MailMessageBuilder implements Serializable {
 		return this.cc;
 	}
 
-	public MailMessageBuilder setBcc(String... bcc) {
+	public MailMessageBuilder bcc(String... bcc) {
 		this.bcc = bcc;
 		return this;
 	}
@@ -86,7 +86,7 @@ public class MailMessageBuilder implements Serializable {
 		return this.bcc;
 	}
 
-	public MailMessageBuilder setSubject(String subject) {
+	public MailMessageBuilder subject(String subject) {
 		this.subject = subject;
 		return this;
 	}
@@ -95,7 +95,7 @@ public class MailMessageBuilder implements Serializable {
 		return this.subject;
 	}
 
-	public MailMessageBuilder setSentDate(Date sentDate) {
+	public MailMessageBuilder sentDate(Date sentDate) {
 		this.sentDate = sentDate;
 		return this;
 	}

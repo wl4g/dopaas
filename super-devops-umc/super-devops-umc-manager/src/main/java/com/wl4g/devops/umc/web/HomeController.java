@@ -66,7 +66,7 @@ public class HomeController extends BaseController {
 
 	@RequestMapping("mailSend")
 	public String mailSendTest() {
-		MailMessageBuilder builder = new MailMessageBuilder().setSubject("测试消息");
+		MailMessageBuilder builder = new MailMessageBuilder().subject("测试消息");
 		GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "mailTpl1")
 				// .addParameter(MailMessageNotifier.KEY_MAILMSG_TYPE, "simple")
 				.addParameter(MailMessageNotifier.KEY_MAILMSG_BUILDER, builder).addParameter("appName", "bizService1")

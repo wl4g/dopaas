@@ -264,25 +264,34 @@
 		settings = jQuery.extend(true, settings, obj);
 		console.debug("Default IAM baseURI is: "+ settings.deploy.baseUri);
 
-		// 获取IAM默认baseURI.
-		var hostname = location.hostname;
-		var pathname = location.pathname;
-		var twoDomain = settings.deploy.defaultTwoDomain;
-		var contextPath = settings.deploy.defaultContextPath;
-		contextPath = contextPath.startsWith("/") ? contextPath : ("/" + contextPath);
-		var port = location.port;
-		var protocol = location.protocol;
-	 	// 如果是用IP部署，为了简化操作，则认为所有服务(如：share-manager/ci-server等)都部署于这台机上.
-        if (hostname == 'localhost' || Common.Util.isIp(hostname ) || hostname.endsWith('.debug') || hostname.endsWith('.local') || hostname.endsWith('.dev')) {
-            settings.deploy.baseUri = protocol+"//"+hostname+":14040"+contextPath;
-        } else { // 如果是用域名部署，则认为其他服务(如：share-manager/ci-server等)通过二级子域名访问
-        	var topDomainName = hostname.split('.').slice(-2).join('.');
-        	if(hostname.indexOf("com.cn") > 0) {
-        		topDomainName = hostname.split('.').slice(-3).join('.');
-        	}
-            settings.deploy.baseUri = protocol+"//"+twoDomain+"."+topDomainName+contextPath;
-        }
-		// Saved IAM baseUri.
+		if (Common.Util.isEmpty(settings.deploy.baseUri)) {
+			// 获取地址栏默认baseUri
+			var hostname = location.hostname;
+			var pathname = location.pathname;
+			var twoDomain = settings.deploy.defaultTwoDomain;
+			var contextPath = settings.deploy.defaultContextPath;
+			contextPath = contextPath.startsWith("/") ? contextPath : ("/" + contextPath);
+			var port = location.port;
+			var protocol = location.protocol;
+		 	// 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
+		 	// 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:14040/iam-server, 10.0.0.12:14046/ci-server)都部署于同一台机。
+		 	// a，当访问的地址是IP；
+		 	// b，当访问域名的后者是.debug/.local/.dev等。
+	        if (hostname == 'localhost' || hostname == '127.0.0.1' || Common.Util.isIp(hostname) || hostname.endsWith('.debug')
+	        		|| hostname.endsWith('.local') || hostname.endsWith('.dev')) {
+	        	settings.deploy.baseUri = protocol+"//"+hostname+":14040"+contextPath;
+	        }
+	        // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，(接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
+	        else {
+	        	var topDomainName = hostname.split('.').slice(-2).join('.');
+	        	if(hostname.indexOf("com.cn") > 0) {
+	        		topDomainName = hostname.split('.').slice(-3).join('.');
+	        	}
+	            settings.deploy.baseUri = protocol+"//"+twoDomain+"."+topDomainName+contextPath;
+	        }
+	    }
+
+		// Sets iamBaseUri
         window.sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
         console.debug("Overlay IAM baseURI: "+ settings.deploy.baseUri);
 	};
@@ -389,7 +398,7 @@
 					clearInterval(monitor);
 					if(!Common.Util.isEmpty(refreshUrl)){ // 可能未授权(用户直接点击了关闭子窗体),只有绑定的refreshUrl不为空时才表示授权成功
 						// Jump to callback refreshUrl
-						window.location.href = refreshUrl;
+						Common.Util.getRootTopWindow(window).location.href = refreshUrl;
 					}
 				}
 			}, 200);
@@ -603,7 +612,7 @@
                                 $(document).unbind("keydown");
 								var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
 								if(settings.account.onSuccess(principal, redirectUrl)){
-									window.location.href = redirectUrl;
+							      Common.Util.getRootTopWindow(window).location.href = redirectUrl;
 								}
 							}
 						},
@@ -705,7 +714,7 @@
 							settings.sms.onError(resp.message); // SMS登录失败回调
 						} else {
 							settings.sms.onSuccess(resp); // SMS登录成功回调
-							window.location.href = resp.data.redirect_url;
+							Common.Util.getRootTopWindow(window).location.href = resp.data.redirect_url;
 						}
 					},
 					error(req, status, errmsg) {
