@@ -56,6 +56,8 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
+  es:
+    hosts: 10.0.0.160
 
 # Redis configuration.
 redis:
