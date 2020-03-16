@@ -19,7 +19,7 @@ import java.io.File;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.GolangModPipeDeployer;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 
 /**
  * Pipeline provider for deployment GOLANG project.

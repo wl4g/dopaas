@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

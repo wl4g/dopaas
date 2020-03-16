@@ -28,7 +28,7 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskInstance;
 import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

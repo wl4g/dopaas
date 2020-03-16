@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 
 /**
  * Pipeline provider for deployment MAVEN assemble tar project.

@@ -28,7 +28,7 @@
     <!-- other -->
     <result column="group_name" property="groupName" jdbcType="LONGVARCHAR" />
 
-    <collection property="instances" javaType="list" ofType="com.wl4g.devops.common.bean.share.AppInstance">
+    <collection property="instances" javaType="list" ofType="com.wl4g.devops.common.bean.erm.AppInstance">
       <result column="i.id" property="id" jdbcType="INTEGER" />
       <result column="i.hostname" property="hostname" jdbcType="VARCHAR" />
       <result column="i.endpoint" property="endpoint" jdbcType="INTEGER" />
