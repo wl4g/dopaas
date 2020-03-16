@@ -47,7 +47,7 @@ import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
 import com.wl4g.devops.ci.tool.LogPipelineCleaner;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.framework.beans.PrototypeAlias;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 

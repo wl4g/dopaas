@@ -16,11 +16,11 @@
 package com.wl4g.devops.iam.configure;
 
 import com.wl4g.devops.common.bean.iam.*;
-import com.wl4g.devops.common.bean.share.ClusterConfig;
+import com.wl4g.devops.common.bean.erm.ClusterConfig;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.UserDao;
-import com.wl4g.devops.dao.share.ClusterConfigDao;
+import com.wl4g.devops.dao.erm.ClusterConfigDao;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;
