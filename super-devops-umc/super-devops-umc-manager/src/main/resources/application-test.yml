@@ -35,6 +35,24 @@ spring:
           server-uri: http://iam.${DEVOPS_DOMAIN_TOP:wl4g.test}/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/umc/config
+      support:
+        notification:
+          mail:
+            host: smtp.sina.com
+            port: 465
+            username: safec7782@sina.com
+            password: safec7782
+            protocol: smtp
+          sms:
+            aliyun:
+              accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+              accessKeySecret: {ALIYUN_SECRET}
+          vms:
+            aliyun:
+              accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+              accessKeySecret: {ALIYUN_SECRET}
+              calledShowNumber: 055162153866
+
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
@@ -56,11 +74,6 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
-  mail:
-    host: smtp.sina.com
-    port: 465
-    username: safec7782@sina.com
-    password: safec7782
 
 # Spring-security config.
 security.user:

@@ -19,7 +19,6 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.notification.mail.MailMessageBuilder;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.umc.model.StatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +48,18 @@ public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 
 		// 1.2 Mail notifier.
 		try {
-			GenericNotifyMessage msg = new GenericNotifyMessage();
-			msg.addToObjects(getMailTo()).setTemplateKey("mailTpl1");
-			MailMessageBuilder builder = new MailMessageBuilder().subject(getSubject());
-			msg.addParameter(MailMessageNotifier.KEY_MAILMSG_SUBJECT, builder).addParameter("appName", status.getAppInfo());
-			msg.addParameter("status", status.getToStatus()).addParameter("detailUrl", status.getDetailsUrl());
+			// TODO
+			GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "umcAlarmTpl1");
+			// Common parameters.
+			msg.addParameter("appName", status.getAppInfo());
+			msg.addParameter("status", status.getToStatus());
+			msg.addParameter("detailUrl", status.getDetailsUrl());
+			// Mail special parameters.
+			msg.addParameter(MailMessageNotifier.KEY_MAILMSG_SUBJECT, getSubject());
+			// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_CC, "");
+			// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_BCC, "");
+			// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_REPLYTO,
+			// "");
 			notifierAdapter.forOperator(MailMessageNotifier.class).send(msg);
 		} catch (Exception e) {
 			log.error("Mail notification failed.", e);
