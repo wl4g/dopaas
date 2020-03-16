@@ -80,12 +80,6 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeOssProperties
 	}
 
 	@Override
-	public ObjectListing<ObjectSummary> listObjects(String bucketName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public ObjectListing<ObjectSummary> listObjects(String bucketName, String prefix) {
 		// TODO Auto-generated method stub
 		return null;

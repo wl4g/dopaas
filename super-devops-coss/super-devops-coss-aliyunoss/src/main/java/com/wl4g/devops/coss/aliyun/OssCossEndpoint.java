@@ -128,12 +128,6 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public OssObjectListing listObjects(String bucketName) {
-		return listObjects(bucketName, null);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
 	public OssObjectListing listObjects(String bucketName, String prefix) {
 		OssObjectListing objectList = new OssObjectListing();
 		ObjectListing ossObjectListing = client.listObjects(bucketName, prefix);

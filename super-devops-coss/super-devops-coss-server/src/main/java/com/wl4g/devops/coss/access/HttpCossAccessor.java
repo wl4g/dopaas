@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
@@ -50,6 +51,7 @@ import com.wl4g.devops.coss.model.bucket.BucketMetadata;
  * @version v1.0 2020年3月4日
  * @since
  */
+@ResponseBody
 public class HttpCossAccessor extends BaseController implements CossAccessor {
 
 	final public static String URL_BASE = "/webservice/";
@@ -70,6 +72,11 @@ public class HttpCossAccessor extends BaseController implements CossAccessor {
 		return getCossEndpoint(param).createBucket(bucketName);
 	}
 
+	/**
+	 * e.g:
+	 * http://wl4g.debug:14061/coss-server/webservice/listBuckets?cossProvider=hdfs&prefix=sm&marker=sm-clound&maxKeys=100&_stacktrace=true
+	 * {"bucketList":[{"name":"sm-clound","owner":{"displayName":"root","id":"root"},"creationDate":0}]}
+	 */
 	@RequestMapping("listBuckets")
 	@Override
 	public BucketList<? extends Bucket> listBuckets(GenericCossParameter param, String prefix, String marker, Integer maxKeys) {
@@ -100,6 +107,11 @@ public class HttpCossAccessor extends BaseController implements CossAccessor {
 		getCossEndpoint(param).setBucketAcl(bucketName, ACL.parse(acl));
 	}
 
+	/**
+	 * e.g:
+	 * http://wl4g.debug:14061/coss-server/webservice/listObjects?cossProvider=hdfs&prefix=sm&bucketName=sm-clound
+	 * {"objectSummaries":[{"bucketName":"sm-clound","key":"hdfs-coss-sample.txt","size":9800,"mtime":1584348593100,"atime":1584348592700,"storageType":"hdfs","owner":{"displayName":"root","id":"root"},"etag":"512@MD5-of-0MD5-of-512CRC32C"}],"commonPrefixes":[],"bucketName":null,"nextMarker":null,"prefix":"sm","marker":null,"maxKeys":0,"delimiter":"/","encodingType":"UTF-8","truncated":false}
+	 */
 	@RequestMapping("listObjects")
 	@Override
 	public ObjectListing<? extends ObjectSummary> listObjects(GenericCossParameter param, String bucketName, String prefix) {

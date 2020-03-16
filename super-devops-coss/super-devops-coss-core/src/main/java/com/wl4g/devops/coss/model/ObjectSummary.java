@@ -196,4 +196,10 @@ public class ObjectSummary {
 		this.storageType = storageType;
 	}
 
+	@Override
+	public String toString() {
+		return "ObjectSummary [bucketName=" + bucketName + ", key=" + key + ", eTag=" + eTag + ", size=" + size + ", mtime="
+				+ mtime + ", atime=" + atime + ", storageType=" + storageType + ", owner=" + owner + "]";
+	}
+
 }
