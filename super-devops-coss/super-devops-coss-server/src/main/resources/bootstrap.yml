@@ -26,7 +26,7 @@ spring:
 
 # ### Server configuration. ###
 server:
-  port: 14060
+  port: 14061
   #address: 0.0.0.0
   sessionTimeout: 30
   contextPath: /${spring.application.name}
