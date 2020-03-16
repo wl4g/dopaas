@@ -49,4 +49,25 @@ public abstract class AbstractMessageNotifier<C extends NotifyProperties> implem
 
 	}
 
+	@Override
+	public boolean preHandle(Object[] args) {
+		// Check notify message templateKey
+		if (config instanceof AbstractNotifyProperties) {
+			AbstractNotifyProperties conf = (AbstractNotifyProperties) config;
+			for (Object arg : args) {
+				if (arg instanceof GenericNotifyMessage) {
+					GenericNotifyMessage msg = (GenericNotifyMessage) arg;
+					// No such templateKey?
+					if (!conf.hasTemplateKey(msg.getTemplateKey())) {
+						log.warn("No such notification template key of: {}", msg.getTemplateKey());
+						return false;
+					}
+					break;
+				}
+			}
+		}
+
+		return true;
+	}
+
 }

@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.common.framework.operator;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import org.aopalliance.intercept.MethodInterceptor;
@@ -49,11 +48,13 @@ public class OperatorAutoHandleInterceptor implements MethodInterceptor {
 		log.debug("Around operator targetObj: {}, method: {}#{}", targetObj, declareClassName, targetMethodName);
 
 		// Call preprocessing
-		isTrue(operator.preHandle(invc.getArguments()), RejectedExecutionOperatorException.class, "Rejected operation of {}#{}",
-				targetObj, targetMethodName);
-
+		if (!operator.preHandle(invc.getArguments())) {
+			log.warn("Rejected operation of {}#{}", targetObj, targetMethodName);
+			return null;
+		}
 		// Invoke target
 		Object returnObj = invc.proceed();
+
 		// Call post processing
 		operator.postHandle(invc.getArguments(), returnObj);
 		return returnObj;

@@ -185,6 +185,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	@Override
 	public HdfsObjectListing listObjects(String bucketName, String prefix) {
 		HdfsObjectListing objectList = new HdfsObjectListing();
+		objectList.setBucketName(bucketName);
 		objectList.setPrefix(prefix);
 		// TODO next, prefix... No implements
 		try {
