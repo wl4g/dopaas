@@ -24,7 +24,7 @@ import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;

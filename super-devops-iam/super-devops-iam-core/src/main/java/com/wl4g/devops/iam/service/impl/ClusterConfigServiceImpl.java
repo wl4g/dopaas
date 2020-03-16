@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.service.impl;
 
-import com.wl4g.devops.common.bean.share.ClusterConfig;
-import com.wl4g.devops.dao.share.ClusterConfigDao;
+import com.wl4g.devops.common.bean.erm.ClusterConfig;
+import com.wl4g.devops.dao.erm.ClusterConfigDao;
 import com.wl4g.devops.iam.service.ClusterConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
