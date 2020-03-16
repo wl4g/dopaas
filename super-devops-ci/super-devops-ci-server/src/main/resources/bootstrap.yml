@@ -38,8 +38,9 @@ spring:
             templates: # http://www.bejson.com/convert/unicode_chinese
               tpl1: Application health notification：${appInfo} status changed from ${fromStatus} to ${toStatus}, details：${msg}
               tpl2: Your verification code is：${code} valid for 5 minutes. You can't tell anyone if you're dead. Thank you for using!
+              tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}
           sms:
-            enable: true # Default[false]
+            enable: false # Default[false]
             aliyun:
               regionId: cn-hangzhou
               accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
@@ -49,7 +50,7 @@ spring:
                 tpl1: SMS_140726862 # Alarm notice template.
                 tpl2: SMS_109490228 # VerificationCode notice template.
           vms:
-            enable: true # Default[false]
+            enable: false # Default[false]
             aliyun:
               regionId: cn-hangzhou
               accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
