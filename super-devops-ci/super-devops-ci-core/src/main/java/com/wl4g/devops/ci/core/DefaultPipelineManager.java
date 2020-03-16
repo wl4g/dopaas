@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.devops.ci.bean.PipelineModel; 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.context.DefaultPipelineContext;
 import com.wl4g.devops.ci.core.context.PipelineContext;
@@ -39,7 +39,6 @@ import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.*;
@@ -371,8 +369,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		}
 
 		// Successful execute job notification.
-		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), "Task Build Success taskId=" + taskId
-				+ " projectName=" + provider.getContext().getProject().getProjectName() + " time=" + (new Date()));
+		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), taskId,"Success");
 	}
 
 	/**
@@ -384,8 +381,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 */
 	protected void postPipelineRunFailure(Integer taskId, PipelineProvider provider, Throwable e) {
 		// Failure execute job notification.
-		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), "Task Build Fail taskId=" + taskId
-				+ " projectName=" + provider.getContext().getProject().getProjectName() + " time=" + (new Date()) + "\n");
+		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), taskId,"Fail");
 	}
 
 	/**
@@ -394,7 +390,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param contactGroupId
 	 * @param message
 	 */
-	protected void notificationResult(Integer contactGroupId, String message) {
+	protected void notificationResult(Integer contactGroupId, Integer taskId, String result) {
 		List<AlarmContact> contacts = alarmContactDao.getContactByGroupIds(asList(contactGroupId));
 		for (AlarmContact alarmContact : contacts) {
 
@@ -408,18 +404,11 @@ public class DefaultPipelineManager implements PipelineManager {
 					continue;
 				}
 
-				// TODO
-				GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "notifyTpl1");
+				GenericNotifyMessage msg = new GenericNotifyMessage(contactChannel.getPrimaryAddress(), "tpl3");
 				// Common parameters.
-				msg.addParameter("appName", "bizService1");
-				msg.addParameter("status", "DOWN");
-				msg.addParameter("cause", "Host.cpu.utilization > 200%");
-				// Mail special parameters.
-				msg.addParameter(MailMessageNotifier.KEY_MAILMSG_SUBJECT, "测试消息");
-				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_CC, "");
-				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_BCC, "");
-				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_REPLYTO,
-				// "");
+				msg.addParameter("isSuccess", result);
+				msg.addParameter("pipelineId", taskId);
+
 				notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
 			}
 
