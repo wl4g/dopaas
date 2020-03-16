@@ -60,11 +60,20 @@ spring:
       support:
         notification:
           mail:
-            protocol: smtp
-            host: smtp.sina.com
+            host: smtp.163.com
             port: 465
-            username: safec7782@sina.com
-            password: safec7782
+            username: babaa1f4@163.com
+            password: XBurnerAir00
+            protocol: smtp
+          sms:
+            aliyun:
+              accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+              accessKeySecret: {ALIYUN_SECRET}
+          vms:
+            aliyun:
+              accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+              accessKeySecret: {ALIYUN_SECRET}
+              calledShowNumber: 055162153866
 
   # Datasource configuration.
   datasource:

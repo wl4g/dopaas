@@ -34,7 +34,7 @@ import static com.wl4g.devops.support.config.NotificationAutoConfiguration.*;
 		KEY_NOTIFY_PREFIX + ".vms.aliyun.regionId=cn-hangzhou",
 		KEY_NOTIFY_PREFIX + ".vms.aliyun.accessKeyId=LTAI4Fk9pjU7ezN2yVeiffYm",
 		// Sensitive config, oneself setup
-		KEY_NOTIFY_PREFIX + ".vms.aliyun.secret=${aliyun_vms_secret}",
+		KEY_NOTIFY_PREFIX + ".vms.aliyun.accessKeySecret=${aliyun_vms_secret}",
 		KEY_NOTIFY_PREFIX + ".vms.aliyun.calledShowNumber=055162153866",
 		KEY_NOTIFY_PREFIX + ".vms.aliyun.templates.tts1=TTS_184820765",
 		KEY_NOTIFY_PREFIX + ".vms.aliyun.templates.tts2=TTS_184825642" })
