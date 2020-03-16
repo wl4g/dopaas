@@ -51,7 +51,7 @@ public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyP
 		super.afterPropertiesSet();
 
 		DefaultProfile profile = DefaultProfile.getProfile(config.getAliyun().getRegionId(), config.getAliyun().getAccessKeyId(),
-				config.getAliyun().getSecret());
+				config.getAliyun().getAccessKeySecret());
 		this.acsClient = new DefaultAcsClient(profile);
 	}
 

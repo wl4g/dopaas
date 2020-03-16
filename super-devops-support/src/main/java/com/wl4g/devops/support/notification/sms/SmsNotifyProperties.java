@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.support.notification.sms;
 
+import javax.validation.constraints.NotBlank;
+
 import com.wl4g.devops.support.notification.AbstractNotifyProperties;
 import com.wl4g.devops.support.notification.NotifyProperties;
 
@@ -44,34 +46,38 @@ public class SmsNotifyProperties implements NotifyProperties {
 
 	public static class AliyunSmsNotifyProperties extends AbstractNotifyProperties {
 
-		private String product;
+		/**
+		 * e.g. cn-hangzhou
+		 */
+		@NotBlank
+		private String regionId = "cn-hangzhou";
 
-		private String domain;
+		// @NotBlank
+		// private String product = "Dysmsapi";
+		// @NotBlank
+		// private String domain = "dysmsapi.aliyuncs.com";
 
+		@NotBlank
 		private String accessKeyId;
 
+		@NotBlank
 		private String accessKeySecret;
 
+		@NotBlank
 		private String signName;
 
-		private String defaultConnectTimeout;
+		@NotBlank
+		private String defaultConnectTimeout = "5_000";
 
-		private String defaultReadTimeout;
+		@NotBlank
+		private String defaultReadTimeout = "10_000";
 
-		public String getProduct() {
-			return product;
+		public String getRegionId() {
+			return regionId;
 		}
 
-		public void setProduct(String product) {
-			this.product = product;
-		}
-
-		public String getDomain() {
-			return domain;
-		}
-
-		public void setDomain(String domain) {
-			this.domain = domain;
+		public void setRegionId(String regionId) {
+			this.regionId = regionId;
 		}
 
 		public String getAccessKeyId() {

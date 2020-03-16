@@ -58,8 +58,8 @@ public class AliyunSmsMessageNotifier extends AbstractMessageNotifier<SmsNotifyP
 		System.setProperty("sun.net.client.defaultReadTimeout", aliyun.getDefaultReadTimeout());
 
 		// 初始化ascClient,暂时不支持多region（请勿修改）
-		IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", aliyun.getAccessKeyId(), aliyun.getAccessKeySecret());
-		DefaultProfile.addEndpoint("cn-hangzhou", aliyun.getProduct(), aliyun.getDomain());
+		IClientProfile profile = DefaultProfile.getProfile(aliyun.getRegionId(), aliyun.getAccessKeyId(),
+				aliyun.getAccessKeySecret());
 		acsClient = new DefaultAcsClient(profile);
 	}
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.AlarmContact; 
 import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
 import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
@@ -28,7 +28,6 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.notification.mail.MailMessageBuilder;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
@@ -361,13 +360,18 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 				}
 
 				//TODO
-                MailMessageBuilder builder = new MailMessageBuilder().subject("测试消息");
-                GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "mailTpl1")
-                        // .addParameter(MailMessageNotifier.KEY_MAILMSG_TYPE, "simple")
-                        .addParameter(MailMessageNotifier.KEY_MAILMSG_SUBJECT, builder).addParameter("appName", "bizService1")
-                        .addParameter("status", "DOWN").addParameter("cause", "Host.cpu.utilization > 200%");
+				GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "umcAlaramTpl2");
+				// Common parameters.
+				msg.addParameter("appName", "bizService1");
+				msg.addParameter("status", "DOWN");
+				msg.addParameter("cause", "Host.cpu.utilization > 200%");
+				// Mail special parameters.
+				msg.addParameter(MailMessageNotifier.KEY_MAILMSG_SUBJECT, "测试消息");
+				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_CC, "");
+				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_BCC, "");
+				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_REPLYTO,
+				// "");
                 notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
-
 			}
 
 		}
