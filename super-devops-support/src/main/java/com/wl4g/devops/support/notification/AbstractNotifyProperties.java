@@ -18,8 +18,12 @@ package com.wl4g.devops.support.notification;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
+import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.replace;
 import static org.apache.commons.lang3.StringUtils.replaceIgnoreCase;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -29,6 +33,8 @@ import java.util.Properties;
 
 import javax.validation.constraints.NotEmpty;
 
+import com.wl4g.devops.tool.common.log.SmartLogger;
+
 /**
  * Abstract Notify configuration properties.
  * 
@@ -37,6 +43,8 @@ import javax.validation.constraints.NotEmpty;
  * @since
  */
 public abstract class AbstractNotifyProperties implements NotifyProperties {
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Case sensitive when parsing template parameters.
@@ -65,7 +73,14 @@ public abstract class AbstractNotifyProperties implements NotifyProperties {
 
 	public void setTemplates(Properties templates) {
 		if (!isEmpty(templates)) {
-			this.templates.putAll(templates);
+			// Check and sets
+			this.templates.putAll(templates.entrySet().stream().map(e -> {
+				if (isNull(e.getKey()) || isNull(e.getValue()) || isBlank((String) e.getKey())) {
+					throw new IllegalArgumentException(
+							format("Cannot configure empty template, key: %s, value: %s", e.getKey(), e.getValue()));
+				}
+				return e;
+			}).collect(toMap(e -> e.getKey(), e -> e.getValue())));
 		}
 	}
 
@@ -80,8 +95,12 @@ public abstract class AbstractNotifyProperties implements NotifyProperties {
 		hasTextOf(templateKey, "notifyTemplateKey");
 		notNullOf(parameters, "notifyTemplateParameters");
 
+		// Gets template content
+		String tplContent = getTemplates().getProperty(templateKey);
+		hasTextOf(templateKey, format("No such notification template content key of: %s", templateKey));
+
 		// Resolving template message
-		StringBuffer template = new StringBuffer(getTemplates().getProperty(templateKey));
+		StringBuffer template = new StringBuffer(tplContent);
 		parameters.forEach((k, v) -> {
 			String template0 = template.toString();
 			template.setLength(0);
@@ -97,6 +116,16 @@ public abstract class AbstractNotifyProperties implements NotifyProperties {
 		String message = template.toString();
 		checkHasFullyResolved(message);
 		return message;
+	}
+
+	/**
+	 * Check if the specified template exists.
+	 * 
+	 * @param templateKey
+	 * @return
+	 */
+	public boolean hasTemplateKey(String templateKey) {
+		return getTemplates().containsKey(templateKey);
 	}
 
 	/**
@@ -124,12 +153,6 @@ public abstract class AbstractNotifyProperties implements NotifyProperties {
 					"Notification template parsing error, and unresolved symbol variable: %s, => %s", firstVar, tplMessage));
 		}
 
-		char[] msgChars = tplMessage.toCharArray();
-		for (int i = 0; i < msgChars.length; i++) {
-			if (msgChars[i] == '$') {
-
-			}
-		}
 	}
 
 	@Override
