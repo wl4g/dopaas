@@ -41,11 +41,9 @@ public class ContactController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> list(String name, String email, String phone, PageModel pm) {
-		log.info("into ContactController.list prarms::" + "name = {} , email = {} , phone = {} , pm = {} ", name, email, phone,
-				pm);
+	public RespBase<?> list(PageModel pm, String name) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = contactService.list(pm, name, email, phone);
+		PageModel list = contactService.list(pm, name);
 		resp.setData(list);
 		return resp;
 	}
@@ -56,9 +54,10 @@ public class ContactController extends BaseController {
 		log.info("into ProjectController.save prarms::" + "alarmContact = {} ", alarmContact);
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(alarmContact, "contact is null");
-		Assert.hasText(alarmContact.getName(), "name is null");
-		Assert.hasText(alarmContact.getEmail(), "email is null");
-		Assert.notEmpty(alarmContact.getGroups(), "contactGroup is null");
+//		Assert.hasText(alarmContact.getName(), "name is null");
+//		Assert.hasText(alarmContact.getEmail(), "email is null");
+//		Assert.notEmpty(alarmContact.getGroups(), "contactGroup is null");
+
 		contactService.save(alarmContact);
 		return resp;
 	}

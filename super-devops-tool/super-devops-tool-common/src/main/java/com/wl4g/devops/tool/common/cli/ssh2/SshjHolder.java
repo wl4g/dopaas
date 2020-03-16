@@ -23,6 +23,7 @@ import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 import net.schmizz.sshj.xfer.FileSystemFile;
 import net.schmizz.sshj.xfer.scp.SCPFileTransfer;
+import net.schmizz.sshj.xfer.scp.ScpCommandLine;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.wl4g.devops.tool.common.io.ByteStreams2.readFullyToString;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -94,7 +96,8 @@ public class SshjHolder extends Ssh2Holders<Session.Command, SCPFileTransfer> {
 		try {
 			// Transfer send file.
 			doScpTransfer(host, user, pemPrivateKey, scp -> {
-				scp.upload(new FileSystemFile(localFile), remoteDir);
+				//scp.upload(new FileSystemFile(localFile), remoteDir);
+				scp.newSCPUploadClient().copy(new FileSystemFile(localFile),remoteDir,ScpCommandLine.EscapeMode.NoEscape);
 			});
 
 			log.debug("SCP put transfered: '{}' to '{}@{}:{}'", localFile.getAbsolutePath(), user, host, remoteDir);
@@ -240,8 +243,8 @@ public class SshjHolder extends Ssh2Holders<Session.Command, SCPFileTransfer> {
 			ssh.authPublickey(user, keyProvider);
 			session = ssh.startSession();
 			// TODO
-			String proCommond = "source /etc/profile\nsource /etc/bashrc\n";
-			cmd = session.exec(proCommond + command);
+			command = "source /etc/profile\nsource /etc/bashrc\n" + command;
+			cmd = session.exec(command);
 			return processor.process(cmd);
 		} catch (Exception e) {
 			throw e;

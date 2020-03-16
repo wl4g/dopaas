@@ -20,16 +20,16 @@
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
         <!-- 生成模型的包名和位置-->
-        <javaModelGenerator targetPackage="com.wl4g.devops.common.bean.doc" targetProject="../../super-devops-common/src/main/java">
+        <javaModelGenerator targetPackage="com.wl4g.devops.common.bean.iam" targetProject="../../super-devops-common/src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
         <!-- 生成映射文件的包名和位置-->
-        <sqlMapGenerator targetPackage="resources.mybatis.doc" targetProject="../../super-devops-dao/src/main">
+        <sqlMapGenerator targetPackage="resources.mybatis.iam" targetProject="../../super-devops-dao/src/main">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
         <!-- 生成DAO的包名和位置-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.wl4g.devops.dao.doc" targetProject="../../super-devops-dao/src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.wl4g.devops.dao.iam" targetProject="../../super-devops-dao/src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
@@ -49,9 +49,10 @@
             <columnOverride column="description" javaType="java.lang.String" jdbcType="VARCHAR" />
         </table>-->
 
-        <table tableName="doc_share" domainObjectName="Share"
+        <table tableName="sys_contact_channel" domainObjectName="ContactChannel"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
+
 
 
 

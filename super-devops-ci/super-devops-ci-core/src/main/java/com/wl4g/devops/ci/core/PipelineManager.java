@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.core;
 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.param.HookParameter;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
@@ -34,14 +35,14 @@ public abstract interface PipelineManager {
 	 * 
 	 * @param param
 	 */
-	void runPipeline(NewParameter param);
+	void runPipeline(NewParameter param, PipelineModel pipelineModel);
 
 	/**
 	 * Roll-back pipeline task job.
 	 * 
 	 * @param param
 	 */
-	void rollbackPipeline(RollbackParameter param);
+	void rollbackPipeline(RollbackParameter param, PipelineModel pipelineModel);
 
 	/**
 	 * Hook pipeline task job.

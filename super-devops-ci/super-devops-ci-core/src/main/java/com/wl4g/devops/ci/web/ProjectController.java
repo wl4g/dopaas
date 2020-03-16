@@ -128,6 +128,17 @@ public class ProjectController extends BaseController {
 		return resp;
 	}
 
+	@RequestMapping(value = "/getByAppClusterId")
+	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
+	public RespBase<?> getByAppClusterId(Integer appClusterId) {
+		log.info("ProjectController.detail prarms::" + "id = {} ", appClusterId);
+		RespBase<Object> resp = RespBase.create();
+		Assert.notNull(appClusterId, "appClusterId can not be null");
+		Project project = projectService.getByAppClusterId(appClusterId);
+		resp.setData(project);
+		return resp;
+	}
+
 	/**
 	 * The build task in execution locks the project, automatically unlocks in
 	 * normal situations, and unlocks in exceptional situations with this
@@ -164,9 +175,9 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/getBranchs")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> getBranchs(Integer projectId, Integer tarOrBranch) {
+	public RespBase<?> getBranchs(Integer appClusterId, Integer tarOrBranch) {
 		RespBase<Object> resp = RespBase.create();
-		List<String> branchs = projectService.getBranchs(projectId, tarOrBranch);
+		List<String> branchs = projectService.getBranchs(appClusterId, tarOrBranch);
 		resp.forMap().put("branchNames", branchs);
 		return resp;
 	}

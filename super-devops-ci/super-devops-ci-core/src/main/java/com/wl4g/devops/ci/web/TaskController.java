@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.ci.web;
 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
@@ -51,6 +53,9 @@ public class TaskController extends BaseController {
 	@Autowired
 	private TaskService taskService;
 
+	@Autowired
+	private FlowManager flowManager;
+
 	/**
 	 * Page List
 	 * 
@@ -68,9 +73,6 @@ public class TaskController extends BaseController {
 	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
 	public RespBase<?> list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String providerKind,
 			String startDate, String endDate, String envType) {
-		log.info("into TaskController.list prarms::"
-				+ "customPage = {} , id = {} , taskName = {} , groupName = {} , branchName = {} , providerKind = {} , startDate = {} , endDate = {} ",
-				pm, id, taskName, groupName, branchName, providerKind, startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
 		PageModel list = taskService.list(pm, id, taskName, groupName, branchName, providerKind, startDate, endDate, envType);
 		resp.setData(list);
@@ -134,7 +136,7 @@ public class TaskController extends BaseController {
 	 */
 	private void checkTask(Task task) {
 		Assert.hasText(task.getTaskName(), "taskName is null");
-		Assert.notNull(task.getProjectId(), "projectId is null");
+		Assert.notNull(task.getAppClusterId(), "appClusterId is null");
 		Assert.notNull(task.getProviderKind(), "packType is null");
 		Assert.hasText(task.getBranchName(), "branchName is null");
 	}
@@ -163,17 +165,27 @@ public class TaskController extends BaseController {
 	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
 	public RespBase<?> create(Integer taskId, String trackId, Integer trackType, String remark, String annex) {
 		RespBase<Object> resp = RespBase.create();
-		pipeliner.runPipeline(new NewParameter(taskId, remark, trackId, trackType, annex));
+		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
+		pipeliner.runPipeline(new NewParameter(taskId, remark, trackId, trackType, annex),pipelineModel);
 		return resp;
 	}
 
 	@RequestMapping(value = "/getDependencys")
 	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
-	public RespBase<?> getDependencys(Integer projectId) {
-		Assert.notNull(projectId, "appClusterId is null");
+	public RespBase<?> getDependencys(Integer appClusterId) {
+		Assert.notNull(appClusterId, "appClusterId is null");
 		RespBase<Object> resp = RespBase.create();
-		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(projectId);
+		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(appClusterId);
 		resp.forMap().put("list", taskBuildCommands);
+		return resp;
+	}
+
+	@RequestMapping(value = "/getForSelect")
+	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
+	public RespBase<?> getForSelect() {
+		RespBase<Object> resp = RespBase.create();
+		List<Task> list = taskService.getForSelect();
+		resp.setData(list);
 		return resp;
 
 	}
