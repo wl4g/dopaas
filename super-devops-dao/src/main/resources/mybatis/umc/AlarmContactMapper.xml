@@ -148,10 +148,14 @@
   </select>
 
   <select id="getContactByGroupIds" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select * from sys_contact c
+    select
+    <include refid="Base_Column_List_c" />,<include refid="Contact_Channel_Column_List" />
+    from sys_contact c
+    left join sys_contact_channel ch on ch.contact_id = c.id
     where exists(select 1 from sys_contact_group_ref gr
     where gr.contact_group_id IN <foreach item="item" index="index" collection="groupIds" open="(" separator="," close=")">#{item}</foreach>
-    and gr.contact_id=c.id);
+    and gr.contact_id=c.id)
+    and c.del_flag!=1
   </select>
 
 
