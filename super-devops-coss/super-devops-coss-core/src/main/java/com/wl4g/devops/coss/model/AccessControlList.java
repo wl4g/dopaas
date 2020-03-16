@@ -36,4 +36,9 @@ public class AccessControlList {
 		this.owner = owner;
 	}
 
+	@Override
+	public String toString() {
+		return "AccessControlList [acl=" + acl + ", owner=" + owner + "]";
+	}
+
 }

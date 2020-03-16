@@ -18,7 +18,6 @@ package com.wl4g.devops.support.notification.vms;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -31,9 +30,10 @@ import com.aliyuncs.IAcsClient;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.wl4g.devops.support.notification.AbstractMessageNotifier;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.NotificationException;
 
-public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyProperties, AliyunVmsMessage> {
+public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyProperties> {
 
 	protected IAcsClient acsClient;
 
@@ -57,7 +57,7 @@ public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyP
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void send(AliyunVmsMessage msg) {
+	public void send(GenericNotifyMessage msg) {
 		CommonRequest req = new CommonRequest();
 		// 请求方法分为POST和GET，建议您选择POST方式
 		req.setSysMethod(MethodType.POST);
@@ -65,7 +65,7 @@ public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyP
 		req.setSysDomain("dyvmsapi.aliyuncs.com");
 		req.setSysVersion("2017-05-25");
 		// SingleCallByTts|SingleCallByVoice
-		req.setSysAction(msg.getAction().name());
+		req.setSysAction(msg.getParameterAsString(KEY_VMS_ACTION, "SingleCallByTts"));
 		// VoiceCode和TtsCode二选一即可，前者用于自定义语音文件通知，后者用于标准语音通知，
 		// action都为SingleCallByTts，参考文档：
 		// https://help.aliyun.com/document_detail/114036.html?spm=a2c4g.11186623.6.579.7bc95f33wpPjWM
@@ -77,11 +77,12 @@ public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyP
 		req.putQueryParameter("TtsCode", ttsCodeOrVoiceCode);
 		req.putQueryParameter("TtsParam", toJSONString(msg.getParameters()));
 		req.putQueryParameter("CalledShowNumber", config.getAliyun().getCalledShowNumber());
-		req.putQueryParameter("CalledNumber", msg.getCalledNumber());
-		req.putQueryParameter("PlayTimes", valueOf(msg.getPlayTimes()));
-		req.putQueryParameter("Volume", valueOf(msg.getVolume()));
-		req.putQueryParameter("Speed", valueOf(msg.getSpeed()));
-		req.putQueryParameter("OutId", valueOf(msg.getCallbackId()));
+		String calledNumber = msg.getToObjects().get(0);
+		req.putQueryParameter("CalledNumber", calledNumber);
+		req.putQueryParameter("PlayTimes", msg.getParameterAsString(KEY_VMS_PLAYTIMES, "2"));
+		req.putQueryParameter("Volume", msg.getParameterAsString(KEY_VMS_VOLUME, "100"));
+		req.putQueryParameter("Speed", msg.getParameterAsString(KEY_VMS_SPEED, "100"));
+		req.putQueryParameter("OutId", msg.getCallbackId());
 
 		try {
 			log.debug("Aliyun vms request: {}", () -> toJSONString(req));
@@ -92,7 +93,7 @@ public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyP
 					if (log.isDebugEnabled())
 						log.debug("Successed response: {}, request: {}", resp.getData(), toJSONString(req));
 					else
-						log.info("Successed calledNumer: {}, message: {}", msg.getCalledNumber(), msg.getParameters());
+						log.info("Successed calledNumer: {}, message: {}", calledNumber, msg.getParameters());
 				} else
 					log.warn("Failed response: {}, request: {}", resp.getData(), toJSONString(req));
 			} else
@@ -103,10 +104,31 @@ public class AliyunVmsMessageNotifier extends AbstractMessageNotifier<VmsNotifyP
 
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Object sendForReply(AliyunVmsMessage message) {
+	public <R> R sendForReply(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * SingleCallByVoice|SingleCallByTts
+	 * 
+	 * @see https://help.aliyun.com/document_detail/114035.html?spm=a2c4g.11186623.6.581.56295ad5EBbcwv#
+	 * @see https://help.aliyun.com/document_detail/114036.html?spm=a2c4g.11186623.6.579.7bc95f33wpPjWM
+	 */
+	final public static String KEY_VMS_ACTION = "VmsAction";
+
+	/**
+	 * 语音文件的播放次数，取值范围为1~3。默认：2
+	 */
+	final public static String KEY_VMS_PLAYTIMES = "VmsPlayTimes";
+
+	/**
+	 * 语音文件播放的音量。取值范围为0~100，默认为100。
+	 */
+	final public static String KEY_VMS_VOLUME = "VmsVolume";
+
+	/**
+	 * 语速控制，取值范围：-500~500。 默认：100
+	 */
+	final public static String KEY_VMS_SPEED = "VmsSpeed";
 }

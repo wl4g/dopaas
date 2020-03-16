@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.tool.hbase.migrator;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.state;
 import static com.wl4g.devops.tool.hbase.migrator.mapred.AbstractTransformHfileMapper.*;
+import static java.lang.String.format;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -118,8 +120,8 @@ public class HfileBulkExporter {
 		// Check directory.
 		String outputDir = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR) + "/" + tabname;
 		FileSystem fs = FileSystem.get(new URI(outputDir), new Configuration(), user);
-		Assert2.state(!fs.exists(new Path(outputDir)),
-				String.format("HDFS temporary directory already has data, path: '%s'", outputDir));
+		state(!fs.exists(new Path(outputDir)),
+				format("HDFS temporary directory already has data, path: '%s'", outputDir));
 
 		// Set scan condition.(if necessary)
 		setScanIfNecessary(conf, line);

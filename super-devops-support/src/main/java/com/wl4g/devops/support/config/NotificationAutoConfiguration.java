@@ -29,7 +29,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.notification.MessageNotifier;
-import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.apns.ApnsMessageNotifier;
 import com.wl4g.devops.support.notification.apns.ApnsNotifyProperties;
@@ -51,6 +50,7 @@ import com.wl4g.devops.support.notification.vms.AliyunVmsMessageNotifier;
 import com.wl4g.devops.support.notification.vms.VmsNotifyProperties;
 import com.wl4g.devops.support.notification.wechat.WechatMessageNotifier;
 import com.wl4g.devops.support.notification.wechat.WechatNotifyProperties;
+import static com.wl4g.devops.support.notification.NoOpMessageNotifier.*;
 
 /**
  * Notification message service auto configuration
@@ -219,16 +219,15 @@ public class NotificationAutoConfiguration {
 	 * @param notifiers
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	@Bean
-	public GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> compositeMessageNotifier(
-			@Autowired(required = false) List<MessageNotifier<? extends NotifyMessage>> notifiers) {
-		if (isNull(notifiers)) {
-			return new GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>>() {
+	public GenericOperatorAdapter<NotifierKind, MessageNotifier> compositeMessageNotifier(
+			@Autowired(required = false) List<MessageNotifier> notifiers) {
+		if (isNull(notifiers))
+			return new GenericOperatorAdapter<NotifierKind, MessageNotifier>(DefaultNoOp) {
 			};
-		}
-		return new GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>>(
-				notifiers.stream().map(n -> ((MessageNotifier<NotifyMessage>) n)).collect(toList())) {
+
+		return new GenericOperatorAdapter<NotifierKind, MessageNotifier>(
+				notifiers.stream().map(n -> ((MessageNotifier) n)).collect(toList()), DefaultNoOp) {
 		};
 	}
 

@@ -36,8 +36,8 @@ import java.util.List;
 public class BitbucketVcsOperator extends AbstractVcsOperator {
 
 	@Override
-	public VcsProvider kind() {
-		return VcsProvider.BITBUCKET;
+	public VcsProviderKind kind() {
+		return VcsProviderKind.BITBUCKET;
 	}
 
 	@Override

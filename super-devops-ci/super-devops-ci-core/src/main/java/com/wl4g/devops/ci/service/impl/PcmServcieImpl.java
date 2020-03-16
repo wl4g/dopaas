@@ -100,7 +100,7 @@ public class PcmServcieImpl implements PcmService {
 		if (Objects.isNull(pcm)) {
 			return null;
 		}
-		return pcmOperator.forOperator(pcm.getProviderKind()).get().getUsers(pcm);
+		return pcmOperator.forOperator(pcm.getProviderKind()).getUsers(pcm);
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public class PcmServcieImpl implements PcmService {
 		if (Objects.isNull(pcm)) {
 			return null;
 		}
-		return pcmOperator.forOperator(pcm.getProviderKind()).get().getProjects(pcm);
+		return pcmOperator.forOperator(pcm.getProviderKind()).getProjects(pcm);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class PcmServcieImpl implements PcmService {
 		if (Objects.isNull(pcm)) {
 			return null;
 		}
-		return pcmOperator.forOperator(pcm.getProviderKind()).get().getIssues(pcm, userId, projectId, search);
+		return pcmOperator.forOperator(pcm.getProviderKind()).getIssues(pcm, userId, projectId, search);
 	}
 
 	private Pcm getPcmKind(Integer taskId) {

@@ -19,6 +19,12 @@ import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import static java.lang.reflect.Modifier.*;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +53,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 
-import com.wl4g.devops.common.framework.operator.AroundAutoHandleOperatorInterceptor;
+import com.wl4g.devops.common.framework.operator.OperatorAutoHandleInterceptor;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.framework.operator.EmptyOperator;
 import com.wl4g.devops.common.framework.operator.Operator;
@@ -56,7 +62,7 @@ import com.wl4g.devops.common.web.RespBase.ErrorPromptMessageBuilder;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
- * System properties auto configuration.
+ * System boot properties auto configuration.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年2月20日
@@ -64,9 +70,9 @@ import com.wl4g.devops.tool.common.log.SmartLogger;
  */
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-public class BootSystemAutoConfiguration implements ApplicationContextAware {
+public class SystemBootAutoConfiguration implements ApplicationContextAware {
 
-	final private static SmartLogger log = getLogger(BootSystemAutoConfiguration.class);
+	final private static SmartLogger log = getLogger(SystemBootAutoConfiguration.class);
 
 	/**
 	 * API prompt max length.
@@ -189,34 +195,59 @@ public class BootSystemAutoConfiguration implements ApplicationContextAware {
 
 	@Bean
 	@ConditionalOnBean(Operator.class)
-	public AroundAutoHandleOperatorInterceptor aroundAutoHandleOperatorInterceptor() {
-		return new AroundAutoHandleOperatorInterceptor();
+	public OperatorAutoHandleInterceptor operatorAutoHandleInterceptor() {
+		return new OperatorAutoHandleInterceptor();
 	}
 
 	@Bean
-	@ConditionalOnBean(AroundAutoHandleOperatorInterceptor.class)
-	public PointcutAdvisor compositeOperatorAspectJExpressionPointcutAdvisor(AroundAutoHandleOperatorInterceptor advice) {
+	@ConditionalOnBean(OperatorAutoHandleInterceptor.class)
+	public PointcutAdvisor compositeOperatorAspectJExpressionPointcutAdvisor(OperatorAutoHandleInterceptor advice) {
 		AbstractGenericPointcutAdvisor advisor = new AbstractGenericPointcutAdvisor() {
-			private static final long serialVersionUID = 1L;
+			final private static long serialVersionUID = 1L;
 
 			@Override
 			public Pointcut getPointcut() {
 				return new Pointcut() {
 
+					final private List<String> EXCLUDED_METHODS = new ArrayList<String>(4) {
+						private static final long serialVersionUID = 3369346948736795743L;
+						{
+							addAll(asList(Operator.class.getDeclaredMethods()).stream().map(m -> m.getName()).collect(toList()));
+							addAll(asList(GenericOperatorAdapter.class.getDeclaredMethods()).stream().map(m -> m.getName())
+									.collect(toList()));
+							addAll(asList(Object.class.getDeclaredMethods()).stream().map(m -> m.getName()).collect(toList()));
+						}
+					};
+
 					@Override
 					public MethodMatcher getMethodMatcher() {
-						return MethodMatcher.TRUE;
+						return new MethodMatcher() {
+
+							@Override
+							public boolean matches(Method method, Class<?> targetClass) {
+								Class<?> declareClass = method.getDeclaringClass();
+								return !isAbstract(method.getModifiers()) && isPublic(method.getModifiers())
+										&& !isInterface(declareClass.getModifiers())
+										&& !EXCLUDED_METHODS.contains(method.getName());
+							}
+
+							@Override
+							public boolean isRuntime() {
+								return false;
+							}
+
+							@Override
+							public boolean matches(Method method, Class<?> targetClass, Object... args) {
+								throw new Error("Shouldn't be here");
+							}
+						};
 					}
 
 					@Override
 					public ClassFilter getClassFilter() {
-						return new ClassFilter() {
-							@Override
-							public boolean matches(Class<?> clazz) {
-								return Operator.class.isAssignableFrom(clazz)
-										&& !GenericOperatorAdapter.class.isAssignableFrom(clazz)
-										&& !isAbstract(clazz.getModifiers()) && !isInterface(clazz.getModifiers());
-							}
+						return clazz -> {
+							return Operator.class.isAssignableFrom(clazz) && !GenericOperatorAdapter.class.isAssignableFrom(clazz)
+									&& !isAbstract(clazz.getModifiers()) && !isInterface(clazz.getModifiers());
 						};
 					}
 				};

@@ -18,23 +18,20 @@ package com.wl4g.devops.umc.web;
 import com.wl4g.devops.common.constants.UMCDevOpsConstants;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
-import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.devops.support.notification.mail.MailMessageBuilder;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
-import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import com.wl4g.devops.umc.handle.DashboardHandle;
 import com.wl4g.devops.umc.model.StatusMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Date;
 
 @RestController
 @RequestMapping(UMCDevOpsConstants.URI_ADMIN_HOME)
@@ -44,10 +41,7 @@ public class HomeController extends BaseController {
 	private DashboardHandle dashboardService;
 
 	@Autowired
-	private  GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifier;
-
-	// @Autowired
-	// private SmsNotificationHandle smsHandle;
+	private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
 
 	@RequestMapping("{msgId}")
 	public Object details(@PathVariable("msgId") String msgId, Model model) {
@@ -72,14 +66,12 @@ public class HomeController extends BaseController {
 
 	@RequestMapping("mailSend")
 	public String mailSendTest() {
-		SimpleMailMessage msg = new SimpleMailMessage();
-		msg.setFrom("safec7782@sina.com"); // 设置显示的账号名(最终发送格式为:
-											// from显示名<from账号名>)
-		msg.setSubject("测试主题");
-		msg.setTo("1154635107@qq.com");
-		msg.setText("test");
-		msg.setSentDate(new Date());
-		notifier.forOperator(MailMessageNotifier.class).get().send(new MailMessageWrapper(msg));
+		MailMessageBuilder builder = new MailMessageBuilder().subject("测试消息");
+		GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "mailTpl1")
+				// .addParameter(MailMessageNotifier.KEY_MAILMSG_TYPE, "simple")
+				.addParameter(MailMessageNotifier.KEY_MAILMSG_BUILDER, builder).addParameter("appName", "bizService1")
+				.addParameter("status", "DOWN").addParameter("cause", "Host.cpu.utilization > 200%");
+		notifierAdapter.forOperator(MailMessageNotifier.class).send(msg);
 		System.out.println("ok..");
 		return "ok";
 	}

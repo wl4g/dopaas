@@ -16,8 +16,9 @@
 package com.wl4g.devops.support.notification.wechat;
 
 import com.wl4g.devops.support.notification.AbstractMessageNotifier;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 
-public class WechatMessageNotifier extends AbstractMessageNotifier<WechatNotifyProperties, WechatMessage> {
+public class WechatMessageNotifier extends AbstractMessageNotifier<WechatNotifyProperties> {
 
 	public WechatMessageNotifier(WechatNotifyProperties config) {
 		super(config);
@@ -29,12 +30,12 @@ public class WechatMessageNotifier extends AbstractMessageNotifier<WechatNotifyP
 	}
 
 	@Override
-	public void send(WechatMessage message) {
+	public void send(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public <R> R sendForReply(WechatMessage message) {
+	public <R> R sendForReply(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 

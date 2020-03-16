@@ -42,12 +42,22 @@ public class ObjectValue implements Closeable {
 	/** Object's content */
 	private transient InputStream objectContent;
 
+	public ObjectValue() {
+		super();
+	}
+
+	public ObjectValue(String key, String bucketName) {
+		super();
+		this.key = key;
+		this.bucketName = bucketName;
+	}
+
 	/**
 	 * Gets the object's metadata
 	 * 
 	 * @return Object's metadata in（{@link ObjectMetadata}
 	 */
-	public ObjectMetadata getObjectMetadata() {
+	public ObjectMetadata getMetadata() {
 		return metadata;
 	}
 
@@ -57,7 +67,7 @@ public class ObjectValue implements Closeable {
 	 * @param metadata
 	 *            Object's metadata.
 	 */
-	public void setObjectMetadata(ObjectMetadata metadata) {
+	public void setMetadata(ObjectMetadata metadata) {
 		this.metadata = metadata;
 	}
 

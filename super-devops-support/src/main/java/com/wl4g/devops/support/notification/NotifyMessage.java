@@ -16,6 +16,8 @@
 package com.wl4g.devops.support.notification;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * {@link NotifyMessage}
@@ -25,5 +27,54 @@ import java.io.Serializable;
  * @see
  */
 public interface NotifyMessage extends Serializable {
+
+	/**
+	 * Gets notification target objects.
+	 * 
+	 * @return
+	 */
+	List<String> getToObjects();
+
+	/**
+	 * Gets notification message content template ID
+	 * 
+	 * @return
+	 */
+	String getTemplateKey();
+
+	/**
+	 * Gets the value list of the notification message content placeholder
+	 * parameter.
+	 * 
+	 * @return
+	 */
+	Map<String, Object> getParameters();
+
+	/**
+	 * Gets parameter value by key.
+	 * 
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	Object getParameter(String key, Object defaultValue);
+
+	/**
+	 * Gets parameter value by key to string.
+	 * 
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	String getParameterAsString(String key, Object defaultValue);
+
+	/**
+	 * Gets notification receipt ID, which can be used to process reliable
+	 * message confirmation application (optional), string type, 1-15 bytes
+	 * long.
+	 * 
+	 * @return
+	 */
+	String getCallbackId();
 
 }

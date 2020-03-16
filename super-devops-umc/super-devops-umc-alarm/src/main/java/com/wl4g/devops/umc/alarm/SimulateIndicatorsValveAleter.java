@@ -22,7 +22,6 @@ import org.springframework.util.Assert;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.notification.MessageNotifier;
-import com.wl4g.devops.support.notification.NotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.config.AlarmProperties;
@@ -41,7 +40,7 @@ public class SimulateIndicatorsValveAleter extends DefaultIndicatorsValveAlerter
 
 	public SimulateIndicatorsValveAleter(JedisService jedisService, JedisLockManager lockManager, AlarmProperties config,
 			AlarmConfigurer configurer, RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector,
-			GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter) {
+			GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter) {
 		super(jedisService, lockManager, config, configurer, ruleManager, inspector, notifierAdapter);
 	}
 

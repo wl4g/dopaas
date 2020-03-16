@@ -22,7 +22,13 @@ package com.wl4g.devops.support.notification;
  * @version v1.0 2020年3月5日
  * @since
  */
-public class NoOpMessageNotifier extends AbstractMessageNotifier<NotifyProperties, NotifyMessage> {
+public class NoOpMessageNotifier extends AbstractMessageNotifier<NotifyProperties> {
+
+	final public static MessageNotifier DefaultNoOp = new NoOpMessageNotifier(new NotifyProperties() {
+		@Override
+		public void validate() {
+		}
+	});
 
 	public NoOpMessageNotifier(NotifyProperties config) {
 		super(config);
@@ -34,13 +40,13 @@ public class NoOpMessageNotifier extends AbstractMessageNotifier<NotifyPropertie
 	}
 
 	@Override
-	public void send(NotifyMessage message) {
+	public void send(GenericNotifyMessage msg) {
 		log.warn("Lost!!! this is an empty message notifier. Please check if the notifier is configured correctly!");
 	}
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Object sendForReply(NotifyMessage message) {
+	public Object sendForReply(GenericNotifyMessage msg) {
 		log.warn("Lost!!! this is an empty message notifier. Please check if the notifier is configured correctly!");
 		return null;
 	}

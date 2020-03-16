@@ -16,8 +16,9 @@
 package com.wl4g.devops.support.notification.apns;
 
 import com.wl4g.devops.support.notification.AbstractMessageNotifier;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 
-public class ApnsMessageNotifier extends AbstractMessageNotifier<ApnsNotifyProperties, ApnsMessage> {
+public class ApnsMessageNotifier extends AbstractMessageNotifier<ApnsNotifyProperties> {
 
 	public ApnsMessageNotifier(ApnsNotifyProperties config) {
 		super(config);
@@ -29,13 +30,12 @@ public class ApnsMessageNotifier extends AbstractMessageNotifier<ApnsNotifyPrope
 	}
 
 	@Override
-	public void send(ApnsMessage message) {
+	public void send(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Object sendForReply(ApnsMessage message) {
+	public <R> R sendForReply(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 

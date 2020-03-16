@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.coss.model;
 
+import static java.util.Objects.isNull;
+
 public class ObjectSymlink {
 
 	/**
@@ -30,7 +32,7 @@ public class ObjectSymlink {
 	/**
 	 * The symlink file's metadata.
 	 */
-	private ObjectMetadata metadata;
+	private ObjectMetadata metadata = new ObjectMetadata();
 
 	public String getSymlink() {
 		return symlink;
@@ -53,7 +55,9 @@ public class ObjectSymlink {
 	}
 
 	public void setMetadata(ObjectMetadata metadata) {
-		this.metadata = metadata;
+		if (!isNull(metadata)) {
+			this.metadata = metadata;
+		}
 	}
 
 }
