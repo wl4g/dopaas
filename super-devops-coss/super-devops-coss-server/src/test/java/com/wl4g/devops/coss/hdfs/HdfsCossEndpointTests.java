@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -33,29 +35,63 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.CossEndpoint.CossProvider;
 import com.wl4g.devops.coss.model.AccessControlList;
+import com.wl4g.devops.coss.model.ObjectListing;
+import com.wl4g.devops.coss.model.ObjectSummary;
+import com.wl4g.devops.coss.model.ObjectValue;
+import com.wl4g.devops.coss.model.bucket.Bucket;
+import com.wl4g.devops.coss.model.bucket.BucketList;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CossServer.class, properties = {})
+@FixMethodOrder(MethodSorters.JVM)
 public class HdfsCossEndpointTests {
 
+	private CossEndpoint endpoint;
+
 	@Autowired
-	private GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter;
+	public void createHdfsEndpoint(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
+		System.out.println("createHdfsEndpoint...");
+		endpoint = endpointAdapter.forOperator(CossProvider.Hdfs);
+	}
 
 	@Test
-	public void hdfsEndpointTest1() throws Exception {
-		System.out.println("Starting...");
-		CossEndpoint endpoint = endpointAdapter.forOperator(CossProvider.Hdfs);
-
+	public void hdfsEndpointCreateBucketTest() throws Exception {
 		System.out.println("createBucket...");
 		endpoint.createBucket("sm-clound");
+	}
 
+	@Test
+	public void hdfsEndpointGetBucketAclTest() throws Exception {
 		System.out.println("getBucketAcl...");
 		AccessControlList acl = endpoint.getBucketAcl("sm-clound");
 		System.out.println(acl);
+	}
 
+	@Test
+	public void hdfsEndpointListBucketsTest() throws Exception {
+		System.out.println("listBuckets...");
+		BucketList<Bucket> buckets = endpoint.listBuckets(null, null, null);
+		System.out.println(buckets);
+	}
+
+	@Test
+	public void hdfsEndpointPutObjectTest() throws Exception {
 		System.out.println("putObject...");
 		endpoint.putObject("sm-clound", "hdfs-coss-sample.txt", new FileInputStream(createSampleFile()));
-		System.out.println("End.");
+	}
+
+	@Test
+	public void hdfsEndpointListObjectsTest() throws Exception {
+		System.out.println("listObjects...");
+		ObjectListing<ObjectSummary> objects = endpoint.listObjects("sm-clound");
+		System.out.println(objects);
+	}
+
+	@Test
+	public void hdfsEndpointGetObjectTest() throws Exception {
+		System.out.println("getObject...");
+		ObjectValue object = endpoint.getObject("sm-clound", "hdfs-coss-sample.txt");
+		System.out.println(object);
 	}
 
 	private File createSampleFile() throws IOException {
@@ -63,8 +99,10 @@ public class HdfsCossEndpointTests {
 		file.deleteOnExit();
 
 		Writer writer = new OutputStreamWriter(new FileOutputStream(file));
-		writer.write("abcdefghijklmnopqrstuvwxyz\n");
-		writer.write("0123456789011234567890\n");
+		for (int i = 0; i < 100; i++) {
+			writer.write("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz\n");
+			writer.write("01234567890012345678900123456789001234567890\n");
+		}
 		writer.close();
 
 		return file;

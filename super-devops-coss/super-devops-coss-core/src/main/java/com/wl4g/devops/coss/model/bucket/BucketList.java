@@ -39,4 +39,9 @@ public class BucketList<T extends Bucket> {
 		this.buckets.clear();
 	}
 
+	@Override
+	public String toString() {
+		return "BucketList [buckets=" + buckets + "]";
+	}
+
 }

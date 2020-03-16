@@ -125,7 +125,9 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 *            Bucket name
 	 * @return {@link ObjectListing} instance that has all objects.
 	 */
-	<T extends ObjectSummary> ObjectListing<T> listObjects(String bucketName);
+	default <T extends ObjectSummary> ObjectListing<T> listObjects(String bucketName) {
+		return listObjects(bucketName, null);
+	}
 
 	/**
 	 * Lists all objects under the specified {@link Bucket} with the specified
