@@ -145,12 +145,6 @@
     <if test="name != null and name != ''" >
       AND c.name LIKE CONCAT('%','${name}','%')
     </if>
-    <if test="email != null and email != ''" >
-      AND c.email LIKE CONCAT('%','${email}','%')
-    </if>
-    <if test="phone != null and phone != ''" >
-      AND c.phone LIKE CONCAT('%','${phone}','%')
-    </if>
   </select>
 
   <select id="getContactByGroupIds" resultMap="BaseResultMap" parameterType="java.util.Map" >

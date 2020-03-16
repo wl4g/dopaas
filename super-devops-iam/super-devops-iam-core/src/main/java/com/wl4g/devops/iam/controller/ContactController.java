@@ -41,11 +41,9 @@ public class ContactController extends BaseController {
 
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> list(String name, String email, String phone, PageModel pm) {
-		log.info("into ContactController.list prarms::" + "name = {} , email = {} , phone = {} , pm = {} ", name, email, phone,
-				pm);
+	public RespBase<?> list(PageModel pm, String name) {
 		RespBase<Object> resp = RespBase.create();
-		PageModel list = contactService.list(pm, name, email, phone);
+		PageModel list = contactService.list(pm, name);
 		resp.setData(list);
 		return resp;
 	}
