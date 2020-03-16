@@ -16,6 +16,7 @@
 package com.wl4g.devops.support.notification.dingtalk;
 
 import com.wl4g.devops.support.notification.AbstractMessageNotifier;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 
 /**
  * {@link DingtalkMessageNotifier}
@@ -24,7 +25,7 @@ import com.wl4g.devops.support.notification.AbstractMessageNotifier;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
-public class DingtalkMessageNotifier extends AbstractMessageNotifier<DingtalkNotifyProperties, DingtalkMessage> {
+public class DingtalkMessageNotifier extends AbstractMessageNotifier<DingtalkNotifyProperties> {
 
 	public DingtalkMessageNotifier(DingtalkNotifyProperties config) {
 		super(config);
@@ -36,13 +37,12 @@ public class DingtalkMessageNotifier extends AbstractMessageNotifier<DingtalkNot
 	}
 
 	@Override
-	public void send(DingtalkMessage message) {
+	public void send(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Object sendForReply(DingtalkMessage message) {
+	public <R> R sendForReply(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -36,8 +36,8 @@ import java.util.List;
 public class CodingVcsOperator extends AbstractVcsOperator {
 
 	@Override
-	public VcsProvider kind() {
-		return VcsProvider.CODING;
+	public VcsProviderKind kind() {
+		return VcsProviderKind.CODING;
 	}
 
 	@Override

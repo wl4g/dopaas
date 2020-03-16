@@ -33,8 +33,8 @@ import java.util.List;
 public class GithubVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
-	public VcsProvider kind() {
-		return VcsProvider.GITHUB;
+	public VcsProviderKind kind() {
+		return VcsProviderKind.GITHUB;
 	}
 
 	@Override

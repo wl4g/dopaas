@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.AlarmContact; 
 import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
 import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
@@ -71,11 +71,11 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	final protected CompositeRuleInspectorAdapter inspector;
 
 	/** Alarm notifier */
-	final protected GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter;
+	final protected GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
 
 	public DefaultIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager, AlarmProperties config,
 			AlarmConfigurer configurer, RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector,
-			GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter) {
+			GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter) {
 		super(jedisService, lockManager, config);
 		Assert.notNull(configurer, "AlarmConfigurer is null, please check config.");
 		Assert.notNull(ruleManager, "RuleManager is null, please check config.");

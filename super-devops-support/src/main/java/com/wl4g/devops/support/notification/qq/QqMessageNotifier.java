@@ -16,8 +16,9 @@
 package com.wl4g.devops.support.notification.qq;
 
 import com.wl4g.devops.support.notification.AbstractMessageNotifier;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 
-public class QqMessageNotifier extends AbstractMessageNotifier<QqNotifyProperties, QqMessage> {
+public class QqMessageNotifier extends AbstractMessageNotifier<QqNotifyProperties> {
 
 	public QqMessageNotifier(QqNotifyProperties config) {
 		super(config);
@@ -29,13 +30,12 @@ public class QqMessageNotifier extends AbstractMessageNotifier<QqNotifyPropertie
 	}
 
 	@Override
-	public void send(QqMessage message) {
+	public void send(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Object sendForReply(QqMessage message) {
+	public <R> R sendForReply(GenericNotifyMessage message) {
 		throw new UnsupportedOperationException();
 	}
 

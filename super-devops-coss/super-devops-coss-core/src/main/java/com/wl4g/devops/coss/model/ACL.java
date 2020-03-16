@@ -24,7 +24,6 @@ package com.wl4g.devops.coss.model;
  * <p>
  * It defines some common permissions.
  * </p>
- *
  */
 public enum ACL {
 
@@ -32,25 +31,25 @@ public enum ACL {
 	 * This is only for object, means the permission inherits the bucket's
 	 * permission.
 	 */
-	Default("default"),
+	Default("default"), // 0755
 
 	/**
 	 * The owner has the {@link Permission#FullControl}, other
 	 * {@link GroupGrantee#AllUsers} does not have access.
 	 */
-	Private("private"),
+	Private("private"), // 0700
 
 	/**
 	 * The owner has the {@link Permission#FullControl}, other
 	 * {@link GroupGrantee#AllUsers} have read-only access.
 	 */
-	PublicRead("public-read"),
+	PublicRead("public-read"), // 0755
 
 	/**
 	 * Both the owner and {@link GroupGrantee#AllUsers} have
 	 * {@link Permission#FullControl}. It's not safe and thus not recommended.
 	 */
-	PublicReadWrite("public-read-write");
+	PublicReadWrite("public-read-write"); // 0777
 
 	private String cannedAclString;
 

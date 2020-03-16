@@ -31,9 +31,7 @@ import com.wl4g.devops.tool.common.log.SmartLogger;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
-public abstract class AbstractMessageNotifier<C extends NotifyProperties, T extends NotifyMessage>
-		implements MessageNotifier<T>, InitializingBean {
-
+public abstract class AbstractMessageNotifier<C extends NotifyProperties> implements MessageNotifier, InitializingBean {
 	final protected SmartLogger log = getLogger(getClass());
 
 	/**

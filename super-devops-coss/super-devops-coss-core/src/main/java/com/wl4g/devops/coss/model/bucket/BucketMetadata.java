@@ -37,6 +37,15 @@ public class BucketMetadata {
 	 */
 	private Map<String, String> attributes = new HashMap<>();
 
+	public BucketMetadata() {
+		super();
+	}
+
+	public BucketMetadata(String bucketName) {
+		super();
+		this.bucketName = bucketName;
+	}
+
 	public String getBucketName() {
 		return bucketName;
 	}

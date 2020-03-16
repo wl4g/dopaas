@@ -98,12 +98,6 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeOssProperties
 	}
 
 	@Override
-	public PutObjectResult putObject(String bucketName, String key, InputStream input) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
 		// TODO Auto-generated method stub
 		return null;
@@ -122,7 +116,7 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeOssProperties
 	}
 
 	@Override
-	public void setObjectAcl(String bucketName, String key, ACL cannedAcl) {
+	public void setObjectAcl(String bucketName, String key, ACL acl) {
 		// TODO Auto-generated method stub
 
 	}

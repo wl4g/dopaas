@@ -15,9 +15,60 @@
  */
 package com.wl4g.devops.coss.hdfs.config;
 
+import static java.util.Objects.isNull;
+import static org.springframework.util.Assert.hasText;
+
+import java.net.URI;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import org.apache.hadoop.fs.Path;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
 public class HdfsCossProperties {
+
+	/**
+	 * Bucket of hdfs root directory URI.
+	 */
+	@NotNull
+	private URI endpointHdfsRootUri = URI.create("hdfs://localhost:8020/coss-bucket");
+
+	/**
+	 * Bucket of hdfs operation user.
+	 */
+	@NotBlank
+	private String user;
+
+	public URI getEndpointHdfsRootUri() {
+		return endpointHdfsRootUri;
+	}
+
+	public void setEndpointHdfsRootUri(URI endpointHdfsRootUri) {
+		this.endpointHdfsRootUri = endpointHdfsRootUri;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		hasText(user, "Hdfs user can not be null");
+		this.user = user;
+	}
+
+	//
+	// --- Function's. ---
+	//
+
+	private Path bucketRootPath;
+
+	public Path getBucketRootPath() {
+		if (isNull(bucketRootPath)) {
+			bucketRootPath = new Path(getEndpointHdfsRootUri());
+		}
+		return bucketRootPath;
+	}
 
 }

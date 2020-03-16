@@ -83,7 +83,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired
-	protected  GenericOperatorAdapter<NotifierKind, MessageNotifier<NotifyMessage>> notifierAdapter;
+	protected GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
 
 	@Autowired
 	protected AppInstanceDao appInstanceDao;
