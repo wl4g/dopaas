@@ -15,13 +15,12 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.wl4g.devops.common.constants.UMCDevOpsConstants;
+import com.wl4g.devops.common.constants.UMCDevOpsConstants; 
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.notification.mail.MailMessageBuilder;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import com.wl4g.devops.umc.handle.DashboardHandle;
@@ -32,7 +31,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+ 
 @RestController
 @RequestMapping(UMCDevOpsConstants.URI_ADMIN_HOME)
 public class HomeController extends BaseController {
@@ -66,12 +65,20 @@ public class HomeController extends BaseController {
 
 	@RequestMapping("mailSend")
 	public String mailSendTest() {
-		MailMessageBuilder builder = new MailMessageBuilder().subject("测试消息");
-		GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "mailTpl1")
-				// .addParameter(MailMessageNotifier.KEY_MAILMSG_TYPE, "simple")
-				.addParameter(MailMessageNotifier.KEY_MAILMSG_BUILDER, builder).addParameter("appName", "bizService1")
-				.addParameter("status", "DOWN").addParameter("cause", "Host.cpu.utilization > 200%");
+		// TODO
+		GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "notifyTpl1");
+		// Common parameters.
+		msg.addParameter("appName", "bizService1");
+		msg.addParameter("status", "DOWN");
+		msg.addParameter("cause", "Host.cpu.utilization > 200%");
+		// Mail special parameters.
+		msg.addParameter(MailMessageNotifier.KEY_MAILMSG_SUBJECT, "测试消息");
+		// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_CC, "");
+		// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_BCC, "");
+		// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_REPLYTO,
+		// "");
 		notifierAdapter.forOperator(MailMessageNotifier.class).send(msg);
+ 
 		System.out.println("ok..");
 		return "ok";
 	}

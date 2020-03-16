@@ -23,7 +23,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.wl4g.devops.support.notification.NotifyProperties;
+import com.wl4g.devops.support.notification.AbstractNotifyProperties;
 
 /**
  * {@link MailNotifyProperties}, Full compatibility with native spring mail!
@@ -32,7 +32,7 @@ import com.wl4g.devops.support.notification.NotifyProperties;
  * @version 2020年1月9日 v1.0.0
  * @see {@link org.springframework.boot.autoconfigure.mail.MailProperties}
  */
-public class MailNotifyProperties implements NotifyProperties {
+public class MailNotifyProperties extends AbstractNotifyProperties {
 	private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 	/**

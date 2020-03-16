@@ -17,11 +17,9 @@ package com.wl4g.devops.support.notification.vms;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 
-import java.util.Properties;
-
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
+import com.wl4g.devops.support.notification.AbstractNotifyProperties;
 import com.wl4g.devops.support.notification.NotifyProperties;
 
 public class VmsNotifyProperties implements NotifyProperties {
@@ -38,44 +36,15 @@ public class VmsNotifyProperties implements NotifyProperties {
 
 	@Override
 	public void validate() {
-
 	}
 
-	public static class BaseVmsProperties {
+	public static class AliyunVmsProperties extends AbstractNotifyProperties {
 
 		/**
 		 * Called show number
 		 */
 		@NotBlank
 		private String calledShowNumber;
-
-		/**
-		 * Text to speech (TTS) template ID
-		 */
-		@NotEmpty
-		private Properties templates = new Properties();
-
-		public String getCalledShowNumber() {
-			return calledShowNumber;
-		}
-
-		public BaseVmsProperties setCalledShowNumber(String calledShowNumber) {
-			hasTextOf(calledShowNumber, "calledShowNumber");
-			this.calledShowNumber = calledShowNumber;
-			return this;
-		}
-
-		public Properties getTemplates() {
-			return templates;
-		}
-
-		public void setTemplates(Properties templates) {
-			this.templates = templates;
-		}
-
-	}
-
-	public static class AliyunVmsProperties extends BaseVmsProperties {
 
 		/**
 		 * e.g. cn-hangzhou
@@ -88,6 +57,16 @@ public class VmsNotifyProperties implements NotifyProperties {
 
 		@NotBlank
 		private String secret;
+
+		public String getCalledShowNumber() {
+			return calledShowNumber;
+		}
+
+		public AliyunVmsProperties setCalledShowNumber(String calledShowNumber) {
+			hasTextOf(calledShowNumber, "calledShowNumber");
+			this.calledShowNumber = calledShowNumber;
+			return this;
+		}
 
 		public String getRegionId() {
 			return regionId;

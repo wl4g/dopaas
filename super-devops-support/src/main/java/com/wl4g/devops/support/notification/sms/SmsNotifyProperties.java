@@ -15,10 +15,7 @@
  */
 package com.wl4g.devops.support.notification.sms;
 
-import java.util.Properties;
-
-import javax.validation.constraints.NotEmpty;
-
+import com.wl4g.devops.support.notification.AbstractNotifyProperties;
 import com.wl4g.devops.support.notification.NotifyProperties;
 
 /**
@@ -45,25 +42,7 @@ public class SmsNotifyProperties implements NotifyProperties {
 
 	}
 
-	public static class BaseSmsProperties {
-
-		/**
-		 * Text template IDS
-		 */
-		@NotEmpty
-		private Properties templates = new Properties();
-
-		public Properties getTemplates() {
-			return templates;
-		}
-
-		public void setTemplates(Properties templates) {
-			this.templates = templates;
-		}
-
-	}
-
-	public static class AliyunSmsNotifyProperties extends BaseSmsProperties {
+	public static class AliyunSmsNotifyProperties extends AbstractNotifyProperties {
 
 		private String product;
 

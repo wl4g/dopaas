@@ -72,4 +72,9 @@ public interface MessageNotifier extends Operator<NotifierKind> {
 
 	}
 
+	/**
+	 * Notification message sendDate keyname.
+	 */
+	final public static String KEY_MSG_SENDDATE = "msgSendDate";
+
 }

@@ -15,25 +15,22 @@
  */
 package com.wl4g.devops.support.notification;
 
-import org.springframework.beans.factory.InitializingBean;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Notify configuration properties.
- * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年2月25日
- * @since
- */
-public interface NotifyProperties extends InitializingBean {
+public class NotifierPropertiesTests {
 
-	@Override
-	default public void afterPropertiesSet() throws Exception {
-		validate();
+	public static void main(String[] args) {
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("name", "jack");
+		// parameters.put("status", "OK");
+
+		AbstractNotifyProperties config = new AbstractNotifyProperties() {
+		};
+		config.getTemplates().put("tpl1", "测试消息，名称：${name}，当前状态为：${status}");
+
+		System.out.println(config.getResolvedMessage("tpl1", parameters));
+
 	}
-
-	/**
-	 * Validation notify properties.
-	 */
-	void validate();
 
 }
