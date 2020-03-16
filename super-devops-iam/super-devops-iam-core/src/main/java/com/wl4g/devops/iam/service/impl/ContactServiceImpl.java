@@ -115,9 +115,9 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
-	public PageModel list(PageModel pm, String name, String email, String phone) {
+	public PageModel list(PageModel pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(alarmContactDao.list(name, email, phone));
+		pm.setRecords(alarmContactDao.list(name));
 		return pm;
 	}
 
