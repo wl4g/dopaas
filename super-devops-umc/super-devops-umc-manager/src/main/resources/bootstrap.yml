@@ -23,6 +23,39 @@ spring:
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
+      support:
+        notification:
+          mail:
+            enable: true # Default[false]
+            properties:
+              mail.smtp.auth: true
+              mail.smtp.ssl.enable: true
+              mail.smtp.timeout: 15000
+              mail.smtp.starttls.enable: true
+              mail.smtp.starttls.required: true
+            templates: # http://www.bejson.com/convert/unicode_chinese
+              tpl1: Application health notification：${appInfo} status changed from ${fromStatus} to ${toStatus}, details：${msg}
+              tpl2: Your verification code is：${code} valid for 5 minutes. You can't tell anyone if you're dead. Thank you for using!
+          sms:
+            enable: true # Default[false]
+            aliyun:
+              regionId: cn-hangzhou
+              accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+              accessKeySecret: {ALIYUN_SECRET}
+              signName: Super Devops\u7edf\u4e00\u76d1\u63a7\u5e73\u53f0
+              templates: # https://dysms.console.aliyun.com/dysms.htm#/domestic/text/template
+                tpl1: SMS_140726862 # Alarm notice template.
+                tpl2: SMS_109490228 # VerificationCode notice template.
+          vms:
+            enable: true # Default[false]
+            aliyun:
+              regionId: cn-hangzhou
+              accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+              accessKeySecret: {ALIYUN_SECRET}
+              calledShowNumber: 055162153866
+              templates:
+                tpl1: TTS_184825642 # Alarm notice template.
+                tpl2: TTS_184820765 # VerificationCode notice template.
 
 # ### Server configuration. ###
 server:

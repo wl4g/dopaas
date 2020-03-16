@@ -56,7 +56,7 @@ public class VmsNotifyProperties implements NotifyProperties {
 		private String accessKeyId;
 
 		@NotBlank
-		private String secret;
+		private String accessKeySecret;
 
 		public String getCalledShowNumber() {
 			return calledShowNumber;
@@ -84,12 +84,12 @@ public class VmsNotifyProperties implements NotifyProperties {
 			this.accessKeyId = accessKeyId;
 		}
 
-		public String getSecret() {
-			return secret;
+		public String getAccessKeySecret() {
+			return accessKeySecret;
 		}
 
-		public void setSecret(String secret) {
-			this.secret = secret;
+		public void setAccessKeySecret(String secret) {
+			this.accessKeySecret = secret;
 		}
 
 	}
