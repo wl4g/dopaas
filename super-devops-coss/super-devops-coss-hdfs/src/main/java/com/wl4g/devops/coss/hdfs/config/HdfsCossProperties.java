@@ -15,7 +15,11 @@
  */
 package com.wl4g.devops.coss.hdfs.config;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.springframework.util.Assert.hasText;
 
 import java.net.URI;
@@ -69,6 +73,37 @@ public class HdfsCossProperties {
 			bucketRootPath = new Path(getEndpointHdfsRootUri());
 		}
 		return bucketRootPath;
+	}
+
+	/**
+	 * Gets object key from hdfs file path.
+	 * 
+	 * <pre>
+	 * e.g:
+	 * getObjectKey("hdfs://localhost:8020/coss-bucket/bucket1/sample1/hdfs-coss-sample.txt") => sample1/hdfs-coss-sample.txt
+	 * </pre>
+	 * 
+	 * @param bucketName
+	 * @param filePath
+	 * @return
+	 */
+	public String getObjectKey(String bucketName, Path filePath) {
+		hasTextOf(bucketName, "bucketName");
+		notNullOf(filePath, "objectFilePath");
+		// Buckets root
+		String prefixPath = getEndpointHdfsRootUri().getPath() + "/" + bucketName;
+		// Substring object key
+		String uriPath = filePath.toUri().getPath();
+		if (!uriPath.contains(prefixPath)) {
+			throw new Error(format("Shouldn't be here, HDFS file path: '%s' will not contain: '%s'", filePath, prefixPath));
+		}
+
+		String objectKey = uriPath.substring(uriPath.indexOf(prefixPath) + prefixPath.length());
+		// Storage protocol cannot start with '/'
+		if (startsWith(objectKey, "/")) {
+			objectKey = objectKey.substring(1);
+		}
+		return objectKey;
 	}
 
 }

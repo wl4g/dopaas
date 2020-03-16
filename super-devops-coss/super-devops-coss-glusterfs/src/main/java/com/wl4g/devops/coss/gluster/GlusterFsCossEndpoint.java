@@ -81,13 +81,6 @@ public class GlusterFsCossEndpoint extends AbstractCossEndpoint<GlusterCossPrope
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public ObjectListing listObjects(String bucketName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
 	public ObjectListing listObjects(String bucketName, String prefix) {
 		// TODO Auto-generated method stub
 		return null;
