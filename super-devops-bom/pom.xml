@@ -68,7 +68,7 @@
 		<!-- Ssh/git & command's. -->
 		<jline.version>3.9.0</jline.version>
 		<ganymed-ssh2.version>262</ganymed-ssh2.version>
-		<sshd.version>2.3.0</sshd.version>
+		<sshd.version>2.4.0</sshd.version>
 		<sshj.version>0.27.0</sshj.version>
 		<eclipse.jgit.version>5.5.1.201910021850-r</eclipse.jgit.version>
 		<!-- Web tool's. -->

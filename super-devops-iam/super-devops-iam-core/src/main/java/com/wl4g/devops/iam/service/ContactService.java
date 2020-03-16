@@ -30,7 +30,7 @@ public interface ContactService {
 
 	void del(Integer id);
 
-	PageModel list(PageModel pm, String name, String email, String phone);
+	PageModel list(PageModel pm, String name);
 
 
 

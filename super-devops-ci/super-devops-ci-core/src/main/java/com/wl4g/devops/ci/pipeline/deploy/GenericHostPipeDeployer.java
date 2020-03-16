@@ -174,7 +174,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @return
 	 */
 	protected String getProgramInstallDir() {
-		return getContext().getProject().getParentAppHome();
+		return getContext().getTaskHistory().getParentAppHome();
 	}
 
 	/**

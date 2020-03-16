@@ -4,79 +4,52 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.iam.AlarmContact" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="email" property="email" jdbcType="VARCHAR" />
-    <result column="phone" property="phone" jdbcType="VARCHAR" />
-    <result column="dingtalk" property="dingtalk" jdbcType="VARCHAR" />
-    <result column="wechat" property="wechat" jdbcType="VARCHAR" />
-    <result column="twitter" property="twitter" jdbcType="VARCHAR" />
-    <result column="facebook" property="facebook" jdbcType="VARCHAR" />
-    <result column="email_enable" property="emailEnable" jdbcType="INTEGER" />
-    <result column="phone_enable" property="phoneEnable" jdbcType="INTEGER" />
-    <result column="dingtalk_enable" property="dingtalkEnable" jdbcType="INTEGER" />
-    <result column="wechat_enable" property="wechatEnable" jdbcType="INTEGER" />
-    <result column="twitter_enable" property="twitterEnable" jdbcType="INTEGER" />
-    <result column="facebook_enable" property="facebookEnable" jdbcType="INTEGER" />
-    <result column="phone_time_of_freq" property="phoneTimeOfFreq" jdbcType="INTEGER" />
-    <result column="dingtalk_time_of_freq" property="dingtalkTimeOfFreq" jdbcType="INTEGER" />
-    <result column="wechat_time_of_freq" property="wechatTimeOfFreq" jdbcType="INTEGER" />
-    <result column="twitter_time_of_freq" property="twitterTimeOfFreq" jdbcType="INTEGER" />
-    <result column="facebook_time_of_freq" property="facebookTimeOfFreq" jdbcType="INTEGER" />
-    <result column="phone_num_of_freq" property="phoneNumOfFreq" jdbcType="INTEGER" />
-    <result column="dingtalk_num_of_freq" property="dingtalkNumOfFreq" jdbcType="INTEGER" />
-    <result column="wechat_num_of_freq" property="wechatNumOfFreq" jdbcType="INTEGER" />
-    <result column="twitter_num_of_freq" property="twitterNumOfFreq" jdbcType="INTEGER" />
-    <result column="facebook_num_of_freq" property="facebookNumOfFreq" jdbcType="INTEGER" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+
+    <collection property="contactChannels" javaType="list" ofType="com.wl4g.devops.common.bean.iam.ContactChannel">
+      <id column="chid" jdbcType="INTEGER" property="id" />
+      <result column="kind" jdbcType="VARCHAR" property="kind" />
+      <result column="contact_id" jdbcType="INTEGER" property="contactId" />
+      <result column="primary_address" jdbcType="VARCHAR" property="primaryAddress" />
+      <result column="time_of_freq" jdbcType="INTEGER" property="timeOfFreq" />
+      <result column="num_of_freq" jdbcType="INTEGER" property="numOfFreq" />
+      <result column="enable" jdbcType="INTEGER" property="enable" />
+    </collection>
+
+
+
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, email, phone, dingtalk, wechat, twitter, facebook, email_enable, phone_enable, 
-    dingtalk_enable, wechat_enable, twitter_enable, facebook_enable, phone_time_of_freq, 
-    dingtalk_time_of_freq, wechat_time_of_freq, twitter_time_of_freq, facebook_time_of_freq, 
-    phone_num_of_freq, dingtalk_num_of_freq, wechat_num_of_freq, twitter_num_of_freq, 
-    facebook_num_of_freq, create_by, create_date, update_by, update_date, del_flag
+    id, `name`, create_by, create_date, update_by, update_date, del_flag
   </sql>
 
   <sql id="Base_Column_List_c" >
-    c.id, c.name, c.email, c.phone, c.dingtalk, c.wechat, c.twitter, c.facebook, c.email_enable, c.phone_enable,
-    c.dingtalk_enable, c.wechat_enable, c.twitter_enable, c.facebook_enable, c.phone_time_of_freq,
-    c.dingtalk_time_of_freq, c.wechat_time_of_freq, c.twitter_time_of_freq, c.facebook_time_of_freq,
-    c.phone_num_of_freq, c.dingtalk_num_of_freq, c.wechat_num_of_freq, c.twitter_num_of_freq,
-    c.facebook_num_of_freq, c.create_by, c.create_date, c.update_by, c.update_date, c.del_flag
+    c.id, c.name, c.create_by, c.create_date, c.update_by, c.update_date, c.del_flag
+  </sql>
+
+  <sql id="Contact_Channel_Column_List">
+    ch.id as chid, ch.kind, ch.contact_id, ch.primary_address, ch.time_of_freq, ch.num_of_freq, ch.enable
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
-    <include refid="Base_Column_List" />
-    from sys_contact
-    where id = #{id,jdbcType=INTEGER}
+    <include refid="Base_Column_List_c" />,<include refid="Contact_Channel_Column_List" />
+    from sys_contact c left join sys_contact_channel ch on ch.contact_id = c.id
+    where c.id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from sys_contact
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.AlarmContact" >
-    insert into sys_contact (id, name, email,
-      phone, dingtalk, wechat, 
-      twitter, facebook, email_enable, 
-      phone_enable, dingtalk_enable, wechat_enable, 
-      twitter_enable, facebook_enable, phone_time_of_freq, 
-      dingtalk_time_of_freq, wechat_time_of_freq, twitter_time_of_freq, 
-      facebook_time_of_freq, phone_num_of_freq, dingtalk_num_of_freq, 
-      wechat_num_of_freq, twitter_num_of_freq, facebook_num_of_freq, 
+    insert into sys_contact (id, `name`,
       create_by, create_date, update_by, 
       update_date, del_flag)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
-      #{phone,jdbcType=VARCHAR}, #{dingtalk,jdbcType=VARCHAR}, #{wechat,jdbcType=VARCHAR}, 
-      #{twitter,jdbcType=VARCHAR}, #{facebook,jdbcType=VARCHAR}, #{emailEnable,jdbcType=INTEGER}, 
-      #{phoneEnable,jdbcType=INTEGER}, #{dingtalkEnable,jdbcType=INTEGER}, #{wechatEnable,jdbcType=INTEGER}, 
-      #{twitterEnable,jdbcType=INTEGER}, #{facebookEnable,jdbcType=INTEGER}, #{phoneTimeOfFreq,jdbcType=INTEGER}, 
-      #{dingtalkTimeOfFreq,jdbcType=INTEGER}, #{wechatTimeOfFreq,jdbcType=INTEGER}, #{twitterTimeOfFreq,jdbcType=INTEGER}, 
-      #{facebookTimeOfFreq,jdbcType=INTEGER}, #{phoneNumOfFreq,jdbcType=INTEGER}, #{dingtalkNumOfFreq,jdbcType=INTEGER}, 
-      #{wechatNumOfFreq,jdbcType=INTEGER}, #{twitterNumOfFreq,jdbcType=INTEGER}, #{facebookNumOfFreq,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
       #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
   </insert>
@@ -88,72 +61,6 @@
       </if>
       <if test="name != null" >
         name,
-      </if>
-      <if test="email != null" >
-        email,
-      </if>
-      <if test="phone != null" >
-        phone,
-      </if>
-      <if test="dingtalk != null" >
-        dingtalk,
-      </if>
-      <if test="wechat != null" >
-        wechat,
-      </if>
-      <if test="twitter != null" >
-        twitter,
-      </if>
-      <if test="facebook != null" >
-        facebook,
-      </if>
-      <if test="emailEnable != null" >
-        email_enable,
-      </if>
-      <if test="phoneEnable != null" >
-        phone_enable,
-      </if>
-      <if test="dingtalkEnable != null" >
-        dingtalk_enable,
-      </if>
-      <if test="wechatEnable != null" >
-        wechat_enable,
-      </if>
-      <if test="twitterEnable != null" >
-        twitter_enable,
-      </if>
-      <if test="facebookEnable != null" >
-        facebook_enable,
-      </if>
-      <if test="phoneTimeOfFreq != null" >
-        phone_time_of_freq,
-      </if>
-      <if test="dingtalkTimeOfFreq != null" >
-        dingtalk_time_of_freq,
-      </if>
-      <if test="wechatTimeOfFreq != null" >
-        wechat_time_of_freq,
-      </if>
-      <if test="twitterTimeOfFreq != null" >
-        twitter_time_of_freq,
-      </if>
-      <if test="facebookTimeOfFreq != null" >
-        facebook_time_of_freq,
-      </if>
-      <if test="phoneNumOfFreq != null" >
-        phone_num_of_freq,
-      </if>
-      <if test="dingtalkNumOfFreq != null" >
-        dingtalk_num_of_freq,
-      </if>
-      <if test="wechatNumOfFreq != null" >
-        wechat_num_of_freq,
-      </if>
-      <if test="twitterNumOfFreq != null" >
-        twitter_num_of_freq,
-      </if>
-      <if test="facebookNumOfFreq != null" >
-        facebook_num_of_freq,
       </if>
       <if test="createBy != null" >
         create_by,
@@ -178,72 +85,6 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="email != null" >
-        #{email,jdbcType=VARCHAR},
-      </if>
-      <if test="phone != null" >
-        #{phone,jdbcType=VARCHAR},
-      </if>
-      <if test="dingtalk != null" >
-        #{dingtalk,jdbcType=VARCHAR},
-      </if>
-      <if test="wechat != null" >
-        #{wechat,jdbcType=VARCHAR},
-      </if>
-      <if test="twitter != null" >
-        #{twitter,jdbcType=VARCHAR},
-      </if>
-      <if test="facebook != null" >
-        #{facebook,jdbcType=VARCHAR},
-      </if>
-      <if test="emailEnable != null" >
-        #{emailEnable,jdbcType=INTEGER},
-      </if>
-      <if test="phoneEnable != null" >
-        #{phoneEnable,jdbcType=INTEGER},
-      </if>
-      <if test="dingtalkEnable != null" >
-        #{dingtalkEnable,jdbcType=INTEGER},
-      </if>
-      <if test="wechatEnable != null" >
-        #{wechatEnable,jdbcType=INTEGER},
-      </if>
-      <if test="twitterEnable != null" >
-        #{twitterEnable,jdbcType=INTEGER},
-      </if>
-      <if test="facebookEnable != null" >
-        #{facebookEnable,jdbcType=INTEGER},
-      </if>
-      <if test="phoneTimeOfFreq != null" >
-        #{phoneTimeOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="dingtalkTimeOfFreq != null" >
-        #{dingtalkTimeOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="wechatTimeOfFreq != null" >
-        #{wechatTimeOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="twitterTimeOfFreq != null" >
-        #{twitterTimeOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="facebookTimeOfFreq != null" >
-        #{facebookTimeOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="phoneNumOfFreq != null" >
-        #{phoneNumOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="dingtalkNumOfFreq != null" >
-        #{dingtalkNumOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="wechatNumOfFreq != null" >
-        #{wechatNumOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="twitterNumOfFreq != null" >
-        #{twitterNumOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="facebookNumOfFreq != null" >
-        #{facebookNumOfFreq,jdbcType=INTEGER},
-      </if>
       <if test="createBy != null" >
         #{createBy,jdbcType=VARCHAR},
       </if>
@@ -267,72 +108,6 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="email != null" >
-        email = #{email,jdbcType=VARCHAR},
-      </if>
-      <if test="phone != null" >
-        phone = #{phone,jdbcType=VARCHAR},
-      </if>
-      <if test="dingtalk != null" >
-        dingtalk = #{dingtalk,jdbcType=VARCHAR},
-      </if>
-      <if test="wechat != null" >
-        wechat = #{wechat,jdbcType=VARCHAR},
-      </if>
-      <if test="twitter != null" >
-        twitter = #{twitter,jdbcType=VARCHAR},
-      </if>
-      <if test="facebook != null" >
-        facebook = #{facebook,jdbcType=VARCHAR},
-      </if>
-      <if test="emailEnable != null" >
-        email_enable = #{emailEnable,jdbcType=INTEGER},
-      </if>
-      <if test="phoneEnable != null" >
-        phone_enable = #{phoneEnable,jdbcType=INTEGER},
-      </if>
-      <if test="dingtalkEnable != null" >
-        dingtalk_enable = #{dingtalkEnable,jdbcType=INTEGER},
-      </if>
-      <if test="wechatEnable != null" >
-        wechat_enable = #{wechatEnable,jdbcType=INTEGER},
-      </if>
-      <if test="twitterEnable != null" >
-        twitter_enable = #{twitterEnable,jdbcType=INTEGER},
-      </if>
-      <if test="facebookEnable != null" >
-        facebook_enable = #{facebookEnable,jdbcType=INTEGER},
-      </if>
-      <if test="phoneTimeOfFreq != null" >
-        phone_time_of_freq = #{phoneTimeOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="dingtalkTimeOfFreq != null" >
-        dingtalk_time_of_freq = #{dingtalkTimeOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="wechatTimeOfFreq != null" >
-        wechat_time_of_freq = #{wechatTimeOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="twitterTimeOfFreq != null" >
-        twitter_time_of_freq = #{twitterTimeOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="facebookTimeOfFreq != null" >
-        facebook_time_of_freq = #{facebookTimeOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="phoneNumOfFreq != null" >
-        phone_num_of_freq = #{phoneNumOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="dingtalkNumOfFreq != null" >
-        dingtalk_num_of_freq = #{dingtalkNumOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="wechatNumOfFreq != null" >
-        wechat_num_of_freq = #{wechatNumOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="twitterNumOfFreq != null" >
-        twitter_num_of_freq = #{twitterNumOfFreq,jdbcType=INTEGER},
-      </if>
-      <if test="facebookNumOfFreq != null" >
-        facebook_num_of_freq = #{facebookNumOfFreq,jdbcType=INTEGER},
-      </if>
       <if test="createBy != null" >
         create_by = #{createBy,jdbcType=VARCHAR},
       </if>
@@ -354,28 +129,6 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.iam.AlarmContact" >
     update sys_contact
     set name = #{name,jdbcType=VARCHAR},
-      email = #{email,jdbcType=VARCHAR},
-      phone = #{phone,jdbcType=VARCHAR},
-      dingtalk = #{dingtalk,jdbcType=VARCHAR},
-      wechat = #{wechat,jdbcType=VARCHAR},
-      twitter = #{twitter,jdbcType=VARCHAR},
-      facebook = #{facebook,jdbcType=VARCHAR},
-      email_enable = #{emailEnable,jdbcType=INTEGER},
-      phone_enable = #{phoneEnable,jdbcType=INTEGER},
-      dingtalk_enable = #{dingtalkEnable,jdbcType=INTEGER},
-      wechat_enable = #{wechatEnable,jdbcType=INTEGER},
-      twitter_enable = #{twitterEnable,jdbcType=INTEGER},
-      facebook_enable = #{facebookEnable,jdbcType=INTEGER},
-      phone_time_of_freq = #{phoneTimeOfFreq,jdbcType=INTEGER},
-      dingtalk_time_of_freq = #{dingtalkTimeOfFreq,jdbcType=INTEGER},
-      wechat_time_of_freq = #{wechatTimeOfFreq,jdbcType=INTEGER},
-      twitter_time_of_freq = #{twitterTimeOfFreq,jdbcType=INTEGER},
-      facebook_time_of_freq = #{facebookTimeOfFreq,jdbcType=INTEGER},
-      phone_num_of_freq = #{phoneNumOfFreq,jdbcType=INTEGER},
-      dingtalk_num_of_freq = #{dingtalkNumOfFreq,jdbcType=INTEGER},
-      wechat_num_of_freq = #{wechatNumOfFreq,jdbcType=INTEGER},
-      twitter_num_of_freq = #{twitterNumOfFreq,jdbcType=INTEGER},
-      facebook_num_of_freq = #{facebookNumOfFreq,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=VARCHAR},
@@ -392,19 +145,17 @@
     <if test="name != null and name != ''" >
       AND c.name LIKE CONCAT('%','${name}','%')
     </if>
-    <if test="email != null and email != ''" >
-      AND c.email LIKE CONCAT('%','${email}','%')
-    </if>
-    <if test="phone != null and phone != ''" >
-      AND c.phone LIKE CONCAT('%','${phone}','%')
-    </if>
   </select>
 
   <select id="getContactByGroupIds" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select * from sys_contact c
+    select
+    <include refid="Base_Column_List_c" />,<include refid="Contact_Channel_Column_List" />
+    from sys_contact c
+    left join sys_contact_channel ch on ch.contact_id = c.id
     where exists(select 1 from sys_contact_group_ref gr
     where gr.contact_group_id IN <foreach item="item" index="index" collection="groupIds" open="(" separator="," close=")">#{item}</foreach>
-    and gr.contact_id=c.id);
+    and gr.contact_id=c.id)
+    and c.del_flag!=1
   </select>
 
 

@@ -15,34 +15,23 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
+import com.wl4g.devops.common.bean.ci.Orchestration;
 import com.wl4g.devops.page.PageModel;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author vjay
- * @date 2019-05-17 11:04:00
+ * @date 2019-11-12 11:05:00
  */
-public interface TaskService {
+public interface OrchestrationService {
 
-	Task save(Task task);
+	PageModel list(PageModel pm, String name);
 
-	PageModel list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String providerKind,
-			String startDate, String endDate, String envType);
+	void save(Orchestration orchestration);
 
-	Map<String, Object> detail(Integer id);
+	void del(Integer id);
 
-	int delete(Integer id);
+	Orchestration detail(Integer id);
 
-	Task getTaskDetailById(Integer triggerId);
-
-	List<TaskBuildCommand> getDependency(Integer appClusterId);
-
-	List<Task> getListByAppClusterId(Integer appClusterId);
-
-	List<Task> getForSelect();
+	void run(Integer id);
 
 }

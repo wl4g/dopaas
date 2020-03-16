@@ -85,6 +85,10 @@ public class DeployProperties {
 		return remoteHomeTmpDir;
 	}
 
+	public String getRemoteHomeTmpDir(String user) {
+		return "/home/" + user + "/.ci-temporary";
+	}
+
 	public void setRemoteHomeTmpDir(String remoteHomeTmpDir) {
 		if (!isBlank(remoteHomeTmpDir)) {
 			this.remoteHomeTmpDir = remoteHomeTmpDir;

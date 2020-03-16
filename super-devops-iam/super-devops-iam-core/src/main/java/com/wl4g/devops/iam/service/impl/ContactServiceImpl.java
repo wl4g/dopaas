@@ -18,8 +18,10 @@ package com.wl4g.devops.iam.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.iam.AlarmContact;
 import com.wl4g.devops.common.bean.iam.AlarmContactGroupRef;
+import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.dao.iam.AlarmContactDao;
 import com.wl4g.devops.dao.iam.AlarmContactGroupRefDao;
+import com.wl4g.devops.dao.iam.ContactChannelDao;
 import com.wl4g.devops.iam.service.ContactService;
 import com.wl4g.devops.page.PageModel;
 import org.apache.commons.collections.CollectionUtils;
@@ -46,6 +48,9 @@ public class ContactServiceImpl implements ContactService {
 	@Autowired
 	private AlarmContactGroupRefDao alarmContactGroupRefDao;
 
+	@Autowired
+	private ContactChannelDao contactChannelDao;
+
 
 	@Override
 	@Transactional
@@ -69,6 +74,15 @@ public class ContactServiceImpl implements ContactService {
 				alarmContactGroupRef.setContactId(alarmContact.getId());
 				alarmContactGroupRefDao.insertSelective(alarmContactGroupRef);
 			}
+		}
+
+		//TODO add 0313
+		contactChannelDao.deleteByContactId(alarmContact.getId());
+		List<ContactChannel> contactChannels = alarmContact.getContactChannels();
+		for(ContactChannel contactChannel : contactChannels){
+			contactChannel.preInsert();
+			contactChannel.setContactId(alarmContact.getId());
+			contactChannelDao.insertSelective(contactChannel);
 		}
 
 	}
@@ -101,9 +115,9 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
-	public PageModel list(PageModel pm, String name, String email, String phone) {
+	public PageModel list(PageModel pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(alarmContactDao.list(name, email, phone));
+		pm.setRecords(alarmContactDao.list(name));
 		return pm;
 	}
 

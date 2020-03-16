@@ -16,17 +16,15 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.exception.ci.NotFoundBackupAssetsFileException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
-
-import static java.lang.String.format;
 
 import java.io.File;
 
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static com.wl4g.devops.tool.common.codec.FingerprintUtils.getMd5Fingerprint;
+import static java.lang.String.format;
 
 /**
  * Recoverable deployment pipeline provider based on physical backup (local
@@ -46,10 +44,10 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	protected void postBuiltModulesDependencies() throws Exception {
 		// Source code fingerprint.
 		// TODO  应获取可打包的主项目project对象
-		setSourceFingerprint(getVcsOperator(new Project()).getLatestCommitted(getContext().getProjectSourceDir()));
+		setSourceFingerprint(getVcsOperator(getContext().getProject()).getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// Assets file fingerprint.
-		String assetsFilename = config.getAssetsFullFilename(getContext().getProject().getAssetsPath(),
+		String assetsFilename = config.getAssetsFullFilename(getContext().getTaskHistory().getAssetsPath(),
 				getContext().getAppCluster().getName());
 		File assetsFile = new File(getContext().getProjectSourceDir() + assetsFilename);
 		if (assetsFile.exists()) {
@@ -94,7 +92,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	 */
 	protected void handleDiskBackupAssets() throws Exception {
 		Integer taskHisId = getContext().getTaskHistory().getId();
-		String assetsFilename = config.getAssetsFullFilename(getContext().getProject().getAssetsPath(),
+		String assetsFilename = config.getAssetsFullFilename(getContext().getTaskHistory().getAssetsPath(),
 				getContext().getAppCluster().getName());
 		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
 		String targetPath = getContext().getProjectSourceDir() + assetsFilename;

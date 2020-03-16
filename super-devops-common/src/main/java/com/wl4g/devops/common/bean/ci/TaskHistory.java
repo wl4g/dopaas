@@ -64,6 +64,11 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private String annex;
 
+	private String parentAppHome;
+
+	/** 构建的文件/目录路径（maven项目的target目录，vue项目的dist目录） */
+	private String assetsPath;
+
 	public Integer getType() {
 		return type;
 	}
@@ -230,5 +235,21 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	public void setAnnex(String annex) {
 		this.annex = annex;
+	}
+
+	public String getParentAppHome() {
+		return parentAppHome;
+	}
+
+	public void setParentAppHome(String parentAppHome) {
+		this.parentAppHome = parentAppHome;
+	}
+
+	public String getAssetsPath() {
+		return assetsPath;
+	}
+
+	public void setAssetsPath(String assetsPath) {
+		this.assetsPath = assetsPath;
 	}
 }

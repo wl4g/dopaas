@@ -51,6 +51,11 @@ public class Task extends BaseBean implements Serializable {
 
 	private String pmPlatform;
 
+	private String parentAppHome;
+
+	/** 构建的文件/目录路径（maven项目的target目录，vue项目的dist目录） */
+	private String assetsPath;
+
 	private List<AppInstance> instances;
 
 	private List<TaskInstance> taskInstances;
@@ -204,6 +209,22 @@ public class Task extends BaseBean implements Serializable {
 
 	public void setPmPlatform(String pmPlatform) {
 		this.pmPlatform = pmPlatform;
+	}
+
+	public String getParentAppHome() {
+		return parentAppHome;
+	}
+
+	public void setParentAppHome(String parentAppHome) {
+		this.parentAppHome = parentAppHome;
+	}
+
+	public String getAssetsPath() {
+		return assetsPath;
+	}
+
+	public void setAssetsPath(String assetsPath) {
+		this.assetsPath = assetsPath;
 	}
 
 	@Override
