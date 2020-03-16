@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.iam.AlarmContact; 
+import com.wl4g.devops.common.bean.iam.AlarmContact;
 import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
 import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
@@ -25,10 +25,11 @@ import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.notification.GenerateNotifyMessage;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.notification.NotifyMessage;
+import com.wl4g.devops.support.notification.mail.MailMessageBuilder;
+import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
@@ -360,17 +361,14 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 				}
 
 				//TODO
-				GenerateNotifyMessage generateNotifyMessage = GenerateNotifyMessage.build();
-				generateNotifyMessage.setTemplateKey("TemplateKey");
-				generateNotifyMessage.getParameters().andPut("test","test").andPut("test2","test2");
-				generateNotifyMessage.setTargets(new String[]{"1","2"});
-
-				notifierAdapter.forOperator(contactChannel.getKind()).get().send(generateNotifyMessage);
+                MailMessageBuilder builder = new MailMessageBuilder().subject("测试消息");
+                GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "mailTpl1")
+                        // .addParameter(MailMessageNotifier.KEY_MAILMSG_TYPE, "simple")
+                        .addParameter(MailMessageNotifier.KEY_MAILMSG_BUILDER, builder).addParameter("appName", "bizService1")
+                        .addParameter("status", "DOWN").addParameter("cause", "Host.cpu.utilization > 200%");
+                notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
 
 			}
-
-
-
 
 		}
 

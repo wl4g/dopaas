@@ -36,10 +36,11 @@ import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.iam.AlarmContactDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
-import com.wl4g.devops.support.notification.GenerateNotifyMessage;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.notification.NotifyMessage;
+import com.wl4g.devops.support.notification.mail.MailMessageBuilder;
+import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -409,12 +410,13 @@ public class DefaultPipelineManager implements PipelineManager {
 					continue;
 				}
 
-				//TODO
-				GenerateNotifyMessage generateNotifyMessage = GenerateNotifyMessage.build();
-				generateNotifyMessage.setTemplateKey("TemplateKey");
-				generateNotifyMessage.getParameters().andPut("test","test").andPut("test2","test2");
-				generateNotifyMessage.setTargets(new String[]{"1","2"});
-				notifierAdapter.forOperator(contactChannel.getKind()).get().send(generateNotifyMessage);
+				MailMessageBuilder builder = new MailMessageBuilder().subject("测试消息");
+				GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "mailTpl1")
+						// .addParameter(MailMessageNotifier.KEY_MAILMSG_TYPE, "simple")
+						.addParameter(MailMessageNotifier.KEY_MAILMSG_BUILDER, builder).addParameter("appName", "bizService1")
+						.addParameter("status", "DOWN").addParameter("cause", "Host.cpu.utilization > 200%");
+				notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
+
 			}
 
 		}
