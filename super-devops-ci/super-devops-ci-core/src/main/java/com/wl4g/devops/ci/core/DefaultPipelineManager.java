@@ -27,6 +27,7 @@ import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.bean.share.AppCluster;
 import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.common.framework.beans.AliasPrototypeBeanFactory;
@@ -35,28 +36,21 @@ import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.iam.AlarmContactDao;
 import com.wl4g.devops.dao.share.AppClusterDao;
 import com.wl4g.devops.dao.share.AppInstanceDao;
+import com.wl4g.devops.support.notification.GenerateNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.NotifyMessage;
-import com.wl4g.devops.support.notification.dingtalk.DingtalkMessage;
-import com.wl4g.devops.support.notification.facebook.FacebookMessage;
-import com.wl4g.devops.support.notification.mail.MailMessageWrapper;
-import com.wl4g.devops.support.notification.sms.AliyunSmsMessage;
-import com.wl4g.devops.support.notification.twitter.TwitterMessage;
-import com.wl4g.devops.support.notification.wechat.WechatMessage;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.FAILED;
-import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.RUNNING;
-import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.SUCCESS;
+import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.*;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.*;
@@ -404,48 +398,23 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected void notificationResult(Integer contactGroupId, String message) {
 		List<AlarmContact> contacts = alarmContactDao.getContactByGroupIds(asList(contactGroupId));
 		for (AlarmContact alarmContact : contacts) {
-			SimpleMailMessage msg = new SimpleMailMessage();
-			msg.setSubject("CI Built Result");
-			msg.setTo(alarmContact.getEmail());
-			msg.setText(message);
-			msg.setSentDate(new Date());
-			// TODO using dynamic kind?
-			notifierAdapter.forOperator(NotifierKind.Mail).get().send(new MailMessageWrapper(msg));
 
-			// phone
-			if (alarmContact.getPhoneEnable() == 1) {
-				// TODO
-				AliyunSmsMessage sms = new AliyunSmsMessage("tpl1", asList(alarmContact.getPhone()));
-				sms.addParameter("msg", message);
-				// notifier.forAdapt(AliyunSmsMessageNotifier.class).send(smsMessage);
+			//new
+			List<ContactChannel> contactChannels = alarmContact.getContactChannels();
+			if(CollectionUtils.isEmpty(contactChannels)){
+				continue;
 			}
+			for(ContactChannel contactChannel : contactChannels){
+				if(1!=contactChannel.getEnable()){
+					continue;
+				}
 
-			// dingtalk
-			if (alarmContact.getDingtalkEnable() == 1) {
-				DingtalkMessage dingtalkMessage = new DingtalkMessage();
-				// TODO set dingtalkMessage
-				// notifier.forAdapt(DingtalkMessageNotifier.class).send(dingtalkMessage);
-			}
-
-			// facebook
-			if (alarmContact.getFacebookEnable() == 1) {
-				FacebookMessage facebookMessage = new FacebookMessage();
-				// TODO set facebookMessage
-				// notifier.forAdapt(FacebookMessageNotifier.class).send(facebookMessage);
-			}
-
-			// twitter
-			if (alarmContact.getTwitterEnable() == 1) {
-				TwitterMessage twitterMessage = new TwitterMessage();
-				// TODO set twitterMessage
-				// notifier.forAdapt(TwitterMessageNotifier.class).send(twitterMessage);
-			}
-
-			// wechat
-			if (alarmContact.getWechatEnable() == 1) {
-				WechatMessage wechatMessage = new WechatMessage();
-				// TODO set wechatMessage
-				// notifier.forAdapt(WechatMessageNotifier.class).send(wechatMessage);
+				//TODO
+				GenerateNotifyMessage generateNotifyMessage = GenerateNotifyMessage.build();
+				generateNotifyMessage.setTemplateKey("TemplateKey");
+				generateNotifyMessage.getParameters().andPut("test","test").andPut("test2","test2");
+				generateNotifyMessage.setTargets(new String[]{"1","2"});
+				notifierAdapter.forOperator(contactChannel.getKind()).get().send(generateNotifyMessage);
 			}
 
 		}
