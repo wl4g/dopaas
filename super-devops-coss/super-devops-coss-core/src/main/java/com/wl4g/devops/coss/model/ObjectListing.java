@@ -31,7 +31,7 @@ public class ObjectListing<T extends ObjectSummary> {
 
 	private String nextMarker;
 
-	private boolean isTruncated;
+	private Boolean isTruncated = false;
 
 	private String prefix;
 
@@ -39,9 +39,9 @@ public class ObjectListing<T extends ObjectSummary> {
 
 	private int maxKeys;
 
-	private String delimiter;
+	private String delimiter = "/";
 
-	private String encodingType;
+	private String encodingType = "UTF-8";
 
 	public List<T> getObjectSummaries() {
 		return objectSummaries;
@@ -137,12 +137,19 @@ public class ObjectListing<T extends ObjectSummary> {
 		this.encodingType = encodingType;
 	}
 
-	public boolean isTruncated() {
+	public Boolean isTruncated() {
 		return isTruncated;
 	}
 
-	public void setTruncated(boolean isTruncated) {
+	public void setTruncated(Boolean isTruncated) {
 		this.isTruncated = isTruncated;
+	}
+
+	@Override
+	public String toString() {
+		return "ObjectListing [objectSummaries=" + objectSummaries + ", commonPrefixes=" + commonPrefixes + ", bucketName="
+				+ bucketName + ", nextMarker=" + nextMarker + ", isTruncated=" + isTruncated + ", prefix=" + prefix + ", marker="
+				+ marker + ", maxKeys=" + maxKeys + ", delimiter=" + delimiter + ", encodingType=" + encodingType + "]";
 	}
 
 }

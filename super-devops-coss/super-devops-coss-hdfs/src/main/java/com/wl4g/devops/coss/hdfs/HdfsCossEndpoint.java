@@ -31,25 +31,27 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileChecksum;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
-
+import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.io.IOUtils;
 
 import com.wl4g.devops.coss.AbstractCossEndpoint;
 import com.wl4g.devops.coss.exception.ServerCossException;
 import com.wl4g.devops.coss.hdfs.config.HdfsCossProperties;
+import com.wl4g.devops.coss.hdfs.model.HdfsObjectListing;
+import com.wl4g.devops.coss.hdfs.model.HdfsObjectSummary;
+import com.wl4g.devops.coss.hdfs.model.bucket.HdfsBucketList;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.AccessControlList;
 import com.wl4g.devops.coss.model.ObjectAcl;
-import com.wl4g.devops.coss.model.ObjectListing;
 import com.wl4g.devops.coss.model.ObjectMetadata;
 import com.wl4g.devops.coss.model.ObjectSymlink;
 import com.wl4g.devops.coss.model.ObjectValue;
 import com.wl4g.devops.coss.model.Owner;
 import com.wl4g.devops.coss.model.PutObjectResult;
 import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 import static com.wl4g.devops.coss.utils.PosixFileSystemUtils.*;
 import static com.wl4g.devops.tool.common.io.FileSizeUtils.*;
@@ -64,7 +66,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	/**
 	 * {@link FileSystem}
 	 */
-	protected FileSystem hdfs;
+	protected FileSystem hdfsFS;
 
 	public HdfsCossEndpoint(HdfsCossProperties config) {
 		super(config);
@@ -91,7 +93,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	public Bucket createBucket(String bucketName) {
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName);
-			hdfs.mkdirs(path, DEFAULT_BUCKET_PERMISSION);
+			hdfsFS.mkdirs(path, DEFAULT_BUCKET_PERMISSION);
 		} catch (IOException e) {
 			throw new ServerCossException(e);
 		}
@@ -101,18 +103,16 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		return bucket;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public BucketList listBuckets(String prefix, String marker, Integer maxKeys) {
-		BucketList<Bucket> bucketList = new BucketList<>();
+	public HdfsBucketList listBuckets(String prefix, String marker, Integer maxKeys) {
+		HdfsBucketList bucketList = new HdfsBucketList();
 		try {
-			FileStatus[] fileStats = hdfs.listStatus(config.getBucketRootPath());
+			FileStatus[] fileStats = hdfsFS.listStatus(config.getBucketRootPath());
 			if (!isNull(fileStats)) {
 				for (FileStatus fileStat : fileStats) {
 					if (fileStat.isDirectory()) {
 						Bucket bucket = new Bucket(fileStat.getPath().getName());
-						// TODO CreationDate?
-						bucket.setCreationDate(null);
+						bucket.setCreationDate(new Date(fileStat.getAccessTime()));
 						bucket.setOwner(new Owner(fileStat.getOwner(), fileStat.getOwner()));
 						bucketList.getBucketList().add(bucket);
 					}
@@ -129,7 +129,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName);
 			// TODO logisic delete?
-			hdfs.delete(path, true);
+			hdfsFS.delete(path, true);
 		} catch (IOException e) {
 			throw new ServerCossException(e);
 		}
@@ -140,7 +140,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		BucketMetadata metadata = new BucketMetadata(bucketName);
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName);
-			FileStatus fileStat = hdfs.getFileStatus(path);
+			FileStatus fileStat = hdfsFS.getFileStatus(path);
 			if (!isNull(fileStat)) {
 				// TODO default is private hdfs server
 				metadata.setBucketRegion("private-hdfs");
@@ -160,7 +160,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		AccessControlList acl = new AccessControlList();
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName);
-			FileStatus fileStat = hdfs.getFileStatus(path);
+			FileStatus fileStat = hdfsFS.getFileStatus(path);
 			if (!isNull(fileStat)) {
 				acl.setOwner(new Owner(fileStat.getOwner(), fileStat.getOwner()));
 				acl.setAcl(toAcl(fileStat.getPermission()));
@@ -175,24 +175,45 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	public void setBucketAcl(String bucketName, ACL acl) {
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName);
-			hdfs.setPermission(path, toFsPermission(acl));
+			hdfsFS.setPermission(path, toFsPermission(acl));
 		} catch (IOException e) {
 			throw new ServerCossException(e);
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	@Override
-	public ObjectListing listObjects(String bucketName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public ObjectListing listObjects(String bucketName, String prefix) {
-		// TODO Auto-generated method stub
-		return null;
+	public HdfsObjectListing listObjects(String bucketName, String prefix) {
+		HdfsObjectListing objectList = new HdfsObjectListing();
+		objectList.setPrefix(prefix);
+		// TODO next, prefix... No implements
+		try {
+			RemoteIterator<LocatedFileStatus> it = hdfsFS.listFiles(config.getBucketRootPath(), true);
+			if (!isNull(it)) {
+				while (it.hasNext()) {
+					LocatedFileStatus fileStat = it.next();
+					if (fileStat.isFile()) {
+						// Object summary
+						HdfsObjectSummary summary = new HdfsObjectSummary();
+						summary.setBucketName(bucketName);
+						summary.setAtime(fileStat.getAccessTime());
+						summary.setMtime(fileStat.getModificationTime());
+						summary.setOwner(new Owner(fileStat.getOwner(), fileStat.getOwner()));
+						summary.setKey(config.getObjectKey(bucketName, fileStat.getPath()));
+						summary.setStorageType("hdfs");
+						summary.setSize(fileStat.getLen());
+						// Checksum
+						Path path = new Path(config.getBucketRootPath(), bucketName + "/" + summary.getKey());
+						FileChecksum checkSum = hdfsFS.getFileChecksum(path);
+						summary.setETag(checkSum.getChecksumOpt().getBytesPerChecksum() + "@" + checkSum.getAlgorithmName());
+						objectList.getObjectSummaries().add(summary);
+					}
+				}
+			}
+		} catch (IOException e) {
+			throw new ServerCossException(e);
+		}
+		return objectList;
 	}
 
 	@Override
@@ -200,7 +221,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		ObjectValue value = new ObjectValue(key, bucketName);
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName + "/" + key);
-			FileStatus fileStat = hdfs.getFileStatus(path);
+			FileStatus fileStat = hdfsFS.getFileStatus(path);
 			if (!isNull(fileStat)) {
 				value.getMetadata().setAtime(fileStat.getAccessTime());
 				value.getMetadata().setMtime(fileStat.getModificationTime());
@@ -209,14 +230,14 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 				value.getMetadata().getUserMetadata().put("owner", fileStat.getOwner());
 				value.getMetadata().getUserMetadata().put("group", fileStat.getGroup());
 				// Checksum
-				FileChecksum checkSum = hdfs.getFileChecksum(path);
+				FileChecksum checkSum = hdfsFS.getFileChecksum(path);
 				if (!isNull(checkSum)) {
 					value.getMetadata()
 							.setEtag(checkSum.getChecksumOpt().getBytesPerChecksum() + "@" + checkSum.getAlgorithmName());
 				}
 				value.getMetadata().setVersionId(null); // TODO
 			}
-			FSDataInputStream input = hdfs.open(path);
+			FSDataInputStream input = hdfsFS.open(path);
 			value.setObjectContent(input);
 		} catch (IOException e) {
 			throw new ServerCossException(e);
@@ -230,15 +251,15 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName + "/" + key);
 			// TODO Existed check?
-			FSDataOutputStream output = hdfs.create(path, true);
+			FSDataOutputStream output = hdfsFS.create(path, true);
 			IOUtils.copyBytes(input, output, DEFAULT_WRITE_BUFFER, true);
 			// Sets permission
 			if (!isNull(metadata) && !isNull(metadata.getAcl())) {
 				FsPermission fp = toFsPermission(metadata.getAcl());
-				hdfs.setPermission(path, fp);
+				hdfsFS.setPermission(path, fp);
 			}
 			// Checksum
-			FileChecksum checkSum = hdfs.getFileChecksum(path);
+			FileChecksum checkSum = hdfsFS.getFileChecksum(path);
 			result.setETag(checkSum.getChecksumOpt().getBytesPerChecksum() + "@" + checkSum.getAlgorithmName());
 			result.setVersionId(null); // TODO
 		} catch (IOException e) {
@@ -252,7 +273,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName + "/" + key);
 			// TODO logisic delete and multiple version?
-			hdfs.delete(path, true);
+			hdfsFS.delete(path, true);
 		} catch (IOException e) {
 			throw new ServerCossException(e);
 		}
@@ -263,7 +284,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		ObjectAcl acl = new ObjectAcl();
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName + "/" + key);
-			FileStatus fileStat = hdfs.getFileStatus(path);
+			FileStatus fileStat = hdfsFS.getFileStatus(path);
 			if (!isNull(fileStat)) {
 				acl.setOwner(new Owner(fileStat.getOwner(), fileStat.getOwner()));
 				acl.setAcl(toAcl(fileStat.getPermission()));
@@ -278,7 +299,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	public void setObjectAcl(String bucketName, String key, ACL acl) {
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName + "/" + key);
-			hdfs.setPermission(path, toFsPermission(acl));
+			hdfsFS.setPermission(path, toFsPermission(acl));
 		} catch (IOException e) {
 			throw new ServerCossException(e);
 		}
@@ -288,7 +309,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	public boolean doesObjectExist(String bucketName, String key) {
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName + "/" + key);
-			return !hdfs.exists(path);
+			return !hdfsFS.exists(path);
 		} catch (IOException e) {
 			throw new ServerCossException(e);
 		}
@@ -299,7 +320,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		try {
 			Path targetPath = new Path(config.getBucketRootPath(), bucketName + "/" + target);
 			Path symlinkPath = new Path(config.getBucketRootPath(), bucketName + "/" + symlink);
-			hdfs.createSymlink(targetPath, symlinkPath, true);
+			hdfsFS.createSymlink(targetPath, symlinkPath, true);
 		} catch (IOException e) {
 			throw new ServerCossException(e);
 		}
@@ -310,7 +331,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		ObjectSymlink objSymlink = new ObjectSymlink();
 		try {
 			Path symlinkPath = new Path(config.getBucketRootPath(), bucketName + "/" + symlink);
-			FileStatus fileStat = hdfs.getFileLinkStatus(symlinkPath);
+			FileStatus fileStat = hdfsFS.getFileLinkStatus(symlinkPath);
 			objSymlink.setSymlink(symlink);
 			objSymlink.setTarget(fileStat.getSymlink().getName());
 
@@ -321,7 +342,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 			objSymlink.getMetadata().getUserMetadata().put("owner", fileStat.getOwner());
 			objSymlink.getMetadata().getUserMetadata().put("group", fileStat.getGroup());
 			// Checksum
-			FileChecksum checkSum = hdfs.getFileChecksum(symlinkPath);
+			FileChecksum checkSum = hdfsFS.getFileChecksum(symlinkPath);
 			if (!isNull(checkSum)) {
 				objSymlink.getMetadata()
 						.setEtag(checkSum.getChecksumOpt().getBytesPerChecksum() + "@" + checkSum.getAlgorithmName());
@@ -343,10 +364,10 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		}
 
 		boolean isRenew = false;
-		if (!isNull(hdfs)) {
+		if (!isNull(hdfsFS)) {
 			// Check current FileSystem status
 			try {
-				hdfs.exists(new Path(config.getEndpointHdfsRootUri()));
+				hdfsFS.exists(new Path(config.getEndpointHdfsRootUri()));
 			} catch (Exception e1) {
 				log.warn("Could't check hdfs FileSystem. cause by: {}", e1.getMessage());
 				if (e1 instanceof IOException) {
@@ -361,8 +382,8 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		}
 
 		// Initializing FileSystem
-		if (isNull(hdfs) || isRenew) {
-			hdfs = getHdfsFileSystem(config);
+		if (isNull(hdfsFS) || isRenew) {
+			hdfsFS = getHdfsFileSystem(config);
 			cacheRefreshLastTime.set(now);
 		}
 	}

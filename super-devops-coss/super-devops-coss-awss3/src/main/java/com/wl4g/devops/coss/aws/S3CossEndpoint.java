@@ -88,13 +88,6 @@ public class S3CossEndpoint extends AbstractCossEndpoint<S3CossProperties> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public S3ObjectListing listObjects(String bucketName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
 	public S3ObjectListing listObjects(String bucketName, String prefix) {
 		// TODO Auto-generated method stub
 		return null;
