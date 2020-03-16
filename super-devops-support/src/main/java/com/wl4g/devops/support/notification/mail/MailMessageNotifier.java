@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.support.notification.mail;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Date;
 import java.util.Properties;
@@ -76,7 +77,7 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
 	public void send(GenericNotifyMessage msg) {
 		String mailMsgType = msg.getParameterAsString(KEY_MAILMSG_TYPE, "simple");
 		switch (mailMsgType) {
-		case "simple":
+		case KEY_MAILMSG_VALUE_SIMPLE:
 			SimpleMailMessage simpleMsg = new SimpleMailMessage();
 			// Add "<>" symbol to send out?
 			/*
@@ -84,15 +85,16 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
 			 * address must be same as authorization user.
 			 */
 			simpleMsg.setFrom(simpleMsg.getFrom() + "<" + config.getUsername() + ">");
-			simpleMsg.setSentDate(new Date());
-
-			MailMessageBuilder builder = (MailMessageBuilder) msg.getParameter(KEY_MAILMSG_BUILDER, null);
-			notNullOf(builder, "mailMessageBuilder");
-			builder.copyTo(simpleMsg);
+			simpleMsg.setSubject(msg.getParameterAsString(KEY_MAILMSG_SUBJECT, EMPTY));
+			simpleMsg.setSentDate(msg.getParameter(KEY_MSG_SENDDATE, new Date()));
+			simpleMsg.setBcc(asList(msg.getParameter(KEY_MAILMSG_BCC)).toArray(new String[] {}));
+			simpleMsg.setCc(asList(msg.getParameter(KEY_MAILMSG_CC)).toArray(new String[] {}));
+			simpleMsg.setReplyTo(msg.getParameter(KEY_MAILMSG_REPLYTO));
+			simpleMsg.setText(config.getResolvedMessage(msg.getTemplateKey(), msg.getParameters()));
 
 			mailSender.send(simpleMsg);
 			break;
-		case "mime": // TODO implements!!!
+		case KEY_MAILMSG_VALUE_MIME: // TODO implements!!!
 			log.warn("No implements MimeMailMessage!!!");
 			break;
 		default:
@@ -107,7 +109,7 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
 	}
 
 	/**
-	 * Send mail message type keyname. </br>
+	 * Send mail message type definitions. </br>
 	 * 
 	 * <pre>
 	 * <b>simple</b> => {@link SimpleMailMessage}
@@ -115,10 +117,27 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
 	 * </pre>
 	 */
 	final public static String KEY_MAILMSG_TYPE = "mailMsgType";
+	final public static String KEY_MAILMSG_VALUE_SIMPLE = "simple";
+	final public static String KEY_MAILMSG_VALUE_MIME = "mime";
 
 	/**
-	 * Mail message builder keyname.
+	 * Mail message builder subject keyname.
 	 */
-	final public static String KEY_MAILMSG_BUILDER = "mailMsgBuilder";
+	final public static String KEY_MAILMSG_SUBJECT = "mailMsgSubject";
+
+	/**
+	 * Mail message builder replyTo keyname.
+	 */
+	final public static String KEY_MAILMSG_REPLYTO = "mailMsgReplyTo";
+
+	/**
+	 * Mail message builder cc keyname.
+	 */
+	final public static String KEY_MAILMSG_CC = "mailMsgCc";
+
+	/**
+	 * Mail message builder bcc keyname.
+	 */
+	final public static String KEY_MAILMSG_BCC = "mailMsgBcc";
 
 }

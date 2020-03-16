@@ -52,7 +52,7 @@ public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 			GenericNotifyMessage msg = new GenericNotifyMessage();
 			msg.addToObjects(getMailTo()).setTemplateKey("mailTpl1");
 			MailMessageBuilder builder = new MailMessageBuilder().subject(getSubject());
-			msg.addParameter(MailMessageNotifier.KEY_MAILMSG_BUILDER, builder).addParameter("appName", status.getAppInfo());
+			msg.addParameter(MailMessageNotifier.KEY_MAILMSG_SUBJECT, builder).addParameter("appName", status.getAppInfo());
 			msg.addParameter("status", status.getToStatus()).addParameter("detailUrl", status.getDetailsUrl());
 			notifierAdapter.forOperator(MailMessageNotifier.class).send(msg);
 		} catch (Exception e) {

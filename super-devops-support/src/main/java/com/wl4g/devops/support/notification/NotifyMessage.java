@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * {@link NotifyMessage}
  * 
@@ -54,10 +56,20 @@ public interface NotifyMessage extends Serializable {
 	 * Gets parameter value by key.
 	 * 
 	 * @param key
+	 * @return
+	 */
+	default <T> T getParameter(@NotBlank String key) {
+		return getParameter(key, null);
+	}
+
+	/**
+	 * Gets parameter value by key.
+	 * 
+	 * @param key
 	 * @param defaultValue
 	 * @return
 	 */
-	Object getParameter(String key, Object defaultValue);
+	<T> T getParameter(@NotBlank String key, Object defaultValue);
 
 	/**
 	 * Gets parameter value by key to string.
@@ -66,7 +78,7 @@ public interface NotifyMessage extends Serializable {
 	 * @param defaultValue
 	 * @return
 	 */
-	String getParameterAsString(String key, Object defaultValue);
+	String getParameterAsString(@NotBlank String key, Object defaultValue);
 
 	/**
 	 * Gets notification receipt ID, which can be used to process reliable

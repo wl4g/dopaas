@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.devops.ci.bean.PipelineModel;
+import com.wl4g.devops.ci.bean.PipelineModel; 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.context.DefaultPipelineContext;
 import com.wl4g.devops.ci.core.context.PipelineContext;
@@ -39,7 +39,6 @@ import com.wl4g.devops.dao.share.AppInstanceDao;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.notification.mail.MailMessageBuilder;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
 import org.slf4j.Logger;
@@ -109,7 +108,6 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected FlowManager flowManager;
 
-
 	@Override
 	public void runPipeline(NewParameter param, PipelineModel pipelineModel) {
 		log.info("Running pipeline job for: {}", param);
@@ -141,14 +139,14 @@ public class DefaultPipelineManager implements PipelineManager {
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
 				task.getBranchName(), null, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
 				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, param.getTaskTraceId(), param.getTaskTraceType(),
-				param.getRemark(), task.getEnvType(), param.getAnnex(),task.getParentAppHome(),task.getAssetsPath());
+				param.getRemark(), task.getEnvType(), param.getAnnex(), task.getParentAppHome(), task.getAssetsPath());
 
 		// Execution pipeline job.
-		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy,pipelineModel));
+		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy, pipelineModel));
 	}
 
 	@Override
-	public void rollbackPipeline(RollbackParameter param,PipelineModel pipelineModel) {
+	public void rollbackPipeline(RollbackParameter param, PipelineModel pipelineModel) {
 		log.info("Rollback pipeline job for: {}", param);
 
 		// Task
@@ -179,10 +177,10 @@ public class DefaultPipelineManager implements PipelineManager {
 				bakTaskHisy.getBuildCommand(), bakTaskHisy.getPreCommand(), bakTaskHisy.getPostCommand(),
 				bakTaskHisy.getProviderKind(), bakTaskHisy.getContactGroupId(), commands, bakTaskHisy.getTrackId(),
 				bakTaskHisy.getTrackType(), bakTaskHisy.getRemark(), bakTaskHisy.getEnvType(), bakTaskHisy.getAnnex(),
-				bakTaskHisy.getParentAppHome(),bakTaskHisy.getAssetsPath());
+				bakTaskHisy.getParentAppHome(), bakTaskHisy.getAssetsPath());
 
 		// Do roll-back pipeline job.
-		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy,pipelineModel));
+		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy, pipelineModel));
 	}
 
 	@Override
@@ -217,11 +215,11 @@ public class DefaultPipelineManager implements PipelineManager {
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
 				param.getBranchName(), sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
 				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, null, null, null, task.getEnvType(), null,
-				task.getParentAppHome(),task.getAssetsPath());
+				task.getParentAppHome(), task.getAssetsPath());
 
 		PipelineModel pipelineModel = flowManager.buildPipeline(task.getId());
 		// Execution pipeline job.
-		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy,pipelineModel));
+		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy, pipelineModel));
 	}
 
 	@Override
@@ -286,7 +284,7 @@ public class DefaultPipelineManager implements PipelineManager {
 
 				postPipelineRunSuccess(taskId, provider);
 
-				//flow status
+				// flow status
 				pipelineModel.setStatus(SUCCESS.toString());
 				flowManager.pipelineStateChange(pipelineModel);
 			} catch (Throwable e) {
@@ -302,7 +300,7 @@ public class DefaultPipelineManager implements PipelineManager {
 				log.info("Post pipeline executeing of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
 				postPipelineRunFailure(taskId, provider, e);
 
-				//flow status
+				// flow status
 				pipelineModel.setStatus(FAILED.toString());
 				flowManager.pipelineStateChange(pipelineModel);
 			} finally {
@@ -400,23 +398,29 @@ public class DefaultPipelineManager implements PipelineManager {
 		List<AlarmContact> contacts = alarmContactDao.getContactByGroupIds(asList(contactGroupId));
 		for (AlarmContact alarmContact : contacts) {
 
-			//new
+			// new
 			List<ContactChannel> contactChannels = alarmContact.getContactChannels();
-			if(CollectionUtils.isEmpty(contactChannels)){
+			if (CollectionUtils.isEmpty(contactChannels)) {
 				continue;
 			}
-			for(ContactChannel contactChannel : contactChannels){
-				if(1!=contactChannel.getEnable()){
+			for (ContactChannel contactChannel : contactChannels) {
+				if (1 != contactChannel.getEnable()) {
 					continue;
 				}
 
-				MailMessageBuilder builder = new MailMessageBuilder().subject("测试消息");
-				GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "mailTpl1")
-						// .addParameter(MailMessageNotifier.KEY_MAILMSG_TYPE, "simple")
-						.addParameter(MailMessageNotifier.KEY_MAILMSG_BUILDER, builder).addParameter("appName", "bizService1")
-						.addParameter("status", "DOWN").addParameter("cause", "Host.cpu.utilization > 200%");
+				// TODO
+				GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "notifyTpl1");
+				// Common parameters.
+				msg.addParameter("appName", "bizService1");
+				msg.addParameter("status", "DOWN");
+				msg.addParameter("cause", "Host.cpu.utilization > 200%");
+				// Mail special parameters.
+				msg.addParameter(MailMessageNotifier.KEY_MAILMSG_SUBJECT, "测试消息");
+				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_CC, "");
+				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_BCC, "");
+				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_REPLYTO,
+				// "");
 				notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
-
 			}
 
 		}
@@ -453,9 +457,9 @@ public class DefaultPipelineManager implements PipelineManager {
 		// New pipeline context.
 		String projectSourceDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 
-		//TODO add pipeline status track
+		// TODO add pipeline status track
 		PipelineContext context = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, taskHisy,
-				refTaskHisy, taskHisyDetails,pipelineModel);
+				refTaskHisy, taskHisyDetails, pipelineModel);
 
 		// Get prototype provider.
 		return beanFactory.getPrototypeBean(context.getTaskHistory().getProviderKind(), context);

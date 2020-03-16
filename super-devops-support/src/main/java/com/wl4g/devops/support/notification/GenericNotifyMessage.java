@@ -24,7 +24,6 @@ import static java.util.stream.Collectors.toMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -138,10 +137,11 @@ public class GenericNotifyMessage implements NotifyMessage {
 		return parameters;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getParameter(@NotBlank String key, Object defaultValue) {
+	public <T> T getParameter(@NotBlank String key, Object defaultValue) {
 		hasTextOf(key, "parameterKey");
-		return getParameters().getOrDefault(key, defaultValue);
+		return (T) getParameters().getOrDefault(key, defaultValue);
 	}
 
 	@Override
@@ -176,7 +176,7 @@ public class GenericNotifyMessage implements NotifyMessage {
 	public GenericNotifyMessage addParameters(Map<String, Object> parameters) {
 		if (!isNull(parameters) && !parameters.isEmpty()) {
 			parameters.putAll(parameters.entrySet().stream().filter(e -> !isNull(e.getKey()))
-					.collect(toMap(e -> ((Entry<String, Object>) e).getKey(), e -> ((Entry<String, Object>) e).getValue())));
+					.collect(toMap(e -> e.getKey(), e -> e.getValue())));
 		}
 		return this;
 	}
