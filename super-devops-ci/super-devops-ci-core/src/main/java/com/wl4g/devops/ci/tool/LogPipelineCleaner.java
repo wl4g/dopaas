@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.tool;
 
-import com.wl4g.devops.dao.share.LogPipelineCleanerDao;
+import com.wl4g.devops.dao.erm.LogPipelineCleanerDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Calendar;
