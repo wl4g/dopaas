@@ -1,1 +1,0 @@
-### SRM - A Spring cloud-based software resource management service that integrates EFK distributed log centralized collection and analysis
