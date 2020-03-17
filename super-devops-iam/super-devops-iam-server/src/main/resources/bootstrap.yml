@@ -32,7 +32,7 @@ spring:
           fail-fast-match-max-attempts: 10
           fail-fast-match-delay: 3600000
           enabled-captcha-max-attempts: 3
-          fail-fast-captcha-max-attempts: 20
+          fail-fast-captcha-max-attempts: 100
           fail-fast-captcha-delay: 600000
           captcha-expire-ms: 60000
           fail-fast-sms-max-attempts: 3

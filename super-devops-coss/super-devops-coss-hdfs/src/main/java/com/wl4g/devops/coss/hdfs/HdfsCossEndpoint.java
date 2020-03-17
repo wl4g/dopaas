@@ -56,6 +56,13 @@ import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 import static com.wl4g.devops.coss.utils.PosixFileSystemUtils.*;
 import static com.wl4g.devops.tool.common.io.FileSizeUtils.*;
 
+/**
+ * File object storage based on HDFS.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年3月17日
+ * @since
+ */
 public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 
 	/**

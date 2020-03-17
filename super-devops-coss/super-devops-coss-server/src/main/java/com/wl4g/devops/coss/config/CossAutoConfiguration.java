@@ -48,13 +48,13 @@ public class CossAutoConfiguration extends OptionalPrefixControllerAutoConfigura
 	@Validated
 	@ConditionalOnProperty(name = KEY_PROPERTY_PREFIX + ".enable", matchIfMissing = true)
 	@ConfigurationProperties(prefix = KEY_PROPERTY_PREFIX)
-	public NativeOssProperties nativeOssProperties() {
-		return new NativeOssProperties();
+	public NativeCossProperties nativeCossProperties() {
+		return new NativeCossProperties();
 	}
 
 	@Bean
-	@ConditionalOnBean(NativeOssProperties.class)
-	public CossEndpoint nativeCossEndpoint(NativeOssProperties config) {
+	@ConditionalOnBean(NativeCossProperties.class)
+	public CossEndpoint nativeCossEndpoint(NativeCossProperties config) {
 		return new NativeCossEndpoint(config);
 	}
 

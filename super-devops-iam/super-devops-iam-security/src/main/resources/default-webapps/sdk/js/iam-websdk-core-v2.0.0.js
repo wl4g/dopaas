@@ -1,5 +1,5 @@
 /**
- * Iam core v1.5.2 | (c) 2017, 2022 wl4g Foundation, Inc.
+ * Iam core v2.0.0 | (c) 2017 ~ 2050 wl4g Foundation, Inc.
  * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
@@ -7,7 +7,7 @@
 
 	// Basic constant definition.
     var constant = {
-        baseUriStoredKey : '__$IamBaseUriStoredKey',
+        baseUriStoredKey : '__$IAM_BASEURI_STORED_KEY',
     };
 
 	// 运行时值/状态临时缓存
@@ -72,6 +72,7 @@
 			// 请申请Captcha
 			$.ajax({
 				url: getApplyCaptchaUrl(),
+				type: "get",
 				dataType: "json",
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 				success: function(res) {
@@ -262,7 +263,7 @@
 	var _configure = function(obj) {
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = jQuery.extend(true, settings, obj);
-		console.debug("Default IAM baseURI is: "+ settings.deploy.baseUri);
+		console.debug("Default iamBaseURI: "+ settings.deploy.baseUri);
 
 		if (Common.Util.isEmpty(settings.deploy.baseUri)) {
 			// 获取地址栏默认baseUri
@@ -293,7 +294,7 @@
 
 		// Sets iamBaseUri
         window.sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
-        console.debug("Overlay IAM baseURI: "+ settings.deploy.baseUri);
+        console.debug("Using overlay iamBaseURI: "+ settings.deploy.baseUri);
 	};
 
 	// 请求连接到第三方社交网络URL
@@ -398,7 +399,7 @@
 					clearInterval(monitor);
 					if(!Common.Util.isEmpty(refreshUrl)){ // 可能未授权(用户直接点击了关闭子窗体),只有绑定的refreshUrl不为空时才表示授权成功
 						// Jump to callback refreshUrl
-						Common.Util.getRootTopWindow(window).location.href = refreshUrl;
+						Common.Util.getRootWindow(window).location.href = refreshUrl;
 					}
 				}
 			}, 200);
@@ -459,8 +460,10 @@
 				url: checkUrl,
 				type: "post",
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+				cache: false,
 				dataType: "json",
-				success: function(res){
+				headers:{'Content-Type':'application/json;charset=utf8','organId':'1333333333'},
+				success: function(res, textStatus, jqxhr){
 					// 初始化完成回调
 					Common.Util.checkEmpty("init.onPostCheck", settings.init.onPostCheck)(res);
 
@@ -612,7 +615,7 @@
                                 $(document).unbind("keydown");
 								var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
 								if(settings.account.onSuccess(principal, redirectUrl)){
-							      Common.Util.getRootTopWindow(window).location.href = redirectUrl;
+							      Common.Util.getRootWindow(window).location.href = redirectUrl;
 								}
 							}
 						},
@@ -714,7 +717,7 @@
 							settings.sms.onError(resp.message); // SMS登录失败回调
 						} else {
 							settings.sms.onSuccess(resp); // SMS登录成功回调
-							Common.Util.getRootTopWindow(window).location.href = resp.data.redirect_url;
+							Common.Util.getRootWindow(window).location.href = resp.data.redirect_url;
 						}
 					},
 					error(req, status, errmsg) {
