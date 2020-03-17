@@ -15,34 +15,25 @@
  */
 package com.wl4g.devops.coss.access;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.CossEndpoint.CossProvider;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
 import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.model.ACL;
-import com.wl4g.devops.coss.model.AccessControlList;
-import com.wl4g.devops.coss.model.ObjectAcl;
-import com.wl4g.devops.coss.model.ObjectListing;
 import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.ObjectSummary;
-import com.wl4g.devops.coss.model.ObjectSymlink;
-import com.wl4g.devops.coss.model.ObjectValue;
 import com.wl4g.devops.coss.model.PutObjectResult;
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
-import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 /**
  * Web/HTTP based coss accessor
@@ -52,7 +43,7 @@ import com.wl4g.devops.coss.model.bucket.BucketMetadata;
  * @since
  */
 @ResponseBody
-public class HttpCossAccessor extends BaseController implements CossAccessor {
+public class HttpCossAccessor extends BaseController {
 
 	final public static String URL_BASE = "/webservice/";
 
@@ -67,9 +58,10 @@ public class HttpCossAccessor extends BaseController implements CossAccessor {
 	}
 
 	@RequestMapping("createBucket")
-	@Override
-	public Bucket createBucket(GenericCossParameter param, String bucketName) {
-		return getCossEndpoint(param).createBucket(bucketName);
+	public RespBase<Object> createBucket(GenericCossParameter param, String bucketName) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(getCossEndpoint(param).createBucket(bucketName));
+		return resp;
 	}
 
 	/**
@@ -78,33 +70,38 @@ public class HttpCossAccessor extends BaseController implements CossAccessor {
 	 * {"bucketList":[{"name":"sm-clound","owner":{"displayName":"root","id":"root"},"creationDate":0}]}
 	 */
 	@RequestMapping("listBuckets")
-	@Override
-	public BucketList<? extends Bucket> listBuckets(GenericCossParameter param, String prefix, String marker, Integer maxKeys) {
-		return getCossEndpoint(param).listBuckets(prefix, marker, maxKeys);
+	public RespBase<Object> listBuckets(GenericCossParameter param, String prefix, String marker, Integer maxKeys) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(getCossEndpoint(param).listBuckets(prefix, marker, maxKeys));
+		return resp;
 	}
 
 	@RequestMapping("deleteBucket")
-	@Override
-	public void deleteBucket(GenericCossParameter param, String bucketName) {
+	public RespBase<Object> deleteBucket(GenericCossParameter param, String bucketName) {
+		RespBase<Object> resp = RespBase.create();
 		getCossEndpoint(param).deleteBucket(bucketName);
+		return resp;
 	}
 
 	@RequestMapping("getBucketMetadata")
-	@Override
-	public BucketMetadata getBucketMetadata(GenericCossParameter param, String bucketName) {
-		return getCossEndpoint(param).getBucketMetadata(bucketName);
+	public RespBase<Object> getBucketMetadata(GenericCossParameter param, String bucketName) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(getCossEndpoint(param).getBucketMetadata(bucketName));
+		return resp;
 	}
 
 	@RequestMapping("getBucketAcl")
-	@Override
-	public AccessControlList getBucketAcl(GenericCossParameter param, String bucketName) {
-		return getCossEndpoint(param).getBucketAcl(bucketName);
+	public RespBase<Object> getBucketAcl(GenericCossParameter param, String bucketName) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(getCossEndpoint(param).getBucketAcl(bucketName));
+		return resp;
 	}
 
 	@RequestMapping("setBucketAcl")
-	@Override
-	public void setBucketAcl(GenericCossParameter param, String bucketName, String acl) {
+	public RespBase<Object> setBucketAcl(GenericCossParameter param, String bucketName, String acl) {
+		RespBase<Object> resp = RespBase.create();
 		getCossEndpoint(param).setBucketAcl(bucketName, ACL.parse(acl));
+		return resp;
 	}
 
 	/**
@@ -113,15 +110,17 @@ public class HttpCossAccessor extends BaseController implements CossAccessor {
 	 * {"objectSummaries":[{"bucketName":"sm-clound","key":"hdfs-coss-sample.txt","size":9800,"mtime":1584348593100,"atime":1584348592700,"storageType":"hdfs","owner":{"displayName":"root","id":"root"},"etag":"512@MD5-of-0MD5-of-512CRC32C"}],"commonPrefixes":[],"bucketName":null,"nextMarker":null,"prefix":"sm","marker":null,"maxKeys":0,"delimiter":"/","encodingType":"UTF-8","truncated":false}
 	 */
 	@RequestMapping("listObjects")
-	@Override
-	public ObjectListing<? extends ObjectSummary> listObjects(GenericCossParameter param, String bucketName, String prefix) {
-		return getCossEndpoint(param).listObjects(bucketName, prefix);
+	public RespBase<Object> listObjects(GenericCossParameter param, String bucketName, String prefix) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(getCossEndpoint(param).listObjects(bucketName, prefix));
+		return resp;
 	}
 
 	@RequestMapping("getObject")
-	@Override
-	public ObjectValue getObject(GenericCossParameter param, String bucketName, String key) {
-		return getCossEndpoint(param).getObject(bucketName, key);
+	public RespBase<Object> getObject(GenericCossParameter param, String bucketName, String key) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(getCossEndpoint(param).getObject(bucketName, key));
+		return resp;
 	}
 
 	@RequestMapping("putObject")
@@ -134,41 +133,44 @@ public class HttpCossAccessor extends BaseController implements CossAccessor {
 		}
 	}
 
-	@Override
 	public PutObjectResult putObject(GenericCossParameter param, String bucketName, String key, InputStream input,
 			ObjectMetadata metadata) {
 		return getCossEndpoint(param).putObject(bucketName, key, input);
 	}
 
 	@RequestMapping("deleteObject")
-	@Override
-	public void deleteObject(GenericCossParameter param, String bucketName, String key) {
+	public RespBase<Object> deleteObject(GenericCossParameter param, String bucketName, String key) {
+		RespBase<Object> resp = RespBase.create();
 		getCossEndpoint(param).deleteObject(bucketName, key);
+		return resp;
 	}
 
 	@RequestMapping("getObjectAcl")
-	@Override
-	public ObjectAcl getObjectAcl(GenericCossParameter param, String bucketName, String key) {
-		return getCossEndpoint(param).getObjectAcl(bucketName, key);
+	public RespBase<Object> getObjectAcl(GenericCossParameter param, String bucketName, String key) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(getCossEndpoint(param).getObjectAcl(bucketName, key));
+		return resp;
 	}
 
 	@RequestMapping("setObjectAcl")
-	@Override
-	public void setObjectAcl(GenericCossParameter param, String bucketName, String key, String acl) {
+	public RespBase<Object> setObjectAcl(GenericCossParameter param, String bucketName, String key, String acl) {
+		RespBase<Object> resp = RespBase.create();
 		getCossEndpoint(param).setObjectAcl(bucketName, key, ACL.parse(acl));
+		return resp;
 	}
 
 	@RequestMapping("createSymlink")
-	@Override
-
-	public void createSymlink(GenericCossParameter param, String bucketName, String symlink, String target) {
+	public RespBase<Object> createSymlink(GenericCossParameter param, String bucketName, String symlink, String target) {
+		RespBase<Object> resp = RespBase.create();
 		getCossEndpoint(param).createSymlink(bucketName, symlink, target);
+		return resp;
 	}
 
 	@RequestMapping("getSymlink")
-	@Override
-	public ObjectSymlink getSymlink(GenericCossParameter param, String bucketName, String symlink) {
-		return getCossEndpoint(param).getSymlink(bucketName, symlink);
+	public RespBase<Object> getSymlink(GenericCossParameter param, String bucketName, String symlink) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(getCossEndpoint(param).getSymlink(bucketName, symlink));
+		return resp;
 	}
 
 	/**
