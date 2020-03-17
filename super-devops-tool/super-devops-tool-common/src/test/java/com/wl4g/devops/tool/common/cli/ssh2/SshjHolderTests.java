@@ -19,44 +19,42 @@ import static java.util.Objects.nonNull;
  */
 public class SshjHolderTests {
 
-	private String home = "$HOME";
+	final public static String HOME = "$HOME";
 
 	public static void main(String[] args) throws Exception {
-
-		//exec();
-
-		scp(); //68869ms cpu <30
-		//test2();
+		// sshjExecTest();
+		sshjScpTest(); // 68869ms cpu <30
+		// sshjConnectTest();
 	}
 
-	private static void exec() throws Exception {
+	public static void sshjExecTest() throws Exception {
 		// Test execute command
 		Ssh2Holders.SshExecResponse sshExecResponse = Ssh2Holders.getInstance(SshjHolder.class).execWithSsh2("10.0.0.160", "root",
-				privateKey.toCharArray(), "mvn -version", 60000);
-		System.out.println("success="+sshExecResponse.getMessage());
-		 System.out.println("fail="+sshExecResponse.getErrmsg());
-		 System.out.println("exitCode="+sshExecResponse.getExitCode());
+				PRIVATE_KEY.toCharArray(), "mvn -version", 60000);
+		System.out.println("success=" + sshExecResponse.getMessage());
+		System.out.println("fail=" + sshExecResponse.getErrmsg());
+		System.out.println("exitCode=" + sshExecResponse.getExitCode());
 	}
 
-	private static void scp() throws Exception {
+	public static void sshjScpTest() throws Exception {
 		long t1 = System.currentTimeMillis();
 		// Test upload file
 		String loaclFile = "/Users/vjay/Downloads/elasticsearch-7.6.0-linux-x86_64.tar";
-		Ssh2Holders.getInstance(SshjHolder.class).scpPutFile("10.0.0.160", "root", privateKey.toCharArray(), new File(loaclFile),
+		Ssh2Holders.getInstance(SshjHolder.class).scpPutFile("10.0.0.160", "root", PRIVATE_KEY.toCharArray(), new File(loaclFile),
 				"$HOME/testssh/elasticsearch-7.6.0-linux-x86_64.tar");
 		long t2 = System.currentTimeMillis();
 		System.out.println(t2 - t1);
 	}
 
-	private static void test2() throws IOException, InterruptedException {
+	public static void sshjConnectTest() throws IOException, InterruptedException {
 		SSHClient ssh = new SSHClient();
 		ssh.addHostKeyVerifier(new PromiscuousVerifier());
 		ssh.connect("10.0.0.160");
-		KeyProvider keyProvider = ssh.loadKeys(new String(privateKey), null, null);
+		KeyProvider keyProvider = ssh.loadKeys(new String(PRIVATE_KEY), null, null);
 		ssh.authPublickey("root", keyProvider);
 		Session session = ssh.startSession();
 		// TODO
-		//session.allocateDefaultPTY();
+		// session.allocateDefaultPTY();
 		Session.Shell shell = session.startShell();
 		String command = "mvn -version\n";
 
@@ -64,7 +62,6 @@ public class SshjHolderTests {
 		outputStream.write(command.getBytes());
 		outputStream.flush();
 		outputStream.close();
-
 
 		InputStream inputStream = shell.getInputStream();
 		InputStream errorStream = shell.getErrorStream();
@@ -80,15 +77,12 @@ public class SshjHolderTests {
 			System.out.println(errmsg);
 		}
 
-
 		session.close();
 		ssh.close();
 
-
 	}
 
-
-	private static final String privateKey = "-----BEGIN RSA PRIVATE KEY-----\n"
+	private static final String PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\n"
 			+ "MIIEpQIBAAKCAQEAwawifYZlHNdmkdMmXdi6wslkfvvAVjGo4cBPtrOFonD0Paex\n"
 			+ "tVRckfkj6rCu4IkKOq6HFBBf1peYVHojLFUm4FGC+YatxoLcdExBj8A/oMVsWN8a\n"
 			+ "ZWv5RH0lqUPZyuefqIrD+pos0R1hJtEDh5cKKT+Ae7kOP2+pX0QeGu0F/z9jozPo\n"

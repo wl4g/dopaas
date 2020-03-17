@@ -15,10 +15,33 @@
  */
 package com.wl4g.devops.coss.natives;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toList;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.AclEntry;
+import java.nio.file.attribute.AclEntryPermission;
+import java.nio.file.attribute.AclFileAttributeView;
+import java.nio.file.attribute.FileOwnerAttributeView;
+import java.nio.file.attribute.UserPrincipal;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import com.wl4g.devops.coss.AbstractCossEndpoint;
-import com.wl4g.devops.coss.config.NativeOssProperties;
+import com.wl4g.devops.coss.config.NativeCossProperties;
+import com.wl4g.devops.coss.exception.ServerCossException;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.AccessControlList;
 import com.wl4g.devops.coss.model.ObjectAcl;
@@ -27,14 +50,27 @@ import com.wl4g.devops.coss.model.ObjectMetadata;
 import com.wl4g.devops.coss.model.ObjectSummary;
 import com.wl4g.devops.coss.model.ObjectSymlink;
 import com.wl4g.devops.coss.model.ObjectValue;
+import com.wl4g.devops.coss.model.Owner;
 import com.wl4g.devops.coss.model.PutObjectResult;
 import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 
-public class NativeCossEndpoint extends AbstractCossEndpoint<NativeOssProperties> {
+/**
+ * File object storage based on native fileSystem.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年3月17日
+ * @since
+ */
+public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossProperties> {
 
-	public NativeCossEndpoint(NativeOssProperties config) {
+	/**
+	 * {@link FileSystem}
+	 */
+	protected FileSystem nativeFS;
+
+	public NativeCossEndpoint(NativeCossProperties config) {
 		super(config);
 	}
 
@@ -45,20 +81,57 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeOssProperties
 
 	@Override
 	public Bucket createBucket(String bucketName) {
-		// TODO Auto-generated method stub
-		return null;
+		File bucketPath = new File(config.getEndpointRootDir(), bucketName);
+		bucketPath.mkdirs();
+		isTrue(bucketPath.exists(), ServerCossException.class, "Couldn't mkdirs bucket directory to '%s'", bucketPath);
+
+		Bucket bucket = new Bucket(bucketName);
+		bucket.setCreationDate(new Date());
+		bucket.setOwner(getCurrentOwner());
+		return bucket;
 	}
 
 	@Override
 	public BucketList<Bucket> listBuckets(String prefix, String marker, Integer maxKeys) {
-		// TODO Auto-generated method stub
-		return null;
+		BucketList<Bucket> bucketList = new BucketList<>();
+
+		List<Bucket> buckets = asList(config.getEndpointRootDir().listFiles(f -> {
+			// TODO
+			if (f.getName().startsWith(prefix)) {
+				return true;
+			}
+			return false;
+		})).stream().map(f -> {
+			if (f.isDirectory()) {
+				try {
+					Bucket bucket = new Bucket(config.getBucketKey(f.getPath()));
+
+					Path path = Paths.get(URI.create(f.getPath()));
+					FileStore fileStore = Files.getFileStore(path); // BasicFileAttributes
+					bucket.setCreationDate(new Date()); // TODO
+
+					FileOwnerAttributeView view = Files.getFileAttributeView(path, FileOwnerAttributeView.class);
+					UserPrincipal owner;
+					owner = view.getOwner();
+					bucket.setOwner(new Owner(owner.getName(), owner.getName()));
+					bucketList.getBucketList().add(bucket);
+					return bucket;
+				} catch (IOException e) {
+					log.warn(format("Couldn't gets file attributes of '%s'", f), e);
+				}
+			}
+			return null;
+		}).collect(toList());
+		bucketList.getBucketList().addAll(buckets);
+
+		return bucketList;
 	}
 
 	@Override
 	public void deleteBucket(String bucketName) {
-		// TODO Auto-generated method stub
-
+		File bucketPath = new File(config.getEndpointRootDir(), bucketName);
+		bucketPath.delete();
+		isTrue(!bucketPath.exists(), ServerCossException.class, "Couldn't delete bucket directory to '%s'", bucketPath);
 	}
 
 	@Override
@@ -69,7 +142,28 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeOssProperties
 
 	@Override
 	public AccessControlList getBucketAcl(String bucketName) {
-		// TODO Auto-generated method stub
+		File bucketPath = new File(config.getEndpointRootDir(), bucketName);
+		Path path = Paths.get(URI.create(bucketPath.getPath()));
+		AclFileAttributeView aclView = Files.getFileAttributeView(path, AclFileAttributeView.class);
+		if (!isNull(aclView)) {
+			try {
+				List<AclEntry> aclEntries = aclView.getAcl();
+				for (AclEntry entry : aclEntries) {
+					System.out.format("Principal: %s%n", entry.principal());
+					System.out.format("Type: %s%n", entry.type());
+					System.out.format("Permissions are:%n");
+
+					Set<AclEntryPermission> permissions = entry.permissions();
+					for (AclEntryPermission p : permissions) {
+						System.out.format("%s %n", p);
+						// TODO
+					}
+
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return null;
 	}
 

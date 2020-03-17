@@ -1,5 +1,5 @@
 ﻿/**
- * Iam captcha jigsaw v1.5.2 | (c) 2017, 2022 wl4g Foundation, Inc.
+ * Iam captcha jigsaw v2.0.0 | (c) 2017 ~ 2050 wl4g Foundation, Inc.
  * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com, babaa1f4@163.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
@@ -28,7 +28,7 @@
         this.initImg();
         this.bindEvents();
     };
-    JigsawCaptcha.VERSION = 'v1.5.2';
+    JigsawCaptcha.VERSION = 'latest';
     JigsawCaptcha.Author = '<Wanglsir@gmail.com, 983708408@qq.com, babaa1f4@163.com>';
     JigsawCaptcha.DEFAULTS = {
         width: 280, // canvas宽度
@@ -135,16 +135,15 @@
         };
         var card = createElement('div', 'JigsawIamCaptcha card');
         card.style.display="none";
-		card.style.backgroundColor="rgb(254,249,249)";
 
         var cardHeader = createElement('div', 'card-header');
 		cardHeader.style.paddingLeft="20px";
 		cardHeader.style.paddingTop="5px";
         var cardHeaderText = createElementValue('span', Common.Util.isZhCN()?'请完成人机验证':'Please complete man-machine verification');
-        var cardBody = createElement('div', 'card-body2');
+        var cardBody = createElement('div', 'card-body');
 
-        var canvas = createCanvas(this.options.width - 2, this.options.height); // 画布
-        var block = createCanvas(this.options.width - 2, this.options.height); // 滑块
+        var canvas = createCanvas(this.options.width, this.options.height); // 画布
+        var block = createCanvas(this.options.width, this.options.height); // 滑块
         var sliderContainer = createElement('div', 'sliderContainer');
         var refreshIcon = createElement('i', 'refreshIcon ' + this.options.repeatIcon);
         var sliderMask = createElement('div', 'sliderMask');
