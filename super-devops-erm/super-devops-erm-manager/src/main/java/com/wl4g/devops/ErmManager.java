@@ -19,11 +19,11 @@ import com.wl4g.devops.iam.client.annotation.EnableIamClient;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+
 
 @EnableIamClient
 @MapperScan("com.wl4g.devops.dao.*")
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
+@SpringBootApplication
 public class ErmManager {
 
 	public static void main(String[] args) {
