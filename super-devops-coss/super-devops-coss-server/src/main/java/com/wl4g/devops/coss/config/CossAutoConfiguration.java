@@ -15,15 +15,6 @@
  */
 package com.wl4g.devops.coss.config;
 
-import java.util.List;
-
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.annotation.Validated;
-
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.CossEndpoint;
@@ -32,6 +23,14 @@ import com.wl4g.devops.coss.access.ConsoleCossAccessor;
 import com.wl4g.devops.coss.access.CossAccessor;
 import com.wl4g.devops.coss.access.HttpCossAccessor;
 import com.wl4g.devops.coss.natives.NativeCossEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
 
 /**
  * COSS core auto configuration.
@@ -72,7 +71,7 @@ public class CossAutoConfiguration extends OptionalPrefixControllerAutoConfigura
 	}
 
 	@Bean
-	public CossAccessor httpCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
+	public HttpCossAccessor httpCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
 		return new HttpCossAccessor(endpointAdapter);
 	}
 
