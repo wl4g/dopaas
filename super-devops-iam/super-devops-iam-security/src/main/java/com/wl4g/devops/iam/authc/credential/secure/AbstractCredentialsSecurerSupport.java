@@ -15,9 +15,12 @@
  */
 package com.wl4g.devops.iam.authc.credential.secure;
 
+import static java.util.Objects.isNull;
+
 import java.security.MessageDigest;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -27,7 +30,6 @@ import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.ByteSource.Util;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -45,6 +47,7 @@ import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.configure.SecureConfig;
 import com.wl4g.devops.iam.crypto.CryptService;
 import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Abstract credentials securer adapter
@@ -55,7 +58,7 @@ import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
  * @since
  */
 abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements IamCredentialsSecurer {
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Secure configuration.
@@ -79,13 +82,13 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	protected CryptService cryptService;
 
 	/**
-	 * Delegate message source.
+	 * I18n message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
 
 	/**
-	 * IAM delegate credentials securer.
+	 * Iam delegate credentials securer. (Extension: optional)
 	 */
 	@Autowired(required = false)
 	protected CredentialsSecurerAdapter delegate;
@@ -106,14 +109,14 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	@Override
 	public String signature(@NotNull CredentialsToken token) {
 		// Delegate signature
-		if (delegate != null && !token.isResolved()) {
-			// Resolve request credentials
+		if (!isNull(delegate) && !token.isResolved()) {
+			// Resolving request credentials token.
 			return delegate.signature(resolves(token));
 		}
 
 		// When the delegate is null, it is unresolved.
 		if (!token.isResolved()) {
-			token = resolves(token); // It is necessary to resolve
+			token = resolves(token); // It is necessary to resolving
 		}
 
 		// Hashing signature
@@ -144,17 +147,17 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	public String applySecret() {
 		// Load secret keySpecPairs
 		Integer index = getBindValue(KEY_SECRET_INDEX);
-		if (index == null) {
+		if (isNull(index)) {
 			index = current().nextInt(0, config.getPreCryptPoolSize());
 		}
-		log.debug("Apply secretkey of indx: {}", index);
+		log.debug("Apply secretKey of index: {}", index);
 
+		// Gets & bind applySecret keyPair index.
 		KeyPairSpec keyPair = cryptService.borrow(index);
-		// Save the applied keyPair index.
 		bind(KEY_SECRET_INDEX, index, config.getApplyPubkeyExpireMs());
 
-		log.info("Apply secretkey of sessionId: {}, index: {}, publicKeyHexString: {}, privateKeyHexString: {}", getSessionId(),
-				index, keyPair.getPubHexString(), keyPair.getHexString());
+		log.info("Apply secretKey of sessionId: {}, index: {}, pubKeyHexString: {}, privKeyHexString: {}", getSessionId(), index,
+				keyPair.getPubHexString(), keyPair.getHexString());
 
 		return keyPair.getPubHexString();
 	}
@@ -182,7 +185,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @param principal
 	 * @return
 	 */
-	protected abstract ByteSource getPublicSalt(@NotNull String principal);
+	protected abstract ByteSource getPublicSalt(@NotBlank String principal);
 
 	/**
 	 * Execute hashing
@@ -195,7 +198,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	protected String doCredentialsHash(@NotNull CredentialsToken token, @NotNull Hasher hasher) {
 		// Merge salt
 		ByteSource salt = merge(privateSalt, getPublicSalt(token.getPrincipal()));
-		log.debug("Merge salt. principal:[{}], salt:[{}]", token.getPrincipal(), salt);
+		log.debug("Merge salt of principal: {}, salt: {}", token.getPrincipal(), salt);
 
 		// Determine which hashing algorithm to use
 		final String[] hashAlgorithms = config.getHashAlgorithms();
@@ -240,15 +243,15 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @param checkCode
 	 * @return
 	 */
-	private KeyPairSpec determineSecretKeySpecPair(@NotNull String principal) {
-		// Choose the best one from the candidate key pair
+	private KeyPairSpec determineSecretKeySpecPair(@NotBlank String principal) {
+		// Gets the best one from the candidate key pair
 		Integer index = getBindValue(KEY_SECRET_INDEX, true);
-		if (index != null) {
+		if (!isNull(index)) {
 			return cryptService.borrow(index);
 		}
 
-		log.warn("Failed to decrypt, secretKey expired. seesionId:[{}], principal:[{}]", getSessionId(), principal);
-		throw new IllegalStateException(String.format("Invalid applied secretKey or expired. principal:[%s]", principal));
+		log.warn("Failed to decrypt, secretKey expired of seesionId: {}, principal: {}", getSessionId(), principal);
+		throw new IllegalStateException(bundle.getMessage("AbstractCredentialsSecurerSupport.secretKey.expired"));
 	}
 
 	/**

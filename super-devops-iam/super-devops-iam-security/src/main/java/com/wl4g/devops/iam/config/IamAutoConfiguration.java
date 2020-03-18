@@ -35,7 +35,7 @@ import org.springframework.web.client.RestTemplate;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 
 import com.wl4g.devops.common.kit.access.IPAccessControl;
-import com.wl4g.devops.iam.authc.credential.GeneralCredentialsHashedMatcher;
+import com.wl4g.devops.iam.authc.credential.GenericCredentialsHashedMatcher;
 import com.wl4g.devops.iam.authc.credential.Oauth2AuthorizingBoundMatcher;
 import com.wl4g.devops.iam.authc.credential.SmsCredentialsHashedMatcher;
 import com.wl4g.devops.iam.authc.credential.secure.DefaultCredentialsSecurer;
@@ -65,7 +65,7 @@ import com.wl4g.devops.iam.filter.FacebookAuthenticationFilter;
 import com.wl4g.devops.iam.filter.QrcodeAuthenticationFilter;
 import com.wl4g.devops.iam.filter.ROOTAuthenticationFilter;
 import com.wl4g.devops.iam.filter.SinaAuthenticationFilter;
-import com.wl4g.devops.iam.filter.GeneralAuthenticationFilter;
+import com.wl4g.devops.iam.filter.GenericAuthenticationFilter;
 import com.wl4g.devops.iam.filter.GithubAuthenticationFilter;
 import com.wl4g.devops.iam.filter.GoogleAuthenticationFilter;
 import com.wl4g.devops.iam.filter.InternalWhiteListServerAuthenticationFilter;
@@ -81,7 +81,7 @@ import com.wl4g.devops.iam.realm.DingtalkAuthorizingRealm;
 import com.wl4g.devops.iam.realm.FacebookAuthorizingRealm;
 import com.wl4g.devops.iam.realm.QrcodeAuthorizingRealm;
 import com.wl4g.devops.iam.realm.SinaAuthorizingRealm;
-import com.wl4g.devops.iam.realm.GeneralAuthorizingRealm;
+import com.wl4g.devops.iam.realm.GenericAuthorizingRealm;
 import com.wl4g.devops.iam.realm.GithubAuthorizingRealm;
 import com.wl4g.devops.iam.realm.GoogleAuthorizingRealm;
 import com.wl4g.devops.iam.realm.QQAuthorizingRealm;
@@ -177,8 +177,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public GeneralCredentialsHashedMatcher generalCredentialsHashedMatcher() {
-		return new GeneralCredentialsHashedMatcher();
+	public GenericCredentialsHashedMatcher genericCredentialsHashedMatcher() {
+		return new GenericCredentialsHashedMatcher();
 	}
 
 	@Bean
@@ -254,8 +254,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public GeneralAuthenticationFilter generalAuthenticationFilter() {
-		return new GeneralAuthenticationFilter();
+	public GenericAuthenticationFilter genericAuthenticationFilter() {
+		return new GenericAuthenticationFilter();
 	}
 
 	@Bean
@@ -357,7 +357,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public FilterRegistrationBean generalFilterRegistrationBean(GeneralAuthenticationFilter filter) {
+	public FilterRegistrationBean genericFilterRegistrationBean(GenericAuthenticationFilter filter) {
 		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
 		registration.setEnabled(false);
 		return registration;
@@ -418,8 +418,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public GeneralAuthorizingRealm generalAuthorizingRealm(GeneralCredentialsHashedMatcher matcher) {
-		return new GeneralAuthorizingRealm(matcher);
+	public GenericAuthorizingRealm genericAuthorizingRealm(GenericCredentialsHashedMatcher matcher) {
+		return new GenericAuthorizingRealm(matcher);
 	}
 
 	@Bean
@@ -430,7 +430,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public QrcodeAuthorizingRealm qrcodeAuthorizingRealm(GeneralCredentialsHashedMatcher matcher) {
+	public QrcodeAuthorizingRealm qrcodeAuthorizingRealm(GenericCredentialsHashedMatcher matcher) {
 		return new QrcodeAuthorizingRealm(matcher);
 	}
 

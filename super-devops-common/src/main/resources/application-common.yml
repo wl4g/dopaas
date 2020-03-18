@@ -26,6 +26,10 @@ spring:
         error-uri-tpl: 50x.tpl.html
         # Default for empty, The default is to intercept the domain name of the browser address bar.
         home-uri: 
+      #embedded-webapps:
+      #  enabled: false # Default false
+      #  base-uri: /default-view
+      #  webapp-location: classpath*:/default-webapps
 
 # Starting banner configuration.
 banner:

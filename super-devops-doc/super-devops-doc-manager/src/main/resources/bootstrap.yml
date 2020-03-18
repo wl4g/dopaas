@@ -17,10 +17,10 @@ spring:
     active: dev
   cloud:
     devops:
-      default-webapps:
-        enabled: true
-        webapp-location: classpath*:/default-webapps
+      embedded-webapps:
+        enabled: true # Default false
         base-uri: /view
+        webapp-location: classpath*:/default-webapps
       support:
         cli:
           enabled: true

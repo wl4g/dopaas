@@ -18,6 +18,8 @@ package com.wl4g.devops.iam.filter;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,28 +27,40 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
-import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
-import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
+import com.wl4g.devops.iam.authc.GenericAuthenticationToken;
+import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType.*;
+import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toMap;
 
 @IamFilter
-public class GeneralAuthenticationFilter extends AbstractIamAuthenticationFilter<GeneralAuthenticationToken> {
-	final public static String NAME = "general";
+public class GenericAuthenticationFilter extends AbstractIamAuthenticationFilter<GenericAuthenticationToken> {
+	final public static String NAME = "generic";
 
 	@Override
-	protected GeneralAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+	protected GenericAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		if (!POST.name().equalsIgnoreCase(request.getMethod())) {
 			response.setStatus(405);
 			throw new HttpRequestMethodNotSupportedException(request.getMethod(),
-					String.format("No support '%s' request method", request.getMethod()));
+					format("No support '%s' request method", request.getMethod()));
 		}
 
+		// Bsse required parameters.
 		String principal = getCleanParam(request, config.getParam().getPrincipalName());
 		String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
 		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
 		String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
-		return new GeneralAuthenticationToken(remoteHost, redirectInfo, principal, cipherPassword, clientRef, verifiedToken,
-				VerifyType.of(request));
+
+		// Other optional parameters.
+		GenericAuthenticationToken token = new GenericAuthenticationToken(remoteHost, redirectInfo, principal, cipherPassword,
+				clientRef, verifiedToken, of(request));
+		Map<String, String> userAttributes = safeMap(request.getParameterMap()).entrySet().stream()
+				.collect(toMap(e -> e.getKey(), e -> isEmptyArray(e.getValue()) ? null : e.getValue()[0]));
+		token.setUserAttributes(userAttributes);
+
+		return token;
 	}
 
 	@Override

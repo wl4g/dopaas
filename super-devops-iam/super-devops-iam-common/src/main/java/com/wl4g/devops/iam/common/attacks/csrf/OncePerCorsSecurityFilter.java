@@ -19,6 +19,8 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
 
 import java.io.IOException;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,10 +38,22 @@ import org.springframework.web.filter.CorsFilter;
  * @version v1.0 2019年4月25日
  * @since
  */
-public class CorsResolveSecurityFilter extends CorsFilter {
+public class OncePerCorsSecurityFilter extends CorsFilter {
 
-	public CorsResolveSecurityFilter(CorsConfigurationSource configSource) {
+	public OncePerCorsSecurityFilter(CorsConfigurationSource configSource) {
 		super(configSource);
+	}
+
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		// Only Internet Explorer supports(P3P)? The authentication mechanism
+		// has been upgraded to non cookie form, reference:
+		// /default-webapps/sdk/iam-websdk-form-{version}.html
+
+		// response.addHeader("P3P", "CP='CURa ADMa DEVa PSAo PSDo OUR BUS UNI
+		// PUR INT DEM STA PRE COM NAV OTC NOI DSP COR'");
+		super.doFilterInternal(request, response, filterChain);
 	}
 
 	/**

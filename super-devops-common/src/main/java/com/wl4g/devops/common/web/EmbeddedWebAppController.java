@@ -18,7 +18,7 @@ package com.wl4g.devops.common.web;
 import static org.springframework.util.StringUtils.*;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.wl4g.devops.common.config.DefaultWebAppAutoConfiguration.DefaultWebAppControllerProperties;
+import com.wl4g.devops.common.config.EmbeddedWebAppAutoConfiguration.EmbeddedWebAppControllerProperties;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.tool.common.resource.StreamResource;
 import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
@@ -50,13 +50,13 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.io.ByteStreams;
 
 /**
- * Default view controller
+ * Embedded webapps view controller
  *
  * @author wangl.sir
  * @version v1.0 2019年1月9日
  * @since
  */
-public class DefaultWebAppController extends BaseController {
+public abstract class EmbeddedWebAppController extends BaseController {
 
 	/**
 	 * Default view page file cache buffer
@@ -71,10 +71,10 @@ public class DefaultWebAppController extends BaseController {
 	/**
 	 * {@link DefaultWebAppControllerProperties}
 	 */
-	protected DefaultWebAppControllerProperties config;
+	protected EmbeddedWebAppControllerProperties config;
 
-	public DefaultWebAppController(DefaultWebAppControllerProperties config) {
-		notNullOf(config, "defaultWebappControllerProperties");
+	public EmbeddedWebAppController(EmbeddedWebAppControllerProperties config) {
+		notNullOf(config, "embeddedWebappControllerProperties");
 		this.config = config;
 	}
 

@@ -81,7 +81,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 */
 	@RequestMapping(value = URI_S_LOGIN_APPLY_SESSION, method = { GET, POST })
 	@ResponseBody
-	public RespBase<?> applySession(HttpServletRequest request) {
+	public RespBase<?> applySession(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			resp.forMap().put(config.getCookie().getName(), getSessionId());
@@ -106,7 +106,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 */
 	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { GET, POST })
 	@ResponseBody
-	public RespBase<?> applyLocale(HttpServletRequest request) {
+	public RespBase<?> applyLocale(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Locale> resp = RespBase.create(sessionStatus());
 		try {
 			String lang = getCleanParam(request, config.getParam().getI18nLang());
@@ -136,7 +136,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 */
 	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { GET, POST })
 	@ResponseBody
-	public RespBase<?> safeCheck(HttpServletRequest request) {
+	public RespBase<?> safeCheck(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			// Limit factors

@@ -21,14 +21,14 @@ import org.apache.shiro.util.ByteSource;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
-public class GeneralAuthenticationInfo extends AbstractIamAuthenticationInfo {
+public class GenericAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = 1558934819432102687L;
 
-	public GeneralAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, String realmName) {
+	public GenericAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, String realmName) {
 		this(accountInfo, principals, null, realmName);
 	}
 
-	public GeneralAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
+	public GenericAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
 			String realmName) {
 		super(accountInfo, principals, credentialsSalt, realmName);
 	}

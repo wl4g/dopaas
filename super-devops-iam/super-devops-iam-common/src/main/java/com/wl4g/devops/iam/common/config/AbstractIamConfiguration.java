@@ -52,8 +52,8 @@ import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
-import com.wl4g.devops.iam.common.attacks.csrf.CorsResolveSecurityFilter;
-import com.wl4g.devops.iam.common.attacks.csrf.CorsResolveSecurityFilter.AdvancedCorsProcessor;
+import com.wl4g.devops.iam.common.attacks.csrf.OncePerCorsSecurityFilter;
+import com.wl4g.devops.iam.common.attacks.csrf.OncePerCorsSecurityFilter.AdvancedCorsProcessor;
 import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
@@ -320,11 +320,11 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public CorsResolveSecurityFilter corsResolveSecurityFilter(CorsProperties config, AdvancedCorsProcessor corsProcessor) {
+	public OncePerCorsSecurityFilter oncePerCorsSecurityFilter(CorsProperties config, AdvancedCorsProcessor corsProcessor) {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		// Merger transformation configuration
 		config.getRules().forEach(rule -> source.registerCorsConfiguration(rule.getPath(), rule.toSpringCorsConfiguration()));
-		CorsResolveSecurityFilter filter = new CorsResolveSecurityFilter(source);
+		OncePerCorsSecurityFilter filter = new OncePerCorsSecurityFilter(source);
 		filter.setCorsProcessor(corsProcessor);
 		return filter;
 	}
@@ -353,7 +353,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	 */
 	@Bean
 	@ConditionalOnBean(CorsProperties.class)
-	public FilterRegistrationBean corsResolveSecurityFilterBean(CorsResolveSecurityFilter filter) {
+	public FilterRegistrationBean corsResolveSecurityFilterBean(OncePerCorsSecurityFilter filter) {
 		// Register CORS filter
 		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
 		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 10);

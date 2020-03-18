@@ -17,6 +17,10 @@ package com.wl4g.devops.iam.authc;
 
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
@@ -32,25 +36,25 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
  * @date 2018年11月19日
  * @since
  */
-public class GeneralAuthenticationToken extends AbstractIamAuthenticationToken
+public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 		implements RememberMeAuthenticationToken, VerifyAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
 	/**
 	 * The username principal
 	 */
-	private String principal;
+	final private String principal;
 
 	/**
 	 * The password credentials
 	 */
-	private String credentials;
+	final private String credentials;
 
 	/**
 	 * Whether or not 'rememberMe' should be enabled for the corresponding login
 	 * attempt; default is <code>false</code>
 	 */
-	private boolean rememberMe = false;
+	final private boolean rememberMe;
 
 	/**
 	 * User client type.
@@ -67,12 +71,18 @@ public class GeneralAuthenticationToken extends AbstractIamAuthenticationToken
 	 */
 	final private VerifyType verifyType;
 
-	public GeneralAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
+	/**
+	 * Client user other attributes properties. (e.g.
+	 * _csrf_token=xxx&lang=zh_CN)
+	 */
+	private Map<String, String> userAttributes = new HashMap<>();
+
+	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
 			final String credentials, String clientRef, final String verifiedToken, final VerifyType verifyType) {
 		this(remoteHost, redirectInfo, principal, credentials, clientRef, verifiedToken, verifyType, false);
 	}
 
-	public GeneralAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
+	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
 			final String credentials, String clientRef, final String verifiedToken, final VerifyType verifyType,
 			final boolean rememberMe) {
 		super(remoteHost, redirectInfo);
@@ -118,11 +128,42 @@ public class GeneralAuthenticationToken extends AbstractIamAuthenticationToken
 		return verifyType;
 	}
 
+	public Map<String, String> getUserAttributes() {
+		return userAttributes;
+	}
+
+	public GenericAuthenticationToken setUserAttributes(Map<String, String> userAttributes) {
+		if (!isEmpty(userAttributes)) {
+			this.userAttributes.putAll(userAttributes);
+		}
+		return this;
+	}
+
 	@Override
 	public String toString() {
-		return "GeneralAuthenticationToken [principal=" + principal + ", credentials=" + credentials + ", rememberMe="
+		return "GenericAuthenticationToken [principal=" + principal + ", credentials=" + credentials + ", rememberMe="
 				+ rememberMe + ", clientRef=" + clientRef + ", verifiedToken=" + verifiedToken + ", verifyType=" + verifyType
-				+ "]";
+				+ ", userAttributes=" + userAttributes + "]";
 	}
+
+	/**
+	 * Native userAgent string. </br>
+	 * 
+	 * <pre>
+	 * e.g. 
+	 * navUserAgent=Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36)
+	 * </pre>
+	 */
+	final public static String KEY_USERAGENT = "navUserAgent";
+
+	/**
+	 * Native OS platform string. (e.g. navPlatform=win32)
+	 */
+	final public static String KEY_PLATFORM = "navPlatform";
+
+	/**
+	 * Client screen pixel. (e.g. screenPixel=1366x768)
+	 */
+	final public static String KEY_SCREENPIXEL = "screenPixel";
 
 }
