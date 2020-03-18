@@ -15,14 +15,12 @@
  */
 package com.wl4g.devops.iam.config;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
+import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.iam.annotation.VerifyAuthController;
 import com.wl4g.devops.iam.web.VerifyAuthenticatorController;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
-
-import java.lang.annotation.Annotation;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
 
@@ -34,26 +32,16 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_B
  * @since
  */
 @AutoConfigureAfter({ LoginAutoConfiguration.class })
-public class VerifyAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
+public class VerifyAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
 	public VerifyAuthenticatorController verifyAuthenticatorController() {
 		return new VerifyAuthenticatorController();
 	}
 
-	@Override
-	protected String getMappingPrefix() {
-		return URI_S_VERIFY_BASE;
-	}
-
 	@Bean
 	public PrefixHandlerMapping verifyAuthenticatorControllerPrefixHandlerMapping() {
-		return super.createPrefixHandlerMapping();
-	}
-
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return VerifyAuthController.class;
+		return super.newPrefixHandlerMapping(URI_S_VERIFY_BASE, VerifyAuthController.class);
 	}
 
 }

@@ -15,18 +15,20 @@
  */
 package com.wl4g.devops.scm.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.scm.*;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
-import com.wl4g.devops.common.bean.share.AppCluster;
-import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.bean.share.Dict;
+import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.iam.Dict;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
-import com.wl4g.devops.dao.share.AppClusterDao;
-import com.wl4g.devops.dao.share.AppInstanceDao;
-import com.wl4g.devops.dao.share.DictDao;
+import com.wl4g.devops.dao.erm.AppClusterDao;
+import com.wl4g.devops.dao.erm.AppInstanceDao;
+import com.wl4g.devops.dao.iam.DictDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,8 +96,10 @@ public class HistoryServiceImpl implements HistoryService {
 		return historyDao.list(agl);
 	}
 
-	public List<VersionList> versionList(Map<String, Object> param) {
-		return historyDao.versionList(param);
+	public PageModel versionList(PageModel pm,Map<String, Object> param) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(historyDao.versionList(param));
+		return pm;
 	}
 
 	@Override
@@ -133,6 +137,7 @@ public class HistoryServiceImpl implements HistoryService {
 		} else if (versionselect.getDelFlag() == Version.DEL_FLAG_DELETE) {
 			throw new RuntimeException("版本已删除");
 		}
+		historyOfDetail.preInsert();
 		historyOfDetail.setVersionid(agl.getId());
 		historyOfDetail.setCreateDate(agl.getCreateDate());
 		historyOfDetail.setCreateBy(agl.getCreateBy());
@@ -140,6 +145,7 @@ public class HistoryServiceImpl implements HistoryService {
 		historyOfDetail.setType(HistoryOfDetail.type.ROLLBACK.getValue());
 		historyDao.insert(historyOfDetail);
 		ReleaseDetail releaseDetail = new ReleaseDetail();
+		releaseDetail.preInsert();
 		releaseDetail.setReleaseId(historyOfDetail.getId());
 		releaseDetail.setInstanceId(Integer.parseInt(agl.getInstanceId()));
 		releaseDetail.setResult("暂无结果");

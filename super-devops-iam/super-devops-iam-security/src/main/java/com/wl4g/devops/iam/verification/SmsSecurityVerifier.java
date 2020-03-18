@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.iam.verification;
 
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.SmsParameter;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action;
-import com.wl4g.devops.iam.verification.cumulation.Cumulator;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SmsParameter;
+import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,10 +39,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.iam.verification.cumulation.CumulateHolder.*;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.BIND;
+import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
@@ -172,7 +172,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 			return;
 		}
 		// Getting account information
-		IamAccountInfo acc = configurer.getIamAccount(new SmsParameter(String.valueOf(mobile)));
+		IamPrincipalInfo acc = configurer.getIamAccount(new SmsParameter(String.valueOf(mobile)));
 
 		// Check mobile(user) available
 		if (!(acc != null && !StringUtils.isEmpty(acc.getPrincipal()))) {

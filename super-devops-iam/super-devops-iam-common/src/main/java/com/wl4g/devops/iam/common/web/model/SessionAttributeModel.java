@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.common.web.model;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.support.cache.ScanCursor.CursorWrapper.parse;
+import static com.wl4g.devops.support.redis.ScanCursor.CursorWrapper.parse;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -24,7 +24,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,9 +47,9 @@ public class SessionAttributeModel implements Serializable {
 	private CursorIndex index = new CursorIndex();
 
 	/**
-	 * Sessoin attributes.
+	 * Session attributes.
 	 */
-	private List<SessionAttribute> sessions = new ArrayList<>(2);
+	private Collection<SessionAttribute> sessions = new ArrayList<>(2);
 
 	public SessionAttributeModel() {
 		super();
@@ -69,11 +69,11 @@ public class SessionAttributeModel implements Serializable {
 		this.index = index;
 	}
 
-	public List<SessionAttribute> getSessions() {
+	public Collection<SessionAttribute> getSessions() {
 		return sessions;
 	}
 
-	public void setSessions(List<SessionAttribute> sessions) {
+	public void setSessions(Collection<SessionAttribute> sessions) {
 		this.sessions = sessions;
 	}
 
@@ -99,6 +99,10 @@ public class SessionAttributeModel implements Serializable {
 
 		public CursorIndex() {
 			super();
+		}
+
+		public CursorIndex(Boolean hasNext) {
+			this(null, hasNext);
 		}
 
 		public CursorIndex(String cursorString, Boolean hasNext) {
@@ -145,9 +149,9 @@ public class SessionAttributeModel implements Serializable {
 		private static final long serialVersionUID = 1990530522326712114L;
 
 		private String id;
-		private Date startTime;
-		private Date stopTime;
-		private Date lastAccessTime;
+		private String startTime;
+		private String stopTime;
+		private String lastAccessTime;
 		private boolean expired;
 		private boolean authenticated;
 		private String host;
@@ -164,27 +168,27 @@ public class SessionAttributeModel implements Serializable {
 			this.id = id;
 		}
 
-		public Date getStartTime() {
+		public String getStartTime() {
 			return startTime;
 		}
 
-		public void setStartTime(Date startTimestamp) {
+		public void setStartTime(String startTimestamp) {
 			this.startTime = startTimestamp;
 		}
 
-		public Date getStopTime() {
+		public String getStopTime() {
 			return stopTime;
 		}
 
-		public void setStopTime(Date stopTimestamp) {
+		public void setStopTime(String stopTimestamp) {
 			this.stopTime = stopTimestamp;
 		}
 
-		public Date getLastAccessTime() {
+		public String getLastAccessTime() {
 			return lastAccessTime;
 		}
 
-		public void setLastAccessTime(Date lastAccessTime) {
+		public void setLastAccessTime(String lastAccessTime) {
 			this.lastAccessTime = lastAccessTime;
 		}
 

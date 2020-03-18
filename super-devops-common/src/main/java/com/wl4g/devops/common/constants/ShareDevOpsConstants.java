@@ -27,6 +27,11 @@ public abstract class ShareDevOpsConstants extends DevOpsConstants {
 	/**
 	 * System dictionaries cache.
 	 */
-	public static final String KEY_CACHE_SYS_DICT_ALL = "dict_all";
+	public static final String KEY_CACHE_SYS_DICT_INIT_CACHE = "dict_init_cache";
+
+	/**
+	 * Config dict cache time(second)
+	 */
+	public static final int CONFIG_DICT_CACHE_TIME_SECOND = 60;
 
 }

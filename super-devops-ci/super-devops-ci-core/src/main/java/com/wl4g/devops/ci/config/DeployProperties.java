@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.ci.config;
 
+import java.io.File;
+
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.isTrue;
-
-import java.io.File;
 
 /**
  * CICD pipeline process, the related configuration classes sent to cluster
@@ -50,7 +50,7 @@ public class DeployProperties {
 	 * e.g. /root/.ci-temporary
 	 * </pre>
 	 */
-	private String remoteHomeTmpDir = "~" + File.separator + ".ci-temporary";
+	private String remoteHomeTmpDir = "$HOME" + File.separator + ".ci-temporary";
 
 	private MvnAssTarProperties mvnAssTar = new MvnAssTarProperties();
 
@@ -83,6 +83,10 @@ public class DeployProperties {
 
 	public String getRemoteHomeTmpDir() {
 		return remoteHomeTmpDir;
+	}
+
+	public String getRemoteHomeTmpDir(String user) {
+		return "/home/" + user + "/.ci-temporary";
 	}
 
 	public void setRemoteHomeTmpDir(String remoteHomeTmpDir) {

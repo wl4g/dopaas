@@ -15,29 +15,37 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.umc.*;
+import com.wl4g.devops.common.bean.iam.AlarmContact; 
+import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
+import com.wl4g.devops.common.bean.iam.ContactChannel;
+import com.wl4g.devops.common.bean.umc.AlarmConfig;
+import com.wl4g.devops.common.bean.umc.AlarmRecord;
+import com.wl4g.devops.common.bean.umc.AlarmRule;
+import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
-import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
+import com.wl4g.devops.support.notification.MessageNotifier;
+import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
+import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
-import com.wl4g.devops.umc.notification.AlarmNotifier;
-import com.wl4g.devops.umc.notification.AlarmNotifier.SimpleAlarmMessage;
-import com.wl4g.devops.umc.notification.AlarmType;
-import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.Map.Entry;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.*;
-import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.common.constants.UMCDevOpsConstants.ALARM_SATUS_SEND;
+import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.Math.abs;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
@@ -63,34 +71,30 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	final protected CompositeRuleInspectorAdapter inspector;
 
 	/** Alarm notifier */
-	final protected CompositeAlarmNotifierAdapter notifier;
+	final protected GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
 
 	public DefaultIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager, AlarmProperties config,
 			AlarmConfigurer configurer, RuleConfigManager ruleManager, CompositeRuleInspectorAdapter inspector,
-			CompositeAlarmNotifierAdapter notifier) {
+			GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter) {
 		super(jedisService, lockManager, config);
 		Assert.notNull(configurer, "AlarmConfigurer is null, please check config.");
 		Assert.notNull(ruleManager, "RuleManager is null, please check config.");
 		Assert.notNull(inspector, "RuleInspector is null, please check config.");
-		Assert.notNull(notifier, "AlarmNotifier is null, please check config.");
+		Assert.notNull(notifierAdapter, "AlarmNotifierAdapter is null, please check config.");
 		this.configurer = configurer;
 		this.ruleManager = ruleManager;
 		this.inspector = inspector;
-		this.notifier = notifier;
+		this.notifierAdapter = notifierAdapter;
 	}
 
 	@Override
 	protected void doHandleAlarm(MetricAggregateWrapper agwrap) {
-		if (log.isInfoEnabled()) {
-			log.info("Alarm handling for host: {} endpoint:{}", agwrap.getHost(), agwrap.getEndpoint());
-		}
+		log.info("Alarm handling for host: {} endpoint:{}", agwrap.getHost(), agwrap.getEndpoint());
 
 		// Load alarm templates by collectId.
 		List<AlarmConfig> alarmConfigs = ruleManager.loadAlarmRuleTpls(agwrap.getHost(), agwrap.getEndpoint());
 		if (isEmpty(alarmConfigs)) {
-			if (log.isInfoEnabled()) {
-				log.info("No found alarm templates for host: {} endpoint:{}", agwrap.getHost(), agwrap.getEndpoint());
-			}
+			log.info("No found alarm templates for host: {} endpoint:{}", agwrap.getHost(), agwrap.getEndpoint());
 			return;
 		}
 
@@ -127,11 +131,14 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	protected Optional<AlarmResult> doGetAlarmResultWithMatchRule(MetricAggregateWrapper agwrap, MetricWrapper mwrap,
 			AlarmConfig alarmConfig, long now) {
 		// Match tags
-		Map<String, String> matchedTag = matchTag(mwrap.getTags(), alarmConfig.getAlarmTemplate().getTagsMap());
-		if (isEmpty(matchedTag)) {
-			log.debug("No match tag to metric: {} and alarm template: {}, metric tags: {}", mwrap.getMetric(),
-					alarmConfig.getAlarmTemplate().getId(), mwrap.getTags());
-			return Optional.empty();
+		Map<String, String> matchedTag = emptyMap();
+		if (!isEmpty(alarmConfig.getAlarmTemplate().getTagsMap())) {
+			matchedTag = matchTag(mwrap.getTags(), alarmConfig.getAlarmTemplate().getTagsMap());
+			if (isEmpty(matchedTag)) {
+				log.debug("No match tag to metric: {} and alarm template: {}, metric tags: {}", mwrap.getMetric(),
+						alarmConfig.getAlarmTemplate().getId(), mwrap.getTags());
+				return Optional.empty();
+			}
 		}
 
 		// Maximum metric keep time window of rules.
@@ -149,10 +156,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			return Optional.empty();
 		}
 
-		if (log.isInfoEnabled()) {
-			log.info("Matched to metric: {} and alarm template: {}, timeWindowQueue: {}", mwrap.getMetric(),
-					alarmConfig.getAlarmTemplate().getId(), toJSONString(metricVals));
-		}
+		log.info("Matched to metric: {} and alarm template: {}, timeWindowQueue: {}", mwrap.getMetric(),
+				alarmConfig.getAlarmTemplate().getId(), toJSONString(metricVals));
 		return Optional.of(new AlarmResult(agwrap, alarmConfig, matchedTag, matchedRules));
 	}
 
@@ -167,7 +172,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		// If no tag is configured, the matching tag does not need to be
 		// executed.
 		if (isEmpty(tplTagMap)) {
-			return emptyMap();
+			return metricTagMap;
 		}
 		Map<String, String> matchedTags = new HashMap<>();
 		for (Entry<String, String> ent : tplTagMap.entrySet()) {
@@ -335,6 +340,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		log.info("into DefaultIndicatorsValveAlerter.notification prarms::" + "alarmContacts = {} , alarmNote = {} ",
 				alarmContacts, alarmRecord.getAlarmNote());
 
+		// TODO using dynamic notifier call.
 		for (AlarmContact alarmContact : alarmContacts) {
 			// save notification
 			AlarmNotificationContact alarmNotificationContact = new AlarmNotificationContact();
@@ -343,53 +349,29 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			alarmNotificationContact.setStatus(ALARM_SATUS_SEND);
 			configurer.saveNotificationContact(alarmNotificationContact);
 
-			// TODO just for test
-			notifier.simpleNotify(new SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.BARK.getValue(), ""));
-
-			// email
-			if (alarmContact.getEmailEnable() == 1) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.EMAIL.getValue(),
-						alarmContact.getEmail()));
+			//new
+			List<ContactChannel> contactChannels = alarmContact.getContactChannels();
+			if(CollectionUtils.isEmpty(contactChannels)){
+				continue;
 			}
+			for(ContactChannel contactChannel : contactChannels){
+				if(1!=contactChannel.getEnable()){
+					continue;
+				}
 
-			// phone
-			if (alarmContact.getPhoneEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_PHONE + alarmContact.getId(), alarmContact.getPhoneNumOfFreq())) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(), AlarmType.SMS.getValue(),
-						alarmContact.getPhone()));
-				handleRateLimit(ALARM_LIMIT_PHONE + alarmContact.getPhone(), alarmContact.getPhoneTimeOfFreq());
-			}
-
-			// dingtalk
-			if (alarmContact.getDingtalkEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkNumOfFreq())) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-						AlarmType.DINGTALK.getValue(), alarmContact.getDingtalk()));
-				handleRateLimit(ALARM_LIMIT_DINGTALK + alarmContact.getId(), alarmContact.getDingtalkTimeOfFreq());
-			}
-
-			// facebook
-			if (alarmContact.getFacebookEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookNumOfFreq())) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-						AlarmType.FACEBOOK.getValue(), alarmContact.getFacebook()));
-				handleRateLimit(ALARM_LIMIT_FACEBOOK + alarmContact.getId(), alarmContact.getFacebookTimeOfFreq());
-			}
-
-			// twitter
-			if (alarmContact.getTwitterEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterNumOfFreq())) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-						AlarmType.TWITTER.getValue(), alarmContact.getTwitter()));
-				handleRateLimit(ALARM_LIMIT_TWITTER + alarmContact.getId(), alarmContact.getTwitterTimeOfFreq());
-			}
-
-			// wechat
-			if (alarmContact.getWechatEnable() == 1
-					&& checkNotifyLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatNumOfFreq())) {
-				notifier.simpleNotify(new AlarmNotifier.SimpleAlarmMessage(alarmRecord.getAlarmNote(),
-						AlarmType.WECHAT.getValue(), alarmContact.getWechat()));
-				handleRateLimit(ALARM_LIMIT_WECHAT + alarmContact.getId(), alarmContact.getWechatTimeOfFreq());
+				//TODO
+				GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "umcAlaramTpl2");
+				// Common parameters.
+				msg.addParameter("appName", "bizService1");
+				msg.addParameter("status", "DOWN");
+				msg.addParameter("cause", "Host.cpu.utilization > 200%");
+				// Mail special parameters.
+				msg.addParameter(MailMessageNotifier.KEY_MAILMSG_SUBJECT, "测试消息");
+				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_CC, "");
+				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_BCC, "");
+				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_REPLYTO,
+				// "");
+                notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
 			}
 
 		}

@@ -15,29 +15,23 @@
  */
 package com.wl4g.devops.scm.controller;
 
-import java.util.HashMap;
-import java.util.List;
-
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.common.bean.scm.*;
+import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.scm.service.HistoryService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.PageModel;
-import com.wl4g.devops.common.bean.scm.ConfigVersionList;
-import com.wl4g.devops.common.bean.scm.HistoryOfDetail;
-import com.wl4g.devops.common.bean.scm.ReleaseDetail;
-import com.wl4g.devops.common.bean.scm.ReleaseHistory;
-import com.wl4g.devops.common.bean.scm.ReleaseHistoryList;
-import com.wl4g.devops.common.bean.scm.Version;
-import com.wl4g.devops.common.bean.scm.VersionList;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.scm.service.HistoryService;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 历史版本
@@ -58,29 +52,21 @@ public class HistoryController extends BaseController {
 	 * 查询流水集合
 	 */
 	@RequestMapping(value = "version-list.json", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequiresPermissions(value = {"scm"})
 	public RespBase<?> versionlist(String startDate, String endDate, PageModel pm) {
 		if (log.isInfoEnabled()) {
 			log.info("VersionList request ... {}, {}, {}", startDate, endDate, pm);
 		}
-
 		RespBase<Object> resp = new RespBase<>();
 		try {
 			HashMap<String, Object> param = new HashMap<>();
 			param.put("startDate", startDate);
 			param.put("endDate", endDate);
-
-			Page<VersionList> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-			List<VersionList> list = historyService.versionList(param);
-
-			pm.setTotal(page.getTotal());
-
-			resp.buildMap().put("page", pm);
-			resp.buildMap().put("list", list);
+			resp.setData(historyService.versionList(pm,param));
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
 			log.error("获取应用组列表失败", e);
 		}
-
 		if (log.isInfoEnabled()) {
 			log.info("VersionList response. {}", resp);
 		}
@@ -93,6 +79,7 @@ public class HistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "history-set.json", method = RequestMethod.POST)
+	@RequiresPermissions(value = {"scm"})
 	public RespBase<?> insert(@RequestBody HistoryOfDetail historyOfDetail) {
 		if (log.isInfoEnabled()) {
 			log.info("HistorySet request ... {}", historyOfDetail);
@@ -114,6 +101,7 @@ public class HistoryController extends BaseController {
 	 * 版本回滚 , 发布 添加流水
 	 */
 	@RequestMapping(value = "reledetail-set.json", method = RequestMethod.POST)
+	@RequiresPermissions(value = {"scm"})
 	public RespBase<?> rollback(@RequestBody ReleaseDetail detail) {
 		if (log.isInfoEnabled()) {
 			log.info("ReledetailSet request ... {}", detail);
@@ -163,6 +151,7 @@ public class HistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "history-delete.json", method = RequestMethod.POST)
+	@RequiresPermissions(value = {"scm"})
 	public RespBase<?> delete(@RequestBody ReleaseHistory history) {
 		if (log.isInfoEnabled()) {
 			log.info("HistoryDel request ... {}", history);
@@ -192,6 +181,7 @@ public class HistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "version-delete.json", method = RequestMethod.POST)
+	@RequiresPermissions(value = {"scm"})
 	public RespBase<?> deleteVersion(@RequestBody Version history) {
 		if (log.isInfoEnabled()) {
 			log.info("VersionDel request ... {}", history);
@@ -222,6 +212,7 @@ public class HistoryController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "version-update.json", method = RequestMethod.POST)
+	@RequiresPermissions(value = {"scm"})
 	public RespBase<?> updateVersion(@RequestBody Version history) {
 		RespBase<?> resp = new RespBase<>();
 		if (log.isInfoEnabled()) {
@@ -248,6 +239,7 @@ public class HistoryController extends BaseController {
 	 * 查询流水集合
 	 */
 	@RequestMapping(value = "release-list.json", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequiresPermissions(value = {"scm"})
 	public RespBase<?> list(ConfigVersionList agl, PageModel pm) {
 		if (log.isInfoEnabled()) {
 			log.info("ReleaseList request... {}, {}", agl, pm);
@@ -259,8 +251,8 @@ public class HistoryController extends BaseController {
 			List<ConfigVersionList> list = historyService.list(agl);
 
 			pm.setTotal(page.getTotal());
-			resp.buildMap().put("page", pm);
-			resp.buildMap().put("list", list);
+			resp.forMap().put("page", pm);
+			resp.forMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -276,6 +268,7 @@ public class HistoryController extends BaseController {
 	 * 回滚版本
 	 */
 	@RequestMapping(value = "release_rollback", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequiresPermissions(value = {"scm"})
 	public RespBase<?> releaseRollback(ConfigVersionList agl) {
 		RespBase<Object> resp = new RespBase<>();
 		try {
@@ -292,6 +285,7 @@ public class HistoryController extends BaseController {
 	 * 查询历史版本集合
 	 */
 	@RequestMapping(value = "history_list", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequiresPermissions(value = {"scm"})
 	public RespBase<?> historylist(ReleaseHistoryList agl, PageModel pm) {
 		if (log.isInfoEnabled()) {
 			log.info("HistoryVersionList request ... {}, {}", agl, pm);
@@ -304,8 +298,8 @@ public class HistoryController extends BaseController {
 
 			pm.setTotal(page.getTotal());
 
-			resp.buildMap().put("page", pm);
-			resp.buildMap().put("list", list);
+			resp.forMap().put("page", pm);
+			resp.forMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);

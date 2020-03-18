@@ -15,22 +15,21 @@
  */
 package com.wl4g.devops.common.web;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.wl4g.devops.common.web.RespBase.ErrorPromptMessageBuilder;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 
 public class RespBaseTest {
 
-	static class TestModel implements Serializable {
-		private static final long serialVersionUID = 3984698842381556513L;
+	static class TestModel {
 		private String name;
 		private List<TestSubModel> subList = new ArrayList<TestSubModel>() {
 			private static final long serialVersionUID = 7144913810891463508L;
@@ -104,11 +103,36 @@ public class RespBaseTest {
 
 	}
 
+	static class TestGenericModel<T> {
+		private T value;
+
+		public TestGenericModel() {
+			super();
+		}
+
+		public TestGenericModel(T value) {
+			super();
+			this.value = value;
+		}
+
+		public T getValue() {
+			return value;
+		}
+
+		public void setValue(T value) {
+			this.value = value;
+		}
+
+	}
+
 	public static void main(String[] args) {
+		respBasePromptTest1();
+		System.out.println("--------------------------");
+
 		// for controller output(map).
-		RespBase<TestModel> resp11 = new RespBase<>(RetCode.create(4001, "message1"));
-		resp11.buildMap().put("testModel11", new TestModel("jack11"));
-		resp11.buildMap().put("testModel12", new TestModel("jack12"));
+		RespBase<TestModel> resp11 = new RespBase<>(RetCode.newCode(4001, "message1"));
+		resp11.forMap().put("testModel11", new TestModel("jack11"));
+		resp11.forMap().put("testModel12", new TestModel("jack12"));
 		resp11.buildNode("testNode1").put("node1", "n11");
 		System.out.println(">>As Map>>" + resp11.asMap());
 
@@ -123,7 +147,7 @@ public class RespBaseTest {
 		System.out.println("-------------------------");
 
 		// for controller output(model).
-		RespBase<TestModel> resp21 = new RespBase<>(RetCode.create(4001, "message2"));
+		RespBase<TestModel> resp21 = new RespBase<>(RetCode.newCode(4001, "message2"));
 		resp21.setData(new TestModel("jack2"));
 		System.out.println(">>As Map>>" + resp21.asMap());
 		// for testing unsupported
@@ -137,6 +161,26 @@ public class RespBaseTest {
 		System.out.println(tm2);
 		System.out.println("-------------------------");
 
+		// for generic types.
+		RespBase<TestGenericModel<TestSubModel>> resp31 = new RespBase<>(RetCode.newCode(4001, "message3"));
+		resp31.setData(new TestGenericModel<TestSubModel>(new TestSubModel("jack3")));
+		System.out.println(">>As Map>>" + resp31.asMap());
+
+		String json31 = toJSONString(resp31);
+		System.out.println(json31);
+		RespBase<TestGenericModel<TestSubModel>> resp32 = parseJSON(json31,
+				new TypeReference<RespBase<TestGenericModel<TestSubModel>>>() {
+				});
+		Object tm3 = resp32.getData();
+		System.out.println(tm3);
+		System.out.println("-------------------------");
+
+	}
+
+	public static void respBasePromptTest1() {
+		String errmsg = ErrorPromptMessageBuilder.build(RetCode.PARAM_ERR, "参数错误");
+		System.out.println(errmsg);
+		System.out.println(ErrorPromptMessageBuilder.build(RetCode.SYS_ERR, errmsg));
 	}
 
 }

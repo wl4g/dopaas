@@ -16,11 +16,11 @@
 package com.wl4g.devops.iam.configure;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
 import com.wl4g.devops.iam.common.configure.SecurityConfigurer;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;
 
 import java.util.List;
 
@@ -63,7 +63,7 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 	 *            query parameter
 	 * @return account information
 	 */
-	IamAccountInfo getIamAccount(Parameter parameter);
+	IamPrincipalInfo getIamAccount(Parameter parameter);
 
 	//
 	// A U T H O R I Z I N G _ M E T H O D
@@ -83,28 +83,6 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 	 *         returned
 	 */
 	boolean isApplicationAccessAuthorized(String principal, String application);
-
-	/**
-	 * Query roles by principal<br/>
-	 * <p>
-	 * EG: sc_sys_mgt,sc_general_mgt,sc_general_operator,sc_user_jack
-	 *
-	 * @param principal
-	 * @param application
-	 * @return principal roles names
-	 */
-	String findRoles(String principal, String application);
-
-	/**
-	 * Query permissions by principal<br/>
-	 * <p>
-	 * EG: sys:user:view,sys:user:edit,goods:order:view,goods:order:edit
-	 *
-	 * @param principal
-	 * @param application
-	 * @return principal permission names
-	 */
-	String findPermissions(String principal, String application);
 
 	//
 	// S N S _ M E T H O D

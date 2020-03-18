@@ -1,6 +1,22 @@
+/*
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.wl4g.devops.common.bean.iam;
 
 import com.wl4g.devops.common.bean.BaseBean;
+import com.wl4g.devops.common.bean.iam.model.GroupExt;
 
 import java.io.Serializable;
 import java.util.List;
@@ -19,8 +35,6 @@ public class Group extends BaseBean implements Serializable {
 
 	private Integer parentId;
 
-	private Integer dutyUserId;
-
 	private Integer status;
 
 	// other
@@ -29,6 +43,8 @@ public class Group extends BaseBean implements Serializable {
 	private List<Integer> menuIds;
 
 	private List<Integer> roleIds;
+
+	private GroupExt groupExt;
 
 	@Override
 	public Integer getId() {
@@ -72,14 +88,6 @@ public class Group extends BaseBean implements Serializable {
 		this.parentId = parentId;
 	}
 
-	public Integer getDutyUserId() {
-		return dutyUserId;
-	}
-
-	public void setDutyUserId(Integer dutyUserId) {
-		this.dutyUserId = dutyUserId;
-	}
-
 	public Integer getStatus() {
 		return status;
 	}
@@ -110,6 +118,14 @@ public class Group extends BaseBean implements Serializable {
 
 	public void setRoleIds(List<Integer> roleIds) {
 		this.roleIds = roleIds;
+	}
+
+	public GroupExt getGroupExt() {
+		return groupExt;
+	}
+
+	public void setGroupExt(GroupExt groupExt) {
+		this.groupExt = groupExt;
 	}
 
 	@Override

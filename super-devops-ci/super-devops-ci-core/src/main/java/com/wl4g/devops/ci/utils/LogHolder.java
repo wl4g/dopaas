@@ -15,20 +15,17 @@
  */
 package com.wl4g.devops.ci.utils;
 
-import static java.lang.ThreadLocal.withInitial;
-import static java.util.Collections.synchronizedMap;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
+import com.google.common.annotations.Beta;
+import com.wl4g.devops.tool.common.annotation.Reserved;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.annotations.Beta;
+import static java.lang.ThreadLocal.withInitial;
+import static java.util.Collections.synchronizedMap;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.springframework.util.Assert.*;
 
 /**
  * Command logs holders.
@@ -38,6 +35,7 @@ import com.google.common.annotations.Beta;
  * @since
  */
 @Beta
+@Reserved
 public abstract class LogHolder {
 
 	/** Current default logs appender ID. */
@@ -153,7 +151,6 @@ public abstract class LogHolder {
 	 * @since
 	 */
 	public static class LogAppender {
-		final public static LogAppender EMPTY = new LogAppender(StringUtils.EMPTY);
 
 		/** Log appender key-name. */
 		final private String key;

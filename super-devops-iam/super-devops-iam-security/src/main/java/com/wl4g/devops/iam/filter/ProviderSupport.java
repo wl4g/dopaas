@@ -109,12 +109,12 @@ public enum ProviderSupport {
 	/**
 	 * Check if you are a supported social network provider
 	 *
-	 * @param providerId
+	 * @param provider
 	 * @throws NoSuchSocialProviderException
 	 */
-	final public static void checkSupport(String providerId) throws NoSuchSocialProviderException {
-		if (!isSupport(providerId)) {
-			throw new NoSuchSocialProviderException(String.format("Unsupported SNS service providers:[%s]", providerId));
+	final public static void checkSupport(String provider) throws NoSuchSocialProviderException {
+		if (!isSupport(provider)) {
+			throw new NoSuchSocialProviderException(String.format("Unsupported SNS service providers:[%s]", provider));
 		}
 	}
 

@@ -15,18 +15,19 @@
  */
 package com.wl4g.devops.ci.core.context;
 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.share.AppCluster;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+
+import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
-
-import java.util.List;
 
 /**
  * Default deploy information implements.
@@ -43,22 +44,25 @@ public class DefaultPipelineContext implements PipelineContext {
 	final private List<AppInstance> instances;
 	final private TaskHistory taskHistory;
 	final private TaskHistory refTaskHistory;
-	final private List<TaskHistoryDetail> taskHistoryDetails;
+	final private List<TaskHistoryInstance> taskHistoryInstances;
+	final private PipelineModel pipelineModel;
+
 
 	public DefaultPipelineContext(Project project, String projectSourceDir, AppCluster appCluster, List<AppInstance> instances,
-			TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryDetail> taskHistoryDetails) {
+								  TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryInstance> taskHistoryInstances, PipelineModel pipelineModel) {
 		notNull(project, "project must not be null");
 		hasText(projectSourceDir, "projectSourceDir must not be empty");
 		notNull(appCluster, "AppCluster must not be empty");
 		notNull(taskHistory, "taskHistory must not be null");
-		notNull(refTaskHistory, "refTaskHistory must not be null");
+		// notNull(refTaskHistory, "refTaskHistory must not be null");
 		this.project = project;
 		this.projectSourceDir = projectSourceDir;
 		this.appCluster = appCluster;
 		this.taskHistory = taskHistory;
 		this.refTaskHistory = refTaskHistory;
 		this.instances = !isEmpty(instances) ? instances : emptyList();
-		this.taskHistoryDetails = !isEmpty(taskHistoryDetails) ? taskHistoryDetails : emptyList();
+		this.taskHistoryInstances = !isEmpty(taskHistoryInstances) ? taskHistoryInstances : emptyList();
+		this.pipelineModel = pipelineModel;
 	}
 
 	@Override
@@ -92,8 +96,12 @@ public class DefaultPipelineContext implements PipelineContext {
 	}
 
 	@Override
-	public List<TaskHistoryDetail> getTaskHistoryDetails() {
-		return taskHistoryDetails;
+	public List<TaskHistoryInstance> getTaskHistoryInstances() {
+		return taskHistoryInstances;
 	}
 
+	@Override
+	public PipelineModel getPipelineModel() {
+		return pipelineModel;
+	}
 }

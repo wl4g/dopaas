@@ -24,8 +24,9 @@ import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.URL_SESSION_I
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
-import static com.wl4g.devops.common.utils.web.UserAgentUtils.isBrowser;
-import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.isJSONResponse;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
 import static java.lang.Boolean.TRUE;
 
 import java.io.Serializable;
@@ -49,18 +50,17 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.common.utils.lang.StringUtils2;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
+import com.wl4g.devops.tool.common.lang.StringUtils2;
 
 /**
- * Abstract custom WEB session management
+ * Abstract custom IAM session management
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
@@ -69,8 +69,7 @@ import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
  */
 public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<? extends ParamProperties>>
 		extends DefaultWebSessionManager {
-
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	/**
 	 * Cache name
@@ -109,7 +108,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 
 	@Override
 	protected Serializable getSessionId(ServletRequest request, ServletResponse response) {
-		// ->bug: For example: infinite redirection error will occur if
+		// ->bug: e.g. infinite redirection error will occur if
 		// iam-example/index.html fails to get sid
 		// if (isMediaRequest(toHttp(request))) { // Static file pass.
 		// return null;
@@ -118,9 +117,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		// Call extra get SID.
 		Serializable sessionId = coprocessor.preGetSessionId(request, response);
 		if (checkAvailable(sessionId)) {
-			if (log.isDebugEnabled()) {
-				log.debug("Use extra sid '{}'", sessionId);
-			}
+			log.debug("Use extra sid '{}'", sessionId);
 			return sessionId;
 		}
 
@@ -128,9 +125,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		// http://localhost/project?__sid=xxx&__cookie=yes
 		sessionId = getCleanParam(request, config.getParam().getSid());
 		if (checkAvailable(sessionId)) {
-			if (log.isDebugEnabled()) {
-				log.debug("Use url sid '{}'", sessionId);
-			}
+			log.debug("Use url sid '{}'", sessionId);
 			// Storage session.
 			storageTokenIfNecessary(request, response, sessionId);
 
@@ -144,18 +139,14 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		// Using cookie in URLs session.(e.g. Android/iOS/WechatApplet)
 		sessionId = getCleanParam(request, config.getCookie().getName());
 		if (checkAvailable(sessionId)) {
-			if (log.isDebugEnabled()) {
-				log.debug("Use url cookie sid '{}'", sessionId);
-			}
+			log.debug("Use url cookie sid '{}'", sessionId);
 			return sessionId;
 		}
 
 		// Using header session.(e.g. Android/iOS/WechatApplet)
 		sessionId = toHttp(request).getHeader(config.getCookie().getName());
 		if (checkAvailable(sessionId)) {
-			if (log.isDebugEnabled()) {
-				log.debug("Use header cookie sid '{}'", sessionId);
-			}
+			log.debug("Use header cookie sid '{}'", sessionId);
 			return sessionId;
 		}
 
@@ -166,21 +157,17 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			 * {@link CentralAuthenticationHandler#loggedin()}
 			 */
 			sessionId = (String) cacheManager.getCache(cacheName).get(new EnhancedKey(grantTicket, String.class));
-			if (log.isDebugEnabled()) {
-				log.debug("Use ticket sid: '{}', grantTicket: '{}'", sessionId, grantTicket);
-			}
+			log.debug("Use ticket sid: '{}', grantTicket: '{}'", sessionId, grantTicket);
 			if (checkAvailable(sessionId)) {
 				return sessionId;
 			} else {
-				log.warn("Cannot got sid via grantTicket: '{}'", grantTicket);
+				log.warn("Cannot get sid with grantTicket: '{}'", grantTicket);
 			}
 		}
 
 		// Using default cookie session.
 		sessionId = super.getSessionId(request, response);
-		if (log.isDebugEnabled()) {
-			log.debug("Use default cookie sid: '{}'", sessionId);
-		}
+		log.debug("Use default cookie sid: '{}'", sessionId);
 		return sessionId;
 	}
 
@@ -337,14 +324,11 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			if (StringUtils2.isEmpty(session.getId())) {
 				throw new IllegalArgumentException("sessionId cannot be null when persisting for subsequent requests.");
 			}
-
 			// Storage session token
 			storageTokenIfNecessary(request, response, session.getId().toString());
-
-		} else if (log.isDebugEnabled()) {
+		} else {
 			log.debug("Session ID cookie is disabled.  No cookie has been set for new session with id {}", session.getId());
 		}
-
 		request.removeAttribute(REFERENCED_SESSION_ID_SOURCE);
 		request.setAttribute(REFERENCED_SESSION_IS_NEW, TRUE);
 	}
@@ -386,17 +370,15 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		 * When a browser request or display specifies that cookies need to
 		 * saved.
 		 */
-		boolean sidSaved = isTrue(request, config.getParam().getSidSaveCookie());
-		if (isBrowser(toHttp(request)) || sidSaved || !isJSONResponse(toHttp(request))) {
+		boolean isSidSave = isTrue(request, config.getParam().getSidSaveCookie());
+		if (isSidSave || isBrowser(toHttp(request)) || !isJSONResponse(toHttp(request))) {
 			Cookie cookie = new SimpleCookie(getSessionIdCookie());
 			cookie.setValue(String.valueOf(sessionId));
-
 			// Save to response.
 			cookie.saveTo(toHttp(request), toHttp(response));
-			if (log.isTraceEnabled()) {
-				log.trace("Set session ID cookie for session with id {}", sessionId);
-			}
-		} else { // Addition customize security headers.
+			log.trace("Set session ID cookie for session with id {}", sessionId);
+		} else {
+			// Addition customize security headers.
 			toHttp(response).addHeader(getSessionIdCookie().getName(), String.valueOf(sessionId));
 		}
 

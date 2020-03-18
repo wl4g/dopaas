@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.publish;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.HashMultimap; 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
@@ -25,8 +25,6 @@ import com.wl4g.devops.scm.config.ScmProperties;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -36,10 +34,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.http.HttpStatus.NOT_MODIFIED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -54,13 +52,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  */
 public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<RunnerProperties> implements ConfigSourcePublisher {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
-
 	/** SCM properties configuration */
 	final protected ScmProperties config;
-
-	/** Deferred watch controller */
-	final private AtomicBoolean watchController = new AtomicBoolean(false);
 
 	/**
 	 * Save all client monitors configuration requests globally (Using:
@@ -69,50 +62,35 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 	final private Map<String, Multimap<String, WatchDeferredResult<ResponseEntity<?>>>> watchRequests;
 
 	public AbstractConfigSourcePublisher(ScmProperties config) {
+		super(new RunnerProperties(false,1));
 		this.config = config;
 		this.watchRequests = new ConcurrentHashMap<>(32);
 	}
 
 	@Override
-	protected void postStartupProperties() {
-		if (watchController.compareAndSet(false, true)) {
-			if (log.isInfoEnabled()) {
-				log.info("Starting config source watchRequests: {}", watchRequests.size());
-			}
-		}
-	}
-
-	@Override
-	protected void postCloseProperties() {
-		if (watchController.compareAndSet(true, false)) {
-			if (log.isInfoEnabled()) {
-				log.info("Closing configSource watcher, watchRequests: {}", watchRequests.size());
-			}
-		}
-	}
-
-	@Override
 	public void run() {
-		while (watchController.get()) {
-			// Scan poll published configuration
+		getWorker().scheduleWithFixedDelay(() -> {
 			try {
+				// Scan poll published configuration.
 				Collection<PublishConfigWrapper> next = null;
-				while (watchController.get() && !isEmpty(next = pollNextPublishedConfig())) {
+				while (isActive() && !isEmpty(next = pollNextPublishedConfig())) {
 					if (log.isInfoEnabled()) {
 						log.info("Scan published config for - {}", next);
 					}
 
 					for (PublishConfigWrapper wrap : next) {
-						Assert.state((wrap != null && isNotBlank(wrap.getCluster())),
-								String.format("Published config group must not be blank! - %s", wrap));
+						if (wrap == null || isBlank(wrap.getCluster())) {
+							log.warn("Published config group must not be blank! - %s", wrap);
+							continue;
+						}
 
 						getCreateWithDeferreds(wrap.getCluster()).values().stream().filter(deferred -> {
 							if (deferred != null) {
 								GetRelease watch = deferred.getWatch();
-								// Filters name space
+								// Filter namespace
 								wrap.getNamespaces().retainAll(watch.getNamespaces());
 								if (!CollectionUtils.isEmpty(wrap.getNamespaces())) {
-									// Filters instance
+									// Filter instance
 									return wrap.getInstances().contains(watch.getInstance());
 								}
 							}
@@ -127,12 +105,11 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 						});
 					}
 				}
-
-				Thread.sleep(config.getWatchDelay());
 			} catch (Throwable th) {
 				log.error("Watching error!", th);
 			}
-		}
+		}, 3000L, config.getWatchDelay(), MILLISECONDS);
+
 	}
 
 	@Override

@@ -19,8 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.devops.shell.bean.SumArgument;
-import com.wl4g.devops.shell.bean.SumResult;
+import com.wl4g.devops.shell.console.args.SumArgument;
+import com.wl4g.devops.shell.console.args.SumResult;
 
 @Service
 public class ExampleServiceImpl implements ExampleService {
@@ -30,7 +30,7 @@ public class ExampleServiceImpl implements ExampleService {
 	@Override
 	public SumResult add(SumArgument add) {
 		int sum = add.getAdd1() + add.getAdd2();
-		log.info("计算结果>>>... {}", sum);
+		System.out.println("计算结果>>>... +" + sum);
 		return new SumResult(sum);
 	}
 

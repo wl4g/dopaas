@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.config;
 
+import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -24,12 +25,15 @@ import org.apache.shiro.web.servlet.NameableFilter;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.util.Assert.notNull;
 
-import java.lang.annotation.Annotation;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.Filter;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
@@ -41,17 +45,17 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.Ordered;
-import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
+import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
 import com.wl4g.devops.iam.common.attacks.csrf.CorsResolveSecurityFilter;
 import com.wl4g.devops.iam.common.attacks.csrf.CorsResolveSecurityFilter.AdvancedCorsProcessor;
 import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
+import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamFilterChainManager;
@@ -59,6 +63,7 @@ import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
+import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.devops.iam.common.session.mgt.support.IamUidSessionIdGenerator;
@@ -73,7 +78,7 @@ import redis.clients.jedis.JedisCluster;
  * @version v1.0 2018年12月23日
  * @since
  */
-public abstract class AbstractIamConfiguration extends AbstractOptionalControllerAutoConfiguration {
+public abstract class AbstractIamConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	// ==============================
 	// Locale i18n configuration.
@@ -98,6 +103,13 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	@Bean
 	public FilterChainManager filterChainManager() {
 		return new IamFilterChainManager();
+	}
+
+	@Bean
+	public EnhancedModularRealmAuthorizer enhancedModularRealmAuthorizer() {
+		// Register define realm.
+		List<Realm> realms = actx.getBeansOfType(AbstractPermittingAuthorizingRealm.class).values().stream().collect(toList());
+		return new EnhancedModularRealmAuthorizer(realms);
 	}
 
 	@Bean
@@ -135,8 +147,8 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 			if (filter instanceof IamAuthenticationFilter) {
 				uriPertten = ((IamAuthenticationFilter) filter).getUriMapping();
 			}
-			Assert.notNull(filterName, "'filterName' must not be null");
-			Assert.notNull(uriPertten, "'uriPertten' must not be null");
+			notNull(filterName, "'filterName' must not be null");
+			notNull(uriPertten, "'uriPertten' must not be null");
 
 			if (filters.putIfAbsent(filterName, (Filter) filter) != null) {
 				throw new IllegalStateException(String.format("Already filter. [%s]", filterName));
@@ -243,14 +255,14 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	// I A M _ C O N T R O L L E R _ C O N F I G's.
 	// ==============================
 
-	@Bean
-	public PrefixHandlerMapping iamControllerPrefixHandlerMapping() {
-		return super.createPrefixHandlerMapping();
-	}
-
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return IamController.class;
+	/**
+	 * Ne IAM controller prefix request handler mapping.
+	 * 
+	 * @param mappingPrefix
+	 * @return
+	 */
+	protected PrefixHandlerMapping newIamControllerPrefixHandlerMapping(@NotBlank String mappingPrefix) {
+		return super.newPrefixHandlerMapping(mappingPrefix, IamController.class);
 	}
 
 	// ==============================
@@ -276,7 +288,7 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 	}
 
 	@Bean
-	@ConditionalOnBean({ XssProperties.class, XssSecurityResolver.class })
+	@ConditionalOnBean({ XssSecurityResolver.class })
 	public XssSecurityResolveInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
 		return new XssSecurityResolveInterceptor(config, resolver);
 	}
@@ -345,10 +357,8 @@ public abstract class AbstractIamConfiguration extends AbstractOptionalControlle
 		// Register CORS filter
 		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
 		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 10);
-		/*
-		 * Cannot use '/*' or it will not be added to the container chain (only
-		 * '/**').
-		 */
+		// Cannot use '/*' or it will not be added to the container chain (only
+		// '/**')
 		filterBean.addUrlPatterns("/*");
 		return filterBean;
 	}

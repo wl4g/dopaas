@@ -15,47 +15,174 @@
  */
 package com.wl4g.devops.ci.vcs;
 
+import com.google.common.annotations.Beta;
+
+import static com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
+import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
+import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.common.framework.operator.Operator;
+
+import java.io.IOException;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+import static org.springframework.util.Assert.notNull;
+
 /**
- * VCS API operator.
+ * VCS APIs operator.
  *
  * @author Wangl.sir
  * @version v1.0 2019年8月2日
  * @since
  */
-public interface VcsOperator {
+@Beta
+public interface VcsOperator extends Operator<VcsProviderKind> {
+
+	// --- APIs operator. ---
 
 	/**
-	 * Vcs type definition.
+	 * Gets VCS remote branch names.
 	 * 
-	 * @return
-	 */
-	String vcsType();
-
-	/**
-	 * Get VCS remote branch names.
-	 *
+	 * @param credentials
+	 *            VCS authentication credentials
 	 * @param projectId
 	 * @return
 	 */
-	List<String> getRemoteBranchNames(int projectId);
+	List<String> getRemoteBranchNames(Vcs credentials, int projectId);
 
 	/**
-	 * Get VCS remote tag names.
-	 *
+	 * Gets VCS remote tag names.
+	 * 
+	 * @param credentials
+	 *            VCS authentication credentials
 	 * @param projectId
 	 * @return
 	 */
-	List<String> getRemoteTags(int projectId);
+	List<String> getRemoteTags(Vcs credentials, int projectId);
 
 	/**
-	 * Find remote project ID by project name.
-	 *
+	 * Gets remote project ID by project name.
+	 * 
+	 * @param credentials
+	 *            VCS authentication credentials
 	 * @param projectName
 	 * @return
 	 */
-	Integer findRemoteProjectId(String projectName);
+	Integer getRemoteProjectId(Vcs credentials, String projectName);
+
+	/**
+	 * Search find remote projects by name.(unlimited)
+	 * 
+	 * @param credentials
+	 * @param projectName
+	 * @return
+	 */
+	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName) {
+		return searchRemoteProjects(credentials, projectName, Integer.MAX_VALUE);
+	}
+
+	/**
+	 * Search find remote projects by name.
+	 * 
+	 * @param credentials
+	 * @param projectName
+	 *            The item name to be searched can be empty. If it is empty, it
+	 *            means unconditional.
+	 * @param limit
+	 *            Page limit maximum
+	 * @return
+	 */
+	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName, int limit);
+
+	// --- VCS commands. ---
+
+	/**
+	 * Clone from remote VCS server.
+	 * 
+	 * @param <T>
+	 * @param credentials
+	 *            VCS authentication credentials
+	 * @param remoteUrl
+	 *            remote VCS server URI
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @return
+	 * @throws IOException
+	 */
+	default <T> T clone(Vcs credentials, String remoteUrl, String projecDir) throws IOException {
+		return clone(credentials, remoteUrl, projecDir, null);
+	}
+
+	/**
+	 * Clone from remote VCS server.
+	 * 
+	 * @param <T>
+	 * @param credentials
+	 *            VCS authentication credentials
+	 * @param remoteUrl
+	 *            remote VCS server URI
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @param branchName
+	 * @return
+	 * @throws IOException
+	 */
+	<T> T clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException;
+
+	/**
+	 * Checkout and pull of VCS repository.
+	 * 
+	 * @param credentials
+	 *            VCS authentication credentials
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @param branchName
+	 */
+	<T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName);
+
+	/**
+	 * Delete (local) branch.
+	 * 
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @param branchName
+	 * @param force
+	 * @return
+	 */
+	List<String> delLocalBranch(String projecDir, String branchName, boolean force);
+
+	/**
+	 * Check VCS project have local repository exist.
+	 * 
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @return
+	 */
+	boolean hasLocalRepository(String projecDir);
+
+	/**
+	 * Gets (local) latest committed ID.
+	 * 
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @return
+	 * @throws Exception
+	 */
+	String getLatestCommitted(String projecDir) throws Exception;
+
+	/**
+	 * Roll-back VCS project local repository(fetch and checkout).
+	 * 
+	 * @param <T>
+	 * @param credentials
+	 *            VCS authentication credentials
+	 * @param projecDir
+	 *            project local VCS repository directory absolute path.
+	 * @param sign
+	 *            committed ID.
+	 * @return
+	 */
+	<T> T rollback(Vcs credentials, String projecDir, String sign);
 
 	/**
 	 * VCS type definitions.
@@ -64,25 +191,66 @@ public interface VcsOperator {
 	 * @version v1.0 2019年11月5日
 	 * @since
 	 */
-	public final static class VcsType {
+	public static enum VcsProviderKind {
 
 		/** Vcs for GITLAB. */
-		final public static String GITLAB = "VcsWithGitlab";
+		GITLAB(1),
 
 		/** Vcs for github. */
-		final public static String GITHUB = "VcsWithGithub";
+		GITHUB(2),
 
 		/** Vcs for gitee. */
-		final public static String GITEE = "VcsWithGitee";
+		GITEE(3),
 
 		/** Vcs for alicode. */
-		final public static String ALICODE = "VcsWithAlicode";
+		ALICODE(4),
 
 		/** Vcs for bitbucket. */
-		final public static String BITBUCKET = "VcsWithBitbucket";
+		BITBUCKET(5),
 
 		/** Vcs for coding. */
-		final public static String CODING = "VcsWithCoding";
+		CODING(6);
+
+		final private int value;
+
+		private VcsProviderKind(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
+
+		/**
+		 * Safe converter string to {@link VcsProviderKind}
+		 * 
+		 * @param vcsProvider
+		 * @return
+		 */
+		final public static VcsProviderKind safeOf(Integer vcsProvider) {
+			if (isNull(vcsProvider)) {
+				return null;
+			}
+			for (VcsProviderKind t : values()) {
+				if (vcsProvider.intValue() == t.getValue()) {
+					return t;
+				}
+			}
+			return null;
+		}
+
+		/**
+		 * Converter string to {@link VcsProviderKind}
+		 * 
+		 * @param vcsProvider
+		 * @return
+		 */
+		final public static VcsProviderKind of(Integer vcsProvider) {
+			VcsProviderKind type = safeOf(vcsProvider);
+			notNull(type, String.format("Unsupported VCS provider for %s", vcsProvider));
+			return type;
+		}
+
 	}
 
 }

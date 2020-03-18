@@ -15,9 +15,11 @@
  */
 package com.wl4g.devops.iam.config.properties;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.tool.common.lang.StringUtils2.startsWithIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * Social networking services configuration
@@ -142,10 +144,9 @@ public class SnsProperties {
 		}
 
 		public void setHref(String href) {
-			if (!StringUtils.isEmpty(href)) {
+			if (!isBlank(href)) {
 				// Wechat oauth2 authorization interface only supports HTTPS
-				Assert.isTrue(StringUtils.startsWithIgnoreCase(href, "HTTPS"),
-						"The 'href' link must be the absolute path of HTTPS protocol");
+				isTrue(startsWithIgnoreCase(href, "HTTPS"), "The 'href' link must be the absolute path of HTTPS protocol");
 				this.href = href;
 			}
 		}

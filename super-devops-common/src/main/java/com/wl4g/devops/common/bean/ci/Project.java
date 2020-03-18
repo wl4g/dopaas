@@ -20,6 +20,8 @@ import com.wl4g.devops.common.bean.BaseBean;
 import java.io.Serializable;
 import java.util.List;
 
+import static java.util.Objects.nonNull;
+
 /**
  * Project bean entity.
  * 
@@ -33,22 +35,32 @@ public class Project extends BaseBean implements Serializable {
 
 	private String projectName;
 
-	private String gitUrl;
+	private Integer vcsId;
+
+	private String httpUrl;
+
+	private String sshUrl;
 
 	private Integer appClusterId;
 
 	/** 构建的文件/目录路径（maven项目的target目录，vue项目的dist目录） */
-	private String assetsPath;
+	//private String assetsPath;
 
-	private String parentAppHome;
+	//private String parentAppHome;
 
 	private String groupName;
 
 	private Integer lockStatus;
 
+	private Integer isBoot;
+
 	private List<Dependency> dependencies;
 
-	private String vcsType;
+	/**
+	 * Project mapping to Vcs credentials.</br>
+	 * Many(Project)-to-One(Vcs)
+	 */
+	private Vcs vcs = new Vcs();
 
 	public String getProjectName() {
 		return projectName;
@@ -66,28 +78,12 @@ public class Project extends BaseBean implements Serializable {
 		this.appClusterId = appClusterId;
 	}
 
-	public String getAssetsPath() {
-		return assetsPath;
+	public String getHttpUrl() {
+		return httpUrl;
 	}
 
-	public void setAssetsPath(String tarPath) {
-		this.assetsPath = tarPath;
-	}
-
-	public String getGitUrl() {
-		return gitUrl;
-	}
-
-	public void setGitUrl(String gitUrl) {
-		this.gitUrl = gitUrl;
-	}
-
-	public String getParentAppHome() {
-		return parentAppHome;
-	}
-
-	public void setParentAppHome(String parentAppHome) {
-		this.parentAppHome = parentAppHome;
+	public void setHttpUrl(String httpUrl) {
+		this.httpUrl = httpUrl;
 	}
 
 	public String getGroupName() {
@@ -114,19 +110,53 @@ public class Project extends BaseBean implements Serializable {
 		this.dependencies = dependencies;
 	}
 
-	public String getVcsType() {
-		return vcsType;
+	public Vcs getVcs() {
+		return vcs;
 	}
 
-	public void setVcsType(String vcsType) {
-		this.vcsType = vcsType;
+	public Integer getVcsId() {
+		return vcsId;
+	}
+
+	public void setVcsId(Integer vcsId) {
+		this.vcsId = vcsId;
+	}
+
+	public String getSshUrl() {
+		return sshUrl;
+	}
+
+	public void setSshUrl(String sshUrl) {
+		this.sshUrl = sshUrl;
+	}
+
+	public void setVcs(Vcs vcs) {
+		if (nonNull(vcs)) {
+			this.vcs = vcs;
+		}
+	}
+
+	public Integer getIsBoot() {
+		return isBoot;
+	}
+
+	public void setIsBoot(Integer isBoot) {
+		this.isBoot = isBoot;
 	}
 
 	@Override
 	public String toString() {
-		return "Project [projectName=" + projectName + ", gitUrl=" + gitUrl + ", appClusterId=" + appClusterId + ", tarPath="
-				+ assetsPath + ", parentAppHome=" + parentAppHome + ", groupName=" + groupName + ", lockStatus=" + lockStatus
-				+ ", dependencies=" + dependencies + "]";
+		return "Project{" +
+				"projectName='" + projectName + '\'' +
+				", vcsId=" + vcsId +
+				", httpUrl='" + httpUrl + '\'' +
+				", sshUrl='" + sshUrl + '\'' +
+				", appClusterId=" + appClusterId +
+				", groupName='" + groupName + '\'' +
+				", lockStatus=" + lockStatus +
+				", isBoot=" + isBoot +
+				", dependencies=" + dependencies +
+				", vcs=" + vcs +
+				'}';
 	}
-
 }

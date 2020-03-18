@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.umc.rule.inspect;
 
+import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
+
 import com.wl4g.devops.umc.rule.Aggregator;
 import com.wl4g.devops.umc.rule.LogicalOperator;
 import com.wl4g.devops.umc.rule.RelationOperator;
-
-import static com.wl4g.devops.common.utils.lang.Collections2.isEmptyArray;
 
 /**
  * Latest rule inspector

@@ -16,12 +16,10 @@
 package com.wl4g.devops.iam.service.impl;
 
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.iam.Group;
-import com.wl4g.devops.common.bean.iam.GroupMenu;
 import com.wl4g.devops.common.bean.iam.Menu;
 import com.wl4g.devops.dao.iam.GroupMenuDao;
 import com.wl4g.devops.dao.iam.MenuDao;
-import com.wl4g.devops.iam.handler.UserUtil;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.service.GroupService;
 import com.wl4g.devops.iam.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.devops.tool.common.lang.TypeConverts.parseIntOrNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Menu service implements.
@@ -44,16 +45,11 @@ import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
 public class MenuServiceImpl implements MenuService {
 
 	@Autowired
-	private MenuDao menuDao;
-
+	protected MenuDao menuDao;
 	@Autowired
-	private UserUtil userUtil;
-
+	protected GroupService groupService;
 	@Autowired
-	private GroupService groupService;
-
-	@Autowired
-	private GroupMenuDao groupMenuDao;
+	protected GroupMenuDao groupMenuDao;
 
 	@Override
 	public Map<String, Object> getMenuTree() {
@@ -77,7 +73,12 @@ public class MenuServiceImpl implements MenuService {
 
 	@Override
 	public List<Menu> getMenuList() {
-		return menuDao.selectByUserId(userUtil.getCurrentLoginUserId());
+		IamPrincipalInfo info = getPrincipalInfo();
+		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
+			return menuDao.selectWithRoot();// root
+		} else {
+			return menuDao.selectByUserId(parseIntOrNull(info.getPrincipalId()));
+		}
 	}
 
 	@Override
@@ -105,24 +106,20 @@ public class MenuServiceImpl implements MenuService {
 
 	private void insert(Menu menu) {
 		menu.preInsert();
-		menuDao.insertSelective(menu);
-
-		// Add group , default add the first group to group_menu
-		Set<Group> groupsSet = groupService.getGroupsSet();
-		List<Group> top = new ArrayList<>();
-		for (Group group : groupsSet) {
-			Group parent = groupService.getParent(new ArrayList<>(groupsSet), group.getParentId());
-			if (parent == null) {
-				top.add(group);
+		Integer parentId = menu.getParentId();
+		if(Objects.nonNull(menu.getType()) && menu.getType().intValue()==3){// if menu type is button
+			menu.setLevel(0);
+		}else{
+			if(Objects.nonNull(parentId) && 0 != parentId){// if has parent menu , set level = parent's level + 1
+				Menu parentMenu = menuDao.selectByPrimaryKey(parentId);
+				Assert.notNull(parentMenu,"parentMenu is null");
+				Assert.notNull(parentMenu.getLevel(),"parentMenu's level is null");
+				menu.setLevel(parentMenu.getLevel()+1);
+			}else{// if is parent menu , set level = 1
+				menu.setLevel(1);
 			}
 		}
-		Assert.isTrue(CollectionUtils.isEmpty(groupsSet), "not found top group");
-		Group group = top.get(0);
-		GroupMenu groupMenu = new GroupMenu();
-		groupMenu.preInsert();
-		groupMenu.setGroupId(group.getId());
-		groupMenu.setMenuId(menu.getId());
-		groupMenuDao.insertSelective(groupMenu);
+		menuDao.insertSelective(menu);
 	}
 
 	private void update(Menu menu) {
@@ -131,15 +128,19 @@ public class MenuServiceImpl implements MenuService {
 	}
 
 	private Set<Menu> getMenusSet() {
-		Integer currentLoginUserId = userUtil.getCurrentLoginUserId();
+		IamPrincipalInfo info = getPrincipalInfo();
+
 		List<Menu> menus = null;
-		String currentLoginUsername = userUtil.getCurrentLoginUsername();
-		if (DEFAULT_USER_ROOT.equals(currentLoginUsername)) {
-			menus = menuDao.selectByRoot();
+		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
+			menus = menuDao.selectWithRoot();
 		} else {
-			menus = menuDao.selectByUserIdAccessGroup(currentLoginUserId);
+			Integer userId = null;
+			if (isNotBlank(info.getPrincipalId())) {
+				userId = Integer.parseInt(info.getPrincipalId());
+			}
+			menus = menuDao.selectByUserIdAccessGroup(userId);
 		}
-		Set<Menu> set = new HashSet<>();
+		Set<Menu> set = new LinkedHashSet<>();
 		set.addAll(menus);
 		return set;
 	}

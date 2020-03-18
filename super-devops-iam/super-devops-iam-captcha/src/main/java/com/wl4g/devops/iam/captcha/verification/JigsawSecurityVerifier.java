@@ -15,17 +15,17 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
-import com.wl4g.devops.common.utils.codec.CheckSums;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
+import com.wl4g.devops.iam.captcha.jigsaw.ImageTailor.TailoredImage;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawApplyImgModel;
-import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawImgCode;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawVerifyImgModel;
-import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
-import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
+import com.wl4g.devops.iam.crypto.CryptService;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
+import com.wl4g.devops.tool.common.codec.CheckSums;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
@@ -33,13 +33,15 @@ import javax.validation.constraints.NotNull;
 
 import static java.util.stream.Collectors.summarizingDouble;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.isTrue;
 
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.common.utils.codec.Encodes.encodeBase64;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.getBindValue;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
+import static com.wl4g.devops.tool.common.codec.Encodes.encodeBase64;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 
 /**
  * JIGSAW slider CAPTCHA verification handler.
@@ -60,7 +62,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	 * RSA cryptographic service.
 	 */
 	@Autowired
-	protected RSACryptographicService rsaCryptoService;
+	protected CryptService cryptService;
 
 	/**
 	 * CAPTCHA configuration.
@@ -74,8 +76,8 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec) {
-		JigsawImgCode code = codeWrap.getCode();
+	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap, KeyPairSpec keySpec) {
+		TailoredImage code = codeWrap.getCode();
 		// Build model
 		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, verifyType().getAlias());
 		model.setY(code.getY());
@@ -99,7 +101,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	final protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
-		JigsawImgCode code = (JigsawImgCode) storedCode.getCode();
+		TailoredImage code = (TailoredImage) storedCode.getCode();
 		JigsawVerifyImgModel model = (JigsawVerifyImgModel) submitCode;
 
 		// Analyze & verification JIGSAW image.
@@ -117,22 +119,20 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	 * @param model
 	 * @return
 	 */
-	final private boolean doAnalyzingJigsawGraph(JigsawImgCode code, JigsawVerifyImgModel model) {
+	final private boolean doAnalyzingJigsawGraph(TailoredImage code, JigsawVerifyImgModel model) {
 		if (Objects.isNull(model.getX())) {
 			log.warn("VerifyJigsaw image x-postition is empty. - {}", model);
 			return false;
 		}
 
 		// DECRYPT slider block x-position.
-		RSAKeySpecWrapper keySpec = getBindValue(model.getApplyToken(), true);
-		String plainX = rsaCryptoService.decryptWithHex(keySpec, model.getX());
-		Assert.hasText(plainX, "Invalid x-position, unable to resolve.");
-		if (log.isDebugEnabled()) {
-			log.debug("Jigsaw analyze decrypt plain x-position: {}, cipher x-position: {}", plainX, model.getX());
-		}
+		KeyPairSpec keySpec = getBindValue(model.getApplyToken(), true);
+		String plainX = cryptService.decryptWithHex(keySpec, model.getX());
+		hasText(plainX, "Invalid x-position, unable to resolve.");
 		// Parsing additional algorithmic salt.
-		Assert.isTrue(plainX.length() > 66,
-				String.format("Failed to analyze jigsaw, illegal additional ciphertext. '%s'", plainX));
+		isTrue(plainX.length() > 66, String.format("Failed to analyze jigsaw, illegal additional ciphertext. '%s'", plainX));
+		log.debug("Jigsaw analyze decrypt plain x-position: {}, cipher x-position: {}", plainX, model.getX());
+
 		// Reduction analysis.
 		final int prototypeX = parseAdditionalWithAlgorithmicSalt(plainX, model);
 
@@ -155,8 +155,8 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 			log.debug("Simple AI-smart trails analyze, xSD: {}, yTrails: {}", ySD, yTrails);
 		}
 
-		// (At present, the effect is not very good.)TODO => for AI CNN model
-		// verifying...
+		// (At present, the effect is not very good.)
+		// TODO => for AI CNN model verifying...
 		return offsetMatched /* && xSD > 13 && xSD < 79 &&ySD>1.3&&ySD<11 */;
 	}
 

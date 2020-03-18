@@ -20,27 +20,29 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.support.cli.ProcessManager;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.exception.ci.PipelineDeployingException;
+import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
+import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
+import com.wl4g.devops.tool.common.crypto.AesUtils;
+import com.wl4g.devops.tool.common.io.FileIOUtils;
+import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 
-import static com.wl4g.devops.ci.utils.LogHolder.cleanupDefault;
-import static com.wl4g.devops.ci.utils.LogHolder.getDefault;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_FAIL;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_RUNNING;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_SUCCESS;
-import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
-import static java.util.Objects.nonNull;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notEmpty;
-import static org.springframework.util.Assert.notNull;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
+import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
+import static com.wl4g.devops.tool.common.lang.DateUtils2.*;
+import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.*;
 
 /**
  * Abstract deploying transfer job.
@@ -51,7 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @param <P>
  */
 public abstract class AbstractPipeDeployer<P extends PipelineProvider> implements Runnable {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = SmartLoggerFactory.getLogger(getClass());
 
 	/** Pipeline CICD properties configuration. */
 	@Autowired
@@ -59,7 +61,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
 	/** Command-line process manager. */
 	@Autowired
-	protected ProcessManager processManager;
+	protected DestroableProcessManager pm;
 
 	/** Task history service. */
 	@Autowired
@@ -74,15 +76,15 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	/** Pipeline taskDetailId. */
 	final protected Integer taskDetailId;
 
-	public AbstractPipeDeployer(P provider, AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
+	public AbstractPipeDeployer(P provider, AppInstance instance, List<TaskHistoryInstance> taskHistoryInstances) {
 		notNull(provider, "Pipeline provider must not be null.");
 		notNull(instance, "Pipeline job instance must not be null.");
-		notEmpty(taskHistoryDetails, "Pipeline task historyDetails must not be null.");
+		notEmpty(taskHistoryInstances, "Pipeline task historyDetails must not be null.");
 		this.provider = provider;
 		this.instance = instance;
 
 		// Task details.
-		Optional<TaskHistoryDetail> taskHisyDetail = taskHistoryDetails.stream()
+		Optional<TaskHistoryInstance> taskHisyDetail = taskHistoryInstances.stream()
 				.filter(detail -> detail.getInstanceId().intValue() == instance.getId().intValue()).findFirst();
 		isTrue(taskHisyDetail.isPresent(), "Not found taskDetailId by details.");
 		this.taskDetailId = taskHisyDetail.get().getId();
@@ -91,42 +93,45 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	@Override
 	public void run() {
 		notNull(taskDetailId, "Transfer job for taskDetailId inmust not be null");
-
 		Integer projectId = getContext().getProject().getId();
 		String projectName = getContext().getProject().getProjectName();
 		log.info("Starting transfer job for instanceId:{}, projectId:{}, projectName:{} ...", instance.getId(), projectId,
 				projectName);
+
 		try {
 			TaskHistory taskHisy = provider.getContext().getTaskHistory();
 			// Update status to running.
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_RUNNING, null);
-			log.info("[PRE]Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
+			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_RUNNING);
+			log.info("[PRE] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
 					TASK_STATUS_RUNNING, taskDetailId, instance.getId(), projectId, projectName);
 
-			// Call PRE commands.
-			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(),
-					instance.getSshKey());
+			// PRE commands.
+			if (!isBlank(taskHisy.getPreCommand())) {
+				doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(), instance.getSshKey());
+			}
 
-			// Distributed deploying to remote.
+			// Deploying distribute to remote.
 			doRemoteDeploying(instance.getHostname(), instance.getSshUser(), instance.getSshKey());
 
-			// Call post remote commands (e.g. restart)
-			provider.doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(),
-					instance.getSshKey());
+			// Post remote commands.(e.g: restart)
+			if (!isBlank(taskHisy.getPostCommand())) {
+				doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(), instance.getSshKey());
+			}
 
 			// Update status to success.
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_SUCCESS, getLogMessage(null));
-			log.info("[SUCCESS]Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
+			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_SUCCESS);
+
+			log.info("[SUCCESS] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
 					TASK_STATUS_SUCCESS, taskDetailId, instance.getId(), projectId, projectName);
 
-		} catch (Exception ex) {
-			log.error("Failed to transfer job", ex);
-
-			taskHistoryService.updateDetailStatusAndResult(taskDetailId, TASK_STATUS_FAIL, getLogMessage(ex));
-			log.error("[FAILED]Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
+		} catch (Exception e) {
+			log.info("[FAILED] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
 					TASK_STATUS_FAIL, taskDetailId, instance.getId(), projectId, projectName);
-		} finally {
-			cleanupDefault(); // Help GC
+
+			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_FAIL);
+			throw new PipelineDeployingException(
+					String.format("Failed to deploying for taskDetailId: %s, instance: %s, projectName: %s, \nCaused by:\n%s",
+							taskDetailId, instance.getId(), projectName, getStackTraceAsString(e)));
 		}
 
 		log.info("Completed of transfer job for instanceId:{}, projectId:{}, projectName:{}", instance.getId(), projectId,
@@ -154,18 +159,73 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	}
 
 	/**
-	 * Obtain log message text.
-	 * 
-	 * @param ex
+	 * Execution remote commands
+	 *
+	 * @param remoteHost
+	 * @param user
+	 * @param command
+	 * @param sshkey
 	 * @return
+	 * @throws Exception
 	 */
-	protected String getLogMessage(Exception ex) {
-		StringBuffer message = getDefault().getMessage();
-		if (nonNull(ex)) {
-			message.append("\nat cause:\n");
-			message.append(getStackTraceAsString(ex));
+	protected void doRemoteCommand(String remoteHost, String user, String command, String sshkey) throws Exception {
+		hasText(command, "Commands must not be empty.");
+
+		// Remote timeout(Ms)
+		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
+		writeDeployLog("Execute remote of %s@%s, timeout: %s, command: [%s]", user, remoteHost, timeoutMs, command);
+
+		try {
+			RemoteDestroableCommand cmd = new RemoteDestroableCommand(command, timeoutMs, user, remoteHost,
+					getUsableCipherSshKey(sshkey));
+			// Execution command.
+			String outmsg = pm.execWaitForComplete(cmd);
+
+			log.info(writeDeployLog("%s@%s, command: [%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command, outmsg));
+		} catch (Exception e) {
+			String logmsg = writeDeployLog("%s@%s, command: [%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
+					e.getMessage());
+			log.info(logmsg);
+
+			// Strictly handle, as long as there is error message in remote
+			// command execution, throw error.
+			throw new PipelineIntegrationBuildingException(logmsg);
 		}
-		return message.toString();
+
+	}
+
+	/**
+	 * Deciphering usable cipher SSH2 key.
+	 *
+	 * @param sshkey
+	 * @return
+	 * @throws Exception
+	 */
+	protected char[] getUsableCipherSshKey(String sshkey) throws Exception {
+		// Obtain text-plain privateKey(RSA)
+		String cipherKey = config.getDeploy().getCipherKey();
+		char[] sshkeyPlain = new AesUtils(cipherKey).decrypt(sshkey).toCharArray();
+		log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
+
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
+		FileIOUtils.writeALineFile(jobDeployerLog, String.format("Transfer plain sshkey: %s => %s", cipherKey, "******"));
+		return sshkeyPlain;
+	}
+
+	/**
+	 * Write deploying log to file.
+	 * 
+	 * @param format
+	 * @param args
+	 */
+	protected String writeDeployLog(String format, Object... args) {
+		String content = String.format(format, args);
+		String message = String.format("%s - pipe(%s), c(%s), i(%s) : %s", getDate("yy/MM/dd HH:mm:ss"),
+				getContext().getTaskHistory().getId(), instance.getClusterId(), instance.getId(), content);
+
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
+		writeALineFile(jobDeployerLog, message);
+		return content;
 	}
 
 }

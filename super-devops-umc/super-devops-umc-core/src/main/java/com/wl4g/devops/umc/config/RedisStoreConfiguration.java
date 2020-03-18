@@ -30,7 +30,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.redis.JedisService;
 
 import de.codecentric.boot.admin.config.AdminServerProperties;
 import de.codecentric.boot.admin.config.AdminServerWebConfiguration;

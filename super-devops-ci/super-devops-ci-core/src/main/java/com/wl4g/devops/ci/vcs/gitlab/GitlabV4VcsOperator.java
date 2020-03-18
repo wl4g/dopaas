@@ -16,44 +16,37 @@
 package com.wl4g.devops.ci.vcs.gitlab;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
-
-import org.springframework.util.Assert;
+import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
+import com.wl4g.devops.common.bean.ci.Vcs;
 
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
+import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.*;
 
 /**
- * GITLAB API v4 utility
+ * VCS operator for GITLAB V4.
  *
  * @author Wangl.sir
  * @version v1.0 2019年8月2日
  * @since
  */
-public class GitlabV4VcsOperator extends AbstractVcsOperator {
+public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
-	public String vcsType() {
-		return VcsType.GITLAB;
+	public VcsProviderKind kind() {
+		return VcsProviderKind.GITLAB;
 	}
 
-	/**
-	 * Get GITLAB remote branch names.
-	 *
-	 * @param projectId
-	 * @return
-	 */
 	@Override
-	public List<String> getRemoteBranchNames(int projectId) {
-		String url = config.getVcs().getGitlab().getBaseUrl() + "/api/v4/projects/" + projectId + "/repository/branches";
+	public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
+		super.getRemoteBranchNames(credentials, projectId);
 
+		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/branches";
 		// Extract branch names.
-		List<Map<String, Object>> branchs = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
+		List<Map<String, Object>> branchs = doRemoteExchange(credentials, url, new TypeReference<List<Map<String, Object>>>() {
 		});
 		List<String> branchNames = safeList(branchs).stream().map(m -> m.getOrDefault("name", EMPTY).toString())
 				.filter(s -> !isEmpty(s)).collect(toList());
@@ -64,18 +57,13 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
 		return branchNames;
 	}
 
-	/**
-	 * Get GITLAB remote tag names.
-	 *
-	 * @param projectId
-	 * @return
-	 */
 	@Override
-	public List<String> getRemoteTags(int projectId) {
-		String url = config.getVcs().getGitlab().getBaseUrl() + "/api/v4/projects/" + projectId + "/repository/tags";
+	public List<String> getRemoteTags(Vcs credentials, int projectId) {
+		super.getRemoteTags(credentials, projectId);
 
+		String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/tags";
 		// Extract tag names.
-		List<Map<String, Object>> tags = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
+		List<Map<String, Object>> tags = doRemoteExchange(credentials, url, new TypeReference<List<Map<String, Object>>>() {
 		});
 		List<String> tagNames = safeList(tags).stream().map(m -> m.getOrDefault("name", EMPTY).toString())
 				.filter(s -> !isEmpty(s)).collect(toList());
@@ -86,25 +74,16 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
 		return tagNames;
 	}
 
-	/**
-	 * Find remote project ID by project name.
-	 *
-	 * @param projectName
-	 * @return
-	 */
 	@Override
-	public Integer findRemoteProjectId(String projectName) {
-		Assert.notNull(projectName, "projectName is null");
-		String url = config.getVcs().getGitlab().getBaseUrl() + "/api/v4/projects?simple=true&search=" + projectName;
+	public Integer getRemoteProjectId(Vcs credentials, String projectName) {
+		super.getRemoteProjectId(credentials, projectName);
 
-		// Extract project IDs.
-		List<Map<String, Object>> projects = doGitExchange(url, new TypeReference<List<Map<String, Object>>>() {
-		});
-
+		// Search projects for GITLAB.
+		List<GitlabV4SimpleProjectModel> projects = searchRemoteProjects(credentials, projectName);
 		Integer id = null;
-		for (Map<String, Object> map : projects) {
-			if (map.getOrDefault("name", "-1").toString().equals(projectName)) {
-				id = Integer.parseInt(map.getOrDefault("id", "-1").toString());
+		for (GitlabV4SimpleProjectModel p : projects) {
+			if (trimToEmpty(projectName).equals(p.getName())) {
+				id = p.getId();
 				break;
 			}
 		}
@@ -113,6 +92,27 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
 			log.info("Extract remote project IDs: {}", id);
 		}
 		return id;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<GitlabV4SimpleProjectModel> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
+		super.searchRemoteProjects(credentials, projectName, limit);
+
+		// Parameters correcting.
+		if (isBlank(projectName)) {
+			projectName = EMPTY;
+			limit = config.getVcs().getGitlab().getSearchProjectsDefaultPageLimit();
+		}
+
+		// Search of remote URL.
+		String url = String.format((credentials.getBaseUri() + "/api/v4/projects?simple=true&search=%s&per_page=%s"), projectName,
+				limit);
+		// Search projects.
+		List<GitlabV4SimpleProjectModel> projects = doRemoteExchange(credentials, url,
+				new TypeReference<List<GitlabV4SimpleProjectModel>>() {
+				});
+		return safeList(projects);
 	}
 
 }

@@ -18,10 +18,6 @@ package com.wl4g.devops.iam.client.config;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.shiro.realm.Realm;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,7 +27,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.wl4g.devops.common.kit.access.IPAccessControl;
 import com.wl4g.devops.iam.client.filter.ROOTAuthenticationFilter;
-import com.wl4g.devops.iam.client.realm.AbstractAuthorizingRealm;
 import com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm;
 import com.wl4g.devops.iam.client.validation.ExpiredSessionIamValidator;
 import com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator;
@@ -47,6 +42,7 @@ import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter;
 import com.wl4g.devops.iam.client.filter.InternalWhiteListClientAuthenticationFilter;
 import com.wl4g.devops.iam.client.filter.LogoutAuthenticationFilter;
+import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
@@ -58,8 +54,14 @@ import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 
+/**
+ * IAM client auto configuration.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年03月19日
+ * @since
+ */
 public class IamClientAutoConfiguration extends AbstractIamConfiguration {
-
 	final private static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
 	final private static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
 	final private static String BEAN_TICKET_VALIDATOR = "fastCasTicketValidator";
@@ -70,13 +72,13 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public DefaultWebSecurityManager securityManager(IamSubjectFactory subjectFactory, IamClientSessionManager sessionManager) {
+	public DefaultWebSecurityManager securityManager(IamSubjectFactory subjectFactory, IamClientSessionManager sessionManager,
+			EnhancedModularRealmAuthorizer authorizer) {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setSessionManager(sessionManager);
-		// Register define realm.
-		List<Realm> realms = actx.getBeansOfType(AbstractAuthorizingRealm.class).values().stream().collect(Collectors.toList());
-		securityManager.setRealms(realms);
+		securityManager.setRealms(authorizer.getRealms());
 		securityManager.setSubjectFactory(subjectFactory);
+		securityManager.setAuthorizer(authorizer);
 		return securityManager;
 	}
 
@@ -248,14 +250,14 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// IAM controller's
 	// ==============================
 
-	@Override
-	protected String getMappingPrefix() {
-		return URI_C_BASE;
-	}
-
 	@Bean
 	public ClientAuthenticatorController clientAuthenticatorController() {
 		return new ClientAuthenticatorController();
+	}
+
+	@Bean
+	public PrefixHandlerMapping iamClientAuthenticatorControllerPrefixHandlerMapping() {
+		return super.newIamControllerPrefixHandlerMapping(URI_C_BASE);
 	}
 
 }

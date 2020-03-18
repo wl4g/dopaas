@@ -26,17 +26,11 @@ package com.wl4g.devops.iam.authc.credential.secure;
 public interface IamCredentialsSecurer extends CredentialsSecurer {
 
 	/**
-<<<<<<< HEAD
-	 * Apply asymmetric algorithm secret public key.
-	 * 
-	 * @param authenticationCode
-=======
 	 * Apply asymmetric algorithm secret public key
 	 *
->>>>>>> refs/heads/0.1.1-RC5-ci
 	 * @return
 	 */
-	default String applySecret(String authenticationCode) {
+	default String applySecret() {
 		throw new UnsupportedOperationException();
 	}
 

@@ -15,35 +15,119 @@
  */
 package com.wl4g.devops.ci.core.context;
 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.share.AppCluster;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.util.List;
 
 /**
- * Deploy information wrapper API.
- *
- * @author Wangl.sir
+ * Pipeline context with composite information wrapper.
+ * 
+ * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-09-29
  * @since
  */
-public interface PipelineContext {
+public abstract interface PipelineContext {
 
+	/**
+	 * The is empty for {@link PipelineContext} instance.
+	 */
+	final public static PipelineContext EMPTY = new PipelineContext() {
+
+		@Override
+		public List<TaskHistoryInstance> getTaskHistoryInstances() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public PipelineModel getPipelineModel() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public TaskHistory getTaskHistory() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public TaskHistory getRefTaskHistory() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public String getProjectSourceDir() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Project getProject() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public List<AppInstance> getInstances() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public AppCluster getAppCluster() {
+			throw new UnsupportedOperationException();
+		}
+	};
+
+	/**
+	 * Get current pipeline build project.
+	 * 
+	 * @return
+	 */
 	Project getProject();
 
+	/**
+	 * Get current pipeline build project.
+	 * 
+	 * @return
+	 */
 	String getProjectSourceDir();
 
+	/**
+	 * Get current pipeline build application cluster.
+	 * 
+	 * @return
+	 */
 	AppCluster getAppCluster();
 
+	/**
+	 * Get current pipeline build to remote instances.
+	 * 
+	 * @return
+	 */
 	List<AppInstance> getInstances();
 
+	/**
+	 * Get current pipeline build task history.
+	 * 
+	 * @return
+	 */
 	TaskHistory getTaskHistory();
 
+	/**
+	 * Get current pipeline reference last task history.
+	 * 
+	 * @return
+	 */
 	TaskHistory getRefTaskHistory();
 
-	List<TaskHistoryDetail> getTaskHistoryDetails();
+	/**
+	 * Get current pipeline task record instance.
+	 * 
+	 * @return
+	 */
+	List<TaskHistoryInstance> getTaskHistoryInstances();
+
+	PipelineModel getPipelineModel();
 
 }

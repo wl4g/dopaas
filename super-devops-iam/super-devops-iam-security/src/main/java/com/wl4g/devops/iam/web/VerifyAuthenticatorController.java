@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2017 ~ 2050 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.common.utils.web.WebUtils2.getHttpRemoteAddr;
-import static com.wl4g.devops.iam.common.utils.Securitys.createLimitFactors;
-import static com.wl4g.devops.iam.common.utils.Securitys.sessionStatus;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.createLimitFactors;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.sessionStatus;
 import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType.TEXT_SMS;
 import static com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber.parse;
 import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -93,7 +93,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 
 			// Apply CAPTCHA
 			if (verifier.forAdapt(request).isEnabled(factors)) { // Enabled?
-				resp.buildMap().put(KEY_APPLY_MODEL, verifier.forAdapt(request).apply(principal, factors, request));
+				resp.forMap().put(KEY_APPLY_MODEL, verifier.forAdapt(request).apply(principal, factors, request));
 			} else { // Invalid requestVERIFIED_TOKEN_EXPIREDMS
 				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
 			}
@@ -127,7 +127,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
 			// Verifying
 			String verifiedToken = verifier.forAdapt(request).verify(params, request, factors);
-			resp.buildMap().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
+			resp.forMap().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
 		} catch (Exception e) {
 			resp.handleError(e);
 			if (log.isWarnEnabled()) {
@@ -160,12 +160,12 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			verifier.forAdapt(request).validate(factors, getCleanParam(request, config.getParam().getVerifiedTokenName()), false);
 
 			// Apply SMS verify code.
-			resp.buildMap().put(KEY_APPLY_MODEL, verifier.forAdapt(TEXT_SMS).apply(mn.asNumberText(), factors, request));
+			resp.forMap().put(KEY_APPLY_MODEL, verifier.forAdapt(TEXT_SMS).apply(mn.asNumberText(), factors, request));
 
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
 			VerifyCodeWrapper code = verifier.forAdapt(TEXT_SMS).getVerifyCode(true);
-			resp.buildMap().put(KEY_SMS_CHECK,
+			resp.forMap().put(KEY_SMS_CHECK,
 					new SmsCheckModel(mn.getNumber(), code.getRemainDelay(config.getMatcher().getFailFastSmsDelay())));
 		} catch (Exception e) {
 			resp.handleError(e);

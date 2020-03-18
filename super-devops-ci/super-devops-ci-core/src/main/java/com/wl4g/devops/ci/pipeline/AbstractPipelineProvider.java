@@ -18,49 +18,55 @@ package com.wl4g.devops.ci.pipeline;
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
-import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.exception.ci.InvalidCommandScriptException;
-import com.wl4g.devops.common.utils.cli.SSH2Utils.CommandResult;
-import com.wl4g.devops.common.utils.codec.AES;
+import com.wl4g.devops.ci.vcs.VcsOperator;
+import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
+import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
+import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
+import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
+import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.cli.ProcessManager;
+import com.wl4g.devops.tool.common.crypto.AesUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
-import static com.wl4g.devops.common.utils.cli.SSH2Utils.executeWithCommand;
-import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.contains;
-import static org.apache.commons.lang3.StringUtils.containsAny;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.replace;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.File;
 import java.util.List;
 
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_END;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_START;
+import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
+import static com.wl4g.devops.tool.common.io.FileIOUtils.writeBLineFile;
+import static com.wl4g.devops.tool.common.lang.DateUtils2.getDate;
+import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 /**
- * Abstract based deploy provider.
+ * Abstract basic developments pipeline provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
- * @date 2019-05-05 17:17:00
+ * @date 2019-08-05 17:17:00
  */
 public abstract class AbstractPipelineProvider implements PipelineProvider {
+	final protected Logger log = getLogger(getClass());
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
-
-	/** Pipeline context wrapper. */
+	/** Pipeline context. */
 	final protected PipelineContext context;
 
 	@Autowired
@@ -72,18 +78,22 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected JedisLockManager lockManager;
 	@Autowired
-	protected ProcessManager processManager;
+	protected DestroableProcessManager pm;
+	@Autowired
+	protected GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsAdapter;
 
 	@Autowired
 	protected DependencyService dependencyService;
 	@Autowired
 	protected TaskHistoryService taskHistoryService;
 	@Autowired
-	protected TaskHisBuildCommandDao taskHisBuildCommandDao;
+	protected TaskHistoryBuildCommandDao taskHistoryBuildCommandDao;
 	@Autowired
 	protected ProjectDao projectDao;
 	@Autowired
 	protected TaskSignDao taskSignDao;
+	@Autowired
+	protected FlowManager flowManager;
 
 	/**
 	 * Pull project source from VCS files fingerprint.
@@ -101,13 +111,35 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	}
 
 	/**
-	 * Pipeline context.
+	 * Basic pipeline.
 	 */
 	public PipelineContext getContext() {
 		return context;
 	}
 
-	// --- Fingerprints. ---
+	/**
+	 * Get VCS operator for specific project.
+	 * 
+	 * @param project
+	 * @return
+	 */
+	protected VcsOperator getVcsOperator(Project project) {
+		notNull(project, "Project can't be null.");
+		notNull(project.getVcs(), "Project.vcs can't be null.");
+		return getVcsOperator(project.getVcs().getProviderKind());
+	}
+
+	/**
+	 * Get VCS operator for specific provider.
+	 * 
+	 * @param vcsKind
+	 * @return
+	 */
+	protected VcsOperator getVcsOperator(String vcsKind) {
+		return vcsAdapter.forOperator(vcsKind);
+	}
+
+	// --- Fingerprint's. ---
 
 	/**
 	 * Get pull project source from VCS files fingerprint.
@@ -130,7 +162,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * 
 	 * @param sourceFingerprint
 	 */
-	protected void setupSourceFingerprint(String sourceFingerprint) {
+	protected void setSourceFingerprint(String sourceFingerprint) {
 		hasText(sourceFingerprint, "sourceFingerprint must not be empty.");
 		this.sourceFingerprint = sourceFingerprint;
 	}
@@ -140,12 +172,12 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * 
 	 * @param assetsFingerprint
 	 */
-	protected void setupAssetsFingerprint(String assetsFingerprint) {
+	protected void setAssetsFingerprint(String assetsFingerprint) {
 		hasText(assetsFingerprint, "assetsFingerprint must not be empty.");
 		this.assetsFingerprint = assetsFingerprint;
 	}
 
-	// --- Functions. ---
+	// --- Function's. ---
 
 	/**
 	 * Execution remote commands
@@ -163,17 +195,23 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 		// Remote timeout(Ms)
 		long timeoutMs = config.getRemoteCommandTimeoutMs(getContext().getInstances().size());
-		logDefault("Transfer remote execution for %s@%s, timeout(%s) => command(%s)", user, remoteHost, timeoutMs, command);
-		// Execution command.
-		CommandResult result = executeWithCommand(remoteHost, user, getUsableCipherSshKey(sshkey), command, timeoutMs);
+		writeBuildLog("Execute remote of %s@%s, timeout: %s, command: [%s]", user, remoteHost, timeoutMs, command);
 
-		logDefault("\n%s@%s -> [stdout]\n", user, remoteHost);
-		if (!isBlank(result.getMessage())) {
-			logDefault(result.getMessage());
-		}
-		logDefault("\n%s@%s -> [stderr]\n", user, remoteHost);
-		if (!isBlank(result.getErrmsg())) {
-			logDefault(result.getErrmsg());
+		try {
+			RemoteDestroableCommand cmd = new RemoteDestroableCommand(command, timeoutMs, user, remoteHost,
+					getUsableCipherSshKey(sshkey));
+			// Execution command.
+			String outmsg = pm.execWaitForComplete(cmd);
+
+			log.info(writeBuildLog("%s@%s, command: [%s], \n\t----- Stdout: -----\n%s", user, remoteHost, command, outmsg));
+		} catch (Exception e) {
+			String logmsg = writeBuildLog("%s@%s, command: [%s], \n\t----- Stderr: -----\n%s", user, remoteHost, command,
+					e.getMessage());
+			log.info(logmsg);
+
+			// Strictly handle, as long as there is error message in remote
+			// command execution, throw error.
+			throw new PipelineIntegrationBuildingException(logmsg);
 		}
 
 	}
@@ -189,39 +227,66 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	public char[] getUsableCipherSshKey(String sshkey) throws Exception {
 		// Obtain text-plain privateKey(RSA)
 		String cipherKey = config.getDeploy().getCipherKey();
-		char[] sshkeyPlain = new AES(cipherKey).decrypt(sshkey).toCharArray();
-		if (log.isInfoEnabled()) {
-			log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
-		}
+		char[] sshkeyPlain = new AesUtils(cipherKey).decrypt(sshkey).toCharArray();
 
-		logDefault("Transfer plain sshkey: %s => %s", cipherKey, "******");
+		log.info(writeBuildLog("Decryption plain sshkey: %s => %s", cipherKey, "******"));
 		return sshkeyPlain;
 	}
 
 	/**
-	 * Execution distribution transfer to remote instances for executable file.
+	 * Execution distribution transfer to remote instances for deployments.
 	 */
-	protected void doExecuteTransferToRemoteInstances() {
+	protected final void startupExecuteRemoteDeploying() {
 		// Creating transfer instances jobs.
-		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> newDeployer(i)).collect(toList());
+		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
+			return (Runnable) () -> {
+				File jobDeployerLog = config.getJobDeployerLog(context.getTaskHistory().getId(), i.getId());
+				try {
+					writeBLineFile(jobDeployerLog, LOG_FILE_START);
+
+					// Do deploying.
+					newPipeDeployer(i).run();
+
+					// Print successful.
+					writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
+							getContext().getAppCluster().getName(), i.getSshUser(), i.getHostname());
+				} catch (Exception e) {
+					String logmsg = writeBuildLog("Failed to deployed to remote! Caused by: \n%s", getStackTraceAsString(e));
+					log.error(logmsg);
+				} finally {
+					writeALineFile(jobDeployerLog, LOG_FILE_END);
+				}
+			};
+		}).collect(toList());
 
 		// Submit jobs for complete.
 		if (!isEmpty(jobs)) {
-			if (log.isInfoEnabled()) {
-				log.info("Transfer jobs starting...  for instances({}), {}", jobs.size(), getContext().getInstances());
-			}
-			jobExecutor.submitForComplete(jobs, config.getDeploy().getTransferTimeoutMs());
+			List<String> instanceStrs = getContext().getInstances().stream().map(i -> i.getHostname() + ":" + i.getEndpoint())
+					.collect(toList());
+
+			log.info(writeBuildLog("Start to deploying cluster: '%s' to remote instances: '%s' ... ",
+					getContext().getAppCluster().getName(), instanceStrs));
+
+			jobExecutor.getWorker().submitForComplete(jobs, config.getDeploy().getTransferTimeoutMs());
 		}
 
 	}
 
 	/**
-	 * Create pipeline transfer job.
+	 * Write provider building log to file.
 	 * 
-	 * @param instance
-	 * @return
+	 * @param format
+	 * @param args
+	 * @return Returns the actual log content, excluding time prefixes such as
+	 *         append.
 	 */
-	protected abstract Runnable newDeployer(AppInstance instance);
+	protected String writeBuildLog(String format, Object... args) {
+		String content = String.format(format, args);
+		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"), getContext().getTaskHistory().getId(),
+				content);
+		writeALineFile(config.getJobLog(context.getTaskHistory().getId()), message);
+		return content;
+	}
 
 	/**
 	 * Resolve commands placeholder variables.
@@ -232,6 +297,14 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected String resolveCmdPlaceholderVariables(String commands) {
 		return new PlaceholderVariableResolver(commands).resolve().get();
 	}
+
+	/**
+	 * Create pipeline task deployer.
+	 * 
+	 * @param instance
+	 * @return
+	 */
+	protected abstract Runnable newPipeDeployer(AppInstance instance);
 
 	/**
 	 * Placeholder variables resolver.
@@ -289,7 +362,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			commands = replace(commands, PH_TMP_SCRIPT_FILE, tmpScriptFile.getAbsolutePath());
 
 			// Replace for backupDir.
-			File backupDir = config.getJobBackup(getContext().getTaskHistory().getId());
+			File backupDir = config.getJobBackupDir(getContext().getTaskHistory().getId());
 			commands = replace(commands, PH_BACKUP_DIR, backupDir.getAbsolutePath());
 
 			// Replace for logPath.
@@ -313,26 +386,17 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			if (containsAny(commands, "{", "}")) {
 				if (contains(commands, "{") && contains(commands, "}")) {
 					String invalidVar = commands.substring(commands.indexOf("{"), commands.indexOf("}") + 1);
-					throw new InvalidCommandScriptException(String.format(
-							"Invalid placeholder '%s' in commands script. See:https://github.com/wl4g/super-devops/blob/master/super-devops-ci/README.md",
+					throw new BadCommandScriptException(String.format(
+							"Bad placeholder '%s' in commands script. See:https://github.com/wl4g/super-devops/blob/master/super-devops-ci/README.md",
 							invalidVar));
 				} else {
-					throw new InvalidCommandScriptException(String.format("Invalid commands script for: %s", commands));
+					throw new BadCommandScriptException(String.format("Bad commands script for: %s", commands));
 				}
 			}
 
 			return commands;
 		}
 
-	}
-
-	public static void main(String[] args) {
-		String s = "aabb111b {pipe.remoteTmpDir} \n echo 1111 \n start...";
-		System.out.println(s);
-		if (containsAny(s, "{", "}")) {
-			System.out.println(s.substring(s.indexOf("{"), s.indexOf("}") + 1));
-		}
-		System.out.println();
 	}
 
 }

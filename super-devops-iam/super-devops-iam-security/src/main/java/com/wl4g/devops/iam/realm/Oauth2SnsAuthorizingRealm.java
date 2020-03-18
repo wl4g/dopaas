@@ -15,26 +15,26 @@
  */
 package com.wl4g.devops.iam.realm;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.Parameter;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.SnsAuthorizingParameter;
-import com.wl4g.devops.iam.authc.EmptyOauth2AuthorizationInfo;
+import com.wl4g.devops.iam.authc.EmptyOauth2AuthenicationInfo;
+import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationInfo;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SnsAuthorizingParameter;
 import com.wl4g.devops.iam.filter.ProviderSupport;
-import com.wl4g.devops.iam.sns.SocialConnectionFactory;
+import com.wl4g.devops.iam.sns.OAuth2ApiBindingFactory;
 
 /**
  * Default SNS oauth2 authorizing realm
@@ -44,13 +44,13 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
  * @date 2019年1月8日
  * @since
  */
-public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticationToken> extends AbstractIamAuthorizingRealm<T> {
+public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticationToken> extends AbstractAuthorizingRealm<T> {
 
 	/**
 	 * IAM Social connection factory
 	 */
 	@Autowired
-	protected SocialConnectionFactory connectFactory;
+	protected OAuth2ApiBindingFactory connectFactory;
 
 	public Oauth2SnsAuthorizingRealm(IamBasedMatcher matcher) {
 		super(matcher);
@@ -65,8 +65,7 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 	 *             if there is an error during authentication.
 	 */
 	@Override
-	protected AuthenticationInfo doAuthenticationInfo(Oauth2SnsAuthenticationToken token) throws AuthenticationException {
-		// Check provider
+	protected IamAuthenticationInfo doAuthenticationInfo(Oauth2SnsAuthenticationToken token) throws AuthenticationException {
 		ProviderSupport.checkSupport(token.getSocial().getProvider());
 
 		/**
@@ -75,14 +74,15 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 		 */
 		Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
 				token.getSocial().getUnionId());
-		IamAccountInfo account = configurer.getIamAccount(parameter);
-		if (log.isInfoEnabled()) {
-			log.info("The accountInfo obtained through {} -> {}", toJSONString(parameter), toJSONString(account));
+		IamPrincipalInfo info = configurer.getIamAccount(parameter);
+		log.info("Get authenticate accountInfo: {}, by sns parameter: {}", toJSONString(info), toJSONString(parameter));
+
+		if (nonNull(info) && !isBlank(info.getPrincipal())) {
+			// Authenticate attributes.(roles/permissions/rememberMe)
+			PrincipalCollection principals = createPermitPrincipalCollection(info);
+			return new Oauth2SnsAuthenticationInfo(info, principals, getName());
 		}
-		if (nonNull(account) && !isBlank(account.getPrincipal())) {
-			return new SimpleAuthenticationInfo(account.getPrincipal(), null, this.getName());
-		}
-		return EmptyOauth2AuthorizationInfo.EMPTY;
+		return EmptyOauth2AuthenicationInfo.EMPTY;
 	}
 
 	/**

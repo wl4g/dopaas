@@ -16,6 +16,7 @@
 package com.wl4g.devops.scm.service;
 
 import com.wl4g.devops.common.bean.scm.*;
+import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public interface HistoryService {
 
 	public List<ConfigVersionList> list(ConfigVersionList agl);
 
-	public List<VersionList> versionList(Map<String, Object> param);
+	PageModel versionList(PageModel pm, Map<String, Object> param);
 
 	public List<ReleaseHistoryList> historylist(ReleaseHistoryList agl);
 

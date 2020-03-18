@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-scm-common</artifactId>
@@ -19,11 +20,21 @@
 		<mysql.version>5.1.21</mysql.version>
 		<pagehelper.version>4.1.6</pagehelper.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-bom</artifactId>
+				<version>master</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-common</artifactId>
-			<version>master</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -31,7 +42,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -40,7 +50,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>${maven-source-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>

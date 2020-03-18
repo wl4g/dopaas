@@ -19,13 +19,12 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_B
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
-import static com.wl4g.devops.common.utils.web.WebUtils2.cleanURI;
-import static com.wl4g.devops.iam.common.utils.Securitys.correctAuthenticaitorURI;
-import static com.wl4g.devops.iam.web.DefaultViewController.URI_STATIC;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.correctAuthenticaitorURI;
+import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.Assert.hasText;
 
-import org.apache.shiro.util.Assert;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
@@ -48,7 +47,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	/**
 	 * Default view loader path
 	 */
-	final public static String DEFAULT_VIEW_LOADER_PATH = "classpath:/default-view";
+	final public static String DEFAULT_VIEW_LOADER_PATH = "/default-webapps";
 
 	/**
 	 * Default view login URI.
@@ -113,7 +112,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	}
 
 	public void setSuccessEndpoint(String successEndpoint) {
-		Assert.hasText(successEndpoint, "Success endpoint must not be empty.");
+		hasText(successEndpoint, "Success endpoint must not be empty.");
 		this.successService = successEndpoint.split("@")[0];
 		this.successUri = cleanURI(correctAuthenticaitorURI(successEndpoint.split("@")[1]));
 	}
@@ -183,6 +182,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	protected void applyDefaultIfNecessary() {
 		// Default URL filter chain.
 		addDefaultFilterChain();
+
 		// Default success endPoint.
 		if (isBlank(getSuccessService())) {
 			setSuccessEndpoint(environment.getProperty("spring.application.name") + "@" + DEFAULT_VIEW_INDEX_URI);
@@ -191,8 +191,8 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 
 	@Override
 	protected void validation() {
-		Assert.hasText(getSuccessService(), "Success service must not be empty.");
-		Assert.hasText(getSuccessUri(), "SuccessUri must not be empty, e.g. http://localhost:14041");
+		hasText(getSuccessService(), "Success service must not be empty.");
+		hasText(getSuccessUri(), "SuccessUri must not be empty, e.g. http://localhost:14041");
 		super.validation();
 	}
 
@@ -200,9 +200,9 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	 * Add default filter chain settings.<br/>
 	 * {@link DefaultOauth2SnsController#connect}<br/>
 	 */
-	private void addDefaultFilterChain() {
+	final private void addDefaultFilterChain() {
 		// Default view access files request rules.
-		getFilterChain().put(DEFAULT_VIEW_BASE_URI + URI_STATIC + "/**", "anon");
+		getFilterChain().put(DEFAULT_VIEW_BASE_URI + "/**", "anon");
 		// SNS authenticator rules.
 		getFilterChain().put(URI_S_SNS_BASE + "/**", "anon");
 		// Login authenticator rules.

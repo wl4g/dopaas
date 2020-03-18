@@ -15,12 +15,13 @@
  */
 package com.wl4g.devops.iam.client.filter;
 
-import static com.wl4g.devops.common.utils.web.UserAgentUtils.isBrowser;
-import static com.wl4g.devops.common.utils.web.WebUtils2.getAvaliableRequestRememberUrl;
-import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
-import static com.wl4g.devops.common.utils.web.WebUtils2.isXHRRequest;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
+import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getAvaliableRequestRememberUrl;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isXHRRequest;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
@@ -29,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.web.util.WebUtils;
 
 import com.wl4g.devops.iam.client.authc.FastCasAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
@@ -81,7 +81,7 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 	@Override
 	protected FastCasAuthenticationToken createAuthenticationToken(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		String ticket = WebUtils.getCleanParam(request, config.getParam().getGrantTicket());
+		String ticket = getCleanParam(request, config.getParam().getGrantTicket());
 		return new FastCasAuthenticationToken(ticket);
 	}
 

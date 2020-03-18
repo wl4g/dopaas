@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.client.session.mgt;
 
+import static java.util.Objects.nonNull;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -28,13 +30,12 @@ import org.apache.shiro.session.Session;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
 import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAVE_GRANT_TICKET;
 
-import com.wl4g.devops.common.bean.iam.model.SessionValidationAssertion;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.validation.IamValidator;
+import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager;
-import com.wl4g.devops.iam.common.utils.Sessions;
-import com.wl4g.devops.support.cache.ScanCursor;
+import com.wl4g.devops.support.redis.ScanCursor;
 
 /**
  * IAM client session manager
@@ -54,10 +55,10 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 	/**
 	 * Expire session validator
 	 */
-	final protected IamValidator<SessionValidationAssertion, SessionValidationAssertion> validator;
+	final protected IamValidator<SessionValidityAssertModel, SessionValidityAssertModel> validator;
 
 	public IamClientSessionManager(IamClientProperties config,
-			IamValidator<SessionValidationAssertion, SessionValidationAssertion> validator) {
+			IamValidator<SessionValidityAssertModel, SessionValidityAssertModel> validator) {
 		super(config, CACHE_TICKET_C);
 		this.validator = validator;
 	}
@@ -78,37 +79,36 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 			while (cursor.hasNext()) {
 				List<IamSession> activeSessions = cursor.readValues();
 
-				// GrantTicket and session
-				Map<String, Session> tmp = new HashMap<>(activeSessions.size());
+				// Grant ticket of local sessions.
+				Map<String, Session> localSessions = new HashMap<>(activeSessions.size());
 
 				// Wrap to validation assertion
-				SessionValidationAssertion request = new SessionValidationAssertion(config.getServiceName());
+				SessionValidityAssertModel request = new SessionValidityAssertModel(config.getServiceName());
 				for (IamSession session : activeSessions) {
 					String grantTicket = (String) session.getAttribute(SAVE_GRANT_TICKET);
 					request.getTickets().add(grantTicket);
-					tmp.put(grantTicket, session);
+					localSessions.put(grantTicket, session);
 				}
 
-				// Validation execution
-				SessionValidationAssertion assertion = validator.validate(request);
-				for (String expiredTicket : assertion.getTickets()) {
-					Session session = tmp.get(expiredTicket);
+				// Validation sessions.
+				SessionValidityAssertModel assertion = validator.validate(request);
+				for (String deadTicket : assertion.getTickets()) {
+					Session session = localSessions.get(deadTicket);
 					try {
-						sessionDAO.delete(session);
+						if (nonNull(session)) {
+							sessionDAO.delete(session);
+							if (log.isInfoEnabled()) {
+								log.info("Cleaup expired session on: {}", session.getId());
+							}
+						}
 					} catch (Exception e) {
-						log.warn("Cleaup expired session failed. sessionId: {}, grantTicket: {}", Sessions.getSessionId(session),
-								expiredTicket);
-					}
-					if (log.isInfoEnabled()) {
-						log.info("Cleaup expired session on: {}", Sessions.getSessionId(session));
+						log.warn("Cleaup expired session failed. sessionId: {}, grantTicket: {}", session.getId(), deadTicket);
 					}
 				}
 			}
-
 		} catch (Exception e) {
 			log.error("Validating expire sessions failed", e);
 		}
-
 	}
 
 }

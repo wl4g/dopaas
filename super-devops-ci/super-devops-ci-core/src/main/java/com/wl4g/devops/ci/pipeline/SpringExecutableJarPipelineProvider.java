@@ -17,10 +17,10 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 
 /**
- * Spring boot executable deployments provider.
+ * Pipeline provider for deployment Spring-boot executable jar project.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月25日
@@ -28,8 +28,8 @@ import com.wl4g.devops.common.bean.share.AppInstance;
  */
 public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvider {
 
-	public SpringExecutableJarPipelineProvider(PipelineContext info) {
-		super(info);
+	public SpringExecutableJarPipelineProvider(PipelineContext context) {
+		super(context);
 	}
 
 	@Override
@@ -43,8 +43,8 @@ public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvi
 	}
 
 	@Override
-	protected Runnable newDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
+	protected Runnable newPipeDeployer(AppInstance instance) {
+		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(SpringExecutableJarPipeDeployer.class, args);
 	}
 

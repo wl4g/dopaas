@@ -31,7 +31,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.common.bean.iam.model.LogoutModel;
 import com.wl4g.devops.common.exception.iam.GrantTicketNullException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
@@ -40,14 +39,15 @@ import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
+import com.wl4g.devops.iam.common.authc.model.LogoutModel;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
-import static com.wl4g.devops.common.utils.web.WebUtils2.applyQueryURL;
-import static com.wl4g.devops.common.utils.web.WebUtils2.isTrue;
-import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.devops.tool.common.web.WebUtils2.applyQueryURL;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;

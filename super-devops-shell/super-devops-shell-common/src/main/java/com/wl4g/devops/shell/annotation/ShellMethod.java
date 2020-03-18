@@ -21,15 +21,61 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * {@link ShellMethod}
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年04月17日
+ * @since
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 @Documented
 public @interface ShellMethod {
 
+	/**
+	 * Command names definition.</br>
+	 * 
+	 * e.g:
+	 * 
+	 * <pre>
+	 * $ > mylist
+	 * </pre>
+	 * 
+	 * @return
+	 */
 	String[] keys();
 
-	String group() default "Default command group";
+	/**
+	 * Command group name.
+	 * 
+	 * @return
+	 */
+	String group();
 
+	/**
+	 * Whether to allow command line execution to be interrupted.
+	 * 
+	 * @return
+	 */
+	InterruptType interruptible() default InterruptType.NOT_ALLOW;
+
+	/**
+	 * Command help description.
+	 * 
+	 * @return
+	 */
 	String help();
+
+	/**
+	 * {@link InterruptType}
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年2月4日 v1.0.0
+	 * @see
+	 */
+	public static enum InterruptType {
+		ALLOW, NOT_ALLOW
+	}
 
 }

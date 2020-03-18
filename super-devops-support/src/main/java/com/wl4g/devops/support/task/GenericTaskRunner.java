@@ -16,45 +16,42 @@
 package com.wl4g.devops.support.task;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.util.Assert;
+
+import com.wl4g.devops.tool.common.task.SafeEnhancedScheduledTaskExecutor;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.util.Collections.emptyList;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static com.wl4g.devops.tool.common.lang.Assert2.state;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * Generic task schedule runner.
+ * Generic local scheduler & task runner.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年6月2日
  * @since
+ * @see {@link org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler}
+ * @see <a href=
+ *      "http://www.doc88.com/p-3922316178617.html">ScheduledThreadPoolExecutor
+ *      Retry task OOM resolution</a>
  */
 public abstract class GenericTaskRunner<C extends RunnerProperties>
-		implements DisposableBean, ApplicationRunner, Closeable, Runnable {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+		implements Closeable, Runnable, ApplicationRunner, DisposableBean {
+	final protected Logger log = getLogger(getClass());
 
-	/** Boss running. */
-	final private AtomicBoolean bossState = new AtomicBoolean(false);
+	/** Running state. */
+	final private AtomicBoolean running = new AtomicBoolean(false);
 
 	/** Runner task properties configuration. */
 	final C config;
@@ -63,49 +60,16 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	private Thread boss;
 
 	/** Runner worker thread group pool. */
-	private ThreadPoolExecutor worker;
+	private SafeEnhancedScheduledTaskExecutor worker;
 
 	@SuppressWarnings("unchecked")
 	public GenericTaskRunner() {
-		this.config = (C) new RunnerProperties();
+		this((C) new RunnerProperties());
 	}
 
 	public GenericTaskRunner(C config) {
-		Assert.notNull(config, "TaskHistory properties must not be null");
+		notNull(config, "GenericTaskRunner properties can't null");
 		this.config = config;
-	}
-
-	@Override
-	public synchronized void run(ApplicationArguments args) throws Exception {
-		// Call PreStartup
-		preStartupProperties();
-
-		// Create worker(if necessary)
-		if (bossState.compareAndSet(false, true)) {
-			if (config.getConcurrency() > 0) {
-				// See:https://www.jianshu.com/p/e7ab1ac8eb4c
-				worker = new ThreadPoolExecutor(config.getConcurrency(), config.getConcurrency(), config.getKeepAliveTime(),
-						MICROSECONDS, new LinkedBlockingQueue<>(config.getAcceptQueue()),
-						new NamedThreadFactory(getClass().getSimpleName()), config.getReject());
-			} else {
-				log.warn("No workthread pool for started, because the number of workthread is less than 0");
-			}
-
-			// Boss asynchronously execution.(if necessary)
-			if (config.isAsyncStartup()) {
-				String name = getClass().getSimpleName() + "-boss";
-				boss = new Thread(this, name);
-				boss.setDaemon(false);
-				boss.start();
-			} else {
-				run(); // Sync execution.
-			}
-		} else {
-			log.warn("Already runner!, already builders are read-only and do not allow task modification");
-		}
-
-		// Call post startup
-		postStartupProperties();
 	}
 
 	@Override
@@ -113,13 +77,43 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 		close();
 	}
 
+	/**
+	 * Note: It is recommended to use the {@link AtomicBoolean} mechanism to
+	 * avoid using synchronized. </br>
+	 * Error example:
+	 * 
+	 * <pre>
+	 * public abstract class ParentClass implements Closeable, Runnable {
+	 * 	public synchronized void close() {
+	 * 		// Some close or release ...
+	 * 	}
+	 * }
+	 * 
+	 * public class SubClass extends ParentClass {
+	 * 	public synchronized void run() {
+	 * 		// Long-time jobs ...
+	 * 
+	 * 		// For example:
+	 * 		// while(true) {
+	 * 		// ...
+	 * 		// }
+	 * 	}
+	 * }
+	 * </pre>
+	 * 
+	 * At this time, it may lead to deadlock, because SubClass.run() has not
+	 * been executed and is not locked, resulting in the call to
+	 * ParentClass.close() always waiting. </br>
+	 * </br>
+	 */
 	@Override
 	public void close() throws IOException {
-		// Call pre close
-		preCloseProperties();
+		if (running.compareAndSet(true, false)) {
+			// Call pre close
+			preCloseProperties();
 
-		if (bossState.compareAndSet(true, false)) {
-			if (worker != null) {
+			// Close for thread pool worker.
+			if (!isNull(worker)) {
 				try {
 					worker.shutdown();
 					worker = null;
@@ -127,46 +121,84 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 					log.error("Runner worker shutdown failed!", e);
 				}
 			}
+
+			// Close for thread-boss.
 			try {
-				if (boss != null) {
+				if (!isNull(boss)) {
 					boss.interrupt();
 					boss = null;
 				}
 			} catch (Exception e) {
 				log.error("Runner boss interrupt failed!", e);
 			}
-		}
 
-		// Call post close
-		postCloseProperties();
+			// Call post close
+			postCloseProperties();
+		}
+	}
+
+	/**
+	 * Auto initialization on startup.
+	 * 
+	 * @throws Exception
+	 */
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		if (running.compareAndSet(false, true)) {
+			// Call PreStartup
+			preStartupProperties();
+
+			// Create worker(if necessary)
+			if (config.getConcurrency() > 0) {
+				// See:https://www.jianshu.com/p/e7ab1ac8eb4c
+				ThreadFactory tf = new NamedThreadFactory(getClass().getSimpleName() + "-worker");
+				worker = new SafeEnhancedScheduledTaskExecutor(config.getConcurrency(), config.getKeepAliveTime(), tf,
+						config.getAcceptQueue(), config.getReject());
+			} else {
+				log.warn("No start threads worker, because the number of workthreads is less than 0");
+			}
+
+			// Boss asynchronously execution.(if necessary)
+			if (config.isAsyncStartup()) {
+				boss = new NamedThreadFactory(getClass().getSimpleName() + "-boss").newThread(this);
+				boss.start();
+			} else {
+				run(); // Sync execution.
+			}
+
+			// Call post startup
+			postStartupProperties();
+		} else {
+			log.warn("Could not startup runner! because already builders are read-only and do not allow task modification");
+		}
 	}
 
 	/**
 	 * Pre startup properties
 	 */
 	protected void preStartupProperties() throws Exception {
-
+		// Ignore
 	}
 
 	/**
 	 * Post startup properties
 	 */
 	protected void postStartupProperties() throws Exception {
-
+		// Ignore
 	}
 
 	/**
 	 * Pre close properties
 	 */
 	protected void preCloseProperties() throws IOException {
-
+		// Ignore
 	}
 
 	/**
 	 * Post close properties
 	 */
 	protected void postCloseProperties() throws IOException {
-
+		// Ignore
 	}
 
 	/**
@@ -175,7 +207,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * @return
 	 */
 	protected boolean isActive() {
-		return boss != null && !boss.isInterrupted() && bossState.get();
+		return boss != null && !boss.isInterrupted() && running.get();
 	}
 
 	/**
@@ -183,7 +215,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * 
 	 * @return
 	 */
-	public C getConfig() {
+	protected C getConfig() {
 		return config;
 	}
 
@@ -193,70 +225,12 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	}
 
 	/**
-	 * Submitted job wait for completed.
-	 * 
-	 * @param jobs
-	 * @param timeoutMs
-	 * @throws IllegalStateException
-	 */
-	public void submitForComplete(List<Runnable> jobs, long timeoutMs) throws IllegalStateException {
-		submitForComplete(jobs, (ex, completed, uncompleted) -> {
-			if (nonNull(ex)) {
-				throw ex;
-			}
-		}, timeoutMs);
-	}
-
-	/**
-	 * Submitted job wait for completed.
-	 * 
-	 * @param jobs
-	 * @param listener
-	 * @param timeoutMs
-	 * @throws IllegalStateException
-	 */
-	public void submitForComplete(List<Runnable> jobs, CompleteTaskListener listener, long timeoutMs)
-			throws IllegalStateException {
-		if (!isEmpty(jobs)) {
-			int total = jobs.size();
-			// Future jobs.
-			Map<Future<?>, Runnable> futureJob = new HashMap<Future<?>, Runnable>(total);
-			try {
-				CountDownLatch latch = new CountDownLatch(total); // Submit.
-				jobs.stream().forEach(job -> futureJob.put(getWorker().submit(new FutureDoneTaskWrapper(latch, job)), job));
-
-				if (!latch.await(timeoutMs, TimeUnit.MILLISECONDS)) { // Timeout?
-					Iterator<Entry<Future<?>, Runnable>> it = futureJob.entrySet().iterator();
-					while (it.hasNext()) {
-						Entry<Future<?>, Runnable> entry = it.next();
-						if (!entry.getKey().isCancelled() && !entry.getKey().isDone()) {
-							entry.getKey().cancel(true);
-						} else {
-							it.remove(); // Cleanup cancelled or isDone
-						}
-					}
-
-					TimeoutException ex = new TimeoutException(
-							String.format("Failed to job execution timeout, %s -> completed(%s)/total(%s)",
-									jobs.get(0).getClass().getName(), (total - latch.getCount()), total));
-
-					listener.onComplete(ex, (total - latch.getCount()), futureJob.values());
-				} else {
-					listener.onComplete(null, total, emptyList());
-				}
-			} catch (Exception e) {
-				throw new IllegalStateException(e);
-			}
-		}
-	}
-
-	/**
-	 * Get thread worker.
+	 * Thread pool executor worker.
 	 * 
 	 * @return
 	 */
-	protected ThreadPoolExecutor getWorker() {
-		Assert.state(worker != null, "Worker thread group is not enabled and can be enabled with concurrency > 0");
+	public SafeEnhancedScheduledTaskExecutor getWorker() {
+		state(nonNull(worker), "Worker thread group is not enabled and can be enabled with concurrency >0");
 		return worker;
 	}
 
@@ -272,7 +246,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 			SecurityManager s = System.getSecurityManager();
 			this.group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
 			if (isBlank(prefix)) {
-				prefix = GenericTaskRunner.class.getSimpleName() + "-Default";
+				prefix = GenericTaskRunner.class.getSimpleName() + "-default";
 			}
 			this.prefix = prefix;
 		}
@@ -286,90 +260,6 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 				t.setPriority(Thread.NORM_PRIORITY);
 			return t;
 		}
-	}
-
-	/**
-	 * Wait future done runnable wrapper.
-	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年10月17日
-	 * @since
-	 */
-	private class FutureDoneTaskWrapper implements Runnable {
-
-		final private CountDownLatch latch;
-
-		final private Runnable job;
-
-		public FutureDoneTaskWrapper(CountDownLatch latch, Runnable job) {
-			Assert.notNull(latch, "Job runable latch must not be null.");
-			Assert.notNull(job, "Job runable must not be null.");
-			this.latch = latch;
-			this.job = job;
-		}
-
-		@Override
-		public void run() {
-			try {
-				this.job.run();
-			} catch (Exception e) {
-				log.error("Execution failure task", e);
-			} finally {
-				this.latch.countDown();
-			}
-		}
-
-	}
-
-	/**
-	 * Wait completion task listener.
-	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2019年10月17日
-	 * @since
-	 */
-	public static interface CompleteTaskListener {
-
-		/**
-		 * Call-back completion listener.
-		 * 
-		 * @param ex
-		 * @param completed
-		 * @param uncompleted
-		 * @throws Exception
-		 */
-		void onComplete(TimeoutException ex, long completed, Collection<Runnable> uncompleted) throws Exception;
-	}
-
-	@SuppressWarnings({ "resource", "unchecked", "rawtypes" })
-	public static void main(String[] args) throws Exception {
-		// Add testing jobs.
-		List<NamedIdJob> jobs = new ArrayList<>();
-		for (int i = 0; i < 3; i++) {
-			jobs.add(new NamedIdJob("testjob-" + i) {
-				@Override
-				public void run() {
-					try {
-						System.out.println("Starting... testjob-" + getId());
-						Thread.sleep(3000L);
-						System.out.println("Completed. testjob-" + getId());
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			});
-		}
-
-		// Create runner.
-		GenericTaskRunner runner = new GenericTaskRunner<RunnerProperties>(new RunnerProperties(false, 2)) {
-		};
-		runner.run(null);
-
-		// Submit jobs & listen job timeout.
-		runner.submitForComplete(jobs, (ex, completed, uncompleted) -> {
-			ex.printStackTrace();
-			System.out.println(String.format("Completed: %s, uncompleted sets: %s", completed, uncompleted));
-		}, 4 * 1000l); // > 3*3000
 	}
 
 }

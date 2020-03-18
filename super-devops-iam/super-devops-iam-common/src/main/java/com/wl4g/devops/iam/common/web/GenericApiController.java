@@ -25,26 +25,29 @@ import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
-import com.wl4g.devops.support.cache.ScanCursor;
-import com.wl4g.devops.support.cache.ScanCursor.CursorWrapper;
+import com.wl4g.devops.support.redis.ScanCursor;
 
-import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
-import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.*;
+import static com.wl4g.devops.tool.common.lang.DateUtils2.formatDate;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
+import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.CursorIndex;
+import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribute;
+import static com.wl4g.devops.support.redis.ScanCursor.CursorWrapper.*;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.AUTHENTICATED_SESSION_KEY;
-import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.PRINCIPALS_SESSION_KEY;
 
 /**
  * Generic abstract API controller.
@@ -56,6 +59,7 @@ import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.PRIN
 @Beta
 @ResponseBody
 public abstract class GenericApiController extends BaseController {
+	final public static String DEFAULT_DATE_PATTERN = "yy/MM/dd HH:mm:ss";
 
 	/**
 	 * IAM properties configuration.
@@ -136,15 +140,20 @@ public abstract class GenericApiController extends BaseController {
 			log.info("Get sessions by <= {}", query);
 		}
 
-		// Parse cursor.
-		CursorWrapper cursor = CursorWrapper.parse(query.getCursor());
-		// Do scan access sessions all.
-		ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(cursor, query.getLimit());
-		List<SessionAttribute> sas = sc.readValues().stream().map(s -> wrapSessionAttribute(s)).collect(toList());
-
-		// Setup response attributes.
-		CursorIndex index = new CursorIndex(sc.getCursor().getCursorString(), sc.getCursor().getHasNext());
-		resp.setData(new SessionAttributeModel(index, sas));
+		// Priority search principal.
+		if (!isBlank(query.getPrincipal())) {
+			Collection<IamSession> ss = sessionDAO.getAccessSessions(query.getPrincipal());
+			List<SessionAttribute> sas = ss.stream().map(s -> wrapSessionAttribute(s)).collect(toList());
+			resp.setData(new SessionAttributeModel(new CursorIndex(false), sas));
+		} else {
+			// Do scan sessions all.
+			ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(parse(query.getCursor()), query.getLimit());
+			// Convert to SessionAttribute.
+			List<SessionAttribute> sas = sc.readValues().stream().map(s -> wrapSessionAttribute(s)).collect(toList());
+			// Setup response attributes.
+			CursorIndex index = new CursorIndex(sc.getCursor().getCursorString(), sc.getCursor().getHasNext());
+			resp.setData(new SessionAttributeModel(index, sas));
+		}
 
 		if (log.isInfoEnabled()) {
 			log.info("Get sessions => {}", resp.asJson());
@@ -159,16 +168,21 @@ public abstract class GenericApiController extends BaseController {
 	 * @return
 	 * @throws Exception
 	 */
-	@DeleteMapping(path = URI_S_API_V1_SESSION)
-	public RespBase<?> destroySession(@Validated SessionDestroyModel destroy) throws Exception {
+	@PostMapping(path = URI_S_API_V1_SESSION)
+	public RespBase<?> destroySessions(@Validated @RequestBody SessionDestroyModel destroy) throws Exception {
 		RespBase<String> resp = RespBase.create();
 		if (log.isInfoEnabled()) {
 			log.info("Destroy sessions by <= {}", destroy);
 		}
 
-		// Destroy sessions.
-		for (Serializable sessionId : destroy.getSessionIds()) {
-			sessionDAO.delete(new IamSession(sessionId));
+		// Destroy with sessionIds.
+		if (!isBlank(destroy.getSessionId())) {
+			sessionDAO.delete(new IamSession((Serializable) destroy.getSessionId()));
+		}
+
+		// Destroy with principal.
+		if (!isBlank(destroy.getPrincipal())) {
+			sessionDAO.removeAccessSession(destroy.getPrincipal());
 		}
 
 		if (log.isInfoEnabled()) {
@@ -240,9 +254,15 @@ public abstract class GenericApiController extends BaseController {
 	protected SessionAttribute wrapSessionAttribute(IamSession session) {
 		SessionAttribute sa = new SessionAttribute();
 		sa.setId(String.valueOf(session.getId()));
-		sa.setLastAccessTime(session.getLastAccessTime());
-		sa.setStartTime(session.getStartTimestamp());
-		sa.setStopTime(session.getStopTimestamp());
+		if (nonNull(session.getLastAccessTime())) {
+			sa.setLastAccessTime(formatDate(session.getLastAccessTime(), DEFAULT_DATE_PATTERN));
+		}
+		if (nonNull(session.getStartTimestamp())) {
+			sa.setStartTime(formatDate(session.getStartTimestamp(), DEFAULT_DATE_PATTERN));
+		}
+		if (nonNull(session.getStopTimestamp())) {
+			sa.setStopTime(formatDate(session.getStopTimestamp(), DEFAULT_DATE_PATTERN));
+		}
 		sa.setHost(session.getHost());
 		sa.setExpired(session.isExpired());
 
@@ -258,10 +278,7 @@ public abstract class GenericApiController extends BaseController {
 		}
 
 		// Authentication principal.
-		PrincipalCollection principals = (PrincipalCollection) session.getAttribute(PRINCIPALS_SESSION_KEY);
-		if (nonNull(principals) && !principals.isEmpty()) {
-			sa.setPrincipal(principals.getPrimaryPrincipal());
-		}
+		sa.setPrincipal(session.getPrimaryPrincipal());
 
 		return sa;
 	}

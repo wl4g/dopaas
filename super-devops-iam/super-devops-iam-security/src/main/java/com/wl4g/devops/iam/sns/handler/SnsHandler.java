@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
+import com.wl4g.devops.iam.sns.CallbackResult;
 
 /**
  * Social networking services handler
@@ -32,6 +33,19 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 public interface SnsHandler {
 
 	/**
+	 * Request connects to a social network (requesting oauth2 authorization)
+	 * parameters binding session key name
+	 */
+	final public static String KEY_SNS_CONNECT_PARAMS = "connect_params_";
+
+	/**
+	 * Handling which(action) type
+	 *
+	 * @return
+	 */
+	Which which();
+
+	/**
 	 * Getting request SNS authorizing URL
 	 *
 	 * @param which
@@ -40,7 +54,7 @@ public interface SnsHandler {
 	 * @param connectParams
 	 * @return
 	 */
-	String connect(Which which, String provider, String state, Map<String, String> connectParams);
+	String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams);
 
 	/**
 	 * SNS authorizing callback
@@ -52,13 +66,6 @@ public interface SnsHandler {
 	 * @param request
 	 * @return
 	 */
-	String callback(Which which, String provider, String state, String code, HttpServletRequest request);
-
-	/**
-	 * Handling which(action) type
-	 *
-	 * @return
-	 */
-	Which whichType();
+	CallbackResult doOAuth2Callback(Which which, String provider, String state, String code, HttpServletRequest request);
 
 }

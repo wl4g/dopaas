@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.sns.wechat.model;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 /**
  * WeChat based response message model
@@ -28,12 +28,12 @@ import com.wl4g.devops.common.utils.serialize.JacksonUtils;
  * @since
  */
 public abstract class WxBasedResponse implements Serializable {
-
 	private static final long serialVersionUID = -7472798322235907609L;
 
-	@JsonProperty("errcode")
-	private Integer errcode = 0;
+	final public static int DEFAULT_WX_OK = 0;
 
+	@JsonProperty("errcode")
+	private Integer errcode = DEFAULT_WX_OK;
 	@JsonProperty("errmsg")
 	private String errmsg = "ok";
 

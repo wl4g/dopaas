@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.realm;
 
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -24,6 +23,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import com.wl4g.devops.iam.authc.QrcodeAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.authz.QrcodeAuthorizationInfo;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for
@@ -48,7 +48,7 @@ import com.wl4g.devops.iam.authz.QrcodeAuthorizationInfo;
  *
  * @since 1.2
  */
-public class QrcodeAuthorizingRealm extends AbstractIamAuthorizingRealm<QrcodeAuthenticationToken> {
+public class QrcodeAuthorizingRealm extends AbstractAuthorizingRealm<QrcodeAuthenticationToken> {
 
 	public QrcodeAuthorizingRealm(IamBasedMatcher matcher) {
 		super(matcher);
@@ -63,7 +63,7 @@ public class QrcodeAuthorizingRealm extends AbstractIamAuthorizingRealm<QrcodeAu
 	 *             if there is an error during authentication.
 	 */
 	@Override
-	protected AuthenticationInfo doAuthenticationInfo(QrcodeAuthenticationToken token) throws AuthenticationException {
+	protected IamAuthenticationInfo doAuthenticationInfo(QrcodeAuthenticationToken token) throws AuthenticationException {
 		throw new UnsupportedOperationException();
 	}
 

@@ -15,48 +15,61 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.devops.common.utils.io.FileIOUtils.ReadResult;
+import com.wl4g.devops.ci.bean.PipelineModel;
+import com.wl4g.devops.ci.core.param.HookParameter;
+import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.core.param.RollbackParameter;
+import com.wl4g.devops.tool.common.io.FileIOUtils.ReadResult;
 
 /**
- * CICD pipeline core entry processor.
+ * CICD pipeline entry management.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
- * @date 2019-05-16 14:45:00
+ * @date 2019-08-01 14:45:00
  */
-public interface PipelineManager {
+public abstract interface PipelineManager {
 
 	/**
-	 * Startup new pipeline task job.
+	 * New create pipeline task job.
 	 * 
-	 * @param taskId
+	 * @param param
 	 */
-	void newPipeline(Integer taskId,Integer trackId,Integer trackType,String remark);
+	void runPipeline(NewParameter param, PipelineModel pipelineModel);
 
 	/**
 	 * Roll-back pipeline task job.
 	 * 
-	 * @param taskId
+	 * @param param
 	 */
-	void rollbackPipeline(Integer taskId);
+	void rollbackPipeline(RollbackParameter param, PipelineModel pipelineModel);
 
 	/**
 	 * Hook pipeline task job.
 	 * 
-	 * @param projectName
-	 * @param branchName
-	 * @param url
+	 * @param param
 	 */
-	void hookPipeline(String projectName, String branchName, String url);
+	void hookPipeline(HookParameter param);
 
 	/**
-	 * Reader pipeline task job logs.
+	 * Reader pipeline task building logs.
 	 * 
 	 * @param taskHisId
-	 * @param index
+	 * @param startPos
 	 * @param size
 	 * @return
 	 */
-	ReadResult logfile(Integer taskHisId, Integer index, Integer size);
+	ReadResult logfile(Integer taskHisId, Long startPos, Integer size);
+
+	/**
+	 * Reader pipeline task detail deploying logs.
+	 *
+	 * @param taskHisId
+	 * @param taskHisDetailId
+	 * @param startPos
+	 * @param size
+	 * @return
+	 */
+	ReadResult logDetailFile(Integer taskHisId, Integer instanceId, Long startPos, Integer size);
 
 }

@@ -15,40 +15,51 @@
  */
 package com.wl4g.devops.ci.vcs.gitee;
 
+import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
+import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
+import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.tool.common.annotation.Reserved;
+
 import java.util.List;
 
-import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
-
 /**
- * Gitee Vcs operator.
+ * VCS operator for GITEE.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月5日
  * @since
  */
-public class GiteeVcsOperator extends AbstractVcsOperator {
+@Reserved
+public class GiteeVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
-	public String vcsType() {
-		return VcsType.GITEE;
+	public VcsProviderKind kind() {
+		return VcsProviderKind.GITEE;
 	}
 
 	@Override
-	public List<String> getRemoteBranchNames(int projectId) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
+		super.getRemoteBranchNames(credentials, projectId);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<String> getRemoteTags(int projectId) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> getRemoteTags(Vcs credentials, int projectId) {
+		super.getRemoteTags(credentials, projectId);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Integer findRemoteProjectId(String projectName) {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer getRemoteProjectId(Vcs credentials, String projectName) {
+		super.getRemoteProjectId(credentials, projectName);
+		throw new UnsupportedOperationException();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CompositeBasicVcsProjectModel> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
+		super.searchRemoteProjects(credentials, projectName, limit);
+		throw new UnsupportedOperationException();
 	}
 
 }

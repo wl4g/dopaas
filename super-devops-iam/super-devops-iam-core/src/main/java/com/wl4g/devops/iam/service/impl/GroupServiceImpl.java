@@ -16,26 +16,24 @@
 package com.wl4g.devops.iam.service.impl;
 
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.iam.Group;
-import com.wl4g.devops.common.bean.iam.GroupMenu;
-import com.wl4g.devops.common.bean.iam.GroupRole;
-import com.wl4g.devops.dao.iam.GroupDao;
-import com.wl4g.devops.dao.iam.GroupMenuDao;
-import com.wl4g.devops.dao.iam.GroupRoleDao;
-import com.wl4g.devops.iam.handler.UserUtil;
+import com.wl4g.devops.common.bean.iam.*;
+import com.wl4g.devops.common.bean.iam.model.GroupExt;
+import com.wl4g.devops.dao.iam.*;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.service.GroupService;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
-import static com.wl4g.devops.common.utils.lang.Collections2.disDupCollection;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.devops.tool.common.collection.Collections2.disDupCollection;
+import static com.wl4g.devops.tool.common.lang.TypeConverts.parseIntOrNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -53,13 +51,22 @@ public class GroupServiceImpl implements GroupService {
 	private GroupDao groupDao;
 
 	@Autowired
-	private UserUtil userUtil;
-
-	@Autowired
 	private GroupMenuDao groupMenuDao;
 
 	@Autowired
 	private GroupRoleDao groupRoleDao;
+
+	@Autowired
+	private ParkDao parkDao;
+
+	@Autowired
+	private CompanyDao companyDao;
+
+	@Autowired
+	private DepartmentDao departmentDao;
+
+	@Autowired
+	private GroupUserDao groupUserDao;
 
 	@Override
 	public List<Group> getGroupsTree() {
@@ -114,14 +121,13 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public Set<Group> getGroupsSet() {
-		Integer currentLoginUserId = userUtil.getCurrentLoginUserId();
-		List<Group> groups = null;
+		IamPrincipalInfo info = getPrincipalInfo();
 
-		String currentLoginUsername = userUtil.getCurrentLoginUsername();
-		if (DEFAULT_USER_ROOT.equals(currentLoginUsername)) {
+		List<Group> groups = null;
+		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
 			groups = groupDao.selectByRoot();
 		} else {
-			groups = groupDao.selectByUserId(currentLoginUserId);
+			groups = groupDao.selectByUserId(parseIntOrNull(info.getPrincipalId()));
 		}
 
 		Set<Group> set = new HashSet<>();
@@ -167,10 +173,11 @@ public class GroupServiceImpl implements GroupService {
 			groupMenu.setGroupId(group.getId());
 			groupMenus.add(groupMenu);
 		}
-		groupMenuDao.insertBatch(groupMenus);
-
+		if (!CollectionUtils.isEmpty(groupMenus)) {
+			groupMenuDao.insertBatch(groupMenus);
+		}
 		// role
-		List<GroupRole> groupRoles = new ArrayList<>();
+		/*List<GroupRole> groupRoles = new ArrayList<>();
 		for (Integer roleId : group.getRoleIds()) {
 			GroupRole groupRole = new GroupRole();
 			groupRole.preInsert();
@@ -178,7 +185,21 @@ public class GroupServiceImpl implements GroupService {
 			groupRole.setRoleId(roleId);
 			groupRoles.add(groupRole);
 		}
-		groupRoleDao.insertBatch(groupRoles);
+		if (!CollectionUtils.isEmpty(groupRoles)) {
+			groupRoleDao.insertBatch(groupRoles);
+		}*/
+
+		insertOrUpdateGroupExt(group);
+
+		// add user-group
+		IamPrincipalInfo info = getPrincipalInfo();
+		if (!DEFAULT_USER_ROOT.equals(info.getPrincipal()) && Objects.nonNull(info) && Objects.nonNull(info.getPrincipalId())) {
+			GroupUser groupUser = new GroupUser();
+			groupUser.preInsert();
+			groupUser.setGroupId(group.getId());
+			groupUser.setUserId(parseIntOrNull(info.getPrincipalId()));
+			groupUserDao.insertSelective(groupUser);
+		}
 
 	}
 
@@ -196,10 +217,12 @@ public class GroupServiceImpl implements GroupService {
 			groupMenu.setGroupId(group.getId());
 			groupMenus.add(groupMenu);
 		}
-		groupMenuDao.insertBatch(groupMenus);
+		if (!CollectionUtils.isEmpty(groupMenus)) {
+			groupMenuDao.insertBatch(groupMenus);
+		}
 
 		// role
-		List<GroupRole> groupRoles = new ArrayList<>();
+		/*List<GroupRole> groupRoles = new ArrayList<>();
 		for (Integer roleId : group.getRoleIds()) {
 			GroupRole groupRole = new GroupRole();
 			groupRole.preInsert();
@@ -207,7 +230,56 @@ public class GroupServiceImpl implements GroupService {
 			groupRole.setRoleId(roleId);
 			groupRoles.add(groupRole);
 		}
-		groupRoleDao.insertBatch(groupRoles);
+		if (!CollectionUtils.isEmpty(groupRoles)) {
+			groupRoleDao.insertBatch(groupRoles);
+		}*/
+		insertOrUpdateGroupExt(group);
+	}
+
+	private void insertOrUpdateGroupExt(Group group) {// remenber: type can not
+														// update
+		if (group == null || group.getGroupExt() == null || group.getType() == null) {
+			return;
+		}
+		Integer id = group.getGroupExt().getId();
+		if (id == null) {// insert
+			if (GroupExt.GroupType.Park.getValue() == group.getType()) {
+				Park park = new Park();
+				BeanUtils.copyProperties(group.getGroupExt(), park);
+				park.setGroupId(group.getId());
+				park.preInsert();
+				parkDao.insertSelective(park);
+			} else if (GroupExt.GroupType.Company.getValue() == group.getType()) {
+				Company company = new Company();
+				BeanUtils.copyProperties(group.getGroupExt(), company);
+				company.setGroupId(group.getId());
+				company.preInsert();
+				companyDao.insertSelective(company);
+			} else if (GroupExt.GroupType.Department.getValue() == group.getType()) {
+				Department department = new Department();
+				BeanUtils.copyProperties(group.getGroupExt(), department);
+				department.setGroupId(group.getId());
+				department.preInsert();
+				departmentDao.insertSelective(department);
+			}
+		} else {// update
+			if (GroupExt.GroupType.Park.getValue() == group.getType()) {
+				Park park = new Park();
+				BeanUtils.copyProperties(group.getGroupExt(), park);
+				park.setGroupId(group.getId());
+				parkDao.updateByPrimaryKeySelective(park);
+			} else if (GroupExt.GroupType.Company.getValue() == group.getType()) {
+				Company company = new Company();
+				BeanUtils.copyProperties(group.getGroupExt(), company);
+				company.setGroupId(group.getId());
+				companyDao.updateByPrimaryKeySelective(company);
+			} else if (GroupExt.GroupType.Department.getValue() == group.getType()) {
+				Department department = new Department();
+				BeanUtils.copyProperties(group.getGroupExt(), department);
+				department.setGroupId(group.getId());
+				departmentDao.updateByPrimaryKeySelective(department);
+			}
+		}
 	}
 
 	@Override
@@ -228,6 +300,26 @@ public class GroupServiceImpl implements GroupService {
 		List<Integer> roleIds = groupRoleDao.selectRoleIdsByGroupId(id);
 		group.setMenuIds(menuIds);
 		group.setRoleIds(roleIds);
+		// group ext
+		GroupExt groupExt = new GroupExt();
+		if (GroupExt.GroupType.Park.getValue() == group.getType()) {
+			Park park = parkDao.selectByGroupId(id);
+			if (Objects.nonNull(park)) {
+				BeanUtils.copyProperties(park, groupExt);
+			}
+		} else if (GroupExt.GroupType.Company.getValue() == group.getType()) {
+			Company company = companyDao.selectByGroupId(id);
+			if (Objects.nonNull(company)) {
+				BeanUtils.copyProperties(company, groupExt);
+			}
+		} else if (GroupExt.GroupType.Department.getValue() == group.getType()) {
+			Department department = departmentDao.selectByGroupId(id);
+			if (Objects.nonNull(department)) {
+				BeanUtils.copyProperties(department, groupExt);
+			}
+		}
+
+		group.setGroupExt(groupExt);
 		return group;
 	}
 

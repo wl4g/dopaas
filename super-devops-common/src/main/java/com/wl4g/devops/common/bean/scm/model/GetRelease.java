@@ -15,8 +15,9 @@
  */
 package com.wl4g.devops.common.bean.scm.model;
 
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import org.springframework.util.Assert;
+
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;

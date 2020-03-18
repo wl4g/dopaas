@@ -16,19 +16,16 @@
 package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.share.AppInstance;
-
-import static com.wl4g.devops.ci.utils.LogHolder.logDefault;
-import static com.wl4g.devops.ci.utils.PipelineUtils.subPacknameWithOutPostfix;
-import static com.wl4g.devops.common.utils.cli.SSH2Utils.transferFile;
-import static org.springframework.util.Assert.hasText;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.springframework.util.Assert.hasText;
 
 /**
  * Generic based host deploying transfer job.
@@ -44,8 +41,8 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	public GenericHostPipeDeployer(P provider, AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
-		super(provider, instance, taskHistoryDetails);
+	public GenericHostPipeDeployer(P provider, AppInstance instance, List<TaskHistoryInstance> taskHistoryInstances) {
+		super(provider, instance, taskHistoryInstances);
 	}
 
 	@Override
@@ -59,11 +56,11 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 		// Ensure remote app install dir(parent appHome).
 		createReplaceRemoteDirectory(remoteHost, user, sshkey, getProgramInstallDir());
 
-		// Uncompress remote program.
-		decompressRemoteProgram(remoteHost, user, sshkey);
-
 		// UnInstall older remote executable program.
 		unInstallRemoteOlderProgram(remoteHost, user, sshkey);
+
+		// Uncompress remote program.
+		decompressRemoteProgram(remoteHost, user, sshkey);
 
 		// Install newer executable program.
 		installRemoteNewerProgram(remoteHost, user, sshkey);
@@ -85,9 +82,10 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 			throws Exception {
 		hasText(remoteDir, "Creating remote directory path must not be empty.");
 		String command = "mkdir -p " + remoteDir;
-		logDefault("Creating replace remote directory for %s@%s -> [%s]", user, remoteHost, command);
+		writeDeployLog("Creating remote directory: %s@%s [%s]", user, remoteHost, command);
+
 		// Directory creating.
-		provider.doRemoteCommand(remoteHost, user, command, sshkey);
+		doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 	/**
@@ -99,10 +97,14 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @throws Exception
 	 */
 	protected void transferToRemoteTmpDir(String remoteHost, String user, String sshkey) throws Exception {
-		String localFile = getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath();
-		logDefault("Transfer to remote tmpdir for %s@%s -> [%s]", user, remoteHost, localFile);
+		String localFile = config.getJobBackupDir(getContext().getTaskHistory().getId()) + "/" + getPrgramInstallFileName() + "."
+				+ DEFAULT_FILE_SUFFIX;
+
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
-		transferFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey), new File(localFile), remoteTmpDir);
+		writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, localFile));
+
+		Ssh2Holders.getDefault().scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey),
+				new File(localFile), remoteTmpDir);
 	}
 
 	/**
@@ -114,9 +116,10 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @throws Exception
 	 */
 	protected void decompressRemoteProgram(String remoteHost, String user, String sshkey) throws Exception {
-		String command = "tar -zxvf " + getRemoteTmpFilePath() + " -C " + config.getDeploy().getRemoteHomeTmpDir();
-		logDefault("Decompress remote program for %s@%s -> [%s]", user, remoteHost, command);
-		provider.doRemoteCommand(remoteHost, user, command, sshkey);
+		String command = "tar -xvf " + getRemoteTmpFilePath() + " -C " + config.getDeploy().getRemoteHomeTmpDir();
+		writeDeployLog("Decompress remote program: %s@%s [%s]", user, remoteHost, command);
+
+		doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 	/**
@@ -129,8 +132,9 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 */
 	protected void unInstallRemoteOlderProgram(String remoteHost, String user, String sshkey) throws Exception {
 		String command = "rm -Rf " + getProgramInstallDir() + "/" + getPrgramInstallFileName();
-		logDefault("UnInstall remote older program for %s@%s -> [%s]", user, remoteHost, command);
-		provider.doRemoteCommand(remoteHost, user, command, sshkey);
+		writeDeployLog("Uninstall remote older program: %s@%s [%s]", user, remoteHost, command);
+
+		doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 	/**
@@ -142,10 +146,11 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @throws Exception
 	 */
 	protected void installRemoteNewerProgram(String remoteHost, String user, String sshkey) throws Exception {
-		String decompressedTmpFile = config.getDeploy().getRemoteHomeTmpDir() + getPrgramInstallFileName();
+		String decompressedTmpFile = config.getDeploy().getRemoteHomeTmpDir() + "/" + getPrgramInstallFileName();
 		String command = "mv " + decompressedTmpFile + " " + getProgramInstallDir();
-		logDefault("Install remote newer program for %s@%s -> [%s]", user, remoteHost, command);
-		provider.doRemoteCommand(remoteHost, user, command, sshkey);
+		writeDeployLog("Install remote newer program: %s@%s [%s]", user, remoteHost, command);
+
+		doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 	/**
@@ -158,8 +163,9 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 */
 	protected void cleanupRemoteProgramTmpFile(String remoteHost, String user, String sshkey) throws Exception {
 		String command = "rm -Rf " + getRemoteTmpFilePath();
-		logDefault("Cleanup remote temporary program file for %s@%s -> [%s]", user, remoteHost, command);
-		provider.doRemoteCommand(remoteHost, user, command, sshkey);
+		writeDeployLog("Cleanup remote temporary program file: %s@%s [%s]", user, remoteHost, command);
+
+		doRemoteCommand(remoteHost, user, command, sshkey);
 	}
 
 	/**
@@ -168,27 +174,26 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @return
 	 */
 	protected String getProgramInstallDir() {
-		return getContext().getProject().getParentAppHome();
+		return getContext().getTaskHistory().getParentAppHome();
 	}
 
 	/**
 	 * Get project program install file name.
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getPrgramInstallFileName() {
-		String distFilePath = getContext().getProject().getAssetsPath();
-		return subPacknameWithOutPostfix(distFilePath);
+		return config.getPrgramInstallFileName(getContext().getAppCluster().getName());
 	}
 
 	/**
 	 * Get remote temporary executable file absolute path.
 	 * 
-	 * @return
+	 * @returns
 	 */
 	protected String getRemoteTmpFilePath() {
-		return config.getTransferRemoteHomeTmpFile(getContext().getProject().getProjectName(), DEFAULT_FILE_SUFFIX)
-				.getAbsolutePath();
+		String result = config.getDeploy().getRemoteHomeTmpDir() + "/" + getPrgramInstallFileName() + "." + DEFAULT_FILE_SUFFIX;
+		return result;
 	}
 
 }

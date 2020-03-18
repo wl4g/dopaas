@@ -15,22 +15,23 @@
  */
 package com.wl4g.devops.iam.sns.handler;
 
-import java.util.Collections;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static java.util.Collections.singletonMap;
+
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.shiro.web.util.WebUtils;
-import org.springframework.util.Assert;
+import static org.apache.shiro.web.util.WebUtils.*;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.iam.sns.SocialConnectionFactory;
+import com.wl4g.devops.iam.sns.OAuth2ApiBindingFactory;
 
 /**
- * Client AUTHC SNS handler.(e.g:WeChat official platform account)
+ * SNS client authorizer handler.(e.g: WeChat public account)
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年2月24日
@@ -38,9 +39,14 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
  */
 public class ClientAuthcSnsHandler extends AbstractSnsHandler {
 
-	public ClientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
+	public ClientAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
 			ServerSecurityConfigurer context) {
 		super(config, snsConfig, connectFactory, context);
+	}
+
+	@Override
+	public Which which() {
+		return Which.CLIENT_AUTH;
 	}
 
 	@Override
@@ -58,31 +64,22 @@ public class ClientAuthcSnsHandler extends AbstractSnsHandler {
 	}
 
 	@Override
-	protected void checkConnectRequireds(String provider, String state, Map<String, String> connectParams) {
-		super.checkConnectRequireds(provider, state, connectParams);
-
+	protected void checkConnectParameters(String provider, String state, Map<String, String> connectParams) {
+		super.checkConnectParameters(provider, state, connectParams);
 		// Check application
-		Assert.hasText(connectParams.get(config.getParam().getApplication()),
-				String.format("'%s' must not be empty", config.getParam().getApplication()));
+		hasTextOf(connectParams.get(config.getParam().getApplication()), config.getParam().getApplication());
 	}
 
 	@Override
 	protected Map<String, String> getOauth2ConnectParameters(String state, HttpServletRequest request) {
-		return Collections.singletonMap(config.getParam().getApplication(),
-				WebUtils.getCleanParam(request, config.getParam().getApplication()));
+		return singletonMap(config.getParam().getApplication(), getCleanParam(request, config.getParam().getApplication()));
 	}
 
 	@Override
-	protected String buildResponseMessage(String provider, String callbackId, Map<String, String> connectParams,
+	protected String postCallbackResponse(String provider, String callbackId, Map<String, String> connectParams,
 			HttpServletRequest request) {
-		String appKey = config.getParam().getApplication();
-		return new StringBuffer(getLoginSubmissionUrl(provider, callbackId, request)).append("&").append(appKey).append("=")
-				.append(connectParams.get(appKey)).toString();
-	}
-
-	@Override
-	public Which whichType() {
-		return Which.CLIENT_AUTH;
+		String application = config.getParam().getApplication();
+		return getLoginSubmitUrl(provider, callbackId, request) + "&" + application + "=" + connectParams.get(application);
 	}
 
 }

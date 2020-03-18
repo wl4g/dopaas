@@ -15,22 +15,22 @@
  */
 package com.wl4g.devops.iam.realm;
 
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.util.StringUtils;
 
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
-import com.wl4g.devops.common.bean.iam.IamAccountInfo.SimpleParameter;
 import com.wl4g.devops.iam.authc.GeneralAuthenticationInfo;
 import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.authz.GeneralAuthorizationInfo;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SimpleParameter;
 
 /**
  * This realm implementation acts as a CAS client to a CAS server for
@@ -55,7 +55,7 @@ import com.wl4g.devops.iam.authz.GeneralAuthorizationInfo;
  *
  * @since 1.2
  */
-public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<GeneralAuthenticationToken> {
+public class GeneralAuthorizingRealm extends AbstractAuthorizingRealm<GeneralAuthenticationToken> {
 
 	public GeneralAuthorizingRealm(IamBasedMatcher matcher) {
 		super(matcher);
@@ -70,24 +70,21 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 	 *             if there is an error during authentication.
 	 */
 	@Override
-	protected AuthenticationInfo doAuthenticationInfo(GeneralAuthenticationToken token) throws AuthenticationException {
+	protected IamAuthenticationInfo doAuthenticationInfo(GeneralAuthenticationToken token) throws AuthenticationException {
 		// Get account by loginId(user-name)
-		IamAccountInfo acc = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
+		IamPrincipalInfo info = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
 		if (log.isDebugEnabled()) {
-			log.debug("Get IamAccountInfo:{} by token:{}", acc, token);
+			log.debug("Get IamPrincipalInfo:{} by token:{}", info, token);
 		}
 
 		// To authenticationInfo
-		if (acc == null || isBlank(acc.getPrincipal())) {
+		if (isNull(info) || isBlank(info.getPrincipal())) {
 			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
 		}
 
-		/*
-		 * Password is a string that may be set to empty.
-		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
-		 */
-		String storedCredentials = (acc != null) ? acc.getStoredCredentials() : StringUtils.EMPTY_STRING;
-		return new GeneralAuthenticationInfo(acc, acc.getPrincipal(), storedCredentials, getName());
+		// Authenticate attributes.(roles/permissions/rememberMe)
+		PrincipalCollection principals = createPermitPrincipalCollection(info);
+		return new GeneralAuthenticationInfo(info, principals, getName());
 	}
 
 	/**
@@ -101,7 +98,11 @@ public class GeneralAuthorizingRealm extends AbstractIamAuthorizingRealm<General
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		return new GeneralAuthorizationInfo();
+		// Create simple authorization info
+		GeneralAuthorizationInfo info = new GeneralAuthorizationInfo();
+		// Merge authorized string(roles/permission)
+		mergeAuthorizedString(principals, info);
+		return info;
 	}
 
 }

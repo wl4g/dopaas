@@ -36,7 +36,7 @@ public interface TaskHistoryDao {
 	int updateByPrimaryKey(TaskHistory record);
 
 	List<TaskHistory> list(@Param("groupName") String groupName, @Param("projectName") String projectName,
-			@Param("branchName") String branchName);
+			@Param("branchName") String branchName,@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("envType") String envType);
 
 	int updateStatus(Long time);
 

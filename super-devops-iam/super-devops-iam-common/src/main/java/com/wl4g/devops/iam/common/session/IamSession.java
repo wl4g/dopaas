@@ -15,29 +15,30 @@
  */
 package com.wl4g.devops.iam.common.session;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.protostuff.Tag;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.StoppedSessionException;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SimpleSession;
 import org.apache.shiro.session.mgt.ValidatingSession;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.apache.shiro.subject.support.DefaultSubjectContext.PRINCIPALS_SESSION_KEY;
 
 /**
  * IAM session implements {@link org.apache.shiro.session.mgt.SimpleSession}
@@ -95,14 +96,30 @@ public class IamSession implements ValidatingSession, Serializable {
 	// http://mail-archives.apache.org/mod_mbox/shiro-user/201109.mbox/%3C4E81BCBD.8060909@metaphysis.net%3E
 	//
 	// ==============================================================
+
+	@Tag(value = 1, alias = "id")
 	private Serializable id;
+
+	@Tag(value = 2, alias = "startTimestamp")
 	private Date startTimestamp = new Date();
+
+	@Tag(value = 3, alias = "stopTimestamp")
 	private Date stopTimestamp;
-	private Date lastAccessTime = startTimestamp;
+
+	@Tag(value = 4, alias = "lastAccessTime")
+	private Date lastAccessTime;
+
 	// Remove concrete reference to DefaultSessionManager
+	@Tag(value = 5, alias = "timeout")
 	private long timeout = DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT;
+
+	@Tag(value = 6, alias = "expired")
 	private boolean expired;
+
+	@Tag(value = 7, alias = "host")
 	private String host;
+
+	@Tag(value = 8, alias = "attributes")
 	private Map<Object, Object> attributes;
 
 	public IamSession() {
@@ -167,7 +184,7 @@ public class IamSession implements ValidatingSession, Serializable {
 
 	@Override
 	public Date getLastAccessTime() {
-		return lastAccessTime;
+		return isNull(lastAccessTime) ? getStartTimestamp() : lastAccessTime;
 	}
 
 	public void setLastAccessTime(Date lastAccessTime) {
@@ -213,6 +230,21 @@ public class IamSession implements ValidatingSession, Serializable {
 
 	public void setAttributes(Map<Object, Object> attributes) {
 		this.attributes = attributes;
+	}
+
+	/**
+	 * Get {@link IamSession} priary principal.
+	 *
+	 * @see {@link org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal()}
+	 * @return
+	 */
+	public Object getPrimaryPrincipal() {
+		// Authentication principal.
+		PrincipalCollection principals = (PrincipalCollection) getAttribute(PRINCIPALS_SESSION_KEY);
+		if (nonNull(principals) && !principals.isEmpty()) {
+			return principals.getPrimaryPrincipal();
+		}
+		return null;
 	}
 
 	@JsonIgnore

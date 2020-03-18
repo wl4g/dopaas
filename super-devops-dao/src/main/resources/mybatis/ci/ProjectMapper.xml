@@ -4,48 +4,78 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Project">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="project_name" jdbcType="VARCHAR" property="projectName" />
-    <result column="vcs_type" jdbcType="VARCHAR" property="vcsType" />
-    <result column="git_url" jdbcType="VARCHAR" property="gitUrl" />
+    <result column="vcs_id" jdbcType="INTEGER" property="vcsId" />
+    <result column="http_url" jdbcType="VARCHAR" property="httpUrl" />
+    <result column="ssh_url" jdbcType="VARCHAR" property="sshUrl" />
     <result column="app_cluster_id" jdbcType="INTEGER" property="appClusterId" />
-    <result column="assets_path" jdbcType="VARCHAR" property="assetsPath" />
-    <result column="parent_app_home" jdbcType="VARCHAR" property="parentAppHome" />
     <result column="lock_status" jdbcType="INTEGER" property="lockStatus" />
+    <result column="is_boot" jdbcType="INTEGER" property="isBoot" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
     <!-- other -->
     <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+
+    <association property="vcs" javaType="com.wl4g.devops.common.bean.ci.Vcs">
+      <id column="v.id" property="id" jdbcType="INTEGER" />
+      <result column="v.name" property="name" jdbcType="VARCHAR" />
+      <result column="v.provider_kind" property="providerKind" jdbcType="INTEGER" />
+      <result column="v.auth_type" property="authType" jdbcType="INTEGER" />
+      <result column="v.base_uri" property="baseUri" jdbcType="VARCHAR" />
+      <result column="v.ssh_key_pub" property="sshKeyPub" jdbcType="VARCHAR" />
+      <result column="v.ssh_key" property="sshKey" jdbcType="VARCHAR" />
+      <result column="v.access_token" property="accessToken" jdbcType="VARCHAR" />
+      <result column="v.username" property="username" jdbcType="VARCHAR" />
+      <result column="v.password" property="password" jdbcType="VARCHAR" />
+      <result column="v.remark" property="remark" jdbcType="VARCHAR" />
+      <result column="v.enable" property="enable" jdbcType="INTEGER" />
+      <result column="v.del_flag" property="delFlag" jdbcType="INTEGER" />
+      <result column="v.create_date" property="createDate" jdbcType="TIMESTAMP" />
+      <result column="v.create_by" property="createBy" jdbcType="VARCHAR" />
+      <result column="v.update_date" property="updateDate" jdbcType="TIMESTAMP" />
+      <result column="v.update_by" property="updateBy" jdbcType="VARCHAR" />
+    </association>
+
   </resultMap>
   <sql id="Base_Column_List">
-    id, project_name,vcs_type, git_url, app_cluster_id, assets_path, parent_app_home, lock_status,
+    id, project_name,vcs_id, http_url,ssh_url, app_cluster_id, lock_status,is_boot,
     remark, del_flag, create_date, create_by, update_date, update_by
   </sql>
   <sql id="Base_Column_List_p">
-    p.id, p.project_name,p.vcs_type, p.git_url, p.app_cluster_id, p.assets_path, p.parent_app_home, p.lock_status,
+    p.id, p.project_name,p.vcs_id, p.http_url,p.ssh_url, p.app_cluster_id, p.lock_status,p.is_boot,
     p.remark, p.del_flag, p.create_date, p.create_by, p.update_date, p.update_by
   </sql>
+
+  <sql id="vcs_alias" >
+    v.id as "v.id",v.name as "v.name",v.provider_kind as "v.provider_kind", v.auth_type as "v.auth_type", v.base_uri as "v.base_uri", v.ssh_key_pub as "v.ssh_key_pub", v.ssh_key as "v.ssh_key",
+    v.access_token as "v.access_token", v.username as "v.username", v.password as "v.password",
+    v.remark as "v.remark", v.enable as "v.enable", v.del_flag as "v.del_flag", v.create_date as "v.create_date", v.create_by as "v.create_by", v.update_date as "v.update_date", v.update_by as "v.update_by"
+  </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
-    from ci_project
-    where id = #{id,jdbcType=INTEGER}
+    <include refid="Base_Column_List_p" />,
+    <include refid="vcs_alias" />
+    from ci_project p
+    left join ci_vcs v on v.id = p.vcs_id
+    where p.id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from ci_project
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Project">
-    insert into ci_project (id, project_name, vcs_type,git_url,
-      app_cluster_id, assets_path, parent_app_home,
-      lock_status, remark, del_flag,
+    insert into ci_project (id, project_name,vcs_id,http_url,ssh_url
+      app_cluster_id,
+      lock_status, is_boot, remark, del_flag,
       create_date, create_by, update_date,
       update_by)
-    values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{vcsType,jdbcType=VARCHAR},,#{gitUrl,jdbcType=VARCHAR},
-      #{appClusterId,jdbcType=INTEGER}, #{assetsPath,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR},
-      #{lockStatus,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR},
+    values (#{id,jdbcType=INTEGER}, #{vcs_id,jdbcType=INTEGER},#{projectName,jdbcType=VARCHAR},#{httpUrl,jdbcType=VARCHAR},#{sshUrl,jdbcType=VARCHAR},
+      #{appClusterId,jdbcType=INTEGER},
+      #{lockStatus,jdbcType=INTEGER},#{isBoot,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=VARCHAR})
   </insert>
@@ -55,26 +85,26 @@
       <if test="id != null">
         id,
       </if>
+      <if test="vcsId != null">
+        vcs_id,
+      </if>
       <if test="projectName != null">
         project_name,
       </if>
-      <if test="vcsType != null">
-        vcs_type,
+      <if test="httpUrl != null">
+        http_url,
       </if>
-      <if test="gitUrl != null">
-        git_url,
+      <if test="sshUrl != null">
+        ssh_url,
       </if>
       <if test="appClusterId != null">
         app_cluster_id,
       </if>
-      <if test="assetsPath != null">
-        assets_path,
-      </if>
-      <if test="parentAppHome != null">
-        parent_app_home,
-      </if>
       <if test="lockStatus != null">
         lock_status,
+      </if>
+      <if test="isBoot != null">
+        is_boot,
       </if>
       <if test="remark != null">
         remark,
@@ -99,32 +129,32 @@
       <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
+      <if test="vcsId != null">
+        #{vcsId,jdbcType=INTEGER},
+      </if>
       <if test="projectName != null">
         #{projectName,jdbcType=VARCHAR},
       </if>
-      <if test="vcsType != null">
-        #{vcsType,jdbcType=VARCHAR},
+      <if test="httpUrl != null">
+        #{httpUrl,jdbcType=VARCHAR},
       </if>
-      <if test="gitUrl != null">
-        #{gitUrl,jdbcType=VARCHAR},
+      <if test="sshUrl != null">
+        #{sshUrl,jdbcType=VARCHAR},
       </if>
       <if test="appClusterId != null">
         #{appClusterId,jdbcType=INTEGER},
       </if>
-      <if test="assetsPath != null">
-        #{assetsPath,jdbcType=VARCHAR},
-      </if>
-      <if test="parentAppHome != null">
-        #{parentAppHome,jdbcType=VARCHAR},
-      </if>
       <if test="lockStatus != null">
         #{lockStatus,jdbcType=INTEGER},
+      </if>
+      <if test="isBoot != null">
+        #{isBoot,jdbcType=INTEGER},
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null">
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
@@ -143,32 +173,32 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.Project">
     update ci_project
     <set>
+      <if test="vcsId != null">
+        vcs_id = #{vcsId,jdbcType=INTEGER},
+      </if>
       <if test="projectName != null">
         project_name = #{projectName,jdbcType=VARCHAR},
       </if>
-      <if test="vcsType != null">
-        vcs_type = #{vcsType,jdbcType=VARCHAR},
+      <if test="httpUrl != null">
+        http_url = #{httpUrl,jdbcType=VARCHAR},
       </if>
-      <if test="gitUrl != null">
-        git_url = #{gitUrl,jdbcType=VARCHAR},
+      <if test="sshUrl != null">
+        ssh_url = #{sshUrl,jdbcType=VARCHAR},
       </if>
       <if test="appClusterId != null">
         app_cluster_id = #{appClusterId,jdbcType=INTEGER},
       </if>
-      <if test="assetsPath != null">
-        assets_path = #{assetsPath,jdbcType=VARCHAR},
-      </if>
-      <if test="parentAppHome != null">
-        parent_app_home = #{parentAppHome,jdbcType=VARCHAR},
-      </if>
       <if test="lockStatus != null">
         lock_status = #{lockStatus,jdbcType=INTEGER},
+      </if>
+      <if test="isBoot != null">
+        is_boot = #{isBoot,jdbcType=INTEGER},
       </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null">
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -187,15 +217,16 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Project">
     update ci_project
-    set project_name = #{projectName,jdbcType=VARCHAR},
-      vcs_type = #{vcsType,jdbcType=VARCHAR},
-      git_url = #{gitUrl,jdbcType=VARCHAR},
+    set
+      vcs_id = #{vcsId,jdbcType=INTEGER},
+      project_name = #{projectName,jdbcType=VARCHAR},
+      http_url = #{httpUrl,jdbcType=VARCHAR},
+      ssh_url = #{sshUrl,jdbcType=VARCHAR},
       app_cluster_id = #{appClusterId,jdbcType=INTEGER},
-      assets_path = #{assetsPath,jdbcType=VARCHAR},
-      parent_app_home = #{parentAppHome,jdbcType=VARCHAR},
       lock_status = #{lockStatus,jdbcType=INTEGER},
+      is_boot = #{isBoot,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
@@ -206,10 +237,12 @@
 
   <select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List_p" />
+    <include refid="Base_Column_List_p" />,
+    <include refid="vcs_alias" />
     ,g.name as group_name
     from ci_project p
     left join app_cluster g on p.app_cluster_id=g.id
+    left join ci_vcs v on v.id=p.vcs_id
     where p.del_flag!=1
     <if test="groupName != null and groupName != ''" >
       AND g.name LIKE CONCAT('%','${groupName}','%')
@@ -217,19 +250,26 @@
     <if test="projectName != null and projectName != ''" >
       AND p.project_name LIKE CONCAT('%','${projectName}','%')
     </if>
+    <if test="isBoot != null">
+      AND p.is_boot = #{isBoot,jdbcType=INTEGER}
+    </if>
   </select>
 
   <select id="getByProjectName" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
-    from ci_project
-    where project_name = #{projectName,jdbcType=VARCHAR}
+    <include refid="Base_Column_List_p" />,
+    <include refid="vcs_alias" />
+    from ci_project p
+    left join ci_vcs v on v.id=p.vcs_id
+    where p.del_flag!=1 and p.project_name = #{projectName,jdbcType=VARCHAR}
   </select>
 
   <select id="getByAppClusterId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
-    from ci_project
-    where app_cluster_id = #{appClusterId,jdbcType=INTEGER} and del_flag!=1
+    <include refid="Base_Column_List_p" />,
+    <include refid="vcs_alias" />
+    from ci_project p
+    left join ci_vcs v on v.id=p.vcs_id
+    where p.app_cluster_id = #{appClusterId,jdbcType=INTEGER} and p.del_flag!=1 limit 1
   </select>
 </mapper>

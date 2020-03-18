@@ -44,7 +44,7 @@
       <result column="t.create_by" property="createBy" jdbcType="VARCHAR" />
       <result column="t.update_date" property="updateDate" jdbcType="TIMESTAMP" />
       <result column="t.update_by" property="updateBy" jdbcType="VARCHAR" />
-      <result column="t.del_flag" property="delFlag" jdbcType="CHAR" />
+      <result column="t.del_flag" property="delFlag" jdbcType="INTEGER" />
 
       <!-- other -->
       <result column="m.metric" property="metric" jdbcType="VARCHAR" />
@@ -59,13 +59,13 @@
         <result column="r.queue_time_window" property="queueTimeWindow" jdbcType="BIGINT" />
         <result column="r.value" property="value" jdbcType="DOUBLE" />
         <result column="r.alarm_level" property="alarmLevel" jdbcType="INTEGER" />
-        <result column="r.del_flag" property="delFlag" jdbcType="CHAR" />
+        <result column="r.del_flag" property="delFlag" jdbcType="INTEGER" />
       </collection>
 
     </association>
 
     <!-- contacts -->
-    <collection property="alarmContacts" ofType="com.wl4g.devops.common.bean.umc.AlarmContact" javaType="list">
+    <collection property="alarmContacts" ofType="com.wl4g.devops.common.bean.iam.AlarmContact" javaType="list">
       <id column="ct.id" property="id" jdbcType="INTEGER" />
       <result column="ct.name" property="name" jdbcType="VARCHAR" />
       <result column="ct.email" property="email" jdbcType="VARCHAR" />
@@ -138,7 +138,7 @@
     select 
     <include refid="Base_Column_List" />
     from umc_alarm_config
-    where id = #{id,jdbcType=INTEGER}
+    where del_flag!=1 and id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from umc_alarm_config
@@ -291,7 +291,7 @@
     select
     <include refid="Base_Column_List" />
     from umc_alarm_config
-    where template_id = #{templateId,jdbcType=INTEGER}
+    where del_flag!=1 and template_id = #{templateId,jdbcType=INTEGER}
   </select>
 
   <select id="getByCollectAddrAndTemplateId" resultMap="BaseResultMap" parameterType="java.util.Map">
@@ -299,13 +299,13 @@
     left join umc_alarm_template t on t.id=c.template_id
     left join umc_alarm_config_collect cc on cc.config_id=c.id
     left join app_instance i on i.id=cc.collect_id
-    where c.template_id=#{templateId,jdbcType=INTEGER} and i.endpoint=#{collectAddr,jdbcType=VARCHAR}
+    where c.template_id=#{templateId,jdbcType=INTEGER} and i.endpoint=#{collectAddr,jdbcType=VARCHAR} and c.del_flag!=1 and t.del_flag!=1
 </select>
 
   <select id="getByClusterIdAndTemplateId" resultMap="BaseResultMap" parameterType="java.util.Map">
     select * from umc_alarm_config c
     left join umc_alarm_template t on t.id=c.template_id
-    where c.template_id=#{templateId,jdbcType=INTEGER} and c.cluster_id=#{appClusterId,jdbcType=INTEGER}
+    where c.del_flag!=1 and t.del_flag!=1 and c.template_id=#{templateId,jdbcType=INTEGER} and c.cluster_id=#{appClusterId,jdbcType=INTEGER}
 </select>
 
 
@@ -314,7 +314,7 @@
     <include refid="Base_Column_List_c"/>,t.name template_name,cg.name contact_group_name
     from umc_alarm_config c
     left join umc_alarm_template t on t.id=c.template_id
-    left join umc_alarm_contact_group cg on c.contact_group_id=cg.id
+    left join sys_contact_group cg on c.contact_group_id=cg.id
     where c.del_flag!=1
     <if test="templateId != null" >
       and c.template_id=#{templateId,jdbcType=INTEGER}
@@ -333,8 +333,8 @@
     left join umc_alarm_template t on c.template_id = t.id
     left join umc_metric_template m on m.id=t.metric_id
     left join umc_alarm_rule r on t.id = r.template_id
-    left join umc_alarm_contact_group_ref gr on gr.contact_group_id = c.contact_group_id
-    left join umc_alarm_contact ct on gr.contact_id = ct.id
+    left join sys_contact_group_ref gr on gr.contact_group_id = c.contact_group_id
+    left join sys_contact ct on gr.contact_id = ct.id
     left join app_instance i on c.collect_id = i.id
     left join app_host h on i.host_id=h.id where i.endpoint = #{endpoint,jdbcType=VARCHAR} and h.hostname = #{host,jdbcType=VARCHAR} and t.del_flag!=1 and c.del_flag!=1 and r.del_flag!=1
   </select>

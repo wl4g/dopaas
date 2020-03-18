@@ -13,7 +13,7 @@
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
 
     <!-- other -->
     <result column="metric" property="metric" jdbcType="VARCHAR" />
@@ -50,7 +50,7 @@
     <include refid="Base_Column_List_t" />,mt.metric,mt.classify
     from umc_alarm_template t
     left join umc_metric_template mt on mt.id=t.metric_id
-    where t.id = #{id,jdbcType=INTEGER}
+    where mt.del_flag!=1 and t.del_flag!=1 and t.id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from umc_alarm_template
@@ -66,7 +66,7 @@
       #{tags,jdbcType=VARCHAR}, #{notifyLevel,jdbcType=INTEGER},
       #{enable,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
-      #{delFlag,jdbcType=CHAR})
+      #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmTemplate" useGeneratedKeys="true" keyProperty="id">
     insert into umc_alarm_template
@@ -143,7 +143,7 @@
         #{updateBy,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -156,9 +156,9 @@
       <if test="metricId != null" >
         metric_id = #{metricId,jdbcType=INTEGER},
       </if>
-      <if test="tags != null" >
-        tags = #{tags,jdbcType=VARCHAR},
-      </if>
+
+      tags = #{tags,jdbcType=VARCHAR},
+
       <if test="notifyLevel != null" >
         notify_level = #{notifyLevel,jdbcType=INTEGER},
       </if>
@@ -181,7 +181,7 @@
         update_by = #{updateBy,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -198,7 +198,7 @@
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=CHAR}
+      del_flag = #{delFlag,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -213,7 +213,7 @@
     left join umc_metric_template mt on mt.id=t.metric_id
     left join app_instance i on i.id=uac.collect_id
     LEFT JOIN umc_alarm_rule r on t.id=r.template_id
-    where uac.enable=1 and t.enable=1 and t.del_flag!=1
+    where uac.enable=1 and t.enable=1 and t.del_flag!=1 and and uac.del_flag!=1
     <if test="collectAddr != null and collectAddr != 0 " >
       and  i.endpoint=#{collectAddr,jdbcType=VARCHAR}
     </if>

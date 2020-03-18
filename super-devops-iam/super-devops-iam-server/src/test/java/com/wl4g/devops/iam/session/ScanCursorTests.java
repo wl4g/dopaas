@@ -29,7 +29,7 @@ import com.google.common.base.Charsets;
 import com.wl4g.devops.IamServer;
 import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
 import com.wl4g.devops.iam.common.session.IamSession;
-import com.wl4g.devops.support.cache.ScanCursor;
+import com.wl4g.devops.support.redis.ScanCursor;
 
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.ScanParams;

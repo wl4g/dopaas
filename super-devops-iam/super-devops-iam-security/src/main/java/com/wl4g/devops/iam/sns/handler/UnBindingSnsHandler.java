@@ -16,15 +16,15 @@
 package com.wl4g.devops.iam.sns.handler;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
-import static com.wl4g.devops.common.utils.Exceptions.getRootCauses;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.bind;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
+import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCauses;
 
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.iam.sns.SocialConnectionFactory;
+import com.wl4g.devops.iam.sns.OAuth2ApiBindingFactory;
 
 /**
  * UnBinding SNS handler
@@ -35,7 +35,7 @@ import com.wl4g.devops.iam.sns.SocialConnectionFactory;
  */
 public class UnBindingSnsHandler extends BasedBindSnsHandler {
 
-	public UnBindingSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
+	public UnBindingSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
 			ServerSecurityConfigurer context) {
 		super(config, snsConfig, connectFactory, context);
 	}
@@ -52,7 +52,7 @@ public class UnBindingSnsHandler extends BasedBindSnsHandler {
 	}
 
 	@Override
-	public Which whichType() {
+	public Which which() {
 		return Which.UNBIND;
 	}
 

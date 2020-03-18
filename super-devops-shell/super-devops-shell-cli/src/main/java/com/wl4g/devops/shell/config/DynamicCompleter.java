@@ -26,8 +26,9 @@ import org.jline.reader.ParsedLine;
 import org.jline.reader.impl.completer.StringsCompleter;
 
 import static com.wl4g.devops.shell.annotation.ShellOption.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+
 import com.wl4g.devops.shell.cli.HelpOptions;
-import com.wl4g.devops.shell.utils.Assert;
 import com.wl4g.devops.shell.utils.LineUtils;
 
 /**
@@ -42,10 +43,10 @@ public class DynamicCompleter implements Completer {
 	/**
 	 * Shell bean registry.
 	 */
-	final private DefaultBeanRegistry registry;
+	final private DefaultShellHandlerRegistrar registry;
 
-	public DynamicCompleter(DefaultBeanRegistry registry) {
-		Assert.notNull(registry, "registry is null, please check configure");
+	public DynamicCompleter(DefaultShellHandlerRegistrar registry) {
+		notNull(registry, "registry is null, please check configure");
 		this.registry = registry;
 	}
 

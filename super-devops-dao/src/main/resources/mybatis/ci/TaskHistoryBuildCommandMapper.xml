@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.TaskBuildCommand" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="task_id" property="taskId" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="command" property="command" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, task_id, project_id, sort, command
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ci_task_history_build_command
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByTaskHisId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from ci_task_history_build_command
+    where task_id = #{taskId,jdbcType=INTEGER}
+    order by sort
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ci_task_history_build_command
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.TaskBuildCommand" >
+    insert into ci_task_history_build_command (id, task_id, project_id,
+      sort, command)
+    values (#{id,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
+      #{sort,jdbcType=INTEGER}, #{command,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskBuildCommand" >
+    insert into ci_task_history_build_command
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="taskId != null" >
+        task_id,
+      </if>
+      <if test="projectId != null" >
+        project_id,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="command != null" >
+        command,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="taskId != null" >
+        #{taskId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="command != null" >
+        #{command,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.TaskBuildCommand" >
+    update ci_task_history_build_command
+    <set >
+      <if test="taskId != null" >
+        task_id = #{taskId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="command != null" >
+        command = #{command,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskBuildCommand" >
+    update ci_task_history_build_command
+    set task_id = #{taskId,jdbcType=INTEGER},
+      project_id = #{projectId,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER},
+      command = #{command,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

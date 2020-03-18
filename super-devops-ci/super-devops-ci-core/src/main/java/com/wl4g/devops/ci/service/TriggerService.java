@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Trigger;
+import com.wl4g.devops.page.PageModel;
 
 /**
  * @author vjay
@@ -23,9 +24,9 @@ import com.wl4g.devops.common.bean.ci.Trigger;
  */
 public interface TriggerService {
 
-	Trigger insert(Trigger trigger);
+	PageModel list(PageModel pm, Integer id, String name, Integer taskId, Integer enable, String startDate, String endDate);
 
-	Trigger update(Trigger trigger);
+	void save(Trigger trigger);
 
 	int delete(Integer id);
 
@@ -34,5 +35,7 @@ public interface TriggerService {
 	void disable(Integer id);
 
 	void updateSha(Integer id, String sha);
+
+	Trigger getById(Integer id);
 
 }

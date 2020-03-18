@@ -15,17 +15,11 @@
  */
 package com.wl4g.devops.support.cli.repository;
 
-import static org.springframework.util.Assert.notEmpty;
-import static org.springframework.util.Assert.notNull;
-
-import java.io.File;
-import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.support.NoSuchProcessException;
+import com.wl4g.devops.support.cli.process.DestroableProcess;
 
 /**
  * Command-line process repository interface.
@@ -41,9 +35,21 @@ public interface ProcessRepository {
 	 * Registration to command-line process.
 	 * 
 	 * @param processId
-	 * @param process
+	 * @param dpw
 	 */
-	void register(String processId, ProcessInfo process);
+	void register(String processId, DestroableProcess dpw);
+
+	/**
+	 * Set whether the current process is allowed to interrupt, for example:
+	 * when processing a lengthy task, when some key steps are executed, it can
+	 * be set as not to interrupt, which is very useful to ensure the security
+	 * of the task.
+	 * 
+	 * @param processId
+	 * @param destroable
+	 * @throws NoSuchProcessException
+	 */
+	void setDestroable(String processId, boolean destroable) throws NoSuchProcessException;
 
 	/**
 	 * Get command-line process information.
@@ -51,7 +57,15 @@ public interface ProcessRepository {
 	 * @param processId
 	 * @return
 	 */
-	ProcessInfo get(String processId) throws NoSuchProcessException;
+	DestroableProcess get(String processId) throws NoSuchProcessException;
+
+	/**
+	 * Check local has command-line process.
+	 * 
+	 * @param processId
+	 * @return
+	 */
+	boolean hasProcess(String processId);
 
 	/**
 	 * Remove cleanup command-line process information.
@@ -59,72 +73,13 @@ public interface ProcessRepository {
 	 * @param processId
 	 * @return
 	 */
-	ProcessInfo cleanup(String processId);
+	DestroableProcess cleanup(String processId);
 
 	/**
 	 * Obtain processes list all.
 	 * 
 	 * @return
 	 */
-	Collection<ProcessInfo> getProcesses();
-
-	/**
-	 * Command-line process information bean.
-	 * 
-	 * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version v1.0.0 2019-10-20
-	 * @since
-	 */
-	public static class ProcessInfo implements Serializable {
-		private static final long serialVersionUID = 1013208493410008301L;
-
-		/** Process ID */
-		final private String processId;
-
-		/** Process context directory */
-		final private File pwdDir;
-
-		/** Process commands */
-		final private List<String> commands;
-
-		/** Process commands standard output file */
-		final private File stdout;
-
-		/** Process object */
-		@JsonIgnore
-		final transient private Process process;
-
-		public ProcessInfo(String processId, File pwdDir, List<String> commands, File stdout, Process process) {
-			notNull(processId, "Execution commands processId must not be null");
-			notEmpty(commands, "Execution commands must not be empty");
-			notNull(process, "Execution process must not be null");
-			this.processId = processId;
-			this.pwdDir = pwdDir;
-			this.commands = commands;
-			this.stdout = stdout;
-			this.process = process;
-		}
-
-		public String getProcessId() {
-			return processId;
-		}
-
-		public File getPwdDir() {
-			return pwdDir;
-		}
-
-		public List<String> getCommands() {
-			return commands;
-		}
-
-		public File getStdout() {
-			return stdout;
-		}
-
-		public Process getProcess() {
-			return process;
-		}
-
-	}
+	Collection<DestroableProcess> getProcessRegistry();
 
 }

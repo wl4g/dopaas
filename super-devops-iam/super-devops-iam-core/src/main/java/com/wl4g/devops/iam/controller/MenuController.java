@@ -18,7 +18,9 @@ package com.wl4g.devops.iam.controller;
 import com.wl4g.devops.common.bean.iam.Menu;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.MenuService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +39,7 @@ public class MenuController {
 	@Autowired
 	private MenuService menuService;
 
-	@RequestMapping(value = "/getMenuTree")
+	@RequestMapping(value = "/tree")
 	public RespBase<?> getMenuTree() {
 		RespBase<Object> resp = RespBase.create();
 		Map<String, Object> result = menuService.getMenuTree();
@@ -45,15 +47,17 @@ public class MenuController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/getMenuList")
+	@RequestMapping(value = "/list")
 	public RespBase<?> getMenuList() {
 		RespBase<Object> resp = RespBase.create();
 		List<Menu> menus = menuService.getMenuList();
-		resp.buildMap().put("data", menus);
+		Assert.notEmpty(menus, "not menu role found , Please ask you manager and check the user-role-menu config");
+		resp.forMap().put("data", menus);
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"iam:menu"})
 	public RespBase<?> save(@RequestBody Menu menu) {
 		RespBase<Object> resp = RespBase.create();
 		menuService.save(menu);
@@ -61,6 +65,7 @@ public class MenuController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"iam:menu"})
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		menuService.del(id);
@@ -68,10 +73,11 @@ public class MenuController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"iam:menu"})
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		Menu menu = menuService.detail(id);
-		resp.buildMap().put("data", menu);
+		resp.forMap().put("data", menu);
 		return resp;
 	}
 

@@ -21,7 +21,6 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.shiro.authc.pam.AuthenticationStrategy;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
@@ -42,6 +41,7 @@ import com.wl4g.devops.iam.authc.credential.SmsCredentialsHashedMatcher;
 import com.wl4g.devops.iam.authc.credential.secure.DefaultCredentialsSecurer;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.authc.pam.ExceptionModularRealmAuthenticator;
+import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
@@ -57,7 +57,8 @@ import com.wl4g.devops.iam.configure.DefaultSecureConfigureAdapter;
 import com.wl4g.devops.iam.configure.SecureConfigureAdapter;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
-import com.wl4g.devops.iam.crypto.keypair.RSACryptographicService;
+import com.wl4g.devops.iam.crypto.CryptService;
+import com.wl4g.devops.iam.crypto.RSACryptService;
 import com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter;
 import com.wl4g.devops.iam.filter.DingtalkAuthenticationFilter;
 import com.wl4g.devops.iam.filter.FacebookAuthenticationFilter;
@@ -75,7 +76,7 @@ import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
-import com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm;
+import com.wl4g.devops.iam.realm.AbstractAuthorizingRealm;
 import com.wl4g.devops.iam.realm.DingtalkAuthorizingRealm;
 import com.wl4g.devops.iam.realm.FacebookAuthorizingRealm;
 import com.wl4g.devops.iam.realm.QrcodeAuthorizingRealm;
@@ -98,8 +99,14 @@ import com.wl4g.devops.iam.verification.SmsSecurityVerifier.SmsHandleSender;
 import com.wl4g.devops.iam.web.CentralAuthenticatorController;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
+/**
+ * IAM server auto configuration.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年03月19日
+ * @since
+ */
 public class IamAutoConfiguration extends AbstractIamConfiguration {
-
 	final public static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
 	final public static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
 	final public static String BEAN_OAUTH2_MATCHER = "oauth2BoundMatcher";
@@ -114,8 +121,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public RSACryptographicService rsaCryptogaphicService(JedisLockManager lockManager) {
-		return new RSACryptographicService(lockManager);
+	public CryptService rsaCryptoService(JedisLockManager lockManager) {
+		return new RSACryptService(lockManager);
 	}
 
 	// ==============================
@@ -124,24 +131,22 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public DefaultWebSecurityManager securityManager(IamSubjectFactory subjectFactory, IamServerSessionManager sessionManager,
-			ModularRealmAuthenticator authenticator) {
+			ModularRealmAuthenticator authenticator, EnhancedModularRealmAuthorizer authorizer) {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		securityManager.setSessionManager(sessionManager);
-		// Register define realm.
-		List<Realm> realms = actx.getBeansOfType(AbstractIamAuthorizingRealm.class).values().stream().collect(toList());
-		securityManager.setRealms(realms);
+		securityManager.setRealms(authorizer.getRealms());
 		securityManager.setSubjectFactory(subjectFactory);
 		// Multiple realm authenticator controller
 		securityManager.setAuthenticator(authenticator);
+		securityManager.setAuthorizer(authorizer);
 		return securityManager;
 	}
 
 	@Bean
-	public ExceptionModularRealmAuthenticator modularRealmAuthenticator(AuthenticationStrategy authenticationStrategy) {
+	public ExceptionModularRealmAuthenticator exceptionModularRealmAuthenticator(AuthenticationStrategy authenticationStrategy) {
 		ExceptionModularRealmAuthenticator authenticator = new ExceptionModularRealmAuthenticator();
 		authenticator.setAuthenticationStrategy(authenticationStrategy);
-		List<Realm> realms = actx.getBeansOfType(AbstractIamAuthorizingRealm.class).values().stream()
-				.collect(Collectors.toList());
+		List<Realm> realms = actx.getBeansOfType(AbstractAuthorizingRealm.class).values().stream().collect(toList());
 		authenticator.setRealms(realms);
 		return authenticator;
 	}
@@ -295,7 +300,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public FilterRegistrationBean authenticateFilterRegistrationBean(
+	public FilterRegistrationBean authenticatorFilterRegistrationBean(
 			@Qualifier(BEAN_AUTH_FILTER) AuthenticatorAuthenticationFilter filter) {
 		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
 		registration.setEnabled(false);
@@ -542,14 +547,14 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// IAM controller's
 	// ==============================
 
-	@Override
-	protected String getMappingPrefix() {
-		return URI_S_BASE;
-	}
-
 	@Bean
 	public CentralAuthenticatorController centralAuthenticatorController() {
 		return new CentralAuthenticatorController();
+	}
+
+	@Bean
+	public PrefixHandlerMapping iamCentralAuthenticatorControllerPrefixHandlerMapping() {
+		return super.newIamControllerPrefixHandlerMapping(URI_S_BASE);
 	}
 
 	// ==============================

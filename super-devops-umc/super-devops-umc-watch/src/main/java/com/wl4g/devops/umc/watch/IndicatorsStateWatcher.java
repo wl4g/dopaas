@@ -16,7 +16,7 @@
 package com.wl4g.devops.umc.watch;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_FETCH_META;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.dangdang.ddframe.job.api.dataflow.DataflowJob;
-import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.config.WatchProperties;
 import com.wl4g.devops.umc.fetch.IndicatorsMetaFetcher;
 import com.wl4g.devops.umc.fetch.IndicatorsMetaInfo;

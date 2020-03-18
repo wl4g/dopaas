@@ -15,10 +15,13 @@
  */
 package com.wl4g.devops.iam.common.authc;
 
-import static org.apache.commons.lang3.StringUtils.isAnyBlank;
+import static java.lang.Boolean.parseBoolean;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.Serializable;
 
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.HostAuthenticationToken;
 
 /**
@@ -31,6 +34,11 @@ import org.apache.shiro.authc.HostAuthenticationToken;
  */
 public interface IamAuthenticationToken extends HostAuthenticationToken {
 
+	/**
+	 * Get redirect information.
+	 * 
+	 * @return
+	 */
 	RedirectInfo getRedirectInfo();
 
 	/**
@@ -43,8 +51,6 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 	public static class RedirectInfo implements Serializable {
 		private static final long serialVersionUID = -7747661274396168460L;
 
-		final public static RedirectInfo EMPTY = new RedirectInfo(null, null);
-
 		/**
 		 * Client authentication redirection application.
 		 */
@@ -55,11 +61,32 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 		 */
 		private String redirectUrl;
 
+		/**
+		 * Whether to enable backoff redirection address. For example, when the
+		 * client's incoming redirecturl is not accessible, the default
+		 * application's redirecturl will be used.</br>
+		 * </br>
+		 * Generally speaking, the client needs to be enabled when it is a web
+		 * PC, but it does not need to be enabled when it is a non web client
+		 * such as Android and iOS
+		 * 
+		 * @see {@link com.wl4g.devops.iam.realm.AbstractAuthorizingRealm#assertCredentialsMatch(AuthenticationToken, AuthenticationInfo)}
+		 * @see {@link com.wl4g.devops.iam.handler.AuthenticationHandler#assertApplicationAccessAuthorized(String, String)}
+		 */
+		private boolean fallbackRedirect = true;
+
+		public RedirectInfo() {
+			this(null, null, true);
+		}
+
 		public RedirectInfo(String fromAppName, String redirectUrl) {
-			// hasText(fromAppName, "Application name must not be empty.");
-			// hasText(redirectUrl, "Redirect url must not be empty.");
-			this.fromAppName = fromAppName;
-			this.redirectUrl = redirectUrl;
+			this(fromAppName, redirectUrl, true);
+		}
+
+		public RedirectInfo(String fromAppName, String redirectUrl, boolean fallbackRedirect) {
+			setFromAppName(fromAppName);
+			setRedirectUrl(redirectUrl);
+			setFallbackRedirect(fallbackRedirect);
 		}
 
 		public String getFromAppName() {
@@ -67,6 +94,7 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 		}
 
 		public void setFromAppName(String fromAppName) {
+			// hasText(fromAppName, "Application name must not be empty.");
 			this.fromAppName = fromAppName;
 		}
 
@@ -75,7 +103,16 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 		}
 
 		public void setRedirectUrl(String redirectUrl) {
+			// hasText(redirectUrl, "Redirect url must not be empty.");
 			this.redirectUrl = redirectUrl;
+		}
+
+		public boolean isFallbackRedirect() {
+			return fallbackRedirect;
+		}
+
+		public void setFallbackRedirect(boolean fallbackRedirect) {
+			this.fallbackRedirect = fallbackRedirect;
 		}
 
 		@Override
@@ -83,8 +120,20 @@ public interface IamAuthenticationToken extends HostAuthenticationToken {
 			return fromAppName + "@" + redirectUrl;
 		}
 
-		public boolean isValidity() {
-			return !isAnyBlank(getFromAppName(), getRedirectUrl());
+		/**
+		 * Build {@link RedirectInfo}
+		 * 
+		 * @param fromAppName
+		 * @param redirectUrl
+		 * @param fallbackRedirect
+		 * @return
+		 */
+		public static RedirectInfo build(String fromAppName, String redirectUrl, String fallbackRedirect) {
+			if (isBlank(fallbackRedirect)) {
+				return new RedirectInfo(fromAppName, redirectUrl);
+			} else {
+				return new RedirectInfo(fromAppName, redirectUrl, parseBoolean(fallbackRedirect));
+			}
 		}
 
 	}

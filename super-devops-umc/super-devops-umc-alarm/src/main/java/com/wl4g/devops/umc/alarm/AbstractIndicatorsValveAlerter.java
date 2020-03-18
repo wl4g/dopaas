@@ -16,13 +16,12 @@
 package com.wl4g.devops.umc.alarm;
 
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
-import com.wl4g.devops.support.cache.JedisService;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.util.Iterator;
@@ -31,7 +30,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
-import static com.wl4g.devops.common.utils.lang.Collections2.ensureList;
+import static com.wl4g.devops.tool.common.collection.Collections2.ensureList;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.Math.abs;
 import static java.util.Collections.emptyList;
 
@@ -43,8 +43,7 @@ import static java.util.Collections.emptyList;
  */
 public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<RunnerProperties>
 		implements IndicatorsValveAlerter {
-
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = getLogger(getClass());
 
 	/** REDIS service */
 	final protected JedisService jedisService;

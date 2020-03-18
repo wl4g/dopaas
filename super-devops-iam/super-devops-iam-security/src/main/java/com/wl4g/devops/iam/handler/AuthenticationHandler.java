@@ -20,14 +20,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.subject.Subject;
 
-import com.wl4g.devops.common.bean.iam.model.LoggedModel;
-import com.wl4g.devops.common.bean.iam.model.LogoutModel;
-import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
-import com.wl4g.devops.common.bean.iam.model.SessionValidationAssertion;
-import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
-import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
+import com.wl4g.devops.iam.common.authc.model.LoggedModel;
+import com.wl4g.devops.iam.common.authc.model.LogoutModel;
+import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
+import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
+import com.wl4g.devops.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.devops.iam.common.authc.model.TicketValidateModel;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
 /**
  * IAM authentication handler.
@@ -69,7 +70,7 @@ public abstract interface AuthenticationHandler {
 	 *            ticket validation request
 	 * @return validation assert result
 	 */
-	TicketAssertion validate(TicketValidationModel model);
+	TicketValidatedAssertModel<IamPrincipalInfo> validate(TicketValidateModel model);
 
 	/**
 	 * Shiro authentication success callback process.
@@ -110,7 +111,7 @@ public abstract interface AuthenticationHandler {
 	 *            from source application name
 	 * @return
 	 */
-	SecondAuthcAssertion secondValidate(String secondAuthCode, String fromAppName);
+	SecondAuthcAssertModel secondValidate(String secondAuthCode, String fromAppName);
 
 	/**
 	 * Sessions expired validation
@@ -118,6 +119,6 @@ public abstract interface AuthenticationHandler {
 	 * @param param
 	 * @return
 	 */
-	SessionValidationAssertion sessionValidate(SessionValidationAssertion param);
+	SessionValidityAssertModel sessionValidate(SessionValidityAssertModel param);
 
 }

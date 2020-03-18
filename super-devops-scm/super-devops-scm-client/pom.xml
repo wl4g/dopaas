@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-scm-client</artifactId>
@@ -13,31 +14,31 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-bom</artifactId>
+				<version>master</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-scm-common</artifactId>
-			<version>master</version>
-			<scope>compile</scope>
-			<exclusions>
-				<!-- No need to use jedis/cache dependency -->
-				<exclusion>
-					<groupId>redis.clients</groupId>
-					<artifactId>jedis</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-client</artifactId>
-			<version>master</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.retry</groupId>
 			<artifactId>spring-retry</artifactId>
-			<version>1.2.4.RELEASE</version>
+			<!-- <version>1.2.4</version> -->
 		</dependency>
 	</dependencies>
 	<build>
@@ -45,7 +46,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -54,7 +54,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>${maven-source-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -69,7 +68,6 @@
 			<plugin>
 				<groupId>com.github.wvengen</groupId>
 				<artifactId>proguard-maven-plugin</artifactId>
-				<version>2.0.11</version>
 				<executions>
 					<execution>
 						<!-- 混淆时刻，这里是打包的时候混淆 -->
@@ -103,17 +101,23 @@
 						<option>-useuniqueclassmembernames</option>
 						<!-- 不混淆所有包名，本人测试混淆后WEB项目问题实在太多，毕竟Spring配置中有大量固定写法的包名 -->
 						<option>-keeppackagenames</option>
-						<!-- [*** 非常重要，不加生成jar的目录结构spring将扫描不到(同时被spring的@Configuration注解的类不能混淆, 原因未知 ???) ***] -->
+						<!-- [*** 非常重要，不加生成jar的目录结构spring将扫描不到(同时被spring的@Configuration注解的类不能混淆, 
+							原因未知 ???) ***] -->
 						<option>-keepdirectories</option>
 						<!-- 不混淆所有特殊的类 -->
 						<option>-keepattributes
 							Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod</option>
 						<!-- 不混淆所有的set/get方法，毕竟项目中使用的部分第三方框架（例如Shiro）会用到大量的set/get映射 -->
-						<option>-keepclassmembers public class * {void set*(***);*** get*();}</option>
+						<option>-keepclassmembers public class * {void set*(***);***
+							get*();}</option>
 						<!-- 不混淆的包下的类名、或方法配置 -->
-						<option>-keep class com.wl4g.devops.scm.client.config.*Configuration { *; }</option>
-						<option>-keep class com.wl4g.devops.scm.client.configure.RefreshBean { *; }</option>
-						<option>-keep class com.wl4g.devops.scm.client.configure.BeanCurrentlyConfigureAspect { *; }</option>
+						<option>-keep class
+							com.wl4g.devops.scm.client.config.*Configuration { *; }</option>
+						<option>-keep class
+							com.wl4g.devops.scm.client.configure.RefreshBean { *; }</option>
+						<option>-keep class
+							com.wl4g.devops.scm.client.configure.BeanCurrentlyConfigureAspect
+							{ *; }</option>
 					</options>
 					<outjar>${project.artifactId}-${project.version}-pg.jar</outjar>
 					<!-- 添加依赖，可以按你的需要修改，这里测试只需要一个JRE的Runtime包就行了 -->

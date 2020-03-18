@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.iam.authc.credential.secure;
 
+import static com.wl4g.devops.tool.common.codec.CheckSums.*;
+
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.ByteSource.Util;
 import org.springframework.util.Assert;
-
-import static com.wl4g.devops.common.utils.codec.CheckSums.*;
 
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.configure.SecureConfig;

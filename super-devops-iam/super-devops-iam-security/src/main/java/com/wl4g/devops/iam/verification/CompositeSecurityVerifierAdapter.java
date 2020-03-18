@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
-import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
+import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
 
 /**
  * Composite verification adapter.
@@ -44,7 +44,7 @@ public class CompositeSecurityVerifierAdapter implements SecurityVerifier {
 	/**
 	 * Verification registry.
 	 */
-	final protected Map<VerifyType, SecurityVerifier> registry = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<VerifyType, SecurityVerifier> registry = new RegisteredUnmodifiableMap<>(new HashMap<>());
 
 	/**
 	 * Real delegate securityVerifier.
