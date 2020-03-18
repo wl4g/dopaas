@@ -140,7 +140,7 @@ public class MenuServiceImpl implements MenuService {
 			}
 			menus = menuDao.selectByUserIdAccessGroup(userId);
 		}
-		Set<Menu> set = new HashSet<>();
+		Set<Menu> set = new LinkedHashSet<>();
 		set.addAll(menus);
 		return set;
 	}
