@@ -15,19 +15,19 @@
  */
 package com.wl4g.devops.scm.controller;
 
-import com.wl4g.devops.common.utils.PropertySources;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
-import com.wl4g.devops.common.bean.PageModel;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.scm.ConfigVersionList;
 import com.wl4g.devops.common.bean.scm.VersionContentBean;
 import com.wl4g.devops.common.bean.scm.VersionOfDetail;
+import com.wl4g.devops.common.utils.PropertySources;
 import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.scm.service.ConfigurationService;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,6 +57,7 @@ public class ConfigurationController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "config-set.json", method = { RequestMethod.POST })
+	@RequiresPermissions(value = {"scm:configuration"})
 	public RespBase<?> configure(@RequestBody VersionOfDetail vod) {
 		if (log.isInfoEnabled()) {
 			log.info("ConfigSet request ... {}", vod);
@@ -81,6 +82,7 @@ public class ConfigurationController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "config-list.json", method = RequestMethod.POST)
+	@RequiresPermissions(value = {"scm:configuration"})
 	public RespBase<?> list(ConfigVersionList agl, PageModel pm) {
 		if (log.isInfoEnabled()) {
 			log.info("ConfigList request ... {}, {}", agl, pm);
@@ -92,8 +94,8 @@ public class ConfigurationController extends BaseController {
 			List<ConfigVersionList> list = configService.list(agl);
 
 			pm.setTotal(page.getTotal());
-			resp.buildMap().put("page", pm);
-			resp.buildMap().put("list", list);
+			resp.forMap().put("page", pm);
+			resp.forMap().put("list", list);
 
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -109,6 +111,7 @@ public class ConfigurationController extends BaseController {
 	 * 查询版本详情
 	 */
 	@RequestMapping(value = "config-select.json", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequiresPermissions(value = {"scm"})
 	public RespBase<?> selectVersion(int id) {
 		if (log.isInfoEnabled()) {
 			log.info("ConfigSelect request ... {}", id);
@@ -117,7 +120,7 @@ public class ConfigurationController extends BaseController {
 		try {
 			List<VersionContentBean> configs = configService.selectVersion(id);
 			if (null != configs) {
-				resp.buildMap().put("configVersions", configs);
+				resp.forMap().put("configVersions", configs);
 			}
 		} catch (Exception e) {
 			resp.setCode(RetCode.SYS_ERR);
@@ -133,6 +136,7 @@ public class ConfigurationController extends BaseController {
 	 * 校验配置
 	 */
 	@RequestMapping(value = "config-check.json", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequiresPermissions(value = {"scm"})
 	public RespBase<?> checkDetail(String content) {
 		if (log.isInfoEnabled()) {
 			log.info("CheckDetail request ... {}", content);

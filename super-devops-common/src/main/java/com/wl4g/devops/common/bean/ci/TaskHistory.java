@@ -42,7 +42,7 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private String postCommand;
 
-	private String tarType;
+	private String providerKind;
 
 	private String result;
 
@@ -52,9 +52,22 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private Integer contactGroupId;
 
-	private Integer trackId;
+	private String trackId;
 
 	private Integer trackType;
+
+	private Long costTime;
+
+	private String envType;
+
+	private String createByName;
+
+	private String annex;
+
+	private String parentAppHome;
+
+	/** 构建的文件/目录路径（maven项目的target目录，vue项目的dist目录） */
+	private String assetsPath;
 
 	public Integer getType() {
 		return type;
@@ -128,12 +141,12 @@ public class TaskHistory extends BaseBean implements Serializable {
 		this.postCommand = postCommand;
 	}
 
-	public String getTarType() {
-		return tarType;
+	public String getProviderKind() {
+		return providerKind;
 	}
 
-	public void setTarType(String tarType) {
-		this.tarType = tarType;
+	public void setProviderKind(String providerKind) {
+		this.providerKind = providerKind;
 	}
 
 	public String getProjectName() {
@@ -176,11 +189,11 @@ public class TaskHistory extends BaseBean implements Serializable {
 		this.buildCommand = buildCommand;
 	}
 
-	public Integer getTrackId() {
+	public String getTrackId() {
 		return trackId;
 	}
 
-	public void setTrackId(Integer trackId) {
+	public void setTrackId(String trackId) {
 		this.trackId = trackId;
 	}
 
@@ -190,5 +203,53 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	public void setTrackType(Integer trackType) {
 		this.trackType = trackType;
+	}
+
+	public Long getCostTime() {
+		return costTime;
+	}
+
+	public void setCostTime(Long costTime) {
+		this.costTime = costTime;
+	}
+
+	public String getEnvType() {
+		return envType;
+	}
+
+	public void setEnvType(String envType) {
+		this.envType = envType;
+	}
+
+	public String getCreateByName() {
+		return createByName;
+	}
+
+	public void setCreateByName(String createByName) {
+		this.createByName = createByName;
+	}
+
+	public String getAnnex() {
+		return annex;
+	}
+
+	public void setAnnex(String annex) {
+		this.annex = annex;
+	}
+
+	public String getParentAppHome() {
+		return parentAppHome;
+	}
+
+	public void setParentAppHome(String parentAppHome) {
+		this.parentAppHome = parentAppHome;
+	}
+
+	public String getAssetsPath() {
+		return assetsPath;
+	}
+
+	public void setAssetsPath(String assetsPath) {
+		this.assetsPath = assetsPath;
 	}
 }

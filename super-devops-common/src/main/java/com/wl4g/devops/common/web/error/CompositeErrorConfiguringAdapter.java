@@ -15,26 +15,25 @@
  */
 package com.wl4g.devops.common.web.error;
 
-import static java.util.Collections.sort;
-import static java.util.Objects.nonNull;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableList;
+
+import org.springframework.core.annotation.Order;
+import org.springframework.util.Assert;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import static java.util.Collections.sort;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.core.annotation.AnnotationUtils.*;
-import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
-
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.util.Assert;
-import com.wl4g.devops.common.utils.lang.OnceModifiableList;
+import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Composite error configure adapter.
@@ -48,7 +47,7 @@ public class CompositeErrorConfiguringAdapter implements ErrorConfiguring {
 	/**
 	 * Error configures.
 	 */
-	final protected List<ErrorConfiguring> errorConfigures = new OnceModifiableList<>(new ArrayList<>());
+	final protected List<ErrorConfiguring> errorConfigures = new RegisteredUnmodifiableList<>(new ArrayList<>());
 
 	public CompositeErrorConfiguringAdapter(List<ErrorConfiguring> configures) {
 		Assert.state(!isEmpty(configures), "Error configures has at least one.");
@@ -67,16 +66,15 @@ public class CompositeErrorConfiguringAdapter implements ErrorConfiguring {
 	}
 
 	@Override
-	public HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
-			Exception ex) {
+	public Integer getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex) {
 		for (ErrorConfiguring c : errorConfigures) {
-			HttpStatus status = c.getStatus(request, response, model, ex);
+			Integer status = c.getStatus(request, response, model, ex);
 			if (nonNull(status)) {
 				return status;
 			}
 		}
 		// Fallback.
-		return SERVICE_UNAVAILABLE;
+		return RetCode.SYS_ERR.getErrcode();
 	}
 
 	@Override

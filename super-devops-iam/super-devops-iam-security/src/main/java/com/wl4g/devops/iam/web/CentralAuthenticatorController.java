@@ -19,31 +19,30 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.apache.shiro.util.Assert;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.wl4g.devops.common.bean.iam.model.LogoutModel;
-import com.wl4g.devops.common.bean.iam.model.SecondAuthcAssertion;
-import com.wl4g.devops.common.bean.iam.model.SessionValidationAssertion;
-import com.wl4g.devops.common.bean.iam.model.TicketAssertion;
-import com.wl4g.devops.common.bean.iam.model.TicketValidationModel;
 import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
-import com.wl4g.devops.common.exception.iam.UnauthorizedException;
-import com.wl4g.devops.common.utils.Exceptions;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.annotation.IamController;
+import com.wl4g.devops.iam.common.authc.model.LogoutModel;
+import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
+import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
+import com.wl4g.devops.iam.common.authc.model.TicketValidatedAssertModel;
+import com.wl4g.devops.iam.common.authc.model.TicketValidateModel;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.tool.common.lang.Exceptions;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VALIDATE;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
-import static com.wl4g.devops.common.utils.web.WebUtils2.isTrue;
-import static com.wl4g.devops.iam.common.utils.Sessions.getSessionId;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SESSION_VALIDATE;
@@ -69,30 +68,15 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	 */
 	@PostMapping(URI_S_VALIDATE)
 	@ResponseBody
-	public RespBase<TicketAssertion> validate(HttpServletRequest request, @NotNull @RequestBody TicketValidationModel param) {
+	public RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> validate(HttpServletRequest request,
+			@NotNull @RequestBody TicketValidateModel param) {
 		if (log.isInfoEnabled()) {
-			log.info("Ticket validate sessionId {} <= {}", getSessionId(), toJSONString(param));
+			log.info("Ticket validate sessionId[{}] <= {}", getSessionId(), toJSONString(param));
 		}
 
-		RespBase<TicketAssertion> resp = new RespBase<>();
-		try {
-			// Ticket assertion.
-			resp.setData(authHandler.validate(param));
-		} catch (Throwable ex) {
-			resp.setCode(RetCode.SYS_ERR);
-			resp.handleError(ex);
-			if (ex instanceof UnauthenticatedException) {
-				// Only if the error is not authenticated, can it be redirected
-				// to the IAM server login page, otherwise the client will
-				// display the error page directly (to prevent unlimited
-				// redirection). See:com.wl4g.devops.iam.client.validation.
-				// AbstractBasedTicketValidator#getRemoteValidation()
-				resp.setCode(RetCode.UNAUTHC);
-			} else if (ex instanceof UnauthorizedException) {
-				resp.setCode(RetCode.UNAUTHZ);
-			}
-			log.warn("Failed to ticket validate.", ex);
-		}
+		RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> resp = new RespBase<>();
+		// Ticket assertion.
+		resp.setData(authHandler.validate(param));
 
 		if (log.isInfoEnabled()) {
 			log.info("Ticket validate => {}", resp);
@@ -110,15 +94,13 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	@PostMapping(URI_S_LOGOUT)
 	@ResponseBody
 	public RespBase<LogoutModel> logout(HttpServletRequest request, HttpServletResponse response) {
-		if (log.isInfoEnabled()) {
-			log.info("Sessions logout <= {}", getFullRequestURL(request));
-		}
+		log.info("Sessions logout <= {}", getFullRequestURL(request));
 
 		RespBase<LogoutModel> resp = new RespBase<>();
 		try {
 			// Source application logout processing
 			String fromAppName = getCleanParam(request, config.getParam().getApplication());
-			Assert.hasText(fromAppName, String.format("'%s' must not be empty", config.getParam().getApplication()));
+			hasTextOf(fromAppName, config.getParam().getApplication());
 
 			// Using coercion ignores remote exit failures
 			boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
@@ -146,12 +128,12 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	 */
 	@PostMapping(URI_S_SECOND_VALIDATE)
 	@ResponseBody
-	public RespBase<SecondAuthcAssertion> seondValidate(HttpServletRequest request) {
+	public RespBase<SecondAuthcAssertModel> seondValidate(HttpServletRequest request) {
 		if (log.isInfoEnabled()) {
 			log.info("Second authentication validate <= {}", getFullRequestURL(request));
 		}
 
-		RespBase<SecondAuthcAssertion> resp = new RespBase<>();
+		RespBase<SecondAuthcAssertModel> resp = new RespBase<>();
 		try {
 			// Required parameters
 			String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondAuthCode());
@@ -178,12 +160,12 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	 */
 	@PostMapping(URI_S_SESSION_VALIDATE)
 	@ResponseBody
-	public RespBase<SessionValidationAssertion> sessionValidate(@NotNull @RequestBody SessionValidationAssertion param) {
+	public RespBase<SessionValidityAssertModel> sessionValidate(@NotNull @RequestBody SessionValidityAssertModel param) {
 		if (log.isInfoEnabled()) {
 			log.info("Sessions expire validate <= {}", toJSONString(param));
 		}
 
-		RespBase<SessionValidationAssertion> resp = new RespBase<>();
+		RespBase<SessionValidityAssertModel> resp = new RespBase<>();
 		try {
 			// Session expire validate assertion.
 			resp.setData(authHandler.sessionValidate(param));

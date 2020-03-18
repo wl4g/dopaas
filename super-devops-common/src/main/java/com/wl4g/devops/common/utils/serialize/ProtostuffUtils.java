@@ -17,7 +17,6 @@ package com.wl4g.devops.common.utils.serialize;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
-import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;
@@ -252,12 +251,6 @@ public abstract class ProtostuffUtils {
 			return wrapper;
 		}
 
-	}
-
-	public static void main(String[] args) {
-		ApplicationInfo info = new ApplicationInfo("mp", "asdfasdf");
-		byte[] data = serialize(info);
-		System.out.println(deserialize(data, ApplicationInfo.class));
 	}
 
 }

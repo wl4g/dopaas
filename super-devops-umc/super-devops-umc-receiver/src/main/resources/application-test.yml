@@ -19,9 +19,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://10.0.0.160:3306/devops?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
-      username: gzsm
-      password: gzsm@%#jh?
+      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/devops?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
+      username: ${DEVOPS_DB_USER:gzsm}
+      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
       max-active: 100
       min-idle: 10
@@ -42,7 +42,7 @@ spring:
         store:
           derby:
           opentsdb:
-            host: http://10.0.0.160
+            host: http://10.0.0.161
             port: 4242
         receiver:
           http:
@@ -50,18 +50,21 @@ spring:
           kafka:
             enabled: true
             concurrency: 3
-            queue-depth: 4092
+            queue-depth: 2
             properties:
               group.id: defaultUmcReceiverClusterId
-              bootstrap.servers: owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092
+              bootstrap.servers: ${KAFKA_NODES:owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092}
               #bootstrap.servers: localhost:9092
         watch:
-#          zk-servers: owner-node2:2181,owner-node3:2181,owner-node4:2181
-          zk-servers: safecloud-master:3181
+          zk-servers: owner-node2:2181,owner-node3:2181,owner-node4:2181
           fetch-cache-sec: 1800
         alarm:
           concurrency: 2
-
+  mail:
+    host: smtp.sina.com
+    port: 465
+    username: safec7782@sina.com
+    password: safec7782
 
 # Spring-security config.
 security.user:
@@ -74,10 +77,4 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes:
-    - safecloud-test:6379
-    - safecloud-test:6380
-    - safecloud-test:6381
-    - safecloud-test:7380
-    - safecloud-test:7380
-    - safecloud-test:7381
+  nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}

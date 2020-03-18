@@ -19,9 +19,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://safecloud-defaulti.mysql.rds.aliyuncs.com:3306/devops?useUnicode=true&characterEncoding=utf-8&useSSL=false
-      username: devops
-      password: DFDDD7F502E694F3E40D750FEEAE423D
+      url: jdbc:mysql://${DEVOPS_DB_URL:safecloud-defaulti.mysql.rds.aliyuncs.com:3306}/devops?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      username: ${DEVOPS_DB_USER:devops}
+      password: ${DEVOPS_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
       initial-size: 10
       max-active: 100
       min-idle: 10
@@ -42,7 +42,7 @@ spring:
         store:
           derby:
           opentsdb:
-            host: http://10.0.0.160
+            host: http://10.0.0.161
             port: 4242
         receiver:
           http:
@@ -50,12 +50,18 @@ spring:
           kafka:
             enabled: false
             concurrency: 3
-            queue-depth: 4092
+            queue-depth: 2
             properties:
-              bootstrap.servers: owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092
+              bootstrap.servers: ${KAFKA_NODES:owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092}
         watch:
           zk-servers: owner-node2:2181,owner-node3:2181,owner-node4:2181
           fetch-cache-sec: 1800
+  mail:
+    host: smtp.exmail.qq.com
+    port: 465
+    username: syslog@7782.co
+    password: Sm#1234
+    protocol: smtp
 
 # Spring-security config.
 security.user:
@@ -68,10 +74,4 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes:
-    - sink-node1:6379
-    - sink-node1:6380
-    - sink-node1:6381
-    - web-node1:6380
-    - web-node1:6380
-    - web-node1:6381
+  nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}

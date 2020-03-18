@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2017 ~ 2050 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
@@ -36,12 +35,6 @@ import com.wl4g.devops.iam.handler.AuthenticationHandler;
  * @since
  */
 public abstract class AbstractAuthenticatorController extends BaseController {
-
-	/**
-	 * Using Distributed Cache to Ensure Concurrency Control under Multi-Node
-	 */
-	@Autowired
-	protected EnhancedCacheManager cacheManager;
 
 	/**
 	 * IAM server properties configuration

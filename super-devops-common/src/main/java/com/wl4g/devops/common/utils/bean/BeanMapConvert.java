@@ -22,7 +22,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.*;
 
-import static com.wl4g.devops.common.utils.reflect.Types.isBaseType;
+import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
@@ -70,7 +70,7 @@ public final class BeanMapConvert {
 				// Filter class property
 				if (!memberName.equals("class")) {
 					Object value = ReflectionUtils.invokeMethod(property.getReadMethod(), obj);
-					if (isBaseType(property.getPropertyType())) {
+					if (isSimpleType(property.getPropertyType())) {
 						properties.put(link(memberOfParent, memberName), value);
 					} else if (Collection.class.isAssignableFrom(cls)) {
 						StringBuffer vals = new StringBuffer();

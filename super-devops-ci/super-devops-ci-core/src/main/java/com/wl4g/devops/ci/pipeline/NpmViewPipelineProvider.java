@@ -17,132 +17,90 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
-import com.wl4g.devops.ci.utils.GitUtils;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
-import org.eclipse.jgit.transport.CredentialsProvider;
-import org.springframework.util.Assert;
+import static java.lang.String.format;
 
 import java.io.File;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * NPM/(VUE/AngularJS/ReactJS...) standard deployments provider.
+ * Pipeline provider for deployment NPM/(VUE/AngularJS/ReactJS...) standard
+ * project.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
  * @since
  */
-public class NpmViewPipelineProvider extends AbstractPipelineProvider {
+public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 
-	public NpmViewPipelineProvider(PipelineContext info) {
-		super(info);
+	/**
+	 * NPM default building command.
+	 */
+	final public static String DEFAULT_NPM_CMD = "cd %s\nrm -Rf dist\nnpm install\nnpm run build\n";
+
+	public NpmViewPipelineProvider(PipelineContext context) {
+		super(context);
 	}
 
 	// --- NPM building. ---
 
 	@Override
-	public void execute() throws Exception {
-		// build
-		build();
-	}
-
-	@Override
-	public void rollback() throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected Runnable newDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
+	protected Runnable newPipeDeployer(AppInstance instance) {
+		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(NpmViewPipeDeployer.class, args);
 	}
 
-	private void build() throws Exception {
-		// TODO
-		// step1: git clone/pull
-		getSources(false);
-		// step2: npm install & npm run build ==> run build command
-		npmBuild();
-		// step3: tar -c
-		pkg();
-		// step4 scp ==> tar -x
-
-		// Startup pipeline jobs.
-		doExecuteTransferToRemoteInstances();
-
-		if (log.isInfoEnabled()) {
-			log.info("Npm pipeline execution successful!");
-		}
-	}
-
-	private void getSources(boolean isRollback) throws Exception {
-		log.info("Pipeline building for projectId={}", getContext().getProject().getId());
-		Project project = getContext().getProject();
-		Assert.notNull(project, "project not exist");
-
-		String branchName = getContext().getTaskHistory().getBranchName();
-		CredentialsProvider credentials = config.getVcs().getGitlab().getCredentials();
-		// Project source directory.
-		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-
-		if (isRollback) {
-			String sha = getContext().getTaskHistory().getShaGit();
-			if (GitUtils.checkGitPath(projectDir)) {
-				GitUtils.rollback(credentials, projectDir, sha);
-			} else {
-				GitUtils.clone(credentials, project.getGitUrl(), projectDir, branchName);
-				GitUtils.rollback(credentials, projectDir, sha);
-			}
-		} else {
-			if (GitUtils.checkGitPath(projectDir)) {// 若果目录存在则chekcout分支并pull
-				GitUtils.checkoutAndPull(credentials, projectDir, getContext().getTaskHistory().getBranchName());
-			} else { // 若目录不存在: 则clone 项目并 checkout 对应分支
-				GitUtils.clone(credentials, project.getGitUrl(), projectDir, branchName);
-			}
-		}
-	}
-
-	private void npmBuild() throws Exception {
-		Project project = getContext().getProject();
-		TaskHistory taskHistory = getContext().getTaskHistory();
-		File logPath = config.getJobLog(getContext().getTaskHistory().getId());
-		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		// Building.
-		if (isBlank(taskHistory.getBuildCommand())) {
-			doBuildWithDefaultCommand(projectDir, logPath, taskHistory.getId());
-		} else {
-			// Obtain temporary command file.
-			File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-			// Resolve placeholder variables.
-			String buildCommand = resolveCmdPlaceholderVariables(taskHistory.getBuildCommand());
-			processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
-		}
-	}
-
-	private void doBuildWithDefaultCommand(String projectDir, File logPath, Integer taskId) throws Exception {
+	@Override
+	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
 		Project project = getContext().getProject();
 		TaskHistory taskHistory = getContext().getTaskHistory();
 		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-		String buildCommand = "cd " + projectDir + "\nnpm install\nnpm run build\n";
-		processManager.execFile(String.valueOf(taskHistory.getId()), buildCommand, tmpCmdFile, logPath, 300000);
+
+		// Execution command.
+		String defaultNpmBuildCmd = format(DEFAULT_NPM_CMD, projectDir);
+		log.info(writeBuildLog("Building with npm default command: %s", defaultNpmBuildCmd));
+		// TODO timeoutMs?
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), defaultNpmBuildCmd, tmpCmdFile,
+				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 	/**
-	 * tar -cvf ***.tar -C /home/ci/view * tar -xvf ***.tar -C /opt/apps/view
+	 * Handling the NPM built installation package asset file, and convert the
+	 * dist directory to a formal tar compressed package.
+	 * 
+	 * </br>
+	 * For example:
+	 * 
+	 * <pre>
+	 * $ cd /root/.ci-workspace/sources/portal-view/dist
+	 * $ mkdir portal-view-1.0.0-bin
+	 * $ mv `ls -A|grep -v portal-view-1.0.0-bin` portal-view-1.0.0-bin/
+	 * $ tar -cvf /Users/vjay/.ci-workspace/sources/safecloud-view-portal/dist/portal-view-master-bin.tar *
+	 * </pre>
 	 */
-	private void pkg() throws Exception {
+	@Override
+	protected void postModuleBuiltCommand() throws Exception {
 		Project project = getContext().getProject();
+		String prgramInstallFileName = config.getPrgramInstallFileName(getContext().getAppCluster().getName());
 		TaskHistory taskHistory = getContext().getTaskHistory();
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		// tar
-		String tarCommand = "cd " + projectDir + "/dist\n" + "tar -zcvf "
-				+ config.getJobBackup(getContext().getTaskHistory().getId()) + "/" + project.getProjectName() + ".tar.gz  *";
-		processManager.execFile(String.valueOf(taskHistory.getId()), tarCommand,
-				config.getJobTmpCommandFile(taskHistory.getId(), -1), config.getJobLog(getContext().getTaskHistory().getId()),
-				300000);
+		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
+		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
+
+		String tarCommand = format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/dist/%s.tar *", projectDir,
+				prgramInstallFileName, prgramInstallFileName, prgramInstallFileName, projectDir, prgramInstallFileName);
+		log.info(writeBuildLog("Npm built, packing the assets file command: %s", tarCommand));
+
+		// Execution command.
+		// TODO timeoutMs?
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 }

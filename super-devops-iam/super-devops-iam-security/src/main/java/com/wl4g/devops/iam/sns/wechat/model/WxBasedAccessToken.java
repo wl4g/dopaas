@@ -15,10 +15,14 @@
  */
 package com.wl4g.devops.iam.sns.wechat.model;
 
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static java.lang.String.format;
+
 import org.springframework.beans.BeanUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.common.exception.iam.SnsApiBindingException;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
 
 public class WxBasedAccessToken extends WxBasedResponse implements Oauth2AccessToken {
@@ -110,14 +114,23 @@ public class WxBasedAccessToken extends WxBasedResponse implements Oauth2AccessT
 
 	@Override
 	public String toString() {
-		return JacksonUtils.toJSONString(this);
+		return toJSONString(this);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public WxBasedAccessToken build(String message) {
-		WxBasedAccessToken at = JacksonUtils.parseJSON(message, this.getClass());
+		WxBasedAccessToken at = parseJSON(message, getClass());
 		BeanUtils.copyProperties(at, this);
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public WxBasedAccessToken validate() {
+		if (getErrcode() != DEFAULT_WX_OK) {
+			throw new SnsApiBindingException(format("[Assertion failed] - WeChat accessToken of %s", toString()));
+		}
 		return this;
 	}
 

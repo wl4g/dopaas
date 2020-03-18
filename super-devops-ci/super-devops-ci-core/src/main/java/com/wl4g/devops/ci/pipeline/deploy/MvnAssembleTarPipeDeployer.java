@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.util.List;
 
@@ -31,8 +31,8 @@ import java.util.List;
 public class MvnAssembleTarPipeDeployer extends GenericHostPipeDeployer<MvnAssembleTarPipelineProvider> {
 
 	public MvnAssembleTarPipeDeployer(MvnAssembleTarPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		super(provider, instance, taskHistoryDetails);
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		super(provider, instance, taskHistoryInstances);
 	}
 
 	@Override

@@ -17,10 +17,9 @@ package com.wl4g.devops.shell.config;
 
 import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 import java.io.Serializable;
-
-import com.wl4g.devops.shell.utils.Assert;
 
 /**
  * Abstract shell configuration
@@ -71,13 +70,12 @@ public abstract class AbstractConfiguration implements Serializable {
 	}
 
 	public void setPortRange(String portRange) {
-		Assert.hasText(portRange, "Listen port range must not be empty");
+		hasText(portRange, "Listen port range must not be empty");
 		String[] part = portRange.split(":");
-		Assert.isTrue(part.length == 2 && isNumeric(part[0]) && isNumeric(part[1]),
-				"Invalid listen port range. (e.g. 66100:66200)");
+		isTrue(part.length == 2 && isNumeric(part[0]) && isNumeric(part[1]), "Invalid listen port range. (e.g. 66100:66200)");
 		int begin = parseInt(part[0]);
 		int end = parseInt(part[1]);
-		Assert.isTrue(begin > 1024 && begin < 65535 && end > 1024 && end < 65535 && end > begin,
+		isTrue(begin > 1024 && begin < 65535 && end > 1024 && end < 65535 && end > begin,
 				String.format(
 						"Both start and end ports must be between 1024 and 65535, And the end port must be greater than the begin port, actual is %s",
 						portRange));

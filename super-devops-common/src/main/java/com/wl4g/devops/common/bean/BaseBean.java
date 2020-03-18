@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.commons.lang3.RandomUtils;
+
 /**
  * DB based bean entity.
  * 
@@ -72,21 +74,25 @@ public abstract class BaseBean implements Serializable {
 	private String remark; // 备注
 
 	/**
-	 * 插入之前执行方法，需要手动调用
+	 * Execute method before inserting, need to call manually
 	 */
 	public void preInsert() {
-		this.updateDate = new Date();
-		this.createDate = this.updateDate;
-		this.createBy = DEFAULT_USER_ID;
-		updateBy = DEFAULT_USER_ID;
-		this.delFlag = DEL_FLAG_NORMAL;
+		// TODO Use random number just for now
+		setId(RandomUtils.nextInt(1_0000, 10_0000));
+
+		setCreateDate(new Date());
+		setCreateBy(DEFAULT_USER_ID);
+		setUpdateDate(getCreateDate());
+		setUpdateBy(DEFAULT_USER_ID);
+		setDelFlag(DEL_FLAG_NORMAL);
 	}
 
 	/**
-	 * 更新之前执行方法，需要手动调用
+	 * Execute method before update, need to call manually
 	 */
 	public void preUpdate() {
-		this.updateDate = new Date();
+		setUpdateDate(new Date());
+		setUpdateBy(DEFAULT_USER_ID);
 	}
 
 	public Integer getId() {

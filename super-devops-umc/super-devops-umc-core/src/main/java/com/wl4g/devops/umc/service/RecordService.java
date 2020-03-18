@@ -16,12 +16,15 @@
 package com.wl4g.devops.umc.service;
 
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
+import com.wl4g.devops.page.PageModel;
 
 /**
  * @author vjay
  * @date 2019-08-05 16:01:00
  */
 public interface RecordService {
+
+	PageModel list(PageModel pm,String name, String startDate, String endDate);
 
 	AlarmRecord detail(Integer id);
 

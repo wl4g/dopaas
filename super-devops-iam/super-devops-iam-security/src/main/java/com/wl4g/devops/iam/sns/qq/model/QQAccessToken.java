@@ -20,9 +20,10 @@ import java.util.Map;
 import org.apache.shiro.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
+import com.wl4g.devops.tool.common.lang.TypeConverts;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
+import com.wl4g.devops.tool.common.web.WebUtils2;
 
 public class QQAccessToken implements Oauth2AccessToken {
 	private static final long serialVersionUID = 6525294825751214763L;
@@ -77,9 +78,16 @@ public class QQAccessToken implements Oauth2AccessToken {
 	@Override
 	public QQAccessToken build(String message) {
 		Map<String, String> params = WebUtils2.toQueryParams(message);
-		this.setAccessToken(params.get("access_token"));
-		this.setRefreshToken(params.get("refresh_token"));
-		this.setExpiresIn(Long.parseLong(params.get("expires_in")));
+		setAccessToken(params.get("access_token"));
+		setRefreshToken(params.get("refresh_token"));
+		setExpiresIn(TypeConverts.parseLongOrNull(params.get("expires_in")));
+		return this;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public QQAccessToken validate() {
+		// TODO
 		return this;
 	}
 

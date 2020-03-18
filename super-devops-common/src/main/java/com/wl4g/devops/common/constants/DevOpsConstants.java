@@ -35,9 +35,4 @@ public abstract class DevOpsConstants {
 	 */
 	final public static String PARAM_STACK_TRACE = ENV.getOrDefault("spring.error.stack.trace", "_stacktrace");
 
-	/**
-	 * Command-line process destroy locker.
-	 */
-	final public static String LOCK_PROCESS_DESTROY_PREFIX = "cli.process.destroy_";
-
 }

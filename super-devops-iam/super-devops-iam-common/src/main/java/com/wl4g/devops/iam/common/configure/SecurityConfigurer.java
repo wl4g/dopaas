@@ -39,33 +39,39 @@ public interface SecurityConfigurer {
 	//
 
 	/**
-	 * Determine the URL of the login success redirection, default: successURL,
-	 * can support customization.
+	 * Decorate the URL of the authenticating success redirection, default:
+	 * successURL, can support customization.
 	 *
 	 * @param successUrl
+	 *            Authenticated success redirect URL.
 	 * @param token
+	 *            Authenticating token.
 	 * @param subject
+	 *            Security context {@link Subject}
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	default String determineLoginSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response) {
+	default String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
+			ServletRequest request, ServletResponse response) {
 		return successUrl;
 	}
 
 	/**
-	 * Determine the URL of the login failure redirection, default: loginURL,
-	 * can support customization.
+	 * Decorate the URL of the authenticating failure redirection, default:
+	 * loginURL, can support customization.
 	 *
 	 * @param loginUrl
+	 *            Login page URL.
 	 * @param token
+	 *            Authenticating token.
 	 * @param ae
+	 *            Authenticating failure expection.
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	default String determineLoginFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
+	default String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
 			ServletRequest request, ServletResponse response) {
 		return loginUrl;
 	}

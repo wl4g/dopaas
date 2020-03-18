@@ -36,24 +36,14 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String KEY_REMEMBERME_NAME = "longTermAuthenticationRequestTokenUsed";
 	/**
-	 * Of the principal corresponding role attributeKey name returned
-	 * successfully by fast-CAS server authentication
-	 */
-	final public static String KEY_ROLE_ATTRIBUTE_NAME = "authzPrincipalRoleAttributeName";
-	/**
-	 * Of the principal corresponding permission attributeKey name returned
-	 * successfully by fast-CAS server authentication
-	 */
-	final public static String KEY_PERMIT_ATTRIBUTE_NAME = "authzPrincipalPermisstionAttributeName";
-	/**
 	 * Authentication principal language attribute name.
 	 */
 	final public static String KEY_LANG_ATTRIBUTE_NAME = "authzPrincipalLangAttributeName";
 
 	/** authentication token save session key-name */
 	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeKey";
-	/** authentication info save session key-name */
-	final public static String KEY_AUTHC_INFO = "authcInfoAttributeKey";
+	/** authentication accountInfo save session key-name */
+	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttributeKey";
 
 	/**
 	 * IAM system service role parameter name.</br>

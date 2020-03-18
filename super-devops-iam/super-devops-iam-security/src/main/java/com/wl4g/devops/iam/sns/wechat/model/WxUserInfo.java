@@ -15,11 +15,12 @@
  */
 package com.wl4g.devops.iam.sns.wechat.model;
 
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 
 public class WxUserInfo extends WxBasedUserInfo {
 	private static final long serialVersionUID = 843944424065492261L;
@@ -38,7 +39,7 @@ public class WxUserInfo extends WxBasedUserInfo {
 	@SuppressWarnings("unchecked")
 	@Override
 	public WxUserInfo build(String message) {
-		return JacksonUtils.parseJSON(message, WxUserInfo.class);
+		return parseJSON(message, WxUserInfo.class);
 	}
 
 }

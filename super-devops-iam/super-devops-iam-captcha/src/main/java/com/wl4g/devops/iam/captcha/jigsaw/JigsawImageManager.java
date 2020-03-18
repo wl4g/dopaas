@@ -16,9 +16,9 @@
 package com.wl4g.devops.iam.captcha.jigsaw;
 
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
-import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawImgCode;
-import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.iam.captcha.jigsaw.ImageTailor.TailoredImage;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.support.redis.JedisService;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -41,9 +41,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_VERIFY_JIGSAW_IMG;
-import static com.wl4g.devops.common.utils.codec.Encodes.toBytes;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.deserialize;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
+import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.startsWith;
@@ -105,7 +105,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * 
 	 * @return
 	 */
-	public JigsawImgCode borrow() {
+	public TailoredImage borrow() {
 		return borrow(-1);
 	}
 
@@ -115,7 +115,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * @param index
 	 * @return
 	 */
-	public JigsawImgCode borrow(int index) {
+	public TailoredImage borrow(int index) {
 		if (index < 0 || index >= config.getJigsaw().getPoolImgSize()) {
 			int _index = current().nextInt(config.getJigsaw().getPoolImgSize());
 			if (log.isDebugEnabled()) {
@@ -140,7 +140,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 			// Retry get.
 			jigsawBuf = jdsCluster.hget(CACHE_VERIFY_JIGSAW_IMG, toBytes(String.valueOf(index)));
 		}
-		JigsawImgCode code = deserialize(jigsawBuf, JigsawImgCode.class);
+		TailoredImage code = deserialize(jigsawBuf, TailoredImage.class);
 		Assert.notNull(code, "Unable to borrow jigsaw image resource.");
 
 		// UnCompression primary block image.
@@ -213,10 +213,10 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 
 			if (source instanceof File) {
 				String path = ((File) sources[index]).getAbsolutePath();
-				putJigsawImage(tailor.getJigsawImageFile(path), i);
+				putJigsawImage(tailor.getImageFile(path), i);
 			} else if (source instanceof Resource) {
 				Resource resource = (Resource) source;
-				putJigsawImage(tailor.getJigsawImageInputStream(resource.getInputStream()), i);
+				putJigsawImage(tailor.getImageInputStream(resource.getInputStream()), i);
 			} else {
 				throw new IllegalStateException(String.format("Unsupported jigsaw image source: %s", source));
 			}
@@ -234,7 +234,7 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * @param code
 	 * @param index
 	 */
-	private void putJigsawImage(JigsawImgCode code, int index) {
+	private void putJigsawImage(TailoredImage code, int index) {
 		// Compression primary block image.
 		byte[] data = serialize(code/* .compress() */);
 		// Storage to cache.

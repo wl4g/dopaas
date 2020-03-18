@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.ci.config;
 
+import java.util.concurrent.TimeUnit;
+
 import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
@@ -60,6 +62,10 @@ public class BuildProperties {
 		notNull(jobTimeoutMs, "Job timeout must not be null.");
 		isTrue(jobTimeoutMs > 0, "Job timeout must greater than 0.");
 		return jobTimeoutMs;
+	}
+
+	public Long getJobTimeoutSec() {
+		return TimeUnit.MILLISECONDS.toSeconds(getJobTimeoutMs());
 	}
 
 	public void setJobTimeoutMs(Long jobTimeoutMs) {

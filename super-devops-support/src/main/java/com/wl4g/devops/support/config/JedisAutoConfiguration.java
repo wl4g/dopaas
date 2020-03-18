@@ -31,11 +31,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.support.cache.JedisClusterFactoryBean;
-import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.redis.JedisClusterFactoryBean;
+import com.wl4g.devops.support.redis.JedisService;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisException;
 
 /**
@@ -90,7 +91,7 @@ public class JedisAutoConfiguration {
 		private int connTimeout = 10000;
 		private int soTimeout = 10000;
 		private int maxAttempts = 20;
-		private GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+		private JedisPoolConfig poolConfig = new JedisPoolConfig();
 
 		public JedisProperties() {
 			// Initialize by default
@@ -140,11 +141,11 @@ public class JedisAutoConfiguration {
 			this.maxAttempts = maxAttempts;
 		}
 
-		public GenericObjectPoolConfig getPoolConfig() {
+		public JedisPoolConfig getPoolConfig() {
 			return poolConfig;
 		}
 
-		public void setPoolConfig(GenericObjectPoolConfig poolConfig) {
+		public void setPoolConfig(JedisPoolConfig poolConfig) {
 			this.poolConfig = poolConfig;
 		}
 

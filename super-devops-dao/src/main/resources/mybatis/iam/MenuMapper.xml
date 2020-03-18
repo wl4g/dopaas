@@ -6,12 +6,14 @@
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="display_name" property="displayName" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
-    <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="level" property="level" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="parent_id" property="parentId" jdbcType="INTEGER" />
     <result column="parent_ids" property="parentIds" jdbcType="VARCHAR" />
     <result column="permission" property="permission" jdbcType="VARCHAR" />
-    <result column="access_uri" property="accessUri" jdbcType="VARCHAR" />
+    <result column="page_location" property="pageLocation" jdbcType="VARCHAR" />
+    <result column="route_path" property="routePath" jdbcType="VARCHAR" />
+    <result column="render_target" property="renderTarget" jdbcType="VARCHAR" />
     <result column="icon" property="icon" jdbcType="VARCHAR" />
     <result column="sort" property="sort" jdbcType="INTEGER" />
     <result column="create_by" property="createBy" jdbcType="INTEGER" />
@@ -21,12 +23,12 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, display_name, type, enable, status, parent_id, parent_ids, permission, 
-    access_uri, icon, sort,create_by, create_date, update_by, update_date, del_flag
+    id, name, display_name, type, level, status, parent_id, parent_ids, permission,
+    page_location, route_path,render_target, icon, sort,create_by, create_date, update_by, update_date, del_flag
   </sql>
   <sql id="Base_Column_List_m" >
-    m.id, m.name, m.display_name, m.type, m.enable, m.status, m.parent_id, m.parent_ids, m.permission,
-    m.access_uri, m.icon, m.sort,m.create_by, m.create_date, m.update_by, m.update_date, m.del_flag
+    m.id, m.name, m.display_name, m.type, m.level, m.status, m.parent_id, m.parent_ids, m.permission,
+    m.page_location,m.route_path,m.render_target, m.icon, m.sort,m.create_by, m.create_date, m.update_by, m.update_date, m.del_flag
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -47,24 +49,29 @@
     select
     <include refid="Base_Column_List_m" />
     from sys_menu m
-    where m.del_flag!=1 and  exists(select 1 from sys_group_menu mg inner join sys_group_user gu on mg.group_id=gu.group_id where m.id=mg.menu_id and gu.user_id=#{userId,jdbcType=INTEGER} );
+    where m.del_flag!=1 and  exists(select 1 from sys_group_menu mg inner join sys_group_user gu on mg.group_id=gu.group_id where m.id=mg.menu_id and gu.user_id=#{userId,jdbcType=INTEGER} )
+    order by m.sort
   </select>
 
-  <select id="selectByRoot" resultMap="BaseResultMap" >
+  <select id="selectWithRoot" resultMap="BaseResultMap" >
     select
     <include refid="Base_Column_List_m" />
     from sys_menu m
-    where m.del_flag!=1;
+    where m.del_flag!=1
+    order by m.sort
   </select>
 
 
-  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List_m" />
     from sys_menu m
     left join  sys_role_menu rm on rm.menu_id=m.id
     left join sys_role_user ru on rm.role_id=ru.role_id
-    where m.del_flag!=1 and ru.user_id = #{userId,jdbcType=INTEGER}
+    where m.del_flag!=1
+    <if test="userId != null" >
+      and ru.user_id = #{userId,jdbcType=INTEGER}
+    </if>
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
@@ -73,15 +80,15 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.Menu" >
     insert into sys_menu (id, name, display_name, 
-      type, enable, status, 
+      type, level, status,
       parent_id, parent_ids, permission, 
-      access_uri, icon,sort, create_by,
+      page_location, route_path,render_target, icon,sort, create_by,
       create_date, update_by, update_date, 
       del_flag)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR}, 
-      #{type,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, #{status,jdbcType=INTEGER},
       #{parentId,jdbcType=INTEGER}, #{parentIds,jdbcType=VARCHAR}, #{permission,jdbcType=VARCHAR}, 
-      #{accessUri,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR},#{sort,jdbcType=INTEGER},  #{createBy,jdbcType=INTEGER},
+      #{pageLocation,jdbcType=VARCHAR}, #{routePath,jdbcType=VARCHAR},#{renderTarget,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR},#{sort,jdbcType=INTEGER},  #{createBy,jdbcType=INTEGER},
       #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
@@ -100,8 +107,8 @@
       <if test="type != null" >
         type,
       </if>
-      <if test="enable != null" >
-        enable,
+      <if test="level != null" >
+        level,
       </if>
       <if test="status != null" >
         status,
@@ -115,8 +122,14 @@
       <if test="permission != null" >
         permission,
       </if>
-      <if test="accessUri != null" >
-        access_uri,
+      <if test="pageLocation != null" >
+        page_location,
+      </if>
+      <if test="routePath != null" >
+        route_path,
+      </if>
+      <if test="renderTarget != null" >
+        render_target,
       </if>
       <if test="icon != null" >
         icon,
@@ -153,8 +166,8 @@
       <if test="type != null" >
         #{type,jdbcType=INTEGER},
       </if>
-      <if test="enable != null" >
-        #{enable,jdbcType=INTEGER},
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
       </if>
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
@@ -168,8 +181,14 @@
       <if test="permission != null" >
         #{permission,jdbcType=VARCHAR},
       </if>
-      <if test="accessUri != null" >
-        #{accessUri,jdbcType=VARCHAR},
+      <if test="pageLocation != null" >
+        #{pageLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="routePath != null" >
+        #{routePath,jdbcType=VARCHAR},
+      </if>
+      <if test="renderTarget != null" >
+        #{renderTarget,jdbcType=VARCHAR},
       </if>
       <if test="icon != null" >
         #{icon,jdbcType=VARCHAR},
@@ -206,8 +225,8 @@
       <if test="type != null" >
         type = #{type,jdbcType=INTEGER},
       </if>
-      <if test="enable != null" >
-        enable = #{enable,jdbcType=INTEGER},
+      <if test="level != null" >
+        level = #{level,jdbcType=INTEGER},
       </if>
       <if test="status != null" >
         status = #{status,jdbcType=INTEGER},
@@ -221,8 +240,14 @@
       <if test="permission != null" >
         permission = #{permission,jdbcType=VARCHAR},
       </if>
-      <if test="accessUri != null" >
-        access_uri = #{accessUri,jdbcType=VARCHAR},
+      <if test="pageLocation != null" >
+        page_location = #{pageLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="routePath != null" >
+        route_path = #{routePath,jdbcType=VARCHAR},
+      </if>
+      <if test="renderTarget != null" >
+        render_target = #{renderTarget,jdbcType=VARCHAR},
       </if>
       <if test="icon != null" >
         icon = #{icon,jdbcType=VARCHAR},
@@ -253,12 +278,14 @@
     set name = #{name,jdbcType=VARCHAR},
       display_name = #{displayName,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
-      enable = #{enable,jdbcType=INTEGER},
+      level = #{level,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
       parent_id = #{parentId,jdbcType=INTEGER},
       parent_ids = #{parentIds,jdbcType=VARCHAR},
       permission = #{permission,jdbcType=VARCHAR},
-      access_uri = #{accessUri,jdbcType=VARCHAR},
+      page_location = #{pageLocation,jdbcType=VARCHAR},
+      route_path = #{routePath,jdbcType=VARCHAR},
+      render_target = #{renderTarget,jdbcType=VARCHAR},
       icon = #{icon,jdbcType=VARCHAR},
       sort = #{sort,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=INTEGER},

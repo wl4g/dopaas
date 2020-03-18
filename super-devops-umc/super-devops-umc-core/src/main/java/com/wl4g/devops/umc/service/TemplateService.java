@@ -15,13 +15,20 @@
  */
 package com.wl4g.devops.umc.service;
 
+import java.util.List;
+
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.devops.page.PageModel;
 
 /**
  * @author vjay
  * @date 2019-08-05 16:01:00
  */
 public interface TemplateService {
+
+	PageModel list(PageModel pm,String name, Integer metricId, String classify);
+
+	List<AlarmTemplate> getByClassify(String classify);
 
 	void save(AlarmTemplate alarmTemplate);
 

@@ -16,6 +16,10 @@ spring:
     active: dev
   cloud: # Spring cloud configuration.
     devops:
+      default-webapps:
+        enabled: true
+        webapp-location: classpath*:/default-webapps
+        base-uri: /view
       iam: # IAM configuration.
 #        login-uri: /view/login.html
 #        unauthorized-uri: /view/403.html
@@ -28,7 +32,7 @@ spring:
           fail-fast-match-max-attempts: 10
           fail-fast-match-delay: 3600000
           enabled-captcha-max-attempts: 3
-          fail-fast-captcha-max-attempts: 20
+          fail-fast-captcha-max-attempts: 100
           fail-fast-captcha-delay: 600000
           captcha-expire-ms: 60000
           fail-fast-sms-max-attempts: 3
@@ -42,10 +46,10 @@ spring:
           session-validation-interval: 360_000
         cookie:
           name: IAMSID_TGC
-#        authc-internal-access:
-#          secure: true
-#          allowIp: 127.0.0.1
-#          denyIp:
+        #acl:
+          #secure: false # Turn off protection will trust any same intranet IP.
+          #allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+          #denyIpRange: ${DEVOPS_IAM_ACL_DENY}
         captcha:
           #kaptcha:
           #gif:
@@ -62,7 +66,7 @@ server:
     uri-encoding: UTF-8
     protocolHeader: x-forwarded-proto
     remoteIpHeader: x-forwarded-for
-    basedir: /var/log/${spring.application.name}
+    basedir: /tmp/${spring.application.name}
     access-log-enabled: false
     accesslog.directory: logs/
     backgroundProcessorDelay: 30 #seconds

@@ -16,7 +16,8 @@
 package com.wl4g.devops.common.bean.scm.model;
 
 import com.google.common.net.HostAndPort;
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 

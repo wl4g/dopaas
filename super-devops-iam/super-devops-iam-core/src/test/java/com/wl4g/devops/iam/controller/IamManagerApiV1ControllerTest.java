@@ -15,10 +15,8 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.toJSONString;
-
-import java.util.Date;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.common.web.RespBase;
@@ -31,8 +29,8 @@ public class IamManagerApiV1ControllerTest {
 
 	public static void main(String[] args) {
 		// for controller output(model).
-		RespBase<SessionAttributeModel> resp11 = new RespBase<>(RetCode.create(4001, "message2"));
-		resp11.buildMap().put("testKey", newSessionAttributeModel());
+		RespBase<SessionAttributeModel> resp11 = new RespBase<>(RetCode.newCode(4001, "message2"));
+		resp11.forMap().put("testKey", newSessionAttributeModel());
 
 		String json11 = toJSONString(resp11);
 		System.out.println(json11);
@@ -44,7 +42,7 @@ public class IamManagerApiV1ControllerTest {
 		System.out.println("===================================================");
 
 		// for controller output(model).
-		RespBase<SessionAttributeModel> resp21 = new RespBase<>(RetCode.create(4001, "message2"));
+		RespBase<SessionAttributeModel> resp21 = new RespBase<>(RetCode.newCode(4001, "message2"));
 		resp21.setData(newSessionAttributeModel());
 
 		String json21 = toJSONString(resp21);
@@ -61,7 +59,6 @@ public class IamManagerApiV1ControllerTest {
 		sam.setIndex(new CursorIndex("0@5", false));
 		SessionAttribute sa1 = new SessionAttribute();
 		sa1.setId("1111");
-		sa1.setLastAccessTime(new Date());
 		sa1.setAuthenticated(false);
 		sa1.setExpired(false);
 		sa1.setHost("0.0.0.01");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2017 ~ 2050 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.iam.web;
 
-import com.wl4g.devops.common.bean.iam.GrantTicketInfo;
 import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.authc.WechatMpAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
 import com.wl4g.devops.iam.common.authc.ClientRef;
+import com.wl4g.devops.iam.common.session.GrantTicketInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.web.GenericApiController;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
@@ -107,7 +107,7 @@ public class IamServerApiV1Controller extends GenericApiController {
 		SessionAttribute sa = super.wrapSessionAttribute(session);
 
 		// Authentication grant applications.
-		GrantTicketInfo grantInfo = (GrantTicketInfo) session.getAttribute(CentralAuthenticationHandler.GRANT_APP_INFO_KEY);
+		GrantTicketInfo grantInfo = (GrantTicketInfo) session.getAttribute(CentralAuthenticationHandler.KEY_GRANTTICKET_INFO);
 		if (nonNull(grantInfo) && grantInfo.hasApplications()) {
 			sa.setGrants(grantInfo.getApplications().keySet());
 		}

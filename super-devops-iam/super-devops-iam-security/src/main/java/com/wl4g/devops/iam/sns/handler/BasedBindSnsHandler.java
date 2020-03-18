@@ -25,16 +25,16 @@ import org.springframework.cglib.beans.BeanMap;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
-import com.wl4g.devops.common.utils.web.WebUtils2;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.config.properties.SnsProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.iam.sns.BindConnection;
-import com.wl4g.devops.iam.sns.SocialConnectionFactory;
+import com.wl4g.devops.iam.sns.OAuth2ApiBinding;
+import com.wl4g.devops.iam.sns.OAuth2ApiBindingFactory;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
+import com.wl4g.devops.tool.common.web.WebUtils2;
 
 import static com.wl4g.devops.common.web.BaseController.REDIRECT_PREFIX;
 
@@ -47,15 +47,15 @@ import static com.wl4g.devops.common.web.BaseController.REDIRECT_PREFIX;
  */
 public abstract class BasedBindSnsHandler extends AbstractSnsHandler {
 
-	public BasedBindSnsHandler(IamProperties config, SnsProperties snsConfig, SocialConnectionFactory connectFactory,
+	public BasedBindSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
 			ServerSecurityConfigurer context) {
 		super(config, snsConfig, connectFactory, context);
 	}
 
 	@Override
-	public String connect(Which which, String provider, String state, Map<String, String> connectParams) {
+	public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
 		// Connecting
-		String authorizingUrl = super.connect(which, provider, state, connectParams);
+		String authorizingUrl = super.doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
 
 		// Save connect parameters
 		saveOauth2ConnectParameters(provider, state, connectParams);
@@ -64,8 +64,8 @@ public abstract class BasedBindSnsHandler extends AbstractSnsHandler {
 	}
 
 	@Override
-	protected void checkConnectRequireds(String provider, String state, Map<String, String> connectParams) {
-		super.checkConnectRequireds(provider, state, connectParams);
+	protected void checkConnectParameters(String provider, String state, Map<String, String> connectParams) {
+		super.checkConnectParameters(provider, state, connectParams);
 
 		// Check connect parameters
 		Assert.notEmpty(connectParams, "Connect parameters must not be empty");
@@ -89,15 +89,15 @@ public abstract class BasedBindSnsHandler extends AbstractSnsHandler {
 	}
 
 	@Override
-	protected void checkConnectCallbacks(String provider, String state, String code, Map<String, String> connectParams) {
+	protected void checkCallbackParameters(String provider, String state, String code, Map<String, String> connectParams) {
 		// Check 'state'
 		Assert.notEmpty(connectParams, String.format("State '%s' is invalid or expired", state));
-		super.checkConnectCallbacks(provider, state, code, connectParams);
+		super.checkCallbackParameters(provider, state, code, connectParams);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected String afterCallbackProcess(String provider, String code, BindConnection connect, Map<String, String> connectParams,
+	protected String doHandleOAuth2Callback(String provider, String code, OAuth2ApiBinding connect, Map<String, String> connectParams,
 			HttpServletRequest request) {
 		// Access token
 		Oauth2AccessToken ast = connect.getAccessToken(code);
@@ -123,7 +123,7 @@ public abstract class BasedBindSnsHandler extends AbstractSnsHandler {
 	}
 
 	@Override
-	protected String buildResponseMessage(String provider, String result, Map<String, String> connectParams,
+	protected String postCallbackResponse(String provider, String result, Map<String, String> connectParams,
 			HttpServletRequest request) {
 		return connectParams.get(config.getParam().getRefreshUrl());
 	}

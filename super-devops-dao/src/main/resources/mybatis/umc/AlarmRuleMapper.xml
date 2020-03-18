@@ -10,7 +10,7 @@
     <result column="queue_time_window" property="queueTimeWindow" jdbcType="BIGINT" />
     <result column="value" property="value" jdbcType="DOUBLE" />
     <result column="alarm_level" property="alarmLevel" jdbcType="INTEGER" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
 
     <!-- other -->
     <result column="compare_value" property="compareValue" jdbcType="DOUBLE" />
@@ -42,7 +42,7 @@
       value, alarm_level,del_flag)
     values (#{id,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER}, #{aggregator,jdbcType=VARCHAR}, 
       #{relateOperator,jdbcType=INTEGER}, #{logicalOperator,jdbcType=INTEGER}, #{queueTimeWindow,jdbcType=BIGINT}, 
-      #{value,jdbcType=DOUBLE}, #{alarmLevel,jdbcType=INTEGER}, #{delFlag,jdbcType=CHAR})
+      #{value,jdbcType=DOUBLE}, #{alarmLevel,jdbcType=INTEGER}, #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.AlarmRule" useGeneratedKeys="true" keyProperty="id">
     insert into umc_alarm_rule
@@ -101,7 +101,7 @@
         #{alarmLevel,jdbcType=INTEGER},
       </if>
       <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
+        #{delFlag,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -130,7 +130,7 @@
         alarm_level = #{alarmLevel,jdbcType=INTEGER},
       </if>
       <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
+        del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -144,7 +144,7 @@
       queue_time_window = #{queueTimeWindow,jdbcType=BIGINT},
       value = #{value,jdbcType=DOUBLE},
       alarm_level = #{alarmLevel,jdbcType=INTEGER},
-      del_flag = #{delFlag,jdbcType=CHAR}
+      del_flag = #{delFlag,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 

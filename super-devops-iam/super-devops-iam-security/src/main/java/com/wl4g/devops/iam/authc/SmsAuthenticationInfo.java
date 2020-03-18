@@ -15,34 +15,22 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
-import com.wl4g.devops.common.bean.iam.IamAccountInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
-public class SmsAuthenticationInfo extends SimpleAuthenticationInfo {
+public class SmsAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = 1558934819432102687L;
 
-	/**
-	 * IAM account information.
-	 */
-	final private IamAccountInfo accountInfo;
-
-	public SmsAuthenticationInfo(IamAccountInfo accountInfo, Object principal, Object credentials, String realmName) {
-		this(accountInfo, principal, credentials, null, realmName);
+	public SmsAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, String realmName) {
+		this(accountInfo, principals, null, realmName);
 	}
 
-	public SmsAuthenticationInfo(IamAccountInfo accountInfo, Object principal, Object credentials, ByteSource credentialsSalt,
+	public SmsAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
 			String realmName) {
-		this.accountInfo = accountInfo;
-		this.principals = new SimplePrincipalCollection(principal, realmName);
-		this.credentials = credentials;
-		this.credentialsSalt = credentialsSalt;
-	}
-
-	public IamAccountInfo getAccountInfo() {
-		return accountInfo;
+		super(accountInfo, principals, credentialsSalt, realmName);
 	}
 
 }

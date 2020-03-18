@@ -15,9 +15,13 @@
  */
 package com.wl4g.devops.umc.alarm;
 
+import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
 import com.wl4g.devops.common.bean.umc.*;
+import com.wl4g.devops.dao.iam.AlarmContactDao;
+import com.wl4g.devops.dao.iam.AlarmNotificationContactDao;
 import com.wl4g.devops.dao.umc.*;
-import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -69,6 +73,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	// @Transactional
 	public AlarmRecord saveAlarmRecord(AlarmTemplate alarmTemplate, Long gatherTime, List<AlarmRule> rules, String alarmNote) {
 		AlarmRecord record = new AlarmRecord();
+		record.preInsert();
 		record.setName(alarmTemplate.getMetric());
 		record.setTemplateId(alarmTemplate.getId());
 		record.setGatherTime(new Date(gatherTime));
@@ -78,6 +83,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 		// Alarm matched rules.
 		for (AlarmRule rule : rules) {
 			AlarmRecordRule recordRule = new AlarmRecordRule();
+			recordRule.preInsert();
 			recordRule.setRecordId(record.getId());
 			recordRule.setRuleId(rule.getId());
 			recordRule.setCompareValue(rule.getCompareValue());
@@ -93,6 +99,7 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 
 	@Override
 	public AlarmNotificationContact saveNotificationContact(AlarmNotificationContact alarmNotificationContact) {
+		alarmNotificationContact.preInsert();
 		alarmNotificationContactDao.insertSelective(alarmNotificationContact);
 		return alarmNotificationContact;
 	}

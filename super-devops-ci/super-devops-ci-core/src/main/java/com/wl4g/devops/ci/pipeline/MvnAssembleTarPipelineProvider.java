@@ -17,16 +17,10 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
-import com.wl4g.devops.ci.utils.GitUtils;
-import com.wl4g.devops.common.bean.share.AppInstance;
-
-import static com.wl4g.devops.ci.utils.PipelineUtils.subPackname;
-import static com.wl4g.devops.common.utils.codec.FingerprintCodec.getMd5Fingerprint;
-
-import java.io.File;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 
 /**
- * MAVEN assemble tar provider.
+ * Pipeline provider for deployment MAVEN assemble tar project.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
@@ -34,74 +28,13 @@ import java.io.File;
  */
 public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
-	public MvnAssembleTarPipelineProvider(PipelineContext info) {
-		super(info);
+	public MvnAssembleTarPipelineProvider(PipelineContext context) {
+		super(context);
 	}
 
 	@Override
-	public void execute() throws Exception {
-		// Maven building and include dependencies.
-		mvnBuild(getContext().getTaskHistory(), false);
-
-		// Setup Vcs source fingerprint.
-		setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
-
-		// MVN build.
-		doMvnBuildInternal();
-	}
-
-	/**
-	 * Roll-back
-	 */
-	@Override
-	public void rollback() throws Exception {
-		// Older file
-		File backupFile = getBackupFile();
-		if (backupFile.exists()) {
-			// Direct using backup file.
-			rollbackBackupFile();
-			// Setup vcs source fingerprint.
-			setupSourceFingerprint(getContext().getRefTaskHistory().getShaGit());
-		} else {
-			// New building and include dependencies.
-			mvnBuild(getContext().getTaskHistory(), true);
-			// Setup vcs source fingerprint.
-			setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
-		}
-
-		// MVN build.
-		doMvnBuildInternal();
-	}
-
-	/**
-	 * Invoke internal MVN build.
-	 */
-	private void doMvnBuildInternal() throws Exception {
-		// Setup assets file fingerprint.
-		File file = new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath());
-		setupAssetsFingerprint(getMd5Fingerprint(file));
-
-		// backup in local
-		backupLocal();
-
-		// Do transfer to remote jobs.
-		doExecuteTransferToRemoteInstances();
-
-		if (log.isInfoEnabled()) {
-			log.info("Maven assemble deploy done!");
-		}
-
-	}
-
-	private File getBackupFile() {
-		String oldFilePath = config.getWorkspace() + "/" + getContext().getTaskHistory().getRefId() + "/"
-				+ subPackname(getContext().getProject().getAssetsPath());
-		return new File(oldFilePath);
-	}
-
-	@Override
-	protected Runnable newDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
+	protected Runnable newPipeDeployer(AppInstance instance) {
+		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(MvnAssembleTarPipeDeployer.class, args);
 	}
 

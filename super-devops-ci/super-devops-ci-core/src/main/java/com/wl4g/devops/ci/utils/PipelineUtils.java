@@ -15,10 +15,9 @@
  */
 package com.wl4g.devops.ci.utils;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.contains;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.state;
+import static org.springframework.util.StringUtils.getFilename;
 
 import java.io.File;
 
@@ -32,29 +31,14 @@ import java.io.File;
 public abstract class PipelineUtils {
 
 	/**
-	 * Get package Name from path.
+	 * Get filename with-out suffix from path.
 	 * 
 	 * @param path
 	 * @return
 	 */
-	public static String subPackname(String path) {
-		hasText(path, "Path must not be empty.");
-		if (contains(path, "/")) {
-			String[] a = path.split("/");
-			return a[a.length - 1];
-		}
-		return EMPTY;
-	}
-
-	/**
-	 * Get package WithOut suffix from path.
-	 * 
-	 * @param path
-	 * @return
-	 */
-	public static String subPacknameWithOutPostfix(String path) {
-		String a = subPackname(path);
-		return a.substring(0, a.lastIndexOf("."));
+	public static String getUnExtensionFilename(String path) {
+		String filename = getFilename(path);
+		return filename.substring(0, filename.lastIndexOf("."));
 	}
 
 	/**

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.filter;
 
-import static com.wl4g.devops.common.utils.web.WebUtils2.getFullRequestURL;
-import static com.wl4g.devops.common.utils.web.WebUtils2.isMediaRequest;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;
@@ -53,7 +53,7 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
 		if (log.isInfoEnabled()) {
 			String url = getFullRequestURL(toHttp(request));
-			log.info("Root request URL: {}", url);
+			log.info("Request of: {}", url);
 		}
 
 		// Logged-in or login page request passed

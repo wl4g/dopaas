@@ -40,7 +40,7 @@ public interface ErrorConfiguring {
 	 * @param ex
 	 * @return
 	 */
-	HttpStatus getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex);
+	Integer getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex);
 
 	/**
 	 * Obtain exception as string.

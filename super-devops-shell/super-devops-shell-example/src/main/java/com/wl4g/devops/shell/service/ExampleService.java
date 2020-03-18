@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.shell.service;
 
-import com.wl4g.devops.shell.bean.SumArgument;
-import com.wl4g.devops.shell.bean.SumResult;
+import com.wl4g.devops.shell.console.args.SumArgument;
+import com.wl4g.devops.shell.console.args.SumResult;
 
 public interface ExampleService {
 

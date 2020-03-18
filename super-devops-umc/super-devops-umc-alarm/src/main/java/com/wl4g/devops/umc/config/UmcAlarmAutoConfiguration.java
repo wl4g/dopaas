@@ -21,20 +21,17 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.devops.support.cache.JedisService;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.support.notification.MessageNotifier;
+import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.alarm.DefaultIndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.SimulateIndicatorsValveAleter;
 import com.wl4g.devops.umc.console.AlarmConsole;
 import com.wl4g.devops.umc.handler.CheckImpledAlarmConfigurer;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
-import com.wl4g.devops.umc.notification.AlarmNotifier;
-import com.wl4g.devops.umc.notification.CompositeAlarmNotifierAdapter;
-import com.wl4g.devops.umc.notification.bark.BarkNotifier;
-import com.wl4g.devops.umc.notification.email.EmailNotifier;
-import com.wl4g.devops.umc.notification.sms.SmsNotifier;
-import com.wl4g.devops.umc.notification.wechat.WeChatNotifier;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.inspect.AvgRuleInspector;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
@@ -70,15 +67,17 @@ public class UmcAlarmAutoConfiguration {
 	@Bean(BEAN_DEFAULT_VALVE_ALERTER)
 	public IndicatorsValveAlerter defaultIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager,
 			AlarmProperties config, AlarmConfigurer configurer, RuleConfigManager ruleManager,
-			CompositeRuleInspectorAdapter inspector, CompositeAlarmNotifierAdapter notifier) {
-		return new DefaultIndicatorsValveAlerter(jedisService, lockManager, config, configurer, ruleManager, inspector, notifier);
+			CompositeRuleInspectorAdapter inspector, GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter) {
+		return new DefaultIndicatorsValveAlerter(jedisService, lockManager, config, configurer, ruleManager, inspector,
+				notifierAdapter);
 	}
 
 	@Bean(BEAN_SIMULATE_VALVE_ALERTER)
 	public IndicatorsValveAlerter simulateIndicatorsValveAlerter(JedisService jedisService, JedisLockManager lockManager,
 			AlarmProperties config, AlarmConfigurer configurer, RuleConfigManager ruleManager,
-			CompositeRuleInspectorAdapter inspector, CompositeAlarmNotifierAdapter notifier) {
-		return new SimulateIndicatorsValveAleter(jedisService, lockManager, config, configurer, ruleManager, inspector, notifier);
+			CompositeRuleInspectorAdapter inspector, GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter) {
+		return new SimulateIndicatorsValveAleter(jedisService, lockManager, config, configurer, ruleManager, inspector,
+				notifierAdapter);
 	}
 
 	@Bean
@@ -90,35 +89,6 @@ public class UmcAlarmAutoConfiguration {
 	@Bean
 	public RuleConfigManager ruleConfigManager() {
 		return new RuleConfigManager();
-	}
-
-	//
-	// Alarm notifiers.
-	//
-
-	@Bean
-	public WeChatNotifier weChatNotifier() {
-		return new WeChatNotifier();
-	}
-
-	@Bean
-	public SmsNotifier smsNotifier() {
-		return new SmsNotifier();
-	}
-
-	@Bean
-	public EmailNotifier emailNotifier() {
-		return new EmailNotifier();
-	}
-
-	@Bean
-	public BarkNotifier barkNotifier() {
-		return new BarkNotifier();
-	}
-
-	@Bean
-	public CompositeAlarmNotifierAdapter compositeAlarmNotifierAdapter(List<AlarmNotifier> notifiers) {
-		return new CompositeAlarmNotifierAdapter(notifiers);
 	}
 
 	//

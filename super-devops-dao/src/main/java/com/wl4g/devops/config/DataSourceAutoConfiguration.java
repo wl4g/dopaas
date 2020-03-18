@@ -19,7 +19,8 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.utils.codec.AES;
+import com.wl4g.devops.support.mybatis.session.MultipleSqlSessionFactoryBean;
+import com.wl4g.devops.tool.common.crypto.AesUtils;
 
 import org.apache.ibatis.plugin.Interceptor;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -60,7 +61,7 @@ import java.util.Properties;
  */
 @Configuration
 public class DataSourceAutoConfiguration {
-	final private static Logger log = LoggerFactory.getLogger(DataSourceAutoConfiguration.class);
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Value("${mybatis.typeAliasesPackage}")
 	private String typeAliasesPackage;
@@ -80,7 +81,7 @@ public class DataSourceAutoConfiguration {
 		String plain = prop.getPassword();
 		if (String.valueOf(this.env.getProperty("spring.profiles.active")).equalsIgnoreCase("prod")) {
 			try {
-				plain = new AES().decrypt(prop.getPassword());
+				plain = new AesUtils().decrypt(prop.getPassword());
 			} catch (Throwable th) {
 				throw new IllegalStateException(
 						String.format("Unable to decryption database password for '%s'", prop.getPassword()), th);
@@ -112,7 +113,7 @@ public class DataSourceAutoConfiguration {
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
 		// SqlSessionFactory
-		SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
+		SqlSessionFactoryBean factory = new MultipleSqlSessionFactoryBean();
 		factory.setDataSource(dataSource);
 		factory.setTypeAliases(getTypeAliases(resolver));
 		factory.setConfigLocation(new ClassPathResource(configLocation));

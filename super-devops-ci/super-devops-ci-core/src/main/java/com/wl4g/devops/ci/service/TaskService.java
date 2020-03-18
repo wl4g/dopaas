@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
+import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
 import java.util.Map;
@@ -29,12 +30,19 @@ public interface TaskService {
 
 	Task save(Task task);
 
+	PageModel list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String providerKind,
+			String startDate, String endDate, String envType);
+
 	Map<String, Object> detail(Integer id);
 
 	int delete(Integer id);
 
 	Task getTaskDetailById(Integer triggerId);
 
-	List<TaskBuildCommand> getDependency(Integer clustomId);
+	List<TaskBuildCommand> getDependency(Integer appClusterId);
+
+	List<Task> getListByAppClusterId(Integer appClusterId);
+
+	List<Task> getForSelect();
 
 }

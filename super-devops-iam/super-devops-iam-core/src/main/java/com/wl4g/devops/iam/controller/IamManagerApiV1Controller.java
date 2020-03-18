@@ -15,16 +15,21 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import com.wl4g.devops.common.bean.share.ClusterConfig;
+import com.wl4g.devops.common.bean.erm.ClusterConfig;
+import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.share.ClusterConfigDao;
+import com.wl4g.devops.dao.erm.ClusterConfigDao;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
-import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
-import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
+import com.wl4g.devops.iam.controller.model.SessionDestroyClientModel;
+import com.wl4g.devops.iam.controller.model.SessionQueryClientModel;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,6 +66,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@RequestMapping(path = "findIamServers")
+	@RequiresPermissions(value = {"iam:online"})
 	public RespBase<?> findIamServers() throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(clusterConfigDao.getIamServer());
@@ -75,23 +81,24 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@RequestMapping(path = "getSessions")
-	public RespBase<?> getRemoteSessions(@Validated SessionQueryModel query, Integer id) throws Exception {
-		notNull(id, "Please select a Iam server");
+	@RequiresPermissions(value = {"iam:online"})
+	public RespBase<?> getRemoteSessions(@Validated SessionQueryClientModel query) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Get remote sessions for <= {} ...", query);
 		}
 
 		// Get remote IAM base URI.
-		ClusterConfig config = clusterConfigDao.selectByPrimaryKey(id);
+		ClusterConfig config = clusterConfigDao.selectByPrimaryKey(query.getId());
 		String url = getRemoteApiV1SessionUri(config.getExtranetBaseUri());
-		log.info("Request get remote sessions for: {}", url);
+		url += "?" + new BeanMapConvert(query).toUriParmaters();
+		if (log.isInfoEnabled()) {
+			log.info("Request get remote sessions for clusterConfigId: {}, URL: {}", query.getId(), url);
+		}
 
 		// Do exchange.
 		RespBase<SessionAttributeModel> resp = restTemplate
 				.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<RespBase<SessionAttributeModel>>() {
 				}).getBody();
-		// String resp = restTemplate.exchange(url, HttpMethod.GET, null,
-		// String.class).getBody();
 
 		if (log.isInfoEnabled()) {
 			log.info("Got remote sessions response for => {}", resp);
@@ -107,25 +114,32 @@ public class IamManagerApiV1Controller extends BaseController {
 	 * @throws Exception
 	 */
 	@PostMapping(path = "destroySessions")
-	public RespBase<?> destroyRemoteSession(@Validated SessionDestroyModel destroy) throws Exception {
+	@RequiresPermissions(value = {"iam:online"})
+	public RespBase<?> destroyRemoteSessions(@Validated SessionDestroyClientModel destroy) throws Exception {
 		if (log.isInfoEnabled()) {
 			log.info("Destroy remote sessions by <= {}", destroy);
 		}
 
-		// TODO --- get remote api baseUri from DB.
+		// Get cluster configuration.
+		ClusterConfig config = clusterConfigDao.selectByPrimaryKey(destroy.getId());
+		notNull(config, String.format("", destroy.getId()));
 
-		String url = getRemoteApiV1SessionUri("");
-		log.info("Request destroy remote sessions for: {}", url);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<?> entity = new HttpEntity<>(destroy, headers);
+		String url = getRemoteApiV1SessionUri(config.getExtranetBaseUri());
+		if (log.isInfoEnabled()) {
+			log.info("Request destroy remote sessions for clusterConfigId: {}, URL: {}", destroy.getId(), url);
+		}
 
 		// Do request.
-		RespBase<String> resp = restTemplate
-				.exchange(url, HttpMethod.DELETE, null, new ParameterizedTypeReference<RespBase<String>>() {
-				}).getBody();
+		RespBase<?> resp = restTemplate.exchange(url, HttpMethod.POST, entity, new ParameterizedTypeReference<RespBase<?>>() {
+		}).getBody();
 
 		if (log.isInfoEnabled()) {
 			log.info("Destroyed remote sessions response for => {}", resp);
 		}
-		return null;
+		return resp;
 	}
 
 	/**

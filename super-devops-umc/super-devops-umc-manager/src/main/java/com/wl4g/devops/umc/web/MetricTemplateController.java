@@ -15,14 +15,12 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.PageModel;
 import com.wl4g.devops.common.bean.umc.MetricTemplate;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.dao.umc.MetricTemplateDao;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.MetricTemplateService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,26 +37,21 @@ import java.util.List;
 @RequestMapping("/metric")
 public class MetricTemplateController extends BaseController {
 
-	@Autowired
-	private MetricTemplateDao metricTemplateDao;
 
 	@Autowired
 	private MetricTemplateService metricTemplateService;
 
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"umc:metrictemplate"})
 	public RespBase<?> list(String metric, String classify, PageModel pm) {
 		RespBase<Object> resp = RespBase.create();
-
-		Page<PageModel> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-		List<MetricTemplate> list = metricTemplateDao.list(metric, classify);
-
-		pm.setTotal(page.getTotal());
-		resp.buildMap().put("page", pm);
-		resp.buildMap().put("list", list);
+		PageModel list = metricTemplateService.list(pm, metric, classify);
+		resp.setData(list);
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"umc:metrictemplate"})
 	public RespBase<?> save(@RequestBody MetricTemplate metricTemplate) {
 		log.info("into MetricTemplateController.save prarms::" + "metricTemplate = {} ", metricTemplate);
 		Assert.notNull(metricTemplate, "metricTemplate is null");
@@ -70,14 +63,16 @@ public class MetricTemplateController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"umc:metrictemplate"})
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		MetricTemplate metricTemplate = metricTemplateDao.selectByPrimaryKey(id);
-		resp.buildMap().put("metricTemplate", metricTemplate);
+		MetricTemplate metricTemplate = metricTemplateService.detal(id);
+		resp.setData(metricTemplate);
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"umc:metrictemplate"})
 	public RespBase<?> del(Integer id) {
 		log.info("into MetricTemplateController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -89,7 +84,7 @@ public class MetricTemplateController extends BaseController {
 	public RespBase<?> getByClassify(String classify) {
 		RespBase<Object> resp = RespBase.create();
 		List<MetricTemplate> metricTemplate = metricTemplateService.getByClassify(classify);
-		resp.buildMap().put("list", metricTemplate);
+		resp.forMap().put("list", metricTemplate);
 		return resp;
 	}
 

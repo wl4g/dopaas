@@ -15,18 +15,18 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import com.wl4g.devops.common.bean.PageModel;
-import com.wl4g.devops.common.bean.iam.User;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.iam.service.UserService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import com.wl4g.devops.common.bean.iam.User;
+import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.iam.service.UserService;
+import com.wl4g.devops.page.PageModel;
 
 /**
  * @author vjay
@@ -41,23 +41,26 @@ public class UserController extends BaseController {
 
 	// @RequiresPermissions({"iam:user:list","iam:group:tree","iam:role:getRolesByUserGroups"})
 	@RequestMapping(value = "/list")
+	@RequiresPermissions(value = {"iam:user"})
 	public RespBase<?> list(PageModel pm, String userName, String displayName) {
 		RespBase<Object> resp = RespBase.create();
-		Map<String, Object> result = userService.list(pm, userName, displayName);
-		resp.setData(result);
+		PageModel list = userService.list(pm, userName, displayName);
+		resp.setData(list);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"iam:user"})
 	public RespBase<?> detail(Integer userId) {
 		Assert.notNull(userId, "userId is null");
 		RespBase<Object> resp = RespBase.create();
 		User detail = userService.detail(userId);
-		resp.buildMap().put("data", detail);
+		resp.forMap().put("data", detail);
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"iam:user"})
 	public RespBase<?> del(Integer userId) {
 		Assert.notNull(userId, "userId is null");
 		RespBase<Object> resp = RespBase.create();
@@ -66,6 +69,7 @@ public class UserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"iam:user"})
 	public RespBase<?> save(@RequestBody User user) {
 		Assert.notNull(user, "user is null");
 		RespBase<Object> resp = RespBase.create();

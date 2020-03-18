@@ -14,8 +14,8 @@
 spring:
   web:
     remote: # RestTemplate configuration.
-      read-timeout: 20000
-      connect-timeout: 6000
+      read-timeout: 60_000
+      connect-timeout: 10_000
       max-response-size: 10485760
       sslProperties: # SSL configuration.
         key-cert-chain-file: 

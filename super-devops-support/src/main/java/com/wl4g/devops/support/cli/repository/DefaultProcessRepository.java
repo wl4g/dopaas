@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.exception.support.NoSuchProcessException;
+import com.wl4g.devops.support.cli.process.DestroableProcess;
 
 /**
  * Default command-line process registration repository.
@@ -34,17 +35,24 @@ import com.wl4g.devops.common.exception.support.NoSuchProcessException;
  */
 public class DefaultProcessRepository implements ProcessRepository {
 
-	/** Command-line process registration repository. */
-	final protected ConcurrentMap<String, ProcessInfo> registry = new ConcurrentHashMap<>();
+	/**
+	 * Command-line process registration repository.
+	 */
+	final protected ConcurrentMap<String, DestroableProcess> registry = new ConcurrentHashMap<>();
 
 	@Override
-	public void register(String processId, ProcessInfo process) {
-		Assert.state(isNull(registry.putIfAbsent(processId, process)), "Already command-line process");
+	public void register(String processId, DestroableProcess dpw) {
+		Assert.state(isNull(registry.putIfAbsent(processId, dpw)), "Already command line process");
 	}
 
 	@Override
-	public ProcessInfo get(String processId) throws NoSuchProcessException {
-		ProcessInfo process = registry.get(processId);
+	public void setDestroable(String processId, boolean destroable) throws NoSuchProcessException {
+		get(processId).setDestroable(destroable);
+	}
+
+	@Override
+	public DestroableProcess get(String processId) throws NoSuchProcessException {
+		DestroableProcess process = registry.get(processId);
 		if (isNull(process)) {
 			throw new NoSuchProcessException(String.format("No such command-line process of '%s'", processId));
 		}
@@ -52,12 +60,17 @@ public class DefaultProcessRepository implements ProcessRepository {
 	}
 
 	@Override
-	public Collection<ProcessInfo> getProcesses() {
+	public boolean hasProcess(String processId) {
+		return registry.containsKey(processId);
+	}
+
+	@Override
+	public Collection<DestroableProcess> getProcessRegistry() {
 		return registry.values();
 	}
 
 	@Override
-	public ProcessInfo cleanup(String processId) {
+	public DestroableProcess cleanup(String processId) {
 		return registry.remove(processId);
 	}
 

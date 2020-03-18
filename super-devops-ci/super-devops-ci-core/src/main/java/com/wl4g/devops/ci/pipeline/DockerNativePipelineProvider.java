@@ -17,118 +17,64 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
-import com.wl4g.devops.ci.utils.GitUtils;
-import com.wl4g.devops.common.bean.ci.Dependency;
-import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.utils.codec.FingerprintCodec;
-
-import java.io.File;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 
 /**
  * Docker native integrate pipeline provider.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
- * @date 2019-05-05 17:28:00
+ * @date 2019-10-25
  */
-public class DockerNativePipelineProvider extends BasedMavenPipelineProvider {
+public class DockerNativePipelineProvider extends AbstractPipelineProvider implements ContainerPipelineProvider {
 
-	public DockerNativePipelineProvider(PipelineContext deployProviderBean) {
-		super(deployProviderBean);
+	public DockerNativePipelineProvider(PipelineContext context) {
+		super(context);
 	}
 
-	/**
-	 * execute -- build , push , pull , run
-	 *
-	 * @throws Exception
-	 */
 	@Override
-	public void execute() throws Exception {
-		Dependency dependency = new Dependency();
-		dependency.setProjectId(getContext().getProject().getId());
-		mvnBuild(getContext().getTaskHistory(), false);
-
-		// get sha and md5
-		setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
-
-		// docker build
-		dockerBuild(getContext().getProjectSourceDir());
-
-		// Startup pipeline jobs.
-		doExecuteTransferToRemoteInstances();
-
-		if (log.isInfoEnabled()) {
-			log.info("Maven assemble deploy done!");
-		}
-	}
-
-	/**
-	 * Roll-back
-	 *
-	 * @throws Exception
-	 */
-	@Override
-	public void rollback() throws Exception {
-		Dependency dependency = new Dependency();
-		dependency.setProjectId(getContext().getProject().getId());
-
-		mvnBuild(getContext().getTaskHistory(), true);
-		setupSourceFingerprint(GitUtils.getLatestCommitted(getContext().getProjectSourceDir()));
-
-		setupAssetsFingerprint(FingerprintCodec.getMd5Fingerprint(new File(getContext().getProjectSourceDir() + getContext().getProject().getAssetsPath())));
-
-		// Startup pipeline jobs.
-		doExecuteTransferToRemoteInstances();
-
-		if (log.isInfoEnabled()) {
-			log.info("Maven assemble deploy done!");
-		}
-	}
-
-	/**
-	 * Docker build
-	 */
-	public void dockerBuild(String path) throws Exception {
-		String command = "mvn -f " + path + "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
+	public void buildImage(String remoteHost, String user, String sshkey, String projectDir) throws Exception {
+		String command = "mvn -f " + projectDir
+				+ "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
 				+ config.getDeploy().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
 				+ config.getDeploy().getDockerNative().getDockerPushPasswd();
-		processManager.exec(command, config.getJobLog(getContext().getTaskHistory().getId()), 300000);
-	}
+		// File jogLogFile =
+		// config.getJobLog(getContext().getTaskHistory().getId());
 
-	/**
-	 * Docker pull
-	 */
-	public void dockerPull(String remoteHost, String user, String imageName, String rsa) throws Exception {
-		String command = "docker pull " + imageName;
-		doRemoteCommand(remoteHost, user, command, rsa);
-	}
-
-	/**
-	 * Docker stop
-	 */
-	public void dockerStop(String remoteHost, String user, String groupName, String rsa) throws Exception {
-		String command = "docker stop " + groupName;
-		doRemoteCommand(remoteHost, user, command, rsa);
-	}
-
-	/**
-	 * Docker remove container
-	 */
-	public void dockerRemoveContainer(String remoteHost, String user, String groupName, String rsa) throws Exception {
-		String command = "docker rm " + groupName;
-		doRemoteCommand(remoteHost, user, command, rsa);
-	}
-
-	/**
-	 * Docker Run
-	 */
-	public void dockerRun(String remoteHost, String user, String runCommand, String rsa) throws Exception {
-		doRemoteCommand(remoteHost, user, runCommand, rsa);
+		// TODO timeoutMs?
+		DestroableCommand cmd = new RemoteDestroableCommand(String.valueOf(getContext().getTaskHistory().getId()), command,
+				180_000L, user, remoteHost, sshkey.toCharArray());
+		pm.execWaitForComplete(cmd);
 	}
 
 	@Override
-	protected Runnable newDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryDetails() };
+	public void imagePull(String remoteHost, String user, String sshkey, String image) throws Exception {
+		String command = "docker pull " + image;
+		doRemoteCommand(remoteHost, user, command, sshkey);
+	}
+
+	@Override
+	public void stopContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
+		String command = "docker stop " + container;
+		doRemoteCommand(remoteHost, user, command, sshkey);
+	}
+
+	@Override
+	public void destroyContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
+		String command = "docker rm " + container;
+		doRemoteCommand(remoteHost, user, command, sshkey);
+	}
+
+	@Override
+	public void startContainer(String remoteHost, String user, String sshkey, String runContainerCommands) throws Exception {
+		doRemoteCommand(remoteHost, user, runContainerCommands, sshkey);
+	}
+
+	@Override
+	protected Runnable newPipeDeployer(AppInstance instance) {
+		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
 		return beanFactory.getBean(DockerNativePipeDeployer.class, args);
 	}
 

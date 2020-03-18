@@ -15,12 +15,14 @@
  */
 package com.wl4g.devops.iam.sns.qq.model;
 
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+
 import org.apache.shiro.util.Assert;
 
-import com.wl4g.devops.common.utils.serialize.JacksonUtils;
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 
 public class QQOpenId implements Oauth2OpenId {
+	private static final long serialVersionUID = 7990021511401902830L;
 
 	private String client_id;
 	private String openid;
@@ -61,7 +63,7 @@ public class QQOpenId implements Oauth2OpenId {
 	@SuppressWarnings("unchecked")
 	public QQOpenId build(String message) {
 		Assert.notNull(message, "'message' must not be null");
-		return JacksonUtils.parseJSON(cleanStringToken(message), QQOpenId.class);
+		return parseJSON(cleanStringToken(message), QQOpenId.class);
 	}
 
 	private String cleanStringToken(String msg) {
@@ -70,6 +72,13 @@ public class QQOpenId implements Oauth2OpenId {
 		// );
 		String cleanPrefix = msg.substring(9, msg.length());
 		return cleanPrefix.substring(0, cleanPrefix.length() - 3);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public QQOpenId validate() {
+		// TODO
+		return this;
 	}
 
 }

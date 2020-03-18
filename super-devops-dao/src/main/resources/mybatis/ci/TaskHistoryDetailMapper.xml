@@ -1,54 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wl4g.devops.dao.ci.TaskHistoryDetailDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.TaskHistoryInstance" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="task_id" property="taskId" jdbcType="INTEGER" />
     <result column="instance_id" property="instanceId" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="INTEGER" />
-    <result column="del_flag" property="delFlag" jdbcType="CHAR" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
-    <result column="create_by" property="createBy" jdbcType="VARCHAR" />
-    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
-    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
-
     <!-- ohter -->
     <result column="remark" property="instanceName" jdbcType="VARCHAR" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" extends="BaseResultMap" >
-    <result column="result" property="result" jdbcType="LONGVARCHAR" />
-  </resultMap>
+
   <sql id="Base_Column_List" >
-    id, task_id, instance_id, status, del_flag, create_date, create_by, update_date, 
-    update_by
+    id, task_id, instance_id, status, create_date
   </sql>
-  <sql id="Blob_Column_List" >
-    result
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from ci_task_history_detail
+    from ci_task_history_instance
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from ci_task_history_detail
+    delete from ci_task_history_instance
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
-    insert into ci_task_history_detail (id, task_id, instance_id,
-      status, del_flag, create_date, 
-      create_by, update_date, update_by, 
-      result)
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryInstance" >
+    insert into ci_task_history_instance (id, task_id, instance_id,
+      status, create_date)
     values (#{id,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, #{instanceId,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{delFlag,jdbcType=CHAR}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
-      #{result,jdbcType=LONGVARCHAR})
+      #{status,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
-    insert into ci_task_history_detail
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryInstance" >
+    insert into ci_task_history_instance
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -62,23 +45,8 @@
       <if test="status != null" >
         status,
       </if>
-      <if test="delFlag != null" >
-        del_flag,
-      </if>
       <if test="createDate != null" >
         create_date,
-      </if>
-      <if test="createBy != null" >
-        create_by,
-      </if>
-      <if test="updateDate != null" >
-        update_date,
-      </if>
-      <if test="updateBy != null" >
-        update_by,
-      </if>
-      <if test="result != null" >
-        result,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -94,28 +62,13 @@
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
       </if>
-      <if test="delFlag != null" >
-        #{delFlag,jdbcType=CHAR},
-      </if>
       <if test="createDate != null" >
         #{createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="createBy != null" >
-        #{createBy,jdbcType=VARCHAR},
-      </if>
-      <if test="updateDate != null" >
-        #{updateDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateBy != null" >
-        #{updateBy,jdbcType=VARCHAR},
-      </if>
-      <if test="result != null" >
-        #{result,jdbcType=LONGVARCHAR},
-      </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
-    update ci_task_history_detail
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryInstance" >
+    update ci_task_history_instance
     <set >
       <if test="taskId != null" >
         task_id = #{taskId,jdbcType=INTEGER},
@@ -126,57 +79,33 @@
       <if test="status != null" >
         status = #{status,jdbcType=INTEGER},
       </if>
-      <if test="delFlag != null" >
-        del_flag = #{delFlag,jdbcType=CHAR},
-      </if>
       <if test="createDate != null" >
         create_date = #{createDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createBy != null" >
-        create_by = #{createBy,jdbcType=VARCHAR},
-      </if>
-      <if test="updateDate != null" >
-        update_date = #{updateDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateBy != null" >
-        update_by = #{updateBy,jdbcType=VARCHAR},
-      </if>
-      <if test="result != null" >
-        result = #{result,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
-    update ci_task_history_details
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryInstance" >
+    update ci_task_history_instances
     set task_id = #{taskId,jdbcType=INTEGER},
       instance_id = #{instanceId,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
-      del_flag = #{delFlag,jdbcType=CHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
-      create_by = #{createBy,jdbcType=VARCHAR},
-      update_date = #{updateDate,jdbcType=TIMESTAMP},
-      update_by = #{updateBy,jdbcType=VARCHAR},
-      result = #{result,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryDetail" >
-    update ci_task_history_detail
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.TaskHistoryInstance" >
+    update ci_task_history_instance
     set task_id = #{taskId,jdbcType=INTEGER},
       instance_id = #{instanceId,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
-      del_flag = #{delFlag,jdbcType=CHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
-      create_by = #{createBy,jdbcType=VARCHAR},
-      update_date = #{updateDate,jdbcType=TIMESTAMP},
-      update_by = #{updateBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="getDetailByTaskId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="getDetailByTaskId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     d.*,i.remark
-    from ci_task_history_detail d
+    from ci_task_history_instance d
     left join app_instance i on d.instance_id=i.id
     where task_id = #{id,jdbcType=INTEGER}
   </select>

@@ -16,8 +16,8 @@
 package com.wl4g.devops.umc.rule;
 
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.support.cache.JedisService;
-import com.wl4g.devops.support.cache.ScanCursor;
+import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.support.redis.ScanCursor;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
-import static com.wl4g.devops.common.utils.lang.Collections2.safeList;
+import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -93,7 +93,7 @@ public class RuleConfigManager implements ApplicationRunner {
 		if (isEmpty(alarmTpls)) {
 			alarmTpls = ruleConfigurer.findAlarmConfigByEndpoint(host, endpoint);
 			if (!isEmpty(alarmTpls)) {
-				jedisService.setObjectList(key, alarmTpls, 0);
+				jedisService.setObjectList(key, alarmTpls, 5);
 			}
 		}
 		return safeList(alarmTpls);

@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class AlarmTemplate extends BaseBean implements Serializable {
@@ -117,7 +117,7 @@ public class AlarmTemplate extends BaseBean implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	public synchronized Map<String, String> getTagsMap() {
-		if (isEmpty(tagMap)) {
+		if (isEmpty(tagMap) && StringUtils.isNotBlank(getTags())) {
 			tagMap = parseJSON(getTags(), List.class);
 		}
 

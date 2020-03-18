@@ -16,7 +16,6 @@
 package com.wl4g.devops.common.web.error;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import static java.util.Locale.*;
@@ -32,8 +31,6 @@ import org.springframework.boot.autoconfigure.web.AbstractErrorController;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,18 +43,19 @@ import static org.springframework.http.MediaType.*;
 import static com.google.common.base.Charsets.UTF_8;
 
 import static com.wl4g.devops.common.constants.DevOpsConstants.PARAM_STACK_TRACE;
-import static com.wl4g.devops.common.utils.web.WebUtils2.write;
-import static com.wl4g.devops.common.utils.web.WebUtils2.writeJson;
-import static com.wl4g.devops.common.utils.web.WebUtils2.ResponseType.*;
-import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.*;
+import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.*;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
+import static com.wl4g.devops.tool.common.web.WebUtils2.write;
+import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
+import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.common.annotation.DevopsErrorController;
 import com.wl4g.devops.common.config.ErrorControllerAutoConfiguration.ErrorControllerProperties;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 
+import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
@@ -77,6 +75,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	final private static String DEFAULT_REDIRECT_KEY = "redirectUrl";
 
 	final private Logger log = LoggerFactory.getLogger(getClass());
+
 	/** Errors configuration properties. */
 	final private ErrorControllerProperties config;
 	/** Errors configuration adapter. */
@@ -102,8 +101,8 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 		}
 
 		try {
-			FreeMarkerConfigurer configurer = new FreeMarkerConfigurer();
-			configurer.setTemplateLoaderPath(config.getBasePath());
+			FreeMarkerConfigurer fmcr = new FreeMarkerConfigurer();
+			fmcr.setTemplateLoaderPath(config.getBasePath());
 			Properties settings = new Properties();
 			settings.setProperty("template_update_delay", "0");
 			settings.setProperty("default_encoding", "UTF-8");
@@ -111,20 +110,22 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 			settings.setProperty("datetime_format", "yyyy-MM-dd HH:mm:ss");
 			settings.setProperty("classic_compatible", "true");
 			settings.setProperty("template_exception_handler", "ignore");
-			configurer.setFreemarkerSettings(settings);
-			configurer.afterPropertiesSet();
+			fmcr.setFreemarkerSettings(settings);
+			fmcr.afterPropertiesSet();
 
-			if (!isRedirectURIError(config.getNotFountUriOrTpl())) {
-				this.tpl404 = configurer.getConfiguration().getTemplate(config.getNotFountUriOrTpl(), "UTF-8");
-				Assert.notNull(tpl404, "Default 404 view template must not be null");
+			// Initial errors template.
+			Configuration fmc = fmcr.getConfiguration();
+			if (!isErrorRedirectURI(config.getNotFountUriOrTpl())) {
+				this.tpl404 = fmc.getTemplate(config.getNotFountUriOrTpl(), UTF_8.name());
+				notNull(tpl404, "Default 404 view template must not be null");
 			}
-			if (!isRedirectURIError(config.getUnauthorizedUriOrTpl())) {
-				this.tpl403 = configurer.getConfiguration().getTemplate(config.getUnauthorizedUriOrTpl(), "UTF-8");
-				Assert.notNull(tpl403, "Default 403 view template must not be null");
+			if (!isErrorRedirectURI(config.getUnauthorizedUriOrTpl())) {
+				this.tpl403 = fmc.getTemplate(config.getUnauthorizedUriOrTpl(), UTF_8.name());
+				notNull(tpl403, "Default 403 view template must not be null");
 			}
-			if (!isRedirectURIError(config.getErrorUriOrTpl())) {
-				this.tpl50x = configurer.getConfiguration().getTemplate(config.getErrorUriOrTpl(), "UTF-8");
-				Assert.notNull(tpl50x, "Default 500 view template must not be null");
+			if (!isErrorRedirectURI(config.getErrorUriOrTpl())) {
+				this.tpl50x = fmc.getTemplate(config.getErrorUriOrTpl(), UTF_8.name());
+				notNull(tpl50x, "Default 500 view template must not be null");
 			}
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
@@ -157,7 +158,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 			Map<String, Object> model = getErrorAttributes(request, response, ex);
 
 			// Obtain custom extension response status.
-			HttpStatus status = adapter.getStatus(request, response, model, ex);
+			int status = adapter.getStatus(request, response, model, ex);
 			String errmsg = adapter.getRootCause(request, response, model, ex);
 
 			// Get redirectUri or rendering template.
@@ -166,31 +167,31 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 			// If and only if the client is a browser and not an XHR request
 			// returns to the page, otherwise it returns to JSON.
 			if (isJSONResponse(request)) {
-				RespBase<Object> resp = new RespBase<>(RetCode.create(status.value(), errmsg));
+				RespBase<Object> resp = new RespBase<>(RetCode.newCode(status, errmsg));
 				if (!(uriOrTpl instanceof Template)) {
-					resp.buildMap().put(DEFAULT_REDIRECT_KEY, uriOrTpl);
+					resp.forMap().put(DEFAULT_REDIRECT_KEY, uriOrTpl);
 				}
 				String errJson = toJSONString(resp);
-				log.error("Response Json Errors => {}", errJson);
+				log.error("Resp err => {}", errJson);
 				writeJson(response, errJson);
-			} else {
+			}
+			// Rendering errors view
+			else {
 				if (uriOrTpl instanceof Template) {
-					log.error("Response View Errors => httpStatus[{}]", status.value());
-					// Merge configuration map model.
-					model.putAll(parseJSON(toJSONString(config), new TypeReference<HashMap<String, Object>>() {
-					}));
-
-					// Readering
+					log.error("Redirect err view => http({})", status);
+					// Merge configuration to model.
+					model.putAll(config.asMap());
+					// Rendering
 					String renderString = processTemplateIntoString((Template) uriOrTpl, model);
-					write(response, status.value(), TEXT_HTML_VALUE, renderString.getBytes(UTF_8));
+					write(response, status, TEXT_HTML_VALUE, renderString.getBytes(UTF_8));
 				} else {
-					log.error("Redirect View Errors => [{}]", uriOrTpl);
+					log.error("Redirect err view => [{}]", uriOrTpl);
 					response.sendRedirect((String) uriOrTpl);
 				}
 			}
 		} catch (Throwable th) {
-			log.error(String.format("Failed to global errors for origin causes: \n%s at causes:\n%s", getStackTraceAsString(ex),
-					getStackTraceAsString(th)));
+			log.error("Failed to global errors for origin causes: \n{} at causes:\n{}", getStackTraceAsString(ex),
+					getStackTraceAsString(th));
 		}
 	}
 
@@ -204,12 +205,11 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 		if (log.isDebugEnabled()) {
 			return true;
 		}
-
 		String parameter = request.getParameter(PARAM_STACK_TRACE);
 		if (parameter == null) {
 			return false;
 		}
-		return Boolean.valueOf(parameter.toLowerCase(ENGLISH));
+		return isTrue(parameter.toLowerCase(ENGLISH), false);
 	}
 
 	/**
@@ -219,8 +219,11 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	 * @return
 	 */
 	private Map<String, Object> getErrorAttributes(HttpServletRequest request, HttpServletResponse response, Exception ex) {
-		Map<String, Object> model = super.getErrorAttributes(request, isStackTrace(request));
-		log.error("Origin Errors - {}", model);
+		boolean _stacktrace = isStackTrace(request);
+		Map<String, Object> model = super.getErrorAttributes(request, _stacktrace);
+		if (_stacktrace) {
+			log.error("Origin Errors - {}", model);
+		}
 
 		// Replace the exception message that appears to be meaningful.
 		model.put("message", adapter.getRootCause(request, response, model, ex));
@@ -236,15 +239,14 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	 * @throws TemplateException
 	 * @throws IOException
 	 */
-	private Object getRedirectUriOrRenderErrorView(Map<String, Object> model, HttpStatus status)
-			throws IOException, TemplateException {
+	private Object getRedirectUriOrRenderErrorView(Map<String, Object> model, int status) throws IOException, TemplateException {
 		switch (status) {
-		case NOT_FOUND:
+		case 404:
 			if (nonNull(tpl404)) {
 				return tpl404;
 			}
 			return config.getNotFountUriOrTpl().substring(DEFAULT_REDIRECT_PREFIX.length());
-		case FORBIDDEN:
+		case 403:
 			if (nonNull(tpl403)) {
 				return tpl403;
 			}
@@ -260,11 +262,11 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	/**
 	 * Is redirection error URI.
 	 * 
-	 * @param uri
+	 * @param uriOrTpl
 	 * @return
 	 */
-	private boolean isRedirectURIError(String uri) {
-		return startsWithIgnoreCase(uri, DEFAULT_REDIRECT_PREFIX);
+	private boolean isErrorRedirectURI(String uriOrTpl) {
+		return startsWithIgnoreCase(uriOrTpl, DEFAULT_REDIRECT_PREFIX);
 	}
 
 }

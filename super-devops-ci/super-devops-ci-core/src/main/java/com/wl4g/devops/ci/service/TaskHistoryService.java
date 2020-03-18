@@ -18,8 +18,9 @@ package com.wl4g.devops.ci.service;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.page.PageModel;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -31,24 +32,28 @@ import java.util.List;
 @Component
 public interface TaskHistoryService {
 
-	List<TaskHistory> list(String groupName, String projectName, String branchName);
+	PageModel list(PageModel pm, String groupName, String projectName, String branchName, String startDate, String endDate,
+			String envType);
 
-	List<TaskHistoryDetail> getDetailByTaskId(Integer id);
+	List<TaskHistoryInstance> getDetailByTaskId(Integer id);
 
 	TaskHistory getById(Integer id);
 
 	TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
-			String sha, Integer parentId,String buildCommand,  String preCommand, String postCommand, String tarType, Integer contactGroupId,
-			List<TaskBuildCommand> taskBuildCommands,Integer trackId,Integer trackType,String remark);
+			String sha, Integer parentId, String buildCommand, String preCommand, String postCommand, String tarType,
+			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, Integer trackType, String remark,
+			String envType, String annex,String parentAppHome,String assetsPath);
 
 	void updateStatus(int taskId, int status);
 
 	void updateStatusAndResult(int taskId, int status, String result);
 
-	void updateDetailStatusAndResult(int taskDetailId, int status, String result);
+	void updateDetailStatus(int taskDetailId, int status);
 
 	void updateStatusAndResultAndSha(int taskId, int status, String result, String sha, String md5);
 
 	void stopByTaskHisId(Integer taskHisId);
+
+	void updateCostTime(int taskId, long costTime);
 
 }

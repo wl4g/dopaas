@@ -16,17 +16,14 @@
 package com.wl4g.devops.iam.client.config;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-
-import java.util.HashMap;
-import java.util.Map;
+import static org.springframework.util.Assert.notNull;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.devops.iam.common.utils.Securitys;
+import com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils;
 import com.wl4g.devops.iam.client.config.IamClientProperties.ClientParamProperties;
 
 @ConfigurationProperties(prefix = "spring.cloud.devops.iam.client")
@@ -75,11 +72,6 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	 * Secondary authenticator provider name.
 	 */
 	private String secondAuthenticatorProvider = "wechat";
-
-	/**
-	 * Filter chains.
-	 */
-	private Map<String, String> filterChain = new HashMap<>();
 
 	/**
 	 * IAM client parameters configuration.
@@ -158,14 +150,6 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 		this.secondAuthenticatorProvider = secondAuthcProvider;
 	}
 
-	public Map<String, String> getFilterChain() {
-		return filterChain;
-	}
-
-	public void setFilterChain(Map<String, String> filterChain) {
-		this.filterChain = filterChain;
-	}
-
 	@Override
 	public ClientParamProperties getParam() {
 		return param;
@@ -177,6 +161,14 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	}
 
 	@Override
+	protected void validation() {
+		notNull(getServerUri(), "'baseUri' must be empty.");
+		notNull(getServiceName(), "'serviceName' must be empty.");
+		notNull(getFilterChain(), "'filterChain' must be empty.");
+		super.validation();
+	}
+
+	@Override
 	protected void applyDefaultIfNecessary() {
 		// Service name.
 		if (isBlank(getServiceName())) {
@@ -184,16 +176,8 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 		}
 		// Login URI.
 		if (isBlank(getLoginUri())) {
-			setLoginUri(Securitys.correctAuthenticaitorURI(getServerUri()));
+			setLoginUri(AuthenticatingSecurityUtils.correctAuthenticaitorURI(getServerUri()));
 		}
-	}
-
-	@Override
-	protected void validation() {
-		Assert.notNull(getServerUri(), "'baseUri' must be empty.");
-		Assert.notNull(getServiceName(), "'serviceName' must be empty.");
-		Assert.notNull(getFilterChain(), "'filterChain' must be empty.");
-		super.validation();
 	}
 
 	/**

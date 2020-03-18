@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.ci.service;
 
+import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
 
@@ -25,18 +27,24 @@ import java.util.List;
  */
 public interface ProjectService {
 
-	int insert(Project project);
-
-	int update(Project project);
+	void save(Project project);
 
 	int deleteById(Integer id);
 
 	int removeById(Integer id);
 
-	List<Project> list(String groupName, String projectName);
+	PageModel list(PageModel pm, String groupName, String projectName);
+
+	List<Project> getBySelect(Integer isBoot);
 
 	Project selectByPrimaryKey(Integer id);
 
+	Project getByAppClusterId(Integer appClusteId);
+
 	int updateLockStatus(Integer id, Integer lockStatus);
+
+	List<String> getBranchs(Integer appClusterId, Integer tarOrBranch);
+
+	List<CompositeBasicVcsProjectModel> vcsProjects(Integer vcsId, String projectName);
 
 }

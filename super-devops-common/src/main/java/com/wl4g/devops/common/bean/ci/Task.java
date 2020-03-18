@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.bean.ci;
 
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.io.Serializable;
 import java.util.List;
@@ -33,7 +33,7 @@ public class Task extends BaseBean implements Serializable {
 
 	private String branchName;
 
-	private String tarType;
+	private String providerKind;
 
 	private String branchType;
 
@@ -45,9 +45,20 @@ public class Task extends BaseBean implements Serializable {
 
 	private Integer contactGroupId;
 
+	private String envType;
+
+	private Integer pcmId;
+
+	private String pmPlatform;
+
+	private String parentAppHome;
+
+	/** 构建的文件/目录路径（maven项目的target目录，vue项目的dist目录） */
+	private String assetsPath;
+
 	private List<AppInstance> instances;
 
-	private List<TaskDetail> taskDetails;
+	private List<TaskInstance> taskInstances;
 
 	private Integer[] instance;
 
@@ -104,12 +115,12 @@ public class Task extends BaseBean implements Serializable {
 		this.branchName = branchName == null ? null : branchName.trim();
 	}
 
-	public String getTarType() {
-		return tarType;
+	public String getProviderKind() {
+		return providerKind;
 	}
 
-	public void setTarType(String tarType) {
-		this.tarType = tarType;
+	public void setProviderKind(String providerKind) {
+		this.providerKind = providerKind;
 	}
 
 	public String getBranchType() {
@@ -136,12 +147,12 @@ public class Task extends BaseBean implements Serializable {
 		this.instances = instances;
 	}
 
-	public List<TaskDetail> getTaskDetails() {
-		return taskDetails;
+	public List<TaskInstance> getTaskInstances() {
+		return taskInstances;
 	}
 
-	public void setTaskDetails(List<TaskDetail> taskDetails) {
-		this.taskDetails = taskDetails;
+	public void setTaskInstances(List<TaskInstance> taskInstances) {
+		this.taskInstances = taskInstances;
 	}
 
 	public Integer getContactGroupId() {
@@ -176,11 +187,51 @@ public class Task extends BaseBean implements Serializable {
 		this.instance = instance;
 	}
 
+	public String getEnvType() {
+		return envType;
+	}
+
+	public void setEnvType(String envType) {
+		this.envType = envType;
+	}
+
+	public String getPmPlatform() {
+		return pmPlatform;
+	}
+
+	public Integer getPcmId() {
+		return pcmId;
+	}
+
+	public void setPcmId(Integer pcmId) {
+		this.pcmId = pcmId;
+	}
+
+	public void setPmPlatform(String pmPlatform) {
+		this.pmPlatform = pmPlatform;
+	}
+
+	public String getParentAppHome() {
+		return parentAppHome;
+	}
+
+	public void setParentAppHome(String parentAppHome) {
+		this.parentAppHome = parentAppHome;
+	}
+
+	public String getAssetsPath() {
+		return assetsPath;
+	}
+
+	public void setAssetsPath(String assetsPath) {
+		this.assetsPath = assetsPath;
+	}
+
 	@Override
 	public String toString() {
 		return "Task{" + "taskName='" + taskName + '\'' + ", appClusterId=" + appClusterId + ", projectId=" + projectId
-				+ ", branchName='" + branchName + '\'' + ", tarType=" + tarType + ", branchType='" + branchType + '\''
+				+ ", branchName='" + branchName + '\'' + ", providerKind=" + providerKind + ", branchType='" + branchType + '\''
 				+ ", preCommand='" + preCommand + '\'' + ", postCommand='" + postCommand + '\'' + ", instances=" + instances
-				+ ", taskDetails=" + taskDetails + ", groupName='" + groupName + '\'' + '}';
+				+ ", taskInstances=" + taskInstances + ", groupName='" + groupName + '\'' + '}';
 	}
 }

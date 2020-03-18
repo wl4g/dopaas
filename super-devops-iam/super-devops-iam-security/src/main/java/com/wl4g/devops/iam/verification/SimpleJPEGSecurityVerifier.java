@@ -15,21 +15,22 @@
  */
 package com.wl4g.devops.iam.verification;
 
-import com.wl4g.devops.iam.crypto.keypair.RSAKeySpecWrapper;
 import com.wl4g.devops.iam.verification.model.SimpleApplyImgModel;
 import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Random;
-
-import static com.wl4g.devops.common.utils.serialize.JacksonUtils.parseJSON;
 
 /**
  * Default JDK CAPTCHA handler.
@@ -52,7 +53,7 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, RSAKeySpecWrapper keySpec)
+	protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, KeyPairSpec keySpec)
 			throws IOException {
 		// Generate image & to base64 string.
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

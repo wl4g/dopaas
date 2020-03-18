@@ -15,20 +15,23 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
 import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.share.AppCluster;
-import com.wl4g.devops.common.bean.share.AppInstance;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.constants.CiDevOpsConstants;
 import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.dao.ci.TaskHisBuildCommandDao;
+import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDetailDao;
-import com.wl4g.devops.dao.share.AppClusterDao;
-import com.wl4g.devops.support.cli.ProcessManager;
+import com.wl4g.devops.dao.erm.AppClusterDao;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.support.cli.destroy.DestroySignal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,17 +57,21 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Autowired
 	private AppClusterDao appClusterDao;
 	@Autowired
-	private TaskHisBuildCommandDao taskHisBuildCommandDao;
+	private TaskHistoryBuildCommandDao taskHistoryBuildCommandDao;
+
 	@Autowired
-	protected ProcessManager processManager;
+	protected DestroableProcessManager pm;
 
 	@Override
-	public List<TaskHistory> list(String groupName, String projectName, String branchName) {
-		return taskHistoryDao.list(groupName, projectName, branchName);
+	public PageModel list(PageModel pm, String groupName, String projectName, String branchName, String startDate, String endDate,
+			String envType) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(taskHistoryDao.list(groupName, projectName, branchName, startDate, endDate, envType));
+		return pm;
 	}
 
 	@Override
-	public List<TaskHistoryDetail> getDetailByTaskId(Integer id) {
+	public List<TaskHistoryInstance> getDetailByTaskId(Integer id) {
 		return taskHistoryDetailDao.getDetailByTaskId(id);
 	}
 
@@ -85,8 +92,9 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Override
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
-			String sha, Integer refId,String buildCommand, String preCommand, String postCommand, String tarType, Integer contactGroupId,
-			List<TaskBuildCommand> taskBuildCommands,Integer trackId,Integer trackType,String remark) {
+			String sha, Integer refId, String buildCommand, String preCommand, String postCommand, String tarType,
+			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, Integer trackType, String remark,
+			String envType, String annex,String parentAppHome,String assetsPath) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preInsert();
@@ -99,26 +107,33 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setBuildCommand(buildCommand);
 		taskHistory.setPreCommand(preCommand);
 		taskHistory.setPostCommand(postCommand);
-		taskHistory.setTarType(tarType);
+		taskHistory.setProviderKind(tarType);
 		taskHistory.setEnable(CiDevOpsConstants.TASK_ENABLE_STATUS);
 		taskHistory.setContactGroupId(contactGroupId);
-		//1107 add
+		// 1107 add
 		taskHistory.setTrackId(trackId);
 		taskHistory.setTrackType(trackType);
 		taskHistory.setRemark(remark);
+		taskHistory.setEnvType(envType);
+		taskHistory.setAnnex(annex);
+		// 20200311 add
+		taskHistory.setParentAppHome(parentAppHome);
+		taskHistory.setAssetsPath(assetsPath);
+
 		taskHistoryDao.insertSelective(taskHistory);
 		for (AppInstance instance : instances) {
-			TaskHistoryDetail taskHistoryDetail = new TaskHistoryDetail();
-			taskHistoryDetail.preInsert();
-			taskHistoryDetail.setTaskId(taskHistory.getId());
-			taskHistoryDetail.setInstanceId(instance.getId());
-			taskHistoryDetail.setStatus(CiDevOpsConstants.TASK_STATUS_CREATE);
-			taskHistoryDetailDao.insertSelective(taskHistoryDetail);
+			TaskHistoryInstance taskHistoryInstance = new TaskHistoryInstance();
+			taskHistoryInstance.preInsert();
+			taskHistoryInstance.setTaskId(taskHistory.getId());
+			taskHistoryInstance.setInstanceId(instance.getId());
+			taskHistoryInstance.setStatus(CiDevOpsConstants.TASK_STATUS_CREATE);
+			taskHistoryDetailDao.insertSelective(taskHistoryInstance);
 		}
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			taskBuildCommand.setId(null);
+			taskBuildCommand.preInsert();
 			taskBuildCommand.setTaskId(taskHistory.getId());
-			taskHisBuildCommandDao.insertSelective(taskBuildCommand);
+			taskHistoryBuildCommandDao.insertSelective(taskBuildCommand);
 		}
 		return taskHistory;
 	}
@@ -163,19 +178,27 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setId(taskHisId);
 		taskHistory.setStatus(TASK_STATUS_STOP);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
-		//CommandUtils.killByTaskId(taskHisId);
-		processManager.destroy(String.valueOf(taskHisId),5000);
 
+		// TODO timeoutMs?
+		pm.destroyForComplete(new DestroySignal(String.valueOf(taskHisId), 5000L));
 	}
 
 	@Override
-	public void updateDetailStatusAndResult(int taskDetailId, int status, String result) {
-		TaskHistoryDetail taskHistoryDetail = new TaskHistoryDetail();
-		taskHistoryDetail.preUpdate();
-		taskHistoryDetail.setId(taskDetailId);
-		taskHistoryDetail.setStatus(status);
-		taskHistoryDetail.setResult(result);
-		taskHistoryDetailDao.updateByPrimaryKeySelective(taskHistoryDetail);
+	public void updateCostTime(int taskId, long costTime) {
+		TaskHistory taskHistory = new TaskHistory();
+		taskHistory.preUpdate();
+		taskHistory.setId(taskId);
+		taskHistory.setCostTime(costTime);
+		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
+	}
+
+	@Override
+	public void updateDetailStatus(int taskDetailId, int status) {
+		TaskHistoryInstance taskHistoryInstance = new TaskHistoryInstance();
+		taskHistoryInstance.preUpdate();
+		taskHistoryInstance.setId(taskDetailId);
+		taskHistoryInstance.setStatus(status);
+		taskHistoryDetailDao.updateByPrimaryKeySelective(taskHistoryInstance);
 	}
 
 }

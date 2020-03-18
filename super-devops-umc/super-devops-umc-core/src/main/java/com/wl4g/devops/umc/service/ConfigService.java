@@ -16,12 +16,15 @@
 package com.wl4g.devops.umc.service;
 
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
+import com.wl4g.devops.page.PageModel;
 
 /**
  * @author vjay
  * @date 2019-08-05 16:01:00
  */
 public interface ConfigService {
+
+	PageModel list(PageModel pm,Integer templateId, Integer contactGroupId);
 
 	void save(AlarmConfig alarmConfig);
 

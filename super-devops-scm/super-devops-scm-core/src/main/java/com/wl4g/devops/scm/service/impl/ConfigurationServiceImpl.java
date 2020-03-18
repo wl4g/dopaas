@@ -23,14 +23,14 @@ import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
-import com.wl4g.devops.common.bean.share.AppCluster;
-import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.common.bean.share.Dict;
+import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.iam.Dict;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
-import com.wl4g.devops.dao.share.AppClusterDao;
-import com.wl4g.devops.dao.share.AppInstanceDao;
-import com.wl4g.devops.dao.share.DictDao;
+import com.wl4g.devops.dao.erm.AppClusterDao;
+import com.wl4g.devops.dao.erm.AppInstanceDao;
+import com.wl4g.devops.dao.iam.DictDao;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,12 +105,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		if (null != vd.getConfigGurations() && !vd.getConfigGurations().isEmpty()) {
 			Map<String, Object> vMap = new HashMap<>();
 			vMap.put("vid", vd.getId());
+			for(VersionContentBean versionContentBean : vd.getConfigGurations()){
+				versionContentBean.preInsert();
+			}
 			vMap.put("configGurations", vd.getConfigGurations());
 			this.configurationDao.insertDetail(vMap);
 		}
 
 		// Save release history information.
 		HistoryOfDetail historyOfDetail = new HistoryOfDetail();
+		historyOfDetail.preInsert();
 		historyOfDetail.setVersionid(versionId);
 		historyOfDetail.setRemark(vd.getRemark());
 		historyOfDetail.setCreateBy(vd.getCreateBy());
@@ -122,6 +126,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		for (AppInstance instance : nodeList) {
 			// Save release history details information.
 			ReleaseDetail releaseDetail = new ReleaseDetail();
+			releaseDetail.preInsert();
 			releaseDetail.setReleaseId(historyOfDetail.getId());
 			releaseDetail.setResult("暂无结果");
 			releaseDetail.setInstanceId(instance.getId());

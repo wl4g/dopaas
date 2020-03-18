@@ -18,13 +18,13 @@ package com.wl4g.devops.iam.authc.credential;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder;
+import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.config.properties.MatcherProperties;
-import com.wl4g.devops.iam.verification.cumulation.CumulateHolder;
-import com.wl4g.devops.iam.verification.cumulation.Cumulator;
 
-import static com.wl4g.devops.iam.common.utils.Securitys.*;
-import static com.wl4g.devops.iam.common.utils.SessionBindings.*;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.util.Assert.notEmpty;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -80,7 +80,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 		// Fail limiter factor keys
 		List<String> factors = createLimitFactors(tk.getHost(), principal);
-		Assert.notEmpty(factors, "'factors' must not be empty");
+		notEmpty(factors, "LimitFactors can't empty");
 
 		Long cumulatedMaxFailCount = 0L;
 		try {
@@ -104,8 +104,8 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		}
 
 		if (log.isInfoEnabled()) {
-			log.info("Credentials[{}], matched[{}], principal[{}], anyFailCount[{}]", String.valueOf(token.getCredentials()),
-					matched, principal, cumulatedMaxFailCount);
+			log.info("Match principal: {}, matched: {}, cumulatedMaxFailCount: {}, factors: {}, token: {}", principal, matched,
+					cumulatedMaxFailCount, factors, tk);
 		}
 		// This is an accident.
 		return matched;
@@ -134,8 +134,8 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 		// Cumulative increase of session matching count by 1
 		long sessioinMatchCountMax = sessionMatchCumulator.accumulate(factors, 1);
-		if (log.isInfoEnabled()) {
-			log.info("Principal {} matched failure accumulative limiter matchCountMax: {}, sessioinMatchCountMax: {}, factor: {}",
+		if (log.isDebugEnabled()) {
+			log.debug("Principal {} match failed accumulative matchCountMax: {}, sessioinMatchCountMax: {}, factor: {}",
 					principal, matchCountMax, sessioinMatchCountMax, factors);
 		}
 
@@ -159,7 +159,6 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	protected void postSuccessProcess(String principal, List<String> factors) {
 		// Destroy all cumulators
 		destroyCumulators(factors);
-
 		if (log.isDebugEnabled()) {
 			log.debug("Principal {} matched success, cleaning factors: {}", principal, factors);
 		}
@@ -219,8 +218,8 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			if (cumulatedMax > matchLockMaxAttempts) {
 				factorLock = true;
 			}
-			if (log.isTraceEnabled()) {
-				log.trace(
+			if (log.isDebugEnabled()) {
+				log.debug(
 						"assertAccountLocked()=> factor:{}, cumulated: {}, matchLockMaxAttempts: {}, cumulatedMax: {}, lock: {}, factorLock: {}",
 						factor, cumulated, matchLockMaxAttempts, cumulatedMax, lock, factorLock);
 			}

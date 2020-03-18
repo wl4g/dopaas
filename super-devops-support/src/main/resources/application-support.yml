@@ -9,53 +9,76 @@
 #
 
 #
-# #### Spring utility configuration. ####
+# #### Spring cloud devops support configuration. ####
 #
 spring:
-  mail:
-    #host: smtp.sina.com
-    #port: 465
-    #username: safec7782@sina.com
-    #password: safec7782
-
-    #host: smtp.anosi.cn
-    #port: 465
-    #username: syslog@anosi.cn
-    #password: Abc.cn123
-
-    #host: smtp.exmail.qq.com
-    #port: 465
-    #username: syslog@7782.co
-    #password: Sm#1234
-
-    #host: smtp.163.com
-    #port: 465
-    #username: babaa1f4@163.com
-    #password: XBurnerAir00
-
-    protocol: smtp
-    default-encoding: UTF-8
-    properties:
-      mail.smtp.auth: true
-      # Note: that you must display the settings ssl. enable, otherwise SSL is disabled by default in windows,
-      # but is turned on by default in linux, which will cause inconsistency.
-      mail.smtp.ssl.enable: true
-      mail.smtp.timeout: 15000
-      mail.smtp.starttls.enable: true
-      mail.smtp.starttls.required: true
-      #mail.smtp.socketFactory.port: ${spring.mail.port}
-      #mail.smtp.socketFactory.fallback: false
-      #mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
-
-# #### SMS configuration. ####
-sms:
-  aliyun:
-    product: Dysmsapi
-    domain: dysmsapi.aliyuncs.com
-    accessKeyId: LTAIyF0dussltest
-    accessKeySecret: kxk4jznkdKQG7rFZ9Ix4rx1h3Btest
-    #signName: XXX Platform
-    signName: XXX Platform
-    templateCode: SMS_140726862
-    defaultConnectTimeout: 10000
-    defaultReadTimeout: 10000
+  cloud:
+    devops:
+      #support:
+      #  devel:
+      #    mybatis-loader: false
+      #  notification:
+      #    mail:
+      #      enable: false # Default[false]
+      #      host: smtp.sina.com
+      #      port: 465
+      #      username: safec7782@sina.com
+      #      password: safec7782
+      #      protocol: smtp
+      #      default-encoding: UTF-8
+      #      properties:
+      #        mail.smtp.auth: true
+      #        # Note: that you must display the settings ssl. enable, otherwise SSL is disabled by default in windows,
+      #        # but is turned on by default in linux, which will cause inconsistency.
+      #        mail.smtp.ssl.enable: true
+      #        mail.smtp.timeout: 15000
+      #        mail.smtp.starttls.enable: true
+      #        mail.smtp.starttls.required: true
+      #        #mail.smtp.socketFactory.port: ${spring.mail.port}
+      #        #mail.smtp.socketFactory.fallback: false
+      #        #mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
+      #      templates: # http://www.bejson.com/convert/unicode_chinese
+      #        tpl1: Application health notification：${appInfo} status changed from ${fromStatus} to ${toStatus}, details：${msg}
+      #        tpl2: Your verification code is：${code} valid for 5 minutes. You can't tell anyone if you're dead. Thank you for using!
+      #    # Some configuration...
+      #    sms:
+      #      enable: true # Default[false]
+      #      aliyun:
+      #        regionId: cn-hangzhou
+      #        accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+      #        accessKeySecret: {ALIYUN_SECRET}
+      #        signName: Super Devops\u7edf\u4e00\u76d1\u63a7\u5e73\u53f0
+      #        templates: # https://dysms.console.aliyun.com/dysms.htm#/domestic/text/template
+      #          tpl1: SMS_140726862 # Alarm notice template.
+      #          tpl2: SMS_109490228 # VerificationCode notice template.
+      #    vms:
+      #      enable: true # Default[false]
+      #      aliyun:
+      #        regionId: cn-hangzhou
+      #        accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+      #        accessKeySecret: {ALIYUN_SECRET}
+      #        calledShowNumber: 055162153866
+      #        templates:
+      #          tpl1: TTS_184825642 # Alarm notice template.
+      #          tpl2: TTS_184820765 # VerificationCode notice template.
+      #    wechat:
+      #      enable: false # Default[false]
+      #      # Some configuration...
+      #    qq:
+      #      enable: false # Default[false]
+      #      # Some configuration...
+      #    apns:
+      #      enable: false # Default[false]
+      #      # Some configuration...
+      #    bark:
+      #      enable: false # Default[false]
+      #      # Some configuration...
+      #    dingtalk:
+      #      enable: false # Default[false]
+      #      # Some configuration...
+      #    facebook:
+      #      enable: false # Default[false]
+      #      # Some configuration...
+      #    twitter:
+      #      enable: false # Default[false]
+      #      # Some configuration...

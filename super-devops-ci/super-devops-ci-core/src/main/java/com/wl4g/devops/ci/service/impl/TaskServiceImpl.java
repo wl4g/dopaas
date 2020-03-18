@@ -15,15 +15,17 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.common.bean.share.AppInstance;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
-import com.wl4g.devops.dao.share.AppInstanceDao;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.tool.common.lang.DateUtils2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,22 +56,18 @@ public class TaskServiceImpl implements TaskService {
 	private DependencyService dependencyService;
 	@Autowired
 	private TaskBuildCommandDao taskBuildCommandDao;
-	@Autowired
-	private AppInstanceDao appInstanceDao;
 
 	@Override
 	@Transactional
 	public Task save(Task task) {
-		// check task repeat
-		// Assert.state(!isRepeat(task, task.getInstance()), "trigger deploy
-		// this instance is Repeat,please check");
 		Assert.notEmpty(task.getInstance(), "instance can not be null");
 		Assert.notNull(task, "task can not be null");
-		Project project = projectDao.getByAppClusterId(task.getAppClusterId());
+		Integer appClusterId = task.getAppClusterId();
+		Assert.notNull(appClusterId, "appClusterId can not be null");
+		Project project = projectDao.getByAppClusterId(appClusterId);
 		Assert.notNull(project, "Not found project , Please check you project config");
-		// TODO filter command
-
 		task.setProjectId(project.getId());
+
 		if (null != task.getId() && task.getId() > 0) {
 			task.preUpdate();
 			task = update(task, task.getInstance(), task.getTaskBuildCommands());
@@ -79,24 +77,38 @@ public class TaskServiceImpl implements TaskService {
 		return task;
 	}
 
+	@Override
+	public PageModel list(PageModel pm, Integer id, String taskName, String groupName, String branchName, String providerKind,
+			String startDate, String endDate, String envType) {
+		String endDateStr = null;
+		if (StringUtils.isNotBlank(endDate)) {
+			endDateStr = DateUtils2.formatDate(DateUtils2.addDays(DateUtils2.parseDate(endDate), 1));
+		}
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(taskDao.list(id, taskName, groupName, branchName, providerKind, startDate, endDateStr, envType));
+		return pm;
+	}
+
 	private Task insert(Task task, Integer[] instanceIds, List<TaskBuildCommand> taskBuildCommands) {
 		task.preInsert();
 		task.setDelFlag(DEL_FLAG_NORMAL);
 		taskDao.insertSelective(task);
 		int taskId = task.getId();
-		List<TaskDetail> taskDetails = new ArrayList<>();
+		List<TaskInstance> taskInstances = new ArrayList<>();
 		for (Integer instanceId : instanceIds) {
-			TaskDetail taskDetail = new TaskDetail();
-			taskDetail.setTaskId(taskId);
-			taskDetail.setInstanceId(instanceId);
-			taskDetailDao.insertSelective(taskDetail);
-			taskDetails.add(taskDetail);
+			TaskInstance taskInstance = new TaskInstance();
+			taskInstance.preInsert();
+			taskInstance.setTaskId(taskId);
+			taskInstance.setInstanceId(instanceId);
+			taskDetailDao.insertSelective(taskInstance);
+			taskInstances.add(taskInstance);
 		}
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			taskBuildCommand.setTaskId(taskId);
+			taskBuildCommand.preInsert();
 			taskBuildCommandDao.insertSelective(taskBuildCommand);
 		}
-		task.setTaskDetails(taskDetails);
+		task.setTaskInstances(taskInstances);
 		return task;
 	}
 
@@ -104,21 +116,23 @@ public class TaskServiceImpl implements TaskService {
 		task.preUpdate();
 		task.preUpdate();
 		taskDao.updateByPrimaryKeySelective(task);
-		List<TaskDetail> taskDetails = new ArrayList<>();
+		List<TaskInstance> taskInstances = new ArrayList<>();
 		taskDetailDao.deleteByTaskId(task.getId());
 		for (Integer instanceId : instanceIds) {
-			TaskDetail taskDetail = new TaskDetail();
-			taskDetail.setTaskId(task.getId());
-			taskDetail.setInstanceId(instanceId);
-			taskDetailDao.insertSelective(taskDetail);
-			taskDetails.add(taskDetail);
+			TaskInstance taskInstance = new TaskInstance();
+			taskInstance.preInsert();
+			taskInstance.setTaskId(task.getId());
+			taskInstance.setInstanceId(instanceId);
+			taskDetailDao.insertSelective(taskInstance);
+			taskInstances.add(taskInstance);
 		}
 		taskBuildCommandDao.deleteByTaskId(task.getId());
 		for (TaskBuildCommand taskBuildCommand : taskBuildCommands) {
 			taskBuildCommand.setTaskId(task.getId());
+			taskBuildCommand.preInsert();
 			taskBuildCommandDao.insertSelective(taskBuildCommand);
 		}
-		task.setTaskDetails(taskDetails);
+		task.setTaskInstances(taskInstances);
 		return task;
 	}
 
@@ -129,19 +143,10 @@ public class TaskServiceImpl implements TaskService {
 		Map data = new HashMap();
 		Task task = getTaskDetailById(id);
 		data.put("task", task);
-		// Environment.
-		for (TaskDetail taskDetail : task.getTaskDetails()) {
-			Integer instanceId = taskDetail.getInstanceId();
-			AppInstance instance = appInstanceDao.selectByPrimaryKey(instanceId);
-			if (instance != null && instance.getEnvType() != null) {
-				data.put("envId", instance.getEnvType());
-				break;
-			}
-		}
 		// Instances.
-		Integer[] instances = new Integer[task.getTaskDetails().size()];
-		for (int i = 0; i < task.getTaskDetails().size(); i++) {
-			instances[i] = task.getTaskDetails().get(i).getInstanceId();
+		Integer[] instances = new Integer[task.getTaskInstances().size()];
+		for (int i = 0; i < task.getTaskInstances().size(); i++) {
+			instances[i] = task.getTaskInstances().get(i).getInstanceId();
 		}
 		data.put("instances", instances);
 		// Commands.
@@ -169,13 +174,13 @@ public class TaskServiceImpl implements TaskService {
 		Assert.notNull(taskId, "taskId is null");
 		Task task = taskDao.selectByPrimaryKey(taskId);
 		Assert.notNull(task, "not found task");
-		List<TaskDetail> taskDetails = taskDetailDao.selectByTaskId(taskId);
-		task.setTaskDetails(taskDetails);
+		List<TaskInstance> taskInstances = taskDetailDao.selectByTaskId(taskId);
+		task.setTaskInstances(taskInstances);
 		return task;
 	}
 
-	public List<TaskBuildCommand> getDependency(Integer clustomId) {
-		Project project = projectDao.getByAppClusterId(clustomId);
+	public List<TaskBuildCommand> getDependency(Integer appClusterId) {
+		Project project = projectDao.getByAppClusterId(appClusterId);
 		if (project == null) {
 			return Collections.emptyList();
 		}
@@ -195,6 +200,17 @@ public class TaskServiceImpl implements TaskService {
 			taskBuildCommands.add(taskBuildCommand);
 		}
 		return taskBuildCommands;
+	}
+
+	@Override
+	public List<Task> getListByAppClusterId(Integer appClusterId) {
+		List<Task> tasks = taskDao.selectByAppClusterId(appClusterId);
+		return tasks;
+	}
+
+	@Override
+	public List<Task> getForSelect() {
+		return taskDao.list(null, null, null, null, null, null, null, null);
 	}
 
 }

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.shell.config;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+
 import java.net.URL;
 
 import javax.xml.bind.JAXBContext;
@@ -23,8 +25,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.wl4g.devops.shell.utils.Assert;
 
 /**
  * Shell properties configuration
@@ -53,12 +53,12 @@ public class Configuration extends AbstractConfiguration {
 	private String banner;
 
 	public String getServer() {
-		Assert.hasText(server, "server is emtpy, please check configure");
+		hasText(server, "server is emtpy, please check configure");
 		return server;
 	}
 
 	public void setServer(String server) {
-		Assert.hasText(server, "server is emtpy, please check configure");
+		hasText(server, "server is emtpy, please check configure");
 		this.server = server;
 	}
 

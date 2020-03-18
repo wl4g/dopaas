@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.config;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
+import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;
 import com.wl4g.devops.umc.annotation.EnableKafkaCollectReceiver;
@@ -36,7 +36,6 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.AbstractMessageListenerContainer.AckMode;
 import org.springframework.kafka.listener.config.ContainerProperties;
 
-import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Properties;
 
@@ -53,7 +52,7 @@ import static com.wl4g.devops.umc.config.ReceiverProperties.KEY_RECEIVER_PREFIX;
  */
 @Configuration
 @ImportAutoConfiguration(UmcWatchAutoConfiguration.class)
-public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
+public class UmcReceiveAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	final public static String BEAN_HTTP_RECEIVER = "httpCollectReceiver";
 	final public static String BEAN_KAFKA_RECEIVER = "kafkaCollectReceiver";
@@ -79,17 +78,7 @@ public class UmcReceiveAutoConfiguration extends AbstractOptionalControllerAutoC
 	@Bean
 	@EnableHttpCollectReceiver
 	public PrefixHandlerMapping httpCollectReceiverPrefixHandlerMapping() {
-		return createPrefixHandlerMapping();
-	}
-
-	@Override
-	protected String getMappingPrefix() {
-		return URI_HTTP_RECEIVER_BASE;
-	}
-
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return com.wl4g.devops.umc.annotation.HttpCollectReceiver.class;
+		return super.newPrefixHandlerMapping(URI_HTTP_RECEIVER_BASE, com.wl4g.devops.umc.annotation.HttpCollectReceiver.class);
 	}
 
 	//

@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
 import java.io.File;
 import java.util.Objects;
 
-import static com.wl4g.devops.common.utils.lang.SystemUtils2.cleanSystemPath;
+import static com.wl4g.devops.tool.common.lang.SystemUtils2.cleanSystemPath;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
@@ -37,9 +37,20 @@ import static org.springframework.util.Assert.hasText;
  * @since
  */
 public class CiCdProperties implements InitializingBean {
-
 	final public static String DEFUALT_JOB_BASEDIR = "jobs";
 	final public static String DEFUALT_VCS_SOURCEDIR = "sources";
+
+	/**
+	 * The default version number(alias), which is used for pipeline
+	 * construction of production installation package
+	 */
+	final public static String DEFUALT_VERSION = "master";
+
+	/**
+	 * Default pipeline build production installation package type.(e.g.
+	 * portal-master-bin.tar)
+	 */
+	final public static String DEFUALT_ASSETS_TYPE = "bin";
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -49,24 +60,39 @@ public class CiCdProperties implements InitializingBean {
 	private String workspace = USER_HOME + File.separator + ".ci-workspace"; // By-default.
 
 	/**
-	 * Pipeline executor properties.
+	 * Pipeline executor configuration properties.
 	 */
 	private ExecutorProperties executor = new ExecutorProperties();
 
 	/**
-	 * Pipeline VCS properties.
+	 * VCS configuration properties.
 	 */
 	private VcsSourceProperties vcs = new VcsSourceProperties();
 
 	/**
-	 * Pipeline build properties.
+	 * Pipeline build configuration properties.
 	 */
 	private BuildProperties build = new BuildProperties();
 
 	/**
-	 * Pipeline deploy properties.
+	 * Pipeline deploy configuration properties.
 	 */
 	private DeployProperties deploy = new DeployProperties();
+
+	/**
+	 * Test and inspection report configuration.
+	 */
+	private TestedReportProperties testedReport = new TestedReportProperties();
+
+	/**
+	 * project collaboration management configuration.
+	 */
+	private PcmProperties pcm = new PcmProperties();
+
+	/**
+	 * Pipeline log records cleaner configuration.
+	 */
+	private LogCleanerProperties logCleaner = new LogCleanerProperties();
 
 	public void setWorkspace(String workspace) {
 		if (!isBlank(workspace)) {
@@ -117,6 +143,30 @@ public class CiCdProperties implements InitializingBean {
 		if (Objects.nonNull(deploy)) {
 			this.deploy = deploy;
 		}
+	}
+
+	public TestedReportProperties getTestedReport() {
+		return testedReport;
+	}
+
+	public void setTestedReport(TestedReportProperties testReport) {
+		this.testedReport = testReport;
+	}
+
+	public PcmProperties getPcm() {
+		return pcm;
+	}
+
+	public void setPcm(PcmProperties pcm) {
+		this.pcm = pcm;
+	}
+
+	public LogCleanerProperties getLogCleaner() {
+		return logCleaner;
+	}
+
+	public void setLogCleaner(LogCleanerProperties logCleaner) {
+		this.logCleaner = logCleaner;
 	}
 
 	@Override
@@ -171,12 +221,26 @@ public class CiCdProperties implements InitializingBean {
 
 	/**
 	 * e.g. </br>
+	 * ~/.ci-workspace/jobs/job.11/deploy.234.out.log
+	 *
+	 * @param taskHisyId
+	 * @param instanceId
+	 * @return
+	 */
+	public File getJobDeployerLog(Integer taskHisyId, Integer instanceId) {
+		Assert.notNull(taskHisyId, "Task history ID must not be null.");
+		Assert.notNull(instanceId, "Task history instanceId ID must not be null.");
+		return new File(getJobBaseDir(taskHisyId).getAbsolutePath() + "/deploy." + instanceId + ".out.log");
+	}
+
+	/**
+	 * e.g. </br>
 	 * ~/.ci-workspace/jobs/job.11/{PROJECT_NAME}
 	 * 
 	 * @param taskHisId
 	 * @return
 	 */
-	public File getJobBackup(Integer taskHisId) {
+	public File getJobBackupDir(Integer taskHisId) {
 		Assert.notNull(taskHisId, "Rollback task history ref ID must not be null.");
 		return new File(getJobBaseDir(taskHisId).getAbsolutePath());
 	}
@@ -231,7 +295,7 @@ public class CiCdProperties implements InitializingBean {
 	public File getTransferLocalTmpFile(Integer taskHisId, String projectName, String suffix) {
 		hasText(projectName, "Transfer project name must not be empty.");
 		hasText(suffix, "Transfer project file suffix must not be empty.");
-		return new File(getJobBackup(taskHisId).getAbsolutePath() + "/" + projectName + "." + suffix);
+		return new File(getJobBackupDir(taskHisId).getAbsolutePath() + "/" + projectName + "." + suffix);
 	}
 
 	/**
@@ -242,10 +306,29 @@ public class CiCdProperties implements InitializingBean {
 	 * @param suffix
 	 * @return
 	 */
-	public File getTransferRemoteHomeTmpFile(String projectName, String suffix) {
+	public String getTransferRemoteHomeTmpFile(String projectName, String suffix) {
 		hasText(projectName, "Transfer project name must not be empty.");
 		hasText(suffix, "Transfer project file suffix must not be empty.");
-		return new File(getDeploy().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix);
+		return getDeploy().getRemoteHomeTmpDir() + "/" + projectName + "." + suffix;
+	}
+
+	/**
+	 * e.g. </br>
+	 * portal-master-bin
+	 * 
+	 * @param clusterName
+	 * @return
+	 */
+	public String getPrgramInstallFileName(String clusterName) {
+		return String.format("%s-%s-%s", clusterName, DEFUALT_VERSION, DEFUALT_ASSETS_TYPE);
+	}
+
+	public String getTarFileNameWithTar(String clusterName) {
+		return String.format("%s-%s-%s.tar", clusterName, DEFUALT_VERSION, DEFUALT_ASSETS_TYPE);
+	}
+
+	public String getAssetsFullFilename(String assetsPath, String clusterName) {
+		return assetsPath + "/" + getPrgramInstallFileName(clusterName) + ".tar";
 	}
 
 }

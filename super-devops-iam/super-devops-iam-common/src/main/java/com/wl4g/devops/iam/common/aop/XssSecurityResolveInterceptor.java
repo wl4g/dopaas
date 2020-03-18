@@ -15,35 +15,28 @@
  */
 package com.wl4g.devops.iam.common.aop;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
-import static java.lang.reflect.Modifier.*;
+import com.wl4g.devops.iam.common.annotation.UnsafeXss;
+import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
+import com.wl4g.devops.iam.common.config.XssProperties;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.aspectj.lang.annotation.Aspect;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.apache.commons.lang3.StringUtils.*;
-import static org.springframework.util.ReflectionUtils.*;
-
-import org.springframework.util.Assert;
-
-import static com.wl4g.devops.common.utils.bean.BeanUtils2.*;
-
-import com.wl4g.devops.common.utils.bean.BeanUtils2.FieldFilter;
-import com.wl4g.devops.iam.common.annotation.UnsafeXss;
-import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
-import com.wl4g.devops.iam.common.config.XssProperties;
+import static com.wl4g.devops.tool.common.bean.BeanUtils2.deepCopyFieldState;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isCompatibleType;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.ReflectionUtils.makeAccessible;
 
 /**
  * XSS security resolve aspect intercept handle
@@ -52,9 +45,7 @@ import com.wl4g.devops.iam.common.config.XssProperties;
  * @version v1.0 2019年2月28日
  * @since
  */
-@Aspect
 public class XssSecurityResolveInterceptor implements MethodInterceptor {
-
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -150,29 +141,22 @@ public class XssSecurityResolveInterceptor implements MethodInterceptor {
 	 */
 	private void objectXssEnode(final Object controller, final Method method, final int index, final Object argument)
 			throws IllegalArgumentException, IllegalAccessException {
-		if (argument == null || ServletRequest.class.isAssignableFrom(argument.getClass())
-				|| ServletResponse.class.isAssignableFrom(argument.getClass()))
+		if (isNull(argument) || isCompatibleType(ServletRequest.class, argument.getClass())
+				|| isCompatibleType(ServletResponse.class, argument.getClass())) {
 			return;
+		}
 
-		copyFullProperties(argument, argument, new FieldFilter() {
-			@Override
-			public boolean match(Field f, Object sourceProperty) {
-				Class<?> clazz = f.getType();
-				int mod = f.getModifiers();
-				return String.class.isAssignableFrom(clazz) && !isFinal(mod) && !isStatic(mod) && !isTransient(mod)
-						&& !isNative(mod) && !isVolatile(mod) && !isSynchronized(mod);
-			}
-		}, new FieldCopyer() {
-			@Override
-			public void doCopy(Object target, Field tf, Field sf, Object sourcePropertyValue)
-					throws IllegalArgumentException, IllegalAccessException {
-				if (sourcePropertyValue != null) {
+		// Recursive traversal and XSS encoding.
+		deepCopyFieldState(argument, argument, (target, tf, sf, sourcePropertyValue) -> {
+			if (nonNull(sourcePropertyValue)) {
+				if (CharSequence.class.isAssignableFrom(tf.getType())) {
 					makeAccessible(tf);
-					tf.set(target, resolver.doResolve(controller, method, index, (String) sourcePropertyValue));
+					tf.set(target, resolver.doResolve(controller, method, index, sourcePropertyValue.toString()));
+				} else {
+					tf.set(target, sourcePropertyValue);
 				}
 			}
 		});
-
 	}
 
 	/**

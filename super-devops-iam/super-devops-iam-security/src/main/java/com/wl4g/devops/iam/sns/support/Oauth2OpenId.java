@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.sns.support;
 
-public interface Oauth2OpenId {
+public interface Oauth2OpenId extends AssertionOAuth2Result {
 
 	String openId();
 

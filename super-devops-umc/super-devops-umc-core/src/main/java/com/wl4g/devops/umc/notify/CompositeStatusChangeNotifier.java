@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.umc.notify;
 
-import com.wl4g.devops.support.notification.mail.MailSenderTemplate;
-import com.wl4g.devops.umc.handle.SmsNotificationHandle;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
+import com.wl4g.devops.support.notification.MessageNotifier;
+import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.umc.model.StatusMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-
-import java.util.Date;
 
 /**
  * Composite status change notifier
@@ -34,46 +34,35 @@ import java.util.Date;
 public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 
 	@Autowired
-	private SmsNotificationHandle smsHandle;
-	@Autowired
-	private MailSenderTemplate mailHandle;
+	private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
 
 	@Override
 	protected void doNotify(StatusMessage status) {
 		// 1.1 SMS notifier.
-		try {
-			if (logger.isDebugEnabled())
-				logger.debug("SMS通知... {}", status);
-
-			this.smsHandle.send(status.getPhoneTo(), status.getAppInfo(), status.getFromStatus(), status.getToStatus(),
-					status.getMsgId());
-		} catch (Exception e) {
-			logger.error("SMS notification failed.", e);
-		}
+		/*
+		 * try { log.debug("SMS通知... {}", status);
+		 * smsHandle.send(status.getPhoneTo(), status.getAppInfo(),
+		 * status.getFromStatus(), status.getToStatus(), status.getMsgId()); }
+		 * catch (Exception e) { log.error("SMS notification failed.", e); }
+		 */
 
 		// 1.2 Mail notifier.
 		try {
-			StringBuffer content = new StringBuffer(status.getAppInfo());
-			content.append(" ");
-			content.append(status.getFromStatus());
-			content.append(" to ");
-			content.append(status.getToStatus());
-			content.append(", See：");
-			content.append(status.getDetailsUrl());
-
-			SimpleMailMessage msg = new SimpleMailMessage();
-			msg.setSubject(getSubject());
-			msg.setFrom(getFromName());
-			msg.setTo(getMailTo());
-			msg.setText(content.toString());
-			msg.setSentDate(new Date());
-
-			if (logger.isDebugEnabled())
-				logger.debug("Mail通知... {}", status);
-
-			this.mailHandle.send(msg);
+			// TODO
+			GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "umcAlarmTpl1");
+			// Common parameters.
+			msg.addParameter("appName", status.getAppInfo());
+			msg.addParameter("status", status.getToStatus());
+			msg.addParameter("detailUrl", status.getDetailsUrl());
+			// Mail special parameters.
+			msg.addParameter(MailMessageNotifier.KEY_MAILMSG_SUBJECT, getSubject());
+			// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_CC, "");
+			// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_BCC, "");
+			// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_REPLYTO,
+			// "");
+			notifierAdapter.forOperator(MailMessageNotifier.class).send(msg);
 		} catch (Exception e) {
-			logger.error("Mail notification failed.", e);
+			log.error("Mail notification failed.", e);
 		}
 	}
 

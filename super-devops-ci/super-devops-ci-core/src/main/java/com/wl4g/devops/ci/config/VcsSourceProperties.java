@@ -15,8 +15,7 @@
  */
 package com.wl4g.devops.ci.config;
 
-import org.eclipse.jgit.transport.CredentialsProvider;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import static java.util.Objects.nonNull;
 
 /**
  * CICD pipeline process, acquiring project source code-related configuration.
@@ -26,6 +25,16 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
  * @since
  */
 public class VcsSourceProperties {
+
+	/**
+	 * Request VCS server read timeout.
+	 */
+	private Integer readTimeout = 60_000;
+
+	/**
+	 * Request VCS server connect timeout.
+	 */
+	private Integer connectTimeout = 10_000;
 
 	/** Gitlab properties. */
 	private GitlabProperties gitlab = new GitlabProperties();
@@ -44,6 +53,35 @@ public class VcsSourceProperties {
 
 	/** Alicode properties. */
 	private AlicodeProperties alicode = new AlicodeProperties();
+
+	/**
+	 * Request VCS server read max body bytes.
+	 */
+	private Integer maxResponseSize = 1024 * 1024 * 10;
+
+	public Integer getReadTimeout() {
+		return readTimeout;
+	}
+
+	public void setReadTimeout(Integer readTimeout) {
+		this.readTimeout = readTimeout;
+	}
+
+	public Integer getConnectTimeout() {
+		return connectTimeout;
+	}
+
+	public void setConnectTimeout(Integer connectTimeout) {
+		this.connectTimeout = connectTimeout;
+	}
+
+	public Integer getMaxResponseSize() {
+		return maxResponseSize;
+	}
+
+	public void setMaxResponseSize(Integer maxResponseSize) {
+		this.maxResponseSize = maxResponseSize;
+	}
 
 	public GitlabProperties getGitlab() {
 		return gitlab;
@@ -101,54 +139,22 @@ public class VcsSourceProperties {
 	 * @since
 	 */
 	public static class GitlabProperties {
-		private String baseUrl;
-		private String username;
-		private String password;
-		private String token;
 
 		/**
-		 * credentials for git
+		 * Search projects pages limit size.
 		 */
-		private CredentialsProvider credentials;
+		private Integer searchProjectsDefaultPageLimit = 20;
 
-		public String getBaseUrl() {
-			return baseUrl;
+		public Integer getSearchProjectsDefaultPageLimit() {
+			return searchProjectsDefaultPageLimit;
 		}
 
-		public void setBaseUrl(String baseUrl) {
-			this.baseUrl = baseUrl;
-		}
-
-		public String getUsername() {
-			return username;
-		}
-
-		public void setUsername(String username) {
-			this.username = username;
-		}
-
-		public String getPassword() {
-			return password;
-		}
-
-		public void setPassword(String password) {
-			this.password = password;
-		}
-
-		public String getToken() {
-			return token;
-		}
-
-		public void setToken(String token) {
-			this.token = token;
-		}
-
-		public CredentialsProvider getCredentials() {
-			if (null == credentials) {
-				credentials = new UsernamePasswordCredentialsProvider(username, password);
+		public void setSearchProjectsDefaultPageLimit(Integer defaultSearchProjectsPageLimit) {
+			if (nonNull(defaultSearchProjectsPageLimit)) {
+				this.searchProjectsDefaultPageLimit = defaultSearchProjectsPageLimit;
 			}
-			return credentials;
 		}
+
 	}
 
 	/**

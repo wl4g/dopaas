@@ -19,31 +19,37 @@ import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.core.DefaultPipelineManager;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.flow.FlowManager;
+import com.wl4g.devops.ci.pcm.PcmOperator;
+import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
+import com.wl4g.devops.ci.pcm.jira.JiraPcmOperator;
+import com.wl4g.devops.ci.pcm.redmine.RedminePcmOperator;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
-import com.wl4g.devops.ci.pipeline.deploy.DjangoStandardPipeDeployer;
+import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
+import com.wl4g.devops.ci.pipeline.deploy.Python3PipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.RktNativePipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
-import com.wl4g.devops.ci.pipeline.deploy.GolangPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.GolangModPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
-import com.wl4g.devops.ci.pipeline.timing.TimingPipelineManager;
-import com.wl4g.devops.ci.vcs.CompositeVcsOperateAdapter;
+import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
 import com.wl4g.devops.ci.vcs.VcsOperator;
+import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.ci.vcs.alicode.AlicodeVcsOperator;
 import com.wl4g.devops.ci.vcs.bitbucket.BitbucketVcsOperator;
 import com.wl4g.devops.ci.vcs.coding.CodingVcsOperator;
 import com.wl4g.devops.ci.vcs.gitee.GiteeVcsOperator;
 import com.wl4g.devops.ci.vcs.github.GithubVcsOperator;
 import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
-import com.wl4g.devops.ci.pipeline.timing.TimingPipelineJob;
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskDetail;
-import com.wl4g.devops.common.bean.ci.TaskHistoryDetail;
-import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.share.AppInstance;
-import com.wl4g.devops.support.beans.prototype.DelegateAlias;
+import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
+import com.wl4g.devops.ci.tool.LogPipelineCleaner;
+import com.wl4g.devops.common.bean.ci.*;
+import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.framework.beans.PrototypeAlias;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -64,10 +70,10 @@ import java.util.List;
 @Configuration
 public class CiCdAutoConfiguration {
 
-	// --- BASIC ---
+	// --- Basic's ---
 
 	@Bean
-	@ConfigurationProperties(prefix = "pipeline")
+	@ConfigurationProperties(prefix = "spring.cloud.devops.ci.pipeline")
 	public CiCdProperties ciCdProperties() {
 		return new CiCdProperties();
 	}
@@ -88,18 +94,18 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
-	public GlobalTimeoutJobCleanupFinalizer globalTimeoutJobCleanFinalizer() {
-		return new GlobalTimeoutJobCleanupFinalizer();
+	public GlobalTimeoutJobCleanupCoordinator globalTimeoutJobCleanCoordinator() {
+		return new GlobalTimeoutJobCleanupCoordinator();
 	}
 
-	// --- CONSOLE ---
+	// --- Console's. ---
 
 	@Bean
 	public CiCdConsole cicdConsole() {
 		return new CiCdConsole();
 	}
 
-	// --- VCS ---
+	// --- VCS's (Version Control System) ---
 
 	@Bean
 	public VcsOperator gitlabV4VcsOperator() {
@@ -132,52 +138,66 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
-	public CompositeVcsOperateAdapter compositeVcsOperateAdapter(List<VcsOperator> operators) {
-		return new CompositeVcsOperateAdapter(operators);
+	public GenericOperatorAdapter<VcsProviderKind, VcsOperator> compositeVcsOperateAdapter(List<VcsOperator> operators) {
+		return new GenericOperatorAdapter<VcsProviderKind, VcsOperator>(operators) {
+		};
+	}
+
+	// --- Flow Manager ---
+	@Bean
+	public FlowManager flowManager() {
+		return new FlowManager();
 	}
 
 	// --- Pipeline provider's. ---
 
 	@Bean
-	@DelegateAlias({ PipelineType.MVN_ASSEMBLE_TAR })
+	@PrototypeAlias({ PipelineKind.MVN_ASSEMBLE_TAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineContext info) {
-		return new MvnAssembleTarPipelineProvider(info);
+	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineContext context) {
+		return new MvnAssembleTarPipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.SPRING_EXECUTABLE_JAR })
+	@PrototypeAlias({ PipelineKind.SPRING_EXECUTABLE_JAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineContext info) {
-		return new SpringExecutableJarPipelineProvider(info);
+	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineContext context) {
+		return new SpringExecutableJarPipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.DOCKER_NATIVE })
+	@PrototypeAlias({ PipelineKind.NPM_VIEW })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineContext info) {
-		return new DockerNativePipelineProvider(info);
+	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineContext context) {
+		return new NpmViewPipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.NPM_VIEW })
+	@PrototypeAlias({ PipelineKind.PYTHON3_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineContext info) {
-		return new NpmViewPipelineProvider(info);
+	public Python3PipelineProvider python3StandardPipelineProvider(PipelineContext context) {
+		return new Python3PipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.DJANGO_STANDARD })
+	@PrototypeAlias({ PipelineKind.GOLANG_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DjangoStandardPipelineProvider djangoStandardPipelineProvider(PipelineContext info) {
-		return new DjangoStandardPipelineProvider(info);
+	public GolangModPipelineProvider golangModPipelineProvider(PipelineContext context) {
+		return new GolangModPipelineProvider(context);
 	}
 
 	@Bean
-	@DelegateAlias({ PipelineType.GOLANG_STANDARD })
+	@PrototypeAlias({ PipelineKind.DOCKER_NATIVE })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public GolangPipelineProvider golangPipelineProvider(PipelineContext info) {
-		return new GolangPipelineProvider(info);
+	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineContext context) {
+		return new DockerNativePipelineProvider(context);
+	}
+
+	@Bean
+	@PrototypeAlias({ PipelineKind.RKT_NATIVE })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public RktNativePipelineProvider rktNativePipelineProvider(PipelineContext context) {
+		return new RktNativePipelineProvider(context);
 	}
 
 	// --- Pipeline deployer's. ---
@@ -185,56 +205,89 @@ public class CiCdAutoConfiguration {
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public MvnAssembleTarPipeDeployer mvnAssembleTarPipeDeployer(MvnAssembleTarPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new MvnAssembleTarPipeDeployer(provider, instance, taskHistoryDetails);
-	}
-
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DockerNativePipeDeployer dockerNativePipeDeployer(DockerNativePipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new DockerNativePipeDeployer(provider, instance, taskHistoryDetails);
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new MvnAssembleTarPipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public NpmViewPipeDeployer npmViewPipeDeployer(NpmViewPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new NpmViewPipeDeployer(provider, instance, taskHistoryDetails);
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new NpmViewPipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SpringExecutableJarPipeDeployer springExecutableJarPipeDeployer(SpringExecutableJarPipelineProvider provider,
-			AppInstance instance, List<TaskHistoryDetail> taskHistoryDetails) {
-		return new SpringExecutableJarPipeDeployer(provider, instance, taskHistoryDetails);
+			AppInstance instance, List<TaskHistoryInstance> taskHistoryInstances) {
+		return new SpringExecutableJarPipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DjangoStandardPipeDeployer djangoStandardPipeDeployer(DjangoStandardPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new DjangoStandardPipeDeployer(provider, instance, taskHistoryDetails);
+	public Python3PipeDeployer python3PipeDeployer(Python3PipelineProvider provider, AppInstance instance,
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new Python3PipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public GolangPipeDeployer golangPipeDeployer(DjangoStandardPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryDetail> taskHistoryDetails) {
-		return new GolangPipeDeployer(provider, instance, taskHistoryDetails);
+	public GolangModPipeDeployer golangModPipeDeployer(Python3PipelineProvider provider, AppInstance instance,
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new GolangModPipeDeployer(provider, instance, taskHistoryInstances);
 	}
-
-	// --- TIMING SCHEDULE ---
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public TimingPipelineJob timingPipelineJob(Trigger trigger, Project project, Task task, List<TaskDetail> taskDetails) {
-		return new TimingPipelineJob(trigger, project, task, taskDetails);
+	public DockerNativePipeDeployer dockerNativePipeDeployer(DockerNativePipelineProvider provider, AppInstance instance,
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new DockerNativePipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean
-	public TimingPipelineManager timingPipelineManager() {
-		return new TimingPipelineManager();
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public RktNativePipeDeployer rktNativePipeDeployer(RktNativePipelineProvider provider, AppInstance instance,
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new RktNativePipeDeployer(provider, instance, taskHistoryInstances);
+	}
+
+	// --- Timing scheduling's. ---
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public TimingPipelineProvider timingPipelineJob(Trigger trigger, Project project, Task task,
+			List<TaskInstance> taskInstances) {
+		return new TimingPipelineProvider(trigger, project, task, taskInstances);
+	}
+
+	@Bean
+	public PipelineTaskScheduler timingPipelineManager() {
+		return new PipelineTaskScheduler();
+	}
+
+	// --- Tool's. ---
+
+	@Bean
+	public LogPipelineCleaner logPipelineCleaner() {
+		return new LogPipelineCleaner();
+	}
+
+	// --- PCM's (Project collaboration management). ---
+
+	@Bean
+	public PcmOperator jiraPcmOperator() {
+		return new JiraPcmOperator();
+	}
+
+	@Bean
+	public PcmOperator redminePcmOperator() {
+		return new RedminePcmOperator();
+	}
+
+	@Bean
+	public GenericOperatorAdapter<PcmKind, PcmOperator> compositePcmOperatorAdapter(List<PcmOperator> operators) {
+		return new GenericOperatorAdapter<PcmKind, PcmOperator>(operators) {
+		};
 	}
 
 }

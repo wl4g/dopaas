@@ -1,0 +1,3607 @@
+/*
+ Navicat Premium Data Transfer
+
+ Source Server         : 10.0.0.160
+ Source Server Type    : MySQL
+ Source Server Version : 50645
+ Source Host           : 10.0.0.160:3306
+ Source Schema         : devops_dev
+
+ Target Server Type    : MySQL
+ Target Server Version : 50645
+ File Encoding         : 65001
+
+ Date: 21/02/2020 14:10:18
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for app_cluster
+-- ----------------------------
+DROP TABLE IF EXISTS `app_cluster`;
+CREATE TABLE `app_cluster` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `dept_id` int(11) NOT NULL COMMENT '应用所属部门ID',
+  `name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '应用名称',
+  `type` int(11) DEFAULT NULL COMMENT '类型:1类似sso这种app,2,类似agent这种应用,,,ci发布时,过滤掉type=2(不带端口的进程,如agent)',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '启用状态（0:禁止/1:启用）',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  `create_by` int(11) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_date` datetime NOT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `dept_id` (`dept_id`),
+  KEY `update_by` (`update_by`),
+  KEY `create_by` (`create_by`),
+  CONSTRAINT `app_cluster_ibfk_1` FOREIGN KEY (`update_by`) REFERENCES `sys_user` (`id`),
+  CONSTRAINT `app_cluster_ibfk_2` FOREIGN KEY (`create_by`) REFERENCES `sys_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='应用集群（组）定义表';
+
+-- ----------------------------
+-- Records of app_cluster
+-- ----------------------------
+BEGIN;
+INSERT INTO `app_cluster` VALUES (1, 1, 'sso', NULL, 1, '统一认证中心接口服务', 1, '2018-09-20 11:20:25', 1, '2019-12-04 11:27:39', 0);
+INSERT INTO `app_cluster` VALUES (2, 1, 'portal', NULL, 1, '门户系统接口服务', 1, '2018-09-20 11:20:25', 1, '2019-12-04 11:27:32', 0);
+INSERT INTO `app_cluster` VALUES (3, 1, 'mp', NULL, 1, '管理平台接口服务', 1, '2018-09-20 11:20:25', 1, '2019-12-04 11:28:04', 0);
+INSERT INTO `app_cluster` VALUES (4, 1, 'ems', NULL, 1, '能耗分析平台接口服务', 1, '2018-09-20 11:20:25', 1, '2019-12-04 11:28:39', 0);
+INSERT INTO `app_cluster` VALUES (5, 1, 'sink', NULL, 1, '实时告警服务', 1, '2018-09-20 11:20:25', 1, '2019-12-04 11:28:57', 0);
+INSERT INTO `app_cluster` VALUES (6, 1, 'dataopen', NULL, 1, '大数据RESTful接口服务', 1, '2018-09-20 11:20:25', 1, '2018-09-19 09:11:27', 0);
+INSERT INTO `app_cluster` VALUES (7, 1, 'mqttCollect', NULL, 1, '设备连接平台服务(MQTT)', 1, '2018-09-20 11:20:25', 1, '2018-09-19 09:12:14', 1);
+INSERT INTO `app_cluster` VALUES (8, 1, 'rpcCollect', NULL, 1, '设备连接平台服务(TCP)', 1, '2018-09-20 11:20:25', 1, '2018-09-19 09:12:31', 1);
+INSERT INTO `app_cluster` VALUES (9, 1, 'base', NULL, 1, '基础数据平台接口服务', 1, '2018-09-20 11:20:25', 1, '2019-12-04 11:29:41', 0);
+INSERT INTO `app_cluster` VALUES (43, 1, 'scm-example', NULL, 1, 'scm-example服务', 1, '2018-11-16 15:56:58', 1, '2018-11-16 15:56:58', 1);
+INSERT INTO `app_cluster` VALUES (63, 1, 'datachecker', NULL, 1, 'datachecker服务', 1, '2019-05-22 09:29:08', 1, '2019-12-09 13:43:52', 0);
+INSERT INTO `app_cluster` VALUES (64, 1, 'trafficmonitor', NULL, 1, 'trafficmonitor服务', 1, '2019-05-22 09:29:08', 1, '2019-05-22 09:29:08', 0);
+INSERT INTO `app_cluster` VALUES (65, 1, 'testapp', NULL, 1, '用于测试alarm的', 1, '2019-07-10 02:12:51', 1, '2019-07-10 02:13:02', 1);
+INSERT INTO `app_cluster` VALUES (66, 1, 'datajob', NULL, 1, '测试ci', 1, '2019-07-17 07:04:48', 1, '2019-09-13 01:35:21', 1);
+INSERT INTO `app_cluster` VALUES (68, 1, 'mobile', NULL, 1, 'mobile服务', 1, '2019-09-19 10:35:14', 1, '2019-12-04 11:30:39', 0);
+INSERT INTO `app_cluster` VALUES (69, 1, 'iiot', NULL, 1, 'iiot服务', 1, '2019-09-19 10:35:14', 1, '2019-12-04 11:30:53', 0);
+INSERT INTO `app_cluster` VALUES (70, 1, 'datav', NULL, 1, 'datav服务', 1, '2019-09-19 10:35:14', 1, '2019-12-04 11:31:17', 0);
+INSERT INTO `app_cluster` VALUES (71, 1, 'rpccollect', NULL, 1, 'rpccollect服务', 1, '2019-09-19 10:35:14', 1, '2019-09-19 10:35:16', 0);
+INSERT INTO `app_cluster` VALUES (72, 1, 'mqttcollect', NULL, 1, 'mqttcollect服务', 1, '2019-09-19 10:35:14', 1, '2019-09-19 10:35:16', 0);
+INSERT INTO `app_cluster` VALUES (73, 1, 'example-collect', NULL, 1, 'example-collect服务', 1, '2019-09-19 10:35:14', 1, '2019-09-19 10:35:16', 0);
+INSERT INTO `app_cluster` VALUES (74, 1, 'trends', NULL, 1, 'trends服务', 1, '2019-09-19 10:35:14', 1, '2019-12-04 11:32:13', 0);
+INSERT INTO `app_cluster` VALUES (75, 1, 'iam-server', NULL, 1, 'Iam-server cluster', 1, '2019-09-20 16:54:41', 1, '2019-09-20 16:54:41', 0);
+INSERT INTO `app_cluster` VALUES (76, 1, 'share-manager', NULL, 1, 'ShareManager cluster', 1, '2019-09-20 16:55:55', 1, '2019-09-20 16:55:55', 0);
+INSERT INTO `app_cluster` VALUES (77, 1, 'umc-manager', NULL, 1, 'UmcManager cluster', 1, '2019-09-20 16:56:47', 1, '2019-09-20 16:56:47', 0);
+INSERT INTO `app_cluster` VALUES (78, 1, 'srm-manager', NULL, 1, 'SrmManager cluster', 1, '2019-09-20 16:57:11', 1, '2019-09-20 16:57:11', 0);
+INSERT INTO `app_cluster` VALUES (79, 1, 'scm-manager', NULL, 1, 'ScmManager cluster', 1, '2019-09-20 16:57:49', 1, '2019-09-20 16:57:49', 0);
+INSERT INTO `app_cluster` VALUES (80, 1, 'ems-view', NULL, 1, 'ems前端集群', 1, '2019-10-21 16:39:57', 1, '2019-12-19 11:00:44', 0);
+INSERT INTO `app_cluster` VALUES (81, 1, 'super-devops-view', NULL, 1, 'devops前端集群', 1, '2019-10-21 16:39:57', 1, '2020-02-05 11:00:52', 0);
+INSERT INTO `app_cluster` VALUES (83, 1, 'test001', NULL, 1, 'test', 1, '2019-10-24 16:26:48', 1, '2019-10-24 16:36:42', 1);
+INSERT INTO `app_cluster` VALUES (84, 1, 'ci-server', NULL, 1, 'CIServer cluster', 1, '2019-11-06 14:26:53', 1, '2019-11-06 14:26:56', 0);
+INSERT INTO `app_cluster` VALUES (85, 1, 'portal-view', NULL, 1, 'portal前端集群', 1, '2019-12-04 18:05:14', 1, '2019-12-19 10:53:57', 0);
+INSERT INTO `app_cluster` VALUES (86, 1, 'datav-view', NULL, 1, 'datav前端集群', 1, '2019-12-04 18:23:13', 1, '2019-12-19 10:53:46', 0);
+INSERT INTO `app_cluster` VALUES (87, 1, 'iiot-view', NULL, 1, 'iiot前端集群', 1, '2019-12-04 18:24:01', 1, '2019-12-19 10:53:26', 0);
+INSERT INTO `app_cluster` VALUES (88, 1, 'mp-view', NULL, 1, 'mp前端集群', 1, '2019-12-04 18:25:40', 1, '2019-12-19 10:53:14', 0);
+INSERT INTO `app_cluster` VALUES (89, 1, 'trends-view', NULL, 1, 'trends前端集群', 1, '2019-12-04 18:26:46', 1, '2019-12-19 10:54:18', 0);
+INSERT INTO `app_cluster` VALUES (90, 1, 'umc-agent', 2, 1, 'umc采集器', 1, '2019-12-06 11:08:36', 1, '2019-12-06 11:08:39', 0);
+INSERT INTO `app_cluster` VALUES (91, 1, 'sso-view', NULL, 1, 'sso-view', 1, '2019-12-18 09:52:48', 1, '2019-12-18 09:52:48', 0);
+INSERT INTO `app_cluster` VALUES (92, 1, 'base-view', NULL, 1, '', 1, '2019-12-18 09:53:19', 1, '2019-12-18 09:53:19', 0);
+INSERT INTO `app_cluster` VALUES (93, 1, 'ems-view', NULL, 1, '', 1, '2019-12-18 09:53:49', 1, '2019-12-18 09:53:49', 1);
+INSERT INTO `app_cluster` VALUES (94, 1, 'doc-manager', NULL, 1, 'DocManager', 1, '2020-02-17 18:15:00', 1, '2020-02-17 18:15:02', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for app_cluster_config
+-- ----------------------------
+DROP TABLE IF EXISTS `app_cluster_config`;
+CREATE TABLE `app_cluster_config` (
+  `id` int(11) NOT NULL,
+  `cluster_id` int(11) NOT NULL COMMENT '对应cluster表的id',
+  `display_name` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '应用名称',
+  `type` int(1) DEFAULT '1' COMMENT '应用集群类型（1:iam/sso，2:其他）',
+  `env_type` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '环境类型,字典value',
+  `view_extranet_base_uri` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '前端视图页面外网BaseURI',
+  `extranet_base_uri` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT '外网BaseURI',
+  `intranet_base_uri` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '内网BaseURI',
+  `remark` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `create_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  `update_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0：正常，1：删除）',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `cluster_id` (`cluster_id`),
+  CONSTRAINT `app_cluster_config_ibfk_1` FOREIGN KEY (`cluster_id`) REFERENCES `app_cluster` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='应用集群配置表（cluster与环境关联的具体配置，一定程度上也相当于app_cluster的明细子表，注：如，对于公私混合部署时，一个cluster_id/env_id可对应多条记录，iam/online功能会用到）';
+
+-- ----------------------------
+-- Records of app_cluster_config
+-- ----------------------------
+BEGIN;
+INSERT INTO `app_cluster_config` VALUES (1, 84, 'ci-server', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14046/ci-server', 'http://localhost:14046/ci-server', 'Ci platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (2, 75, 'iam-server', 1, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14040/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (3, 79, 'scm-server', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14043/scm-server', 'http://localhost:14043/scm-server', 'Share platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (4, 76, 'share-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14051/share-manager', 'http://localhost:14051/share-manager', 'Share platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (5, 78, 'srm-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14050/srm-manager', 'http://localhost:14050/srm-manager', 'Srm platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (6, 77, 'umc-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14048/umc-manager', 'http://localhost:14048/umc-manager', 'Umc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (7, 84, 'ci-server', 2, 'test', 'http://localhost:8080', 'http://ci.anjiancloud.alpha/ci-server', 'http://localhost:14046/ci-server', 'Ci platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (8, 75, 'iam-server', 1, 'test', 'http://localhost:8080', 'http://iam.anjiancloud.alpha/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (9, 79, 'scm-server', 2, 'test', 'http://localhost:8080', 'http://scm.anjiancloud.alpha/scm-server', 'http://localhost:14043/scm-server', 'Share platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (10, 76, 'share-manager', 2, 'test', 'http://localhost:8080', 'http://share.anjiancloud.alpha/share-manager', 'http://localhost:14051/share-manager', 'Share platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (11, 78, 'srm-manager', 2, 'test', 'http://localhost:8080', 'http://srm.anjiancloud.alpha/srm-manager', 'http://localhost:14050/srm-manager', 'Srm platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (12, 77, 'umc-manager', 2, 'test', 'http://localhost:8080', 'http://umc.anjiancloud.alpha/umc-manager', 'http://localhost:14048/umc-manager', 'Umc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (13, 84, 'ci-server', 2, 'prod', 'http://localhost:8080', 'https://ci.sunwuu.com/ci-server', 'http://localhost:14046/ci-server', 'Ci platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (14, 75, 'iam-server', 1, 'prod', 'http://localhost:8080', 'https://iam.sunwuu.com/iam-server', 'http://localhost:14040/iam-server', 'Iam platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (15, 79, 'scm-server', 2, 'prod', 'http://localhost:8080', 'https://scm.sunwuu.com/scm-server', 'http://localhost:14043/scm-server', 'Share platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (16, 76, 'share-manager', 2, 'prod', 'http://localhost:8080', 'https://share.sunwuu.com/share-manager', 'http://localhost:14051/share-manager', 'Share platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (17, 77, 'umc-manager', 2, 'prod', 'http://localhost:8080', 'https://umc.sunwuu.com/umc-manager', 'http://localhost:14048/umc-manager', 'Umc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (18, 94, 'doc-manager', 2, 'dev', 'http://localhost:8080', 'http://wl4g.debug:14060/doc-manager', 'http://localhost:14060/doc-manager', 'Doc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (19, 94, 'doc-manager', 2, 'test', 'http://localhost:8080', 'http://doc.anjiancloud.alpha:14060/doc-manager', 'http://localhost:14060/doc-manager', 'Doc platform', NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_cluster_config` VALUES (20, 94, 'doc-manager', 2, 'prod', 'http://localhost:8080', 'http://doc.anjiancloud.com:14060/doc-manager', 'http://localhost:14060/doc-manager', 'Doc platform', NULL, NULL, NULL, NULL, 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for app_environment
+-- ----------------------------
+DROP TABLE IF EXISTS `app_environment`;
+CREATE TABLE `app_environment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cluster_id` int(11) NOT NULL COMMENT '所属应用分组ID',
+  `name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '环境名称（dev/test/pre/prod）',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  `create_by` int(11) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_date` datetime NOT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `cluster_id` (`cluster_id`),
+  KEY `create_by` (`create_by`),
+  KEY `update_by` (`update_by`),
+  CONSTRAINT `app_environment_ibfk_1` FOREIGN KEY (`cluster_id`) REFERENCES `app_cluster` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `app_environment_ibfk_2` FOREIGN KEY (`create_by`) REFERENCES `sys_user` (`id`),
+  CONSTRAINT `app_environment_ibfk_3` FOREIGN KEY (`update_by`) REFERENCES `sys_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='APP配置命名空间（eg: dev/test/pre/prod）';
+
+-- ----------------------------
+-- Records of app_environment
+-- ----------------------------
+BEGIN;
+INSERT INTO `app_environment` VALUES (1, 1, 'dev', 'sso服务开发调试环境', 1, '2018-09-20 11:18:49', 1, '2018-11-05 11:42:48', 0);
+INSERT INTO `app_environment` VALUES (2, 1, 'test', 'sso服务特性验证环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:08:24', 0);
+INSERT INTO `app_environment` VALUES (3, 1, 'pre', 'sso服务灰度验证环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:08:31', 0);
+INSERT INTO `app_environment` VALUES (4, 1, 'prod', 'sso服务生产正式环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (5, 6, 'dev', 'dataopen开发调试环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (6, 6, 'test', 'dataopen特性验证环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (7, 6, 'prod', 'dataopen生产正式环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (15, 2, 'dev', 'portal开发调试环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (16, 2, 'test', 'portal特性验证环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (17, 2, 'prod', 'portal生产正式环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (18, 3, 'dev', 'mp开发调试环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (19, 3, 'test', 'mp特性验证环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (20, 3, 'prod', 'mp生产正式环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (21, 4, 'dev', 'ems开发调试环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (22, 4, 'test', 'ems特性验证环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (23, 4, 'prod', 'ems生产正式环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (24, 5, 'dev', 'sink开发调试环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (25, 5, 'test', 'sink特性验证环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (26, 5, 'prod', 'sink生产正式环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (27, 7, 'dev', 'mqttCollect开发调试环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (28, 7, 'test', 'mqttCollect特性验证环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (29, 7, 'prod', 'mqttCollect生产正式环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (30, 8, 'dev', 'rpcCollect开发调试环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (31, 8, 'test', 'rpcCollect特性验证环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (32, 8, 'prod', 'rpcCollect生产正式环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (33, 9, 'dev', 'base开发调试环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (34, 9, 'test', 'base特性验证环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (35, 9, 'prod', 'base生产正式环境', 1, '2018-09-20 11:18:49', 1, '2018-09-19 09:10:47', 0);
+INSERT INTO `app_environment` VALUES (36, 43, 'dev', 'scm-example开发调试环境', 1, '2018-11-06 13:57:37', 1, '2018-11-06 13:57:37', 0);
+INSERT INTO `app_environment` VALUES (38, 43, 'test', 'scm-example测试调试环境', 1, '2018-11-16 15:56:58', 1, '2018-11-16 15:56:58', 0);
+INSERT INTO `app_environment` VALUES (43, 68, 'dev', 'mobile开发调试环境', 1, '2019-05-21 16:31:20', 1, '2019-05-21 16:31:20', 0);
+INSERT INTO `app_environment` VALUES (44, 69, 'dev', 'iiot开发调试环境', 1, '2019-05-21 16:31:20', 1, '2019-05-21 16:31:20', 0);
+INSERT INTO `app_environment` VALUES (45, 70, 'dev', 'datav开发调试环境', 1, '2019-05-21 16:31:20', 1, '2019-05-21 16:31:20', 0);
+INSERT INTO `app_environment` VALUES (46, 71, 'dev', 'rpccollect开发调试环境', 1, '2019-05-21 16:31:20', 1, '2019-05-21 16:31:20', 0);
+INSERT INTO `app_environment` VALUES (47, 72, 'dev', 'mqttcollect开发调试环境', 1, '2019-05-21 16:31:20', 1, '2019-05-21 16:31:20', 0);
+INSERT INTO `app_environment` VALUES (48, 73, 'dev', 'example-collect开发调试环境', 1, '2019-05-21 16:31:20', 1, '2019-05-21 16:31:20', 0);
+INSERT INTO `app_environment` VALUES (49, 74, 'dev', 'trends开发调试环境', 1, '2019-05-21 16:31:20', 1, '2019-05-21 16:31:20', 0);
+INSERT INTO `app_environment` VALUES (50, 75, 'dev', 'iam-server开发环境', 1, '2019-09-20 16:54:41', 1, '2019-09-20 16:54:41', 0);
+INSERT INTO `app_environment` VALUES (51, 75, 'test', 'iam-server测试环境', 1, '2019-09-20 16:54:41', 1, '2019-09-20 16:54:41', 0);
+INSERT INTO `app_environment` VALUES (52, 76, 'dev', 'shareManager开发环境', 1, '2019-09-20 16:55:55', 1, '2019-09-20 16:55:55', 0);
+INSERT INTO `app_environment` VALUES (53, 76, 'test', 'shareManager测试环境', 1, '2019-09-20 16:55:55', 1, '2019-09-20 16:55:55', 0);
+INSERT INTO `app_environment` VALUES (54, 77, 'dev', 'UmcManager开发环境', 1, '2019-09-20 16:56:47', 1, '2019-09-20 16:56:47', 0);
+INSERT INTO `app_environment` VALUES (55, 77, 'test', 'UmcManager测试环境', 1, '2019-09-20 16:56:47', 1, '2019-09-20 16:56:47', 0);
+INSERT INTO `app_environment` VALUES (56, 78, 'dev', 'UmcManager开发环境', 1, '2019-09-20 16:57:11', 1, '2019-09-20 16:57:11', 0);
+INSERT INTO `app_environment` VALUES (57, 78, 'test', 'UmcManager测试环境', 1, '2019-09-20 16:57:11', 1, '2019-09-20 16:57:11', 0);
+INSERT INTO `app_environment` VALUES (58, 79, 'dev', 'ScmManager开发环境', 1, '2019-09-20 16:57:49', 1, '2019-09-20 16:57:49', 0);
+INSERT INTO `app_environment` VALUES (59, 79, 'test', 'ScmManager测试环境', 1, '2019-09-20 16:57:49', 1, '2019-09-20 16:57:49', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for app_host
+-- ----------------------------
+DROP TABLE IF EXISTS `app_host`;
+CREATE TABLE `app_host` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '显示名称',
+  `hostname` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '可链通的域名地址（不一定等于真实主机名）',
+  `idc_id` int(11) NOT NULL COMMENT '机房id',
+  `status` int(1) NOT NULL COMMENT '主机状态（如：新建/启动中/运行中/停止中/停止/挂起）',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `idc_id` (`idc_id`),
+  CONSTRAINT `app_host_ibfk_1` FOREIGN KEY (`idc_id`) REFERENCES `app_idc` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='主机FQDN解析定义表(不一定跟物理机一一对应，仅表示host解析)';
+
+-- ----------------------------
+-- Records of app_host
+-- ----------------------------
+BEGIN;
+INSERT INTO `app_host` VALUES (1, 'owner-node1', 'owner-node1', 1, 1, '2019-08-06 15:20:42', '1', '2019-08-06 15:20:47', '1', 0);
+INSERT INTO `app_host` VALUES (2, 'heweijiedeMacBook-Pro.local', 'heweijiedeMacBook-Pro.local', 1, 1, '2019-08-21 17:36:30', '1', '2019-08-21 17:36:33', '1', 0);
+INSERT INTO `app_host` VALUES (3, 'owner-node2', 'owner-node2', 1, 1, '2019-08-06 15:20:42', '1', '2019-08-06 15:20:47', '1', 0);
+INSERT INTO `app_host` VALUES (4, 'owner-node3', 'owner-node3', 1, 1, '2019-08-06 15:20:42', '1', '2019-08-06 15:20:47', '1', 0);
+INSERT INTO `app_host` VALUES (5, 'owner-node4', 'owner-node4', 1, 1, '2019-08-06 15:20:42', '1', '2019-08-06 15:20:47', '1', 0);
+INSERT INTO `app_host` VALUES (6, 'n1.kafka.wl4gsafecloudcs.com', 'n1.kafka.wl4gsafecloudcs.com', 1, 1, '2019-08-06 15:20:42', '1', '2019-08-06 15:20:47', '1', 0);
+INSERT INTO `app_host` VALUES (7, 'n2.kafka.wl4gsafecloudcs.com', 'n2.kafka.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (8, 'n3.kafka.wl4gsafecloudcs.com', 'n3.kafka.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (9, 'n1.compute.wl4gsafecloudcs.com', 'n1.compute.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (10, 'n1.mqttcollect.wl4gsafecloudcs.com', 'n1.mqttcollect.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (11, 'n2.mqttcollect.wl4gsafecloudcs.com', 'n2.mqttcollect.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (12, 'n1.rpccollect.wl4gsafecloudcs.com', 'n1.rpccollect.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (13, 'n2.rpccollect.wl4gsafecloudcs.com', 'n2.rpccollect.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (14, 'n1.web.wl4gsafecloudcs.com', 'n1.web.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (15, 'n2.web.wl4gsafecloudcs.com', 'n2.web.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (16, 'n3.web.wl4gsafecloudcs.com', 'n3.web.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (17, 'n1.repo.wl4gsafecloudcs.com', 'n1.repo.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (18, 'n1.sink.wl4gsafecloudcs.com', 'n1.sink.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (19, 'n1.devops.wl4gsafecloudcs.com', 'n1.devops.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+INSERT INTO `app_host` VALUES (20, 'n2.devops.wl4gsafecloudcs.com', 'n2.devops.wl4gsafecloudcs.com', 1, 1, '2019-11-25 15:31:40', '1', '2019-11-25 15:31:45', '1', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for app_host_netcard
+-- ----------------------------
+DROP TABLE IF EXISTS `app_host_netcard`;
+CREATE TABLE `app_host_netcard` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `host_id` int(11) NOT NULL,
+  `name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '网卡名称',
+  `status` varchar(16) COLLATE utf8_bin DEFAULT NULL COMMENT '网卡状态，如：UP/DOWN',
+  `ipv4` varchar(15) COLLATE utf8_bin DEFAULT NULL,
+  `ipv6` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `hwaddr` varchar(17) COLLATE utf8_bin DEFAULT NULL COMMENT '硬件Mac地址',
+  `netmask` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '子网掩码',
+  `broadcast` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '广播地址',
+  `getway` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '网关地址',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` datetime DEFAULT NULL,
+  `del_flag` int(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `host_id` (`host_id`),
+  CONSTRAINT `app_host_netcard_ibfk_1` FOREIGN KEY (`host_id`) REFERENCES `app_host` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='(宿)主机网卡信息表';
+
+-- ----------------------------
+-- Records of app_host_netcard
+-- ----------------------------
+BEGIN;
+INSERT INTO `app_host_netcard` VALUES (1, 1, 'eth0', '1', '115.29.212.28', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `app_host_netcard` VALUES (2, 1, 'eth0', '1', '115.29.212.29', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for app_idc
+-- ----------------------------
+DROP TABLE IF EXISTS `app_idc`;
+CREATE TABLE `app_idc` (
+  `id` int(11) NOT NULL,
+  `name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `area_code` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '可用区编码（如：aliyun-shenzhen-a1）',
+  `provider` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '数据中心云服务商，对应dict（如：aliyun/google/azure）',
+  `loc_x` varchar(16) COLLATE utf8_bin DEFAULT NULL COMMENT '地理坐标X',
+  `loc_y` varchar(16) COLLATE utf8_bin DEFAULT NULL COMMENT '地理坐标Y',
+  `enable` int(11) DEFAULT NULL,
+  `adress` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '地址',
+  `time_zone` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '时区',
+  PRIMARY KEY (`id`),
+  KEY `provider` (`provider`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of app_idc
+-- ----------------------------
+BEGIN;
+INSERT INTO `app_idc` VALUES (1, '阿里云-华南A1', 'aliyun-shenzhen-a1', '1', '1', '2', 1, '华南1-深圳地区', '+8');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for app_instance
+-- ----------------------------
+DROP TABLE IF EXISTS `app_instance`;
+CREATE TABLE `app_instance` (
+  `id` int(64) NOT NULL AUTO_INCREMENT,
+  `cluster_id` int(64) NOT NULL COMMENT '应用分组ID',
+  `version_id` int(64) DEFAULT NULL COMMENT '当前应用版本ID',
+  `host_id` int(11) DEFAULT NULL COMMENT '主机id',
+  `env_type` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '所属环境类型,1023改成去字典value',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '启用状态（0:禁止/1:启用）',
+  `endpoint` varchar(16) COLLATE utf8_bin NOT NULL COMMENT '0812改:port/addr\n像sso这种则使用 port,  像agent则使用addr',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  `ssh_user` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '部署主机SSH账号(CI)',
+  `ssh_key` text COLLATE utf8_bin COMMENT '部署主机SSH私钥(CI)',
+  `ssh_key_pub` text COLLATE utf8_bin COMMENT '部署主机SSH公钥(CI)',
+  `create_by` int(11) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_date` datetime NOT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `cluster_id` (`cluster_id`),
+  KEY `version_id` (`version_id`),
+  KEY `update_by` (`update_by`),
+  KEY `create_by` (`create_by`),
+  KEY `host_id` (`host_id`),
+  CONSTRAINT `app_instance_ibfk_1` FOREIGN KEY (`cluster_id`) REFERENCES `app_cluster` (`id`),
+  CONSTRAINT `app_instance_ibfk_2` FOREIGN KEY (`version_id`) REFERENCES `scm_version` (`id`),
+  CONSTRAINT `app_instance_ibfk_3` FOREIGN KEY (`update_by`) REFERENCES `sys_user` (`id`),
+  CONSTRAINT `app_instance_ibfk_4` FOREIGN KEY (`create_by`) REFERENCES `sys_user` (`id`),
+  CONSTRAINT `app_instance_ibfk_5` FOREIGN KEY (`host_id`) REFERENCES `app_host` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='应用分组（集群）的实例（节点）';
+
+-- ----------------------------
+-- Records of app_instance
+-- ----------------------------
+BEGIN;
+INSERT INTO `app_instance` VALUES (1, 63, 184, 1, 'test', 1, '8080', '办公室服务器1', 'root', NULL, NULL, 1, '2019-05-20 17:45:23', 1, '2019-08-16 16:02:17', 1);
+INSERT INTO `app_instance` VALUES (2, 63, 175, 1, 'fat', 1, '8080', '办公室服务器2', 'datachecker', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4D49D5E42AC766D7392967E778EBCF5B6A222E50FEE3BF3391D522F14BE02447A80165C6307E92E63A735A880E7C3EAD0426228C19830C124B66A16D594DD72EB948A3532A9F193F1BDCD052E8BE2E9DAA66373F1F508010D40C867875D22CEF850325DD49120C08BDA90263A9CFB234BF3615C32FCC6E9F851696C8B5C1C662130D5F36B657BA3DF8D05B0065B00875F12053BCA2EDBAB0A18AB71C982205493393F9FD98E726ED065342BFC4554F57D87314A6CB9A7F6B33A8B2D700A8BFD238F96C6DFF1032476CF19C0298E01A8F566494A1C1F7564603FD4E2DD9EB60EDDF24F28F771DA044CB15B86ED428714BC380FDA375F4E2ED4E4236F32792DE02E746F31AC4640C50D1976A82E0469F504CBFE4DB257C50C018F185D6347DE70C854100B72887DB5A82CBA16140F7842A261BF680A7FABA8BC6505032947A85C98AFF7A84BDE05682EC983FD00880392F8C85ED2C684A108DF4F312812FF8AB5CA1F47B9E1F8E1F687AB9D70BA379057A575A5E851BE6E82E4321532F3BD8BABC1EB7FB86FCD4BB4730EF0207289821F0C103FBE429D3AB75059D8CB1119887C36358FC91C5E4CF037B39360B8B96482E48FCAF0EF64AE8A85143AA637EA34DE02EBDD3C483318BA1FEFDD62FF9B6A9914716AACE94107F17EEF894315C1A3E4D703A30D96E73699A7A3B639D54BC4F7A3C4A17D2EE895C4212EF68D5D1BA8946E86D524F5016338369A8DE72DEE76FE60E108AC41B3DFE09218CBC5E66265AB0B2B44D32BD6530EEC335A636AF453B08E74780FB453823A0834F78EB4D13E6BFBC8B680D31B7903027EEF11A1C185F21F470EFE28AFA09C0853BBDCA4DE41D7B5B833F79F0053C0DA239C31796673C39F9D760D73F62520C5F6586D58D1571194B6CA05FA50D6750FA6EA365D06ABBCE4FD20703AF114357A8B3FF9431D7C5615D32A1A7EA3D02A3AD2DB73C9A1AE5D0A9D148FEF3D4854B8C2E7352E504EF264EA78ED3F70652234D3EE355CF8910038DE2B52CA08EB6A37F2561FD789A0FCA78377D0C8ECD685EAB046A5B06EDBFD1B96222E841A74BB214DB3616BBBDEF192B7100711520D53AFB07ACE8609899D0B875A26FEB7F65646CCD778B5D1F2F2C8E9487D8A56DF000AC3751002FD38273DE85853877D19FE3A89F5F21D80B3B2C4E1FEDBB486D594B478CBEC25C0A8B029C8FA018D5B40000224EE860BC4B2F3B6E30A244DFC59047ECCD8A90A0888C0DFF27FA707E82D74985AE528A8F1CBBD88E78A37F145BC9B1BBFE23957693DD4F276C06ACA76023071904240187A333F770975BC199A19C595685DC7726DDD9B3AF719439085DFA8AE6B250B23413E349B744FAC3C1C8142F76256457439FA893AEA30FE78BB99F35352F7198B668013F401B4C5CB31EBA199085334B17ED6C02534D97C707CCEC61303D3E02AC0CDD8ECA9F06190994F56F68BDBB64F28F03391F44DB04BCC4B8F4CD2DA25993640A5F8A4A727E71406163683ED858C254BFA10E2B60985ADA959507171BD87D614954C7303BC7C113A6179A9D9FCDD312547E0F1D01252519B1723BD4261C95559BDB8E61608FEB3279B91029B49BE5ABF3DED3421A4A8DB30F10827A328D22786A9E80163BD28C220F57F1744ED60DD3BE7601957EE1AEF4EC93A832B3CE6AA3F49338BDA25F88B67E07D22227785DEE2EC35F43A333CBBA3B20D4590B075D5A43EC5B5191A625FDEBA60D836B4E3510003F15A06D4CFD81F2EC973D323BC17F42A1E63F6C609FED30D4A9B86C498D6C1A1D4DFCC16A09E09BC13549A4E5C0D81B7DC74C9A5404CFCF866EBA1B13A58AEF28798AFB43D4D23362899FD4022F1BA746DECE38AB4B48C4C8619E8732B6282C0D96D81286AAD327937E64DC62825460113DE6E18158E40B97BE9AA23369632E0E26013F6CEB0B9C95FB10E3A60E39EBCB35BB14984EE4E3FEA988ACC334B0D87942EDA5965A932E1AEE45689A5C5322218E033F784E197AB65EA845E12A7AA6C99DD1794466C0623F4E4D18591DA2D1E8242AE776AABFA967685C30EFC864BD92AEF7CABCB8ED768A9B2444F6EBF66873720AF14B32EF9A1F8073F746C0AD088C0B55B4EDBD959B5E6DC59EA2A5E44EDC8EECAB06205A9851545A23988235E17594619686E969002AC41C88ED3612804A7803D2DA080CB36D80187ACCB9832DEB245F6178E7C49A33E34C1416FED1BAF9EDB70579B9C267A614B47A9919723D376B1EBF7C784A8433CF001076FA1D5D9170649A18C0655D30F9FCAC77F985F16238E8FB8298263E6F98A9D90EBB19F46B90799B01853A09C3625EE7F888AF9C8FE2', NULL, 1, '2019-05-22 17:19:23', 1, '2019-12-04 11:29:57', 1);
+INSERT INTO `app_instance` VALUES (3, 43, 183, 1, 'test', 1, '8080', '本地虚拟机', 'root', NULL, NULL, 1, '2019-05-17 17:14:19', 1, '2019-05-17 17:14:19', 0);
+INSERT INTO `app_instance` VALUES (54, 43, 425, 2, 'test', 1, '14044', '本地虚拟机2', NULL, NULL, NULL, 1, '2018-11-08 21:32:51', 1, '2019-09-09 13:48:08', 0);
+INSERT INTO `app_instance` VALUES (55, 43, 175, 1, 'test', 1, '14044', '本地虚拟机2', NULL, NULL, NULL, 1, '2018-11-08 21:32:51', 1, '2018-11-16 13:47:11', 0);
+INSERT INTO `app_instance` VALUES (56, 43, 387, 1, 'test', 1, '14044', '本地虚拟机2', NULL, NULL, NULL, 1, '2018-11-08 21:32:51', 1, '2019-06-25 12:59:45', 0);
+INSERT INTO `app_instance` VALUES (67, 66, 184, 1, 'test', 1, '0', '办公室服务器1-datajob', 'datachecker', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4D49D5E42AC766D7392967E778EBCF5B6A222E50FEE3BF3391D522F14BE02447A80165C6307E92E63A735A880E7C3EAD0426228C19830C124B66A16D594DD72EB948A3532A9F193F1BDCD052E8BE2E9DAA66373F1F508010D40C867875D22CEF850325DD49120C08BDA90263A9CFB234BF3615C32FCC6E9F851696C8B5C1C662130D5F36B657BA3DF8D05B0065B00875F12053BCA2EDBAB0A18AB71C982205493393F9FD98E726ED065342BFC4554F57D87314A6CB9A7F6B33A8B2D700A8BFD238F96C6DFF1032476CF19C0298E01A8F566494A1C1F7564603FD4E2DD9EB60EDDF24F28F771DA044CB15B86ED428714BC380FDA375F4E2ED4E4236F32792DE02E746F31AC4640C50D1976A82E0469F504CBFE4DB257C50C018F185D6347DE70C854100B72887DB5A82CBA16140F7842A261BF680A7FABA8BC6505032947A85C98AFF7A84BDE05682EC983FD00880392F8C85ED2C684A108DF4F312812FF8AB5CA1F47B9E1F8E1F687AB9D70BA379057A575A5E851BE6E82E4321532F3BD8BABC1EB7FB86FCD4BB4730EF0207289821F0C103FBE429D3AB75059D8CB1119887C36358FC91C5E4CF037B39360B8B96482E48FCAF0EF64AE8A85143AA637EA34DE02EBDD3C483318BA1FEFDD62FF9B6A9914716AACE94107F17EEF894315C1A3E4D703A30D96E73699A7A3B639D54BC4F7A3C4A17D2EE895C4212EF68D5D1BA8946E86D524F5016338369A8DE72DEE76FE60E108AC41B3DFE09218CBC5E66265AB0B2B44D32BD6530EEC335A636AF453B08E74780FB453823A0834F78EB4D13E6BFBC8B680D31B7903027EEF11A1C185F21F470EFE28AFA09C0853BBDCA4DE41D7B5B833F79F0053C0DA239C31796673C39F9D760D73F62520C5F6586D58D1571194B6CA05FA50D6750FA6EA365D06ABBCE4FD20703AF114357A8B3FF9431D7C5615D32A1A7EA3D02A3AD2DB73C9A1AE5D0A9D148FEF3D4854B8C2E7352E504EF264EA78ED3F70652234D3EE355CF8910038DE2B52CA08EB6A37F2561FD789A0FCA78377D0C8ECD685EAB046A5B06EDBFD1B96222E841A74BB214DB3616BBBDEF192B7100711520D53AFB07ACE8609899D0B875A26FEB7F65646CCD778B5D1F2F2C8E9487D8A56DF000AC3751002FD38273DE85853877D19FE3A89F5F21D80B3B2C4E1FEDBB486D594B478CBEC25C0A8B029C8FA018D5B40000224EE860BC4B2F3B6E30A244DFC59047ECCD8A90A0888C0DFF27FA707E82D74985AE528A8F1CBBD88E78A37F145BC9B1BBFE23957693DD4F276C06ACA76023071904240187A333F770975BC199A19C595685DC7726DDD9B3AF719439085DFA8AE6B250B23413E349B744FAC3C1C8142F76256457439FA893AEA30FE78BB99F35352F7198B668013F401B4C5CB31EBA199085334B17ED6C02534D97C707CCEC61303D3E02AC0CDD8ECA9F06190994F56F68BDBB64F28F03391F44DB04BCC4B8F4CD2DA25993640A5F8A4A727E71406163683ED858C254BFA10E2B60985ADA959507171BD87D614954C7303BC7C113A6179A9D9FCDD312547E0F1D01252519B1723BD4261C95559BDB8E61608FEB3279B91029B49BE5ABF3DED3421A4A8DB30F10827A328D22786A9E80163BD28C220F57F1744ED60DD3BE7601957EE1AEF4EC93A832B3CE6AA3F49338BDA25F88B67E07D22227785DEE2EC35F43A333CBBA3B20D4590B075D5A43EC5B5191A625FDEBA60D836B4E3510003F15A06D4CFD81F2EC973D323BC17F42A1E63F6C609FED30D4A9B86C498D6C1A1D4DFCC16A09E09BC13549A4E5C0D81B7DC74C9A5404CFCF866EBA1B13A58AEF28798AFB43D4D23362899FD4022F1BA746DECE38AB4B48C4C8619E8732B6282C0D96D81286AAD327937E64DC62825460113DE6E18158E40B97BE9AA23369632E0E26013F6CEB0B9C95FB10E3A60E39EBCB35BB14984EE4E3FEA988ACC334B0D87942EDA5965A932E1AEE45689A5C5322218E033F784E197AB65EA845E12A7AA6C99DD1794466C0623F4E4D18591DA2D1E8242AE776AABFA967685C30EFC864BD92AEF7CABCB8ED768A9B2444F6EBF66873720AF14B32EF9A1F8073F746C0AD088C0B55B4EDBD959B5E6DC59EA2A5E44EDC8EECAB06205A9851545A23988235E17594619686E969002AC41C88ED3612804A7803D2DA080CB36D80187ACCB9832DEB245F6178E7C49A33E34C1416FED1BAF9EDB70579B9C267A614B47A9919723D376B1EBF7C784A8433CF001076FA1D5D9170649A18C0655D30F9FCAC77F985F16238E8FB8298263E6F98A9D90EBB19F46B90799B01853A09C3625EE7F888AF9C8FE2', NULL, 1, '2019-05-20 17:45:23', 1, '2019-05-20 17:45:23', 0);
+INSERT INTO `app_instance` VALUES (68, 1, 388, 1, 'fat', 1, '28080', '办公室服务器1-sso', 'sso', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-05-20 17:45:23', 1, '2019-12-04 11:27:39', 0);
+INSERT INTO `app_instance` VALUES (74, 63, 392, 2, 'test', 1, '14044', 'agent测试', NULL, NULL, NULL, 1, '2019-08-21 17:37:58', 1, '2019-09-06 11:20:42', 1);
+INSERT INTO `app_instance` VALUES (75, 2, NULL, 1, 'fat', 1, '28082', '办公室服务器1-portal', 'portal', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-05-20 17:45:23', 1, '2019-12-04 11:27:32', 0);
+INSERT INTO `app_instance` VALUES (76, 9, NULL, 1, 'fat', 1, '28084', '办公室服务器1-base', 'base', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 15:45:42', 1, '2019-12-04 11:29:41', 0);
+INSERT INTO `app_instance` VALUES (77, 4, NULL, 1, 'fat', 1, '28083', '办公室服务器1-ems', 'ems', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 17:09:42', 1, '2019-12-04 11:28:39', 0);
+INSERT INTO `app_instance` VALUES (78, 68, NULL, 1, 'fat', 1, '28086', '办公室服务器1-mobile', 'mobile', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 17:09:42', 1, '2019-12-04 11:30:39', 0);
+INSERT INTO `app_instance` VALUES (79, 3, NULL, 1, 'fat', 1, '28081', '办公室服务器1-mp', 'mp', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 17:09:42', 1, '2019-12-04 11:28:04', 0);
+INSERT INTO `app_instance` VALUES (80, 69, NULL, 1, 'fat', 1, '28089', '办公室服务器1-iiot', 'iiot', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 17:09:42', 1, '2019-12-04 11:30:53', 0);
+INSERT INTO `app_instance` VALUES (81, 70, NULL, 1, 'fat', 1, '28090', '办公室服务器1-datav', 'datav', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 17:09:42', 1, '2019-12-04 11:31:17', 0);
+INSERT INTO `app_instance` VALUES (82, 71, NULL, 5, 'test', 1, '39088', '办公室服务器4-rpccollect', 'rpccollect', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 17:09:42', 1, '2019-09-19 17:09:43', 0);
+INSERT INTO `app_instance` VALUES (83, 72, NULL, 4, 'test', 1, '29088', '办公室服务器3-mqttcollect', 'mqttcollect', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 17:09:42', 1, '2019-09-19 17:09:43', 0);
+INSERT INTO `app_instance` VALUES (84, 72, NULL, 5, 'test', 1, '29088', '办公室服务器4-mqttcollect', 'mqttcollect', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 17:09:42', 1, '2019-09-19 17:09:43', 0);
+INSERT INTO `app_instance` VALUES (85, 73, NULL, 4, 'test', 1, '19088', '办公室服务器3-example-collect', 'example-collect', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 17:09:42', 1, '2019-09-19 17:09:43', 0);
+INSERT INTO `app_instance` VALUES (86, 5, NULL, 1, 'fat', 1, '19088', '办公室服务器1-sink', 'sink', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 17:09:42', 1, '2019-12-04 11:28:57', 0);
+INSERT INTO `app_instance` VALUES (87, 74, NULL, 5, 'fat', 1, '19088', '办公室服务器4-trends', 'trends', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-19 17:09:42', 1, '2019-12-04 11:32:13', 0);
+INSERT INTO `app_instance` VALUES (88, 76, NULL, 1, 'test', 1, '14051', '办公室服务器1-shareManager', 'share-manager', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-20 17:00:01', 1, '2019-09-20 17:01:09', 0);
+INSERT INTO `app_instance` VALUES (89, 77, NULL, 1, 'test', 1, '14048', '办公室服务器1-umc-manager', 'umc-manager', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-09-20 17:03:08', 1, '2019-09-20 17:03:08', 0);
+INSERT INTO `app_instance` VALUES (90, 80, NULL, 1, 'fat', 1, '80', 'ems-view测试环境', 'sut', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4D49D5E42AC766D7392967E778EBCF5B6A222E50FEE3BF3391D522F14BE02447A80165C6307E92E63A735A880E7C3EAD0426228C19830C124B66A16D594DD72EB948A3532A9F193F1BDCD052E8BE2E9DAA66373F1F508010D40C867875D22CEF850325DD49120C08BDA90263A9CFB234BF3615C32FCC6E9F851696C8B5C1C662130D5F36B657BA3DF8D05B0065B00875F12053BCA2EDBAB0A18AB71C982205493393F9FD98E726ED065342BFC4554F57D87314A6CB9A7F6B33A8B2D700A8BFD238F96C6DFF1032476CF19C0298E01A8F566494A1C1F7564603FD4E2DD9EB60EDDF24F28F771DA044CB15B86ED428714BC380FDA375F4E2ED4E4236F32792DE02E746F31AC4640C50D1976A82E0469F504CBFE4DB257C50C018F185D6347DE70C854100B72887DB5A82CBA16140F7842A261BF680A7FABA8BC6505032947A85C98AFF7A84BDE05682EC983FD00880392F8C85ED2C684A108DF4F312812FF8AB5CA1F47B9E1F8E1F687AB9D70BA379057A575A5E851BE6E82E4321532F3BD8BABC1EB7FB86FCD4BB4730EF0207289821F0C103FBE429D3AB75059D8CB1119887C36358FC91C5E4CF037B39360B8B96482E48FCAF0EF64AE8A85143AA637EA34DE02EBDD3C483318BA1FEFDD62FF9B6A9914716AACE94107F17EEF894315C1A3E4D703A30D96E73699A7A3B639D54BC4F7A3C4A17D2EE895C4212EF68D5D1BA8946E86D524F5016338369A8DE72DEE76FE60E108AC41B3DFE09218CBC5E66265AB0B2B44D32BD6530EEC335A636AF453B08E74780FB453823A0834F78EB4D13E6BFBC8B680D31B7903027EEF11A1C185F21F470EFE28AFA09C0853BBDCA4DE41D7B5B833F79F0053C0DA239C31796673C39F9D760D73F62520C5F6586D58D1571194B6CA05FA50D6750FA6EA365D06ABBCE4FD20703AF114357A8B3FF9431D7C5615D32A1A7EA3D02A3AD2DB73C9A1AE5D0A9D148FEF3D4854B8C2E7352E504EF264EA78ED3F70652234D3EE355CF8910038DE2B52CA08EB6A37F2561FD789A0FCA78377D0C8ECD685EAB046A5B06EDBFD1B96222E841A74BB214DB3616BBBDEF192B7100711520D53AFB07ACE8609899D0B875A26FEB7F65646CCD778B5D1F2F2C8E9487D8A56DF000AC3751002FD38273DE85853877D19FE3A89F5F21D80B3B2C4E1FEDBB486D594B478CBEC25C0A8B029C8FA018D5B40000224EE860BC4B2F3B6E30A244DFC59047ECCD8A90A0888C0DFF27FA707E82D74985AE528A8F1CBBD88E78A37F145BC9B1BBFE23957693DD4F276C06ACA76023071904240187A333F770975BC199A19C595685DC7726DDD9B3AF719439085DFA8AE6B250B23413E349B744FAC3C1C8142F76256457439FA893AEA30FE78BB99F35352F7198B668013F401B4C5CB31EBA199085334B17ED6C02534D97C707CCEC61303D3E02AC0CDD8ECA9F06190994F56F68BDBB64F28F03391F44DB04BCC4B8F4CD2DA25993640A5F8A4A727E71406163683ED858C254BFA10E2B60985ADA959507171BD87D614954C7303BC7C113A6179A9D9FCDD312547E0F1D01252519B1723BD4261C95559BDB8E61608FEB3279B91029B49BE5ABF3DED3421A4A8DB30F10827A328D22786A9E80163BD28C220F57F1744ED60DD3BE7601957EE1AEF4EC93A832B3CE6AA3F49338BDA25F88B67E07D22227785DEE2EC35F43A333CBBA3B20D4590B075D5A43EC5B5191A625FDEBA60D836B4E3510003F15A06D4CFD81F2EC973D323BC17F42A1E63F6C609FED30D4A9B86C498D6C1A1D4DFCC16A09E09BC13549A4E5C0D81B7DC74C9A5404CFCF866EBA1B13A58AEF28798AFB43D4D23362899FD4022F1BA746DECE38AB4B48C4C8619E8732B6282C0D96D81286AAD327937E64DC62825460113DE6E18158E40B97BE9AA23369632E0E26013F6CEB0B9C95FB10E3A60E39EBCB35BB14984EE4E3FEA988ACC334B0D87942EDA5965A932E1AEE45689A5C5322218E033F784E197AB65EA845E12A7AA6C99DD1794466C0623F4E4D18591DA2D1E8242AE776AABFA967685C30EFC864BD92AEF7CABCB8ED768A9B2444F6EBF66873720AF14B32EF9A1F8073F746C0AD088C0B55B4EDBD959B5E6DC59EA2A5E44EDC8EECAB06205A9851545A23988235E17594619686E969002AC41C88ED3612804A7803D2DA080CB36D80187ACCB9832DEB245F6178E7C49A33E34C1416FED1BAF9EDB70579B9C267A614B47A9919723D376B1EBF7C784A8433CF001076FA1D5D9170649A18C0655D30F9FCAC77F985F16238E8FB8298263E6F98A9D90EBB19F46B90799B01853A09C3625EE7F888AF9C8FE2', NULL, 1, '2019-10-21 16:43:05', 1, '2019-12-19 11:00:44', 0);
+INSERT INTO `app_instance` VALUES (91, 81, NULL, 1, 'fat', 1, '80', '测试devops-view', 'sut', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4D49D5E42AC766D7392967E778EBCF5B6A222E50FEE3BF3391D522F14BE02447A80165C6307E92E63A735A880E7C3EAD0426228C19830C124B66A16D594DD72EB948A3532A9F193F1BDCD052E8BE2E9DAA66373F1F508010D40C867875D22CEF850325DD49120C08BDA90263A9CFB234BF3615C32FCC6E9F851696C8B5C1C662130D5F36B657BA3DF8D05B0065B00875F12053BCA2EDBAB0A18AB71C982205493393F9FD98E726ED065342BFC4554F57D87314A6CB9A7F6B33A8B2D700A8BFD238F96C6DFF1032476CF19C0298E01A8F566494A1C1F7564603FD4E2DD9EB60EDDF24F28F771DA044CB15B86ED428714BC380FDA375F4E2ED4E4236F32792DE02E746F31AC4640C50D1976A82E0469F504CBFE4DB257C50C018F185D6347DE70C854100B72887DB5A82CBA16140F7842A261BF680A7FABA8BC6505032947A85C98AFF7A84BDE05682EC983FD00880392F8C85ED2C684A108DF4F312812FF8AB5CA1F47B9E1F8E1F687AB9D70BA379057A575A5E851BE6E82E4321532F3BD8BABC1EB7FB86FCD4BB4730EF0207289821F0C103FBE429D3AB75059D8CB1119887C36358FC91C5E4CF037B39360B8B96482E48FCAF0EF64AE8A85143AA637EA34DE02EBDD3C483318BA1FEFDD62FF9B6A9914716AACE94107F17EEF894315C1A3E4D703A30D96E73699A7A3B639D54BC4F7A3C4A17D2EE895C4212EF68D5D1BA8946E86D524F5016338369A8DE72DEE76FE60E108AC41B3DFE09218CBC5E66265AB0B2B44D32BD6530EEC335A636AF453B08E74780FB453823A0834F78EB4D13E6BFBC8B680D31B7903027EEF11A1C185F21F470EFE28AFA09C0853BBDCA4DE41D7B5B833F79F0053C0DA239C31796673C39F9D760D73F62520C5F6586D58D1571194B6CA05FA50D6750FA6EA365D06ABBCE4FD20703AF114357A8B3FF9431D7C5615D32A1A7EA3D02A3AD2DB73C9A1AE5D0A9D148FEF3D4854B8C2E7352E504EF264EA78ED3F70652234D3EE355CF8910038DE2B52CA08EB6A37F2561FD789A0FCA78377D0C8ECD685EAB046A5B06EDBFD1B96222E841A74BB214DB3616BBBDEF192B7100711520D53AFB07ACE8609899D0B875A26FEB7F65646CCD778B5D1F2F2C8E9487D8A56DF000AC3751002FD38273DE85853877D19FE3A89F5F21D80B3B2C4E1FEDBB486D594B478CBEC25C0A8B029C8FA018D5B40000224EE860BC4B2F3B6E30A244DFC59047ECCD8A90A0888C0DFF27FA707E82D74985AE528A8F1CBBD88E78A37F145BC9B1BBFE23957693DD4F276C06ACA76023071904240187A333F770975BC199A19C595685DC7726DDD9B3AF719439085DFA8AE6B250B23413E349B744FAC3C1C8142F76256457439FA893AEA30FE78BB99F35352F7198B668013F401B4C5CB31EBA199085334B17ED6C02534D97C707CCEC61303D3E02AC0CDD8ECA9F06190994F56F68BDBB64F28F03391F44DB04BCC4B8F4CD2DA25993640A5F8A4A727E71406163683ED858C254BFA10E2B60985ADA959507171BD87D614954C7303BC7C113A6179A9D9FCDD312547E0F1D01252519B1723BD4261C95559BDB8E61608FEB3279B91029B49BE5ABF3DED3421A4A8DB30F10827A328D22786A9E80163BD28C220F57F1744ED60DD3BE7601957EE1AEF4EC93A832B3CE6AA3F49338BDA25F88B67E07D22227785DEE2EC35F43A333CBBA3B20D4590B075D5A43EC5B5191A625FDEBA60D836B4E3510003F15A06D4CFD81F2EC973D323BC17F42A1E63F6C609FED30D4A9B86C498D6C1A1D4DFCC16A09E09BC13549A4E5C0D81B7DC74C9A5404CFCF866EBA1B13A58AEF28798AFB43D4D23362899FD4022F1BA746DECE38AB4B48C4C8619E8732B6282C0D96D81286AAD327937E64DC62825460113DE6E18158E40B97BE9AA23369632E0E26013F6CEB0B9C95FB10E3A60E39EBCB35BB14984EE4E3FEA988ACC334B0D87942EDA5965A932E1AEE45689A5C5322218E033F784E197AB65EA845E12A7AA6C99DD1794466C0623F4E4D18591DA2D1E8242AE776AABFA967685C30EFC864BD92AEF7CABCB8ED768A9B2444F6EBF66873720AF14B32EF9A1F8073F746C0AD088C0B55B4EDBD959B5E6DC59EA2A5E44EDC8EECAB06205A9851545A23988235E17594619686E969002AC41C88ED3612804A7803D2DA080CB36D80187ACCB9832DEB245F6178E7C49A33E34C1416FED1BAF9EDB70579B9C267A614B47A9919723D376B1EBF7C784A8433CF001076FA1D5D9170649A18C0655D30F9FCAC77F985F16238E8FB8298263E6F98A9D90EBB19F46B90799B01853A09C3625EE7F888AF9C8FE2', NULL, 1, '2019-10-21 16:43:05', 1, '2020-02-05 11:00:52', 0);
+INSERT INTO `app_instance` VALUES (92, 1, NULL, 15, 'pro', 1, '28080', '生产服务器web-n2', 'sso', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 11:26:40', 1, '2019-12-04 11:27:39', 0);
+INSERT INTO `app_instance` VALUES (93, 2, NULL, 15, 'pro', 1, '28082', '生产服务器web-n2', 'portal', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 11:27:32', 1, '2019-12-04 11:27:32', 0);
+INSERT INTO `app_instance` VALUES (94, 3, NULL, 15, 'pro', 1, '28081', '生产服务器web-n2', 'mp', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 11:28:04', 1, '2019-12-04 11:28:04', 0);
+INSERT INTO `app_instance` VALUES (95, 4, NULL, 15, 'pro', 1, '28083', '生产服务器web-n2', 'ems', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 11:28:39', 1, '2019-12-04 11:28:39', 0);
+INSERT INTO `app_instance` VALUES (96, 5, NULL, 15, 'pro', 1, '19088', '生产服务器web-n2', 'sink', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 11:28:57', 1, '2019-12-04 11:28:57', 0);
+INSERT INTO `app_instance` VALUES (97, 9, NULL, 15, 'pro', 1, '28084', '生产服务器web-n2', 'base', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 11:29:34', 1, '2019-12-04 11:29:41', 0);
+INSERT INTO `app_instance` VALUES (98, 68, NULL, 15, 'pro', 1, '28086', '生产服务器web-n2', 'mobile', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 11:30:30', 1, '2019-12-04 11:30:39', 0);
+INSERT INTO `app_instance` VALUES (99, 69, NULL, 15, 'pro', 1, '28089', '生产服务器web-n2', 'iiot', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 11:30:53', 1, '2019-12-04 11:30:53', 0);
+INSERT INTO `app_instance` VALUES (100, 70, NULL, 15, 'pro', 1, '28090', '生产服务器web-n2', 'datav', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 11:31:17', 1, '2019-12-04 11:31:17', 0);
+INSERT INTO `app_instance` VALUES (101, 74, NULL, 15, 'pro', 1, '19088', '生产服务器web-n2', 'trends', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 11:32:13', 1, '2019-12-04 11:32:13', 0);
+INSERT INTO `app_instance` VALUES (102, 80, NULL, 15, 'pro', 1, '80', '生产ems-view', 'ems', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 18:01:40', 1, '2019-12-19 11:00:44', 0);
+INSERT INTO `app_instance` VALUES (103, 81, NULL, 19, 'pro', 1, '80', '生产devops-view', 'devops', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 18:04:20', 1, '2020-02-05 11:00:52', 0);
+INSERT INTO `app_instance` VALUES (104, 85, NULL, 1, 'fat', 1, '80', '测试devops-view', 'sut', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4D49D5E42AC766D7392967E778EBCF5B6A222E50FEE3BF3391D522F14BE02447A80165C6307E92E63A735A880E7C3EAD0426228C19830C124B66A16D594DD72EB948A3532A9F193F1BDCD052E8BE2E9DAA66373F1F508010D40C867875D22CEF850325DD49120C08BDA90263A9CFB234BF3615C32FCC6E9F851696C8B5C1C662130D5F36B657BA3DF8D05B0065B00875F12053BCA2EDBAB0A18AB71C982205493393F9FD98E726ED065342BFC4554F57D87314A6CB9A7F6B33A8B2D700A8BFD238F96C6DFF1032476CF19C0298E01A8F566494A1C1F7564603FD4E2DD9EB60EDDF24F28F771DA044CB15B86ED428714BC380FDA375F4E2ED4E4236F32792DE02E746F31AC4640C50D1976A82E0469F504CBFE4DB257C50C018F185D6347DE70C854100B72887DB5A82CBA16140F7842A261BF680A7FABA8BC6505032947A85C98AFF7A84BDE05682EC983FD00880392F8C85ED2C684A108DF4F312812FF8AB5CA1F47B9E1F8E1F687AB9D70BA379057A575A5E851BE6E82E4321532F3BD8BABC1EB7FB86FCD4BB4730EF0207289821F0C103FBE429D3AB75059D8CB1119887C36358FC91C5E4CF037B39360B8B96482E48FCAF0EF64AE8A85143AA637EA34DE02EBDD3C483318BA1FEFDD62FF9B6A9914716AACE94107F17EEF894315C1A3E4D703A30D96E73699A7A3B639D54BC4F7A3C4A17D2EE895C4212EF68D5D1BA8946E86D524F5016338369A8DE72DEE76FE60E108AC41B3DFE09218CBC5E66265AB0B2B44D32BD6530EEC335A636AF453B08E74780FB453823A0834F78EB4D13E6BFBC8B680D31B7903027EEF11A1C185F21F470EFE28AFA09C0853BBDCA4DE41D7B5B833F79F0053C0DA239C31796673C39F9D760D73F62520C5F6586D58D1571194B6CA05FA50D6750FA6EA365D06ABBCE4FD20703AF114357A8B3FF9431D7C5615D32A1A7EA3D02A3AD2DB73C9A1AE5D0A9D148FEF3D4854B8C2E7352E504EF264EA78ED3F70652234D3EE355CF8910038DE2B52CA08EB6A37F2561FD789A0FCA78377D0C8ECD685EAB046A5B06EDBFD1B96222E841A74BB214DB3616BBBDEF192B7100711520D53AFB07ACE8609899D0B875A26FEB7F65646CCD778B5D1F2F2C8E9487D8A56DF000AC3751002FD38273DE85853877D19FE3A89F5F21D80B3B2C4E1FEDBB486D594B478CBEC25C0A8B029C8FA018D5B40000224EE860BC4B2F3B6E30A244DFC59047ECCD8A90A0888C0DFF27FA707E82D74985AE528A8F1CBBD88E78A37F145BC9B1BBFE23957693DD4F276C06ACA76023071904240187A333F770975BC199A19C595685DC7726DDD9B3AF719439085DFA8AE6B250B23413E349B744FAC3C1C8142F76256457439FA893AEA30FE78BB99F35352F7198B668013F401B4C5CB31EBA199085334B17ED6C02534D97C707CCEC61303D3E02AC0CDD8ECA9F06190994F56F68BDBB64F28F03391F44DB04BCC4B8F4CD2DA25993640A5F8A4A727E71406163683ED858C254BFA10E2B60985ADA959507171BD87D614954C7303BC7C113A6179A9D9FCDD312547E0F1D01252519B1723BD4261C95559BDB8E61608FEB3279B91029B49BE5ABF3DED3421A4A8DB30F10827A328D22786A9E80163BD28C220F57F1744ED60DD3BE7601957EE1AEF4EC93A832B3CE6AA3F49338BDA25F88B67E07D22227785DEE2EC35F43A333CBBA3B20D4590B075D5A43EC5B5191A625FDEBA60D836B4E3510003F15A06D4CFD81F2EC973D323BC17F42A1E63F6C609FED30D4A9B86C498D6C1A1D4DFCC16A09E09BC13549A4E5C0D81B7DC74C9A5404CFCF866EBA1B13A58AEF28798AFB43D4D23362899FD4022F1BA746DECE38AB4B48C4C8619E8732B6282C0D96D81286AAD327937E64DC62825460113DE6E18158E40B97BE9AA23369632E0E26013F6CEB0B9C95FB10E3A60E39EBCB35BB14984EE4E3FEA988ACC334B0D87942EDA5965A932E1AEE45689A5C5322218E033F784E197AB65EA845E12A7AA6C99DD1794466C0623F4E4D18591DA2D1E8242AE776AABFA967685C30EFC864BD92AEF7CABCB8ED768A9B2444F6EBF66873720AF14B32EF9A1F8073F746C0AD088C0B55B4EDBD959B5E6DC59EA2A5E44EDC8EECAB06205A9851545A23988235E17594619686E969002AC41C88ED3612804A7803D2DA080CB36D80187ACCB9832DEB245F6178E7C49A33E34C1416FED1BAF9EDB70579B9C267A614B47A9919723D376B1EBF7C784A8433CF001076FA1D5D9170649A18C0655D30F9FCAC77F985F16238E8FB8298263E6F98A9D90EBB19F46B90799B01853A09C3625EE7F888AF9C8FE2', NULL, 1, '2019-12-04 18:05:14', 1, '2019-12-19 10:53:57', 0);
+INSERT INTO `app_instance` VALUES (105, 85, NULL, 14, 'pro', 1, '80', '生产devops-view', 'portal', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 18:05:14', 1, '2019-12-19 10:53:57', 0);
+INSERT INTO `app_instance` VALUES (106, 86, NULL, 1, 'fat', 1, '80', '测试datav-view', 'sut', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4D49D5E42AC766D7392967E778EBCF5B6A222E50FEE3BF3391D522F14BE02447A80165C6307E92E63A735A880E7C3EAD0426228C19830C124B66A16D594DD72EB948A3532A9F193F1BDCD052E8BE2E9DAA66373F1F508010D40C867875D22CEF850325DD49120C08BDA90263A9CFB234BF3615C32FCC6E9F851696C8B5C1C662130D5F36B657BA3DF8D05B0065B00875F12053BCA2EDBAB0A18AB71C982205493393F9FD98E726ED065342BFC4554F57D87314A6CB9A7F6B33A8B2D700A8BFD238F96C6DFF1032476CF19C0298E01A8F566494A1C1F7564603FD4E2DD9EB60EDDF24F28F771DA044CB15B86ED428714BC380FDA375F4E2ED4E4236F32792DE02E746F31AC4640C50D1976A82E0469F504CBFE4DB257C50C018F185D6347DE70C854100B72887DB5A82CBA16140F7842A261BF680A7FABA8BC6505032947A85C98AFF7A84BDE05682EC983FD00880392F8C85ED2C684A108DF4F312812FF8AB5CA1F47B9E1F8E1F687AB9D70BA379057A575A5E851BE6E82E4321532F3BD8BABC1EB7FB86FCD4BB4730EF0207289821F0C103FBE429D3AB75059D8CB1119887C36358FC91C5E4CF037B39360B8B96482E48FCAF0EF64AE8A85143AA637EA34DE02EBDD3C483318BA1FEFDD62FF9B6A9914716AACE94107F17EEF894315C1A3E4D703A30D96E73699A7A3B639D54BC4F7A3C4A17D2EE895C4212EF68D5D1BA8946E86D524F5016338369A8DE72DEE76FE60E108AC41B3DFE09218CBC5E66265AB0B2B44D32BD6530EEC335A636AF453B08E74780FB453823A0834F78EB4D13E6BFBC8B680D31B7903027EEF11A1C185F21F470EFE28AFA09C0853BBDCA4DE41D7B5B833F79F0053C0DA239C31796673C39F9D760D73F62520C5F6586D58D1571194B6CA05FA50D6750FA6EA365D06ABBCE4FD20703AF114357A8B3FF9431D7C5615D32A1A7EA3D02A3AD2DB73C9A1AE5D0A9D148FEF3D4854B8C2E7352E504EF264EA78ED3F70652234D3EE355CF8910038DE2B52CA08EB6A37F2561FD789A0FCA78377D0C8ECD685EAB046A5B06EDBFD1B96222E841A74BB214DB3616BBBDEF192B7100711520D53AFB07ACE8609899D0B875A26FEB7F65646CCD778B5D1F2F2C8E9487D8A56DF000AC3751002FD38273DE85853877D19FE3A89F5F21D80B3B2C4E1FEDBB486D594B478CBEC25C0A8B029C8FA018D5B40000224EE860BC4B2F3B6E30A244DFC59047ECCD8A90A0888C0DFF27FA707E82D74985AE528A8F1CBBD88E78A37F145BC9B1BBFE23957693DD4F276C06ACA76023071904240187A333F770975BC199A19C595685DC7726DDD9B3AF719439085DFA8AE6B250B23413E349B744FAC3C1C8142F76256457439FA893AEA30FE78BB99F35352F7198B668013F401B4C5CB31EBA199085334B17ED6C02534D97C707CCEC61303D3E02AC0CDD8ECA9F06190994F56F68BDBB64F28F03391F44DB04BCC4B8F4CD2DA25993640A5F8A4A727E71406163683ED858C254BFA10E2B60985ADA959507171BD87D614954C7303BC7C113A6179A9D9FCDD312547E0F1D01252519B1723BD4261C95559BDB8E61608FEB3279B91029B49BE5ABF3DED3421A4A8DB30F10827A328D22786A9E80163BD28C220F57F1744ED60DD3BE7601957EE1AEF4EC93A832B3CE6AA3F49338BDA25F88B67E07D22227785DEE2EC35F43A333CBBA3B20D4590B075D5A43EC5B5191A625FDEBA60D836B4E3510003F15A06D4CFD81F2EC973D323BC17F42A1E63F6C609FED30D4A9B86C498D6C1A1D4DFCC16A09E09BC13549A4E5C0D81B7DC74C9A5404CFCF866EBA1B13A58AEF28798AFB43D4D23362899FD4022F1BA746DECE38AB4B48C4C8619E8732B6282C0D96D81286AAD327937E64DC62825460113DE6E18158E40B97BE9AA23369632E0E26013F6CEB0B9C95FB10E3A60E39EBCB35BB14984EE4E3FEA988ACC334B0D87942EDA5965A932E1AEE45689A5C5322218E033F784E197AB65EA845E12A7AA6C99DD1794466C0623F4E4D18591DA2D1E8242AE776AABFA967685C30EFC864BD92AEF7CABCB8ED768A9B2444F6EBF66873720AF14B32EF9A1F8073F746C0AD088C0B55B4EDBD959B5E6DC59EA2A5E44EDC8EECAB06205A9851545A23988235E17594619686E969002AC41C88ED3612804A7803D2DA080CB36D80187ACCB9832DEB245F6178E7C49A33E34C1416FED1BAF9EDB70579B9C267A614B47A9919723D376B1EBF7C784A8433CF001076FA1D5D9170649A18C0655D30F9FCAC77F985F16238E8FB8298263E6F98A9D90EBB19F46B90799B01853A09C3625EE7F888AF9C8FE2', NULL, 1, '2019-12-04 18:23:13', 1, '2019-12-19 10:53:46', 0);
+INSERT INTO `app_instance` VALUES (107, 86, NULL, 14, 'pro', 1, '80', '生产datav-view', 'datav', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 18:23:13', 1, '2019-12-19 10:53:46', 0);
+INSERT INTO `app_instance` VALUES (108, 87, NULL, 1, 'fat', 1, '80', '测试iiot-view', 'sut', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4D49D5E42AC766D7392967E778EBCF5B6A222E50FEE3BF3391D522F14BE02447A80165C6307E92E63A735A880E7C3EAD0426228C19830C124B66A16D594DD72EB948A3532A9F193F1BDCD052E8BE2E9DAA66373F1F508010D40C867875D22CEF850325DD49120C08BDA90263A9CFB234BF3615C32FCC6E9F851696C8B5C1C662130D5F36B657BA3DF8D05B0065B00875F12053BCA2EDBAB0A18AB71C982205493393F9FD98E726ED065342BFC4554F57D87314A6CB9A7F6B33A8B2D700A8BFD238F96C6DFF1032476CF19C0298E01A8F566494A1C1F7564603FD4E2DD9EB60EDDF24F28F771DA044CB15B86ED428714BC380FDA375F4E2ED4E4236F32792DE02E746F31AC4640C50D1976A82E0469F504CBFE4DB257C50C018F185D6347DE70C854100B72887DB5A82CBA16140F7842A261BF680A7FABA8BC6505032947A85C98AFF7A84BDE05682EC983FD00880392F8C85ED2C684A108DF4F312812FF8AB5CA1F47B9E1F8E1F687AB9D70BA379057A575A5E851BE6E82E4321532F3BD8BABC1EB7FB86FCD4BB4730EF0207289821F0C103FBE429D3AB75059D8CB1119887C36358FC91C5E4CF037B39360B8B96482E48FCAF0EF64AE8A85143AA637EA34DE02EBDD3C483318BA1FEFDD62FF9B6A9914716AACE94107F17EEF894315C1A3E4D703A30D96E73699A7A3B639D54BC4F7A3C4A17D2EE895C4212EF68D5D1BA8946E86D524F5016338369A8DE72DEE76FE60E108AC41B3DFE09218CBC5E66265AB0B2B44D32BD6530EEC335A636AF453B08E74780FB453823A0834F78EB4D13E6BFBC8B680D31B7903027EEF11A1C185F21F470EFE28AFA09C0853BBDCA4DE41D7B5B833F79F0053C0DA239C31796673C39F9D760D73F62520C5F6586D58D1571194B6CA05FA50D6750FA6EA365D06ABBCE4FD20703AF114357A8B3FF9431D7C5615D32A1A7EA3D02A3AD2DB73C9A1AE5D0A9D148FEF3D4854B8C2E7352E504EF264EA78ED3F70652234D3EE355CF8910038DE2B52CA08EB6A37F2561FD789A0FCA78377D0C8ECD685EAB046A5B06EDBFD1B96222E841A74BB214DB3616BBBDEF192B7100711520D53AFB07ACE8609899D0B875A26FEB7F65646CCD778B5D1F2F2C8E9487D8A56DF000AC3751002FD38273DE85853877D19FE3A89F5F21D80B3B2C4E1FEDBB486D594B478CBEC25C0A8B029C8FA018D5B40000224EE860BC4B2F3B6E30A244DFC59047ECCD8A90A0888C0DFF27FA707E82D74985AE528A8F1CBBD88E78A37F145BC9B1BBFE23957693DD4F276C06ACA76023071904240187A333F770975BC199A19C595685DC7726DDD9B3AF719439085DFA8AE6B250B23413E349B744FAC3C1C8142F76256457439FA893AEA30FE78BB99F35352F7198B668013F401B4C5CB31EBA199085334B17ED6C02534D97C707CCEC61303D3E02AC0CDD8ECA9F06190994F56F68BDBB64F28F03391F44DB04BCC4B8F4CD2DA25993640A5F8A4A727E71406163683ED858C254BFA10E2B60985ADA959507171BD87D614954C7303BC7C113A6179A9D9FCDD312547E0F1D01252519B1723BD4261C95559BDB8E61608FEB3279B91029B49BE5ABF3DED3421A4A8DB30F10827A328D22786A9E80163BD28C220F57F1744ED60DD3BE7601957EE1AEF4EC93A832B3CE6AA3F49338BDA25F88B67E07D22227785DEE2EC35F43A333CBBA3B20D4590B075D5A43EC5B5191A625FDEBA60D836B4E3510003F15A06D4CFD81F2EC973D323BC17F42A1E63F6C609FED30D4A9B86C498D6C1A1D4DFCC16A09E09BC13549A4E5C0D81B7DC74C9A5404CFCF866EBA1B13A58AEF28798AFB43D4D23362899FD4022F1BA746DECE38AB4B48C4C8619E8732B6282C0D96D81286AAD327937E64DC62825460113DE6E18158E40B97BE9AA23369632E0E26013F6CEB0B9C95FB10E3A60E39EBCB35BB14984EE4E3FEA988ACC334B0D87942EDA5965A932E1AEE45689A5C5322218E033F784E197AB65EA845E12A7AA6C99DD1794466C0623F4E4D18591DA2D1E8242AE776AABFA967685C30EFC864BD92AEF7CABCB8ED768A9B2444F6EBF66873720AF14B32EF9A1F8073F746C0AD088C0B55B4EDBD959B5E6DC59EA2A5E44EDC8EECAB06205A9851545A23988235E17594619686E969002AC41C88ED3612804A7803D2DA080CB36D80187ACCB9832DEB245F6178E7C49A33E34C1416FED1BAF9EDB70579B9C267A614B47A9919723D376B1EBF7C784A8433CF001076FA1D5D9170649A18C0655D30F9FCAC77F985F16238E8FB8298263E6F98A9D90EBB19F46B90799B01853A09C3625EE7F888AF9C8FE2', NULL, 1, '2019-12-04 18:24:01', 1, '2019-12-19 10:53:26', 0);
+INSERT INTO `app_instance` VALUES (109, 87, NULL, 14, 'pro', 1, '80', '生产iiot-view', 'iiot', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 18:24:01', 1, '2019-12-19 10:53:26', 0);
+INSERT INTO `app_instance` VALUES (110, 88, NULL, 1, 'fat', 1, '80', '测试mp-view', 'sut', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4D49D5E42AC766D7392967E778EBCF5B6A222E50FEE3BF3391D522F14BE02447A80165C6307E92E63A735A880E7C3EAD0426228C19830C124B66A16D594DD72EB948A3532A9F193F1BDCD052E8BE2E9DAA66373F1F508010D40C867875D22CEF850325DD49120C08BDA90263A9CFB234BF3615C32FCC6E9F851696C8B5C1C662130D5F36B657BA3DF8D05B0065B00875F12053BCA2EDBAB0A18AB71C982205493393F9FD98E726ED065342BFC4554F57D87314A6CB9A7F6B33A8B2D700A8BFD238F96C6DFF1032476CF19C0298E01A8F566494A1C1F7564603FD4E2DD9EB60EDDF24F28F771DA044CB15B86ED428714BC380FDA375F4E2ED4E4236F32792DE02E746F31AC4640C50D1976A82E0469F504CBFE4DB257C50C018F185D6347DE70C854100B72887DB5A82CBA16140F7842A261BF680A7FABA8BC6505032947A85C98AFF7A84BDE05682EC983FD00880392F8C85ED2C684A108DF4F312812FF8AB5CA1F47B9E1F8E1F687AB9D70BA379057A575A5E851BE6E82E4321532F3BD8BABC1EB7FB86FCD4BB4730EF0207289821F0C103FBE429D3AB75059D8CB1119887C36358FC91C5E4CF037B39360B8B96482E48FCAF0EF64AE8A85143AA637EA34DE02EBDD3C483318BA1FEFDD62FF9B6A9914716AACE94107F17EEF894315C1A3E4D703A30D96E73699A7A3B639D54BC4F7A3C4A17D2EE895C4212EF68D5D1BA8946E86D524F5016338369A8DE72DEE76FE60E108AC41B3DFE09218CBC5E66265AB0B2B44D32BD6530EEC335A636AF453B08E74780FB453823A0834F78EB4D13E6BFBC8B680D31B7903027EEF11A1C185F21F470EFE28AFA09C0853BBDCA4DE41D7B5B833F79F0053C0DA239C31796673C39F9D760D73F62520C5F6586D58D1571194B6CA05FA50D6750FA6EA365D06ABBCE4FD20703AF114357A8B3FF9431D7C5615D32A1A7EA3D02A3AD2DB73C9A1AE5D0A9D148FEF3D4854B8C2E7352E504EF264EA78ED3F70652234D3EE355CF8910038DE2B52CA08EB6A37F2561FD789A0FCA78377D0C8ECD685EAB046A5B06EDBFD1B96222E841A74BB214DB3616BBBDEF192B7100711520D53AFB07ACE8609899D0B875A26FEB7F65646CCD778B5D1F2F2C8E9487D8A56DF000AC3751002FD38273DE85853877D19FE3A89F5F21D80B3B2C4E1FEDBB486D594B478CBEC25C0A8B029C8FA018D5B40000224EE860BC4B2F3B6E30A244DFC59047ECCD8A90A0888C0DFF27FA707E82D74985AE528A8F1CBBD88E78A37F145BC9B1BBFE23957693DD4F276C06ACA76023071904240187A333F770975BC199A19C595685DC7726DDD9B3AF719439085DFA8AE6B250B23413E349B744FAC3C1C8142F76256457439FA893AEA30FE78BB99F35352F7198B668013F401B4C5CB31EBA199085334B17ED6C02534D97C707CCEC61303D3E02AC0CDD8ECA9F06190994F56F68BDBB64F28F03391F44DB04BCC4B8F4CD2DA25993640A5F8A4A727E71406163683ED858C254BFA10E2B60985ADA959507171BD87D614954C7303BC7C113A6179A9D9FCDD312547E0F1D01252519B1723BD4261C95559BDB8E61608FEB3279B91029B49BE5ABF3DED3421A4A8DB30F10827A328D22786A9E80163BD28C220F57F1744ED60DD3BE7601957EE1AEF4EC93A832B3CE6AA3F49338BDA25F88B67E07D22227785DEE2EC35F43A333CBBA3B20D4590B075D5A43EC5B5191A625FDEBA60D836B4E3510003F15A06D4CFD81F2EC973D323BC17F42A1E63F6C609FED30D4A9B86C498D6C1A1D4DFCC16A09E09BC13549A4E5C0D81B7DC74C9A5404CFCF866EBA1B13A58AEF28798AFB43D4D23362899FD4022F1BA746DECE38AB4B48C4C8619E8732B6282C0D96D81286AAD327937E64DC62825460113DE6E18158E40B97BE9AA23369632E0E26013F6CEB0B9C95FB10E3A60E39EBCB35BB14984EE4E3FEA988ACC334B0D87942EDA5965A932E1AEE45689A5C5322218E033F784E197AB65EA845E12A7AA6C99DD1794466C0623F4E4D18591DA2D1E8242AE776AABFA967685C30EFC864BD92AEF7CABCB8ED768A9B2444F6EBF66873720AF14B32EF9A1F8073F746C0AD088C0B55B4EDBD959B5E6DC59EA2A5E44EDC8EECAB06205A9851545A23988235E17594619686E969002AC41C88ED3612804A7803D2DA080CB36D80187ACCB9832DEB245F6178E7C49A33E34C1416FED1BAF9EDB70579B9C267A614B47A9919723D376B1EBF7C784A8433CF001076FA1D5D9170649A18C0655D30F9FCAC77F985F16238E8FB8298263E6F98A9D90EBB19F46B90799B01853A09C3625EE7F888AF9C8FE2', NULL, 1, '2019-12-04 18:25:40', 1, '2019-12-19 10:53:14', 0);
+INSERT INTO `app_instance` VALUES (111, 88, NULL, 14, 'pro', 1, '80', '生产mp-view', 'mp', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 18:25:40', 1, '2019-12-19 10:53:14', 0);
+INSERT INTO `app_instance` VALUES (112, 89, NULL, 5, 'fat', 1, '80', '测试trends-view', 'sut', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4D49D5E42AC766D7392967E778EBCF5B6A222E50FEE3BF3391D522F14BE02447A80165C6307E92E63A735A880E7C3EAD0426228C19830C124B66A16D594DD72EB948A3532A9F193F1BDCD052E8BE2E9DAA66373F1F508010D40C867875D22CEF850325DD49120C08BDA90263A9CFB234BF3615C32FCC6E9F851696C8B5C1C662130D5F36B657BA3DF8D05B0065B00875F12053BCA2EDBAB0A18AB71C982205493393F9FD98E726ED065342BFC4554F57D87314A6CB9A7F6B33A8B2D700A8BFD238F96C6DFF1032476CF19C0298E01A8F566494A1C1F7564603FD4E2DD9EB60EDDF24F28F771DA044CB15B86ED428714BC380FDA375F4E2ED4E4236F32792DE02E746F31AC4640C50D1976A82E0469F504CBFE4DB257C50C018F185D6347DE70C854100B72887DB5A82CBA16140F7842A261BF680A7FABA8BC6505032947A85C98AFF7A84BDE05682EC983FD00880392F8C85ED2C684A108DF4F312812FF8AB5CA1F47B9E1F8E1F687AB9D70BA379057A575A5E851BE6E82E4321532F3BD8BABC1EB7FB86FCD4BB4730EF0207289821F0C103FBE429D3AB75059D8CB1119887C36358FC91C5E4CF037B39360B8B96482E48FCAF0EF64AE8A85143AA637EA34DE02EBDD3C483318BA1FEFDD62FF9B6A9914716AACE94107F17EEF894315C1A3E4D703A30D96E73699A7A3B639D54BC4F7A3C4A17D2EE895C4212EF68D5D1BA8946E86D524F5016338369A8DE72DEE76FE60E108AC41B3DFE09218CBC5E66265AB0B2B44D32BD6530EEC335A636AF453B08E74780FB453823A0834F78EB4D13E6BFBC8B680D31B7903027EEF11A1C185F21F470EFE28AFA09C0853BBDCA4DE41D7B5B833F79F0053C0DA239C31796673C39F9D760D73F62520C5F6586D58D1571194B6CA05FA50D6750FA6EA365D06ABBCE4FD20703AF114357A8B3FF9431D7C5615D32A1A7EA3D02A3AD2DB73C9A1AE5D0A9D148FEF3D4854B8C2E7352E504EF264EA78ED3F70652234D3EE355CF8910038DE2B52CA08EB6A37F2561FD789A0FCA78377D0C8ECD685EAB046A5B06EDBFD1B96222E841A74BB214DB3616BBBDEF192B7100711520D53AFB07ACE8609899D0B875A26FEB7F65646CCD778B5D1F2F2C8E9487D8A56DF000AC3751002FD38273DE85853877D19FE3A89F5F21D80B3B2C4E1FEDBB486D594B478CBEC25C0A8B029C8FA018D5B40000224EE860BC4B2F3B6E30A244DFC59047ECCD8A90A0888C0DFF27FA707E82D74985AE528A8F1CBBD88E78A37F145BC9B1BBFE23957693DD4F276C06ACA76023071904240187A333F770975BC199A19C595685DC7726DDD9B3AF719439085DFA8AE6B250B23413E349B744FAC3C1C8142F76256457439FA893AEA30FE78BB99F35352F7198B668013F401B4C5CB31EBA199085334B17ED6C02534D97C707CCEC61303D3E02AC0CDD8ECA9F06190994F56F68BDBB64F28F03391F44DB04BCC4B8F4CD2DA25993640A5F8A4A727E71406163683ED858C254BFA10E2B60985ADA959507171BD87D614954C7303BC7C113A6179A9D9FCDD312547E0F1D01252519B1723BD4261C95559BDB8E61608FEB3279B91029B49BE5ABF3DED3421A4A8DB30F10827A328D22786A9E80163BD28C220F57F1744ED60DD3BE7601957EE1AEF4EC93A832B3CE6AA3F49338BDA25F88B67E07D22227785DEE2EC35F43A333CBBA3B20D4590B075D5A43EC5B5191A625FDEBA60D836B4E3510003F15A06D4CFD81F2EC973D323BC17F42A1E63F6C609FED30D4A9B86C498D6C1A1D4DFCC16A09E09BC13549A4E5C0D81B7DC74C9A5404CFCF866EBA1B13A58AEF28798AFB43D4D23362899FD4022F1BA746DECE38AB4B48C4C8619E8732B6282C0D96D81286AAD327937E64DC62825460113DE6E18158E40B97BE9AA23369632E0E26013F6CEB0B9C95FB10E3A60E39EBCB35BB14984EE4E3FEA988ACC334B0D87942EDA5965A932E1AEE45689A5C5322218E033F784E197AB65EA845E12A7AA6C99DD1794466C0623F4E4D18591DA2D1E8242AE776AABFA967685C30EFC864BD92AEF7CABCB8ED768A9B2444F6EBF66873720AF14B32EF9A1F8073F746C0AD088C0B55B4EDBD959B5E6DC59EA2A5E44EDC8EECAB06205A9851545A23988235E17594619686E969002AC41C88ED3612804A7803D2DA080CB36D80187ACCB9832DEB245F6178E7C49A33E34C1416FED1BAF9EDB70579B9C267A614B47A9919723D376B1EBF7C784A8433CF001076FA1D5D9170649A18C0655D30F9FCAC77F985F16238E8FB8298263E6F98A9D90EBB19F46B90799B01853A09C3625EE7F888AF9C8FE2', NULL, 1, '2019-12-04 18:26:46', 1, '2019-12-19 10:54:18', 0);
+INSERT INTO `app_instance` VALUES (113, 89, NULL, 9, 'pro', 1, '80', '生产trends-view', 'trends', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-04 18:26:46', 1, '2019-12-19 10:54:18', 0);
+INSERT INTO `app_instance` VALUES (114, 90, NULL, 2, 'dev', 1, 'agent_0001', 'umc采集器0001', NULL, NULL, NULL, 1, '2019-12-06 11:12:15', 1, '2019-12-06 11:12:16', 0);
+INSERT INTO `app_instance` VALUES (115, 90, NULL, 1, 'fat', 1, 'agent_0001', 'umc采集器0001', NULL, NULL, NULL, 1, '2019-12-06 11:12:15', 1, '2019-12-06 11:12:16', 0);
+INSERT INTO `app_instance` VALUES (116, 91, NULL, 1, 'fat', 1, '80', '', 'sut', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-18 09:52:49', 1, '2019-12-18 09:52:49', 0);
+INSERT INTO `app_instance` VALUES (117, 92, NULL, 1, 'fat', 1, '80', '', 'sut', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-18 09:53:19', 1, '2019-12-18 09:53:19', 0);
+INSERT INTO `app_instance` VALUES (118, 93, NULL, 1, 'fat', 1, '80', '', 'sut', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4DD906D3128281746C78279B7DAED63C5BD98FBB31475DA5200BDE7FEC9603D5205FDDDE0D852EFED8AB3AF477442F3850AED97167CA4306AAD0A88001ACAD3A9475F742B4C8B013830A7687411FBA7E584C55AA028E781F810A22DCEE9217A589D01AA4337E1C4404B3367E929120BC561D2EA404573D472868CC24CC787D643955629AF90B9E6E542AE79ACEB25B8970244651C93A3436EA12AF69BECACCFBAF86C672CEF1DE10BF17A2A8EE6DB319B8C995EB95D855A1C55F87B28D020E396BBBC44BBDBFA9DB36C546040FB4E9188F39BCEFBEA091158FBACFE90E35B1F41006A5AE1E2A9174CF2F91175CB0C33DF8EAA8DBAFEED549661C06E49F5EE742889705C71D8FE90338F63B271D8E899F4A8FC81FB0F3788AB6E82BB2793E2FF2C15248F984FCC6868A61E54BFFD260ECDADD23E5BBFC6DB1469D193FB379D9FC5559830C84B2AFFA5990C10D2A1D857A3CFC003B5C347F28894660ECD911CB3EB854C5A2758A4210B8A661DBD346A03EEC87F9D80D3984E05C7DC5B4805186FBDDF530C586FB6B6F6583474AF994F68465DF36FAA4837BF1C5573E1EFE41FFF4A184B5E876D4AA162B0D627D732DF0219B04C90AC14D2D1B4E660BD5B9CD81B3412D18535C216A445FCB1AD504676B1F225A7557B7195063F4C24BDB21225B7388651A1AD20C69322E9C6F91460FB51A80B68C4D6D8FDFD8B67BBEE73809EF694A47BDE087B702D8A40E9435F3E2DD5E92E807459CAC093CE29D9F76958DFBF8FC518CCCFCE6A1962E9A136E7E13EB1CBF13D18CB3719DF429D14F2595B03A20174A7917BB837EDBB213F724903D78FD6168EC6E4B8AF40667D7E85AFC89843376D9BBD7CC53AD7139012CCF43B9ABCEE00E6001B9CBEEA3D2EBCD033071A8D644FDBC27D136A4440457D4B74EDA7E5B09BCD57687DE38CA691FB2126ED5DBF5F4355CEF960EF059F63E633CE13AF2FEE5644164AEAD367EFFA0763B246294502DE26B434923F9AFD621C838498E832CFF9051B8441CD7EA0802D5F8AA19598D5BB3CAFF9E4BFFA1A35BCF2008A64C80CF4786C9FD08FBBDACC2C4CC53055F097553B68C8AF559E862C17FB9BD1302E56D36F490C3C27871873610AD3EB8792CDF349DEF52F317442F9FA120E96C8A0B697166FFEA88F69BB8C95BCE673933EAE5C53FA800DCE7A71EE0904C800ED854D3046FB5ABFE47EFF1FA9D59FAA5F2E79A31D442D40689FE1A78F2729C2790F7052B49C065D02FF7BC385078BBCBEE23D161814F29B9A7296C642FE341636C1AEBE764CE4ABA3AA8AC87411770591F147F1273D8E7FEF44FE2BACE2FFBF963745948C86FD1E22ABB73BA72268E16D47524937F52AD702CB8531DDF558755AE4717D165A09FD6F412FF83C08F57B98973D72E49F8A54C2B98AEC73EF766BDDF91C5FCB9FCAA61D7DF4DB919B50EC97F7C0C68FDEC25507FC23612448516FE0DE6E0991705A7E6782015AD33412D4626EAE41CDA297C6F0DFAE2EB87BCBF3293FEBB0EBC94E0095ACADB8D1EAFB91E1AA2E25C7945D7D97FF0106312C43716852F599BEBD14CBC1A9A81A9BE5B60929FC5AAA15B70068E790B37EDA1960CEA4053EB43F16906C6670333A245D7601FDD39936162B54E45CE65A52966E54E6C4D9B56960231A91BDB6699853C052226E5EF9042CF049FDE00766F77EB0D81A74F2614A85407F5CC3A6D2C9FF01839EA47D49B21382227FC72B5B3A8D8FAD500FAF327F103774B0E9553DFC5D468C2DFCEA0607358CDA911EA0F8B429081BCB65B9FC4A96D70DF2CD2BC2C33618939850E1ADC8B1EE905F8E50D947FF7FD46FC6235EA4DAF36C7E31862BE50BD04F20D0ADED420DD1D404929954D4890A59C41C2371A9940E4EAE68112D1EBC1FAE0A3FF281134A11A9D78C21956073F6EA6E898167D4CE3C8B6C32BFDC08EC8B6D5B7AB2172D4226BCBDD48FC47A9B5F1A942BF1A3F7829B864AC590079B0281035F2418714B57999F6CA95447ED2D62BA3B22A8ECA69A7E73F7CC9E81122DF4E2DEEB46C0E183B38332615D4187957B842F1A2650B4063AC89C2844520902C81A7027378C9C0DBBCF056390F361D417E39CD815D900BFFD8C12904A94637B9F65CBC30F075102A7323D44DCD88986861D254347DB884C5C29A7368855640AB718DDB269C378A96AFACA755A34BBFA30002FB02777583D163C29EB19507C6731DCAD73C2E9F81B615FF46D9FCB7F0001228BA54095D63C06475E3F8A94A77B3BC3C0699F726DEA4557A00FB46661D4076B06AE5367DCEE9DEE478CE23AB0A9AC44559A420C66C33AD6C9355AED184291078F5C8D27E', NULL, 1, '2019-12-18 09:53:49', 1, '2019-12-18 09:53:49', 0);
+INSERT INTO `app_instance` VALUES (119, 81, NULL, 1, 'fat', 1, '80', '测试devops-view', 'sut', '60DF996522E1CC4DF951E49C095C55EC0678812D8221A5A6FBB054207AA1BA4D3CA69ABC45E6783EA9AC488BDE809F8AF0EC38A6EA386B3A7C3B7D00E1B7988417B18BE8495E6EAB4C48F1F54779C6108D8E05B9870A62F42E0D08D8D66FE02C50BD26625CE4BA0A3849F50B03B0B108FBF46DB9754EDDE5A40E72CD7978610E33D824E88B9661E52542D4048959058388F6811CA5DF6052FA48E697B531D768696CB099EBF436C84788EE22927DBCABBFB5C3007DCB64364A9525F3D06A8454581FB88B3B961B5737A17E2AE8DEEC1F3B6E28473907A7B7764C468674712B42046D3C31695BF2FAAD491A3A45B51D67A4F32571C7532BBBEA2696CA2E4908C591F2B6FD5F5F44CAC9830CB1A76B4E4591A5FA5BDED8981EDB8A49C87560284C0443975C1C1F99F775756B55CEC8902E51E2D5832CCBE269EF597C9F2C293BBD8D95691D29C1AA4BAB784936A61A708267283434715FB33DEE0B9D40DF4921F22AFED1A7D455A9E2040F36799FFF8D540DABA67AE607C49A6DB962B54D5C0B46EA78DBB475FF5B52495A90A25A0EA6A131B849E90175EF389B88DFD738898A20343D20423614833318474DD19DCE28E9F24631F163CA652378497A17C3535B873ECD01CB61D4533B6FC0F703DE143FDB07AB20718CAE5D75E072F408F19BE31857E9BE7CA144D74E5895D7377B09C80C8BF343A2C21818DAEDBFEE6355B0D8ADB9FFF61787C3464283364BD27263C5ED41BFBEFE41ED4936EDE5B8A042E85329D6DA8D786BA563776522B4BF73C57ADDE2656DA1D7BAC087641E2A18E0E49536450C81B45F7DEA77AB36E50F8B4B06D7CB90AD5F438DAB59AA49B5ABEB04DFFB4737783A480DC68707A24651DD0F050D25DF89CB629311053F5308F5B6E33685BFC5D884E1E7BFCC9E34E7CB184E1A96DF9AE57E011AB93C5E56F7C0611E161CBA782AAE974881D51D8730D9F6946FB44498BB1B1969C51A9DCC74983FDFF9838284E9C2B9440747E18C62CE32C33F9899A91F01D1E6A8A2EBF3A3B2EF528D9797501AD59F1AF6533898DAF6F1112EC1EC58E9B9E1BAAE363A776AEC89006A87E70CD28F730774CB959402959F4024FDE108414DCEB4869A6E0A8C7794E9DD07E7E2886055F61541E6021F79A79AE3AF0D6096A5D3922B984C08EE8C01AF47B59035A58C705E8AB8442B7BA1EEDC2F11BAC864A1A2AF473A6FB75E73D8B1BC8C91AA890F9DA0620AE6D38A8FB4D0D0DE352022893DB5D1090EF1BE72F4818F43', 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDzRU5ZsCnhmWc5LpaCjr/vzeU34KJenPFfYwy4DYkHLksbSztRvPT0gkfS3JgzawkUTiIlKFzt+DjbzU4fgR5vK6XI5ed/qGEUF9UBnHaEfsYgiRG4qP8ZSJNJw9h8VVh8iy6T+jZowro1RmSlpUm2L5fWdFavCPVMMOxQeE772Q== generateBySystem\n', 1, '2020-02-05 11:00:41', 1, '2020-02-05 11:00:41', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_analysis_history
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_analysis_history`;
+CREATE TABLE `ci_analysis_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `project_id` int(11) NOT NULL,
+  `analyzer_kind` varchar(50) COLLATE utf8_bin NOT NULL COMMENT '分析引擎',
+  `language` varchar(30) COLLATE utf8_bin NOT NULL COMMENT 'e.g: java',
+  `asset_version` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '0.0.0' COMMENT '资产(源码)文件版本号',
+  `asset_bytes` int(11) NOT NULL DEFAULT '0' COMMENT '资产(源码)文件总字节数',
+  `asset_analysis_size` int(11) DEFAULT '0' COMMENT '已扫描的资产(源码)文件数量',
+  `state` int(1) NOT NULL COMMENT '(扫描)分析任务状态(对应sys_dict)，如：new/waiting/scan/analyzing/done',
+  `bug_collection_file` varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT '扫描结果文件路径',
+  `create_date` datetime NOT NULL,
+  `update_date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`),
+  CONSTRAINT `ci_analysis_history_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `ci_project` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='代码扫描(记录)历史表';
+
+-- ----------------------------
+-- Records of ci_analysis_history
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_analysis_history` VALUES (1, 17, 'SPOTBUGS', 'java', '0.0.0', 0, 0, 1, NULL, '2019-11-19 22:51:23', '2019-11-19 22:51:23');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_dependency
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_dependency`;
+CREATE TABLE `ci_dependency` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `project_id` int(11) DEFAULT NULL,
+  `dependent_id` int(11) DEFAULT NULL,
+  `branch` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pk_ci_denpendency_project_id` (`project_id`),
+  KEY `ok_ci_denpendency_dependent_id` (`dependent_id`),
+  CONSTRAINT `ci_dependency_ibfk_1` FOREIGN KEY (`dependent_id`) REFERENCES `ci_project` (`id`),
+  CONSTRAINT `ci_dependency_ibfk_2` FOREIGN KEY (`project_id`) REFERENCES `ci_project` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of ci_dependency
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_dependency` VALUES (2, 24, 19, 'dev', 0, NULL, NULL, NULL, NULL);
+INSERT INTO `ci_dependency` VALUES (5, 19, 20, 'dev', 0, NULL, NULL, NULL, NULL);
+INSERT INTO `ci_dependency` VALUES (6, 21, 19, 'dev', 0, NULL, NULL, NULL, NULL);
+INSERT INTO `ci_dependency` VALUES (7, 21, 22, 'dev', 0, NULL, NULL, NULL, NULL);
+INSERT INTO `ci_dependency` VALUES (8, 25, 22, 'dev', 0, NULL, NULL, NULL, NULL);
+INSERT INTO `ci_dependency` VALUES (9, 26, 19, 'dev', 0, NULL, NULL, NULL, NULL);
+INSERT INTO `ci_dependency` VALUES (10, 22, 19, 'dev', 0, NULL, NULL, NULL, NULL);
+INSERT INTO `ci_dependency` VALUES (11, 25, 19, 'dev', 0, NULL, NULL, NULL, NULL);
+INSERT INTO `ci_dependency` VALUES (12, 17, 19, 'dev', 0, NULL, NULL, NULL, NULL);
+INSERT INTO `ci_dependency` VALUES (13, 23, 19, 'dev', 0, NULL, NULL, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_pcm
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_pcm`;
+CREATE TABLE `ci_pcm` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) COLLATE utf8_bin NOT NULL,
+  `provider_kind` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '类型: redmine,jira等,从字典获取',
+  `base_url` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '接口请求地址',
+  `auth_type` int(1) DEFAULT NULL COMMENT '认证方式,1账号密码,2密钥',
+  `access_token` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '密钥',
+  `username` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户名',
+  `password` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '密码',
+  `remark` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of ci_pcm
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_pcm` VALUES (2, 'redmine1', 'redmine', 'http://redmine.anjiancloud.repo/redmine', 2, '049c9528c9a11903e6b7dbdc046bc1ccac82d1aa', '', '', NULL, 0, '2020-01-06 14:48:11', '1', '2020-01-06 14:48:11', '1');
+INSERT INTO `ci_pcm` VALUES (3, 'redmine2', 'redmine', 'http://redmine.anjiancloud.repo/redmine', 2, '049c9528c9a11903e6b7dbdc046bc1ccac82d1aa', '', '', NULL, 0, '2020-01-06 14:49:20', '1', '2020-01-06 14:49:20', '1');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_project
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_project`;
+CREATE TABLE `ci_project` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `app_cluster_id` int(11) DEFAULT NULL COMMENT '项目组id',
+  `project_name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT 'git项目名',
+  `vcs_id` int(11) DEFAULT NULL COMMENT '对应vcs表',
+  `http_url` varchar(512) COLLATE utf8_bin DEFAULT NULL COMMENT 'git项目http地址',
+  `ssh_url` varchar(512) COLLATE utf8_bin DEFAULT NULL COMMENT 'git项目的ssh地址',
+  `parent_app_home` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '真实项目存放的父级目录',
+  `assets_path` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '构建的文件/目录路径（maven项目的target目录，vue项目的dist目录）',
+  `lock_status` int(11) DEFAULT NULL COMMENT '锁定状态,1运行中锁定,0非运行中解锁',
+  `remark` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `pk_ci_project_app_cluster_id` (`app_cluster_id`),
+  CONSTRAINT `ci_project_ibfk_1` FOREIGN KEY (`app_cluster_id`) REFERENCES `app_cluster` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='git项目,与appGroup一一对应';
+
+-- ----------------------------
+-- Records of ci_project
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_project` VALUES (17, 4, 'safecloud-web-ems', 1, 'http://git.anjiancloud.repo/biz-team/ems-team/safecloud-web-ems.git', NULL, '/opt/apps/acm/ems-package', '/ems-starter/target', 0, '', '2019-08-01 10:36:53', '1', '2019-09-28 15:47:54', '1', 0);
+INSERT INTO `ci_project` VALUES (19, 9, 'safecloud-web-base', 1, 'http://git.anjiancloud.repo/biz-team/base/safecloud-web-base.git', NULL, '/opt/apps/acm/base-package', '/base-starter/target', 0, '', '2019-09-19 10:19:47', '1', '2019-09-25 15:46:05', '1', 0);
+INSERT INTO `ci_project` VALUES (20, NULL, 'safecloud-web-support', 1, 'http://git.anjiancloud.repo/biz-team/suport-team/safecloud-web-support.git', NULL, NULL, NULL, 0, NULL, '2019-09-19 10:29:09', '1', '2019-09-19 10:29:11', '1', 0);
+INSERT INTO `ci_project` VALUES (21, 68, 'safecloud-web-mobile', 1, 'http://git.anjiancloud.repo/biz-team/mobile-team/safecloud-web-mobile.git', NULL, '/opt/apps/acm/mobile-package', '/mobile-starter/target', 0, '', '2019-09-19 10:19:47', '1', '2019-09-28 15:38:20', '1', 0);
+INSERT INTO `ci_project` VALUES (22, 3, 'safecloud-web-mp', 1, 'http://git.anjiancloud.repo/biz-team/mp-team/safecloud-web-mp.git', NULL, '/opt/apps/acm/mp-package', '/mp-starter/target', 0, '', '2019-09-19 10:19:47', '1', '2019-09-28 15:49:40', '1', 0);
+INSERT INTO `ci_project` VALUES (23, 2, 'safecloud-web-portal', 1, 'http://git.anjiancloud.repo/biz-team/portal-team/safecloud-web-portal.git', NULL, '/opt/apps/acm/portal-package', '/portal-starter/target', 0, '', '2019-09-19 10:19:47', '1', '2019-09-28 15:49:15', '1', 0);
+INSERT INTO `ci_project` VALUES (24, 1, 'safecloud-web-sso', 1, 'http://git.anjiancloud.repo/biz-team/sso-team/safecloud-web-sso.git', NULL, '/opt/apps/acm/sso-package', '/sso-starter/target', 0, '', '2019-09-19 10:19:47', '1', '2019-09-28 15:47:23', '1', 0);
+INSERT INTO `ci_project` VALUES (25, 69, 'safecloud-web-iiot', 1, 'http://git.anjiancloud.repo/biz-team/iiot-team/safecloud-web-iiot.git', NULL, '/opt/apps/acm/iiot-package', '/iiot-starter/target', 0, '', '2019-09-19 18:14:24', '1', '2019-09-28 15:46:47', '1', 0);
+INSERT INTO `ci_project` VALUES (26, 70, 'safecloud-web-datav', 1, 'http://git.anjiancloud.repo/biz-team/datav-team/safecloud-web-datav.git', NULL, '/opt/apps/acm/datav-package', '/datav-starter/target', 0, '', '2019-09-19 18:14:24', '1', '2019-09-28 15:44:51', '1', 0);
+INSERT INTO `ci_project` VALUES (27, 71, 'safecloud-collect', 1, 'http://git.anjiancloud.repo/iot-team/collect-team/safecloud-collect.git', NULL, '/opt/apps/acm/rpccollect-package', '/safecloud-collect-rpc-starter/target', 0, '', '2019-09-20 10:22:51', '1', '2019-09-20 10:22:51', '1', 0);
+INSERT INTO `ci_project` VALUES (28, 72, 'safecloud-collect', 1, 'http://git.anjiancloud.repo/iot-team/collect-team/safecloud-collect.git', NULL, '/opt/apps/acm/mqttcollect-package', '/safecloud-collect-mqtt-starter/target', 0, '', '2019-09-20 10:22:51', '1', '2019-09-20 10:22:51', '1', 0);
+INSERT INTO `ci_project` VALUES (29, 73, 'safecloud-collect', 1, 'http://git.anjiancloud.repo/iot-team/collect-team/safecloud-collect.git', NULL, '/opt/apps/acm/example-collect-package', '/safecloud-collect-example-starter/target', 0, '', '2019-09-20 10:22:51', '1', '2019-09-20 10:22:51', '1', 0);
+INSERT INTO `ci_project` VALUES (30, 5, 'safecloud-sink', 1, 'http://git.anjiancloud.repo/biz-team/sink-team/safecloud-sink.git', NULL, '/opt/apps/acm/sink-package', '/safecloud-sink-starter/target', 0, '', '2019-09-20 11:10:44', '1', '2019-09-20 11:10:44', '1', 0);
+INSERT INTO `ci_project` VALUES (31, 74, 'safecloud-ml', 1, 'http://git.anjiancloud.repo/bigdata-team/trend-team/safecloud-ml.git', NULL, '/opt/apps/acm/trends-package', '/safecloud-ml-web/target', 0, '', '2019-09-20 11:10:44', '1', '2019-09-20 11:10:44', '1', 0);
+INSERT INTO `ci_project` VALUES (32, 80, 'safecloud-view-ems', 1, 'http://git.anjiancloud.repo/biz-team/ems-view-team/safecloud-view-ems.git', 'git@git.anjiancloud.repo:biz-team/ems-view-team/safecloud-view-ems.git', '/usr/share/nginx/html/ems-view-package', '/dist', 0, '', '2019-10-21 16:57:42', '1', '2019-12-18 16:05:18', '1', 0);
+INSERT INTO `ci_project` VALUES (33, 81, 'super-devops-view-internal', 1, 'http://git.anjiancloud.repo/other-team/super-devops-view-internal.git', 'git@git.anjiancloud.repo:other-team/super-devops-view-internal.git', '/usr/share/nginx/html/super-devops-view-package', '/dist', 0, '', '2019-10-21 16:57:42', '1', '2019-12-18 19:52:50', '1', 0);
+INSERT INTO `ci_project` VALUES (34, 85, 'safecloud-view-portal', 1, 'http://git.anjiancloud.repo/biz-team/portal-view-team/safecloud-view-portal.git', 'git@git.anjiancloud.repo:biz-team/portal-view-team/safecloud-view-portal.git', '/usr/share/nginx/html/portal-view-package', '/dist', 0, '', '2019-12-17 19:48:35', '1', '2019-12-18 16:21:26', '1', 0);
+INSERT INTO `ci_project` VALUES (35, 88, 'safecloud-view-mp', 1, 'http://git.anjiancloud.repo/biz-team/mp-view-team/safecloud-view-mp.git', 'git@git.anjiancloud.repo:biz-team/mp-view-team/safecloud-view-mp.git', '/usr/share/nginx/html/mp-view-package', '/dist', 0, '', '2019-12-17 19:49:47', '1', '2019-12-18 16:05:38', '1', 0);
+INSERT INTO `ci_project` VALUES (36, 87, 'safecloud-web-iiot-view', 1, 'http://git.anjiancloud.repo/biz-team/iiot-team/safecloud-web-iiot-view.git', 'git@git.anjiancloud.repo:biz-team/iiot-team/safecloud-web-iiot-view.git', '/usr/share/nginx/html/iiot-view-package', '/dist', 0, '', '2019-12-17 19:52:08', '1', '2019-12-18 16:05:49', '1', 0);
+INSERT INTO `ci_project` VALUES (37, 91, 'safecloud-view-sso', 1, 'http://git.anjiancloud.repo/biz-team/sso-view-team/safecloud-view-sso.git', 'git@git.anjiancloud.repo:biz-team/sso-view-team/safecloud-view-sso.git', '/usr/share/nginx/html/sso-view-package', '/dist', 0, '', '2019-12-18 09:55:08', '1', '2019-12-18 16:05:57', '1', 0);
+INSERT INTO `ci_project` VALUES (38, 92, 'safecloud-view-base', 1, 'http://git.anjiancloud.repo/biz-team/base-view-team/safecloud-view-base.git', 'git@git.anjiancloud.repo:biz-team/base-view-team/safecloud-view-base.git', '/usr/share/nginx/html/base-view-package', '/dist', 0, '', '2019-12-18 09:55:49', '1', '2019-12-18 09:55:49', '1', 0);
+INSERT INTO `ci_project` VALUES (39, 93, 'safecloud-view-ems', 1, 'http://git.anjiancloud.repo/biz-team/ems-view-team/safecloud-view-ems.git', 'git@git.anjiancloud.repo:biz-team/ems-view-team/safecloud-view-ems.git', '/usr/share/nginx/html/ems-view-package', '/dist', 0, '', '2019-12-18 09:56:27', '1', '2019-12-18 09:56:27', '1', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_task
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_task`;
+CREATE TABLE `ci_task` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_name` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '名字',
+  `app_cluster_id` int(11) DEFAULT NULL COMMENT '项目分组id',
+  `project_id` int(11) DEFAULT NULL COMMENT '项目id',
+  `branch_name` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '分支名',
+  `pre_command` text COLLATE utf8_bin COMMENT '自定义命令',
+  `build_command` text COLLATE utf8_bin COMMENT '编译命令',
+  `post_command` text COLLATE utf8_bin COMMENT '自定义命令',
+  `provider_kind` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '类型:1tar,2jar,3docker',
+  `branch_type` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '分支类型:1branch,2tag',
+  `env_type` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '所属环境类型,1023改成去字典value',
+  `pcm_id` int(11) DEFAULT NULL COMMENT 'pcm id',
+  `remark` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `enable` int(11) DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `contact_group_id` int(11) DEFAULT NULL COMMENT '联系人分组',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `pk_ci_task_app_cluster_id` (`app_cluster_id`),
+  KEY `pk_ci_task_project_id` (`project_id`),
+  KEY `pcm_id` (`pcm_id`),
+  CONSTRAINT `ci_task_ibfk_1` FOREIGN KEY (`app_cluster_id`) REFERENCES `app_cluster` (`id`),
+  CONSTRAINT `ci_task_ibfk_2` FOREIGN KEY (`project_id`) REFERENCES `ci_project` (`id`),
+  CONSTRAINT `ci_task_ibfk_3` FOREIGN KEY (`pcm_id`) REFERENCES `ci_pcm` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=181 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='任务表,记录部署任务';
+
+-- ----------------------------
+-- Records of ci_task
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_task` VALUES (152, 'ems-办公室160', 4, 17, 'dev', '', NULL, 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', '1', 'fat', NULL, NULL, NULL, 0, '2019-08-01 10:41:28', '1', '2020-01-06 15:35:53', '1', 8);
+INSERT INTO `ci_task` VALUES (154, 'sso-办公室160', 1, 24, 'dev', '', NULL, '/etc/init.d/sso.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-19 11:37:09', '1', '2020-01-06 15:36:08', '1', 8);
+INSERT INTO `ci_task` VALUES (155, 'base-办公室160', 9, 19, 'dev', '', NULL, '/etc/init.d/base.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-19 15:48:40', '1', '2019-09-19 16:56:03', '1', 8);
+INSERT INTO `ci_task` VALUES (156, 'mobile-办公室160', 68, 21, 'dev', '', NULL, '/etc/init.d/mobile.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-19 17:38:51', '1', '2019-09-19 17:38:51', '1', 8);
+INSERT INTO `ci_task` VALUES (157, 'mp-办公室160', 3, 22, 'dev', '', NULL, '/etc/init.d/mp.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-19 17:43:58', '1', '2019-09-19 17:43:58', '1', 8);
+INSERT INTO `ci_task` VALUES (158, 'portal-办公室160', 2, 23, 'dev', '', NULL, '/etc/init.d/portal.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-19 17:59:18', '1', '2019-09-19 17:59:18', '1', 8);
+INSERT INTO `ci_task` VALUES (159, 'iiot-办公室160', 69, 25, 'dev', '', NULL, '/etc/init.d/iiot.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-19 18:41:12', '1', '2019-09-19 18:41:12', '1', 8);
+INSERT INTO `ci_task` VALUES (160, 'datav-办公室160', 70, 26, 'dev', '', NULL, '/etc/init.d/datav.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-19 18:41:48', '1', '2019-09-26 13:47:52', '1', 8);
+INSERT INTO `ci_task` VALUES (161, 'rpccollect-164', 71, 27, 'dev', '', NULL, '/etc/init.d/rpccollect.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-20 10:31:14', '1', '2019-09-20 10:31:14', '1', 8);
+INSERT INTO `ci_task` VALUES (162, 'example-collect-163', 73, 29, 'dev', '', NULL, '/etc/init.d/example-collect.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-20 10:32:08', '1', '2019-09-20 10:32:08', '1', 8);
+INSERT INTO `ci_task` VALUES (163, 'mmttcollect-163-164', 72, 28, 'dev', '', NULL, '/etc/init.d/mqttcollect.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-20 10:32:55', '1', '2019-09-20 10:32:55', '1', 8);
+INSERT INTO `ci_task` VALUES (164, 'sink-node1', 5, 30, 'dev', '', NULL, '/etc/init.d/sink.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-20 11:16:56', '1', '2019-09-20 11:17:52', '1', 8);
+INSERT INTO `ci_task` VALUES (165, 'trends-node4', 74, 31, 'dev', 'ls\npwd', NULL, '/etc/init.d/trends.service restart', 'MvnAssTar', '1', 'fat', 2, NULL, NULL, 0, '2019-09-20 11:17:38', '1', '2019-10-16 11:58:16', '1', 8);
+INSERT INTO `ci_task` VALUES (166, 'ems-view测试环境', 80, 32, 'dev', '', '', '', 'NpmTar', '1', 'fat', 2, NULL, NULL, 0, '2019-10-23 10:19:13', '1', '2019-10-23 10:19:13', '1', 8);
+INSERT INTO `ci_task` VALUES (167, 'super-devops-view测试环境', 81, 33, 'dev', '', '', '', 'NpmTar', '1', 'fat', 2, NULL, NULL, 0, '2019-10-23 10:19:13', '1', '2019-12-18 10:07:02', '1', 8);
+INSERT INTO `ci_task` VALUES (168, '生产iiot-web-n2', 69, 25, 'dev', '', '', '/etc/init.d/iiot.service restart', 'MvnAssTar', '1', 'pro', 2, NULL, NULL, 0, '2019-12-04 11:33:42', '1', '2019-12-04 17:36:45', '1', 8);
+INSERT INTO `ci_task` VALUES (169, '生产sso-web-n2', 1, 24, 'dev', '', '', '/etc/init.d/sso.service restart', 'MvnAssTar', '1', 'pro', 2, NULL, NULL, 0, '2019-12-04 17:37:24', '1', '2019-12-04 17:37:24', '1', NULL);
+INSERT INTO `ci_task` VALUES (170, '生产base-web-n2', 9, 19, 'dev', '', '', '/etc/init.d/base.service restart', 'MvnAssTar', '1', 'pro', 2, NULL, NULL, 0, '2019-12-04 17:38:18', '1', '2019-12-04 17:38:18', '1', NULL);
+INSERT INTO `ci_task` VALUES (171, '生产ems-web-n2', 4, 17, 'dev', '', '', '/etc/init.d/ems.service restart', 'MvnAssTar', '1', 'pro', 2, NULL, NULL, 0, '2019-12-04 17:39:11', '1', '2019-12-04 17:57:03', '1', NULL);
+INSERT INTO `ci_task` VALUES (172, '生产datav-web-n2', 70, 26, 'dev', '', '', '/etc/init.d/datav.service restart', 'MvnAssTar', '1', 'pro', 2, NULL, NULL, 0, '2019-12-04 17:47:13', '1', '2019-12-04 17:47:13', '1', NULL);
+INSERT INTO `ci_task` VALUES (173, '生产portal-web-n2', 2, 23, 'dev', '', '', '/etc/init.d/portal.service restart', 'MvnAssTar', '1', 'pro', 2, NULL, NULL, 0, '2019-12-04 17:48:10', '1', '2019-12-04 18:21:27', '1', 8);
+INSERT INTO `ci_task` VALUES (174, '生产mobile-web-n2', 68, 21, 'dev', '', '', '/etc/init.d/mobile.service restart', 'MvnAssTar', '1', 'pro', 2, NULL, NULL, 0, '2019-12-04 17:48:45', '1', '2019-12-04 17:48:45', '1', NULL);
+INSERT INTO `ci_task` VALUES (175, '生产mp-web-n2', 3, 22, 'dev', '', '', '/etc/init.d/mp.service restart', 'MvnAssTar', '1', 'pro', 2, NULL, NULL, 0, '2019-12-04 23:05:26', '1', '2019-12-04 23:05:26', '1', NULL);
+INSERT INTO `ci_task` VALUES (177, 'portal-view测试环境', 85, 34, 'dev', '', '', '', 'NpmTar', '1', 'fat', 2, NULL, NULL, 0, '2019-12-18 14:50:33', '1', '2019-12-18 14:50:33', '1', 8);
+INSERT INTO `ci_task` VALUES (178, 'sso-view测试环境', 91, 37, 'dev', '', '', '', 'NpmTar', '1', 'fat', 2, NULL, NULL, 0, '2019-12-18 14:54:10', '1', '2019-12-18 14:54:10', '1', 8);
+INSERT INTO `ci_task` VALUES (179, 'base-view测试环境', 92, 38, 'dev', '', '', '', 'NpmTar', '1', 'fat', 2, NULL, NULL, 0, '2019-12-18 14:54:42', '1', '2019-12-18 14:54:42', '1', 8);
+INSERT INTO `ci_task` VALUES (180, 'mp-view测试环境', 88, 35, 'dev', '', '', '', 'NpmTar', '1', 'fat', 2, NULL, NULL, 0, '2019-12-18 14:56:30', '1', '2019-12-18 14:56:30', '1', 8);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_task_build_command
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_task_build_command`;
+CREATE TABLE `ci_task_build_command` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_id` int(11) DEFAULT NULL COMMENT 'ci任务id',
+  `project_id` int(11) DEFAULT NULL COMMENT '项目id',
+  `sort` int(11) DEFAULT NULL COMMENT '排序',
+  `command` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '命令',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='ci项目build时命令';
+
+-- ----------------------------
+-- Records of ci_task_build_command
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_task_build_command` VALUES (5, 168, 20, 1, '');
+INSERT INTO `ci_task_build_command` VALUES (6, 168, 19, 2, '');
+INSERT INTO `ci_task_build_command` VALUES (7, 168, 20, 1, NULL);
+INSERT INTO `ci_task_build_command` VALUES (8, 168, 19, 2, NULL);
+INSERT INTO `ci_task_build_command` VALUES (9, 168, 22, 3, NULL);
+INSERT INTO `ci_task_build_command` VALUES (10, 169, 20, 1, NULL);
+INSERT INTO `ci_task_build_command` VALUES (11, 169, 19, 2, NULL);
+INSERT INTO `ci_task_build_command` VALUES (12, 170, 20, 1, NULL);
+INSERT INTO `ci_task_build_command` VALUES (13, 171, 20, 1, NULL);
+INSERT INTO `ci_task_build_command` VALUES (14, 171, 19, 2, NULL);
+INSERT INTO `ci_task_build_command` VALUES (15, 172, 20, 1, NULL);
+INSERT INTO `ci_task_build_command` VALUES (16, 172, 19, 2, NULL);
+INSERT INTO `ci_task_build_command` VALUES (17, 173, 20, 1, NULL);
+INSERT INTO `ci_task_build_command` VALUES (18, 173, 19, 2, NULL);
+INSERT INTO `ci_task_build_command` VALUES (19, 174, 20, 1, NULL);
+INSERT INTO `ci_task_build_command` VALUES (20, 174, 19, 2, NULL);
+INSERT INTO `ci_task_build_command` VALUES (21, 174, 22, 3, NULL);
+INSERT INTO `ci_task_build_command` VALUES (22, 175, 20, 1, NULL);
+INSERT INTO `ci_task_build_command` VALUES (23, 175, 19, 2, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_task_history
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_task_history`;
+CREATE TABLE `ci_task_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` int(11) NOT NULL COMMENT '类型:1钩子触发,2手动部署,3回滚,调度',
+  `project_id` int(11) NOT NULL COMMENT '项目id',
+  `status` int(11) NOT NULL COMMENT '状态:0创建,1进行,2成功,3失败,4超时',
+  `branch_name` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '分支名',
+  `sha_git` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT 'commit的sha值,用于回滚',
+  `sha_local` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '根据tar算的md5,用于比较包',
+  `ref_id` int(11) DEFAULT NULL COMMENT '从哪个历史回滚来的',
+  `build_command` text COLLATE utf8_bin COMMENT '编译命令',
+  `pre_command` text COLLATE utf8_bin COMMENT '部署前命令',
+  `post_command` text COLLATE utf8_bin COMMENT '部署后命令(重启命令)',
+  `provider_kind` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '类型:1tar,2jar,3自定义',
+  `result` text COLLATE utf8_bin COMMENT '运行结果',
+  `cost_time` bigint(20) DEFAULT NULL COMMENT '花费时间ms',
+  `track_type` int(11) DEFAULT NULL COMMENT '跟踪类型：新建、BUG、迭代、反馈',
+  `track_id` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '跟踪id',
+  `env_type` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '所属环境类型,1023改成去字典value',
+  `annex` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '附件地址',
+  `remark` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `contact_group_id` int(11) DEFAULT NULL COMMENT '联系人分组',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `pk_ci_task_history_project_id` (`project_id`),
+  CONSTRAINT `ci_task_history_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `ci_project` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1033 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='任务历史表,记录部署任务';
+
+-- ----------------------------
+-- Records of ci_task_history
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_task_history` VALUES (1007, 2, 17, 2, 'dev', 'b7cc7d231c99af0222dc8031f95bff54ad39c9cf', '4a5f76f67aee36885090f09ba66deedf', NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 89499, 1, '1318', 'fat', 'http://wl4g.debug:14046/ci-server/fs/download/c23fec3a-7855-4643-9b0a-9f715cfecd0b.sql', 'test', 0, '2020-01-07 14:59:16', '1', '2020-01-07 15:00:45', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1008, 2, 17, 5, 'dev', 'dd78aa3409b43826da42b4305d9f4dc738d5aada', '4a23756f3e8f79f75666e99d615f7eee', NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 69959, 1, '1323', 'fat', '', 'test', 0, '2020-01-07 16:15:11', '1', '2020-01-07 16:16:21', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1009, 2, 17, 5, 'dev', NULL, NULL, NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 155540, 1, '1324', 'fat', '', '1', 0, '2020-01-07 16:19:39', '1', '2020-01-07 16:22:15', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1010, 2, 26, 5, 'dev', NULL, NULL, NULL, NULL, '', '/etc/init.d/datav.service restart', 'MvnAssTar', NULL, 200215, 1, '1324', 'fat', '', 'test', 0, '2020-01-07 16:24:06', '1', '2020-01-07 16:27:26', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1011, 2, 23, 2, 'dev', '0d7c11b51e5a59bc35c2a1475ee729b78c59df81', 'ad3b617ec64787d31db6bdf57bd987b6', NULL, NULL, '', '/etc/init.d/portal.service restart', 'MvnAssTar', NULL, 76459, 1, '1324', 'fat', '', '1', 0, '2020-01-07 16:28:55', '1', '2020-01-07 16:30:11', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1012, 2, 26, 2, 'dev', '896cd5e038b32ef734b7c7b623c6c12f9eed1cb2', '86ed4087c89b61d1ccc799048cf8ddd5', NULL, NULL, '', '/etc/init.d/datav.service restart', 'MvnAssTar', NULL, 83428, 1, '1324', 'fat', '', '1', 0, '2020-01-07 16:31:20', '1', '2020-01-07 16:32:44', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1013, 2, 34, 5, 'dev', 'dde09913ac55a1c311f52b72795f0ac85c5e08ef', 'a30365a527cb39840001c4d02d94ae55', NULL, '', '', '', 'NpmTar', NULL, 46891, 1, '1324', 'fat', '', '1', 0, '2020-01-07 16:43:00', '1', '2020-01-07 16:43:47', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1014, 2, 34, 2, 'dev', 'dde09913ac55a1c311f52b72795f0ac85c5e08ef', 'b331301930599eb6b163fc24c3271c59', NULL, '', '', '', 'NpmTar', NULL, 47067, 1, '1324', 'fat', '', '1', 0, '2020-01-07 16:49:44', '1', '2020-01-07 16:50:32', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1015, 2, 34, 2, 'dev', 'dde09913ac55a1c311f52b72795f0ac85c5e08ef', '9de16d1d9b756595505676399161e924', NULL, '', '', '', 'NpmTar', NULL, 56131, 1, '1324', 'fat', '', '1', 0, '2020-01-07 16:51:33', '1', '2020-01-07 16:52:29', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1016, 2, 35, 2, 'dev', 'f224f907888671b5ccf0cb11f1638b89c0719fd9', '7502e8744fd81ade095c98b1b344183c', NULL, '', '', '', 'NpmTar', NULL, 105521, 1, '1324', 'fat', '', '1', 0, '2020-01-07 16:52:56', '1', '2020-01-07 16:54:41', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1017, 2, 34, 2, 'dev', 'dde09913ac55a1c311f52b72795f0ac85c5e08ef', 'f6861f859ba5c7f4f0878e411c79acb9', NULL, '', '', '', 'NpmTar', NULL, 46688, 1, '1324', 'fat', '', '1', 0, '2020-01-07 16:55:45', '1', '2020-01-07 16:56:32', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1018, 2, 17, 2, 'dev', '586046f61142c7b2ec90482bc189a367ce07abbf', '568e7b8955dd828de39963807d0d2bbe', NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 78858, 1, '1326', 'fat', '', '1', 0, '2020-01-07 18:43:54', '1', '2020-01-07 18:45:13', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1019, 2, 24, 2, 'dev', '044ef13179de90ebc70b6b936fc124f6957626c4', '01dd4437ab3bc87678a71de6c6b3f30c', NULL, NULL, '', '/etc/init.d/sso.service restart', 'MvnAssTar', NULL, 67167, 1, '1326', 'fat', '', '1', 0, '2020-01-07 18:52:03', '1', '2020-01-07 18:53:10', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1020, 2, 25, 2, 'dev', 'cb50f9dd0a59f806b0452fb753e435a4f3ac4c74', 'c03db9139c00043acef40ccdf089d4bb', NULL, NULL, '', '/etc/init.d/iiot.service restart', 'MvnAssTar', NULL, 88372, 1, '1326', 'fat', '', '1', 0, '2020-01-08 10:25:22', '1', '2020-01-08 10:26:50', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1021, 2, 17, 5, 'dev', 'e60a08ebf6aa7ec4f07cc20c2e59ee7b125962be', '1bb04adc9f4983ab7856707276e8f340', NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 75181, 1, '1327', 'fat', '', '1', 0, '2020-01-08 15:59:27', '1', '2020-01-08 16:00:43', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1022, 2, 17, 2, 'dev', 'e60a08ebf6aa7ec4f07cc20c2e59ee7b125962be', 'f6cebeafd921ec4bae04a2e31c3572ad', NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 87490, 1, '1327', 'fat', '', '1', 0, '2020-01-08 16:01:50', '1', '2020-01-08 16:03:17', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1023, 2, 23, 2, 'dev', '0d7c11b51e5a59bc35c2a1475ee729b78c59df81', '17e27039b8bbaadd0219b56a5888e562', NULL, NULL, '', '/etc/init.d/portal.service restart', 'MvnAssTar', NULL, 93142, 1, '1327', 'fat', '', '1', 0, '2020-01-08 16:38:37', '1', '2020-01-08 16:40:10', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1024, 2, 17, 5, 'dev', NULL, NULL, NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 429550, 1, '1327', 'fat', '', '1', 0, '2020-01-08 16:40:21', '1', '2020-01-08 16:47:31', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1025, 2, 17, 2, 'dev', 'e60a08ebf6aa7ec4f07cc20c2e59ee7b125962be', 'd23f5c9bc58e510ce690a4aaec0b249d', NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 87921, 1, '1327', 'fat', '', '1', 0, '2020-01-08 16:48:28', '1', '2020-01-08 16:49:56', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1026, 2, 23, 5, 'dev', NULL, NULL, NULL, NULL, '', '/etc/init.d/portal.service restart', 'MvnAssTar', NULL, NULL, 1, '1327', 'fat', '', '1', 0, '2020-01-08 16:50:09', '1', '2020-01-08 16:54:19', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1027, 2, 17, 5, 'dev', 'e60a08ebf6aa7ec4f07cc20c2e59ee7b125962be', '9067cb088d5d440ec128b808b167eeef', NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 67790, 1, '1327', 'fat', '', '1', 0, '2020-01-08 17:09:09', '1', '2020-01-08 17:10:17', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1028, 2, 17, 2, 'dev', 'ac038e2bcd2d4a0ceedc8adb393462e741896b27', 'e36bbe606aeada44c11c97db9af1e575', NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 76714, 1, '1327', 'fat', '', '1', 0, '2020-01-09 09:59:59', '1', '2020-01-09 10:01:16', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1029, 2, 17, 2, 'dev', 'ac038e2bcd2d4a0ceedc8adb393462e741896b27', '5754aface652853927753be63e3caeac', NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 94736, 1, '1327', 'fat', '', '1', 0, '2020-01-09 10:02:09', '1', '2020-01-09 10:03:44', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1030, 2, 23, 2, 'dev', '0d7c11b51e5a59bc35c2a1475ee729b78c59df81', 'af5931e008ece5d11642ce77dd7f31c6', NULL, NULL, '', '/etc/init.d/portal.service restart', 'MvnAssTar', NULL, 74424, 1, '1327', 'fat', '', '1', 0, '2020-01-09 10:02:20', '1', '2020-01-09 10:03:35', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1031, 2, 17, 2, 'dev', 'ac038e2bcd2d4a0ceedc8adb393462e741896b27', '94e8415ee5f04c990258c8fe75a871a3', NULL, NULL, '', 'sleep 10s\n/etc/init.d/ems.service restart', 'MvnAssTar', NULL, 94068, 1, '1327', 'fat', '', '1', 0, '2020-01-09 10:17:25', '1', '2020-01-09 10:18:59', '1', 8);
+INSERT INTO `ci_task_history` VALUES (1032, 2, 23, 2, 'dev', '0d7c11b51e5a59bc35c2a1475ee729b78c59df81', '8ab444492c657c742f27dc318c7b3541', NULL, NULL, '', '/etc/init.d/portal.service restart', 'MvnAssTar', NULL, 80146, 1, '1327', 'fat', '', '1', 0, '2020-01-09 10:17:33', '1', '2020-01-09 10:18:53', '1', 8);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_task_history_build_command
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_task_history_build_command`;
+CREATE TABLE `ci_task_history_build_command` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_id` int(11) DEFAULT NULL COMMENT 'ci任务id',
+  `project_id` int(11) DEFAULT NULL COMMENT '项目id',
+  `sort` int(11) DEFAULT NULL COMMENT '排序',
+  `command` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '命令',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='ci项目build时命令历史';
+
+-- ----------------------------
+-- Records of ci_task_history_build_command
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_task_history_build_command` VALUES (1, 454, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (2, 454, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (3, 455, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (4, 455, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (5, 456, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (6, 456, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (7, 457, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (8, 457, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (9, 459, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (10, 459, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (11, 460, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (12, 460, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (13, 461, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (14, 461, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (15, 462, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (16, 462, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (17, 463, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (18, 463, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (19, 464, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (20, 464, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (21, 465, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (22, 465, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (23, 466, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (24, 466, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (25, 467, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (26, 467, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (27, 468, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (28, 468, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (29, 469, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (30, 469, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (31, 470, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (32, 470, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (33, 471, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (34, 471, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (35, 472, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (36, 472, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (37, 473, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (38, 473, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (39, 474, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (40, 474, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (41, 475, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (42, 475, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (43, 476, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (44, 476, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (45, 477, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (46, 477, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (47, 479, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (48, 479, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (49, 480, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (50, 480, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (51, 481, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (52, 481, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (53, 482, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (54, 482, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (55, 483, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (56, 483, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (57, 484, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (58, 484, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (59, 485, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (60, 485, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (61, 486, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (62, 486, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (63, 507, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (64, 507, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (65, 508, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (66, 508, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (67, 511, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (68, 511, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (69, 512, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (70, 512, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (71, 513, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (72, 513, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (73, 514, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (74, 514, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (75, 515, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (76, 515, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (77, 516, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (78, 516, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (79, 518, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (80, 518, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (81, 521, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (82, 521, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (83, 522, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (84, 522, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (85, 525, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (86, 525, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (87, 527, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (88, 527, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (89, 529, 20, 1, 'echo \'build dependency safecloud-web-support\'');
+INSERT INTO `ci_task_history_build_command` VALUES (90, 529, 19, 2, 'echo \'build dependency safecloud-web-base\'');
+INSERT INTO `ci_task_history_build_command` VALUES (91, 530, 20, 1, '');
+INSERT INTO `ci_task_history_build_command` VALUES (92, 530, 19, 2, '');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_task_history_instance
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_task_history_instance`;
+CREATE TABLE `ci_task_history_instance` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_id` int(11) NOT NULL COMMENT '任务id',
+  `instance_id` int(11) NOT NULL COMMENT '实例id',
+  `status` int(11) NOT NULL COMMENT '状态:0创建,1开始,2进行中,3结束',
+  `result` text COLLATE utf8_bin COMMENT '结果',
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pk_ci_task_history_detail_instance_id` (`instance_id`),
+  KEY `pk_ci_task_history_detail_task_id` (`task_id`),
+  CONSTRAINT `ci_task_history_instance_ibfk_1` FOREIGN KEY (`instance_id`) REFERENCES `app_instance` (`id`),
+  CONSTRAINT `ci_task_history_instance_ibfk_2` FOREIGN KEY (`task_id`) REFERENCES `ci_task_history` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=843 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='一个任务历史对应的多个实例';
+
+-- ----------------------------
+-- Records of ci_task_history_instance
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_task_history_instance` VALUES (817, 1007, 77, 2, NULL, '2020-01-07 14:59:16');
+INSERT INTO `ci_task_history_instance` VALUES (818, 1008, 77, 3, NULL, '2020-01-07 16:15:11');
+INSERT INTO `ci_task_history_instance` VALUES (819, 1009, 77, 3, NULL, '2020-01-07 16:19:39');
+INSERT INTO `ci_task_history_instance` VALUES (820, 1010, 81, 3, NULL, '2020-01-07 16:24:06');
+INSERT INTO `ci_task_history_instance` VALUES (821, 1011, 75, 2, NULL, '2020-01-07 16:28:55');
+INSERT INTO `ci_task_history_instance` VALUES (822, 1012, 81, 2, NULL, '2020-01-07 16:31:20');
+INSERT INTO `ci_task_history_instance` VALUES (823, 1013, 104, 3, NULL, '2020-01-07 16:43:00');
+INSERT INTO `ci_task_history_instance` VALUES (824, 1014, 104, 2, NULL, '2020-01-07 16:49:44');
+INSERT INTO `ci_task_history_instance` VALUES (825, 1015, 104, 2, NULL, '2020-01-07 16:51:33');
+INSERT INTO `ci_task_history_instance` VALUES (826, 1016, 110, 2, NULL, '2020-01-07 16:52:56');
+INSERT INTO `ci_task_history_instance` VALUES (827, 1017, 104, 2, NULL, '2020-01-07 16:55:45');
+INSERT INTO `ci_task_history_instance` VALUES (828, 1018, 77, 2, NULL, '2020-01-07 18:43:54');
+INSERT INTO `ci_task_history_instance` VALUES (829, 1019, 68, 2, NULL, '2020-01-07 18:52:03');
+INSERT INTO `ci_task_history_instance` VALUES (830, 1020, 80, 2, NULL, '2020-01-08 10:25:22');
+INSERT INTO `ci_task_history_instance` VALUES (831, 1021, 77, 3, NULL, '2020-01-08 15:59:28');
+INSERT INTO `ci_task_history_instance` VALUES (832, 1022, 77, 2, NULL, '2020-01-08 16:01:50');
+INSERT INTO `ci_task_history_instance` VALUES (833, 1023, 75, 2, NULL, '2020-01-08 16:38:37');
+INSERT INTO `ci_task_history_instance` VALUES (834, 1024, 77, 1, NULL, '2020-01-08 16:40:21');
+INSERT INTO `ci_task_history_instance` VALUES (835, 1025, 77, 2, NULL, '2020-01-08 16:48:28');
+INSERT INTO `ci_task_history_instance` VALUES (836, 1026, 75, 3, NULL, '2020-01-08 16:50:09');
+INSERT INTO `ci_task_history_instance` VALUES (837, 1027, 77, 3, NULL, '2020-01-08 17:09:09');
+INSERT INTO `ci_task_history_instance` VALUES (838, 1028, 77, 2, NULL, '2020-01-09 09:59:59');
+INSERT INTO `ci_task_history_instance` VALUES (839, 1029, 77, 2, NULL, '2020-01-09 10:02:09');
+INSERT INTO `ci_task_history_instance` VALUES (840, 1030, 75, 2, NULL, '2020-01-09 10:02:20');
+INSERT INTO `ci_task_history_instance` VALUES (841, 1031, 77, 2, NULL, '2020-01-09 10:17:25');
+INSERT INTO `ci_task_history_instance` VALUES (842, 1032, 75, 2, NULL, '2020-01-09 10:17:33');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_task_instance
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_task_instance`;
+CREATE TABLE `ci_task_instance` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_id` int(11) NOT NULL COMMENT '任务id',
+  `instance_id` int(11) NOT NULL COMMENT '实例id',
+  PRIMARY KEY (`id`),
+  KEY `pk_ci_task_detail_task_id` (`task_id`),
+  KEY `pk_ci_task_instance_id` (`instance_id`),
+  CONSTRAINT `ci_task_instance_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `ci_task` (`id`),
+  CONSTRAINT `ci_task_instance_ibfk_2` FOREIGN KEY (`instance_id`) REFERENCES `app_instance` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=217 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='一个任务对应的多个实例';
+
+-- ----------------------------
+-- Records of ci_task_instance
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_task_instance` VALUES (169, 155, 76);
+INSERT INTO `ci_task_instance` VALUES (173, 156, 78);
+INSERT INTO `ci_task_instance` VALUES (175, 157, 79);
+INSERT INTO `ci_task_instance` VALUES (176, 158, 75);
+INSERT INTO `ci_task_instance` VALUES (177, 159, 80);
+INSERT INTO `ci_task_instance` VALUES (179, 161, 82);
+INSERT INTO `ci_task_instance` VALUES (180, 162, 85);
+INSERT INTO `ci_task_instance` VALUES (181, 163, 83);
+INSERT INTO `ci_task_instance` VALUES (182, 163, 84);
+INSERT INTO `ci_task_instance` VALUES (185, 164, 86);
+INSERT INTO `ci_task_instance` VALUES (186, 160, 81);
+INSERT INTO `ci_task_instance` VALUES (190, 165, 87);
+INSERT INTO `ci_task_instance` VALUES (191, 166, 90);
+INSERT INTO `ci_task_instance` VALUES (199, 168, 99);
+INSERT INTO `ci_task_instance` VALUES (200, 169, 92);
+INSERT INTO `ci_task_instance` VALUES (201, 170, 97);
+INSERT INTO `ci_task_instance` VALUES (203, 172, 100);
+INSERT INTO `ci_task_instance` VALUES (205, 174, 98);
+INSERT INTO `ci_task_instance` VALUES (206, 171, 95);
+INSERT INTO `ci_task_instance` VALUES (207, 173, 93);
+INSERT INTO `ci_task_instance` VALUES (208, 175, 94);
+INSERT INTO `ci_task_instance` VALUES (209, 167, 91);
+INSERT INTO `ci_task_instance` VALUES (211, 177, 104);
+INSERT INTO `ci_task_instance` VALUES (212, 178, 116);
+INSERT INTO `ci_task_instance` VALUES (213, 179, 117);
+INSERT INTO `ci_task_instance` VALUES (214, 180, 110);
+INSERT INTO `ci_task_instance` VALUES (215, 152, 77);
+INSERT INTO `ci_task_instance` VALUES (216, 154, 68);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_task_sign
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_task_sign`;
+CREATE TABLE `ci_task_sign` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_id` int(11) DEFAULT NULL COMMENT '任务id',
+  `dependency_id` int(11) DEFAULT NULL COMMENT '依赖id',
+  `sha_git` varchar(64) CHARACTER SET utf8 DEFAULT NULL COMMENT 'sha--用于被依赖项目的回滚',
+  PRIMARY KEY (`id`),
+  KEY `pk_ci_task_sign_task_id` (`task_id`),
+  KEY `pk_ci_task_sign_dependency_id` (`dependency_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=555 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of ci_task_sign
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_task_sign` VALUES (1, 180, 1, '811a05195e8d785736b1d72daa74486746004c3d');
+INSERT INTO `ci_task_sign` VALUES (2, 181, 1, '811a05195e8d785736b1d72daa74486746004c3d');
+INSERT INTO `ci_task_sign` VALUES (3, 194, 1, 'ef506f4ffdd30062703baaa87b4b9b52742bcca0');
+INSERT INTO `ci_task_sign` VALUES (4, 194, 2, '4b78f68abc3661901f2b6437a96525f3bcada0df');
+INSERT INTO `ci_task_sign` VALUES (5, 195, 1, 'ef506f4ffdd30062703baaa87b4b9b52742bcca0');
+INSERT INTO `ci_task_sign` VALUES (6, 195, 2, '4b78f68abc3661901f2b6437a96525f3bcada0df');
+INSERT INTO `ci_task_sign` VALUES (7, 198, 1, '45e2e62918f60e5c55833ba6741a3825f85021f9');
+INSERT INTO `ci_task_sign` VALUES (8, 209, 1, 'fb48307eb1b62e11bf469685e16a44339ded165b');
+INSERT INTO `ci_task_sign` VALUES (9, 209, 2, '3673aca8abab95d73821c95b5a0f6d55ce1d0a20');
+INSERT INTO `ci_task_sign` VALUES (10, 213, 1, 'fb48307eb1b62e11bf469685e16a44339ded165b');
+INSERT INTO `ci_task_sign` VALUES (11, 213, 2, '3673aca8abab95d73821c95b5a0f6d55ce1d0a20');
+INSERT INTO `ci_task_sign` VALUES (12, 216, 3, 'b4150ac98dc73742009608d29e497d776646c6cb');
+INSERT INTO `ci_task_sign` VALUES (13, 233, 1, '50cb7fab90e84a5d0dcccfffdcf392484de06e84');
+INSERT INTO `ci_task_sign` VALUES (14, 233, 2, '7c5e27c478f8144c8d203d3d215a079f90f55e17');
+INSERT INTO `ci_task_sign` VALUES (15, 235, 3, '50cb7fab90e84a5d0dcccfffdcf392484de06e84');
+INSERT INTO `ci_task_sign` VALUES (16, 244, 4, '1df1fe29d81dd69c2352b90c80496fde0dca5353');
+INSERT INTO `ci_task_sign` VALUES (17, 246, 4, '3a414b365dd1024bd7da115d8d794fa7884ba99b');
+INSERT INTO `ci_task_sign` VALUES (18, 249, 4, '3a414b365dd1024bd7da115d8d794fa7884ba99b');
+INSERT INTO `ci_task_sign` VALUES (19, 252, 4, 'cfecbae0f2f19ffe6fe4065c3a59d40bc6b6fb20');
+INSERT INTO `ci_task_sign` VALUES (20, 256, 4, '0403677ff2b66d2736728dfca41c7b6a0b4c149b');
+INSERT INTO `ci_task_sign` VALUES (21, 257, 4, '62b5f63e0eb78458df09eec124fb782d50febb12');
+INSERT INTO `ci_task_sign` VALUES (22, 259, 4, 'ec6bb2c8658975435aad90d91738da3bec5f01fa');
+INSERT INTO `ci_task_sign` VALUES (23, 261, 4, '14cbf734ec0b06e8704e8b3a2092255ac11a2423');
+INSERT INTO `ci_task_sign` VALUES (24, 262, 4, '14cbf734ec0b06e8704e8b3a2092255ac11a2423');
+INSERT INTO `ci_task_sign` VALUES (25, 263, 1, '9b042e0c1110315ba6c80d7132205c79de6c78a5');
+INSERT INTO `ci_task_sign` VALUES (26, 263, 2, '9cd76ea6c432a77f3b2c79ddbff4c8d8f36ba1f4');
+INSERT INTO `ci_task_sign` VALUES (27, 264, 1, '1d43a90c0363f08d346f502e80dc1f28756807f2');
+INSERT INTO `ci_task_sign` VALUES (28, 264, 2, '9cd76ea6c432a77f3b2c79ddbff4c8d8f36ba1f4');
+INSERT INTO `ci_task_sign` VALUES (29, 266, 1, '1d43a90c0363f08d346f502e80dc1f28756807f2');
+INSERT INTO `ci_task_sign` VALUES (30, 266, 2, '9cd76ea6c432a77f3b2c79ddbff4c8d8f36ba1f4');
+INSERT INTO `ci_task_sign` VALUES (31, 267, 1, '1d43a90c0363f08d346f502e80dc1f28756807f2');
+INSERT INTO `ci_task_sign` VALUES (32, 267, 2, '9cd76ea6c432a77f3b2c79ddbff4c8d8f36ba1f4');
+INSERT INTO `ci_task_sign` VALUES (33, 268, 1, '1d43a90c0363f08d346f502e80dc1f28756807f2');
+INSERT INTO `ci_task_sign` VALUES (34, 268, 2, '9cd76ea6c432a77f3b2c79ddbff4c8d8f36ba1f4');
+INSERT INTO `ci_task_sign` VALUES (35, 269, 1, 'a84b967b3c8a82f5792343105c8aaa72d3331594');
+INSERT INTO `ci_task_sign` VALUES (36, 269, 2, '9cd76ea6c432a77f3b2c79ddbff4c8d8f36ba1f4');
+INSERT INTO `ci_task_sign` VALUES (37, 270, 1, 'a84b967b3c8a82f5792343105c8aaa72d3331594');
+INSERT INTO `ci_task_sign` VALUES (38, 270, 2, '9cd76ea6c432a77f3b2c79ddbff4c8d8f36ba1f4');
+INSERT INTO `ci_task_sign` VALUES (39, 274, 3, 'b8a925ff27064391e7945ccf7c0c98978b763178');
+INSERT INTO `ci_task_sign` VALUES (40, 276, 4, 'b8a925ff27064391e7945ccf7c0c98978b763178');
+INSERT INTO `ci_task_sign` VALUES (41, 277, 4, 'b8a925ff27064391e7945ccf7c0c98978b763178');
+INSERT INTO `ci_task_sign` VALUES (42, 281, 3, 'b8a925ff27064391e7945ccf7c0c98978b763178');
+INSERT INTO `ci_task_sign` VALUES (43, 284, 4, 'b8a925ff27064391e7945ccf7c0c98978b763178');
+INSERT INTO `ci_task_sign` VALUES (44, 289, 3, '38eaa3890cd1b0f8d688d47909516780d2de8a9c');
+INSERT INTO `ci_task_sign` VALUES (45, 294, 4, '38eaa3890cd1b0f8d688d47909516780d2de8a9c');
+INSERT INTO `ci_task_sign` VALUES (46, 300, 5, '3877e21b9bf69efe4d8422e80538f3064aa326d9');
+INSERT INTO `ci_task_sign` VALUES (47, 301, 5, 'fb5262466d3909334359216f56f86810c5c06f0d');
+INSERT INTO `ci_task_sign` VALUES (48, 302, 4, 'fb5262466d3909334359216f56f86810c5c06f0d');
+INSERT INTO `ci_task_sign` VALUES (49, 303, 4, '9bf4105fa9975b2d11da0da256252f167fc98ed9');
+INSERT INTO `ci_task_sign` VALUES (50, 305, 3, '9bf4105fa9975b2d11da0da256252f167fc98ed9');
+INSERT INTO `ci_task_sign` VALUES (51, 306, 3, '9bf4105fa9975b2d11da0da256252f167fc98ed9');
+INSERT INTO `ci_task_sign` VALUES (52, 314, 5, '3946eb99f229d752790ccf3122dfc22d5fc95fc2');
+INSERT INTO `ci_task_sign` VALUES (53, 315, 5, 'f9d1954f9ba105a8b48f7152808a016e8e29c339');
+INSERT INTO `ci_task_sign` VALUES (54, 321, 4, 'f16c4061a50f4b9ffd7a0e3cb6601edbf0cb346d');
+INSERT INTO `ci_task_sign` VALUES (55, 323, 4, 'aa32a172e68a7c596febe849b044634f8415a451');
+INSERT INTO `ci_task_sign` VALUES (56, 325, 1, 'aa32a172e68a7c596febe849b044634f8415a451');
+INSERT INTO `ci_task_sign` VALUES (57, 325, 5, 'aa32a172e68a7c596febe849b044634f8415a451');
+INSERT INTO `ci_task_sign` VALUES (58, 325, 2, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (59, 326, 5, 'aa32a172e68a7c596febe849b044634f8415a451');
+INSERT INTO `ci_task_sign` VALUES (60, 331, 4, '0d11fff5948f31cfe543a425bd67389ed9d7aa9d');
+INSERT INTO `ci_task_sign` VALUES (61, 332, 4, '0d11fff5948f31cfe543a425bd67389ed9d7aa9d');
+INSERT INTO `ci_task_sign` VALUES (62, 333, 4, '0d11fff5948f31cfe543a425bd67389ed9d7aa9d');
+INSERT INTO `ci_task_sign` VALUES (63, 337, 1, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (64, 337, 5, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (65, 337, 2, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (66, 338, 1, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (67, 338, 5, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (68, 338, 2, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (69, 343, 4, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (70, 344, 1, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (71, 344, 5, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (72, 344, 2, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (73, 345, 5, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (74, 346, 1, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (75, 346, 5, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (76, 346, 2, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (77, 347, 1, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (78, 347, 5, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (79, 347, 2, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (80, 348, 1, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (81, 348, 5, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (82, 348, 2, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (83, 349, 1, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (84, 349, 5, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (85, 349, 2, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (86, 350, 1, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (87, 350, 5, '93fe5f3671b8127a1e17e9fff6406b1904f140be');
+INSERT INTO `ci_task_sign` VALUES (88, 350, 2, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (89, 354, 4, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (90, 356, 4, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (91, 358, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (92, 358, 10, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (93, 358, 8, '66abf21f5fec18368e50aa1360d38f53e9a74552');
+INSERT INTO `ci_task_sign` VALUES (94, 358, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (95, 358, 11, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (96, 359, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (97, 359, 9, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (98, 360, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (99, 360, 10, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (100, 361, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (101, 361, 10, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (102, 362, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (103, 362, 10, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (104, 362, 8, '903b58fe1a3689288e8120a6f84155b1fa5dd964');
+INSERT INTO `ci_task_sign` VALUES (105, 362, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (106, 362, 11, '0f88dbb144eb19e6122646ac70d3c4fdf75aefc1');
+INSERT INTO `ci_task_sign` VALUES (107, 363, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (108, 363, 13, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (109, 364, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (110, 364, 2, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (111, 365, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (112, 365, 12, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (113, 366, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (114, 367, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (115, 367, 6, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (116, 367, 5, '13558d910e90e047d19d0d933fe384272823fdda');
+INSERT INTO `ci_task_sign` VALUES (117, 367, 10, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (118, 367, 7, '903b58fe1a3689288e8120a6f84155b1fa5dd964');
+INSERT INTO `ci_task_sign` VALUES (119, 368, 5, '5f1de4b8e787314893fc1d9b4d2d803459214f52');
+INSERT INTO `ci_task_sign` VALUES (120, 368, 2, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (121, 370, 5, '5f1de4b8e787314893fc1d9b4d2d803459214f52');
+INSERT INTO `ci_task_sign` VALUES (122, 370, 2, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (123, 371, 5, '5f1de4b8e787314893fc1d9b4d2d803459214f52');
+INSERT INTO `ci_task_sign` VALUES (124, 371, 2, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (125, 372, 5, '5f1de4b8e787314893fc1d9b4d2d803459214f52');
+INSERT INTO `ci_task_sign` VALUES (126, 372, 6, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (127, 372, 5, '5f1de4b8e787314893fc1d9b4d2d803459214f52');
+INSERT INTO `ci_task_sign` VALUES (128, 372, 10, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (129, 372, 7, '903b58fe1a3689288e8120a6f84155b1fa5dd964');
+INSERT INTO `ci_task_sign` VALUES (130, 373, 5, '5f1de4b8e787314893fc1d9b4d2d803459214f52');
+INSERT INTO `ci_task_sign` VALUES (131, 373, 6, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (132, 373, 5, '5f1de4b8e787314893fc1d9b4d2d803459214f52');
+INSERT INTO `ci_task_sign` VALUES (133, 373, 10, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (134, 373, 7, '903b58fe1a3689288e8120a6f84155b1fa5dd964');
+INSERT INTO `ci_task_sign` VALUES (135, 378, 5, '5f1de4b8e787314893fc1d9b4d2d803459214f52');
+INSERT INTO `ci_task_sign` VALUES (136, 378, 13, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (137, 379, 5, '5f1de4b8e787314893fc1d9b4d2d803459214f52');
+INSERT INTO `ci_task_sign` VALUES (138, 379, 6, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (139, 379, 5, '5f1de4b8e787314893fc1d9b4d2d803459214f52');
+INSERT INTO `ci_task_sign` VALUES (140, 379, 10, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (141, 379, 7, '0cf5a44992262bbf0f68bea84165ee59c3023dfe');
+INSERT INTO `ci_task_sign` VALUES (142, 381, 5, '5f1de4b8e787314893fc1d9b4d2d803459214f52');
+INSERT INTO `ci_task_sign` VALUES (143, 381, 12, '662a1512853e09903ebce48248e65e73707921f1');
+INSERT INTO `ci_task_sign` VALUES (144, 383, 5, '395de29b873371e0fab80ce35f563591b8738717');
+INSERT INTO `ci_task_sign` VALUES (145, 383, 2, '5c47166dfb1a4bea046f67bdb2891d62f459dead');
+INSERT INTO `ci_task_sign` VALUES (146, 384, 5, '395de29b873371e0fab80ce35f563591b8738717');
+INSERT INTO `ci_task_sign` VALUES (147, 384, 2, '5c47166dfb1a4bea046f67bdb2891d62f459dead');
+INSERT INTO `ci_task_sign` VALUES (148, 385, 5, '395de29b873371e0fab80ce35f563591b8738717');
+INSERT INTO `ci_task_sign` VALUES (149, 385, 2, '5c47166dfb1a4bea046f67bdb2891d62f459dead');
+INSERT INTO `ci_task_sign` VALUES (150, 386, 5, '395de29b873371e0fab80ce35f563591b8738717');
+INSERT INTO `ci_task_sign` VALUES (151, 387, 5, '395de29b873371e0fab80ce35f563591b8738717');
+INSERT INTO `ci_task_sign` VALUES (152, 387, 10, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (153, 387, 8, '0cf5a44992262bbf0f68bea84165ee59c3023dfe');
+INSERT INTO `ci_task_sign` VALUES (154, 387, 5, '395de29b873371e0fab80ce35f563591b8738717');
+INSERT INTO `ci_task_sign` VALUES (155, 387, 11, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (156, 388, 5, '395de29b873371e0fab80ce35f563591b8738717');
+INSERT INTO `ci_task_sign` VALUES (157, 388, 10, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (158, 388, 8, '0cf5a44992262bbf0f68bea84165ee59c3023dfe');
+INSERT INTO `ci_task_sign` VALUES (159, 388, 5, '395de29b873371e0fab80ce35f563591b8738717');
+INSERT INTO `ci_task_sign` VALUES (160, 388, 11, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (161, 389, 5, '395de29b873371e0fab80ce35f563591b8738717');
+INSERT INTO `ci_task_sign` VALUES (162, 389, 6, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (163, 389, 5, '395de29b873371e0fab80ce35f563591b8738717');
+INSERT INTO `ci_task_sign` VALUES (164, 389, 10, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (165, 389, 7, '0cf5a44992262bbf0f68bea84165ee59c3023dfe');
+INSERT INTO `ci_task_sign` VALUES (166, 390, 5, 'ae92c1474305ce1c0ab1d32c6a7034a6487cb5a2');
+INSERT INTO `ci_task_sign` VALUES (167, 390, 2, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (168, 391, 5, 'cb70383134a86bf249fd7ff0388a2703e2208e62');
+INSERT INTO `ci_task_sign` VALUES (169, 391, 9, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (170, 392, 5, 'efa6495f7b60b6634e3ef60bc19d2d845483c922');
+INSERT INTO `ci_task_sign` VALUES (171, 392, 10, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (172, 392, 8, 'b96818e051151f02c2b286a9950a7bfc097406b3');
+INSERT INTO `ci_task_sign` VALUES (173, 392, 5, 'efa6495f7b60b6634e3ef60bc19d2d845483c922');
+INSERT INTO `ci_task_sign` VALUES (174, 392, 11, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (175, 399, 20, 'efa6495f7b60b6634e3ef60bc19d2d845483c922');
+INSERT INTO `ci_task_sign` VALUES (176, 399, 19, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (177, 400, 20, 'efa6495f7b60b6634e3ef60bc19d2d845483c922');
+INSERT INTO `ci_task_sign` VALUES (178, 400, 19, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (179, 402, 20, 'efa6495f7b60b6634e3ef60bc19d2d845483c922');
+INSERT INTO `ci_task_sign` VALUES (180, 402, 19, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (181, 404, 20, 'efa6495f7b60b6634e3ef60bc19d2d845483c922');
+INSERT INTO `ci_task_sign` VALUES (182, 404, 19, 'ba1961c265a0deca5c96235fe80805b79ff96fe4');
+INSERT INTO `ci_task_sign` VALUES (183, 406, 20, '66affcfe36225b7e31d6c9c6892c4d9892ca8954');
+INSERT INTO `ci_task_sign` VALUES (184, 406, 19, '42e93bef1f48e3257dd4d985f8f658025aa0e798');
+INSERT INTO `ci_task_sign` VALUES (185, 407, 20, '66affcfe36225b7e31d6c9c6892c4d9892ca8954');
+INSERT INTO `ci_task_sign` VALUES (186, 407, 19, '66f65f2bde2cd0eeaa325dad89753ba265086318');
+INSERT INTO `ci_task_sign` VALUES (187, 407, 22, 'b84bd642729e01c61775f4f1da0f346ad6f29c62');
+INSERT INTO `ci_task_sign` VALUES (188, 408, 20, '66affcfe36225b7e31d6c9c6892c4d9892ca8954');
+INSERT INTO `ci_task_sign` VALUES (189, 408, 19, '091e93d0dbdecbdc22514e568fdc1dee8efcdd3d');
+INSERT INTO `ci_task_sign` VALUES (190, 408, 22, '9f6f649327a1692dfd501a7fa1018326d23d55da');
+INSERT INTO `ci_task_sign` VALUES (191, 434, 20, '85ae56f9ba5338981a228a71dcf869a8fc6ebf0d');
+INSERT INTO `ci_task_sign` VALUES (192, 434, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (193, 435, 20, '36d3084cf91d0a3e5f377f3eb3fbe46616a104e6');
+INSERT INTO `ci_task_sign` VALUES (194, 435, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (195, 437, 20, '991b0e7725e9f0d71c8acffd52f154156bbcb685');
+INSERT INTO `ci_task_sign` VALUES (196, 438, 20, '991b0e7725e9f0d71c8acffd52f154156bbcb685');
+INSERT INTO `ci_task_sign` VALUES (197, 439, 20, '93d4ae356ab9f41673d1ef3909fe8db904d1e9b1');
+INSERT INTO `ci_task_sign` VALUES (198, 440, 20, '93d4ae356ab9f41673d1ef3909fe8db904d1e9b1');
+INSERT INTO `ci_task_sign` VALUES (199, 441, 20, '93d4ae356ab9f41673d1ef3909fe8db904d1e9b1');
+INSERT INTO `ci_task_sign` VALUES (200, 441, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (201, 442, 20, '93d4ae356ab9f41673d1ef3909fe8db904d1e9b1');
+INSERT INTO `ci_task_sign` VALUES (202, 442, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (203, 443, 20, '93d4ae356ab9f41673d1ef3909fe8db904d1e9b1');
+INSERT INTO `ci_task_sign` VALUES (204, 443, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (205, 444, 20, '93d4ae356ab9f41673d1ef3909fe8db904d1e9b1');
+INSERT INTO `ci_task_sign` VALUES (206, 444, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (207, 445, 20, '93d4ae356ab9f41673d1ef3909fe8db904d1e9b1');
+INSERT INTO `ci_task_sign` VALUES (208, 445, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (209, 446, 20, '93d4ae356ab9f41673d1ef3909fe8db904d1e9b1');
+INSERT INTO `ci_task_sign` VALUES (210, 446, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (211, 447, 20, '93d4ae356ab9f41673d1ef3909fe8db904d1e9b1');
+INSERT INTO `ci_task_sign` VALUES (212, 447, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (213, 448, 20, '08d251e0979355f8a0db7909c7f1a896f9bbdc64');
+INSERT INTO `ci_task_sign` VALUES (214, 448, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (215, 449, 20, 'f29b77b4a3d48261a67748c96523d9eeaed11a29');
+INSERT INTO `ci_task_sign` VALUES (216, 449, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (217, 450, 20, 'f29b77b4a3d48261a67748c96523d9eeaed11a29');
+INSERT INTO `ci_task_sign` VALUES (218, 450, 19, '46bc4cc4d13510ea1fc36875208999900a9cfc59');
+INSERT INTO `ci_task_sign` VALUES (219, 467, 20, '8829296b871b137f5ea2c48b71a884fbb6d668ad');
+INSERT INTO `ci_task_sign` VALUES (220, 468, 20, '8829296b871b137f5ea2c48b71a884fbb6d668ad');
+INSERT INTO `ci_task_sign` VALUES (221, 469, 20, '8829296b871b137f5ea2c48b71a884fbb6d668ad');
+INSERT INTO `ci_task_sign` VALUES (222, 469, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (223, 471, 20, '8829296b871b137f5ea2c48b71a884fbb6d668ad');
+INSERT INTO `ci_task_sign` VALUES (224, 471, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (225, 473, 20, '553b56639dc73708c4214d32ccf4f3ebc0710351');
+INSERT INTO `ci_task_sign` VALUES (226, 473, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (227, 474, 20, '553b56639dc73708c4214d32ccf4f3ebc0710351');
+INSERT INTO `ci_task_sign` VALUES (228, 474, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (229, 475, 20, '553b56639dc73708c4214d32ccf4f3ebc0710351');
+INSERT INTO `ci_task_sign` VALUES (230, 475, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (231, 476, 20, '553b56639dc73708c4214d32ccf4f3ebc0710351');
+INSERT INTO `ci_task_sign` VALUES (232, 476, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (233, 477, 20, '553b56639dc73708c4214d32ccf4f3ebc0710351');
+INSERT INTO `ci_task_sign` VALUES (234, 477, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (235, 479, 20, '553b56639dc73708c4214d32ccf4f3ebc0710351');
+INSERT INTO `ci_task_sign` VALUES (236, 479, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (237, 480, 20, '553b56639dc73708c4214d32ccf4f3ebc0710351');
+INSERT INTO `ci_task_sign` VALUES (238, 480, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (239, 481, 20, '553b56639dc73708c4214d32ccf4f3ebc0710351');
+INSERT INTO `ci_task_sign` VALUES (240, 481, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (241, 482, 20, '553b56639dc73708c4214d32ccf4f3ebc0710351');
+INSERT INTO `ci_task_sign` VALUES (242, 482, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (243, 483, 20, '53de0fae0bc84c14c07200377302827d52fc0651');
+INSERT INTO `ci_task_sign` VALUES (244, 483, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (245, 484, 20, '53de0fae0bc84c14c07200377302827d52fc0651');
+INSERT INTO `ci_task_sign` VALUES (246, 484, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (247, 485, 20, '53de0fae0bc84c14c07200377302827d52fc0651');
+INSERT INTO `ci_task_sign` VALUES (248, 485, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (249, 486, 20, '53de0fae0bc84c14c07200377302827d52fc0651');
+INSERT INTO `ci_task_sign` VALUES (250, 486, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (251, 507, 20, '54cc32cb3b82555b506a05d64b86f9cb02e780c5');
+INSERT INTO `ci_task_sign` VALUES (252, 507, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (253, 508, 20, '54cc32cb3b82555b506a05d64b86f9cb02e780c5');
+INSERT INTO `ci_task_sign` VALUES (254, 508, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (255, 511, 20, '54cc32cb3b82555b506a05d64b86f9cb02e780c5');
+INSERT INTO `ci_task_sign` VALUES (256, 511, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (257, 512, 20, '54cc32cb3b82555b506a05d64b86f9cb02e780c5');
+INSERT INTO `ci_task_sign` VALUES (258, 512, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (259, 513, 20, '54cc32cb3b82555b506a05d64b86f9cb02e780c5');
+INSERT INTO `ci_task_sign` VALUES (260, 513, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (261, 514, 20, '54cc32cb3b82555b506a05d64b86f9cb02e780c5');
+INSERT INTO `ci_task_sign` VALUES (262, 514, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (263, 515, 20, '54cc32cb3b82555b506a05d64b86f9cb02e780c5');
+INSERT INTO `ci_task_sign` VALUES (264, 515, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (265, 516, 20, '54cc32cb3b82555b506a05d64b86f9cb02e780c5');
+INSERT INTO `ci_task_sign` VALUES (266, 516, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (267, 518, 20, '54cc32cb3b82555b506a05d64b86f9cb02e780c5');
+INSERT INTO `ci_task_sign` VALUES (268, 518, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (269, 521, 20, 'eb6a0908754bcee27d72d439011997d4bfb9e79d');
+INSERT INTO `ci_task_sign` VALUES (270, 521, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (271, 522, 20, 'eb6a0908754bcee27d72d439011997d4bfb9e79d');
+INSERT INTO `ci_task_sign` VALUES (272, 522, 19, '5b2bf11eb104408775d544a272b5cf313429c2e1');
+INSERT INTO `ci_task_sign` VALUES (273, 525, 20, 'c99503ac3bb9d2af338592aabbc70277c681b3de');
+INSERT INTO `ci_task_sign` VALUES (274, 525, 19, '299f40604e1b6ed1b540837afbf8145a923485b2');
+INSERT INTO `ci_task_sign` VALUES (275, 527, 20, 'c99503ac3bb9d2af338592aabbc70277c681b3de');
+INSERT INTO `ci_task_sign` VALUES (276, 527, 19, '299f40604e1b6ed1b540837afbf8145a923485b2');
+INSERT INTO `ci_task_sign` VALUES (277, 529, 20, 'c99503ac3bb9d2af338592aabbc70277c681b3de');
+INSERT INTO `ci_task_sign` VALUES (278, 529, 19, '299f40604e1b6ed1b540837afbf8145a923485b2');
+INSERT INTO `ci_task_sign` VALUES (279, 530, 20, 'c99503ac3bb9d2af338592aabbc70277c681b3de');
+INSERT INTO `ci_task_sign` VALUES (280, 530, 19, '299f40604e1b6ed1b540837afbf8145a923485b2');
+INSERT INTO `ci_task_sign` VALUES (281, 546, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (282, 546, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (283, 546, 22, 'aed3ab4a7eafdc9fb33f411dd69a75defd77017f');
+INSERT INTO `ci_task_sign` VALUES (284, 547, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (285, 547, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (286, 547, 22, 'aed3ab4a7eafdc9fb33f411dd69a75defd77017f');
+INSERT INTO `ci_task_sign` VALUES (287, 548, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (288, 548, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (289, 549, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (290, 549, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (291, 550, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (292, 550, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (293, 551, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (294, 551, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (295, 552, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (296, 552, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (297, 553, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (298, 553, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (299, 554, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (300, 554, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (301, 555, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (302, 555, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (303, 556, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (304, 556, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (305, 563, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (306, 564, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (307, 565, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (308, 566, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (309, 567, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (310, 568, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (311, 569, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (312, 570, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (313, 570, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (314, 571, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (315, 571, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (316, 572, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (317, 572, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (318, 573, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (319, 573, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (320, 574, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (321, 574, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (322, 575, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (323, 575, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (324, 576, 20, '48ca5edeae5a305406cad59b84ad6cc3dc0f54f0');
+INSERT INTO `ci_task_sign` VALUES (325, 576, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (326, 577, 20, 'b98f25a175b4c1b6b87632c61e21143ec3771a74');
+INSERT INTO `ci_task_sign` VALUES (327, 577, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (328, 578, 20, 'b98f25a175b4c1b6b87632c61e21143ec3771a74');
+INSERT INTO `ci_task_sign` VALUES (329, 578, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (330, 579, 20, 'b98f25a175b4c1b6b87632c61e21143ec3771a74');
+INSERT INTO `ci_task_sign` VALUES (331, 579, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (332, 580, 20, 'b98f25a175b4c1b6b87632c61e21143ec3771a74');
+INSERT INTO `ci_task_sign` VALUES (333, 581, 20, 'b98f25a175b4c1b6b87632c61e21143ec3771a74');
+INSERT INTO `ci_task_sign` VALUES (334, 581, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (335, 582, 20, 'b98f25a175b4c1b6b87632c61e21143ec3771a74');
+INSERT INTO `ci_task_sign` VALUES (336, 582, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (337, 584, 20, 'b98f25a175b4c1b6b87632c61e21143ec3771a74');
+INSERT INTO `ci_task_sign` VALUES (338, 584, 19, 'b64c90ee4a8145df5fa4c543e13d73e85df8f960');
+INSERT INTO `ci_task_sign` VALUES (339, 584, 22, 'aed3ab4a7eafdc9fb33f411dd69a75defd77017f');
+INSERT INTO `ci_task_sign` VALUES (340, 585, 20, '7733e7bf620b4bf652b73910f9ca1c4fc19fe240');
+INSERT INTO `ci_task_sign` VALUES (341, 585, 19, '170a9e1cdcb214ce44973f20e1541897be445aa8');
+INSERT INTO `ci_task_sign` VALUES (342, 593, 20, '5e1da45dc18661e14a9fa433222d231fa3f1fd97');
+INSERT INTO `ci_task_sign` VALUES (343, 593, 19, '6ec9db46eb6b9671b7c3fc15e6c25b996ba8b03a');
+INSERT INTO `ci_task_sign` VALUES (344, 594, 20, '5e1da45dc18661e14a9fa433222d231fa3f1fd97');
+INSERT INTO `ci_task_sign` VALUES (345, 594, 19, '6ec9db46eb6b9671b7c3fc15e6c25b996ba8b03a');
+INSERT INTO `ci_task_sign` VALUES (346, 595, 20, 'c2b48672d6a4aad48aa749eb8ddd3ec1e050e583');
+INSERT INTO `ci_task_sign` VALUES (347, 595, 19, '6ec9db46eb6b9671b7c3fc15e6c25b996ba8b03a');
+INSERT INTO `ci_task_sign` VALUES (348, 596, 22, 'a2972c3da19e6a34dd4b37971c7f4f4397b38444');
+INSERT INTO `ci_task_sign` VALUES (349, 597, 20, 'c2b48672d6a4aad48aa749eb8ddd3ec1e050e583');
+INSERT INTO `ci_task_sign` VALUES (350, 597, 19, '6ec9db46eb6b9671b7c3fc15e6c25b996ba8b03a');
+INSERT INTO `ci_task_sign` VALUES (351, 597, 22, 'a2972c3da19e6a34dd4b37971c7f4f4397b38444');
+INSERT INTO `ci_task_sign` VALUES (352, 600, 20, 'c2b48672d6a4aad48aa749eb8ddd3ec1e050e583');
+INSERT INTO `ci_task_sign` VALUES (353, 600, 19, '6ec9db46eb6b9671b7c3fc15e6c25b996ba8b03a');
+INSERT INTO `ci_task_sign` VALUES (354, 800, 20, 'c2b48672d6a4aad48aa749eb8ddd3ec1e050e583');
+INSERT INTO `ci_task_sign` VALUES (355, 801, 20, 'c2b48672d6a4aad48aa749eb8ddd3ec1e050e583');
+INSERT INTO `ci_task_sign` VALUES (356, 802, 20, 'c2b48672d6a4aad48aa749eb8ddd3ec1e050e583');
+INSERT INTO `ci_task_sign` VALUES (357, 802, 19, '6ec9db46eb6b9671b7c3fc15e6c25b996ba8b03a');
+INSERT INTO `ci_task_sign` VALUES (358, 803, 20, 'c2b48672d6a4aad48aa749eb8ddd3ec1e050e583');
+INSERT INTO `ci_task_sign` VALUES (359, 803, 19, '6ec9db46eb6b9671b7c3fc15e6c25b996ba8b03a');
+INSERT INTO `ci_task_sign` VALUES (360, 804, 20, 'd4832a1d8605a1b12bd9bdded92e641fef7fbdb8');
+INSERT INTO `ci_task_sign` VALUES (361, 804, 19, '6ec9db46eb6b9671b7c3fc15e6c25b996ba8b03a');
+INSERT INTO `ci_task_sign` VALUES (362, 804, 22, 'a2972c3da19e6a34dd4b37971c7f4f4397b38444');
+INSERT INTO `ci_task_sign` VALUES (363, 805, 20, 'da93d145591033141aa11c332426dcf85f35ce6f');
+INSERT INTO `ci_task_sign` VALUES (364, 806, 20, '9b9cb0cf4c86400ac46cc1a1239cb13229eb32ee');
+INSERT INTO `ci_task_sign` VALUES (365, 806, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (366, 814, 20, '0e184fa5c9953c60505e6b9a73071b41c75063e4');
+INSERT INTO `ci_task_sign` VALUES (367, 814, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (368, 815, 20, '0e184fa5c9953c60505e6b9a73071b41c75063e4');
+INSERT INTO `ci_task_sign` VALUES (369, 815, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (370, 816, 20, '0e184fa5c9953c60505e6b9a73071b41c75063e4');
+INSERT INTO `ci_task_sign` VALUES (371, 816, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (372, 817, 20, '0e184fa5c9953c60505e6b9a73071b41c75063e4');
+INSERT INTO `ci_task_sign` VALUES (373, 817, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (374, 819, 20, '0e184fa5c9953c60505e6b9a73071b41c75063e4');
+INSERT INTO `ci_task_sign` VALUES (375, 819, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (376, 821, 20, '0e184fa5c9953c60505e6b9a73071b41c75063e4');
+INSERT INTO `ci_task_sign` VALUES (377, 821, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (378, 822, 20, '69868bc00af3025a8a4bbf925bf2bcea01555bd8');
+INSERT INTO `ci_task_sign` VALUES (379, 822, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (380, 822, 22, '139f16a260acb7099b1df0bb0c64d6fa4ca0dc49');
+INSERT INTO `ci_task_sign` VALUES (381, 823, 20, '69868bc00af3025a8a4bbf925bf2bcea01555bd8');
+INSERT INTO `ci_task_sign` VALUES (382, 823, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (383, 824, 20, '45e2b7df4326c403eebdc1d93b68177333ce64bf');
+INSERT INTO `ci_task_sign` VALUES (384, 824, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (385, 825, 20, '45e2b7df4326c403eebdc1d93b68177333ce64bf');
+INSERT INTO `ci_task_sign` VALUES (386, 825, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (387, 826, 20, '45e2b7df4326c403eebdc1d93b68177333ce64bf');
+INSERT INTO `ci_task_sign` VALUES (388, 826, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (389, 826, 22, '83073c08abc3db2543dea4e220cbb346c7e9cf47');
+INSERT INTO `ci_task_sign` VALUES (390, 843, 20, '3670d9a07d17faceb81312edde03e41213b70b73');
+INSERT INTO `ci_task_sign` VALUES (391, 843, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (392, 843, 22, '83073c08abc3db2543dea4e220cbb346c7e9cf47');
+INSERT INTO `ci_task_sign` VALUES (393, 844, 20, '3670d9a07d17faceb81312edde03e41213b70b73');
+INSERT INTO `ci_task_sign` VALUES (394, 844, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (395, 844, 22, '83073c08abc3db2543dea4e220cbb346c7e9cf47');
+INSERT INTO `ci_task_sign` VALUES (396, 845, 20, 'e83eb5194e0ee7d8bc372f000e40eb1f5989d88a');
+INSERT INTO `ci_task_sign` VALUES (397, 845, 19, 'c24559c1f1798b336cb6dd3c8791d61b2da7e19c');
+INSERT INTO `ci_task_sign` VALUES (398, 845, 22, '83073c08abc3db2543dea4e220cbb346c7e9cf47');
+INSERT INTO `ci_task_sign` VALUES (399, 846, 20, '94b8c62975a97d30a0b8d2498b43ff0dc4a99a29');
+INSERT INTO `ci_task_sign` VALUES (400, 846, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (401, 850, 20, '94b8c62975a97d30a0b8d2498b43ff0dc4a99a29');
+INSERT INTO `ci_task_sign` VALUES (402, 851, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (403, 852, 20, '94b8c62975a97d30a0b8d2498b43ff0dc4a99a29');
+INSERT INTO `ci_task_sign` VALUES (404, 852, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (405, 856, 20, '94b8c62975a97d30a0b8d2498b43ff0dc4a99a29');
+INSERT INTO `ci_task_sign` VALUES (406, 858, 20, '94b8c62975a97d30a0b8d2498b43ff0dc4a99a29');
+INSERT INTO `ci_task_sign` VALUES (407, 852, 22, '83073c08abc3db2543dea4e220cbb346c7e9cf47');
+INSERT INTO `ci_task_sign` VALUES (408, 858, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (409, 859, 22, '83073c08abc3db2543dea4e220cbb346c7e9cf47');
+INSERT INTO `ci_task_sign` VALUES (410, 860, 20, '94b8c62975a97d30a0b8d2498b43ff0dc4a99a29');
+INSERT INTO `ci_task_sign` VALUES (411, 860, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (412, 862, 20, '94b8c62975a97d30a0b8d2498b43ff0dc4a99a29');
+INSERT INTO `ci_task_sign` VALUES (413, 863, 20, '94b8c62975a97d30a0b8d2498b43ff0dc4a99a29');
+INSERT INTO `ci_task_sign` VALUES (414, 863, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (415, 864, 20, '94b8c62975a97d30a0b8d2498b43ff0dc4a99a29');
+INSERT INTO `ci_task_sign` VALUES (416, 866, 20, '94b8c62975a97d30a0b8d2498b43ff0dc4a99a29');
+INSERT INTO `ci_task_sign` VALUES (417, 866, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (418, 867, 20, 'a471677adb6cd4a1fb415e4b9125ad1b1323fa79');
+INSERT INTO `ci_task_sign` VALUES (419, 867, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (420, 868, 20, 'f1ed0e9d56e9a29e19f48c7e3238191f17e4f8fa');
+INSERT INTO `ci_task_sign` VALUES (421, 868, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (422, 869, 20, 'f1ed0e9d56e9a29e19f48c7e3238191f17e4f8fa');
+INSERT INTO `ci_task_sign` VALUES (423, 869, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (424, 871, 20, 'e90a3fe5365a18870101ea81e2e1bf67aa5d97b2');
+INSERT INTO `ci_task_sign` VALUES (425, 871, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (426, 880, 20, 'e90a3fe5365a18870101ea81e2e1bf67aa5d97b2');
+INSERT INTO `ci_task_sign` VALUES (427, 881, 20, 'e90a3fe5365a18870101ea81e2e1bf67aa5d97b2');
+INSERT INTO `ci_task_sign` VALUES (428, 882, 20, 'e90a3fe5365a18870101ea81e2e1bf67aa5d97b2');
+INSERT INTO `ci_task_sign` VALUES (429, 882, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (430, 883, 20, 'e90a3fe5365a18870101ea81e2e1bf67aa5d97b2');
+INSERT INTO `ci_task_sign` VALUES (431, 883, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (432, 884, 20, 'e90a3fe5365a18870101ea81e2e1bf67aa5d97b2');
+INSERT INTO `ci_task_sign` VALUES (433, 884, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (434, 885, 20, 'e90a3fe5365a18870101ea81e2e1bf67aa5d97b2');
+INSERT INTO `ci_task_sign` VALUES (435, 885, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (436, 886, 20, 'e90a3fe5365a18870101ea81e2e1bf67aa5d97b2');
+INSERT INTO `ci_task_sign` VALUES (437, 886, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (438, 887, 20, '66d625f481b20af475975af01a32ed44ecf0827a');
+INSERT INTO `ci_task_sign` VALUES (439, 887, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (440, 888, 20, '66d625f481b20af475975af01a32ed44ecf0827a');
+INSERT INTO `ci_task_sign` VALUES (441, 889, 20, '150188f344e98f2b601c9cc3506a801f831a0543');
+INSERT INTO `ci_task_sign` VALUES (442, 890, 20, '150188f344e98f2b601c9cc3506a801f831a0543');
+INSERT INTO `ci_task_sign` VALUES (443, 891, 20, '150188f344e98f2b601c9cc3506a801f831a0543');
+INSERT INTO `ci_task_sign` VALUES (444, 892, 20, '150188f344e98f2b601c9cc3506a801f831a0543');
+INSERT INTO `ci_task_sign` VALUES (445, 893, 20, '150188f344e98f2b601c9cc3506a801f831a0543');
+INSERT INTO `ci_task_sign` VALUES (446, 894, 20, '150188f344e98f2b601c9cc3506a801f831a0543');
+INSERT INTO `ci_task_sign` VALUES (447, 895, 20, '150188f344e98f2b601c9cc3506a801f831a0543');
+INSERT INTO `ci_task_sign` VALUES (448, 896, 20, '150188f344e98f2b601c9cc3506a801f831a0543');
+INSERT INTO `ci_task_sign` VALUES (449, 896, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (450, 897, 20, '150188f344e98f2b601c9cc3506a801f831a0543');
+INSERT INTO `ci_task_sign` VALUES (451, 897, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (452, 898, 20, '150188f344e98f2b601c9cc3506a801f831a0543');
+INSERT INTO `ci_task_sign` VALUES (453, 898, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (454, 898, 22, 'ab469f7601e4d353e9293e0bb48c3a41ebb9e3a8');
+INSERT INTO `ci_task_sign` VALUES (455, 899, 20, '150188f344e98f2b601c9cc3506a801f831a0543');
+INSERT INTO `ci_task_sign` VALUES (456, 899, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (457, 900, 20, 'efc696303a09de4e1553007ecf4e64db979595f7');
+INSERT INTO `ci_task_sign` VALUES (458, 900, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (459, 901, 20, 'efc696303a09de4e1553007ecf4e64db979595f7');
+INSERT INTO `ci_task_sign` VALUES (460, 901, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (461, 903, 20, 'efc696303a09de4e1553007ecf4e64db979595f7');
+INSERT INTO `ci_task_sign` VALUES (462, 903, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (463, 903, 22, '6f811a8ec6fb8c8a40774bd2ed87c9476856bd89');
+INSERT INTO `ci_task_sign` VALUES (464, 905, 20, '95118b14124c89c4152067acb578f4209fbb3d7d');
+INSERT INTO `ci_task_sign` VALUES (465, 905, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (466, 906, 20, '95118b14124c89c4152067acb578f4209fbb3d7d');
+INSERT INTO `ci_task_sign` VALUES (467, 906, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (468, 909, 20, '95118b14124c89c4152067acb578f4209fbb3d7d');
+INSERT INTO `ci_task_sign` VALUES (469, 909, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (470, 910, 20, '95118b14124c89c4152067acb578f4209fbb3d7d');
+INSERT INTO `ci_task_sign` VALUES (471, 910, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (472, 911, 20, '95118b14124c89c4152067acb578f4209fbb3d7d');
+INSERT INTO `ci_task_sign` VALUES (473, 911, 19, 'e4bf9aa28273b18fb745860a71ebb5fd514f1921');
+INSERT INTO `ci_task_sign` VALUES (474, 938, 20, '1f13bee2dd83a310e6dcc47843f115413a6ad9d0');
+INSERT INTO `ci_task_sign` VALUES (475, 938, 19, 'd2f83816a76ee80b1e68e16c142b741e4f2384b6');
+INSERT INTO `ci_task_sign` VALUES (476, 939, 20, '1f13bee2dd83a310e6dcc47843f115413a6ad9d0');
+INSERT INTO `ci_task_sign` VALUES (477, 939, 19, 'd2f83816a76ee80b1e68e16c142b741e4f2384b6');
+INSERT INTO `ci_task_sign` VALUES (478, 943, 20, 'c71a8ba5c50fd21b196f028fee1df5944ea898e4');
+INSERT INTO `ci_task_sign` VALUES (479, 943, 19, 'd2f83816a76ee80b1e68e16c142b741e4f2384b6');
+INSERT INTO `ci_task_sign` VALUES (480, 946, 20, '2f6d530cdd84fbe6e1743f59e805c64529391e01');
+INSERT INTO `ci_task_sign` VALUES (481, 946, 19, 'd2f83816a76ee80b1e68e16c142b741e4f2384b6');
+INSERT INTO `ci_task_sign` VALUES (482, 946, 22, '1eade3e68f6ea393a15182ff328f508d5db63e1d');
+INSERT INTO `ci_task_sign` VALUES (483, 948, 20, '2f6d530cdd84fbe6e1743f59e805c64529391e01');
+INSERT INTO `ci_task_sign` VALUES (484, 948, 19, 'd2f83816a76ee80b1e68e16c142b741e4f2384b6');
+INSERT INTO `ci_task_sign` VALUES (485, 951, 20, '54a5e367eaefbf57214f51437444347d00993e6f');
+INSERT INTO `ci_task_sign` VALUES (486, 951, 19, 'd2f83816a76ee80b1e68e16c142b741e4f2384b6');
+INSERT INTO `ci_task_sign` VALUES (487, 951, 22, '0f8ebfda0677ef825266dece58daa1dac2f6165a');
+INSERT INTO `ci_task_sign` VALUES (488, 955, 20, 'fc5ae69c4fb671f0a3b099d8dea508df14a1d775');
+INSERT INTO `ci_task_sign` VALUES (489, 955, 19, 'd2f83816a76ee80b1e68e16c142b741e4f2384b6');
+INSERT INTO `ci_task_sign` VALUES (490, 955, 22, '66561f092b81c23d5a6cc80a237532e01815ca03');
+INSERT INTO `ci_task_sign` VALUES (491, 956, 20, 'fc5ae69c4fb671f0a3b099d8dea508df14a1d775');
+INSERT INTO `ci_task_sign` VALUES (492, 956, 19, 'd2f83816a76ee80b1e68e16c142b741e4f2384b6');
+INSERT INTO `ci_task_sign` VALUES (493, 956, 22, '66561f092b81c23d5a6cc80a237532e01815ca03');
+INSERT INTO `ci_task_sign` VALUES (494, 965, 20, 'fc5ae69c4fb671f0a3b099d8dea508df14a1d775');
+INSERT INTO `ci_task_sign` VALUES (495, 965, 19, 'd2f83816a76ee80b1e68e16c142b741e4f2384b6');
+INSERT INTO `ci_task_sign` VALUES (496, 969, 20, 'fc5ae69c4fb671f0a3b099d8dea508df14a1d775');
+INSERT INTO `ci_task_sign` VALUES (497, 969, 19, 'd2f83816a76ee80b1e68e16c142b741e4f2384b6');
+INSERT INTO `ci_task_sign` VALUES (498, 976, 22, '66561f092b81c23d5a6cc80a237532e01815ca03');
+INSERT INTO `ci_task_sign` VALUES (499, 987, 20, '854ce1cbec7eb69d4f64c18fac2fea1e2514a356');
+INSERT INTO `ci_task_sign` VALUES (500, 987, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (501, 987, 22, 'c6f3b98a729ab27c99bbec327c42cc25a6719367');
+INSERT INTO `ci_task_sign` VALUES (502, 995, 20, '582e4a2e24a871e09b5d542c87b98fe580c02ad3');
+INSERT INTO `ci_task_sign` VALUES (503, 995, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (504, 995, 22, 'bf3eff7ae27eeb57daf010ca2e6dc38406aa8562');
+INSERT INTO `ci_task_sign` VALUES (505, 997, 20, '33f713134e84cbc0bde0c668e33d348c5182b0f7');
+INSERT INTO `ci_task_sign` VALUES (506, 997, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (507, 997, 22, '2ec1bbfeb4be2f43559cfd7fcc15cff78332adbf');
+INSERT INTO `ci_task_sign` VALUES (508, 998, 20, '33f713134e84cbc0bde0c668e33d348c5182b0f7');
+INSERT INTO `ci_task_sign` VALUES (509, 998, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (510, 998, 22, '2ec1bbfeb4be2f43559cfd7fcc15cff78332adbf');
+INSERT INTO `ci_task_sign` VALUES (511, 999, 20, '33f713134e84cbc0bde0c668e33d348c5182b0f7');
+INSERT INTO `ci_task_sign` VALUES (512, 999, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (513, 999, 22, 'bfc39c7526962f022766af0d938abc44e259bace');
+INSERT INTO `ci_task_sign` VALUES (514, 1005, 20, '33f713134e84cbc0bde0c668e33d348c5182b0f7');
+INSERT INTO `ci_task_sign` VALUES (515, 1005, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (516, 1007, 20, 'd1da900e5e45341b66f55d32fb88422792cbbcc1');
+INSERT INTO `ci_task_sign` VALUES (517, 1007, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (518, 1008, 20, 'd1da900e5e45341b66f55d32fb88422792cbbcc1');
+INSERT INTO `ci_task_sign` VALUES (519, 1008, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (520, 1009, 20, 'd1da900e5e45341b66f55d32fb88422792cbbcc1');
+INSERT INTO `ci_task_sign` VALUES (521, 1009, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (522, 1010, 20, 'd1da900e5e45341b66f55d32fb88422792cbbcc1');
+INSERT INTO `ci_task_sign` VALUES (523, 1010, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (524, 1011, 20, '02a894bef16ccddec3371f0f68aad97a7aec73b0');
+INSERT INTO `ci_task_sign` VALUES (525, 1011, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (526, 1012, 20, '02a894bef16ccddec3371f0f68aad97a7aec73b0');
+INSERT INTO `ci_task_sign` VALUES (527, 1012, 19, '2d01532adfd214df6364b20ebc5af71be2bfc544');
+INSERT INTO `ci_task_sign` VALUES (528, 1018, 20, '4c3993870599331f69f96c01c451e8bc1659d3ce');
+INSERT INTO `ci_task_sign` VALUES (529, 1018, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (530, 1019, 20, '4c3993870599331f69f96c01c451e8bc1659d3ce');
+INSERT INTO `ci_task_sign` VALUES (531, 1019, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (532, 1020, 20, 'be6fbf58048155ea53a60b289153e6ce52b7719b');
+INSERT INTO `ci_task_sign` VALUES (533, 1020, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (534, 1020, 22, 'bfc39c7526962f022766af0d938abc44e259bace');
+INSERT INTO `ci_task_sign` VALUES (535, 1021, 20, '9551756a8591f382ff5c4e399a9a1d3458db4f13');
+INSERT INTO `ci_task_sign` VALUES (536, 1021, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (537, 1022, 20, '9551756a8591f382ff5c4e399a9a1d3458db4f13');
+INSERT INTO `ci_task_sign` VALUES (538, 1022, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (539, 1023, 20, 'e648ac5bdebad0ee45269de9c3d4f801274d6862');
+INSERT INTO `ci_task_sign` VALUES (540, 1023, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (541, 1024, 20, 'e648ac5bdebad0ee45269de9c3d4f801274d6862');
+INSERT INTO `ci_task_sign` VALUES (542, 1024, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (543, 1025, 20, 'e648ac5bdebad0ee45269de9c3d4f801274d6862');
+INSERT INTO `ci_task_sign` VALUES (544, 1025, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (545, 1026, 20, 'e648ac5bdebad0ee45269de9c3d4f801274d6862');
+INSERT INTO `ci_task_sign` VALUES (546, 1026, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (547, 1027, 20, 'e648ac5bdebad0ee45269de9c3d4f801274d6862');
+INSERT INTO `ci_task_sign` VALUES (548, 1027, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (549, 1028, 20, 'b40acfae2993585a37a7b2073976d0f54685f588');
+INSERT INTO `ci_task_sign` VALUES (550, 1028, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (551, 1029, 20, 'b40acfae2993585a37a7b2073976d0f54685f588');
+INSERT INTO `ci_task_sign` VALUES (552, 1029, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+INSERT INTO `ci_task_sign` VALUES (553, 1031, 20, 'b40acfae2993585a37a7b2073976d0f54685f588');
+INSERT INTO `ci_task_sign` VALUES (554, 1031, 19, '77ffba08114a177ed8a76e2bb87d252ca4f37710');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_trigger
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_trigger`;
+CREATE TABLE `ci_trigger` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '名字',
+  `cluster_id` int(11) NOT NULL COMMENT 'git项目id',
+  `task_id` int(11) DEFAULT NULL COMMENT '对应任务id',
+  `type` int(11) DEFAULT NULL COMMENT '类型: 1调度(定时),2触发(钩子)',
+  `cron` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '当类型为调度时,时间表达式',
+  `sha` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '当类型为调度时,比较新旧sha,有差异才更新',
+  `remark` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `enable` int(11) DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pk_ci_trigger_cluster_id` (`cluster_id`),
+  KEY `pk_ci_trigger_task_id` (`task_id`),
+  CONSTRAINT `ci_trigger_ibfk_1` FOREIGN KEY (`cluster_id`) REFERENCES `app_cluster` (`id`),
+  CONSTRAINT `ci_trigger_ibfk_2` FOREIGN KEY (`task_id`) REFERENCES `ci_task` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='自动部署的 钩子 配置, 通过项目名和分支名,得到环境id';
+
+-- ----------------------------
+-- Records of ci_trigger
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_trigger` VALUES (19, '新特性验证调度发布', 69, 159, 4, '5 0 * * * ?', '2145dc106f60d421aa3a4ab5470b050774dc1522', 'iiot-dev新特性验证调度发布', 0, 0, '2019-09-20 09:05:18', '1', '2019-09-20 09:05:18', '1');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ci_trigger_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_trigger_detail`;
+CREATE TABLE `ci_trigger_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `trigger_id` int(11) NOT NULL COMMENT '钩子id',
+  `instance_id` int(11) NOT NULL COMMENT '实例id',
+  `del_flag` int(1) DEFAULT '0',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pk_ci_trigger_detail_trigger_id` (`trigger_id`),
+  KEY `pk_ci_trigger_detail_instance_id` (`instance_id`),
+  CONSTRAINT `ci_trigger_detail_ibfk_1` FOREIGN KEY (`instance_id`) REFERENCES `app_instance` (`id`),
+  CONSTRAINT `ci_trigger_detail_ibfk_2` FOREIGN KEY (`trigger_id`) REFERENCES `ci_trigger` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='一个钩子 对应 多个实例';
+
+-- ----------------------------
+-- Table structure for ci_vcs
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_vcs`;
+CREATE TABLE `ci_vcs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '名字',
+  `provider_kind` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '服务商:gitlab,github,等',
+  `auth_type` int(11) DEFAULT NULL COMMENT '认证方式,1账号密码,2密钥',
+  `base_uri` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '地址',
+  `ssh_key_pub` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '公钥',
+  `ssh_key` varchar(2000) COLLATE utf8_bin DEFAULT NULL COMMENT '私钥',
+  `access_token` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '令牌',
+  `username` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '账户',
+  `password` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '密码',
+  `remark` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `enable` int(11) DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of ci_vcs
+-- ----------------------------
+BEGIN;
+INSERT INTO `ci_vcs` VALUES (1, 'gitlab', 'gitlab', 1, 'http://git.anjiancloud.repo', 'qw423423', 'asdf234', 'Xw6xYojnoj7SSDyyLXP7', 'heweijie', 'hwj13535248668', NULL, NULL, 0, NULL, NULL, '2019-11-12 17:58:20', NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for doc_file_changes
+-- ----------------------------
+DROP TABLE IF EXISTS `doc_file_changes`;
+CREATE TABLE `doc_file_changes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) COLLATE utf8_bin NOT NULL,
+  `doc_code` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '文件编码,uuid',
+  `type` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '仅支持文本文件(如：md、txt)',
+  `action` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT 'add, edit, del,取字典',
+  `lang` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '语言',
+  `content` text COLLATE utf8_bin NOT NULL COMMENT '文件路径',
+  `sha` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '内容的sha1值',
+  `description` text COLLATE utf8_bin COMMENT '说明(CN)',
+  `is_latest` int(1) NOT NULL COMMENT '是否最新',
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_by` varchar(64) COLLATE utf8_bin NOT NULL,
+  `update_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_by` varchar(64) COLLATE utf8_bin NOT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `file_code` (`doc_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='doc文档文件变更记录表';
+
+-- ----------------------------
+-- Records of doc_file_changes
+-- ----------------------------
+BEGIN;
+INSERT INTO `doc_file_changes` VALUES (35, 'Test1', '6054e9151d7f4825a63d2aabf69a4249', 'md', 'add', 'en_US', '/6054e9151d7f4825a63d2aabf69a4249/20200115180640.md', NULL, 'test', 0, '2020-01-15 18:06:40', '1', '2020-01-15 18:06:40', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (36, 'Test1', '6054e9151d7f4825a63d2aabf69a4249', 'md', 'edit', 'en_US', '/6054e9151d7f4825a63d2aabf69a4249/20200115180701.md', NULL, 'test', 0, '2020-01-15 18:07:01', '1', '2020-01-15 18:07:01', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (37, 'Test1', '6054e9151d7f4825a63d2aabf69a4249', 'md', 'edit', 'en_US', '/6054e9151d7f4825a63d2aabf69a4249/20200116104700.md', NULL, 'test-1234567890', 0, '2020-01-16 10:47:00', '1', '2020-01-16 10:47:00', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (38, 'Test1', '6054e9151d7f4825a63d2aabf69a4249', 'md', 'edit', 'en_US', '/6054e9151d7f4825a63d2aabf69a4249/20200116104749.md', NULL, 'test1234567890000', 0, '2020-01-16 10:47:49', '1', '2020-01-16 10:47:49', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (39, 'Test1', '6054e9151d7f4825a63d2aabf69a4249', 'md', 'edit', 'en_US', '/6054e9151d7f4825a63d2aabf69a4249/20200116114222.md', NULL, 'test123456789012345678901234567890', 1, '2020-01-16 11:42:22', '1', '2020-01-16 11:42:22', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (40, 'test', '9bbcfa3ff12a4a5784c667940820afe9', 'md', 'add', 'en_US', '/9bbcfa3ff12a4a5784c667940820afe9/20200117152503.md', NULL, 'test', 1, '2020-01-17 15:25:06', '1', '2020-01-17 15:25:06', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (41, 'testuuu', '24bc8b071fc141f18b75cd7a7b287b29', 'md', 'add', 'en_US', '/24bc8b071fc141f18b75cd7a7b287b29/20200117165005.md', NULL, 'uuuu', 1, '2020-01-17 16:50:22', '1', '2020-01-17 16:50:22', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (42, 'tete', 'd77f8e9204f54d8d9dee23708b426f0b', 'md', 'add', 'en_US', '/d77f8e9204f54d8d9dee23708b426f0b/20200117170747.md', NULL, 'ertyu', 1, '2020-01-17 17:07:52', '1', '2020-01-17 17:07:52', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (43, 'test333', '4891772e51364d4fa483f3c4da0b954a', 'md', 'add', 'en_US', '/4891772e51364d4fa483f3c4da0b954a/20200205163309.md', NULL, 'test', 0, '2020-02-05 16:33:09', '1', '2020-02-05 16:33:09', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (44, 'test333', '4891772e51364d4fa483f3c4da0b954a', 'md', 'edit', 'en_US', '/4891772e51364d4fa483f3c4da0b954a/20200205163446.md', NULL, 'test', 0, '2020-02-05 16:34:46', '1', '2020-02-05 16:34:46', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (45, 'test333', '4891772e51364d4fa483f3c4da0b954a', 'md', 'edit', 'en_US', '/4891772e51364d4fa483f3c4da0b954a/20200219143709.md', NULL, 'test', 0, '2020-02-19 14:37:09', '1', '2020-02-19 14:37:09', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (46, 'test333', '4891772e51364d4fa483f3c4da0b954a', 'md', 'edit', 'en_US', '/4891772e51364d4fa483f3c4da0b954a/20200219152740.md', NULL, 'test', 0, '2020-02-19 15:27:40', '1', '2020-02-19 15:27:40', '1', 0);
+INSERT INTO `doc_file_changes` VALUES (47, 'test333', '4891772e51364d4fa483f3c4da0b954a', 'md', 'edit', 'en_US', '/4891772e51364d4fa483f3c4da0b954a/20200219152939.md', NULL, 'test', 1, '2020-02-19 15:29:39', '1', '2020-02-19 15:29:39', '1', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for doc_file_label
+-- ----------------------------
+DROP TABLE IF EXISTS `doc_file_label`;
+CREATE TABLE `doc_file_label` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `label_id` int(11) NOT NULL,
+  `file_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of doc_file_label
+-- ----------------------------
+BEGIN;
+INSERT INTO `doc_file_label` VALUES (37, 1, 35);
+INSERT INTO `doc_file_label` VALUES (38, 4, 35);
+INSERT INTO `doc_file_label` VALUES (39, 1, 36);
+INSERT INTO `doc_file_label` VALUES (40, 4, 36);
+INSERT INTO `doc_file_label` VALUES (41, 1, 37);
+INSERT INTO `doc_file_label` VALUES (42, 4, 37);
+INSERT INTO `doc_file_label` VALUES (43, 1, 38);
+INSERT INTO `doc_file_label` VALUES (44, 4, 38);
+INSERT INTO `doc_file_label` VALUES (45, 1, 39);
+INSERT INTO `doc_file_label` VALUES (46, 4, 39);
+INSERT INTO `doc_file_label` VALUES (47, 1, 40);
+INSERT INTO `doc_file_label` VALUES (48, 1, 41);
+INSERT INTO `doc_file_label` VALUES (49, 1, 42);
+INSERT INTO `doc_file_label` VALUES (50, 1, 43);
+INSERT INTO `doc_file_label` VALUES (51, 1, 44);
+INSERT INTO `doc_file_label` VALUES (52, 1, 45);
+INSERT INTO `doc_file_label` VALUES (53, 1, 46);
+INSERT INTO `doc_file_label` VALUES (54, 1, 47);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for doc_label
+-- ----------------------------
+DROP TABLE IF EXISTS `doc_label`;
+CREATE TABLE `doc_label` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '标签名',
+  `create_date` datetime NOT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin NOT NULL,
+  `update_date` datetime NOT NULL,
+  `update_by` varchar(64) COLLATE utf8_bin NOT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of doc_label
+-- ----------------------------
+BEGIN;
+INSERT INTO `doc_label` VALUES (1, 'test1', '2020-01-15 11:28:35', '1', '2020-01-15 15:44:17', '1', 0);
+INSERT INTO `doc_label` VALUES (2, 'test2', '2020-01-15 11:28:35', '1', '2020-01-15 11:28:35', '1', 0);
+INSERT INTO `doc_label` VALUES (3, 'test3', '2020-01-15 11:28:35', '1', '2020-01-15 11:28:35', '1', 0);
+INSERT INTO `doc_label` VALUES (4, 'test4', '2020-01-15 11:28:35', '1', '2020-01-15 11:28:35', '1', 0);
+INSERT INTO `doc_label` VALUES (5, 'test5', '2020-01-15 11:28:35', '1', '2020-01-15 11:28:35', '1', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for doc_share
+-- ----------------------------
+DROP TABLE IF EXISTS `doc_share`;
+CREATE TABLE `doc_share` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `share_code` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '分享编码',
+  `doc_code` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '文档编码',
+  `share_type` int(11) NOT NULL COMMENT '分享类型,分享类型,0不需要密码,1需要密码',
+  `passwd` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '分享密码',
+  `expire_time` datetime DEFAULT NULL COMMENT '过期时间',
+  `expire_type` int(2) NOT NULL COMMENT '过期类型,1永久 2限时,',
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_by` varchar(64) COLLATE utf8_bin NOT NULL,
+  `update_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_by` varchar(64) COLLATE utf8_bin NOT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `doc_share_ibfk_1` (`doc_code`),
+  CONSTRAINT `doc_share_ibfk_1` FOREIGN KEY (`doc_code`) REFERENCES `doc_file_changes` (`doc_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of doc_share
+-- ----------------------------
+BEGIN;
+INSERT INTO `doc_share` VALUES (9, 'afc8a2d34d814b6f90072954660ba34a', '4891772e51364d4fa483f3c4da0b954a', 1, 'u5a9', NULL, 1, '2020-02-20 11:38:35', '1', '2020-02-20 11:38:35', '1', 1);
+INSERT INTO `doc_share` VALUES (10, '218bf36c45434f96beb84b49f789e6dd', '4891772e51364d4fa483f3c4da0b954a', 1, 'k4e9', '2020-02-21 11:45:21', 2, '2020-02-20 11:45:21', '1', '2020-02-20 11:45:21', '1', 0);
+INSERT INTO `doc_share` VALUES (11, '32910e92560749cfa681ff16cf270655', '4891772e51364d4fa483f3c4da0b954a', 1, 'i00a', NULL, 1, '2020-02-20 11:46:45', '1', '2020-02-20 11:46:45', '1', 0);
+INSERT INTO `doc_share` VALUES (12, 'a61e3deb15d9415fadb9f239cb0db0c9', '4891772e51364d4fa483f3c4da0b954a', 1, 'd8m6', '2020-02-27 11:47:57', 2, '2020-02-20 11:47:57', '1', '2020-02-20 11:47:57', '1', 0);
+INSERT INTO `doc_share` VALUES (13, 'a8d17cc353544cecaff895636033da60', '4891772e51364d4fa483f3c4da0b954a', 1, 'n1d3', '2020-02-29 00:00:00', 2, '2020-02-20 11:48:16', '1', '2020-02-20 11:48:16', '1', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for scm_release_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `scm_release_detail`;
+CREATE TABLE `scm_release_detail` (
+  `id` int(64) NOT NULL AUTO_INCREMENT,
+  `release_id` int(11) NOT NULL COMMENT '发布ID',
+  `instance_id` int(11) NOT NULL COMMENT '应用实例ID',
+  `status` int(1) DEFAULT NULL COMMENT '发布结果状态（1:成功/0:未更改/-1:更新失败）',
+  `description` text COLLATE utf8_bin COMMENT '发布结果说明',
+  `result` text COLLATE utf8_bin COMMENT '配置发布结果内容，JSON格式',
+  PRIMARY KEY (`id`),
+  KEY `of_id` (`instance_id`),
+  KEY `release_id` (`release_id`),
+  CONSTRAINT `scm_release_detail_ibfk_1` FOREIGN KEY (`instance_id`) REFERENCES `app_instance` (`id`),
+  CONSTRAINT `scm_release_detail_ibfk_2` FOREIGN KEY (`release_id`) REFERENCES `scm_release_history` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=391 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='ACM配置发布历史明细表';
+
+-- ----------------------------
+-- Records of scm_release_detail
+-- ----------------------------
+BEGIN;
+INSERT INTO `scm_release_detail` VALUES (1, 1, 54, 1, NULL, NULL);
+INSERT INTO `scm_release_detail` VALUES (341, 343, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (342, 344, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (343, 345, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (344, 346, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (345, 347, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (346, 348, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (347, 349, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (348, 350, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (349, 351, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (350, 352, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (351, 353, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (352, 354, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (353, 355, 56, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (354, 356, 68, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (355, 357, 74, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (356, 358, 74, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (357, 359, 74, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (358, 360, 74, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (359, 361, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (360, 362, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (361, 363, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (362, 364, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (363, 365, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (364, 366, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (365, 367, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (366, 368, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (367, 369, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (368, 370, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (369, 371, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (370, 372, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (371, 373, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (372, 374, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (373, 375, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (374, 376, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (375, 377, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (376, 378, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (377, 379, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (378, 380, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (379, 381, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (380, 382, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (381, 383, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (382, 384, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (383, 385, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (384, 386, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (385, 387, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (386, 388, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (387, 389, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (388, 390, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (389, 391, 54, NULL, NULL, '暂无结果');
+INSERT INTO `scm_release_detail` VALUES (390, 392, 54, NULL, NULL, '暂无结果');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for scm_release_history
+-- ----------------------------
+DROP TABLE IF EXISTS `scm_release_history`;
+CREATE TABLE `scm_release_history` (
+  `id` int(64) NOT NULL AUTO_INCREMENT,
+  `version_id` int(64) NOT NULL COMMENT '版本号ID',
+  `status` int(1) DEFAULT NULL COMMENT '发布状态（1:成功/2:失败）',
+  `type` int(1) NOT NULL DEFAULT '1' COMMENT '配置类型（1：新发布/2：重回滚）',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  `create_by` int(11) NOT NULL COMMENT '发布用户ID',
+  `create_date` datetime NOT NULL COMMENT '发布时间',
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态',
+  PRIMARY KEY (`id`),
+  KEY `version_id` (`version_id`),
+  KEY `create_by` (`create_by`),
+  CONSTRAINT `scm_release_history_ibfk_1` FOREIGN KEY (`version_id`) REFERENCES `scm_version` (`id`),
+  CONSTRAINT `scm_release_history_ibfk_2` FOREIGN KEY (`create_by`) REFERENCES `sys_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=393 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='ACM配置发布历史记录表';
+
+-- ----------------------------
+-- Records of scm_release_history
+-- ----------------------------
+BEGIN;
+INSERT INTO `scm_release_history` VALUES (1, 175, 1, 1, NULL, 1, '2019-06-13 12:00:43', 0);
+INSERT INTO `scm_release_history` VALUES (343, 372, NULL, 1, 'tests', 1, '2019-06-24 10:58:45', 0);
+INSERT INTO `scm_release_history` VALUES (344, 376, NULL, 1, 'test', 1, '2019-06-24 18:01:41', 0);
+INSERT INTO `scm_release_history` VALUES (345, 377, NULL, 1, 'test', 1, '2019-06-24 18:21:25', 0);
+INSERT INTO `scm_release_history` VALUES (346, 378, NULL, 1, 'test', 1, '2019-06-24 18:33:43', 0);
+INSERT INTO `scm_release_history` VALUES (347, 379, NULL, 1, 'test', 1, '2019-06-24 18:34:29', 0);
+INSERT INTO `scm_release_history` VALUES (348, 380, NULL, 1, 'test2', 1, '2019-06-24 18:36:32', 0);
+INSERT INTO `scm_release_history` VALUES (349, 381, NULL, 1, 'test2', 1, '2019-06-24 18:36:54', 0);
+INSERT INTO `scm_release_history` VALUES (350, 382, NULL, 1, 'test2', 1, '2019-06-24 18:39:48', 0);
+INSERT INTO `scm_release_history` VALUES (351, 383, NULL, 1, 'test2', 1, '2019-06-24 18:45:09', 0);
+INSERT INTO `scm_release_history` VALUES (352, 384, NULL, 1, 'test2', 1, '2019-06-24 18:46:47', 0);
+INSERT INTO `scm_release_history` VALUES (353, 385, NULL, 1, 'test2', 1, '2019-06-24 18:58:39', 0);
+INSERT INTO `scm_release_history` VALUES (354, 386, NULL, 1, 'test2', 1, '2019-06-25 09:13:50', 0);
+INSERT INTO `scm_release_history` VALUES (355, 387, NULL, 1, 'test2', 1, '2019-06-25 12:59:45', 0);
+INSERT INTO `scm_release_history` VALUES (356, 388, NULL, 1, 'test', 1, '2019-07-27 11:30:00', 0);
+INSERT INTO `scm_release_history` VALUES (357, 390, NULL, 1, 'test', 1, '2019-09-06 10:59:25', 0);
+INSERT INTO `scm_release_history` VALUES (358, 391, NULL, 1, 'test', 1, '2019-09-06 11:01:17', 0);
+INSERT INTO `scm_release_history` VALUES (359, 392, NULL, 1, 'test', 1, '2019-09-06 11:09:22', 0);
+INSERT INTO `scm_release_history` VALUES (360, 393, NULL, 1, 'test', 1, '2019-09-06 11:20:42', 0);
+INSERT INTO `scm_release_history` VALUES (361, 394, NULL, 1, 'test', 1, '2019-09-06 11:24:53', 0);
+INSERT INTO `scm_release_history` VALUES (362, 395, NULL, 1, 'test', 1, '2019-09-06 11:25:56', 0);
+INSERT INTO `scm_release_history` VALUES (363, 396, NULL, 1, 'test', 1, '2019-09-06 11:26:50', 0);
+INSERT INTO `scm_release_history` VALUES (364, 397, NULL, 1, 'test', 1, '2019-09-06 11:29:59', 0);
+INSERT INTO `scm_release_history` VALUES (365, 398, NULL, 1, 'test', 1, '2019-09-06 11:44:01', 0);
+INSERT INTO `scm_release_history` VALUES (366, 399, NULL, 1, 'test', 1, '2019-09-06 14:31:43', 0);
+INSERT INTO `scm_release_history` VALUES (367, 400, NULL, 1, 'test', 1, '2019-09-06 14:32:17', 0);
+INSERT INTO `scm_release_history` VALUES (368, 401, NULL, 1, 'test', 1, '2019-09-09 09:39:20', 0);
+INSERT INTO `scm_release_history` VALUES (369, 402, NULL, 1, 'test', 1, '2019-09-09 09:54:39', 0);
+INSERT INTO `scm_release_history` VALUES (370, 403, NULL, 1, 'test', 1, '2019-09-09 10:14:58', 0);
+INSERT INTO `scm_release_history` VALUES (371, 404, NULL, 1, 'test', 1, '2019-09-09 10:32:57', 0);
+INSERT INTO `scm_release_history` VALUES (372, 405, NULL, 1, 'test', 1, '2019-09-09 10:33:25', 0);
+INSERT INTO `scm_release_history` VALUES (373, 406, NULL, 1, 'test', 1, '2019-09-09 10:38:23', 0);
+INSERT INTO `scm_release_history` VALUES (374, 407, NULL, 1, 'test', 1, '2019-09-09 10:40:58', 0);
+INSERT INTO `scm_release_history` VALUES (375, 408, NULL, 1, 'test', 1, '2019-09-09 10:50:48', 0);
+INSERT INTO `scm_release_history` VALUES (376, 409, NULL, 1, 'test', 1, '2019-09-09 10:57:15', 0);
+INSERT INTO `scm_release_history` VALUES (377, 410, NULL, 1, 'test', 1, '2019-09-09 10:57:46', 0);
+INSERT INTO `scm_release_history` VALUES (378, 411, NULL, 1, 'test', 1, '2019-09-09 11:05:47', 0);
+INSERT INTO `scm_release_history` VALUES (379, 412, NULL, 1, 'test', 1, '2019-09-09 11:09:58', 0);
+INSERT INTO `scm_release_history` VALUES (380, 413, NULL, 1, 'test', 1, '2019-09-09 11:10:54', 0);
+INSERT INTO `scm_release_history` VALUES (381, 414, NULL, 1, 'test', 1, '2019-09-09 11:13:34', 0);
+INSERT INTO `scm_release_history` VALUES (382, 415, NULL, 1, 'test', 1, '2019-09-09 11:13:54', 0);
+INSERT INTO `scm_release_history` VALUES (383, 416, NULL, 1, 'test', 1, '2019-09-09 11:14:27', 0);
+INSERT INTO `scm_release_history` VALUES (384, 417, NULL, 1, 'test', 1, '2019-09-09 11:15:25', 0);
+INSERT INTO `scm_release_history` VALUES (385, 418, NULL, 1, 'test', 1, '2019-09-09 11:15:57', 0);
+INSERT INTO `scm_release_history` VALUES (386, 419, NULL, 1, 'test', 1, '2019-09-09 11:16:19', 0);
+INSERT INTO `scm_release_history` VALUES (387, 420, NULL, 1, 'test', 1, '2019-09-09 11:16:54', 0);
+INSERT INTO `scm_release_history` VALUES (388, 421, NULL, 1, 'test', 1, '2019-09-09 11:18:24', 0);
+INSERT INTO `scm_release_history` VALUES (389, 422, NULL, 1, 'test', 1, '2019-09-09 11:28:05', 0);
+INSERT INTO `scm_release_history` VALUES (390, 423, NULL, 1, 'test', 1, '2019-09-09 11:33:19', 0);
+INSERT INTO `scm_release_history` VALUES (391, 424, NULL, 1, 'test', 1, '2019-09-09 11:34:51', 0);
+INSERT INTO `scm_release_history` VALUES (392, 425, NULL, 1, 'test', 1, '2019-09-09 13:48:08', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for scm_version
+-- ----------------------------
+DROP TABLE IF EXISTS `scm_version`;
+CREATE TABLE `scm_version` (
+  `id` int(64) NOT NULL AUTO_INCREMENT,
+  `sign` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '摘要签名',
+  `sign_type` varchar(8) COLLATE utf8_bin NOT NULL COMMENT '摘要算法(MD5/SHA-1/SHA-512...)',
+  `tag` int(1) DEFAULT NULL COMMENT '版本标记（1:健康/2:缺陷）',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  `create_by` int(11) NOT NULL COMMENT '创建用户ID',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `create_by` (`create_by`),
+  CONSTRAINT `scm_version_ibfk_1` FOREIGN KEY (`create_by`) REFERENCES `sys_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=426 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='ACM配置历史版本表';
+
+-- ----------------------------
+-- Records of scm_version
+-- ----------------------------
+BEGIN;
+INSERT INTO `scm_version` VALUES (175, '4f7e07693227b5115f657bac78baf2af', 'MD5', 1, 'tests', 1, '2018-11-08 21:56:04', 0);
+INSERT INTO `scm_version` VALUES (176, '4f7e07693227b5115f657bac78baf2af', 'MD5', 1, 'tests', 1, '2018-11-08 21:57:51', 0);
+INSERT INTO `scm_version` VALUES (177, '4f7e07693227b5115f657bac78baf2af', 'MD5', 1, 'tests', 1, '2018-11-08 22:02:58', 0);
+INSERT INTO `scm_version` VALUES (178, '4ad7e6c2c7d4242e1ee7ba7a5a0fd3e4', 'MD5', 1, 'tests', 1, '2018-11-08 22:21:02', 0);
+INSERT INTO `scm_version` VALUES (179, 'd69b8eac0f672301b37522110ccd1341', 'MD5', 1, 'tests', 1, '2018-11-08 22:25:38', 0);
+INSERT INTO `scm_version` VALUES (180, 'd69b8eac0f672301b37522110ccd1341', 'MD5', 1, 'tests', 1, '2018-11-08 22:26:50', 0);
+INSERT INTO `scm_version` VALUES (181, 'd69b8eac0f672301b37522110ccd1341', 'MD5', 1, 'tests', 1, '2018-11-08 22:29:05', 0);
+INSERT INTO `scm_version` VALUES (182, 'd69b8eac0f672301b37522110ccd1341', 'MD5', 1, 'tests', 1, '2018-11-08 22:29:34', 0);
+INSERT INTO `scm_version` VALUES (183, 'd69b8eac0f672301b37522110ccd1341', 'MD5', 1, 'tests', 1, '2018-11-08 22:30:02', 0);
+INSERT INTO `scm_version` VALUES (184, 'd69b8eac0f672301b37522110ccd1341', 'MD5', 1, 'tests', 1, '2018-11-08 22:30:48', 0);
+INSERT INTO `scm_version` VALUES (372, '978075c38c91d8f0adf61d48461ae80f', 'MD5', NULL, 'tests', 1, '2019-06-24 10:58:45', 0);
+INSERT INTO `scm_version` VALUES (376, '35dfcfd789f2f7756f3fb3c53e372ad5', 'MD5', NULL, 'test', 1, '2019-06-24 18:01:41', 0);
+INSERT INTO `scm_version` VALUES (377, '471aea3e0416b40879c4c863918134a0', 'MD5', NULL, 'test', 1, '2019-06-24 18:21:25', 0);
+INSERT INTO `scm_version` VALUES (378, 'e1566b04e61e2b7545b1087b20e24bc1', 'MD5', NULL, 'test', 1, '2019-06-24 18:33:43', 0);
+INSERT INTO `scm_version` VALUES (379, 'df4b2c0fc683429bc954849d55c89e88', 'MD5', NULL, 'test', 1, '2019-06-24 18:34:29', 0);
+INSERT INTO `scm_version` VALUES (380, 'e1566b04e61e2b7545b1087b20e24bc1', 'MD5', NULL, 'test2', 1, '2019-06-24 18:36:32', 0);
+INSERT INTO `scm_version` VALUES (381, 'ac1e922fa7edaf39c4f401db90b3b649', 'MD5', NULL, 'test2', 1, '2019-06-24 18:36:54', 0);
+INSERT INTO `scm_version` VALUES (382, '24fe1756b71a197b39f0d8bbf2cd8b41', 'MD5', NULL, 'test2', 1, '2019-06-24 18:39:48', 0);
+INSERT INTO `scm_version` VALUES (383, '3c88ba3e448cd0417eb7e42b3f23fccc', 'MD5', NULL, 'test2', 1, '2019-06-24 18:45:09', 0);
+INSERT INTO `scm_version` VALUES (384, 'd2036ad34d724e41832e76afb857249b', 'MD5', NULL, 'test2', 1, '2019-06-24 18:46:47', 0);
+INSERT INTO `scm_version` VALUES (385, 'a341e3879064a460dc239e18b97e7a42', 'MD5', NULL, 'test2', 1, '2019-06-24 18:58:39', 0);
+INSERT INTO `scm_version` VALUES (386, '404976a4ef2445d7a0f785d34a52f021', 'MD5', NULL, 'test2', 1, '2019-06-25 09:13:50', 0);
+INSERT INTO `scm_version` VALUES (387, 'c6e4774b0ed7944e9ff0889975743aa1', 'MD5', NULL, 'test2', 1, '2019-06-25 12:59:45', 0);
+INSERT INTO `scm_version` VALUES (388, '0a18b0fb516e42becfb68564ce650d8f', 'MD5', NULL, 'test', 1, '2019-07-27 11:30:00', 0);
+INSERT INTO `scm_version` VALUES (390, '779223e1bfab26d0334be6f4c93dd560', 'MD5', NULL, 'test', 1, '2019-09-06 10:59:25', 0);
+INSERT INTO `scm_version` VALUES (391, '4510f6232d1265d3915520ffd4cc29e0', 'MD5', NULL, 'test', 1, '2019-09-06 11:01:17', 0);
+INSERT INTO `scm_version` VALUES (392, 'a4ea2f7930c1647b3f5d5932de5f875c', 'MD5', NULL, 'test', 1, '2019-09-06 11:09:22', 0);
+INSERT INTO `scm_version` VALUES (393, '420d46eab1cbdc012cf859cae0fd8159', 'MD5', NULL, 'test', 1, '2019-09-06 11:20:42', 0);
+INSERT INTO `scm_version` VALUES (394, '779223e1bfab26d0334be6f4c93dd560', 'MD5', NULL, 'test', 1, '2019-09-06 11:24:53', 0);
+INSERT INTO `scm_version` VALUES (395, '4510f6232d1265d3915520ffd4cc29e0', 'MD5', NULL, 'test', 1, '2019-09-06 11:25:56', 0);
+INSERT INTO `scm_version` VALUES (396, 'a4ea2f7930c1647b3f5d5932de5f875c', 'MD5', NULL, 'test', 1, '2019-09-06 11:26:50', 0);
+INSERT INTO `scm_version` VALUES (397, '420d46eab1cbdc012cf859cae0fd8159', 'MD5', NULL, 'test', 1, '2019-09-06 11:29:59', 0);
+INSERT INTO `scm_version` VALUES (398, '779223e1bfab26d0334be6f4c93dd560', 'MD5', NULL, 'test', 1, '2019-09-06 11:44:01', 0);
+INSERT INTO `scm_version` VALUES (399, 'c77526c93149f7b1926d31053e91e20a', 'MD5', NULL, 'test', 1, '2019-09-06 14:31:43', 0);
+INSERT INTO `scm_version` VALUES (400, '4510f6232d1265d3915520ffd4cc29e0', 'MD5', NULL, 'test', 1, '2019-09-06 14:32:17', 0);
+INSERT INTO `scm_version` VALUES (401, 'a4ea2f7930c1647b3f5d5932de5f875c', 'MD5', NULL, 'test', 1, '2019-09-09 09:39:20', 0);
+INSERT INTO `scm_version` VALUES (402, '420d46eab1cbdc012cf859cae0fd8159', 'MD5', NULL, 'test', 1, '2019-09-09 09:54:39', 0);
+INSERT INTO `scm_version` VALUES (403, '9422223595d1b011521a9bbf05dcbe7f', 'MD5', NULL, 'test', 1, '2019-09-09 10:14:58', 0);
+INSERT INTO `scm_version` VALUES (404, '8119bf8518141953788090fae7b803b8', 'MD5', NULL, 'test', 1, '2019-09-09 10:32:57', 0);
+INSERT INTO `scm_version` VALUES (405, '1904176e11519a1be146de12ee35488a', 'MD5', NULL, 'test', 1, '2019-09-09 10:33:25', 0);
+INSERT INTO `scm_version` VALUES (406, '1904176e11519a1be146de12ee35488a', 'MD5', NULL, 'test', 1, '2019-09-09 10:38:23', 0);
+INSERT INTO `scm_version` VALUES (407, 'ef246951c5379d075d82fe07bc02e517', 'MD5', NULL, 'test', 1, '2019-09-09 10:40:58', 0);
+INSERT INTO `scm_version` VALUES (408, 'a2ef4271538ed020330fe9d8eda340d5', 'MD5', NULL, 'test', 1, '2019-09-09 10:50:48', 0);
+INSERT INTO `scm_version` VALUES (409, '3dfe71f1123c7c2d778175ee18ae64b3', 'MD5', NULL, 'test', 1, '2019-09-09 10:57:15', 0);
+INSERT INTO `scm_version` VALUES (410, 'a2ef4271538ed020330fe9d8eda340d5', 'MD5', NULL, 'test', 1, '2019-09-09 10:57:46', 0);
+INSERT INTO `scm_version` VALUES (411, '3dfe71f1123c7c2d778175ee18ae64b3', 'MD5', NULL, 'test', 1, '2019-09-09 11:05:47', 0);
+INSERT INTO `scm_version` VALUES (412, 'e292b9cab9d4b669fe286213089f5c1f', 'MD5', NULL, 'test', 1, '2019-09-09 11:09:58', 0);
+INSERT INTO `scm_version` VALUES (413, '2854b444d6455670849438ac721717bd', 'MD5', NULL, 'test', 1, '2019-09-09 11:10:54', 0);
+INSERT INTO `scm_version` VALUES (414, 'b58aeda96cc6caf20fd43fcbd9266e42', 'MD5', NULL, 'test', 1, '2019-09-09 11:13:34', 0);
+INSERT INTO `scm_version` VALUES (415, '8a4db67ce19cb0cc76b5ef1bd0ba5b59', 'MD5', NULL, 'test', 1, '2019-09-09 11:13:54', 0);
+INSERT INTO `scm_version` VALUES (416, 'c7319f270275d6350aed6055a4176343', 'MD5', NULL, 'test', 1, '2019-09-09 11:14:27', 0);
+INSERT INTO `scm_version` VALUES (417, '2ef64ebcfc10ef70d2eadc274e31fdf8', 'MD5', NULL, 'test', 1, '2019-09-09 11:15:25', 0);
+INSERT INTO `scm_version` VALUES (418, 'ad47c8d4a19563b9944a08950c796098', 'MD5', NULL, 'test', 1, '2019-09-09 11:15:57', 0);
+INSERT INTO `scm_version` VALUES (419, '3b9a4455599b1c25008b468eb11d1ef9', 'MD5', NULL, 'test', 1, '2019-09-09 11:16:19', 0);
+INSERT INTO `scm_version` VALUES (420, 'efbafdd77b29d63657a6531ee7b3521e', 'MD5', NULL, 'test', 1, '2019-09-09 11:16:54', 0);
+INSERT INTO `scm_version` VALUES (421, '0a6d1eaf03df2e62630a19898a8d690d', 'MD5', NULL, 'test', 1, '2019-09-09 11:18:24', 0);
+INSERT INTO `scm_version` VALUES (422, 'bc074c091cd9c9c650dbe81b2666c48d', 'MD5', NULL, 'test', 1, '2019-09-09 11:28:05', 0);
+INSERT INTO `scm_version` VALUES (423, '92c8205b7b930e9ceab7b27e89f9880b', 'MD5', NULL, 'test', 1, '2019-09-09 11:33:19', 0);
+INSERT INTO `scm_version` VALUES (424, 'e120625d487e03ea7db0b095348b1000', 'MD5', NULL, 'test', 1, '2019-09-09 11:34:51', 0);
+INSERT INTO `scm_version` VALUES (425, 'b161a622c7374f628abaa04031e3cfb3', 'MD5', NULL, 'test', 1, '2019-09-09 13:48:08', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for scm_version_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `scm_version_detail`;
+CREATE TABLE `scm_version_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `version_id` int(11) NOT NULL COMMENT '版本号ID',
+  `namespace_id` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '命名空间ID(sys_dict)',
+  `type` int(1) NOT NULL DEFAULT '1' COMMENT '内容文件类型（1：yml/2：preperties）',
+  `content` text COLLATE utf8_bin NOT NULL COMMENT '配置内容',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`),
+  KEY `version_id` (`version_id`),
+  KEY `namespace_id` (`namespace_id`),
+  CONSTRAINT `scm_version_detail_ibfk_1` FOREIGN KEY (`version_id`) REFERENCES `scm_version` (`id`),
+  CONSTRAINT `scm_version_detail_ibfk_2` FOREIGN KEY (`namespace_id`) REFERENCES `sys_dict` (`key`)
+) ENGINE=InnoDB AUTO_INCREMENT=403 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='ACM配置明细表';
+
+-- ----------------------------
+-- Records of scm_version_detail
+-- ----------------------------
+BEGIN;
+INSERT INTO `scm_version_detail` VALUES (1, 175, 'app_ns_type@fat', 1, '# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,\r\n# All rights reserved. Contact us 983708408@qq.com\r\n#\r\n# Unless required by applicable law or agreed to in writing, software\r\n# distributed under the License is distributed on an \"AS IS\" BASIS,\r\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\r\n# See the License for the specific language governing permissions and\r\n# limitations under the License.\r\n#\r\n\r\n# #### Environment(Test) configuration. ####\r\n#\r\n\r\n# Example configuration.\r\nexample:\r\n  firstName: 王166\r\n  lastName: jack\r\n\r\nspring:\r\n  cloud:\r\n    devops:\r\n      iam:\r\n        client:\r\n          base-uri: http://localhost:14043/scm\r\n', NULL);
+INSERT INTO `scm_version_detail` VALUES (352, 372, 'app_ns_type@fat', 1, '# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,\n# All rights reserved. Contact us 983708408@qq.com\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\n\n# #### Environment(Test) configuration. ####\n#\n\n# Example configuration.\nexample:\n  firstName: he\n  lastName: weijie\n\nspring:\n  cloud:\n    devops:\n      iam:\n        client:\n          base-uri: http://localhost:14043/scm\n', NULL);
+INSERT INTO `scm_version_detail` VALUES (353, 376, 'app_ns_type@fat', 1, 'spring:\n  datasource:\n    type: com.alibaba.druid.pool.DruidDataSource\n    driverClassName: com.mysql.jdbc.Driver\n    druid:\n      url: jdbc:mysql://safecloud-test:30601/devops?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8\n      username: gzsm', NULL);
+INSERT INTO `scm_version_detail` VALUES (354, 377, 'app_ns_type@fat', 1, 'example:\n  firstName: 王\n  lastName: jack', NULL);
+INSERT INTO `scm_version_detail` VALUES (355, 378, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: wj', NULL);
+INSERT INTO `scm_version_detail` VALUES (356, 379, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: wj1', NULL);
+INSERT INTO `scm_version_detail` VALUES (357, 380, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: wj', NULL);
+INSERT INTO `scm_version_detail` VALUES (358, 381, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: wj2', NULL);
+INSERT INTO `scm_version_detail` VALUES (359, 382, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: wj23', NULL);
+INSERT INTO `scm_version_detail` VALUES (360, 383, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: wj234', NULL);
+INSERT INTO `scm_version_detail` VALUES (361, 384, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: wj2345', NULL);
+INSERT INTO `scm_version_detail` VALUES (362, 385, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: wj23456', NULL);
+INSERT INTO `scm_version_detail` VALUES (363, 386, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: wj234567', NULL);
+INSERT INTO `scm_version_detail` VALUES (364, 387, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: wj2345678', NULL);
+INSERT INTO `scm_version_detail` VALUES (365, 388, 'app_ns_type@fat', 1, 'test: 1', NULL);
+INSERT INTO `scm_version_detail` VALUES (367, 390, 'app_ns_type@dev', 1, 'example:\n  firstName: he\n  lastName: weijie', NULL);
+INSERT INTO `scm_version_detail` VALUES (368, 391, 'app_ns_type@dev', 1, 'example:\n  firstName: he\n  lastName: weijie2', NULL);
+INSERT INTO `scm_version_detail` VALUES (369, 392, 'app_ns_type@dev', 1, 'example:\n  firstName: he\n  lastName: weijie3', NULL);
+INSERT INTO `scm_version_detail` VALUES (370, 393, 'app_ns_type@dev', 1, 'example:\n  firstName: he\n  lastName: weijie4', NULL);
+INSERT INTO `scm_version_detail` VALUES (371, 394, 'app_ns_type@dev', 1, 'example:\n  firstName: he\n  lastName: weijie', NULL);
+INSERT INTO `scm_version_detail` VALUES (372, 395, 'app_ns_type@dev', 1, 'example:\n  firstName: he\n  lastName: weijie2', NULL);
+INSERT INTO `scm_version_detail` VALUES (373, 396, 'app_ns_type@dev', 1, 'example:\n  firstName: he\n  lastName: weijie3', NULL);
+INSERT INTO `scm_version_detail` VALUES (374, 397, 'app_ns_type@dev', 1, 'example:\n  firstName: he\n  lastName: weijie4', NULL);
+INSERT INTO `scm_version_detail` VALUES (375, 398, 'app_ns_type@dev', 1, 'example:\n  firstName: he\n  lastName: weijie', NULL);
+INSERT INTO `scm_version_detail` VALUES (376, 399, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie1', NULL);
+INSERT INTO `scm_version_detail` VALUES (377, 400, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie2', NULL);
+INSERT INTO `scm_version_detail` VALUES (378, 401, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie3', NULL);
+INSERT INTO `scm_version_detail` VALUES (379, 402, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie4', NULL);
+INSERT INTO `scm_version_detail` VALUES (380, 403, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie5', NULL);
+INSERT INTO `scm_version_detail` VALUES (381, 404, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie6', NULL);
+INSERT INTO `scm_version_detail` VALUES (382, 405, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie7', NULL);
+INSERT INTO `scm_version_detail` VALUES (383, 406, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie7', NULL);
+INSERT INTO `scm_version_detail` VALUES (384, 407, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie8', NULL);
+INSERT INTO `scm_version_detail` VALUES (385, 408, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie9', NULL);
+INSERT INTO `scm_version_detail` VALUES (386, 409, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie10', NULL);
+INSERT INTO `scm_version_detail` VALUES (387, 410, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie9', NULL);
+INSERT INTO `scm_version_detail` VALUES (388, 411, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie10', NULL);
+INSERT INTO `scm_version_detail` VALUES (389, 412, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie11', NULL);
+INSERT INTO `scm_version_detail` VALUES (390, 413, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie12', NULL);
+INSERT INTO `scm_version_detail` VALUES (391, 414, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie13', NULL);
+INSERT INTO `scm_version_detail` VALUES (392, 415, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie14', NULL);
+INSERT INTO `scm_version_detail` VALUES (393, 416, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie15', NULL);
+INSERT INTO `scm_version_detail` VALUES (394, 417, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie16', NULL);
+INSERT INTO `scm_version_detail` VALUES (395, 418, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie17', NULL);
+INSERT INTO `scm_version_detail` VALUES (396, 419, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie18', NULL);
+INSERT INTO `scm_version_detail` VALUES (397, 420, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie19', NULL);
+INSERT INTO `scm_version_detail` VALUES (398, 421, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie20', NULL);
+INSERT INTO `scm_version_detail` VALUES (399, 422, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie21', NULL);
+INSERT INTO `scm_version_detail` VALUES (400, 423, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie22', NULL);
+INSERT INTO `scm_version_detail` VALUES (401, 424, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie23', NULL);
+INSERT INTO `scm_version_detail` VALUES (402, 425, 'app_ns_type@fat', 1, 'example:\n  firstName: he\n  lastName: weijie24', NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_company
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_company`;
+CREATE TABLE `sys_company` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) DEFAULT NULL,
+  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `group_id` (`group_id`),
+  CONSTRAINT `sys_company_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_company
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_company` VALUES (2, 7, 'adsf', 'asdf', 'adsf', 'asdf');
+INSERT INTO `sys_company` VALUES (3, 2, NULL, NULL, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_contact
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_contact`;
+CREATE TABLE `sys_contact` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) CHARACTER SET utf8 NOT NULL COMMENT '通知分组名称',
+  `email` varchar(20) CHARACTER SET utf8 NOT NULL,
+  `phone` varchar(20) CHARACTER SET utf8 DEFAULT NULL,
+  `dingtalk` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `wechat` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `twitter` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `facebook` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `email_enable` int(11) NOT NULL DEFAULT '1' COMMENT 'email通知开关',
+  `phone_enable` int(11) NOT NULL DEFAULT '0' COMMENT 'phone通知开关',
+  `dingtalk_enable` int(11) NOT NULL DEFAULT '0' COMMENT 'dingtalk通知开关',
+  `wechat_enable` int(11) NOT NULL DEFAULT '0' COMMENT 'wechat通知开关',
+  `twitter_enable` int(11) NOT NULL DEFAULT '0' COMMENT 'twitter通知开关',
+  `facebook_enable` int(11) NOT NULL DEFAULT '0' COMMENT 'facebook通知开关',
+  `phone_time_of_freq` int(11) DEFAULT '30' COMMENT 'phone通知频率限制（num/min）时间部分',
+  `dingtalk_time_of_freq` int(11) DEFAULT '30' COMMENT 'dingtalk通知频率限制（num/min）时间部分',
+  `wechat_time_of_freq` int(11) DEFAULT '30' COMMENT 'wechat通知频率限制（num/min）时间部分',
+  `twitter_time_of_freq` int(11) DEFAULT '30' COMMENT 'twitter通知频率限制（num/min）时间部分',
+  `facebook_time_of_freq` int(11) DEFAULT '30' COMMENT 'facebook通知频率限制（num/min）时间部分',
+  `phone_num_of_freq` int(11) DEFAULT '2' COMMENT 'phone通知频率限制（num/min）次数部分',
+  `dingtalk_num_of_freq` int(11) DEFAULT '5' COMMENT 'dingtalk通知频率限制（num/min）次数部分',
+  `wechat_num_of_freq` int(11) DEFAULT '5' COMMENT 'wechat通知频率限制（num/min）次数部分',
+  `twitter_num_of_freq` int(11) DEFAULT '5' COMMENT 'twitter通知频率限制（num/min）次数部分',
+  `facebook_num_of_freq` int(11) DEFAULT '5' COMMENT 'facebook通知频率限制（num/min）次数部分',
+  `create_by` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  `update_by` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='告警联系人表';
+
+-- ----------------------------
+-- Records of sys_contact
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_contact` VALUES (1, 'test1', 'babaa1f4@163.com', '13888888888', NULL, NULL, NULL, NULL, 1, 0, 0, 0, 0, 0, 30, 30, 30, 30, 30, 2, 5, 5, 5, 5, '1', '2019-08-05 06:45:17', '1', '2019-08-05 17:22:41', 1);
+INSERT INTO `sys_contact` VALUES (2, 'wangsir', '983708408@qq.com', NULL, NULL, NULL, NULL, NULL, 1, 0, 0, 0, 0, 0, 30, 30, 30, 30, 30, 2, 5, 5, 5, 5, '1', '2019-08-05 06:45:17', '1', '2019-12-06 14:31:43', 0);
+INSERT INTO `sys_contact` VALUES (3, 'testuser', '1234@qq.com', '12345678901', 'qwer', 'asdf', 'zxcv', 'uioo', 1, 0, 1, 1, 1, 1, 1, 4, 5, 7, 9, 2, 3, 6, 8, 10, '1', '2019-08-05 16:40:58', '1', '2019-08-23 16:33:01', 1);
+INSERT INTO `sys_contact` VALUES (7, 'hwj', '1154635107@qq.com', '13660205656', 'asdf', 'qwer', 'rtyu', 'xcvb', 1, 1, 1, 1, 1, 1, 300, 300, 300, 300, 300, 3, 3, 3, 3, 3, '1', '2019-08-23 15:16:39', '1', '2019-09-18 16:30:46', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_contact_group
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_contact_group`;
+CREATE TABLE `sys_contact_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '告警分组名称',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='告警联系人分组表';
+
+-- ----------------------------
+-- Records of sys_contact_group
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_contact_group` VALUES (1, 'testGroup', '2019-08-05 08:17:14', '1', '2019-08-23 16:34:09', '1', 1);
+INSERT INTO `sys_contact_group` VALUES (2, 'test2', '2019-08-06 11:42:59', '1', '2019-08-23 16:33:34', '1', 1);
+INSERT INTO `sys_contact_group` VALUES (3, 'test3', '2019-08-06 11:43:18', '1', '2019-08-23 16:33:33', '1', 1);
+INSERT INTO `sys_contact_group` VALUES (4, 'test4', '2019-08-06 11:46:52', '1', '2019-08-06 11:48:17', '1', 1);
+INSERT INTO `sys_contact_group` VALUES (5, 'asdf', '2019-08-06 14:03:51', '1', '2019-08-23 16:33:32', '1', 1);
+INSERT INTO `sys_contact_group` VALUES (6, '234234', '2019-08-06 14:03:57', '1', '2019-08-23 15:35:22', '1', 1);
+INSERT INTO `sys_contact_group` VALUES (7, 'test4', '2019-08-23 15:35:09', '1', '2019-08-23 16:33:31', '1', 1);
+INSERT INTO `sys_contact_group` VALUES (8, 'developer', '2019-08-23 16:34:06', '1', '2019-08-23 16:34:06', '1', 0);
+INSERT INTO `sys_contact_group` VALUES (9, 'tester', '2019-08-23 16:34:14', '1', '2019-12-09 13:50:51', '1', 0);
+INSERT INTO `sys_contact_group` VALUES (10, 'Operator', '2019-08-23 16:35:26', '1', '2019-08-23 16:35:26', '1', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_contact_group_ref
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_contact_group_ref`;
+CREATE TABLE `sys_contact_group_ref` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `contact_group_id` int(11) NOT NULL,
+  `contact_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `contact_group_id` (`contact_group_id`),
+  KEY `contact_id` (`contact_id`),
+  CONSTRAINT `sys_contact_group_ref_ibfk_1` FOREIGN KEY (`contact_group_id`) REFERENCES `sys_contact_group` (`id`),
+  CONSTRAINT `sys_contact_group_ref_ibfk_2` FOREIGN KEY (`contact_id`) REFERENCES `sys_contact` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_contact_group_ref
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_contact_group_ref` VALUES (2, 1, 3);
+INSERT INTO `sys_contact_group_ref` VALUES (3, 1, 1);
+INSERT INTO `sys_contact_group_ref` VALUES (4, 2, 3);
+INSERT INTO `sys_contact_group_ref` VALUES (5, 2, 1);
+INSERT INTO `sys_contact_group_ref` VALUES (14, 8, 7);
+INSERT INTO `sys_contact_group_ref` VALUES (15, 9, 7);
+INSERT INTO `sys_contact_group_ref` VALUES (16, 10, 7);
+INSERT INTO `sys_contact_group_ref` VALUES (17, 8, 2);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_data_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_data_permission`;
+CREATE TABLE `sys_data_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `object_id` int(11) NOT NULL COMMENT '数据权限资源对象ID，如ci_task_id,',
+  `org_id` int(11) NOT NULL COMMENT 'sys_organization',
+  `type` int(11) NOT NULL COMMENT '数据权限资源类型，增加字典类型：data_permission_type，字典值使用数字，key使用object_id对应表名缩写',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Table structure for sys_department
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_department`;
+CREATE TABLE `sys_department` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) DEFAULT NULL,
+  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `group_id` (`group_id`),
+  CONSTRAINT `sys_department_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_department
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_department` VALUES (1, 3, NULL, NULL, '18127968606');
+INSERT INTO `sys_department` VALUES (2, 4, NULL, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_dict
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_dict`;
+CREATE TABLE `sys_dict` (
+  `key` varchar(32) COLLATE utf8_bin NOT NULL COMMENT 'key,唯一',
+  `value` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '数据值',
+  `label` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '标签名',
+  `label_en` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '标签名(EN)',
+  `type` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '类型',
+  `themes` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '主题/样式',
+  `icon` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '图标',
+  `sort` decimal(10,0) NOT NULL DEFAULT '50' COMMENT '排序（升序）',
+  `status` int(1) NOT NULL DEFAULT '1' COMMENT '字典状态（1:均使用 | 2:仅后台使用 | 3:仅前端使用）释：如状态为`2`的字典的值不会返回给前端（登录后返回字典列表给前端缓存）',
+  `enable` int(11) DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '创建者',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `update_by` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '更新者',
+  `update_date` datetime NOT NULL COMMENT '更新时间',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '备注信息',
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  PRIMARY KEY (`key`),
+  KEY `sys_dict_value` (`value`),
+  KEY `sys_dict_label` (`label`),
+  KEY `sys_dict_del_flag` (`del_flag`),
+  KEY `key` (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='字典表\r\ndict系统管理（界面）： key、type不可变（只能开发人员修改数据库，因key、type会在代码硬编码)\r\n只可修改 value、themes、icon、lable、sort、status、description';
+
+-- ----------------------------
+-- Records of sys_dict
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_dict` VALUES ('aggre_oper_type@avg', 'avg', '平均值', 'avg', 'agg_oper_type', '', '', 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-21 10:40:08', '聚合运算符（平均值） ', 0);
+INSERT INTO `sys_dict` VALUES ('aggre_oper_type@latest', 'latest', '最新值', 'latest', 'agg_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-07-16 13:17:22', '聚合运算符（最新值）', 0);
+INSERT INTO `sys_dict` VALUES ('aggre_oper_type@max', 'max', '最大值', 'max', 'agg_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-09-15 13:55:21', '聚合运算符（最大值）', 0);
+INSERT INTO `sys_dict` VALUES ('aggre_oper_type@min', 'min', '最小值', 'min', 'agg_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-07-16 13:17:22', '聚合运算符（最小值）', 0);
+INSERT INTO `sys_dict` VALUES ('app_ns_type@dev', 'dev', '开发环境', 'Development Environment', 'app_ns_type', '', '', 50, 1, 1, '1', '2019-06-12 08:00:00', '1', '2019-11-22 16:03:13', '开发环境，用于开发者调试使用（Development environment）', 0);
+INSERT INTO `sys_dict` VALUES ('app_ns_type@fat', 'fat', '测试环境', 'Testing Environment', 'app_ns_type', '', '', 50, 1, 1, '1', '2019-06-12 08:00:00', '1', '2019-11-22 16:03:08', '功能验收测试环境，用于软件测试使用（Feature Acceptance Test environment）', 0);
+INSERT INTO `sys_dict` VALUES ('app_ns_type@pro', 'pro', '生产环境', 'Production Environment', 'app_ns_type', NULL, NULL, 50, 1, 1, '1', '2019-06-12 08:00:00', '1', '2019-08-16 08:56:29', '线上生产环境（Production environment）', 0);
+INSERT INTO `sys_dict` VALUES ('app_ns_type@uat', 'uat', '验收环境', 'User Verify Environment', 'app_ns_type', NULL, NULL, 50, 1, 1, '1', '2019-06-12 08:00:00', '1', '2019-06-12 08:00:00', '用户验收测试环境，用于生产环境下的软件灰度测试使用（User Acceptance Test environment）', 0);
+INSERT INTO `sys_dict` VALUES ('arith_oper_type@add', 'add', '加', 'add', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:19', '算术运算符（加）', 0);
+INSERT INTO `sys_dict` VALUES ('arith_oper_type@div', 'div', '除', 'div', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:06', '算术运算符（除）', 0);
+INSERT INTO `sys_dict` VALUES ('arith_oper_type@mul', 'mul', '乘', 'mul', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:18', '算术运算符（乘）', 0);
+INSERT INTO `sys_dict` VALUES ('arith_oper_type@subtr', 'subtr', '减', 'subtr', 'arith_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:20', '算术运算符（减）', 0);
+INSERT INTO `sys_dict` VALUES ('ci_analysis_state@analyzing', '4', 'Analyzing', 'Analyzing', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_analysis_state@done', '5', 'Done', 'Done', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_analysis_state@new', '1', 'New', 'New', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:28:55', '1', '2019-12-16 17:28:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_analysis_state@scan', '3', 'Scan', 'Scan', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_analysis_state@waiting', '2', 'Waiting', 'Waiting', 'ci_analysis_state', NULL, NULL, 50, 1, NULL, '1', '2019-12-16 17:32:57', '1', '2019-12-16 17:32:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@DockerNative', 'DockerNative', 'DockerNative', 'DockerNative', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@Golang', 'Golang', 'Golang', 'Golang', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-11-22 11:22:03', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@MvnAssTar', 'MvnAssTar', 'MvnAssTar', 'MvnAssTar', 'ci_provider_kind', 'primary', NULL, 1, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@NpmTar', 'NpmTar', 'NpmTar', 'NpmTar', 'ci_provider_kind', 'primary', NULL, 2, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@Python3', 'Python3', 'Python3', 'Python3', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@RktNative', 'RktNative', 'RktNative', 'RktNative', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_provider_kind@SpringExecJar', 'SpringExecJar', 'SpringExecJar', 'SpringExecJar', 'ci_provider_kind', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_track_type@bug', '2', '漏洞', 'Bug', 'ci_track_type', NULL, NULL, 2, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_track_type@feedback', '4', '反馈', 'Feedback', 'ci_track_type', NULL, NULL, 4, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_track_type@iteration', '3', '迭代', 'Iteration', 'ci_track_type', NULL, NULL, 3, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_track_type@new', '1', '新建', 'New', 'ci_track_type', NULL, NULL, 1, 1, 1, '1', '2019-11-13 09:30:46', '1', '2019-11-13 09:30:48', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_vcs_type@VcsWithGithub', 'VcsWithGithub', 'VcsWithGithub', 'VcsWithGithub', 'ci_vcs_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ci_vcs_type@VcsWithGitlab', 'VcsWithGitlab', 'VcsWithGitlab', 'VcsWithGitlab', 'ci_vcs_type', NULL, NULL, 50, 1, 1, '1', '2019-11-07 15:47:27', '1', '2019-11-07 15:47:30', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('ctl_switch_type@off', 'off', '关', 'off', 'switch_type', 'gray', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '控制开关（关）', 0);
+INSERT INTO `sys_dict` VALUES ('ctl_switch_type@on', 'on', '开', 'on', 'switch_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '控制开关（开）', 0);
+INSERT INTO `sys_dict` VALUES ('doc_file_type@md', 'md', 'Md', 'Md', 'doc_file_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_file_type@txt', 'Txt', 'Txt', 'Txt', 'doc_file_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@en_US', 'en_US', 'US English Edition', 'US English Edition', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@ja_JP', 'ja_JP', '日陰勢', '日陰勢', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_CN', 'zh_CN', '简体中文版', '简体中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('doc_lang_type@zh_HK', 'zh_HK', '繁體中文版', '繁體中文版', 'doc_lang_type', NULL, NULL, 50, 1, 1, '1', '2020-01-14 14:51:04', '1', '2020-01-14 14:51:05', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@aliyun', '1', '阿里云', 'Aliyun Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@aws', '2', '亚马逊云', 'Aws Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@azure', '3', '微软云', 'Azure Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@baidu', '4', '百度云', 'Baidu Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@ctyun', '5', '天翼云', 'Ctyun Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@google', '6', 'Google云', 'Google Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@qingcloud', '7', '青云', 'Qing Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('idc_provider@tencent', '8', '腾讯云', 'Tencent Cloud', 'idc_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('logical_oper_type@and', 'and', '与', 'and', 'logical_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:21', '逻辑运算符（与）', 0);
+INSERT INTO `sys_dict` VALUES ('logical_oper_type@not', 'not', '非', 'not', 'logical_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:21', '逻辑运算符（非）', 0);
+INSERT INTO `sys_dict` VALUES ('logical_oper_type@or', 'or', '或', 'or', 'logical_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:21', '逻辑运算符（或）', 0);
+INSERT INTO `sys_dict` VALUES ('menu_type@button', '3', '按钮', 'Button', 'menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', '', 0);
+INSERT INTO `sys_dict` VALUES ('menu_type@dynamic', '2', '动态菜单', 'Dynamic Menu', 'menu_type', NULL, NULL, 50, 1, NULL, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('menu_type@static', '1', '静态菜单', 'Static Menu', 'menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-17 14:21:38', '1', '2019-12-17 14:21:42', '', 0);
+INSERT INTO `sys_dict` VALUES ('metric_classify@basic', 'basic', 'basic', 'basic', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 16:55:57', '1', '2019-08-23 16:55:57', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('metric_classify@docker', 'docker', 'docker', 'docker', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 16:58:11', '1', '2019-08-23 16:58:11', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('metric_classify@kafka', 'kafka', 'kafka', 'kafka', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 17:01:14', '1', '2019-08-23 17:01:14', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('metric_classify@redis', 'redis', 'redis', 'redis', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 16:58:47', '1', '2019-08-23 16:58:47', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('metric_classify@zookeeper', 'zookeeper', 'zookeeper', 'zookeeper', 'metric_classify', 'primary', '', 50, 1, 1, '1', '2019-08-23 17:02:01', '1', '2019-08-23 17:02:01', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('pcm_auth_type@key', '2', 'key', 'key', 'pcm_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('pcm_auth_type@password', '1', 'password', 'password', 'pcm_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('pcm_provider@jira', 'jira', 'Jira', 'Jira', 'pcm_provider', 'primary', NULL, 50, 1, 0, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('pcm_provider@redmine', 'redmine', 'Redmine', 'Redmine', 'pcm_provider', 'primary', NULL, 49, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@gt', 'gt', '大于', 'gt', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（大于）', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@gte', 'gte', '大于等于', 'gte', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（大于等于）', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@lt', 'lt', '小于', 'lt', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-08-16 08:56:22', '关系运算符（小于）', 0);
+INSERT INTO `sys_dict` VALUES ('relate_oper_type@lte', 'lte', '小于等于', 'lte', 'relate_oper_type', NULL, NULL, 50, 1, 1, '1', '2019-07-16 13:17:22', '1', '2019-07-16 13:17:22', '关系运算符（小于等于）', 0);
+INSERT INTO `sys_dict` VALUES ('sys_group_type@company', '2', 'Company', 'Company', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_group_type@department', '3', 'Department', 'Department', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_group_type@park', '1', 'Park', 'Park', 'sys_group_type', NULL, NULL, 50, 1, 1, '1', '2019-11-19 14:32:26', '1', '2019-11-19 14:32:27', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('sys_menu_type@dynamic', '2', '动态菜单', 'DynamicMenu', 'sys_menu_type', '', '', 50, 1, 1, '1', '2019-12-11 14:49:36', '1', '2019-12-11 14:49:40', '动态菜单类型（sys_menu表）', 0);
+INSERT INTO `sys_dict` VALUES ('sys_menu_type@static', '1', '静态菜单', 'StaticMenu', 'sys_menu_type', NULL, NULL, 50, 1, 1, '1', '2019-12-11 14:49:36', '1', '2019-12-11 14:49:40', '静态菜单类型（sys_menu表）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@danger', 'danger', '严重', 'danger', 'theme_type', 'danger', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:20', '皮肤主题（严重）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@gray', 'gray', '灰色', 'gray', 'theme_type', 'gray', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（灰色）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@primary', 'primary', '主要', 'primary', 'theme_type', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（主要）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@success', 'success', '成功', 'success', 'theme_type', 'success', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（成功）', 0);
+INSERT INTO `sys_dict` VALUES ('theme_type@warning', 'warning', '警告', 'warning', 'theme_type', 'warning', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '皮肤主题（警告）', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_auth_type@password', '1', 'password', 'password', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('vcs_auth_type@ssh', '2', 'ssh', 'ssh', 'vcs_auth_type', '', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@alicode', 'alicode', 'Alicode', 'Alicode', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@bitbucket', 'bitbucket', 'Bitbucket', 'Bitbucket', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', NULL, 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@coding', 'coding', 'Coding', 'Coding', 'vcs_provider', 'primary', '', 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@gitee', 'gitee', 'Gitee', 'Gitee', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@github', 'github', 'Github', 'Github', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+INSERT INTO `sys_dict` VALUES ('vcs_provider@gitlab', 'gitlab', 'Gitlab', 'Gitlab', 'vcs_provider', 'primary', NULL, 50, 1, 1, '1', '2019-08-13 15:10:32', '1', '2019-08-16 08:56:21', '', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_group
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group`;
+CREATE TABLE `sys_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户分租(customer）名，与displayName灵活应用',
+  `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户分租(customer）展示名',
+  `type` int(1) DEFAULT '0' COMMENT '用户分组类型（预留）1park,2company,3department',
+  `parent_id` int(11) DEFAULT NULL COMMENT '父级id',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户组启用状态（0:禁用/1:启用）',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户组状态（预留）',
+  `create_by` int(11) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_date` datetime NOT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0:正常/1:删除）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统用户组表';
+
+-- ----------------------------
+-- Records of sys_group
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_group` VALUES (1, 'PanYuEnergyParkCenter', '番禺节能科技园中心', 1, NULL, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:04:16', 0);
+INSERT INTO `sys_group` VALUES (2, 'Shangmaikeji-GZ', '广州商脉科技网络科技有限公司', 2, 1, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:05:05', 0);
+INSERT INTO `sys_group` VALUES (3, 'BigdataDepartment', '大数据研发部', 3, 2, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:09:55', 0);
+INSERT INTO `sys_group` VALUES (4, 'BizDepartment', '应用研发部', 3, 2, 1, 0, 1, '2019-10-29 14:52:29', 1, '2019-11-26 14:06:18', 0);
+INSERT INTO `sys_group` VALUES (5, 'DevSecOpsFramework', 'DevSecOps+系统架构部', 0, 2, 1, 0, 1, '2019-10-31 15:46:29', 1, '2019-11-26 14:10:19', 0);
+INSERT INTO `sys_group` VALUES (7, 'test', 'test', 2, NULL, 1, 0, 1, '2019-11-19 14:56:44', 1, '2019-11-19 14:56:44', 1);
+INSERT INTO `sys_group` VALUES (8, 'test', 'test', 0, 3, 1, 0, 1, '2019-11-26 10:56:34', 1, '2019-11-26 10:56:34', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_group_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group_menu`;
+CREATE TABLE `sys_group_menu` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) DEFAULT NULL,
+  `menu_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `group_id` (`group_id`),
+  KEY `menu_id` (`menu_id`),
+  CONSTRAINT `sys_group_menu_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
+  CONSTRAINT `sys_group_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=361 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-menu中间表';
+
+-- ----------------------------
+-- Records of sys_group_menu
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_group_menu` VALUES (46, 7, 1, 1, '2019-11-19 14:56:44');
+INSERT INTO `sys_group_menu` VALUES (47, 7, 7, 1, '2019-11-19 14:56:44');
+INSERT INTO `sys_group_menu` VALUES (127, 1, 1, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (128, 1, 2, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (129, 1, 3, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (130, 1, 4, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (131, 1, 5, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (132, 1, 6, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (133, 1, 7, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (134, 1, 8, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (135, 1, 9, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (136, 1, 10, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (137, 1, 11, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (138, 1, 12, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (139, 1, 13, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (140, 1, 14, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (141, 1, 15, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (142, 1, 16, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (143, 1, 17, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (144, 1, 18, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (145, 1, 19, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (146, 1, 20, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (147, 1, 21, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (148, 1, 22, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (149, 1, 23, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (150, 1, 24, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (151, 1, 25, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (152, 1, 26, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (153, 1, 27, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (154, 1, 28, 1, '2019-11-26 14:04:16');
+INSERT INTO `sys_group_menu` VALUES (166, 2, 1, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (167, 2, 33, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (168, 2, 34, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (169, 2, 7, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (170, 2, 8, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (171, 2, 9, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (172, 2, 10, 1, '2019-11-26 14:05:06');
+INSERT INTO `sys_group_menu` VALUES (328, 3, 1, 1, '2019-11-26 14:09:56');
+INSERT INTO `sys_group_menu` VALUES (329, 3, 7, 1, '2019-11-26 14:09:56');
+INSERT INTO `sys_group_menu` VALUES (330, 5, 1, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (331, 5, 2, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (332, 5, 3, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (333, 5, 4, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (334, 5, 5, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (335, 5, 6, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (336, 5, 7, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (337, 5, 8, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (338, 5, 11, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (339, 5, 12, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (340, 5, 13, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (341, 5, 14, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (342, 5, 15, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (343, 5, 16, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (344, 5, 17, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (345, 5, 18, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (346, 5, 19, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (347, 5, 20, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (348, 5, 21, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (349, 5, 22, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (350, 5, 23, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (351, 5, 24, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (352, 5, 25, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (353, 5, 26, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (354, 5, 27, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (355, 5, 28, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (358, 5, 31, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (359, 5, 33, 1, '2019-11-26 14:10:19');
+INSERT INTO `sys_group_menu` VALUES (360, 5, 34, 1, '2019-11-26 14:10:19');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_group_role
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group_role`;
+CREATE TABLE `sys_group_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `group_id` (`group_id`),
+  KEY `role_id` (`role_id`),
+  CONSTRAINT `sys_group_role_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
+  CONSTRAINT `sys_group_role_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-role中间表';
+
+-- ----------------------------
+-- Table structure for sys_group_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_group_user`;
+CREATE TABLE `sys_group_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `group_id` (`group_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `sys_group_user_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`),
+  CONSTRAINT `sys_group_user_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统group-user中间表';
+
+-- ----------------------------
+-- Records of sys_group_user
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_group_user` VALUES (2, 4, 1, 1, '2019-10-29 14:56:07');
+INSERT INTO `sys_group_user` VALUES (18, 2, 1, 1, '2019-10-30 18:29:40');
+INSERT INTO `sys_group_user` VALUES (20, 1, 1, 1, '2019-11-05 13:58:00');
+INSERT INTO `sys_group_user` VALUES (23, 4, 5, 1, '2019-11-26 14:10:52');
+INSERT INTO `sys_group_user` VALUES (24, 3, 7, 1, '2019-11-26 14:10:59');
+INSERT INTO `sys_group_user` VALUES (25, 5, 7, 1, '2019-11-26 14:10:59');
+INSERT INTO `sys_group_user` VALUES (26, 3, 8, 1, '2019-11-26 14:11:11');
+INSERT INTO `sys_group_user` VALUES (27, 5, 8, 1, '2019-11-26 14:11:11');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_menu`;
+CREATE TABLE `sys_menu` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
+  `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
+  `type` int(1) DEFAULT NULL COMMENT '菜单类型, (e.g 1静态菜单,2动态菜单,3按钮...参考字典)',
+  `level` int(1) NOT NULL DEFAULT '1' COMMENT '级别,顶级=1 , 菜单为0级',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '菜单状态(e.g 启用,禁用)',
+  `parent_id` int(11) NOT NULL COMMENT '父级菜单ID ,顶级的父级id为0',
+  `parent_ids` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '树形父级菜单ID列表（如：1,11,22）',
+  `permission` varchar(500) COLLATE utf8_bin NOT NULL COMMENT '权限标识（如：sys:user:edit,sys:user:view），用于如shiro-aop方法及权限校验',
+  `page_location` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '页面地址,(例如静态菜单:/ci/task/xx.vue文件路径(不包含.vue后缀),动态菜单www.baidu.com)',
+  `route_path` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '路由地址,例如/ci/task (#号后面的部分)',
+  `classify` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '属于哪一个项目，取自字典',
+  `icon` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '图标',
+  `sort` int(11) DEFAULT NULL COMMENT '排序',
+  `create_by` int(11) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_date` datetime NOT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0:正常/1:删除）',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统菜单（权限）表';
+
+-- ----------------------------
+-- Records of sys_menu
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_menu` VALUES (1, 'CI Delivery', '集成交付', 1, 1, 0, 0, NULL, 'ci', '/ci', '/ci', NULL, '/static/images/menu/CI_on.png', 30, 1, '2019-10-31 10:01:57', 1, '2020-01-19 14:23:53', 0);
+INSERT INTO `sys_menu` VALUES (2, 'Monitor', '监控报警', 1, 1, 0, 0, NULL, 'umc', '/umc', '/umc', NULL, '/static/images/menu/UMC_on.png', 20, 1, '2019-10-31 10:01:57', 1, '2020-01-19 14:23:58', 0);
+INSERT INTO `sys_menu` VALUES (3, 'Resources', '环境资源', 1, 1, 0, 0, NULL, 'srm', '/srm', '/srm', NULL, '/static/images/menu/SRM_on.png', 40, 1, '2019-10-31 17:24:33', 1, '2020-01-19 14:24:47', 0);
+INSERT INTO `sys_menu` VALUES (4, 'Configuration', '配置中心', 1, 1, 0, 0, NULL, 'scm', '/scm', '/scm', NULL, '/static/images/menu/SCM_on.png', 50, 1, '2019-10-31 17:25:49', 1, '2020-01-19 14:56:33', 0);
+INSERT INTO `sys_menu` VALUES (5, 'System', '系统设置', 1, 1, 0, 0, NULL, 'iam', '/iam', '/iam', NULL, '/static/images/menu/IAM_on.png', 100, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:26:27', 0);
+INSERT INTO `sys_menu` VALUES (6, 'Assets', '资产管理', 1, 1, 0, 0, NULL, 'share', '/share', '/share', NULL, '/static/images/menu/SCM_on.png', 90, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:52:43', 0);
+INSERT INTO `sys_menu` VALUES (7, 'Pipelines', '任务流水线', 1, 2, 0, 1, NULL, 'ci:task', '/ci/task/Task', '/ci/task', NULL, '/static/images/menu/pipeline.png', 1, 1, '2019-10-31 10:01:57', 1, '2020-01-02 17:32:21', 0);
+INSERT INTO `sys_menu` VALUES (8, 'Run Schedule', '执行计划', 1, 2, 0, 1, NULL, 'ci:trigger', '/ci/trigger/Trigger', '/ci/trigger', NULL, '/static/images/menu/schedule.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:32:42', 0);
+INSERT INTO `sys_menu` VALUES (9, 'Run Records', '运行记录', 1, 2, 0, 1, NULL, 'ci:taskhis', '/ci/taskhis/TaskHistory', '/ci/taskhis', NULL, '/static/images/menu/changes.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:32:53', 0);
+INSERT INTO `sys_menu` VALUES (10, 'Project Dependencies', '工程依赖', 1, 2, 0, 1, NULL, 'ci:project', '/ci/project/Project', '/ci/project', NULL, '/static/images/menu/projects.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:33:05', 0);
+INSERT INTO `sys_menu` VALUES (11, 'Online', '在线用户', 1, 2, 0, 5, NULL, 'iam:online', '/iam/online/Online', '/iam/online', NULL, '/static/images/menu/onlines.png', 50, 1, '2019-10-31 10:01:57', 1, '2020-01-19 14:21:03', 0);
+INSERT INTO `sys_menu` VALUES (12, 'Users', '用户管理', 1, 2, 0, 5, NULL, 'iam:user', '/iam/user/User', '/iam/user', NULL, '/static/images/menu/user.png', 60, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:23:14', 0);
+INSERT INTO `sys_menu` VALUES (13, 'Menus', '菜单配置', 1, 2, 0, 5, NULL, 'iam:menu', '/iam/menu/Menu', '/iam/menu', NULL, '/static/images/menu/menu.png', 90, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:17:09', 0);
+INSERT INTO `sys_menu` VALUES (14, 'Organizations', '组织机构', 1, 2, 0, 5, NULL, 'iam:group', '/iam/group/Group', '/iam/group', NULL, '/static/images/menu/group.png', 80, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:20:34', 0);
+INSERT INTO `sys_menu` VALUES (15, 'Roles', '角色管理', 1, 2, 0, 5, NULL, 'iam:role', '/iam/role/Role', '/iam/role', NULL, '/static/images/menu/role.png', 70, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:23:11', 0);
+INSERT INTO `sys_menu` VALUES (16, 'Configure', '配置列表', 1, 2, 0, 4, NULL, 'scm:configuration', '/scm/configuration/Configuration', '/scm/configuration', NULL, '/static/images/menu/configuration.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:34:31', 0);
+INSERT INTO `sys_menu` VALUES (17, 'Historical Versions', '发布版本', 1, 2, 0, 4, NULL, 'scm:historic', '/scm/historic/Historic', '/scm/historic', NULL, '/static/images/menu/historical_vsersion.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:34:37', 0);
+INSERT INTO `sys_menu` VALUES (18, 'Push Tracks', '推送轨迹', 1, 2, 0, 4, NULL, 'scm:track', '/scm/track/Track', '/scm/track', NULL, '/static/images/menu/push_tracks.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:34:43', 0);
+INSERT INTO `sys_menu` VALUES (19, 'Cluster', '集群管理', 1, 2, 0, 6, NULL, 'share:cluster', '/share/cluster/Cluster', '/share/cluster', NULL, '/static/images/menu/cluster.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:35:44', 0);
+INSERT INTO `sys_menu` VALUES (20, 'Dictionaries', '字典配置', 1, 2, 0, 5, NULL, 'iam:dict', '/iam/dict/Dict', '/iam/dict', NULL, '/static/images/menu/dictionaries.png', 100, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:16:21', 0);
+INSERT INTO `sys_menu` VALUES (21, 'Notifications', '通知设置', 1, 2, 0, 5, NULL, 'iam:contact', '/iam/contact/Contact', '/iam/contact', NULL, '/static/images/menu/alarm_contact.png', 40, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:22:41', 0);
+INSERT INTO `sys_menu` VALUES (22, 'Log Console', '日志控制台', 1, 2, 0, 3, NULL, 'srm:console', '/srm/console/Console', '/srm/console', NULL, '/static/images/menu/log_console.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:34:24', 0);
+INSERT INTO `sys_menu` VALUES (23, 'SBA Monitor', 'SBA监控', 2, 2, 0, 2, NULL, 'umc:sbamonitor', 'http://www.baidu.com', '/umc/sbamonitor', NULL, '/static/images/menu/sba_monitor.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:52:16', 0);
+INSERT INTO `sys_menu` VALUES (24, 'Biz Traffic', '业务流量', 1, 2, 0, 2, NULL, 'umc:biztraffic', '/umc/biztraffic/Biztraffic', '/umc/biztraffic', NULL, '/static/images/menu/biz_traffic.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:33:38', 0);
+INSERT INTO `sys_menu` VALUES (25, 'Alarm Logs', '告警历史', 1, 2, 0, 2, NULL, 'umc:record', '/umc/record/Record', '/umc/record', NULL, '/static/images/menu/alarm_logs.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:33:48', 0);
+INSERT INTO `sys_menu` VALUES (26, 'Alarm Config', '告警配置', 1, 2, 0, 2, NULL, 'umc:config', '', '/umc/config', NULL, NULL, NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:57:16', 0);
+INSERT INTO `sys_menu` VALUES (27, 'Alarm Template', '告警模板', 1, 2, 0, 2, NULL, 'umc:templat', '/umc/templat/Templat', '/umc/templat', NULL, '/static/images/menu/alarm_template.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:34:02', 0);
+INSERT INTO `sys_menu` VALUES (28, 'Metric Template', '度量模板', 1, 2, 0, 2, NULL, 'umc:metrictemplate', '/umc/metrictemplate/MetricTemplate', '/umc/metrictemplate', NULL, '/static/images/menu/metric_template.png', NULL, 1, '2019-11-01 15:54:37', 1, '2020-01-02 17:34:15', 0);
+INSERT INTO `sys_menu` VALUES (31, 'Alarm Config list', '告警配置列表', 2, 0, 0, 26, NULL, 'umc:config:list', 'http://10.0.0.161:3000/', '/umc/config/list', NULL, '', NULL, 1, '2019-11-05 17:03:05', 1, '2020-01-02 17:57:22', 0);
+INSERT INTO `sys_menu` VALUES (32, 'VCS Repository', '源码仓库', 1, 2, 0, 1, NULL, 'ci:vcs', '/ci/vcs/Vcs', '/ci/vcs', NULL, '/static/images/menu/VCS.png', NULL, 1, '2019-10-31 10:01:57', 1, '2020-01-02 17:33:15', 0);
+INSERT INTO `sys_menu` VALUES (33, 'Home', '主页', 1, 1, 0, 0, NULL, 'home', '', '/home', NULL, '/static/images/menu/HOME.png', 10, 1, '2019-11-26 10:42:01', 1, '2020-01-19 14:23:41', 0);
+INSERT INTO `sys_menu` VALUES (34, 'Overview', '概览', 1, 2, 0, 33, NULL, 'home:overview', '/home/overview/Overview', '/home/overview', NULL, '/static/images/menu/Overview.png', 2, 1, '2019-11-26 10:42:33', 1, '2020-01-03 14:34:42', 0);
+INSERT INTO `sys_menu` VALUES (35, 'Host', '主机管理', 1, 2, 0, 6, NULL, 'share:host', '/share/host/Host', '/share/host', NULL, NULL, NULL, 1, '2019-11-26 18:10:09', 1, '2020-01-02 17:35:38', 0);
+INSERT INTO `sys_menu` VALUES (36, 'Safety Quality', '安全与质量', 1, 2, 0, 1, NULL, 'ci:analysis', '', '/analysis', NULL, '', NULL, 1, '2019-12-04 11:21:38', 1, '2020-01-02 17:49:04', 0);
+INSERT INTO `sys_menu` VALUES (40, 'PackageAnalyzer', '安装包分析', 2, 3, 0, 36, NULL, 'ci:analysis:package', 'https://www.baidu.com/', '/ci/analysis/package', NULL, '', 50, 1, '2019-12-17 10:00:05', 1, '2020-01-02 17:48:30', 0);
+INSERT INTO `sys_menu` VALUES (41, 'CodeAnalyzer', '源码分析', 2, 3, 0, 36, NULL, 'ci:analysis:code', 'https://fanyi.baidu.com/', '/ci/analysis/code', NULL, '', 50, 1, '2019-12-17 10:00:32', 1, '2020-01-02 17:49:20', 0);
+INSERT INTO `sys_menu` VALUES (45, 'btntest', '按钮权限测试', 3, 0, 0, 36, NULL, 'ci:btntest', '', '', NULL, '', 2, 1, '2020-01-03 15:06:19', 1, '2020-01-03 15:06:19', 0);
+INSERT INTO `sys_menu` VALUES (46, 'Pcm', '项目协作', 1, 2, 0, 1, NULL, 'ci:pcm', '/ci/pcm/Pcm', '/ci/pcm', NULL, '/static/images/menu/VCS.png', NULL, 1, '2019-10-31 10:01:57', 1, '2020-01-02 17:33:15', 0);
+INSERT INTO `sys_menu` VALUES (47, 'Docs', '文档管理', 1, 1, 0, 0, NULL, 'doc', '/doc', '/doc', NULL, '/static/images/menu/SCM_on.png', 60, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:48:38', 0);
+INSERT INTO `sys_menu` VALUES (48, 'Docs', '文档管理', 1, 2, 0, 47, NULL, 'doc:file', '/doc/file/File', '/doc/file', NULL, '/static/images/menu/SCM_on.png', 10, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:46:55', 0);
+INSERT INTO `sys_menu` VALUES (49, 'Shares', '分享管理', 1, 2, 0, 47, NULL, 'doc:share', '/doc/share/Share', '/doc/share', NULL, '/static/images/menu/SCM_on.png', 20, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:47:17', 0);
+INSERT INTO `sys_menu` VALUES (50, 'Labels', '标签管理', 1, 2, 0, 47, NULL, 'doc:label', '/doc/label/Label', '/doc/label', NULL, '/static/images/menu/SCM_on.png', 40, 1, '2019-11-01 15:54:37', 1, '2020-01-19 14:47:40', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_notification_contact
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_notification_contact`;
+CREATE TABLE `sys_notification_contact` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `record_id` int(11) DEFAULT NULL COMMENT '信息id',
+  `contact_id` int(11) DEFAULT NULL COMMENT '联系人',
+  `status` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT 'send , unsend , accepted , unaccepted ',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `notification_id` (`record_id`),
+  KEY `contact_id` (`contact_id`),
+  CONSTRAINT `sys_notification_contact_ibfk_1` FOREIGN KEY (`contact_id`) REFERENCES `sys_contact` (`id`),
+  CONSTRAINT `sys_notification_contact_ibfk_2` FOREIGN KEY (`record_id`) REFERENCES `umc_alarm_record` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=410 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_notification_contact
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_notification_contact` VALUES (162, 123, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (163, 123, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (164, 124, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (165, 124, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (166, 125, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (167, 125, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (168, 126, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (169, 126, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (170, 127, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (171, 128, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (172, 127, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (173, 128, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (174, 129, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (175, 130, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (176, 129, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (177, 130, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (178, 131, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (179, 132, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (180, 132, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (181, 133, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (182, 131, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (183, 133, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (184, 134, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (185, 134, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (186, 135, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (187, 135, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (188, 136, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (189, 136, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (190, 137, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (191, 138, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (192, 137, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (193, 138, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (194, 139, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (195, 140, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (196, 139, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (197, 140, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (198, 141, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (199, 141, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (200, 142, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (201, 142, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (202, 143, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (203, 143, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (204, 144, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (205, 144, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (206, 145, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (207, 145, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (208, 146, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (209, 146, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (210, 147, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (211, 147, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (212, 148, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (213, 148, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (214, 149, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (215, 150, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (216, 150, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (217, 149, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (218, 151, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (219, 151, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (220, 153, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (221, 154, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (222, 152, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (223, 153, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (224, 152, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (225, 154, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (226, 155, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (227, 155, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (228, 156, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (229, 156, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (230, 157, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (231, 157, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (232, 158, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (233, 158, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (234, 159, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (235, 159, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (236, 160, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (237, 161, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (238, 160, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (239, 161, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (240, 162, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (241, 162, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (242, 163, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (243, 163, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (244, 164, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (245, 164, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (246, 165, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (247, 165, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (248, 166, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (249, 166, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (250, 167, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (251, 167, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (252, 168, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (253, 168, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (254, 169, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (255, 169, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (256, 170, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (257, 170, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (258, 171, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (259, 171, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (260, 172, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (261, 172, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (262, 173, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (263, 173, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (264, 174, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (265, 174, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (266, 175, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (267, 175, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (268, 176, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (269, 176, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (270, 177, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (271, 177, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (272, 178, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (273, 178, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (274, 179, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (275, 179, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (276, 180, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (277, 180, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (278, 181, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (279, 181, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (280, 182, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (281, 182, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (282, 183, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (283, 183, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (284, 184, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (285, 184, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (286, 185, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (287, 185, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (288, 186, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (289, 186, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (290, 187, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (291, 187, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (292, 188, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (293, 188, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (294, 189, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (295, 189, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (296, 190, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (297, 190, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (298, 191, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (299, 191, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (300, 192, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (301, 192, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (302, 193, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (303, 193, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (304, 194, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (305, 194, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (306, 195, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (307, 195, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (308, 196, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (309, 196, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (310, 197, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (311, 197, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (312, 198, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (313, 198, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (314, 199, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (315, 199, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (316, 200, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (317, 200, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (318, 201, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (319, 201, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (320, 202, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (321, 202, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (322, 203, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (323, 203, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (324, 204, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (325, 204, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (326, 205, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (327, 205, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (328, 206, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (329, 206, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (330, 207, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (331, 207, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (332, 208, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (333, 208, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (334, 209, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (335, 209, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (336, 210, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (337, 210, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (338, 211, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (339, 211, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (340, 212, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (341, 212, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (342, 213, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (343, 213, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (344, 214, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (345, 214, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (346, 215, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (347, 215, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (348, 216, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (349, 216, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (350, 217, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (351, 217, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (352, 218, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (353, 218, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (354, 219, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (355, 219, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (356, 220, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (357, 220, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (358, 221, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (359, 221, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (360, 222, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (361, 222, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (362, 223, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (363, 223, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (364, 224, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (365, 224, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (366, 225, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (367, 225, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (368, 226, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (369, 226, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (370, 227, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (371, 227, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (372, 228, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (373, 228, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (374, 229, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (375, 229, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (376, 230, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (377, 230, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (378, 231, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (379, 231, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (380, 232, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (381, 232, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (382, 233, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (383, 233, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (384, 234, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (385, 234, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (386, 235, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (387, 235, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (388, 236, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (389, 236, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (390, 237, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (391, 237, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (392, 238, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (393, 238, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (394, 239, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (395, 239, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (396, 240, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (397, 240, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (398, 241, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (399, 241, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (400, 242, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (401, 242, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (402, 243, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (403, 243, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (404, 244, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (405, 244, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (406, 246, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (407, 245, 2, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (408, 246, 7, '1', NULL);
+INSERT INTO `sys_notification_contact` VALUES (409, 245, 7, '1', NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_park
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_park`;
+CREATE TABLE `sys_park` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) DEFAULT NULL,
+  `display_name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `contact_phone` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `group_id` (`group_id`),
+  CONSTRAINT `sys_park_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `sys_group` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of sys_park
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_park` VALUES (1, 1, NULL, NULL, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_role
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role`;
+CREATE TABLE `sys_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_code` varchar(255) COLLATE utf8_bin NOT NULL COMMENT '用户角色名，与displayName灵活应用',
+  `display_name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '用户角色展示名',
+  `type` int(1) DEFAULT NULL COMMENT '用户角色类型（预留）',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '用户角色启用状态（0:禁用/1:启用）',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户角色状态（预留）',
+  `create_by` int(11) NOT NULL,
+  `create_date` datetime NOT NULL,
+  `update_by` int(11) NOT NULL,
+  `update_date` datetime NOT NULL,
+  `del_flag` int(1) NOT NULL COMMENT '删除状态（0:正常/1:删除）',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统角色表';
+
+-- ----------------------------
+-- Records of sys_role
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_role` VALUES (1, 'coder', '普通开发角色', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2019-11-26 14:12:10', 0);
+INSERT INTO `sys_role` VALUES (2, 'test', '普通测试角色', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2019-11-26 14:11:58', 0);
+INSERT INTO `sys_role` VALUES (3, 'devops', '系统运维研发', 1, 1, 0, 1, '2019-10-29 11:28:03', 1, '2019-11-26 14:12:27', 0);
+INSERT INTO `sys_role` VALUES (4, 'test1', 'test1', NULL, 1, 0, 1, '2019-11-04 17:00:59', 1, '2019-11-04 17:02:42', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_role_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_menu`;
+CREATE TABLE `sys_role_menu` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_id` int(11) DEFAULT NULL,
+  `menu_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `role_id` (`role_id`),
+  KEY `menu_id` (`menu_id`),
+  CONSTRAINT `sys_role_menu_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`),
+  CONSTRAINT `sys_role_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `sys_menu` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统role-menu中间表';
+
+-- ----------------------------
+-- Records of sys_role_menu
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_role_menu` VALUES (33, 4, NULL, 1, '2019-11-04 17:02:43');
+INSERT INTO `sys_role_menu` VALUES (34, 4, 1, 1, '2019-11-04 17:02:43');
+INSERT INTO `sys_role_menu` VALUES (35, 4, 2, 1, '2019-11-04 17:02:43');
+INSERT INTO `sys_role_menu` VALUES (36, 4, 7, 1, '2019-11-04 17:02:43');
+INSERT INTO `sys_role_menu` VALUES (37, 4, 23, 1, '2019-11-04 17:02:43');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_role_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_user`;
+CREATE TABLE `sys_role_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `role_id` (`role_id`),
+  CONSTRAINT `sys_role_user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `sys_user` (`id`),
+  CONSTRAINT `sys_role_user_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `sys_role` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统user-role中间表';
+
+-- ----------------------------
+-- Records of sys_role_user
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_role_user` VALUES (15, 1, 1, 1, '2019-11-01 10:44:13');
+INSERT INTO `sys_role_user` VALUES (18, 5, 2, 1, '2019-11-26 14:10:52');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for sys_user
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_user`;
+CREATE TABLE `sys_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '登录账号名(唯一）',
+  `display_name` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '显示名称',
+  `password` varchar(768) COLLATE utf8_bin NOT NULL COMMENT '密文密码',
+  `user_type` int(1) NOT NULL DEFAULT '2' COMMENT '用户类型（如：1:管理员/2:运维者）',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT '启用状态（0:禁止/1:启用）',
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '用户状态（预留）',
+  `email` varchar(48) COLLATE utf8_bin DEFAULT NULL,
+  `phone` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `wechat_open_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `wechat_union_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `facebook_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `google_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `twitter_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `linkedin_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `alipay_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `github_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `aws_id` varchar(500) COLLATE utf8_bin DEFAULT NULL,
+  `remark` varchar(500) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
+  `create_by` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  `update_by` int(11) DEFAULT '0',
+  `update_date` datetime DEFAULT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='通用系统用户表';
+
+-- ----------------------------
+-- Records of sys_user
+-- ----------------------------
+BEGIN;
+INSERT INTO `sys_user` VALUES (1, 'root', '系统根超级管理员', '911ef082b5de81151ba25d8442efb6e77bb380fd36ac349ee737ee5461ae6d3e8a13e4366a20e6dd71f95e8939fe375e203577568297cdbc34d598dd47475a7c', 1, 1, 0, '983708408@qq.com', '18127968606', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '商物云系统管理员1', NULL, NULL, NULL, '2019-11-17 18:13:34', 0);
+INSERT INTO `sys_user` VALUES (5, 'liuxl', '刘兴龙', '145acd2247e905cd1fb5f66f2f39ba6e92ea63b7575beff1c6344f37e4eefd59fe4363b754b3dab37412f69a33e7de5f220e2dda65806971432eaf643a6a4368', 2, 1, 0, 'zhangsan@gmail.com', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '测试人员-刘兴龙', 1, '2019-10-30 11:16:05', 1, '2019-11-26 14:10:52', 0);
+INSERT INTO `sys_user` VALUES (7, 'hwjie', '何伟杰', '64d7241bf258dac036d229fafa10edcf7aab380a1f79bf908ef7b4cc60134d48e8b3e0100caa31ff2a62c14346e803df325d33169285251c670ee771be9dadbb', 2, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 15:01:05', 1, '2019-11-26 14:10:59', 0);
+INSERT INTO `sys_user` VALUES (8, 'wanglsir', 'wanglsir', '6810ae5a577b26dd4916468fe5b21519', 2, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-17 18:11:00', 1, '2019-11-26 14:11:10', 0);
+INSERT INTO `sys_user` VALUES (9, 'zhangsan', '张三', '534e207105a443d66ce84fe20c53bc1b98b33d3aac11ca6bfe4d2b7a56ccc0e9', 2, 1, 0, 'zhangsan@163.com', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-27 17:53:32', 1, '2019-11-27 17:53:32', 0);
+INSERT INTO `sys_user` VALUES (10, 'lisi', '李四', 'e006e8d3f251ec5eca396907c60d1c2473f15ffa30f9b2fa668ab468d29e9c96', 2, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-28 14:59:30', 1, '2019-11-28 15:15:27', 0);
+INSERT INTO `sys_user` VALUES (11, 'wangwu', '王五', 'c91cb62f88fa25d36e33ead6da8fa361', 2, 1, 0, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 1, '2019-11-28 15:21:12', 1, '2019-11-28 15:21:12', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for umc_alarm_config
+-- ----------------------------
+DROP TABLE IF EXISTS `umc_alarm_config`;
+CREATE TABLE `umc_alarm_config` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `collect_id` int(11) DEFAULT NULL COMMENT '采集器id',
+  `template_id` int(11) DEFAULT NULL COMMENT '模版id',
+  `contact_group_id` int(11) DEFAULT NULL COMMENT '通知联系人分组ID',
+  `callback_url` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '触发回调地址',
+  `enable` int(1) DEFAULT '1' COMMENT '启用状态',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `contact_group_id` (`contact_group_id`),
+  KEY `collector_id` (`collect_id`),
+  KEY `template_id` (`template_id`),
+  CONSTRAINT `umc_alarm_config_ibfk_1` FOREIGN KEY (`contact_group_id`) REFERENCES `sys_contact_group` (`id`),
+  CONSTRAINT `umc_alarm_config_ibfk_2` FOREIGN KEY (`template_id`) REFERENCES `umc_alarm_template` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of umc_alarm_config
+-- ----------------------------
+BEGIN;
+INSERT INTO `umc_alarm_config` VALUES (4, 115, 3, 8, 'test', 1, '2019-08-12 17:36:38', '1', '2019-12-06 15:00:07', '1', 0);
+INSERT INTO `umc_alarm_config` VALUES (9, 115, 7, 8, '', 1, '2019-12-06 15:47:55', '1', '2019-12-06 15:47:55', '1', 0);
+INSERT INTO `umc_alarm_config` VALUES (10, 115, 5, 8, '', 1, '2019-12-06 15:51:23', '1', '2019-12-06 15:51:23', '1', 0);
+INSERT INTO `umc_alarm_config` VALUES (11, 115, 11, 8, '', 1, '2019-12-06 15:51:56', '1', '2019-12-06 15:51:56', '1', 0);
+INSERT INTO `umc_alarm_config` VALUES (12, 115, 12, 8, '', 1, '2019-12-06 15:52:31', '1', '2019-12-06 15:52:31', '1', 0);
+INSERT INTO `umc_alarm_config` VALUES (13, 115, 17, 8, '', 1, '2019-12-06 15:53:10', '1', '2019-12-06 15:53:10', '1', 0);
+INSERT INTO `umc_alarm_config` VALUES (14, 115, 19, 8, '', 1, '2019-12-06 15:53:23', '1', '2019-12-06 15:53:23', '1', 0);
+INSERT INTO `umc_alarm_config` VALUES (15, 115, 22, 8, '', 1, '2019-12-06 15:53:50', '1', '2019-12-06 15:53:50', '1', 0);
+INSERT INTO `umc_alarm_config` VALUES (16, 115, 23, 8, '', 1, '2019-12-06 15:54:01', '1', '2019-12-06 15:54:01', '1', 0);
+INSERT INTO `umc_alarm_config` VALUES (17, 115, 14, 8, '', 1, '2019-12-06 15:54:12', '1', '2019-12-06 15:54:12', '1', 0);
+INSERT INTO `umc_alarm_config` VALUES (18, 115, 15, 8, '', 1, '2019-12-06 15:54:28', '1', '2019-12-06 15:54:28', '1', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for umc_alarm_record
+-- ----------------------------
+DROP TABLE IF EXISTS `umc_alarm_record`;
+CREATE TABLE `umc_alarm_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '告警名称',
+  `template_id` int(11) DEFAULT NULL COMMENT '对应模版名称',
+  `gather_time` datetime DEFAULT NULL COMMENT '采集时间',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `alarm_type` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '通知类型:对应umc_alarm_config的alarm_type',
+  `alarm_note` text COLLATE utf8_bin COMMENT 'note内容：collector_addr，metric_name，tags，value，threshold，relateOperator',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `config_id` (`template_id`),
+  CONSTRAINT `umc_alarm_record_ibfk_1` FOREIGN KEY (`template_id`) REFERENCES `umc_alarm_template` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=247 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='umc告警记录表';
+
+-- ----------------------------
+-- Records of umc_alarm_record
+-- ----------------------------
+BEGIN;
+INSERT INTO `umc_alarm_record` VALUES (123, 'host.cpu', 3, '2019-12-09 11:41:10', '2019-12-09 11:41:10', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":60.998244293801896}]}');
+INSERT INTO `umc_alarm_record` VALUES (124, 'host.cpu', 3, '2019-12-09 12:15:03', '2019-12-09 12:15:03', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":54.88080301065716}]}');
+INSERT INTO `umc_alarm_record` VALUES (125, 'host.cpu', 3, '2019-12-09 12:15:13', '2019-12-09 12:15:13', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":53.930348258919125}]}');
+INSERT INTO `umc_alarm_record` VALUES (126, 'host.cpu', 3, '2019-12-09 12:26:14', '2019-12-09 12:26:14', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":91.0179640714954}]}');
+INSERT INTO `umc_alarm_record` VALUES (127, 'host.cpu', 3, '2019-12-09 12:26:34', '2019-12-09 12:26:34', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":64.81063456296708}]}');
+INSERT INTO `umc_alarm_record` VALUES (128, 'host.cpu', 3, '2019-12-09 12:26:24', '2019-12-09 12:26:44', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":69.55104088277363}]}');
+INSERT INTO `umc_alarm_record` VALUES (129, 'host.cpu', 3, '2019-12-09 12:26:44', '2019-12-09 12:27:04', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":80.34102306844211}]}');
+INSERT INTO `umc_alarm_record` VALUES (130, 'host.cpu', 3, '2019-12-09 12:27:04', '2019-12-09 12:27:04', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":74.02857859080775}]}');
+INSERT INTO `umc_alarm_record` VALUES (131, 'host.cpu', 3, '2019-12-09 12:26:54', '2019-12-09 12:27:17', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":91.32385938699508}]}');
+INSERT INTO `umc_alarm_record` VALUES (132, 'host.cpu', 3, '2019-12-09 12:27:14', '2019-12-09 12:27:18', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":73.58395989988612}]}');
+INSERT INTO `umc_alarm_record` VALUES (133, 'host.cpu', 3, '2019-12-09 12:27:24', '2019-12-09 12:27:24', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":60.65862242365244}]}');
+INSERT INTO `umc_alarm_record` VALUES (134, 'host.cpu', 3, '2019-12-09 12:27:34', '2019-12-09 12:27:34', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":69.22496225443581}]}');
+INSERT INTO `umc_alarm_record` VALUES (135, 'host.mem.usedPercent', 7, '2019-12-09 12:27:34', '2019-12-09 12:27:41', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":86.56340955212599}]}');
+INSERT INTO `umc_alarm_record` VALUES (136, 'host.cpu', 3, '2019-12-09 12:27:55', '2019-12-09 12:27:55', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":75.96996245250814}]}');
+INSERT INTO `umc_alarm_record` VALUES (137, 'host.cpu', 3, '2019-12-09 12:27:44', '2019-12-09 12:27:57', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":73.87928875587322}]}');
+INSERT INTO `umc_alarm_record` VALUES (138, 'host.mem.usedPercent', 7, '2019-12-09 12:27:55', '2019-12-09 12:28:00', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":86.49887282762133}]}');
+INSERT INTO `umc_alarm_record` VALUES (139, 'host.mem.usedPercent', 7, '2019-12-09 12:27:44', '2019-12-09 12:28:03', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":86.48935020695664}]}');
+INSERT INTO `umc_alarm_record` VALUES (140, 'host.cpu', 3, '2019-12-09 12:28:05', '2019-12-09 12:28:05', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":67.41374968532797}]}');
+INSERT INTO `umc_alarm_record` VALUES (141, 'host.mem.usedPercent', 7, '2019-12-09 12:28:05', '2019-12-09 12:28:09', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":86.65537931854547}]}');
+INSERT INTO `umc_alarm_record` VALUES (142, 'host.cpu', 3, '2019-12-09 12:28:15', '2019-12-09 12:28:15', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":3,\"compareValue\":54.53403667432477}]}');
+INSERT INTO `umc_alarm_record` VALUES (143, 'host.mem.usedPercent', 7, '2019-12-09 12:28:15', '2019-12-09 12:28:21', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":86.77932140719663}]}');
+INSERT INTO `umc_alarm_record` VALUES (144, 'host.mem.usedPercent', 7, '2019-12-09 12:28:25', '2019-12-09 12:28:25', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.11683170075484}]}');
+INSERT INTO `umc_alarm_record` VALUES (145, 'host.mem.usedPercent', 7, '2019-12-09 12:28:35', '2019-12-09 12:28:35', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.2741029617324}]}');
+INSERT INTO `umc_alarm_record` VALUES (146, 'host.mem.usedPercent', 7, '2019-12-09 12:28:45', '2019-12-09 12:28:45', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.1363210021152}]}');
+INSERT INTO `umc_alarm_record` VALUES (147, 'host.mem.usedPercent', 7, '2019-12-09 12:28:55', '2019-12-09 12:28:55', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.12817990154696}]}');
+INSERT INTO `umc_alarm_record` VALUES (148, 'host.cpu', 3, '2019-12-09 12:29:05', '2019-12-09 12:29:05', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":3,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"avg\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":1,\"compareValue\":50.49168339171471}]}');
+INSERT INTO `umc_alarm_record` VALUES (149, 'host.mem.usedPercent', 7, '2019-12-09 12:29:05', '2019-12-09 12:29:11', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":92.66370889792688}]}');
+INSERT INTO `umc_alarm_record` VALUES (150, 'host.cpu', 3, '2019-12-09 12:29:15', '2019-12-09 12:29:15', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":3,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"avg\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":50.0,\"alarmLevel\":1,\"compareValue\":52.20977850773451}]}');
+INSERT INTO `umc_alarm_record` VALUES (151, 'host.mem.usedPercent', 7, '2019-12-09 12:29:15', '2019-12-09 12:29:26', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":88.26857540114656}]}');
+INSERT INTO `umc_alarm_record` VALUES (152, 'host.mem.usedPercent', 7, '2019-12-09 12:29:35', '2019-12-09 12:29:53', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.45365123426485}]}');
+INSERT INTO `umc_alarm_record` VALUES (153, 'host.mem.usedPercent', 7, '2019-12-09 12:29:25', '2019-12-09 12:29:54', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.4950474971543}]}');
+INSERT INTO `umc_alarm_record` VALUES (154, 'host.mem.usedPercent', 7, '2019-12-09 12:29:55', '2019-12-09 12:29:55', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.65300951818007}]}');
+INSERT INTO `umc_alarm_record` VALUES (155, 'host.mem.usedPercent', 7, '2019-12-09 12:29:45', '2019-12-09 12:30:03', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.62387424614643}]}');
+INSERT INTO `umc_alarm_record` VALUES (156, 'host.mem.usedPercent', 7, '2019-12-09 12:30:05', '2019-12-09 12:30:05', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.6641603589584}]}');
+INSERT INTO `umc_alarm_record` VALUES (157, 'host.cpu', 3, '2019-12-09 12:30:25', '2019-12-09 12:30:25', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":80.0,\"alarmLevel\":3,\"compareValue\":91.40135372234538}]}');
+INSERT INTO `umc_alarm_record` VALUES (158, 'host.cpu', 3, '2019-12-09 12:30:35', '2019-12-09 12:30:35', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":80.0,\"alarmLevel\":3,\"compareValue\":100.00000000028801}]}');
+INSERT INTO `umc_alarm_record` VALUES (159, 'host.cpu', 3, '2019-12-09 12:30:46', '2019-12-09 12:30:46', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":80.0,\"alarmLevel\":3,\"compareValue\":99.9999999994422}]}');
+INSERT INTO `umc_alarm_record` VALUES (160, 'host.cpu', 3, '2019-12-09 12:30:56', '2019-12-09 12:31:05', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":90.0,\"alarmLevel\":3,\"compareValue\":100.00000000042999}]}');
+INSERT INTO `umc_alarm_record` VALUES (161, 'host.cpu', 3, '2019-12-09 12:31:06', '2019-12-09 12:31:06', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":90.0,\"alarmLevel\":3,\"compareValue\":99.99999999971311}]}');
+INSERT INTO `umc_alarm_record` VALUES (162, 'host.cpu', 3, '2019-12-09 12:31:16', '2019-12-09 12:31:16', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":90.0,\"alarmLevel\":3,\"compareValue\":100.0}]}');
+INSERT INTO `umc_alarm_record` VALUES (163, 'host.cpu', 3, '2019-12-09 12:31:26', '2019-12-09 12:31:27', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":90.0,\"alarmLevel\":3,\"compareValue\":99.99999999985751}]}');
+INSERT INTO `umc_alarm_record` VALUES (164, 'host.cpu', 3, '2019-12-09 12:31:36', '2019-12-09 12:31:37', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":90.0,\"alarmLevel\":3,\"compareValue\":100.00000000043043}]}');
+INSERT INTO `umc_alarm_record` VALUES (165, 'host.cpu', 3, '2019-12-09 12:31:47', '2019-12-09 12:31:47', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":90.0,\"alarmLevel\":3,\"compareValue\":100.00000000028652}]}');
+INSERT INTO `umc_alarm_record` VALUES (166, 'host.cpu', 3, '2019-12-09 12:31:57', '2019-12-09 12:31:57', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":90.0,\"alarmLevel\":3,\"compareValue\":99.99999999957053}]}');
+INSERT INTO `umc_alarm_record` VALUES (167, 'host.cpu', 3, '2019-12-09 12:32:07', '2019-12-09 12:32:07', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":90.0,\"alarmLevel\":3,\"compareValue\":99.97539370033488}]}');
+INSERT INTO `umc_alarm_record` VALUES (168, 'host.cpu', 3, '2019-12-09 12:35:27', '2019-12-09 12:35:38', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":90.0,\"alarmLevel\":3,\"compareValue\":99.55290610972489}]}');
+INSERT INTO `umc_alarm_record` VALUES (169, 'host.cpu', 3, '2019-12-09 12:42:28', '2019-12-09 12:42:28', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":95.0,\"alarmLevel\":3,\"compareValue\":97.68541562911408}]}');
+INSERT INTO `umc_alarm_record` VALUES (170, 'host.mem.usedPercent', 7, '2019-12-09 12:45:19', '2019-12-09 12:45:19', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":92.86504078197984}]}');
+INSERT INTO `umc_alarm_record` VALUES (171, 'host.mem.usedPercent', 7, '2019-12-09 12:45:29', '2019-12-09 12:45:29', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":86.41600629183725}]}');
+INSERT INTO `umc_alarm_record` VALUES (172, 'host.cpu', 3, '2019-12-09 12:46:49', '2019-12-09 12:46:49', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.99999999927925}]}');
+INSERT INTO `umc_alarm_record` VALUES (173, 'host.cpu', 3, '2019-12-09 12:46:59', '2019-12-09 12:46:59', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000100408}]}');
+INSERT INTO `umc_alarm_record` VALUES (174, 'host.cpu', 3, '2019-12-09 12:47:09', '2019-12-09 12:47:09', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.99999999899715}]}');
+INSERT INTO `umc_alarm_record` VALUES (175, 'host.cpu', 3, '2019-12-09 12:47:19', '2019-12-09 12:47:20', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000057474}]}');
+INSERT INTO `umc_alarm_record` VALUES (176, 'host.cpu', 3, '2019-12-09 12:47:30', '2019-12-09 12:47:30', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.9999999998567}]}');
+INSERT INTO `umc_alarm_record` VALUES (177, 'host.cpu', 3, '2019-12-09 12:47:40', '2019-12-09 12:47:40', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000014401}]}');
+INSERT INTO `umc_alarm_record` VALUES (178, 'host.cpu', 3, '2019-12-09 12:47:50', '2019-12-09 12:47:50', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000014305}]}');
+INSERT INTO `umc_alarm_record` VALUES (179, 'host.cpu', 3, '2019-12-09 12:48:00', '2019-12-09 12:48:00', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.99999999928157}]}');
+INSERT INTO `umc_alarm_record` VALUES (180, 'host.mem.usedPercent', 7, '2019-12-09 18:02:50', '2019-12-09 18:02:50', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":90.62532533564772}]}');
+INSERT INTO `umc_alarm_record` VALUES (181, 'host.mem.usedPercent', 7, '2019-12-09 18:03:00', '2019-12-09 18:03:00', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":90.311991643777}]}');
+INSERT INTO `umc_alarm_record` VALUES (182, 'host.mem.usedPercent', 7, '2019-12-09 18:03:20', '2019-12-09 18:03:20', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.21647383770987}]}');
+INSERT INTO `umc_alarm_record` VALUES (183, 'host.mem.usedPercent', 7, '2019-12-09 18:03:30', '2019-12-09 18:03:30', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":86.58395966356038}]}');
+INSERT INTO `umc_alarm_record` VALUES (184, 'host.mem.usedPercent', 7, '2019-12-09 18:03:40', '2019-12-09 18:03:41', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":88.21395601733413}]}');
+INSERT INTO `umc_alarm_record` VALUES (185, 'host.mem.usedPercent', 7, '2019-12-09 18:03:51', '2019-12-09 18:03:51', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.02394618387144}]}');
+INSERT INTO `umc_alarm_record` VALUES (186, 'host.mem.usedPercent', 7, '2019-12-09 18:04:01', '2019-12-09 18:04:01', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.46672337477729}]}');
+INSERT INTO `umc_alarm_record` VALUES (187, 'host.mem.usedPercent', 7, '2019-12-09 18:04:11', '2019-12-09 18:04:11', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.54011662990014}]}');
+INSERT INTO `umc_alarm_record` VALUES (188, 'host.mem.usedPercent', 7, '2019-12-09 18:04:21', '2019-12-09 18:04:21', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.47530853537654}]}');
+INSERT INTO `umc_alarm_record` VALUES (189, 'host.mem.usedPercent', 7, '2019-12-09 18:04:31', '2019-12-09 18:04:31', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.43768678275053}]}');
+INSERT INTO `umc_alarm_record` VALUES (190, 'host.mem.usedPercent', 7, '2019-12-09 18:04:41', '2019-12-09 18:04:41', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.90333306525264}]}');
+INSERT INTO `umc_alarm_record` VALUES (191, 'host.mem.usedPercent', 7, '2019-12-09 18:04:51', '2019-12-09 18:04:51', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.88855573422119}]}');
+INSERT INTO `umc_alarm_record` VALUES (192, 'host.mem.usedPercent', 7, '2019-12-09 18:05:01', '2019-12-09 18:05:01', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.80280280823564}]}');
+INSERT INTO `umc_alarm_record` VALUES (193, 'host.mem.usedPercent', 7, '2019-12-09 18:05:11', '2019-12-09 18:05:11', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.59606819380555}]}');
+INSERT INTO `umc_alarm_record` VALUES (194, 'host.mem.usedPercent', 7, '2019-12-09 18:05:21', '2019-12-09 18:05:21', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.55718827109173}]}');
+INSERT INTO `umc_alarm_record` VALUES (195, 'host.mem.usedPercent', 7, '2019-12-09 18:05:31', '2019-12-09 18:05:31', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":95.43331131124513}]}');
+INSERT INTO `umc_alarm_record` VALUES (196, 'host.mem.usedPercent', 7, '2019-12-09 18:05:41', '2019-12-09 18:05:42', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":97.64327473550057}]}');
+INSERT INTO `umc_alarm_record` VALUES (197, 'host.mem.usedPercent', 7, '2019-12-09 18:05:52', '2019-12-09 18:05:53', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.97934134055802}]}');
+INSERT INTO `umc_alarm_record` VALUES (198, 'host.mem.usedPercent', 7, '2019-12-09 18:06:03', '2019-12-09 18:06:03', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":88.6898896905543}]}');
+INSERT INTO `umc_alarm_record` VALUES (199, 'host.mem.usedPercent', 7, '2019-12-09 18:06:13', '2019-12-09 18:06:13', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.13836565185792}]}');
+INSERT INTO `umc_alarm_record` VALUES (200, 'host.mem.usedPercent', 7, '2019-12-09 18:06:23', '2019-12-09 18:06:23', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.12252751075242}]}');
+INSERT INTO `umc_alarm_record` VALUES (201, 'host.mem.usedPercent', 7, '2019-12-09 18:06:33', '2019-12-09 18:06:33', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.0748897374273}]}');
+INSERT INTO `umc_alarm_record` VALUES (202, 'host.mem.usedPercent', 7, '2019-12-09 18:06:43', '2019-12-09 18:06:43', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.06201199652844}]}');
+INSERT INTO `umc_alarm_record` VALUES (203, 'host.mem.usedPercent', 7, '2019-12-09 18:06:53', '2019-12-09 18:06:53', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":89.06726670689523}]}');
+INSERT INTO `umc_alarm_record` VALUES (204, 'host.cpu', 3, '2019-12-09 18:07:13', '2019-12-09 18:07:13', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000071985}]}');
+INSERT INTO `umc_alarm_record` VALUES (205, 'host.cpu', 3, '2019-12-09 18:07:23', '2019-12-09 18:07:23', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.99999999985634}]}');
+INSERT INTO `umc_alarm_record` VALUES (206, 'host.cpu', 3, '2019-12-09 18:07:33', '2019-12-09 18:07:33', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000014373}]}');
+INSERT INTO `umc_alarm_record` VALUES (207, 'host.cpu', 3, '2019-12-09 18:07:43', '2019-12-09 18:07:43', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.99999999928228}]}');
+INSERT INTO `umc_alarm_record` VALUES (208, 'host.cpu', 3, '2019-12-09 18:07:53', '2019-12-09 18:07:54', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000085979}]}');
+INSERT INTO `umc_alarm_record` VALUES (209, 'host.cpu', 3, '2019-12-09 18:08:04', '2019-12-09 18:08:04', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.9999999998565}]}');
+INSERT INTO `umc_alarm_record` VALUES (210, 'host.cpu', 3, '2019-12-09 18:08:14', '2019-12-09 18:08:14', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000028801}]}');
+INSERT INTO `umc_alarm_record` VALUES (211, 'host.cpu', 3, '2019-12-09 18:08:24', '2019-12-09 18:08:24', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.99999999913872}]}');
+INSERT INTO `umc_alarm_record` VALUES (212, 'host.cpu', 3, '2019-12-09 18:08:34', '2019-12-09 18:08:34', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000042999}]}');
+INSERT INTO `umc_alarm_record` VALUES (213, 'host.cpu', 3, '2019-12-09 18:08:44', '2019-12-09 18:08:44', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.99999999957053}]}');
+INSERT INTO `umc_alarm_record` VALUES (214, 'host.cpu', 3, '2019-12-09 18:08:54', '2019-12-09 18:08:54', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.99999999971311}]}');
+INSERT INTO `umc_alarm_record` VALUES (215, 'host.cpu', 3, '2019-12-09 18:09:04', '2019-12-09 18:09:04', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000086426}]}');
+INSERT INTO `umc_alarm_record` VALUES (216, 'host.mem.usedPercent', 7, '2019-12-09 18:17:15', '2019-12-09 18:17:15', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":86.38201102946437}]}');
+INSERT INTO `umc_alarm_record` VALUES (217, 'host.mem.usedPercent', 7, '2019-12-09 18:17:25', '2019-12-09 18:17:25', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.16802195432794}]}');
+INSERT INTO `umc_alarm_record` VALUES (218, 'host.mem.usedPercent', 7, '2019-12-09 18:17:35', '2019-12-09 18:17:35', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.15043224310017}]}');
+INSERT INTO `umc_alarm_record` VALUES (219, 'host.mem.usedPercent', 7, '2019-12-09 18:17:45', '2019-12-09 18:17:45', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.07844517807547}]}');
+INSERT INTO `umc_alarm_record` VALUES (220, 'host.mem.usedPercent', 7, '2019-12-09 18:17:55', '2019-12-09 18:17:56', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.20068503660782}]}');
+INSERT INTO `umc_alarm_record` VALUES (221, 'host.mem.usedPercent', 7, '2019-12-09 18:18:05', '2019-12-09 18:18:06', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.56740461220485}]}');
+INSERT INTO `umc_alarm_record` VALUES (222, 'host.mem.usedPercent', 7, '2019-12-09 18:18:16', '2019-12-09 18:18:16', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.52482418923273}]}');
+INSERT INTO `umc_alarm_record` VALUES (223, 'host.mem.usedPercent', 7, '2019-12-09 18:18:26', '2019-12-09 18:18:26', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.40845579111021}]}');
+INSERT INTO `umc_alarm_record` VALUES (224, 'host.mem.usedPercent', 7, '2019-12-09 18:18:36', '2019-12-09 18:18:36', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.73175616367658}]}');
+INSERT INTO `umc_alarm_record` VALUES (225, 'host.mem.usedPercent', 7, '2019-12-09 18:18:46', '2019-12-09 18:18:46', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":94.89614669375104}]}');
+INSERT INTO `umc_alarm_record` VALUES (226, 'host.mem.usedPercent', 7, '2019-12-09 18:18:56', '2019-12-09 18:18:56', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.80717235894063}]}');
+INSERT INTO `umc_alarm_record` VALUES (227, 'host.mem.usedPercent', 7, '2019-12-09 18:19:06', '2019-12-09 18:19:06', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":93.85877312134237}]}');
+INSERT INTO `umc_alarm_record` VALUES (228, 'host.mem.usedPercent', 7, '2019-12-09 18:19:16', '2019-12-09 18:19:16', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.48406934638804}]}');
+INSERT INTO `umc_alarm_record` VALUES (229, 'host.mem.usedPercent', 7, '2019-12-09 18:19:26', '2019-12-09 18:19:26', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.45078951406511}]}');
+INSERT INTO `umc_alarm_record` VALUES (230, 'host.mem.usedPercent', 7, '2019-12-09 18:19:36', '2019-12-09 18:19:36', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.43204031275641}]}');
+INSERT INTO `umc_alarm_record` VALUES (231, 'host.mem.usedPercent', 7, '2019-12-09 18:19:46', '2019-12-09 18:19:46', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.54636110073601}]}');
+INSERT INTO `umc_alarm_record` VALUES (232, 'host.mem.usedPercent', 7, '2019-12-09 18:19:56', '2019-12-09 18:19:56', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.mem.usedPercent\",\"matchedTag\":{},\"matchedRules\":[{\"id\":10,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":7,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":60000,\"value\":86.0,\"alarmLevel\":1,\"compareValue\":87.68883036068036}]}');
+INSERT INTO `umc_alarm_record` VALUES (233, 'host.cpu', 3, '2019-12-09 18:20:16', '2019-12-09 18:20:16', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.99999999942581}]}');
+INSERT INTO `umc_alarm_record` VALUES (234, 'host.cpu', 3, '2019-12-09 18:20:26', '2019-12-09 18:20:26', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.99999999971298}]}');
+INSERT INTO `umc_alarm_record` VALUES (235, 'host.cpu', 3, '2019-12-09 18:20:36', '2019-12-09 18:20:37', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.0}]}');
+INSERT INTO `umc_alarm_record` VALUES (236, 'host.cpu', 3, '2019-12-09 18:20:47', '2019-12-09 18:20:47', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.0}]}');
+INSERT INTO `umc_alarm_record` VALUES (237, 'host.cpu', 3, '2019-12-09 18:20:57', '2019-12-09 18:20:57', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000043106}]}');
+INSERT INTO `umc_alarm_record` VALUES (238, 'host.cpu', 3, '2019-12-09 18:21:07', '2019-12-09 18:21:07', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.0}]}');
+INSERT INTO `umc_alarm_record` VALUES (239, 'host.cpu', 3, '2019-12-09 18:21:17', '2019-12-09 18:21:17', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.9999999998567}]}');
+INSERT INTO `umc_alarm_record` VALUES (240, 'host.cpu', 3, '2019-12-09 18:21:27', '2019-12-09 18:21:27', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.99999999957294}]}');
+INSERT INTO `umc_alarm_record` VALUES (241, 'host.cpu', 3, '2019-12-09 18:21:37', '2019-12-09 18:21:37', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000085893}]}');
+INSERT INTO `umc_alarm_record` VALUES (242, 'host.cpu', 3, '2019-12-09 18:21:47', '2019-12-09 18:21:47', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.00000000028815}]}');
+INSERT INTO `umc_alarm_record` VALUES (243, 'host.cpu', 3, '2019-12-09 18:37:29', '2019-12-09 18:37:29', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.42743340791634}]}');
+INSERT INTO `umc_alarm_record` VALUES (244, 'host.cpu', 3, '2019-12-09 18:40:20', '2019-12-09 18:40:20', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":99.00497512403521}]}');
+INSERT INTO `umc_alarm_record` VALUES (245, 'host.cpu', 3, '2019-12-10 16:27:04', '2019-12-10 16:27:20', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":3,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"avg\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":95.0,\"alarmLevel\":1,\"compareValue\":100.0},{\"id\":8,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"latest\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":99.0,\"alarmLevel\":3,\"compareValue\":100.0}]}');
+INSERT INTO `umc_alarm_record` VALUES (246, 'host.cpu', 3, '2019-12-10 16:27:14', '2019-12-10 16:27:21', NULL, '{\"host\":\"owner-node1\",\"endpoint\":\"agent_0001\",\"metricName\":\"host.cpu\",\"matchedTag\":{},\"matchedRules\":[{\"id\":3,\"createBy\":null,\"createDate\":null,\"updateBy\":null,\"updateDate\":null,\"delFlag\":0,\"enable\":null,\"remark\":null,\"templateId\":3,\"aggregator\":\"avg\",\"relateOperator\":3,\"logicalOperator\":1,\"queueTimeWindow\":300000,\"value\":95.0,\"alarmLevel\":1,\"compareValue\":97.70029673591914}]}');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for umc_alarm_record_rule
+-- ----------------------------
+DROP TABLE IF EXISTS `umc_alarm_record_rule`;
+CREATE TABLE `umc_alarm_record_rule` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `record_id` int(11) DEFAULT NULL COMMENT '记录id',
+  `rule_id` int(11) DEFAULT NULL COMMENT '匹配规则id',
+  `compare_value` double DEFAULT NULL COMMENT '比较值,聚合运算后得出的值',
+  PRIMARY KEY (`id`),
+  KEY `record_id` (`record_id`),
+  KEY `rule_id` (`rule_id`),
+  CONSTRAINT `umc_alarm_record_rule_ibfk_1` FOREIGN KEY (`record_id`) REFERENCES `umc_alarm_record` (`id`),
+  CONSTRAINT `umc_alarm_record_rule_ibfk_2` FOREIGN KEY (`rule_id`) REFERENCES `umc_alarm_rule` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=298 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='告警记录对应规则表';
+
+-- ----------------------------
+-- Records of umc_alarm_record_rule
+-- ----------------------------
+BEGIN;
+INSERT INTO `umc_alarm_record_rule` VALUES (173, 123, 8, 60.998244293801896);
+INSERT INTO `umc_alarm_record_rule` VALUES (174, 124, 8, 54.88080301065716);
+INSERT INTO `umc_alarm_record_rule` VALUES (175, 125, 8, 53.930348258919125);
+INSERT INTO `umc_alarm_record_rule` VALUES (176, 126, 8, 91.0179640714954);
+INSERT INTO `umc_alarm_record_rule` VALUES (177, 127, 8, 64.81063456296708);
+INSERT INTO `umc_alarm_record_rule` VALUES (178, 128, 8, 69.55104088277363);
+INSERT INTO `umc_alarm_record_rule` VALUES (179, 129, 8, 80.34102306844211);
+INSERT INTO `umc_alarm_record_rule` VALUES (180, 130, 8, 74.02857859080775);
+INSERT INTO `umc_alarm_record_rule` VALUES (181, 131, 8, 91.32385938699508);
+INSERT INTO `umc_alarm_record_rule` VALUES (182, 132, 8, 73.58395989988612);
+INSERT INTO `umc_alarm_record_rule` VALUES (183, 133, 8, 60.65862242365244);
+INSERT INTO `umc_alarm_record_rule` VALUES (184, 134, 8, 69.22496225443581);
+INSERT INTO `umc_alarm_record_rule` VALUES (185, 135, 10, 86.56340955212599);
+INSERT INTO `umc_alarm_record_rule` VALUES (186, 136, 8, 75.96996245250814);
+INSERT INTO `umc_alarm_record_rule` VALUES (187, 137, 8, 73.87928875587322);
+INSERT INTO `umc_alarm_record_rule` VALUES (188, 138, 10, 86.49887282762133);
+INSERT INTO `umc_alarm_record_rule` VALUES (189, 139, 10, 86.48935020695664);
+INSERT INTO `umc_alarm_record_rule` VALUES (190, 140, 8, 67.41374968532797);
+INSERT INTO `umc_alarm_record_rule` VALUES (191, 141, 10, 86.65537931854547);
+INSERT INTO `umc_alarm_record_rule` VALUES (192, 142, 8, 54.53403667432477);
+INSERT INTO `umc_alarm_record_rule` VALUES (193, 143, 10, 86.77932140719663);
+INSERT INTO `umc_alarm_record_rule` VALUES (194, 144, 10, 87.11683170075484);
+INSERT INTO `umc_alarm_record_rule` VALUES (195, 145, 10, 87.2741029617324);
+INSERT INTO `umc_alarm_record_rule` VALUES (196, 146, 10, 87.1363210021152);
+INSERT INTO `umc_alarm_record_rule` VALUES (197, 147, 10, 87.12817990154696);
+INSERT INTO `umc_alarm_record_rule` VALUES (198, 148, 3, 50.49168339171471);
+INSERT INTO `umc_alarm_record_rule` VALUES (199, 149, 10, 92.66370889792688);
+INSERT INTO `umc_alarm_record_rule` VALUES (200, 150, 3, 52.20977850773451);
+INSERT INTO `umc_alarm_record_rule` VALUES (201, 151, 10, 88.26857540114656);
+INSERT INTO `umc_alarm_record_rule` VALUES (202, 152, 10, 87.45365123426485);
+INSERT INTO `umc_alarm_record_rule` VALUES (203, 153, 10, 87.4950474971543);
+INSERT INTO `umc_alarm_record_rule` VALUES (204, 154, 10, 87.65300951818007);
+INSERT INTO `umc_alarm_record_rule` VALUES (205, 155, 10, 87.62387424614643);
+INSERT INTO `umc_alarm_record_rule` VALUES (206, 156, 10, 87.6641603589584);
+INSERT INTO `umc_alarm_record_rule` VALUES (207, 157, 8, 91.40135372234538);
+INSERT INTO `umc_alarm_record_rule` VALUES (208, 158, 8, 100.00000000028801);
+INSERT INTO `umc_alarm_record_rule` VALUES (209, 159, 8, 99.9999999994422);
+INSERT INTO `umc_alarm_record_rule` VALUES (210, 160, 8, 100.00000000042999);
+INSERT INTO `umc_alarm_record_rule` VALUES (211, 161, 8, 99.99999999971311);
+INSERT INTO `umc_alarm_record_rule` VALUES (212, 162, 8, 100);
+INSERT INTO `umc_alarm_record_rule` VALUES (213, 163, 8, 99.99999999985751);
+INSERT INTO `umc_alarm_record_rule` VALUES (214, 164, 8, 100.00000000043043);
+INSERT INTO `umc_alarm_record_rule` VALUES (215, 165, 8, 100.00000000028652);
+INSERT INTO `umc_alarm_record_rule` VALUES (216, 166, 8, 99.99999999957053);
+INSERT INTO `umc_alarm_record_rule` VALUES (217, 167, 8, 99.97539370033488);
+INSERT INTO `umc_alarm_record_rule` VALUES (218, 168, 8, 99.55290610972489);
+INSERT INTO `umc_alarm_record_rule` VALUES (219, 169, 8, 97.68541562911408);
+INSERT INTO `umc_alarm_record_rule` VALUES (220, 170, 10, 92.86504078197984);
+INSERT INTO `umc_alarm_record_rule` VALUES (221, 171, 10, 86.41600629183725);
+INSERT INTO `umc_alarm_record_rule` VALUES (222, 172, 8, 99.99999999927925);
+INSERT INTO `umc_alarm_record_rule` VALUES (223, 173, 8, 100.00000000100408);
+INSERT INTO `umc_alarm_record_rule` VALUES (224, 174, 8, 99.99999999899715);
+INSERT INTO `umc_alarm_record_rule` VALUES (225, 175, 8, 100.00000000057474);
+INSERT INTO `umc_alarm_record_rule` VALUES (226, 176, 8, 99.9999999998567);
+INSERT INTO `umc_alarm_record_rule` VALUES (227, 177, 8, 100.00000000014401);
+INSERT INTO `umc_alarm_record_rule` VALUES (228, 178, 8, 100.00000000014305);
+INSERT INTO `umc_alarm_record_rule` VALUES (229, 179, 8, 99.99999999928157);
+INSERT INTO `umc_alarm_record_rule` VALUES (230, 180, 10, 90.62532533564772);
+INSERT INTO `umc_alarm_record_rule` VALUES (231, 181, 10, 90.311991643777);
+INSERT INTO `umc_alarm_record_rule` VALUES (232, 182, 10, 87.21647383770987);
+INSERT INTO `umc_alarm_record_rule` VALUES (233, 183, 10, 86.58395966356038);
+INSERT INTO `umc_alarm_record_rule` VALUES (234, 184, 10, 88.21395601733413);
+INSERT INTO `umc_alarm_record_rule` VALUES (235, 185, 10, 89.02394618387144);
+INSERT INTO `umc_alarm_record_rule` VALUES (236, 186, 10, 89.46672337477729);
+INSERT INTO `umc_alarm_record_rule` VALUES (237, 187, 10, 89.54011662990014);
+INSERT INTO `umc_alarm_record_rule` VALUES (238, 188, 10, 89.47530853537654);
+INSERT INTO `umc_alarm_record_rule` VALUES (239, 189, 10, 89.43768678275053);
+INSERT INTO `umc_alarm_record_rule` VALUES (240, 190, 10, 89.90333306525264);
+INSERT INTO `umc_alarm_record_rule` VALUES (241, 191, 10, 89.88855573422119);
+INSERT INTO `umc_alarm_record_rule` VALUES (242, 192, 10, 89.80280280823564);
+INSERT INTO `umc_alarm_record_rule` VALUES (243, 193, 10, 89.59606819380555);
+INSERT INTO `umc_alarm_record_rule` VALUES (244, 194, 10, 89.55718827109173);
+INSERT INTO `umc_alarm_record_rule` VALUES (245, 195, 10, 95.43331131124513);
+INSERT INTO `umc_alarm_record_rule` VALUES (246, 196, 10, 97.64327473550057);
+INSERT INTO `umc_alarm_record_rule` VALUES (247, 197, 10, 89.97934134055802);
+INSERT INTO `umc_alarm_record_rule` VALUES (248, 198, 10, 88.6898896905543);
+INSERT INTO `umc_alarm_record_rule` VALUES (249, 199, 10, 89.13836565185792);
+INSERT INTO `umc_alarm_record_rule` VALUES (250, 200, 10, 89.12252751075242);
+INSERT INTO `umc_alarm_record_rule` VALUES (251, 201, 10, 89.0748897374273);
+INSERT INTO `umc_alarm_record_rule` VALUES (252, 202, 10, 89.06201199652844);
+INSERT INTO `umc_alarm_record_rule` VALUES (253, 203, 10, 89.06726670689523);
+INSERT INTO `umc_alarm_record_rule` VALUES (254, 204, 8, 100.00000000071985);
+INSERT INTO `umc_alarm_record_rule` VALUES (255, 205, 8, 99.99999999985634);
+INSERT INTO `umc_alarm_record_rule` VALUES (256, 206, 8, 100.00000000014373);
+INSERT INTO `umc_alarm_record_rule` VALUES (257, 207, 8, 99.99999999928228);
+INSERT INTO `umc_alarm_record_rule` VALUES (258, 208, 8, 100.00000000085979);
+INSERT INTO `umc_alarm_record_rule` VALUES (259, 209, 8, 99.9999999998565);
+INSERT INTO `umc_alarm_record_rule` VALUES (260, 210, 8, 100.00000000028801);
+INSERT INTO `umc_alarm_record_rule` VALUES (261, 211, 8, 99.99999999913872);
+INSERT INTO `umc_alarm_record_rule` VALUES (262, 212, 8, 100.00000000042999);
+INSERT INTO `umc_alarm_record_rule` VALUES (263, 213, 8, 99.99999999957053);
+INSERT INTO `umc_alarm_record_rule` VALUES (264, 214, 8, 99.99999999971311);
+INSERT INTO `umc_alarm_record_rule` VALUES (265, 215, 8, 100.00000000086426);
+INSERT INTO `umc_alarm_record_rule` VALUES (266, 216, 10, 86.38201102946437);
+INSERT INTO `umc_alarm_record_rule` VALUES (267, 217, 10, 87.16802195432794);
+INSERT INTO `umc_alarm_record_rule` VALUES (268, 218, 10, 87.15043224310017);
+INSERT INTO `umc_alarm_record_rule` VALUES (269, 219, 10, 87.07844517807547);
+INSERT INTO `umc_alarm_record_rule` VALUES (270, 220, 10, 87.20068503660782);
+INSERT INTO `umc_alarm_record_rule` VALUES (271, 221, 10, 87.56740461220485);
+INSERT INTO `umc_alarm_record_rule` VALUES (272, 222, 10, 87.52482418923273);
+INSERT INTO `umc_alarm_record_rule` VALUES (273, 223, 10, 87.40845579111021);
+INSERT INTO `umc_alarm_record_rule` VALUES (274, 224, 10, 87.73175616367658);
+INSERT INTO `umc_alarm_record_rule` VALUES (275, 225, 10, 94.89614669375104);
+INSERT INTO `umc_alarm_record_rule` VALUES (276, 226, 10, 87.80717235894063);
+INSERT INTO `umc_alarm_record_rule` VALUES (277, 227, 10, 93.85877312134237);
+INSERT INTO `umc_alarm_record_rule` VALUES (278, 228, 10, 87.48406934638804);
+INSERT INTO `umc_alarm_record_rule` VALUES (279, 229, 10, 87.45078951406511);
+INSERT INTO `umc_alarm_record_rule` VALUES (280, 230, 10, 87.43204031275641);
+INSERT INTO `umc_alarm_record_rule` VALUES (281, 231, 10, 87.54636110073601);
+INSERT INTO `umc_alarm_record_rule` VALUES (282, 232, 10, 87.68883036068036);
+INSERT INTO `umc_alarm_record_rule` VALUES (283, 233, 8, 99.99999999942581);
+INSERT INTO `umc_alarm_record_rule` VALUES (284, 234, 8, 99.99999999971298);
+INSERT INTO `umc_alarm_record_rule` VALUES (285, 235, 8, 100);
+INSERT INTO `umc_alarm_record_rule` VALUES (286, 236, 8, 100);
+INSERT INTO `umc_alarm_record_rule` VALUES (287, 237, 8, 100.00000000043106);
+INSERT INTO `umc_alarm_record_rule` VALUES (288, 238, 8, 100);
+INSERT INTO `umc_alarm_record_rule` VALUES (289, 239, 8, 99.9999999998567);
+INSERT INTO `umc_alarm_record_rule` VALUES (290, 240, 8, 99.99999999957294);
+INSERT INTO `umc_alarm_record_rule` VALUES (291, 241, 8, 100.00000000085893);
+INSERT INTO `umc_alarm_record_rule` VALUES (292, 242, 8, 100.00000000028815);
+INSERT INTO `umc_alarm_record_rule` VALUES (293, 243, 8, 99.42743340791634);
+INSERT INTO `umc_alarm_record_rule` VALUES (294, 244, 8, 99.00497512403521);
+INSERT INTO `umc_alarm_record_rule` VALUES (295, 245, 3, 100);
+INSERT INTO `umc_alarm_record_rule` VALUES (296, 245, 8, 100);
+INSERT INTO `umc_alarm_record_rule` VALUES (297, 246, 3, 97.70029673591914);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for umc_alarm_rule
+-- ----------------------------
+DROP TABLE IF EXISTS `umc_alarm_rule`;
+CREATE TABLE `umc_alarm_rule` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `template_id` int(11) NOT NULL COMMENT '模版id',
+  `aggregator` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '聚合器',
+  `relate_operator` int(32) DEFAULT NULL COMMENT 'metric值大小的条件运算（>|<|=|<=|>=）',
+  `logical_operator` int(11) DEFAULT NULL COMMENT 'metric匹配逻辑运算（and/连续出现才匹配|or/只要出现就匹配|not/没有出现则匹配）',
+  `queue_time_window` bigint(11) DEFAULT NULL COMMENT 'metric滑动队列时间窗口，单位:ms',
+  `value` double DEFAULT NULL COMMENT '告警阀值（比较值）',
+  `alarm_level` int(11) DEFAULT NULL COMMENT '告警等级{严重,一般}',
+  `del_flag` int(1) DEFAULT '0',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `template_id` (`template_id`),
+  KEY `umc_alarm_rule_ibfk_2` (`aggregator`),
+  CONSTRAINT `umc_alarm_rule_ibfk_1` FOREIGN KEY (`template_id`) REFERENCES `umc_alarm_template` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='umc告警规则表';
+
+-- ----------------------------
+-- Records of umc_alarm_rule
+-- ----------------------------
+BEGIN;
+INSERT INTO `umc_alarm_rule` VALUES (3, 3, 'avg', 3, 1, 300000, 95, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (4, 3, 'avg', 1, 1, 300000, 90, 2, 1);
+INSERT INTO `umc_alarm_rule` VALUES (6, 5, 'avg', 1, 1, 30000, 12, 1, NULL);
+INSERT INTO `umc_alarm_rule` VALUES (8, 3, 'latest', 3, 1, 300000, 99, 3, 0);
+INSERT INTO `umc_alarm_rule` VALUES (9, 5, 'latest', 3, 1, 600000, 80, 2, 0);
+INSERT INTO `umc_alarm_rule` VALUES (10, 7, 'latest', 3, 1, 60000, 86, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (11, 8, 'latest', 5, 1, 60000, 1073741824, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (12, 9, 'latest', 3, 1, 60000, 80, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (13, 10, 'avg', 3, 1, 600000, 512, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (14, 11, 'latest', 4, 1, 600000, 3, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (15, 12, 'latest', 2, 1, 60000, 10, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (16, 13, 'latest', 2, 1, 60000, 10, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (17, 14, 'latest', 2, 1, 60000, 1000, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (18, 15, 'latest', 3, 1, 600, 500, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (19, 16, 'latest', 2, 1, 60000, 1, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (20, 17, 'latest', 2, 1, 60000, 100, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (21, 18, 'latest', 2, 1, 60000, 1073741824, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (22, 19, 'latest', 2, 1, 60000, 1288490188, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (23, 20, 'latest', 2, 1, 60000, 512, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (24, 21, 'latest', 2, 1, 60000, 512, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (25, 22, 'latest', 2, 1, 60000, 80, 1, 0);
+INSERT INTO `umc_alarm_rule` VALUES (26, 23, 'latest', 2, 1, 60000, 80, 1, 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for umc_alarm_template
+-- ----------------------------
+DROP TABLE IF EXISTS `umc_alarm_template`;
+CREATE TABLE `umc_alarm_template` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '模板名称',
+  `metric_id` int(11) DEFAULT NULL COMMENT '度量id',
+  `tags` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '标签，如采集上行附加信息(ip=10.0.0.160, kafkaTopic=abc)',
+  `notify_level` int(11) DEFAULT NULL COMMENT '高于此等级才告警',
+  `enable` int(11) DEFAULT NULL COMMENT '启用状态',
+  `remark` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `del_flag` int(1) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='umc告警模版表';
+
+-- ----------------------------
+-- Records of umc_alarm_template
+-- ----------------------------
+BEGIN;
+INSERT INTO `umc_alarm_template` VALUES (3, 'cpu', 6, '', 2, 1, NULL, '2019-08-08 18:02:45', '1', '2019-12-09 18:00:58', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (5, 'disk-used-percent', 8, '', 1, 1, NULL, '2019-08-23 14:53:02', '1', '2019-12-06 11:47:24', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (7, 'mem-userdPercent', 7, '', 1, 1, NULL, '2019-12-06 11:23:44', '1', '2019-12-06 14:02:13', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (8, 'men-free', 27, '', 1, 1, NULL, '2019-12-06 11:25:47', '1', '2019-12-06 14:02:23', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (9, 'dick-inodesUsedPercent', 39, '', 1, 1, NULL, '2019-12-06 14:05:09', '1', '2019-12-06 14:05:09', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (10, 'host-net-closeWait', 44, '', 1, 1, NULL, '2019-12-06 14:07:04', '1', '2019-12-06 14:07:04', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (11, 'kafka-brokers', 49, '', 1, 1, NULL, '2019-12-06 14:08:27', '1', '2019-12-06 14:08:27', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (12, 'kafka_consumergroup_lag', 60, '', 1, 1, NULL, '2019-12-06 14:09:15', '1', '2019-12-06 14:09:15', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (13, 'kafka_consumergroup_lag_sum', 62, '', 1, 1, NULL, '2019-12-06 14:10:04', '1', '2019-12-06 14:10:04', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (14, 'zookeeper.zk.max.latency', 64, '', 1, 1, NULL, '2019-12-06 14:11:03', '1', '2019-12-06 14:11:03', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (15, 'zookeeper.zk.num.alive.connections', 68, '', 1, 1, NULL, '2019-12-06 14:11:43', '1', '2019-12-06 14:11:43', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (16, 'zookeeper.zk.outstanding.requests', 69, '', 1, 1, NULL, '2019-12-06 14:12:26', '1', '2019-12-09 10:20:35', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (17, 'redis.clients', 81, '', 1, 1, NULL, '2019-12-06 14:13:18', '1', '2019-12-06 14:13:18', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (18, 'redis.used.memory', 85, '', 1, 1, NULL, '2019-12-06 14:14:18', '1', '2019-12-06 14:14:18', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (19, 'redis.used.memory.peak', 86, '', 1, 1, NULL, '2019-12-06 14:15:01', '1', '2019-12-06 14:15:01', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (20, 'redis.instantaneous.input.kbps', 138, '', 1, 1, NULL, '2019-12-06 14:16:02', '1', '2019-12-09 10:18:42', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (21, 'redis.instantaneous.output.kbps', 139, '', 1, 1, NULL, '2019-12-06 14:16:30', '1', '2019-12-09 10:18:55', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (22, 'docker.cpu.perc', 171, '', 1, 1, NULL, '2019-12-06 14:17:13', '1', '2019-12-06 14:17:13', '1', 0);
+INSERT INTO `umc_alarm_template` VALUES (23, 'docker.mem.perc', 173, '', 1, 1, NULL, '2019-12-06 14:17:46', '1', '2019-12-06 14:17:46', '1', 0);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for umc_metric_template
+-- ----------------------------
+DROP TABLE IF EXISTS `umc_metric_template`;
+CREATE TABLE `umc_metric_template` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `metric` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '度量(e.g Host.mem.free)',
+  `classify` varchar(32) COLLATE utf8_bin NOT NULL COMMENT '度量类别,用字典key',
+  `remark` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT '说明',
+  `create_date` datetime DEFAULT NULL,
+  `create_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `update_by` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `del_flag` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `classify` (`classify`)
+) ENGINE=InnoDB AUTO_INCREMENT=178 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Records of umc_metric_template
+-- ----------------------------
+BEGIN;
+INSERT INTO `umc_metric_template` VALUES (6, 'host.cpu', 'basic', NULL, '2019-08-23 16:31:39', '1', '2019-08-23 16:31:39', '1', 0);
+INSERT INTO `umc_metric_template` VALUES (7, 'host.mem.usedPercent', 'basic', NULL, '2019-08-23 16:31:59', '1', '2019-12-05 18:15:08', '1', 0);
+INSERT INTO `umc_metric_template` VALUES (8, 'host.disk.usedPercent', 'basic', NULL, '2019-08-23 16:32:23', '1', '2019-08-23 16:32:23', '1', 0);
+INSERT INTO `umc_metric_template` VALUES (26, 'host.mem.total', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (27, 'host.mem.free', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (29, 'host.mem.used', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (30, 'host.mem.cached', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (31, 'host.mem.buffers', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (32, 'host.disk.total', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (33, 'host.disk.free', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (34, 'host.disk.used', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (36, 'host.disk.inodesTotal', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (37, 'host.disk.inodesUsed', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (38, 'host.disk.inodesFree', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (39, 'host.disk.inodesUsedPercent', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (40, 'host.net.up', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (41, 'host.net.down', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (42, 'host.net.count', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (43, 'host.net.estab', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (44, 'host.net.closeWait', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (45, 'host.net.timeWait', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (46, 'host.net.close', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (47, 'host.net.listen', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (48, 'host.net.closing', 'basic', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (49, 'kafka_brokers', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (50, 'kafka_topic_partition_current_offset', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (51, 'kafka_topic_partition_in_sync_replica', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (52, 'kafka_topic_partition_leader', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (53, 'kafka_topic_partition_leader_is_preferred', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (54, 'kafka_topic_partition_oldest_offset', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (55, 'kafka_topic_partition_replicas', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (56, 'kafka_topic_partition_under_replicated_partition', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (57, 'kafka_topic_partitions', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (58, 'kafka_consumergroup_members', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (59, 'kafka_consumergroup_current_offset', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (60, 'kafka_consumergroup_lag', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (61, 'kafka_consumergroup_current_offset_sum', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (62, 'kafka_consumergroup_lag_sum', 'kafka', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (63, 'zookeeper.zk.avg.latency', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (64, 'zookeeper.zk.max.latency', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (65, 'zookeeper.zk.min.latency', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (66, 'zookeeper.zk.packets.received', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (67, 'zookeeper.zk.packets.sent', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (68, 'zookeeper.zk.num.alive.connections', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (69, 'zookeeper.zk.outstanding.requests', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (70, 'zookeeper.zk.znode.count', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (71, 'zookeeper.zk.watch.count', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (72, 'zookeeper.zk.ephemerals.count', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (73, 'zookeeper.zk.approximate.data.size', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (74, 'zookeeper.zk.open.file.descriptor.count', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (75, 'zookeeper.zk.max.file.descriptor.count', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (76, 'zookeeper.zk.followers', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (77, 'zookeeper.zk.synced.followers', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (78, 'zookeeper.zk.pending.syncs', 'zookeeper', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (79, 'redis.uptime', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (80, 'redis.lru.clock', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (81, 'redis.clients', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (82, 'redis.client.recent.max.input.buffer', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (83, 'redis.client.recent.max.output.buffer', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (84, 'redis.blocked.clients', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (85, 'redis.used.memory', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (86, 'redis.used.memory.peak', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (87, 'redis.used.memory.overhead', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (88, 'redis.used.memory.startup', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (89, 'redis.used.memory.dataset', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (90, 'redis.allocator.allocated', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (91, 'redis.allocator.active', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (92, 'redis.allocator.resident', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (93, 'redis.total.system.memory', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (94, 'redis.used.memory.lua', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (95, 'redis.used.memory.scripts', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (96, 'redis.number.of.cached.scripts', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (97, 'redis.maxmemory', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (98, 'redis.allocator.frag.ratio', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (99, 'redis.allocator.frag.bytes', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (100, 'redis.allocator.rss.ratio', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (101, 'redis.allocator.rss.bytes', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (102, 'redis.rss.overhead.ratio', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (103, 'redis.rss.overhead.bytes', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (104, 'redis.mem.fragmentation.ratio', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (105, 'redis.mem.fragmentation.bytes', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (106, 'redis.mem.not.counted.for.evict', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (107, 'redis.mem.replication.backlog', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (108, 'redis.mem.clients.slaves', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (109, 'redis.mem.clients.normal', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (110, 'redis.mem.aof.buffer', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (111, 'redis.active.defrag.running', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (112, 'redis.lazyfree.pending.objects', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (113, 'redis.loading', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (114, 'redis.rdb.changes.since.last.save', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (115, 'redis.rdb.bgsave.in.progress', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (116, 'redis.rdb.last.save.time', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (117, 'redis.rdb.last.bgsave.time.sec', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (118, 'redis.rdb.current.bgsave.time.sec', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (119, 'redis.rdb.last.cow.size', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (120, 'redis.aof.enabled', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (121, 'redis.aof.rewrite.in.progress', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (122, 'redis.aof.rewrite.scheduled', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (123, 'redis.aof.last.rewrite.time.sec', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (124, 'redis.aof.current.rewrite.time.sec', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (125, 'redis.aof.last.cow.size', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (126, 'redis.aof.current.size', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (127, 'redis.aof.base.size', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (128, 'redis.aof.pending.rewrite', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (129, 'redis.aof.buffer.length', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (130, 'redis.aof.rewrite.buffer.length', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (131, 'redis.aof.pending.bio.fsync', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (132, 'redis.aof.delayed.fsync', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (133, 'redis.total.connections.received', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (134, 'redis.total.commands.processed', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (135, 'redis.instantaneous.ops.per.sec', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (136, 'redis.total.net.input.bytes', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (137, 'redis.total.net.output.bytes', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (138, 'redis.instantaneous.input.kbps', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (139, 'redis.instantaneous.output.kbps', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (140, 'redis.rejected.connections', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (141, 'redis.sync.full', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (142, 'redis.sync.partial.ok', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (143, 'redis.sync.partial.err', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (144, 'redis.expired.keys', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (145, 'redis.expired.stale.perc', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (146, 'redis.expired.time.cap.reached.count', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (147, 'redis.evicted.keys', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (148, 'redis.keyspace.hits', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (149, 'redis.keyspace.misses', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (150, 'redis.pubsub.channels', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (151, 'redis.pubsub.patterns', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (152, 'redis.latest.fork.usec', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (153, 'redis.migrate.cached.sockets', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (154, 'redis.slave.expires.tracked.keys', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (155, 'redis.active.defrag.hits', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (156, 'redis.active.defrag.misses', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (157, 'redis.active.defrag.key.hits', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (158, 'redis.active.defrag.key.misses', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (159, 'redis.connected.slaves', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (160, 'redis.master.repl.offset', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (161, 'redis.second.repl.offset', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (162, 'redis.repl.backlog.active', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (163, 'redis.repl.backlog.size', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (164, 'redis.repl.backlog.first.byte.offset', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (165, 'redis.repl.backlog.histlen', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (166, 'redis.used.cpu.sys', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (167, 'redis.used.cpu.user', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (168, 'redis.used.cpu.sys.children', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (169, 'redis.used.cpu.user.children', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (170, 'redis.cluster.enabled', 'redis', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (171, 'docker.cpu.perc', 'docker', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (172, 'docker.mem.usage', 'docker', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (173, 'docker.mem.perc', 'docker', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (174, 'docker.net.in', 'docker', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (175, 'docker.net.out', 'docker', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (176, 'docker.block.in', 'docker', NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `umc_metric_template` VALUES (177, 'docker.block.out1', 'docker', NULL, NULL, NULL, NULL, NULL, 0);
+COMMIT;
+
+SET FOREIGN_KEY_CHECKS = 1;

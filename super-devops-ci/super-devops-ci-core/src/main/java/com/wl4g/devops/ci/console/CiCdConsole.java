@@ -15,22 +15,20 @@
  */
 package com.wl4g.devops.ci.console;
 
-import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.ci.console.args.TaskListArgument;
-import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalMsArgument;
-import com.wl4g.devops.ci.pipeline.GlobalTimeoutJobCleanupFinalizer;
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.utils.lang.TableFormatters;
-import com.wl4g.devops.dao.ci.TaskDao;
+import com.wl4g.devops.ci.console.args.TasksArgument;
+import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalArgument;
+import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
+import com.wl4g.devops.ci.service.TaskService;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.shell.annotation.ShellComponent;
 import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.shell.processor.ShellHolder;
+import com.wl4g.devops.shell.handler.SimpleShellContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
-import static com.wl4g.devops.common.utils.Exceptions.getStackTraceAsString;
-import static com.wl4g.devops.shell.processor.ShellHolder.printf;
+import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.tool.common.lang.TableFormatters.*;
+import static java.lang.String.format;
 
 /**
  * CI/CD console point
@@ -44,13 +42,13 @@ import static com.wl4g.devops.shell.processor.ShellHolder.printf;
 public class CiCdConsole {
 	final public static String GROUP = "Devops CI/CD console commands";
 
-	/** {@link GlobalTimeoutJobCleanupFinalizer}. */
+	/** {@link GlobalTimeoutJobCleanupCoordinator}. */
 	@Autowired
-	private GlobalTimeoutJobCleanupFinalizer finalizer;
+	private GlobalTimeoutJobCleanupCoordinator coordinator;
 
-	/** {@link TaskDao}. */
+	/** {@link TaskService}. */
 	@Autowired
-	private TaskDao taskDao;
+	private TaskService taskService;
 
 	/**
 	 * Reset timeout cleanup expression.
@@ -59,45 +57,42 @@ public class CiCdConsole {
 	 * @return
 	 */
 	@ShellMethod(keys = "modifyCleanupInterval", group = GROUP, help = "Modifying global jobs timeout finalizer max-interval")
-	public String modifyCleanupInterval(TimeoutCleanupIntervalMsArgument arg) {
-		ShellHolder.open();
+	public void modifyCleanupInterval(TimeoutCleanupIntervalArgument arg, SimpleShellContext context) {
 		try {
-			printf(String.format("Modifying timeout cleanup finalizer intervalMs: <%s>", arg.getMaxIntervalMs()));
-			// Refreshing global timeoutCleanupFinalizer
-			finalizer.refreshGlobalJobCleanMaxIntervalMs(arg.getMaxIntervalMs());
+			context.printf(format("Modifying timeout cleanup finalizer intervalMs: <%s>", arg.getMaxIntervalMs()));
 
-			printf(String.format("Modifyed timeoutCleanup finalizer of intervalMs:<%s>", arg.getMaxIntervalMs()));
+			// Refresh global timeoutCleanupFinalizer
+			coordinator.refreshGlobalJobCleanMaxIntervalMs(arg.getMaxIntervalMs());
+
+			context.printf(format("Modifyed timeoutCleanup finalizer of intervalMs:<%s>", arg.getMaxIntervalMs()));
 		} catch (Exception e) {
-			printf(String.format("Failed to timeoutCleanup finalizer intervalMs. cause by: %s", getStackTraceAsString(e)));
+			context.printf(format("Failed to timeoutCleanup finalizer intervalMs. cause by: %s", getStackTraceAsString(e)));
 		} finally {
-			ShellHolder.close();
+			context.completed();
 		}
-		return "Reset timeoutCleanupFinalizer expression completed!";
 	}
 
 	/**
-	 * Get task list.
+	 * Get task pipeline list.
 	 * 
 	 * @param arg
 	 * @return
 	 */
 	@ShellMethod(keys = "pipelineList", group = GROUP, help = "Pipeline tasks list.")
-	public String getPipelineList(TaskListArgument arg) {
-		ShellHolder.open();
+	public void pipelineList(TasksArgument arg, SimpleShellContext context) {
 		try {
-			// Setup pagers.
-			PageHelper.startPage(arg.getPageNum(), arg.getPageSize(), true);
+			// Find tasks.
+			PageModel pm = new PageModel(arg.getPageNum(), arg.getPageSize());
+			taskService.list(pm, arg.getId(), arg.getTaskName(), arg.getGroupName(), arg.getBranchName(), arg.getTarType(),
+					arg.getStartDate(), arg.getEndDate(), null);
 
-			// Print to client
-			List<Task> list = taskDao.list(null, null, null, null, null, null, null);
-			return TableFormatters.build(list).setH('=').setV('!').getTableString();
+			// Print write to console.
+			context.printf(build(pm.getRecords()).setH('=').setV('!').getTableString());
 		} catch (Exception e) {
-			printf(String.format("Failed to find taskList. cause by: %s", getStackTraceAsString(e)));
+			context.printf(format("Failed to find taskList. cause by: %s", getStackTraceAsString(e)));
 		} finally {
-			ShellHolder.close();
+			context.completed();
 		}
-
-		return "Load pipeline task list completed!";
 	}
 
 }

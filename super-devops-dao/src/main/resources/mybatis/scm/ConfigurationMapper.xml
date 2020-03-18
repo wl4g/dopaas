@@ -95,10 +95,11 @@
 	</insert>
 	<insert id ="insertDetail" parameterType="java.util.Map" >
 		insert into scm_version_detail
-		(version_id, `type`, content, remark, namespace_id)
+		(id, version_id, `type`, content, remark, namespace_id)
 		values
 		<foreach collection ="configGurations" item="detail" index= "index" separator =",">
 			(
+			#{detail.id},
 			#{vid},
 			#{detail.type},
 			#{detail.content},

@@ -17,15 +17,52 @@ spring:
     active: dev
   cloud:
     devops:
-      support:
-        cli:
-          enabled: true
       iam: # IAM client configuration.
         client: # IAM client configuration.
           service-name: ${spring.application.name}
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
+      support:
+        cli:
+          enabled: true
+        notification:
+          mail:
+            enable: true # Default[false]
+            properties:
+              mail.smtp.auth: true
+              mail.smtp.ssl.enable: true
+              mail.smtp.timeout: 15000
+              mail.smtp.starttls.enable: true
+              mail.smtp.starttls.required: true
+            templates: # http://www.bejson.com/convert/unicode_chinese
+              tpl1: Application health notification：${appInfo} status changed from ${fromStatus} to ${toStatus}, details：${msg}
+              tpl2: Your verification code is：${code} valid for 5 minutes. You can't tell anyone if you're dead. Thank you for using!
+              tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}
+          sms:
+            enable: false # Default[false]
+            aliyun:
+              regionId: cn-hangzhou
+              accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+              accessKeySecret: {ALIYUN_SECRET}
+              signName: Super Devops\u7edf\u4e00\u76d1\u63a7\u5e73\u53f0
+              templates: # https://dysms.console.aliyun.com/dysms.htm#/domestic/text/template
+                tpl1: SMS_140726862 # Alarm notice template.
+                tpl2: SMS_109490228 # VerificationCode notice template.
+          vms:
+            enable: false # Default[false]
+            aliyun:
+              regionId: cn-hangzhou
+              accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+              accessKeySecret: {ALIYUN_SECRET}
+              calledShowNumber: 055162153866
+              templates:
+                tpl1: TTS_184825642 # Alarm notice template.
+                tpl2: TTS_184820765 # VerificationCode notice template.
+  http: # Upload file limit
+    multipart:
+      max-file-size: 50Mb
+      max-request-size: 50Mb
 
 # ### Server configuration. ###
 server:
@@ -37,7 +74,7 @@ server:
     uri-encoding: UTF-8
     protocolHeader: x-forwarded-proto
     remoteIpHeader: x-forwarded-for
-    basedir: /var/log/${spring.application.name}
+    basedir: /tmp/${spring.application.name}
     access-log-enabled: false
     accesslog.directory: logs/
     backgroundProcessorDelay: 30 #seconds

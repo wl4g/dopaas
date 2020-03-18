@@ -30,7 +30,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.common.utils.io.FileSizeUtil;
+import com.wl4g.devops.tool.common.io.FileSizeUtils;
 import com.wl4g.devops.umc.client.utils.PlatformOSUtil;
 import com.wl4g.devops.umc.client.utils.PlatformOSUtil.MemInfo;
 
@@ -67,7 +67,7 @@ public class AdvancedMemoryHealthIndicator extends AbstractAdvancedHealthIndicat
 
 	@Override
 	protected String formatValue(long value) {
-		return FileSizeUtil.getHumanReadable(value);
+		return FileSizeUtils.getHumanReadable(value);
 	}
 
 	@Override

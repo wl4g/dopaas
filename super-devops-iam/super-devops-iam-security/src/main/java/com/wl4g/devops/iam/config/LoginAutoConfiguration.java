@@ -15,13 +15,11 @@
  */
 package com.wl4g.devops.iam.config;
 
-import com.wl4g.devops.common.config.AbstractOptionalControllerAutoConfiguration;
+import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.web.LoginAuthenticatorController;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
-
-import java.lang.annotation.Annotation;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
 
@@ -33,26 +31,16 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BA
  * @since
  */
 @AutoConfigureAfter({ IamAutoConfiguration.class })
-public class LoginAutoConfiguration extends AbstractOptionalControllerAutoConfiguration {
+public class LoginAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
 	public LoginAuthenticatorController loginAuthenticatorController() {
 		return new LoginAuthenticatorController();
 	}
 
-	@Override
-	protected String getMappingPrefix() {
-		return URI_S_LOGIN_BASE;
-	}
-
 	@Bean
 	public PrefixHandlerMapping loginAuthenticatorControllerPrefixHandlerMapping() {
-		return super.createPrefixHandlerMapping();
-	}
-
-	@Override
-	protected Class<? extends Annotation> annotationClass() {
-		return LoginAuthController.class;
+		return super.newPrefixHandlerMapping(URI_S_LOGIN_BASE, LoginAuthController.class);
 	}
 
 }

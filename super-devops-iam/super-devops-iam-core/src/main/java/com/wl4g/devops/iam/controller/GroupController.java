@@ -18,12 +18,15 @@ package com.wl4g.devops.iam.controller;
 import com.wl4g.devops.common.bean.iam.Group;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.GroupService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**
  * @author vjay
@@ -36,16 +39,18 @@ public class GroupController {
 	@Autowired
 	private GroupService groupService;
 
-	// @RequiresPermissions("iam:group:tree")
+
 	@RequestMapping(value = "/getGroupsTree")
+	@RequiresPermissions(value = {"iam:group"},logical = AND)
 	public RespBase<?> getGroupsTree() {
 		RespBase<Object> resp = RespBase.create();
 		List<Group> groupsTree = groupService.getGroupsTree();
-		resp.buildMap().put("data", groupsTree);
+		resp.forMap().put("data", groupsTree);
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
+	@RequiresPermissions(value = {"iam:group"},logical = AND)
 	public RespBase<?> save(@RequestBody Group group) {
 		RespBase<Object> resp = RespBase.create();
 		groupService.save(group);
@@ -53,6 +58,7 @@ public class GroupController {
 	}
 
 	@RequestMapping(value = "/del")
+	@RequiresPermissions(value = {"iam:group"},logical = AND)
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		groupService.del(id);
@@ -60,10 +66,11 @@ public class GroupController {
 	}
 
 	@RequestMapping(value = "/detail")
+	@RequiresPermissions(value = {"iam:group"},logical = AND)
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		Group group = groupService.detail(id);
-		resp.buildMap().put("data", group);
+		resp.forMap().put("data", group);
 		return resp;
 	}
 

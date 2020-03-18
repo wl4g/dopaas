@@ -32,8 +32,12 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final int TASK_STATUS_SUCCESS = 2;
 	// task-fail
 	public static final int TASK_STATUS_FAIL = 3;
+	// task-timeout
+	public  static final int TASK_STATUS_TIMEOUT = 4;
 	// stop
 	public static final int TASK_STATUS_STOP = 5;
+	// task-part-success
+	public  static final int TASK_STATUS_PART_SUCCESS = 6;
 
 	// Auto trigger
 	public static final int TASK_TYPE_TRIGGER = 1;
@@ -47,7 +51,7 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	// TaskHistory Lock Status -- Lock
 	public static final int TASK_LOCK_STATUS_LOCK = 1;
 	// TaskHistory Lock Status -- unLock
-	public static final int TASK_LOCK_STATUS__UNLOCK = 0;
+	public static final int TASK_LOCK_STATUS_UNLOCK = 0;
 
 	public static final int TASK_ENABLE_STATUS = 1;
 	public static final int TASK_DISABLE_STATUS = 0;
@@ -67,5 +71,10 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	 */
 	public static final String LOG_FILE_START = "<[EOF]";
 	public static final String LOG_FILE_END = "[EOF]>";
+
+	// --- Codes analyzers. ---
+
+	/** Analyzers API base URI path. */
+	final public static String URL_ANALYZER_BASE_PATH = "/analyzer";
 
 }

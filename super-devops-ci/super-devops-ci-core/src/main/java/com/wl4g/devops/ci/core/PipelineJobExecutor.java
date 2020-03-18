@@ -19,8 +19,6 @@ import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
 /**
  * Pipeline job executor runner.
  * 
@@ -35,10 +33,6 @@ public class PipelineJobExecutor extends GenericTaskRunner<RunnerProperties> {
 	public PipelineJobExecutor(CiCdProperties config) {
 		super(config.getExecutor());
 		this.config = config;
-	}
-
-	public ThreadPoolExecutor getWorker() {
-		return super.getWorker();
 	}
 
 }

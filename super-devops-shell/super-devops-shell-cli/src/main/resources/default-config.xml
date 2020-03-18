@@ -3,11 +3,13 @@
 	<server>localhost</server>
 	<portRange>66100:66200</portRange>
 	<banner><![CDATA[
+Welcom to :
  ___            ___            ___  _         _  _   ___  _  _ 
 | . \ ___  _ _ | . | ___  ___ / __>| |_  ___ | || | |  _>| |<_>
 | | |/ ._>| | || | || . \<_-< \__ \| . |/ ._>| || | | <__| || |
 |___/\___.|__/ `___'|  _//__/ <___/|_|_|\___.|_||_| `___/|_||_|
                     |_|   
 
-wiki: https://github.com/wl4g/super-devops/blob/master/super-devops-shell/super-devops-shell-cli/README.md]]></banner>
+Wiki: https://github.com/wl4g/super-devops/blob/master/super-devops-shell/README.md
+Authors: <wanglsir@gmail.com, 983708408@qq.com>]]></banner>
 </configuration>

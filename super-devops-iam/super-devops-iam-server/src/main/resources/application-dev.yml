@@ -17,8 +17,7 @@ spring:
       - path: /**
         allowCredentials: true
         allowsOrigins:
-           - http://localhost:8080
-           - http://localhost.com:8080
+          - '*'
         allowsHeaders: '*'
         allowsMethods: GET,POST
   cloud:
@@ -27,8 +26,8 @@ spring:
         login-uri: /view/login.html
         #login-uri: http://localhost:8080/#/login # See: super-devops-view
         unauthorized-uri: /view/403.html
-        success-endpoint: umc-manager@http://localhost:14048/umc-manager
-        #success-endpoint: ${spring.application.name}@/view/index.html
+        #success-endpoint: umc-manager@http://localhost:14048/umc-manager
+        success-endpoint: ${spring.application.name}@/view/index.html
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
@@ -55,9 +54,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://safecloud-test:30601/devops?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
-      username: gzsm
-      password: gzsm@%#jh?
+      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/devops_dev?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
+      username: ${DEVOPS_DB_USER:gzsm}
+      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
       max-active: 100
       min-idle: 10
@@ -79,4 +78,4 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${REDIS_NODES:safecloud-test:6379,safecloud-test:6380,safecloud-test:6381,safecloud-test:7380,safecloud-test:7380,safecloud-test:7381}
+  nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}

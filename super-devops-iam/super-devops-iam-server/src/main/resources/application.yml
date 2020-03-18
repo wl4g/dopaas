@@ -18,20 +18,6 @@ spring:
     expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..)) or
                 execution(* com.wl4g.devops.iam.sns.*.*Controller.*(..)) or
                 execution(* com.wl4g.devops.iam.*.*Controller.*(..))
-#  freemarker:
-#    request-context-attribute: req
-#    suffix: .html
-#    content-type: text/html
-#    enabled: true
-#    cache: false
-#    template-loader-path: classpath:/template/ #模板加载路径
-#    charset: UTF-8
-#    expose-request-attributes: false
-#    expose-session-attributes: false
-#    expose-spring-macro-helpers: false
-#    settings:
-#      # Numeral formatting, no decimal point.
-#      number_format: '0.##'
 
 # Mybatis configuration.
 mybatis:
@@ -42,6 +28,9 @@ mybatis:
 # Logging configuration.
 logging:
   file: ${server.tomcat.basedir}/logs/${spring.application.name}.log
+  pattern:
+    #console: ${logging.pattern.file}
+    #file: '%d{yy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:%4p} ${PID} [%t] [%X{_H_:X-Request-ID}] [%X{_H_:X-Request-Seq}] [%X{_C_:${spring.cloud.devops.iam.cookie.name}}] - %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
   root: INFO
   # Custom configuration(Non spring-boot standard).
   policy:
@@ -53,3 +42,5 @@ logging:
     org:
       springframework: INFO
       apache: INFO
+    com:
+      wl4g.devops.dao: DEBUG

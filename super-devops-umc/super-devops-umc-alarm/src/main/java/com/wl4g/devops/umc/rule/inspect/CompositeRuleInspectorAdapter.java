@@ -26,7 +26,7 @@ import java.util.Optional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.devops.common.utils.lang.OnceModifiableMap;
+import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
 import com.wl4g.devops.umc.rule.Aggregator;
 
 /**
@@ -41,7 +41,7 @@ public class CompositeRuleInspectorAdapter extends AbstractRuleInspector {
 	/**
 	 * Rule inspectors.
 	 */
-	final protected Map<Aggregator, RuleInspector> ruleInspectors = new OnceModifiableMap<>(new HashMap<>());
+	final protected Map<Aggregator, RuleInspector> ruleInspectors = new RegisteredUnmodifiableMap<>(new HashMap<>());
 
 	public CompositeRuleInspectorAdapter(List<RuleInspector> inspectors) {
 		Assert.state(!CollectionUtils.isEmpty(inspectors), "Rule inspectors has at least one.");

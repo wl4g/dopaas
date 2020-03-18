@@ -16,30 +16,36 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.support.beans.prototype.DelegateAliasPrototypeBean;
+import com.wl4g.devops.common.framework.beans.PrototypeBean;
+import com.wl4g.devops.tool.common.annotation.StableApi;
 
 /**
- * Pipeline provider.
+ * Pipeline provider SPI.
  * 
  * @author vjay
  * @author Wangl.sir <983708408@qq.com>
  * @date 2019-05-05 17:17:00
  */
-public interface PipelineProvider extends DelegateAliasPrototypeBean {
+@StableApi
+public interface PipelineProvider extends PrototypeBean {
 
 	/**
 	 * Execution pipeline with provider process.
 	 * 
 	 * @throws Exception
 	 */
-	void execute() throws Exception;
+	default void execute() throws Exception {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Roll-back with provider process.
 	 * 
 	 * @throws Exception
 	 */
-	void rollback() throws Exception;
+	default void rollback() throws Exception {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Get pipeline information.

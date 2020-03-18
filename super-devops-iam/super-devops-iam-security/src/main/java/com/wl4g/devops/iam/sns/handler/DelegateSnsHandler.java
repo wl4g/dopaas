@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.sns.handler;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,10 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.shiro.util.Assert;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.util.StringUtils;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.config.properties.IamProperties;
+import com.wl4g.devops.iam.sns.CallbackResult;
 
 /**
  * IAM Social delegate handler factory
@@ -54,25 +56,25 @@ public class DelegateSnsHandler implements SnsHandler {
 		Assert.notEmpty(handlers, "'handlers' must not be empty");
 		this.config = config;
 		for (SnsHandler handler : handlers) {
-			if (repository.putIfAbsent(handler.whichType(), handler) != null) {
-				throw new IllegalStateException(String.format("Already sns handler register", handler.whichType()));
+			if (repository.putIfAbsent(handler.which(), handler) != null) {
+				throw new IllegalStateException(String.format("Already sns handler register", handler.which()));
 			}
 		}
 	}
 
 	@Override
-	public String connect(Which which, String provider, String state, Map<String, String> connectParams) {
-		state = StringUtils.isEmpty(state) ? UUID.randomUUID().toString().replaceAll("-", "") : state;
-		return getSnsHandler(which).connect(which, provider, state, connectParams);
+	public String doOAuth2GetAuthorizingUrl(Which which, String provider, String state, Map<String, String> connectParams) {
+		state = isBlank(state) ? UUID.randomUUID().toString().replaceAll("-", "") : state;
+		return getSnsHandler(which).doOAuth2GetAuthorizingUrl(which, provider, state, connectParams);
 	}
 
 	@Override
-	public String callback(Which which, String provider, String state, String code, HttpServletRequest request) {
-		return getSnsHandler(which).callback(which, provider, state, code, request);
+	public CallbackResult doOAuth2Callback(Which which, String provider, String state, String code, HttpServletRequest request) {
+		return getSnsHandler(which).doOAuth2Callback(which, provider, state, code, request);
 	}
 
 	@Override
-	public Which whichType() {
+	public Which which() {
 		throw new UnsupportedOperationException();
 	}
 
