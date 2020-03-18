@@ -36,15 +36,11 @@ spring:
           success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/oss/buckets
       coss:
         aliyunoss:
-          enable: true
-          endpoint: oss-cn-shenzhen.aliyuncs.com
           accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
           accessKeySecret: ${aliyun.secret}
         hdfs:
-          enable: true
           endpoint-hdfs-root-uri: hdfs://owner-node3:8020/coss-bucket
-          user: root
-
+        native:
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
