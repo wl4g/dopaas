@@ -23,6 +23,17 @@ spring:
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
+      coss:
+        aliyunoss:
+          enable: true
+          endpoint: oss-cn-shenzhen.aliyuncs.com
+        hdfs:
+          enable: true
+          user: root
+        native:
+          enable: true
+          #user: ${spring.application.name}
+          endpointRootDir: /mnt/disk1/coss-bucket
 
 # ### Server configuration. ###
 server:

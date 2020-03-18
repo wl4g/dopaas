@@ -15,18 +15,18 @@
  */
 package com.wl4g.devops.coss.config;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.springframework.util.Assert.hasText;
-
-import java.io.File;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.validation.annotation.Validated;
 
 @Validated
 public class NativeCossProperties {
@@ -41,7 +41,7 @@ public class NativeCossProperties {
 	 * Bucket of native fileSystem operation user.
 	 */
 	@NotBlank
-	private String user;
+	private String user = SystemUtils.USER_NAME;
 
 	public File getEndpointRootDir() {
 		return endpointRootDir;
