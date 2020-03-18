@@ -1,11 +1,12 @@
 /**
- * Common util v1.5.2 | (c) 2017 ~ 2050 wl4g Foundation, Inc.
+ * Common util v2.0.0 | (c) 2017 ~ 2050 wl4g Foundation, Inc.
  * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
 	// Exposing the API to the outside.
 	if(!window.Common){ window.Common = {}; }
+	if(!window.Common.Constants){ window.Common.Constants = {}; }
 
 	// Common util.
 	window.Common.Util = {
@@ -492,7 +493,39 @@
         },
         isIp : function(ip) {
             return Common.Util.isIpv4(ip) || Common.Util.isIpv6(ip);
-        }
+        },
+       	// 获取浏览器指纹, 产品可参考阿里云风控sdk的umid获取: https://help.aliyun.com/document_detail/101030.html
+       	// 以下是基于开源实现: https://github.com/Valve/fingerprintjs2 , 这个插件主要是获取浏览器语言/窗口尺寸等
+       	// 环境参数计算的设备唯一标识, 某些参数需排除才能接近实际情况, 如:浏览器尺寸, 窗口尺寸不影响生成设备标识
+       	getThisFingerprint: function(callback){
+       		if(Common.Constants.UmidObject){
+       		 	if ((new Date().getTime()-Common.Constants.UmidObject.time) > 1000) {
+	       			Common.Constants.UmidObject = null;
+       		 	} else {
+       		 		callback(Common.Constants.UmidObject.value);
+       		 		return;
+       		 	}
+       		}
+
+       		// Gets fingerprint.
+       		if(!Common.Constants.UmidObject) {
+	       		$.getScript("js/fingerprint2-v2.1.0.js", function(){
+	       			setTimeout(function() {
+						Fingerprint2.get({
+						    excludes: {userAgent: true, language: true}
+						}, function(components){ 
+						    console.debug("Gets umid components: "+ JSON.stringify(components));
+						    var values = components.map(function (component) { return component.value });
+						    var umid = Fingerprint2.x64hash128(values.join(''), 31);
+						   	Common.Constants.UmidObject = { value: umid, time: new Date().getTime() };
+						    console.debug("Gets umid is: " + umid);
+						    callback(umid);
+						});
+					}, 500);
+				});
+			}
+
+       	}
 
 	};
 })(window, document);
