@@ -117,7 +117,7 @@
 			verifyCodeKey: "verifyCode", // 提交验证码参数名（不通用：simple/gif）
 			verifiedTokenKey: "verifiedToken", // 验证码已校验的凭据token参数名（通用）
 			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
-			accountSubmitUri: "/auth/general", // 账号登录提交的URL后缀
+			accountSubmitUri: "/auth/generic", // 账号登录提交的URL后缀
 			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
 			checkUri: "/login/check", // 登录前初始检查接口的URL后缀
 			captchaApplyUri: "/verify/applycaptcha", // 申请GRAPH验证码URI后缀

@@ -1,4 +1,4 @@
-#### COSS(Composite Object Storage Service) 是一个基于SpringCloud复合对象存储服务，本身不做存储，它可以桥接到其他存储介质，支持hdfs、aliyun-oss、aws-s3、GlusterFS等。
+#### COSS(Composite Object Storage Service) 是一个基于SpringCloud复合对象存储服务，支持桥接到其他存储介质，如, hdfs、aliyun-oss、aws-s3、GlusterFS等。
 
 ##### 使用场景说明：
 - 1，如果您只是用于demo及演示使用，只需使用默认本地（或NFS共享）文件系统，即不需要依赖部署任何coss-xx扩展模块；

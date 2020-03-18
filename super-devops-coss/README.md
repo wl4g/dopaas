@@ -1,4 +1,4 @@
-#### COSS(Composite Object Storage Service) A composite object storage service based on spring cloud. It does not store data on its own, It can bridge to other storage media, supporting hdfs, aliyun-oss, aws-s3, glusterfs, etc.
+#### COSS(Composite Object Storage Service) A composite object storage service based on spring cloud. It does not store data on its own, Supports bridging to other storage media, such as Hdfs, Aliyun OSS, Aws S3, GlusterFS, etc
 
 ##### Usage scenario description:
 - 1. If you are only used for demo and demonstration, you only need to use the default local (or NFS share) file system, that is, you do not need to deploy any coss-xx extension module.

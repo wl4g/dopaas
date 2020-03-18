@@ -1,5 +1,5 @@
 ![DevSecOps](shots/logo.jpg)
-## 一站式面向微服务轻量级DevSecOps解决方案，支持CI/CD、统一监控、链路追踪、统一认证、统一配置、日志分析、弹性伸缩、调度中心、控制台服务、HBase运维工具、文档管理、版本控制等
+## 一站式面向微服务轻量级DevSecOps解决方案，支持CI/CD、统一监控、链路追踪、统一认证、统一配置、日志分析、弹性伸缩、调度中心、控制台服务、HBase运维工具、文档管理、及时通讯、对象存储、版本控制等
 
 [![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
@@ -76,7 +76,9 @@ sudo systemctl restart docker
 - [CI](super-devops-ci/README_CN.md)            &nbsp;&nbsp;    持续集成部署模块（持续迭代）, CICD构建流等
 - [ESM](super-devops-esm/README_CN.md)          &nbsp;&nbsp;    弹性伸缩管理, 集成k8s、docker，基于CPU、网络流量自动或手动容器伸缩的管理
 - [SCM](super-devops-scm/README_CN.md)          &nbsp;&nbsp;    配置服务中心, 支持在线配置热更新如：DataSource、RedisClient等
-- [SRM](super-devops-srm/README_CN.md)          &nbsp;&nbsp;    软件资源环境管理, 如，ELK日志分析、二进制编译产物包等
+- [ERM](super-devops-erm/README_CN.md)          &nbsp;&nbsp;    基础资源环境管理, 如ELK日志分析、二进制编译产物包等
+- [DJOB](super-devops-djob/README_CN.md)        &nbsp;&nbsp;    基于SpringCloud分布式调度平台, 默认是基于ElasticJob增强实现
+- [COSS](super-devops-coss/README_CN.md)        &nbsp;&nbsp;    基于SpringCloud复合对象存储服, 支持nativefs、hdfs、aliyun-oss、aws-s3、GlusterFS等
 - [SHELL](super-devops-shell/README_CN.md)      &nbsp;&nbsp;    Shell Cli, 给应用添加类似hbase-shell的控制台功能
 - [DOC](super-devops-doc/README_CN.md)          &nbsp;&nbsp;    API文档服务, 在线API文档查阅
 - [IAM](super-devops-iam/README_CN.md)          &nbsp;&nbsp;    统一身份识别与访问管理服务，支持SSO/CAS、oauth2、opensaml等

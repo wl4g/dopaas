@@ -33,7 +33,7 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
  * @date 2018年11月29日
  * @since
  */
-public class GeneralCredentialsHashedMatcher extends AbstractAttemptsMatcher {
+public class GenericCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
 	@Override
 	public boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors) {

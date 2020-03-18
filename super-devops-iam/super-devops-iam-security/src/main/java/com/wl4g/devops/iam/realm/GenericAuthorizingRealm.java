@@ -24,10 +24,10 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
-import com.wl4g.devops.iam.authc.GeneralAuthenticationInfo;
-import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
+import com.wl4g.devops.iam.authc.GenericAuthenticationInfo;
+import com.wl4g.devops.iam.authc.GenericAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
-import com.wl4g.devops.iam.authz.GeneralAuthorizationInfo;
+import com.wl4g.devops.iam.authz.GenericAuthorizationInfo;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SimpleParameter;
@@ -55,9 +55,9 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SimpleParameter;
  *
  * @since 1.2
  */
-public class GeneralAuthorizingRealm extends AbstractAuthorizingRealm<GeneralAuthenticationToken> {
+public class GenericAuthorizingRealm extends AbstractAuthorizingRealm<GenericAuthenticationToken> {
 
-	public GeneralAuthorizingRealm(IamBasedMatcher matcher) {
+	public GenericAuthorizingRealm(IamBasedMatcher matcher) {
 		super(matcher);
 	}
 
@@ -70,7 +70,7 @@ public class GeneralAuthorizingRealm extends AbstractAuthorizingRealm<GeneralAut
 	 *             if there is an error during authentication.
 	 */
 	@Override
-	protected IamAuthenticationInfo doAuthenticationInfo(GeneralAuthenticationToken token) throws AuthenticationException {
+	protected IamAuthenticationInfo doAuthenticationInfo(GenericAuthenticationToken token) throws AuthenticationException {
 		// Get account by loginId(user-name)
 		IamPrincipalInfo info = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
 		if (log.isDebugEnabled()) {
@@ -84,7 +84,7 @@ public class GeneralAuthorizingRealm extends AbstractAuthorizingRealm<GeneralAut
 
 		// Authenticate attributes.(roles/permissions/rememberMe)
 		PrincipalCollection principals = createPermitPrincipalCollection(info);
-		return new GeneralAuthenticationInfo(info, principals, getName());
+		return new GenericAuthenticationInfo(info, principals, getName());
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class GeneralAuthorizingRealm extends AbstractAuthorizingRealm<GeneralAut
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		// Create simple authorization info
-		GeneralAuthorizationInfo info = new GeneralAuthorizationInfo();
+		GenericAuthorizationInfo info = new GenericAuthorizationInfo();
 		// Merge authorized string(roles/permission)
 		mergeAuthorizedString(principals, info);
 		return info;

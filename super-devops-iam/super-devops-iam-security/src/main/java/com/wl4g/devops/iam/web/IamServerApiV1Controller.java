@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.web;
 
-import com.wl4g.devops.iam.authc.GeneralAuthenticationToken;
+import com.wl4g.devops.iam.authc.GenericAuthenticationToken;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.authc.WechatMpAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
@@ -115,8 +115,8 @@ public class IamServerApiV1Controller extends GenericApiController {
 		// Authentication client type.
 		Object token = session.getAttribute(KEY_AUTHC_TOKEN);
 		if (nonNull(token)) {
-			if (token instanceof GeneralAuthenticationToken) {
-				sa.setClientRef(((GeneralAuthenticationToken) token).getClientRef());
+			if (token instanceof GenericAuthenticationToken) {
+				sa.setClientRef(((GenericAuthenticationToken) token).getClientRef());
 			} else if ((token instanceof WechatMpAuthenticationToken)) {
 				sa.setClientRef(ClientRef.WeChatMp);
 			}
