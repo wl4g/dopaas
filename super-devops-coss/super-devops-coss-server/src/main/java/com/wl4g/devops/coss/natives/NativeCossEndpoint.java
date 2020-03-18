@@ -15,46 +15,29 @@
  */
 package com.wl4g.devops.coss.natives;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
-import static java.lang.String.format;
-import static java.util.Arrays.asList;
-import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toList;
+import com.wl4g.devops.coss.AbstractCossEndpoint;
+import com.wl4g.devops.coss.config.NativeCossProperties;
+import com.wl4g.devops.coss.exception.ServerCossException;
+import com.wl4g.devops.coss.model.*;
+import com.wl4g.devops.coss.model.bucket.Bucket;
+import com.wl4g.devops.coss.model.bucket.BucketList;
+import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.FileStore;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.AclEntry;
-import java.nio.file.attribute.AclEntryPermission;
-import java.nio.file.attribute.AclFileAttributeView;
-import java.nio.file.attribute.FileOwnerAttributeView;
-import java.nio.file.attribute.UserPrincipal;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.wl4g.devops.coss.AbstractCossEndpoint;
-import com.wl4g.devops.coss.config.NativeCossProperties;
-import com.wl4g.devops.coss.exception.ServerCossException;
-import com.wl4g.devops.coss.model.ACL;
-import com.wl4g.devops.coss.model.AccessControlList;
-import com.wl4g.devops.coss.model.ObjectAcl;
-import com.wl4g.devops.coss.model.ObjectListing;
-import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.ObjectSummary;
-import com.wl4g.devops.coss.model.ObjectSymlink;
-import com.wl4g.devops.coss.model.ObjectValue;
-import com.wl4g.devops.coss.model.Owner;
-import com.wl4g.devops.coss.model.PutObjectResult;
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
-import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toList;
 
 /**
  * File object storage based on native fileSystem.
@@ -82,6 +65,7 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 	@Override
 	public Bucket createBucket(String bucketName) {
 		File bucketPath = new File(config.getEndpointRootDir(), bucketName);
+		isTrue(!bucketPath.exists(), ServerCossException.class, "Duplicate creation directory '%s'", bucketPath);
 		bucketPath.mkdirs();
 		isTrue(bucketPath.exists(), ServerCossException.class, "Couldn't mkdirs bucket directory to '%s'", bucketPath);
 
@@ -105,24 +89,17 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 			if (f.isDirectory()) {
 				try {
 					Bucket bucket = new Bucket(config.getBucketKey(f.getPath()));
-
-					Path path = Paths.get(URI.create(f.getPath()));
-					FileStore fileStore = Files.getFileStore(path); // BasicFileAttributes
-					bucket.setCreationDate(new Date()); // TODO
-
-					FileOwnerAttributeView view = Files.getFileAttributeView(path, FileOwnerAttributeView.class);
-					UserPrincipal owner;
-					owner = view.getOwner();
-					bucket.setOwner(new Owner(owner.getName(), owner.getName()));
+					bucket.setCreationDate(new Date(f.lastModified()));
+					String owner = Files.getOwner(f.toPath()).getName();
+					bucket.setOwner(new Owner(owner, owner));
 					bucketList.getBucketList().add(bucket);
 					return bucket;
-				} catch (IOException e) {
+				} catch (Exception e) {
 					log.warn(format("Couldn't gets file attributes of '%s'", f), e);
 				}
 			}
 			return null;
 		}).collect(toList());
-		bucketList.getBucketList().addAll(buckets);
 
 		return bucketList;
 	}

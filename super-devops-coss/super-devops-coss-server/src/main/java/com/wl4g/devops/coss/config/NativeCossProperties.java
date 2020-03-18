@@ -22,8 +22,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.springframework.util.Assert.hasText;
@@ -48,6 +47,10 @@ public class NativeCossProperties {
 	}
 
 	public void setEndpointRootDir(File endpointRootDir) {
+		if(!endpointRootDir.exists()){
+			endpointRootDir.mkdirs();
+			isTrue(endpointRootDir.exists(),"Create endpointRootDir fail");
+		}
 		this.endpointRootDir = endpointRootDir;
 	}
 
