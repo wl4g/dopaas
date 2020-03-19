@@ -26,6 +26,7 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 import com.wl4g.devops.iam.web.model.CaptchaCheckModel;
 import com.wl4g.devops.iam.web.model.GeneralCheckModel;
 import com.wl4g.devops.iam.web.model.SmsCheckModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.createLimitFactors;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.sessionStatus;
@@ -139,13 +141,29 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	public RespBase<?> safeCheck(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
+			//
+			// --- Check generic authenticating environments. ---
+			//
+			// Login account number or mobile number(Optional)
+			String principal = getCleanParam(request, config.getParam().getPrincipalName());
 			// Limit factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
+			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
 
+			// When the login page is loaded, the parameter 'principal' will be
+			// empty, no need to generate a key. When submitting the login
+			// request parameter 'principal' will not be empty, you need to
+			// generate 'secret'.
+			String secret = EMPTY;
+			if (isNotBlank(principal)) {
+				// Apply credentials encryption secret key
+				secret = securer.applySecret(principal);
+			}
 			// Secret(pubKey).
-			resp.forMap().put(KEY_GENERAL_CHECK, new GeneralCheckModel(securer.applySecret()));
+			resp.forMap().put(KEY_GENERAL_CHECK, new GeneralCheckModel(secret));
 
-			// CAPTCHA check.
+			//
+			// --- Check captcha authenticating environments. ---
+			//
 			CaptchaCheckModel model = new CaptchaCheckModel(false);
 			if (verifier.forAdapt(request).isEnabled(factors)) {
 				model.setEnabled(true);
@@ -154,19 +172,19 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			}
 			resp.forMap().put(KEY_CAPTCHA_CHECK, model);
 
-			// SMS check.
-			/*
-			 * When the SMS verification code is not empty, this creation
-			 * time-stamp is returned (used to display the current remaining
-			 * number of seconds before the front end can re-send the SMS
-			 * verification code).
-			 */
+			//
+			// --- Check SMS authenticating environments. ---
+			//
+			// When the SMS verification code is not empty, this creation
+			// time-stamp is returned (used to display the current remaining
+			// number of seconds before the front end can re-send the SMS
+			// verification code).
 			VerifyCodeWrapper code = verifier.forAdapt(VerifyType.TEXT_SMS).getVerifyCode(false);
 
 			// SMS apply owner(mobile number).
 			Long mobileNum = null;
-			if (nonNull(code) && nonNull(code.getOwner()) && isNumeric(code.getOwner())) {
-				mobileNum = Long.parseLong(code.getOwner());
+			if (nonNull(code)) {
+				mobileNum = parseLongOrNull(code.getOwner());
 			}
 
 			// Remaining delay.
@@ -195,7 +213,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 */
 	@RequestMapping(value = URI_S_LOGIN_ERRREAD, method = { GET, POST })
 	@ResponseBody
-	public RespBase<?> errorRead(HttpServletRequest request, HttpServletResponse response) {
+	public RespBase<?> readError(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<String> resp = RespBase.create(sessionStatus());
 		try {
 			// Get error message in session

@@ -111,25 +111,31 @@
 		PlatformType: (function() {
 		    var ua = navigator.userAgent.toLowerCase();
 		    var mua = {
-		        WECHAT: /micromessenger/.test(ua), //WeChat MicroMessenger
-		        IOS: /ipod|iphone|ipad/.test(ua), //iOS
-		       	MAC: /macintosh|mac os|mac/.test(ua), // Mac
-		        IPHONE: /iphone/.test(ua), // iPhone
-		        IPAD: /ipad/.test(ua), // iPad
-		        ANDROID: /android/.test(ua), // Android Device
-		        WINDOWS: /windows/.test(ua), // Windows Device
-		        Linux: /unix|linux/.test(ua), // Unux/Linux Device
-		        TOUCH_DEVICE: ('ontouchstart' in window) || /touch/.test(ua), // Touch Device
-		        MOBILE: /mobile/.test(ua), // Mobile Device (iPad)
-		        ANDROID_TABLET: false, // Android Tablet
+		        MicroMessenger: /micromessenger/.test(ua), //WeChat MicroMessenger
+		        iOS: /ipod|iphone|ipad/.test(ua), //iOS
+		       	Mac: /macintosh|mac os|mac/.test(ua), // Mac
+		        iPhone: /iphone/.test(ua), // iPhone
+		        iPad: /ipad/.test(ua), // iPad
+		        Android: /android/.test(ua), // Android Device
+		        Windows: /windows/.test(ua), // Windows Device
+		        Linux: /linux/.test(ua), // Linux Device
+		        FreeBSD: /freebsd/.test(ua), // FreeBSD Device
+		        OpenBSD: /openbsd/.test(ua), // OpenBSD Device
+		        SunOS: /sunos/.test(ua), // SunOS Device
+		        AIX: /aix/.test(ua), // AIX Device
+		        Irix: /irix/.test(ua), // Irix Device
+		        Solaris: /solaris/.test(ua), // Solaris Device
+		        TouchDevice: ('ontouchstart' in window) || /touch/.test(ua), // Touch Device
+		        Mobile: /mobile/.test(ua), // Mobile Device (iPad)
+		        AndroidTablet: false, // Android Tablet
 		        WINDOWS_TABLET: false, // Windows Tablet
-		        TABLET: false, // Tablet (iPad, Android, Windows)
-		        SMART_PHONE: false //Smart Phone (iPhone, Android)
+		        Tablet: false, // Tablet (iPad, Android, Windows)
+		        SmartPhone: false // Smart Phone (iPhone, Android)
 		    };
-		    mua.ANDROID_TABLET = mua.ANDROID && !mua.MOBILE;
-		    mua.WINDOWS_TABLET = mua.WINDOWS && /tablet/.test(ua);
-		    mua.TABLET = mua.IPAD || mua.ANDROID_TABLET || mua.WINDOWS_TABLET;
-		    mua.SMART_PHONE = mua.MOBILE && !mua.TABLET;
+		    mua.AndroidTablet = mua.Android && !mua.Mobile;
+		    mua.WindowsTablet = mua.Windows && /tablet/.test(ua);
+		    mua.Tablet = mua.iPad || mua.AndroidTablet || mua.WindowsTablet;
+		    mua.SmartPhone = mua.Mobile && !mua.Tablet;
 		    return mua;
 		})(),
 		int2char(n) {
@@ -141,45 +147,65 @@
 		isZhCN() {
 		    return Common.Util.language().indexOf('zh') >= 0;
 		},
-		base64ToHex(s) { // convert a base64 string to hex
-		    var ret = "";
-		    var i;
-		    var k = 0; // b64 state, 0-3
-		    var slop = 0;
-		    for (i = 0; i < s.length; ++i) {
-		        if (s.charAt(i) == "=") {
-		            break;
-		        }
-		        var v = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".indexOf(s.charAt(i));
-		        if (v < 0) {
-		            continue;
-		        }
-		        if (k == 0) {
-		            ret += Common.Util.int2char(v >> 2);
-		            slop = v & 3;
-		            k = 1;
-		        }
-		        else if (k == 1) {
-		            ret += Common.Util.int2char((slop << 2) | (v >> 4));
-		            slop = v & 0xf;
-		            k = 2;
-		        }
-		        else if (k == 2) {
-		            ret += Common.Util.int2char(slop);
-		            ret += Common.Util.int2char(v >> 2);
-		            slop = v & 3;
-		            k = 3;
-		        }
-		        else {
-		            ret += Common.Util.int2char((slop << 2) | (v >> 4));
-		            ret += Common.Util.int2char(v & 0xf);
-		            k = 0;
-		        }
-		    }
-		    if (k == 1) {
-		        ret += Common.Util.int2char(slop << 2);
-		    }
-		    return ret;
+		Codec: {
+			// Base64 and Hex functions.
+            hexToBase64: function(str) {
+            	var tableStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        		var table = tableStr.split("");
+				var btoa = function(bin) {
+					for (var i = 0, j = 0, len = bin.length / 3, base64 = []; i < len; ++i) {
+	                    var a = bin.charCodeAt(j++), b = bin.charCodeAt(j++), c = bin.charCodeAt(j++);
+	                    if ((a | b | c) > 255) throw new Error("String contains an invalid character");
+	                    base64[base64.length] = table[a >> 2] + table[((a << 4) & 63) | (b >> 4)] +
+	                        (isNaN(b) ? "=" : table[((b << 2) & 63) | (c >> 6)]) +
+	                        (isNaN(b + c) ? "=" : table[c & 63]);
+	                }
+	                return base64.join("");
+				};
+	            return btoa(String.fromCharCode.apply(null,
+	                str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" "))
+	            );
+	        },
+	        base64ToHex(s) { // convert a base64 string to hex
+			    var ret = "";
+			    var i;
+			    var k = 0; // b64 state, 0-3
+			    var slop = 0;
+			    for (i = 0; i < s.length; ++i) {
+			        if (s.charAt(i) == "=") {
+			            break;
+			        }
+			        var v = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".indexOf(s.charAt(i));
+			        if (v < 0) {
+			            continue;
+			        }
+			        if (k == 0) {
+			            ret += Common.Util.int2char(v >> 2);
+			            slop = v & 3;
+			            k = 1;
+			        }
+			        else if (k == 1) {
+			            ret += Common.Util.int2char((slop << 2) | (v >> 4));
+			            slop = v & 0xf;
+			            k = 2;
+			        }
+			        else if (k == 2) {
+			            ret += Common.Util.int2char(slop);
+			            ret += Common.Util.int2char(v >> 2);
+			            slop = v & 3;
+			            k = 3;
+			        }
+			        else {
+			            ret += Common.Util.int2char((slop << 2) | (v >> 4));
+			            ret += Common.Util.int2char(v & 0xf);
+			            k = 0;
+			        }
+			    }
+			    if (k == 1) {
+			        ret += Common.Util.int2char(slop << 2);
+			    }
+			    return ret;
+			}
 		},
 		Crc16CheckSum: {
 			_auchCRCHi : [
@@ -497,12 +523,32 @@
        	// 获取浏览器指纹, 产品可参考阿里云风控sdk的umid获取: https://help.aliyun.com/document_detail/101030.html
        	// 以下是基于开源实现: https://github.com/Valve/fingerprintjs2 , 这个插件主要是获取浏览器语言/窗口尺寸等
        	// 环境参数计算的设备唯一标识, 某些参数需排除才能接近实际情况, 如:浏览器尺寸, 窗口尺寸不影响生成设备标识
-       	getThisFingerprint: function(callback){
+       	getFingerprint: function(excludes, callback){
+       		var _excludes = null;
+       		var _callback = null;
+       		if(arguments.length  <= 0) {
+       			throw Error("Callback is required");
+       		} else {
+       			for(var i=0; i < arguments.length; i++){
+					if(Common.Util.isObject(arguments[i])) {
+						_excludes = arguments[i];
+					} else if(Common.Util.isFunction(arguments[i])) {
+						_callback = arguments[i];
+					}
+				}
+       		}
+       		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
+       		var defaultOptions = {};
+			_excludes = jQuery.extend(true, defaultOptions, _excludes);
+       		if (_callback == null) {
+       			throw Error("Callback is required");
+       		}
+
        		if(Common.Constants.UmidObject){
-       		 	if ((new Date().getTime()-Common.Constants.UmidObject.time) > 1000) {
+       		 	if ((new Date().getTime()-Common.Constants.UmidObject.time) > 5000) {
 	       			Common.Constants.UmidObject = null;
        		 	} else {
-       		 		callback(Common.Constants.UmidObject.value);
+       		 		_callback(Common.Constants.UmidObject.value);
        		 		return;
        		 	}
        		}
@@ -512,14 +558,14 @@
 	       		$.getScript("js/fingerprint2-v2.1.0.js", function(){
 	       			setTimeout(function() {
 						Fingerprint2.get({
-						    excludes: {userAgent: true, language: true}
+						    excludes: _excludes
 						}, function(components){ 
 						    console.debug("Gets umid components: "+ JSON.stringify(components));
 						    var values = components.map(function (component) { return component.value });
 						    var umid = Fingerprint2.x64hash128(values.join(''), 31);
 						   	Common.Constants.UmidObject = { value: umid, time: new Date().getTime() };
 						    console.debug("Gets umid is: " + umid);
-						    callback(umid);
+						    _callback(umid);
 						});
 					}, 500);
 				});

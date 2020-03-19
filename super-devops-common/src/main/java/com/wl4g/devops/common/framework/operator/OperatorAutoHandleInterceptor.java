@@ -48,7 +48,7 @@ public class OperatorAutoHandleInterceptor implements MethodInterceptor {
 		log.debug("Around operator targetObj: {}, method: {}#{}", targetObj, declareClassName, targetMethodName);
 
 		// Call preprocessing
-		if (!operator.preHandle(invc.getArguments())) {
+		if (!operator.preHandle(invc.getMethod(), invc.getArguments())) {
 			log.warn("Rejected operation of {}#{}", targetObj, targetMethodName);
 			return null;
 		}
@@ -56,7 +56,7 @@ public class OperatorAutoHandleInterceptor implements MethodInterceptor {
 		Object returnObj = invc.proceed();
 
 		// Call post processing
-		operator.postHandle(invc.getArguments(), returnObj);
+		operator.postHandle(invc.getMethod(), invc.getArguments(), returnObj);
 		return returnObj;
 	}
 

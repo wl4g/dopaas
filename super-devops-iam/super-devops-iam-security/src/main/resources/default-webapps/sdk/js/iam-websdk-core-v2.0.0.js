@@ -562,7 +562,7 @@
 
 				_InitSafeCheck(function(checkCaptcha, checkGeneral, checkSms){
 					var secret = Common.Util.checkEmpty("Error for secret is empty", checkGeneral.secret);
-					var credentials = encodeURIComponent(IAM.Crypto.rivestShamirAdleman(secret, plainPasswd));
+					var credentials = encodeURIComponent(IAM.Crypto.rsa1ToHexString(secret, plainPasswd));
 					var verifiedToken = "";
 					if(runtime.safeCheck.checkCaptcha.enabled){
 						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
@@ -732,18 +732,34 @@
 	var clientRef = function(){
 		var clientRef = null;
 		var platformType = Common.Util.PlatformType;
-		if(platformType.WINDOWS){
-			clientRef = "windows";
-		} else if (platformType.WECHAT) {
-			clientRef = "WECHATMP";
-		} else if (platformType.ANDROID) {
-			clientRef = "WECHATMP";
-		} else if (platformType.IOS) {
-			clientRef = "IOS";
-		} else if (platformType.MAC) {
-			clientRef = "MAC";
+		if(platformType.Windows){
+			clientRef = "Windows";
+		} else if (platformType.MicroMessenger) {
+			clientRef = "Wechatmp";
+		} else if (platformType.Android) {
+			clientRef = "Android";
+		} else if (platformType.iOS) {
+			clientRef = "iOS";
+		} else if (platformType.iPad) {
+			clientRef = "iPad";
+		} else if (platformType.iPhone) {
+			clientRef = "iPhone";
+		} else if (platformType.iOS) {
+			clientRef = "iOS";
+		} else if (platformType.Mac) {
+			clientRef = "Mac";
 		} else if (platformType.Linux) {
 			clientRef = "Linux";
+		} else if (platformType.Irix) {
+			clientRef = "Irix";
+		} else if (platformType.Solaris) {
+			clientRef = "Solaris";
+		} else if (platformType.AIX) {
+			clientRef = "AIX";
+		} else if (platformType.OpenBSD) {
+			clientRef = "OpenBSD";
+		} else if (platformType.FreeBSD) {
+			clientRef = "FreeBSD";
 		} else {
 			clientRef = "Unknown";
 			console.warn("Unknown platform browser ["+ navigator.appVersion +"]");
@@ -752,7 +768,7 @@
 	};
 
 	// Check parent classy.
-	if(!window.IAM){ window.IAM = {}; }
+	if(!window.IAM){ window.IAM={} }
 
 	// Exposing core APIs
 	window.IAM.Core = {

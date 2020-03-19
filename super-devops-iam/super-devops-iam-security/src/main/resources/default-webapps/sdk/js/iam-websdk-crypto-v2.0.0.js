@@ -14,35 +14,92 @@
 	// 暴露API给外部
 	if(!window.IAM){ window.IAM = {}; }
 	window.IAM.Crypto = {
-		sha512WithHex: function(s){
+		sha512ToHexString: function(s){
 			return hex_sha512(s);
 		},
-		sha512WithBase64: function(s){
+		sha512ToBase64String: function(s){
 			return b64_sha512(s);
 		},
-		hmacSha512WithHex: function(k, d){
+		hmacSha512ToHexString: function(k, d){
 			return hex_hmac_sha512(k, d);
 		},
-		hmacSha512WithBase64: function(k, d){
+		hmacSha512ToBase64String: function(k, d){
 			return b64_hmac_sha512(k, d);
 		},
-		rivestShamirAdleman: function(publicKey, plain){ // RSA1
-			var crypt = new JSEncrypt();
-			crypt.setKey(Common.Util.checkEmpty("publicKey", publicKey)); //You can use also setPrivateKey and setPublicKey, they are both alias to setKey
+		/**
+		 * 测试示例:
+		 * 准备数据：base64=MTIz, hex=313233
+		 * 
+		 * 第一步（生成秘钥对）：
+		 * var keypair = IAM.Crypto.RSA.generateKey();
+		 * console.log(JSON.stringify(keypair));
+		 *
+		 * //publicKeyBase64=MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgGUqVNE4Jc9qYhahq/CnpzlJ2qIr5tvUiMXJbFSFbe1winhYxn3NExrDkV+ZfsfZOc1/O6wxFoudX/ZGzAMpiym9LAnrcN5dyMrMgVH/iHrY0jlAGis/5Qkk5JTfftDsADsH1iC5b2O55Pybm/HJNb8XhD0T34Bst9Qk7Iz5PdjjAgMBAAE=
+		 * //privateKeyBase64=MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgGUqVNE4Jc9qYhahq/CnpzlJ2qIr5tvUiMXJbFSFbe1winhYxn3NExrDkV+ZfsfZOc1/O6wxFoudX/ZGzAMpiym9LAnrcN5dyMrMgVH/iHrY0jlAGis/5Qkk5JTfftDsADsH1iC5b2O55Pybm/HJNb8XhD0T34Bst9Qk7Iz5PdjjAgMBAAE=
+		 * //publicKeyHex=30819e300d06092a864886f70d010101050003818c00308188028180652a54d13825cf6a6216a1abf0a7a73949daa22be6dbd488c5c96c54856ded708a7858c67dcd131ac3915f997ec7d939cd7f3bac31168b9d5ff646cc03298b29bd2c09eb70de5dc8cacc8151ff887ad8d239401a2b3fe50924e494df7ed0ec003b07d620b96f63b9e4fc9b9bf1c935bf17843d13df806cb7d424ec8cf93dd8e30203010001
+		 * //privateKeyHex=3082025a020100028180652a54d13825cf6a6216a1abf0a7a73949daa22be6dbd488c5c96c54856ded708a7858c67dcd131ac3915f997ec7d939cd7f3bac31168b9d5ff646cc03298b29bd2c09eb70de5dc8cacc8151ff887ad8d239401a2b3fe50924e494df7ed0ec003b07d620b96f63b9e4fc9b9bf1c935bf17843d13df806cb7d424ec8cf93dd8e302030100010281805f600b5abc0e997f783e51e962170d46ab641e24399fe2bd978a904117124e1a1dd1dc10362612eed695c58556cb5ef669d09c1778a802b439f65b44976ea12d668c02f0e1ea694f1ac8f1b4e409d10ca81a6998c39c563ba052b3523f9b875f6d445d09aa309b7170b6ae6eeffff0f8f6ab5707081687e7226eeb0537902111024100ab542337f447603cc01587fa6c598d9581fe9f5fbddf3dac959e6c82645e1cbdf0629bd6c47a04eba486a2a89589976ba41c5acc2932a69d66caba6d7bb7b26f024100972964f61ba164b5b2d37ea2416416ed24d3caa3273e30ae1921335b2d4d335dc03e0c945b9674d4d8eb1dc7350a67dedbdfe267238a5b923c01483915de6acd0240625d9536dbf65ae7a634f6742ddf20adf50bb67f26a9546491267b104605cea4b2ae3ae10cbf2db2092d0f9890fa854854d9bebbb6ef90bf9033d6e36303addb02400cf5d49d3143463239f1de32a52ea2b4946ac03dfad85f2e1e237596c4ac90d1e1f0affd6c58db0d80c7afd6eb9a47cb98c87a4de3833254b86657bde53d1ba502405d90024a45bb2bd846968fb8761a6bc6650dead71d3a20088b089a71bbb3a179c7cf86aea64dec3600e3cf56f71369a4ff0c960ffc9b8ad71d5d1be93756ecb4
+		 * 
+		 * 第二步（publicKey加密数据）：
+	     * var hexCiphertext = IAM.Crypto.RSA.encryptToHexString(keypair.publicKeyHex, "313233");
+		 * console.log("加密后hex字符串" + hexCiphertext);
+		 * // 结果：127125a5499a06d7cd53581b277b783cddf4f745bab16776878f04b60d849d01806c5f56800a131432ec2ada1f6ecd7c8c0328362df45c07a78d8b1a14a10e333ed9fd6d0075250a53286f0fb727fec7d1ac4f05dd98cad11794ccddadfc3238d77b28c05bae0eb644e289b294942a0defa26444a357c0ac5e60eed1fbd12895
+		 * 
+		 * 第三步（privateKey解密数据）：
+	     * var hexPlaintext = IAM.Crypto.RSA.encryptToHexString(keypair.privateKeyHex, hexCiphertext);
+		 * console.log("解密后hex字符串" + hexPlaintext);
+		 * // 结果：313233
+		 **/
+		RSA: {
+		    encryptToHexString: function(publicKey, hexPlaintext){ // RSA1 encrypt
+				var crypt = new JSEncrypt();
+				// You can use also setPrivateKey and setPublicKey, they are both alias to setKey
+				publicKey = Common.Util.Codec.hexToBase64(Common.Util.checkEmpty("publicKey", publicKey));
+				crypt.setKey(publicKey);
 
-			//Eventhough the methods are called setPublicKey and setPrivateKey, remember
-			//that they are only alias to setKey, so you can pass them both a private or
-			//a public openssl key, just remember that setting a public key allows you to only encrypt.
-			// Encrypt the data with the public key.
-			if(typeof plain != "string"){
-				plain = plain.toString(); // e.g. Is int-type encryption background Java rsa1_padding5 cannot be decrypted.
-			}
-			var enc = crypt.encrypt(plain);
-			if(!enc){
-				throw "Failed to RSA encryption, maybe the key is set incorrectly. '" + publicKey + "'";
-			}
-			return Common.Util.base64ToHex(enc);
-		},
+				//Eventhough the methods are called setPublicKey and setPrivateKey, remember
+				//that they are only alias to setKey, so you can pass them both a private or
+				//a public openssl key, just remember that setting a public key allows you to only encrypt.
+				// Encrypt the data with the public key.
+				if(typeof hexPlaintext != "string"){
+					plaintext = plaintext.toString(); // e.g. Is int-type encryption background Java rsa1_padding5 cannot be decrypted.
+				}
+				var ciphertext = crypt.encrypt(Common.Util.Codec.hexToBase64(hexPlaintext));
+				if(!ciphertext){
+					throw "Failed to RSA encryption, maybe the key is set incorrectly. '" + publicKey + "'";
+				}
+				return Common.Util.Codec.base64ToHex(ciphertext);
+			},
+		    decryptFromHexString: function(privateKey, hexCiphertext){ // RSA1 decrypt
+				var crypt = new JSEncrypt();
+				// You can use also setPrivateKey and setPublicKey, they are both alias to setKey
+				privateKey = Common.Util.Codec.hexToBase64(Common.Util.checkEmpty("privateKey", privateKey));
+				crypt.setKey(privateKey);
+
+				//Eventhough the methods are called setPublicKey and setPrivateKey, remember
+				//that they are only alias to setKey, so you can pass them both a private or
+				//a public openssl key, just remember that setting a public key allows you to only encrypt.
+				// Encrypt the data with the public key.
+				if(typeof hexCiphertext != "string"){
+					hexCiphertext = hexCiphertext.toString(); // e.g. Is int-type encryption background Java rsa1_padding5 cannot be decrypted.
+				}
+				var plaintext = crypt.decrypt(Common.Util.Codec.hexToBase64(hexCiphertext));
+				if(!plaintext){
+					throw "Failed to RSA encryption, maybe the key is set incorrectly. '" + privateKey + "'";
+				}
+				return Common.Util.Codec.base64ToHex(plaintext);
+			},
+		    generateKey: function(){
+				var crypt = new JSEncrypt();
+				var publicKeyBase64 = crypt.getPublicKeyB64();
+				var privateKeyBase64 = crypt.getPrivateKeyB64();
+				return {
+					publicKeyBase64: publicKeyBase64,
+				 	privateKeyBase64: privateKeyBase64,
+					publicKeyHex: Common.Util.Codec.base64ToHex(publicKeyBase64),
+				 	privateKeyHex: Common.Util.Codec.base64ToHex(privateKeyBase64),
+				};
+			},
+		}
 	};
 
 	/*

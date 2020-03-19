@@ -117,6 +117,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/** Based URI with login authenticator controller. */
 	final public static String URI_S_LOGIN_BASE = "/login";
 	/**
+	 * Apply sessionID, For example for mobile use.
+	 */
+	final public static String URI_S_LOGIN_APPLY_SESSION = "sessions";
+	/**
 	 * Apply authentication code, For example for mobile use.
 	 */
 	final public static String URI_S_LOGIN_APPLY_AUTHCODE = "authenticationcode";
@@ -182,6 +186,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Cryptographic service cache name.
 	 */
 	final public static byte[] CACHE_CRYPTO = "crypto_keypairs".getBytes(Charsets.UTF_8);
+	/**
+	 * The public key index by logged-in users
+	 */
+	final public static String KEY_SECRET_INDEX = "securerSecretKeyPairIndex";
 	/**
 	 * Cache applied secret key index.
 	 */

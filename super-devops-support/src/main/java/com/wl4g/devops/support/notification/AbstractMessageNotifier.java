@@ -18,6 +18,8 @@ package com.wl4g.devops.support.notification;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
+import java.lang.reflect.Method;
+
 import org.springframework.beans.factory.InitializingBean;
 
 import com.wl4g.devops.tool.common.log.SmartLogger;
@@ -50,7 +52,7 @@ public abstract class AbstractMessageNotifier<C extends NotifyProperties> implem
 	}
 
 	@Override
-	public boolean preHandle(Object[] args) {
+	public boolean preHandle(Method method, Object[] args) {
 		// Check notify message templateKey
 		if (config instanceof AbstractNotifyProperties) {
 			AbstractNotifyProperties conf = (AbstractNotifyProperties) config;

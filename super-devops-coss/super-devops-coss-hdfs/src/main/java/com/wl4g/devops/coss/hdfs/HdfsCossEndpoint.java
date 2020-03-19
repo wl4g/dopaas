@@ -22,6 +22,7 @@ import static java.util.Objects.isNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -91,7 +92,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	}
 
 	@Override
-	public boolean preHandle(Object[] args) {
+	public boolean preHandle(Method method, Object[] args) {
 		checkAndInitializingHdfsFileSystem();
 		return true;
 	}
