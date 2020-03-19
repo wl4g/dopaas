@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.common.framework.operator;
 
+import java.lang.reflect.Method;
+
 /**
  * Generic operator adapter.
  * 
@@ -35,23 +37,27 @@ public interface Operator<K extends Enum<?>> {
 	/**
 	 * Preprocessing, such as checking connections to remote services.
 	 * 
+	 * @param method
+	 *            target method.
 	 * @param args
 	 *            Input formal parameters
 	 * @return
 	 */
-	default boolean preHandle(Object[] args) {
+	default boolean preHandle(Method method, Object[] args) {
 		return true;
 	}
 
 	/**
 	 * Post processing, such as checking the actual processing results.
 	 * 
+	 * @param method
+	 *            target method.
 	 * @param args
 	 *            Input formal parameters
 	 * @param returnObj
 	 *            Execute return result object
 	 */
-	default void postHandle(Object[] args, Object returnObj) {
+	default void postHandle(Method method, Object[] args, Object returnObj) {
 
 	}
 

@@ -45,7 +45,7 @@
 			var applyTokenCrc = Common.Util.Crc16CheckSum.crc16Modbus(runtime.applyModel.applyToken);
 			var tmpX = IAM.Crypto.sha512WithHex(left+runtime.applyModel.applyToken).substring(31, 97) + (left*applyTokenCrc);
             // Do encryption x-position.
-			var cipherX = IAM.Crypto.rivestShamirAdleman(runtime.applyModel.secret, tmpX);
+			var cipherX = IAM.Crypto.rsa1ToHexString(runtime.applyModel.secret, tmpX);
             var ret = null;
             var verifyData = {
                 applyToken: runtime.applyModel.applyToken,

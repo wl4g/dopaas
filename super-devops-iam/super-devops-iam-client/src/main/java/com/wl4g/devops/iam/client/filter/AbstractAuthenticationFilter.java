@@ -221,7 +221,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				RespBase<String> loggedResp = makeLoggedResponse(request, subject, successUrl);
 
 				// Callback custom success handling.
-				coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response, loggedResp.forMap());
+				coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), loggedResp.forMap());
 
 				String logged = toJSONString(loggedResp);
 				if (log.isInfoEnabled()) {
@@ -235,7 +235,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// Redirection
 		else {
 			// Callback custom success handling.
-			coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response, null);
+			coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), null);
 
 			if (log.isInfoEnabled()) {
 				log.info("Authenticated redirect to - {}", successUrl);

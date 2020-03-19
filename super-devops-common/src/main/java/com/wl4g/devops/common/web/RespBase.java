@@ -190,9 +190,9 @@ public class RespBase<D> implements Serializable {
 			return this;
 		}
 		if (isAvailablePayload()) { // Data already payLoad ?
-			throw new IllegalStateException(String.format(
-					"RespBase.data already payLoad, In order to set it successful the data node must be the initial value or empty. - %s",
-					getData()));
+			throw new IllegalStateException(
+					format("RespBase.data already payLoad, In order to set it successful the data node must be the initial value or empty. - %s",
+							getData()));
 		}
 		this.data = data;
 		return this;
@@ -263,7 +263,7 @@ public class RespBase<D> implements Serializable {
 					this.data = (D) new DataMap<>((Map) data);
 				}
 			} else {
-				String errmsg = String.format(
+				String errmsg = format(
 						"Illegal type compatible operation, because RespBase.data has initialized the available data, class type is: %s, and forMap() requires RespBase.data to be uninitialized or the initialized data type is must an instance of Map",
 						data.getClass());
 				throw new UnsupportedOperationException(errmsg);
@@ -649,7 +649,7 @@ public class RespBase<D> implements Serializable {
 			if (nonNull(retCode)) {
 				return retCode;
 			}
-			throw new IllegalArgumentException(String.format("'%s'", nameOrCode));
+			throw new IllegalArgumentException(format("'%s'", nameOrCode));
 		}
 
 		/**

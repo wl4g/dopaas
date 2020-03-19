@@ -68,6 +68,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static org.springframework.util.Assert.*;
 
 /**
@@ -239,7 +240,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		Subject subject = SecurityUtils.getSubject();
 
 		// Execution listener
-		coprocessor.preLogout(forced, request, response);
+		coprocessor.preLogout(forced, toHttp(request), toHttp(response));
 
 		// Represents all logged-out Tags
 		boolean logoutAll = true;

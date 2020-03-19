@@ -53,12 +53,12 @@ public class GenericAuthenticationFilter extends AbstractIamAuthenticationFilter
 		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
 		String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
 
-		// Other optional parameters.
+		// Additional optional parameters.
 		GenericAuthenticationToken token = new GenericAuthenticationToken(remoteHost, redirectInfo, principal, cipherPassword,
 				clientRef, verifiedToken, of(request));
-		Map<String, String> userAttributes = safeMap(request.getParameterMap()).entrySet().stream()
+		Map<String, String> userProperties = safeMap(request.getParameterMap()).entrySet().stream()
 				.collect(toMap(e -> e.getKey(), e -> isEmptyArray(e.getValue()) ? null : e.getValue()[0]));
-		token.setUserAttributes(userAttributes);
+		token.setUserProperties(userProperties);
 
 		return token;
 	}

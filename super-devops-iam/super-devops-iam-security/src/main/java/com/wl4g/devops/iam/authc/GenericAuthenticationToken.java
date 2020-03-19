@@ -75,7 +75,7 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	 * Client user other attributes properties. (e.g.
 	 * _csrf_token=xxx&lang=zh_CN)
 	 */
-	private Map<String, String> userAttributes = new HashMap<>();
+	private Map<String, String> userProperties = new HashMap<>();
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
 			final String credentials, String clientRef, final String verifiedToken, final VerifyType verifyType) {
@@ -128,13 +128,13 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 		return verifyType;
 	}
 
-	public Map<String, String> getUserAttributes() {
-		return userAttributes;
+	public Map<String, String> getUserProperties() {
+		return userProperties;
 	}
 
-	public GenericAuthenticationToken setUserAttributes(Map<String, String> userAttributes) {
+	public GenericAuthenticationToken setUserProperties(Map<String, String> userAttributes) {
 		if (!isEmpty(userAttributes)) {
-			this.userAttributes.putAll(userAttributes);
+			this.userProperties.putAll(userAttributes);
 		}
 		return this;
 	}
@@ -143,27 +143,38 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	public String toString() {
 		return "GenericAuthenticationToken [principal=" + principal + ", credentials=" + credentials + ", rememberMe="
 				+ rememberMe + ", clientRef=" + clientRef + ", verifiedToken=" + verifiedToken + ", verifyType=" + verifyType
-				+ ", userAttributes=" + userAttributes + "]";
+				+ ", userAttributes=" + userProperties + "]";
 	}
 
 	/**
-	 * Native userAgent string. </br>
+	 * User properties keys definitions.
 	 * 
-	 * <pre>
-	 * e.g. 
-	 * navUserAgent=Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36)
-	 * </pre>
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2020年3月19日
+	 * @since
 	 */
-	final public static String KEY_USERAGENT = "navUserAgent";
+	public static interface UserPropertiesKey {
 
-	/**
-	 * Native OS platform string. (e.g. navPlatform=win32)
-	 */
-	final public static String KEY_PLATFORM = "navPlatform";
+		/**
+		 * Native userAgent string. </br>
+		 * 
+		 * <pre>
+		 * e.g. 
+		 * navUserAgent=Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36)
+		 * </pre>
+		 */
+		final public static String KEY_USERAGENT = "navUserAgent";
 
-	/**
-	 * Client screen pixel. (e.g. screenPixel=1366x768)
-	 */
-	final public static String KEY_SCREENPIXEL = "screenPixel";
+		/**
+		 * Native OS platform string. (e.g. navPlatform=win32)
+		 */
+		final public static String KEY_PLATFORM = "navPlatform";
+
+		/**
+		 * Client screen pixel. (e.g. screenPixel=1366x768)
+		 */
+		final public static String KEY_SCREENPIXEL = "screenPixel";
+
+	}
 
 }

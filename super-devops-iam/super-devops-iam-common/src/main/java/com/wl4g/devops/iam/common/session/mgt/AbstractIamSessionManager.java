@@ -115,7 +115,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		// }
 
 		// Call extra get SID.
-		Serializable sessionId = coprocessor.preGetSessionId(request, response);
+		Serializable sessionId = coprocessor.preGetSessionId(toHttp(request), toHttp(response));
 		if (checkAvailable(sessionId)) {
 			log.debug("Use extra sid '{}'", sessionId);
 			return sessionId;

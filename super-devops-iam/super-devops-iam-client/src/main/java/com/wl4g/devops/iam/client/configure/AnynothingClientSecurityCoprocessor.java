@@ -16,13 +16,13 @@
 package com.wl4g.devops.iam.client.configure;
 
 import javax.servlet.Filter;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class AnynothingClientSecurityCoprocessor implements ClientSecurityCoprocessor {
 
 	@Override
-	public boolean preAuthentication(Filter filter, ServletRequest request, ServletResponse response) {
+	public boolean preCreateToken(Filter filter, HttpServletRequest request, HttpServletResponse response) {
 		return true;
 	}
 

@@ -182,7 +182,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		 * restricting client IP white-list to prevent violent cracking of large
 		 * number of submission login requests.
 		 */
-		if (!coprocessor.preAuthentication(this, request, response)) {
+		if (!coprocessor.preCreateToken(this, toHttp(request), toHttp(response))) {
 			throw new AccessRejectedException(format("Access rejected for remote IP:%s", getHttpRemoteAddr(toHttp(request))));
 		}
 
@@ -236,7 +236,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 							params);
 
 					// Call authenticated success.
-					coprocessor.postAuthenticatingSuccess(tk, subject, request, response, loggedResp.asMap());
+					coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), loggedResp.asMap());
 
 					String logged = toJSONString(loggedResp);
 					log.info("Response to success - {}", logged);
@@ -256,7 +256,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				}
 
 				// Handle success processing.
-				coprocessor.postAuthenticatingSuccess(tk, subject, request, response, params);
+				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), params);
 
 				log.info("Redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), params);
 				issueRedirect(request, response, redirect.getRedirectUrl(), params, true);
