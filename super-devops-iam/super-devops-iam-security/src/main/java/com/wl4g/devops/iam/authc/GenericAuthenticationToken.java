@@ -73,7 +73,9 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 
 	/**
 	 * Client user other attributes properties. (e.g.
-	 * _csrf_token=xxx&lang=zh_CN)
+	 * _csrf_token=xxx&lang=zh_CN&umid=xxx&ua=xxx)
+	 * 
+	 * @see {@link com.wl4g.devops.iam.config.properties.ServerParamProperties#riskControlParam}
 	 */
 	private Map<String, String> userProperties = new HashMap<>();
 
@@ -144,37 +146,6 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 		return "GenericAuthenticationToken [principal=" + principal + ", credentials=" + credentials + ", rememberMe="
 				+ rememberMe + ", clientRef=" + clientRef + ", verifiedToken=" + verifiedToken + ", verifyType=" + verifyType
 				+ ", userAttributes=" + userProperties + "]";
-	}
-
-	/**
-	 * User properties keys definitions.
-	 * 
-	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
-	 * @version v1.0 2020年3月19日
-	 * @since
-	 */
-	public static interface UserPropertiesKey {
-
-		/**
-		 * Native userAgent string. </br>
-		 * 
-		 * <pre>
-		 * e.g. 
-		 * navUserAgent=Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36)
-		 * </pre>
-		 */
-		final public static String KEY_USERAGENT = "navUserAgent";
-
-		/**
-		 * Native OS platform string. (e.g. navPlatform=win32)
-		 */
-		final public static String KEY_PLATFORM = "navPlatform";
-
-		/**
-		 * Client screen pixel. (e.g. screenPixel=1366x768)
-		 */
-		final public static String KEY_SCREENPIXEL = "screenPixel";
-
 	}
 
 }

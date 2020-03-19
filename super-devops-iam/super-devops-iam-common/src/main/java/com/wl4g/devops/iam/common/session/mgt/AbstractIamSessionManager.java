@@ -28,6 +28,7 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
 import static java.lang.Boolean.TRUE;
+import static java.util.Objects.isNull;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -49,7 +50,6 @@ import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
@@ -58,6 +58,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Abstract custom IAM session management
@@ -69,7 +70,7 @@ import com.wl4g.devops.tool.common.lang.StringUtils2;
  */
 public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<? extends ParamProperties>>
 		extends DefaultWebSessionManager {
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Cache name
@@ -116,7 +117,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 
 		// Call extra get SID.
 		Serializable sessionId = coprocessor.preGetSessionId(toHttp(request), toHttp(response));
-		if (checkAvailable(sessionId)) {
+		if (checkSessionValidity(sessionId)) {
 			log.debug("Use extra sid '{}'", sessionId);
 			return sessionId;
 		}
@@ -124,7 +125,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		// Using URLs session. e.g.
 		// http://localhost/project?__sid=xxx&__cookie=yes
 		sessionId = getCleanParam(request, config.getParam().getSid());
-		if (checkAvailable(sessionId)) {
+		if (checkSessionValidity(sessionId)) {
 			log.debug("Use url sid '{}'", sessionId);
 			// Storage session.
 			storageTokenIfNecessary(request, response, sessionId);
@@ -138,27 +139,27 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 
 		// Using cookie in URLs session.(e.g. Android/iOS/WechatApplet)
 		sessionId = getCleanParam(request, config.getCookie().getName());
-		if (checkAvailable(sessionId)) {
+		if (checkSessionValidity(sessionId)) {
 			log.debug("Use url cookie sid '{}'", sessionId);
 			return sessionId;
 		}
 
 		// Using header session.(e.g. Android/iOS/WechatApplet)
 		sessionId = toHttp(request).getHeader(config.getCookie().getName());
-		if (checkAvailable(sessionId)) {
+		if (checkSessionValidity(sessionId)) {
 			log.debug("Use header cookie sid '{}'", sessionId);
 			return sessionId;
 		}
 
 		// Using grant ticket session.
 		String grantTicket = getCleanParam(request, config.getParam().getGrantTicket());
-		if (checkAvailable(grantTicket)) {
+		if (checkSessionValidity(grantTicket)) {
 			/**
 			 * {@link CentralAuthenticationHandler#loggedin()}
 			 */
 			sessionId = (String) cacheManager.getCache(cacheName).get(new EnhancedKey(grantTicket, String.class));
 			log.debug("Use ticket sid: '{}', grantTicket: '{}'", sessionId, grantTicket);
-			if (checkAvailable(sessionId)) {
+			if (checkSessionValidity(sessionId)) {
 				return sessionId;
 			} else {
 				log.warn("Cannot get sid with grantTicket: '{}'", grantTicket);
@@ -351,11 +352,11 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * safeCheckText("12345") == true<br/>
 	 * safeCheckText(" 12345 ") == true<br/>
 	 *
-	 * @param str
+	 * @param sid
 	 * @return
 	 */
-	protected boolean checkAvailable(Serializable str) {
-		return str != null && isNotBlank(str.toString()) && !str.toString().equalsIgnoreCase("NULL");
+	protected boolean checkSessionValidity(Serializable sid) {
+		return !isNull(sid) && isNotBlank(sid.toString()) && !sid.toString().equalsIgnoreCase("NULL");
 	}
 
 	/**

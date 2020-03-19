@@ -22,7 +22,7 @@ import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.config.properties.MatcherProperties;
 
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.*;
+import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
@@ -101,7 +101,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		String principal = (String) tk.getPrincipal();
 
 		// Fail limiter factor keys
-		List<String> factors = createLimitFactors(tk.getHost(), principal);
+		List<String> factors = getV1Factors(tk.getHost(), principal);
 		notEmpty(factors, "LimitFactors can't empty");
 
 		Long cumulatedMaxFailCount = 0L;
@@ -162,7 +162,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		if (isNull(failPrincipalFactors)) {
 			failPrincipalFactors = new ArrayList<>();
 		}
-		failPrincipalFactors.add(createUIDLimitFactor(principal));
+		failPrincipalFactors.add(getUIDFactor(principal));
 		bind(KEY_FAIL_PRINCIPAL_FACTORS, failPrincipalFactors);
 
 		return matchCountMax;
@@ -241,9 +241,9 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			 */
 			if (factorLock) {
 				Long remainTime = lockCache.timeToLive(new EnhancedKey(factor, matchLockDelay), principal);
-				log.warn(
-						format("Matching failed, limiter factor [%s] attempts have been made to exceed the maximum limit [%s], remain time [%s Sec] [%s]",
-								factor, matchLockMaxAttempts, remainTime, factor));
+				log.warn(format(
+						"Matching failed, limiter factor [%s] attempts have been made to exceed the maximum limit [%s], remain time [%s Sec] [%s]",
+						factor, matchLockMaxAttempts, remainTime, factor));
 			}
 
 			// The whole is marked as needing to be locked
@@ -252,7 +252,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 		if (lock) { // Any factor matched
 			log.warn("Client that has been locked. factors: {}", factors);
-			throw new LockedAccountException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
+			throw new LockedAccountException(bundle.getMessage("AbstractAttemptsMatcher.accessReject"));
 		}
 
 		return cumulatedMax;

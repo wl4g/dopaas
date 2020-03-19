@@ -68,19 +68,14 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	 */
 	@PostMapping(URI_S_VALIDATE)
 	@ResponseBody
-	public RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> validate(HttpServletRequest request,
-			@NotNull @RequestBody TicketValidateModel param) {
-		if (log.isInfoEnabled()) {
-			log.info("Ticket validate sessionId[{}] <= {}", getSessionId(), toJSONString(param));
-		}
+	public RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> validate(@NotNull @RequestBody TicketValidateModel param) {
+		log.info("Ticket validating sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
 		RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> resp = new RespBase<>();
 		// Ticket assertion.
 		resp.setData(authHandler.validate(param));
 
-		if (log.isInfoEnabled()) {
-			log.info("Ticket validate => {}", resp);
-		}
+		log.info("Ticket validated => {}", resp);
 		return resp;
 	}
 
@@ -129,9 +124,7 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	@PostMapping(URI_S_SECOND_VALIDATE)
 	@ResponseBody
 	public RespBase<SecondAuthcAssertModel> seondValidate(HttpServletRequest request) {
-		if (log.isInfoEnabled()) {
-			log.info("Second authentication validate <= {}", getFullRequestURL(request));
-		}
+		log.info("Second authentication validate <= {}", getFullRequestURL(request));
 
 		RespBase<SecondAuthcAssertModel> resp = new RespBase<>();
 		try {

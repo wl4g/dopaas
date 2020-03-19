@@ -22,9 +22,9 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_RO
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTH_BASE;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.SESSION_STATUS_AUTHC;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.SESSION_STATUS_UNAUTHC;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.correctAuthenticaitorURI;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.SESSION_STATUS_AUTHC;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.SESSION_STATUS_UNAUTHC;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bindKVParameters;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.extParameterValue;

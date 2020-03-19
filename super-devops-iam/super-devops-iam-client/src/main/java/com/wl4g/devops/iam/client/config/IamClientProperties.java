@@ -23,8 +23,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils;
 import com.wl4g.devops.iam.client.config.IamClientProperties.ClientParamProperties;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 
 @ConfigurationProperties(prefix = "spring.cloud.devops.iam.client")
 public class IamClientProperties extends AbstractIamProperties<ClientParamProperties> implements InitializingBean {
@@ -176,7 +176,7 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 		}
 		// Login URI.
 		if (isBlank(getLoginUri())) {
-			setLoginUri(AuthenticatingSecurityUtils.correctAuthenticaitorURI(getServerUri()));
+			setLoginUri(correctAuthenticaitorURI(getServerUri()));
 		}
 	}
 
