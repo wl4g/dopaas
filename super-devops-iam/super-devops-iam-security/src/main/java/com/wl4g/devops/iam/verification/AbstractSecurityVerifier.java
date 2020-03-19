@@ -27,8 +27,6 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -36,6 +34,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -46,6 +45,7 @@ import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Abstract IAM verification handler
@@ -57,7 +57,7 @@ import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
  */
 public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Verified token bit.

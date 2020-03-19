@@ -21,11 +21,10 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SmsParameter;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.UnknownAccountException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -39,6 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_SMS_COUNTER;
 import static com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action.BIND;
@@ -157,7 +158,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 	public void afterPropertiesSet() throws Exception {
 		this.applySmsCumulator = newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
 				config.getMatcher().getFailFastSmsMaxDelay());
-		Assert.notNull(applySmsCumulator, "applyCumulator is null, please check configure");
+		notNullOf(applySmsCumulator, "applyCumulator");
 	}
 
 	/**
@@ -209,7 +210,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 	 */
 	public static class PrintSmsHandleSender implements SmsHandleSender {
 
-		final protected Logger log = LoggerFactory.getLogger(getClass());
+		final protected SmartLogger log = getLogger(getClass());
 
 		@Override
 		public void doSend(Map<String, Object> parameters) {

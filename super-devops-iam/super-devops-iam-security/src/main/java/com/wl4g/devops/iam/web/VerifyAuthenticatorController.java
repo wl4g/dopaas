@@ -86,6 +86,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			if (!coprocessor.preApplyCapcha(request, response)) {
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
 			}
+
 			// LoginId number or mobileNum(Optional)
 			String principal = getCleanParam(request, config.getParam().getPrincipalName());
 			// Limit factors
@@ -145,12 +146,13 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 */
 	@RequestMapping(value = URI_S_VERIFY_SMS_APPLY, method = { GET })
 	@ResponseBody
-	public RespBase<?> applySmsVerify(HttpServletRequest request, HttpServletResponse response) {
+	public RespBase<?> applySmsCode(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
-			if (!coprocessor.preApplyVerify(request, response)) {
+			if (!coprocessor.preApplySmsCode(request, response)) {
 				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
 			}
+
 			// Login account number or mobile number(Required)
 			MobileNumber mn = parse(getCleanParam(request, config.getParam().getPrincipalName()));
 			// Lock factors

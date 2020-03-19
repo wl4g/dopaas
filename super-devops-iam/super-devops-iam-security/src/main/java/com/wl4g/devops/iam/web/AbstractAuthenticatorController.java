@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
+import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 
@@ -53,6 +54,12 @@ public abstract class AbstractAuthenticatorController extends BaseController {
 	 */
 	@Autowired
 	protected ServerSecurityCoprocessor coprocessor;
+
+	/**
+	 * IAM server security configurer.
+	 */
+	@Autowired
+	protected ServerSecurityConfigurer configurer;
 
 	/**
 	 * Delegate message source.

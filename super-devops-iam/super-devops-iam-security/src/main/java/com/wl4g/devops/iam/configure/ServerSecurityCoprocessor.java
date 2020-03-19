@@ -36,7 +36,7 @@ import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 
 	/**
-	 * Before apply CAPTCHA handle
+	 * Preprocessing apply captcha handle
 	 *
 	 * @param request
 	 * @param response
@@ -47,18 +47,18 @@ public interface ServerSecurityCoprocessor extends SecurityCoprocessor {
 	}
 
 	/**
-	 * Before apply verify-code handle
+	 * Preprocessing apply SMS verifyCode handle
 	 *
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	default boolean preApplyVerify(ServletRequest request, ServletResponse response) {
+	default boolean preApplySmsCode(ServletRequest request, ServletResponse response) {
 		return true;
 	}
 
 	/**
-	 * Before Whether the generic authenticating check match is allowed.
+	 * Preprocessing whether the generic authenticating check match is allowed.
 	 *
 	 * @param token
 	 * @param info
