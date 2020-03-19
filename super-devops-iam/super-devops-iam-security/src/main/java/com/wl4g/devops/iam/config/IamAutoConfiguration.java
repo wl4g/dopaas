@@ -533,6 +533,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	public SmsSecurityVerifier smsVerification() {
 		return new SmsSecurityVerifier();
 	}

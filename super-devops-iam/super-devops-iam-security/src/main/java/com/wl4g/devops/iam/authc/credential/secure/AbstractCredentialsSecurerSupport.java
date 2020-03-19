@@ -149,10 +149,10 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	}
 
 	@Override
-	public String applySecret(@NotNull String authCode) {
+	public String applySecret(@NotNull String principal) {
 		// Gets secretKey(publicKey) index.
 		EnhancedCache secretIdxCache = cacheManager.getEnhancedCache(CACHE_PUBKEY_IDX);
-		Integer index = (Integer) secretIdxCache.get(new EnhancedKey(authCode, Integer.class));
+		Integer index = (Integer) secretIdxCache.get(new EnhancedKey(principal, Integer.class));
 		if (isNull(index)) {
 			index = current().nextInt(0, config.getPreCryptPoolSize());
 		}
@@ -160,7 +160,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 		// Gets & bind applySecret keyPair index.
 		KeyPairSpec keyPair = cryptService.borrow(index);
-		secretIdxCache.put(new EnhancedKey(authCode, config.getApplyPubkeyExpireMs()), index);
+		secretIdxCache.put(new EnhancedKey(principal, config.getApplyPubkeyExpireMs()), index);
 
 		log.info("Applied secretKey of sessionId: {}, index: {}, pubKeyHexString: {}, privKeyHexString: {}", getSessionId(),
 				index, keyPair.getPubHexString(), keyPair.getHexString());
@@ -252,7 +252,6 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	private KeyPairSpec determineSecretKeySpecPair(@NotBlank String principal) {
 		try {
 			// Gets the best one from the candidate keyPair.
-			// TODO authCode?
 			Integer index = (Integer) secretIndexCache.get(new EnhancedKey(principal, Integer.class));
 			if (!isNull(index)) {
 				return cryptService.borrow(index);
