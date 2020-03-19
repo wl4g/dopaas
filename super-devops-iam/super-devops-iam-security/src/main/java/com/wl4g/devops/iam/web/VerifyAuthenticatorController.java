@@ -34,8 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.createLimitFactors;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.sessionStatus;
+import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.sessionStatus;
 import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType.TEXT_SMS;
 import static com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber.parse;
 import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
@@ -84,13 +84,13 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			if (!coprocessor.preApplyCapcha(request, response)) {
-				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
+				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.accessReject"));
 			}
 
 			// LoginId number or mobileNum(Optional)
 			String principal = getCleanParam(request, config.getParam().getPrincipalName());
 			// Limit factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
+			List<String> factors = getV1Factors(getHttpRemoteAddr(request), principal);
 
 			// Apply CAPTCHA
 			if (verifier.forAdapt(request).isEnabled(factors)) { // Enabled?
@@ -120,20 +120,17 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 */
 	@RequestMapping(value = URI_S_VERIFY_ANALYZE_CAPTCHA, method = { POST })
 	@ResponseBody
-	public RespBase<?> verifyAnalyzeCaptcha(@UnsafeXss @RequestBody String params, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+	public RespBase<?> verifyCaptcha(@UnsafeXss @RequestBody String params, HttpServletRequest request) throws Exception {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			// Limit factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), null);
+			List<String> factors = getV1Factors(getHttpRemoteAddr(request), null);
 			// Verifying
 			String verifiedToken = verifier.forAdapt(request).verify(params, request, factors);
 			resp.forMap().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
 		} catch (Exception e) {
 			resp.handleError(e);
-			if (log.isWarnEnabled()) {
-				log.warn("Failed to verifyAnalyze captcha.", e);
-			}
+			log.warn("Failed to verifyAnalyze captcha.", e);
 		}
 		return resp;
 	}
@@ -150,13 +147,13 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			if (!coprocessor.preApplySmsCode(request, response)) {
-				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
+				throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.accessReject"));
 			}
 
 			// Login account number or mobile number(Required)
 			MobileNumber mn = parse(getCleanParam(request, config.getParam().getPrincipalName()));
 			// Lock factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), mn.asNumberText());
+			List<String> factors = getV1Factors(getHttpRemoteAddr(request), mn.asNumberText());
 
 			// Graph validation
 			verifier.forAdapt(request).validate(factors, getCleanParam(request, config.getParam().getVerifiedTokenName()), false);

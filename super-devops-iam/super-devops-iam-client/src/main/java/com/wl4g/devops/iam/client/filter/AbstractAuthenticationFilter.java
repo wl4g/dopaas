@@ -29,8 +29,8 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMCLIENT;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.SESSION_STATUS_AUTHC;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.SESSION_STATUS_UNAUTHC;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.SESSION_STATUS_AUTHC;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.SESSION_STATUS_UNAUTHC;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionExpiredTime;

@@ -150,7 +150,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 		if (applySmsCount >= failFastSmsMaxAttempts) {
 			log.warn("Apply for SMS verification code too often, actual: {}, maximum: {}, factors: {}", applySmsCount,
 					failFastSmsMaxAttempts, factors);
-			throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
+			throw new AccessRejectedException(bundle.getMessage("AbstractAttemptsMatcher.accessReject"));
 		}
 	}
 

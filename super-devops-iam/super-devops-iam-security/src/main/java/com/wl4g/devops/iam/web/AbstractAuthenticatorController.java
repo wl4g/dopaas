@@ -19,6 +19,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.common.web.BaseController;
@@ -35,7 +36,7 @@ import com.wl4g.devops.iam.handler.AuthenticationHandler;
  * @version v1.0 2019年1月22日
  * @since
  */
-public abstract class AbstractAuthenticatorController extends BaseController {
+public abstract class AbstractAuthenticatorController extends BaseController implements InitializingBean {
 
 	/**
 	 * IAM server properties configuration
@@ -66,5 +67,10 @@ public abstract class AbstractAuthenticatorController extends BaseController {
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+
+	}
 
 }

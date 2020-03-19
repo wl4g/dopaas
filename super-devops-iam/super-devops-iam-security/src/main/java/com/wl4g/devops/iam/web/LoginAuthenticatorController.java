@@ -39,9 +39,7 @@ import java.util.Objects;
 
 import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.createLimitFactors;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.sessionStatus;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
+import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
 import static com.wl4g.devops.iam.web.model.CaptchaCheckModel.KEY_CAPTCHA_CHECK;
 import static com.wl4g.devops.iam.web.model.GeneralCheckModel.KEY_GENERAL_CHECK;
 import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
@@ -147,7 +145,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// Login account number or mobile number(Optional)
 			String principal = getCleanParam(request, config.getParam().getPrincipalName());
 			// Limit factors
-			List<String> factors = createLimitFactors(getHttpRemoteAddr(request), principal);
+			List<String> factors = getV1Factors(getHttpRemoteAddr(request), principal);
 
 			// When the login page is loaded, the parameter 'principal' will be
 			// empty, no need to generate a key. When submitting the login
