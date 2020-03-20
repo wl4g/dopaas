@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.bean.umc;
 
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.Contact;
 
 import java.io.Serializable;
 import java.util.List;
@@ -46,7 +46,7 @@ public class AlarmConfig extends BaseBean implements Serializable {
 	private AlarmTemplate alarmTemplate;
 
 	/* contacts */
-	private List<AlarmContact> alarmContacts;
+	private List<Contact> contacts;
 
 	public Integer getCollectId() {
 		return collectId;
@@ -128,11 +128,11 @@ public class AlarmConfig extends BaseBean implements Serializable {
 		this.alarmTemplate = alarmTemplate;
 	}
 
-	public List<AlarmContact> getAlarmContacts() {
-		return alarmContacts;
+	public List<Contact> getContacts() {
+		return contacts;
 	}
 
-	public void setAlarmContacts(List<AlarmContact> alarmContacts) {
-		this.alarmContacts = alarmContacts;
+	public void setContacts(List<Contact> contacts) {
+		this.contacts = contacts;
 	}
 }

@@ -18,11 +18,16 @@ package com.wl4g.devops.common.bean.iam;
 import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
+import java.util.List;
 
-public class AlarmContactGroup extends BaseBean implements Serializable {
+public class Contact extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
 
 	private String name;
+
+	private Integer[] groups;
+
+	private List<ContactChannel> contactChannels;
 
 	public String getName() {
 		return name;
@@ -30,6 +35,35 @@ public class AlarmContactGroup extends BaseBean implements Serializable {
 
 	public void setName(String name) {
 		this.name = name == null ? null : name.trim();
+	}
+
+
+	public Integer[] getGroups() {
+		return groups;
+	}
+
+	public void setGroups(Integer[] groups) {
+		this.groups = groups;
+	}
+
+	public List<ContactChannel> getContactChannels() {
+		return contactChannels;
+	}
+
+	public void setContactChannels(List<ContactChannel> contactChannels) {
+		this.contactChannels = contactChannels;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		Contact other = (Contact) obj;
+		if (this.getId().equals(other.getId())) {
+			return true;
+		}
+		return false;
 	}
 
 }

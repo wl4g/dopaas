@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.service;
 
-import com.wl4g.devops.common.bean.iam.AlarmContactGroup;
+import com.wl4g.devops.common.bean.iam.ContactGroup;
 import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
@@ -26,11 +26,11 @@ import java.util.List;
  */
 public interface ContactGroupService {
 
-	void save(AlarmContactGroup alarmContactGroup);
+	void save(ContactGroup contactGroup);
 
 	void del(Integer id);
 
-	List<AlarmContactGroup> contactGroups(String name);
+	List<ContactGroup> contactGroups(String name);
 
 	PageModel list(PageModel pm, String name);
 }

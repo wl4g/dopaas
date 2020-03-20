@@ -16,11 +16,11 @@
 package com.wl4g.devops.umc.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
+import com.wl4g.devops.common.bean.iam.NotificationContact;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.dao.iam.AlarmNotificationContactDao;
+import com.wl4g.devops.dao.iam.NotificationContactDao;
 import com.wl4g.devops.dao.umc.AlarmRecordDao;
 import com.wl4g.devops.dao.umc.AlarmRuleDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
@@ -49,7 +49,7 @@ public class RecordServiceImpl implements RecordService {
 	private AlarmTemplateDao alarmTemplateDao;
 
 	@Autowired
-	private AlarmNotificationContactDao alarmNotificationContactDao;
+	private NotificationContactDao notificationContactDao;
 
 	@Override
 	public PageModel list(PageModel pm, String name, String startDate, String endDate) {
@@ -66,7 +66,7 @@ public class RecordServiceImpl implements RecordService {
 		List<AlarmRule> alarmRules = alarmRuleDao.selectByRecordId(id);
 		AlarmTemplate alarmTemplate = alarmTemplateDao.selectByPrimaryKey(alarmRecord.getTemplateId());
 		Assert.notNull(alarmTemplate, "alarmTemplate is null");
-		List<AlarmNotificationContact> notificationContacts = alarmNotificationContactDao.getByRecordId(id);
+		List<NotificationContact> notificationContacts = notificationContactDao.getByRecordId(id);
 		alarmRecord.setNotificationContacts(notificationContacts);
 		alarmRecord.setAlarmRules(alarmRules);
 		alarmRecord.setAlarmTemplate(alarmTemplate);

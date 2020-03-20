@@ -16,7 +16,7 @@
 package com.wl4g.devops.common.bean.umc;
 
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
+import com.wl4g.devops.common.bean.iam.NotificationContact;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -41,7 +41,7 @@ public class AlarmRecord extends BaseBean implements Serializable {
 
 	private String alarmNote;
 
-	private List<AlarmNotificationContact> notificationContacts;
+	private List<NotificationContact> notificationContacts;
 
 	public String getName() {
 		return name;
@@ -107,11 +107,11 @@ public class AlarmRecord extends BaseBean implements Serializable {
 		this.alarmNote = alarmNote;
 	}
 
-	public List<AlarmNotificationContact> getNotificationContacts() {
+	public List<NotificationContact> getNotificationContacts() {
 		return notificationContacts;
 	}
 
-	public void setNotificationContacts(List<AlarmNotificationContact> notificationContacts) {
+	public void setNotificationContacts(List<NotificationContact> notificationContacts) {
 		this.notificationContacts = notificationContacts;
 	}
 }

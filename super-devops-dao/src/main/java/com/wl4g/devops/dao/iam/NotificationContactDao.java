@@ -15,23 +15,23 @@
  */
 package com.wl4g.devops.dao.iam;
 
-import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
+import com.wl4g.devops.common.bean.iam.NotificationContact;
 
 import java.util.List;
 
-public interface AlarmNotificationContactDao {
+public interface NotificationContactDao {
 	int deleteByPrimaryKey(Integer id);
 
-	int insert(AlarmNotificationContact record);
+	int insert(NotificationContact record);
 
-	int insertSelective(AlarmNotificationContact record);
+	int insertSelective(NotificationContact record);
 
-	AlarmNotificationContact selectByPrimaryKey(Integer id);
+	NotificationContact selectByPrimaryKey(Integer id);
 
-	int updateByPrimaryKeySelective(AlarmNotificationContact record);
+	int updateByPrimaryKeySelective(NotificationContact record);
 
-	int updateByPrimaryKey(AlarmNotificationContact record);
+	int updateByPrimaryKey(NotificationContact record);
 
-	List<AlarmNotificationContact> getByRecordId(Integer id);
+	List<NotificationContact> getByRecordId(Integer id);
 
 }

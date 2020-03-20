@@ -19,19 +19,26 @@ import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
 
-public class AlarmContactGroupRef extends BaseBean implements Serializable {
+public class NotificationContact extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 381411777614066880L;
 
-	private Integer contactGroupId;
+	private Integer recordId;
 
 	private Integer contactId;
 
-	public Integer getContactGroupId() {
-		return contactGroupId;
+	private String status;
+
+	// other
+	private String name;
+	private String email;
+	private String phone;
+
+	public Integer getRecordId() {
+		return recordId;
 	}
 
-	public void setContactGroupId(Integer contactGroupId) {
-		this.contactGroupId = contactGroupId;
+	public void setRecordId(Integer recordId) {
+		this.recordId = recordId;
 	}
 
 	public Integer getContactId() {
@@ -40,5 +47,37 @@ public class AlarmContactGroupRef extends BaseBean implements Serializable {
 
 	public void setContactId(Integer contactId) {
 		this.contactId = contactId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status == null ? null : status.trim();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 }
