@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.controller;
 
-import com.wl4g.devops.common.bean.iam.AlarmContactGroup;
+import com.wl4g.devops.common.bean.iam.ContactGroup;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.service.ContactGroupService;
@@ -50,12 +50,12 @@ public class ContactGroupController extends BaseController {
 
 	@RequestMapping(value = "/save")
 	@RequiresPermissions(value = { "iam:contact" })
-	public RespBase<?> save(AlarmContactGroup alarmContactGroup) {
-		log.info("into ContactGroupController.save prarms::" + "alarmContactGroup = {} ", alarmContactGroup);
-		Assert.notNull(alarmContactGroup, "group is null");
-		Assert.hasText(alarmContactGroup.getName(), "groupName is null");
+	public RespBase<?> save(ContactGroup contactGroup) {
+		log.info("into ContactGroupController.save prarms::" + "contactGroup = {} ", contactGroup);
+		Assert.notNull(contactGroup, "group is null");
+		Assert.hasText(contactGroup.getName(), "groupName is null");
 		RespBase<Object> resp = RespBase.create();
-		contactGroupService.save(alarmContactGroup);
+		contactGroupService.save(contactGroup);
 		return resp;
 	}
 
@@ -72,8 +72,8 @@ public class ContactGroupController extends BaseController {
 	@RequiresPermissions(value = { "iam:contact" })
 	public RespBase<?> groupList() {
 		RespBase<Object> resp = RespBase.create();
-		List<AlarmContactGroup> alarmContactGroups = contactGroupService.contactGroups(null);
-		resp.setData(alarmContactGroups);
+		List<ContactGroup> contactGroups = contactGroupService.contactGroups(null);
+		resp.setData(contactGroups);
 		return resp;
 	}
 

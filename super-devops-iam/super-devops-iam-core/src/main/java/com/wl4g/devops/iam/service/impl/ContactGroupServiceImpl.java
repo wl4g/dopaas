@@ -16,8 +16,8 @@
 package com.wl4g.devops.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.iam.AlarmContactGroup;
-import com.wl4g.devops.dao.iam.AlarmContactGroupDao;
+import com.wl4g.devops.common.bean.iam.ContactGroup;
+import com.wl4g.devops.dao.iam.ContactGroupDao;
 import com.wl4g.devops.iam.service.ContactGroupService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,40 +37,40 @@ import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
 public class ContactGroupServiceImpl implements ContactGroupService {
 
 	@Autowired
-	private AlarmContactGroupDao alarmContactGroupDao;
+	private ContactGroupDao contactGroupDao;
 
 	@Override
-	public void save(AlarmContactGroup alarmContactGroup) {
-		Assert.notNull(alarmContactGroup, "alarmContactGroup is null");
-		if (alarmContactGroup.getId() != null) {
-			alarmContactGroup.preUpdate();
-			alarmContactGroupDao.updateByPrimaryKeySelective(alarmContactGroup);
+	public void save(ContactGroup contactGroup) {
+		Assert.notNull(contactGroup, "contactGroup is null");
+		if (contactGroup.getId() != null) {
+			contactGroup.preUpdate();
+			contactGroupDao.updateByPrimaryKeySelective(contactGroup);
 		} else {
-			alarmContactGroup.preInsert();
-			alarmContactGroup.setDelFlag(DEL_FLAG_NORMAL);
-			alarmContactGroup.setEnable(ENABLED);
-			alarmContactGroupDao.insertSelective(alarmContactGroup);
+			contactGroup.preInsert();
+			contactGroup.setDelFlag(DEL_FLAG_NORMAL);
+			contactGroup.setEnable(ENABLED);
+			contactGroupDao.insertSelective(contactGroup);
 		}
 	}
 
 	@Override
 	public void del(Integer id) {
-		AlarmContactGroup alarmContactGroup = new AlarmContactGroup();
-		alarmContactGroup.preUpdate();
-		alarmContactGroup.setId(id);
-		alarmContactGroup.setDelFlag(1);
-		alarmContactGroupDao.updateByPrimaryKeySelective(alarmContactGroup);
+		ContactGroup contactGroup = new ContactGroup();
+		contactGroup.preUpdate();
+		contactGroup.setId(id);
+		contactGroup.setDelFlag(1);
+		contactGroupDao.updateByPrimaryKeySelective(contactGroup);
 	}
 
 	@Override
-	public List<AlarmContactGroup> contactGroups(String name) {
-		return alarmContactGroupDao.list(name);
+	public List<ContactGroup> contactGroups(String name) {
+		return contactGroupDao.list(name);
 	}
 
 	@Override
 	public PageModel list(PageModel pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(alarmContactGroupDao.list(name));
+		pm.setRecords(contactGroupDao.list(name));
 		return pm;
 	}
 }

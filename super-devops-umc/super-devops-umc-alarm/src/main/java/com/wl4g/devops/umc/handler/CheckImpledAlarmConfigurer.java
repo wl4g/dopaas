@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.umc.handler;
 
-import com.wl4g.devops.common.bean.iam.AlarmContact;
-import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
+import com.wl4g.devops.common.bean.iam.Contact;
+import com.wl4g.devops.common.bean.iam.NotificationContact;
 import com.wl4g.devops.common.bean.umc.*;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -52,12 +52,12 @@ public class CheckImpledAlarmConfigurer implements AlarmConfigurer, Initializing
 	}
 
 	@Override
-	public List<AlarmContact> getContactByGroupIds(List<Integer> groupIds) {
+	public List<Contact> getContactByGroupIds(List<Integer> groupIds) {
 		return null;
 	}
 
 	@Override
-	public AlarmNotificationContact saveNotificationContact(AlarmNotificationContact alarmNotificationContact) {
+	public NotificationContact saveNotificationContact(NotificationContact notificationContact) {
 		return null;
 	}
 

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.umc.alarm;
 
+import com.wl4g.devops.common.bean.iam.Contact;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.common.bean.iam.AlarmContact;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class AlarmConfigTpls {
 
 	private AlarmTemplate alarmTemplate;
 
-	private List<AlarmContact> alarmContacts;
+	private List<Contact> contacts;
 
 	public AlarmConfig getAlarmConfig() {
 		return alarmConfig;
@@ -49,11 +49,11 @@ public class AlarmConfigTpls {
 		this.alarmTemplate = alarmTemplate;
 	}
 
-	public List<AlarmContact> getAlarmContacts() {
-		return alarmContacts;
+	public List<Contact> getContacts() {
+		return contacts;
 	}
 
-	public void setAlarmContacts(List<AlarmContact> alarmContacts) {
-		this.alarmContacts = alarmContacts;
+	public void setContacts(List<Contact> contacts) {
+		this.contacts = contacts;
 	}
 }

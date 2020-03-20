@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.iam.AlarmContact; 
-import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
+import com.wl4g.devops.common.bean.iam.Contact;
+import com.wl4g.devops.common.bean.iam.NotificationContact;
 import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.bean.umc.AlarmConfig;
 import com.wl4g.devops.common.bean.umc.AlarmRecord;
@@ -256,18 +256,18 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 				continue;
 			}
 			AlarmTemplate tpl = config.getAlarmTemplate();
-			if (tpl == null || isEmpty(config.getAlarmContacts())) {
+			if (tpl == null || isEmpty(config.getContacts())) {
 				continue;
 			}
 
 			// Merge template and contact
 			TemplateContactWrapper contactWrap = contactMap.get(config.getTemplateId());
 			if (null == contactWrap) {
-				contactWrap = new TemplateContactWrapper(config.getTemplateId(), tpl, config.getAlarmContacts(),
+				contactWrap = new TemplateContactWrapper(config.getTemplateId(), tpl, config.getContacts(),
 						result.getMatchedTag(), result.getMatchedRules(), result.getAggregateWrap());
 			} else {
-				List<AlarmContact> contacts = contactWrap.getContacts();
-				contacts.addAll(config.getAlarmContacts());
+				List<Contact> contacts = contactWrap.getContacts();
+				contacts.addAll(config.getContacts());
 				contactWrap.setContacts(contacts);
 			}
 			contactMap.put(config.getTemplateId(), contactWrap);
@@ -298,8 +298,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param contacts
 	 * @return
 	 */
-	public static List<AlarmContact> distinctContacts(List<AlarmContact> contacts) {
-		Set<AlarmContact> _contacts = new TreeSet<>((o1, o2) -> o1.getId().compareTo(o2.getId()));
+	public static List<Contact> distinctContacts(List<Contact> contacts) {
+		Set<Contact> _contacts = new TreeSet<>((o1, o2) -> o1.getId().compareTo(o2.getId()));
 		_contacts.addAll(contacts);
 		return new ArrayList<>(_contacts);
 	}
@@ -336,21 +336,21 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param alarmConfigs
 	 * @param macthedRules
 	 */
-	protected void notification(List<AlarmContact> alarmContacts, AlarmRecord alarmRecord) {
-		log.info("into DefaultIndicatorsValveAlerter.notification prarms::" + "alarmContacts = {} , alarmNote = {} ",
-				alarmContacts, alarmRecord.getAlarmNote());
+	protected void notification(List<Contact> contacts, AlarmRecord alarmRecord) {
+		log.info("into DefaultIndicatorsValveAlerter.notification prarms::" + "contacts = {} , alarmNote = {} ",
+                contacts, alarmRecord.getAlarmNote());
 
 		// TODO using dynamic notifier call.
-		for (AlarmContact alarmContact : alarmContacts) {
+		for (Contact contact : contacts) {
 			// save notification
-			AlarmNotificationContact alarmNotificationContact = new AlarmNotificationContact();
-			alarmNotificationContact.setRecordId(alarmRecord.getId());
-			alarmNotificationContact.setContactId(alarmContact.getId());
-			alarmNotificationContact.setStatus(ALARM_SATUS_SEND);
-			configurer.saveNotificationContact(alarmNotificationContact);
+			NotificationContact notificationContact = new NotificationContact();
+			notificationContact.setRecordId(alarmRecord.getId());
+			notificationContact.setContactId(contact.getId());
+			notificationContact.setStatus(ALARM_SATUS_SEND);
+			configurer.saveNotificationContact(notificationContact);
 
 			//new
-			List<ContactChannel> contactChannels = alarmContact.getContactChannels();
+			List<ContactChannel> contactChannels = contact.getContactChannels();
 			if(CollectionUtils.isEmpty(contactChannels)){
 				continue;
 			}

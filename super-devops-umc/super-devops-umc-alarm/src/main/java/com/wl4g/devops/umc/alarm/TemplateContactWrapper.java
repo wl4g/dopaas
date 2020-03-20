@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.Contact;
 import com.wl4g.devops.common.bean.umc.AlarmRule;
 import com.wl4g.devops.common.bean.umc.AlarmTemplate;
 
@@ -29,12 +29,12 @@ import java.util.Map;
 public class TemplateContactWrapper {
 	private int templateId;
 	private AlarmTemplate alarmTemplate;
-	private List<AlarmContact> contacts;
+	private List<Contact> contacts;
 	private Map<String, String> matchedTag;
 	private List<AlarmRule> matchedRules;
 	private MetricAggregateWrapper aggregateWrap;
 
-	public TemplateContactWrapper(int templateId, AlarmTemplate alarmTemplate, List<AlarmContact> contacts,
+	public TemplateContactWrapper(int templateId, AlarmTemplate alarmTemplate, List<Contact> contacts,
 			Map<String, String> matchedTag, List<AlarmRule> matchedRules, MetricAggregateWrapper aggregateWrap) {
 		this.templateId = templateId;
 		this.alarmTemplate = alarmTemplate;
@@ -60,11 +60,11 @@ public class TemplateContactWrapper {
 		this.alarmTemplate = alarmTemplate;
 	}
 
-	public List<AlarmContact> getContacts() {
+	public List<Contact> getContacts() {
 		return contacts;
 	}
 
-	public void setContacts(List<AlarmContact> contacts) {
+	public void setContacts(List<Contact> contacts) {
 		this.contacts = contacts;
 	}
 

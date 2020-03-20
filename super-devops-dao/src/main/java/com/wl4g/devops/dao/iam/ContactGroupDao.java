@@ -15,25 +15,23 @@
  */
 package com.wl4g.devops.dao.iam;
 
-import com.wl4g.devops.common.bean.iam.AlarmContactGroupRef;
+import com.wl4g.devops.common.bean.iam.ContactGroup;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface AlarmContactGroupRefDao {
+public interface ContactGroupDao {
 	int deleteByPrimaryKey(Integer id);
 
-	int insert(AlarmContactGroupRef record);
+	int insert(ContactGroup record);
 
-	int insertSelective(AlarmContactGroupRef record);
+	int insertSelective(ContactGroup record);
 
-	AlarmContactGroupRef selectByPrimaryKey(Integer id);
+	ContactGroup selectByPrimaryKey(Integer id);
 
-	int updateByPrimaryKeySelective(AlarmContactGroupRef record);
+	int updateByPrimaryKeySelective(ContactGroup record);
 
-	int updateByPrimaryKey(AlarmContactGroupRef record);
+	int updateByPrimaryKey(ContactGroup record);
 
-	int deleteByContactId(Integer id);
-
-	List<AlarmContactGroupRef> selectByContactId(Integer id);
-
+	List<ContactGroup> list(@Param("name") String name);
 }

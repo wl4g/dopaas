@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.iam.AlarmContactDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.iam.AlarmContact" >
+<mapper namespace="com.wl4g.devops.dao.iam.ContactDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.iam.Contact" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
@@ -45,7 +45,7 @@
     delete from sys_contact
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.AlarmContact" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.Contact" >
     insert into sys_contact (id, `name`,
       create_by, create_date, update_by, 
       update_date, del_flag)
@@ -53,7 +53,7 @@
       #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.AlarmContact" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.iam.Contact" useGeneratedKeys="true" keyProperty="id">
     insert into sys_contact
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -102,7 +102,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.iam.AlarmContact" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.iam.Contact" >
     update sys_contact
     <set >
       <if test="name != null" >
@@ -126,7 +126,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.iam.AlarmContact" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.iam.Contact" >
     update sys_contact
     set name = #{name,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=VARCHAR},
