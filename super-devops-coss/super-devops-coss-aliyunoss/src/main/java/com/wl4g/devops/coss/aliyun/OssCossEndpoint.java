@@ -54,13 +54,13 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 	/**
 	 * Aliyun OSS client.
 	 */
-	final protected OSS client;
+	final protected OSS ossClient;
 
 	public OssCossEndpoint(AliyunOssProperties config) {
 		super(config);
 		// Constructs a client instance with your account for accessing OSS
-		this.client = new OSSClientBuilder().build(config.getEndpoint(), config.getAccessKeyId(), config.getAccessKeySecret());
-		log.info("Initialized OSS client: {}", client);
+		this.ossClient = new OSSClientBuilder().build(config.getEndpoint(), config.getAccessKeyId(), config.getAccessKeySecret());
+		log.info("Initialized OSS client: {}", ossClient);
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 	@Override
 	public OssBucket createBucket(String bucketName) {
 		OssBucket bucket = new OssBucket();
-		Bucket ossBucket = client.createBucket(bucketName);
+		Bucket ossBucket = ossClient.createBucket(bucketName);
 		bucket.setName(ossBucket.getName());
 		bucket.setLocation(ossBucket.getLocation());
 		bucket.setOwner(new Owner(ossBucket.getOwner().getId(), ossBucket.getOwner().getDisplayName()));
@@ -92,20 +92,20 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 	@Override
 	public OssBucketList listBuckets(String prefix, String marker, Integer maxKeys) {
 		OssBucketList buckets = new OssBucketList();
-		BucketList ossBucketList = client.listBuckets(prefix, marker, maxKeys);
+		BucketList ossBucketList = ossClient.listBuckets(prefix, marker, maxKeys);
 		buckets.setBucketList(ossBucketList.getBucketList().stream().map(b -> new OssBucket(b)).collect(toList()));
 		return buckets;
 	}
 
 	@Override
 	public void deleteBucket(String bucketName) {
-		client.deleteBucket(bucketName);
+		ossClient.deleteBucket(bucketName);
 	}
 
 	@Override
 	public OssBucketMetadata getBucketMetadata(String bucketName) {
 		OssBucketMetadata metadata = new OssBucketMetadata();
-		BucketMetadata ossMetadata = client.getBucketMetadata(bucketName);
+		BucketMetadata ossMetadata = ossClient.getBucketMetadata(bucketName);
 		metadata.setBucketName(bucketName);
 		metadata.setBucketRegion(ossMetadata.getBucketRegion());
 		metadata.setAttributes(ossMetadata.getHttpMetadata());
@@ -115,7 +115,7 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 	@Override
 	public OssAccessControlList getBucketAcl(String bucketName) {
 		OssAccessControlList acl = new OssAccessControlList();
-		AccessControlList ossAcl = client.getBucketAcl(bucketName);
+		AccessControlList ossAcl = ossClient.getBucketAcl(bucketName);
 		acl.setOwner(new Owner(ossAcl.getOwner().getId(), ossAcl.getOwner().getDisplayName()));
 		acl.setAcl(ACL.parse(ossAcl.getCannedACL().toString()));
 		return acl;
@@ -123,14 +123,14 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 
 	@Override
 	public void setBucketAcl(String bucketName, ACL acl) {
-		client.setBucketAcl(bucketName, CannedAccessControlList.parse(acl.toString()));
+		ossClient.setBucketAcl(bucketName, CannedAccessControlList.parse(acl.toString()));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public OssObjectListing listObjects(String bucketName, String prefix) {
 		OssObjectListing objectList = new OssObjectListing();
-		ObjectListing ossObjectListing = client.listObjects(bucketName, prefix);
+		ObjectListing ossObjectListing = ossClient.listObjects(bucketName, prefix);
 		objectList.setBucketName(ossObjectListing.getBucketName());
 		objectList.setPrefix(ossObjectListing.getPrefix());
 		objectList.setEncodingType(ossObjectListing.getEncodingType());
@@ -146,7 +146,7 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 	@Override
 	public OssObjectValue getObject(String bucketName, String key) {
 		OssObjectValue objectValue = new OssObjectValue();
-		OSSObject ossObject = client.getObject(bucketName, key);
+		OSSObject ossObject = ossClient.getObject(bucketName, key);
 		objectValue.setBucketName(ossObject.getBucketName());
 		objectValue.setKey(ossObject.getKey());
 		objectValue.setObjectContent(ossObject.getObjectContent());
@@ -159,7 +159,7 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 	public OssPutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
 		try {
 			OssPutObjectResult putObjectRes = new OssPutObjectResult();
-			PutObjectResult ossPutObjectRes = client.putObject(bucketName, key, input,
+			PutObjectResult ossPutObjectRes = ossClient.putObject(bucketName, key, input,
 					((OssObjectMetadata) metadata).toAliyunOssObjectMetadata());
 			putObjectRes.setETag(ossPutObjectRes.getETag());
 			putObjectRes.setVersionId(ossPutObjectRes.getVersionId());
@@ -171,13 +171,13 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 
 	@Override
 	public void deleteObject(String bucketName, String key) {
-		client.deleteObject(bucketName, key);
+		ossClient.deleteObject(bucketName, key);
 	}
 
 	@Override
 	public OssObjectAcl getObjectAcl(String bucketName, String key) {
 		OssObjectAcl objectAcl = new OssObjectAcl();
-		ObjectAcl ossObjectAcl = client.getObjectAcl(bucketName, key);
+		ObjectAcl ossObjectAcl = ossClient.getObjectAcl(bucketName, key);
 		objectAcl.setOwner(new Owner(ossObjectAcl.getOwner().getId(), ossObjectAcl.getOwner().getDisplayName()));
 		objectAcl.setVersionId(ossObjectAcl.getVersionId());
 		objectAcl.setAcl(ACL.parse(ossObjectAcl.getPermission().toString()));
@@ -186,23 +186,23 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 
 	@Override
 	public void setObjectAcl(String bucketName, String key, ACL acl) {
-		client.setObjectAcl(bucketName, key, CannedAccessControlList.parse(acl.toString()));
+		ossClient.setObjectAcl(bucketName, key, CannedAccessControlList.parse(acl.toString()));
 	}
 
 	@Override
 	public boolean doesObjectExist(String bucketName, String key) {
-		return client.doesObjectExist(bucketName, key);
+		return ossClient.doesObjectExist(bucketName, key);
 	}
 
 	@Override
 	public void createSymlink(String bucketName, String symlink, String target) {
-		client.createSymlink(bucketName, symlink, target);
+		ossClient.createSymlink(bucketName, symlink, target);
 	}
 
 	@Override
 	public ObjectSymlink getSymlink(String bucketName, String symlink) {
 		ObjectSymlink objectSymlink = new ObjectSymlink();
-		OSSSymlink ossSymlink = client.getSymlink(bucketName, symlink);
+		OSSSymlink ossSymlink = ossClient.getSymlink(bucketName, symlink);
 		objectSymlink.setSymlink(ossSymlink.getSymlink());
 		objectSymlink.setTarget(ossSymlink.getTarget());
 		objectSymlink.setMetadata(new OssObjectMetadata(ossSymlink.getMetadata()));

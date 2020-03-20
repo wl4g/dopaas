@@ -66,7 +66,6 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 	@Autowired
 	private MetadataIndexManager metadataIndexManager;
 
-
 	public NativeCossEndpoint(NativeCossProperties config) {
 		super(config);
 	}
@@ -93,44 +92,42 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 	public BucketList<Bucket> listBuckets(String prefix, String marker, Integer maxKeys) {
 		BucketList<Bucket> bucketList = new BucketList<>();
 
-		List<Bucket> buckets = asList(config.getEndpointRootDir().listFiles(f -> {
-			// TODO
-			if(f.getName().startsWith(".")){
-				return false;
-			}
-			if (f.getName().startsWith(prefix)) {
-				return true;
-			}
-			return false;
-		})).stream().map(f -> {
-			if (f.isDirectory()) {
-				try {
-					Bucket bucket = new Bucket(config.getBucketKey(f.getPath()));
-					bucket.setCreationDate(new Date(f.lastModified()));
-					String owner = Files.getOwner(f.toPath()).getName();
-					bucket.setOwner(new Owner(owner, owner));
-					bucketList.getBucketList().add(bucket);
-					return bucket;
-				} catch (Exception e) {
-					log.warn(format("Couldn't gets file attributes of '%s'", f), e);
-				}
-			}
-			return null;
-		}).collect(toList());
+		List<Bucket> buckets = asList(
+				config.getEndpointRootDir().listFiles(f -> !f.getName().startsWith(".") && f.getName().startsWith(prefix)))
+						.stream().map(f -> {
+							if (f.isDirectory()) {
+								try {
+									Bucket bucket = new Bucket(config.getBucketKey(f.getPath()));
+									bucket.setCreationDate(new Date(f.lastModified()));
+									String owner = Files.getOwner(f.toPath()).getName();
+									bucket.setOwner(new Owner(owner, owner));
+									return bucket;
+								} catch (Exception e) {
+									log.warn(format("Couldn't gets file attributes of '%s'", f), e);
+								}
+							}
+							return null;
+						}).filter(f -> !isNull(f)).collect(toList());
 
+		bucketList.getBucketList().addAll(buckets);
 		return bucketList;
 	}
 
 	@Override
 	public void deleteBucket(String bucketName) {
 		File bucketPath = new File(config.getEndpointRootDir(), bucketName);
-		File trash = new File(config.getBucketPathTrash());
-		if(!trash.exists()){
-			trash.mkdirs();
+		File trashPath = new File(config.getBucketPathTrash());
+		if (!trashPath.exists()) {
+			trashPath.mkdirs();
 		}
-		bucketPath.renameTo(trash);
-		//boolean delete = bucketPath.delete();
-		isTrue(!bucketPath.exists(), ServerCossException.class, "Couldn't delete bucket directory to '%s'", bucketPath);
+		// Logisic delete. // TODO add deletingTaskManager?
+		bucketPath.renameTo(trashPath);
+		// Check renamed
+		if (bucketPath.exists() || !trashPath.exists()) {
+			throw new ServerCossException(format("Couldn't delete bucket directory '%s' to '%s'", bucketPath, trashPath));
+		}
+
+		log.info("Deleted bucket directory '{}' to '{}'", bucketPath, trashPath);
 	}
 
 	@Override
@@ -143,7 +140,8 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 	public AccessControlList getBucketAcl(String bucketName) {
 		File bucketPath = new File(config.getEndpointRootDir(), bucketName);
 		Path path = Paths.get(URI.create(bucketPath.getPath()));
-		//Set<PosixFilePermission> posixFilePermissions1 = Files.getPosixFilePermissions(Paths.get(bucketPath.getAbsolutePath()));
+		// Set<PosixFilePermission> posixFilePermissions1 =
+		// Files.getPosixFilePermissions(Paths.get(bucketPath.getAbsolutePath()));
 		AclFileAttributeView aclView = Files.getFileAttributeView(path, AclFileAttributeView.class);
 		if (!isNull(aclView)) {
 			try {
@@ -170,9 +168,9 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 	@Override
 	public void setBucketAcl(String bucketName, ACL acl) {
 		File bucketPath = new File(config.getEndpointRootDir(), bucketName);
-		Set<PosixFilePermission> posixFilePermissions = acl2PosixFilePermissions(acl);
+		Set<PosixFilePermission> posixPermissions = getAclPosixPermissions(acl);
 		try {
-			Files.setPosixFilePermissions(Paths.get(bucketPath.getAbsolutePath()), posixFilePermissions);
+			Files.setPosixFilePermissions(Paths.get(bucketPath.getAbsolutePath()), posixPermissions);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -182,38 +180,31 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 	public ObjectListing<ObjectSummary> listObjects(String bucketName, String prefix) {
 		ObjectListing<ObjectSummary> objectListing = new ObjectListing<>();
 		File bucketPath = new File(config.getEndpointRootDir(), bucketName);
-		if(!bucketPath.exists() || !bucketPath.isDirectory()){
+		if (!bucketPath.exists() || !bucketPath.isDirectory()) {
 			return objectListing;
 		}
 		objectListing.setBucketName(bucketName);
+		objectListing.setPrefix(prefix);
 
-		List<ObjectSummary> objectSummaries = asList(bucketPath.listFiles(f -> {
-			// TODO
-			if(f.getName().startsWith(".")){
-				return false;
-			}
-			if (f.getName().startsWith(prefix)) {
-				return true;
-			}
-			return false;
-		})).stream().map(f -> {
-				try {
-					ObjectSummary objectSummary = new ObjectSummary();
-					objectSummary.setBucketName(bucketName);
-					objectSummary.setKey(f.getName());
-					objectSummary.setMtime(f.lastModified());
-					objectSummary.setStorageType(kind().getValue());
-					String owner = Files.getOwner(f.toPath()).getName();
-					objectSummary.setOwner(new Owner(owner, owner));
-					objectSummary.setSize(Files.size(f.toPath()));
-					objectListing.getObjectSummaries().add(objectSummary);
-					return objectSummary;
-				} catch (Exception e) {
-					log.warn(format("Couldn't gets file attributes of '%s'", f), e);
-				}
-			return null;
-		}).collect(toList());
+		List<ObjectSummary> objectSummaries = asList(
+				bucketPath.listFiles(f -> !f.getName().startsWith(".") && f.getName().startsWith(prefix))).stream().map(f -> {
+					try {
+						ObjectSummary objectSummary = new ObjectSummary();
+						objectSummary.setBucketName(bucketName);
+						objectSummary.setKey(f.getName());
+						objectSummary.setMtime(f.lastModified());
+						objectSummary.setStorageType(kind().getValue());
+						String owner = Files.getOwner(f.toPath()).getName();
+						objectSummary.setOwner(new Owner(owner, owner));
+						objectSummary.setSize(Files.size(f.toPath()));
+						return objectSummary;
+					} catch (Exception e) {
+						log.warn(format("Couldn't gets file attributes of '%s'", f), e);
+					}
+					return null;
+				}).filter(f -> !isNull(f)).collect(toList());
 
+		objectListing.getObjectSummaries().addAll(objectSummaries);
 		return objectListing;
 	}
 
@@ -225,11 +216,12 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 
 	@Override
 	public PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
-		File objectPath = new File(config.getEndpointRootDir()+File.separator+bucketName, key);
+		File objectPath = new File(config.getEndpointRootDir() + File.separator + bucketName, key);
 		try {
-			FileIOUtils.copyInputStreamToFile(input,objectPath);
-			setObjectAcl(bucketName,key,ACL.Default);
-			metadataIndexManager.addFile(config.getEndpointRootDir()+File.separator+bucketName,1,Files.size(objectPath.toPath()));
+			FileIOUtils.copyInputStreamToFile(input, objectPath);
+			setObjectAcl(bucketName, key, ACL.Default);
+			metadataIndexManager.addFile(config.getEndpointRootDir() + File.separator + bucketName, 1,
+					Files.size(objectPath.toPath()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -238,7 +230,7 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 
 	@Override
 	public void deleteObject(String bucketName, String key) {
-		File objectPath = new File(config.getEndpointRootDir()+File.separator+bucketName, key);
+		File objectPath = new File(config.getEndpointRootDir() + File.separator + bucketName, key);
 		long fileSize = 0;
 		try {
 			fileSize = Files.size(objectPath.toPath());
@@ -247,27 +239,26 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 		}
 
 		File trash = new File(config.getObjectPathTrash(bucketName));
-		if(!trash.getParentFile().exists()){
+		if (!trash.getParentFile().exists()) {
 			trash.getParentFile().mkdirs();
 		}
 		objectPath.renameTo(trash);
-		//objectPath.delete();
+		// objectPath.delete();
 		isTrue(!objectPath.exists(), ServerCossException.class, "Couldn't delete object to '%s'", objectPath);
-		metadataIndexManager.addFile(config.getEndpointRootDir()+File.separator+bucketName,-1,-fileSize);
+		metadataIndexManager.addFile(config.getEndpointRootDir() + File.separator + bucketName, -1, -fileSize);
 	}
-
 
 	@Override
 	public ObjectAcl getObjectAcl(String bucketName, String key) {
 		// TODO Auto-generated method stub
-		File objectPath = new File(config.getEndpointRootDir()+File.separator+bucketName, key);
+		File objectPath = new File(config.getEndpointRootDir() + File.separator + bucketName, key);
 		ObjectAcl objectAcl = new ObjectAcl();
 		try {
 			Set<PosixFilePermission> posixFilePermissions = Files.getPosixFilePermissions(objectPath.toPath());
-			ACL acl = posixFilePermissions2Acl(posixFilePermissions);
+			ACL acl = getPosixPermissionAcl(posixFilePermissions);
 			String owner = Files.getOwner(objectPath.toPath()).getName();
 			objectAcl.setAcl(acl);
-			objectAcl.setOwner(new Owner(owner,owner));
+			objectAcl.setOwner(new Owner(owner, owner));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -276,8 +267,8 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 
 	@Override
 	public void setObjectAcl(String bucketName, String key, ACL acl) {
-		File objectPath = new File(config.getEndpointRootDir()+File.separator+bucketName, key);
-		Set<PosixFilePermission> posixFilePermissions = acl2PosixFilePermissions(acl);
+		File objectPath = new File(config.getEndpointRootDir() + File.separator + bucketName, key);
+		Set<PosixFilePermission> posixFilePermissions = getAclPosixPermissions(acl);
 		try {
 			Files.setPosixFilePermissions(Paths.get(objectPath.getAbsolutePath()), posixFilePermissions);
 		} catch (IOException e) {
@@ -295,7 +286,6 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 	@Override
 	public void createSymlink(String bucketName, String symlink, String target) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -304,47 +294,46 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 		return null;
 	}
 
-
-	private static Set<PosixFilePermission> acl2PosixFilePermissions(ACL acl){
-		//using PosixFilePermission to set file permissions
+	private static Set<PosixFilePermission> getAclPosixPermissions(ACL acl) {
+		// using PosixFilePermission to set file permissions
 		Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
-		if(Default.equals(acl)){//0755
-			//add owners permission
+		if (Default.equals(acl)) {// 0755
+			// add owners permission
 			perms.add(PosixFilePermission.OWNER_READ);
 			perms.add(PosixFilePermission.OWNER_WRITE);
 			perms.add(PosixFilePermission.OWNER_EXECUTE);
-			//add group permissions
+			// add group permissions
 			perms.add(PosixFilePermission.GROUP_READ);
 			perms.add(PosixFilePermission.GROUP_EXECUTE);
-			//add others permissions
+			// add others permissions
 			perms.add(PosixFilePermission.OTHERS_READ);
 			perms.add(PosixFilePermission.OTHERS_EXECUTE);
-		}else if (Private.equals(acl)){//0700
-			//add owners permission
+		} else if (Private.equals(acl)) {// 0700
+			// add owners permission
 			perms.add(PosixFilePermission.OWNER_READ);
 			perms.add(PosixFilePermission.OWNER_WRITE);
 			perms.add(PosixFilePermission.OWNER_EXECUTE);
-		}else if (PublicRead.equals(acl)){//0755
-			//add owners permission
+		} else if (PublicRead.equals(acl)) {// 0755
+			// add owners permission
 			perms.add(PosixFilePermission.OWNER_READ);
 			perms.add(PosixFilePermission.OWNER_WRITE);
 			perms.add(PosixFilePermission.OWNER_EXECUTE);
-			//add group permissions
+			// add group permissions
 			perms.add(PosixFilePermission.GROUP_READ);
 			perms.add(PosixFilePermission.GROUP_EXECUTE);
-			//add others permissions
+			// add others permissions
 			perms.add(PosixFilePermission.OTHERS_READ);
 			perms.add(PosixFilePermission.OTHERS_EXECUTE);
-		}else if (PublicReadWrite.equals(acl)){//0777
-			//add owners permission
+		} else if (PublicReadWrite.equals(acl)) {// 0777
+			// add owners permission
 			perms.add(PosixFilePermission.OWNER_READ);
 			perms.add(PosixFilePermission.OWNER_WRITE);
 			perms.add(PosixFilePermission.OWNER_EXECUTE);
-			//add group permissions
+			// add group permissions
 			perms.add(PosixFilePermission.GROUP_READ);
 			perms.add(PosixFilePermission.GROUP_WRITE);
 			perms.add(PosixFilePermission.GROUP_EXECUTE);
-			//add others permissions
+			// add others permissions
 			perms.add(PosixFilePermission.OTHERS_READ);
 			perms.add(PosixFilePermission.OTHERS_WRITE);
 			perms.add(PosixFilePermission.OTHERS_EXECUTE);
@@ -352,15 +341,14 @@ public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossPropertie
 		return perms;
 	}
 
-	private static ACL posixFilePermissions2Acl(Set<PosixFilePermission> posixFilePermissions){
-
-		if(posixFilePermissions.containsAll(acl2PosixFilePermissions(PublicReadWrite))){
+	private static ACL getPosixPermissionAcl(Set<PosixFilePermission> posixPermissions) {
+		if (posixPermissions.containsAll(getAclPosixPermissions(PublicReadWrite))) {
 			return PublicReadWrite;
-		}else if (posixFilePermissions.containsAll(acl2PosixFilePermissions(PublicRead))) {
+		} else if (posixPermissions.containsAll(getAclPosixPermissions(PublicRead))) {
 			return PublicRead;
-		}else if (posixFilePermissions.containsAll(acl2PosixFilePermissions(Private))) {
+		} else if (posixPermissions.containsAll(getAclPosixPermissions(Private))) {
 			return Private;
-		}else{
+		} else {
 			return null;
 		}
 	}
