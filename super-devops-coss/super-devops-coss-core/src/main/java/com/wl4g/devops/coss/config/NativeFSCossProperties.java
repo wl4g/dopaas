@@ -12,15 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
- *     We respect and thank the glusterfs team, part of the code for this module comes 
- * from: https://github.com/gluster/glusterfs-java-filesystem
  */
-package com.wl4g.devops.coss.gluster.model.bucket;
+package com.wl4g.devops.coss.config;
 
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
+import org.springframework.validation.annotation.Validated;
 
-public class GlusterBucketList extends BucketList<Bucket> {
+@Validated
+public class NativeFSCossProperties extends StandardFSCossProperties {
 
 }

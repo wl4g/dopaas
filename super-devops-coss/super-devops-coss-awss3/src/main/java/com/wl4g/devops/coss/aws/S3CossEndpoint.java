@@ -46,12 +46,15 @@ import com.wl4g.devops.coss.model.PutObjectResult;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 
 /**
- * Amazon S3 coss endpoint
+ * Amazon S3 coss endpoint.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月10日
  * @since
  * @see {@link com.amazonaws.services.s3.AbstractAmazonS3}
+ * @see <a href=
+ *      "https://docs.aws.amazon.com/zh_cn/sdk-for-java/v1/developer-guide/examples-s3.html">Aws
+ *      S3 docs</a>
  */
 public class S3CossEndpoint extends AbstractCossEndpoint<S3CossProperties> {
 

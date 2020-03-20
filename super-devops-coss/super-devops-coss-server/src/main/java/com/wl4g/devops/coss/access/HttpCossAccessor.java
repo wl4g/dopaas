@@ -21,7 +21,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.CossEndpoint.CossProvider;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
-import com.wl4g.devops.coss.config.NativeCossProperties;
+import com.wl4g.devops.coss.config.NativeFSCossProperties;
 import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.ObjectMetadata;
@@ -62,7 +62,7 @@ public class HttpCossAccessor extends BaseController {
 	private MetadataIndexManager metadataIndexManager;
 
 	@Autowired
-	private NativeCossProperties config;
+	private NativeFSCossProperties config;
 
 	public HttpCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
 		notNullOf(endpointAdapter, "endpointAdapter");
