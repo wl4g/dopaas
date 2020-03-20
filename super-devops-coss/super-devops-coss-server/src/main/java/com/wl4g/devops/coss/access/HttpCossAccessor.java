@@ -148,7 +148,7 @@ public class HttpCossAccessor extends BaseController {
 	public PutObjectResult putObject(GenericCossParameter param, String bucketName, String key,
 			@RequestParam(required = false) ObjectMetadata metadata, MultipartFile file) {
 		try {
-			if(StringUtils.isBlank(key)){
+			if (StringUtils.isBlank(key)) {
 				key = file.getOriginalFilename();
 			}
 			return putObject(param, bucketName, key, file.getInputStream(), metadata);

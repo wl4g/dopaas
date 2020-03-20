@@ -34,14 +34,14 @@ public enum ACL {
 	Default("default"), // 0755
 
 	/**
-	 * The owner has the {@link Permission#FullControl}, other
-	 * {@link GroupGrantee#AllUsers} does not have access.
+	 * The owner has the {@link com.amazonaws.services.s3.model.Permission},
+	 * other {@link com.aliyun.oss.model.ObjectPermission} does not have access.
 	 */
 	Private("private"), // 0700
 
 	/**
-	 * The owner has the {@link Permission#FullControl}, other
-	 * {@link GroupGrantee#AllUsers} have read-only access.
+	 * Owner has the full control of the object. Other users only have read
+	 * access.
 	 */
 	PublicRead("public-read"), // 0755
 
@@ -72,15 +72,12 @@ public enum ACL {
 		throw new IllegalArgumentException("Unable to parse the provided acl " + acl);
 	}
 
-
-	public static String[] cannedAclStrings(){
+	public static String[] cannedAclStrings() {
 		String[] result = new String[ACL.values().length];
-		for(int i = 0;i<ACL.values().length; i++){
+		for (int i = 0; i < ACL.values().length; i++) {
 			result[i] = ACL.values()[i].toString();
 		}
 		return result;
 	}
-
-
 
 }
