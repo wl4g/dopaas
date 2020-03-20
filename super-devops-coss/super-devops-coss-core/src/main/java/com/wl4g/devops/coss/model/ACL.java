@@ -72,4 +72,15 @@ public enum ACL {
 		throw new IllegalArgumentException("Unable to parse the provided acl " + acl);
 	}
 
+
+	public static String[] cannedAclStrings(){
+		String[] result = new String[ACL.values().length];
+		for(int i = 0;i<ACL.values().length; i++){
+			result[i] = ACL.values()[i].toString();
+		}
+		return result;
+	}
+
+
+
 }

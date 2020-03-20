@@ -21,18 +21,24 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.CossEndpoint.CossProvider;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
+import com.wl4g.devops.coss.config.NativeCossProperties;
 import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.ObjectMetadata;
 import com.wl4g.devops.coss.model.PutObjectResult;
+import com.wl4g.devops.coss.natives.MetadataIndexManager;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static com.wl4g.devops.coss.natives.MetadataIndexManager.indexFileName;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 /**
@@ -51,6 +57,12 @@ public class HttpCossAccessor extends BaseController {
 	 * {@link CossEndpoint}
 	 */
 	final protected GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter;
+
+	@Autowired
+	private MetadataIndexManager metadataIndexManager;
+
+	@Autowired
+	private NativeCossProperties config;
 
 	public HttpCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
 		notNullOf(endpointAdapter, "endpointAdapter");
@@ -104,6 +116,15 @@ public class HttpCossAccessor extends BaseController {
 		return resp;
 	}
 
+	@RequestMapping("getBucketIndex")
+	public RespBase<Object> getBucketIndex(GenericCossParameter param, String bucketName) throws IOException {
+		RespBase<Object> resp = RespBase.create();
+		String indexPath = config.getEndpointRootDir() + File.separator + bucketName + indexFileName;
+		MetadataIndexManager.MetadataIndex metadataIndex = metadataIndexManager.read(new File(indexPath));
+		resp.setData(metadataIndex);
+		return resp;
+	}
+
 	/**
 	 * e.g:
 	 * http://wl4g.debug:14061/coss-server/webservice/listObjects?cossProvider=hdfs&prefix=sm&bucketName=sm-clound
@@ -127,6 +148,9 @@ public class HttpCossAccessor extends BaseController {
 	public PutObjectResult putObject(GenericCossParameter param, String bucketName, String key,
 			@RequestParam(required = false) ObjectMetadata metadata, MultipartFile file) {
 		try {
+			if(StringUtils.isBlank(key)){
+				key = file.getOriginalFilename();
+			}
 			return putObject(param, bucketName, key, file.getInputStream(), metadata);
 		} catch (IOException e) {
 			throw new CossException(e);
@@ -170,6 +194,20 @@ public class HttpCossAccessor extends BaseController {
 	public RespBase<Object> getSymlink(GenericCossParameter param, String bucketName, String symlink) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(getCossEndpoint(param).getSymlink(bucketName, symlink));
+		return resp;
+	}
+
+	@RequestMapping("getCossProviders")
+	public RespBase<Object> getCossProvider() {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(CossProvider.values());
+		return resp;
+	}
+
+	@RequestMapping("getACLs")
+	public RespBase<Object> getACLs() {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(ACL.cannedAclStrings());
 		return resp;
 	}
 
