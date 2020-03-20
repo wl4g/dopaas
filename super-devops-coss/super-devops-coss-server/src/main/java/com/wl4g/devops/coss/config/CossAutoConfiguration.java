@@ -22,16 +22,8 @@ import com.wl4g.devops.coss.CossEndpoint.CossProvider;
 import com.wl4g.devops.coss.access.ConsoleCossAccessor;
 import com.wl4g.devops.coss.access.CossAccessor;
 import com.wl4g.devops.coss.access.HttpCossAccessor;
-import com.wl4g.devops.coss.natives.MetadataIndexManager;
-import com.wl4g.devops.coss.natives.NativeCossEndpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.annotation.Validated;
-
-import java.util.List;
 
 /**
  * COSS core auto configuration.
@@ -42,27 +34,6 @@ import java.util.List;
  */
 @Configuration
 public class CossAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
-	final public static String KEY_PROPERTY_PREFIX = "spring.cloud.devops.coss.native";
-
-	@Bean
-	@Validated
-	@ConditionalOnProperty(name = KEY_PROPERTY_PREFIX + ".enable", matchIfMissing = true)
-	@ConfigurationProperties(prefix = KEY_PROPERTY_PREFIX)
-	public NativeCossProperties nativeCossProperties() {
-		return new NativeCossProperties();
-	}
-
-	@Bean
-	@ConditionalOnBean(NativeCossProperties.class)
-	public CossEndpoint nativeCossEndpoint(NativeCossProperties config) {
-		return new NativeCossEndpoint(config);
-	}
-
-	@Bean
-	public GenericOperatorAdapter<CossProvider, CossEndpoint> compositeCossEndpoint(List<CossEndpoint> endpoints) {
-		return new GenericOperatorAdapter<CossProvider, CossEndpoint>(endpoints) {
-		};
-	}
 
 	// --- A C C E S S O R'S. ---
 
@@ -79,13 +50,6 @@ public class CossAutoConfiguration extends OptionalPrefixControllerAutoConfigura
 	@Bean
 	public PrefixHandlerMapping httpCossAccessorPrefixHandlerMapping(HttpCossAccessor httpCossAccessor) {
 		return super.newPrefixHandlerMapping(HttpCossAccessor.URL_BASE, httpCossAccessor);
-	}
-
-
-	// --- MetadataIndexManager ---
-	@Bean
-	public MetadataIndexManager metadataIndexManager() {
-		return new MetadataIndexManager();
 	}
 
 }

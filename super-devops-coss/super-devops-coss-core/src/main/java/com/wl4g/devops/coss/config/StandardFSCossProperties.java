@@ -28,7 +28,7 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.springframework.util.Assert.hasText;
 
 @Validated
-public class NativeCossProperties {
+public abstract class StandardFSCossProperties {
 
 	final public static String PATH_TRASH = "/.trash";
 

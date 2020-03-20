@@ -16,7 +16,7 @@
 package com.wl4g.devops.coss.natives;
 
 import com.wl4g.devops.coss.AbstractCossEndpoint;
-import com.wl4g.devops.coss.config.NativeCossProperties;
+import com.wl4g.devops.coss.config.StandardFSCossProperties;
 import com.wl4g.devops.coss.exception.ServerCossException;
 import com.wl4g.devops.coss.model.*;
 import com.wl4g.devops.coss.model.bucket.Bucket;
@@ -50,29 +50,25 @@ import static java.util.stream.Collectors.toList;
 import static com.wl4g.devops.coss.model.ACL.*;
 
 /**
- * File object storage based on native fileSystem.
+ * Based on standard file system object storage.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月17日
  * @since
  */
-public class NativeCossEndpoint extends AbstractCossEndpoint<NativeCossProperties> {
+public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties> extends AbstractCossEndpoint<C> {
 
 	/**
 	 * {@link FileSystem}
 	 */
-	protected FileSystem nativeFS;
+	final protected FileSystem standardFS;
 
 	@Autowired
 	private MetadataIndexManager metadataIndexManager;
 
-	public NativeCossEndpoint(NativeCossProperties config) {
+	public StandardFSCossEndpoint(C config, FileSystem standardFS) {
 		super(config);
-	}
-
-	@Override
-	public CossProvider kind() {
-		return CossProvider.NativeFs;
+		this.standardFS = standardFS;
 	}
 
 	@Override
