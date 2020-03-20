@@ -127,28 +127,6 @@ public abstract class ReflectionUtils2 {
 	//
 
 	/**
-	 * Naming prefix for CGLIB-renamed methods.
-	 * 
-	 * @see #isCglibRenamedMethod
-	 */
-	private static final String CGLIB_RENAMED_METHOD_PREFIX = "CGLIB$";
-
-	private static final Method[] NO_METHODS = {};
-
-	private static final Field[] NO_FIELDS = {};
-
-	/**
-	 * Cache for {@link Class#getDeclaredMethods()} plus equivalent default
-	 * methods from Java 8 based interfaces, allowing for fast iteration.
-	 */
-	private static final Map<Class<?>, Method[]> declaredMethodsCache = new ConcurrentReferenceHashMap<Class<?>, Method[]>(256);
-
-	/**
-	 * Cache for {@link Class#getDeclaredFields()}, allowing for fast iteration.
-	 */
-	private static final Map<Class<?>, Field[]> declaredFieldsCache = new ConcurrentReferenceHashMap<Class<?>, Field[]>(256);
-
-	/**
 	 * Attempt to find a {@link Field field} on the supplied {@link Class} with
 	 * the supplied {@code name}. Searches all superclasses up to
 	 * {@link Object}.
@@ -1035,5 +1013,30 @@ public abstract class ReflectionUtils2 {
 			return (!method.isBridge() && method.getDeclaringClass() != Object.class);
 		}
 	};
+
+	/**
+	 * Naming prefix for CGLIB-renamed methods.
+	 * 
+	 * @see #isCglibRenamedMethod
+	 */
+	private static final String CGLIB_RENAMED_METHOD_PREFIX = "CGLIB$";
+	private static final Method[] NO_METHODS = {};
+	private static final Field[] NO_FIELDS = {};
+
+	/**
+	 * Cache for {@link Class#getDeclaredMethods()} plus equivalent default
+	 * methods from Java 8 based interfaces, allowing for fast iteration.
+	 */
+	private static final Map<Class<?>, Method[]> declaredMethodsCache;
+
+	/**
+	 * Cache for {@link Class#getDeclaredFields()}, allowing for fast iteration.
+	 */
+	private static final Map<Class<?>, Field[]> declaredFieldsCache;
+
+	static {
+		declaredMethodsCache = new ConcurrentReferenceHashMap<Class<?>, Method[]>(256);
+		declaredFieldsCache = new ConcurrentReferenceHashMap<Class<?>, Field[]>(256);
+	}
 
 }

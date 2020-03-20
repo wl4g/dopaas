@@ -38,7 +38,7 @@ import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.safeDecodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
-import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
+import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResp;
 import static java.lang.String.format;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CALLBACK;
 import static com.google.common.base.Charsets.UTF_8;
@@ -111,7 +111,7 @@ public class DefaultOauth2SnsController extends AbstractSnsController {
 		String authorizingUrl = delegate.doOAuth2GetAuthorizingUrl(Which.of(which), provider, state, connectParams);
 
 		// Response type
-		if (isJSONResponse(request)) {
+		if (isJSONResp(request)) {
 			RespBase<String> resp = RespBase.create();
 			resp.setCode(RetCode.OK).setStatus(DEFAULT_AUTHC_READY_STATUS)
 					.setMessage("Obtain the SNS authorization code is ready.");

@@ -22,13 +22,13 @@ import java.security.spec.RSAPublicKeySpec;
 import com.wl4g.devops.tool.common.crypto.cipher.spec.RSAKeyPairSpec;
 
 /**
- * RivestShamirAdleman algorithm
+ * Asymmetric algorithm implemented by RivestShamirAdleman.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月20日
  * @since
  */
-public class RSAAsymCryptor extends FastAsymCryptor<RSAAsymCryptor, RSAKeyPairSpec> {
+public class RSAAsymCryptor extends AbstractFastAsymCryptor<RSAAsymCryptor, RSAKeyPairSpec> {
 
 	@Override
 	protected String getAlgorithmPrimary() {

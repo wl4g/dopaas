@@ -79,9 +79,9 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 *
 	 * @param request
 	 */
-	@RequestMapping(value = URI_S_LOGIN_APPLY_SESSION, method = { GET, POST })
+	@RequestMapping(value = URI_S_LOGIN_APPLY_SESSION, method = { POST })
 	@ResponseBody
-	public RespBase<?> applySession(HttpServletRequest request, HttpServletResponse response) {
+	public RespBase<?> connectToken(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			resp.forMap().put(config.getCookie().getName(), getSessionId());
@@ -104,7 +104,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 *
 	 * @param response
 	 */
-	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { GET, POST })
+	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { GET })
 	@ResponseBody
 	public RespBase<?> applyLocale(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Locale> resp = RespBase.create(sessionStatus());
@@ -134,9 +134,9 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 *
 	 * @param request
 	 */
-	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { GET, POST })
+	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { POST })
 	@ResponseBody
-	public RespBase<?> safeCheck(HttpServletRequest request, HttpServletResponse response) {
+	public RespBase<?> check(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			//
@@ -209,7 +209,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = URI_S_LOGIN_ERRREAD, method = { GET, POST })
+	@RequestMapping(value = URI_S_LOGIN_ERRREAD, method = { GET })
 	@ResponseBody
 	public RespBase<?> readError(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<String> resp = RespBase.create(sessionStatus());

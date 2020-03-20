@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,8 +45,11 @@ import com.wl4g.devops.tool.common.collection.CollectionUtils2;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 
+import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.lang.StringUtils2.isDomain;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.*;
+import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
@@ -219,6 +223,40 @@ public abstract class WebUtils2 {
 			return paramsMap;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(String.format("Illegal parameter format. '%s'", urlQuery), e);
+		}
+	}
+
+	/**
+	 * Reject http request methods.
+	 * 
+	 * @param allowMode
+	 * @param request
+	 * @param response
+	 * @param methods
+	 * @throws UnsupportedOperationException
+	 */
+	public static void rejectRequestMethod(boolean allowMode, ServletRequest request, ServletResponse response, String... methods)
+			throws UnsupportedOperationException {
+		notNullOf(request, "request");
+		notNullOf(response, "response");
+		if (!isEmptyArray(methods)) {
+			HttpServletRequest req = (HttpServletRequest) request;
+			HttpServletResponse resp = (HttpServletResponse) response;
+			boolean rejected1 = true, rejected2 = false;
+			for (String method : methods) {
+				if (method.equalsIgnoreCase(req.getMethod())) {
+					if (allowMode) {
+						rejected1 = false;
+					} else {
+						rejected2 = true;
+					}
+					break;
+				}
+			}
+			if ((allowMode && rejected1) || (!allowMode && rejected2)) {
+				resp.setStatus(405);
+				throw new UnsupportedOperationException(format("No support '%s' request method", req.getMethod()));
+			}
 		}
 	}
 
@@ -736,7 +774,7 @@ public abstract class WebUtils2 {
 		 * @param request
 		 * @return
 		 */
-		final public static boolean isJSONResponse(String respTypeValue, HttpServletRequest request) {
+		public static boolean isJSONResp(String respTypeValue, HttpServletRequest request) {
 			return determineJSONResponse(safeOf(respTypeValue), request);
 		}
 
@@ -746,8 +784,8 @@ public abstract class WebUtils2 {
 		 * @param request
 		 * @return
 		 */
-		final public static boolean isJSONResponse(HttpServletRequest request) {
-			return isJSONResponse(request, null);
+		public static boolean isJSONResp(HttpServletRequest request) {
+			return isJSONResp(request, null);
 		}
 
 		/**
@@ -757,7 +795,7 @@ public abstract class WebUtils2 {
 		 * @param respTypeName
 		 * @return
 		 */
-		final public static boolean isJSONResponse(HttpServletRequest request, String respTypeName) {
+		public static boolean isJSONResp(HttpServletRequest request, String respTypeName) {
 			Assert2.notNull(request, "Request must not be null");
 
 			List<String> paramNames = Arrays.asList(RESPTYPE_NAMES);
@@ -782,7 +820,7 @@ public abstract class WebUtils2 {
 		 * @param request
 		 * @return
 		 */
-		final public static boolean determineJSONResponse(ResponseType respType, HttpServletRequest request) {
+		private static boolean determineJSONResponse(ResponseType respType, HttpServletRequest request) {
 			Assert2.notNull(request, "Request must not be null");
 			// Using default strategy
 			if (Objects.isNull(respType)) {

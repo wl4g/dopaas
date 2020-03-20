@@ -24,7 +24,7 @@ import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAV
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.Authenticated;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
-import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
+import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResp;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 
 import java.util.HashMap;
@@ -123,7 +123,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 		String redirectUrl = buildConnectAuthenticatingUrl(http, annotation);
 
 		// Response JSON message
-		if (isJSONResponse(http.getRequest())) {
+		if (isJSONResp(http.getRequest())) {
 			RespBase<String> resp = new RespBase<>(SECOND_UNAUTH, STATUS_SECOND_UNAUTHC, MSG_SECOND_UNAUTHC, null);
 			resp.forMap().put(config.getParam().getRedirectUrl(), redirectUrl);
 			resp.setMessage(errdesc);

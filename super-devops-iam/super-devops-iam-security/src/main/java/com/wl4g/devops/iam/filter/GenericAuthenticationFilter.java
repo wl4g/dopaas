@@ -16,14 +16,11 @@
 package com.wl4g.devops.iam.filter;
 
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
@@ -31,7 +28,7 @@ import com.wl4g.devops.iam.authc.GenericAuthenticationToken;
 import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
-import static java.lang.String.format;
+import static com.wl4g.devops.tool.common.web.WebUtils2.rejectRequestMethod;
 import static java.util.stream.Collectors.toMap;
 
 @IamFilter
@@ -41,11 +38,7 @@ public class GenericAuthenticationFilter extends AbstractIamAuthenticationFilter
 	@Override
 	protected GenericAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		if (!POST.name().equalsIgnoreCase(request.getMethod())) {
-			response.setStatus(405);
-			throw new HttpRequestMethodNotSupportedException(request.getMethod(),
-					format("No support '%s' request method", request.getMethod()));
-		}
+		rejectRequestMethod(true, request, response, "POST");
 
 		// Bsse required parameters.
 		String principal = getCleanParam(request, config.getParam().getPrincipalName());

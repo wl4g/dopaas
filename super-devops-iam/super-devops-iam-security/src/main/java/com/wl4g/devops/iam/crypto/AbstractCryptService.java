@@ -89,22 +89,6 @@ public abstract class AbstractCryptService<K> implements CryptService {
 		notNull(keySpecClass, "KeySpecClass must not be null.");
 	}
 
-	/**
-	 * Get random borrow generated key-pairs.
-	 *
-	 * @return
-	 */
-	@Override
-	public KeyPairSpec borrow() {
-		return borrow(-1);
-	}
-
-	/**
-	 * Get random borrow JIGSAW image code.
-	 *
-	 * @param index
-	 * @return
-	 */
 	@Override
 	public KeyPairSpec borrow(int index) {
 		if (index < 0 || index >= config.getKeyPairPools()) {

@@ -49,7 +49,9 @@ public interface CryptService {
 	 *
 	 * @return
 	 */
-	KeyPairSpec borrow();
+	default KeyPairSpec borrow() {
+		return borrow(-1);
+	}
 
 	/**
 	 * Apply keySpec resource.
