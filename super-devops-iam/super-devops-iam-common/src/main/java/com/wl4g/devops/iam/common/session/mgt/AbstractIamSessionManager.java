@@ -26,8 +26,9 @@ import static org.apache.shiro.web.util.WebUtils.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
+import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResp;
 import static java.lang.Boolean.TRUE;
+import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 
 import java.io.Serializable;
@@ -372,15 +373,15 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		 * saved.
 		 */
 		boolean isSidSave = isTrue(request, config.getParam().getSidSaveCookie());
-		if (isSidSave || isBrowser(toHttp(request)) || !isJSONResponse(toHttp(request))) {
+		if (isSidSave || isBrowser(toHttp(request)) || !isJSONResp(toHttp(request))) {
 			Cookie cookie = new SimpleCookie(getSessionIdCookie());
-			cookie.setValue(String.valueOf(sessionId));
+			cookie.setValue(valueOf(sessionId));
 			// Save to response.
 			cookie.saveTo(toHttp(request), toHttp(response));
 			log.trace("Set session ID cookie for session with id {}", sessionId);
 		} else {
 			// Addition customize security headers.
-			toHttp(response).addHeader(getSessionIdCookie().getName(), String.valueOf(sessionId));
+			toHttp(response).addHeader(getSessionIdCookie().getName(), valueOf(sessionId));
 		}
 
 	}

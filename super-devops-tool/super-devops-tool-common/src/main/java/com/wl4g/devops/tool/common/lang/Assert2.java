@@ -24,9 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.wl4g.devops.tool.common.lang.ClassUtils2.*;
 import static com.wl4g.devops.tool.common.lang.StringUtils2.*;
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
 import static java.lang.Math.max;
 import static java.lang.Thread.currentThread;
 
@@ -831,10 +829,14 @@ public abstract class Assert2 {
 	 * @param fmtMessage
 	 * @param args
 	 */
-	public static void doAssertHandle(Class<? extends RuntimeException> exceptionClass, String fmtMessage, Object... args) {
+	private static void doAssertHandle(Class<? extends RuntimeException> exceptionClass, String fmtMessage, Object... args) {
 		RuntimeException th = newRuntimeExceptionInstance(exceptionClass);
 		// Init cause message
-		setField(detailMessageField, th, "[Assertion failed] - " + doFormat(fmtMessage, args));
+		try {
+			detailMessageField.set(th, "[Assertion failed] - " + doFormat(fmtMessage, args));
+		} catch (Exception ex) {
+			throw new Error("Unexpected reflection exception - " + ex.getClass().getName() + ": " + ex.getMessage());
+		}
 
 		// Remove useless stack elements
 		StackTraceElement[] stackEles = th.getStackTrace();
@@ -861,11 +863,12 @@ public abstract class Assert2 {
 	private static RuntimeException newRuntimeExceptionInstance(Class<? extends RuntimeException> exceptionClass) {
 		try {
 			if (objenesis != null) {
-				return (RuntimeException) invokeMethod(objenesisStdNewInstanceMethod, objenesis, exceptionClass);
+				return (RuntimeException) objenesisStdNewInstanceMethod.invoke(objenesis, exceptionClass,
+						new Object[] { exceptionClass });
 			}
 			return (RuntimeException) exceptionClass.newInstance();
-		} catch (Exception e) {
-			throw new Error(e);
+		} catch (Exception ex) {
+			throw new Error("Unexpected reflection exception - " + ex.getClass().getName() + ": " + ex.getMessage());
 		}
 	}
 
@@ -877,31 +880,34 @@ public abstract class Assert2 {
 	final private static Field causeField;
 
 	static {
-		detailMessageField = findField(Throwable.class, "detailMessage", String.class);
-		causeField = findField(Throwable.class, "cause", Throwable.class);
-		makeAccessible(detailMessageField);
-		makeAccessible(causeField);
-
-		Object _objenesis = null;
-		Method _objenesisStdNewInstanceMethod = null;
 		try {
-			Class<?> objenesisClass = forName(OBJENSIS_CLASS, currentThread().getContextClassLoader());
-			if (!Objects.isNull(objenesisClass)) {
-				_objenesisStdNewInstanceMethod = findMethod(objenesisClass, "newInstance", Class.class);
-				// Objenesis object.
-				for (Constructor<?> c : objenesisClass.getConstructors()) {
-					Class<?>[] paramClasses = c.getParameterTypes();
-					if (paramClasses != null && paramClasses.length == 1 && boolean.class.isAssignableFrom(paramClasses[0])) {
-						_objenesis = c.newInstance(new Object[] { true });
-						break;
+			detailMessageField = Throwable.class.getDeclaredField("detailMessage");
+			causeField = Throwable.class.getDeclaredField("cause");
+			detailMessageField.setAccessible(true);
+			causeField.setAccessible(true);
+
+			Object _objenesis = null;
+			Method _objenesisStdNewInstanceMethod = null;
+			try {
+				Class<?> objenesisClass = Class.forName(OBJENSIS_CLASS, false, currentThread().getContextClassLoader());
+				if (!Objects.isNull(objenesisClass)) {
+					_objenesisStdNewInstanceMethod = objenesisClass.getMethod("newInstance", Class.class);
+					// Objenesis object.
+					for (Constructor<?> c : objenesisClass.getConstructors()) {
+						Class<?>[] paramClasses = c.getParameterTypes();
+						if (paramClasses != null && paramClasses.length == 1 && boolean.class.isAssignableFrom(paramClasses[0])) {
+							_objenesis = c.newInstance(new Object[] { true });
+							break;
+						}
 					}
 				}
+			} catch (ClassNotFoundException e) { // Ignore
 			}
-		} catch (Exception e) { // Ignore
+			objenesis = _objenesis;
+			objenesisStdNewInstanceMethod = _objenesisStdNewInstanceMethod;
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
 		}
-		objenesis = _objenesis;
-		objenesisStdNewInstanceMethod = _objenesisStdNewInstanceMethod;
-
 	}
 
 }

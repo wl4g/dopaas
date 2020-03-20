@@ -171,9 +171,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
 			// Storage verified token.
 			String verifiedToken = "vefdt" + randomAlphabetic(DEFAULT_VERIFIED_TOKEN_BIT);
-			if (log.isInfoEnabled()) {
-				log.info("Saving to verified token: {}", verifiedToken);
-			}
+			log.info("Saving to verified token: {}", verifiedToken);
 			return bind(getVerifiedTokenStoredKey(), verifiedToken, getVerifiedTokenExpireMs());
 		} finally {
 			if (storedCode != null) {

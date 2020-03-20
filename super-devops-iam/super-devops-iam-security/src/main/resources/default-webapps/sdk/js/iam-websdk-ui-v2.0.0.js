@@ -18,34 +18,25 @@ function changeTab(showId, hideId) {
 };
 
 $(function() {
-    // 账号登录
-    $('#passwordGo').click(function () {
-        $('#login_scan_pass').show();
-        $('#login_scan_panel').hide();
-        $('#login_phone').hide();
-        $('.active').removeClass('active');
-        $(this).addClass('active')
-    });
-    // 手机登录
-    $('#phoneGo').click(function () {
-        $('#login_scan_pass').hide();
-        $('#login_scan_panel').hide();
-        $('#login_phone').show();
-        $('.active').removeClass('active');
-        $(this).addClass('active')
-    });
-    // 扫码登录
-    $('#codeGo').click(function () {
-        $('#login_scan_pass').hide();
-        $('#login_scan_panel').show();
-        $('#login_phone').hide();
-        $('.active').removeClass('active');
-        $(this).addClass('active')
-    });
-    //关闭 code-close
+	$(".login-link").click(function(){
+	    var that = this;
+	    $(".login-link").each(function(ele, obj){
+	        var panel = $(that).attr("data-panel");
+	        var _panel = $(obj).attr("data-panel");
+	        if (panel != _panel){
+	            $("#"+_panel).hide();
+	            $(obj).removeClass('active');
+	        } else {
+	            $("#"+_panel).show();
+	            $(obj).addClass('active');
+	        }
+	    });
+	});
+
     $('.code-close').click(function () {
         $('.code-write').hide()
     });
+
     $(".select-area").change(function(){
         var selectVal = $(this).children('option:selected').val();
         console.log(selectVal)

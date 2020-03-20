@@ -177,13 +177,15 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 	@Override
 	protected IamAuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
+		HttpServletRequest req = toHttp(request);
+		HttpServletResponse resp = toHttp(response);
 		/*
 		 * Pre-handler before authentication, For example, the implementation of
 		 * restricting client IP white-list to prevent violent cracking of large
 		 * number of submission login requests.
 		 */
-		if (!coprocessor.preCreateToken(this, toHttp(request), toHttp(response))) {
-			throw new AccessRejectedException(format("Access rejected for remote IP:%s", getHttpRemoteAddr(toHttp(request))));
+		if (!coprocessor.preCreateToken(this, req, resp)) {
+			throw new AccessRejectedException(format("Access rejected for remote IP:%s", getHttpRemoteAddr(req)));
 		}
 
 		// Success redirection.
@@ -196,10 +198,10 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		rememberRedirectInfo(redirect, request, response);
 
 		// Remote client address.
-		String clientRemoteAddr = getHttpRemoteAddr(toHttp(request));
+		String clientRemoteAddr = getHttpRemoteAddr(req);
 
 		// Create authentication token
-		return postCreateToken(clientRemoteAddr, redirect, toHttp(request), toHttp(response));
+		return postCreateToken(clientRemoteAddr, redirect, req, resp);
 	}
 
 	protected abstract T postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
@@ -339,7 +341,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Using last saved parameters.
 		String respTypeValue = extParameterValue(KEY_REQ_AUTH_PARAMS, ResponseType.DEFAULT_RESPTYPE_NAME);
 		log.debug("Using last response type:{}", respTypeValue);
-		return ResponseType.isJSONResponse(respTypeValue, toHttp(request)) || ResponseType.isJSONResponse(toHttp(request));
+		return ResponseType.isJSONResp(respTypeValue, toHttp(request)) || ResponseType.isJSONResp(toHttp(request));
 	}
 
 	/**

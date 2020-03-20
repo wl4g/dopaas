@@ -95,7 +95,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Get response code value.
+	 * Gets response code value.
 	 * 
 	 * @return
 	 */
@@ -104,7 +104,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Setup response code of {@link RetCode}.
+	 * Sets response code of {@link RetCode}.
 	 * 
 	 * @param retCode
 	 * @return
@@ -117,7 +117,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Setup response code of int.
+	 * Sets response code of int.
 	 * 
 	 * @param retCode
 	 * @return
@@ -137,7 +137,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Setup status.
+	 * Sets status.
 	 * 
 	 * @param status
 	 * @return
@@ -150,7 +150,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Get error message text.
+	 * Gets error message text.
 	 * 
 	 * @return
 	 */
@@ -159,7 +159,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Setup error message text.
+	 * Sets error message text.
 	 * 
 	 * @return
 	 */
@@ -169,7 +169,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Get response data node of {@link Object}.
+	 * Gets response data node of {@link Object}.
 	 * 
 	 * @return
 	 */
@@ -180,26 +180,25 @@ public class RespBase<D> implements Serializable {
 	// --- Expanded's. ---.
 
 	/**
-	 * Setup response bean to data.
+	 * Sets response bean to data.
 	 * 
 	 * @param data
 	 * @return
 	 */
 	public RespBase<D> setData(D data) {
-		if (isNull(data)) {
+		if (isNull(data))
 			return this;
-		}
-		if (isAvailablePayload()) { // Data already payLoad ?
+		if (checkDataAvailable()) // Data already payLoad ?
 			throw new IllegalStateException(
 					format("RespBase.data already payLoad, In order to set it successful the data node must be the initial value or empty. - %s",
 							getData()));
-		}
+
 		this.data = data;
 		return this;
 	}
 
 	/**
-	 * Setup error throwable, does not set response status code.
+	 * Sets error throwable, does not set response status code.
 	 * 
 	 * @param th
 	 * @return
@@ -233,14 +232,18 @@ public class RespBase<D> implements Serializable {
 	@SuppressWarnings({ "unchecked" })
 	@JsonIgnore
 	public synchronized DataMap<Object> asMap() {
-		if (data instanceof Map) { // type of Map ?
-			return (DataMap<Object>) data;
-		}
-		return (DataMap<Object>) (data = (D) convertBean(data, DataMap.class));
+		if (isNull(getData()))
+			return null;
+		if (data instanceof Map) // Type of Map ?
+			return (DataMap<Object>) getData();
+
+		setData((D) convertBean(data, DataMap.class));
+		return (DataMap<Object>) getData();
 	}
 
 	/**
-	 * Build for response data node of {@link DataMap}.
+	 * Build {@link DataMap} instance for response data body.(if
+	 * {@link RespBase#getData()} is null)
 	 * 
 	 * @see {@link RespBase#getData()}
 	 * @return
@@ -248,7 +251,7 @@ public class RespBase<D> implements Serializable {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@JsonIgnore
 	public synchronized DataMap<Object> forMap() {
-		if (!isAvailablePayload()) { // Data unalready ?
+		if (!checkDataAvailable()) { // Data unalready ?
 			data = (D) new DataMap<>(); // Init
 		} else {
 			// Convert to DataMap.
@@ -294,8 +297,8 @@ public class RespBase<D> implements Serializable {
 	 * 
 	 * @return
 	 */
-	private boolean isAvailablePayload() {
-		return nonNull(data) && data != DEFAULT_DATA;
+	private boolean checkDataAvailable() {
+		return nonNull(getData()) && getData() != DEFAULT_DATA;
 	}
 
 	/**
@@ -387,7 +390,7 @@ public class RespBase<D> implements Serializable {
 	 * @return
 	 */
 	public final static boolean eq(RespBase<?> resp, RetCode retCode) {
-		return resp != null && retCode.getErrcode() == resp.getCode();
+		return !isNull(resp) && retCode.getErrcode() == resp.getCode();
 	}
 
 	/**

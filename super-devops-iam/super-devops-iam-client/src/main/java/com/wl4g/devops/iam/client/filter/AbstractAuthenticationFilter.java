@@ -23,6 +23,7 @@ import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
@@ -42,7 +43,7 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
-import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
+import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResp;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -71,7 +72,6 @@ import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
-import com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 
 import java.io.IOException;
@@ -153,7 +153,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	/**
 	 * Accumulator used to restrict redirection authentication.
 	 */
-	final protected Cumulator failCumulator;
+	final protected Cumulator failedCumulator;
 
 	/**
 	 * Delegate message source.
@@ -171,7 +171,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		this.configurer = context;
 		this.coprocessor = coprocessor;
 		this.cache = cacheManager.getEnhancedCache(CACHE_TICKET_C);
-		this.failCumulator = CumulateHolder.newSessionCumulator(KEY_TRY_REDIRECT_AUTHC, 10_000L);
+		this.failedCumulator = newSessionCumulator(KEY_TRY_REDIRECT_AUTHC, 10_000L);
 	}
 
 	@Override
@@ -215,7 +215,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
 
 		// JSON response
-		if (isJSONResponse(toHttp(request))) {
+		if (isJSONResp(toHttp(request))) {
 			try {
 				// Make logged response JSON.
 				RespBase<String> loggedResp = makeLoggedResponse(request, subject, successUrl);
@@ -274,7 +274,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// page directly (to prevent unlimited redirection).
 		/** See:{@link AbstractBasedIamValidator#doGetRemoteValidation()} */
 		if (isNull(cause) || (cause instanceof InvalidGrantTicketException)) {
-			if (isJSONResponse(toHttp(request))) {
+			if (isJSONResp(toHttp(request))) {
 				try {
 					String failMsg = makeFailedResponse(failRedirectUrl, cause);
 					if (log.isInfoEnabled()) {
@@ -332,7 +332,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				// When the IamServer redirects the request, but the
 				// grantTicket validate failed, infinite redirect needs to
 				// be prevented.
-				if ((cause instanceof InvalidGrantTicketException) && failCumulator.accumulate(factors, 1) > 5) {
+				if ((cause instanceof InvalidGrantTicketException) && failedCumulator.accumulate(factors, 1) > 5) {
 					throw new TooManyRequestAuthentcationException(String.format("Too many redirect request authenticating"));
 				}
 			}

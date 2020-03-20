@@ -462,7 +462,7 @@
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 				cache: false,
 				dataType: "json",
-				headers:{'Content-Type':'application/json;charset=utf8','organId':'1333333333'},
+				headers:{'Content-Type':'application/x-www-form-urlencoded;charset=utf8'},
 				success: function(res, textStatus, jqxhr){
 					// 初始化完成回调
 					Common.Util.checkEmpty("init.onPostCheck", settings.init.onPostCheck)(res);
@@ -562,7 +562,7 @@
 
 				_InitSafeCheck(function(checkCaptcha, checkGeneral, checkSms){
 					var secret = Common.Util.checkEmpty("Error for secret is empty", checkGeneral.secret);
-					var credentials = encodeURIComponent(IAM.Crypto.rsa1ToHexString(secret, plainPasswd));
+					var credentials = encodeURIComponent(IAM.Crypto.RSA.encryptToHexString(secret, plainPasswd));
 					var verifiedToken = "";
 					if(runtime.safeCheck.checkCaptcha.enabled){
 						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'

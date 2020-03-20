@@ -20,13 +20,13 @@ import java.security.spec.KeySpec;
 import com.wl4g.devops.tool.common.crypto.cipher.spec.DSAKeyPairSpec;
 
 /**
- * {@link DSAAsymCryptor}
+ * Asymmetric algorithm implemented by DSA.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2019年11月9日 v1.0.0
  * @see
  */
-public class DSAAsymCryptor extends FastAsymCryptor<DSAAsymCryptor, DSAKeyPairSpec> {
+public class DSAAsymCryptor extends AbstractFastAsymCryptor<DSAAsymCryptor, DSAKeyPairSpec> {
 
 	@Override
 	protected String getAlgorithmPrimary() {
