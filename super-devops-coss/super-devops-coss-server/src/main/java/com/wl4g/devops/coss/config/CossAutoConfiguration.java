@@ -22,6 +22,7 @@ import com.wl4g.devops.coss.CossEndpoint.CossProvider;
 import com.wl4g.devops.coss.access.ConsoleCossAccessor;
 import com.wl4g.devops.coss.access.CossAccessor;
 import com.wl4g.devops.coss.access.HttpCossAccessor;
+import com.wl4g.devops.coss.natives.MetadataIndexManager;
 import com.wl4g.devops.coss.natives.NativeCossEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -78,6 +79,13 @@ public class CossAutoConfiguration extends OptionalPrefixControllerAutoConfigura
 	@Bean
 	public PrefixHandlerMapping httpCossAccessorPrefixHandlerMapping(HttpCossAccessor httpCossAccessor) {
 		return super.newPrefixHandlerMapping(HttpCossAccessor.URL_BASE, httpCossAccessor);
+	}
+
+
+	// --- MetadataIndexManager ---
+	@Bean
+	public MetadataIndexManager metadataIndexManager() {
+		return new MetadataIndexManager();
 	}
 
 }

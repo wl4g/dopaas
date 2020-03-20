@@ -30,6 +30,8 @@ import static org.springframework.util.Assert.hasText;
 @Validated
 public class NativeCossProperties {
 
+	final public static String PATH_TRASH = "/.trash";
+
 	/**
 	 * Bucket of native fileSystem root directory URI.
 	 */
@@ -127,4 +129,11 @@ public class NativeCossProperties {
 		return objectKey;
 	}
 
+	public String getBucketPathTrash() {
+		return getEndpointRootDir().getAbsolutePath()+PATH_TRASH+File.separator + System.currentTimeMillis();
+	}
+
+	public String getObjectPathTrash(String bucketName) {
+		return getEndpointRootDir().getAbsolutePath()+File.separator+bucketName+File.separator+PATH_TRASH +File.separator + System.currentTimeMillis();
+	}
 }
