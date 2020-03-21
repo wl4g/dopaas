@@ -36,7 +36,7 @@ import java.util.List;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.sessionStatus;
-import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType.TEXT_SMS;
+import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind.TEXT_SMS;
 import static com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber.parse;
 import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
@@ -65,7 +65,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	final public static String KEY_VWEIFIED_MODEL = "verifiedModel";
 
 	/**
-	 * Composite verification handler.
+	 * Composite verifier handler.
 	 */
 	@Autowired
 	protected CompositeSecurityVerifierAdapter verifier;
@@ -93,8 +93,8 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			List<String> factors = getV1Factors(getHttpRemoteAddr(request), principal);
 
 			// Apply CAPTCHA
-			if (verifier.forAdapt(request).isEnabled(factors)) { // Enabled?
-				resp.forMap().put(KEY_APPLY_MODEL, verifier.forAdapt(request).apply(principal, factors, request));
+			if (verifier.forOperator(request).isEnabled(factors)) { // Enabled?
+				resp.forMap().put(KEY_APPLY_MODEL, verifier.forOperator(request).apply(principal, factors, request));
 			} else { // Invalid requestVERIFIED_TOKEN_EXPIREDMS
 				log.warn("Invalid request, no captcha enabled, factors: {}", factors);
 			}
@@ -126,7 +126,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			// Limit factors
 			List<String> factors = getV1Factors(getHttpRemoteAddr(request), null);
 			// Verifying
-			String verifiedToken = verifier.forAdapt(request).verify(params, request, factors);
+			String verifiedToken = verifier.forOperator(request).verify(params, request, factors);
 			resp.forMap().put(KEY_VWEIFIED_MODEL, new VerifiedTokenModel(true, verifiedToken));
 		} catch (Exception e) {
 			resp.handleError(e);
@@ -156,14 +156,15 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			List<String> factors = getV1Factors(getHttpRemoteAddr(request), mn.asNumberText());
 
 			// Graph validation
-			verifier.forAdapt(request).validate(factors, getCleanParam(request, config.getParam().getVerifiedTokenName()), false);
+			verifier.forOperator(request).validate(factors,
+					getCleanParam(request, config.getParam().getVerifiedTokenName()), false);
 
 			// Apply SMS verify code.
-			resp.forMap().put(KEY_APPLY_MODEL, verifier.forAdapt(TEXT_SMS).apply(mn.asNumberText(), factors, request));
+			resp.forMap().put(KEY_APPLY_MODEL, verifier.forOperator(TEXT_SMS).apply(mn.asNumberText(), factors, request));
 
 			// The creation time of the currently created SMS authentication
 			// code (must exist).
-			VerifyCodeWrapper code = verifier.forAdapt(TEXT_SMS).getVerifyCode(true);
+			VerifyCodeWrapper code = verifier.forOperator(TEXT_SMS).getVerifyCode(true);
 			resp.forMap().put(KEY_SMS_CHECK,
 					new SmsCheckModel(mn.getNumber(), code.getRemainDelay(config.getMatcher().getFailFastSmsDelay())));
 		} catch (Exception e) {

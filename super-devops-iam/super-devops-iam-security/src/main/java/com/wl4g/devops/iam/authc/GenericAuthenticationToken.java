@@ -26,7 +26,7 @@ import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.ClientRef;
-import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
+import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
 
 /**
  * General (Username/Password) authentication token
@@ -69,7 +69,7 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	/**
 	 * Verifier type.
 	 */
-	final private VerifyType verifyType;
+	final private VerifyKind verifyType;
 
 	/**
 	 * Client user other attributes properties. (e.g.
@@ -80,12 +80,12 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	private Map<String, String> userProperties = new HashMap<>();
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, String clientRef, final String verifiedToken, final VerifyType verifyType) {
+			final String credentials, String clientRef, final String verifiedToken, final VerifyKind verifyType) {
 		this(remoteHost, redirectInfo, principal, credentials, clientRef, verifiedToken, verifyType, false);
 	}
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, String clientRef, final String verifiedToken, final VerifyType verifyType,
+			final String credentials, String clientRef, final String verifiedToken, final VerifyKind verifyType,
 			final boolean rememberMe) {
 		super(remoteHost, redirectInfo);
 		hasText(principal, "Username principal must not be empty.");
@@ -126,7 +126,7 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	}
 
 	@Override
-	public VerifyType getVerifyType() {
+	public VerifyKind getVerifyType() {
 		return verifyType;
 	}
 

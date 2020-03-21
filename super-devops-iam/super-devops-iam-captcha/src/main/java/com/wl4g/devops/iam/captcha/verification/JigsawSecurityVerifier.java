@@ -71,15 +71,15 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	protected CaptchaProperties capConfig;
 
 	@Override
-	public VerifyType verifyType() {
-		return VerifyType.GRAPH_JIGSAW;
+	public VerifyKind kind() {
+		return VerifyKind.GRAPH_JIGSAW;
 	}
 
 	@Override
 	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap, KeyPairSpec keySpec) {
 		TailoredImage code = codeWrap.getCode();
 		// Build model
-		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, verifyType().getAlias());
+		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, kind().getAlias());
 		model.setY(code.getY());
 		model.setPrimaryImg(encodeBase64(code.getPrimaryImg()));
 		model.setBlockImg(encodeBase64(code.getBlockImg()));

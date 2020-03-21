@@ -42,8 +42,8 @@ import java.io.IOException;
 public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
-	public VerifyType verifyType() {
-		return VerifyType.GRAPH_GIF;
+	public VerifyKind kind() {
+		return VerifyKind.GRAPH_GIF;
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 		captcha.out(out);
 
 		// Build model
-		GifApplyImgModel model = new GifApplyImgModel(applyToken, verifyType().getAlias());
+		GifApplyImgModel model = new GifApplyImgModel(applyToken, kind().getAlias());
 		model.setPrimaryImg(convertToBase64(out.toByteArray()));
 		return model;
 	}

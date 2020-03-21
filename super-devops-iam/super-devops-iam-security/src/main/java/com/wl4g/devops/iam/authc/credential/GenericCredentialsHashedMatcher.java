@@ -51,7 +51,7 @@ public class GenericCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 	protected void assertRequestVerify(AuthenticationToken token, String principal, List<String> factors) {
 		if (token instanceof VerifyAuthenticationToken) {
 			VerifyAuthenticationToken tk = ((VerifyAuthenticationToken) token);
-			verifier.forAdapt(tk.getVerifyType()).validate(factors, tk.getVerifiedToken(), false);
+			verifier.forOperator(tk.getVerifyType()).validate(factors, tk.getVerifiedToken(), false);
 		}
 	}
 

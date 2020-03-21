@@ -284,7 +284,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 * @return
 	 */
 	private String getVerifyCodeStoredKey() {
-		return "VERIFY_CODE." + verifyType().name();
+		return "VERIFY_CODE." + kind().name();
 	}
 
 	/**
@@ -293,7 +293,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 * @return
 	 */
 	private String getVerifiedTokenStoredKey() {
-		return "VERIFIED_TOKEN." + verifyType().name();
+		return "VERIFIED_TOKEN." + kind().name();
 	}
 
 }

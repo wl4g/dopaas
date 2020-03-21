@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
+import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
 
 /**
  * Captcha & verification authentication token
@@ -32,7 +32,7 @@ public interface VerifyAuthenticationToken {
 	 *
 	 * @return
 	 */
-	VerifyType getVerifyType();
+	VerifyKind getVerifyType();
 
 	/**
 	 * Get submitted verifiedToken.
