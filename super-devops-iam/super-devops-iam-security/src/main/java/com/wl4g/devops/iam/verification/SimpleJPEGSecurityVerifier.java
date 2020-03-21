@@ -48,8 +48,8 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 	final private static Font DEFAULT_FONT = defaultFont();
 
 	@Override
-	public VerifyType verifyType() {
-		return VerifyType.GRAPH_SIMPLE;
+	public VerifyKind kind() {
+		return VerifyKind.GRAPH_SIMPLE;
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 		ImageIO.write(createImage(codeWrap.getCode()), "JPEG", out);
 
 		// Build model
-		SimpleApplyImgModel model = new SimpleApplyImgModel(applyToken, verifyType().getAlias());
+		SimpleApplyImgModel model = new SimpleApplyImgModel(applyToken, kind().getAlias());
 		model.setPrimaryImg(convertToBase64(out.toByteArray()));
 		return model;
 	}

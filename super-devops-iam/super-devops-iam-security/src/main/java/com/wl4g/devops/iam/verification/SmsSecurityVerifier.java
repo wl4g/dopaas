@@ -78,8 +78,8 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 	private Cumulator applySmsCumulator;
 
 	@Override
-	public VerifyType verifyType() {
-		return VerifyType.TEXT_SMS;
+	public VerifyKind kind() {
+		return VerifyKind.TEXT_SMS;
 	}
 
 	@Override

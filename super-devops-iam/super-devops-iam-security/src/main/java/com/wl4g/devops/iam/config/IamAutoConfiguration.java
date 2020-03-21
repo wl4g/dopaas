@@ -90,8 +90,8 @@ import com.wl4g.devops.iam.realm.TwitterAuthorizingRealm;
 import com.wl4g.devops.iam.realm.WechatAuthorizingRealm;
 import com.wl4g.devops.iam.realm.WechatMpAuthorizingRealm;
 import com.wl4g.devops.iam.session.mgt.IamServerSessionManager;
-import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SimpleJPEGSecurityVerifier;
+import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.PrintSmsHandleSender;
@@ -524,7 +524,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	 */
 	@Bean
 	public CompositeSecurityVerifierAdapter compositeSecurityVerifierAdapter(List<SecurityVerifier> verifiers) {
-		return new CompositeSecurityVerifierAdapter(verifiers);
+		return new CompositeSecurityVerifierAdapter();
 	}
 
 	@Bean

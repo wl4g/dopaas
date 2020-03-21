@@ -22,7 +22,7 @@ import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
-import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
+import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
 import com.wl4g.devops.iam.web.model.CaptchaCheckModel;
 import com.wl4g.devops.iam.web.model.GeneralCheckModel;
 import com.wl4g.devops.iam.web.model.SmsCheckModel;
@@ -163,9 +163,9 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// --- Check captcha authenticating environments. ---
 			//
 			CaptchaCheckModel model = new CaptchaCheckModel(false);
-			if (verifier.forAdapt(request).isEnabled(factors)) {
+			if (verifier.forOperator(request).isEnabled(factors)) {
 				model.setEnabled(true);
-				model.setSupport(VerifyType.SUPPORT_ALL); // Default
+				model.setSupport(VerifyKind.SUPPORT_ALL); // Default
 				model.setApplyUri(getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA);
 			}
 			resp.forMap().put(KEY_CAPTCHA_CHECK, model);
@@ -177,7 +177,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			// time-stamp is returned (used to display the current remaining
 			// number of seconds before the front end can re-send the SMS
 			// verification code).
-			VerifyCodeWrapper code = verifier.forAdapt(VerifyType.TEXT_SMS).getVerifyCode(false);
+			VerifyCodeWrapper code = verifier.forOperator(VerifyKind.TEXT_SMS).getVerifyCode(false);
 
 			// SMS apply owner(mobile number).
 			Long mobileNum = null;
