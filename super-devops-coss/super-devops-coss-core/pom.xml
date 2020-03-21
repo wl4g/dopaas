@@ -34,6 +34,10 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-coss-common</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

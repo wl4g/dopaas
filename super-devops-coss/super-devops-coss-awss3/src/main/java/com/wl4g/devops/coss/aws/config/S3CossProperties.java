@@ -21,6 +21,8 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.amazonaws.regions.Regions;
+
 @Validated
 public class S3CossProperties {
 
@@ -29,6 +31,9 @@ public class S3CossProperties {
 
 	@NotBlank
 	private String accessKeySecret;
+
+	@NotBlank
+	private String regionName = Regions.DEFAULT_REGION.getName();
 
 	public String getAccessKeyId() {
 		return accessKeyId;
@@ -46,6 +51,14 @@ public class S3CossProperties {
 	public void setAccessKeySecret(String accessKeySecret) {
 		notNullOf(accessKeySecret, "cossAccessKeySecret");
 		this.accessKeySecret = accessKeySecret;
+	}
+
+	public String getRegionName() {
+		return regionName;
+	}
+
+	public void setRegionName(String regionName) {
+		this.regionName = regionName;
 	}
 
 }

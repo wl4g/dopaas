@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-bom</artifactId>
@@ -103,6 +104,7 @@
 		<aliyun-sdk-core.version>4.4.0</aliyun-sdk-core.version>
 		<aliyun-sdk-oss.version>3.8.1</aliyun-sdk-oss.version>
 		<aws-sdk-s3.version>1.11.734</aws-sdk-s3.version>
+		<glusterfs-javafs.version>1.0.4</glusterfs-javafs.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -307,6 +309,12 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-coss-common</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-coss-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
@@ -414,9 +422,9 @@
 				<version>${javax-servlet-api.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			<!-- Validation, Note: that the use of '$NO-MVN-MAN-VER$' is valid for the current dependency. 
-				When this project is referenced externally, the indirect dependency will fail, possibly leading 
-				to dependency incompatible versions. -->
+			<!-- Validation, Note: that the use of '$NO-MVN-MAN-VER$' is valid for 
+				the current dependency. When this project is referenced externally, the indirect 
+				dependency will fail, possibly leading to dependency incompatible versions. -->
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator</artifactId>
@@ -565,7 +573,8 @@
 				<version>${spotbugs.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- Using metrics package, spring-actual will use DropwizardMetricServices implementation. -->
+			<!-- Using metrics package, spring-actual will use DropwizardMetricServices 
+				implementation. -->
 			<dependency>
 				<groupId>com.codahale.metrics</groupId>
 				<artifactId>metrics-core</artifactId>
@@ -794,8 +803,8 @@
 				<version>${elasticsearch-client.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- Note: only specified 6.2.3 can be displayed here, otherwise it will be overwritten by 
-				other dependency packages (such as spring dependency BOM) -->
+			<!-- Note: only specified 6.2.3 can be displayed here, otherwise it will 
+				be overwritten by other dependency packages (such as spring dependency BOM) -->
 			<dependency>
 				<groupId>org.elasticsearch</groupId>
 				<artifactId>elasticsearch</artifactId>
@@ -857,6 +866,12 @@
 				<groupId>com.amazonaws</groupId>
 				<artifactId>aws-java-sdk-s3</artifactId>
 				<version>${aws-sdk-s3.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.peircean.glusterfs</groupId>
+				<artifactId>glusterfs-java-filesystem</artifactId>
+				<version>${glusterfs-javafs.version}</version>
 				<scope>compile</scope>
 			</dependency>
 		</dependencies>

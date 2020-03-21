@@ -16,11 +16,11 @@
 package com.wl4g.devops.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.iam.AlarmContact;
-import com.wl4g.devops.common.bean.iam.AlarmContactGroupRef;
+import com.wl4g.devops.common.bean.iam.Contact;
+import com.wl4g.devops.common.bean.iam.ContactGroupRef;
 import com.wl4g.devops.common.bean.iam.ContactChannel;
-import com.wl4g.devops.dao.iam.AlarmContactDao;
-import com.wl4g.devops.dao.iam.AlarmContactGroupRefDao;
+import com.wl4g.devops.dao.iam.ContactDao;
+import com.wl4g.devops.dao.iam.ContactGroupRefDao;
 import com.wl4g.devops.dao.iam.ContactChannelDao;
 import com.wl4g.devops.iam.service.ContactService;
 import com.wl4g.devops.page.PageModel;
@@ -43,10 +43,10 @@ import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
 public class ContactServiceImpl implements ContactService {
 
 	@Autowired
-	private AlarmContactDao alarmContactDao;
+	private ContactDao contactDao;
 
 	@Autowired
-	private AlarmContactGroupRefDao alarmContactGroupRefDao;
+	private ContactGroupRefDao contactGroupRefDao;
 
 	@Autowired
 	private ContactChannelDao contactChannelDao;
@@ -54,70 +54,70 @@ public class ContactServiceImpl implements ContactService {
 
 	@Override
 	@Transactional
-	public void save(AlarmContact alarmContact) {
-		if (null != alarmContact.getId() && alarmContact.getId() > 0) {
-			alarmContact.preUpdate();
-			alarmContactGroupRefDao.deleteByContactId(alarmContact.getId());
-			alarmContactDao.updateByPrimaryKeySelective(alarmContact);
+	public void save(Contact contact) {
+		if (null != contact.getId() && contact.getId() > 0) {
+			contact.preUpdate();
+			contactGroupRefDao.deleteByContactId(contact.getId());
+			contactDao.updateByPrimaryKeySelective(contact);
 		} else {
-			alarmContact.preInsert();
-			alarmContact.setDelFlag(DEL_FLAG_NORMAL);
-			alarmContact.setEnable(ENABLED);
-			alarmContactDao.insertSelective(alarmContact);
+			contact.preInsert();
+			contact.setDelFlag(DEL_FLAG_NORMAL);
+			contact.setEnable(ENABLED);
+			contactDao.insertSelective(contact);
 		}
-		Integer[] groups = alarmContact.getGroups();
+		Integer[] groups = contact.getGroups();
 		if (null != groups) {
 			for (Integer group : groups) {
-				AlarmContactGroupRef alarmContactGroupRef = new AlarmContactGroupRef();
-				alarmContactGroupRef.preInsert();
-				alarmContactGroupRef.setContactGroupId(group);
-				alarmContactGroupRef.setContactId(alarmContact.getId());
-				alarmContactGroupRefDao.insertSelective(alarmContactGroupRef);
+				ContactGroupRef contactGroupRef = new ContactGroupRef();
+				contactGroupRef.preInsert();
+				contactGroupRef.setContactGroupId(group);
+				contactGroupRef.setContactId(contact.getId());
+				contactGroupRefDao.insertSelective(contactGroupRef);
 			}
 		}
 
 		//TODO add 0313
-		contactChannelDao.deleteByContactId(alarmContact.getId());
-		List<ContactChannel> contactChannels = alarmContact.getContactChannels();
+		contactChannelDao.deleteByContactId(contact.getId());
+		List<ContactChannel> contactChannels = contact.getContactChannels();
 		for(ContactChannel contactChannel : contactChannels){
 			contactChannel.preInsert();
-			contactChannel.setContactId(alarmContact.getId());
+			contactChannel.setContactId(contact.getId());
 			contactChannelDao.insertSelective(contactChannel);
 		}
 
 	}
 
 	@Override
-	public AlarmContact detail(Integer id) {
+	public Contact detail(Integer id) {
 		Assert.notNull(id, "id can not be null");
-		AlarmContact alarmContact = alarmContactDao.selectByPrimaryKey(id);
-		List<AlarmContactGroupRef> alarmContactGroupRefs = alarmContactGroupRefDao.selectByContactId(id);
-		if (CollectionUtils.isNotEmpty(alarmContactGroupRefs)) {
-			Integer[] groups = new Integer[alarmContactGroupRefs.size()];
-			for (int i = 0; i < alarmContactGroupRefs.size(); i++) {
-				groups[i] = alarmContactGroupRefs.get(i).getContactGroupId();
+		Contact contact = contactDao.selectByPrimaryKey(id);
+		List<ContactGroupRef> contactGroupRefs = contactGroupRefDao.selectByContactId(id);
+		if (CollectionUtils.isNotEmpty(contactGroupRefs)) {
+			Integer[] groups = new Integer[contactGroupRefs.size()];
+			for (int i = 0; i < contactGroupRefs.size(); i++) {
+				groups[i] = contactGroupRefs.get(i).getContactGroupId();
 			}
-			alarmContact.setGroups(groups);
+			contact.setGroups(groups);
 		} else {
-			alarmContact.setGroups(new Integer[0]);
+			contact.setGroups(new Integer[0]);
 		}
-		return alarmContact;
+		return contact;
 	}
 
 	@Override
 	public void del(Integer id) {
 		Assert.notNull(id, "id can not be null");
-		AlarmContact alarmContact = new AlarmContact();
-		alarmContact.preUpdate();
-		alarmContact.setId(id);
-		alarmContact.setDelFlag(1);
-		alarmContactDao.updateByPrimaryKeySelective(alarmContact);
+		Contact contact = new Contact();
+		contact.preUpdate();
+		contact.setId(id);
+		contact.setDelFlag(1);
+		contactDao.updateByPrimaryKeySelective(contact);
 	}
 
 	@Override
 	public PageModel list(PageModel pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(alarmContactDao.list(name));
+		pm.setRecords(contactDao.list(name));
 		return pm;
 	}
 

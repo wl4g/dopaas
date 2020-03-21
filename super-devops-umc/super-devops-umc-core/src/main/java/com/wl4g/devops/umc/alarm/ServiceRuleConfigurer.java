@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.iam.AlarmContact;
-import com.wl4g.devops.common.bean.iam.AlarmNotificationContact;
+import com.wl4g.devops.common.bean.iam.Contact;
+import com.wl4g.devops.common.bean.iam.NotificationContact;
 import com.wl4g.devops.common.bean.umc.*;
-import com.wl4g.devops.dao.iam.AlarmContactDao;
-import com.wl4g.devops.dao.iam.AlarmNotificationContactDao;
+import com.wl4g.devops.dao.iam.ContactDao;
+import com.wl4g.devops.dao.iam.NotificationContactDao;
 import com.wl4g.devops.dao.umc.*;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
@@ -50,10 +50,10 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	private AlarmRecordRuleDao alarmRecordRuleDao;
 
 	@Autowired
-	private AlarmContactDao alarmContactDao;
+	private ContactDao contactDao;
 
 	@Autowired
-	private AlarmNotificationContactDao alarmNotificationContactDao;
+	private NotificationContactDao notificationContactDao;
 
 	/**
 	 * Large search from db
@@ -93,15 +93,15 @@ public class ServiceRuleConfigurer implements AlarmConfigurer {
 	}
 
 	@Override
-	public List<AlarmContact> getContactByGroupIds(List<Integer> groupIds) {
-		return alarmContactDao.getContactByGroupIds(groupIds);
+	public List<Contact> getContactByGroupIds(List<Integer> groupIds) {
+		return contactDao.getContactByGroupIds(groupIds);
 	}
 
 	@Override
-	public AlarmNotificationContact saveNotificationContact(AlarmNotificationContact alarmNotificationContact) {
-		alarmNotificationContact.preInsert();
-		alarmNotificationContactDao.insertSelective(alarmNotificationContact);
-		return alarmNotificationContact;
+	public NotificationContact saveNotificationContact(NotificationContact notificationContact) {
+		notificationContact.preInsert();
+		notificationContactDao.insertSelective(notificationContact);
+		return notificationContact;
 	}
 
 }

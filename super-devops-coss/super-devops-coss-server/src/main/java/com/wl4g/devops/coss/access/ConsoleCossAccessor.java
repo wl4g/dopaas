@@ -25,7 +25,7 @@ import java.util.Map;
 
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.CossEndpoint;
-import com.wl4g.devops.coss.CossEndpoint.CossProvider;
+import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
 import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.model.ACL;

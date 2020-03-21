@@ -65,7 +65,7 @@
     </association>
 
     <!-- contacts -->
-    <collection property="alarmContacts" ofType="com.wl4g.devops.common.bean.iam.AlarmContact" javaType="list">
+    <collection property="contacts" ofType="com.wl4g.devops.common.bean.iam.Contact" javaType="list">
       <id column="ct.id" property="id" jdbcType="INTEGER" />
       <result column="ct.name" property="name" jdbcType="VARCHAR" />
       <result column="ct.email" property="email" jdbcType="VARCHAR" />

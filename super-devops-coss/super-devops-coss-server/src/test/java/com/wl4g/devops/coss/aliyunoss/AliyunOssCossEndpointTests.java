@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aliyunoss;
 
-import org.junit.Test;
+import org.junit.Test; 
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.wl4g.devops.CossServer;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.CossEndpoint;
-import com.wl4g.devops.coss.CossEndpoint.CossProvider;
+import com.wl4g.devops.coss.CossProvider;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CossServer.class, properties = {})

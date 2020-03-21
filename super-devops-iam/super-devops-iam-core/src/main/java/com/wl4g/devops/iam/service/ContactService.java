@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.service;
 
-import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.Contact;
 import com.wl4g.devops.page.PageModel;
 
 /**
@@ -24,9 +24,9 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface ContactService {
 
-	void save(AlarmContact alarmContact);
+	void save(Contact contact);
 
-	AlarmContact detail(Integer id);
+	Contact detail(Integer id);
 
 	void del(Integer id);
 
