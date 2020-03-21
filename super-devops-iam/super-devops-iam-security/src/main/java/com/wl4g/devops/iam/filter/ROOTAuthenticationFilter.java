@@ -49,12 +49,10 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<IamAuthenticationToken> {
 	final public static String NAME = "rootFilter";
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		if (log.isInfoEnabled()) {
-			String url = getFullRequestURL(toHttp(request));
-			log.info("Request of: {}", url);
-		}
+		log.info("Request of: {}", () -> getFullRequestURL(toHttp(request)));
 
 		// Logged-in or login page request passed
 		return (getSubject(request, response).isAuthenticated() || isLoginRequest(request, response)

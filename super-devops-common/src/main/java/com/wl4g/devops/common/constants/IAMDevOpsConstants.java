@@ -189,11 +189,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * The public key index by logged-in users
 	 */
-	final public static String KEY_SECRET_INFO = "appliedSecretInfo";
-	/**
-	 * Apply authentication code keyName.
-	 */
-	final public static String CACHE_AUTH_CODE = "authcode_";
+	final public static String KEY_SECRET_INFO = "applySecretInfo";
 
 	/**
 	 * Limiter login failure prefix based on user-name.

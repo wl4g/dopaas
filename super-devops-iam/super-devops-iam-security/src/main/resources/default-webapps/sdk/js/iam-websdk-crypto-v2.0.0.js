@@ -51,11 +51,11 @@
 				if(typeof plaintext != "string"){
 					plaintext = plaintext.toString(); // e.g. Is int-type encryption background Java rsa1_padding5 cannot be decrypted.
 				}
-				var ciphertext = crypt.encrypt(plaintext);
-				if(!ciphertext){
+				var ciphertextBase64 = crypt.encrypt(plaintext);
+				if(!ciphertextBase64){
 					throw "Failed to RSA encryption, maybe the key is set incorrectly. '" + publicKey + "'";
 				}
-				return Common.Util.Codec.base64ToHex(ciphertext);
+				return Common.Util.Codec.base64ToHex(ciphertextBase64);
 			},
 		    decryptFromHexString: function(privateKey, hexCiphertext){ // RSA1 decrypt
 				var crypt = new JSEncrypt();
@@ -74,7 +74,7 @@
 				if(!plaintext){
 					throw "Failed to RSA encryption, maybe the key is set incorrectly. '" + privateKey + "'";
 				}
-				return Common.Util.Codec.base64ToHex(plaintext);
+				return plaintext;
 			},
 		    generateKey: function(){
 				var crypt = new JSEncrypt();

@@ -67,7 +67,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 import com.wl4g.devops.tool.common.log.SmartLogger;
-import com.wl4g.devops.tool.common.web.WebUtils2.ResponseType;
+import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -80,6 +80,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static org.apache.commons.lang3.RandomStringUtils.*;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -321,9 +322,9 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	protected boolean isJSONResponse(ServletRequest request) {
 		// Using last saved parameters.
-		String respTypeValue = extParameterValue(KEY_REQ_AUTH_PARAMS, ResponseType.DEFAULT_RESPTYPE_NAME);
+		String respTypeValue = extParameterValue(KEY_REQ_AUTH_PARAMS, DEFAULT_RESPTYPE_NAME);
 		log.debug("Using last response type:{}", respTypeValue);
-		return ResponseType.isJSONResp(respTypeValue, toHttp(request)) || ResponseType.isJSONResp(toHttp(request));
+		return isJSONResp(respTypeValue, toHttp(request)) || isJSONResp(toHttp(request));
 	}
 
 	/**
@@ -396,7 +397,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		redirect.setRedirectUrl(safeEncodeParameterRedirectUrl(redirect.getRedirectUrl()));
 
 		// Response type.
-		String respTypeKey = ResponseType.DEFAULT_RESPTYPE_NAME;
+		String respTypeKey = DEFAULT_RESPTYPE_NAME;
 		String respType = getCleanParam(request, respTypeKey);
 
 		// Overlay to save the latest parameters.
@@ -501,6 +502,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// to get token.
 		params.put(config.getCookie().getName(), subject.getSession().getId());
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
+		params.put(config.getParam().getClientSecretTokenName(), bind(KEY_CLIENT_SECRET_TOKEN, randomAlphanumeric(32)));
 		resp.forMap().putAll(params);
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		return resp;
@@ -603,7 +605,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	/**
 	 * Login/Authentication request parameters binding session key
 	 */
-	final public static String KEY_REQ_AUTH_PARAMS = AbstractIamAuthenticationFilter.class.getSimpleName() + ".REQ_AUTH_PARAMS";
+	final public static String KEY_REQ_AUTH_PARAMS = "REQ_AUTH_PARAMS";
 
 	/**
 	 * Authentication request redirect information key.
@@ -615,5 +617,12 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * filters submitted by login
 	 */
 	final public static String URI_BASE_MAPPING = URI_AUTH_BASE;
+
+	/**
+	 * When the authentication is successful, the access token will be returned.
+	 * The client then uses sessionid + accesstoken as the credential to access
+	 * the business API.
+	 */
+	final public static String KEY_CLIENT_SECRET_TOKEN = "CLIENT_SECRET_TOKEN";
 
 }
