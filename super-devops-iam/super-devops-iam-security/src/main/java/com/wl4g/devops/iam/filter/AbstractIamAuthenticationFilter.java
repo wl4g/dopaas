@@ -21,9 +21,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_RO
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMSERVER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTH_BASE;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
-import static com.wl4g.devops.common.web.RespBase.RetCode.UNAUTHC;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.SESSION_STATUS_AUTHC;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.SESSION_STATUS_UNAUTHC;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bindKVParameters;
@@ -68,6 +66,7 @@ import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 import com.wl4g.devops.tool.common.web.WebUtils2.ResponseType;
 
 import java.io.IOException;
@@ -85,7 +84,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -105,23 +103,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticationToken> extends AuthenticatingFilter
 		implements IamAuthenticationFilter {
 
-	/**
-	 * Login/Authentication request parameters binding session key
-	 */
-	final public static String KEY_REQ_AUTH_PARAMS = AbstractIamAuthenticationFilter.class.getSimpleName() + ".REQ_AUTH_PARAMS";
-
-	/**
-	 * Authentication request redirect information key.
-	 */
-	final public static String KEY_REQ_AUTH_REDIRECT = "REQ_AUTH_REDIRECT";
-
-	/**
-	 * URI login submission base path for processing all SHIRO authentication
-	 * filters submitted by login
-	 */
-	final public static String URI_BASE_MAPPING = URI_AUTH_BASE;
-
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * IAM server configuration properties
@@ -493,7 +475,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private RespBase<String> makeLoggedResponse(Subject subject, ServletRequest request, String grantTicket, String successUrl,
 			Map params) {
-		hasText(successUrl, "'successUrl' must not be empty");
+		hasTextOf(successUrl, "successUrl");
 
 		// Redirection URL
 		StringBuffer successRedirectUrl = new StringBuffer(successUrl);
@@ -540,9 +522,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private String makeFailedResponse(String failRedirectUrl, ServletRequest request, Map params, String errmsg) {
 		errmsg = (isNotBlank(errmsg)) ? errmsg : "Authentication failure";
+
 		// Make message
-		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
-		resp.setCode(UNAUTHC).setMessage(errmsg);
+		RespBase<String> resp = RespBase.create(sessionStatus());
+		// More useful than RespBase.UNAUTH
+		resp.setCode(OK).setMessage(errmsg);
 		resp.forMap().putAll(params);
 		resp.forMap().put(config.getParam().getRedirectUrl(), failRedirectUrl);
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
@@ -615,5 +599,21 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * Get filter name
 	 */
 	public abstract String getName();
+
+	/**
+	 * Login/Authentication request parameters binding session key
+	 */
+	final public static String KEY_REQ_AUTH_PARAMS = AbstractIamAuthenticationFilter.class.getSimpleName() + ".REQ_AUTH_PARAMS";
+
+	/**
+	 * Authentication request redirect information key.
+	 */
+	final public static String KEY_REQ_AUTH_REDIRECT = "REQ_AUTH_REDIRECT";
+
+	/**
+	 * URI login submission base path for processing all SHIRO authentication
+	 * filters submitted by login
+	 */
+	final public static String URI_BASE_MAPPING = URI_AUTH_BASE;
 
 }

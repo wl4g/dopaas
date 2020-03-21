@@ -1,3 +1,4 @@
+package com.wl4g.devops;
 /*
  * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
@@ -13,22 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.alarm;
 
-/**
- * Collection metric valve alerter.
- * 
- * @author Wangl.sir
- * @version v1.0 2019年7月5日
- * @since
- */
-public interface IndicatorsValveAlerter {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-	/**
-	 * Aggregate data alerts based on metrics.
-	 * 
-	 * @param wrap
-	 */
-	void alarm(MetricAggregateWrapper wrap);
+@SpringBootApplication
+public class CossExample {
+
+	public static void main(String[] args) {
+		SpringApplication.run(CossExample.class, args);
+	}
 
 }

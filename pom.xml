@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
@@ -64,9 +65,10 @@
 		<module>super-devops-tool</module>
 		<module>super-devops-iam</module>
 		<module>super-devops-umc</module>
-		<!--<module>super-devops-djob</module>-->
+		<!--<module>super-devops-djob</module> -->
 		<module>super-devops-doc</module>
 		<module>super-devops-coss</module>
+		<module>super-devops-rcm</module>
 		<!-- <module>super-devops-esm</module> -->
 		<!-- <module>super-devops-im</module> -->
 	</modules>
@@ -146,11 +148,21 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.3</version><!--$NO-MVN-MAN-VER$-->
+				<version>2.5.3</version><!--$NO-MVN-MAN-VER$ -->
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<!-- <preparationGoals>clean install</preparationGoals> -->
 					<!-- <developmentVersion>latest</developmentVersion> -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>sonatype-nexus-staging</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -55,7 +55,7 @@ public class CoreCossAutoConfiguration {
 	}
 
 	@Bean
-	public GenericOperatorAdapter<CossProvider, CossEndpoint> compositeCossEndpoint(List<CossEndpoint> endpoints) {
+	public GenericOperatorAdapter<CossProvider, CossEndpoint> compositeCossEndpointAdapter(List<CossEndpoint> endpoints) {
 		return new GenericOperatorAdapter<CossProvider, CossEndpoint>(endpoints) {
 		};
 	}

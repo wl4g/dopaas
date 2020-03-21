@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.alarm;
+package com.wl4g.devops.umc.alarm.alerting;
 
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
-import org.slf4j.Logger;
 import org.springframework.util.Assert;
 
 import java.util.Iterator;
@@ -43,7 +44,8 @@ import static java.util.Collections.emptyList;
  */
 public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<RunnerProperties>
 		implements IndicatorsValveAlerter {
-	final protected Logger log = getLogger(getClass());
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/** REDIS service */
 	final protected JedisService jedisService;
@@ -63,9 +65,8 @@ public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<R
 
 	@Override
 	public void alarm(MetricAggregateWrapper wrap) {
-		// TODO 没有进入doHandleAlarm方法，要看下这个getworker是否有bug
-		// getWorker().execute(() -> doHandleAlarm(wrap));
-		doHandleAlarm(wrap);
+		// doHandleAlarm not running ???
+		getWorker().execute(() -> doHandleAlarm(wrap));
 	}
 
 	/**

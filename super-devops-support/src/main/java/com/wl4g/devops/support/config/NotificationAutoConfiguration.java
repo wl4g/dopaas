@@ -220,15 +220,21 @@ public class NotificationAutoConfiguration {
 	 * @return
 	 */
 	@Bean
-	public GenericOperatorAdapter<NotifierKind, MessageNotifier> compositeMessageNotifier(
+	public GenericOperatorAdapter<NotifierKind, MessageNotifier> compositeMessageNotifierAdapter(
 			@Autowired(required = false) List<MessageNotifier> notifiers) {
 		if (isNull(notifiers))
-			return new GenericOperatorAdapter<NotifierKind, MessageNotifier>(DefaultNoOp) {
-			};
+			return defaultMessageNotifier;
 
 		return new GenericOperatorAdapter<NotifierKind, MessageNotifier>(
 				notifiers.stream().map(n -> ((MessageNotifier) n)).collect(toList()), DefaultNoOp) {
 		};
 	}
+
+	/**
+	 * Default message notifier. {@link MessageNotifier}
+	 */
+	final private static GenericOperatorAdapter<NotifierKind, MessageNotifier> defaultMessageNotifier = new GenericOperatorAdapter<NotifierKind, MessageNotifier>(
+			DefaultNoOp) {
+	};
 
 }
