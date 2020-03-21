@@ -16,6 +16,7 @@
 package com.wl4g.devops.coss.natives;
 
 import com.wl4g.devops.coss.AbstractCossEndpoint;
+import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.config.StandardFSCossProperties;
 import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.exception.ServerCossException;

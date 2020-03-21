@@ -32,6 +32,7 @@ import com.amazonaws.services.s3.model.AccessControlList;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.ListBucketsRequest;
 import com.wl4g.devops.coss.AbstractCossEndpoint;
+import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.aws.config.S3CossProperties;
 import com.wl4g.devops.coss.aws.model.S3AccessControlList;
 import com.wl4g.devops.coss.aws.model.S3CopyObjectResult;

@@ -38,6 +38,7 @@ import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.io.IOUtils;
 
 import com.wl4g.devops.coss.AbstractCossEndpoint;
+import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.exception.ServerCossException;
 import com.wl4g.devops.coss.hdfs.config.HdfsCossProperties;

@@ -15,10 +15,9 @@
  */
 package com.wl4g.devops.coss.config;
 
-import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.CossEndpoint;
-import com.wl4g.devops.coss.CossEndpoint.CossProvider;
+import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.natives.MetadataIndexManager;
 import com.wl4g.devops.coss.natives.NativeCossEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -38,7 +37,7 @@ import java.util.List;
  * @since
  */
 @Configuration
-public class NativeFSCossAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public class CoreCossAutoConfiguration {
 	final public static String KEY_PROPERTY_PREFIX = "spring.cloud.devops.coss.native";
 
 	@Bean

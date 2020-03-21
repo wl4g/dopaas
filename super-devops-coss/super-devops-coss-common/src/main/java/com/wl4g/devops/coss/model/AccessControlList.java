@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.coss.natives;
+package com.wl4g.devops.coss.model;
 
-import java.nio.file.FileSystems;
+public class AccessControlList {
 
-import com.wl4g.devops.coss.CossProvider;
-import com.wl4g.devops.coss.config.NativeFSCossProperties;
+	private ACL acl;
+	private Owner owner;
 
-/**
- * File object storage based on native fileSystem.
- * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年3月17日
- * @since
- */
-public class NativeCossEndpoint extends StandardFSCossEndpoint<NativeFSCossProperties> {
+	public ACL getAcl() {
+		return acl;
+	}
 
-	public NativeCossEndpoint(NativeFSCossProperties config) {
-		super(config, FileSystems.getDefault());
+	public void setAcl(ACL acl) {
+		this.acl = acl;
+	}
+
+	public Owner getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Owner owner) {
+		this.owner = owner;
 	}
 
 	@Override
-	public CossProvider kind() {
-		return CossProvider.NativeFs;
+	public String toString() {
+		return "AccessControlList [acl=" + acl + ", owner=" + owner + "]";
 	}
 
 }

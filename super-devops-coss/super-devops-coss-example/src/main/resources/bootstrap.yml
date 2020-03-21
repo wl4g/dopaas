@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: oss-example
+  application.name: coss-example
   profiles:
     active: dev
 
