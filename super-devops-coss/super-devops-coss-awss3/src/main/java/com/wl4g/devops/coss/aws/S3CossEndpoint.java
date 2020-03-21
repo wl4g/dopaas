@@ -20,6 +20,7 @@ import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.toList;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -33,16 +34,20 @@ import com.amazonaws.services.s3.model.ListBucketsRequest;
 import com.wl4g.devops.coss.AbstractCossEndpoint;
 import com.wl4g.devops.coss.aws.config.S3CossProperties;
 import com.wl4g.devops.coss.aws.model.S3AccessControlList;
+import com.wl4g.devops.coss.aws.model.S3CopyObjectResult;
 import com.wl4g.devops.coss.aws.model.S3ObjectAcl;
 import com.wl4g.devops.coss.aws.model.S3ObjectListing;
 import com.wl4g.devops.coss.aws.model.S3ObjectValue;
 import com.wl4g.devops.coss.aws.model.bucket.S3Bucket;
 import com.wl4g.devops.coss.aws.model.bucket.S3BucketList;
+import com.wl4g.devops.coss.exception.CossException;
+import com.wl4g.devops.coss.exception.ServerCossException;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.ObjectSymlink;
 import com.wl4g.devops.coss.model.Owner;
 import com.wl4g.devops.coss.model.PutObjectResult;
+import com.wl4g.devops.coss.model.RestoreObjectRequest;
+import com.wl4g.devops.coss.model.RestoreObjectResult;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 
 /**
@@ -151,9 +156,28 @@ public class S3CossEndpoint extends AbstractCossEndpoint<S3CossProperties> {
 	}
 
 	@Override
+	public S3CopyObjectResult copyObject(String sourceBucketName, String sourceKey, String destinationBucketName,
+			String destinationKey) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public void deleteObject(String bucketName, String key) {
 		s3Client.deleteObject(bucketName, key);
 		log.info("Deleted s3 object of bucket: {}, key: {}", bucketName, key);
+	}
+
+	@Override
+	public void deleteVersion(String bucketName, String key, String versionId) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public RestoreObjectResult restoreObject(RestoreObjectRequest request) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -174,20 +198,12 @@ public class S3CossEndpoint extends AbstractCossEndpoint<S3CossProperties> {
 
 	@Override
 	public boolean doesObjectExist(String bucketName, String key) {
-		// TODO Auto-generated method stub
-		return false;
+		return s3Client.doesObjectExist(bucketName, key);
 	}
 
 	@Override
-	public void createSymlink(String bucketName, String symlink, String target) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public ObjectSymlink getSymlink(String bucketName, String symlink) {
-		// TODO Auto-generated method stub
-		return null;
+	public URL getUrl(String bucketName, String key) throws CossException, ServerCossException {
+		return s3Client.getUrl(bucketName, key);
 	}
 
 }

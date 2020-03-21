@@ -20,10 +20,12 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
 
 import java.io.InputStream;
+import java.net.URL;
 
 import com.wl4g.devops.common.framework.operator.Operator;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.AccessControlList;
+import com.wl4g.devops.coss.model.CopyObjectResult;
 import com.wl4g.devops.coss.model.ObjectAcl;
 import com.wl4g.devops.coss.model.ObjectListing;
 import com.wl4g.devops.coss.model.ObjectMetadata;
@@ -31,10 +33,14 @@ import com.wl4g.devops.coss.model.ObjectSummary;
 import com.wl4g.devops.coss.model.ObjectSymlink;
 import com.wl4g.devops.coss.model.ObjectValue;
 import com.wl4g.devops.coss.model.PutObjectResult;
+import com.wl4g.devops.coss.model.RestoreObjectRequest;
+import com.wl4g.devops.coss.model.RestoreObjectResult;
 import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 import com.wl4g.devops.coss.CossEndpoint.CossProvider;
+import com.wl4g.devops.coss.exception.CossException;
+import com.wl4g.devops.coss.exception.ServerCossException;
 
 /**
  * Composite object storage server file system API.
@@ -42,6 +48,8 @@ import com.wl4g.devops.coss.CossEndpoint.CossProvider;
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年2月28日
  * @since
+ * @throws CossException
+ * @throws ServerCossException
  */
 public interface CossEndpoint extends Operator<CossProvider> {
 
@@ -52,8 +60,10 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * 
 	 * @param bucketName
 	 *            bucket name
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	Bucket createBucket(String bucketName);
+	Bucket createBucket(String bucketName) throws CossException, ServerCossException;
 
 	/**
 	 * Returns all {@link Bucket} instances of the current account that meet the
@@ -73,8 +83,11 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 *            Max bucket count to return. The valid value is from 1 to 1000,
 	 *            default is 100 if it's null.
 	 * @return The list of {@link Bucket} instances.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	<T extends Bucket> BucketList<T> listBuckets(String prefix, String marker, Integer maxKeys);
+	<T extends Bucket> BucketList<T> listBuckets(String prefix, String marker, Integer maxKeys)
+			throws CossException, ServerCossException;
 
 	/**
 	 * Deletes the {@link Bucket} instance. A non-empty bucket could not be
@@ -82,8 +95,10 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * 
 	 * @param bucketName
 	 *            bucket name to delete.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	void deleteBucket(String bucketName);
+	void deleteBucket(String bucketName) throws CossException, ServerCossException;
 
 	/**
 	 * Gets the metadata of {@link Bucket}.
@@ -92,8 +107,10 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 *            Bucket name.
 	 *
 	 * @return The {@link BucketMetadata} instance.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	BucketMetadata getBucketMetadata(String bucketName);
+	BucketMetadata getBucketMetadata(String bucketName) throws CossException, ServerCossException;
 
 	/**
 	 * Returns the Access control List (ACL) of the {@link Bucket} instance.
@@ -101,8 +118,10 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @param bucketName
 	 *            Bucket Name.
 	 * @return Access Control List(ACL) {@link AccessControlList}.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	AccessControlList getBucketAcl(String bucketName);
+	AccessControlList getBucketAcl(String bucketName) throws CossException, ServerCossException;
 
 	/**
 	 * Applies the Access Control List(ACL) on the {@link Bucket}.
@@ -113,8 +132,10 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 *            {@link CannedAccessControlList} instance. If the instance is
 	 *            null, no ACL change on the bucket (but the request is still
 	 *            sent).
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	void setBucketAcl(String bucketName, ACL acl);
+	void setBucketAcl(String bucketName, ACL acl) throws CossException, ServerCossException;
 
 	// --- Object's function ---
 
@@ -124,6 +145,8 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @param bucketName
 	 *            Bucket name
 	 * @return {@link ObjectListing} instance that has all objects.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
 	default <T extends ObjectSummary> ObjectListing<T> listObjects(String bucketName) {
 		return listObjects(bucketName, null);
@@ -140,8 +163,11 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @return A {@link ObjectListing} instance that has all objects
 	 * @throws OSSException
 	 * @throws ClientException
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	<T extends ObjectSummary> ObjectListing<T> listObjects(String bucketName, String prefix);
+	<T extends ObjectSummary> ObjectListing<T> listObjects(String bucketName, String prefix)
+			throws CossException, ServerCossException;
 
 	/**
 	 * Gets a {@link ObjectValue} from {@link Bucket}.
@@ -152,8 +178,10 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 *            Object Key.
 	 * @return A {@link OSSObject} instance. The caller is responsible to close
 	 *         the connection after usage.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	ObjectValue getObject(String bucketName, String key);
+	ObjectValue getObject(String bucketName, String key) throws CossException, ServerCossException;
 
 	/**
 	 * Uploads the file to the {@link Bucket} from the {@link InputStream}
@@ -166,6 +194,8 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @param input
 	 *            {@link InputStream} instance to write from. The must be
 	 *            readable.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
 	default PutObjectResult putObject(String bucketName, String key, InputStream input) {
 		return putObject(bucketName, key, input, null);
@@ -186,8 +216,30 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 *            The {@link ObjectMetadata} instance. If it does not specify
 	 *            the Content-Length information, the data is encoded by chunked
 	 *            tranfer encoding.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata);
+	PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata)
+			throws CossException, ServerCossException;
+
+	/**
+	 * Copies an existing file in COSS from source bucket to the target bucket.
+	 * If target file exists, it would be overwritten by the source file.
+	 * 
+	 * @param sourceBucketName
+	 *            Source object's bucket name.
+	 * @param sourceKey
+	 *            Source object's key.
+	 * @param destinationBucketName
+	 *            Target object's bucket name.
+	 * @param destinationKey
+	 *            Target object's key.
+	 * @return A {@link CopyObjectResult} instance.
+	 * @throws CossException
+	 * @throws ServerCossException
+	 */
+	public CopyObjectResult copyObject(String sourceBucketName, String sourceKey, String destinationBucketName,
+			String destinationKey) throws CossException, ServerCossException;
 
 	/**
 	 * Deletes the specified {@link ObjectValue} by bucket name and object key.
@@ -196,8 +248,47 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 *            Bucket name.
 	 * @param key
 	 *            Object key.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	void deleteObject(String bucketName, String key);
+	void deleteObject(String bucketName, String key) throws CossException, ServerCossException;
+
+	/**
+	 * Deletes a specific version of the specified object in the specified
+	 * bucket. Once deleted, there is no method to restore or undelete an object
+	 * version. This is the only way to permanently delete object versions that
+	 * are protected by versioning.
+	 * <p>
+	 * If attempting to delete an object that does not exist, OSS will return a
+	 * success message instead of an error message.
+	 * </p>
+	 *
+	 * @param bucketName
+	 *            The name of the OSS bucket containing the object to delete.
+	 * @param key
+	 *            The key of the object to delete.
+	 * @param versionId
+	 *            The version of the object to delete.
+	 *
+	 * @throws ClientException
+	 *             If any errors are encountered in the client while making the
+	 *             request or handling the response.
+	 * @throws OSSException
+	 *             If any errors occurred in OSS while processing the request.
+	 * @throws CossException
+	 * @throws ServerCossException
+	 */
+	void deleteVersion(String bucketName, String key, String versionId) throws CossException, ServerCossException;
+
+	/**
+	 * Restores the object of archive storage. The function is not applicable to
+	 * Normal or IA storage. The restoreObject() needs to be called prior to
+	 * calling getObject() on an archive object.
+	 * 
+	 * @param request
+	 * @return A {@link RestoreObjectResult} instance.
+	 */
+	RestoreObjectResult restoreObject(RestoreObjectRequest request) throws CossException, ServerCossException;
 
 	/**
 	 * Gets the Access Control List (ACL) of the OSS object.
@@ -207,8 +298,10 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @param key
 	 *            Object Key.
 	 * @return The {@link ObjectAcl} instance of the object.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	ObjectAcl getObjectAcl(String bucketName, String key);
+	ObjectAcl getObjectAcl(String bucketName, String key) throws CossException, ServerCossException;
 
 	/**
 	 * Sets the Access Control List (ACL) on a {@link ObjectValue} instance.
@@ -220,8 +313,10 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @param acl
 	 *            One of the three values: Private, PublicRead or
 	 *            PublicReadWrite.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	void setObjectAcl(String bucketName, String key, ACL acl);
+	void setObjectAcl(String bucketName, String key, ACL acl) throws CossException, ServerCossException;
 
 	/**
 	 * Checks if a specific {@link ObjectValue} exists under the specific
@@ -233,8 +328,10 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @param key
 	 *            Object Key.
 	 * @return True if exists; false if not.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	boolean doesObjectExist(String bucketName, String key);
+	boolean doesObjectExist(String bucketName, String key) throws CossException, ServerCossException;
 
 	/**
 	 * Creates a symlink link to a target file under the bucket---this is not
@@ -246,8 +343,12 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 *            symlink name.
 	 * @param target
 	 *            target file key.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	void createSymlink(String bucketName, String symlink, String target);
+	default void createSymlink(String bucketName, String symlink, String target) throws CossException, ServerCossException {
+		throw new CossException(format("No supported operation of COSS.provider: %s", kind()));
+	}
 
 	/**
 	 * Gets the symlink information for the given symlink name.
@@ -258,8 +359,35 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 *            The symlink name.
 	 * @return The symlink information, including the target file name and its
 	 *         metadata.
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
-	ObjectSymlink getSymlink(String bucketName, String symlink);
+	default ObjectSymlink getSymlink(String bucketName, String symlink) throws CossException, ServerCossException {
+		throw new CossException(format("No supported operation of COSS.provider: %s", kind()));
+	}
+
+	/**
+	 * Returns an URL for the object stored in the specified bucket and key.
+	 * <p>
+	 * If the object identified by the given bucket and key has public read
+	 * permissions (ex: {@link ACL#PublicRead}), then this URL can be directly
+	 * accessed to retrieve the object's data.
+	 *
+	 * @param bucketName
+	 *            The name of the bucket containing the object whose URL is
+	 *            being requested.
+	 * @param key
+	 *            The key under which the object whose URL is being requested is
+	 *            stored.
+	 *
+	 * @return A unique URL for the object stored in the specified bucket and
+	 *         key.
+	 * @throws CossException
+	 * @throws ServerCossException
+	 */
+	default URL getUrl(String bucketName, String key) throws CossException, ServerCossException {
+		throw new CossException(format("No supported operation of COSS.provider: %s", kind()));
+	}
 
 	/**
 	 * VCS type definitions.
@@ -267,22 +395,34 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2019年11月5日
 	 * @since
+	 * @throws CossException
+	 * @throws ServerCossException
 	 */
 	public static enum CossProvider {
 
-		/** COSS provider for aliyun oss. */
+		/**
+		 * COSS provider for aliyun oss.
+		 */
 		AliyunOss("aliyunoss"),
 
-		/** COSS provider for aws s3. */
+		/**
+		 * COSS provider for aws s3.
+		 */
 		AwsS3("awss3"),
 
-		/** COSS provider for hdfs. */
+		/**
+		 * COSS provider for hdfs.
+		 */
 		Hdfs("hdfs"),
 
-		/** COSS provider for glusterfs. */
+		/**
+		 * COSS provider for glusterfs.
+		 */
 		GlusterFs("glusterfs"),
 
-		/** COSS provider for native fs. */
+		/**
+		 * COSS provider for native fs.
+		 */
 		NativeFs("nativefs");
 
 		final private String value;

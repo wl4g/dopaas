@@ -38,6 +38,7 @@ import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.io.IOUtils;
 
 import com.wl4g.devops.coss.AbstractCossEndpoint;
+import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.exception.ServerCossException;
 import com.wl4g.devops.coss.hdfs.config.HdfsCossProperties;
 import com.wl4g.devops.coss.hdfs.model.HdfsObjectListing;
@@ -45,12 +46,15 @@ import com.wl4g.devops.coss.hdfs.model.HdfsObjectSummary;
 import com.wl4g.devops.coss.hdfs.model.bucket.HdfsBucketList;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.AccessControlList;
+import com.wl4g.devops.coss.model.CopyObjectResult;
 import com.wl4g.devops.coss.model.ObjectAcl;
 import com.wl4g.devops.coss.model.ObjectMetadata;
 import com.wl4g.devops.coss.model.ObjectSymlink;
 import com.wl4g.devops.coss.model.ObjectValue;
 import com.wl4g.devops.coss.model.Owner;
 import com.wl4g.devops.coss.model.PutObjectResult;
+import com.wl4g.devops.coss.model.RestoreObjectRequest;
+import com.wl4g.devops.coss.model.RestoreObjectResult;
 import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 import static com.wl4g.devops.coss.utils.PosixFileSystemUtils.*;
@@ -285,6 +289,25 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 		} catch (IOException e) {
 			throw new ServerCossException(e);
 		}
+	}
+
+	@Override
+	public CopyObjectResult copyObject(String sourceBucketName, String sourceKey, String destinationBucketName,
+			String destinationKey) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteVersion(String bucketName, String key, String versionId) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public RestoreObjectResult restoreObject(RestoreObjectRequest request) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
