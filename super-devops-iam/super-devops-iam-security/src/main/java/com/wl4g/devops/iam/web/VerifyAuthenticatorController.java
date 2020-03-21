@@ -23,7 +23,7 @@ import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber;
 import com.wl4g.devops.iam.verification.model.VerifiedTokenModel;
-import com.wl4g.devops.iam.web.model.SmsCheckModel;
+import com.wl4g.devops.iam.web.model.SmsCheckResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +38,7 @@ import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.sessionStatus;
 import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind.TEXT_SMS;
 import static com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber.parse;
-import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
+import static com.wl4g.devops.iam.web.model.SmsCheckResult.KEY_SMS_CHECK;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -166,7 +166,7 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 			// code (must exist).
 			VerifyCodeWrapper code = verifier.forOperator(TEXT_SMS).getVerifyCode(true);
 			resp.forMap().put(KEY_SMS_CHECK,
-					new SmsCheckModel(mn.getNumber(), code.getRemainDelay(config.getMatcher().getFailFastSmsDelay())));
+					new SmsCheckResult(mn.getNumber(), code.getRemainDelay(config.getMatcher().getFailFastSmsDelay())));
 		} catch (Exception e) {
 			resp.handleError(e);
 			if (log.isDebugEnabled()) {

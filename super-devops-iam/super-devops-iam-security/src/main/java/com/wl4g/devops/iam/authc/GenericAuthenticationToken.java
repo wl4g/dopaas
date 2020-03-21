@@ -15,8 +15,7 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.HashMap;
@@ -51,6 +50,12 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	final private String credentials;
 
 	/**
+	 * The signature of nonce passed from the client, where nonce is generated
+	 * when the client calls the check interface during authentication.
+	 */
+	final private String signature;
+
+	/**
 	 * Whether or not 'rememberMe' should be enabled for the corresponding login
 	 * attempt; default is <code>false</code>
 	 */
@@ -80,21 +85,24 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	private Map<String, String> userProperties = new HashMap<>();
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, String clientRef, final String verifiedToken, final VerifyKind verifyType) {
-		this(remoteHost, redirectInfo, principal, credentials, clientRef, verifiedToken, verifyType, false);
+			final String credentials, final String signature, final String clientRef, final String verifiedToken,
+			final VerifyKind verifyType) {
+		this(remoteHost, redirectInfo, principal, credentials, signature, clientRef, verifiedToken, verifyType, false);
 	}
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, String clientRef, final String verifiedToken, final VerifyKind verifyType,
-			final boolean rememberMe) {
+			final String credentials, final String signature, final String clientRef, final String verifiedToken,
+			final VerifyKind verifyType, final boolean rememberMe) {
 		super(remoteHost, redirectInfo);
-		hasText(principal, "Username principal must not be empty.");
-		hasText(credentials, "Credentials must not be empty.");
-		hasText(clientRef, "ClientRef must not be empty.");
-		// hasText(verifiedToken, "Verified token must not be empty.");
-		notNull(verifyType, "Verify type must not be null.");
+		hasTextOf(principal, "principal");
+		hasTextOf(credentials, "credentials");
+		hasTextOf(signature, "signature");
+		hasTextOf(clientRef, "clientRef");
+		// hasTextOf(verifiedToken, "verifiedToken");
+		notNullOf(verifyType, "verifyType");
 		this.principal = principal;
 		this.credentials = credentials;
+		this.signature = signature;
 		this.clientRef = ClientRef.of(clientRef);
 		this.verifiedToken = verifiedToken;
 		this.verifyType = verifyType;
@@ -109,6 +117,10 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	@Override
 	public Object getCredentials() {
 		return credentials;
+	}
+
+	public String getSignature() {
+		return signature;
 	}
 
 	@Override

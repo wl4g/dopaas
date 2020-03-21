@@ -43,6 +43,11 @@ public class ServerParamProperties extends ParamProperties {
 	private String credentialName = "credential";
 
 	/**
+	 * Password parameter name at login time of signature.
+	 */
+	private String signatureName = "signature";
+
+	/**
 	 * Client type reference parameter name at login time of account password.
 	 */
 	private String clientRefName = "client_ref";
@@ -112,6 +117,14 @@ public class ServerParamProperties extends ParamProperties {
 
 	public void setCredentialName(String loginPassword) {
 		this.credentialName = loginPassword;
+	}
+
+	public String getSignatureName() {
+		return signatureName;
+	}
+
+	public void setSignatureName(String signatureName) {
+		this.signatureName = signatureName;
 	}
 
 	public String getClientRefName() {

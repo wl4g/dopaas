@@ -118,7 +118,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		}
 
 		// Credentials verification
-		final boolean matched = doMatching(token, info, factors);
+		final boolean matched = doMatching((IamAuthenticationToken) token, info, factors);
 		if (matched) { // Matched successful processing
 			postSuccessProcess(principal, factors);
 		} else {
@@ -139,7 +139,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 * @param factors
 	 * @return
 	 */
-	protected abstract boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors);
+	protected abstract boolean doMatching(IamAuthenticationToken token, AuthenticationInfo info, List<String> factors);
 
 	/**
 	 * After matched failure processing

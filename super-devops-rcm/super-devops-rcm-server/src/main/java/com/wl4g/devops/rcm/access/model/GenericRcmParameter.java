@@ -20,7 +20,7 @@ import javax.validation.constraints.NotBlank;
 import com.wl4g.devops.shell.annotation.ShellOption;
 
 /**
- * Generic COSS accessor parameter.
+ * Generic RCM accessor parameter.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月11日
@@ -30,14 +30,14 @@ public class GenericRcmParameter {
 
 	@ShellOption(opt = "P", lopt = "provider", help = "Real Object Storage Service Provider")
 	@NotBlank
-	private String cossProvider;
+	private String rcmProvider;
 
-	public String getCossProvider() {
-		return cossProvider;
+	public String getRcmProvider() {
+		return rcmProvider;
 	}
 
-	public void setCossProvider(String cossProvider) {
-		this.cossProvider = cossProvider;
+	public void setRcmProvider(String rcmProvider) {
+		this.rcmProvider = rcmProvider;
 	}
 
 }

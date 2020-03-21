@@ -15,9 +15,8 @@
  */
 package com.wl4g.devops.iam.authc.credential.secure;
 
+import static java.security.MessageDigest.*;
 import static java.util.Objects.isNull;
-
-import java.security.MessageDigest;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
@@ -32,17 +31,14 @@ import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.ByteSource.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_PUBKEY_IDX;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
 import static com.wl4g.devops.tool.common.codec.CheckSums.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.configure.SecureConfig;
 import com.wl4g.devops.iam.crypto.CryptService;
@@ -69,11 +65,6 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * Credential cache manager.
 	 */
 	final protected EnhancedCacheManager cacheManager;
-
-	/**
-	 * Store the keyPair cache of each apply.
-	 */
-	final protected EnhancedCache secretIndexCache;
 
 	/**
 	 * The 'private' part of the hash salt.
@@ -108,19 +99,18 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		this.privateSalt = Util.bytes(config.getPrivateSalt());
 		this.config = config;
 		this.cacheManager = cacheManager;
-		this.secretIndexCache = cacheManager.getEnhancedCache(CACHE_PUBKEY_IDX);
 	}
 
 	@Override
 	public String signature(@NotNull CredentialsToken token) {
 		// Delegate signature
-		if (!isNull(delegate) && !token.isResolved()) {
+		if (!isNull(delegate) && !token.isSolved()) {
 			// Resolving request credentials token.
 			return delegate.signature(resolves(token));
 		}
 
 		// When the delegate is null, it is unresolved.
-		if (!token.isResolved()) {
+		if (!token.isSolved()) {
 			token = resolves(token); // It is necessary to resolving
 		}
 
@@ -139,32 +129,31 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		notNullOf(info, "storedCredentials");
 		notNullOf(info.getCredentials(), "storedCredentials");
 
-		// Delegate validate
-		if (delegate != null && !token.isResolved()) {
+		// Delegate validate.
+		if (!isNull(delegate) && !token.isSolved()) {
 			return delegate.validate(resolves(token), info);
 		}
 
-		// Compare request credentials with storage credentials
-		return MessageDigest.isEqual(toBytes(signature(token)), toBytes(info.getCredentials()));
+		// # Assertion compare request credentials & storage credentials.
+		return isEqual(toBytes(signature(token)), toBytes(info.getCredentials()));
 	}
 
 	@Override
 	public String applySecret(@NotNull String principal) {
 		// Gets secretKey(publicKey) index.
-		EnhancedCache secretIdxCache = cacheManager.getEnhancedCache(CACHE_PUBKEY_IDX);
-		Integer index = (Integer) secretIdxCache.get(new EnhancedKey(principal, Integer.class));
+		Integer index = getBindValue(KEY_SECRET_INFO);
 		if (isNull(index)) {
 			index = current().nextInt(0, config.getPreCryptPoolSize());
 		}
 		log.debug("Applied secretKey index: {}", index);
 
-		// Gets & bind applySecret keyPair index.
+		// Gets applySecret keyPair index.
 		KeyPairSpec keyPair = cryptService.borrow(index);
-		secretIdxCache.put(new EnhancedKey(principal, config.getApplyPubkeyExpireMs()), index);
+		// Storage applied securet.
+		bind(KEY_SECRET_INFO, index, config.getApplyPubkeyExpireMs());
 
 		log.info("Applied secretKey of sessionId: {}, index: {}, pubKeyHexString: {}, privKeyHexString: {}", getSessionId(),
 				index, keyPair.getPubHexString(), keyPair.getHexString());
-
 		return keyPair.getPubHexString();
 	}
 
@@ -220,7 +209,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	/**
 	 * Corresponding to the front end, RSA1 encryption is used by default.
 	 *
-	 * @param token
+	 * @param tokenz
 	 * @return
 	 */
 	protected CredentialsToken resolves(@NotNull CredentialsToken token) {
@@ -250,19 +239,14 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * @return
 	 */
 	private KeyPairSpec determineSecretKeySpecPair(@NotBlank String principal) {
-		try {
-			// Gets the best one from the candidate keyPair.
-			Integer index = (Integer) secretIndexCache.get(new EnhancedKey(principal, Integer.class));
-			if (!isNull(index)) {
-				return cryptService.borrow(index);
-			}
-
-			log.warn("Failed to decrypt, secretKey expired of seesionId: {}, principal: {}", getSessionId(), principal);
-			throw new IllegalStateException(bundle.getMessage("AbstractCredentialsSecurerSupport.secretKey.expired"));
-		} finally { // Cleanup
-			secretIndexCache.remove(new EnhancedKey(principal));
+		// Gets the best one from the candidate keyPair.
+		Integer index = getBindValue(KEY_SECRET_INFO, true);
+		if (!isNull(index)) {
+			return cryptService.borrow(index);
 		}
 
+		log.warn("Failed to decrypt, secretKey expired of seesionId: {}, principal: {}", getSessionId(), principal);
+		throw new IllegalStateException(bundle.getMessage("AbstractCredentialsSecurerSupport.secretKey.expired"));
 	}
 
 	/**

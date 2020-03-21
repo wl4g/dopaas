@@ -119,7 +119,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Apply sessionID, For example for mobile use.
 	 */
-	final public static String URI_S_LOGIN_APPLY_SESSION = "sessions";
+	final public static String URI_S_LOGIN_APPLY_SESSION = "connect";
 	/**
 	 * Apply authentication code, For example for mobile use.
 	 */
@@ -189,11 +189,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * The public key index by logged-in users
 	 */
-	final public static String KEY_SECRET_INDEX = "securerSecretKeyPairIndex";
-	/**
-	 * Cache applied secret key index.
-	 */
-	final public static String CACHE_PUBKEY_IDX = "pubkey_index_";
+	final public static String KEY_SECRET_INFO = "appliedSecretInfo";
 	/**
 	 * Apply authentication code keyName.
 	 */
