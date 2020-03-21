@@ -18,40 +18,66 @@ package com.wl4g.devops.iam.web.model;
 import java.io.Serializable;
 
 /**
- * General check model.
+ * CAPTCHA check model.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-24
  * @since
  */
-public class GeneralCheckModel implements Serializable {
+public class CaptchaCheckResult implements Serializable {
 	private static final long serialVersionUID = 2636165327046053795L;
 
 	/**
-	 * General PreCheck response key-name.
+	 * CAPTCHA check response key-name.
 	 */
-	final public static String KEY_GENERAL_CHECK = "checkGeneral";
+	final public static String KEY_CAPTCHA_CHECK = "checkCaptcha";
 
 	/**
-	 * Encrypted secret public key requested before login returns.
+	 * Enable login CAPTCHA token for session.
 	 */
-	private String secret;
+	private boolean enabled;
 
-	public GeneralCheckModel() {
+	/**
+	 * CAPTCHA verify type support.
+	 */
+	private String support;
+
+	/**
+	 * Apply CAPTCHA URL.
+	 */
+	private String applyUri;
+
+	public CaptchaCheckResult() {
 		super();
 	}
 
-	public GeneralCheckModel(String secret) {
+	public CaptchaCheckResult(boolean enabled) {
 		super();
-		this.secret = secret;
+		this.enabled = enabled;
 	}
 
-	public String getSecret() {
-		return secret;
+	public boolean isEnabled() {
+		return enabled;
 	}
 
-	public void setSecret(String secret) {
-		this.secret = secret;
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public String getSupport() {
+		return support;
+	}
+
+	public void setSupport(String support) {
+		this.support = support;
+	}
+
+	public String getApplyUri() {
+		return applyUri;
+	}
+
+	public void setApplyUri(String applyUrl) {
+		this.applyUri = applyUrl;
 	}
 
 }

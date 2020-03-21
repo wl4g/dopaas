@@ -49,7 +49,7 @@ public class ConsoleRcmAccessor implements RcmAccessor {
 	 */
 	@SuppressWarnings("unused")
 	private RiskAnalysisEngine getCossEndpoint(GenericRcmParameter param) {
-		return engineAdapter.forOperator(param.getCossProvider());
+		return engineAdapter.forOperator(param.getRcmProvider());
 	}
 
 }

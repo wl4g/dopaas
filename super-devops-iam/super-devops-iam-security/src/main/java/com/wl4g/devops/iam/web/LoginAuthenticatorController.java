@@ -23,9 +23,9 @@ import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
-import com.wl4g.devops.iam.web.model.CaptchaCheckModel;
-import com.wl4g.devops.iam.web.model.GeneralCheckModel;
-import com.wl4g.devops.iam.web.model.SmsCheckModel;
+import com.wl4g.devops.iam.web.model.CaptchaCheckResult;
+import com.wl4g.devops.iam.web.model.GenericCheckResult;
+import com.wl4g.devops.iam.web.model.SmsCheckResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,9 +40,9 @@ import java.util.Objects;
 import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
-import static com.wl4g.devops.iam.web.model.CaptchaCheckModel.KEY_CAPTCHA_CHECK;
-import static com.wl4g.devops.iam.web.model.GeneralCheckModel.KEY_GENERAL_CHECK;
-import static com.wl4g.devops.iam.web.model.SmsCheckModel.KEY_SMS_CHECK;
+import static com.wl4g.devops.iam.web.model.CaptchaCheckResult.KEY_CAPTCHA_CHECK;
+import static com.wl4g.devops.iam.web.model.GenericCheckResult.KEY_GENERAL_CHECK;
+import static com.wl4g.devops.iam.web.model.SmsCheckResult.KEY_SMS_CHECK;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
@@ -81,7 +81,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 */
 	@RequestMapping(value = URI_S_LOGIN_APPLY_SESSION, method = { POST })
 	@ResponseBody
-	public RespBase<?> connectToken(HttpServletRequest request, HttpServletResponse response) {
+	public RespBase<?> connectApplySession(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		try {
 			resp.forMap().put(config.getCookie().getName(), getSessionId());
@@ -157,18 +157,18 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 				secret = securer.applySecret(principal);
 			}
 			// Secret(pubKey).
-			resp.forMap().put(KEY_GENERAL_CHECK, new GeneralCheckModel(secret));
+			resp.forMap().put(KEY_GENERAL_CHECK, new GenericCheckResult(secret));
 
 			//
 			// --- Check captcha authenticating environments. ---
 			//
-			CaptchaCheckModel model = new CaptchaCheckModel(false);
+			CaptchaCheckResult captcha = new CaptchaCheckResult(false);
 			if (verifier.forOperator(request).isEnabled(factors)) {
-				model.setEnabled(true);
-				model.setSupport(VerifyKind.SUPPORT_ALL); // Default
-				model.setApplyUri(getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA);
+				captcha.setEnabled(true);
+				captcha.setSupport(VerifyKind.SUPPORT_ALL); // Default
+				captcha.setApplyUri(getRFCBaseURI(request, true) + URI_S_VERIFY_BASE + "/" + URI_S_VERIFY_APPLY_CAPTCHA);
 			}
-			resp.forMap().put(KEY_CAPTCHA_CHECK, model);
+			resp.forMap().put(KEY_CAPTCHA_CHECK, captcha);
 
 			//
 			// --- Check SMS authenticating environments. ---
@@ -190,7 +190,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 			if (Objects.nonNull(code)) {
 				remainDelay = code.getRemainDelay(config.getMatcher().getFailFastSmsDelay());
 			}
-			resp.forMap().put(KEY_SMS_CHECK, new SmsCheckModel(nonNull(mobileNum), mobileNum, remainDelay));
+			resp.forMap().put(KEY_SMS_CHECK, new SmsCheckResult(nonNull(mobileNum), mobileNum, remainDelay));
 		} catch (Exception e) {
 			if (e instanceof IamException) {
 				resp.setCode(RetCode.BIZ_ERR);

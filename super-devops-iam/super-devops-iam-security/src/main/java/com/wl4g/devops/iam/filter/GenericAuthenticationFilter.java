@@ -41,14 +41,15 @@ public class GenericAuthenticationFilter extends AbstractIamAuthenticationFilter
 		rejectRequestMethod(true, request, response, "POST");
 
 		// Bsse required parameters.
-		String principal = getCleanParam(request, config.getParam().getPrincipalName());
-		String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
-		String clientRef = getCleanParam(request, config.getParam().getClientRefName());
-		String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
+		final String principal = getCleanParam(request, config.getParam().getPrincipalName());
+		final String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
+		final String signature = getCleanParam(request, config.getParam().getSignatureName());
+		final String clientRef = getCleanParam(request, config.getParam().getClientRefName());
+		final String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
 
 		// Additional optional parameters.
 		GenericAuthenticationToken token = new GenericAuthenticationToken(remoteHost, redirectInfo, principal, cipherPassword,
-				clientRef, verifiedToken, of(request));
+				signature, clientRef, verifiedToken, of(request));
 		Map<String, String> userProperties = safeMap(request.getParameterMap()).entrySet().stream()
 				.collect(toMap(e -> e.getKey(), e -> isEmptyArray(e.getValue()) ? null : e.getValue()[0]));
 		token.setUserProperties(userProperties);

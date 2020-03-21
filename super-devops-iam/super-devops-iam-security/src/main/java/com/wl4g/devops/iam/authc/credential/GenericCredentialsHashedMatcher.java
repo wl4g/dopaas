@@ -21,6 +21,7 @@ import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
+import com.wl4g.devops.iam.authc.GenericAuthenticationToken;
 import com.wl4g.devops.iam.authc.VerifyAuthenticationToken;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
@@ -36,14 +37,15 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 public class GenericCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
 	@Override
-	public boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors) {
-		// Before pre-check.
-		if (!coprocessor.preAuthenticatingAllowed((IamAuthenticationToken) token, info)) {
-			throw new AccountException(bundle.getMessage("ServerSecurityCoprocessor.accessDenied", token.getPrincipal()));
+	public boolean doMatching(IamAuthenticationToken token, AuthenticationInfo info, List<String> factors) {
+		GenericAuthenticationToken tk = (GenericAuthenticationToken) token;
+		// Before preCheck.
+		if (!coprocessor.preAuthenticatingAllowed(tk, info)) {
+			throw new AccountException(bundle.getMessage("ServerSecurityCoprocessor.accessDenied", tk.getPrincipal()));
 		}
 
 		// Matching credentials.
-		CredentialsToken credentialsToken = new CredentialsToken((String) token.getPrincipal(), (String) token.getCredentials());
+		CredentialsToken credentialsToken = new CredentialsToken((String) tk.getPrincipal(), (String) tk.getCredentials());
 		return securer.validate(credentialsToken, info);
 	}
 

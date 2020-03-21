@@ -18,6 +18,15 @@ package com.wl4g.devops.rcm.aliyun;
 import com.wl4g.devops.rcm.RcmProvider;
 import com.wl4g.devops.rcm.RiskAnalysisEngine;
 
+/**
+ * 
+ * {@link SafRiskAnalysisEngine}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年3月21日 v1.0.0
+ * @see https://help.aliyun.com/document_detail/90966.html?spm=a2c4g.11186623.6.564.4b0a3620ghFtdv
+ * @see https://github.com/aliyun/aliyun-openapi-java-sdk/blob/master/aliyun-java-sdk-saf/src/test/java/SafPopTest.java
+ */
 public class SafRiskAnalysisEngine implements RiskAnalysisEngine {
 
 	@Override

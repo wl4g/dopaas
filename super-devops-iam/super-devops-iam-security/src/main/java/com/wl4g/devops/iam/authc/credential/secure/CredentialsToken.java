@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.authc.credential.secure;
 
 import javax.validation.constraints.NotBlank;
 
-import org.springframework.util.Assert;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * Final credentials token
@@ -44,22 +44,22 @@ public final class CredentialsToken {
 	 * Whether the tag has resolved the encrypted password passed from the front
 	 * end.
 	 */
-	final private boolean resolved;
+	final private boolean isSolved;
 
-	public CredentialsToken(CredentialsToken token, boolean solved) {
-		this(token.getPrincipal(), token.getCredentials(), solved);
+	public CredentialsToken(CredentialsToken token) {
+		this(token.getPrincipal(), token.getCredentials());
 	}
 
 	public CredentialsToken(String principal, String credentials) {
 		this(principal, credentials, false);
 	}
 
-	public CredentialsToken(String principal, String credentials, boolean solved) {
-		Assert.hasText(principal, "Principal must not be empty");
-		Assert.hasText(credentials, "Credentials must not be empty");
+	public CredentialsToken(String principal, String credentials, boolean isSolved) {
+		hasTextOf(principal, "principal");
+		hasTextOf(credentials, "credentials");
 		this.principal = principal;
 		this.credentials = credentials;
-		this.resolved = solved;
+		this.isSolved = isSolved;
 	}
 
 	final public String getPrincipal() {
@@ -70,13 +70,14 @@ public final class CredentialsToken {
 		return credentials;
 	}
 
-	final public boolean isResolved() {
-		return resolved;
+	final public boolean isSolved() {
+		return isSolved;
 	}
 
 	@Override
 	public String toString() {
-		return "CredentialsToken [principal=" + principal + ", credentials=" + credentials + ", resolved=" + resolved + "]";
+		return "CredentialsToken [principal=" + getPrincipal() + ", credentials=" + getCredentials() + ", resolved=" + isSolved
+				+ "]";
 	}
 
 }
