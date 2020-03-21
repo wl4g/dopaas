@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.coss;
-
-import static java.lang.String.format;
+package com.wl4g.devops.coss.client;
 
 import java.io.InputStream;
 import java.net.URL;
 
-import com.wl4g.devops.common.framework.operator.Operator;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.AccessControlList;
 import com.wl4g.devops.coss.model.CopyObjectResult;
@@ -40,13 +37,13 @@ import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.exception.ServerCossException;
 
 /**
- * Composite object storage server file system API.
+ * Composite object storage client API. {@link CossClient}
  * 
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年2月28日
- * @since
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年3月21日 v1.0.0
+ * @see
  */
-public interface CossEndpoint extends Operator<CossProvider> {
+public interface CossClient {
 
 	// --- Bucket's function ---
 
@@ -341,9 +338,7 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @throws CossException
 	 * @throws ServerCossException
 	 */
-	default void createSymlink(String bucketName, String symlink, String target) throws CossException, ServerCossException {
-		throw new CossException(format("No supported operation of COSS.provider: %s", kind()));
-	}
+	void createSymlink(String bucketName, String symlink, String target) throws CossException, ServerCossException;
 
 	/**
 	 * Gets the symlink information for the given symlink name.
@@ -357,9 +352,7 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @throws CossException
 	 * @throws ServerCossException
 	 */
-	default ObjectSymlink getSymlink(String bucketName, String symlink) throws CossException, ServerCossException {
-		throw new CossException(format("No supported operation of COSS.provider: %s", kind()));
-	}
+	ObjectSymlink getSymlink(String bucketName, String symlink) throws CossException, ServerCossException;
 
 	/**
 	 * Returns an URL for the object stored in the specified bucket and key.
@@ -380,8 +373,6 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @throws CossException
 	 * @throws ServerCossException
 	 */
-	default URL getUrl(String bucketName, String key) throws CossException, ServerCossException {
-		throw new CossException(format("No supported operation of COSS.provider: %s", kind()));
-	}
+	URL getUrl(String bucketName, String key) throws CossException, ServerCossException;
 
 }

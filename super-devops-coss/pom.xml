@@ -10,6 +10,7 @@
 	<description>COSS - A open source composite object storage system based on spring cloud.</description>
 	<modules>
 		<module>super-devops-coss-client</module>
+		<module>super-devops-coss-common</module>
 		<module>super-devops-coss-core</module>
 		<module>super-devops-coss-hdfs</module>
 		<module>super-devops-coss-aliyunoss</module>

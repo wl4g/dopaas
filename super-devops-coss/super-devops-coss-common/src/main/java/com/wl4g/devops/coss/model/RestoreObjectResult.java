@@ -1,4 +1,3 @@
-package com.wl4g.devops;
 /*
  * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
@@ -14,15 +13,8 @@ package com.wl4g.devops;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.wl4g.devops.coss.model;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class OssExample {
-
-	public static void main(String[] args) {
-		SpringApplication.run(OssExample.class, args);
-	}
+public class RestoreObjectResult {
 
 }

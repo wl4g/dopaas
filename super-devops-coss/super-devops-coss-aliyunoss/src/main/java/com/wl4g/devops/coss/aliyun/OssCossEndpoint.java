@@ -34,6 +34,7 @@ import com.aliyun.oss.model.ObjectAcl;
 import com.aliyun.oss.model.ObjectListing;
 import com.aliyun.oss.model.PutObjectResult;
 import com.wl4g.devops.coss.AbstractCossEndpoint;
+import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.aliyun.config.AliyunOssProperties;
 import com.wl4g.devops.coss.aliyun.model.OssAccessControlList;
 import com.wl4g.devops.coss.aliyun.model.OssCopyObjectResult;

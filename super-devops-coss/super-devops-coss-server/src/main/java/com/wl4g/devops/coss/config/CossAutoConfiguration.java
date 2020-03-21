@@ -18,7 +18,7 @@ package com.wl4g.devops.coss.config;
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.CossEndpoint;
-import com.wl4g.devops.coss.CossEndpoint.CossProvider;
+import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.access.ConsoleCossAccessor;
 import com.wl4g.devops.coss.access.CossAccessor;
 import com.wl4g.devops.coss.access.HttpCossAccessor;
@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * COSS core auto configuration.
+ * COSS API auto configuration.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月11日
@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CossAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
-	// --- A C C E S S O R'S. ---
+	// --- A C C E S S O R _ E X P O R T'S. ---
 
 	@Bean
 	public CossAccessor consoleCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
