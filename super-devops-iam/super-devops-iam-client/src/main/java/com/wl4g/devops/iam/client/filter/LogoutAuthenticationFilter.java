@@ -118,10 +118,7 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 			try {
 				// try/catch added for SHIRO-298:
 				getSubject(request, response).logout();
-
-				if (log.isInfoEnabled()) {
-					log.info("Local logout finished. sessionId[{}]", sessionId);
-				}
+				log.info("Local logout finished. sessionId[{}]", sessionId);
 			} catch (SessionException e) {
 				log.warn("Logout exception. This can generally safely be ignored.", e);
 			}

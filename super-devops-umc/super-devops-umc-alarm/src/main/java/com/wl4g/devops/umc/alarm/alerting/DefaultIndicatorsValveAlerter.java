@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.umc.alarm;
+package com.wl4g.devops.umc.alarm.alerting;
 
 import com.wl4g.devops.common.bean.iam.Contact;
 import com.wl4g.devops.common.bean.iam.NotificationContact;
@@ -30,7 +30,11 @@ import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.support.redis.JedisService;
-import com.wl4g.devops.umc.alarm.MetricAggregateWrapper.MetricWrapper;
+import com.wl4g.devops.umc.alarm.AlarmNote;
+import com.wl4g.devops.umc.alarm.AlarmMessage;
+import com.wl4g.devops.umc.alarm.TemplateContactWrapper;
+import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
+import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper.MetricWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
@@ -47,6 +51,7 @@ import static com.wl4g.devops.common.constants.UMCDevOpsConstants.ALARM_SATUS_SE
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.Math.abs;
+import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -99,13 +104,13 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 		}
 
 		// Alarm match handling.
-		List<AlarmResult> results = new ArrayList<>(agwrap.getMetrics().size() * 2);
-		final long now = System.currentTimeMillis();
+		List<AlarmMessage> results = new ArrayList<>(agwrap.getMetrics().size() * 2);
+		long now = currentTimeMillis();
 		for (MetricWrapper mwrap : agwrap.getMetrics()) {
 			for (AlarmConfig tpl : alarmConfigs) {
 				if (StringUtils.equals(mwrap.getMetric(), tpl.getAlarmTemplate().getMetric())) {
 					// Obtain matching alarm result.
-					Optional<AlarmResult> ropt = doGetAlarmResultWithMatchRule(agwrap, mwrap, tpl, now);
+					Optional<AlarmMessage> ropt = getMatchRulesAlarmMessage(agwrap, mwrap, tpl, now);
 					if (ropt.isPresent()) {
 						results.add(ropt.get());
 					}
@@ -113,14 +118,14 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			}
 		}
 
-		// Record & notification
-		postAlarmResultProcessed(results);
+		// Record & notification etc.
+		postAlarmHandle(results);
 	}
 
-	// --- Matching. ---
+	// --- Template & Rules matching. ---
 
 	/**
-	 * Do obtain alarm result with match rule.
+	 * Gets obtain alarm result with match rule.
 	 * 
 	 * @param agwrap
 	 * @param mwrap
@@ -128,7 +133,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param now
 	 * @return
 	 */
-	protected Optional<AlarmResult> doGetAlarmResultWithMatchRule(MetricAggregateWrapper agwrap, MetricWrapper mwrap,
+	protected Optional<AlarmMessage> getMatchRulesAlarmMessage(MetricAggregateWrapper agwrap, MetricWrapper mwrap,
 			AlarmConfig alarmConfig, long now) {
 		// Match tags
 		Map<String, String> matchedTag = emptyMap();
@@ -158,7 +163,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 
 		log.info("Matched to metric: {} and alarm template: {}, timeWindowQueue: {}", mwrap.getMetric(),
 				alarmConfig.getAlarmTemplate().getId(), toJSONString(metricVals));
-		return Optional.of(new AlarmResult(agwrap, alarmConfig, matchedTag, matchedRules));
+		return Optional.of(new AlarmMessage(agwrap, alarmConfig, matchedTag, matchedRules));
 	}
 
 	/**
@@ -237,7 +242,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 				.collect(toList()).toArray(new Double[] {});
 	}
 
-	// --- Alarm result processed. ---
+	// --- Alarm message storage & notification. ---
 
 	/**
 	 * After alarm result processed.
@@ -247,9 +252,9 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param gatherTime
 	 * @param macthedRules
 	 */
-	protected void postAlarmResultProcessed(List<AlarmResult> results) {
+	protected void postAlarmHandle(List<AlarmMessage> results) {
 		Map<Integer, TemplateContactWrapper> contactMap = new HashMap<>();
-		for (AlarmResult result : results) {
+		for (AlarmMessage result : results) {
 			// Check
 			AlarmConfig config = result.getAlarmConfig();
 			if (config == null) {
@@ -264,7 +269,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			TemplateContactWrapper contactWrap = contactMap.get(config.getTemplateId());
 			if (null == contactWrap) {
 				contactWrap = new TemplateContactWrapper(config.getTemplateId(), tpl, config.getContacts(),
-						result.getMatchedTag(), result.getMatchedRules(), result.getAggregateWrap());
+						result.getMatchedTag(), result.getMatchedRules(), result.getAggregate());
 			} else {
 				List<Contact> contacts = contactWrap.getContacts();
 				contacts.addAll(config.getContacts());
@@ -287,8 +292,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			AlarmRecord record = configurer.saveAlarmRecord(contactWrap.getAlarmTemplate(),
 					contactWrap.getAggregateWrap().getTimestamp(), contactWrap.getMatchedRules(), toJSONString(note));
 
-			// Send notification
-			notification(new ArrayList<>(contactWrap.getContacts()), record);
+			// Handle notifications
+			handleNotification(new ArrayList<>(contactWrap.getContacts()), record);
 		}
 	}
 
@@ -336,9 +341,9 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param alarmConfigs
 	 * @param macthedRules
 	 */
-	protected void notification(List<Contact> contacts, AlarmRecord alarmRecord) {
-		log.info("into DefaultIndicatorsValveAlerter.notification prarms::" + "contacts = {} , alarmNote = {} ",
-                contacts, alarmRecord.getAlarmNote());
+	protected void handleNotification(List<Contact> contacts, AlarmRecord alarmRecord) {
+		log.info("into DefaultIndicatorsValveAlerter.notification prarms::" + "contacts = {} , alarmNote = {} ", contacts,
+				alarmRecord.getAlarmNote());
 
 		// TODO using dynamic notifier call.
 		for (Contact contact : contacts) {
@@ -349,17 +354,17 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 			notificationContact.setStatus(ALARM_SATUS_SEND);
 			configurer.saveNotificationContact(notificationContact);
 
-			//new
+			// new
 			List<ContactChannel> contactChannels = contact.getContactChannels();
-			if(CollectionUtils.isEmpty(contactChannels)){
+			if (CollectionUtils.isEmpty(contactChannels)) {
 				continue;
 			}
-			for(ContactChannel contactChannel : contactChannels){
-				if(1!=contactChannel.getEnable()){
+			for (ContactChannel contactChannel : contactChannels) {
+				if (1 != contactChannel.getEnable()) {
 					continue;
 				}
 
-				//TODO
+				// TODO
 				GenericNotifyMessage msg = new GenericNotifyMessage("1154635107@qq.com", "umcAlaramTpl2");
 				// Common parameters.
 				msg.addParameter("appName", "bizService1");
@@ -371,7 +376,7 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_BCC, "");
 				// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_REPLYTO,
 				// "");
-                notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
+				notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
 			}
 
 		}

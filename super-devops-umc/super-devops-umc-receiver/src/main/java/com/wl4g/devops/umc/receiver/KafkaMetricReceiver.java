@@ -17,7 +17,7 @@ package com.wl4g.devops.umc.receiver;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate;
-import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
+import com.wl4g.devops.umc.alarm.alerting.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.store.MetricStore;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
