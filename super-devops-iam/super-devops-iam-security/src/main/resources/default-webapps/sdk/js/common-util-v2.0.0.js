@@ -10,10 +10,10 @@
 
 	// Common util.
 	window.Common.Util = {
-		printWarn: function(msg){
-			console.log("%cSecurity Warning!","font-size:50px;color:red;-webkit-text-fill-color:red;-webkit-text-stroke:1px black;");
+		printSafeWarn: function(msg){
+			console.log("%cSECURITY WARNING!","font-size:50px;color:red;-webkit-text-fill-color:red;-webkit-text-stroke:1px black;");
 		 	if(!Common.Util.isEmpty(msg)){
-				console.log("%c"+msg,"font-size:16px;color:#303d65;");
+				console.log("%c"+msg,"font-size:14px;color:#303d65;");
 		 	}
 		},
 		getEleValue: function(name, obj){
