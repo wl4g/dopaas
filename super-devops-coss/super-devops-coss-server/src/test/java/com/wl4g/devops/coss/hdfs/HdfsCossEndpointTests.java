@@ -33,7 +33,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.wl4g.devops.CossServer;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.CossEndpoint;
-import com.wl4g.devops.coss.CossEndpoint.CossProvider;
+import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.model.AccessControlList;
 import com.wl4g.devops.coss.model.ObjectListing;
 import com.wl4g.devops.coss.model.ObjectSummary;

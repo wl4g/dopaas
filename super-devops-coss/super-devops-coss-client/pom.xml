@@ -28,7 +28,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-coss-core</artifactId>
+			<artifactId>super-devops-coss-common</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

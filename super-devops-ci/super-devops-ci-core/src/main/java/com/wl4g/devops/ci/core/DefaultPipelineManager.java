@@ -26,14 +26,14 @@ import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.common.bean.iam.AlarmContact;
+import com.wl4g.devops.common.bean.iam.Contact;
 import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.framework.beans.AliasPrototypeBeanFactory;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.*;
-import com.wl4g.devops.dao.iam.AlarmContactDao;
+import com.wl4g.devops.dao.iam.ContactDao;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
@@ -98,7 +98,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	@Autowired
 	protected TaskDetailDao taskDetailDao;
 	@Autowired
-	protected AlarmContactDao alarmContactDao;
+	protected ContactDao contactDao;
 	@Autowired
 	protected TaskBuildCommandDao taskBuildCmdDao;
 	@Autowired
@@ -391,11 +391,11 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param message
 	 */
 	protected void notificationResult(Integer contactGroupId, Integer taskId, String result) {
-		List<AlarmContact> contacts = alarmContactDao.getContactByGroupIds(asList(contactGroupId));
-		for (AlarmContact alarmContact : contacts) {
+		List<Contact> contacts = contactDao.getContactByGroupIds(asList(contactGroupId));
+		for (Contact contact : contacts) {
 
 			// new
-			List<ContactChannel> contactChannels = alarmContact.getContactChannels();
+			List<ContactChannel> contactChannels = contact.getContactChannels();
 			if (CollectionUtils.isEmpty(contactChannels)) {
 				continue;
 			}

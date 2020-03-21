@@ -31,13 +31,13 @@ public class GlusterCossAutoConfiguration {
 	@Bean
 	@ConditionalOnProperty(name = KEY_PROPERTY_PREFIX + ".enable", matchIfMissing = false)
 	@ConfigurationProperties(prefix = KEY_PROPERTY_PREFIX)
-	public GlusterCossProperties glusterCossProperties() {
-		return new GlusterCossProperties();
+	public GlusterFsCossProperties glusterCossProperties() {
+		return new GlusterFsCossProperties();
 	}
 
 	@Bean
-	@ConditionalOnBean(GlusterCossProperties.class)
-	public CossEndpoint glusterFsCossEndpoint(GlusterCossProperties config) {
+	@ConditionalOnBean(GlusterFsCossProperties.class)
+	public CossEndpoint glusterFsCossEndpoint(GlusterFsCossProperties config) {
 		return new GlusterFsCossEndpoint(config);
 	}
 
