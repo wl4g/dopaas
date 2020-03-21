@@ -50,10 +50,10 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	final private String credentials;
 
 	/**
-	 * The signature of nonce passed from the client, where nonce is generated
-	 * when the client calls the check interface during authentication.
+	 * The secret key that the client requests for authentication is used to
+	 * login successfully encrypted additional ticket.
 	 */
-	final private String signature;
+	final private String clientSecret;
 
 	/**
 	 * Whether or not 'rememberMe' should be enabled for the corresponding login
@@ -102,7 +102,7 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 		notNullOf(verifyType, "verifyType");
 		this.principal = principal;
 		this.credentials = credentials;
-		this.signature = signature;
+		this.clientSecret = signature;
 		this.clientRef = ClientRef.of(clientRef);
 		this.verifiedToken = verifiedToken;
 		this.verifyType = verifyType;
@@ -119,8 +119,8 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 		return credentials;
 	}
 
-	public String getSignature() {
-		return signature;
+	public String getClientSecret() {
+		return clientSecret;
 	}
 
 	@Override

@@ -154,6 +154,16 @@
 		    return Common.Util.language().indexOf('zh') >= 0;
 		},
 		Codec: {
+			encodeBase64: function(str) {
+			    var encode = encodeURI(str);
+			    var base64Str = btoa(encode);
+			    return base64Str;
+			},
+			decodeBase64: function(base64Str) {
+				var decode = atob(base64Str);
+				var str = decodeURI(decode);
+				return str;
+			},
 			// Base64 and Hex functions.
             hexToBase64: function(str) {
             	var tableStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";

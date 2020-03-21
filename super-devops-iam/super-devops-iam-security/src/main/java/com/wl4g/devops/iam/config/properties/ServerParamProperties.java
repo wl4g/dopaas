@@ -43,9 +43,17 @@ public class ServerParamProperties extends ParamProperties {
 	private String credentialName = "credential";
 
 	/**
-	 * Password parameter name at login time of signature.
+	 * The secret public key that the client requests for authentication is used
+	 * to login successfully encrypted additional ticket.
 	 */
-	private String signatureName = "signature";
+	private String clientPubKeySecretName = "clientSecret";
+
+	/**
+	 * When the authentication is successful, the access token will be returned.
+	 * The client then uses sessionid + accesstoken as the credential to access
+	 * the business API.
+	 */
+	private String clientSecretTokenName = "secretToken";
 
 	/**
 	 * Client type reference parameter name at login time of account password.
@@ -119,12 +127,20 @@ public class ServerParamProperties extends ParamProperties {
 		this.credentialName = loginPassword;
 	}
 
-	public String getSignatureName() {
-		return signatureName;
+	public String getClientPubKeySecretName() {
+		return clientPubKeySecretName;
 	}
 
-	public void setSignatureName(String signatureName) {
-		this.signatureName = signatureName;
+	public void setClientPubKeySecretName(String signatureName) {
+		this.clientPubKeySecretName = signatureName;
+	}
+
+	public String getClientSecretTokenName() {
+		return clientSecretTokenName;
+	}
+
+	public void setClientSecretTokenName(String accessTokenName) {
+		this.clientSecretTokenName = accessTokenName;
 	}
 
 	public String getClientRefName() {
