@@ -36,6 +36,7 @@ import com.aliyun.oss.model.PutObjectResult;
 import com.wl4g.devops.coss.AbstractCossEndpoint;
 import com.wl4g.devops.coss.aliyun.config.AliyunOssProperties;
 import com.wl4g.devops.coss.aliyun.model.OssAccessControlList;
+import com.wl4g.devops.coss.aliyun.model.OssCopyObjectResult;
 import com.wl4g.devops.coss.aliyun.model.OssObjectAcl;
 import com.wl4g.devops.coss.aliyun.model.OssObjectListing;
 import com.wl4g.devops.coss.aliyun.model.OssObjectMetadata;
@@ -44,10 +45,14 @@ import com.wl4g.devops.coss.aliyun.model.OssPutObjectResult;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucket;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucketList;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucketMetadata;
+import com.wl4g.devops.coss.exception.CossException;
+import com.wl4g.devops.coss.exception.ServerCossException;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.ObjectMetadata;
 import com.wl4g.devops.coss.model.ObjectSymlink;
 import com.wl4g.devops.coss.model.Owner;
+import com.wl4g.devops.coss.model.RestoreObjectRequest;
+import com.wl4g.devops.coss.model.RestoreObjectResult;
 
 public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 
@@ -170,8 +175,27 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 	}
 
 	@Override
+	public OssCopyObjectResult copyObject(String sourceBucketName, String sourceKey, String destinationBucketName,
+			String destinationKey) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public void deleteObject(String bucketName, String key) {
 		ossClient.deleteObject(bucketName, key);
+	}
+
+	@Override
+	public void deleteVersion(String bucketName, String key, String versionId) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public RestoreObjectResult restoreObject(RestoreObjectRequest request) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

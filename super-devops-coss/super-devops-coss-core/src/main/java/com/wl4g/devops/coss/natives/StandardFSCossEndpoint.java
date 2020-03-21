@@ -17,6 +17,7 @@ package com.wl4g.devops.coss.natives;
 
 import com.wl4g.devops.coss.AbstractCossEndpoint;
 import com.wl4g.devops.coss.config.StandardFSCossProperties;
+import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.exception.ServerCossException;
 import com.wl4g.devops.coss.model.*;
 import com.wl4g.devops.coss.model.bucket.Bucket;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
@@ -59,15 +61,19 @@ import static com.wl4g.devops.coss.model.ACL.*;
 public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties> extends AbstractCossEndpoint<C> {
 
 	/**
-	 * {@link FileSystem}
+	 * Standard FS of {@link FileSystem}
 	 */
 	final protected FileSystem standardFS;
 
+	/**
+	 * Storage objects metadata of {@link MetadataIndexManager}
+	 */
 	@Autowired
-	private MetadataIndexManager metadataIndexManager;
+	private MetadataIndexManager metadataManager;
 
 	public StandardFSCossEndpoint(C config, FileSystem standardFS) {
 		super(config);
+		notNullOf(standardFS, "standardFS");
 		this.standardFS = standardFS;
 	}
 
@@ -77,7 +83,7 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		isTrue(!bucketPath.exists(), ServerCossException.class, "Duplicate creation directory '%s'", bucketPath);
 		bucketPath.mkdirs();
 		isTrue(bucketPath.exists(), ServerCossException.class, "Couldn't mkdirs bucket directory to '%s'", bucketPath);
-		metadataIndexManager.create(bucketPath.getAbsolutePath());
+		metadataManager.create(bucketPath.getAbsolutePath());
 		Bucket bucket = new Bucket(bucketName);
 		bucket.setCreationDate(new Date());
 		bucket.setOwner(getCurrentOwner());
@@ -216,11 +222,24 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		try {
 			FileIOUtils.copyInputStreamToFile(input, objectPath);
 			setObjectAcl(bucketName, key, ACL.Default);
-			metadataIndexManager.addFile(config.getEndpointRootDir() + File.separator + bucketName, 1,
+			metadataManager.addFile(config.getEndpointRootDir() + File.separator + bucketName, 1,
 					Files.size(objectPath.toPath()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+
+	@Override
+	public CopyObjectResult copyObject(String sourceBucketName, String sourceKey, String destinationBucketName,
+			String destinationKey) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CossProvider kind() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -241,7 +260,19 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		objectPath.renameTo(trash);
 		// objectPath.delete();
 		isTrue(!objectPath.exists(), ServerCossException.class, "Couldn't delete object to '%s'", objectPath);
-		metadataIndexManager.addFile(config.getEndpointRootDir() + File.separator + bucketName, -1, -fileSize);
+		metadataManager.addFile(config.getEndpointRootDir() + File.separator + bucketName, -1, -fileSize);
+	}
+
+	@Override
+	public void deleteVersion(String bucketName, String key, String versionId) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public RestoreObjectResult restoreObject(RestoreObjectRequest request) throws CossException, ServerCossException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
