@@ -43,7 +43,7 @@ public class GenericAuthenticationFilter extends AbstractIamAuthenticationFilter
 		// Bsse required parameters.
 		final String principal = getCleanParam(request, config.getParam().getPrincipalName());
 		final String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
-		final String clientSecret = getCleanParam(request, config.getParam().getClientPubKeySecretName());
+		final String clientSecret = getCleanParam(request, config.getParam().getClientSecretName());
 		final String clientRef = getCleanParam(request, config.getParam().getClientRefName());
 		final String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
 

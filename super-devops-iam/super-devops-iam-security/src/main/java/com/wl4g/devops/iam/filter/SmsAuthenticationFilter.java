@@ -40,10 +40,11 @@ public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<Sms
 	@Override
 	protected SmsAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		String action = getCleanParam(request, config.getParam().getSmsActionName());
-		String principal = getCleanParam(request, config.getParam().getPrincipalName());
-		String smsCode = getCleanParam(request, config.getParam().getCredentialName());
-		return new SmsAuthenticationToken(remoteHost, action, principal, smsCode);
+		final String action = getCleanParam(request, config.getParam().getSmsActionName());
+		final String principal = getCleanParam(request, config.getParam().getPrincipalName());
+		final String smsCode = getCleanParam(request, config.getParam().getCredentialName());
+		final String clientSecret = getCleanParam(request, config.getParam().getClientSecretName());
+		return new SmsAuthenticationToken(clientSecret, remoteHost, action, principal, smsCode);
 	}
 
 	@Override

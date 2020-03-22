@@ -1,5 +1,5 @@
 /**
- * Iam core v2.0.0 | (c) 2017 ~ 2050 wl4g Foundation, Inc.
+ * IAM WebSDK CORE v2.0.0 | (c) 2017 ~ 2050 wl4g Foundation, Inc.
  * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
@@ -27,6 +27,7 @@
 				remainDelayMs: null,
 			}
 		},
+		clientSecret: { }, // Authenticating clientSecret info
 		applyModel: { // Apply captcha result.
 			primaryImg: null,
 			applyToken: null,
@@ -112,6 +113,7 @@
 			refreshUrlKey: "refresh_url", // 刷新URL参数名
 			principalKey: "principal", // 提交账号参数名
 			credentialKey: "credential", // 提交账号凭据(如：静态密码/SMS验证码)参数名
+			clientSecretKey: "clientSecret", // 客户端秘钥(公钥)参数名
 			verifyTypeKey: "verifyType", // 验证码verifier别名参数名（通用）
 			applyTokenKey: "applyToken", // 申请的验证码f返回token参数名（通用）
 			verifyCodeKey: "verifyCode", // 提交验证码参数名（不通用：simple/gif）
@@ -561,7 +563,10 @@
 				}
 
 				_InitSafeCheck(function(checkCaptcha, checkGeneral, checkSms){
+					// Gets server secret.
 					var secret = Common.Util.checkEmpty("Error for secret is empty", checkGeneral.secret);
+					// Generate clientSecret.
+					runtime.clientSecret = IAM.Crypto.RSA.generateKey();
 					var credentials = encodeURIComponent(IAM.Crypto.RSA.encryptToHexString(secret, plainPasswd));
 					var verifiedToken = "";
 					if(runtime.safeCheck.checkCaptcha.enabled){
@@ -589,6 +594,7 @@
 						+ Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
 						+ "&" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
 						+ "&" + Common.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
+						+ "&" + Common.Util.checkEmpty("definition.clientSecretKey",settings.definition.clientSecretKey) + "=" + runtime.clientSecret.publicKeyHex
 						+ "&" + Common.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + verifiedToken
 						+ "&" + Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" + Common.Util.checkEmpty("captcha.use", settings.captcha.use)
 						+ "&" + Common.Util.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();

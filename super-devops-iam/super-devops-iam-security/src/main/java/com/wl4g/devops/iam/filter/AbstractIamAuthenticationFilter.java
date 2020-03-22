@@ -15,11 +15,7 @@
  */
 package com.wl4g.devops.iam.filter;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMSERVER;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTH_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.correctAuthenticaitorURI;
@@ -65,6 +61,7 @@ import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
+import com.wl4g.devops.iam.crypto.CryptService;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
@@ -129,6 +126,12 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	@Autowired
 	protected ServerSecurityCoprocessor coprocessor;
+
+	/**
+	 * Cryptic service.
+	 */
+	@Autowired
+	protected CryptService cryptService;
 
 	/**
 	 * Enhanced cache manager.
@@ -495,14 +498,21 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			redirectUrl = getRFCBaseURI(toHttp(request), true) + successRedirectUrl;
 		}
 
-		// Make message:
-		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
-		resp.setCode(OK).setMessage("Authentication successful");
 		// Placing it in http.body makes it easier for Android/iOS
 		// to get token.
 		params.put(config.getCookie().getName(), subject.getSession().getId());
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
-		params.put(config.getParam().getClientSecretTokenName(), bind(KEY_CLIENT_SECRET_TOKEN, randomAlphanumeric(32)));
+		// Generate client secret token.
+		final String clientSecretTokenPlain = bind(KEY_CLIENT_SECRET_TOKEN, randomAlphanumeric(32));
+		// Use client public key encryption.
+		// TODO
+//		final String clientSecretToken = cryptService.encryptWithHex(null, clientSecretTokenPlain);
+		final String clientSecretToken = clientSecretTokenPlain;
+		params.put(config.getParam().getClientSecretTokenName(), clientSecretToken);
+
+		// Make message
+		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
+		resp.setCode(OK).setMessage("Authentication successful");
 		resp.forMap().putAll(params);
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		return resp;
@@ -617,12 +627,5 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * filters submitted by login
 	 */
 	final public static String URI_BASE_MAPPING = URI_AUTH_BASE;
-
-	/**
-	 * When the authentication is successful, the access token will be returned.
-	 * The client then uses sessionid + accesstoken as the credential to access
-	 * the business API.
-	 */
-	final public static String KEY_CLIENT_SECRET_TOKEN = "CLIENT_SECRET_TOKEN";
 
 }
