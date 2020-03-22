@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
+import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
@@ -295,7 +295,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Response JSON message.
 		if (isJSONResponse(request)) {
 			try {
-				String failed = makeFailedResponse(redirect.getRedirectUrl(), request, params, errmsg);
+				RespBase<String> resp = makeFailedResponse(redirect.getRedirectUrl(), request, params, errmsg);
+				String failed = toJSONString(resp);
 				log.info("Resp unauth: {}", failed);
 				writeJson(toHttp(response), failed);
 			} catch (IOException e) {
@@ -477,7 +478,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private RespBase<String> makeLoggedResponse(Subject subject, ServletRequest request, String grantTicket, String successUrl,
+	protected RespBase<String> makeLoggedResponse(Subject subject, ServletRequest request, String grantTicket, String successUrl,
 			Map params) {
 		hasTextOf(successUrl, "successUrl");
 
@@ -506,7 +507,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		final String clientSecretTokenPlain = bind(KEY_CLIENT_SECRET_TOKEN, randomAlphanumeric(32));
 		// Use client public key encryption.
 		// TODO
-//		final String clientSecretToken = cryptService.encryptWithHex(null, clientSecretTokenPlain);
+		// final String clientSecretToken = cryptService.encryptWithHex(null,
+		// clientSecretTokenPlain);
 		final String clientSecretToken = clientSecretTokenPlain;
 		params.put(config.getParam().getClientSecretTokenName(), clientSecretToken);
 
@@ -532,17 +534,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private String makeFailedResponse(String failRedirectUrl, ServletRequest request, Map params, String errmsg) {
+	protected RespBase<String> makeFailedResponse(String failRedirectUrl, ServletRequest request, Map params, String errmsg) {
 		errmsg = (isNotBlank(errmsg)) ? errmsg : "Authentication failure";
 
 		// Make message
 		RespBase<String> resp = RespBase.create(sessionStatus());
-		// More useful than RespBase.UNAUTH
-		resp.setCode(OK).setMessage(errmsg);
+		resp.setCode(UNAUTHC).setMessage(errmsg);
 		resp.forMap().putAll(params);
 		resp.forMap().put(config.getParam().getRedirectUrl(), failRedirectUrl);
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
-		return toJSONString(resp);
+		return resp;
 	}
 
 	/**

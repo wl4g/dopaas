@@ -4,6 +4,36 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 
+!(function(window, document){
+	// 创建UI
+	window.IAM.UI = {
+		/**
+		 * Init IAM JSSDK UI.
+		 * 
+		 * @param renderId Render target object element id.
+		 **/
+		initUI: function(renderObj, iamServerBaseUri){
+			if(!renderObj || renderObj == undefined){
+				throw Error("IAM JSSDK UI (renderObj) is required!");
+			}
+			if(!iamServerBaseUri || iamServerBaseUri == undefined || iamServerBaseUri.trim().length<=0){
+				console.warn("Init 'iamServerBaseUri' not configure, already used default!");
+				iamServerBaseUri = null; // Init
+			}
+
+			console.debug("Initializing IAM JSSDK UI...");
+			var loginForm = $('<div class="login-form"><div class="login-form-header"><span class="login-link active"id="login_link_account"data-panel="login_account_panel">账号登录</span><span class="login-line"></span><span class="login-link"id="login_link_phone"data-panel="login_phone_panel">手机登录</span><span class="login-line"></span><span class="login-link"id="login_link_scan"data-panel="login_scan_panel">扫码登录</span></div><div class="login-form-tip"id="err_tip"></div><div class="login-form-body"><!--密码登录--><div class="login-form-panel active"id="login_account_panel"><form><div class="login-form-item"><i class="icon-user"></i><input class="inp"id="user_name"name="username"placeholder="请输入账号"maxlength="20"></div><div class="login-form-item"><i class="icon-pass"></i><input class="inp"id="password"name="password"type="password"placeholder="请输入密码"maxlength="35"autocapitalize="off"autocomplete="off"></div><div class="login-form-item"id="captcha_panel"><!--拖动验证--></div><input class="btn"id="iam_submit"type="button"value="登录"></form></div><!--手机登录--><div class="login-form-panel"id="login_phone_panel"><select class="select-area"><option value="+086">中国大陆+086</option><option value="+852">中国香港+852</option><option value="+853">中国澳门+853</option><option value="+084">越南+084</option><option value="+092">巴基斯坦+092</option><option value="+065">新加坡+065</option><option value="+358">法国+358</option><option value="+066">泰国+066</option></select><div class="login-form-item"><i class="icon-phone"></i><input id="user_phone"class="inp"name="phone"placeholder="请输入手机号"maxlength="11"><p class="err-info phone-err">请输入正确的手机号</p></div><div class="login-form-item login-form-item-number"><i class="icon-codeNumber"></i><input id="codeNumber"class="inp"type="text"placeholder="请输入短信动态码"name="codeNumber"maxlength=6><button class="btn-code"type="button"id="code-get">获取</button><p class="err-info pass-err">请输入短信验证码</p></div><input class="btn"id="phone_submit"type="button"value="登录"></div><!--微信登录--><div class="login-form-panel"id="login_scan_panel"><div class="box-qrcode"><div id="qrcode_show"style="height:255px;"></div></div><div class="qrcode-text">打开<span class="bold">微信"扫一扫"</span>扫描二维码</div></div></div></div>');
+			loginForm.appendTo($(renderObj));
+
+			// 绑定UI Tab事件
+			initUITab();
+
+			// 绑定IAM SDK事件
+			initUISDK(iamServerBaseUri);
+		}
+	}
+})(window, document);
+
 function changeTab(showId, hideId) {
     $("#" + showId).show();
     $("#" + showId + "_1").css({
@@ -17,15 +47,8 @@ function changeTab(showId, hideId) {
     $("#" + hideId).hide();
 }
 
-// 创建UI
-$(function(){
-	console.debug("Create IAM-SDK UI...");
-	var loginForm = $('<div class="login-form"><div class="login-form-header"><span class="login-link active" id="login_link_account" data-panel="login_account_panel">账号登录</span><span class="login-line"></span><span class="login-link" id="login_link_phone" data-panel="login_phone_panel">手机登录</span><span class="login-line"></span><span class="login-link" id="login_link_scan" data-panel="login_scan_panel">扫码登录</span></div><div class="login-form-tip" id="err_tip"></div><div class="login-form-body"><!-- 密码登录--><div class="login-form-panel active" id="login_account_panel"><form><div class="login-form-item"><i class="icon-user"></i><input class="inp" id="user_name"  name="username" placeholder="请输入账号" maxlength="20"></div><div class="login-form-item"><i class="icon-pass"></i><input class="inp" id="password" name="password" type="password" placeholder="请输入密码" maxlength="35" autocapitalize="off" autocomplete="off"></div><div class="login-form-item" id="captcha_panel"><!-- 拖动验证--></div><input class="btn" id="iam_submit" type="button"  value="登录"></form></div><!-- 手机登录--><div class="login-form-panel" id="login_phone_panel"><select class="select-area"><option value="+086">中国大陆+086</option><option value="+852">中国香港+852</option><option value="+853">中国澳门+853</option><option value="+084">越南+084</option><option value="+092">巴基斯坦+092</option><option value="+065">新加坡+065</option><option value="+358">法国+358</option><option value="+066">泰国+066</option></select><div class="login-form-item"><i class="icon-phone"></i><input id="user_phone" class="inp" name="phone" placeholder="请输入手机号" maxlength="11"><p class="err-info phone-err">请输入正确的手机号</p></div><div class="login-form-item login-form-item-number"><i class="icon-codeNumber"></i><input id="codeNumber" class="inp" type="text" placeholder="请输入短信动态码"  name="codeNumber"  maxlength=6><button class="btn-code" type="button" id="code-get">获取</button><p class="err-info pass-err">请输入短信验证码</p></div><input class="btn" id="phone_submit" type="button" value="登录"></div><!-- 微信登录--><div class="login-form-panel" id="login_scan_panel"><div class="box-qrcode"><div id="qrcode_show" style="height:255px;"></div></div><div class="qrcode-text">打开<span class="bold">微信"扫一扫"</span>扫描二维码</div></div></div></div>');
-	loginForm.appendTo($("#content-right"));
-});
-
-// 绑定UI事件
-$(function() {
+// 绑定UI Tab事件
+function initUITab() {
 	$(".login-link").click(function(){
 	    var that = this;
 	    $(".login-link").each(function(ele, obj){
@@ -41,24 +64,24 @@ $(function() {
 	    });
 	});
     $('.code-close').click(function () {
-        $('.code-write').hide()
+        $('.code-write').hide();
     });
     $(".select-area").change(function(){
         var selectVal = $(this).children('option:selected').val();
-        console.log(selectVal);
         if (selectVal != "+086") {
             alert("目前此功能仅对中国大陆用户开放！敬请谅解");
             $(this).children('option')[0].selected = true;
         }
     });
-});
+}
 
-// 绑定IAM-SDK事件
-$(function () {
+// 绑定IAM SDK事件
+function initUISDK(iamServerBaseUri) {
 	Common.Util.printSafeWarn("This browser function is for developers only. Please do not paste and execute any content here, which may cause your account to be attacked and bring you loss!");
 	window.IAM.Core.configure({
 		deploy: {
     		//baseUri: "http://localhost:14040/iam-server", // Using auto iamBaseUri
+   			baseUri: iamServerBaseUri,
    			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
  			deaultContextPath: "/iam-server" // IAMServerd的context-path
  		},
@@ -176,7 +199,7 @@ $(function () {
 			}
 		}
 	}).bindForAccountAuthenticator().bindForSMSAuthenticator().bindForSNSAuthenticator().bindForCaptchaVerifier();
-});
+}
 
 // 监听panelType为pagePanel类型的SNS授权回调
 $(function () {

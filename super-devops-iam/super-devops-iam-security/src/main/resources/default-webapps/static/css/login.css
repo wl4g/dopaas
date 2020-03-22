@@ -31,7 +31,6 @@ span a{color:#3481CF;text-decoration:none}
 .rightimageBox{position:relative;width:150px;height:178px;border:1px solid #eee;text-align:center;color:#000;background:#eee;z-index:1000;box-shadow:#ffdede 1px 1px 18px}
 #qrcode-title{margin:8px}
 .rightImage{position:relative;width:135px;height:135px;text-align:center;margin:0 0 0 0px;z-index:1000}
-#err_tip{position:absolute;top:50px;left:50px;width:246px;background:#fdf5f5;margin:0 auto;text-align:center;font-size:14px;color:#dc5151c7;font-weight:600;border-radius:2px;z-index:100;display:none}
 #content-left{position:absolute;left:0;top:78px;bottom:0;width:60%}
 .base,.cloud,.shadow,.light{position:absolute;left:-5vh;width:100%;height:100%;overflow:hidden}
 .base img,.cloud img,.shadow img,.light img{width:100%;position:absolute;top:29vh}

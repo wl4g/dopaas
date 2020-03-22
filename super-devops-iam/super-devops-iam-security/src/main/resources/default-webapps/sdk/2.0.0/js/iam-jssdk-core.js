@@ -447,9 +447,11 @@
 			var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal, false));
 			var checkUrl = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri)
 				+ Common.Util.checkEmpty("definition.checkUri",settings.definition.checkUri) + "?"
-				+ Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal + "&"
-				+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
-				+ Common.Util.checkEmpty("captcha.use", settings.captcha.use);
+				+ Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
+				+ "&" + Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
+				+ Common.Util.checkEmpty("captcha.use", settings.captcha.use)
+				+ "&" + Common.Util.checkEmpty("definition.responseType", settings.definition.responseType) + "="
+				+ Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue);
 
 			// 初始化前回调
 			if(!Common.Util.checkEmpty("init.onPreCheck", settings.init.onPreCheck)(principal, checkUrl)){
@@ -461,10 +463,9 @@
 			$.ajax({
 				url: checkUrl,
 				type: "post",
-				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+				xhrFields: { withCredentials: false }, // Send cookies when support cross-domain request.
 				cache: false,
 				dataType: "json",
-				headers:{'Content-Type':'application/x-www-form-urlencoded;charset=utf8'},
 				success: function(res, textStatus, jqxhr){
 					// 初始化完成回调
 					Common.Util.checkEmpty("init.onPostCheck", settings.init.onPostCheck)(res);
@@ -597,7 +598,9 @@
 						+ "&" + Common.Util.checkEmpty("definition.clientSecretKey",settings.definition.clientSecretKey) + "=" + runtime.clientSecret.publicKeyHex
 						+ "&" + Common.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + verifiedToken
 						+ "&" + Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" + Common.Util.checkEmpty("captcha.use", settings.captcha.use)
-						+ "&" + Common.Util.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef();
+						+ "&" + Common.Util.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef()
+						+ "&" + Common.Util.checkEmpty("definition.responseType", settings.definition.responseType) + "="
+						+ "&" + Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue);
 
 					// Submission
 					$.ajax({

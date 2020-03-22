@@ -43,6 +43,7 @@ import com.wl4g.devops.iam.common.authc.model.LogoutModel;
 import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 
+import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
@@ -90,9 +91,7 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 		boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
 		// Current session-id
 		Serializable sessionId = getSessionId();
-		if (log.isInfoEnabled()) {
-			log.info("Logout of forced[{}], sessionId[{}]", forced, sessionId);
-		}
+		log.info("Logout of forced[{}], sessionId[{}]", forced, sessionId);
 
 		// Callback logout
 		coprocessor.preLogout(forced, toHttp(request), toHttp(response));
@@ -129,6 +128,14 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 		 */
 		onLoginFailure(LogoutAuthenticationToken.EMPTY, null, request, response);
 		return false;
+	}
+
+	@Override
+	protected RespBase<String> makeFailedResponse(String loginRedirectUrl, Throwable err) {
+		RespBase<String> resp = super.makeFailedResponse(loginRedirectUrl, err);
+		// More useful than RetCode.UNAUTHC
+		resp.setCode(OK);
+		return resp;
 	}
 
 	/**

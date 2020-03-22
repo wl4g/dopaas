@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.attacks.csrf;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
 
 import java.io.IOException;
@@ -24,12 +25,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.DefaultCorsProcessor;
 import org.springframework.web.filter.CorsFilter;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * CORS(CSRF attack) resolve filter
@@ -49,10 +50,11 @@ public class OncePerCorsSecurityFilter extends CorsFilter {
 			throws ServletException, IOException {
 		// Only Internet Explorer supports(P3P)? The authentication mechanism
 		// has been upgraded to non cookie form, reference:
-		// /default-webapps/sdk/iam-websdk-form-{version}.html
+		// /default-webapps/sdk/{version}/iam-jssdk-form.html
 
 		// response.addHeader("P3P", "CP='CURa ADMa DEVa PSAo PSDo OUR BUS UNI
 		// PUR INT DEM STA PRE COM NAV OTC NOI DSP COR'");
+		// response.addHeader("Set-Cookie", "HttpOnly;Secure;SameSite=None");
 		super.doFilterInternal(request, response, filterChain);
 	}
 
@@ -65,7 +67,7 @@ public class OncePerCorsSecurityFilter extends CorsFilter {
 	 */
 	public static class AdvancedCorsProcessor extends DefaultCorsProcessor {
 
-		final protected Logger log = LoggerFactory.getLogger(getClass());
+		final protected SmartLogger log = getLogger(getClass());
 
 		@Override
 		public boolean processRequest(CorsConfiguration config, HttpServletRequest request, HttpServletResponse response)
