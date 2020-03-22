@@ -23,7 +23,7 @@ import org.apache.shiro.web.util.WebUtils;
 
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
-import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
+import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE;
@@ -44,6 +44,7 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResp;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -269,7 +270,8 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		if (isNull(cause) || (cause instanceof InvalidGrantTicketException)) {
 			if (isJSONResp(toHttp(request))) {
 				try {
-					String failMsg = makeFailedResponse(failRedirectUrl, cause);
+					RespBase<String> resp = makeFailedResponse(failRedirectUrl, cause);
+					String failMsg = toJSONString(resp);
 					log.info("Failed to invalid grantTicket response: {}", failMsg);
 					writeJson(toHttp(response), failMsg);
 				} catch (IOException e) {
@@ -319,7 +321,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			 * @see {@link com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm#doAuthenticationInfo(AuthenticationToken)#MARK1}
 			 */
 			if (nonNull(token.getPrincipal())) {
-				List<String> factors = singletonList(String.valueOf(token.getPrincipal()));
+				List<String> factors = singletonList(valueOf(token.getPrincipal()));
 				// When the IamServer redirects the request, but the
 				// grantTicket validate failed, infinite redirect needs to
 				// be prevented.
@@ -414,7 +416,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 *            login success redirect URL
 	 * @return
 	 */
-	private RespBase<String> makeLoggedResponse(ServletRequest request, Subject subject, String redirectUri) {
+	protected RespBase<String> makeLoggedResponse(ServletRequest request, Subject subject, String redirectUri) {
 		hasTextOf(redirectUri, "redirectUri");
 
 		// Make message
@@ -439,17 +441,16 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 *            Exception object
 	 * @return
 	 */
-	private String makeFailedResponse(String loginRedirectUrl, Throwable err) {
+	protected RespBase<String> makeFailedResponse(String loginRedirectUrl, Throwable err) {
 		String errmsg = err != null ? err.getMessage() : "Authentication failure";
 
 		// Make message
 		RespBase<String> resp = RespBase.create(sessionStatus());
-		// More useful than RetCode.UNAUTHC
-		resp.setCode(OK).setMessage(errmsg);
+		resp.setCode(UNAUTHC).setMessage(errmsg);
 		resp.forMap().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
 		resp.forMap().put(config.getParam().getApplication(), config.getServiceName());
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
-		return toJSONString(resp);
+		return resp;
 	}
 
 	@Override

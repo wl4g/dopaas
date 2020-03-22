@@ -9,70 +9,70 @@
 		jqModule: { // Fingerprint
 			stable: "jquery-3.3.1.min.js",
 			grey: "jquery-3.3.1.min.js",
-			cssStable: null,
-			cssGrey: null,
+			css_stable: null,
+			css_grey: null,
 			ratio: 100
 		},
 		cryptoJSModule: { // CryptoJS
 			stable: "crypto-js-4.0.0.min.js",
 			grey: "crypto-js-4.0.0.min.js",
-			cssStable: null,
-			cssGrey: null,
+			css_stable: null,
+			css_grey: null,
 			ratio: 100
 		},
 		fpWebModule: { // Fingerprint
 			stable: "fingerprint2-2.1.0.min.js",
 			grey: "fingerprint2-2.1.0.js",
-			cssStable: null,
-			cssGrey: null,
+			css_stable: null,
+			css_grey: null,
 			ratio: 200
 		},
 		commonModule: {
-			stable: "common-util.js",
-			grey: "common-util.min.js",
-			cssStable: "font-awesome-all.5.7.2.min.css",
-			cssGrey: "font-awesome-all.5.7.2.css",
+			stable: "common-util.min.js",
+			grey: "common-util.js",
+			css_stable: "font-awesome-all.5.7.2.min.css",
+			css_grey: "font-awesome-all.5.7.2.min.css",
 			ratio: 250
 		},
 		cryptoModule: {
 			stable: "iam-jssdk-crypto.min.js",
 			grey: "iam-jssdk-crypto.js",
-			cssStable: null,
-			cssGrey: null,
+			css_stable: null,
+			css_grey: null,
 			ratio: 300
 		},
 		captchaJigsawModule: {
 			stable: "iam-jssdk-captcha-jigsaw.min.js",
 			grey: "iam-jssdk-captcha-jigsaw.js",
-			cssStable: "iam-jssdk-captcha-jigsaw.min.css",
-			cssGrey: "iam-jssdk-captcha-jigsaw.css",
+			css_stable: "iam-jssdk-captcha-jigsaw.min.css",
+			css_grey: "iam-jssdk-captcha-jigsaw.css",
 			ratio: 400
 		},
 		coreModule: {
 			stable: "iam-jssdk-core.min.js",
 			grey: "iam-jssdk-core.js",
-			cssStable: null,
-			cssGrey: null,
+			css_stable: null,
+			css_grey: null,
 			ratio: 500
 		},
 		uiModule: {
 			stable: "iam-jssdk-ui.min.js",
 			grey: "iam-jssdk-ui.js",
-			cssStable: "iam-jssdk-ui.min.css",
-			cssGrey: "iam-jssdk-ui.css",
+			css_stable: "iam-jssdk-ui.min.css",
+			css_grey: "iam-jssdk-ui.css",
 			ratio: 1000
 		}
 	};
 	var g_dependencies = [{
 		name: "uiModule",
-		features: ["iamUi", "iamSdkUi"],
+		features: ["iamUi", "iamSdkUi", "IamUI", "IamSdkUI"],
 		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "commonModule", "cryptoModule", "coreModule",
 			"captchaJigsawModule", "uiModule"],
 		sync: !1
 	},
 	{
 		name: "coreModule",
-		features: ["ui", "iamUi", "iamSdkUi"],
+		features: ["iamCore", "iamSdkCore", "IamCore", "IamSdkCore"],
 		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "cryptoModule", "coreModule", "captchaJigsawModule"],
 		sync: !1
 	}];
@@ -123,22 +123,72 @@
 		return setModules;
 	}
 
-	// Using module.
+	// Using modules.
 	window.IAM = window.IAM || {};
-	window.IAM.Modules = {
-		use: function(name, path, cache, callback){
-			IAM.Modules.useCss(name, path+"/css/", cache, function(state){});
-			IAM.Modules.useJs(name, path+"/js/", cache, callback);
-		},
-		useJs: function(name, path, cache, callback){
-			if(!name || !path || cache == undefined || callback == null || !callback) {
-				throw Error("useJs parameters (name, path, cache, callback) is required!");
+	/**
+	 * Gets current script attributes settings,
+	 * load(css and js) specification module JSSDK API.
+	 * 
+	 * @return.param path Module jssdk file path(relative prefix).
+	 * @return.param cache Whether to use caching.
+	 * @return.param mode Operating mode (or environment) Optional: stable | grey
+	 **/
+	var _modules_settings = (function(){
+		let scripts = document.getElementsByTagName("script");
+		var curScript = scripts[scripts.length - 1]; // 最后一个script元素，即引用了本文件的script元素
+		curScript = document.currentScript || curScript;
+		// Gets default path(<script src=http://cdn.wl4g.com/iamjssdk/2.0.0/js/IAM.js  => defaultPath=http://cdn.wl4g.com/iamjssdk/2.0.0).
+		var src = curScript.getAttribute("src");
+		var defaultPath = "./";
+		var parts = src.split("/");
+		if(src.toLocaleUpperCase().startsWith("HTTP")){
+			defaultPath = ""; // reset
+			for(var i=0; i<parts.length; i++){
+			    if(i<parts.length-2){
+			        defaultPath += parts[i]+"/";
+			    }
 			}
+		}
+		var settings = {
+			path: curScript.getAttribute("path") || defaultPath,
+			cache: curScript.getAttribute("cache") || "false",
+			mode: curScript.getAttribute("mode") || "stable"
+		};
+		// Print settings
+		console.debug("IAM JSSDK using settings: "+ JSON.stringify(settings));
+		if(settings.cache){
+			console.debug("IAM JSSDK cache is enabled!");
+		}
+		if(settings.mode == 'grey'){
+			console.warn("IAM JSSDK using [GREY] mode!");
+		}
+		return settings;
+	})();
+
+	window.IAM.Modules = {
+		/**
+		 * Use load(css and js) specification module JSSDK API.
+		 * 
+		 * @param name Module name(alias).
+		 * @param callback Loaded callback function.
+		 **/
+		use: function(name, callback){
+			IAM.Modules.useCss(name, function(){});
+			IAM.Modules.useJs(name, callback);
+		},
+		useJs: function(name, callback){
+			if(Object.prototype.toString.call(name) == '[object Function]' || !name || callback == null || !callback) {
+				throw Error("useJs parameters (name, callback) is required!");
+			}
+			// Gets settings.
+			var path = _modules_settings.path + "/js/";
+			var cache = _modules_settings.cache;
+			var mode = _modules_settings.mode;
 
 			window.onload = function(){
 				var scriptUrls = getDependModules(name).map(d=>{
-					var t = cache ? 1 : new Date().getTime();
-					return d.stable+"?t="+t;
+					var t = (cache == 'true') ? 1 : new Date().getTime();
+					return d[mode]+"?t="+t;
 				});
 				// Loading multiple scripts.
 				(function loadScripts(urls, path) {
@@ -153,8 +203,8 @@
 							// Multiple binding for browser compatibility
 							script.onload = script.onreadystatechange = function(e) {
 								if (!script.readyState || script.readyState == 'loaded' || script.readyState == 'complete') {
-					            	console.debug("Loaded scripts of name:"+name+", readyState:"+this.readyState);
-									callback("loaded");
+					            	console.debug("Loaded scripts name: "+name+", readyState: "+ this.readyState);
+									callback(window.IAM.UI);
 								}
 					        };
 						}
@@ -184,14 +234,18 @@
 				//});
 			}
 		},
-		useCss: function(name, path, cache, callback){
-			if(!name || !path || cache == undefined || callback == null || !callback) {
-				throw Error("useCss parameters (name, path, cache, callback) is required!");
+		useCss: function(name, callback){
+			if(Object.prototype.toString.call(name) == '[object Function]' || !name || callback == null || !callback) {
+				throw Error("useCss parameters (name, callback) is required!");
 			}
+			// Gets settings.
+			var path = _modules_settings.path + "/css/";
+			var cache = _modules_settings.cache;
+			var mode = _modules_settings.mode;
 
-			var cssUrls = getDependModules(name).filter(d=>d.cssStable!=null&&d.cssStable!="").map(d=>{
-				var t = cache ? 1 : new Date().getTime();
-				return d.cssStable+"?t="+t;
+			var cssUrls = getDependModules(name).filter(d=>d["css_"+mode]!=null&&d["css_"+mode]!="").map(d=>{
+				var t = (cache == 'true') ? 1 : new Date().getTime();
+				return d["css_"+mode]+"?t="+t;
 			});
 			// Loading multiple css
 			(function loadCss(urls, path) {
@@ -206,7 +260,7 @@
 						// Multiple binding for browser compatibility
 						link.onload = link.onreadystatechange = function(e) {
 							if (!link.readyState || link.readyState == 'loaded' || link.readyState == 'complete') {
-				            	console.debug("Loaded links of name:"+name+", readyState:"+this.readyState);
+				            	console.debug("Loaded links name: "+name+", readyState: "+ this.readyState);
 								callback("loaded");
 							}
 				        };

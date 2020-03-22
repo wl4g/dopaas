@@ -10,10 +10,14 @@
 	<link rel="stylesheet" href="./static/css/lanren.css"/>
 	<!-- https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css -->
 	<!-- @Authors: <Wanglsir@gmail.com, 983708408@qq.com> -->
-	<script type="text/javascript" src="./sdk/2.0.0/js/IAM.js"></script>
+	<script type="text/javascript" src="./sdk/2.0.0/js/IAM.min.js" path="./sdk/2.0.0/" cache="true" mode="stable"></script>
 	<script type="text/javascript">
-		IAM.Modules.use("iamUi", "./sdk/2.0.0/", true, function(state){
-			console.log("IAM JSSDK loaded completed!");
+		IAM.Modules.use("IamUI", function(uiModule){
+			console.log("******* IAM JSSDK loaded completed! *******");
+			$(function(){
+				var iamServerUri = null; // e.g. http://localhost:14040/iam-server/
+				uiModule.initUI(document.getElementById("content-right"), iamServerUri);
+			});
 		});
 	</script>
 </head>
