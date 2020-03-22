@@ -8,21 +8,16 @@
 	<link rel="stylesheet" href="./static/css/bootstrap-3.3.7.min.css"/>
 	<link rel="stylesheet" href="./static/css/login.css"/>
 	<link rel="stylesheet" href="./static/css/lanren.css"/>
+	<!-- https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css -->
+	<!-- @Authors: <Wanglsir@gmail.com, 983708408@qq.com> -->
+	<script type="text/javascript" src="./sdk/2.0.0/js/IAM.js"></script>
+	<script type="text/javascript">
+		IAM.Modules.use("iamUi", "./sdk/2.0.0/", true, function(state){
+			console.log("IAM JSSDK loaded completed!");
+		});
+	</script>
 </head>
 <body style="background:url('./static/images/bg_icon/background.png') no-repeat;background-size: cover;">
-    <!--<script type="text/javascript">
-       // 只有放<body>之后（内容元素之前）最合适，否则会出现缩放闪屏（但使用如VUE框架则没有此问题，可放在</body>之前）
-       let w = window.screen.width;
-       if (w >= 1500) {
-         document.body.style.zoom = '1';
-       } else if (w >= 1400) {
-         document.body.style.zoom = '0.9';
-       } else if (w >= 1250) {
-         document.body.style.zoom = '0.8';
-       } else {
-         document.body.style.zoom = '0.7';
-       }
-    </script>-->
 	<div id="top">
 		<img id="img_logo" src="./static/images/bg_icon/logo.png" />
 	</div>
@@ -57,7 +52,6 @@
 			</div>
 		</div>
 		<div id="content-right">
-			<iframe src="http://localhost:14040/iam-server/view/sdk/iam-websdk-form-v2.0.0.html" scrolling="no" style="width:100%;height:100%;border:solid 0;"></iframe>
 		</div>
 	</div>
 	<div id="foot" style="line-height:24px; position:relative;z-index:1000;">
