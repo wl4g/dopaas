@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
-import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.ClientRef;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
 
@@ -35,7 +34,7 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
  * @date 2018年11月19日
  * @since
  */
-public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
+public class GenericAuthenticationToken extends ClientSecretIamAuthenticationToken
 		implements RememberMeAuthenticationToken, VerifyAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
@@ -48,12 +47,6 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	 * The password credentials
 	 */
 	final private String credentials;
-
-	/**
-	 * The secret key that the client requests for authentication is used to
-	 * login successfully encrypted additional ticket.
-	 */
-	final private String clientSecret;
 
 	/**
 	 * Whether or not 'rememberMe' should be enabled for the corresponding login
@@ -91,18 +84,16 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	}
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, final String signature, final String clientRef, final String verifiedToken,
+			final String credentials, final String clientSecret, final String clientRef, final String verifiedToken,
 			final VerifyKind verifyType, final boolean rememberMe) {
-		super(remoteHost, redirectInfo);
+		super(clientSecret, remoteHost, redirectInfo);
 		hasTextOf(principal, "principal");
 		hasTextOf(credentials, "credentials");
-		hasTextOf(signature, "signature");
 		hasTextOf(clientRef, "clientRef");
 		// hasTextOf(verifiedToken, "verifiedToken");
 		notNullOf(verifyType, "verifyType");
 		this.principal = principal;
 		this.credentials = credentials;
-		this.clientSecret = signature;
 		this.clientRef = ClientRef.of(clientRef);
 		this.verifiedToken = verifiedToken;
 		this.verifyType = verifyType;
@@ -117,10 +108,6 @@ public class GenericAuthenticationToken extends AbstractIamAuthenticationToken
 	@Override
 	public Object getCredentials() {
 		return credentials;
-	}
-
-	public String getClientSecret() {
-		return clientSecret;
 	}
 
 	@Override

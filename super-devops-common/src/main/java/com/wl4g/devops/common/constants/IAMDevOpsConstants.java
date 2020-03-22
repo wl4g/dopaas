@@ -192,6 +192,13 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String KEY_SECRET_INFO = "applySecretInfo";
 
 	/**
+	 * When the authentication is successful, the access token will be returned.
+	 * The client then uses sessionid + accesstoken as the credential to access
+	 * the business API.
+	 */
+	final public static String KEY_CLIENT_SECRET_TOKEN = "CLIENT_SECRET_TOKEN";
+
+	/**
 	 * Limiter login failure prefix based on user-name.
 	 */
 	final public static String KEY_FAIL_LIMIT_UID_PREFIX = "uid_";

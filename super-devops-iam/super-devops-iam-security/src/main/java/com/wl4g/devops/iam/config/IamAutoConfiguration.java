@@ -76,6 +76,7 @@ import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
+import com.wl4g.devops.iam.mgt.IamServerSubjectFactory;
 import com.wl4g.devops.iam.realm.AbstractAuthorizingRealm;
 import com.wl4g.devops.iam.realm.DingtalkAuthorizingRealm;
 import com.wl4g.devops.iam.realm.FacebookAuthorizingRealm;
@@ -128,6 +129,11 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 	// SHIRO manager and filter's
 	// ==============================
+
+	@Bean
+	public IamSubjectFactory iamSubjectFactory() {
+		return new IamServerSubjectFactory();
+	}
 
 	@Bean
 	public DefaultWebSecurityManager securityManager(IamSubjectFactory subjectFactory, IamServerSessionManager sessionManager,
@@ -524,7 +530,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	 */
 	@Bean
 	public CompositeSecurityVerifierAdapter compositeSecurityVerifierAdapter(List<SecurityVerifier> verifiers) {
-		return new CompositeSecurityVerifierAdapter();
+		return new CompositeSecurityVerifierAdapter(verifiers);
 	}
 
 	@Bean

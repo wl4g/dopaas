@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.verification;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
@@ -29,6 +31,10 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
  * @since
  */
 public class CompositeSecurityVerifierAdapter extends GenericOperatorAdapter<VerifyKind, SecurityVerifier> {
+
+	public CompositeSecurityVerifierAdapter(List<SecurityVerifier> verifiers) {
+		super(verifiers);
+	}
 
 	/**
 	 * Making the adaptation actually execute securityVerifier.

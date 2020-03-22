@@ -15,11 +15,16 @@
  */
 package com.wl4g.devops.iam.common.mgt;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Objects.isNull;
+
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * {@link org.apache.shiro.mgt.SubjectFactory Subject} implementation to be used
@@ -28,6 +33,8 @@ import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
  * @since 1.2
  */
 public class IamSubjectFactory extends DefaultWebSubjectFactory {
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	@Override
 	public Subject createSubject(SubjectContext context) {
@@ -41,7 +48,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		// authenticated flag appropriately:
 		if (authenticated) {
 			AuthenticationToken token = context.getAuthenticationToken();
-			if (token != null && token instanceof RememberMeAuthenticationToken) {
+			if (!isNull(token) && token instanceof RememberMeAuthenticationToken) {
 				RememberMeAuthenticationToken iamCasToken = (RememberMeAuthenticationToken) token;
 				// set the authenticated flag of the context to true only if the
 				// CAS subject is not in a remember me mode
@@ -50,6 +57,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 				}
 			}
 		}
+
 		return super.createSubject(context);
 	}
 

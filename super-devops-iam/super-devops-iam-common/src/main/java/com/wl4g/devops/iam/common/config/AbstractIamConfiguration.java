@@ -174,6 +174,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	public IamSubjectFactory iamSubjectFactory() {
 		return new IamSubjectFactory();
 	}

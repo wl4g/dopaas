@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.iam.web.model;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-
 import java.io.Serializable;
 
 /**
@@ -41,7 +39,7 @@ public class GenericCheckResult implements Serializable {
 	private String secret;
 
 	public GenericCheckResult(String secret) {
-		hasTextOf(secret, "secret");
+		// hasTextOf(secret, "secret");
 		this.secret = secret;
 	}
 

@@ -1,23 +1,11 @@
 /**
- * Iam core v2.0.0 | (c) 2017 ~ 2050 wl4g Foundation, Inc.
+ * IAM WebSDK UI v2.0.0 | (c) 2017 ~ 2050 wl4g Foundation, Inc.
  * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 
-function changeTab(showId, hideId) {
-    $("#" + showId).show();
-    $("#" + showId + "_1").css({
-        "color": "#0b86f3",
-        "font-weight": "bold"
-    });
-    $("#" + hideId + "_1").css({
-        "color": "white",
-        "font-weight": "100"
-    });
-    $("#" + hideId).hide();
-};
-
 $(function() {
+	
 	$(".login-link").click(function(){
 	    var that = this;
 	    $(".login-link").each(function(ele, obj){
@@ -32,11 +20,9 @@ $(function() {
 	        }
 	    });
 	});
-
     $('.code-close').click(function () {
         $('.code-write').hide()
     });
-
     $(".select-area").change(function(){
         var selectVal = $(this).children('option:selected').val();
         console.log(selectVal)
@@ -45,5 +31,17 @@ $(function() {
             $(this).children('option')[0].selected = true;
         }
     });
-
 });
+
+function changeTab(showId, hideId) {
+    $("#" + showId).show();
+    $("#" + showId + "_1").css({
+        "color": "#0b86f3",
+        "font-weight": "bold"
+    });
+    $("#" + hideId + "_1").css({
+        "color": "white",
+        "font-weight": "100"
+    });
+    $("#" + hideId).hide();
+};
