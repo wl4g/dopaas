@@ -16,7 +16,6 @@
 package com.wl4g.devops.coss.natives;
 
 import com.wl4g.devops.coss.AbstractCossEndpoint;
-import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.config.StandardFSCossProperties;
 import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.exception.ServerCossException;
@@ -30,28 +29,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.AclEntry;
-import java.nio.file.attribute.AclEntryPermission;
-import java.nio.file.attribute.AclFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.wl4g.devops.coss.model.ACL.*;
+import static com.wl4g.devops.tool.common.io.FileUtils.deleteAnyone;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
-import static com.wl4g.devops.coss.model.ACL.*;
 
 /**
  * Based on standard file system object storage.
@@ -86,6 +82,7 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		bucketPath.mkdirs();
 		isTrue(bucketPath.exists(), ServerCossException.class, "Couldn't mkdirs bucket directory to '%s'", bucketPath);
 		metadataManager.create(bucketPath.getAbsolutePath());
+		setBucketAcl(bucketName,ACL.Default);
 		Bucket bucket = new Bucket(bucketName);
 		bucket.setCreationDate(new Date());
 		bucket.setOwner(getCurrentOwner());
@@ -95,7 +92,6 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 	@Override
 	public BucketList<Bucket> listBuckets(String prefix, String marker, Integer maxKeys) {
 		BucketList<Bucket> bucketList = new BucketList<>();
-
 		List<Bucket> buckets = asList(
 				config.getEndpointRootDir().listFiles(f -> !f.getName().startsWith(".") && f.getName().startsWith(prefix)))
 						.stream().map(f -> {
@@ -112,7 +108,6 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 							}
 							return null;
 						}).filter(f -> !isNull(f)).collect(toList());
-
 		bucketList.getBucketList().addAll(buckets);
 		return bucketList;
 	}
@@ -136,37 +131,27 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 
 	@Override
 	public BucketMetadata getBucketMetadata(String bucketName) {
-		// TODO Auto-generated method stub
-		return null;
+		File bucketPath = new File(config.getEndpointRootDir(), bucketName);
+		BucketMetadata bucketMetadata = new BucketMetadata();
+		bucketMetadata.setBucketName(bucketName);
+		bucketMetadata.setBucketRegion(null);//TODO
+		return bucketMetadata;
 	}
 
 	@Override
 	public AccessControlList getBucketAcl(String bucketName) {
 		File bucketPath = new File(config.getEndpointRootDir(), bucketName);
-		Path path = Paths.get(URI.create(bucketPath.getPath()));
-		// Set<PosixFilePermission> posixFilePermissions1 =
-		// Files.getPosixFilePermissions(Paths.get(bucketPath.getAbsolutePath()));
-		AclFileAttributeView aclView = Files.getFileAttributeView(path, AclFileAttributeView.class);
-		if (!isNull(aclView)) {
-			try {
-				List<AclEntry> aclEntries = aclView.getAcl();
-				for (AclEntry entry : aclEntries) {
-					System.out.format("Principal: %s%n", entry.principal());
-					System.out.format("Type: %s%n", entry.type());
-					System.out.format("Permissions are:%n");
-
-					Set<AclEntryPermission> permissions = entry.permissions();
-					for (AclEntryPermission p : permissions) {
-						System.out.format("%s %n", p);
-						// TODO
-					}
-
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		AccessControlList accessControlList = new AccessControlList();
+		try {
+			Set<PosixFilePermission> posixFilePermissions = Files.getPosixFilePermissions(bucketPath.toPath());
+			ACL acl = getPosixPermissionAcl(posixFilePermissions);
+			String owner = Files.getOwner(bucketPath.toPath()).getName();
+			accessControlList.setAcl(acl);
+			accessControlList.setOwner(new Owner(owner, owner));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return null;
+		return accessControlList;
 	}
 
 	@Override
@@ -214,7 +199,23 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 
 	@Override
 	public ObjectValue getObject(String bucketName, String key) {
-		// TODO Auto-generated method stub
+		File objectPath = new File(config.getEndpointRootDir() + File.separator + bucketName, key);
+		ObjectValue objectValue = new ObjectValue();
+		objectValue.setBucketName(bucketName);
+		objectValue.setKey(key);
+
+		ObjectMetadata objectMetadata = new ObjectMetadata();
+		ObjectAcl objectAcl = getObjectAcl(bucketName, key);
+		objectMetadata.setAcl(objectAcl.getAcl());
+		try {
+			objectMetadata.setContentLength(Files.size(objectPath.toPath()));
+			objectMetadata.setMtime(Files.getLastModifiedTime(objectPath.toPath()).toMillis());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//TODO objectMetadata.set........
+		objectMetadata.setPath(new ObjectKey(""));
+		objectValue.setMetadata(objectMetadata);
 		return null;
 	}
 
@@ -235,14 +236,16 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 	@Override
 	public CopyObjectResult copyObject(String sourceBucketName, String sourceKey, String destinationBucketName,
 			String destinationKey) throws CossException, ServerCossException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public CossProvider kind() {
-		// TODO Auto-generated method stub
-		return null;
+		CopyObjectResult copyObjectResult = new CopyObjectResult();
+		File sourcePath = new File(config.getEndpointRootDir() + File.separator + sourceBucketName, sourceKey);
+		File destinationPath = new File(config.getEndpointRootDir() + File.separator + destinationBucketName, destinationKey);
+		try {
+			Files.copy(sourcePath.toPath(),destinationPath.toPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		copyObjectResult.setLastModified(new Date());
+		return copyObjectResult;
 	}
 
 	@Override
@@ -267,19 +270,21 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 
 	@Override
 	public void deleteVersion(String bucketName, String key, String versionId) throws CossException, ServerCossException {
-		// TODO Auto-generated method stub
-
+		File objectPath = new File(config.getEndpointRootDir() + File.separator + bucketName, key);
+		deleteAnyone(objectPath.getAbsolutePath());
 	}
 
 	@Override
-	public RestoreObjectResult restoreObject(RestoreObjectRequest request) throws CossException, ServerCossException {
-		// TODO Auto-generated method stub
+	public RestoreObjectResult restoreObject(RestoreObjectRequest request,String bucketName, String key) throws CossException, ServerCossException {
+		File trash = new File(config.getObjectPathTrash(bucketName)+ File.separator + key);
+		if(trash.exists()){
+
+		}
 		return null;
 	}
 
 	@Override
 	public ObjectAcl getObjectAcl(String bucketName, String key) {
-		// TODO Auto-generated method stub
 		File objectPath = new File(config.getEndpointRootDir() + File.separator + bucketName, key);
 		ObjectAcl objectAcl = new ObjectAcl();
 		try {
@@ -308,20 +313,47 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 
 	@Override
 	public boolean doesObjectExist(String bucketName, String key) {
-		// TODO Auto-generated method stub
-		return false;
+		File objectPath = new File(config.getEndpointRootDir() + File.separator + bucketName, key);
+		return objectPath.exists();
 	}
 
 	@Override
 	public void createSymlink(String bucketName, String symlink, String target) {
-		// TODO Auto-generated method stub
+		File symlinkFile = new File(config.getEndpointRootDir() + File.separator + bucketName, symlink);
+		File targetFile = new File(config.getEndpointRootDir() + File.separator + bucketName, target);
+		try {
+			Files.createSymbolicLink(symlinkFile.toPath(),targetFile.toPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public ObjectSymlink getSymlink(String bucketName, String symlink) {
-		// TODO Auto-generated method stub
+		ObjectSymlink objectSymlink = new ObjectSymlink();
+		File symlinkFile = new File(config.getEndpointRootDir() + File.separator + bucketName, symlink);
+		try {
+			Path path = Files.readSymbolicLink(symlinkFile.toPath());
+			objectSymlink.setTarget(path.toString());
+			objectSymlink.setSymlink(symlink);
+			ObjectMetadata objectMetadata = new ObjectMetadata();
+			objectMetadata.setAcl(getObjectAcl(bucketName,symlink).getAcl());
+			try {
+				objectMetadata.setContentLength(Files.size(symlinkFile.toPath()));
+				objectMetadata.setMtime(Files.getLastModifiedTime(symlinkFile.toPath()).toMillis());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			//TODO objectMetadata.set........
+			objectSymlink.setMetadata(objectMetadata);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
+
+
 
 	@Override
 	public URL getUrl(String bucketName, String key) throws CossException, ServerCossException {
