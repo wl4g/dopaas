@@ -119,6 +119,8 @@
 			verifyCodeKey: "verifyCode", // 提交验证码参数名（不通用：simple/gif）
 			verifiedTokenKey: "verifiedToken", // 验证码已校验的凭据token参数名（通用）
 			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
+			smsActionKey: "action", // SMS登录action参数名
+			smsActionValueLogin: "login", // SMS登录action=login的值
 			accountSubmitUri: "/auth/generic", // 账号登录提交的URL后缀
 			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
 			checkUri: "/login/check", // 登录前初始检查接口的URL后缀
@@ -445,40 +447,27 @@
 	var _InitSafeCheck = function(callback){
 		$(function(){
 			var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal, false));
-			var checkUrl = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri)
-				+ Common.Util.checkEmpty("definition.checkUri",settings.definition.checkUri) + "?"
-				+ Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
-				+ "&" + Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" 
-				+ Common.Util.checkEmpty("captcha.use", settings.captcha.use)
-				+ "&" + Common.Util.checkEmpty("definition.responseType", settings.definition.responseType) + "="
-				+ Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue);
-
 			// 初始化前回调
-			if(!Common.Util.checkEmpty("init.onPreCheck", settings.init.onPreCheck)(principal, checkUrl)){
+			if(!Common.Util.checkEmpty("init.onPreCheck", settings.init.onPreCheck)(principal)){
 				console.warn("Skip the init safeCheck, because onPreCheck() return false");
 				return;
 			}
 
 			// 请求安全预检
-			$.ajax({
-				url: checkUrl,
-				type: "post",
-				dataType: "json",
-				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
-				success: function(res, textStatus, jqxhr){
-					// 初始化完成回调
-					Common.Util.checkEmpty("init.onPostCheck", settings.init.onPostCheck)(res);
-
-					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-					if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
-						runtime.safeCheck = res.data; // [MARK3]
-						callback(res.data.checkCaptcha, res.data.checkGeneral, res.data.checkSms);
-					}
-				},
-				error: function(req, status, errmsg){
-					console.log("Failed to safe check, " + errmsg);
-					Common.Util.checkEmpty("init.onError", settings.init.onError)(req, status, errmsg); // 登录异常回调
+			var checkParam = new Map();
+			checkParam.set("{principalKey}", principal);
+			checkParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
+			doIamRequest("checkUri", checkParam, function(res){
+				// 初始化完成回调
+				Common.Util.checkEmpty("init.onPostCheck", settings.init.onPostCheck)(res);
+				var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+				if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
+					runtime.safeCheck = res.data; // [MARK3]
+					callback(res.data.checkCaptcha, res.data.checkGeneral, res.data.checkSms);
 				}
+			}, function(errmsg){
+				console.log("Failed to safe check, " + errmsg);
+				Common.Util.checkEmpty("init.onError", settings.init.onError)(req, status, errmsg); // 登录异常回调
 			});
 		});
 	};
@@ -563,81 +552,89 @@
 				}
 
 				_InitSafeCheck(function(checkCaptcha, checkGeneral, checkSms){
-					// Gets server secret.
-					var secret = Common.Util.checkEmpty("Error for secret is empty", checkGeneral.secret);
-					// Generate clientSecret.
-					runtime.clientSecret = IAM.Crypto.RSA.generateKey();
-					var credentials = encodeURIComponent(IAM.Crypto.RSA.encryptToHexString(secret, plainPasswd));
-					var verifiedToken = "";
-					if(runtime.safeCheck.checkCaptcha.enabled){
-						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
-						if(Common.Util.isEmpty(verifiedToken)){ // Required
-							settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete the man-machine verify");
+					// 获取设备指纹信息
+					Common.Util.getFingerprint({}, function(fpObject){
+						// 获取Server返回公钥
+						var secret = Common.Util.checkEmpty("Error for secret is empty", checkGeneral.secret);
+						// 生成client公钥
+						runtime.clientSecret = IAM.Crypto.RSA.generateKey();
+						var credentials = encodeURIComponent(IAM.Crypto.RSA.encryptToHexString(secret, plainPasswd));
+						// 已校验的验证码Token(如果有)
+						var verifiedToken = "";
+						if(runtime.safeCheck.checkCaptcha.enabled){
+							verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
+							if(Common.Util.isEmpty(verifiedToken)){ // Required
+								settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete the man-machine verify");
+								return;
+							}
+						}
+						// 检查必须参数
+						if(Common.Util.isAnyEmpty(principal, credentials)){
+							settings.account.onError("No empty login name or password allowed");
 							return;
 						}
-					}
-					// Check principal/credentials.
-					if(Common.Util.isAnyEmpty(principal, credentials)){
-						settings.account.onError("No empty login name or password allowed");
-						return;
-					}
-
-					// Call before submission login.
-					if(!settings.account.onBeforeSubmit(principal, credentials, verifiedToken)){
-						return;
-					}
-
-					// Submission URL
-					var loginSubmitUrl = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri)
-						+ Common.Util.checkEmpty("definition.accountSubmitUri",settings.definition.accountSubmitUri) + "?"
-						+ Common.Util.checkEmpty("definition.responseType",settings.definition.responseType) + "="
-						+ Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue)
-						+ "&" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + principal
-						+ "&" + Common.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + credentials
-						+ "&" + Common.Util.checkEmpty("definition.clientSecretKey",settings.definition.clientSecretKey) + "=" + runtime.clientSecret.publicKeyHex
-						+ "&" + Common.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + verifiedToken
-						+ "&" + Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "=" + Common.Util.checkEmpty("captcha.use", settings.captcha.use)
-						+ "&" + Common.Util.checkEmpty("definition.clientRefKey",settings.definition.clientRefKey) + "=" + clientRef()
-						+ "&" + Common.Util.checkEmpty("definition.responseType", settings.definition.responseType) + "="
-						+ "&" + Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue);
-
-					// Submission
-					$.ajax({
-						url: loginSubmitUrl,
-						type: "post",
-						dataType: "json",
-						xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
-						beforeSend: function(){
-							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
-						},
-						complete: function (XHR, textStatus) {
+						// Call before submission login.
+						if(!settings.account.onBeforeSubmit(principal, credentials, verifiedToken)){
+							return;
+						}
+	
+						// 锁定登录按钮
+						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
+						// 创建登录请求参数
+						var loginParam = new Map();
+						loginParam.set("{principalKey}", principal);
+						loginParam.set("{credentialKey}", credentials);
+						loginParam.set("{clientSecretKey}", runtime.clientSecret.publicKeyHex);
+						loginParam.set("{clientRefKey}", clientRef());
+						loginParam.set("{verifiedTokenKey}", verifiedToken);
+						loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
+						// 设备指纹UMID(必须)
+						loginParam.set("umid", fpObject.umid);
+						// 设备指纹附加参数(必须)
+						loginParam.set("userAgent", fpObject.components.get("userAgent"));
+						loginParam.set("platform", fpObject.components.get("platform"));
+						loginParam.set("pixelRatio", fpObject.components.get("pixelRatio"));
+						loginParam.set("timezone", fpObject.components.get("timezone"));
+						loginParam.set("language", fpObject.components.get("language"));
+						loginParam.set("cpuClass", fpObject.components.get("cpuClass"));
+						loginParam.set("touchSupport", fpObject.components.get("touchSupport"));
+						loginParam.set("deviceMemory", fpObject.components.get("deviceMemory"));
+						loginParam.set("availableScreenResolution", fpObject.components.get("availableScreenResolution"));
+						// 基于Web指纹附加参数(可选)
+						loginParam.set("canvas", CryptoJS.MD5(fpObject.components.get("canvas")).toString(CryptoJS.enc.Hex));
+						loginParam.set("webgl", CryptoJS.MD5(fpObject.components.get("webgl")).toString(CryptoJS.enc.Hex));
+						loginParam.set("indexedDb", fpObject.components.get("indexedDb"));
+						loginParam.set("sessionStorage", fpObject.components.get("sessionStorage"));
+						loginParam.set("localStorage", fpObject.components.get("localStorage"));
+						loginParam.set("colorDepth", fpObject.components.get("colorDepth"));
+						// 请求提交登录
+						doIamRequest("accountSubmitUri", loginParam, function(resp){
+							// 解锁登录按钮
 							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
-						},
-						success: function(resp){
+	
 							runtime.verifiedModel.verifiedToken = ""; // Clear
 							var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 							if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){ // Failed?
 								resetCaptcha(); // 刷新验证码
 								settings.account.onError(resp.message); // 登录失败回调
 							} else { // 登录成功，直接重定向
-                                $(document).unbind("keydown");
+	                            $(document).unbind("keydown");
 								var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
 								if(settings.account.onSuccess(principal, redirectUrl)){
 							      Common.Util.getRootWindow(window).location.href = redirectUrl;
 								}
 							}
-						},
-						error: function(req, status, errmsg){
+						}, function(errmsg){
 							runtime.verifiedModel.verifiedToken = ""; // Clear
 							settings.account.onError(errmsg); // 登录异常回调
-						}
+						});
 					});
 				});
 			});
 		});
 	};
 
-	// Init SMS authentication implement.
+	// Init SMS authentication implements.
 	var _InitSMSAuthenticator = function(){
 		$(function(){
 			// 绑定申请SMS验证码按钮点击事件
@@ -649,7 +646,6 @@
 					settings.sms.onError("SMS login for mobile number is required.");
 					return;
 				}
-
 				// 检查输入的验证码
 				var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 				var captcha = imgInput.val();
@@ -660,41 +656,34 @@
 					}
 				}
 
-				var url = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri) + Common.Util.checkEmpty("definition.smsApplyUri",settings.definition.smsApplyUri)
-					+ "?" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + encodeURIComponent(mobileNum)
-					+ "&" + Common.Util.checkEmpty("definition.verifiedTokenKey",settings.definition.verifiedTokenKey) + "=" + captcha;
 				// 请求申请SMS验证码
-				$.ajax({
-					url: url,
-					type: "post",
-					xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
-					dataType: "json",
-					success: function (resp) {
-						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-						// 登录失败
-						if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
-							settings.sms.onError(resp.message); // 申请失败回调
-						} else {
-							settings.sms.onSuccess(resp); // 申请成功回调
-							var remainDelaySec = resp.data.checkSms.remainDelayMs/1000;
-							var num = parseInt(remainDelaySec);
-							var timer = setInterval(() => {
-								var sendSmsBtn = $(settings.sms.sendSmsBtn);
-								if (num < 1) {
-									sendSmsBtn.attr('disabled', false);
-									sendSmsBtn.text('获取');
-									clearInterval(timer);
-								} else {
-									sendSmsBtn.attr('disabled', true);
-									sendSmsBtn.text(num + 's');
-									num--;
-								}
-							}, 1000);
-						}
-					},
-					error(req, status, errmsg) {
-						settings.sms.onError(errmsg); // 申请失败回调
+				var getSmsParam = new Map();
+				getSmsParam.set("{principalKey}", encodeURIComponent(mobileNum));
+				getSmsParam.set("{verifiedTokenKey}", captcha);
+				doIamRequest("smsApplyUri", getSmsParam, function(res){
+					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+					// 登录失败
+					if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
+						settings.sms.onError(resp.message); // 申请失败回调
+					} else {
+						settings.sms.onSuccess(resp); // 申请成功回调
+						var remainDelaySec = resp.data.checkSms.remainDelayMs/1000;
+						var num = parseInt(remainDelaySec);
+						var timer = setInterval(() => {
+							var sendSmsBtn = $(settings.sms.sendSmsBtn);
+							if (num < 1) {
+								sendSmsBtn.attr('disabled', false);
+								sendSmsBtn.text('获取');
+								clearInterval(timer);
+							} else {
+								sendSmsBtn.attr('disabled', true);
+								sendSmsBtn.text(num + 's');
+								num--;
+							}
+						}, 1000);
 					}
+				}, function(errmsg){
+					settings.sms.onError(errmsg); // 申请失败回调
 				});
 			});
 			// 绑定SMS登录提交按钮点击事件
@@ -703,34 +692,25 @@
 				var mobileArea = Common.Util.getEleValue("sms.mobileArea", settings.sms.mobileArea, false);
 				var mobileNum = mobileArea + Common.Util.getEleValue("sms.mobile", settings.sms.mobile, false);
 				var smsCode = Common.Util.getEleValue("sms.smsCode", settings.sms.smsCode, false);
-
 				// 提交SMS登录之前回调
 				if(!settings.sms.onBeforeSubmit(mobileNum, smsCode)){
 					return;
 				}
 
-				var url = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri)+Common.Util.checkEmpty("definition.smsSubmitUri",settings.definition.smsSubmitUri)
-					+ "?action=login&" + Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey) + "=" + mobileNum
-					+ "&" + Common.Util.checkEmpty("definition.credentialKey",settings.definition.credentialKey) + "=" + smsCode;
-				$.ajax({
-					url: url,
-					type: "post",
-					xhrFields: {
-						withCredentials: true // Send cookies when support cross-domain request.
-					},
-					dataType: "json",
-					success: function (resp) {
-						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-						if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
-							settings.sms.onError(resp.message); // SMS登录失败回调
-						} else {
-							settings.sms.onSuccess(resp); // SMS登录成功回调
-							Common.Util.getRootWindow(window).location.href = resp.data.redirect_url;
-						}
-					},
-					error(req, status, errmsg) {
-						settings.sms.onError(errmsg); // SMS登录失败回调
+				var smsLoginParam = new Map();
+				smsLoginParam.set("{principalKey}", encodeURIComponent(mobileNum));
+				smsLoginParam.set("{credentialKey}", smsCode);
+				smsLoginParam.set("{smsActionKey}", Common.Util.checkEmpty("definition.smsActionValueLogin", settings.definition.smsActionValueLogin));
+				doIamRequest("smsSubmitUri", smsLoginParam, function(res){
+					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+					if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
+						settings.sms.onError(resp.message); // SMS登录失败回调
+					} else {
+						settings.sms.onSuccess(resp); // SMS登录成功回调
+						Common.Util.getRootWindow(window).location.href = resp.data.redirect_url;
 					}
+				}, function(errmsg){
+					settings.sms.onError(errmsg); // SMS登录失败回调
 				});
 			});
 		});
@@ -752,6 +732,42 @@
 			console.warn("Unknown platform browser ["+ navigator.appVersion +"]");
 		}
 		return clientRef;
+	};
+
+	// 提交基于IAM特征的请求(即, 设置跨域允许cookie,表单,post等)
+	var doIamRequest = function(urlKey, paramMap, success, error){
+		// Default parameters.
+		paramMap.set("{responseType}", Common.Util.checkEmpty("definition.responseTypeValue", settings.definition.responseTypeValue));
+		// Gets base URI.
+		var url = Common.Util.checkEmpty("deploy.baseUri", settings.deploy.baseUri)
+					+ Common.Util.checkEmpty("definition", settings.definition[urlKey]);
+		// Convertions form data
+		var formData = "";
+		paramMap.forEach((value, key) => {
+			var paramName = key;
+			// Check placeholder key.
+			if(key.startsWith("{") && key.endsWith("}")){
+				var realKey = key.substr(1, key.length-2);
+				paramName = Common.Util.checkEmpty("definition."+realKey, settings.definition[realKey]);
+			}
+			formData+=(paramName+"="+value+"&");
+		});
+		if(formData.endsWith("&")){
+			formData = formData.substr(0, formData.lastIndexOf('&'));
+		}
+		$.ajax({
+			url: url,
+			type: "post",
+			//headers: { ContentType: "application/x-www-form-urlencoded" },
+			data: formData,
+			xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+			success: function(res, textStatus, jqxhr){
+				success(res);
+			},
+			error: function(req, status, errmsg){
+				error(errmsg);
+			}
+		});
 	};
 
 	// Check parent classy.
