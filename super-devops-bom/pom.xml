@@ -260,12 +260,6 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-srm-core</artifactId>
-				<version>${project.parent.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-erm-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>

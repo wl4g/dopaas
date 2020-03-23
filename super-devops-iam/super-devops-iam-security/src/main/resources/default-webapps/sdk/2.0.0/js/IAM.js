@@ -261,7 +261,7 @@
 						link.onload = link.onreadystatechange = function(e) {
 							if (!link.readyState || link.readyState == 'loaded' || link.readyState == 'complete') {
 				            	console.debug("Loaded links name: "+name+", readyState: "+ this.readyState);
-								callback("loaded");
+								callback();
 							}
 				        };
 					}

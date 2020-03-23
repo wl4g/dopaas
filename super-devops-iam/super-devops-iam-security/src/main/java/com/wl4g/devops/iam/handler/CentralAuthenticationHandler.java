@@ -62,15 +62,14 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
+import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
-import static org.springframework.util.Assert.*;
 
 /**
  * Default authentication handler implements
@@ -133,14 +132,14 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	public TicketValidatedAssertModel<IamPrincipalInfo> validate(TicketValidateModel model) {
 		TicketValidatedAssertModel<IamPrincipalInfo> assertion = new TicketValidatedAssertModel<>();
 		String appName = model.getApplication();
-		hasText(appName, "'appName' must not be empty.");
+		hasTextOf(appName, "appName");
 
 		// Get subject session of grantTicket.
 		/*
 		 * Synchronize with xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
 		Subject subject = SecurityUtils.getSubject();
-		log.debug("Validate subject[{}] by grantTicket: '{}'", subject, model.getTicket());
+		log.debug("Validating subject: {} by grantTicket: {}", subject, model.getTicket());
 
 		// Assertion grantTicket.
 		assertGrantTicketValidity(subject, model);
@@ -154,7 +153,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * xx.xx.handler.impl.FastCasAuthenticationHandler#validate#loggedin
 		 */
 		cacheManager.getCache(CACHE_TICKET_S).remove(new EnhancedKey(model.getTicket()));
-		log.debug("Clean older grantTicket[{}]", model.getTicket());
+		log.debug("Clean older grantTicket: {}", model.getTicket());
 
 		// Get current grant ticket session.
 		Session session = subject.getSession();
@@ -162,7 +161,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// --- Grant attributes setup. ---
 
 		// Grant validated start date.
-		long now = System.currentTimeMillis();
+		long now = currentTimeMillis();
 		assertion.setValidFromDate(new Date(now));
 
 		/*
@@ -183,7 +182,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * {@link com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm#doAuthenticationInfo(AuthenticationToken)}
 		 */
 		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).setStoredCredentials(newGrantTicket));
-		log.info("New validate grantTicket[{}], sessionId[{}]", newGrantTicket, getSessionId());
+		log.info("New validated grantTicket: {}, sessionId: {}", newGrantTicket, getSessionId());
 
 		/*
 		 * Re-bind granting session => applications
@@ -283,7 +282,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	@Override
 	public SessionValidityAssertModel sessionValidate(SessionValidityAssertModel assertion) {
-		hasText(assertion.getApplication(), "Validate session params: application can't empty");
+		hasTextOf(assertion.getApplication(), "appName");
 
 		ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_BATCH_SIZE);
 		while (cursor.hasNext()) {
@@ -357,26 +356,26 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 */
 	private void assertGrantTicketValidity(Subject subject, TicketValidateModel model) throws InvalidGrantTicketException {
 		if (isBlank(model.getTicket())) {
-			log.warn("Invalid grantTicket has empty, grantTicket: {}, application: '{}', sessionId: '{}'", model.getTicket(),
-					model.getApplication(), subject.getSession().getId());
-			throw new InvalidGrantTicketException("Invalid grantTicket has empty");
+			log.warn("Invalid grantTicket, application: {}, sessionId: {}", model.getTicket(), model.getApplication(),
+					subject.getSession().getId());
+			throw new InvalidGrantTicketException("Invalid granting ticket");
 		}
 
 		// Get grant information
 		GrantTicketInfo info = getGrantTicketInfo(subject.getSession());
-		log.debug("Got grantTicket info:{} by sessionId:{}", info, getSessionId());
+		log.debug("Got grantTicketInfo: {}, sessionId:{}", info, getSessionId());
 
 		// No grant ticket created or expired?
 		if (isNull(info)) {
-			throw new InvalidGrantTicketException("Invalid grantTicket.");
+			throw new InvalidGrantTicketException("Invalid granting ticket");
 		}
 
 		// Validate Request appName ticket and storedTicket match?
 		String storedTicket = info.getApplications().get(model.getApplication());
 		if (!(model.getTicket().equals(storedTicket) && subject.isAuthenticated() && nonNull(subject.getPrincipal()))) {
-			log.warn("Invalid grantTicket:{}, appName:{}, sessionId:{}", model.getTicket(), model.getApplication(),
+			log.warn("Invalid grantTicket: {}, appName: {}, sessionId: {}", model.getTicket(), model.getApplication(),
 					subject.getSession().getId());
-			throw new InvalidGrantTicketException("Invalid grantTicket.");
+			throw new InvalidGrantTicketException("Invalid granting ticket");
 		}
 
 	}
@@ -406,8 +405,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * Notification all logged-in applications to logout
 		 */
 		for (ApplicationInfo app : apps) {
-			hasText(app.getIntranetBaseUri(),
-					String.format("Application[%s] 'internalBaseUri' must not be empty", app.getAppName()));
+			hasText(app.getIntranetBaseUri(), "Application[%s] 'internalBaseUri' must not be empty", app.getAppName());
 			// GrantTicket by application name
 			String grantTicket = grantInfo.getApplications().get(app.getAppName());
 			// Application logout URL

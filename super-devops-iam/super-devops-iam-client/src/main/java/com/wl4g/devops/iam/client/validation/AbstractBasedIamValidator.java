@@ -25,13 +25,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import static org.springframework.http.HttpMethod.*;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
@@ -84,8 +84,8 @@ public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> im
 	 * @return the response from the CAS server.
 	 */
 	protected RespBase<A> doGetRemoteValidate(String endpoint, R req) {
-		hasText(endpoint, "Validate endpoint must not be empty.");
-		notNull(req, "Validate parameters must not be null.");
+		hasTextOf(endpoint, "validateEndpoint");
+		notNullOf(req, "validateParameters");
 
 		StringBuffer url = new StringBuffer(config.getServerUri());
 		url.append(URI_S_BASE).append("/").append(endpoint).append("?");
@@ -119,9 +119,7 @@ public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> im
 		RespBase<A> resp = null;
 		try {
 			resp = restTemplate.exchange(url.toString(), POST, entity, getTypeReference()).getBody();
-			if (log.isInfoEnabled()) {
-				log.info("Validate retrieved: {}", resp);
-			}
+			log.info("Validate retrieved: {}", resp);
 		} catch (Throwable ex) {
 			throw new RestClientException(String.format("Failed to validate ticket via URL: %s", url), ex);
 		}

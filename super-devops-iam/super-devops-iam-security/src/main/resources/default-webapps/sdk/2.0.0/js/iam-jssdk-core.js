@@ -463,9 +463,8 @@
 			$.ajax({
 				url: checkUrl,
 				type: "post",
-				xhrFields: { withCredentials: false }, // Send cookies when support cross-domain request.
-				cache: false,
 				dataType: "json",
+				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 				success: function(res, textStatus, jqxhr){
 					// 初始化完成回调
 					Common.Util.checkEmpty("init.onPostCheck", settings.init.onPostCheck)(res);
@@ -606,8 +605,8 @@
 					$.ajax({
 						url: loginSubmitUrl,
 						type: "post",
-						xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 						dataType: "json",
+						xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 						beforeSend: function(){
 							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
 						},
@@ -737,39 +736,18 @@
 		});
 	};
 
-	// Client device OS type mark.
+	// Client device OS type.
 	var clientRef = function(){
 		var clientRef = null;
-		var platformType = Common.Util.PlatformType;
-		if(platformType.Windows){
-			clientRef = "Windows";
-		} else if (platformType.MicroMessenger) {
-			clientRef = "Wechatmp";
-		} else if (platformType.Android) {
-			clientRef = "Android";
-		} else if (platformType.iOS) {
-			clientRef = "iOS";
-		} else if (platformType.iPad) {
-			clientRef = "iPad";
-		} else if (platformType.iPhone) {
-			clientRef = "iPhone";
-		} else if (platformType.iOS) {
-			clientRef = "iOS";
-		} else if (platformType.Mac) {
-			clientRef = "Mac";
-		} else if (platformType.Linux) {
-			clientRef = "Linux";
-		} else if (platformType.Irix) {
-			clientRef = "Irix";
-		} else if (platformType.Solaris) {
-			clientRef = "Solaris";
-		} else if (platformType.AIX) {
-			clientRef = "AIX";
-		} else if (platformType.OpenBSD) {
-			clientRef = "OpenBSD";
-		} else if (platformType.FreeBSD) {
-			clientRef = "FreeBSD";
-		} else {
+		var osTypes = Common.Util.PlatformType;
+		for(var osname in osTypes){
+		    if(osTypes[osname]){
+		        console.debug("Got current OS: "+ osname);
+		        clientRef = osname;
+		        break;
+		    }
+		}
+		if(Common.Util.isEmpty(clientRef)) {
 			clientRef = "Unknown";
 			console.warn("Unknown platform browser ["+ navigator.appVersion +"]");
 		}
