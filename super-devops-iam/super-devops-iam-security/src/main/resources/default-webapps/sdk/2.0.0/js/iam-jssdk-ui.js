@@ -22,7 +22,116 @@
 			}
 
 			console.debug("Initializing IAM JSSDK UI...");
-			var loginForm = $('<div class="login-form"><div class="login-form-header"><span class="login-link active"id="login_link_account"data-panel="login_account_panel">账号登录</span><span class="login-line"></span><!--<span class="login-link"id="login_link_phone"data-panel="login_phone_panel">手机登录</span>--><span class="login-line"></span><span class="login-link"id="login_link_scan"data-panel="login_scan_panel">扫码登录</span></div><div class="login-form-tip"id="err_tip"></div><div class="login-form-body"><!--密码登录--><div class="login-form-panel active"id="login_account_panel"><form><div class="login-form-item"><i class="icon-user"></i><input class="inp"id="user_name"name="username"placeholder="请输入账号"maxlength="20"></div><div class="login-form-item"><i class="icon-pass"></i><input class="inp"id="password"name="password"type="password"placeholder="请输入密码"maxlength="35"autocapitalize="off"autocomplete="off"></div><div class="login-form-item"id="captcha_panel"><!--拖动验证--></div><input class="btn"id="iam_submit"type="button"value="登录"></form></div><!--手机登录--><div class="login-form-panel"id="login_phone_panel"><select class="select-area"><option value="+086">中国大陆+086</option><option value="+852">中国香港+852</option><option value="+853">中国澳门+853</option><option value="+084">越南+084</option><option value="+092">巴基斯坦+092</option><option value="+065">新加坡+065</option><option value="+358">法国+358</option><option value="+066">泰国+066</option></select><div class="login-form-item"><i class="icon-phone"></i><input id="user_phone"class="inp"name="phone"placeholder="请输入手机号"maxlength="11"><p class="err-info phone-err">请输入正确的手机号</p></div><div class="login-form-item login-form-item-number"><i class="icon-codeNumber"></i><input id="codeNumber"class="inp"type="text"placeholder="请输入短信动态码"name="codeNumber"maxlength=6><button class="btn-code"type="button"id="code-get">获取</button><p class="err-info pass-err">请输入短信验证码</p></div><input class="btn"id="phone_submit"type="button"value="登录"></div><!--微信登录--><div class="login-form-panel"id="login_scan_panel"><div class="box-qrcode"><div id="qrcode_show"style="height:255px;"></div></div><div class="qrcode-text">打开<span class="bold">微信"扫一扫"</span>扫描二维码</div></div></div></div>');
+			// Javascript multi line string supports.
+			// @see https://www.jb51.net/article/49480.htm
+			var loginFormHtmlStr = `
+					<div class="login-form">
+						<div class="login-form-header">
+							<span class="login-link active" id="login_link_account" data-panel="login_account_panel">
+								账号登录
+							</span>
+							<!--<span class="login-line">
+							</span>
+							<span class="login-link" id="login_link_phone" data-panel="login_phone_panel">
+								手机登录
+							</span>-->
+							<span class="login-line">
+							</span>
+							<span class="login-link" id="login_link_scan" data-panel="login_scan_panel">
+								扫码登录
+							</span>
+						</div>
+						<div class="login-form-tip" id="err_tip">
+						</div>
+						<div class="login-form-body">
+							<!-- 密码登录-->
+							<div class="login-form-panel active" id="login_account_panel">
+								<form>
+									<div class="login-form-item">
+										<i class="icon-user">
+										</i>
+										<input class="inp" id="user_name" name="username" placeholder="请输入账号"
+										maxlength="20">
+									</div>
+									<div class="login-form-item">
+										<i class="icon-pass">
+										</i>
+										<input class="inp" id="password" name="password" type="password" placeholder="请输入密码"
+										maxlength="35" autocapitalize="off" autocomplete="off">
+									</div>
+									<div class="login-form-item" id="captcha_panel">
+										<!-- 拖动验证-->
+									</div>
+									<input class="btn" id="iam_submit" type="button" value="登录">
+								</form>
+							</div>
+							<!-- 手机登录-->
+							<div class="login-form-panel" id="login_phone_panel">
+								<select class="select-area">
+									<option value="+086">
+										中国大陆+086
+									</option>
+									<option value="+852">
+										中国香港+852
+									</option>
+									<option value="+853">
+										中国澳门+853
+									</option>
+									<option value="+084">
+										越南+084
+									</option>
+									<option value="+092">
+										巴基斯坦+092
+									</option>
+									<option value="+065">
+										新加坡+065
+									</option>
+									<option value="+358">
+										法国+358
+									</option>
+									<option value="+066">
+										泰国+066
+									</option>
+								</select>
+								<div class="login-form-item">
+									<i class="icon-phone">
+									</i>
+									<input id="user_phone" class="inp" name="phone" placeholder="请输入手机号" maxlength="11">
+									<p class="err-info phone-err">
+										请输入正确的手机号
+									</p>
+								</div>
+								<div class="login-form-item login-form-item-number">
+									<i class="icon-codeNumber">
+									</i>
+									<input id="codeNumber" class="inp" type="text" placeholder="请输入短信动态码"
+									name="codeNumber" maxlength=6>
+									<button class="btn-code" type="button" id="code-get">
+										获取
+									</button>
+									<p class="err-info pass-err">
+										请输入短信验证码
+									</p>
+								</div>
+								<input class="btn" id="phone_submit" type="button" value="登录">
+							</div>
+							<!-- 微信登录-->
+							<div class="login-form-panel" id="login_scan_panel">
+								<div class="box-qrcode">
+									<div id="qrcode_show" style="height:255px;">
+									</div>
+								</div>
+								<div class="qrcode-text">
+									打开
+									<span class="bold">
+										微信"扫一扫"
+									</span>
+									扫描二维码
+								</div>
+							</div>
+						</div>
+					</div>`;
+			var loginForm = $(loginFormHtmlStr);
 			loginForm.appendTo($(renderObj));
 
 			// 绑定UI Tab事件

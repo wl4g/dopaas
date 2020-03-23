@@ -577,18 +577,19 @@
 						if(!settings.account.onBeforeSubmit(principal, credentials, verifiedToken)){
 							return;
 						}
-	
+
 						// 锁定登录按钮
 						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
 						// 创建登录请求参数
 						var loginParam = new Map();
 						loginParam.set("{principalKey}", principal);
+						//loginParam.set("{principalKey}", Common.Util.Codec.toHex(principal));
 						loginParam.set("{credentialKey}", credentials);
 						loginParam.set("{clientSecretKey}", runtime.clientSecret.publicKeyHex);
 						loginParam.set("{clientRefKey}", clientRef());
 						loginParam.set("{verifiedTokenKey}", verifiedToken);
 						loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
-						// 设备指纹UMID(必须)
+						// 设备指纹信息(必须)
 						loginParam.set("umid", fpObject.umid);
 						// 设备指纹附加参数(必须)
 						loginParam.set("userAgent", fpObject.components.get("userAgent"));
