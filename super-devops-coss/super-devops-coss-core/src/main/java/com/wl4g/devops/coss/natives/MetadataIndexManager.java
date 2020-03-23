@@ -15,7 +15,7 @@ import java.nio.charset.Charset;
  */
 public class MetadataIndexManager {
 
-    public static final String indexFileName = "/.index.json";
+    public static final String indexFileName = "/.bucket.metadata";
     private static final String charset = "UTF-8";
 
     public void create(String bucketPath){
