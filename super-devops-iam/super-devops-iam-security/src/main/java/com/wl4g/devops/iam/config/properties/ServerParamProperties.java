@@ -249,6 +249,15 @@ public class ServerParamProperties extends ParamProperties {
 		//
 
 		/**
+		 * UMID signature string. </br>
+		 * 
+		 * <pre>
+		 * e.g.umid = d9ead4a278c79794654202fc91da4231
+		 * </pre>
+		 */
+		final public static String KEY_UMID = "umid";
+
+		/**
 		 * Native userAgent string. </br>
 		 * 
 		 * <pre>

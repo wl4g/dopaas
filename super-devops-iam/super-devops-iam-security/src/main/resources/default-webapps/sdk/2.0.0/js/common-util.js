@@ -560,31 +560,38 @@
        			throw Error("Callback is required");
        		}
 
-       		if(Common.Constants.UmidObject){
-       		 	if ((new Date().getTime()-Common.Constants.UmidObject.time) > 5000) {
-	       			Common.Constants.UmidObject = null;
+       		if(Common.Constants._fingerprintObject){
+       		 	if ((new Date().getTime()-Common.Constants._fingerprintObject.time) > 5000) {
+	       			Common.Constants._fingerprintObject = null;
        		 	} else {
-       		 		_callback(Common.Constants.UmidObject.value);
+       		 		_callback(Common.Constants._fingerprintObject.components);
        		 		return;
        		 	}
        		}
 
-       		// Gets fingerprint.
-       		if(!Common.Constants.UmidObject) {
-	       		$.getScript("js/fingerprint2-v2.1.0.js", function(){
-	       			setTimeout(function() {
-						Fingerprint2.get({
-						    excludes: _excludes
-						}, function(components){ 
-						    console.debug("Gets umid components: "+ JSON.stringify(components));
-						    var values = components.map(function (component) { return component.value });
-						    var umid = Fingerprint2.x64hash128(values.join(''), 31);
-						   	Common.Constants.UmidObject = { value: umid, time: new Date().getTime() };
-						    console.debug("Gets umid is: " + umid);
-						    _callback(umid);
-						});
-					}, 500);
-				});
+       		// Gets last fingerprint.
+       		if(!Common.Constants._fingerprintObject) {
+       			setTimeout(function() {
+					Fingerprint2.get({
+					    excludes: _excludes
+					}, function(components){ 
+					    console.debug("Gets components: "+ JSON.stringify(components));
+					    var values = components.map(function (component) { return component.value });
+					    var umid = Fingerprint2.x64hash128(values.join(''), 31);
+					   	Common.Constants._fingerprintObject = { 
+					   		umid: umid,
+					   		time: new Date().getTime(),
+					   		components: (function(){
+						   		var componentsMap = new Map();
+								for(var index in components){
+								    componentsMap.set(components[index].key+"", components[index].value);
+								}
+								return componentsMap;
+					   		})()
+					   	};
+					    _callback(Common.Constants._fingerprintObject);
+					});
+				}, 500);
 			}
 
        	}
