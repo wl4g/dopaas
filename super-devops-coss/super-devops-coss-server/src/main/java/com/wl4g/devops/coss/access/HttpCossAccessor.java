@@ -37,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.*;
 
 import static com.wl4g.devops.coss.natives.MetadataIndexManager.indexFileName;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
@@ -200,7 +201,7 @@ public class HttpCossAccessor extends BaseController {
 	@RequestMapping("getCossProviders")
 	public RespBase<Object> getCossProvider() {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(CossProvider.values());
+		resp.setData(getCossProviderWithEnable());
 		return resp;
 	}
 
@@ -219,6 +220,22 @@ public class HttpCossAccessor extends BaseController {
 	 */
 	private CossEndpoint getCossEndpoint(GenericCossParameter param) {
 		return endpointAdapter.forOperator(param.getCossProvider());
+	}
+
+	private List<Map<String,Object>> getCossProviderWithEnable(){
+		List<Map<String,Object>> list = new ArrayList<>();
+		Set<CossProvider> runningKinds = endpointAdapter.getRunningKinds();
+		for(CossProvider cossProvider : CossProvider.values()){
+			Map<String, Object> map = new HashMap<>();
+			map.put("name",cossProvider);
+			if(runningKinds.contains(cossProvider)){
+				map.put("enable", true);
+			}else{
+				map.put("enable", false);
+			}
+			list.add(map);
+		}
+		return list;
 	}
 
 }
