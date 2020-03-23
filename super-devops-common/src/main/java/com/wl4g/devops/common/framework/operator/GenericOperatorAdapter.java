@@ -154,6 +154,15 @@ public abstract class GenericOperatorAdapter<K extends Enum<?>, O extends Operat
 	}
 
 	/**
+	 * Gets the currently running operator kind.
+	 * 
+	 * @return
+	 */
+	public Set<K> getRunningKinds() {
+		return operatorAliasRegistry.keySet();
+	}
+
+	/**
 	 * Ensure operator.
 	 * 
 	 * @param operator
