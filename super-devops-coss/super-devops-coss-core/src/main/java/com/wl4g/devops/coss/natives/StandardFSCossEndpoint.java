@@ -167,25 +167,37 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 
 	@Override
 	public ObjectListing<ObjectSummary> listObjects(String bucketName, String prefix) {
+
+		// e.g abc/def/hh
+		int i = prefix.lastIndexOf("/");
+		String subPath = prefix.substring(0,i+1);// e.g abc/def/
+		String search = prefix.substring(i+1,prefix.length());// e.g hh
+
 		ObjectListing<ObjectSummary> objectListing = new ObjectListing<>();
-		File bucketPath = new File(config.getEndpointRootDir(), bucketName);
-		if (!bucketPath.exists() || !bucketPath.isDirectory()) {
+		File path = new File(config.getEndpointRootDir()+File.separator+ bucketName+File.separator+subPath);
+
+		if (!path.exists()) {
 			return objectListing;
 		}
 		objectListing.setBucketName(bucketName);
 		objectListing.setPrefix(prefix);
 
 		List<ObjectSummary> objectSummaries = asList(
-				bucketPath.listFiles(f -> !f.getName().startsWith(".") && f.getName().startsWith(prefix))).stream().map(f -> {
+				path.listFiles(f -> !f.getName().startsWith(".") && f.getName().startsWith(search))).stream().map(f -> {
 					try {
 						ObjectSummary objectSummary = new ObjectSummary();
 						objectSummary.setBucketName(bucketName);
-						objectSummary.setKey(f.getName());
+						if(f.isDirectory()){
+							objectSummary.setKey(f.getName()+File.separator);
+						}else{
+							objectSummary.setKey(f.getName());
+							objectSummary.setSize(Files.size(f.toPath()));
+						}
 						objectSummary.setMtime(f.lastModified());
 						objectSummary.setStorageType(kind().getValue());
 						String owner = Files.getOwner(f.toPath()).getName();
 						objectSummary.setOwner(new Owner(owner, owner));
-						objectSummary.setSize(Files.size(f.toPath()));
+
 						return objectSummary;
 					} catch (Exception e) {
 						log.warn(format("Couldn't gets file attributes of '%s'", f), e);
@@ -214,9 +226,9 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 			e.printStackTrace();
 		}
 		//TODO objectMetadata.set........
-		objectMetadata.setPath(new ObjectKey(""));
+		objectMetadata.setPath(new ObjectKey(objectPath.getAbsolutePath()));
 		objectValue.setMetadata(objectMetadata);
-		return null;
+		return objectValue;
 	}
 
 	@Override
