@@ -60,7 +60,6 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 import com.wl4g.devops.tool.common.log.SmartLogger;
-import com.wl4g.devops.tool.common.web.CookieUtils;
 
 /**
  * Abstract custom IAM session management
@@ -377,7 +376,8 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		if (isSaveCookie || !isJSONResp(toHttp(request)) || isBrowser(toHttp(request))) {
 			// Sets session cookie.
 			Cookie sid = new SimpleCookie(getSessionIdCookie());
-			sid.setValue(valueOf(sessionId)+"; SameSite=None; Secure=false");
+			// sid.setValue(valueOf(sessionId)+"; SameSite=None; Secure=false");
+			sid.setValue(valueOf(sessionId));
 			sid.saveTo(toHttp(request), toHttp(response));
 			log.trace("Set session ID cookie for session with id {}", sessionId);
 		} else {

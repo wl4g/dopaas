@@ -164,6 +164,9 @@
 				var str = decodeURI(decode);
 				return str;
 			},
+			toHex: function(str) {
+				return Common.Util.Codec.base64ToHex(Common.Util.Codec.encodeBase64(str));
+			},
 			// Base64 and Hex functions.
             hexToBase64: function(str) {
             	var tableStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -564,7 +567,7 @@
        		 	if ((new Date().getTime()-Common.Constants._fingerprintObject.time) > 5000) {
 	       			Common.Constants._fingerprintObject = null;
        		 	} else {
-       		 		_callback(Common.Constants._fingerprintObject.components);
+       		 		_callback(Common.Constants._fingerprintObject);
        		 		return;
        		 	}
        		}
@@ -577,7 +580,7 @@
 					}, function(components){ 
 					    console.debug("Gets components: "+ JSON.stringify(components));
 					    var values = components.map(function (component) { return component.value });
-					    var umid = Fingerprint2.x64hash128(values.join(''), 31);
+					    var umid = Fingerprint2.x64hash128(values.join(''), Math.sqrt(31));
 					   	Common.Constants._fingerprintObject = { 
 					   		umid: umid,
 					   		time: new Date().getTime(),
