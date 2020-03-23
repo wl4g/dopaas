@@ -104,16 +104,17 @@ public abstract class EmbeddedWebAppController extends BaseController {
 		// Get buffer cache
 		byte[] buf = bufferCache.get(filepath);
 		if (isNull(buf)) {
-			InputStream in = getResourceAsStream(filepath);
-			if (nonNull(in)) {
-				log.debug("Request access file: {}", filepath);
-				buf = ByteStreams.toByteArray(in);
-				if (!isJVMDebugging) { // Debug mode is enabled
-					bufferCache.put(filepath, buf);
+			try (InputStream in = getResourceAsStream(filepath);) {
+				if (nonNull(in)) {
+					log.debug("Request access file: {}", filepath);
+					buf = ByteStreams.toByteArray(in);
+					if (!isJVMDebugging) { // Debug mode is enabled
+						bufferCache.put(filepath, buf);
+					}
+				} else { // Not found
+					write(response, NOT_FOUND.value(), TEXT_HTML_VALUE, "Not Found".getBytes(UTF_8));
+					return;
 				}
-			} else { // Not found
-				write(response, NOT_FOUND.value(), TEXT_HTML_VALUE, "Not Found".getBytes(UTF_8));
-				return;
 			}
 		}
 		response.setDateHeader("Expires", currentTimeMillis() + 600_000);
