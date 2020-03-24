@@ -14,7 +14,10 @@
 		IAM.Modules.use("IamUI", function(uiModule){
 			console.log("******* IAM JSSDK loaded completed! *******");
 			$(function(){
-				var iamServerUri = "http://localhost:14040/iam-server"; // e.g. http://localhost:14040/iam-server/
+				// e.g. http://127.0.0.1:14040/iam-server/
+				// e.g. http://localhost:14040/iam-server/
+				// e.g. http://iam.wl4g.debug/iam-server
+				var iamServerUri = "http://localhost:14040/iam-server/";
 				uiModule.initUI(document.getElementById("content-right"), iamServerUri);
 			});
 		});

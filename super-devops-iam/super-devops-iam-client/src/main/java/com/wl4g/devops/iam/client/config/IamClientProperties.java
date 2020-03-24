@@ -174,7 +174,7 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 		if (isBlank(getServiceName())) {
 			setServiceName(environment.getProperty("spring.application.name"));
 		}
-		// Login URI.
+		// Login page URI.
 		if (isBlank(getLoginUri())) {
 			setLoginUri(correctAuthenticaitorURI(getServerUri()));
 		}
