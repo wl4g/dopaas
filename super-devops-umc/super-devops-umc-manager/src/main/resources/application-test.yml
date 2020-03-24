@@ -13,17 +13,13 @@
 spring:
   web:
     cors:
-      enabled: true # Defualt: true
       rules:
-      - path: /**
-        allowCredentials: true
-        allowsOrigins:
-           - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
-           - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
-           - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
-           - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
-        allowsHeaders: '*'
-        allowsMethods: GET,POST
+        /**:
+          allowsOrigins:
+            - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
+            - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
+            - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
+            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
   cloud:
     devops:
       iam:

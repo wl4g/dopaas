@@ -25,7 +25,7 @@ spring:
             /public/**: anon # Public rule release
       support:
         cli:
-          enabled: true
+          enable: true
         notification:
           mail:
             enable: true # Default[false]

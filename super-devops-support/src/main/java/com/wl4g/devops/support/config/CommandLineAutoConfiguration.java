@@ -32,7 +32,7 @@ import com.wl4g.devops.support.cli.repository.ProcessRepository;
  * @since
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.cloud.devops.support.cli.enabled", matchIfMissing = false)
+@ConditionalOnProperty(name = "spring.cloud.devops.support.cli.enable", matchIfMissing = false)
 public class CommandLineAutoConfiguration {
 
 	@Bean
