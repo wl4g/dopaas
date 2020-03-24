@@ -16,6 +16,10 @@
 package com.wl4g.devops.iam.authc;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 
@@ -37,6 +41,15 @@ public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuth
 	 */
 	final private String clientSecret;
 
+	/**
+	 * Client user other attributes properties. (e.g.
+	 * _csrf_token=xxx&lang=zh_CN&umid=xxx&ua=xxx)
+	 * 
+	 * @see {@link com.wl4g.devops.iam.config.properties.ServerParamProperties#getRequiredRiskControlParams()}
+	 * @see {@link com.wl4g.devops.iam.config.properties.ServerParamProperties#getOptionalRiskControlParams()}
+	 */
+	private Map<String, String> userProperties = new HashMap<>();
+
 	public ClientSecretIamAuthenticationToken(final String clientSecret) {
 		this(clientSecret, null);
 	}
@@ -54,6 +67,17 @@ public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuth
 
 	public String getClientSecret() {
 		return clientSecret;
+	}
+
+	public Map<String, String> getUserProperties() {
+		return userProperties;
+	}
+
+	public ClientSecretIamAuthenticationToken setUserProperties(Map<String, String> userAttributes) {
+		if (!isEmpty(userAttributes)) {
+			this.userProperties.putAll(userAttributes);
+		}
+		return this;
 	}
 
 }

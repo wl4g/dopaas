@@ -259,7 +259,7 @@ public class RespBase<D> implements Serializable {
 			 * ###[Note(scene): This logic is to solve the data analysis of, for
 			 * example:{@link org.springframework.web.client.RestTemplate}.response]
 			 */
-			if (data instanceof Map) { // e.g.LinkedHashMap
+			if (data instanceof Map) { // e.g:LinkedHashMap
 				if (data instanceof DataMap) {
 					this.data = (D) data;
 				} else {

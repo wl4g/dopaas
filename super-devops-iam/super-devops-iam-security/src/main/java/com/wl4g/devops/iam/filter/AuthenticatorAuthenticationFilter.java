@@ -20,6 +20,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
@@ -78,6 +79,18 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	protected IamAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		return new AuthenticatorAuthenticationToken(remoteHost, redirectInfo);
+	}
+
+	@Override
+	protected RedirectInfo determineFailureRedirect(RedirectInfo redirect, IamAuthenticationToken token,
+			AuthenticationException ae, ServletRequest request, ServletResponse response) {
+		/**
+		 * Fix Infinite redirection, {@link AuthenticatorAuthenticationFilter}
+		 * may redirect to loginUrl, if failRedirectUrl equals getLoginUrl, it
+		 * will happen infinite redirection.
+		 **/
+		redirect.setRedirectUrl(getLoginUrl());
+		return super.determineFailureRedirect(redirect, token, ae, request, response);
 	}
 
 	@Override

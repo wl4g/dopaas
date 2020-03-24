@@ -41,7 +41,6 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.startsWith;
-import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
@@ -206,8 +205,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			 */
 			// bind(KEY_AUTHC_TOKEN, tk);
 
-			// Determine redirectUrl(authenticator URL).
-			RedirectInfo redirect = determineSuccessRedirect(tk, subject, request, response);
+			// Determine(decorate) redirectUrl(authenticator URL).
+			RedirectInfo redirect = determineSuccessRedirect(getRedirectInfo(request), tk, subject, request, response);
 
 			// Granting ticket.
 			String grantTicket = authHandler.loggedin(redirect.getFromAppName(), subject).getGrantTicket();
@@ -282,7 +281,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			bind(KEY_ERR_SESSION_SAVED, errmsg);
 		}
 		// Failure redirect
-		RedirectInfo redirect = determineFailureRedirect(tk, ae, request, response);
+		RedirectInfo redirect = determineFailureRedirect(getRedirectInfo(request), tk, ae, request, response);
 
 		// Post handling of authentication failure.
 		coprocessor.postAuthenticatingFailure(tk, ae, request, response);
@@ -550,17 +549,17 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * Determine the URL of the login success redirection, default: successURL,
 	 * can support customization.
 	 *
+	 * @param redirect
+	 *            First get from the binding {@link RedirectInfo}
 	 * @param token
 	 * @param subject
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	private RedirectInfo determineSuccessRedirect(IamAuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response) {
+	protected RedirectInfo determineSuccessRedirect(RedirectInfo redirect, IamAuthenticationToken token, Subject subject,
+			ServletRequest request, ServletResponse response) {
 
-		// before get bind redirect.
-		RedirectInfo redirect = getRedirectInfo(request);
 		// Unvalidity using to default
 		if (isBlank(redirect.getFromAppName())) {
 			redirect.setFromAppName(config.getSuccessService());
@@ -580,22 +579,17 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * Determine the URL of the login failure redirection, default: loginURL,
 	 * can support customization.
 	 *
+	 * @param redirect
+	 *            First get from the binding {@link RedirectInfo}
 	 * @param token
 	 * @param ae
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	private RedirectInfo determineFailureRedirect(IamAuthenticationToken token, AuthenticationException ae,
-			ServletRequest request, ServletResponse response) {
-
-		// before get bind redirect.
-		RedirectInfo redirect = getRedirectInfo(request);
-
-		// Fix Infinite redirection,AuthenticatorAuthenticationFilter may
-		// redirect to loginUrl,if failRedirectUrl==getLoginUrl,it will happen
-		// infinite redirection.
-		if (this instanceof AuthenticatorAuthenticationFilter || isBlank(redirect.getRedirectUrl())) {
+	protected RedirectInfo determineFailureRedirect(RedirectInfo redirect, IamAuthenticationToken token,
+			AuthenticationException ae, ServletRequest request, ServletResponse response) {
+		if (isBlank(redirect.getRedirectUrl())) {
 			redirect.setRedirectUrl(getLoginUrl());
 		}
 

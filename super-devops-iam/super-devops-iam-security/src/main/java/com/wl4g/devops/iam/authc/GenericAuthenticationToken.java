@@ -16,10 +16,6 @@
 package com.wl4g.devops.iam.authc;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static org.springframework.util.CollectionUtils.isEmpty;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
@@ -69,18 +65,10 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 	 */
 	final private VerifyKind verifyType;
 
-	/**
-	 * Client user other attributes properties. (e.g.
-	 * _csrf_token=xxx&lang=zh_CN&umid=xxx&ua=xxx)
-	 * 
-	 * @see {@link com.wl4g.devops.iam.config.properties.ServerParamProperties#riskControlParam}
-	 */
-	private Map<String, String> userProperties = new HashMap<>();
-
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, final String signature, final String clientRef, final String verifiedToken,
+			final String credentials, final String clientSecret, final String clientRef, final String verifiedToken,
 			final VerifyKind verifyType) {
-		this(remoteHost, redirectInfo, principal, credentials, signature, clientRef, verifiedToken, verifyType, false);
+		this(remoteHost, redirectInfo, principal, credentials, clientSecret, clientRef, verifiedToken, verifyType, false);
 	}
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
@@ -129,22 +117,11 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 		return verifyType;
 	}
 
-	public Map<String, String> getUserProperties() {
-		return userProperties;
-	}
-
-	public GenericAuthenticationToken setUserProperties(Map<String, String> userAttributes) {
-		if (!isEmpty(userAttributes)) {
-			this.userProperties.putAll(userAttributes);
-		}
-		return this;
-	}
-
 	@Override
 	public String toString() {
 		return "GenericAuthenticationToken [principal=" + principal + ", credentials=" + credentials + ", rememberMe="
 				+ rememberMe + ", clientRef=" + clientRef + ", verifiedToken=" + verifiedToken + ", verifyType=" + verifyType
-				+ ", userAttributes=" + userProperties + "]";
+				+ ", userProperties=" + getUserProperties() + "]";
 	}
 
 }

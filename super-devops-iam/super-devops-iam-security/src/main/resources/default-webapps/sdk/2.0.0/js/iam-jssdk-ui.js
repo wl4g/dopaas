@@ -211,7 +211,7 @@ function initUISDK(iamServerBaseUri) {
 					}
 				});
  			},
- 			onError: function(req, status, errmsg){
+ 			onError: function(errmsg){
 				console.error("初始化失败... "+ errmsg);
 			}
  		},

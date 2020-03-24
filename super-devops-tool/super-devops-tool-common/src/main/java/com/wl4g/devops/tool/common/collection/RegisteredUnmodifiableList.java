@@ -30,6 +30,10 @@ import com.wl4g.devops.tool.common.lang.Assert2;
  * Its feature is that after the registration is successful, it cannot be
  * modified.
  * 
+ * Note: it uses synchronous lock to control thread safety. It is not applicable
+ * to high concurrency scenarios, but more applicable to registration
+ * configuration when starting server.
+ * 
  * @author Wangl.sir
  * @version v1.0 2019年8月1日
  * @since

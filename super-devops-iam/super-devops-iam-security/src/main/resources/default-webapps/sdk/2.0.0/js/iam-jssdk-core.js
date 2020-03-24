@@ -143,7 +143,7 @@
  			onPostCheck: function(res){
  				console.debug("onPostCheck... " + res);
  			},
- 			onError: function(req, status, errmsg){
+ 			onError: function(errmsg){
  				console.error("Failed to initialize... "+ errmsg);
  			}
  		},
@@ -467,7 +467,7 @@
 				}
 			}, function(errmsg){
 				console.log("Failed to safe check, " + errmsg);
-				Common.Util.checkEmpty("init.onError", settings.init.onError)(req, status, errmsg); // 登录异常回调
+				Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 登录异常回调
 			});
 		});
 	};
