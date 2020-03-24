@@ -18,7 +18,8 @@ package com.wl4g.devops.iam.config.properties;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wl4g.devops.iam.config.properties.ServerParamProperties.DefaultRiskControlKey.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 
 /**
@@ -108,15 +109,11 @@ public class ServerParamProperties extends ParamProperties {
 	private List<String> requiredRiskControlParams = new ArrayList<String>() {
 		private static final long serialVersionUID = -8690288151434386891L;
 		{
-			add(KEY_USERAGENT);
-			add(KEY_PLATFORM);
-			add(KEY_PIXEL_RATIO);
-			add(KEY_TIMEZONE);
-			add(KEY_LANGUAGE);
-			add(KEY_DEVICE_MEMORY);
-			add(KEY_CPU_CLASS);
-			add(KEY_TOUCHSUPPORT);
-			add(KEY_AVAILABLE_SCREEN_RESOLUTION);
+			for (DefaultRiskControlKey key : DefaultRiskControlKey.values()) {
+				if (key.isRequired()) {
+					add(key.getParamName());
+				}
+			}
 		}
 	};
 
@@ -130,12 +127,11 @@ public class ServerParamProperties extends ParamProperties {
 	private List<String> optionalRiskControlParams = new ArrayList<String>() {
 		private static final long serialVersionUID = -8690288151434386891L;
 		{
-			add(KEY_WEB_CANVAS);
-			add(KEY_WEB_WEBGL);
-			add(KEY_WEB_INDEXEDDB);
-			add(KEY_WEB_SESSIONSTORAGE);
-			add(KEY_WEB_LOCALSTORAGE);
-			add(KEY_COLOR_DEPTH);
+			for (DefaultRiskControlKey key : DefaultRiskControlKey.values()) {
+				if (!key.isRequired()) {
+					add(key.getParamName());
+				}
+			}
 		}
 	};
 
@@ -242,7 +238,7 @@ public class ServerParamProperties extends ParamProperties {
 	 * @see <a href=
 	 *      "https://github.com/Valve/fingerprintjs2/wiki/Stable-components">Fingerprintjs2-Stable-components</a>
 	 */
-	public static interface DefaultRiskControlKey {
+	public static enum DefaultRiskControlKey {
 
 		//
 		// --- REQUIRED risk identification control parameters deinition. ---
@@ -255,7 +251,7 @@ public class ServerParamProperties extends ParamProperties {
 		 * e.g.umid = d9ead4a278c79794654202fc91da4231
 		 * </pre>
 		 */
-		final public static String KEY_UMID = "umid";
+		KEY_UMID("umid", true),
 
 		/**
 		 * Native userAgent string. </br>
@@ -265,81 +261,110 @@ public class ServerParamProperties extends ParamProperties {
 		 * userAgent=Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36)
 		 * </pre>
 		 */
-		final public static String KEY_USERAGENT = "userAgent";
+		KEY_USERAGENT("userAgent", true),
 
 		/**
 		 * Native OS platform string. (e.g. platform=win32)
 		 */
-		final public static String KEY_PLATFORM = "platform";
+		KEY_PLATFORM("platform", true),
 
 		/**
 		 * Client screen pixel. (e.g. pixelRatio=1366x768)
 		 */
-		final public static String KEY_PIXEL_RATIO = "pixelRatio";
+		KEY_PIXEL_RATIO("pixelRatio", true),
 
 		/**
 		 * Web browser client e.g: fingerprint2.timezone.
 		 */
-		final public static String KEY_TIMEZONE = "timezone";
+		KEY_TIMEZONE("timezone", true),
 
 		/**
 		 * Web browser client e.g: fingerprint2.language.
 		 */
-		final public static String KEY_LANGUAGE = "language";
+		KEY_LANGUAGE("language", true),
 
 		/**
 		 * Web browser client e.g: fingerprint2.deviceMemory.
 		 */
-		final public static String KEY_DEVICE_MEMORY = "deviceMemory";
+		KEY_DEVICE_MEMORY("deviceMemory", true),
 
 		/**
 		 * Web browser client e.g: fingerprint2.cpuClass.
 		 */
-		final public static String KEY_CPU_CLASS = "cpuClass";
+		KEY_CPU_CLASS("cpuClass", true),
 
 		/**
 		 * Web browser client e.g: fingerprint2.touchSupport.
 		 */
-		final public static String KEY_TOUCHSUPPORT = "touchSupport";
+		KEY_TOUCHSUPPORT("touchSupport", true),
 
 		/**
 		 * Web browser client e.g: fingerprint2.availableScreenResolution.
 		 */
-		final public static String KEY_AVAILABLE_SCREEN_RESOLUTION = "availableScreenResolution";
+		KEY_AVAILABLE_SCREEN_RESOLUTION("availableScreenResolution", true),
 
 		//
 		// --- OPTIONAL risk identification control parameters deinition. ---
 		//
 
 		/**
+		 * Web browser headers.referer
+		 */
+		KEY_WEB_REFERER("referer", false),
+
+		/**
 		 * Web browser client e.g: fingerprint2.canvas.
 		 */
-		final public static String KEY_WEB_CANVAS = "canvas";
+		KEY_WEB_CANVAS("canvas", false),
 
 		/**
 		 * Web browser client e.g: fingerprint2.webgl.
 		 */
-		final public static String KEY_WEB_WEBGL = "webgl";
+		KEY_WEB_WEBGL("webgl", false),
 
 		/**
 		 * Web browser client e.g: fingerprint2.indexedDb.
 		 */
-		final public static String KEY_WEB_INDEXEDDB = "indexedDb";
+		KEY_WEB_INDEXEDDB("indexedDb", false),
 
 		/**
 		 * Web browser client e.g: fingerprint2.sessionStorage.
 		 */
-		final public static String KEY_WEB_SESSIONSTORAGE = "sessionStorage";
+		KEY_WEB_SESSIONSTORAGE("sessionStorage", false),
 
 		/**
 		 * Web browser client e.g: fingerprint2.localStorage.
 		 */
-		final public static String KEY_WEB_LOCALSTORAGE = "localStorage";
+		KEY_WEB_LOCALSTORAGE("localStorage", false),
 
 		/**
 		 * Web browser client e.g: fingerprint2.colorDepth.
 		 */
-		final public static String KEY_COLOR_DEPTH = "colorDepth";
+		KEY_COLOR_DEPTH("colorDepth", false);
+
+		/**
+		 * User custom properties parameters name.
+		 */
+		final private String paramName;
+
+		/**
+		 * Is required parameter?
+		 */
+		final private boolean required;
+
+		private DefaultRiskControlKey(String paramName, boolean required) {
+			notNullOf(paramName, "paramName");
+			this.paramName = paramName;
+			this.required = required;
+		}
+
+		public String getParamName() {
+			return paramName;
+		}
+
+		public boolean isRequired() {
+			return required;
+		}
 
 	}
 

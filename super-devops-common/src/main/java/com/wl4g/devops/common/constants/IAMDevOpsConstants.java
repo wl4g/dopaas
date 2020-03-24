@@ -117,13 +117,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/** Based URI with login authenticator controller. */
 	final public static String URI_S_LOGIN_BASE = "/login";
 	/**
-	 * Apply sessionID, For example for mobile use.
+	 * Initiate handshake to establish connection, such as client submits UA and
+	 * device fingerprint information, and server returns session ID.
 	 */
-	final public static String URI_S_LOGIN_APPLY_SESSION = "connect";
-	/**
-	 * Apply authentication code, For example for mobile use.
-	 */
-	final public static String URI_S_LOGIN_APPLY_AUTHCODE = "authenticationcode";
+	final public static String URI_S_LOGIN_CONNECT_HANDHAKE = "handhake";
 	/**
 	 * Initialization before login checks whether authentication code is
 	 * enabled, etc.
