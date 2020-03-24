@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.common.config;
 
-import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -106,10 +105,9 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public EnhancedModularRealmAuthorizer enhancedModularRealmAuthorizer() {
+	public EnhancedModularRealmAuthorizer enhancedModularRealmAuthorizer(List<AbstractPermittingAuthorizingRealm> realms) {
 		// Register define realm.
-		List<Realm> realms = actx.getBeansOfType(AbstractPermittingAuthorizingRealm.class).values().stream().collect(toList());
-		return new EnhancedModularRealmAuthorizer(realms);
+		return new EnhancedModularRealmAuthorizer(realms.stream().collect(toList()));
 	}
 
 	@Bean

@@ -318,6 +318,8 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			return config.getUnauthorizedUri();
 		} else { // Unauthenticated or other error.
 			/**
+			 * Check to block multiple invalid redirects.
+			 * 
 			 * @see {@link com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm#doAuthenticationInfo(AuthenticationToken)#MARK1}
 			 */
 			if (nonNull(token.getPrincipal())) {
@@ -326,7 +328,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				// grantTicket validate failed, infinite redirect needs to
 				// be prevented.
 				if ((cause instanceof InvalidGrantTicketException) && failedCumulator.accumulate(factors, 1) > 5) {
-					throw new TooManyRequestAuthentcationException(String.format("Too many redirect request authenticating"));
+					throw new TooManyRequestAuthentcationException(format("Too many redirect request authenticating"));
 				}
 			}
 
