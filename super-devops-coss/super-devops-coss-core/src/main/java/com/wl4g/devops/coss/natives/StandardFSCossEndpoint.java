@@ -81,7 +81,7 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		isTrue(!bucketPath.exists(), ServerCossException.class, "Duplicate creation directory '%s'", bucketPath);
 		bucketPath.mkdirs();
 		isTrue(bucketPath.exists(), ServerCossException.class, "Couldn't mkdirs bucket directory to '%s'", bucketPath);
-		metadataManager.create(bucketPath.getAbsolutePath());
+		metadataManager.createBucketMeta(bucketPath.getAbsolutePath());
 		setBucketAcl(bucketName,ACL.Default);
 		Bucket bucket = new Bucket(bucketName);
 		bucket.setCreationDate(new Date());
@@ -237,8 +237,8 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		try {
 			FileIOUtils.copyInputStreamToFile(input, objectPath);
 			setObjectAcl(bucketName, key, ACL.Default);
-			metadataManager.addFile(config.getEndpointRootDir() + File.separator + bucketName, 1,
-					Files.size(objectPath.toPath()));
+			metadataManager.modifyBucketMetaData(config.getEndpointRootDir() + File.separator + bucketName, 1,
+					Files.size(objectPath.toPath()),0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -277,7 +277,7 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		objectPath.renameTo(trash);
 		// objectPath.delete();
 		isTrue(!objectPath.exists(), ServerCossException.class, "Couldn't delete object to '%s'", objectPath);
-		metadataManager.addFile(config.getEndpointRootDir() + File.separator + bucketName, -1, -fileSize);
+		metadataManager.modifyBucketMetaData(config.getEndpointRootDir() + File.separator + bucketName, -1, -fileSize,0);
 	}
 
 	@Override
