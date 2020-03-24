@@ -26,8 +26,9 @@ import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.ObjectMetadata;
 import com.wl4g.devops.coss.model.PutObjectResult;
+import com.wl4g.devops.coss.model.metadata.BucketStatusMetaData;
 import com.wl4g.devops.coss.natives.MetadataIndexManager;
-import org.apache.commons.lang3.StringUtils;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import static com.wl4g.devops.coss.natives.MetadataIndexManager.indexFileName;
+import static com.wl4g.devops.coss.natives.MetadataIndexManager.BUCKET_METADATA;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 /**
@@ -120,8 +121,8 @@ public class HttpCossAccessor extends BaseController {
 	@RequestMapping("getBucketIndex")
 	public RespBase<Object> getBucketIndex(GenericCossParameter param, String bucketName) throws IOException {
 		RespBase<Object> resp = RespBase.create();
-		String indexPath = config.getEndpointRootDir() + File.separator + bucketName + indexFileName;
-		MetadataIndexManager.MetadataIndex metadataIndex = metadataIndexManager.read(new File(indexPath));
+		String indexPath = config.getEndpointRootDir() + File.separator + bucketName + BUCKET_METADATA;
+		BucketStatusMetaData metadataIndex = metadataIndexManager.readBucketMetaData(new File(indexPath));
 		resp.setData(metadataIndex);
 		return resp;
 	}
@@ -149,9 +150,7 @@ public class HttpCossAccessor extends BaseController {
 	public PutObjectResult putObject(GenericCossParameter param, String bucketName, String key,
 			@RequestParam(required = false) ObjectMetadata metadata, MultipartFile file) {
 		try {
-			if (StringUtils.isBlank(key)) {
-				key = file.getOriginalFilename();
-			}
+			key = key + file.getOriginalFilename();
 			return putObject(param, bucketName, key, file.getInputStream(), metadata);
 		} catch (IOException e) {
 			throw new CossException(e);
@@ -209,6 +208,15 @@ public class HttpCossAccessor extends BaseController {
 	public RespBase<Object> getACLs() {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(ACL.cannedAclStrings());
+		return resp;
+	}
+
+	@RequestMapping("createDir")
+	public RespBase<Object> createDir(String bucketName,String currentPath,String dirName) {
+		RespBase<Object> resp = RespBase.create();
+		File path = new File(config.getEndpointRootDir()+File.separator+ bucketName+currentPath+dirName);
+		path.mkdirs();
+		Assert2.isTrue(path.exists(),"createBucketMeta dir fail");
 		return resp;
 	}
 
