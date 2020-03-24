@@ -78,9 +78,9 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 	private Map<String, String> userProperties = new HashMap<>();
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, final String signature, final String clientRef, final String verifiedToken,
+			final String credentials, final String clientSecret, final String clientRef, final String verifiedToken,
 			final VerifyKind verifyType) {
-		this(remoteHost, redirectInfo, principal, credentials, signature, clientRef, verifiedToken, verifyType, false);
+		this(remoteHost, redirectInfo, principal, credentials, clientSecret, clientRef, verifiedToken, verifyType, false);
 	}
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,

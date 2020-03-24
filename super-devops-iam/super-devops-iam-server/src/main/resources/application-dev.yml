@@ -11,15 +11,20 @@
 # #### Environment(Test) configuration. ####
 #
 spring:
-  web.cors:
-    enabled: true # Defualt: true
-    rules:
-      - path: /**
-        allowCredentials: true
-        allowsOrigins:
-          - '*'
-        allowsHeaders: '*'
-        allowsMethods: GET,POST
+  web:
+    cors:
+      rules:
+        /**:
+          allowsOrigins:
+            - https://${DEVOPS_DOMAIN_TOP:wl4g.debug}
+            - http://${DEVOPS_DOMAIN_TOP:wl4g.debug}
+            - https://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
+            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
+            - http://localhost:8080
+            - http://localhost:14040
+            - http://127.0.0.1:8080
+            - http://127.0.0.1:14040
+            #- '*'
   cloud:
     devops:
       iam: # IAM configuration.

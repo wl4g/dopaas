@@ -324,7 +324,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	public OncePerCorsSecurityFilter oncePerCorsSecurityFilter(CorsProperties config, AdvancedCorsProcessor corsProcessor) {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		// Merger transformation configuration
-		config.getRules().forEach(rule -> source.registerCorsConfiguration(rule.getPath(), rule.toSpringCorsConfiguration()));
+		config.getRules().forEach((key, rule) -> source.registerCorsConfiguration(key, rule.toSpringCorsConfiguration()));
 		OncePerCorsSecurityFilter filter = new OncePerCorsSecurityFilter(source);
 		filter.setCorsProcessor(corsProcessor);
 		return filter;

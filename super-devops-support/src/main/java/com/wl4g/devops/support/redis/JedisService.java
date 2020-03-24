@@ -20,10 +20,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 import com.wl4g.devops.tool.common.serialize.SerializeUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.ScanParams;
@@ -34,6 +33,7 @@ import java.util.Set;
 
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.stream.Collectors.toList;
@@ -49,9 +49,12 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @since
  */
 public class JedisService {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
-	private JedisCluster jedisCluster;
+	/**
+	 * {@link JedisCluster}
+	 */
+	final protected JedisCluster jedisCluster;
 
 	public JedisService(JedisCluster jedisCluster) {
 		Assert.isTrue(jedisCluster != null, "Redis cluster object creation failed.");
