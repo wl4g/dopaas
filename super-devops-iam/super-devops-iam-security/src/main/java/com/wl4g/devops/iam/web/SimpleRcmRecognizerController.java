@@ -17,23 +17,26 @@ package com.wl4g.devops.iam.web;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.sessionStatus;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static java.util.stream.Collectors.toMap;
+import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
+import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static com.wl4g.devops.iam.web.model.SimpleRcmTokenResult.*;
 
+import java.net.URLDecoder;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.handler.SimpleRcmRecognizerHandler;
 import com.wl4g.devops.iam.web.model.SimpleRcmTokenResult;
+import com.wl4g.devops.tool.common.codec.Base58;
+
+import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
 
 /**
  * Simple risk control controller.
@@ -53,32 +56,36 @@ public class SimpleRcmRecognizerController extends AbstractAuthenticatorControll
 	protected SimpleRcmRecognizerHandler handler;
 
 	/**
-	 * Initiate handshake to establish connection, such as client submits UA and
-	 * device fingerprint information, and server returns session ID.
+	 * Apply umidToken, such as client submits UA and device fingerprint
+	 * information, and server returns session ID.
 	 * 
 	 * @param request
 	 * @param response
 	 * @return
+	 * @throws Exception
 	 */
-	@RequestMapping(value = URI_S_RCM_UMIDTOKEN_APPLY, method = { POST })
+	@RequestMapping(value = URI_S_RCM_UMTOKEN_APPLY, method = { POST })
 	@ResponseBody
-	public RespBase<?> applyUmidToken(HttpServletRequest request, HttpServletResponse response) {
+	public RespBase<?> applyUmidToken(@RequestParam("umdata") String umdata, HttpServletRequest request) throws Exception {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 
-		// Gets required risk control parameters.
-		Map<String, String> requiredParams = config.getParam().getRequiredRiskControlParams().stream().map(name -> {
-			String value = request.getParameter(name);
-			hasText(value, "Parameter '%s' is required!", name);
-			return value;
-		}).collect(toMap(n -> n, v -> v));
+		// Decode umdata.
+		umdata = URLDecoder.decode(umdata, "UTF-8");
+		// Original algorithm: base58 Re-encoding the fingerprint set data after
+		// random iteration n%3+1 times
+		int n = parseIntOrDefault(umdata.substring(0, umdata.indexOf("!")));
+		String umItemData = umdata.substring(umdata.indexOf("!") + 1);
+		int iterations = n % 3 + 1;
+		for (int i = 0; i < iterations; i++) {
+			umItemData = new String(Base58.decode(umItemData));
+		}
 
-		// Gets optional risk control parameters.
-		Map<String, String> optionalParams = config.getParam().getOptionalRiskControlParams().stream()
-				.map(name -> request.getParameter(name)).collect(toMap(n -> n, v -> v));
+		// To risk control parameters.
+		Map<String, String> paramMap = safeMap(toQueryParams(umItemData));
 
 		// [Simple risk control processing]
-		String umidToken = handler.applyUmidToken(requiredParams, optionalParams);
-		resp.forMap().put(KEY_RCM_TOKEN_MODEL, new SimpleRcmTokenResult(umidToken));
+		String umidToken = handler.applyUmidToken(paramMap);
+		resp.setData(new SimpleRcmTokenResult(umidToken));
 		return resp;
 	}
 

@@ -153,7 +153,118 @@
 		isZhCN() {
 		    return Common.Util.language().indexOf('zh') >= 0;
 		},
+		// Convertion paramMap to formData url
+		toUrl: function(templateMap, paramMap) {
+			Common.Util.checkEmpty("templateMap", templateMap);
+			Common.Util.checkEmpty("paramMap", paramMap);
+			var formData = "";
+			paramMap.forEach((value, key) => {
+				var paramName = key;
+				// Check template placeholder key.
+				if(!Common.Util.isEmpty(key)) {
+					if(key.startsWith("{") && key.endsWith("}")) {
+						var realKey = key.substr(1, key.length - 2);
+						paramName = Common.Util.checkEmpty("templateMap." + realKey, templateMap[realKey]);
+					}
+				} else {
+					console.warn("Null param.key of parameters: "+ JSON.stringify(paramMap));
+				}
+				formData += (paramName + "=" + value + "&");
+			});
+			if(formData.endsWith("&")){
+				formData = formData.substr(0, formData.lastIndexOf('&'));
+			}
+			return formData;
+		},
 		Codec: {
+			encodeBase58: function(plaintext){ // 明文字符串base58编码
+				var ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+				var ALPHABET_MAP = {};
+				var BASE = 58;
+				for (var i = 0; i < ALPHABET.length; i++) {
+					ALPHABET_MAP[ALPHABET.charAt(i)] = i;
+				}
+				// 内部明文字符串转字节函数(toUTF8())
+				var plainBuffer = (function(str){
+				    var result = new Array();
+				    var k = 0;
+				    for (var i = 0; i < str.length; i++) {
+				        var j = encodeURI(str[i]);
+				        if (j.length==1) {
+				            // 未转换的字符
+				            result[k++] = j.charCodeAt(0);
+				        } else {
+				            // 转换成%XX形式的字符
+				            var bytes = j.split("%");
+				            for (var l = 1; l < bytes.length; l++) {
+				                result[k++] = parseInt("0x" + bytes[l]);
+				            }
+				        }
+				    }
+				    return result;
+				})(plaintext);
+				// 编码base58字符串
+				if (plainBuffer.length === 0) return '';
+				var i, j, digits = [0];
+				for (i = 0; i < plainBuffer.length; i++) {
+					for (j = 0; j < digits.length; j++){
+			            // 将数据转为二进制，再位运算右边添8个0，得到的数转二进制
+			            // 位运算-->相当于 digits[j].toString(2);parseInt(10011100000000,2)
+			            digits[j] <<= 8;
+			        }
+					digits[0] += plainBuffer[i];
+					var carry = 0;
+					for (j = 0; j < digits.length; ++j) {
+						digits[j] += carry;
+						carry = (digits[j] / BASE) | 0;
+						digits[j] %= BASE;
+					}
+					while (carry) {
+						digits.push(carry % BASE);
+						carry = (carry / BASE) | 0;
+					}
+				}
+				// Deal with leading zeros
+				for (i = 0; plainBuffer[i] === 0 && i < plainBuffer.length - 1; i++) digits.push(0);
+				return digits.reverse().map(function(digit) { return ALPHABET[digit]; }).join('');
+			},
+			decodeBase58: function(base58) { // base58字符串解码
+				var ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+				var ALPHABET_MAP = {};
+				var BASE = 58;
+				for (var i = 0; i < ALPHABET.length; i++) {
+					ALPHABET_MAP[ALPHABET.charAt(i)] = i;
+				}
+				if (base58.length === 0) return [];
+				var i, j, bytes = [0];
+				for (i = 0; i < base58.length; i++) {
+					var c = base58[i];
+			        // c是不是ALPHABET_MAP的key 
+					if (!(c in ALPHABET_MAP)) throw new Error('Non-base58 character');
+					for (j = 0; j < bytes.length; j++) bytes[j] *= BASE;
+					bytes[0] += ALPHABET_MAP[c];
+					var carry = 0;
+					for (j = 0; j < bytes.length; ++j) {
+						bytes[j] += carry;
+						carry = bytes[j] >> 8;
+			            // 0xff --> 11111111
+						bytes[j] &= 0xff;
+					}
+					while (carry) {
+						bytes.push(carry & 0xff);
+						carry >>= 8;
+					}
+				}
+				// Deal with leading zeros
+				for (i=0; base58[i] === '1' && i < base58.length - 1; i++) bytes.push(0);
+				// Ascii to string.
+				var plainBuffer = bytes.reverse();
+				var plaintext = "";
+				for (i=0; i<plainBuffer.length; i++) {
+					plaintext += String.fromCharCode(plainBuffer[i]);
+				}
+				return plaintext;
+			},
 			encodeBase64: function(str) {
 			    var encode = encodeURI(str);
 			    var base64Str = btoa(encode);
@@ -562,16 +673,14 @@
        		if (_callback == null) {
        			throw Error("Callback is required");
        		}
-
        		if(Common.Constants._fingerprintObject){
-       		 	if ((new Date().getTime()-Common.Constants._fingerprintObject.time) > 5000) {
+       		 	if ((new Date().getTime()-Common.Constants._fingerprintObject.time) > 30000) {
 	       			Common.Constants._fingerprintObject = null;
        		 	} else {
        		 		_callback(Common.Constants._fingerprintObject);
        		 		return;
        		 	}
        		}
-
        		// Gets last fingerprint.
        		if(!Common.Constants._fingerprintObject) {
        			setTimeout(function() {
@@ -596,7 +705,6 @@
 					});
 				}, 500);
 			}
-
        	}
 
 	};

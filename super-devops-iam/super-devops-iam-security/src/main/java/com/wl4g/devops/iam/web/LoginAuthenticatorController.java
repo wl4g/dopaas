@@ -80,8 +80,6 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	@ResponseBody
 	public RespBase<?> check(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
-		// Assign a session ID to the current request. If not, create a new one.
-		resp.forMap().put(config.getCookie().getName(), getSession(true).getId());
 
 		//
 		// --- Check generic authenticating environments. ---
@@ -97,11 +95,12 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 		// generate 'secret'.
 		String secret = EMPTY;
 		if (isNotBlank(principal)) {
-			// Apply credentials encryption secret pubKey
+			// Apply credentials encryption secret(pubKey)
 			secret = securer.applySecret(principal);
 		}
-		// Secret(pubKey).
-		resp.forMap().put(KEY_GENERAL_CHECK, new GenericCheckResult(secret));
+		// Assign a session ID to the current request. If not, create a new one.
+		GenericCheckResult generic = new GenericCheckResult(secret, config.getCookie().getName(), getSession(true).getId());
+		resp.forMap().put(KEY_GENERAL_CHECK, generic);
 
 		//
 		// --- Check captcha authenticating environments. ---
