@@ -14,6 +14,8 @@ import java.nio.file.Files;
 import java.util.Map;
 
 import static com.wl4g.devops.coss.model.metadata.ObjectsStatusMetaData.ObjectStatusMetaData;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * @author vjay
@@ -24,44 +26,93 @@ public class MetadataIndexManager {
     public static final String BUCKET_METADATA = "/.bucket.metadata";
     public static final String OBJECT_METADATA_DIR = "/.metadata/";
     public static final String OBJECT_METADATA_PRE = "block.";//  e.g: /.metadata/block.0
-
     private static final String charset = "UTF-8";
 
-    public void createBucketMeta(String bucketPath) {
-        File file = new File(bucketPath + BUCKET_METADATA);
-        createBucketMeta(file);
-    }
+
+    //============================================object============================================
 
     public void addObject(String bucketPath, File file, ObjectStatusMetaData objectStatusMetaData) throws Exception {
         File lastObjectMetaFile = getLastObjectMetaFile(file.getParentFile());
-
         FileLockUtils.doTryLock(file, fileLock -> {
-            String s = FileIOUtils.readFileToString(lastObjectMetaFile, charset);
-            ObjectsStatusMetaData objectsStatusMetaData = JacksonUtils.parseJSON(s, ObjectsStatusMetaData.class);
+            ObjectsStatusMetaData objectsStatusMetaData = readObjectsStatusMetaData(lastObjectMetaFile);
+            if(isNull(objectsStatusMetaData)){
+                return null;
+            }
+            objectsStatusMetaData.setTotalCount(objectsStatusMetaData.getTotalCount()+1);
+            objectsStatusMetaData.setTotalSize(objectsStatusMetaData.getTotalSize()+Files.size(file.toPath()));
             Map<String, ObjectStatusMetaData> objects = objectsStatusMetaData.getObjects();
             objects.put(file.getName(), objectStatusMetaData);
             String s1 = JacksonUtils.toJSONString(objectsStatusMetaData);
-            FileIOUtils.writeFile(lastObjectMetaFile,s1);
+            FileIOUtils.writeFile(lastObjectMetaFile,s1,false);
             return null;
         });
 
         modifyBucketMetaData(bucketPath,1, Files.size(file.toPath()),0);
     }
 
-    public void delObject(String bucketPath, File file) {
-        //TODO
+    public void delObject(String bucketPath, File file) throws Exception {
+        String key = file.getName();
+        File metaFile = getObjectMetaFileByKey(file.getParentFile(), key);
+        if(isNull(metaFile)){
+            return;
+        }
+        FileLockUtils.doTryLock(file, fileLock -> {
+            ObjectsStatusMetaData objectsStatusMetaData = readObjectsStatusMetaData(metaFile);
+            if(isNull(objectsStatusMetaData)){
+                return null;
+            }
+            objectsStatusMetaData.setTotalCount(objectsStatusMetaData.getTotalCount()-1);
+            objectsStatusMetaData.setTotalSize(objectsStatusMetaData.getTotalSize()-Files.size(file.toPath()));
+            Map<String, ObjectStatusMetaData> objects = objectsStatusMetaData.getObjects();
+            objects.remove(key);
+            String s1 = JacksonUtils.toJSONString(objectsStatusMetaData);
+            FileIOUtils.writeFile(metaFile,s1);
+            return null;
+        });
+        modifyBucketMetaData(bucketPath,-1, -Files.size(file.toPath()),0);
+
     }
 
-    public void modifyObject(String bucketPath, File file, ObjectStatusMetaData objectStatusMetaData) {
-        //TODO
+    public void modifyObject(File file, ObjectStatusMetaData objectStatusMetaData) throws Exception {
+        String key = file.getName();
+        File metaFile = getObjectMetaFileByKey(file.getParentFile(), key);
+        if(isNull(metaFile)){
+            return;
+        }
+        FileLockUtils.doTryLock(file, fileLock -> {
+            ObjectsStatusMetaData objectsStatusMetaData = readObjectsStatusMetaData(metaFile);
+            if(isNull(objectsStatusMetaData)){
+                return null;
+            }
+            Map<String, ObjectStatusMetaData> objects = objectsStatusMetaData.getObjects();
+            objects.put(key,objectStatusMetaData);
+            String s1 = JacksonUtils.toJSONString(objectsStatusMetaData);
+            FileIOUtils.writeFile(metaFile,s1,false);
+            return null;
+        });
     }
 
-    public ObjectStatusMetaData getObject(String bucketPath, File file){
-        //TODO
+    public ObjectStatusMetaData getObject(String bucketPath,File file) throws IOException {
+
+        modifyBucketMetaData(bucketPath,0, 0,1);
+        String key = file.getName();
+        File metaFile = getObjectMetaFileByKey(file.getParentFile(), key);
+        if(isNull(metaFile)){
+            return null;
+        }
+        ObjectsStatusMetaData objectsStatusMetaData = readObjectsStatusMetaData(metaFile);
+        if(isNull(objectsStatusMetaData) || isNull(objectsStatusMetaData.getObjects())){
+            return null;
+        }
+        Map<String, ObjectStatusMetaData> objects = objectsStatusMetaData.getObjects();
+        ObjectStatusMetaData objectStatusMetaData = objects.get(key);
+        if(nonNull(objectStatusMetaData)){
+            return objectStatusMetaData;
+        }
         return null;
     }
 
-    private File getObjectMetaFileByKey(File parentFile){
+    private File getObjectMetaFileByKey(File parentFile,String key) throws IOException {
         if(!parentFile.exists()){
             return null;
         }
@@ -70,8 +121,17 @@ public class MetadataIndexManager {
         if(!metaDataDir.exists() || files ==null || files.length<=0){
             return null;
         }
-        //TODO doing.......
-
+        for(File file : files){
+            ObjectsStatusMetaData objectsStatusMetaData = readObjectsStatusMetaData(file);
+            if(isNull(objectsStatusMetaData) || isNull(objectsStatusMetaData.getObjects())){
+                continue;
+            }
+            Map<String, ObjectStatusMetaData> objects = objectsStatusMetaData.getObjects();
+            ObjectStatusMetaData objectStatusMetaData = objects.get(key);
+            if(nonNull(objectStatusMetaData)){
+                return file;
+            }
+        }
         return null;
     }
 
@@ -118,18 +178,24 @@ public class MetadataIndexManager {
         return 0;
     }
 
-
-
-
+    //============================================bucket============================================
 
     /**
-     * Add file
+     * Create Bucket
+     * @param bucketPath
+     */
+    public void createBucketMeta(String bucketPath) {
+        File file = new File(bucketPath + BUCKET_METADATA);
+        createBucketMeta(file);
+    }
+
+    /**
      *
      * @param bucketPath
      * @param addFileNum
      * @param addFileSize
      */
-    public void modifyBucketMetaData(String bucketPath, int addFileNum, long addFileSize, long requestTimes) {
+    public void modifyBucketMetaData(String bucketPath, int addFileNum, long addFileSize, long addRequestTimes) {
         File file = new File(bucketPath + BUCKET_METADATA);
         checkBucketMetaData(file);
         try {
@@ -137,7 +203,7 @@ public class MetadataIndexManager {
                 BucketStatusMetaData metadataIndex = readBucketMetaData(file);
                 metadataIndex.setNumberOfDocuments(metadataIndex.getNumberOfDocuments() + addFileNum);
                 metadataIndex.setStorageUsage(metadataIndex.getStorageUsage() + addFileSize);
-                metadataIndex.setNumberOfRequests(metadataIndex.getNumberOfRequests() + requestTimes);
+                metadataIndex.setNumberOfRequests(metadataIndex.getNumberOfRequests() + addRequestTimes);
                 metadataIndex.setModifyDate(System.currentTimeMillis());
                 writeBucketMetaData(file, metadataIndex);
                 return null;
@@ -178,6 +244,14 @@ public class MetadataIndexManager {
         }
         String s = FileIOUtils.readFileToString(file, charset);
         return JacksonUtils.parseJSON(s, BucketStatusMetaData.class);
+    }
+
+    private ObjectsStatusMetaData readObjectsStatusMetaData(File file) throws IOException {
+        if (!file.exists()) {
+            return null;
+        }
+        String s = FileIOUtils.readFileToString(file, charset);
+        return JacksonUtils.parseJSON(s, ObjectsStatusMetaData.class);
     }
 
 
