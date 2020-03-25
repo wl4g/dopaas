@@ -55,7 +55,7 @@ public class JedisAutoConfiguration {
 	/**
 	 * Resolving spring byName injection conflict.
 	 */
-	final public static String BEAN_NAME_REDIS = "superDevopsSupportJedisService";
+	final public static String BEAN_NAME_REDIS = "JedisAutoConfiguration.JedisService.Bean";
 
 	@Bean
 	@ConditionalOnProperty(name = KEY_JEDIS_PREFIX + ".nodes", matchIfMissing = false)
@@ -72,7 +72,7 @@ public class JedisAutoConfiguration {
 	}
 
 	@Bean(BEAN_NAME_REDIS)
-	@ConditionalOnBean(JedisClusterFactoryBean.class)
+	@ConditionalOnBean(JedisProperties.class)
 	public JedisService jedisService(JedisCluster jedisCluster) {
 		return new JedisService(jedisCluster);
 	}
