@@ -863,8 +863,7 @@ public abstract class Assert2 {
 	private static RuntimeException newRuntimeExceptionInstance(Class<? extends RuntimeException> exceptionClass) {
 		try {
 			if (objenesis != null) {
-				return (RuntimeException) objenesisStdNewInstanceMethod.invoke(objenesis, exceptionClass,
-						new Object[] { exceptionClass });
+				return (RuntimeException) objenesisStdNewInstanceMethod.invoke(objenesis, new Object[] { exceptionClass });
 			}
 			return (RuntimeException) exceptionClass.newInstance();
 		} catch (Exception ex) {

@@ -172,9 +172,8 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Cumulative number of applications based on caching.
 		long applyCaptchaCount = applyCaptchaCumulator.accumulate(factors, 1);
-		if (log.isDebugEnabled()) {
-			log.debug("Check graph verifyCode apply, for apply count: {}", applyCaptchaCount);
-		}
+		log.debug("Check graph verifyCode apply, for apply count: {}", applyCaptchaCount);
+
 		if (applyCaptchaCount >= failFastCaptchaMaxAttempts) {
 			log.warn("Too many times to apply for graph verify-code, actual: {}, maximum: {}, factors: {}", applyCaptchaCount,
 					failFastCaptchaMaxAttempts, factors);
@@ -183,10 +182,9 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Cumulative number of applications based on session
 		long sessionApplyCaptchaCount = sessionApplyCaptchaCumulator.accumulate(factors, 1);
-		if (log.isDebugEnabled()) {
-			log.debug("Check graph verifyCode apply, for session apply count: {}, sessionId: {}", sessionApplyCaptchaCount,
-					getSessionId());
-		}
+		log.debug("Check graph verifyCode apply, for session apply count: {}, sessionId: {}", sessionApplyCaptchaCount,
+				getSessionId());
+
 		// Exceeding the limit
 		if (sessionApplyCaptchaCount >= failFastCaptchaMaxAttempts) {
 			log.warn("Too many times to apply for session graph verify-code, actual: {}, maximum: {}, factors: {}",

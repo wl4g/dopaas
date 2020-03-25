@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 
 /**
@@ -38,7 +36,10 @@ public class LogoutAuthenticationToken extends AbstractIamAuthenticationToken {
 
 	public LogoutAuthenticationToken(final String principal, final String remoteHost, final RedirectInfo redirectInfo) {
 		super(remoteHost, redirectInfo);
-		hasTextOf(principal, "principal");
+		/**
+		 * @see {@link com.wl4g.devops.iam.filter.LogoutAuthenticationFilter#postCreateToken()}:MARK1
+		 */
+		// hasTextOf(principal, "principal");
 		this.principal = principal;
 	}
 

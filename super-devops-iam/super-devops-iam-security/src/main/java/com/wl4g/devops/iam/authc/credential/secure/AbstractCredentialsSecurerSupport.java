@@ -140,6 +140,11 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 	@Override
 	public String applySecret(@NotNull String principal) {
+		/**
+		 * @see {@link com.wl4g.devops.iam.web.LoginAuthenticatorController#handhake()}
+		 */
+		checkSession();
+
 		// Gets secretKey(publicKey) index.
 		Integer index = getBindValue(KEY_SECRET_INFO);
 		if (isNull(index)) {

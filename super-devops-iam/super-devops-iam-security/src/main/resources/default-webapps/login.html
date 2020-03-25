@@ -4,20 +4,21 @@
 	<meta charset="UTF-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Sign in for IAM Authentication Central</title>
-	<link rel="shortcut icon" href="./favicon.ico"/>
+	<link rel="shortcut icon" href="./static/images/favicon.icon"/>
 	<link rel="stylesheet" href="./static/css/login.css"/>
 	<link rel="stylesheet" href="./static/css/lanren.css"/>
 	<!-- https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css -->
 	<!-- @Authors: <Wanglsir@gmail.com, 983708408@qq.com> -->
+	<script type="text/javascript" src="//g.alicdn.com/AWSC/AWSC/awsc.js"></script>
 	<script type="text/javascript" src="./sdk/2.0.0/js/IAM.min.js" path="./sdk/2.0.0/" cache="false" mode="grey"></script>
 	<script type="text/javascript">
 		IAM.Modules.use("IamUI", function(uiModule){
 			console.log("******* IAM JSSDK loaded completed! *******");
 			$(function(){
-				// e.g. http://127.0.0.1:14040/iam-server/
-				// e.g. http://localhost:14040/iam-server/
+				// e.g. http://127.0.0.1:14040/iam-server
+				// e.g. http://localhost:14040/iam-server
 				// e.g. http://iam.wl4g.debug/iam-server
-				var iamServerUri = "http://localhost:14040/iam-server/";
+				var iamServerUri = "http://localhost:14040/iam-server";
 				uiModule.initUI(document.getElementById("content-right"), iamServerUri);
 			});
 		});

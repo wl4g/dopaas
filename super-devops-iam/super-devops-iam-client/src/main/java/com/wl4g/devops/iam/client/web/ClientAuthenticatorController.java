@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.client.web;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_LOGOUT;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,7 +30,6 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.authc.model.LogoutModel;
-import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 import com.wl4g.devops.tool.common.lang.Exceptions;
 
 /**
@@ -52,7 +52,7 @@ public class ClientAuthenticatorController extends BaseController {
 	@ResponseBody
 	public RespBase<LogoutModel> logout(HttpServletRequest request) {
 		if (log.isInfoEnabled()) {
-			log.info("Logout processing... sessionId[{}]", IamSecurityHolder.getSessionId());
+			log.info("Logout processing... sessionId[{}]", getSessionId());
 		}
 
 		RespBase<LogoutModel> resp = new RespBase<>();

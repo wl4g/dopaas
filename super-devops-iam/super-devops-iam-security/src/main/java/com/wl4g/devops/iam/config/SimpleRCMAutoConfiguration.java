@@ -16,31 +16,31 @@
 package com.wl4g.devops.iam.config;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
-import com.wl4g.devops.iam.annotation.LoginAuthController;
-import com.wl4g.devops.iam.web.LoginAuthenticatorController;
+import com.wl4g.devops.iam.web.SimpleRcmRecognizerController;
+
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_RCM_BASE;
 
 /**
- * IAM authentication(login) configuration
- *
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年1月8日
+ * IAM simple risk control configuration
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年3月25日
  * @since
  */
-@AutoConfigureAfter({ IamAutoConfiguration.class })
-public class LoginAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+@AutoConfigureAfter({ LoginAutoConfiguration.class })
+public class SimpleRCMAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
-	public LoginAuthenticatorController loginAuthenticatorController() {
-		return new LoginAuthenticatorController();
+	public SimpleRcmRecognizerController simpleRCMController() {
+		return new SimpleRcmRecognizerController();
 	}
 
 	@Bean
-	public PrefixHandlerMapping loginAuthenticatorControllerPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_S_LOGIN_BASE, LoginAuthController.class);
+	public PrefixHandlerMapping simpleRCMControllerPrefixHandlerMapping() {
+		return super.newPrefixHandlerMapping(URI_S_RCM_BASE, com.wl4g.devops.iam.annotation.SimpleRCMController.class);
 	}
 
 }

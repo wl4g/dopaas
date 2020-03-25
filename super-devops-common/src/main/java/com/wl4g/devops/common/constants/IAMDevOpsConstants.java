@@ -105,22 +105,8 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String URI_S_WECHAT_MP_RECEIVE = "receive";
 
-	/** Based URI with verifier authenticator controller. */
-	final public static String URI_S_VERIFY_BASE = "/verify";
-	/** URI for apply for CAPTCHA. */
-	final public static String URI_S_VERIFY_APPLY_CAPTCHA = "applycaptcha";
-	/** URI for verify analyze for CAPTCHA. */
-	final public static String URI_S_VERIFY_ANALYZE_CAPTCHA = "verifyanalyze";
-	/** URI for apply for verify-code. */
-	final public static String URI_S_VERIFY_SMS_APPLY = "applysmsverify";
-
 	/** Based URI with login authenticator controller. */
 	final public static String URI_S_LOGIN_BASE = "/login";
-	/**
-	 * Initiate handshake to establish connection, such as client submits UA and
-	 * device fingerprint information, and server returns session ID.
-	 */
-	final public static String URI_S_LOGIN_CONNECT_HANDHAKE = "handhake";
 	/**
 	 * Initialization before login checks whether authentication code is
 	 * enabled, etc.
@@ -132,6 +118,27 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Get the error information stored in the current session
 	 */
 	final public static String URI_S_LOGIN_ERRREAD = "errread";
+
+	/** Based URI with verifier authenticator controller. */
+	final public static String URI_S_VERIFY_BASE = "/verify";
+	/** URI for apply for CAPTCHA. */
+	final public static String URI_S_VERIFY_APPLY_CAPTCHA = "applycaptcha";
+	/** URI for verify analyze for CAPTCHA. */
+	final public static String URI_S_VERIFY_ANALYZE_CAPTCHA = "verifyanalyze";
+	/** URI for apply for verify-code. */
+	final public static String URI_S_VERIFY_SMS_APPLY = "applysmsverify";
+
+	/** Based URI with simple risk control controller. */
+	final public static String URI_S_RCM_BASE = "/rcm";
+	/**
+	 * Before requesting authentication, the client needs to submit the device
+	 * fingerprint um, UA and other information to obtain the corresponding
+	 * token, so as to solve the risk control detection. Note: it is a simple
+	 * version of the implementation of risk control inspection. It is
+	 * recommended to use a more professional external RiskControlService in the
+	 * production environment.
+	 */
+	final public static String URI_S_RCM_UMIDTOKEN_APPLY = "applyumidtoken";
 
 	/**
 	 * Generic API v1 base URL.
@@ -183,11 +190,13 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Cryptographic service cache name.
 	 */
 	final public static byte[] CACHE_CRYPTO = "crypto_keypairs".getBytes(Charsets.UTF_8);
+	/** Simple risk control handler umidToken cache key. */
+	final public static String CACHE_SIMPLE_RCM_UMIDTOKEN = "simpleUmidToken_";
+
 	/**
 	 * The public key index by logged-in users
 	 */
 	final public static String KEY_SECRET_INFO = "applySecretInfo";
-
 	/**
 	 * When the authentication is successful, the access token will be returned.
 	 * The client then uses sessionid + accesstoken as the credential to access

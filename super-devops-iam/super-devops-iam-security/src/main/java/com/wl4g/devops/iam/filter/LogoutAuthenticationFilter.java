@@ -51,7 +51,9 @@ public class LogoutAuthenticationFilter extends AbstractIamAuthenticationFilter<
 	@Override
 	protected LogoutAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		return new LogoutAuthenticationToken(getPrincipal(), remoteHost, redirectInfo);
+		// MARK1: If the current status is unauthenticated, the principle cannot
+		// be obtained if the logout is ignored.
+		return new LogoutAuthenticationToken(getPrincipal(false), remoteHost, redirectInfo);
 	}
 
 	@Override

@@ -20,7 +20,6 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 import javax.annotation.Resource;
 
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
-import org.apache.shiro.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +45,20 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	/**
 	 * Rest template
 	 */
-	final protected RestTemplate restTemplate;
+	@Autowired
+	protected RestTemplate restTemplate;
 
 	/**
 	 * IAM security context handler
 	 */
-	final protected ServerSecurityConfigurer configurer;
+	@Autowired
+	protected ServerSecurityConfigurer configurer;
+
+	/**
+	 * IAM server security processor
+	 */
+	@Autowired
+	protected ServerSecurityCoprocessor coprocessor;
 
 	/**
 	 * IAM server configuration properties
@@ -72,22 +79,9 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	protected EnhancedCacheManager cacheManager;
 
 	/**
-	 * IAM server security processor
-	 */
-	@Autowired
-	protected ServerSecurityCoprocessor coprocessor;
-
-	/**
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
-
-	public AbstractAuthenticationHandler(ServerSecurityConfigurer context, RestTemplate restTemplate) {
-		Assert.notNull(context, "'context' must not be null");
-		Assert.notNull(restTemplate, "'restTemplate' must not be null");
-		this.restTemplate = restTemplate;
-		this.configurer = context;
-	}
 
 }
