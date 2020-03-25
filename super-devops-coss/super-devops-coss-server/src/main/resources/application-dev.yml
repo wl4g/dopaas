@@ -40,6 +40,7 @@ spring:
           endpoint-hdfs-root-uri: hdfs://owner-node3:8020/coss-bucket
         native:
           endpointRootDir: /tmp/coss-bucket
+          downloadBaseUrl: http://wl4g.debug:14061/coss-server/webservice/download
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

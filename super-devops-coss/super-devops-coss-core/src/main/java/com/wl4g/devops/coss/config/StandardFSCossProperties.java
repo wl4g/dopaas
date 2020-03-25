@@ -38,6 +38,9 @@ public abstract class StandardFSCossProperties {
 	@NotNull
 	private File endpointRootDir = new File("/mnt/disk1/coss-bucket");
 
+
+	private String downloadBaseUrl;
+
 	/**
 	 * Bucket of native fileSystem operation user.
 	 */
@@ -143,5 +146,13 @@ public abstract class StandardFSCossProperties {
 
 	public String getObjectPathTrash(String bucketName) {
 		return getEndpointRootDir().getAbsolutePath()+File.separator+bucketName+File.separator+PATH_TRASH +File.separator + System.currentTimeMillis();
+	}
+
+	public String getDownloadBaseUrl() {
+		return downloadBaseUrl;
+	}
+
+	public void setDownloadBaseUrl(String downloadBaseUrl) {
+		this.downloadBaseUrl = downloadBaseUrl;
 	}
 }
