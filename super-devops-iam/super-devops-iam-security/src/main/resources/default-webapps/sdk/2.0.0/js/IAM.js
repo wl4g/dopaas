@@ -64,14 +64,14 @@
 		}
 	};
 	var g_dependencies = [{
-		name: "uiModule",
+		name: "UI",
 		features: ["iamUi", "iamSdkUi", "IamUI", "IamSdkUI"],
 		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "commonModule", "cryptoModule", "coreModule",
 			"captchaJigsawModule", "uiModule"],
 		sync: !1
 	},
 	{
-		name: "coreModule",
+		name: "Core",
 		features: ["iamCore", "iamSdkCore", "IamCore", "IamSdkCore"],
 		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "cryptoModule", "coreModule", "captchaJigsawModule"],
 		sync: !1
@@ -87,23 +87,25 @@
 	}
 
 	// Parsing module dependencies 
-	function getDependModules(name){
-		var modules = new Array();
-		for(var d=0; d < g_dependencies.length; d++){
+	function getDependModules(feature){
+		var modules = new Array(), moduleName = null;
+		for(var d=0; d<g_dependencies.length; d++){
 			var matched = false;
 			for(var f=0; f < g_dependencies[d].features.length; f++){
-				if(g_dependencies[d].features[f] == name){
+				if(g_dependencies[d].features[f] == feature){
 					matched = true;
+					moduleName = g_dependencies[d].name;
 					break;
 				}
 			}
 			if(matched){
-				for(var dn=0; dn < g_dependencies[d].depends.length; dn++){
+				for(var dn=0; dn<g_dependencies[d].depends.length; dn++){
 					var gModule = getGModule(g_dependencies[d].depends[dn]);
 					modules.push(gModule);
 				}
 			}
 		}
+		// 去重
 		let setModules = [modules[0]];
 		for(let i=1; i < modules.length; i++){
 			let flag = false;
@@ -120,7 +122,7 @@
 		setModules.sort(function(a, b){
 			return a.ratio - b.ratio;
 		});
-		return setModules;
+		return {"name": moduleName, "modules": setModules};
 	}
 
 	// Using modules.
@@ -169,16 +171,16 @@
 		/**
 		 * Use load(css and js) specification module JSSDK API.
 		 * 
-		 * @param name Module name(alias).
+		 * @param name Module feature(alias).
 		 * @param callback Loaded callback function.
 		 **/
-		use: function(name, callback){
-			IAM.Modules.useCss(name, function(){});
-			IAM.Modules.useJs(name, callback);
+		use: function(feature, callback){
+			IAM.Modules.useCss(feature, function(){});
+			IAM.Modules.useJs(feature, callback);
 		},
-		useJs: function(name, callback){
-			if(Object.prototype.toString.call(name) == '[object Function]' || !name || callback == null || !callback) {
-				throw Error("useJs parameters (name, callback) is required!");
+		useJs: function(feature, callback){
+			if(Object.prototype.toString.call(feature) == '[object Function]' || !feature || callback == null || !callback) {
+				throw Error("useJs parameters (feature, callback) is required!");
 			}
 			// Gets settings.
 			var path = _modules_settings.path + "/js/";
@@ -186,12 +188,13 @@
 			var mode = _modules_settings.mode;
 
 			window.onload = function(){
-				var scriptUrls = getDependModules(name).map(d=>{
+				var depends = getDependModules(feature);
+				var scriptUrls = depends.modules.map(d=>{
 					var t = (cache == 'true') ? 1 : new Date().getTime();
 					return d[mode]+"?t="+t;
 				});
 				// Loading multiple scripts.
-				(function loadScripts(urls, path) {
+				(function loadScripts(name, urls, path) {
 					urls.forEach(function(src, i) {
 						let script = document.createElement('script');
 						script.type = 'text/javascript';
@@ -203,19 +206,19 @@
 							// Multiple binding for browser compatibility
 							script.onload = script.onreadystatechange = function(e) {
 								if (!script.readyState || script.readyState == 'loaded' || script.readyState == 'complete') {
-					            	console.debug("Loaded scripts name: "+name+", readyState: "+ this.readyState);
-									callback(window.IAM.UI);
+					            	console.debug("Loaded scripts feature: "+feature+", readyState: "+ this.readyState);
+									callback(window.IAM[name]);
 								}
 					        };
 						}
 						// Fire the loading
 						document.body.appendChild(script);
 					});
-				})(scriptUrls, path);
+				})(depends.name, scriptUrls, path);
 
 				// --- JQuery Versions. ---
 				//$.when(scriptUrls, $.Deferred(d => $(d.resolve))).done(function(response, status){
-				//	console.debug("Loaded script of name: "+ name);
+				//	console.debug("Loaded script of feature: "+ feature);
 				//	callback(status);
 				//});
 	
@@ -229,26 +232,27 @@
 				//$.Deferred(function(deferred){
 				//    $(deferred.resolve);
 				//})).done(function(){
-				//	console.debug("Loaded script of name: "+ name);
+				//	console.debug("Loaded script of feature: "+ feature);
 				//	callback("loaded");
 				//});
 			}
 		},
-		useCss: function(name, callback){
-			if(Object.prototype.toString.call(name) == '[object Function]' || !name || callback == null || !callback) {
-				throw Error("useCss parameters (name, callback) is required!");
+		useCss: function(feature, callback){
+			if(Object.prototype.toString.call(feature) == '[object Function]' || !feature || callback == null || !callback) {
+				throw Error("useCss parameters (feature, callback) is required!");
 			}
 			// Gets settings.
 			var path = _modules_settings.path + "/css/";
 			var cache = _modules_settings.cache;
 			var mode = _modules_settings.mode;
 
-			var cssUrls = getDependModules(name).filter(d=>d["css_"+mode]!=null&&d["css_"+mode]!="").map(d=>{
+			var depends = getDependModules(feature);
+			var cssUrls = depends.modules.filter(d=>d["css_"+mode]!=null&&d["css_"+mode]!="").map(d=>{
 				var t = (cache == 'true') ? 1 : new Date().getTime();
 				return d["css_"+mode]+"?t="+t;
 			});
 			// Loading multiple css
-			(function loadCss(urls, path) {
+			(function loadCss(name, urls, path) {
 				urls.forEach(function(src, i) {
 					let link = document.createElement('link');
 					link.rel = 'stylesheet';
@@ -260,7 +264,7 @@
 						// Multiple binding for browser compatibility
 						link.onload = link.onreadystatechange = function(e) {
 							if (!link.readyState || link.readyState == 'loaded' || link.readyState == 'complete') {
-				            	console.debug("Loaded links name: "+name+", readyState: "+ this.readyState);
+				            	console.debug("Loaded links feature: "+feature+", readyState: "+ this.readyState);
 								callback();
 							}
 				        };
@@ -268,7 +272,7 @@
 					// Fire the loading
 					document.head.appendChild(link);
 				});
-			})(cssUrls, path);
+			})(depends.name, cssUrls, path);
 		}
 	}
 

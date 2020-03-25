@@ -493,7 +493,7 @@
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 						console.debug("Got umidToken: " + res.umidToken);
-						runtim.umidToken = res.umidToken;
+						runtime.umidToken = res.umidToken;
 					}
 				}, function(errmsg){
 					console.warn("Failed to gets umidToken, " + errmsg);
