@@ -121,12 +121,13 @@
 			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
 			smsActionKey: "action", // SMS登录action参数名
 			smsActionValueLogin: "login", // SMS登录action=login的值
-			accountSubmitUri: "/auth/generic", // 账号登录提交的URL后缀
-			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
-			checkUri: "/login/check", // 登录前初始检查接口的URL后缀
+			applyUmidTokenUri: "/rcm/applyumidtoken", // 页面初始化时请求umidToken的接口URL后缀
+			checkUri: "/login/check", // 认证前安全检查接口URL后缀
 			captchaApplyUri: "/verify/applycaptcha", // 申请GRAPH验证码URI后缀
 			verifyAnalyzeUri: "/verify/verifyAnalyze", // 校验分析GRAPH验证码URI后缀
+			accountSubmitUri: "/auth/generic", // 账号登录提交的URL后缀
 			smsApplyUri: "/verify/applysmsverify", // 申请SMS验证码URI后缀
+			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
 			codeOkValue: "200" // 接口返回成功码判定标准
 		},
@@ -136,6 +137,9 @@
 			defaultContextPath: "/iam-server", // 默认IAM Server的context-path
 		},
  		init: { // 初始相关配置(Event)
+ 			onPostUmidToken: function(res){
+ 				console.debug("onPostUmidToken... "+ res);
+ 			},
  			onPreCheck: function(principal, checkUrl){
  				console.debug("onPostCheck... principal:"+ principal +", checkUrl:"+ checkUrl);
  				return true; // continue after?
@@ -443,7 +447,48 @@
 		}
 	};
 
-	// Before safe check.
+	// 初始化请求获取umidToken/uaToken等(页面加载时调用一次即可)
+	_InitApplyUmidToken = function(){
+		$(function(){
+			// 获取设备指纹信息
+			Common.Util.getFingerprint({}, function(fpObject){
+				var umidParam = new Map();
+				// 设备指纹信息(必须)
+				umidParam.set("umid", fpObject.umid);
+				// 设备指纹附加参数(必须)
+				umidParam.set("userAgent", fpObject.components.get("userAgent"));
+				umidParam.set("platform", fpObject.components.get("platform"));
+				umidParam.set("pixelRatio", fpObject.components.get("pixelRatio"));
+				umidParam.set("timezone", fpObject.components.get("timezone"));
+				umidParam.set("language", fpObject.components.get("language"));
+				umidParam.set("cpuClass", fpObject.components.get("cpuClass"));
+				umidParam.set("touchSupport", fpObject.components.get("touchSupport"));
+				umidParam.set("deviceMemory", fpObject.components.get("deviceMemory"));
+				umidParam.set("availableScreenResolution", fpObject.components.get("availableScreenResolution"));
+				// 基于Web指纹附加参数(可选)
+				umidParam.set("canvas", CryptoJS.MD5(fpObject.components.get("canvas")).toString(CryptoJS.enc.Hex));
+				umidParam.set("webgl", CryptoJS.MD5(fpObject.components.get("webgl")).toString(CryptoJS.enc.Hex));
+				umidParam.set("indexedDb", fpObject.components.get("indexedDb"));
+				umidParam.set("sessionStorage", fpObject.components.get("sessionStorage"));
+				umidParam.set("localStorage", fpObject.components.get("localStorage"));
+				umidParam.set("colorDepth", fpObject.components.get("colorDepth"));
+				// 请求握手
+				doIamRequest("applyUmidTokenUri", umidParam, function(res){
+					// 握手完成回调
+					Common.Util.checkEmpty("init.onPostUmidToken", settings.init.onPostUmidToken)(res);
+					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+					if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
+						console.log("get umidToken successful");
+					}
+				}, function(errmsg){
+					console.wran("Failed to gets umidToken, " + errmsg);
+					Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 异常回调
+				});
+			});
+		});
+	};
+
+	// 请求安全检查
 	var _InitSafeCheck = function(callback){
 		$(function(){
 			var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal, false));

@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.utils;
 
+import static com.wl4g.devops.iam.common.session.NoOpSession.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static java.lang.System.currentTimeMillis;
@@ -28,8 +29,10 @@ import java.util.Map;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.subject.Subject;
 
+import com.wl4g.devops.iam.common.session.NoOpSession;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
 /**
@@ -96,17 +99,31 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Getting current session
+	 * Check if the current topic session is available. </br>
+	 * Note: it only checks whether the current session exists. If it exists, it
+	 * does not check the validity of the session
+	 * 
+	 * @throws UnknownSessionException
+	 */
+	public static void checkSession() throws UnknownSessionException {
+		notNull(getSubject().getSession(false), UnknownSessionException.class,
+				"There is no session in the current subject. Do you not complete some pre logic (e.g, the logic of creating session)?");
+	}
+
+	/**
+	 * Gets current session, If there is no session currently,
+	 * {@link NoOpSession#DefaultNoOpSession} will be returned
 	 *
 	 * @param create
 	 * @return
 	 */
 	public static Session getSession() {
-		return getSession(true);
+		Session session = getSession(false);
+		return isNull(session) ? DefaultNoOpSession : session;
 	}
 
 	/**
-	 * Getting current session
+	 * Gets current session
 	 *
 	 * @param create
 	 * @return
@@ -116,7 +133,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Getting session-id
+	 * Gets session-id
 	 *
 	 * @return
 	 */
@@ -125,7 +142,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Getting session-id
+	 * Gets session-id
 	 *
 	 * @param subject
 	 * @return
@@ -135,7 +152,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Getting session-id
+	 * Gets session-id
 	 *
 	 * @param session
 	 * @return

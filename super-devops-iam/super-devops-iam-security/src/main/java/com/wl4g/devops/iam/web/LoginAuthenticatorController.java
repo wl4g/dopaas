@@ -72,42 +72,6 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	protected IamCredentialsSecurer securer;
 
 	/**
-	 * Initiate handshake to establish connection, such as client submits UA and
-	 * device fingerprint information, and server returns session ID.
-	 * 
-	 * @param request
-	 */
-	@RequestMapping(value = URI_S_LOGIN_CONNECT_HANDHAKE, method = { POST })
-	@ResponseBody
-	public RespBase<?> handhake(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<Object> resp = RespBase.create(sessionStatus());
-		resp.forMap().put(config.getCookie().getName(), getSessionId());
-		return resp;
-	}
-
-	/**
-	 * Apply international locale.</br>
-	 * See:{@link com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle}
-	 * See:{@link org.springframework.context.support.MessageSourceAccessor}
-	 *
-	 * @param response
-	 */
-	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { GET })
-	@ResponseBody
-	public RespBase<?> applyLocale(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<Locale> resp = RespBase.create(sessionStatus());
-		String lang = getCleanParam(request, config.getParam().getI18nLang());
-		// Gets apply locale.
-		Locale locale = request.getLocale();
-		if (isNotBlank(lang)) {
-			locale = new Locale(lang);
-		}
-		bind(KEY_LANG_ATTRIBUTE_NAME, locale);
-		resp.forMap().put(KEY_LANG_ATTRIBUTE_NAME, locale);
-		return resp;
-	}
-
-	/**
 	 * Login before environmental security check.
 	 *
 	 * @param request
@@ -116,6 +80,9 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	@ResponseBody
 	public RespBase<?> check(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
+		// Assign a session ID to the current request. If not, create a new one.
+		resp.forMap().put(config.getCookie().getName(), getSession(true).getId());
+
 		//
 		// --- Check generic authenticating environments. ---
 		//
@@ -130,7 +97,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 		// generate 'secret'.
 		String secret = EMPTY;
 		if (isNotBlank(principal)) {
-			// Apply credentials encryption secret key
+			// Apply credentials encryption secret pubKey
 			secret = securer.applySecret(principal);
 		}
 		// Secret(pubKey).
@@ -187,6 +154,28 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 		errmsg = isBlank(errmsg) ? "" : errmsg;
 		resp.forMap().put(KEY_ERR_SESSION_SAVED, errmsg);
 
+		return resp;
+	}
+
+	/**
+	 * Apply international locale.</br>
+	 * See:{@link com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle}
+	 * See:{@link org.springframework.context.support.MessageSourceAccessor}
+	 *
+	 * @param response
+	 */
+	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { GET })
+	@ResponseBody
+	public RespBase<?> applyLocale(HttpServletRequest request, HttpServletResponse response) {
+		RespBase<Locale> resp = RespBase.create(sessionStatus());
+		String lang = getCleanParam(request, config.getParam().getI18nLang());
+		// Gets apply locale.
+		Locale locale = request.getLocale();
+		if (isNotBlank(lang)) {
+			locale = new Locale(lang);
+		}
+		bind(KEY_LANG_ATTRIBUTE_NAME, locale);
+		resp.forMap().put(KEY_LANG_ATTRIBUTE_NAME, locale);
 		return resp;
 	}
 

@@ -29,7 +29,7 @@ public class GenericCheckResult implements Serializable {
 	private static final long serialVersionUID = 2636165327046053795L;
 
 	/**
-	 * General PreCheck response key-name.
+	 * General response key-name.
 	 */
 	final public static String KEY_GENERAL_CHECK = "checkGeneral";
 

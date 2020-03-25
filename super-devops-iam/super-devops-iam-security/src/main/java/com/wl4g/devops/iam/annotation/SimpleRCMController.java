@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.crypto.digest;
+package com.wl4g.devops.iam.annotation;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Digest hashing algorithm utility.
+ * Simple risk control controller annotation.
  * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0 2019年1月20日
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年3月25日
  * @since
- * @see {@link org.apache.commons.codec.digest.DigestUtils}
- * @see {@link com.google.common.hash.Hashing}
  */
-public abstract class DigestUtils2 extends DigestUtils {
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE })
+@Documented
+public @interface SimpleRCMController {
 
 }

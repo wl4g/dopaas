@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 
@@ -55,7 +54,6 @@ import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.AnynothingSecurityCoprocessor;
 import com.wl4g.devops.iam.configure.DefaultSecureConfigureAdapter;
 import com.wl4g.devops.iam.configure.SecureConfigureAdapter;
-import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.crypto.CryptService;
 import com.wl4g.devops.iam.crypto.RSACryptService;
@@ -76,6 +74,7 @@ import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
+import com.wl4g.devops.iam.handler.SimpleRcmRecognizerHandler;
 import com.wl4g.devops.iam.mgt.IamServerSubjectFactory;
 import com.wl4g.devops.iam.realm.AbstractAuthorizingRealm;
 import com.wl4g.devops.iam.realm.DingtalkAuthorizingRealm;
@@ -512,9 +511,13 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public CentralAuthenticationHandler centralAuthenticationHandler(RestTemplate restTemplate,
-			ServerSecurityConfigurer configurer) {
-		return new CentralAuthenticationHandler(configurer, restTemplate);
+	public CentralAuthenticationHandler centralAuthenticationHandler() {
+		return new CentralAuthenticationHandler();
+	}
+
+	@Bean
+	public SimpleRcmRecognizerHandler rcmRecognizerHandler() {
+		return new SimpleRcmRecognizerHandler();
 	}
 
 	// ==============================

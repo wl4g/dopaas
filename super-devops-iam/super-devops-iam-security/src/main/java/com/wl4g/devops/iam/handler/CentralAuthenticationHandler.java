@@ -33,7 +33,6 @@ import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
-import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.support.redis.ScanCursor;
 
 import org.apache.shiro.SecurityUtils;
@@ -44,7 +43,6 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -82,10 +80,6 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 */
 	@Autowired
 	protected IamSessionDAO sessionDAO;
-
-	public CentralAuthenticationHandler(ServerSecurityConfigurer context, RestTemplate restTemplate) {
-		super(context, restTemplate);
-	}
 
 	@Override
 	public void checkAuthenticateRedirectValidity(String appName, String redirectUrl) throws IllegalCallbackDomainException {

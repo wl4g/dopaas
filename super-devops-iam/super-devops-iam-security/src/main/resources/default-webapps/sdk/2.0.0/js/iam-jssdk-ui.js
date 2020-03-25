@@ -189,7 +189,7 @@ function initUISDK(iamServerBaseUri) {
 	Common.Util.printSafeWarn("This browser function is for developers only. Please do not paste and execute any content here, which may cause your account to be attacked and bring you loss!");
 	window.IAM.Core.configure({
 		deploy: {
-    		//baseUri: "http://localhost:14040/iam-server", // Using auto iamBaseUri
+    		//baseUri: "http://localhost:14040/iam-server", // Using auto extra configure
    			baseUri: iamServerBaseUri,
    			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
  			deaultContextPath: "/iam-server" // IAMServerd的context-path
@@ -311,7 +311,7 @@ function initUISDK(iamServerBaseUri) {
 }
 
 // 监听panelType为pagePanel类型的SNS授权回调
-$(function () {
+$(function() {
 	window.onmessage = function (e) {
 		if(e.data) {
 			window.location.href = JSON.parse(e.data).refresh_url;
