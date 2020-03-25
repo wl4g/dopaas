@@ -44,7 +44,7 @@ import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
+import com.wl4g.devops.iam.verification.model.SimpleVerifyImgResult;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
@@ -235,8 +235,8 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 		if (Objects.isNull(submitCode)) {
 			return false;
 		}
-		if (submitCode instanceof SimpleVerifyImgModel) {
-			return trimToEmpty(storedCode.getCode()).equalsIgnoreCase(((SimpleVerifyImgModel) submitCode).getVerifyCode());
+		if (submitCode instanceof SimpleVerifyImgResult) {
+			return trimToEmpty(storedCode.getCode()).equalsIgnoreCase(((SimpleVerifyImgResult) submitCode).getVerifyCode());
 		}
 		throw new UnsupportedOperationException(String.format("Unsupported verify-code: %s, Override the doMatch() method",
 				submitCode.getClass().getSimpleName()));

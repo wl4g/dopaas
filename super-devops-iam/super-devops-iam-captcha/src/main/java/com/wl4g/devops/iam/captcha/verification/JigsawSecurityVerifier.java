@@ -18,8 +18,8 @@ package com.wl4g.devops.iam.captcha.verification;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.ImageTailor.TailoredImage;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
-import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawApplyImgModel;
-import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawVerifyImgModel;
+import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawApplyImgResult;
+import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawVerifyImgResult;
 import com.wl4g.devops.iam.crypto.CryptService;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 import com.wl4g.devops.tool.common.codec.CheckSums;
@@ -79,7 +79,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap, KeyPairSpec keySpec) {
 		TailoredImage code = codeWrap.getCode();
 		// Build model
-		JigsawApplyImgModel model = new JigsawApplyImgModel(graphToken, kind().getAlias());
+		JigsawApplyImgResult model = new JigsawApplyImgResult(graphToken, kind().getAlias());
 		model.setY(code.getY());
 		model.setPrimaryImg(encodeBase64(code.getPrimaryImg()));
 		model.setBlockImg(encodeBase64(code.getBlockImg()));
@@ -94,7 +94,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	protected Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request) {
-		JigsawVerifyImgModel model = parseJSON(params, JigsawVerifyImgModel.class);
+		JigsawVerifyImgResult model = parseJSON(params, JigsawVerifyImgResult.class);
 		validator.validate(model);
 		return model;
 	}
@@ -102,7 +102,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	@Override
 	final protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
 		TailoredImage code = (TailoredImage) storedCode.getCode();
-		JigsawVerifyImgModel model = (JigsawVerifyImgModel) submitCode;
+		JigsawVerifyImgResult model = (JigsawVerifyImgResult) submitCode;
 
 		// Analyze & verification JIGSAW image.
 		boolean matched = doAnalyzingJigsawGraph(code, model);
@@ -119,7 +119,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	 * @param model
 	 * @return
 	 */
-	final private boolean doAnalyzingJigsawGraph(TailoredImage code, JigsawVerifyImgModel model) {
+	final private boolean doAnalyzingJigsawGraph(TailoredImage code, JigsawVerifyImgResult model) {
 		if (Objects.isNull(model.getX())) {
 			log.warn("VerifyJigsaw image x-postition is empty. - {}", model);
 			return false;
@@ -167,7 +167,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	 * @param model
 	 * @return
 	 */
-	final private int parseAdditionalWithAlgorithmicSalt(String plainX, JigsawVerifyImgModel model) {
+	final private int parseAdditionalWithAlgorithmicSalt(String plainX, JigsawVerifyImgResult model) {
 		try {
 			final int tmp0 = Integer.parseInt(plainX.substring(66));
 			final long tmp1 = CheckSums.crc16String(model.getApplyToken());

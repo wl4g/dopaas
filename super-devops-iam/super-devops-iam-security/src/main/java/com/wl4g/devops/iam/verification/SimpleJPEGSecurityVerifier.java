@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.verification;
 
-import com.wl4g.devops.iam.verification.model.SimpleApplyImgModel;
-import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
+import com.wl4g.devops.iam.verification.model.SimpleApplyImgResult;
+import com.wl4g.devops.iam.verification.model.SimpleVerifyImgResult;
 import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
 
 import javax.imageio.ImageIO;
@@ -60,14 +60,14 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 		ImageIO.write(createImage(codeWrap.getCode()), "JPEG", out);
 
 		// Build model
-		SimpleApplyImgModel model = new SimpleApplyImgModel(applyToken, kind().getAlias());
+		SimpleApplyImgResult model = new SimpleApplyImgResult(applyToken, kind().getAlias());
 		model.setPrimaryImg(convertToBase64(out.toByteArray()));
 		return model;
 	}
 
 	@Override
 	protected Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request) {
-		SimpleVerifyImgModel model = parseJSON(params, SimpleVerifyImgModel.class);
+		SimpleVerifyImgResult model = parseJSON(params, SimpleVerifyImgResult.class);
 		validator.validate(model);
 		return model;
 	}

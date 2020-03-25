@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw.model;
 
-import com.wl4g.devops.iam.verification.model.BasedVerifyCodeModel;
+import com.wl4g.devops.iam.verification.model.AbstractVerifyCodeResult;
 
 import javax.validation.constraints.NotBlank;
 
@@ -26,7 +26,7 @@ import javax.validation.constraints.NotBlank;
  * @version v1.0 2019年8月30日
  * @since
  */
-public class JigsawApplyImgModel extends BasedVerifyCodeModel {
+public class JigsawApplyImgResult extends AbstractVerifyCodeResult {
 	private static final long serialVersionUID = 4975604164412626949L;
 
 	private int y;
@@ -40,11 +40,11 @@ public class JigsawApplyImgModel extends BasedVerifyCodeModel {
 	@NotBlank
 	private String secret;
 
-	public JigsawApplyImgModel() {
+	public JigsawApplyImgResult() {
 		super();
 	}
 
-	public JigsawApplyImgModel(String graphToken, String verifyType) {
+	public JigsawApplyImgResult(String graphToken, String verifyType) {
 		setApplyToken(graphToken);
 		setVerifyType(verifyType);
 	}
