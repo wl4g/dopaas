@@ -48,6 +48,14 @@ public abstract class StandardFSCossProperties {
 		return endpointRootDir;
 	}
 
+	public File getBucketPath(String bucketName){
+		return new File(getEndpointRootDir(), bucketName);
+	}
+
+	public File getObjectPath(String bucketName,String key){
+		return new File(getEndpointRootDir().getAbsolutePath() + File.separator + bucketName + File.separator + key);
+	}
+
 	public void setEndpointRootDir(File endpointRootDir) {
 		if(!endpointRootDir.exists()){
 			endpointRootDir.mkdirs();
