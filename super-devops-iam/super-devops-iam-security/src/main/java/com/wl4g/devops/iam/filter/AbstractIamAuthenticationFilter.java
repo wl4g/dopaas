@@ -170,7 +170,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		 * number of submission login requests.
 		 */
 		if (!coprocessor.preCreateToken(this, req, resp)) {
-			throw new AccessRejectedException(format("Access rejected for remote IP:%s", getHttpRemoteAddr(req)));
+			throw new AccessRejectedException(format("Access rejected of remoteIp: %s", getHttpRemoteAddr(req)));
 		}
 
 		// Success redirection.
@@ -341,13 +341,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	protected RedirectInfo getRedirectInfo(ServletRequest request) {
-		// Get request redirect
+		// Gets request redirect
 		String fromAppName = getCleanParam(request, config.getParam().getApplication());
 		String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl());
 		String fallbackRedirect = getCleanParam(request, config.getParam().getFallbackRedirect());
 		RedirectInfo redirect = RedirectInfo.build(fromAppName, redirectUrl, fallbackRedirect);
 
-		// Get fallback redirect
+		// Fallback redirect
 		if (isBlank(redirect.getFromAppName())) {
 			RedirectInfo bind = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
 			if (nonNull(bind)) {
