@@ -33,7 +33,6 @@ import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
-import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.support.redis.ScanCursor;
 
@@ -56,11 +55,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.ExpiredAuthorized;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionExpiredTime;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
@@ -217,8 +213,8 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	@Override
 	public LogoutModel logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response) {
-		log.debug("Logout from[{}], forced[{}], sessionId[{}]", appName, forced, getSessionId());
-		Subject subject = SecurityUtils.getSubject();
+		log.debug("Logout from: {}, forced: {}, sessionId: {}", appName, forced, getSessionId());
+		Subject subject = getSubject();
 
 		// Execution listener
 		coprocessor.preLogout(forced, toHttp(request), toHttp(response));
@@ -245,11 +241,13 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		if (forced || logoutAll) {
 			// Logout server session
 			try {
-				// That's the subject Refer to
-				// com.wl4g.devops.iam.session.mgt.IamSessionManager#getSessionId
-				// try/catch added for SHIRO-298:
-				subject.logout();
-				log.debug("Gentral logout. sessionId[{}]", IamSecurityHolder.getSessionId(subject));
+				/**
+				 * That's the subject Refer to
+				 * {@link com.wl4g.devops.iam.session.mgt.IamServerSessionManager#getSessionId())
+				 * try/catch added for #SHIRO-298:
+				 */
+				log.debug("Logouting... sessionId: {}", getSessionId(subject));
+				subject.logout(); // After that, session is null
 			} catch (SessionException e) {
 				log.warn("Encountered session exception during logout. This can generally safely be ignored.", e);
 			}

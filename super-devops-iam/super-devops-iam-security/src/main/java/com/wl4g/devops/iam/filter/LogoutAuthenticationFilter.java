@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -26,11 +27,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.SecurityUtils;
-
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 
@@ -51,23 +51,26 @@ public class LogoutAuthenticationFilter extends AbstractIamAuthenticationFilter<
 	@Override
 	protected LogoutAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		return new LogoutAuthenticationToken(remoteHost, redirectInfo);
+		return new LogoutAuthenticationToken(getPrincipal(), remoteHost, redirectInfo);
 	}
 
 	@Override
 	protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
 		// Using coercion ignores remote exit failures
 		boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
-		log.info("Sign out... for forced[{}], session[{}]", forced, SecurityUtils.getSubject().getSession());
+		log.info("Signout... of forced: {}, session: {}", forced, getSessionId());
+
+		// Create logout token
+		IamAuthenticationToken token = createToken(request, response);
 
 		// Logout all logged-in external applications
-		super.authHandler.logout(forced, null, toHttp(request), toHttp(response));
+		authHandler.logout(forced, null, toHttp(request), toHttp(response));
 
 		/*
 		 * Execute login failure redirect login page logic first, (prevent
 		 * logout from getting binding parameters later)
 		 */
-		super.onLoginFailure(createToken(request, response), null, request, response);
+		super.onLoginFailure(token, null, request, response);
 		return false;
 	}
 

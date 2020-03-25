@@ -38,6 +38,8 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSession;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
 import static java.lang.Boolean.parseBoolean;
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -107,9 +109,8 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			 */
 			Date validUntilDate = assertion.getValidUntilDate();
 			long maxIdleTimeMs = validUntilDate.getTime() - System.currentTimeMillis();
-			state(maxIdleTimeMs > 0,
-					String.format("Remote authenticated response session expired time: %s invalid, maxIdleTimeMs: %s",
-							validUntilDate, maxIdleTimeMs));
+			state(maxIdleTimeMs > 0, format("Remote authenticated response session expired time: %s invalid, maxIdleTimeMs: %s",
+					validUntilDate, maxIdleTimeMs));
 			getSession().setTimeout(maxIdleTimeMs);
 
 			IamPrincipalInfo info = assertion.getPrincipalInfo();
@@ -117,16 +118,14 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			bind(KEY_LANG_ATTRIBUTE_NAME, info.getAttributes().get(KEY_LANG_ATTRIBUTE_NAME));
 
 			// Update settings grant ticket
-			String newGrantTicket = String.valueOf(info.getStoredCredentials());
+			String newGrantTicket = valueOf(info.getStoredCredentials());
 			fctk.setCredentials(newGrantTicket);
 
 			// Attribute of remember
 			String principal = assertion.getPrincipalInfo().getPrincipal();
 			fctk.setPrincipal(principal); // MARK1
 			fctk.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
-			if (log.isInfoEnabled()) {
-				log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
-			}
+			log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
 
 			// Authenticate attributes.(roles/permissions/rememberMe)
 			PrincipalCollection principals = createPermitPrincipalCollection(info);
