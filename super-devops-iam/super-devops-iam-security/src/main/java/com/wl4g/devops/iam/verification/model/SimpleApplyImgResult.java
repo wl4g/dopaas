@@ -15,34 +15,35 @@
  */
 package com.wl4g.devops.iam.verification.model;
 
+import javax.validation.constraints.NotBlank;
+
 /**
- * @author vjay
- * @date 2019-09-04 17:50:00
+ * Apply simple image model.
+ *
+ * @author Wangl.sir
+ * @version v1.0 2019年9月4日
+ * @since
  */
-public class VerifiedTokenModel {
+public class SimpleApplyImgResult extends AbstractVerifyCodeResult {
+	private static final long serialVersionUID = -5065908011134214117L;
 
-	private boolean verified;
+	@NotBlank
+	private String primaryImg;
 
-	private String verifiedToken;
-
-	public VerifiedTokenModel(boolean verified, String verifiedToken) {
-		this.verified = verified;
-		this.verifiedToken = verifiedToken;
+	public SimpleApplyImgResult() {
+		super();
 	}
 
-	public boolean isVerified() {
-		return verified;
+	public SimpleApplyImgResult(@NotBlank String applyToken, @NotBlank String verifyType) {
+		super(applyToken, verifyType);
 	}
 
-	public void setVerified(boolean verified) {
-		this.verified = verified;
+	public String getPrimaryImg() {
+		return primaryImg;
 	}
 
-	public String getVerifiedToken() {
-		return verifiedToken;
+	public void setPrimaryImg(String primaryImg) {
+		this.primaryImg = primaryImg;
 	}
 
-	public void setVerifiedToken(String verifiedToken) {
-		this.verifiedToken = verifiedToken;
-	}
 }

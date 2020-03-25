@@ -24,17 +24,17 @@ import javax.validation.constraints.NotBlank;
  * @version v1.0 2019年9月4日
  * @since
  */
-public class SimpleVerifyImgModel extends BasedVerifyCodeModel {
+public class SimpleVerifyImgResult extends AbstractVerifyCodeResult {
 	private static final long serialVersionUID = -5475719110868579286L;
 
 	@NotBlank
 	private String verifyCode;
 
-	public SimpleVerifyImgModel() {
+	public SimpleVerifyImgResult() {
 		super();
 	}
 
-	public SimpleVerifyImgModel(@NotBlank String applyToken, @NotBlank String verifyType) {
+	public SimpleVerifyImgResult(@NotBlank String applyToken, @NotBlank String verifyType) {
 		setApplyToken(applyToken);
 		setVerifyType(verifyType);
 	}

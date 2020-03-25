@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
  * @version v1.0 2019-09-01
  * @since
  */
-public abstract class BasedVerifyCodeModel implements Serializable {
+public abstract class AbstractVerifyCodeResult implements Serializable {
 	private static final long serialVersionUID = -333742824989510195L;
 
 	/**
@@ -43,11 +43,11 @@ public abstract class BasedVerifyCodeModel implements Serializable {
 	@NotBlank
 	private String verifyType;
 
-	public BasedVerifyCodeModel() {
+	public AbstractVerifyCodeResult() {
 		super();
 	}
 
-	public BasedVerifyCodeModel(@NotBlank String applyToken, @NotBlank String verifyType) {
+	public AbstractVerifyCodeResult(@NotBlank String applyToken, @NotBlank String verifyType) {
 		setApplyToken(applyToken);
 		setVerifyType(verifyType);
 	}
