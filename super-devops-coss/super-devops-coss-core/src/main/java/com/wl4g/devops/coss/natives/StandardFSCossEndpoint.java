@@ -28,9 +28,7 @@ import com.wl4g.devops.tool.common.io.FileIOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -222,6 +220,12 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		objectValue.setBucketName(bucketName);
 		objectValue.setKey(key);
 
+		try {
+			objectValue.setObjectContent(new FileInputStream(objectPath));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
 		ObjectStatusMetaData objectStatusMetaData = null;
 		try {
 			objectStatusMetaData = metadataManager.getObject(bucketPath.getAbsolutePath(), objectPath);
@@ -251,15 +255,13 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		File bucketPath = config.getBucketPath(bucketName);
 		try {
 			FileIOUtils.copyInputStreamToFile(input, objectPath);
-			setObjectAcl(bucketName, key, ACL.Default);
-
+			setObjectAcl(bucketName, key, nonNull(metadata)?metadata.getAcl():null);
 			ObjectStatusMetaData objectStatusMetaData = new ObjectStatusMetaData();
 			if(nonNull(metadata)){
 				BeanUtils.copyProperties(metadata,objectStatusMetaData);
 			}
 			HashCode hashCode = md5().hashBytes(Files.readAllBytes(objectPath.toPath()));
 			objectStatusMetaData.setEtag(hashCode.toString());
-
 			metadataManager.addObject(bucketPath.getAbsolutePath(),objectPath,objectStatusMetaData);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -354,6 +356,9 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 	@Override
 	public void setObjectAcl(String bucketName, String key, ACL acl) {
 		File objectPath = config.getObjectPath(bucketName,key);
+		if(isNull(acl)){
+			acl = ACL.Default;
+		}
 		Set<PosixFilePermission> posixFilePermissions = getAclPosixPermissions(acl);
 		try {
 			Files.setPosixFilePermissions(Paths.get(objectPath.getAbsolutePath()), posixFilePermissions);
