@@ -12,9 +12,12 @@
 
 	// 运行时值/状态临时缓存
 	var runtime = {
+		umidToken: null,
 		safeCheck: { // Safe check result.
-			checkGeneral: {
+			checkGeneric: {
 				secret: null,
+				sessionKey: null,
+				sessionValue: null,
 			},
 			checkCaptcha: {
 				enabled: false,
@@ -121,7 +124,7 @@
 			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
 			smsActionKey: "action", // SMS登录action参数名
 			smsActionValueLogin: "login", // SMS登录action=login的值
-			applyUmidTokenUri: "/rcm/applyumidtoken", // 页面初始化时请求umidToken的接口URL后缀
+			applyUmTokenUri: "/rcm/applyumtoken", // 页面初始化时请求umidToken的接口URL后缀
 			checkUri: "/login/check", // 认证前安全检查接口URL后缀
 			captchaApplyUri: "/verify/applycaptcha", // 申请GRAPH验证码URI后缀
 			verifyAnalyzeUri: "/verify/verifyAnalyze", // 校验分析GRAPH验证码URI后缀
@@ -303,6 +306,9 @@
 		// Sets iamBaseUri
         window.sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
         console.debug("Using overlay iamBaseURI: "+ settings.deploy.baseUri);
+
+        // Sets init umidToken.
+        _InitApplyUmidToken();
 	};
 
 	// 请求连接到第三方社交网络URL
@@ -350,7 +356,7 @@
 
 	// Reset graph captcha.
 	var resetCaptcha = function(){
-		_InitSafeCheck(function(checkCaptcha, checkGeneral, checkSms){
+		_InitSafeCheck(function(checkCaptcha, checkGeneric, checkSms){
 			if(checkCaptcha.enabled && !runtime.flags.isApplying){ // 启用验证码且不是申请中(防止并发)?
 				// 获取当前配置CaptchaVerifier实例、显示
 				Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().required();
@@ -452,36 +458,45 @@
 		$(function(){
 			// 获取设备指纹信息
 			Common.Util.getFingerprint({}, function(fpObject){
-				var umidParam = new Map();
-				// 设备指纹信息(必须)
-				umidParam.set("umid", fpObject.umid);
-				// 设备指纹附加参数(必须)
-				umidParam.set("userAgent", fpObject.components.get("userAgent"));
-				umidParam.set("platform", fpObject.components.get("platform"));
-				umidParam.set("pixelRatio", fpObject.components.get("pixelRatio"));
-				umidParam.set("timezone", fpObject.components.get("timezone"));
-				umidParam.set("language", fpObject.components.get("language"));
-				umidParam.set("cpuClass", fpObject.components.get("cpuClass"));
-				umidParam.set("touchSupport", fpObject.components.get("touchSupport"));
-				umidParam.set("deviceMemory", fpObject.components.get("deviceMemory"));
-				umidParam.set("availableScreenResolution", fpObject.components.get("availableScreenResolution"));
-				// 基于Web指纹附加参数(可选)
-				umidParam.set("canvas", CryptoJS.MD5(fpObject.components.get("canvas")).toString(CryptoJS.enc.Hex));
-				umidParam.set("webgl", CryptoJS.MD5(fpObject.components.get("webgl")).toString(CryptoJS.enc.Hex));
-				umidParam.set("indexedDb", fpObject.components.get("indexedDb"));
-				umidParam.set("sessionStorage", fpObject.components.get("sessionStorage"));
-				umidParam.set("localStorage", fpObject.components.get("localStorage"));
-				umidParam.set("colorDepth", fpObject.components.get("colorDepth"));
+				var umItem = new Map();
+				// 设备指纹参数项(必须)
+				umItem.set("userAgent", fpObject.components.get("userAgent"));
+				umItem.set("platform", fpObject.components.get("platform"));
+				umItem.set("pixelRatio", fpObject.components.get("pixelRatio"));
+				umItem.set("timezone", fpObject.components.get("timezone"));
+				umItem.set("language", fpObject.components.get("language"));
+				umItem.set("cpuClass", fpObject.components.get("cpuClass"));
+				umItem.set("touchSupport", fpObject.components.get("touchSupport"));
+				umItem.set("deviceMemory", fpObject.components.get("deviceMemory"));
+				umItem.set("availableScreenResolution", fpObject.components.get("availableScreenResolution"));
+				// 基于Web指纹附加参数项(可选)
+				umItem.set("canvas", CryptoJS.MD5(fpObject.components.get("canvas")).toString(CryptoJS.enc.Hex));
+				umItem.set("webgl", CryptoJS.MD5(fpObject.components.get("webgl")).toString(CryptoJS.enc.Hex));
+				umItem.set("indexedDb", fpObject.components.get("indexedDb"));
+				umItem.set("sessionStorage", fpObject.components.get("sessionStorage"));
+				umItem.set("localStorage", fpObject.components.get("localStorage"));
+				umItem.set("colorDepth", fpObject.components.get("colorDepth"));
 				// 请求握手
-				doIamRequest("applyUmidTokenUri", umidParam, function(res){
-					// 握手完成回调
-					Common.Util.checkEmpty("init.onPostUmidToken", settings.init.onPostUmidToken)(res);
+				var umidParam = new Map();
+				// 规则算法(私有):用base58迭代随机n%3+1次得到指纹集合数据的编码密文data
+				var umItemData = Common.Util.toUrl({}, umItem);
+				var n = 100 + parseInt(Math.random() * 100);
+				var iterations = parseInt(n % 3 + 1), umdata = umItemData;
+				for (var i=0; i<iterations; i++){
+					umdata = Common.Util.Codec.encodeBase58(umdata);
+				}
+				umdata = n + "!" + umdata;
+				console.debug("Generated apply umidToken data: "+ umdata)
+				umidParam.set("umdata", umdata);
+				doIamRequest("{applyUmTokenUri}", umidParam, function(res){
+					Common.Util.checkEmpty("init.onPostUmidToken", settings.init.onPostUmidToken)(res); //获得token回调
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
-						console.log("get umidToken successful");
+						console.debug("Got umidToken: " + res.umidToken);
+						runtim.umidToken = res.umidToken;
 					}
 				}, function(errmsg){
-					console.wran("Failed to gets umidToken, " + errmsg);
+					console.warn("Failed to gets umidToken, " + errmsg);
 					Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 异常回调
 				});
 			});
@@ -497,18 +512,17 @@
 				console.warn("Skip the init safeCheck, because onPreCheck() return false");
 				return;
 			}
-
 			// 请求安全预检
 			var checkParam = new Map();
 			checkParam.set("{principalKey}", principal);
 			checkParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
-			doIamRequest("checkUri", checkParam, function(res){
+			doIamRequest("{checkUri}", checkParam, function(res){
 				// 初始化完成回调
 				Common.Util.checkEmpty("init.onPostCheck", settings.init.onPostCheck)(res);
 				var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 				if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 					runtime.safeCheck = res.data; // [MARK3]
-					callback(res.data.checkCaptcha, res.data.checkGeneral, res.data.checkSms);
+					callback(res.data.checkCaptcha, res.data.checkGeneric, res.data.checkSms);
 				}
 			}, function(errmsg){
 				console.log("Failed to safe check, " + errmsg);
@@ -523,7 +537,7 @@
 			// 初始刷新验证码
 			resetCaptcha();
 
-			// Init captcha event.
+			// 初始化&绑定验证码事件
 			if(settings.captcha.use == "VerifyWithSimpleGraph" || settings.captcha.use == "VerifyWithGifGraph") {
 				var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 				// Set captcha input maxLength.
@@ -538,37 +552,28 @@
 
 							// Submission verify analyze captcha.
 							var _check = function(name, params){ return Common.Util.checkEmpty(name, params) };
-							var _map = new Common.Util.FastMap();
-							_map.put(_check("definition.verifyCodeKey", settings.definition.verifyCodeKey), captcha);
-							_map.put(_check("definition.applyTokenKey", settings.definition.applyTokenKey), _check("applyModel.applyToken", runtime.applyModel.applyToken));
-							_map.put(_check("definition.verifyTypeKey", settings.definition.verifyTypeKey), _check("applyModel.verifyType", runtime.applyModel.verifyType));
-
-							$.ajax({
-								url: getVerifyCaptchaUrl(),
-								type: "post",
-								xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
-								dataType: "json",
-								contentType:"application/json",
-								data: _map.asJsonString(),
-								complete: function (XHR, textStatus) {
-									runtime.flags.isVerifying = false; // Reset verify status.
-								},
-								success: function(res){
-									var codeOkValue = _check("definition.codeOkValue",settings.definition.codeOkValue);
-									if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
-										resetCaptcha();
-										settings.captcha.onError(res.message); // Call after captcha error.
-									} else { // Verify success.
-										runtime.verifiedModel = res.data.verifiedModel;
-										Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().cancel(false); // Hide captcha when success.
-									}
-								},
-								error: function(req, status, errmsg){
+							var captchaParam = new Common.Util.FastMap();
+							captchaParam.put(_check("definition.verifyCodeKey", settings.definition.verifyCodeKey), captcha);
+							captchaParam.put(_check("definition.applyTokenKey", settings.definition.applyTokenKey), _check("applyModel.applyToken", runtime.applyModel.applyToken));
+							captchaParam.put(_check("definition.verifyTypeKey", settings.definition.verifyTypeKey), _check("applyModel.verifyType", runtime.applyModel.verifyType));
+							// 提交验证码
+							doIamRequest(getVerifyCaptchaUrl(), captchaParam, function(res){
+								runtime.flags.isVerifying = false; // Reset verify status.
+								var codeOkValue = _check("definition.codeOkValue",settings.definition.codeOkValue);
+								if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
 									resetCaptcha();
-									settings.captcha.onError(errmsg); // Call after captcha error.
+									settings.captcha.onError(res.message); // Call after captcha error.
+								} else { // Verify success.
+									runtime.verifiedModel = res.data.verifiedModel;
+									Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().cancel(false); // Hide captcha when success.
 								}
+							}, function(errmsg){
+								runtime.flags.isVerifying = false; // Reset verify status.
+								resetCaptcha();
+								settings.captcha.onError(errmsg); // Call after captcha error.
 							});
 						}
+
 					}
 				});
 			};
@@ -596,11 +601,15 @@
 					return;
 				}
 
-				_InitSafeCheck(function(checkCaptcha, checkGeneral, checkSms){
-					// 获取设备指纹信息
-					Common.Util.getFingerprint({}, function(fpObject){
-						// 获取Server返回公钥
-						var secret = Common.Util.checkEmpty("Error for secret is empty", checkGeneral.secret);
+				_InitSafeCheck(function(checkCaptcha, checkGeneric, checkSms){
+					// 获取设备指纹Token
+					_InitApplyUmidToken(function(umidToken){
+						// 获取Server公钥信息
+						var secret = Common.Util.checkEmpty("Secret is empty", checkGeneric.secret);
+						// 获取session信息(为解决新版浏览器会阻止非顶级域名的cors共享策略, 即正确配置了allowd-header,withCredentials等也会被阻止, chrom80+开始)
+						var sessionKey = Common.Util.checkEmpty("sessionKey is empty", checkGeneric.sessionKey);
+						var sessionValue = Common.Util.checkEmpty("sessionValue is empty", checkGeneric.sessionValue);
+
 						// 生成client公钥
 						runtime.clientSecret = IAM.Crypto.RSA.generateKey();
 						var credentials = encodeURIComponent(IAM.Crypto.RSA.encryptToHexString(secret, plainPasswd));
@@ -609,7 +618,7 @@
 						if(runtime.safeCheck.checkCaptcha.enabled){
 							verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
 							if(Common.Util.isEmpty(verifiedToken)){ // Required
-								settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete the man-machine verify");
+								settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete man-machine verify");
 								return;
 							}
 						}
@@ -634,27 +643,11 @@
 						loginParam.set("{clientRefKey}", clientRef());
 						loginParam.set("{verifiedTokenKey}", verifiedToken);
 						loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
-						// 设备指纹信息(必须)
-						loginParam.set("umid", fpObject.umid);
-						// 设备指纹附加参数(必须)
-						loginParam.set("userAgent", fpObject.components.get("userAgent"));
-						loginParam.set("platform", fpObject.components.get("platform"));
-						loginParam.set("pixelRatio", fpObject.components.get("pixelRatio"));
-						loginParam.set("timezone", fpObject.components.get("timezone"));
-						loginParam.set("language", fpObject.components.get("language"));
-						loginParam.set("cpuClass", fpObject.components.get("cpuClass"));
-						loginParam.set("touchSupport", fpObject.components.get("touchSupport"));
-						loginParam.set("deviceMemory", fpObject.components.get("deviceMemory"));
-						loginParam.set("availableScreenResolution", fpObject.components.get("availableScreenResolution"));
-						// 基于Web指纹附加参数(可选)
-						loginParam.set("canvas", CryptoJS.MD5(fpObject.components.get("canvas")).toString(CryptoJS.enc.Hex));
-						loginParam.set("webgl", CryptoJS.MD5(fpObject.components.get("webgl")).toString(CryptoJS.enc.Hex));
-						loginParam.set("indexedDb", fpObject.components.get("indexedDb"));
-						loginParam.set("sessionStorage", fpObject.components.get("sessionStorage"));
-						loginParam.set("localStorage", fpObject.components.get("localStorage"));
-						loginParam.set("colorDepth", fpObject.components.get("colorDepth"));
+						loginParam.set(sessionKey, sessionValue); // Submit manually(Solve cross-cookie issues)
+						// 设备指纹umidToken(初始化页面时获取, 必须)
+						loginParam.set("umidToken", fpObject.umid);
 						// 请求提交登录
-						doIamRequest("accountSubmitUri", loginParam, function(resp){
+						doIamRequest("{accountSubmitUri}", loginParam, function(resp){
 							// 解锁登录按钮
 							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
 	
@@ -671,6 +664,8 @@
 								}
 							}
 						}, function(errmsg){
+							// 失败时也要解锁登录按钮
+							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
 							runtime.verifiedModel.verifiedToken = ""; // Clear
 							settings.account.onError(errmsg); // 登录异常回调
 						});
@@ -706,7 +701,7 @@
 				var getSmsParam = new Map();
 				getSmsParam.set("{principalKey}", encodeURIComponent(mobileNum));
 				getSmsParam.set("{verifiedTokenKey}", captcha);
-				doIamRequest("smsApplyUri", getSmsParam, function(res){
+				doIamRequest("{smsApplyUri}", getSmsParam, function(res){
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					// 登录失败
 					if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
@@ -747,7 +742,7 @@
 				smsLoginParam.set("{principalKey}", encodeURIComponent(mobileNum));
 				smsLoginParam.set("{credentialKey}", smsCode);
 				smsLoginParam.set("{smsActionKey}", Common.Util.checkEmpty("definition.smsActionValueLogin", settings.definition.smsActionValueLogin));
-				doIamRequest("smsSubmitUri", smsLoginParam, function(res){
+				doIamRequest("{smsSubmitUri}", smsLoginParam, function(res){
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
 						settings.sms.onError(resp.message); // SMS登录失败回调
@@ -781,31 +776,25 @@
 	};
 
 	// 提交基于IAM特征的请求(即, 设置跨域允许cookie,表单,post等)
-	var doIamRequest = function(urlKey, paramMap, success, error){
-		// Default parameters.
+	var doIamRequest = function(urlAndKey, paramMap, success, error){
+		// Submit manually(Solve cross-cookie issues)
+		if(!Common.Util.isAnyEmpty(runtime.safeCheck.checkGeneric.sessionKey, runtime.safeCheck.checkGeneric.sessionValue)){
+			paramMap.set(runtime.safeCheck.checkGeneric.sessionKey, runtime.safeCheck.checkGeneric.sessionValue);
+		}
+		// Default common parameters.
 		paramMap.set("{responseType}", Common.Util.checkEmpty("definition.responseTypeValue", settings.definition.responseTypeValue));
-		// Gets base URI.
-		var url = Common.Util.checkEmpty("deploy.baseUri", settings.deploy.baseUri)
-					+ Common.Util.checkEmpty("definition", settings.definition[urlKey]);
-		// Convertions form data
-		var formData = "";
-		paramMap.forEach((value, key) => {
-			var paramName = key;
-			// Check placeholder key.
-			if(key.startsWith("{") && key.endsWith("}")){
-				var realKey = key.substr(1, key.length-2);
-				paramName = Common.Util.checkEmpty("definition."+realKey, settings.definition[realKey]);
-			}
-			formData+=(paramName+"="+value+"&");
-		});
-		if(formData.endsWith("&")){
-			formData = formData.substr(0, formData.lastIndexOf('&'));
+		var _url = Common.Util.checkEmpty("deploy.baseUri", settings.deploy.baseUri);
+		if(urlAndKey.startsWith("{") && urlAndKey.endsWith("}")) { // Build API URI
+			var realKey = urlAndKey.substr(1, urlAndKey.length - 2);
+			_url += Common.Util.checkEmpty("definition", settings.definition[realKey]);
+		} else {
+			_url += Common.Util.checkEmpty("definition", settings.definition[urlAndKey]);
 		}
 		$.ajax({
-			url: url,
+			url: _url,
 			type: "post",
-			//headers: { ContentType: "application/x-www-form-urlencoded" },
-			data: formData,
+			//headers: { ContentType: "" },
+			data: Common.Util.toUrl(settings.definition, paramMap),
 			xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 			success: function(res, textStatus, jqxhr){
 				success(res);

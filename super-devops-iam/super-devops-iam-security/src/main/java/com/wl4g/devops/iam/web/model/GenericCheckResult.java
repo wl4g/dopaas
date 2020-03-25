@@ -31,24 +31,55 @@ public class GenericCheckResult implements Serializable {
 	/**
 	 * General response key-name.
 	 */
-	final public static String KEY_GENERAL_CHECK = "checkGeneral";
+	final public static String KEY_GENERAL_CHECK = "checkGeneric";
 
 	/**
 	 * Applied secret public key hex.
 	 */
 	private String secret;
 
-	public GenericCheckResult(String secret) {
+	/**
+	 * Session keyname.
+	 */
+	private String sessionKey;
+
+	/**
+	 * Session value.
+	 */
+	private Serializable sessionValue;
+
+	public GenericCheckResult(String secret, String sessionKey, Serializable sessionValue) {
 		// hasTextOf(secret, "secret");
-		this.secret = secret;
+		setSecret(secret);
+		setSessionKey(sessionKey);
+		setSessionValue(sessionValue);
 	}
 
 	public String getSecret() {
 		return secret;
 	}
 
-	public void setSecret(String secret) {
+	public GenericCheckResult setSecret(String secret) {
 		this.secret = secret;
+		return this;
+	}
+
+	public String getSessionKey() {
+		return sessionKey;
+	}
+
+	public GenericCheckResult setSessionKey(String sessionKey) {
+		this.sessionKey = sessionKey;
+		return this;
+	}
+
+	public Serializable getSessionValue() {
+		return sessionValue;
+	}
+
+	public GenericCheckResult setSessionValue(Serializable sessionValue) {
+		this.sessionValue = sessionValue;
+		return this;
 	}
 
 }

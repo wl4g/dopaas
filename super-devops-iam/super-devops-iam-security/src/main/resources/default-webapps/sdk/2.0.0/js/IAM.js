@@ -6,7 +6,7 @@
  
 !function(window, document){
 	var g_modules = {
-		jqModule: { // Fingerprint
+		jqModule: { // JQuery
 			stable: "jquery-3.3.1.min.js",
 			grey: "jquery-3.3.1.min.js",
 			css_stable: null,

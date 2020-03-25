@@ -28,11 +28,6 @@ public class SimpleRcmTokenResult implements Serializable {
 	private static final long serialVersionUID = -3434524148761808680L;
 
 	/**
-	 * Risk control UMID response model key-name.
-	 */
-	final public static String KEY_RCM_TOKEN_MODEL = "rcmModel";
-
-	/**
 	 * Risk control UMID token.
 	 */
 	private String umidToken;

@@ -138,7 +138,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * recommended to use a more professional external RiskControlService in the
 	 * production environment.
 	 */
-	final public static String URI_S_RCM_UMIDTOKEN_APPLY = "applyumidtoken";
+	final public static String URI_S_RCM_UMTOKEN_APPLY = "applyumtoken";
 
 	/**
 	 * Generic API v1 base URL.
