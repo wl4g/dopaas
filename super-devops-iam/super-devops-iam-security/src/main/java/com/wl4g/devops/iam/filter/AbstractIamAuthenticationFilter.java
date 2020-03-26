@@ -53,7 +53,7 @@ import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.IllegalRequestException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
@@ -186,10 +186,10 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		String clientRemoteAddr = getHttpRemoteAddr(req);
 
 		// Create authentication token
-		return postCreateToken(clientRemoteAddr, redirect, req, resp);
+		return doCreateToken(clientRemoteAddr, redirect, req, resp);
 	}
 
-	protected abstract T postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+	protected abstract T doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

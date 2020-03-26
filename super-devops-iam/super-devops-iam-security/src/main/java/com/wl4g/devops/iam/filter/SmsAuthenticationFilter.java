@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
 
@@ -38,7 +38,7 @@ public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<Sms
 	final public static String NAME = "sms";
 
 	@Override
-	protected SmsAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+	protected SmsAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		final String action = getCleanParam(request, config.getParam().getSmsActionName());
 		final String principal = getCleanParam(request, config.getParam().getPrincipalName());

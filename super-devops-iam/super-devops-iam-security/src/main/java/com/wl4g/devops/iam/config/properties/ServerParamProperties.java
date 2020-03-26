@@ -29,11 +29,6 @@ public class ServerParamProperties extends ParamProperties {
 	private static final long serialVersionUID = 3258460473711285504L;
 
 	/**
-	 * Account parameter name at login time of account password.
-	 */
-	private String principalName = "principal";
-
-	/**
 	 * Password parameter name at login time of account password.
 	 */
 	private String credentialName = "credential";
@@ -93,14 +88,6 @@ public class ServerParamProperties extends ParamProperties {
 	 * Dynamic verification code operation action type parameter key-name.
 	 */
 	private String smsActionName = "action";
-
-	public String getPrincipalName() {
-		return principalName;
-	}
-
-	public void setPrincipalName(String loginUsername) {
-		this.principalName = loginUsername;
-	}
 
 	public String getCredentialName() {
 		return credentialName;

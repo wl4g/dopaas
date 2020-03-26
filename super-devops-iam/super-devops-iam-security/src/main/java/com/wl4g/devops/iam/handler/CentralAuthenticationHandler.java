@@ -21,6 +21,7 @@ import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.model.LoggedModel;
 import com.wl4g.devops.iam.common.authc.model.LogoutModel;
 import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
@@ -57,6 +58,7 @@ import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Stat
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
@@ -210,8 +212,9 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		log.debug("Logout from: {}, forced: {}, sessionId: {}", appName, forced, getSessionId());
 		Subject subject = getSubject();
 
-		// Execution listener
-		coprocessor.preLogout(forced, toHttp(request), toHttp(response));
+		// From client signout
+		coprocessor.preLogout(new LogoutAuthenticationToken(getPrincipal(), getHttpRemoteAddr(request)), toHttp(request),
+				toHttp(response));
 
 		// Represents all logged-out Tags
 		boolean logoutAll = true;

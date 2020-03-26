@@ -92,13 +92,13 @@ public interface SecurityCoprocessor {
 	}
 
 	/**
-	 * Call before logout
+	 * Pre-logout processing.
 	 *
-	 * @param forced
+	 * @param token
 	 * @param request
 	 * @param response
 	 */
-	default void preLogout(boolean forced, HttpServletRequest request, HttpServletResponse response) {
+	default void preLogout(AuthenticationToken token, HttpServletRequest request, HttpServletResponse response) {
 	}
 
 }

@@ -31,7 +31,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 
 /**
@@ -49,11 +49,11 @@ public class LogoutAuthenticationFilter extends AbstractIamAuthenticationFilter<
 	final public static String NAME = "logout";
 
 	@Override
-	protected LogoutAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+	protected LogoutAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		// MARK1: If the current status is unauthenticated, the principle cannot
 		// be obtained if the logout is ignored.
-		return new LogoutAuthenticationToken(getPrincipal(false), remoteHost, redirectInfo);
+		return new LogoutAuthenticationToken(getPrincipal(false), remoteHost);
 	}
 
 	@Override

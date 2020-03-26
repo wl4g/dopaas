@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.authc.GenericAuthenticationToken;
 import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
@@ -36,7 +36,7 @@ public class GenericAuthenticationFilter extends AbstractIamAuthenticationFilter
 	final public static String NAME = "generic";
 
 	@Override
-	protected GenericAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+	protected GenericAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		rejectRequestMethod(true, request, response, "POST");
 
