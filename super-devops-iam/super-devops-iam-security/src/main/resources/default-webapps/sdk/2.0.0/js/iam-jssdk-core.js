@@ -8,11 +8,18 @@
 	// Basic constant definition.
     var constant = {
         baseUriStoredKey : '__$IAM_BASEURI_STORED_KEY',
+        umidTokenStorageKey : '__$IAM_UMID_STORED_KEY',
     };
 
 	// 运行时值/状态临时缓存
 	var runtime = {
-		umidToken: null,
+		getOrSetUmidToken: function(umidToken){
+			if(Common.Util.isEmpty(umidToken)){
+				return Common.Util.Codec.decodeBase58(sessionStorage.getItem(constant.umidTokenStorageKey));
+			} else {
+				sessionStorage.setItem(constant.umidTokenStorageKey, Common.Util.Codec.encodeBase58(umidToken));
+			}
+		},
 		safeCheck: { // Safe check result.
 			checkGeneric: {
 				secret: null,
@@ -122,6 +129,7 @@
 			verifyCodeKey: "verifyCode", // 提交验证码参数名（不通用：simple/gif）
 			verifiedTokenKey: "verifiedToken", // 验证码已校验的凭据token参数名（通用）
 			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
+			umidTokenKey: "umidToken", // 提交umidToken的参数名
 			smsActionKey: "action", // SMS登录action参数名
 			smsActionValueLogin: "login", // SMS登录action=login的值
 			applyUmTokenUri: "/rcm/applyumtoken", // 页面初始化时请求umidToken的接口URL后缀
@@ -190,6 +198,11 @@
                             applycaptchaUrl: getApplyCaptchaUrl(),
 							applyverifyUrl: getVerifyCaptchaUrl(),
                             repeatIcon: 'fa fa-redo',
+                            decorateVerifyData: function(verifyData){
+                            	// 增加umidToken参数
+                            	verifyData[Common.Util.checkEmpty("definition.umidTokenKey", definition.umidTokenKey)] = runtime.getOrSetUmidToken();
+                            	return verifyData;
+                            },
                             onSuccess: function (verifiedToken) {
 								console.debug("Jigsaw captcha verify successful. verifiedToken is '"+ verifiedToken + "'");
 								runtime.flags.isApplying = false; // Apply captcha completed.
@@ -493,7 +506,7 @@
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 						console.debug("Got umidToken: " + res.umidToken);
-						runtime.umidToken = res.umidToken;
+						runtime.getOrSetUmidToken(res.umidToken);
 					}
 				}, function(errmsg){
 					console.warn("Failed to gets umidToken, " + errmsg);
@@ -552,10 +565,11 @@
 
 							// Submission verify analyze captcha.
 							var _check = function(name, params){ return Common.Util.checkEmpty(name, params) };
-							var captchaParam = new Common.Util.FastMap();
-							captchaParam.put(_check("definition.verifyCodeKey", settings.definition.verifyCodeKey), captcha);
-							captchaParam.put(_check("definition.applyTokenKey", settings.definition.applyTokenKey), _check("applyModel.applyToken", runtime.applyModel.applyToken));
-							captchaParam.put(_check("definition.verifyTypeKey", settings.definition.verifyTypeKey), _check("applyModel.verifyType", runtime.applyModel.verifyType));
+							var captchaParam = new Map();
+							captchaParam.put("{verifyCodeKey}", captcha);
+							captchaParam.put("{applyTokenKey}", _check("applyModel.applyToken", runtime.applyModel.applyToken));
+							captchaParam.put("{verifyTypeKey}", _check("applyModel.verifyType", runtime.applyModel.verifyType));
+							captchaParam.set("{umidTokenKey}", runtime.getOrSetUmidToken());
 							// 提交验证码
 							doIamRequest(getVerifyCaptchaUrl(), captchaParam, function(res){
 								runtime.flags.isVerifying = false; // Reset verify status.
@@ -580,10 +594,10 @@
 		});
 	};
 
-	// Init Account login implement.
+	// Init Account login implements.
 	var _InitAccountAuthenticator = function(){
 		$(function(){
-			// Init bind key-enter login submit.
+			// Init bind key-enter auto submit.
 			$(document).bind("keydown",function(event){
 				if(event.keyCode == 13){
 					$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click();
@@ -604,7 +618,7 @@
 				_InitSafeCheck(function(checkCaptcha, checkGeneric, checkSms){
 					// 获取Server公钥信息
 					var secret = Common.Util.checkEmpty("Secret is empty", checkGeneric.secret);
-					// 获取session信息(为解决新版浏览器会阻止非顶级域名的cors共享策略, 即正确配置了allowd-header,withCredentials等也会被阻止, chrom80+开始)
+					// 获取session信息(为解决新版浏览器会阻止非顶级域名的cors共享策略, 即正确配置了allowd-header,withCredentials等也会被阻止, 如chrom80+开始)
 					var sessionKey = Common.Util.checkEmpty("sessionKey is empty", checkGeneric.sessionKey);
 					var sessionValue = Common.Util.checkEmpty("sessionValue is empty", checkGeneric.sessionValue);
 
@@ -641,9 +655,10 @@
 					loginParam.set("{clientRefKey}", clientRef());
 					loginParam.set("{verifiedTokenKey}", verifiedToken);
 					loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
-					loginParam.set(sessionKey, sessionValue); // Submit manually(Solve cross-cookie issues)
 					// 设备指纹umidToken(初始化页面时获取, 必须)
-					loginParam.set("umidToken", runtime.umidToken);
+					loginParam.set("{umidTokenKey}", runtime.getOrSetUmidToken());
+					// Submit manually(Solve cross-cookie issues)
+					loginParam.set(sessionKey, sessionValue);
 					// 请求提交登录
 					doIamRequest("{accountSubmitUri}", loginParam, function(resp){
 						// 解锁登录按钮

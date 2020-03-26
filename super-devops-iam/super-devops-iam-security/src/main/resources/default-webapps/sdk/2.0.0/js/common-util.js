@@ -178,6 +178,7 @@
 		},
 		Codec: {
 			encodeBase58: function(plaintext){ // 明文字符串base58编码
+				if(!plaintext) { return null; }
 				var ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 				var ALPHABET_MAP = {};
 				var BASE = 58;
@@ -229,6 +230,7 @@
 				return digits.reverse().map(function(digit) { return ALPHABET[digit]; }).join('');
 			},
 			decodeBase58: function(base58) { // base58字符串解码
+				if(!base58) { return null; }
 				var ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 				var ALPHABET_MAP = {};
 				var BASE = 58;

@@ -61,7 +61,7 @@
                 contentType: 'application/json',
                 dataType: 'json',
 				async: false,
-				data: JSON.stringify(verifyData),
+				data: JSON.stringify(Common.Util.checkEmpty("decorateVerifyData", that.decorateVerifyData)(verifyData)),
                 success: function (res) {
 					if(res.code == 200){
 						runtime.verifiedModel = res.data.verifiedModel;
@@ -107,6 +107,10 @@
 					Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw apply captcha, " + errmsg);
 				}
 			});
+		},
+		decorateVerifyData: function(verifyData){
+			console.debug("NoOp decorate verifyData.");
+			return verifyData;
 		},
 		onSuccess: function(verifiedToken){
 			console.debug("Jigsaw captcha verify successfully. verifiedToken => "+ verifiedToken);

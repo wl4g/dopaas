@@ -112,7 +112,7 @@ public class SimpleRcmRecognizerHandler implements InitializingBean {
 		// Storage umidToken=>umid
 		umidCache.put(new EnhancedKey(umidToken, 60_000), umid);
 
-		log.info("Generated umidToken: {}, umid: {}", umidToken, umid);
+		log.info("Created umidToken: {}, umid: {}", umidToken, umid);
 		return umidToken;
 	}
 
@@ -123,7 +123,7 @@ public class SimpleRcmRecognizerHandler implements InitializingBean {
 	 * @return
 	 */
 	public double getEvaluation(@NotBlank String umidToken) {
-		return 9d; // TODO
+		return 9d; // TODO no implements
 	}
 
 	/**

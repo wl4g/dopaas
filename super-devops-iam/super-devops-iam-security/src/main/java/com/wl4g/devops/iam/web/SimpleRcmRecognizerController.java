@@ -19,6 +19,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.sessionStatus;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.net.URLDecoder;
@@ -68,9 +69,30 @@ public class SimpleRcmRecognizerController extends AbstractAuthenticatorControll
 	@ResponseBody
 	public RespBase<?> applyUmidToken(@RequestParam("umdata") String umdata, HttpServletRequest request) throws Exception {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
+		log.info("Apply umidToken, parsed umdata: {}", umdata);
 
 		// Decode umdata.
 		umdata = URLDecoder.decode(umdata, "UTF-8");
+		// Parse risk control parameter.
+		Map<String, String> paramMap = parseUmdataParameter(umdata);
+
+		// [Simple risk control processing]
+		String umidToken = handler.applyUmidToken(paramMap);
+		resp.setData(new SimpleRcmTokenResult(umidToken));
+		return resp;
+	}
+
+	/**
+	 * Parse umdata to parameter.
+	 * 
+	 * @param umdata
+	 * @return
+	 */
+	private Map<String, String> parseUmdataParameter(String umdata) {
+		if (isBlank(umdata) || !umdata.contains("!")) {
+			throw new IllegalArgumentException("Invalid umdata");
+		}
+
 		// Original algorithm: base58 Re-encoding the fingerprint set data after
 		// random iteration n%3+1 times
 		int n = parseIntOrDefault(umdata.substring(0, umdata.indexOf("!")));
@@ -81,12 +103,7 @@ public class SimpleRcmRecognizerController extends AbstractAuthenticatorControll
 		}
 
 		// To risk control parameters.
-		Map<String, String> paramMap = safeMap(toQueryParams(umItemData));
-
-		// [Simple risk control processing]
-		String umidToken = handler.applyUmidToken(paramMap);
-		resp.setData(new SimpleRcmTokenResult(umidToken));
-		return resp;
+		return safeMap(toQueryParams(umItemData));
 	}
 
 }
