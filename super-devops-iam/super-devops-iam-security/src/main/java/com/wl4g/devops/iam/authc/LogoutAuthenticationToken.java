@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 
 /**
  * Logout authentication token
@@ -25,7 +25,7 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
  * @date 2018年11月19日
  * @since
  */
-public class LogoutAuthenticationToken extends AbstractIamAuthenticationToken {
+public class LogoutAuthenticationToken implements IamAuthenticationToken {
 
 	private static final long serialVersionUID = 8587329689973009598L;
 
@@ -34,13 +34,19 @@ public class LogoutAuthenticationToken extends AbstractIamAuthenticationToken {
 	 */
 	final private String principal;
 
-	public LogoutAuthenticationToken(final String principal, final String remoteHost, final RedirectInfo redirectInfo) {
-		super(remoteHost, redirectInfo);
+	/**
+	 * Remote client host address
+	 */
+	final private String remoteHost;
+
+	public LogoutAuthenticationToken(final String principal, final String remoteHost) {
 		/**
-		 * @see {@link com.wl4g.devops.iam.filter.LogoutAuthenticationFilter#postCreateToken()}:MARK1
+		 * @see {@link com.wl4g.devops.iam.filter.LogoutAuthenticationFilter#doCreateToken()}:MARK1
 		 */
 		// hasTextOf(principal, "principal");
 		this.principal = principal;
+		// hasTextOf(remoteHost, "remoteHost");
+		this.remoteHost = remoteHost;
 	}
 
 	@Override
@@ -55,7 +61,7 @@ public class LogoutAuthenticationToken extends AbstractIamAuthenticationToken {
 
 	@Override
 	public String getHost() {
-		return null;
+		return remoteHost;
 	}
 
 }

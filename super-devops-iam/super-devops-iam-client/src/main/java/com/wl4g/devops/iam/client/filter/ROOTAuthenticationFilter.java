@@ -79,7 +79,7 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 	 *             if there is an error processing the request.
 	 */
 	@Override
-	protected FastCasAuthenticationToken createAuthenticationToken(HttpServletRequest request, HttpServletResponse response)
+	protected FastCasAuthenticationToken doCreateToken(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String ticket = getCleanParam(request, config.getParam().getGrantTicket());
 		return new FastCasAuthenticationToken(ticket);

@@ -19,7 +19,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
-import org.apache.shiro.web.util.WebUtils;
 
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
@@ -64,6 +63,7 @@ import com.wl4g.devops.common.exception.iam.TooManyRequestAuthentcationException
 import com.wl4g.devops.common.exception.iam.UnauthorizedException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.client.authc.FastCasAuthenticationToken;
+import com.wl4g.devops.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
@@ -177,10 +177,10 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 
 	@Override
 	protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
-		return createAuthenticationToken(WebUtils.toHttp(request), WebUtils.toHttp(response));
+		return doCreateToken(toHttp(request), toHttp(response));
 	}
 
-	protected abstract T createAuthenticationToken(HttpServletRequest request, HttpServletResponse response) throws Exception;
+	protected abstract T doCreateToken(HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 	@Override
 	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
@@ -244,12 +244,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
 			ServletResponse response) {
 		Throwable cause = getRootCause(ae);
-		if (cause != null) {
-			if (cause instanceof IamException) {
+		if (!isNull(cause)) {
+			if (cause instanceof IamException)
 				log.error("Failed to caused by: {}", getMessage(cause));
-			} else {
+			else
 				log.error("Failed to authenticate.", cause);
-			}
 		}
 
 		// Failure redirect URL
@@ -270,7 +269,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		if (isNull(cause) || (cause instanceof InvalidGrantTicketException)) {
 			if (isJSONResp(toHttp(request))) {
 				try {
-					RespBase<String> resp = makeFailedResponse(failRedirectUrl, cause);
+					RespBase<Object> resp = makeFailedResponse(token, failRedirectUrl, cause);
 					String failMsg = toJSONString(resp);
 					log.info("Failed to invalid grantTicket response: {}", failMsg);
 					writeJson(toHttp(response), failMsg);
@@ -436,18 +435,20 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	/**
 	 * Make login failed response message.
 	 * 
-	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeFailedResponse()}
+	 * @param token
+	 *            e.g, {@link LogoutAuthenticationToken}
 	 * @param loginRedirectUrl
 	 *            Login redirect URL
 	 * @param err
 	 *            Exception object
 	 * @return
+	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeFailedResponse()}
 	 */
-	protected RespBase<String> makeFailedResponse(String loginRedirectUrl, Throwable err) {
+	protected RespBase<Object> makeFailedResponse(AuthenticationToken token, String loginRedirectUrl, Throwable err) {
 		String errmsg = err != null ? err.getMessage() : "Authentication failure";
 
 		// Make message
-		RespBase<String> resp = RespBase.create(sessionStatus());
+		RespBase<Object> resp = RespBase.create(sessionStatus());
 		resp.setCode(UNAUTHC).setMessage(errmsg);
 		resp.forMap().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
 		resp.forMap().put(config.getParam().getApplication(), config.getServiceName());

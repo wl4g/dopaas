@@ -17,20 +17,48 @@ package com.wl4g.devops.iam.client.authc;
 
 import org.apache.shiro.authc.AuthenticationToken;
 
+/**
+ * Signout authentication token.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年3月26日
+ * @since
+ */
 public class LogoutAuthenticationToken implements AuthenticationToken {
 
 	final private static long serialVersionUID = -7503506620220450148L;
 
-	final public static LogoutAuthenticationToken EMPTY = new LogoutAuthenticationToken();
+	/**
+	 * Forced signout?
+	 */
+	final private boolean forced;
+
+	/**
+	 * Principal currently exiting
+	 */
+	final private String principal;
+
+	public LogoutAuthenticationToken(final boolean forced, final String principal) {
+		this.forced = forced;
+		/**
+		 * @see {@link com.wl4g.devops.iam.client.filter.LogoutAuthenticationFilter#doCreateToken()}
+		 */
+		// hasTextOf(principal, "principal");
+		this.principal = principal;
+	}
 
 	@Override
 	public Object getPrincipal() {
-		return null;
+		return principal;
 	}
 
 	@Override
 	public Object getCredentials() {
 		return null;
+	}
+
+	public boolean isForced() {
+		return forced;
 	}
 
 }

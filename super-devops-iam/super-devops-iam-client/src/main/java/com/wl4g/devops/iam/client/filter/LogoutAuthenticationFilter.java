@@ -20,7 +20,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.session.SessionException;
@@ -46,12 +45,15 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipal;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.tool.common.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
+import static java.lang.String.valueOf;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -80,21 +82,21 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 	}
 
 	@Override
-	protected AuthenticationToken createAuthenticationToken(HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	protected AuthenticationToken doCreateToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
 		// Using coercion ignores remote exit failures
-		boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
-		// Current session-id
-		Serializable sessionId = getSessionId();
-		log.info("Logout of forced[{}], sessionId[{}]", forced, sessionId);
+		final boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
+		log.info("Signout forced: {}, sessionId: {}", forced, getSessionId());
 
-		// Callback logout
-		coprocessor.preLogout(forced, toHttp(request), toHttp(response));
+		// Create logout token.
+		LogoutAuthenticationToken token = new LogoutAuthenticationToken(forced, getPrincipal());
+
+		// Pre-logout processing.
+		coprocessor.preLogout(token, toHttp(request), toHttp(response));
 
 		/*
 		 * Post to remote logout
@@ -104,37 +106,42 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 			logout = doRequestRemoteLogout(forced);
 		} catch (Exception e) {
 			if (e instanceof IamException)
-				log.warn("Failed to remote logout. {}", ExceptionUtils.getRootCauseMessage(e));
+				log.warn("Failed to remote logout. {}", getRootCauseMessage(e));
 			else
 				log.warn("Failed to remote logout.", e);
 		}
 
 		/*
-		 * Check remote logout
+		 * Check server logout result.
 		 */
-		if (forced || checkLogout(logout)) {
-			// Local session logout
+		if (forced || checkLogoutResult(logout)) {
 			try {
+				// That session logout
 				// try/catch added for SHIRO-298:
 				getSubject(request, response).logout();
-				log.info("Local logout finished. sessionId[{}]", sessionId);
+				log.info("logout client of sessionId: {}", getSessionId());
 			} catch (SessionException e) {
 				log.warn("Logout exception. This can generally safely be ignored.", e);
 			}
 		}
 
-		/*
-		 * Redirection processing
-		 */
-		onLoginFailure(LogoutAuthenticationToken.EMPTY, null, request, response);
+		// Redirection processing
+		onLoginFailure(token, null, request, response);
 		return false;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	protected RespBase<String> makeFailedResponse(String loginRedirectUrl, Throwable err) {
-		RespBase<String> resp = super.makeFailedResponse(loginRedirectUrl, err);
+	protected RespBase<Object> makeFailedResponse(AuthenticationToken token, String loginRedirectUrl, Throwable err) {
+		RespBase<Object> resp = super.makeFailedResponse(token, loginRedirectUrl, err);
 		// More useful than RetCode.UNAUTHC
 		resp.setCode(OK);
+
+		// When exiting, the principal will be pushed to the server along with
+		// the redirection, so that the server can realize special handling of
+		// the exit behavior, e.g, to customize different login pages for each
+		// user.
+		((Map) resp.getData()).put(config.getParam().getPrincipalName(), token.getPrincipal());
 		return resp;
 	}
 
@@ -169,8 +176,8 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 	 * @param logout
 	 * @return
 	 */
-	private boolean checkLogout(LogoutModel logout) {
-		return (logout != null && config.getServiceName().equals(String.valueOf(logout.getApplication())));
+	private boolean checkLogoutResult(LogoutModel logout) {
+		return (!isNull(logout) && config.getServiceName().equals(valueOf(logout.getApplication())));
 	}
 
 	/**

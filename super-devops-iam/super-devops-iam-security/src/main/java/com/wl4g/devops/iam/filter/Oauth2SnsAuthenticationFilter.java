@@ -26,7 +26,7 @@ import org.springframework.core.ResolvableType;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.sns.handler.AbstractSnsHandler;
 
@@ -66,7 +66,7 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 	}
 
 	@Override
-	protected T postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+	protected T doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		String callbackId = getCleanParam(request, PARAM_SNS_CALLBACK_ID);
 		hasTextOf(callbackId, PARAM_SNS_CALLBACK_ID);

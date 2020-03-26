@@ -321,6 +321,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		private String sidSaveCookie = "__cookie";
 
 		/**
+		 * Account parameter name at login time of account password.
+		 */
+		private String principalName = "principal";
+
+		/**
 		 * Authentication parameter application name
 		 */
 		private String logoutForced = "forced";
@@ -403,6 +408,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public void setSidSaveCookie(String sidSaveCookie) {
 			this.sidSaveCookie = sidSaveCookie;
+		}
+
+		public String getPrincipalName() {
+			return principalName;
+		}
+
+		public void setPrincipalName(String loginUsername) {
+			this.principalName = loginUsername;
 		}
 
 		public String getLogoutForced() {

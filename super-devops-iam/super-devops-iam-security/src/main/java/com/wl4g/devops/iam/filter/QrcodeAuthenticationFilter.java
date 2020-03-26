@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.authc.QrcodeAuthenticationToken;
 
 @IamFilter
@@ -27,7 +27,7 @@ public class QrcodeAuthenticationFilter extends AbstractIamAuthenticationFilter<
 	final public static String NAME = "qrcode";
 
 	@Override
-	protected QrcodeAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+	protected QrcodeAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
 		return null;

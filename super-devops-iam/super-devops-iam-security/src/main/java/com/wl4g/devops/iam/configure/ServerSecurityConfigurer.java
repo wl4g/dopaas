@@ -19,7 +19,7 @@ import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.configure.SecurityConfigurer;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;

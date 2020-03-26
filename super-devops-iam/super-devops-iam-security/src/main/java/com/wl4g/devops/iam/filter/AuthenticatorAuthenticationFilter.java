@@ -32,7 +32,7 @@ import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 
 /**
  * IAM client authenticator authorization filter.</br>
@@ -77,7 +77,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	}
 
 	@Override
-	protected IamAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+	protected IamAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		return new AuthenticatorAuthenticationToken(getPrincipal(false),remoteHost, redirectInfo);
 	}
