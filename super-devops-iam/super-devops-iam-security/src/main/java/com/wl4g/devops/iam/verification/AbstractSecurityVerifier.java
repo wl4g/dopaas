@@ -30,6 +30,7 @@ import org.apache.shiro.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
@@ -45,6 +46,7 @@ import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.verification.model.SimpleVerifyImgResult;
+import com.wl4g.devops.tool.common.codec.Base58;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
@@ -161,6 +163,8 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 				return null; // not enabled
 			}
 
+			// Decoding
+			params = new String(Base58.decode(params), UTF_8);
 			// Verification
 			Object submitCode = getRequestVerifyCode(params, request);
 			storedCode = getVerifyCode(true);

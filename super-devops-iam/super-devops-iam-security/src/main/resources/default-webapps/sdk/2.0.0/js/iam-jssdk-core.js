@@ -5,13 +5,13 @@
  */
 (function(window, document) {
 
-	// Basic constant definition.
+	// Base constants definition.
     var constant = {
-        baseUriStoredKey : '__$IAM_BASEURI_STORED_KEY',
-        umidTokenStorageKey : '__$IAM_UMID_STORED_KEY',
+        baseUriStoredKey : '__IAM_BASEURI',
+        umidTokenStorageKey : '__IAM_UMIDTOKEN',
     };
 
-	// 运行时值/状态临时缓存
+	// 运行时状态值/全局变量/临时缓存
 	var runtime = {
 		getOrSetUmidToken: function(umidToken){
 			if(Common.Util.isEmpty(umidToken)){
@@ -25,6 +25,18 @@
 				secret: null,
 				sessionKey: null,
 				sessionValue: null,
+				sessionAppendTo: function(param){
+					// 手动提交session(解决跨顶级域名共享cookie失效问题, 如, chrome80+)
+					if(!Common.Util.isAnyEmpty(runtime.safeCheck.checkGeneric.sessionKey, runtime.safeCheck.checkGeneric.sessionValue)){
+						if(Common.Util.isObject(param)){
+							param[runtime.safeCheck.checkGeneric.sessionKey] = runtime.safeCheck.checkGeneric.sessionValue;
+						} else if (Common.Util.isMap(param)) {
+							param.set(runtime.safeCheck.checkGeneric.sessionKey, runtime.safeCheck.checkGeneric.sessionValue);
+						} else if (Common.Util.isString(param)) {
+							param+="&"+runtime.safeCheck.checkGeneric.sessionKey+"="+runtime.safeCheck.checkGeneric.sessionValue;
+						}
+					}
+				}
 			},
 			checkCaptcha: {
 				enabled: false,
@@ -48,15 +60,15 @@
 			verifiedToken: null,
 		},
 		flags: { // Runtime status flag(Prevention concurrent).
-			isApplying: false,
+			isCurrentlyApplying: false,
 			isVerifying: false,
 		}
 	};
 
-	// DefaultCaptcha配置实现(jpeg/gif验证码)
+	// DefaultCaptcha配置实现(JPEG/Gif验证码)
 	var _defaultCaptchaVerifier = {
 		captchaLen: 5,
-		cancel: function(destroy) {
+		captchaDestroy: function(destroy) {
 			var imgInput = Common.Util.checkEmpty("captcha.input", settings.captcha.input);
 			var img = Common.Util.checkEmpty("captcha.img", settings.captcha.img);
 			// UnBind refresh captcha.
@@ -71,45 +83,38 @@
 				$(img).css({"display":"none"});
 			}
 		},
-		required: function() {
-			// Set the current application verify code.
-			runtime.flags.isApplying = false;
+		captchaRender: function() {
+			// Sets the current applying verify code.
+			runtime.flags.isCurrentlyApplying = false;
 
 			var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 			var img = Common.Util.checkEmpty("captcha.img", settings.captcha.img);
 			imgInput.val(""); // 清空验证码input
-			// Bind refresh captcha.
+			// 绑定刷新验证码
 			$(img).click(function(){ resetCaptcha(); });
-			// 请申请Captcha
-			$.ajax({
-				url: getApplyCaptchaUrl(),
-				type: "get",
-				dataType: "json",
-				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
-				success: function(res) {
-					// Apply captcha completed.
-					runtime.flags.isApplying = false;
-					runtime.applyModel = res.data.applyModel; // [MARK4]
-					$(imgInput).css({"display":"none","cursor":"text"});
-					$(imgInput).removeAttr('disabled');
-					$(img).css({"display" : "none"});
-					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-					if(!Common.Util.isEmpty(res) && res.code == codeOkValue){ // Success?
-						$(img).attr("src", res.data.applyModel.primaryImg);
-					} else {
-						$(img).attr("title", res.message); // 如:刷新过快
-						$(img).unbind("click");
-						setTimeout(function(){
-							$(img).click(function(){ resetCaptcha(); });
-						}, 15000); // 至少15sec才能点击刷新
-					}
-				},
-				error: function(req, status, errmsg){
-					console.debug("Failed to apply captcha, " + errmsg);
-					Common.Util.checkEmpty("captcha.onError", settings.captcha.onError)(errmsg);
+			// 请求申请Captcha
+			doIamRequest("get", getApplyCaptchaUrl(), new Map(), function(res) {
+				// Apply captcha completed.
+				runtime.flags.isCurrentlyApplying = false;
+				runtime.applyModel = res.data.applyModel; // [MARK4]
+				$(imgInput).css({"display":"none","cursor":"text"});
+				$(imgInput).removeAttr('disabled');
+				$(img).css({"display" : "none"});
+				var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+				if(!Common.Util.isEmpty(res) && res.code == codeOkValue){ // Success?
+					$(img).attr("src", res.data.applyModel.primaryImg);
+				} else {
+					$(img).attr("title", res.message); // 如:刷新过快
+					$(img).unbind("click");
+					setTimeout(function(){
+						$(img).click(function(){ resetCaptcha(); });
+					}, 15000); // 至少15sec才能点击刷新
 				}
+			}, function(req, status, errmsg){
+				console.debug("Failed to apply captcha, " + errmsg);
+				Common.Util.checkEmpty("captcha.onError", settings.captcha.onError)(errmsg);
 			});
-		},
+		}
 	};
 
 	// Global settings.
@@ -126,7 +131,7 @@
 			clientSecretKey: "clientSecret", // 客户端秘钥(公钥)参数名
 			verifyTypeKey: "verifyType", // 验证码verifier别名参数名（通用）
 			applyTokenKey: "applyToken", // 申请的验证码f返回token参数名（通用）
-			verifyCodeKey: "verifyCode", // 提交验证码参数名（不通用：simple/gif）
+			verifyDataKey: "verifyData", // 提交验证码参数名（通用：simple/gif/jigsaw）
 			verifiedTokenKey: "verifiedToken", // 验证码已校验的凭据token参数名（通用）
 			clientRefKey: "client_ref", // 提交登录的客户端类型参数名
 			umidTokenKey: "umidToken", // 提交umidToken的参数名
@@ -135,7 +140,7 @@
 			applyUmTokenUri: "/rcm/applyumtoken", // 页面初始化时请求umidToken的接口URL后缀
 			checkUri: "/login/check", // 认证前安全检查接口URL后缀
 			captchaApplyUri: "/verify/applycaptcha", // 申请GRAPH验证码URI后缀
-			verifyAnalyzeUri: "/verify/verifyAnalyze", // 校验分析GRAPH验证码URI后缀
+			verifyAnalyzeUri: "/verify/verifyanalysis", // 校验分析GRAPH验证码URI后缀
 			accountSubmitUri: "/auth/generic", // 账号登录提交的URL后缀
 			smsApplyUri: "/verify/applysmsverify", // 申请SMS验证码URI后缀
 			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
@@ -178,40 +183,43 @@
 				}
 				throw "Illegal verifier type for '" + type + "'";
 			},
-			registry: { // 图像验证码实现程序注册器
+			registry: { // 图像验证码实程序注册器
 				VerifyWithSimpleGraph: _defaultCaptchaVerifier,
 				VerifyWithGifGraph: _defaultCaptchaVerifier,
 				VerifyWithJigsawGraph: {  // JigsawCaptcha配置实现
-					cancel: function(destroy) {
+					captchaDestroy: function(destroy) {
 						var jigsawPanel = Common.Util.checkEmpty("captcha.panel", settings.captcha.panel);
 						if(destroy){
 							$(jigsawPanel).css({"display":"none"});
 						}
 					},
-					required: function() {
+					captchaRender: function() {
 						// Set the current application verify code.
-						runtime.flags.isApplying = false;
+						runtime.flags.isCurrentlyApplying = false;
 						var jigsawPanel = Common.Util.checkEmpty("captcha.panel", settings.captcha.panel);
 
 						// 加载Jigsaw插件滑块
                         $(jigsawPanel).JigsawIamCaptcha({
-                            applycaptchaUrl: getApplyCaptchaUrl(),
-							applyverifyUrl: getVerifyCaptchaUrl(),
+                        	// 提交验证码的参数名
+                        	verifyDataKey: Common.Util.checkEmpty("definition.verifyDataKey", settings.definition.verifyDataKey),
+                            applyCaptchaUrl: getApplyCaptchaUrl(),
+							verifyAnalysisUrl: getVerifyAnalysisUrl(),
                             repeatIcon: 'fa fa-redo',
-                            decorateVerifyData: function(verifyData){
+                            decorateVerifyParam: function(params) {
                             	// 增加umidToken参数
-                            	verifyData[Common.Util.checkEmpty("definition.umidTokenKey", definition.umidTokenKey)] = runtime.getOrSetUmidToken();
-                            	return verifyData;
+                            	params[Common.Util.checkEmpty("definition.umidTokenKey", settings.definition.umidTokenKey)] = runtime.getOrSetUmidToken();
+                            	runtime.safeCheck.checkGeneric.sessionAppendTo(params);
+                            	return params;
                             },
                             onSuccess: function (verifiedToken) {
 								console.debug("Jigsaw captcha verify successful. verifiedToken is '"+ verifiedToken + "'");
-								runtime.flags.isApplying = false; // Apply captcha completed.
+								runtime.flags.isCurrentlyApplying = false; // Apply captcha completed.
 								runtime.verifiedModel.verifiedToken = verifiedToken; // [MARK4], See: 'MARK2'
 								Common.Util.checkEmpty("captcha.onSuccess", settings.captcha.onSuccess)(verifiedToken);
                             },
 							onFail: function(element){
 								console.debug("Failed to jigsaw captcha verify. element => "+ element);
-								runtime.flags.isApplying = false; // Apply captcha completed.
+								runtime.flags.isCurrentlyApplying = false; // Apply captcha completed.
 								runtime.verifiedModel.verifiedToken = ""; // Clear
 								Common.Util.checkEmpty("captcha.onError", settings.captcha.onError)(element);
 							}
@@ -286,7 +294,7 @@
 	// Configure settings
 	var _configure = function(obj) {
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
-		settings = jQuery.extend(true, settings, obj);
+		settings = $.extend(true, settings, obj);
 		console.debug("Default iamBaseURI: "+ settings.deploy.baseUri);
 
 		if (Common.Util.isEmpty(settings.deploy.baseUri)) {
@@ -357,8 +365,9 @@
 	};
 
 	// Make get verify & analyze captcha URL.
-	var getVerifyCaptchaUrl = function(){
-		var verifyUrl = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri) + Common.Util.checkEmpty("definition.verifyAnalyzeUri",settings.definition.verifyAnalyzeUri) + "?"
+	var getVerifyAnalysisUrl = function(){
+		var verifyUrl = Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri) 
+			+ Common.Util.checkEmpty("definition.verifyAnalyzeUri",settings.definition.verifyAnalyzeUri) + "?"
 			+ Common.Util.checkEmpty("definition.verifyTypeKey", settings.definition.verifyTypeKey) + "="
 			//+ Common.Util.checkEmpty("applyModel.verifyType",runtime.applyModel.verifyType) + "&"
 			+ Common.Util.checkEmpty("captcha.use", settings.captcha.use) + "&"
@@ -370,9 +379,9 @@
 	// Reset graph captcha.
 	var resetCaptcha = function(){
 		_InitSafeCheck(function(checkCaptcha, checkGeneric, checkSms){
-			if(checkCaptcha.enabled && !runtime.flags.isApplying){ // 启用验证码且不是申请中(防止并发)?
+			if(checkCaptcha.enabled && !runtime.flags.isCurrentlyApplying){ // 启用验证码且不是申请中(防止并发)?
 				// 获取当前配置CaptchaVerifier实例、显示
-				Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().required();
+				Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaRender();
 			}
 		});
 	};
@@ -501,12 +510,12 @@
 				umdata = n + "!" + umdata;
 				console.debug("Generated apply umidToken data: "+ umdata)
 				umidParam.set("umdata", umdata);
-				doIamRequest("{applyUmTokenUri}", umidParam, function(res){
+				doIamRequest("post", "{applyUmTokenUri}", umidParam, function(res){
 					Common.Util.checkEmpty("init.onPostUmidToken", settings.init.onPostUmidToken)(res); //获得token回调
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
-						console.debug("Got umidToken: " + res.umidToken);
-						runtime.getOrSetUmidToken(res.umidToken);
+						console.debug("Got umidToken: " + res.data.umidToken);
+						runtime.getOrSetUmidToken(res.data.umidToken);
 					}
 				}, function(errmsg){
 					console.warn("Failed to gets umidToken, " + errmsg);
@@ -529,12 +538,12 @@
 			var checkParam = new Map();
 			checkParam.set("{principalKey}", principal);
 			checkParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
-			doIamRequest("{checkUri}", checkParam, function(res){
+			doIamRequest("post", "{checkUri}", checkParam, function(res){
 				// 初始化完成回调
 				Common.Util.checkEmpty("init.onPostCheck", settings.init.onPostCheck)(res);
 				var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 				if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
-					runtime.safeCheck = res.data; // [MARK3]
+					runtime.safeCheck = $.extend(true, runtime.safeCheck, res.data); // [MARK3]
 					callback(res.data.checkCaptcha, res.data.checkGeneric, res.data.checkSms);
 				}
 			}, function(errmsg){
@@ -566,12 +575,12 @@
 							// Submission verify analyze captcha.
 							var _check = function(name, params){ return Common.Util.checkEmpty(name, params) };
 							var captchaParam = new Map();
-							captchaParam.put("{verifyCodeKey}", captcha);
+							captchaParam.put("{verifyDataKey}", captcha);
 							captchaParam.put("{applyTokenKey}", _check("applyModel.applyToken", runtime.applyModel.applyToken));
 							captchaParam.put("{verifyTypeKey}", _check("applyModel.verifyType", runtime.applyModel.verifyType));
 							captchaParam.set("{umidTokenKey}", runtime.getOrSetUmidToken());
 							// 提交验证码
-							doIamRequest(getVerifyCaptchaUrl(), captchaParam, function(res){
+							doIamRequest("post", getVerifyAnalysisUrl(), captchaParam, function(res){
 								runtime.flags.isVerifying = false; // Reset verify status.
 								var codeOkValue = _check("definition.codeOkValue",settings.definition.codeOkValue);
 								if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
@@ -579,7 +588,7 @@
 									settings.captcha.onError(res.message); // Call after captcha error.
 								} else { // Verify success.
 									runtime.verifiedModel = res.data.verifiedModel;
-									Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().cancel(false); // Hide captcha when success.
+									Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaDestroy(false); // Hide captcha when success.
 								}
 							}, function(errmsg){
 								runtime.flags.isVerifying = false; // Reset verify status.
@@ -660,7 +669,7 @@
 					// Submit manually(Solve cross-cookie issues)
 					loginParam.set(sessionKey, sessionValue);
 					// 请求提交登录
-					doIamRequest("{accountSubmitUri}", loginParam, function(resp){
+					doIamRequest("post", "{accountSubmitUri}", loginParam, function(resp){
 						// 解锁登录按钮
 						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
 
@@ -713,7 +722,7 @@
 				var getSmsParam = new Map();
 				getSmsParam.set("{principalKey}", encodeURIComponent(mobileNum));
 				getSmsParam.set("{verifiedTokenKey}", captcha);
-				doIamRequest("{smsApplyUri}", getSmsParam, function(res){
+				doIamRequest("post", "{smsApplyUri}", getSmsParam, function(res){
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					// 登录失败
 					if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
@@ -754,7 +763,7 @@
 				smsLoginParam.set("{principalKey}", encodeURIComponent(mobileNum));
 				smsLoginParam.set("{credentialKey}", smsCode);
 				smsLoginParam.set("{smsActionKey}", Common.Util.checkEmpty("definition.smsActionValueLogin", settings.definition.smsActionValueLogin));
-				doIamRequest("{smsSubmitUri}", smsLoginParam, function(res){
+				doIamRequest("post", "{smsSubmitUri}", smsLoginParam, function(res){
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
 						settings.sms.onError(resp.message); // SMS登录失败回调
@@ -788,13 +797,11 @@
 	};
 
 	// 提交基于IAM特征的请求(即, 设置跨域允许cookie,表单,post等)
-	var doIamRequest = function(urlAndKey, paramMap, success, error){
-		// Submit manually(Solve cross-cookie issues)
-		if(!Common.Util.isAnyEmpty(runtime.safeCheck.checkGeneric.sessionKey, runtime.safeCheck.checkGeneric.sessionValue)){
-			paramMap.set(runtime.safeCheck.checkGeneric.sessionKey, runtime.safeCheck.checkGeneric.sessionValue);
-		}
-		// Default common parameters.
+	var doIamRequest = function(method, urlAndKey, paramMap, success, error){
+		runtime.safeCheck.checkGeneric.sessionAppendTo(paramMap);
+		// 默认公共参数
 		paramMap.set("{responseType}", Common.Util.checkEmpty("definition.responseTypeValue", settings.definition.responseTypeValue));
+		// 拼接生成请求URL
 		var _url = Common.Util.checkEmpty("deploy.baseUri", settings.deploy.baseUri);
 		if(urlAndKey.startsWith("{") && urlAndKey.endsWith("}")) { // Build API URI
 			var realKey = urlAndKey.substr(1, urlAndKey.length - 2);
@@ -804,7 +811,7 @@
 		}
 		$.ajax({
 			url: _url,
-			type: "post",
+			type: method,
 			//headers: { ContentType: "" },
 			data: Common.Util.toUrl(settings.definition, paramMap),
 			xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.

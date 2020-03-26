@@ -19,14 +19,13 @@ import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.framework.operator.NoSuchOperatorException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.annotation.VerifyAuthController;
-import com.wl4g.devops.iam.common.annotation.UnsafeXss;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber;
 import com.wl4g.devops.iam.verification.model.VerifiedTokenResult;
 import com.wl4g.devops.iam.web.model.SmsCheckResult;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -107,15 +106,15 @@ public class VerifyAuthenticatorController extends AbstractAuthenticatorControll
 	 * @param response
 	 * @throws Exception
 	 */
-	@RequestMapping(value = URI_S_VERIFY_ANALYZE_CAPTCHA, method = { POST })
+	@RequestMapping(value = URI_S_VERIFY_ANALYSIS_CAPTCHA, method = { POST })
 	@ResponseBody
-	public RespBase<?> verifyCaptcha(@UnsafeXss @RequestBody String params, HttpServletRequest request) throws Exception {
+	public RespBase<?> verifyAnalysis(String verifyData, HttpServletRequest request) throws Exception {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 
 		// Limit factors
 		List<String> factors = getV1Factors(getHttpRemoteAddr(request), null);
 		// Verifying
-		String verifiedToken = verifier.forOperator(request).verify(params, request, factors);
+		String verifiedToken = verifier.forOperator(request).verify(verifyData, request, factors);
 		resp.forMap().put(KEY_VWEIFIED_RESULT, new VerifiedTokenResult(true, verifiedToken));
 
 		return resp;
