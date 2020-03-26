@@ -344,8 +344,25 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				clientRedirectUrl += "?" + clientParamStr;
 			}
 			params.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
+
+			// Custom decorate failure parameters.
+			decorateFailureRedirectParams(token, cause, request, params);
+
+			// Build to query URL.
 			return applyQueryURL(getLoginUrl(), params);
 		}
+	}
+
+	/**
+	 * Decorate authenticate failure redirection parameter.
+	 * 
+	 * @param token
+	 * @param cause
+	 * @param request
+	 * @param params
+	 */
+	protected void decorateFailureRedirectParams(AuthenticationToken token, Throwable cause, HttpServletRequest request,
+			Map<String, String> params) {
 	}
 
 	/**

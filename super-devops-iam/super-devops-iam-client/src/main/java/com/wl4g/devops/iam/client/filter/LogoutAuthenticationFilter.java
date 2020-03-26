@@ -83,27 +83,28 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 
 	@Override
 	protected AuthenticationToken doCreateToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
 		// Using coercion ignores remote exit failures
 		final boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
 		log.info("Signout forced: {}, sessionId: {}", forced, getSessionId());
 
-		// Create logout token.
-		LogoutAuthenticationToken token = new LogoutAuthenticationToken(forced, getPrincipal());
+		// Note: there is no need to assert when getting
+		// the principal. e.g, avoid call '/logout' to report an error
+		// when the current client is not authenticated.
+		return new LogoutAuthenticationToken(forced, getPrincipal(false));
+	}
+
+	@Override
+	protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+		// Create logout token
+		LogoutAuthenticationToken token = (LogoutAuthenticationToken) createToken(request, response);
 
 		// Pre-logout processing.
 		coprocessor.preLogout(token, toHttp(request), toHttp(response));
 
-		/*
-		 * Post to remote logout
-		 */
+		// Post to remote logout
 		LogoutModel logout = null;
 		try {
-			logout = doRequestRemoteLogout(forced);
+			logout = doRequestRemoteLogout(token.isForced());
 		} catch (Exception e) {
 			if (e instanceof IamException)
 				log.warn("Failed to remote logout. {}", getRootCauseMessage(e));
@@ -111,10 +112,8 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 				log.warn("Failed to remote logout.", e);
 		}
 
-		/*
-		 * Check server logout result.
-		 */
-		if (forced || checkLogoutResult(logout)) {
+		// Check server logout result.
+		if (token.isForced() || checkLogoutResult(logout)) {
 			try {
 				// That session logout
 				// try/catch added for SHIRO-298:
@@ -130,18 +129,21 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 		return false;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	protected void decorateFailureRedirectParams(AuthenticationToken token, Throwable cause, HttpServletRequest request,
+			Map<String, String> params) {
+		// When exiting, the principal will be pushed to the server along with
+		// the redirection, so that the server can realize special handling of
+		// the exit behavior, e.g, to customize different login pages for each
+		// user.
+		params.put(config.getParam().getPrincipalName(), valueOf(token.getPrincipal()));
+	}
+
 	@Override
 	protected RespBase<Object> makeFailedResponse(AuthenticationToken token, String loginRedirectUrl, Throwable err) {
 		RespBase<Object> resp = super.makeFailedResponse(token, loginRedirectUrl, err);
 		// More useful than RetCode.UNAUTHC
 		resp.setCode(OK);
-
-		// When exiting, the principal will be pushed to the server along with
-		// the redirection, so that the server can realize special handling of
-		// the exit behavior, e.g, to customize different login pages for each
-		// user.
-		((Map) resp.getData()).put(config.getParam().getPrincipalName(), token.getPrincipal());
 		return resp;
 	}
 
