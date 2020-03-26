@@ -24,6 +24,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipal;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 
 import com.google.common.annotations.Beta;
@@ -78,7 +79,7 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	@Override
 	protected IamAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		return new AuthenticatorAuthenticationToken(remoteHost, redirectInfo);
+		return new AuthenticatorAuthenticationToken(getPrincipal(false),remoteHost, redirectInfo);
 	}
 
 	@Override

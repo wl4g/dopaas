@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.filter;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
@@ -23,8 +24,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.util.Assert;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.iam.authc.RootAuthenticationToken;
@@ -102,7 +101,7 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 	 * @return
 	 */
 	protected boolean matchRequest(String defineUrl, ServletRequest request, ServletResponse response) {
-		Assert.hasText(defineUrl, "'defineUrl' is empty");
+		hasTextOf(defineUrl, "defineUrl");
 		// Relative path and complete path matching
 		return (pathsMatch(defineUrl, request) || defineUrl.equals(getFullRequestURL(toHttp(request), false)));
 	}
