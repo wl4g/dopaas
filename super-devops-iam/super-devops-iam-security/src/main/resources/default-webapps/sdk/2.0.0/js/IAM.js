@@ -64,14 +64,14 @@
 		}
 	};
 	var g_dependencies = [{
-		name: "UI",
+		name: "UI", // 需与该模块在window中的对象名一致, @see:[MARK1]
 		features: ["iamUi", "iamSdkUi", "IamUI", "IamSdkUI"],
 		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "commonModule", "cryptoModule", "coreModule",
 			"captchaJigsawModule", "uiModule"],
 		sync: !1
 	},
 	{
-		name: "Core",
+		name: "Core", // 需与该模块在window中的对象名一致, @see:MARK1
 		features: ["iamCore", "iamSdkCore", "IamCore", "IamSdkCore"],
 		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "cryptoModule", "coreModule", "captchaJigsawModule"],
 		sync: !1
@@ -207,7 +207,7 @@
 							script.onload = script.onreadystatechange = function(e) {
 								if (!script.readyState || script.readyState == 'loaded' || script.readyState == 'complete') {
 					            	console.debug("Loaded scripts feature: "+feature+", readyState: "+ this.readyState);
-									callback(window.IAM[name]);
+									callback(window.IAM[name]); // [MARK1]
 								}
 					        };
 						}

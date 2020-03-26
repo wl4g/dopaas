@@ -11,12 +11,12 @@
 			applyToken: null,
 			verifyType: null,
 			secret: null,
-			y: 0,
+			y: 0
 		},
 		verifiedModel: {
 			verified: false,
-			verifiedToken: null,
-		},
+			verifiedToken: null
+		}
 	};
     var JigsawCaptcha = function (element, options) {
         this.element0 = $(element);
@@ -37,54 +37,13 @@
         failedText: Common.Util.isZhCN()?'再试一次':"Let\'s try again?",
         barText: Common.Util.isZhCN()?'请拖动滑块完成拼图':'Drag to complete the jigsaw',
         repeatIcon: 'fa fa-repeat',
-        applycaptchaUrl: null,
-        applyverifyUrl: null,
-        verify: function (arr, left) {
-			// Additional algorithmic salt.
-			left = new String(left);
-			var applyTokenCrc = Common.Util.Crc16CheckSum.crc16Modbus(runtime.applyModel.applyToken);
-			var tmpX = IAM.Crypto.sha512ToHexString(left+runtime.applyModel.applyToken).substring(31, 97) + (left*applyTokenCrc);
-            // Do encryption x-position.
-			var cipherX = IAM.Crypto.RSA.encryptToHexString(runtime.applyModel.secret, tmpX);
-            var ret = null;
-            var verifyData = {
-                applyToken: runtime.applyModel.applyToken,
-                x: cipherX,
-                trails: arr,
-            };
-			// Submission verify & analyze.
-			var that = this;
-            $.ajax({
-                url: Common.Util.checkEmpty("optinos.applyverifyUrl", that.applyverifyUrl),
-				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
-                type: 'post',
-                contentType: 'application/json',
-                dataType: 'json',
-				async: false,
-				data: JSON.stringify(Common.Util.checkEmpty("decorateVerifyData", that.decorateVerifyData)(verifyData)),
-                success: function (res) {
-					if(res.code == 200){
-						runtime.verifiedModel = res.data.verifiedModel;
-						ret = res.data.verifiedModel;
-						// Remove silder mouse event all.
-						$(".sliderContainer").find(".slider").unbind(); // [MARK7], See: MARK6
-						// Call jigsaw captcha verified.
-						Common.Util.checkEmpty("options.onSuccess", that.onSuccess)(runtime.verifiedModel.verifiedToken);
-					} else {
-						Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw verify captcha, caused by: " + res.message);
-					}
-                },
-				error: function(req, status, errmsg){
-					console.debug(errmsg);
-					Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw verify captcha, caused by: " + errmsg);
-				}
-            });
-            return ret;
-        },
-		applycaptcha: function(img1, img2, tipText) {
+        applyCaptchaUrl: null,
+        verifyAnalysisUrl: null,
+        verifyDataKey: "verifyData", // Default: 'verifyData'
+		applyCaptcha: function(img1, img2, tipText) {
 			var that = this;
 			$.ajax({
-				url: Common.Util.checkEmpty("optinos.applycaptchaUrl", that.applycaptchaUrl),
+				url: Common.Util.checkEmpty("optinos.applyCaptchaUrl", that.applyCaptchaUrl),
 				type: 'GET',
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 				success: function (res) {
@@ -108,12 +67,59 @@
 				}
 			});
 		},
-		decorateVerifyData: function(verifyData){
-			console.debug("NoOp decorate verifyData.");
-			return verifyData;
+		verifyAnalysis: function (arr, left) {
+			// Additional algorithmic salt.
+			left = new String(left);
+			var applyTokenCrc = Common.Util.Crc16CheckSum.crc16Modbus(runtime.applyModel.applyToken);
+			var tmpX = CryptoJS.enc.Hex.stringify(CryptoJS.SHA512(left + runtime.applyModel.applyToken)).substring(31, 97) + (left*applyTokenCrc);
+            // Do encryption x-position.
+			var cipherX = IAM.Crypto.RSA.encryptToHexString(runtime.applyModel.secret, tmpX);
+            var ret = null;
+            var verifyData = {
+                applyToken: runtime.applyModel.applyToken,
+                x: cipherX,
+                trails: arr,
+            };
+            // 提交验证码获取分析结果
+			var that = this;
+			// 获取最终提交参数 & 编码参数
+			var paramJson = Common.Util.checkEmpty("decorateVerifyParam", that.decorateVerifyParam)(verifyData);
+			var paramMap = new Map();
+			paramMap.set(Common.Util.checkEmpty("options.verifyDataKey", that.verifyDataKey),
+				Common.Util.Codec.encodeBase58(JSON.stringify(paramJson)));
+            $.ajax({
+                url: Common.Util.checkEmpty("options.verifyAnalysisUrl", that.verifyAnalysisUrl),
+				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+                type: 'post',
+                //contentType: 'application/json',
+                //dataType: 'json',
+				async: false,
+				data: Common.Util.toUrl({}, paramMap),
+                success: function(res) {
+					if(res.code == 200){
+						runtime.verifiedModel = res.data.verifiedModel;
+						ret = res.data.verifiedModel;
+						// Remove silder mouse event all.
+						$(".sliderContainer").find(".slider").unbind(); // [MARK7], See: MARK6
+						// Call jigsaw captcha verified.
+						Common.Util.checkEmpty("options.onSuccess", that.onSuccess)(runtime.verifiedModel.verifiedToken);
+					} else {
+						Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw verify captcha, caused by: " + res.message);
+					}
+                },
+				error: function(req, status, errmsg){
+					console.debug(errmsg);
+					Common.Util.checkEmpty("options.onFail", that.onFail)("Failed to jigsaw verify captcha, caused by: " + errmsg);
+				}
+            });
+            return ret;
+        },
+		decorateVerifyParam: function(params){
+			console.debug("NoOp decorate verify params.");
+			return params;
 		},
 		onSuccess: function(verifiedToken){
-			console.debug("Jigsaw captcha verify successfully. verifiedToken => "+ verifiedToken);
+			console.debug("Jigsaw captcha verifyed successful. verifiedToken: "+ verifiedToken);
 		},
 		onFail: function(errmsg){
 			console.error(errmsg);
@@ -226,7 +232,7 @@
         this.img2 = img2;
 
 		// Apply captcha.
-        this.applycaptcha();
+        this.applyCaptcha();
     };
 
     JigsawCaptcha.prototype.bindEvents = function () {
@@ -292,7 +298,7 @@
             if (eventX === originX) return false;
             that.sliderContainer.removeClass('sliderContainer_active');
             that.trails = trails;
-            var data = that.verify();
+            var data = that.verifyAnalysis();
             if (data && data.verified) {
                 that.sliderContainer.addClass('sliderContainer_success');
                 that.text.text(Common.Util.isZhCN()?'验证通过':'Verified');
@@ -335,15 +341,15 @@
     };
 
 	// Apply captcha.
-    JigsawCaptcha.prototype.applycaptcha = function() {
+    JigsawCaptcha.prototype.applyCaptcha = function() {
 		var tipText = this.text;
-		this.options.applycaptcha(this.img1, this.img2, tipText);
+		this.options.applyCaptcha(this.img1, this.img2, tipText);
 	};
 
 	// Verify captcha.
-    JigsawCaptcha.prototype.verify = function () {
+    JigsawCaptcha.prototype.verifyAnalysis = function () {
         var left = parseInt(this.block.style.left);
-        var verified = this.options.verify(this.trails, left); // 拖动时x/y轴的移动距离,最总x位置
+        var verified = this.options.verifyAnalysis(this.trails, left); // 拖动时x/y轴的移动距离,最总x位置
         return verified;
     };
 
@@ -360,7 +366,7 @@
 
         this.text.attr('data-text', this.text.text());
         this.text.text(this.options.loadingText);
-        this.applycaptcha();
+        this.applyCaptcha();
     };
 
 	// Register to JQuery.

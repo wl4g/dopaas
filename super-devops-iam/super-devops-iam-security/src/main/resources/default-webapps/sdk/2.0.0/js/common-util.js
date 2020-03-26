@@ -65,6 +65,9 @@
 		isArray : function (obj) {
 		    return Object.prototype.toString.call(obj) === '[object Array]';
 		},
+		isMap : function (obj) {
+		    return Object.prototype.toString.call(obj) === '[object Map]';
+		},
 		isObject : function (obj) {
 		    return Object.prototype.toString.call(obj) === '[object Object]';
 		},
