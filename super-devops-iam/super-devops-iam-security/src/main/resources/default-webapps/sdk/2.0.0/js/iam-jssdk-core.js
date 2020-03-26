@@ -643,7 +643,7 @@
 					loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
 					loginParam.set(sessionKey, sessionValue); // Submit manually(Solve cross-cookie issues)
 					// 设备指纹umidToken(初始化页面时获取, 必须)
-					loginParam.set("umidToken", fpObject.umid);
+					loginParam.set("umidToken", runtime.umidToken);
 					// 请求提交登录
 					doIamRequest("{accountSubmitUri}", loginParam, function(resp){
 						// 解锁登录按钮
