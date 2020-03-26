@@ -15,20 +15,19 @@
  */
 package com.wl4g.devops.support.notification.mail;
 
-import static java.lang.String.format;
-import static java.util.Arrays.asList;
-import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
-import java.util.Date;
-import java.util.Properties;
-
+import com.wl4g.devops.support.notification.AbstractMessageNotifier;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMailMessage;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier;
-import com.wl4g.devops.support.notification.GenericNotifyMessage;
+import java.util.Date;
+import java.util.Properties;
+
+import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * {@link MailMessageNotifier}, Full compatibility with native spring mail!
@@ -87,8 +86,8 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
 			simpleMsg.setFrom(simpleMsg.getFrom() + "<" + config.getUsername() + ">");
 			simpleMsg.setSubject(msg.getParameterAsString(KEY_MAILMSG_SUBJECT, EMPTY));
 			simpleMsg.setSentDate(msg.getParameter(KEY_MSG_SENDDATE, new Date()));
-			simpleMsg.setBcc(asList(msg.getParameter(KEY_MAILMSG_BCC)).toArray(new String[] {}));
-			simpleMsg.setCc(asList(msg.getParameter(KEY_MAILMSG_CC)).toArray(new String[] {}));
+			simpleMsg.setBcc(safeList(msg.getParameter(KEY_MAILMSG_BCC)).toArray(new String[] {}));
+			simpleMsg.setCc(safeList(msg.getParameter(KEY_MAILMSG_CC)).toArray(new String[] {}));
 			simpleMsg.setReplyTo(msg.getParameter(KEY_MAILMSG_REPLYTO));
 			simpleMsg.setText(config.getResolvedMessage(msg.getTemplateKey(), msg.getParameters()));
 
