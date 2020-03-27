@@ -50,7 +50,7 @@ import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
  * @version v1.0 2020年3月25日
  * @since
  */
-@com.wl4g.devops.iam.annotation.SimpleRCMController
+@com.wl4g.devops.iam.annotation.SimpleRcmController
 public class SimpleRcmRecognizerController extends AbstractAuthenticatorController {
 
 	@Autowired

@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.web;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
+import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
@@ -39,7 +40,7 @@ import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
 import static com.wl4g.devops.iam.web.model.CaptchaCheckResult.KEY_CAPTCHA_CHECK;
-import static com.wl4g.devops.iam.web.model.GenericCheckResult.KEY_GENERAL_CHECK;
+import static com.wl4g.devops.iam.web.model.GenericCheckResult.KEY_GENERIC_CHECK;
 import static com.wl4g.devops.iam.web.model.SmsCheckResult.KEY_SMS_CHECK;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
@@ -93,14 +94,15 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 		// empty, no need to generate a key. When submitting the login
 		// request parameter 'principal' will not be empty, you need to
 		// generate 'secret'.
-		String secret = EMPTY;
-		if (isNotBlank(principal)) {
+		GenericCheckResult generic = new GenericCheckResult();
+		if (!isBlank(principal)) {
+			generic.setSessionKey(config.getCookie().getName());
+			generic.setSessionValue(getSession().getId());
 			// Apply credentials encryption secret(pubKey)
-			secret = securer.applySecret(principal);
+			generic.setSecret(securer.applySecret(principal));
 		}
 		// Assign a session ID to the current request. If not, create a new one.
-		GenericCheckResult generic = new GenericCheckResult(secret, config.getCookie().getName(), getSession(true).getId());
-		resp.forMap().put(KEY_GENERAL_CHECK, generic);
+		resp.forMap().put(KEY_GENERIC_CHECK, generic);
 
 		//
 		// --- Check captcha authenticating environments. ---
@@ -139,7 +141,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	}
 
 	/**
-	 * Read the error message stored in the current session.
+	 * Read the error message from currently session.
 	 *
 	 * @param request
 	 * @return
@@ -148,7 +150,10 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	@ResponseBody
 	public RespBase<?> readError(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<String> resp = RespBase.create(sessionStatus());
-		// Get error message in session
+		// Check session is required
+		//IamSecurityHolder.checkSession();
+
+		// Read error message from session
 		String errmsg = getBindValue(KEY_ERR_SESSION_SAVED, true);
 		errmsg = isBlank(errmsg) ? "" : errmsg;
 		resp.forMap().put(KEY_ERR_SESSION_SAVED, errmsg);
@@ -163,10 +168,13 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 *
 	 * @param response
 	 */
-	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { GET })
+	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { POST })
 	@ResponseBody
 	public RespBase<?> applyLocale(HttpServletRequest request, HttpServletResponse response) {
 		RespBase<Locale> resp = RespBase.create(sessionStatus());
+		// Check session is required
+		IamSecurityHolder.checkSession();
+
 		String lang = getCleanParam(request, config.getParam().getI18nLang());
 		// Gets apply locale.
 		Locale locale = request.getLocale();

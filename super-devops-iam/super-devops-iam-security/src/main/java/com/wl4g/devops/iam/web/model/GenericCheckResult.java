@@ -31,7 +31,7 @@ public class GenericCheckResult implements Serializable {
 	/**
 	 * General response key-name.
 	 */
-	final public static String KEY_GENERAL_CHECK = "checkGeneric";
+	final public static String KEY_GENERIC_CHECK = "checkGeneric";
 
 	/**
 	 * Applied secret public key hex.
@@ -47,6 +47,10 @@ public class GenericCheckResult implements Serializable {
 	 * Session value.
 	 */
 	private Serializable sessionValue;
+
+	public GenericCheckResult() {
+		super();
+	}
 
 	public GenericCheckResult(String secret, String sessionKey, Serializable sessionValue) {
 		// hasTextOf(secret, "secret");
