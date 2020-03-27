@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.coss.awss3;
 
+import com.wl4g.devops.CossManager;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.wl4g.devops.CossServer;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = CossServer.class, properties = {})
+@SpringBootTest(classes = CossManager.class, properties = {})
 public class Awss3CossEndpointTests {
 
 }
