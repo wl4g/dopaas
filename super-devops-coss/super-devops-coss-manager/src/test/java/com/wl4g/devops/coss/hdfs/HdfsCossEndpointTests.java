@@ -15,22 +15,7 @@
  */
 package com.wl4g.devops.coss.hdfs;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import com.wl4g.devops.CossServer;
+import com.wl4g.devops.CossManager;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.CossProvider;
@@ -40,9 +25,18 @@ import com.wl4g.devops.coss.model.ObjectSummary;
 import com.wl4g.devops.coss.model.ObjectValue;
 import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketList;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.io.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = CossServer.class, properties = {})
+@SpringBootTest(classes = CossManager.class, properties = {})
 @FixMethodOrder(MethodSorters.JVM)
 public class HdfsCossEndpointTests {
 
