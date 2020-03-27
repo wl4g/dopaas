@@ -213,7 +213,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		Subject subject = getSubject();
 
 		// From client signout
-		coprocessor.preLogout(new LogoutAuthenticationToken(getPrincipal(), getHttpRemoteAddr(request)), toHttp(request),
+		coprocessor.preLogout(new LogoutAuthenticationToken(getPrincipal(false), getHttpRemoteAddr(request)), toHttp(request),
 				toHttp(response));
 
 		// Represents all logged-out Tags

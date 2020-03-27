@@ -51,6 +51,7 @@ public abstract class CumulateHolder {
 	 *            Expired milliseconds
 	 * @return
 	 */
+	@Deprecated
 	public static Cumulator newSessionCumulator(String name, long expireMs) {
 		hasTextOf(name, "sessionCumulator.name");
 		return new SessionCumulator(name, expireMs);

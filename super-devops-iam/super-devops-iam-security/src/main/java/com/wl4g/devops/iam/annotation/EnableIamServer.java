@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Import;
 
 import com.wl4g.devops.iam.config.IamServerApiV1AutoConfiguration;
 import com.wl4g.devops.iam.config.LoginAutoConfiguration;
-import com.wl4g.devops.iam.config.SimpleRCMAutoConfiguration;
+import com.wl4g.devops.iam.config.SimpleRcmAutoConfiguration;
 import com.wl4g.devops.iam.config.IamAutoConfiguration;
 import com.wl4g.devops.iam.config.BasedConfigAutoConfiguration;
 import com.wl4g.devops.iam.config.SnsAutoConfiguration;
@@ -43,7 +43,7 @@ import com.wl4g.devops.iam.config.VerifyAutoConfiguration;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
 @Import({ BasedConfigAutoConfiguration.class, IamAutoConfiguration.class, LoginAutoConfiguration.class,
-		VerifyAutoConfiguration.class, SimpleRCMAutoConfiguration.class, SnsAutoConfiguration.class,
+		VerifyAutoConfiguration.class, SimpleRcmAutoConfiguration.class, SnsAutoConfiguration.class,
 		IamServerApiV1AutoConfiguration.class })
 public @interface EnableIamServer {
 

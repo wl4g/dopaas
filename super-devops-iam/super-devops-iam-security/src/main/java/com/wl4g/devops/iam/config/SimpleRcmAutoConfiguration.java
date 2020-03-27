@@ -31,7 +31,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_RCM_BASE
  * @since
  */
 @AutoConfigureAfter({ LoginAutoConfiguration.class })
-public class SimpleRCMAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public class SimpleRcmAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
 	public SimpleRcmRecognizerController simpleRCMController() {
@@ -40,7 +40,7 @@ public class SimpleRCMAutoConfiguration extends OptionalPrefixControllerAutoConf
 
 	@Bean
 	public PrefixHandlerMapping simpleRCMControllerPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_S_RCM_BASE, com.wl4g.devops.iam.annotation.SimpleRCMController.class);
+		return super.newPrefixHandlerMapping(URI_S_RCM_BASE, com.wl4g.devops.iam.annotation.SimpleRcmController.class);
 	}
 
 }

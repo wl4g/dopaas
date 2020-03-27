@@ -15,18 +15,19 @@
  */
 package com.wl4g.devops.iam.common.utils.cumulate;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Default security limit accumulation counter based on distributed
@@ -37,7 +38,7 @@ import com.wl4g.devops.iam.common.cache.EnhancedKey;
  * @since
  */
 public class DefaultCumulator implements Cumulator {
-	final private Logger log = LoggerFactory.getLogger(getClass());
+	final private SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Distributed enhancedCache

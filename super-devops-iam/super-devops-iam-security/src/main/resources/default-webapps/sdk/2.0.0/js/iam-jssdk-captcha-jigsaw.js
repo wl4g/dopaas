@@ -37,14 +37,14 @@
         failedText: Common.Util.isZhCN()?'再试一次':"Let\'s try again?",
         barText: Common.Util.isZhCN()?'请拖动滑块完成拼图':'Drag to complete the jigsaw',
         repeatIcon: 'fa fa-repeat',
-        applyCaptchaUrl: null,
-        verifyAnalysisUrl: null,
+        getApplyCaptchaUrl: null,
+        getVerifyAnalysisUrl: null,
         verifyDataKey: "verifyData", // Default: 'verifyData'
 		applyCaptcha: function(img1, img2, tipText) {
 			var that = this;
 			$.ajax({
-				url: Common.Util.checkEmpty("optinos.applyCaptchaUrl", that.applyCaptchaUrl),
-				type: 'GET',
+				url: Common.Util.checkEmpty("optinos.getApplyCaptchaUrl", that.getApplyCaptchaUrl()),
+				type: 'get',
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 				success: function (res) {
 					if(res.code == 200){
@@ -82,13 +82,10 @@
             };
             // 提交验证码获取分析结果
 			var that = this;
-			// 获取最终提交参数 & 编码参数
-			var paramJson = Common.Util.checkEmpty("decorateVerifyParam", that.decorateVerifyParam)(verifyData);
 			var paramMap = new Map();
-			paramMap.set(Common.Util.checkEmpty("options.verifyDataKey", that.verifyDataKey),
-				Common.Util.Codec.encodeBase58(JSON.stringify(paramJson)));
+			paramMap.set(Common.Util.checkEmpty("options.verifyDataKey", that.verifyDataKey), Common.Util.Codec.encodeBase58(JSON.stringify(verifyData)));
             $.ajax({
-                url: Common.Util.checkEmpty("options.verifyAnalysisUrl", that.verifyAnalysisUrl),
+                url: Common.Util.checkEmpty("options.getVerifyAnalysisUrl", that.getVerifyAnalysisUrl()),
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
                 type: 'post',
                 //contentType: 'application/json',
@@ -114,10 +111,6 @@
             });
             return ret;
         },
-		decorateVerifyParam: function(params){
-			console.debug("NoOp decorate verify params.");
-			return params;
-		},
 		onSuccess: function(verifiedToken){
 			console.debug("Jigsaw captcha verifyed successful. verifiedToken: "+ verifiedToken);
 		},
