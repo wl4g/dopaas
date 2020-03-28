@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.attacks.xss.html;
+package com.wl4g.devops.iam.common.security.xss.html;
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ import org.antlr.runtime.tree.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wl4g.devops.iam.common.attacks.xss.html.HTMLParser;
+import com.wl4g.devops.iam.common.security.xss.html.HTMLParser;
 
 public class htmlTreeParser extends TreeParser {
 	public static final String[] tokenNames = new String[] { "<invalid>", "<EOR>", "<DOWN>", "<UP>", "TAG_START_OPEN",

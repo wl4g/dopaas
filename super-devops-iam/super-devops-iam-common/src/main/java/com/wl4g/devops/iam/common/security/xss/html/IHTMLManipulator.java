@@ -13,32 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.attacks.xss.html;
+package com.wl4g.devops.iam.common.security.xss.html;
 
-public class Attribute {
-	private String name;
-	private String value;
+public interface IHTMLManipulator {
+	public void addNode();
 
-	public Attribute(String name, String value) {
-		super();
-		this.name = name;
-		this.value = value;
-	}
+	public void addAttribute();
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
+	public void addText();
 }

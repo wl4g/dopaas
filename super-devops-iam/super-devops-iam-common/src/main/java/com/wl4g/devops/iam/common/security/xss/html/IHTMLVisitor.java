@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.attacks.xss.html;
+package com.wl4g.devops.iam.common.security.xss.html;
 
-public class HandlingException extends Exception {
-	private static final long serialVersionUID = 2053156480130828672L;
+import java.io.IOException;
+import java.io.Writer;
 
-	public HandlingException(String msg) {
-		super(msg);
-	}
+public interface IHTMLVisitor {
+	abstract void writeAll(Writer writer, IHTMLFilter filter, boolean convertIntoValidXML, boolean filterText) throws IOException;
 
+	abstract void setPrevNode(Node node);
+
+	abstract Node getPrevNode();
 }

@@ -204,6 +204,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		return "data:image/jpeg;base64," + encodeBase64(data);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		MatcherProperties matcher = config.getMatcher();

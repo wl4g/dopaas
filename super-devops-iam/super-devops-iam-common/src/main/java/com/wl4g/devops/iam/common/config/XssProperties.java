@@ -15,13 +15,15 @@
  */
 package com.wl4g.devops.iam.common.config;
 
+import static java.lang.String.format;
+
 import java.io.Serializable;
 import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * XSS configuration properties
@@ -33,7 +35,7 @@ import org.springframework.util.Assert;
 public class XssProperties implements InitializingBean, Serializable {
 	final private static long serialVersionUID = -5701992202744439835L;
 
-	final public static String PREFIX = "spring.web.xss";
+	final public static String KEY_XSS_PREFIX = "spring.web.xss";
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -57,13 +59,13 @@ public class XssProperties implements InitializingBean, Serializable {
 	}
 
 	public String getExpression() {
-		Assert.hasText(expression, String
-				.format("XSS interception expression is required, and the '%s' configuration item does not exist?", PREFIX));
+		hasText(expression, format("XSS interception expression is required, and the '%s' configuration item does not exist?",
+				KEY_XSS_PREFIX));
 		return expression;
 	}
 
 	public void setExpression(String expression) {
-		Assert.hasText(expression, "expression is emtpy, please check configure");
+		hasText(expression, "expression is emtpy, please check configure");
 		this.expression = expression;
 	}
 

@@ -38,7 +38,7 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
  * @date 2018年11月29日
  * @since
  */
-public abstract interface AuthenticationHandler {
+public interface AuthenticationHandler {
 
 	/**
 	 * Assertion the validity of the request parameters before executing the

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.attacks.xss;
+package com.wl4g.devops.iam.common.security.xss;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -24,12 +24,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.wl4g.devops.iam.common.attacks.xss.html.HTMLParser;
-import com.wl4g.devops.iam.common.attacks.xss.html.XSSFilter;
+import com.wl4g.devops.iam.common.security.xss.html.HTMLParser;
+import com.wl4g.devops.iam.common.security.xss.html.XSSFilter;
 
 /**
  * Default XSS HttpServlet request wrapper
@@ -38,9 +39,9 @@ import com.wl4g.devops.iam.common.attacks.xss.html.XSSFilter;
  * @version v1.0 2019年4月26日
  * @since
  */
-public class DefaultXssHttpRequestWrapper extends XssHttpRequestWrapper {
+public class DefaultXssRequestWrapper extends XssRequestWrapper {
 
-	public DefaultXssHttpRequestWrapper(HttpServletRequest request) {
+	public DefaultXssRequestWrapper(HttpServletRequest request) {
 		super(request);
 	}
 
@@ -170,7 +171,7 @@ public class DefaultXssHttpRequestWrapper extends XssHttpRequestWrapper {
 			} catch (NullPointerException ex) {
 				return (O) value;
 			} catch (Exception ex) {
-				throw new IllegalArgumentException(String.format("Solving possible XSS data failure for: %s ", value), ex);
+				throw new IllegalArgumentException(format("Decrypting xss request failure of parameter: %s ", value), ex);
 			}
 		}
 

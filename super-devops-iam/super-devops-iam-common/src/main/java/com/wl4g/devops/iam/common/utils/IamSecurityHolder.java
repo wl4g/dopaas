@@ -148,7 +148,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @return
 	 */
 	public static Serializable getSessionId(Subject subject) {
-		return getSessionId(subject.getSession());
+		return getSessionId(subject.getSession(false));
 	}
 
 	/**
