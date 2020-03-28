@@ -1,5 +1,7 @@
 package com.wl4g.devops.coss.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +42,7 @@ public class ObjectValue implements Closeable {
 	private ObjectMetadata metadata = new ObjectMetadata();
 
 	/** Object's content */
+	@JsonIgnore
 	private transient InputStream objectContent;
 
 	public ObjectValue() {

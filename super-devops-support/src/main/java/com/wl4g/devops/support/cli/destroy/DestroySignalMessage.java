@@ -34,6 +34,10 @@ public class DestroySignalMessage extends DestroySignal {
 	/** Destroy throws message. */
 	private String errmsg = EMPTY;
 
+	public DestroySignalMessage(){
+
+	}
+
 	public DestroySignalMessage(DestroySignal signal) {
 		this(signal, DestroyState.DESTROYED, "destroyed successful!");
 	}

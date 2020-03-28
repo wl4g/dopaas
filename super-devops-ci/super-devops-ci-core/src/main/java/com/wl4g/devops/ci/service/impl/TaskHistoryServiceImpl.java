@@ -39,7 +39,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOP;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOPING;
 
 /**
  * @author vjay
@@ -176,7 +176,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		TaskHistory taskHistory = new TaskHistory();
 		taskHistory.preUpdate();
 		taskHistory.setId(taskHisId);
-		taskHistory.setStatus(TASK_STATUS_STOP);
+		taskHistory.setStatus(TASK_STATUS_STOPING);
 		taskHistoryDao.updateByPrimaryKeySelective(taskHistory);
 
 		// TODO timeoutMs?
