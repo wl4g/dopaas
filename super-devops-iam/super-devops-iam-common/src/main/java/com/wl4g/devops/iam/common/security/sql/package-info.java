@@ -13,15 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.attacks.xss.html;
-
-import java.io.IOException;
-import java.io.Writer;
-
-public interface IHTMLVisitor {
-	abstract void writeAll(Writer writer, IHTMLFilter filter, boolean convertIntoValidXML, boolean filterText) throws IOException;
-
-	abstract void setPrevNode(Node node);
-
-	abstract Node getPrevNode();
-}
+package com.wl4g.devops.iam.common.security.sql;

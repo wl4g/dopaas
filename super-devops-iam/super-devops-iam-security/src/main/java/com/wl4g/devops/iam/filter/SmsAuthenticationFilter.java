@@ -43,7 +43,7 @@ public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<Sms
 		final String action = getCleanParam(request, config.getParam().getSmsActionName());
 		final String principal = getCleanParam(request, config.getParam().getPrincipalName());
 		final String smsCode = getCleanParam(request, config.getParam().getCredentialName());
-		final String clientSecret = getCleanParam(request, config.getParam().getClientSecretName());
+		final String clientSecret = getCleanParam(request, config.getParam().getClientSecretKeyName());
 		return new SmsAuthenticationToken(clientSecret, remoteHost, action, principal, smsCode);
 	}
 

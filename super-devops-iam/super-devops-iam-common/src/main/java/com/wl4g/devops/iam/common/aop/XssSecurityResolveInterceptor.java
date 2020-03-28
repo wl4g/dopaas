@@ -16,8 +16,9 @@
 package com.wl4g.devops.iam.common.aop;
 
 import com.wl4g.devops.iam.common.annotation.UnsafeXss;
-import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.config.XssProperties;
+import com.wl4g.devops.iam.common.security.xss.XssSecurityResolver;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;

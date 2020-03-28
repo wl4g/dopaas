@@ -503,13 +503,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		params.put(config.getCookie().getName(), subject.getSession().getId());
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
 		// Generate client secret token.
-		final String clientSecretTokenPlain = bind(KEY_CLIENT_SECRET_TOKEN, randomAlphanumeric(32));
+		final String clientSecretTokenPlain = bind(KEY_CLIENT_SECRETKEY, randomAlphanumeric(32));
 		// Use client public key encryption.
 		// TODO
 		// final String clientSecretToken = cryptService.encryptWithHex(null,
 		// clientSecretTokenPlain);
 		final String clientSecretToken = clientSecretTokenPlain;
-		params.put(config.getParam().getClientSecretTokenName(), clientSecretToken);
+		params.put(config.getParam().getSecretKeyName(), clientSecretToken);
 
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);

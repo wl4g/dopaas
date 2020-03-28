@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.attacks.xss.html;
+package com.wl4g.devops.iam.common.security.xss.html;
 
-public interface IHTMLManipulator {
-	public void addNode();
+public class HandlingException extends Exception {
+	private static final long serialVersionUID = 2053156480130828672L;
 
-	public void addAttribute();
+	public HandlingException(String msg) {
+		super(msg);
+	}
 
-	public void addText();
 }

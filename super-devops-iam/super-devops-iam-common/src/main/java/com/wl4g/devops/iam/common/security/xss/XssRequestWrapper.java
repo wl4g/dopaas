@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.attacks.xss;
+package com.wl4g.devops.iam.common.security.xss;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -25,11 +25,11 @@ import javax.servlet.http.HttpServletRequestWrapper;
  * @version v1.0 2019年4月26日
  * @since
  */
-public abstract class XssHttpRequestWrapper extends HttpServletRequestWrapper {
+public abstract class XssRequestWrapper extends HttpServletRequestWrapper {
 
 	private HttpServletRequest orig;
 
-	public XssHttpRequestWrapper(HttpServletRequest request) {
+	public XssRequestWrapper(HttpServletRequest request) {
 		super(request);
 		this.orig = request;
 	}
@@ -41,8 +41,8 @@ public abstract class XssHttpRequestWrapper extends HttpServletRequestWrapper {
 	}
 
 	public static HttpServletRequest getOrigRequest(HttpServletRequest request) {
-		if (request instanceof XssHttpRequestWrapper) {
-			return ((XssHttpRequestWrapper) request).getOrigRequest();
+		if (request instanceof XssRequestWrapper) {
+			return ((XssRequestWrapper) request).getOrigRequest();
 		}
 		return request;
 	}

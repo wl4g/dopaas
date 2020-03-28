@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.attacks.csrf;
+package com.wl4g.devops.iam.common.security.cors;
 
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
@@ -39,9 +39,9 @@ import com.wl4g.devops.tool.common.log.SmartLogger;
  * @version v1.0 2019年4月25日
  * @since
  */
-public class OncePerCorsSecurityFilter extends CorsFilter {
+public final class CorsSecurityFilter extends CorsFilter {
 
-	public OncePerCorsSecurityFilter(CorsConfigurationSource configSource) {
+	public CorsSecurityFilter(CorsConfigurationSource configSource) {
 		super(configSource);
 	}
 

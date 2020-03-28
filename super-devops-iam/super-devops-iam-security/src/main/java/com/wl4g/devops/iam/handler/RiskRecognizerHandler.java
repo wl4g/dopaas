@@ -15,78 +15,26 @@
  */
 package com.wl4g.devops.iam.handler;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static java.util.Collections.unmodifiableList;
-import static java.util.Locale.US;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.config.properties.IamProperties;
-import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
-import com.wl4g.devops.tool.common.log.SmartLogger;
-
 /**
- * {@link SimpleRcmRecognizerHandler}
+ * Risk control identification handler.
+ * 
+ * {@link RiskRecognizerHandler}
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月25日
  * @since
  */
-public class SimpleRcmRecognizerHandler implements InitializingBean {
-
-	final protected SmartLogger log = getLogger(getClass());
-
-	/**
-	 * IAM server configuration properties
-	 */
-	@Autowired
-	protected IamProperties config;
-
-	/**
-	 * {@link EnhancedCacheManager}
-	 */
-	@Autowired
-	protected EnhancedCacheManager cacheManager;
-
-	/**
-	 * IAM security context handler
-	 */
-	@Autowired
-	protected ServerSecurityConfigurer configurer;
-
-	/**
-	 * IAM server security processor
-	 */
-	@Autowired
-	protected ServerSecurityCoprocessor coprocessor;
-
-	/**
-	 * {@link EnhancedCache}
-	 */
-	protected EnhancedCache umidCache;
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		this.umidCache = cacheManager.getEnhancedCache(CACHE_SIMPLE_RCM_UMIDTOKEN);
-	}
+public interface RiskRecognizerHandler {
 
 	/**
 	 * Apply UMID token string.</br>
@@ -96,25 +44,7 @@ public class SimpleRcmRecognizerHandler implements InitializingBean {
 	 * @param params
 	 * @return
 	 */
-	public String applyUmidToken(@NotNull Map<String, String> params) {
-		log.info("Apply UMID token of parameters: {}", params);
-
-		// Generate UMID from scene dimension parameters.
-		List<String> values = params.values().stream().collect(toList());
-		Collections.sort(values, (v1, v2) -> v1.compareTo(v2));
-		StringBuffer valuesStr = new StringBuffer(values.size() * 10);
-		values.forEach(v -> valuesStr.append(v));
-
-		// Digest to umid
-		String umid = sha256Hex(valuesStr.toString());
-		// Generate umidToken.
-		String umidToken = randomAlphanumeric(59).toUpperCase(US);
-		// Storage umidToken=>umid
-		umidCache.put(new EnhancedKey(umidToken, 60_000), umid);
-
-		log.info("Created umidToken: {}, umid: {}", umidToken, umid);
-		return umidToken;
-	}
+	String applyUmidToken(@NotNull Map<String, String> params);
 
 	/**
 	 * Gets safety evaluation from umidToken.
@@ -122,9 +52,7 @@ public class SimpleRcmRecognizerHandler implements InitializingBean {
 	 * @param umidToken
 	 * @return
 	 */
-	public double getEvaluation(@NotBlank String umidToken) {
-		return 9d; // TODO no implements
-	}
+	double getEvaluation(@NotBlank String umidToken);
 
 	/**
 	 * User properties items definitions.

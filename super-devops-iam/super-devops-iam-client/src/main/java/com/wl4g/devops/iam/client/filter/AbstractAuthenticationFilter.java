@@ -162,6 +162,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
 
+	@SuppressWarnings("deprecation")
 	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
 			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
 		notNull(config, "'config' must not be null");
