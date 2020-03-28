@@ -21,6 +21,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
+import com.wl4g.devops.coss.access.model.ObjectValueModel;
 import com.wl4g.devops.coss.config.NativeFSCossProperties;
 import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.model.ACL;
@@ -145,6 +146,9 @@ public class HttpCossAccessor extends BaseController {
     @RequestMapping("getObject")
     public RespBase<Object> getObject(GenericCossParameter param, String bucketName, String key) {
         RespBase<Object> resp = RespBase.create();
+        ObjectValueModel objectValueModel = new ObjectValueModel(getCossEndpoint(param).getObject(bucketName, key));
+        String downloadUrl = config.getDownloadBaseUrl()+ "?bucketName=" + bucketName +"&key="+key;
+        objectValueModel.setDownloadUrl(downloadUrl);
         resp.setData(getCossEndpoint(param).getObject(bucketName, key));
         return resp;
     }

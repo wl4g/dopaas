@@ -269,6 +269,21 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		return null;
 	}
 
+
+	public PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata){
+		File objectPath = config.getObjectPath(bucketName,key);
+		try {
+			ObjectStatusMetaData objectStatusMetaData = new ObjectStatusMetaData();
+			if(nonNull(metadata)){
+				BeanUtils.copyProperties(metadata,objectStatusMetaData);
+			}
+			metadataManager.modifyObject(objectPath, objectStatusMetaData);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	@Override
 	public CopyObjectResult copyObject(String sourceBucketName, String sourceKey, String destinationBucketName,
 			String destinationKey) throws CossException, ServerCossException {
