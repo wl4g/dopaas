@@ -17,6 +17,8 @@ package com.wl4g.devops.tool.common.lang;
 
 import org.apache.commons.lang3.SystemUtils;
 
+import com.wl4g.devops.tool.common.log.SmartLogger;
+
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.net.NetworkInterface;
@@ -28,10 +30,11 @@ import java.util.List;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.hash.Hashing.md5;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
-import static com.wl4g.devops.tool.common.lang.Assert2.state;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.net.NetworkInterface.getNetworkInterfaces;
 import static java.util.Collections.list;
 import static java.util.Collections.sort;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -43,6 +46,8 @@ import static org.apache.commons.lang3.StringUtils.*;
  * @since
  */
 public abstract class SystemUtils2 extends SystemUtils {
+
+	final private static SmartLogger log = getLogger(SystemUtils2.class);
 
 	// --- OS platform info. ---
 
@@ -86,7 +91,7 @@ public abstract class SystemUtils2 extends SystemUtils {
 	 * @return
 	 */
 	private static String defaultGlobalHostSerial0() {
-		// Getting MAC Address Information of Network Card
+		// Gets MAC address information of network card
 		try {
 			List<NetworkInterface> nis = list(getNetworkInterfaces());
 			// Ascii dict sort.
@@ -100,8 +105,10 @@ public abstract class SystemUtils2 extends SystemUtils {
 					}
 				}
 			}
-			state(nonNull(mac),
-					"Failed to get network card info. The OS not configured network card or connected to the network?");
+			if (isNull(mac)) { // No configured network?
+				log.error("=>> Failed to get network card info. the OS not configured network or connected to the network?");
+				return "Unknown Network";
+			}
 
 			StringBuffer sb = new StringBuffer(32);
 			for (int i = 0; i < mac.length; i++) {
