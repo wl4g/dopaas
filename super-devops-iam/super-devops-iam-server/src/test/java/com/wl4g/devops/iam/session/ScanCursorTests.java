@@ -19,8 +19,10 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SESSION;
 
 import java.io.IOException;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -36,6 +38,7 @@ import redis.clients.jedis.ScanParams;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IamServer.class)
+@FixMethodOrder(MethodSorters.JVM)
 public class ScanCursorTests {
 
 	@Autowired

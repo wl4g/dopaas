@@ -16,19 +16,16 @@
 package com.wl4g.devops.support.redis;
 
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.split;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notEmpty;
-import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.IOException;
@@ -78,7 +75,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	final private ScanParams params;
 	final private Class<?> valueType;
 	final private JedisCluster cluster;
-	final private List<JedisPool> jedisNodes;
+	final private List<JedisPool> nodePools;
 
 	private CursorWrapper cursor;
 	private CursorState state;
@@ -137,12 +134,12 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 		notNull(valueType, "No scan value java type is specified. Use constructs that can set value java type.");
 		this.cluster = cluster;
 		this.params = param != null ? param : NONE_PARAMS;
-		this.jedisNodes = cluster.getClusterNodes().values().stream().collect(toCollection(ArrayList::new));
+		this.nodePools = cluster.getClusterNodes().values().stream().map(n -> n).collect(toList());
 		this.state = CursorState.READY;
 		this.cursor = cursor;
 		this.iter = new ScanIterable<>(cursor, emptyList());
 		CursorWrapper.validate(cursor);
-		notEmpty(jedisNodes, "Jedis nodes is empty.");
+		notEmptyOf(nodePools, "Jedis nodes is empty.");
 	}
 
 	/*
@@ -210,9 +207,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	@SuppressWarnings("unchecked")
 	public synchronized final <T extends ScanCursor<E>> T open() {
 		if (isOpen()) {
-			if (log.isDebugEnabled()) {
-				log.debug("Cursor already " + state + ", no need (re)open it.");
-			}
+			log.debug("Cursor already " + state + ", no need (re)open it.");
 			return (T) this;
 		}
 
@@ -302,7 +297,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 			nextScan();
 		}
 
-		return (iter.iterator().hasNext() || !checkScanFinished());
+		return (iter.iterator().hasNext() || !checkScanCompleted());
 	}
 
 	/**
@@ -310,7 +305,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 */
 	protected synchronized void nextScan() {
 		// Select a node
-		try (Jedis jedis = jedisNodes.get(getCursor().getSelectionPos()).getResource()) {
+		try (Jedis jedis = nodePools.get(getCursor().getSelectionPos()).getResource()) {
 			// Traverse only the primary node
 			if (containsIgnoreCase(jedis.info(REPLICATION), ROLE_MASTER)) {
 				processResult(doScanNode(jedis));
@@ -348,7 +343,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 		this.cursor = res.getCursor();
 
 		// The current node has completed traversal
-		if (checkScanFinished()) { // End?
+		if (checkScanCompleted()) { // End?
 			nextTo(); // Select to next node.
 		}
 	}
@@ -361,11 +356,9 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 
 		// Safe check fully scanned.
 		if (checkScanNodesCompleted()) {
-			if (log.isDebugEnabled()) {
-				log.debug(String.format("Scanned all jedis nodes. size: %s", jedisNodes.size()));
-			}
+			log.debug(format("Scanned all jedis nodes. size: %s", nodePools.size()));
 			state = CursorState.FINISHED;
-			cursor.setSelectionPos(jedisNodes.size() - 1);
+			cursor.setSelectionPos(nodePools.size() - 1);
 		}
 	}
 
@@ -374,7 +367,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @return
 	 */
-	private boolean checkScanFinished() {
+	private boolean checkScanCompleted() {
 		return trimToEmpty(getCursor().getCursor()).equalsIgnoreCase("0");
 	}
 
@@ -384,7 +377,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * @return
 	 */
 	private boolean checkScanNodesCompleted() {
-		return cursor.getSelectionPos() >= jedisNodes.size();
+		return cursor.getSelectionPos() >= nodePools.size();
 	}
 
 	/**
