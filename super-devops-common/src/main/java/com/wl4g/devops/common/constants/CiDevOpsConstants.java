@@ -38,6 +38,9 @@ public abstract class CiDevOpsConstants extends DevOpsConstants {
 	public static final int TASK_STATUS_STOP = 5;
 	// task-part-success
 	public  static final int TASK_STATUS_PART_SUCCESS = 6;
+	// stoping
+	public static final int TASK_STATUS_STOPING = 7;
+
 
 	// Auto trigger
 	public static final int TASK_TYPE_TRIGGER = 1;

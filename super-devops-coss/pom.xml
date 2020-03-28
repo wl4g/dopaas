@@ -17,6 +17,7 @@
 		<module>super-devops-coss-awss3</module>
 		<module>super-devops-coss-glusterfs</module>
 		<module>super-devops-coss-server</module>
+		<module>super-devops-coss-manager</module>
 		<module>super-devops-coss-example</module>
 	</modules>
 	<properties>
