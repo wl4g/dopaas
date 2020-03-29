@@ -13,32 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.authc.credential.secure;
+package com.wl4g.devops.iam.verification.model;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 
 /**
- * IAM credentials securer
+ * Apply simple image model.
  *
- * @author wangl.sir
- * @version v1.0 2019年1月16日
- * @see {@link org.apache.shiro.crypto.hash.DefaultHashService#combine()}
+ * @author Wangl.sir
+ * @version v1.0 2019年9月4日
  * @since
  */
-public interface IamCredentialsSecurer extends CredentialsSecurer {
+public class GenericApplyResult extends AbstractVerifyCodeResult {
+	private static final long serialVersionUID = -5065908011134214117L;
 
-	/**
-	 * Apply asymmetric algorithm secret public key
-	 * 
-	 * @param kind
-	 * @param principal
-	 * @return
-	 */
-	default String applySecret(@NotNull SecureAlgKind kind, @NotBlank String principal) {
-		throw new UnsupportedOperationException();
+	@NotBlank
+	private String primaryImg;
+
+	public GenericApplyResult() {
+		super();
+	}
+
+	public GenericApplyResult(@NotBlank String applyToken, @NotBlank String verifyType) {
+		super(applyToken, verifyType);
+	}
+
+	public String getPrimaryImg() {
+		return primaryImg;
+	}
+
+	public void setPrimaryImg(String primaryImg) {
+		this.primaryImg = primaryImg;
 	}
 
 }

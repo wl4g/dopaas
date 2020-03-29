@@ -29,7 +29,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import static com.wl4g.devops.iam.common.config.AbstractIamProperties.CipherParameterProperties.*;
+import static com.wl4g.devops.iam.common.config.AbstractIamProperties.CipherProperties.*;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.tool.common.log.SmartLogger;

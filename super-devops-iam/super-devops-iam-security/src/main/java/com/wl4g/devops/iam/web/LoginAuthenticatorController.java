@@ -15,15 +15,19 @@
  */
 package com.wl4g.devops.iam.web;
 
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
-import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
+import com.wl4g.devops.iam.crypto.SecureCryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.devops.iam.handler.risk.RiskRecognizerHandler;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
 import com.wl4g.devops.iam.web.model.CaptchaCheckResult;
 import com.wl4g.devops.iam.web.model.GenericCheckResult;
+import com.wl4g.devops.iam.web.model.HandshakeResult;
 import com.wl4g.devops.iam.web.model.SmsCheckResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,20 +35,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import static com.wl4g.devops.iam.common.config.AbstractIamProperties.IamVersion.*;
 import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.checkSession;
 import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
 import static com.wl4g.devops.iam.web.model.CaptchaCheckResult.KEY_CAPTCHA_CHECK;
 import static com.wl4g.devops.iam.web.model.GenericCheckResult.KEY_GENERIC_CHECK;
 import static com.wl4g.devops.iam.web.model.SmsCheckResult.KEY_SMS_CHECK;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getRequestParam;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -73,18 +80,52 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	protected IamCredentialsSecurer securer;
 
 	/**
+	 * Risk control recognizer handler.
+	 */
+	@Autowired
+	protected RiskRecognizerHandler riskRecognizerHandler;
+
+	@Autowired
+	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
+
+	/**
+	 * Apply session, applicable to mobile token session.
+	 *
+	 * @param request
+	 */
+	@RequestMapping(value = URI_S_LOGIN_HANDSHAKE, method = { POST })
+	@ResponseBody
+	public RespBase<?> handshake(HttpServletRequest request) {
+		checkPreHandle(request, false);
+
+		RespBase<Object> resp = RespBase.create(sessionStatus());
+		// --- Reponed handshake result. ---
+		HandshakeResult handshake = new HandshakeResult(V2_0_0.getVersion());
+		// Current supports crypt algorithms.
+		handshake.setAlgorithms(cryptAdapter.getRunningKinds().stream().map(k -> k.getAlgorithm()).collect(toList()));
+		// Assgin sessionKeyId
+		handshake.setSessionKey(config.getCookie().getName());
+		handshake.setSessionValue(getSession().getId());
+		resp.setData(handshake);
+		return resp;
+	}
+
+	/**
 	 * Login before environmental security check.
 	 *
 	 * @param request
 	 */
 	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { POST })
 	@ResponseBody
-	public RespBase<?> check(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<Object> resp = RespBase.create(sessionStatus());
+	public RespBase<?> check(HttpServletRequest request) {
+		checkPreHandle(request, true);
 
+		RespBase<Object> resp = RespBase.create(sessionStatus());
 		//
 		// --- Check generic authenticating environments. ---
 		//
+		// Gets choosed secure algorithm.
+		String kind = getRequestParam(request, config.getParam().getCryptKindName(), true);
 		// Login account number or mobile number(Optional)
 		String principal = getCleanParam(request, config.getParam().getPrincipalName());
 		// Limit factors
@@ -96,10 +137,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 		// generate 'secret'.
 		GenericCheckResult generic = new GenericCheckResult();
 		if (!isBlank(principal)) {
-			generic.setSessionKey(config.getCookie().getName());
-			generic.setSessionValue(getSession().getId());
 			// Apply credentials encryption secret(pubKey)
-			generic.setSecret(securer.applySecret(principal));
+			generic.setSecretKey(securer.applySecret(SecureAlgKind.of(kind), principal));
 		}
 		// Assign a session ID to the current request. If not, create a new one.
 		resp.forMap().put(KEY_GENERIC_CHECK, generic);
@@ -148,11 +187,10 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 */
 	@RequestMapping(value = URI_S_LOGIN_ERRREAD, method = { GET })
 	@ResponseBody
-	public RespBase<?> readError(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<String> resp = RespBase.create(sessionStatus());
-		// Check session is required
-		//IamSecurityHolder.checkSession();
+	public RespBase<?> readError(HttpServletRequest request) {
+		checkPreHandle(request, true);
 
+		RespBase<String> resp = RespBase.create(sessionStatus());
 		// Read error message from session
 		String errmsg = getBindValue(KEY_ERR_SESSION_SAVED, true);
 		errmsg = isBlank(errmsg) ? "" : errmsg;
@@ -170,11 +208,10 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 */
 	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { POST })
 	@ResponseBody
-	public RespBase<?> applyLocale(HttpServletRequest request, HttpServletResponse response) {
-		RespBase<Locale> resp = RespBase.create(sessionStatus());
-		// Check session is required
-		IamSecurityHolder.checkSession();
+	public RespBase<?> applyLocale(HttpServletRequest request) {
+		checkPreHandle(request, true);
 
+		RespBase<Locale> resp = RespBase.create(sessionStatus());
 		String lang = getCleanParam(request, config.getParam().getI18nLang());
 		// Gets apply locale.
 		Locale locale = request.getLocale();
@@ -184,6 +221,23 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 		bind(KEY_LANG_ATTRIBUTE_NAME, locale);
 		resp.forMap().put(KEY_LANG_ATTRIBUTE_NAME, locale);
 		return resp;
+	}
+
+	/**
+	 * Check pre-handling.
+	 * 
+	 * @param request
+	 */
+	private void checkPreHandle(HttpServletRequest request, boolean checkSessionKeyId) {
+		if (checkSessionKeyId) {
+			// Check sessionKeyId
+			// @see:com.wl4g.devops.iam.web.LoginAuthenticatorController#handhake()
+			checkSession();
+		}
+
+		// Check umidToken validatity.
+		String umidToken = getCleanParam(request, config.getParam().getUmidTokenName());
+		riskRecognizerHandler.checkEvaluation(umidToken);
 	}
 
 }

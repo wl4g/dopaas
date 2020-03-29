@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.web.model;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+
 import java.io.Serializable;
 
 /**
@@ -36,53 +38,24 @@ public class GenericCheckResult implements Serializable {
 	/**
 	 * Applied secret public key hex.
 	 */
-	private String secret;
-
-	/**
-	 * Session keyname.
-	 */
-	private String sessionKey;
-
-	/**
-	 * Session value.
-	 */
-	private Serializable sessionValue;
+	private String secretKey;
 
 	public GenericCheckResult() {
 		super();
 	}
 
-	public GenericCheckResult(String secret, String sessionKey, Serializable sessionValue) {
-		// hasTextOf(secret, "secret");
-		setSecret(secret);
-		setSessionKey(sessionKey);
-		setSessionValue(sessionValue);
+	public GenericCheckResult(String secretKey) {
+		// hasTextOf(secretKey, "secretKey");
+		setSecretKey(secretKey);
 	}
 
-	public String getSecret() {
-		return secret;
+	public String getSecretKey() {
+		return secretKey;
 	}
 
-	public GenericCheckResult setSecret(String secret) {
-		this.secret = secret;
-		return this;
-	}
-
-	public String getSessionKey() {
-		return sessionKey;
-	}
-
-	public GenericCheckResult setSessionKey(String sessionKey) {
-		this.sessionKey = sessionKey;
-		return this;
-	}
-
-	public Serializable getSessionValue() {
-		return sessionValue;
-	}
-
-	public GenericCheckResult setSessionValue(Serializable sessionValue) {
-		this.sessionValue = sessionValue;
+	public GenericCheckResult setSecretKey(String secretKey) {
+		hasTextOf(secretKey, "secretKey");
+		this.secretKey = secretKey;
 		return this;
 	}
 

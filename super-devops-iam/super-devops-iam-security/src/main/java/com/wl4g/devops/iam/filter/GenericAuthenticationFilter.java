@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.authc.GenericAuthenticationToken;
 import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
@@ -43,13 +44,15 @@ public class GenericAuthenticationFilter extends AbstractIamAuthenticationFilter
 		// Bsse required parameters.
 		final String principal = getCleanParam(request, config.getParam().getPrincipalName());
 		final String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
+		final String cryptKind = getCleanParam(request, config.getParam().getCryptKindName());
 		final String clientSecret = getCleanParam(request, config.getParam().getClientSecretKeyName());
 		final String clientRef = getCleanParam(request, config.getParam().getClientRefName());
 		final String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
 
 		// Additional optional parameters.
 		GenericAuthenticationToken token = new GenericAuthenticationToken(remoteHost, redirectInfo, principal, cipherPassword,
-				clientSecret, clientRef, verifiedToken, of(request));
+				SecureAlgKind.of(cryptKind), clientSecret, clientRef, verifiedToken, of(request));
+		// Extra custom parameters.
 		Map<String, String> userProperties = safeMap(request.getParameterMap()).entrySet().stream()
 				.collect(toMap(e -> e.getKey(), e -> isEmptyArray(e.getValue()) ? null : e.getValue()[0]));
 		token.setUserProperties(userProperties);

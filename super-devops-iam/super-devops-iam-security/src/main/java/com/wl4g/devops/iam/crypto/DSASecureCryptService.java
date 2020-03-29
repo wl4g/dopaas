@@ -16,55 +16,47 @@
 package com.wl4g.devops.iam.crypto;
 
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.tool.common.crypto.cipher.RSAAsymCryptor;
+import com.wl4g.devops.tool.common.crypto.cipher.DSAAsymCryptor;
+import com.wl4g.devops.tool.common.crypto.cipher.spec.DSAKeyPairSpec;
 import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
 import com.wl4g.devops.tool.common.crypto.cipher.spec.RSAKeyPairSpec;
 
 /**
- * RSA cryptographic service.
+ * DSA cryptographic service.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-30
  * @since
  */
-public final class RSACryptService extends AbstractCryptService<RSAKeyPairSpec> {
+public final class DSASecureCryptService extends AbstractAsymmetricCryptService<RSAKeyPairSpec> {
 
 	/**
-	 * Cryptic algorithm.
+	 * DSA cryptic algorithm.
 	 */
-	final protected RSAAsymCryptor rsa = new RSAAsymCryptor();
+	final protected DSAAsymCryptor dsa = new DSAAsymCryptor();
 
-	public RSACryptService(JedisLockManager lockManager) {
+	public DSASecureCryptService(JedisLockManager lockManager) {
 		super(lockManager);
 	}
 
-	/**
-	 * Encryption with hex plain.
-	 *
-	 * @param keySpec
-	 * @param hexPlain
-	 * @return
-	 */
+	@Override
+	public SecureAlgKind kind() {
+		return SecureAlgKind.DSA;
+	}
+
 	@Override
 	public String encryptWithHex(KeyPairSpec keySpec, String hexPlain) {
-		return rsa.build(keySpec).encrypt(hexPlain);
+		return dsa.build(keySpec).encrypt(hexPlain);
 	}
 
-	/**
-	 * Decryption with hex cipher.
-	 *
-	 * @param keySpec
-	 * @param hexCipher
-	 * @return
-	 */
 	@Override
 	public String decryptWithHex(KeyPairSpec keySpec, String hexCipher) {
-		return rsa.build(keySpec).decrypt(hexCipher);
+		return dsa.build(keySpec).decrypt(hexCipher);
 	}
 
 	@Override
-	protected RSAKeyPairSpec generateKeySpec() {
-		return rsa.generateKeySpecPair();
+	protected DSAKeyPairSpec generateKeySpec() {
+		return dsa.generateKeySpecPair();
 	}
 
 }

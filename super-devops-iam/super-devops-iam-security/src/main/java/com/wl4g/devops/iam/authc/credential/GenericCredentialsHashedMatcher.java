@@ -45,7 +45,8 @@ public class GenericCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 		}
 
 		// Matching credentials.
-		CredentialsToken credentialsToken = new CredentialsToken((String) tk.getPrincipal(), (String) tk.getCredentials());
+		CredentialsToken credentialsToken = new CredentialsToken((String) tk.getPrincipal(), (String) tk.getCredentials(),
+				tk.getKind());
 		return securer.validate(credentialsToken, info);
 	}
 

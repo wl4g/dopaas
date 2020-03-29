@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.iam.handler.SimpleRiskRecognizerHandler;
+import com.wl4g.devops.iam.handler.risk.SimpleRcmRecognizerHandler;
 import com.wl4g.devops.iam.web.model.SimpleRcmTokenResult;
 import com.wl4g.devops.tool.common.codec.Base58;
 
@@ -51,10 +51,10 @@ import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
  * @since
  */
 @com.wl4g.devops.iam.annotation.SimpleRcmController
-public class SimpleRiskRecognizerController extends AbstractAuthenticatorController {
+public class SimpleRcmRecognizerController extends AbstractAuthenticatorController {
 
 	@Autowired
-	protected SimpleRiskRecognizerHandler handler;
+	protected SimpleRcmRecognizerHandler handler;
 
 	/**
 	 * Apply umidToken, such as client submits UA and device fingerprint

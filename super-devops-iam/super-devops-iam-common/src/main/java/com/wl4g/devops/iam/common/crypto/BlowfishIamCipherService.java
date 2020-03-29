@@ -13,37 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.verification.model;
-
-import javax.validation.constraints.NotBlank;
+package com.wl4g.devops.iam.common.crypto;
 
 /**
- * Apply simple image model.
- *
- * @author Wangl.sir
- * @version v1.0 2019年9月4日
- * @since
+ * {@link BlowfishIamCipherService}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年3月29日 v1.0.0
+ * @see
  */
-public class SimpleApplyImgResult extends AbstractVerifyCodeResult {
-	private static final long serialVersionUID = -5065908011134214117L;
+public class BlowfishIamCipherService extends AbstractSymmetricCipherService {
 
-	@NotBlank
-	private String primaryImg;
-
-	public SimpleApplyImgResult() {
-		super();
+	@Override
+	public CipherCryptKind kind() {
+		return CipherCryptKind.BLOWFISH;
 	}
 
-	public SimpleApplyImgResult(@NotBlank String applyToken, @NotBlank String verifyType) {
-		super(applyToken, verifyType);
+	@Override
+	public byte[] encrypt(byte[] key, byte[] plaintext) {
+		// TODO
+		return null;
 	}
 
-	public String getPrimaryImg() {
-		return primaryImg;
-	}
-
-	public void setPrimaryImg(String primaryImg) {
-		this.primaryImg = primaryImg;
+	@Override
+	public byte[] decrypt(byte[] key, byte[] ciphertext) {
+		// TODO
+		return null;
 	}
 
 }

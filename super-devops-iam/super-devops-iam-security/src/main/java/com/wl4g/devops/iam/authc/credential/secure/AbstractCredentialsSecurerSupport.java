@@ -38,10 +38,12 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.configure.SecureConfig;
-import com.wl4g.devops.iam.crypto.CryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
@@ -54,6 +56,7 @@ import com.wl4g.devops.tool.common.log.SmartLogger;
  * @since
  */
 abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements IamCredentialsSecurer {
+
 	final protected SmartLogger log = getLogger(getClass());
 
 	/**
@@ -72,10 +75,10 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	final protected ByteSource privateSalt;
 
 	/**
-	 * Cryptic service.
+	 * Secure asymmetric cryptic service.
 	 */
 	@Autowired
-	protected CryptService cryptService;
+	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
 
 	/**
 	 * I18n message source.
@@ -138,11 +141,16 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		return isEqual(toBytes(signature(token)), toBytes(info.getCredentials()));
 	}
 
+	/**
+	 * {@link super#applySecret(String)}
+	 * 
+	 * @param principal
+	 * @return
+	 * @see {@link com.wl4g.devops.iam.web.LoginAuthenticatorController#handhake()}
+	 */
 	@Override
-	public String applySecret(@NotNull String principal) {
-		/**
-		 * @see {@link com.wl4g.devops.iam.web.LoginAuthenticatorController#handhake()}
-		 */
+	public String applySecret(@NotNull SecureAlgKind kind, @NotNull String principal) {
+		// Check required sessionKey.
 		checkSession();
 
 		// Gets secretKey(publicKey) index.
@@ -153,7 +161,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		log.debug("Applied secretKey index: {}", index);
 
 		// Gets applySecret keyPair index.
-		KeyPairSpec keyPair = cryptService.borrow(index);
+		KeyPairSpec keyPair = cryptAdapter.forOperator(kind).generateKeyBorrow(index);
 		// Storage applied securet.
 		bind(KEY_SECRET_INFO, index, config.getApplyPubkeyExpireMs());
 
@@ -212,14 +220,16 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	}
 
 	/**
-	 * Corresponding to the front end, RSA1 encryption is used by default.
+	 * Corresponding to the front end, RSA1/RSA2/DSA/ECC/... encryption is used
+	 * by default.
 	 *
-	 * @param tokenz
+	 * @param cryptKind
+	 * @param token
 	 * @return
 	 */
 	protected CredentialsToken resolves(@NotNull CredentialsToken token) {
 		// Determine keyPairSpec
-		KeyPairSpec keySpec = determineSecretKeySpecPair(token.getPrincipal());
+		KeyPairSpec keySpec = determineSecretKeySpecPair(token.getKind(), token.getPrincipal());
 
 		if (log.isInfoEnabled()) {
 			String publicBase64String = keySpec.getPubHexString();
@@ -232,22 +242,23 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 			}
 		}
 
-		// Mysterious DECRYPT them.
-		final String plainCredentials = cryptService.decryptWithHex(keySpec, token.getCredentials());
-		return new CredentialsToken(token.getPrincipal(), plainCredentials, true);
+		// Mysterious decryption them.
+		final String plainCredentials = cryptAdapter.forOperator(token.getKind()).decryptWithHex(keySpec, token.getCredentials());
+		return new CredentialsToken(token.getPrincipal(), plainCredentials, token.getKind(), true);
 	}
 
 	/**
 	 * Determine asymmetric algorithms keyPair
 	 *
-	 * @param checkCode
+	 * @param cryptKind
+	 * @param principal
 	 * @return
 	 */
-	private KeyPairSpec determineSecretKeySpecPair(@NotBlank String principal) {
+	private KeyPairSpec determineSecretKeySpecPair(@NotNull SecureAlgKind kind, @NotBlank String principal) {
 		// Gets the best one from the candidate keyPair.
 		Integer index = getBindValue(KEY_SECRET_INFO, true);
 		if (!isNull(index)) {
-			return cryptService.borrow(index);
+			return cryptAdapter.forOperator(kind).generateKeyBorrow(index);
 		}
 
 		log.warn("Failed to decrypt, secretKey expired of seesionId: {}, principal: {}", getSessionId(), principal);

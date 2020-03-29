@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.handler;
+package com.wl4g.devops.iam.handler.risk;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static java.util.Collections.unmodifiableList;
@@ -51,8 +51,18 @@ public interface RiskRecognizerHandler {
 	 * 
 	 * @param umidToken
 	 * @return
+	 * @throws SuspiciousRiskException;
 	 */
-	double getEvaluation(@NotBlank String umidToken);
+	double getEvaluation(@NotBlank String umidToken) throws SuspiciousRiskException;
+
+	/**
+	 * Check and assess whether there are risks.
+	 * 
+	 * @param umidToken
+	 * @return
+	 * @throws SuspiciousRiskException;
+	 */
+	void checkEvaluation(@NotBlank String umidToken) throws SuspiciousRiskException;
 
 	/**
 	 * User properties items definitions.

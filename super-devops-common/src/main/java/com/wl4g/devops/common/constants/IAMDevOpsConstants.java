@@ -108,6 +108,11 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/** Based URI with login authenticator controller. */
 	final public static String URI_S_LOGIN_BASE = "/login";
 	/**
+	 * Pre-processing handshake, e.g, apply sessionKeyId, All clients are
+	 * unified, including PC/WEB/iOS/Andriod/WechatMp/WechatApplet
+	 */
+	final public static String URI_S_LOGIN_HANDSHAKE = "/handshake";
+	/**
 	 * Initialization before login checks whether authentication code is
 	 * enabled, etc.
 	 */

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.handler;
+package com.wl4g.devops.iam.handler.risk;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Collections.sort;
 import static java.util.Locale.US;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -41,13 +41,13 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
- * {@link SimpleRiskRecognizerHandler}
+ * {@link SimpleRcmRecognizerHandler}
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月25日
  * @since
  */
-public class SimpleRiskRecognizerHandler implements RiskRecognizerHandler, InitializingBean {
+public class SimpleRcmRecognizerHandler implements RiskRecognizerHandler, InitializingBean {
 
 	final protected SmartLogger log = getLogger(getClass());
 
@@ -98,7 +98,7 @@ public class SimpleRiskRecognizerHandler implements RiskRecognizerHandler, Initi
 
 		// Generate UMID from scene dimension parameters.
 		List<String> values = params.values().stream().collect(toList());
-		Collections.sort(values, (v1, v2) -> v1.compareTo(v2));
+		sort(values, (v1, v2) -> v1.compareTo(v2));
 		StringBuffer valuesStr = new StringBuffer(values.size() * 10);
 		values.forEach(v -> valuesStr.append(v));
 
@@ -119,8 +119,14 @@ public class SimpleRiskRecognizerHandler implements RiskRecognizerHandler, Initi
 	 * @param umidToken
 	 * @return
 	 */
-	public double getEvaluation(@NotBlank String umidToken) {
+	public double getEvaluation(@NotBlank String umidToken) throws SuspiciousRiskException {
 		return 9d; // TODO no implements
+	}
+
+	@Override
+	public void checkEvaluation(@NotBlank String umidToken) throws SuspiciousRiskException {
+		// TODO Auto-generated method stub
+
 	}
 
 }

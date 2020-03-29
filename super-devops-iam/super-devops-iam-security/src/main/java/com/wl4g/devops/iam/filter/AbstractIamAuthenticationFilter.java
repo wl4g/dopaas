@@ -51,6 +51,7 @@ import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.IllegalRequestException;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
@@ -60,7 +61,8 @@ import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
-import com.wl4g.devops.iam.crypto.CryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
@@ -127,10 +129,10 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	protected ServerSecurityCoprocessor coprocessor;
 
 	/**
-	 * Cryptic service.
+	 * Secure asymmetric cryptic service.
 	 */
 	@Autowired
-	protected CryptService cryptService;
+	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
 
 	/**
 	 * Enhanced cache manager.

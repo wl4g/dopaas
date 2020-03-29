@@ -15,12 +15,14 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.ImageTailor.TailoredImage;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawApplyImgResult;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawVerifyImgResult;
-import com.wl4g.devops.iam.crypto.CryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 import com.wl4g.devops.tool.common.codec.CheckSums;
 import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
@@ -59,10 +61,10 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	protected JigsawImageManager jigsawManager;
 
 	/**
-	 * RSA cryptographic service.
+	 * Secure asymmetric cryptographic service.
 	 */
 	@Autowired
-	protected CryptService cryptService;
+	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
 
 	/**
 	 * CAPTCHA configuration.
@@ -76,7 +78,8 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(String graphToken, VerifyCodeWrapper codeWrap, KeyPairSpec keySpec) {
+	protected Object postApplyGraphProperties(@NotNull SecureAlgKind kind, String graphToken, VerifyCodeWrapper codeWrap,
+			KeyPairSpec keySpec) {
 		TailoredImage code = codeWrap.getCode();
 		// Build model
 		JigsawApplyImgResult model = new JigsawApplyImgResult(graphToken, kind().getAlias());
@@ -100,26 +103,25 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 	}
 
 	@Override
-	final protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
+	final protected boolean doMatch(@NotNull SecureAlgKind kind, VerifyCodeWrapper storedCode, Object submitCode) {
 		TailoredImage code = (TailoredImage) storedCode.getCode();
 		JigsawVerifyImgResult model = (JigsawVerifyImgResult) submitCode;
 
 		// Analyze & verification JIGSAW image.
-		boolean matched = doAnalyzingJigsawGraph(code, model);
-		if (log.isInfoEnabled()) {
-			log.info("Jigsaw match result: {}, storedCode: {}, submitCode: {}", matched, code.toString(), model.toString());
-		}
+		boolean matched = doAnalyzingJigsawGraph(kind, code, model);
+		log.info("Jigsaw match result: {}, storedCode: {}, submitCode: {}", matched, code.toString(), model.toString());
 		return matched;
 	}
 
 	/**
 	 * Analyzing & verification JIGSAW graph.
 	 * 
+	 * @param request
 	 * @param code
 	 * @param model
 	 * @return
 	 */
-	final private boolean doAnalyzingJigsawGraph(TailoredImage code, JigsawVerifyImgResult model) {
+	final private boolean doAnalyzingJigsawGraph(@NotNull SecureAlgKind kind, TailoredImage code, JigsawVerifyImgResult model) {
 		if (Objects.isNull(model.getX())) {
 			log.warn("VerifyJigsaw image x-postition is empty. - {}", model);
 			return false;
@@ -127,10 +129,11 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 		// DECRYPT slider block x-position.
 		KeyPairSpec keySpec = getBindValue(model.getApplyToken(), true);
-		String plainX = cryptService.decryptWithHex(keySpec, model.getX());
+		String plainX = cryptAdapter.forOperator(kind).decryptWithHex(keySpec, model.getX());
 		hasText(plainX, "Invalid x-position, unable to resolve.");
 		// Parsing additional algorithmic salt.
 		isTrue(plainX.length() > 66, String.format("Failed to analyze jigsaw, illegal additional ciphertext. '%s'", plainX));
+
 		log.debug("Jigsaw analyze decrypt plain x-position: {}, cipher x-position: {}", plainX, model.getX());
 
 		// Reduction analysis.
@@ -144,16 +147,13 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		final List<Integer> xTrails = model.getTrails().stream().map(v -> v.getX()).filter(v -> Objects.nonNull(v))
 				.collect(toList());
 		final double xSD = analyzingStandartDeviation(xTrails);
-		if (log.isDebugEnabled()) {
-			log.debug("Simple AI-smart trails analyze, xSD: {}, xTrails: {}", xSD, xTrails);
-		}
+		log.debug("Simple AI-smart trails analyze, xSD: {}, xTrails: {}", xSD, xTrails);
+
 		// Y-standardDeviation
 		final List<Integer> yTrails = model.getTrails().stream().map(v -> v.getY()).filter(v -> Objects.nonNull(v))
 				.collect(toList());
 		final double ySD = analyzingStandartDeviation(yTrails);
-		if (log.isDebugEnabled()) {
-			log.debug("Simple AI-smart trails analyze, xSD: {}, yTrails: {}", ySD, yTrails);
-		}
+		log.debug("Simple AI-smart trails analyze, xSD: {}, yTrails: {}", ySD, yTrails);
 
 		// (At present, the effect is not very good.)
 		// TODO => for AI CNN model verifying...

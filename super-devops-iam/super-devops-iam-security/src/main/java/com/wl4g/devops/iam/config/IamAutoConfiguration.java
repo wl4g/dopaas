@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Bean;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.kit.access.IPAccessControl;
 import com.wl4g.devops.iam.authc.credential.GenericCredentialsHashedMatcher;
 import com.wl4g.devops.iam.authc.credential.Oauth2AuthorizingBoundMatcher;
@@ -55,8 +56,11 @@ import com.wl4g.devops.iam.configure.AnynothingSecurityCoprocessor;
 import com.wl4g.devops.iam.configure.DefaultSecureConfigureAdapter;
 import com.wl4g.devops.iam.configure.SecureConfigureAdapter;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
-import com.wl4g.devops.iam.crypto.CryptService;
-import com.wl4g.devops.iam.crypto.RSACryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService;
+import com.wl4g.devops.iam.crypto.DSASecureCryptService;
+import com.wl4g.devops.iam.crypto.ECCSecureCryptService;
+import com.wl4g.devops.iam.crypto.RSASecureCryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter;
 import com.wl4g.devops.iam.filter.DingtalkAuthenticationFilter;
 import com.wl4g.devops.iam.filter.FacebookAuthenticationFilter;
@@ -74,7 +78,7 @@ import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
-import com.wl4g.devops.iam.handler.SimpleRiskRecognizerHandler;
+import com.wl4g.devops.iam.handler.risk.SimpleRcmRecognizerHandler;
 import com.wl4g.devops.iam.realm.AbstractAuthorizingRealm;
 import com.wl4g.devops.iam.realm.DingtalkAuthorizingRealm;
 import com.wl4g.devops.iam.realm.FacebookAuthorizingRealm;
@@ -120,8 +124,25 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public CryptService rsaCryptoService(JedisLockManager lockManager) {
-		return new RSACryptService(lockManager);
+	public RSASecureCryptService rsaSecureCryptService(JedisLockManager lockManager) {
+		return new RSASecureCryptService(lockManager);
+	}
+
+	@Bean
+	public DSASecureCryptService dsaSecureCryptService(JedisLockManager lockManager) {
+		return new DSASecureCryptService(lockManager);
+	}
+
+	@Bean
+	public ECCSecureCryptService eccSecureCryptService(JedisLockManager lockManager) {
+		return new ECCSecureCryptService(lockManager);
+	}
+
+	@Bean
+	public GenericOperatorAdapter<SecureAlgKind, SecureCryptService> compositeCryptServiceAdapter(
+			List<SecureCryptService> cryptServices) {
+		return new GenericOperatorAdapter<SecureAlgKind, SecureCryptService>(cryptServices) {
+		};
 	}
 
 	// ==============================
@@ -510,8 +531,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public SimpleRiskRecognizerHandler simpleRiskRecognizerHandler() {
-		return new SimpleRiskRecognizerHandler();
+	public SimpleRcmRecognizerHandler simpleRiskRecognizerHandler() {
+		return new SimpleRcmRecognizerHandler();
 	}
 
 	// ==============================

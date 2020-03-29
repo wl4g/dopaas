@@ -46,6 +46,7 @@ import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 
 import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.lang.StringUtils2.isDomain;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.*;
@@ -258,6 +259,32 @@ public abstract class WebUtils2 {
 				throw new UnsupportedOperationException(format("No support '%s' request method", req.getMethod()));
 			}
 		}
+	}
+
+	/**
+	 * Convenience method that returns a request parameter value, first running
+	 * it through {@link StringUtils#clean(String)}.
+	 *
+	 * @param request
+	 *            the servlet request.
+	 * @param paramName
+	 *            the parameter name.
+	 * @return the clean param value, or null if the param does not exist or is
+	 *         empty.
+	 */
+	public static String getRequestParam(ServletRequest request, String paramName, boolean required) {
+		String paramValue = request.getParameter(paramName);
+		String cleanedValue = paramValue;
+		if (paramValue != null) {
+			cleanedValue = paramValue.trim();
+			if (cleanedValue.equals(EMPTY)) {
+				cleanedValue = null;
+			}
+		}
+		if (required) {
+			hasTextOf(cleanedValue, paramName);
+		}
+		return cleanedValue;
 	}
 
 	/**
