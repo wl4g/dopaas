@@ -16,10 +16,9 @@
 package com.wl4g.devops.iam.crypto;
 
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.tool.common.crypto.cipher.ECCAsymCryptor;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.ECCKeyPairSpec;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.RSAKeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.ECCCryptor;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.ECCKeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 /**
  * DSA cryptographic service.
@@ -28,15 +27,10 @@ import com.wl4g.devops.tool.common.crypto.cipher.spec.RSAKeyPairSpec;
  * @version v1.0 2019-08-30
  * @since
  */
-public final class ECCSecureCryptService extends AbstractAsymmetricCryptService<RSAKeyPairSpec> {
-
-	/**
-	 * ECC cryptic algorithm.
-	 */
-	final protected ECCAsymCryptor ecc = new ECCAsymCryptor();
+public final class ECCSecureCryptService extends AbstractAsymmetricCryptService {
 
 	public ECCSecureCryptService(JedisLockManager lockManager) {
-		super(lockManager);
+		super(lockManager, new ECCCryptor());
 	}
 
 	@Override
@@ -45,12 +39,12 @@ public final class ECCSecureCryptService extends AbstractAsymmetricCryptService<
 	}
 
 	@Override
-	public String encryptWithHex(KeyPairSpec keySpec, String hexPlain) {
+	public String encryptWithHex(KeyPairSpec keySpec, String plaintext) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public String decryptWithHex(KeyPairSpec keySpec, String hexCipher) {
+	public String decryptWithHex(KeyPairSpec keySpec, String hexCiphertext) {
 		throw new UnsupportedOperationException();
 	}
 

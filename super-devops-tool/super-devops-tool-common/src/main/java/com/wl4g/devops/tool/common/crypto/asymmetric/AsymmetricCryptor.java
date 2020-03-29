@@ -1,0 +1,93 @@
+/*
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.wl4g.devops.tool.common.crypto.asymmetric;
+
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
+
+/**
+ * {@link AsymmetricCryptor}
+ * 
+ * @param <C>
+ * @param <K>
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2019年08月29日 v1.0.0
+ * @see
+ */
+public interface AsymmetricCryptor {
+
+	/**
+	 * Generate keySpecPair
+	 *
+	 * @return
+	 */
+	KeyPairSpec generateKeySpecPair();
+
+	/**
+	 * Deserialization generate keyPair.
+	 * 
+	 * @param publicKey
+	 * @param privateKey
+	 * @return
+	 */
+	KeyPairSpec generateKeyPair(byte[] publicKey, byte[] privateKey);
+
+	/**
+	 * Encrypt plain text based on the built key pair
+	 *
+	 * @param plaintext
+	 * @return
+	 */
+	String encrypt(String plaintext);
+
+	/**
+	 * Decryption the hex ciphertext based on the constructed key pair
+	 *
+	 * @param hexCiphertext
+	 * @return
+	 */
+	String decrypt(String hexCiphertext);
+
+	/**
+	 * Initialize the build of a password instance based on the specified key
+	 * pair
+	 *
+	 * @param keyPairSpec
+	 * @return
+	 */
+	AsymmetricCryptor getInstance(KeyPairSpec keyPairSpec);
+
+	/**
+	 * Get algorithm name
+	 *
+	 * @return
+	 */
+	String getAlgorithmPrimary();
+
+	/**
+	 * Get algorithm padding
+	 *
+	 * @return
+	 */
+	String getPadAlgorithm();
+
+	/**
+	 * Get asymmetric key digits
+	 *
+	 * @return
+	 */
+	int getKeyBit();
+
+}

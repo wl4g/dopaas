@@ -133,7 +133,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 		return new DSASecureCryptService(lockManager);
 	}
 
-	@Bean
+	// @Bean
 	public ECCSecureCryptService eccSecureCryptService(JedisLockManager lockManager) {
 		return new ECCSecureCryptService(lockManager);
 	}

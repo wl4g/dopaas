@@ -22,7 +22,7 @@ import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.config.properties.MatcherProperties;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,7 +110,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		state(nonNull(wrap), "Failed to apply captcha.");
 
 		// Gets choosed secure algorithm.
-		SecureAlgKind kind = SecureAlgKind.of(getRequestParam(request, config.getParam().getCryptKindName(), true));
+		SecureAlgKind kind = SecureAlgKind.of(getRequestParam(request, config.getParam().getSecretAlgKindName(), true));
 
 		// Gets crypt algorithm(RSA/DSA/ECC..) secretKey.(Used to encrypt
 		// sliding X position)

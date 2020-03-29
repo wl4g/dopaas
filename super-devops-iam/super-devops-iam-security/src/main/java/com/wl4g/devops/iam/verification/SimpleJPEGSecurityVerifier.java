@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.verification;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.verification.model.GenericApplyResult;
 import com.wl4g.devops.iam.verification.model.GenericVerifyResult;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;

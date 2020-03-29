@@ -17,8 +17,6 @@ package com.wl4g.devops.iam.authc;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
 import com.wl4g.devops.iam.common.authc.ClientRef;
@@ -48,12 +46,6 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 	final private String credentials;
 
 	/**
-	 * Iam asymmetric secure crypt algorithm kind definitions..
-	 */
-	@NotNull
-	final private SecureAlgKind kind;
-
-	/**
 	 * Whether or not 'rememberMe' should be enabled for the corresponding login
 	 * attempt; default is <code>false</code>
 	 */
@@ -81,9 +73,9 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 	}
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, final SecureAlgKind kind, final String clientSecret, final String clientRef,
+			final String credentials, final SecureAlgKind secureAlgKind, final String clientSecret, final String clientRef,
 			final String verifiedToken, final VerifyKind verifyType, final boolean rememberMe) {
-		super(clientSecret, remoteHost, redirectInfo);
+		super(secureAlgKind, clientSecret, remoteHost, redirectInfo);
 		hasTextOf(principal, "principal");
 		hasTextOf(credentials, "credentials");
 		hasTextOf(clientRef, "clientRef");
@@ -91,7 +83,6 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 		notNullOf(verifyType, "verifyType");
 		this.principal = principal;
 		this.credentials = credentials;
-		this.kind = kind;
 		this.clientRef = ClientRef.of(clientRef);
 		this.verifiedToken = verifiedToken;
 		this.verifyType = verifyType;
@@ -106,10 +97,6 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 	@Override
 	public Object getCredentials() {
 		return credentials;
-	}
-
-	public SecureAlgKind getKind() {
-		return kind;
 	}
 
 	@Override

@@ -125,7 +125,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 		// --- Check generic authenticating environments. ---
 		//
 		// Gets choosed secure algorithm.
-		String kind = getRequestParam(request, config.getParam().getCryptKindName(), true);
+		String alg = getRequestParam(request, config.getParam().getSecretAlgKindName(), true);
 		// Login account number or mobile number(Optional)
 		String principal = getCleanParam(request, config.getParam().getPrincipalName());
 		// Limit factors
@@ -138,7 +138,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 		GenericCheckResult generic = new GenericCheckResult();
 		if (!isBlank(principal)) {
 			// Apply credentials encryption secret(pubKey)
-			generic.setSecretKey(securer.applySecret(SecureAlgKind.of(kind), principal));
+			generic.setSecretKey(securer.applySecret(SecureAlgKind.of(alg), principal));
 		}
 		// Assign a session ID to the current request. If not, create a new one.
 		resp.forMap().put(KEY_GENERIC_CHECK, generic);

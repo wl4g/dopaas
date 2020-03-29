@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.crypto.cipher;
+package com.wl4g.devops.tool.common.crypto.asymmetric;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -26,11 +27,15 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+
 import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Hex;
 
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Fast Abstract asymmetric algorithm public implementation.
@@ -39,12 +44,14 @@ import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
  * @version v1.0 2019年1月21日
  * @since
  */
-abstract class AbstractFastAsymCryptor<C, K> {
+abstract class AbstractFastAsymmCryptor implements AsymmetricCryptor {
 
 	/*
 	 * Current used encryption and decryption cipher
 	 */
 	final private static ThreadLocal<Cipher[]> currentCipherPairCache = new ThreadLocal<>();
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Specify the key factory of the algorithm instance.
@@ -56,7 +63,7 @@ abstract class AbstractFastAsymCryptor<C, K> {
 	 *
 	 * @param keyWrap
 	 */
-	public AbstractFastAsymCryptor() {
+	public AbstractFastAsymmCryptor() {
 		try {
 			keyFactory = KeyFactory.getInstance(getAlgorithmPrimary());
 		} catch (Exception e) {
@@ -69,7 +76,8 @@ abstract class AbstractFastAsymCryptor<C, K> {
 	 *
 	 * @return
 	 */
-	final public K generateKeySpecPair() {
+	@Override
+	final public KeyPairSpec generateKeySpecPair() {
 		try {
 			// Generate keyPair.
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance(getAlgorithmPrimary());
@@ -86,11 +94,42 @@ abstract class AbstractFastAsymCryptor<C, K> {
 	}
 
 	/**
+	 * Deserialization generate keyPair.
+	 * 
+	 * @param publicKey
+	 * @param privateKey
+	 * @return
+	 */
+	@Override
+	final public KeyPairSpec generateKeyPair(byte[] publicKey, byte[] privateKey) {
+		try {
+			// Deserialization generate keyPair.
+			PublicKey _publicKey = null;
+			if (!isNull(publicKey)) {
+				_publicKey = keyFactory.generatePublic(new X509EncodedKeySpec(publicKey));
+			}
+
+			PrivateKey _privateKey = null;
+			if (!isNull(privateKey)) {
+				_privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKey));
+			}
+
+			// Generate keySpec by keyPair.
+			KeySpec pubKeySepc = keyFactory.getKeySpec(_publicKey, getPublicKeySpecClass());
+			KeySpec privKeySepc = keyFactory.getKeySpec(_privateKey, getPrivateKeySpecClass());
+			return newKeySpec(getAlgorithmPrimary(), pubKeySepc, privKeySepc);
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	/**
 	 * Encrypt plain text based on the built key pair
 	 *
 	 * @param plaintext
 	 * @return
 	 */
+	@Override
 	final public String encrypt(String plaintext) {
 		if (isBlank(plaintext)) {
 			return null;
@@ -111,6 +150,7 @@ abstract class AbstractFastAsymCryptor<C, K> {
 	 * @param hexCiphertext
 	 * @return
 	 */
+	@Override
 	final public String decrypt(String hexCiphertext) {
 		if (isBlank(hexCiphertext)) {
 			return null;
@@ -130,12 +170,12 @@ abstract class AbstractFastAsymCryptor<C, K> {
 	 * Initialize the build of a password instance based on the specified key
 	 * pair
 	 *
-	 * @param keyspec
+	 * @param keyPairSpec
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	final public C build(KeyPairSpec keyspec) {
-		notNullOf(keyspec, "keyspec");
+	@Override
+	final public AsymmetricCryptor getInstance(KeyPairSpec keyPairSpec) {
+		notNullOf(keyPairSpec, "keyPairSpec");
 		try {
 			// Get current cache cipherPair.
 			Cipher[] cipherPair = currentCipherPairCache.get();
@@ -149,8 +189,8 @@ abstract class AbstractFastAsymCryptor<C, K> {
 			}
 
 			// Generate publicKey/privateKey to cache
-			PrivateKey key = keyFactory.generatePrivate(keyspec.getKeySpec());
-			PublicKey pubKey = keyFactory.generatePublic(keyspec.getPubKeySpec());
+			PrivateKey key = keyFactory.generatePrivate(keyPairSpec.getKeySpec());
+			PublicKey pubKey = keyFactory.generatePublic(keyPairSpec.getPubKeySpec());
 			decryptCipher.init(Cipher.DECRYPT_MODE, key);
 			encryptCipher.init(Cipher.ENCRYPT_MODE, pubKey);
 
@@ -160,29 +200,8 @@ abstract class AbstractFastAsymCryptor<C, K> {
 			throw new IllegalStateException(e);
 		}
 
-		return (C) this;
+		return this;
 	}
-
-	/**
-	 * Get algorithm name
-	 *
-	 * @return
-	 */
-	protected abstract String getAlgorithmPrimary();
-
-	/**
-	 * Get algorithm padding
-	 *
-	 * @return
-	 */
-	protected abstract String getPadAlgorithm();
-
-	/**
-	 * Get asymmetric key digits
-	 *
-	 * @return
-	 */
-	protected abstract int getKeyBit();
 
 	/**
 	 * Get public key description of asymmetric algorithms
@@ -206,6 +225,6 @@ abstract class AbstractFastAsymCryptor<C, K> {
 	 * @param keySpec
 	 * @return
 	 */
-	protected abstract K newKeySpec(String algorithm, KeySpec pubKeySpec, KeySpec keySpec);
+	protected abstract KeyPairSpec newKeySpec(String algorithm, KeySpec pubKeySpec, KeySpec keySpec);
 
 }

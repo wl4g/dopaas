@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.crypto.cipher;
+package com.wl4g.devops.tool.common.crypto.asymmetric;
 
 import java.security.spec.KeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
-import com.wl4g.devops.tool.common.crypto.cipher.spec.RSAKeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.RSAKeyPairSpec;
 
 /**
  * Asymmetric algorithm implemented by RivestShamirAdleman.
@@ -28,31 +28,31 @@ import com.wl4g.devops.tool.common.crypto.cipher.spec.RSAKeyPairSpec;
  * @version v1.0 2019年1月20日
  * @since
  */
-public class RSAAsymCryptor extends AbstractFastAsymCryptor<RSAAsymCryptor, RSAKeyPairSpec> {
+public class RSACryptor extends AbstractFastAsymmCryptor {
 
 	@Override
-	protected String getAlgorithmPrimary() {
+	public String getAlgorithmPrimary() {
 		return "RSA";
 	}
 
 	@Override
-	protected int getKeyBit() {
+	public String getPadAlgorithm() {
+		return "RSA/ECB/PKCS1Padding";
+	}
+
+	@Override
+	public int getKeyBit() {
 		return 1024;
 	}
 
 	@Override
-	protected Class<? extends KeySpec> getPublicKeySpecClass() {
+	public Class<? extends KeySpec> getPublicKeySpecClass() {
 		return RSAPublicKeySpec.class;
 	}
 
 	@Override
 	public Class<? extends KeySpec> getPrivateKeySpecClass() {
 		return RSAPrivateCrtKeySpec.class;
-	}
-
-	@Override
-	protected String getPadAlgorithm() {
-		return "RSA/ECB/PKCS1Padding";
 	}
 
 	@Override

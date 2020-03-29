@@ -21,7 +21,7 @@ import com.wl4g.devops.iam.captcha.gif.model.GifApplyImgModel;
 import com.wl4g.devops.iam.captcha.gif.model.GifVerifyImgModel;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;

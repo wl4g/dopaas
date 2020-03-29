@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.common.crypto;
 
 import static com.google.common.base.Charsets.UTF_8;
 
-import com.wl4g.devops.tool.common.crypto.AESUtils;
+import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 
 /**
  * {@link AesIamCipherService}
@@ -36,7 +36,7 @@ public class AesIamCipherService extends AbstractSymmetricCipherService {
 	@Override
 	public byte[] encrypt(byte[] key, byte[] plaintext) {
 		try {
-			return new AESUtils(new String(key)).encrypt(new String(plaintext)).getBytes(UTF_8);
+			return new AESCryptor(new String(key)).encryptWithHex(new String(plaintext)).getBytes(UTF_8);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -46,7 +46,7 @@ public class AesIamCipherService extends AbstractSymmetricCipherService {
 	@Override
 	public byte[] decrypt(byte[] key, byte[] ciphertext) {
 		try {
-			return new AESUtils(new String(key)).decrypt(new String(ciphertext)).getBytes(UTF_8);
+			return new AESCryptor(new String(key)).decryptWithHex(new String(ciphertext)).getBytes(UTF_8);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

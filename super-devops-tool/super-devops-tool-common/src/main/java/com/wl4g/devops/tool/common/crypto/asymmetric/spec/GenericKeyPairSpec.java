@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.crypto.cipher.spec;
+package com.wl4g.devops.tool.common.crypto.asymmetric.spec;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Map;
@@ -26,16 +27,14 @@ import java.security.spec.KeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 
-import com.wl4g.devops.tool.common.lang.Assert2;
-
 /**
- * Packaging classes of asymmetric algorithmic key pairs
+ * Generic asymmetric algorithmic keyPair spec.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月22日
  * @since
  */
-final public class RSAKeyPairSpec extends KeyPairSpec {
+abstract class GenericKeyPairSpec extends KeyPairSpec {
 	final private static long serialVersionUID = -6748188131949785684L;
 	final transient private static Map<String, KeyFactory> keyFactoryCache = new ConcurrentHashMap<>();
 
@@ -51,20 +50,20 @@ final public class RSAKeyPairSpec extends KeyPairSpec {
 	private transient String keyBase64String;
 	private transient String pubKeyBase64String;
 
-	public RSAKeyPairSpec(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
-		Assert2.notNull(algorithm, "'algorithm' must not be null");
-		Assert2.notNull(pubKeySpec, "'publicKeySpec' must not be null");
-		Assert2.notNull(keySpec, "'privateKeySpec' must not be null");
+	public GenericKeyPairSpec(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+		notNull(algorithm, "'algorithm' must not be null");
+		notNull(pubKeySpec, "'publicKeySpec' must not be null");
+		notNull(keySpec, "'privateKeySpec' must not be null");
 		this.algorithm = algorithm;
 		this.pubKeySpec = pubKeySpec;
 		this.keySpec = keySpec;
 	}
 
-	public RSAKeyPairSpec(String keySpecId, String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+	public GenericKeyPairSpec(String keySpecId, String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
 		super(keySpecId);
-		Assert2.notNull(algorithm, "'algorithm' must not be null");
-		Assert2.notNull(pubKeySpec, "'publicKeySpec' must not be null");
-		Assert2.notNull(keySpec, "'privateKeySpec' must not be null");
+		notNull(algorithm, "'algorithm' must not be null");
+		notNull(pubKeySpec, "'publicKeySpec' must not be null");
+		notNull(keySpec, "'privateKeySpec' must not be null");
 		this.algorithm = algorithm;
 		this.pubKeySpec = pubKeySpec;
 		this.keySpec = keySpec;

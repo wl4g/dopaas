@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.tool.common.crypto.cipher;
 
-import com.wl4g.devops.tool.common.crypto.cipher.RSAAsymCryptor;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.RSACryptor;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 //import java.security.KeyFactory;
 //import java.security.KeyPair;
@@ -36,7 +36,7 @@ public class RsaEncryptorTests {
 
 	public static void main(String[] args) throws Exception {
 		// Get algorithm instance
-		RSAAsymCryptor rsa = new RSAAsymCryptor();
+		RSACryptor rsa = new RSACryptor();
 
 		// Create keySpec pair
 		KeyPairSpec keySpecPair = rsa.generateKeySpecPair();
@@ -46,7 +46,7 @@ public class RsaEncryptorTests {
 		// for (int i = 0; i < 2_000; i++) {
 		// new Thread(() -> {
 		// An instance of serialized key load algorithms
-		rsa.build(keySpecPair);
+		rsa.getInstance(keySpecPair);
 
 		String plainText = "abcd";
 		System.out.println("Origin plain text:\t" + plainText);

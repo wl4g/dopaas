@@ -19,6 +19,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_CRYPTO;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.deserialize;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
 import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static io.netty.util.internal.ThreadLocalRandom.current;
@@ -36,7 +37,8 @@ import org.springframework.util.Assert;
 import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.redis.JedisService;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.AsymmetricCryptor;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import redis.clients.jedis.JedisCluster;
@@ -48,7 +50,7 @@ import redis.clients.jedis.JedisCluster;
  * @version v1.0 2019-08-30
  * @since
  */
-public abstract class AbstractAsymmetricCryptService<K> implements SecureCryptService {
+public abstract class AbstractAsymmetricCryptService implements SecureCryptService {
 
 	/**
 	 * Default JIGSAW initialize image timeoutMs
@@ -61,6 +63,11 @@ public abstract class AbstractAsymmetricCryptService<K> implements SecureCryptSe
 	 * KeySpec class.
 	 */
 	final protected Class<? extends KeyPairSpec> keySpecClass;
+
+	/**
+	 * AsymmetricCryptor
+	 */
+	final protected AsymmetricCryptor cryptor;
 
 	/**
 	 * Simple lock manager.
@@ -80,8 +87,10 @@ public abstract class AbstractAsymmetricCryptService<K> implements SecureCryptSe
 	protected JedisService jedisService;
 
 	@SuppressWarnings("unchecked")
-	public AbstractAsymmetricCryptService(JedisLockManager lockManager) {
-		notNull(lockManager, "Crypto lockManager must not be null.");
+	public AbstractAsymmetricCryptService(JedisLockManager lockManager, AsymmetricCryptor cryptor) {
+		notNullOf(lockManager, "lockManager");
+		notNullOf(cryptor, "cryptor");
+		this.cryptor = cryptor;
 		this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_KEY_INIT_TIMEOUTMS, TimeUnit.MILLISECONDS);
 
 		ResolvableType resolveType = ResolvableType.forClass(getClass());
@@ -126,6 +135,11 @@ public abstract class AbstractAsymmetricCryptService<K> implements SecureCryptSe
 	 * @return
 	 */
 	protected abstract KeyPairSpec generateKeySpec();
+
+	@Override
+	public KeyPairSpec generateKeyPair(byte[] publicKey, byte[] privateKey) {
+		return cryptor.generateKeyPair(publicKey, privateKey);
+	}
 
 	/**
 	 * Initialize keySpec pool.
