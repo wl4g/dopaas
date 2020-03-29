@@ -21,7 +21,10 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 
 /**
  * Client secret IAM authentication token
@@ -34,6 +37,12 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuthenticationToken {
 
 	private static final long serialVersionUID = 5483061935073949894L;
+
+	/**
+	 * Iam asymmetric secure crypt algorithm kind definitions..
+	 */
+	@NotNull
+	final private SecureAlgKind secureAlgKind;
 
 	/**
 	 * The secret key that the client requests for authentication is used to
@@ -50,19 +59,25 @@ public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuth
 	 */
 	private Map<String, String> userProperties = new HashMap<>();
 
-	public ClientSecretIamAuthenticationToken(final String clientSecret) {
-		this(clientSecret, null);
+	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecret) {
+		this(kind, clientSecret, null);
 	}
 
-	public ClientSecretIamAuthenticationToken(final String clientSecret, final String remoteHost) {
-		this(clientSecret, remoteHost, null);
+	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecret, final String remoteHost) {
+		this(kind, clientSecret, remoteHost, null);
 	}
 
-	public ClientSecretIamAuthenticationToken(final String clientSecret, final String remoteHost,
+	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecret, final String remoteHost,
 			final RedirectInfo redirectInfo) {
 		super(remoteHost, redirectInfo);
+		notNullOf(kind, "kind");
 		hasTextOf(clientSecret, "clientSecret");
+		this.secureAlgKind = kind;
 		this.clientSecret = clientSecret;
+	}
+
+	public SecureAlgKind getSecureAlgKind() {
+		return secureAlgKind;
 	}
 
 	public String getClientSecret() {

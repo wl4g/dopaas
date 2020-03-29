@@ -13,49 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.crypto.cipher;
+package com.wl4g.devops.tool.common.crypto.asymmetric;
 
 import java.security.spec.KeySpec;
 
-import com.wl4g.devops.tool.common.crypto.cipher.spec.DSAKeyPairSpec;
+import org.bouncycastle.jce.spec.ECPrivateKeySpec;
+import org.bouncycastle.jce.spec.ECPublicKeySpec;
+
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.ECCKeyPairSpec;
 
 /**
- * Asymmetric algorithm implemented by DSA.
+ * Asymmetric algorithm implemented by ECC.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2019年11月9日 v1.0.0
  * @see
  */
-public class DSAAsymCryptor extends AbstractFastAsymCryptor<DSAAsymCryptor, DSAKeyPairSpec> {
+public class ECCCryptor extends AbstractFastAsymmCryptor {
 
 	@Override
-	protected String getAlgorithmPrimary() {
-		throw new UnsupportedOperationException();
+	public String getAlgorithmPrimary() {
+		return "ECC";
 	}
 
 	@Override
-	protected String getPadAlgorithm() {
-		throw new UnsupportedOperationException();
+	public String getPadAlgorithm() {
+		return "ECC/ECB/PKCS1Padding";
 	}
 
 	@Override
-	protected int getKeyBit() {
-		throw new UnsupportedOperationException();
+	public int getKeyBit() {
+		return 1024;
 	}
 
 	@Override
 	protected Class<? extends KeySpec> getPublicKeySpecClass() {
-		throw new UnsupportedOperationException();
+		return ECPublicKeySpec.class;
 	}
 
 	@Override
 	protected Class<? extends KeySpec> getPrivateKeySpecClass() {
-		throw new UnsupportedOperationException();
+		return ECPrivateKeySpec.class;
 	}
 
 	@Override
-	protected DSAKeyPairSpec newKeySpec(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
-		throw new UnsupportedOperationException();
+	protected ECCKeyPairSpec newKeySpec(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+		return new ECCKeyPairSpec(algorithm, pubKeySpec, keySpec);
 	}
 
 }

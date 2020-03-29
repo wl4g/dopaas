@@ -49,7 +49,7 @@ public class ServerParamProperties extends ParamProperties {
 	 * 
 	 * @see {@link SecureAlgKind }
 	 */
-	private String cryptKindName = "cryptKind";
+	private String secretAlgKindName = "alg";
 
 	/**
 	 * Verification verifiedToken parameter name.
@@ -85,12 +85,12 @@ public class ServerParamProperties extends ParamProperties {
 		this.umidTokenName = umidTokenName;
 	}
 
-	public String getCryptKindName() {
-		return cryptKindName;
+	public String getSecretAlgKindName() {
+		return secretAlgKindName;
 	}
 
-	public void setCryptKindName(String secureAlgName) {
-		this.cryptKindName = secureAlgName;
+	public void setSecretAlgKindName(String cryptAlgKindName) {
+		this.secretAlgKindName = cryptAlgKindName;
 	}
 
 	public String getVerifiedTokenName() {

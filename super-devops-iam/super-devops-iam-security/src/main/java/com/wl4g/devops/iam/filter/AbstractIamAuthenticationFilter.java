@@ -54,6 +54,7 @@ import com.wl4g.devops.common.exception.iam.IllegalRequestException;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
@@ -64,6 +65,8 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
 
@@ -78,7 +81,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.apache.commons.lang3.RandomStringUtils.*;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -221,8 +224,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			if (isJSONResponse(request)) {
 				try {
 					// Make logged JSON.
-					RespBase<String> loggedResp = makeLoggedResponse(subject, request, grantTicket, redirect.getRedirectUrl(),
-							params);
+					RespBase<String> loggedResp = makeLoggedResponse(token, subject, request, grantTicket,
+							redirect.getRedirectUrl(), params);
 
 					// Call authenticated success.
 					coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), loggedResp.asMap());
@@ -466,8 +469,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	/**
 	 * Make logged-in response message.
 	 *
+	 * @param token
 	 * @param subject
-	 * 
 	 * @param request
 	 *            Servlet request
 	 * @param fromAppName
@@ -479,8 +482,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected RespBase<String> makeLoggedResponse(Subject subject, ServletRequest request, String grantTicket, String successUrl,
-			Map params) {
+	protected RespBase<String> makeLoggedResponse(AuthenticationToken token, Subject subject, ServletRequest request,
+			String grantTicket, String successUrl, Map params) {
 		hasTextOf(successUrl, "successUrl");
 
 		// Redirection URL
@@ -504,14 +507,9 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// to get token.
 		params.put(config.getCookie().getName(), subject.getSession().getId());
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
-		// Generate client secret token.
-		final String clientSecretTokenPlain = bind(KEY_CLIENT_SECRETKEY, randomAlphanumeric(32));
-		// Use client public key encryption.
-		// TODO
-		// final String clientSecretToken = cryptService.encryptWithHex(null,
-		// clientSecretTokenPlain);
-		final String clientSecretToken = clientSecretTokenPlain;
-		params.put(config.getParam().getSecretKeyName(), clientSecretToken);
+
+		// Post success secret processing.
+		postSuccessSecretTokenHandle(token, params);
 
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
@@ -602,6 +600,42 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// hasTextOf(redirect.getFromAppName(), "application"); //Probably-empty
 		hasText(redirect.getRedirectUrl(), "Failure redirectUrl empty, please check the configure");
 		return redirect;
+	}
+
+	/**
+	 * Post secret/token and signnature processing.
+	 * 
+	 * @param token
+	 * @param params
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void postSuccessSecretTokenHandle(AuthenticationToken token, Map params) {
+		try {
+			// Deserialize the 'clientSecret' and use it to encrypt the newly
+			// generated symmetric algorithm key.
+			if (token instanceof ClientSecretIamAuthenticationToken) {
+				// New symmetric secretKey.
+				// TODO Dynamic symmetric algorithm??
+				String secretKey = Hex.encodeHexString(new AESCryptor().generateAesKey(128));
+				bind(KEY_CLIENT_SECRETKEY, secretKey);
+
+				// Gets clientSecret (publicKeyHex)
+				String clientSecretPubKeyHex = ((ClientSecretIamAuthenticationToken) token).getClientSecret();
+
+				// Gets crypt service.
+				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
+				SecureCryptService cryptService = cryptAdapter.forOperator(kind);
+
+				// Encryption secretKey by clientSecretKey.
+				KeyPairSpec keyPairSpec = cryptService.generateKeyPair(Hex.decodeHex(clientSecretPubKeyHex.toCharArray()), null);
+				String secretKeyCiphertextHex = cryptService.encryptWithHex(keyPairSpec, secretKey);
+				params.put(config.getParam().getSecretKeyName(), secretKeyCiphertextHex);
+			}
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+
 	}
 
 	/**

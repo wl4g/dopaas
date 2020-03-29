@@ -27,7 +27,7 @@ import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.erm.service.AppClusterService;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
-import com.wl4g.devops.tool.common.crypto.AESUtils;
+import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,8 +105,8 @@ public class AppClueterServiceImpl implements AppClusterService {
 			appInstance.setClusterId(clusterId);
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
 				try {
-					AESUtils aes = new AESUtils(cipherKey);
-					String encrypt = aes.encrypt(appInstance.getSshKey());
+					AESCryptor aes = new AESCryptor(cipherKey);
+					String encrypt = aes.encryptWithHex(appInstance.getSshKey());
 					appInstance.setSshKey(encrypt);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -150,8 +150,8 @@ public class AppClueterServiceImpl implements AppClusterService {
 		for (AppInstance appInstance : appCluster.getInstances()) {
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
 				try {
-					AESUtils aes = new AESUtils(cipherKey);
-					String encrypt = aes.encrypt(appInstance.getSshKey());
+					AESCryptor aes = new AESCryptor(cipherKey);
+					String encrypt = aes.encryptWithHex(appInstance.getSshKey());
 					appInstance.setSshKey(encrypt);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -198,7 +198,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 		for (AppInstance appInstance : appInstances) {
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
 				try {
-					char[] sshkeyPlain = new AESUtils(cipherKey).decrypt(appInstance.getSshKey()).toCharArray();
+					char[] sshkeyPlain = new AESCryptor(cipherKey).decryptWithHex(appInstance.getSshKey()).toCharArray();
 					appInstance.setSshKey(String.valueOf(sshkeyPlain));
 				} catch (Exception e) {
 					e.printStackTrace();

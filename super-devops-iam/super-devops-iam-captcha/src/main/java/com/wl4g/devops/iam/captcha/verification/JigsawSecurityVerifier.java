@@ -25,7 +25,7 @@ import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
 import com.wl4g.devops.tool.common.codec.CheckSums;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

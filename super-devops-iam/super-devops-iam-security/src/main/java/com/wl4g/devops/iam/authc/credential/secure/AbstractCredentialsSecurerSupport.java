@@ -44,7 +44,7 @@ import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.configure.SecureConfig;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**

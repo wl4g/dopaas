@@ -166,7 +166,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 				return null; // not enabled
 			}
 			// Gets choosed secure algorithm.
-			SecureAlgKind kind = SecureAlgKind.of(getRequestParam(request, config.getParam().getCryptKindName(), true));
+			SecureAlgKind kind = SecureAlgKind.of(getRequestParam(request, config.getParam().getSecretAlgKindName(), true));
 
 			// Decoding
 			params = new String(Base58.decode(params), UTF_8);

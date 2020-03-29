@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.crypto;
+package com.wl4g.devops.tool.common.crypto.symmetric;
 
+import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -32,7 +35,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @date 2018年3月15日
  * @since
  */
-public class AESUtils {
+public class AESCryptor extends AbstractSymmetricCryptor {
 	final private static String KEY_CIPHER_ENV = "DEVOPS_CIPHER_KEY";
 	final private static String KEY_CIPHER_PRINT = "DEVOPS_CIPHER_PRINT";
 
@@ -63,42 +66,41 @@ public class AESUtils {
 	 * http://blog.csdn.net/qq_35973977/article/details/77711669<br/>
 	 */
 	final private static String DEFAULT_CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding";// 默认的加密算法
-	final private static String DEFAULT_ENCODING = "UTF-8";
-	final private static int DEFAULT_AES_KEYSIZE = 128;
 
 	private Cipher ecipher, dcipher;
 
-	public AESUtils() throws Exception {
-		initialize(getDefaultCipher());
+	public AESCryptor() {
+		initialize(getDefaultCipher()); // TODO Remove getDefaultCipher() ??
 	}
 
-	public AESUtils(String key) throws Exception {
+	public AESCryptor(String key) throws Exception {
 		initialize(key);
 	}
 
-	public String encrypt(String src) throws Exception {
-		return byte2hex(ecipher.doFinal(src.getBytes(DEFAULT_ENCODING)));
+	@Override
+	public String encryptWithHex(String src) {
+		try {
+			return byte2hex(ecipher.doFinal(src.getBytes(DEFAULT_ENCODING)));
+		} catch (IllegalBlockSizeException | BadPaddingException | UnsupportedEncodingException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
-	public String decrypt(String src) throws Exception {
-		return new String(dcipher.doFinal(hex2byte(src)), DEFAULT_ENCODING);
+	@Override
+	public String decryptWithHex(String src) {
+		try {
+			return new String(dcipher.doFinal(hex2byte(src)), DEFAULT_ENCODING);
+		} catch (UnsupportedEncodingException | IllegalBlockSizeException | BadPaddingException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
-	/**
-	 * 生成AES密钥,返回字节数组, 默认长度为128位(16字节).
-	 * 
-	 * @return
-	 */
+	@Override
 	public String generateAesKeyString() {
 		return byte2hex(generateAesKey(DEFAULT_AES_KEYSIZE));
 	}
 
-	/**
-	 * 生成AES密钥,可选长度为128,192,256位.
-	 * 
-	 * @param keysize
-	 * @return
-	 */
+	@Override
 	public byte[] generateAesKey(int keysize) {
 		try {
 			KeyGenerator keyGenerator = KeyGenerator.getInstance(DEFAULT_SPEC_ALGORITHM);
@@ -110,21 +112,25 @@ public class AESUtils {
 		}
 	}
 
-	private void initialize(String key) throws Exception {
-		if (key == null || key.length() != 16)
+	private void initialize(String key) {
+		if (key == null || key.length() != 16) {
 			throw new RuntimeException("Illegal secret key, only for 16 bytes.");
+		}
+		try {
+			SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(DEFAULT_ENCODING), DEFAULT_SPEC_ALGORITHM);
+			// 创建密码器, PKCS5Padding比PKCS7Padding效率高，PKCS7Padding可支持IOS加解密
+			this.ecipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
+			this.dcipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
 
-		SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(DEFAULT_ENCODING), DEFAULT_SPEC_ALGORITHM);
-		// 创建密码器, PKCS5Padding比PKCS7Padding效率高，PKCS7Padding可支持IOS加解密
-		this.ecipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
-		this.dcipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
-
-		/*
-		 * 初始化为加密模式的密码器，此方法可以采用三种方式，按加密算法要求来添加。（1）无第三个参数（2）第三个参数为 new
-		 * SecureRandom(..)对象，随机数。(AES不可采用这种方法)（3）采用IVParameterSpec
-		 */
-		this.ecipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-		this.dcipher.init(Cipher.DECRYPT_MODE, skeySpec);
+			/*
+			 * 初始化为加密模式的密码器，此方法可以采用三种方式，按加密算法要求来添加。（1）无第三个参数（2）第三个参数为 new
+			 * SecureRandom(..)对象，随机数。(AES不可采用这种方法)（3）采用IVParameterSpec
+			 */
+			this.ecipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+			this.dcipher.init(Cipher.DECRYPT_MODE, skeySpec);
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	private String getDefaultCipher() {
@@ -175,10 +181,10 @@ public class AESUtils {
 	}
 
 	public static void main(String[] args) throws Exception {
-		AESUtils aes = new AESUtils();
+		AESCryptor aes = new AESCryptor();
 		String s = "safecloud@#123";
-		System.out.println("cipherText: " + (s = aes.encrypt(s)));
-		System.out.println("plainText: " + aes.decrypt(s));
+		System.out.println("cipherText: " + (s = aes.encryptWithHex(s)));
+		System.out.println("plainText: " + aes.decryptWithHex(s));
 	}
 
 }

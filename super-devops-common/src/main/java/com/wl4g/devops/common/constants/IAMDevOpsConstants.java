@@ -207,7 +207,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * The client then uses sessionid + accesstoken as the credential to access
 	 * the business API.
 	 */
-	final public static String KEY_CLIENT_SECRETKEY = "CLIENT_SECRET_TOKEN";
+	final public static String KEY_CLIENT_SECRETKEY = "clientSecretKey";
 
 	/**
 	 * Limiter login failure prefix based on user-name.

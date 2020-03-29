@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.crypto;
 
 import com.wl4g.devops.common.framework.operator.Operator;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import static com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
@@ -35,19 +35,19 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 	 * Encryption with hex plain.
 	 *
 	 * @param keySpec
-	 * @param hexPlain
+	 * @param plaintext
 	 * @return
 	 */
-	String encryptWithHex(KeyPairSpec keySpec, String hexPlain);
+	String encryptWithHex(KeyPairSpec keySpec, String plaintext);
 
 	/**
 	 * Decryption with hex cipher.
 	 *
 	 * @param keySpec
-	 * @param hexCipher
+	 * @param hexCiphertext
 	 * @return
 	 */
-	String decryptWithHex(KeyPairSpec keySpec, String hexCipher);
+	String decryptWithHex(KeyPairSpec keySpec, String hexCiphertext);
 
 	/**
 	 * Generate keySpec resource.
@@ -65,6 +65,15 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 	 * @return
 	 */
 	KeyPairSpec generateKeyBorrow(int index);
+
+	/**
+	 * Deserialization generate keyPair.
+	 * 
+	 * @param publicKey
+	 * @param privateKey
+	 * @return
+	 */
+	KeyPairSpec generateKeyPair(byte[] publicKey, byte[] privateKey);
 
 	/**
 	 * Iam asymmetric secure crypt algorithm kind definitions.

@@ -13,48 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.crypto.cipher.spec;
+package com.wl4g.devops.tool.common.crypto.asymmetric.spec;
 
 import java.security.spec.KeySpec;
 
 /**
- * DSA asymmetric algorithmic key pairs
+ * Generic asymmetric algorithmic ECC keyPair spec.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月22日
  * @since
  */
-final public class DSAKeyPairSpec extends KeyPairSpec {
-	final private static long serialVersionUID = -6748181131949785684L;
+public final class ECCKeyPairSpec extends GenericKeyPairSpec {
 
-	@Override
-	public KeySpec getKeySpec() {
-		throw new UnsupportedOperationException();
+	final private static long serialVersionUID = -6748188131119785684L;
+
+	public ECCKeyPairSpec(String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+		super(algorithm, pubKeySpec, keySpec);
 	}
 
-	@Override
-	public KeySpec getPubKeySpec() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getHexString() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getPubHexString() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getBase64String() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getPubBase64String() {
-		throw new UnsupportedOperationException();
+	public ECCKeyPairSpec(String keySpecId, String algorithm, KeySpec pubKeySpec, KeySpec keySpec) {
+		super(keySpecId, algorithm, pubKeySpec, keySpec);
 	}
 
 }
