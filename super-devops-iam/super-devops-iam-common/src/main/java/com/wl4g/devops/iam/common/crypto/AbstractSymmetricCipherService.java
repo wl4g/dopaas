@@ -13,29 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.captcha.gif.model;
+package com.wl4g.devops.iam.common.crypto;
 
-import javax.validation.constraints.NotBlank;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
-import com.wl4g.devops.iam.verification.model.GenericVerifyResult;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
- * GIF simple image model
+ * {@link AbstractSymmetricCipherService}
  * 
- * @author Wangl.sir
- * @version v1.0 2019年9月4日
- * @since
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年3月29日 v1.0.0
+ * @see
  */
-public class GifVerifyImgModel extends GenericVerifyResult {
-	private static final long serialVersionUID = -5475719110868579286L;
+public abstract class AbstractSymmetricCipherService implements IamCipherService {
 
-	public GifVerifyImgModel() {
-		super();
-	}
-
-	public GifVerifyImgModel(@NotBlank String applyToken, @NotBlank String verifyType) {
-		setApplyToken(applyToken);
-		setVerifyType(verifyType);
-	}
+	final protected SmartLogger log = getLogger(getClass());
 
 }

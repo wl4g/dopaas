@@ -20,7 +20,7 @@ import com.wl4g.devops.iam.authc.SmsAuthenticationToken.Action;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SmsParameter;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
-import com.wl4g.devops.iam.verification.model.SimpleVerifyImgResult;
+import com.wl4g.devops.iam.verification.model.GenericVerifyResult;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -91,7 +91,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 
 	@Override
 	protected Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request) {
-		SimpleVerifyImgResult model = parseJSON(params, SimpleVerifyImgResult.class);
+		GenericVerifyResult model = parseJSON(params, GenericVerifyResult.class);
 		validator.validate(model);
 		return model;
 	}

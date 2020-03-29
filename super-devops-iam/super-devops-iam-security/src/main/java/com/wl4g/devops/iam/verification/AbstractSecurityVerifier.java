@@ -36,6 +36,8 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getRequestParam;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -45,7 +47,8 @@ import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.iam.verification.model.SimpleVerifyImgResult;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.devops.iam.verification.model.GenericVerifyResult;
 import com.wl4g.devops.tool.common.codec.Base58;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
@@ -113,7 +116,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
 		// Already created verify-code
 		VerifyCodeWrapper code = getBindValue(getVerifyCodeStoredKey());
-		if (code != null && code.getCode() != null) { // Assertion
+		if (!isNull(code) && !isNull(code.getCode())) { // Assertion
 			return code;
 		}
 
@@ -162,13 +165,16 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 			if (!isEnabled(factors)) {
 				return null; // not enabled
 			}
+			// Gets choosed secure algorithm.
+			SecureAlgKind kind = SecureAlgKind.of(getRequestParam(request, config.getParam().getCryptKindName(), true));
 
 			// Decoding
 			params = new String(Base58.decode(params), UTF_8);
-			// Verification
+			// Gets request verifyCode.
 			Object submitCode = getRequestVerifyCode(params, request);
+			// Stored verifyCode.
 			storedCode = getVerifyCode(true);
-			if (!doMatch(storedCode, submitCode)) {
+			if (!doMatch(kind, storedCode, submitCode)) {
 				log.error("Verification mismatched. {} => {}", submitCode, storedCode);
 				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch"));
 			}
@@ -231,16 +237,17 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	/**
 	 * Match submitted validation code
 	 *
+	 * @param request
 	 * @param storedCode
 	 * @param submitCode
 	 * @return
 	 */
-	protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
+	protected boolean doMatch(@NotNull SecureAlgKind kind, VerifyCodeWrapper storedCode, Object submitCode) {
 		if (Objects.isNull(submitCode)) {
 			return false;
 		}
-		if (submitCode instanceof SimpleVerifyImgResult) {
-			return trimToEmpty(storedCode.getCode()).equalsIgnoreCase(((SimpleVerifyImgResult) submitCode).getVerifyCode());
+		if (submitCode instanceof GenericVerifyResult) {
+			return trimToEmpty(storedCode.getCode()).equalsIgnoreCase(((GenericVerifyResult) submitCode).getVerifyCode());
 		}
 		throw new UnsupportedOperationException(String.format("Unsupported verify-code: %s, Override the doMatch() method",
 				submitCode.getClass().getSimpleName()));

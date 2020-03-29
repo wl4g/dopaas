@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.captcha.gif.model;
-
-import javax.validation.constraints.NotBlank;
-
-import com.wl4g.devops.iam.verification.model.GenericVerifyResult;
+package com.wl4g.devops.iam.common.crypto;
 
 /**
- * GIF simple image model
+ * {@link Des3IamCipherService}
  * 
- * @author Wangl.sir
- * @version v1.0 2019年9月4日
- * @since
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年3月29日 v1.0.0
+ * @see
  */
-public class GifVerifyImgModel extends GenericVerifyResult {
-	private static final long serialVersionUID = -5475719110868579286L;
+public class Des3IamCipherService extends AbstractSymmetricCipherService {
 
-	public GifVerifyImgModel() {
-		super();
+	@Override
+	public CipherCryptKind kind() {
+		return CipherCryptKind.DES3;
 	}
 
-	public GifVerifyImgModel(@NotBlank String applyToken, @NotBlank String verifyType) {
-		setApplyToken(applyToken);
-		setVerifyType(verifyType);
+	@Override
+	public byte[] encrypt(byte[] key, byte[] plaintext) {
+		// TODO
+		return null;
+	}
+
+	@Override
+	public byte[] decrypt(byte[] key, byte[] ciphertext) {
+		// TODO
+		return null;
 	}
 
 }

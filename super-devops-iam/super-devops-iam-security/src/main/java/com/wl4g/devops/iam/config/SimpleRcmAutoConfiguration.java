@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.config;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
-import com.wl4g.devops.iam.web.SimpleRiskRecognizerController;
+import com.wl4g.devops.iam.web.SimpleRcmRecognizerController;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
@@ -34,8 +34,8 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_RCM_BASE
 public class SimpleRcmAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
-	public SimpleRiskRecognizerController simpleRCMController() {
-		return new SimpleRiskRecognizerController();
+	public SimpleRcmRecognizerController simpleRCMController() {
+		return new SimpleRcmRecognizerController();
 	}
 
 	@Bean

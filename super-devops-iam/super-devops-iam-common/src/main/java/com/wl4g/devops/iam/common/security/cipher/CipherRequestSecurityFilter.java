@@ -63,7 +63,6 @@ public final class CipherRequestSecurityFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-
 		// If it is an encrypted parameter request, it is wrapped as a
 		// decryptable request.
 		filterChain.doFilter(factory.newRequestWrapper(config, request), response);

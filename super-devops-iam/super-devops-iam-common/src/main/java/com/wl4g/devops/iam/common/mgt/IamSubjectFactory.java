@@ -85,7 +85,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		}
 
 		/**
-		 * Verification of enhanced sessionid additional signature.
+		 * Validation of enhanced sessionid additional signature.
 		 * 
 		 * @see {@link }
 		 */
@@ -132,23 +132,28 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 				clientSign, clientSecretKey, authcToken);
 
 		// Only the password authentication is verified.
-//		if (authcToken instanceof ClientSecretIamAuthenticationToken) {
-//			hasText(clientSign, UnauthenticatedException.class, "client sign is required");
-//			hasText(sessionId, UnauthenticatedException.class, "sessionId is required");
-//			hasTextOf(clientSecretKey, "clientSecretKey"); // Shouldn't here
-//
-//			// Calculate signature
-//			final byte[] validSign = getHmacSha1(clientSecretKey.getBytes(UTF_8)).doFinal(sessionId.getBytes(UTF_8));
-//			log.debug("Asserted signatur, sessionId:{}, clientSign:{}, clientSecretKey:{}, validSign:{}, authcToken:{}",
-//					clientSign, sessionId, clientSecretKey, validSign, authcToken);
-//
-//			// Compare signature's
-//			if (!isEqual(clientSign.getBytes(UTF_8), validSign)) {
-//				throw new UnauthenticatedException(
-//						format("Illegal authentication credentials signature. clientSign: {}, clientSecretKey: {}", clientSign,
-//								clientSecretKey));
-//			}
-//		}
+		// if (authcToken instanceof ClientSecretIamAuthenticationToken) {
+		// hasText(clientSign, UnauthenticatedException.class, "client sign is
+		// required");
+		// hasText(sessionId, UnauthenticatedException.class, "sessionId is
+		// required");
+		// hasTextOf(clientSecretKey, "clientSecretKey"); // Shouldn't here
+		//
+		// // Calculate signature
+		// final byte[] validSign =
+		// getHmacSha1(clientSecretKey.getBytes(UTF_8)).doFinal(sessionId.getBytes(UTF_8));
+		// log.debug("Asserted signatur, sessionId:{}, clientSign:{},
+		// clientSecretKey:{}, validSign:{}, authcToken:{}",
+		// clientSign, sessionId, clientSecretKey, validSign, authcToken);
+		//
+		// // Compare signature's
+		// if (!isEqual(clientSign.getBytes(UTF_8), validSign)) {
+		// throw new UnauthenticatedException(
+		// format("Illegal authentication credentials signature. clientSign: {},
+		// clientSecretKey: {}", clientSign,
+		// clientSecretKey));
+		// }
+		// }
 
 	}
 

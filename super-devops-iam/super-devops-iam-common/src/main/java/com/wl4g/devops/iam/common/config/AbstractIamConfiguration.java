@@ -50,6 +50,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
@@ -58,6 +59,11 @@ import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamFilterChainManager;
 import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
+import com.wl4g.devops.iam.common.crypto.AesIamCipherService;
+import com.wl4g.devops.iam.common.crypto.BlowfishIamCipherService;
+import com.wl4g.devops.iam.common.crypto.IamCipherService;
+import com.wl4g.devops.iam.common.crypto.IamCipherService.CipherCryptKind;
+import com.wl4g.devops.iam.common.crypto.Des3IamCipherService;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
@@ -370,8 +376,30 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	//
-	// C I P H E R _ F I L T E R _ C O N F I G's.
+	// C I P H E R _ A N D _ F I L T E R _ C O N F I G's.
 	//
+
+	@Bean
+	public IamCipherService aesIamCipherService() {
+		return new AesIamCipherService();
+	}
+
+	@Bean
+	public IamCipherService blowfishIamCipherService() {
+		return new BlowfishIamCipherService();
+	}
+
+	@Bean
+	public IamCipherService des3IamCipherService() {
+		return new Des3IamCipherService();
+	}
+
+	@Bean
+	public GenericOperatorAdapter<CipherCryptKind, IamCipherService> compositeIamCipherServiceAdapter(
+			List<IamCipherService> cipherServices) {
+		return new GenericOperatorAdapter<CipherCryptKind, IamCipherService>(cipherServices) {
+		};
+	}
 
 	/**
 	 * Can be used to extend and create a custom {@link CipherRequestWrapper}

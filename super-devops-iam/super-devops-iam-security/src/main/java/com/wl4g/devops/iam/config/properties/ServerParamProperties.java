@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.config.properties;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 
 /**
  * IAM server parameters configuration properties
@@ -37,6 +38,18 @@ public class ServerParamProperties extends ParamProperties {
 	 * Client type reference parameter name at login time of account password.
 	 */
 	private String clientRefName = "client_ref";
+
+	/**
+	 * UmidToken parameter name.
+	 */
+	private String umidTokenName = "umidToken";
+
+	/**
+	 * Secure asymmetric cryptic algorithm name.
+	 * 
+	 * @see {@link SecureAlgKind }
+	 */
+	private String cryptKindName = "cryptKind";
 
 	/**
 	 * Verification verifiedToken parameter name.
@@ -62,6 +75,22 @@ public class ServerParamProperties extends ParamProperties {
 
 	public void setClientRefName(String clientRefName) {
 		this.clientRefName = clientRefName;
+	}
+
+	public String getUmidTokenName() {
+		return umidTokenName;
+	}
+
+	public void setUmidTokenName(String umidTokenName) {
+		this.umidTokenName = umidTokenName;
+	}
+
+	public String getCryptKindName() {
+		return cryptKindName;
+	}
+
+	public void setCryptKindName(String secureAlgName) {
+		this.cryptKindName = secureAlgName;
 	}
 
 	public String getVerifiedTokenName() {

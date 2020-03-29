@@ -29,7 +29,6 @@ import static org.springframework.util.Assert.notNull;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.Assert;
@@ -38,24 +37,25 @@ import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import redis.clients.jedis.JedisCluster;
 
 /**
- * Abstract cryptographic service
+ * Abstract secretKey asymmetric secure crypt service.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019-08-30
  * @since
  */
-public abstract class AbstractCryptService<K> implements CryptService {
+public abstract class AbstractAsymmetricCryptService<K> implements SecureCryptService {
 
 	/**
 	 * Default JIGSAW initialize image timeoutMs
 	 */
 	final public static long DEFAULT_KEY_INIT_TIMEOUTMS = 60_000L;
 
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * KeySpec class.
@@ -80,7 +80,7 @@ public abstract class AbstractCryptService<K> implements CryptService {
 	protected JedisService jedisService;
 
 	@SuppressWarnings("unchecked")
-	public AbstractCryptService(JedisLockManager lockManager) {
+	public AbstractAsymmetricCryptService(JedisLockManager lockManager) {
 		notNull(lockManager, "Crypto lockManager must not be null.");
 		this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_KEY_INIT_TIMEOUTMS, TimeUnit.MILLISECONDS);
 
@@ -90,7 +90,7 @@ public abstract class AbstractCryptService<K> implements CryptService {
 	}
 
 	@Override
-	public KeyPairSpec borrow(int index) {
+	public KeyPairSpec generateKeyBorrow(int index) {
 		if (index < 0 || index >= config.getKeyPairPools()) {
 			int _index = current().nextInt(config.getKeyPairPools());
 			if (log.isDebugEnabled()) {

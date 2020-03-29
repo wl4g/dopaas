@@ -87,7 +87,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	/**
 	 * Cipher request parameter properties.
 	 */
-	private CipherParameterProperties cipher = new CipherParameterProperties();
+	private CipherProperties cipher = new CipherProperties();
 
 	/**
 	 * Redirect to login URI.</br>
@@ -154,11 +154,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	public abstract void setParam(P param);
 
-	public CipherParameterProperties getCipher() {
+	public CipherProperties getCipher() {
 		return cipher;
 	}
 
-	public void setCipher(CipherParameterProperties cipher) {
+	public void setCipher(CipherProperties cipher) {
 		this.cipher = cipher;
 	}
 
@@ -334,6 +334,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		private static final long serialVersionUID = 3258460473777285504L;
 
 		/**
+		 * This is the version number parameter name of the Iam API.
+		 */
+		private String version = "version";
+
+		/**
 		 * This SID session is used if the parameter contains the "SID"
 		 * parameter name.
 		 */
@@ -450,6 +455,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		private String clientSignName = "clientSign";
 
 		// --- Client's secret & signature.] ---
+
+		public String getVersion() {
+			return version;
+		}
+
+		public void setVersion(String version) {
+			this.version = version;
+		}
 
 		public String getSid() {
 			return sid;
@@ -612,7 +625,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @version 2020年3月28日 v1.0.0
 	 * @see
 	 */
-	public static class CipherParameterProperties implements Serializable {
+	public static class CipherProperties implements Serializable {
 
 		final private static long serialVersionUID = -5701992202765239835L;
 
@@ -643,7 +656,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			return cipherParameterHeader;
 		}
 
-		public CipherParameterProperties setCipherParameterHeader(List<String> cipherParameterHeader) {
+		public CipherProperties setCipherParameterHeader(List<String> cipherParameterHeader) {
 			if (!CollectionUtils.isEmpty(cipherParameterHeader)) {
 				for (String param : cipherParameterHeader) {
 					if (!this.cipherParameterHeader.contains(param)) {
@@ -658,7 +671,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			return isCaseSensitive;
 		}
 
-		public CipherParameterProperties setCaseSensitive(boolean isCaseSensitive) {
+		public CipherProperties setCaseSensitive(boolean isCaseSensitive) {
 			this.isCaseSensitive = isCaseSensitive;
 			return this;
 		}
@@ -732,6 +745,43 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			for (Which t : values()) {
 				if (String.valueOf(which).equalsIgnoreCase(t.name())) {
 					return t;
+				}
+			}
+			return null;
+		}
+
+	}
+
+	/**
+	 * {@link IamVersion}
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年3月29日 v1.0.0
+	 * @see
+	 */
+	public static enum IamVersion {
+
+		V2_0_0("v2.0.0");
+
+		private String version;
+
+		private IamVersion(String version) {
+			this.version = version;
+		}
+
+		public String getVersion() {
+			return version;
+		}
+
+		public void setVersion(String version) {
+			this.version = version;
+		}
+
+		public static IamVersion safeOf(String version) {
+			for (IamVersion v : values()) {
+				if (String.valueOf(version).equalsIgnoreCase(v.name())
+						|| String.valueOf(version).equalsIgnoreCase(v.getVersion())) {
+					return v;
 				}
 			}
 			return null;
