@@ -241,6 +241,12 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	}
 
 	@Override
+	public PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
+		//TODO
+		return null;
+	}
+
+	@Override
 	public PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
 		PutObjectResult result = new PutObjectResult();
 		try {

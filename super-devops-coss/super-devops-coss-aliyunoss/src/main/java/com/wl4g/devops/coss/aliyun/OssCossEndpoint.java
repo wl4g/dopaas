@@ -146,6 +146,12 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 		return objectValue;
 	}
 
+	@Override
+	public com.wl4g.devops.coss.model.PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
+		//TODO
+		return null;
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public OssPutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {

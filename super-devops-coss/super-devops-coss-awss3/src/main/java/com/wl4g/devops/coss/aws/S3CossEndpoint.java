@@ -142,6 +142,11 @@ public class S3CossEndpoint extends AbstractCossEndpoint<S3CossProperties> {
 	}
 
 	@Override
+	public PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
+		return null;
+	}
+
+	@Override
 	public PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
 		// TODO Auto-generated method stub
 		return null;

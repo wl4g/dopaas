@@ -21,6 +21,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
+import com.wl4g.devops.coss.access.model.ObjectMetadataModel;
 import com.wl4g.devops.coss.access.model.ObjectValueModel;
 import com.wl4g.devops.coss.config.NativeFSCossProperties;
 import com.wl4g.devops.coss.exception.CossException;
@@ -31,6 +32,7 @@ import com.wl4g.devops.coss.model.PutObjectResult;
 import com.wl4g.devops.coss.model.metadata.BucketStatusMetaData;
 import com.wl4g.devops.coss.natives.MetadataIndexManager;
 import com.wl4g.devops.tool.common.lang.Assert2;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -163,6 +165,14 @@ public class HttpCossAccessor extends BaseController {
         } catch (IOException e) {
             throw new CossException(e);
         }
+    }
+
+    @RequestMapping("putObjectMetaData")
+    public PutObjectResult putObjectMetaData(GenericCossParameter param, String bucketName, String key, ObjectMetadataModel objectMetadataModel) {
+            ObjectMetadata metadata = new ObjectMetadata();
+            BeanUtils.copyProperties(objectMetadataModel,metadata,"acl");
+            metadata.setAcl(ACL.parse(objectMetadataModel.getAcl()));
+            return getCossEndpoint(param).putObjectMetaData( bucketName, key,  metadata);
     }
 
     public PutObjectResult putObject(GenericCossParameter param, String bucketName, String key, InputStream input,
