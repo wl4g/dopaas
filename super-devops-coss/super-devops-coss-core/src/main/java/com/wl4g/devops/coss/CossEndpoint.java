@@ -185,6 +185,8 @@ public interface CossEndpoint extends Operator<CossProvider> {
 		return putObject(bucketName, key, input, null);
 	}
 
+	PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata);
+
 	/**
 	 * Uploads the file to the {@link Bucket} from the @{link InputStream} with
 	 * the {@link ObjectMetadata} information。

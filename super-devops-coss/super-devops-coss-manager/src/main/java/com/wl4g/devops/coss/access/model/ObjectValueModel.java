@@ -26,4 +26,6 @@ public class ObjectValueModel extends ObjectValue {
     public void setDownloadUrl(String downloadUrl) {
         this.downloadUrl = downloadUrl;
     }
+
+
 }
