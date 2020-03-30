@@ -127,13 +127,14 @@ public class RespBaseTest {
 
 	public static void main(String[] args) {
 		respBasePromptTest1();
-		System.out.println("--------------------------");
+		System.out.println("----------11111----------------");
 
 		// for controller output(map).
 		RespBase<TestModel> resp11 = new RespBase<>(RetCode.newCode(4001, "message1"));
 		resp11.forMap().put("testModel11", new TestModel("jack11"));
 		resp11.forMap().put("testModel12", new TestModel("jack12"));
-		resp11.buildNode("testNode1").put("node1", "n11");
+		resp11.forMapNode("testNode1").put("k11", "v11");
+		resp11.forMapNode("testNode2").put("k21", "v21");
 		System.out.println(">>As Map>>" + resp11.asMap());
 
 		String json11 = toJSONString(resp11);
@@ -144,7 +145,7 @@ public class RespBaseTest {
 		// TestModel tm1 = (TestModel) resp12.forMap().get("testModel");
 		TestModel tm1 = (TestModel) resp12.getData();
 		System.out.println(tm1);
-		System.out.println("-------------------------");
+		System.out.println("----------22222---------------");
 
 		// for controller output(model).
 		RespBase<TestModel> resp21 = new RespBase<>(RetCode.newCode(4001, "message2"));
@@ -159,7 +160,7 @@ public class RespBaseTest {
 		});
 		Object tm2 = resp22.getData();
 		System.out.println(tm2);
-		System.out.println("-------------------------");
+		System.out.println("----------33333---------------");
 
 		// for generic types.
 		RespBase<TestGenericModel<TestSubModel>> resp31 = new RespBase<>(RetCode.newCode(4001, "message3"));
@@ -173,7 +174,7 @@ public class RespBaseTest {
 				});
 		Object tm3 = resp32.getData();
 		System.out.println(tm3);
-		System.out.println("-------------------------");
+		System.out.println("-----------44444--------------");
 
 	}
 
