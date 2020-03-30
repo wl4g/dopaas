@@ -34,6 +34,7 @@ import com.wl4g.devops.coss.natives.MetadataIndexManager;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -149,14 +150,14 @@ public class HttpCossAccessor extends BaseController {
     public RespBase<Object> getObject(GenericCossParameter param, String bucketName, String key) {
         RespBase<Object> resp = RespBase.create();
         ObjectValueModel objectValueModel = new ObjectValueModel(getCossEndpoint(param).getObject(bucketName, key));
-        String downloadUrl = config.getDownloadBaseUrl()+ "?bucketName=" + bucketName +"&key="+key;
+        String downloadUrl = config.getDownloadBaseUrl() + "?bucketName=" + bucketName + "&key=" + key;
         objectValueModel.setDownloadUrl(downloadUrl);
         resp.setData(getCossEndpoint(param).getObject(bucketName, key));
         return resp;
     }
 
     @RequestMapping("putObject")
-    public PutObjectResult putObject(GenericCossParameter param, String bucketName,String acl, String key, MultipartFile file) {
+    public PutObjectResult putObject(GenericCossParameter param, String bucketName, String acl, String key, MultipartFile file) {
         try {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setAcl(ACL.parse(acl));
@@ -168,16 +169,18 @@ public class HttpCossAccessor extends BaseController {
     }
 
     @RequestMapping("putObjectMetaData")
-    public PutObjectResult putObjectMetaData(GenericCossParameter param, String bucketName, String key, ObjectMetadataModel objectMetadataModel) {
-            ObjectMetadata metadata = new ObjectMetadata();
-            BeanUtils.copyProperties(objectMetadataModel,metadata,"acl");
-            metadata.setAcl(ACL.parse(objectMetadataModel.getAcl()));
-            return getCossEndpoint(param).putObjectMetaData( bucketName, key,  metadata);
+    public RespBase<Object> putObjectMetaData(@RequestBody ObjectMetadataModel objectMetadataModel) {
+        RespBase<Object> resp = RespBase.create();
+        ObjectMetadata metadata = new ObjectMetadata();
+        BeanUtils.copyProperties(objectMetadataModel, metadata, "acl");
+        metadata.setAcl(ACL.parse(objectMetadataModel.getAcl()));
+        getCossEndpoint(objectMetadataModel.getParam()).putObjectMetaData(objectMetadataModel.getBucketName(), objectMetadataModel.getKey(), metadata);
+        return resp;
     }
 
     public PutObjectResult putObject(GenericCossParameter param, String bucketName, String key, InputStream input,
                                      ObjectMetadata metadata) {
-        return getCossEndpoint(param).putObject(bucketName, key, input,metadata);
+        return getCossEndpoint(param).putObject(bucketName, key, input, metadata);
     }
 
     @RequestMapping("deleteObject")

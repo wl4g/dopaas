@@ -281,7 +281,7 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return new PutObjectResult();
 	}
 
 	@Override
