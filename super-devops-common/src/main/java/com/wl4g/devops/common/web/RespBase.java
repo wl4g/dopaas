@@ -283,10 +283,13 @@ public class RespBase<D> implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	@JsonIgnore
-	public DataMap<Object> buildNode(String nodeKey) {
+	public synchronized DataMap<Object> forMapNode(String nodeKey) {
 		hasText(nodeKey, "RespBase build datamap nodeKey name can't be empty");
-		DataMap<Object> nodeMap = new DataMap<>();
-		forMap().put(nodeKey, (D) nodeMap);
+		DataMap<Object> data = forMap();
+		DataMap<Object> nodeMap = (DataMap<Object>) data.get(nodeKey);
+		if (isNull(nodeMap)) {
+			data.put(nodeKey, (D) (nodeMap = new DataMap<>()));
+		}
 		return nodeMap;
 	}
 
