@@ -64,7 +64,7 @@ public enum ACL {
 
 	public static ACL parse(String acl) {
 		for (ACL cacl : ACL.values()) {
-			if (cacl.toString().equals(acl)) {
+			if (cacl.toString().equalsIgnoreCase(acl) || acl.equalsIgnoreCase(cacl.name())) {
 				return cacl;
 			}
 		}
