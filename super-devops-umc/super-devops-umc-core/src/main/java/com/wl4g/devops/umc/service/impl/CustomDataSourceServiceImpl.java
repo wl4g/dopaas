@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
 
 import static com.wl4g.devops.common.bean.umc.model.DataSourceProvide.MYSQL;
@@ -116,6 +117,10 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
         }
     }
 
+    @Override
+    public List<CustomDataSource> dataSources() {
+        return customDatasourceDao.list(null);
+    }
 
 
 }
