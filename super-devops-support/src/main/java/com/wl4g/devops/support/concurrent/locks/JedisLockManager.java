@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
+import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 import static java.lang.Thread.interrupted;
 import static java.lang.Thread.sleep;
@@ -222,10 +223,8 @@ public class JedisLockManager {
 			if (currentProcessId.equals(acquiredProcessId)) {
 				// Obtain lock record once cumulatively.
 				counter.incrementAndGet();
-				if (log.isDebugEnabled()) {
-					log.debug("Reuse acquire lock for name: {}, acquiredProcessId: {}, counter: {}", name, acquiredProcessId,
-							counter);
-				}
+				log.debug("Reuse acquire lock for name: {}, acquiredProcessId: {}, counter: {}", name, acquiredProcessId,
+						counter);
 				return true;
 			} else {
 				// Not currently locked? Lock expired? Local counter reset.
@@ -257,7 +256,7 @@ public class JedisLockManager {
 			} else if (res instanceof Number) {
 				return ((Number) res).longValue() >= 1L;
 			} else {
-				throw new IllegalStateException(String.format("Unknown acquired state for %s", res));
+				throw new IllegalStateException(format("Unknown acquired state for %s", res));
 			}
 		}
 
