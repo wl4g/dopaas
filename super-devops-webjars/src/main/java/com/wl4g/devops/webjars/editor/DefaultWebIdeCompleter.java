@@ -13,9 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.wl4g.devops.webjars.editor;
+
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.webjars.editor.model.CompleteRequest;
+
 /**
+ * Default webide completer.
+ * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年2月21日
+ * @version v1.0 2020年3月31日
  * @since
  */
-package com.wl4g.devops.tool.devel.mybatis;
+public class DefaultWebIdeCompleter implements WebIdeCompleter {
+
+	final protected SmartLogger log = getLogger(getClass());
+
+	@Override
+	public String complete(CompleteRequest req) {
+		log.debug("On completion of start: {}, line: {}, input: {}", req.getStart(), req.getLine(), req.getInput());
+		return req.getInput();
+	}
+
+}

@@ -57,6 +57,7 @@
 		<module>super-devops-bom</module>
 		<module>super-devops-common</module>
 		<module>super-devops-support</module>
+		<module>super-devops-webjars</module>
 		<module>super-devops-erm</module>
 		<module>super-devops-dao</module>
 		<module>super-devops-scm</module>

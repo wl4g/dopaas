@@ -21,9 +21,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
-import com.wl4g.devops.common.web.EmbeddedWebAppController;
-import static com.wl4g.devops.common.config.EmbeddedWebAppAutoConfiguration.EmbeddedWebAppControllerProperties.*;
+import com.wl4g.devops.common.web.embedded.GenericEmbeddedWebappsController;
+
+import static com.wl4g.devops.common.config.DefaultEmbeddedWebappsAutoConfiguration.GenericEmbeddedWebappsProperties.*;
 
 import java.util.Properties;
 
@@ -36,35 +36,38 @@ import java.util.Properties;
  */
 @Configuration
 @ConditionalOnProperty(value = KEY_EMBEDDED_WEBAPP_BASE + ".enabled", matchIfMissing = false)
-public class EmbeddedWebAppAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public class DefaultEmbeddedWebappsAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
 	@ConfigurationProperties(prefix = KEY_EMBEDDED_WEBAPP_BASE)
-	public EmbeddedWebAppControllerProperties embeddedWebappControllerProperties() {
-		return new EmbeddedWebAppControllerProperties();
-	}
-
-	@Bean
-	@ConditionalOnMissingBean
-	public EmbeddedWebAppController embeddedWebAppController(EmbeddedWebAppControllerProperties config) {
-		return new EmbeddedWebAppController(config) {
+	@ConditionalOnMissingBean(GenericEmbeddedWebappsController.class)
+	public GenericEmbeddedWebappsProperties embeddedWebappsControllerProperties() {
+		return new GenericEmbeddedWebappsProperties() {
 		};
 	}
 
 	@Bean
-	public PrefixHandlerMapping embeddedWebAppControllerPrefixHandlerMapping(EmbeddedWebAppControllerProperties config,
-			EmbeddedWebAppController webapp) {
+	@ConditionalOnMissingBean(GenericEmbeddedWebappsController.class)
+	public GenericEmbeddedWebappsController embeddedWebappsController(GenericEmbeddedWebappsProperties config) {
+		return new GenericEmbeddedWebappsController(config) {
+		};
+	}
+
+	@Bean
+	@ConditionalOnMissingBean(GenericEmbeddedWebappsController.class)
+	public PrefixHandlerMapping embeddedWebappsControllerPrefixHandlerMapping(GenericEmbeddedWebappsProperties config,
+			GenericEmbeddedWebappsController webapp) {
 		return super.newPrefixHandlerMapping(config.getBaseUri(), webapp);
 	}
 
 	/**
-	 * {@link EmbeddedWebAppControllerProperties}
+	 * {@link GenericEmbeddedWebappsProperties}
 	 * 
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020年2月20日
 	 * @since
 	 */
-	public static class EmbeddedWebAppControllerProperties {
+	public static abstract class GenericEmbeddedWebappsProperties {
 		final public static String KEY_EMBEDDED_WEBAPP_BASE = "spring.cloud.devops.embedded-webapps";
 
 		/**
