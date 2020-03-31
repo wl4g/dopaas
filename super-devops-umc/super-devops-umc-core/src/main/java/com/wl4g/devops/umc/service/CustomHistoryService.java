@@ -15,28 +15,21 @@
  */
 package com.wl4g.devops.umc.service;
 
-import com.wl4g.devops.common.bean.umc.CustomDataSource;
-import com.wl4g.devops.common.bean.umc.model.DataSourceProvide;
+import com.wl4g.devops.common.bean.umc.CustomHistory;
 import com.wl4g.devops.page.PageModel;
-
-import java.util.List;
 
 /**
  * @author vjay
  * @date 2019-08-05 16:01:00
  */
-public interface CustomDataSourceService {
+public interface CustomHistoryService {
 
 	PageModel list(PageModel pm, String name);
 
-	CustomDataSource detal(Integer id);
+	CustomHistory detal(Integer id);
 
-	void save(CustomDataSource customDatasource);
+	void save(CustomHistory customDatasource);
 
 	void del(Integer id);
-
-	void testConnect(DataSourceProvide dataSourceProvide, String url, String username, String password,Integer id) throws Exception;
-
-	List<CustomDataSource> dataSources();
 
 }
