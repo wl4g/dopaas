@@ -27,7 +27,7 @@ import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
  * @version v1.0 2019-08-30
  * @since
  */
-public final class ECCSecureCryptService extends AbstractAsymmetricCryptService {
+public final class ECCSecureCryptService extends AbstractAsymmetricCryptService<ECCKeyPairSpec> {
 
 	public ECCSecureCryptService(JedisLockManager lockManager) {
 		super(lockManager, new ECCCryptor());

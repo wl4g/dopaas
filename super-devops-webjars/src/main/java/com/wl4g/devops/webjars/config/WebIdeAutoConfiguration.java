@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static com.wl4g.devops.webjars.config.WebIdeProperties.*;
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.webjars.editor.DefaultWebIdeCompleter;
 import com.wl4g.devops.webjars.editor.WebIdeCompleter;
@@ -35,10 +36,6 @@ import com.wl4g.devops.webjars.editor.WebIdeEndpoint;
  */
 @Configuration
 public class WebIdeAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
-
-	final public static String KEY_WEBIDE_PREFIX = "spring.cloud.devops.webjars";
-
-	final public static String URI_WEBIDE_BASE = "/webide";
 
 	@Bean
 	@ConditionalOnProperty(name = KEY_WEBIDE_PREFIX + ".enable", matchIfMissing = true)

@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.wl4g.devops.common.web.embedded.GenericEmbeddedWebappsController;
+import com.wl4g.devops.common.web.embedded.GenericEmbeddedWebappsEndpoint;
 import com.wl4g.devops.webjars.config.WebIdeProperties;
 import com.wl4g.devops.webjars.editor.model.CompleteRequest;
 
@@ -32,7 +32,7 @@ import com.wl4g.devops.webjars.editor.model.CompleteRequest;
  * @version v1.0 2020年3月31日
  * @since
  */
-public class WebIdeEndpoint extends GenericEmbeddedWebappsController {
+public class WebIdeEndpoint extends GenericEmbeddedWebappsEndpoint {
 
 	@Autowired
 	protected WebIdeCompleter completer;

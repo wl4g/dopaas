@@ -55,7 +55,7 @@ import static com.google.common.io.ByteStreams.*;
  * @version v1.0 2019年1月9日
  * @since
  */
-public abstract class GenericEmbeddedWebappsController extends BaseController {
+public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 
 	/**
 	 * Web file buffer cache
@@ -72,11 +72,11 @@ public abstract class GenericEmbeddedWebappsController extends BaseController {
 	 */
 	final protected GenericEmbeddedWebappsProperties config;
 
-	public GenericEmbeddedWebappsController(GenericEmbeddedWebappsProperties config) {
+	public GenericEmbeddedWebappsEndpoint(GenericEmbeddedWebappsProperties config) {
 		this(config, new DefaultWebappsGuavaCache());
 	}
 
-	public GenericEmbeddedWebappsController(GenericEmbeddedWebappsProperties config, WebResourceCache cache) {
+	public GenericEmbeddedWebappsEndpoint(GenericEmbeddedWebappsProperties config, WebResourceCache cache) {
 		notNullOf(config, "embeddedWebappControllerProperties");
 		this.config = config;
 		this.cache = cache;
@@ -91,7 +91,7 @@ public abstract class GenericEmbeddedWebappsController extends BaseController {
 	@GetMapping(path = "/**")
 	public void doWebResources(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String uri = request.getRequestURI();
-		String filepath = uri.substring(uri.indexOf(config.getBaseUri()) + config.getBaseUri().length() + 1);
+		String filepath = uri.substring(uri.indexOf(config.getBaseUri()) + config.getBaseUri().length());
 		doResponseFile(filepath, request, response);
 	}
 
