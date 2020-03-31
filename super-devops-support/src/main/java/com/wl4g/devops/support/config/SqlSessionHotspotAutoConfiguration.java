@@ -22,8 +22,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.devops.common.annotation.conditional.ConditionalOnJdwpDebug;
-import com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotLoader;
-import com.wl4g.devops.tool.devel.mybatis.loader.SqlSessionMapperHotspotLoader.HotspotLoadProperties;
+import com.wl4g.devops.support.mybatis.loader.SqlSessionMapperHotspotLoader;
+import com.wl4g.devops.support.mybatis.loader.SqlSessionMapperHotspotLoader.HotspotLoadProperties;
 
 /**
  * {@link SqlSessionMapperHotspotLoader} auto configuration.

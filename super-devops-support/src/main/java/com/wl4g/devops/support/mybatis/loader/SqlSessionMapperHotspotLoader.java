@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.devel.mybatis.loader;
+package com.wl4g.devops.support.mybatis.loader;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
@@ -38,11 +38,12 @@ import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.slf4j.Logger;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
 
@@ -53,11 +54,11 @@ import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
  * @version v1.0 2019年11月14日
  * @since
  */
-public class SqlSessionMapperHotspotLoader implements ApplicationRunner {
+public final class SqlSessionMapperHotspotLoader implements ApplicationRunner {
 	final public static String TARGET_PART_PATH = "target" + File.separator + "classes";
 	final public static String SRC_PART_PATH = "src" + File.separator + "main" + File.separator + "resources";
 
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/** Refresh configuration properties. */
 	final protected HotspotLoadProperties config;

@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.web;
+package com.wl4g.devops.common.web.embedded;
 
 import static org.springframework.util.StringUtils.*;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.wl4g.devops.common.config.EmbeddedWebAppAutoConfiguration.EmbeddedWebAppControllerProperties;
+import com.wl4g.devops.common.config.DefaultEmbeddedWebappsAutoConfiguration.GenericEmbeddedWebappsProperties;
 import com.wl4g.devops.common.web.BaseController;
+import com.wl4g.devops.common.web.embedded.WebResourceCache.*;
 import com.wl4g.devops.tool.common.resource.StreamResource;
 import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
 import com.wl4g.devops.tool.common.resource.resolver.ResourcePatternResolver;
@@ -33,21 +35,18 @@ import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.http.MediaType.*;
-import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.springframework.http.HttpStatus.*;
 
 import java.io.InputStream;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.io.ByteStreams;
+import static com.google.common.io.ByteStreams.*;
 
 /**
  * Embedded webapps view controller
@@ -56,39 +55,44 @@ import com.google.common.io.ByteStreams;
  * @version v1.0 2019年1月9日
  * @since
  */
-public abstract class EmbeddedWebAppController extends BaseController {
+public abstract class GenericEmbeddedWebappsController extends BaseController {
 
 	/**
-	 * Default view page file cache buffer
+	 * Web file buffer cache
 	 */
-	final private Map<String, byte[]> bufferCache = new ConcurrentHashMap<>();
+	final protected WebResourceCache cache;
 
 	/**
 	 * {@link ResourcePatternResolver}
 	 */
-	final private ResourcePatternResolver resolver = new ClassPathResourcePatternResolver();
+	final protected ResourcePatternResolver resolver = new ClassPathResourcePatternResolver();
 
 	/**
 	 * {@link DefaultWebAppControllerProperties}
 	 */
-	protected EmbeddedWebAppControllerProperties config;
+	final protected GenericEmbeddedWebappsProperties config;
 
-	public EmbeddedWebAppController(EmbeddedWebAppControllerProperties config) {
+	public GenericEmbeddedWebappsController(GenericEmbeddedWebappsProperties config) {
+		this(config, new DefaultWebappsGuavaCache());
+	}
+
+	public GenericEmbeddedWebappsController(GenericEmbeddedWebappsProperties config, WebResourceCache cache) {
 		notNullOf(config, "embeddedWebappControllerProperties");
 		this.config = config;
+		this.cache = cache;
 	}
 
 	/**
-	 * Reader static resource files
+	 * Reader web resource files
 	 *
 	 * @param filename
 	 * @param response
 	 */
 	@GetMapping(path = "/**")
-	public void readerResource(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void doWebResources(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String uri = request.getRequestURI();
 		String filepath = uri.substring(uri.indexOf(config.getBaseUri()) + config.getBaseUri().length() + 1);
-		responseFile(filepath, response);
+		doResponseFile(filepath, request, response);
 	}
 
 	/**
@@ -98,18 +102,21 @@ public abstract class EmbeddedWebAppController extends BaseController {
 	 * @param response
 	 * @throws Exception
 	 */
-	protected void responseFile(String filepath, HttpServletResponse response) throws Exception {
-		notNull(filepath, "'filepath' must can't empty");
+	protected void doResponseFile(String filepath, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		notNullOf(filepath, "filepath");
 
 		// Get buffer cache
-		byte[] buf = bufferCache.get(filepath);
+		byte[] buf = cache.get(filepath);
 		if (isNull(buf)) {
 			try (InputStream in = getResourceAsStream(filepath);) {
 				if (nonNull(in)) {
 					log.debug("Request access file: {}", filepath);
-					buf = ByteStreams.toByteArray(in);
-					if (!isJVMDebugging) { // Debug mode is enabled
-						bufferCache.put(filepath, buf);
+					// Call pre-processing
+					buf = preResponesPropertiesSet(filepath, toByteArray(in), request);
+
+					// Check cache?
+					if (!isCache(filepath, request)) {
+						cache.put(filepath, buf);
 					}
 				} else { // Not found
 					write(response, NOT_FOUND.value(), TEXT_HTML_VALUE, "Not Found".getBytes(UTF_8));
@@ -117,17 +124,50 @@ public abstract class EmbeddedWebAppController extends BaseController {
 				}
 			}
 		}
-		response.setDateHeader("Expires", currentTimeMillis() + 600_000);
-		response.addHeader("Pragma", "Pragma");
-		response.addHeader("Cache-Control", "public");
-		response.addHeader("Last-Modified", valueOf(currentTimeMillis()));
+		// Post response properties.
+		postResponsePropertiesSet(response);
 
 		// Response file.
 		write(response, OK.value(), getContentType(filepath), buf);
 	}
 
 	/**
-	 * Get content type by file path.
+	 * Enable caching or not
+	 * 
+	 * @param filepath
+	 * @param request
+	 * @return
+	 */
+	protected boolean isCache(String filepath, HttpServletRequest request) {
+		return isJVMDebugging;
+	}
+
+	/**
+	 * Pre-processing response properties set.
+	 * 
+	 * @param filepath
+	 * @param buf
+	 * @param request
+	 * @return
+	 */
+	protected byte[] preResponesPropertiesSet(String filepath, byte[] buf, HttpServletRequest request) {
+		return buf;
+	}
+
+	/**
+	 * Post response properties set.
+	 * 
+	 * @param response
+	 */
+	protected void postResponsePropertiesSet(HttpServletResponse response) {
+		response.setDateHeader("Expires", currentTimeMillis() + 600_000);
+		response.addHeader("Pragma", "Pragma");
+		response.addHeader("Cache-Control", "public");
+		response.addHeader("Last-Modified", valueOf(currentTimeMillis()));
+	}
+
+	/**
+	 * Gets content type by file path.
 	 *
 	 * @param ext
 	 * @return
@@ -144,7 +184,7 @@ public abstract class EmbeddedWebAppController extends BaseController {
 	 * @return
 	 * @throws Exception
 	 */
-	private InputStream getResourceAsStream(String path) throws Exception {
+	protected InputStream getResourceAsStream(String path) throws Exception {
 		if (startsWith(path, "/")) {
 			path = path.substring(1);
 		}

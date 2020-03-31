@@ -15,7 +15,8 @@
  */
 package com.wl4g.devops.common.config;
 
-import static org.springframework.util.Assert.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static org.springframework.util.Assert.notNull;
 
 import java.lang.annotation.Annotation;
@@ -63,8 +64,8 @@ public abstract class OptionalPrefixControllerAutoConfiguration implements Appli
 	 * @return
 	 */
 	protected PrefixHandlerMapping newPrefixHandlerMapping(@NotBlank String mappingPrefix, @NotNull Object... handlers) {
-		hasText(mappingPrefix, "empty mappingPrefix");
-		notNull(handlers, "null handlers.");
+		hasTextOf(mappingPrefix, "mappingPrefix");
+		notNullOf(handlers, "handlers");
 
 		PrefixHandlerMapping mapping = new PrefixHandlerMapping(handlers);
 		mapping.setPrefix(mappingPrefix);
@@ -80,8 +81,8 @@ public abstract class OptionalPrefixControllerAutoConfiguration implements Appli
 	 */
 	protected PrefixHandlerMapping newPrefixHandlerMapping(@NotBlank String mappingPrefix,
 			@NotNull Class<? extends Annotation> annotationClass) {
-		hasText(mappingPrefix, "empty mappingPrefix");
-		notNull(annotationClass, "null annotationClass.");
+		hasTextOf(mappingPrefix, "mappingPrefix");
+		notNullOf(annotationClass, "annotationClass");
 
 		Map<String, Object> beans = actx.getBeansWithAnnotation(annotationClass);
 		PrefixHandlerMapping mapping = new PrefixHandlerMapping(beans.values().toArray(new Object[beans.size()]));
