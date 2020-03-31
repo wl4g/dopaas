@@ -158,6 +158,12 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-webjars</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-dao</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>

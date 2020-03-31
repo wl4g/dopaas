@@ -27,12 +27,11 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.exception.ExceptionUtils.wrapAndThrow;
 import static org.springframework.util.Assert.notNull;
 
-import java.util.concurrent.TimeUnit;
+import static java.util.concurrent.TimeUnit.*;
 import java.util.concurrent.locks.Lock;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
-import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
@@ -50,19 +49,24 @@ import redis.clients.jedis.JedisCluster;
  * @version v1.0 2019-08-30
  * @since
  */
-public abstract class AbstractAsymmetricCryptService implements SecureCryptService {
+public abstract class AbstractAsymmetricCryptService<K extends KeyPairSpec> implements SecureCryptService {
 
 	/**
-	 * Default JIGSAW initialize image timeoutMs
+	 * Default JIGSAW initializing mutex image timeoutMs
 	 */
-	final public static long DEFAULT_KEY_INIT_TIMEOUTMS = 60_000L;
+	final public static long DEFAULT_LOCK_EXPIRE_MS = 60_000L;
+
+	/**
+	 * Try lock mutex timeoutMs.
+	 */
+	final public static long DEFAULT_TRYLOCK_TIMEOUT_MS = DEFAULT_LOCK_EXPIRE_MS / 2;
 
 	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * KeySpec class.
 	 */
-	final protected Class<? extends KeyPairSpec> keySpecClass;
+	final protected Class<K> keySpecClass;
 
 	/**
 	 * AsymmetricCryptor
@@ -91,10 +95,10 @@ public abstract class AbstractAsymmetricCryptService implements SecureCryptServi
 		notNullOf(lockManager, "lockManager");
 		notNullOf(cryptor, "cryptor");
 		this.cryptor = cryptor;
-		this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_KEY_INIT_TIMEOUTMS, TimeUnit.MILLISECONDS);
+		this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_LOCK_EXPIRE_MS, MILLISECONDS);
 
 		ResolvableType resolveType = ResolvableType.forClass(getClass());
-		this.keySpecClass = (Class<? extends KeyPairSpec>) resolveType.getSuperType().getGeneric(0).resolve();
+		this.keySpecClass = (Class<K>) resolveType.getSuperType().getGeneric(0).resolve();
 		notNull(keySpecClass, "KeySpecClass must not be null.");
 	}
 
@@ -102,9 +106,7 @@ public abstract class AbstractAsymmetricCryptService implements SecureCryptServi
 	public KeyPairSpec generateKeyBorrow(int index) {
 		if (index < 0 || index >= config.getKeyPairPools()) {
 			int _index = current().nextInt(config.getKeyPairPools());
-			if (log.isDebugEnabled()) {
-				log.debug("Borrow keySpec index '{}' of out bound, used random index '{}'", index, _index);
-			}
+			log.debug("Borrow keySpec index '{}' of out bound, used random index '{}'", index, _index);
 			index = _index;
 		}
 
@@ -113,8 +115,8 @@ public abstract class AbstractAsymmetricCryptService implements SecureCryptServi
 		byte[] keySpecBuf = jdsCluster.hget(CACHE_CRYPTO, toBytes(String.valueOf(index)));
 		if (isNull(keySpecBuf)) { // Expired?
 			try {
-				if (lock.tryLock(DEFAULT_KEY_INIT_TIMEOUTMS / 2, TimeUnit.MILLISECONDS)) {
-					initializeKeySpecPool();
+				if (lock.tryLock(DEFAULT_TRYLOCK_TIMEOUT_MS, MILLISECONDS)) {
+					doInitializingKeyPairSpecAll();
 				}
 			} catch (Exception e) {
 				wrapAndThrow(e);
@@ -124,8 +126,9 @@ public abstract class AbstractAsymmetricCryptService implements SecureCryptServi
 			// Retry get.
 			keySpecBuf = jdsCluster.hget(CACHE_CRYPTO, toBytes(String.valueOf(index)));
 		}
+
 		KeyPairSpec keySpec = (KeyPairSpec) deserialize(keySpecBuf, keySpecClass);
-		Assert.notNull(keySpec, "Unable to borrow keySpec resource.");
+		notNull(keySpec, "Unable to borrow keySpec resource.");
 		return keySpec;
 	}
 
@@ -142,11 +145,11 @@ public abstract class AbstractAsymmetricCryptService implements SecureCryptServi
 	}
 
 	/**
-	 * Initialize keySpec pool.
+	 * Initializing keyPairSpec pool.
 	 *
 	 * @return
 	 */
-	private synchronized void initializeKeySpecPool() {
+	private synchronized void doInitializingKeyPairSpecAll() {
 		// Create generate cryptic keyPairs
 		for (int index = 0; index < config.getKeyPairPools(); index++) {
 			// Generate keySpec.
@@ -154,13 +157,10 @@ public abstract class AbstractAsymmetricCryptService implements SecureCryptServi
 			// Storage to cache.
 			jedisService.getJedisCluster().hset(CACHE_CRYPTO, toBytes(String.valueOf(index)), serialize(keySpec));
 			jedisService.getJedisCluster().expire(CACHE_CRYPTO, config.getKeyPairExpireMs());
-			if (log.isDebugEnabled()) {
-				log.debug("Put keySpec to cache for index {}, keySpec => {}", index, toJSONString(keySpec));
-			}
+
+			log.debug("Put keySpec to cache for index {}, keySpec => {}", index, toJSONString(keySpec));
 		}
-		if (log.isInfoEnabled()) {
-			log.info("Initialized keySpec total: {}", config.getKeyPairPools());
-		}
+		log.info("Initialized keySpec total: {}", config.getKeyPairPools());
 	}
 
 }

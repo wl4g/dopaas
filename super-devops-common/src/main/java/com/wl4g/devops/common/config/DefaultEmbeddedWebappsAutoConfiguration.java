@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.common.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.common.web.embedded.GenericEmbeddedWebappsController;
+import com.wl4g.devops.common.web.embedded.GenericEmbeddedWebappsEndpoint;
 
 import static com.wl4g.devops.common.config.DefaultEmbeddedWebappsAutoConfiguration.GenericEmbeddedWebappsProperties.*;
 
@@ -35,28 +35,27 @@ import java.util.Properties;
  * @since
  */
 @Configuration
-@ConditionalOnProperty(value = KEY_EMBEDDED_WEBAPP_BASE + ".enabled", matchIfMissing = false)
 public class DefaultEmbeddedWebappsAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
 	@ConfigurationProperties(prefix = KEY_EMBEDDED_WEBAPP_BASE)
-	@ConditionalOnMissingBean(GenericEmbeddedWebappsController.class)
-	public GenericEmbeddedWebappsProperties embeddedWebappsControllerProperties() {
+	@ConditionalOnProperty(value = KEY_EMBEDDED_WEBAPP_BASE + ".enabled", matchIfMissing = false)
+	public GenericEmbeddedWebappsProperties embeddedWebappsEndpointProperties() {
 		return new GenericEmbeddedWebappsProperties() {
 		};
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(GenericEmbeddedWebappsController.class)
-	public GenericEmbeddedWebappsController embeddedWebappsController(GenericEmbeddedWebappsProperties config) {
-		return new GenericEmbeddedWebappsController(config) {
+	@ConditionalOnBean(GenericEmbeddedWebappsProperties.class)
+	public GenericEmbeddedWebappsEndpoint embeddedWebappsEndpoint(GenericEmbeddedWebappsProperties config) {
+		return new GenericEmbeddedWebappsEndpoint(config) {
 		};
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(GenericEmbeddedWebappsController.class)
-	public PrefixHandlerMapping embeddedWebappsControllerPrefixHandlerMapping(GenericEmbeddedWebappsProperties config,
-			GenericEmbeddedWebappsController webapp) {
+	@ConditionalOnBean(GenericEmbeddedWebappsProperties.class)
+	public PrefixHandlerMapping defaultEmbeddedWebappsEndpointPrefixHandlerMapping(GenericEmbeddedWebappsProperties config,
+			GenericEmbeddedWebappsEndpoint webapp) {
 		return super.newPrefixHandlerMapping(config.getBaseUri(), webapp);
 	}
 

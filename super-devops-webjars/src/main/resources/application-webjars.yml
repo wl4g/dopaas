@@ -15,3 +15,5 @@ spring:
   cloud:
     devops:
       webjars:
+        webide:
+          enable: true # Default: true

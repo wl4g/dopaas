@@ -27,7 +27,69 @@ import com.wl4g.devops.common.config.DefaultEmbeddedWebappsAutoConfiguration.Gen
 public class WebIdeProperties extends GenericEmbeddedWebappsProperties {
 
 	public WebIdeProperties() {
-		setBaseUri(WebIdeAutoConfiguration.URI_WEBIDE_BASE);
+		setBaseUri(URI_WEBIDE_BASE);
+		setWebappLocation(PATH_WEBIDE_WEBAPPS);
 	}
+
+	/**
+	 * {@link IdeLanguage}
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年3月31日 v1.0.0
+	 * @see
+	 */
+	public static enum IdeLanguage {
+
+		Assembly_x86, // nasm(汇编)
+
+		Cpp,
+
+		Clujure,
+
+		Coffee,
+
+		Csharp, // C#
+
+		D,
+
+		Erlang,
+
+		Golang,
+
+		Groovy,
+
+		Haskell,
+
+		Java, // java8
+
+		Javascript, // nodejs
+
+		Lisp,
+
+		Lua,
+
+		ObjectiveC,
+
+		Perl,
+
+		Php, // php7
+
+		Python, // python3
+
+		R,
+
+		Ruby,
+
+		Scala,
+
+		Rust,
+
+		Sh; // shell
+
+	}
+
+	final public static String KEY_WEBIDE_PREFIX = "spring.cloud.devops.webjars.webide";
+	final public static String URI_WEBIDE_BASE = "/webide";
+	final public static String PATH_WEBIDE_WEBAPPS = "classpath*:/default-webapps" + URI_WEBIDE_BASE;
 
 }

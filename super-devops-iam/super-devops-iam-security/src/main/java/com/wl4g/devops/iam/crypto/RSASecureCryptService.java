@@ -27,7 +27,7 @@ import com.wl4g.devops.tool.common.crypto.asymmetric.spec.RSAKeyPairSpec;
  * @version v1.0 2019-08-30
  * @since
  */
-public final class RSASecureCryptService extends AbstractAsymmetricCryptService {
+public final class RSASecureCryptService extends AbstractAsymmetricCryptService<RSAKeyPairSpec> {
 
 	public RSASecureCryptService(JedisLockManager lockManager) {
 		super(lockManager, new RSACryptor());
