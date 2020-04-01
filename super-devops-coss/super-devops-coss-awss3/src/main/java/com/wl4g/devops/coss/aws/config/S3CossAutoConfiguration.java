@@ -21,7 +21,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.aws.S3CossEndpoint;
 
 @Configuration
@@ -37,7 +36,7 @@ public class S3CossAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean(S3CossProperties.class)
-	public CossEndpoint s3CossEndpoint(S3CossProperties config) {
+	public S3CossEndpoint s3CossEndpoint(S3CossProperties config) {
 		return new S3CossEndpoint(config);
 	}
 

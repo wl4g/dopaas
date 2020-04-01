@@ -17,7 +17,6 @@ package com.wl4g.devops.ci.config;
 
 import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.core.DefaultPipelineManager;
-import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pcm.PcmOperator;
@@ -89,7 +88,7 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
-	public PipelineManager defualtPipelineManager() {
+	public DefaultPipelineManager defualtPipelineManager() {
 		return new DefaultPipelineManager();
 	}
 
@@ -108,32 +107,32 @@ public class CiCdAutoConfiguration {
 	// --- VCS's (Version Control System) ---
 
 	@Bean
-	public VcsOperator gitlabV4VcsOperator() {
+	public GitlabV4VcsOperator gitlabV4VcsOperator() {
 		return new GitlabV4VcsOperator();
 	}
 
 	@Bean
-	public VcsOperator githubV4VcsOperator() {
+	public GithubVcsOperator githubV4VcsOperator() {
 		return new GithubVcsOperator();
 	}
 
 	@Bean
-	public VcsOperator bitbucketVcsOperator() {
+	public BitbucketVcsOperator bitbucketVcsOperator() {
 		return new BitbucketVcsOperator();
 	}
 
 	@Bean
-	public VcsOperator codingVcsOperator() {
+	public CodingVcsOperator codingVcsOperator() {
 		return new CodingVcsOperator();
 	}
 
 	@Bean
-	public VcsOperator giteeVcsOperator() {
+	public GiteeVcsOperator giteeVcsOperator() {
 		return new GiteeVcsOperator();
 	}
 
 	@Bean
-	public VcsOperator alicodeVcsOperator() {
+	public AlicodeVcsOperator alicodeVcsOperator() {
 		return new AlicodeVcsOperator();
 	}
 
@@ -275,12 +274,12 @@ public class CiCdAutoConfiguration {
 	// --- PCM's (Project collaboration management). ---
 
 	@Bean
-	public PcmOperator jiraPcmOperator() {
+	public JiraPcmOperator jiraPcmOperator() {
 		return new JiraPcmOperator();
 	}
 
 	@Bean
-	public PcmOperator redminePcmOperator() {
+	public RedminePcmOperator redminePcmOperator() {
 		return new RedminePcmOperator();
 	}
 

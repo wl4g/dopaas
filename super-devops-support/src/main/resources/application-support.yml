@@ -16,7 +16,10 @@ spring:
     devops:
       #support:
       #  devel:
-      #    mybatis-loader: false
+      #    mybatis-loader: # Mybatis mappers autoloader for development only(Note: production disabled)
+      #      enable: false  # Default with: auto(enable jdwp?)
+      #      fast-fail: false
+      #      monitor-loader-interval-ms: 1000
       #  notification:
       #    mail:
       #      enable: false # Default[false]
