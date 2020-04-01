@@ -42,63 +42,67 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
+import static java.lang.System.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.*;
 
 public class WebUtils2Tests {
 
 	public static void main(String[] args) {
-		System.out.println("-------------0000-------------------");
+		out.println("-------------0000-------------------");
 
 		// URI s =
 		// URI.create("http://portal.wl4g.com/portal/authenticator?fragment=eleIndex/elecReport#/eleIndex/index");
 		URI s = URI.create(
 				"http://portal.wl4g.com/portal/authenticator?redirect_url=http://portal.wl4g.com/?fragment=eleIndex/elecReport#/authLogin");
-		System.out.println(s.getScheme());
-		System.out.println(s.getHost());
-		System.out.println(s.getPort());
-		System.out.println(s.getPath());
-		System.out.println(s.getQuery());
-		System.out.println(s.getFragment());
-		System.out.println("-------------1111-------------------");
+		out.println(s.getScheme());
+		out.println(s.getHost());
+		out.println(s.getPort());
+		out.println(s.getPath());
+		out.println(s.getQuery());
+		out.println(s.getFragment());
+		out.println("-------------1111-------------------");
 
-		System.out.println(getBaseURIForDefault("http", "my.com", 8080));
-		System.out.println(getBaseURIForDefault("http", "my.com", 80));
-		System.out.println(getBaseURIForDefault("https", "my.com", 443));
-		System.out.println(getBaseURIForDefault("http", "my.com", -1));
-		System.out.println(getBaseURIForDefault("https", "my.com", -1));
+		out.println(getBaseURIForDefault("http", "my.com", 8080));
+		out.println(getBaseURIForDefault("http", "my.com", 80));
+		out.println(getBaseURIForDefault("https", "my.com", 443));
+		out.println(getBaseURIForDefault("http", "my.com", -1));
+		out.println(getBaseURIForDefault("https", "my.com", -1));
 
-		System.out.println("-------------2222-------------------");
-		System.out.println(URI.create("http://my.com/index/#/me").getQuery());
-		System.out.println(toQueryParams("application=iam-example&gt=aaa&redirect_url=http://my.com/index"));
-		System.out.println(toQueryParams("application=iam-example&gt=aaa&redirect_url=http://my.com/index/#/me"));
+		out.println("-------------2222-------------------");
+		out.println(URI.create("http://my.com/index/#/me").getQuery());
+		out.println(toQueryParams("application=iam-example&gt=aaa&redirect_url=http://my.com/index"));
+		out.println(toQueryParams("application=iam-example&gt=aaa&redirect_url=http://my.com/index/#/me"));
 
-		System.out.println("-------------3333-------------------");
-		System.out.println(extractDomainString("http://*.aaa.anjiancloud.test/API/v2"));
+		out.println("-------------3333-------------------");
+		out.println(extractWildcardHostName("http://*.aaa.anjiancloud.test/API/v2"));
 
-		System.out.println("-------------1111-------------------");
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com/API/v2", "http://bb.aa.domain.com/API/v2", true));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com/API/v2", "https://bb.aa.domain.com/API/v2", true));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com/api/v2/", "http://bb.aa.domain.com/API/v2", true));
-		System.out.println(isSameWithOrigin("http://bb.*.domain.com", "https://bb.aa.domain.com", false));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com", "https://bb.aa.domain.com", true));
-		System.out.println(isSameWithOrigin("http://*.aa.domain.com:8080", "http://bb.aa.domain.com:8080/", true));
+		out.println("-------------1111-------------------");
+		out.println(isSameWildcardOrigin("http://*.aa.domain.com/api/v2", "http://bb.aa.domain.com/api/v2", true));
+		out.println(isSameWildcardOrigin("http://*.aa.domain.com/api/v2", "https://bb.aa.domain.com/api/v2", true));
+		out.println(isSameWildcardOrigin("http://*.aa.domain.com/api/v2/", "http://bb.aa.domain.com/API/v2", true));
+		out.println(isSameWildcardOrigin("http://bb.*.domain.com", "https://bb.aa.domain.com", false));
+		out.println(isSameWildcardOrigin("http://*.aa.domain.com", "https://bb.aa.domain.com", true));
+		out.println(isSameWildcardOrigin("http://*.aa.domain.com:8080", "http://bb.aa.domain.com:8080/", true));
+		out.println(isSameWildcardOrigin("http://*.aa.domain.com:*", "http://bb.aa.domain.com:8080/api/v2/xx", true));
+		out.println(isSameWildcardOrigin("http://*.aa.domain.com:8080", "http://bb.aa.domain.com:8443/v2/xx", true));
+		out.println(isSameWildcardOrigin("http://*.aa.domain.com:*", "http://bb.aa.domain.com:8080/v2/xx", true));
 
-		System.out.println("-------------4444-------------------");
-		System.out.println(cleanURI("https://my.domain.com//myapp///index?t=123"));
-		System.out.println(cleanURI("https://my.domain.com///myapp/////index?t=123"));
+		out.println("-------------4444-------------------");
+		out.println(cleanURI("https://my.domain.com//myapp///index?t=123"));
+		out.println(cleanURI("https://my.domain.com///myapp/////index?t=123"));
 
-		System.out.println("-------------5555-------------------");
+		out.println("-------------5555-------------------");
 		try {
 			rejectRequestMethod(true, new TestHttpServletRequest("POST"), testResponse, "POST", "GET");
-			System.out.println("reject1 -- OK");
+			out.println("reject1 -- OK");
 		} catch (Exception e) {
-			System.out.println("reject1 -- ERROR");
+			out.println("reject1 -- ERROR");
 		}
 		try {
 			rejectRequestMethod(false, new TestHttpServletRequest("POST"), testResponse, "POST", "GET");
-			System.out.println("reject2 -- OK");
+			out.println("reject2 -- OK");
 		} catch (Exception e) {
-			System.out.println("reject2 -- ERROR");
+			out.println("reject2 -- ERROR");
 		}
 
 	}

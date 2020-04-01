@@ -16,15 +16,15 @@ spring:
       rules:
         /**:
           allowsOrigins:
-            - https://${DEVOPS_DOMAIN_TOP:wl4g.debug}
-            - http://${DEVOPS_DOMAIN_TOP:wl4g.debug}
-            - https://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
-            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
-            - http://localhost:8080
-            - http://localhost:14040
-            - http://127.0.0.1:8080
-            - http://127.0.0.1:14040
-            #- '*'
+            #- http://${DEVOPS_DOMAIN_TOP:wl4g.debug}
+            #- http://${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
+            #- http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
+            #- http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
+            #- http://localhost:8080
+            #- http://localhost:14040
+            #- http://127.0.0.1:8080
+            #- http://127.0.0.1:14040
+            - '*'
   cloud:
     devops:
       iam: # IAM configuration.
