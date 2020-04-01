@@ -26,6 +26,10 @@ import com.wl4g.devops.common.config.DefaultEmbeddedWebappsAutoConfiguration.Gen
  */
 public class WebIdeProperties extends GenericEmbeddedWebappsProperties {
 
+	final public static String KEY_WEBIDE_PREFIX = "spring.cloud.devops.webjars.webide";
+	final public static String URI_WEBIDE_BASE = "/webide";
+	final public static String PATH_WEBIDE_WEBAPPS = "classpath*:/webapps-plugin" + URI_WEBIDE_BASE;
+
 	public WebIdeProperties() {
 		setBaseUri(URI_WEBIDE_BASE);
 		setWebappLocation(PATH_WEBIDE_WEBAPPS);
@@ -87,9 +91,5 @@ public class WebIdeProperties extends GenericEmbeddedWebappsProperties {
 		Sh; // shell
 
 	}
-
-	final public static String KEY_WEBIDE_PREFIX = "spring.cloud.devops.webjars.webide";
-	final public static String URI_WEBIDE_BASE = "/webide";
-	final public static String PATH_WEBIDE_WEBAPPS = "classpath*:/default-webapps" + URI_WEBIDE_BASE;
 
 }

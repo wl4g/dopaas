@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.common.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -37,26 +38,31 @@ import java.util.Properties;
 @Configuration
 public class DefaultEmbeddedWebappsAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
-	@Bean
+	final private static String BEAN_DEFAULT_EMBEDDED_WEBAPPS_PROPERTIES = "defaultGenericEmbeddedWebappsProperties";
+	final private static String BEAN_DEFAULT_EMBEDDED_WEBAPPS_ENDPOINT = "defaultGenericEmbeddedWebappsEndpoint";
+
+	@Bean(BEAN_DEFAULT_EMBEDDED_WEBAPPS_PROPERTIES)
 	@ConfigurationProperties(prefix = KEY_EMBEDDED_WEBAPP_BASE)
 	@ConditionalOnProperty(value = KEY_EMBEDDED_WEBAPP_BASE + ".enabled", matchIfMissing = false)
-	public GenericEmbeddedWebappsProperties embeddedWebappsEndpointProperties() {
+	public GenericEmbeddedWebappsProperties defaultEmbeddedWebappsEndpointProperties() {
 		return new GenericEmbeddedWebappsProperties() {
 		};
 	}
 
-	@Bean
+	@Bean(BEAN_DEFAULT_EMBEDDED_WEBAPPS_ENDPOINT)
 	@ConditionalOnBean(GenericEmbeddedWebappsProperties.class)
-	public GenericEmbeddedWebappsEndpoint embeddedWebappsEndpoint(GenericEmbeddedWebappsProperties config) {
+	public GenericEmbeddedWebappsEndpoint defaultEmbeddedWebappsEndpoint(
+			@Qualifier(BEAN_DEFAULT_EMBEDDED_WEBAPPS_PROPERTIES) GenericEmbeddedWebappsProperties config) {
 		return new GenericEmbeddedWebappsEndpoint(config) {
 		};
 	}
 
 	@Bean
 	@ConditionalOnBean(GenericEmbeddedWebappsProperties.class)
-	public PrefixHandlerMapping defaultEmbeddedWebappsEndpointPrefixHandlerMapping(GenericEmbeddedWebappsProperties config,
-			GenericEmbeddedWebappsEndpoint webapp) {
-		return super.newPrefixHandlerMapping(config.getBaseUri(), webapp);
+	public PrefixHandlerMapping defaultEmbeddedWebappsEndpointPrefixHandlerMapping(
+			@Qualifier(BEAN_DEFAULT_EMBEDDED_WEBAPPS_PROPERTIES) GenericEmbeddedWebappsProperties config,
+			@Qualifier(BEAN_DEFAULT_EMBEDDED_WEBAPPS_ENDPOINT) GenericEmbeddedWebappsEndpoint endpoint) {
+		return super.newPrefixHandlerMapping(config.getBaseUri(), endpoint);
 	}
 
 	/**

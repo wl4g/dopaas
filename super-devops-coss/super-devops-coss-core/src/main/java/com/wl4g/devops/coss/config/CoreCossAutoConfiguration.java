@@ -50,7 +50,7 @@ public class CoreCossAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean(NativeFSCossProperties.class)
-	public CossEndpoint nativeCossEndpoint(NativeFSCossProperties config) {
+	public NativeCossEndpoint nativeCossEndpoint(NativeFSCossProperties config) {
 		return new NativeCossEndpoint(config);
 	}
 
