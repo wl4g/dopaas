@@ -26,13 +26,12 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.http.HttpMethod;
-import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 
 import com.wl4g.devops.tool.common.collection.RegisteredSetList;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.tool.common.web.WebUtils2.isSameWithOrigin;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isSameWildcardOrigin;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.contains;
@@ -270,12 +269,11 @@ public class CorsProperties implements Serializable {
 		 */
 		@Override
 		public String checkOrigin(String requestOrigin) {
-			if (!StringUtils.hasText(requestOrigin)) {
+			if (isBlank(requestOrigin))
 				return null;
-			}
-			if (isEmpty(getAllowedOrigins())) {
+			if (isEmpty(getAllowedOrigins()))
 				return null;
-			}
+
 			if (getAllowedOrigins().contains(ALL)) {
 				/**
 				 * Note: Chrome will prompt: </br>
@@ -296,7 +294,7 @@ public class CorsProperties implements Serializable {
 					return requestOrigin;
 				}
 				// e.g. allowedOrigin => "http://*.aa.mydomain.com"
-				if (isSameWithOrigin(allowedOrigin, requestOrigin, true)) {
+				if (isSameWildcardOrigin(allowedOrigin, requestOrigin, true)) {
 					return requestOrigin;
 				}
 			}
