@@ -1,10 +1,13 @@
-package com.wl4g.devops.common.bean.umc;
+package com.wl4g.devops.common.bean.umc.datasouces;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
-import java.util.List;
+/**
+ * @author vjay
+ * @date 2020-04-02 14:58:00
+ */
+public class BaseDataSource extends BaseBean {
 
-public class CustomDataSource extends BaseBean {
     private static final long serialVersionUID = 381411777614066880L;
 
     private String name;
@@ -12,8 +15,6 @@ public class CustomDataSource extends BaseBean {
     private String provider;
 
     private Integer status;
-
-    private List<CustomDataSourceProperties> customDataSourceProperties;
 
     public String getName() {
         return name;
@@ -37,13 +38,5 @@ public class CustomDataSource extends BaseBean {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public List<CustomDataSourceProperties> getCustomDataSourceProperties() {
-        return customDataSourceProperties;
-    }
-
-    public void setCustomDataSourceProperties(List<CustomDataSourceProperties> customDataSourceProperties) {
-        this.customDataSourceProperties = customDataSourceProperties;
     }
 }

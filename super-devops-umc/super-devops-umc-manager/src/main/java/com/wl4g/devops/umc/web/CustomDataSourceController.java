@@ -15,18 +15,18 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.wl4g.devops.common.bean.umc.CustomDataSource;
+import com.wl4g.devops.common.bean.umc.datasouces.MysqlDataSource;
 import com.wl4g.devops.common.bean.umc.model.DataSourceProvide;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import com.wl4g.devops.umc.service.CustomDataSourceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
+import static com.wl4g.devops.common.bean.umc.model.DataSourceProvide.MYSQL;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 
 /**
@@ -50,23 +50,21 @@ public class CustomDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(@RequestBody CustomDataSource customDataSource) {
-		log.info("into CustomDatasourceController.save prarms::" + "customDataSource = {} ", customDataSource);
-		notNull(customDataSource, "customDataSource is null");
-		hasText(customDataSource.getName(), "name is null");
-		hasText(customDataSource.getUrl(), "url is null");
-		hasText(customDataSource.getProvider(), "provider is null");
-		hasText(customDataSource.getUsername(), "username is null");
+	public RespBase<?> save(String dataSource,String provider) {
+		log.info("into CustomDatasourceController.save prarms::" + "customDataSource = {} ", dataSource);
+		notNull(dataSource, "customDataSource is null");
 		RespBase<Object> resp = RespBase.create();
-		customDataSourceService.save(customDataSource);
+		if(MYSQL.toString().equalsIgnoreCase(provider)){
+			MysqlDataSource mysqlDataSource = JacksonUtils.parseJSON(dataSource, MysqlDataSource.class);
+			customDataSourceService.save(mysqlDataSource);
+		}
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		CustomDataSource customDataSource = customDataSourceService.detal(id);
-		resp.setData(customDataSource);
+		resp.setData(customDataSourceService.detal(id));
 		return resp;
 	}
 
