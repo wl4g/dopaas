@@ -481,8 +481,8 @@ public abstract class WebUtils2 {
 			return false;
 
 		// Hostname equaled?
-		String hostname1 = extractWildcardHostName(defWildcardUri);
-		String hostname2 = extractWildcardHostName(requestUri);
+		String hostname1 = extractWildcardEndpoint(defWildcardUri);
+		String hostname2 = extractWildcardEndpoint(requestUri);
 		if (equalsIgnoreCase(hostname1, hostname2))
 			return true;
 
@@ -526,7 +526,7 @@ public abstract class WebUtils2 {
 	 * @param wildcardUri
 	 * @return
 	 */
-	public static String extractWildcardHostName(String wildcardUri) {
+	public static String extractWildcardEndpoint(String wildcardUri) {
 		if (isEmpty(wildcardUri))
 			return EMPTY;
 
