@@ -15,9 +15,7 @@
  */
 package com.wl4g.devops.common.web.error;
 
-import static com.wl4g.devops.common.web.RespBase.RetCode.SYS_ERR;
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,8 +32,8 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.validation.FieldError;
 
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
+import static com.wl4g.devops.common.web.RespBase.*;
+import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 
 /**
  * Default basic error configure.
@@ -50,14 +48,23 @@ public class DefaultBasicErrorConfiguring implements ErrorConfiguring {
 
 	@Override
 	public Integer getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex) {
-		Integer statusCode = (Integer) model.getOrDefault("status", SYS_ERR.getErrcode());
-		if (isNull(statusCode)) {
-			RetCode retCode = RespBase.getRestfulCode(ex);
-			if (nonNull(retCode)) {
+		Integer statusCode = (Integer) model.get("status");
+		/**
+		 * Eliminate meaningless status code: 999
+		 * 
+		 * @see {@link org.springframework.boot.autoconfigure.web.DefaultErrorAttributes#addStatus()}
+		 */
+		if (isNull(statusCode) || statusCode == 999) {
+			RetCode retCode = getRestfulCode(ex);
+			if (!isNull(retCode)) {
 				statusCode = retCode.getErrcode();
-			} else { // Has been setup to: 999?
+			} else if (ex instanceof IllegalArgumentException) {
+				return PARAM_ERR.getErrcode();
+			} else if (ex instanceof UnsupportedOperationException) {
+				return UNSUPPORTED.getErrcode();
+			} else { // status=999?
 				// statusCode = (Integer)
-				// request.getAttribute("javax.servlet.error.status_code");
+				// equest.getAttribute("javax.servlet.error.status_code");
 			}
 		}
 		if (!isNull(statusCode)) {

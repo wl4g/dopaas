@@ -27,7 +27,7 @@ import com.wl4g.devops.common.web.RespBase.RetCode;
  * @version v1.0 2019年9月2日
  * @since
  */
-public interface BizInvalidArgRestfulException extends RESTfulException {
+public interface BizInvalidParamsRestfulException extends RESTfulException {
 
 	/**
 	 * Get exception response code.

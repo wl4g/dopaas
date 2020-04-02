@@ -22,12 +22,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
-import com.wl4g.devops.common.web.RespBase.RetCode;
+import static com.wl4g.devops.common.web.RespBase.RetCode.*;
+import static com.wl4g.devops.tool.common.lang.Exceptions.*;
 import com.wl4g.devops.common.web.error.ErrorConfiguring;
-import com.wl4g.devops.tool.common.lang.Exceptions;
 
 /**
  * IAM authorization error configuring.
@@ -41,15 +42,19 @@ public class IamErrorConfiguring implements ErrorConfiguring {
 
 	@Override
 	public Integer getStatus(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model, Exception ex) {
-		// IAM Unauthenticated error?
+		// IAM Unauthenticated?
 		if ((ex instanceof UnauthenticatedException)
 				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthenticatedException)) {
-			return RetCode.UNAUTHC.getErrcode();
+			return UNAUTHC.getErrcode();
 		}
-		// IAM Unauthorized error?
+		// IAM Unauthorized?
 		else if ((ex instanceof UnauthorizedException)
 				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthorizedException)) {
-			return RetCode.UNAUTHZ.getErrcode();
+			return UNAUTHZ.getErrcode();
+		}
+		// see: IamSecurityHolder
+		else if (ex instanceof UnknownSessionException) {
+			return PARAM_ERR.getErrcode();
 		}
 
 		// Using next chain configuring.
@@ -59,12 +64,12 @@ public class IamErrorConfiguring implements ErrorConfiguring {
 	@Override
 	public String getRootCause(HttpServletRequest request, HttpServletResponse response, Map<String, Object> model,
 			Exception ex) {
-		// IAM Unauthenticated or Unauthorized error?
+		// IAM Unauthenticated or Unauthorized?
 		if ((ex instanceof UnauthenticatedException) || (ex instanceof UnauthorizedException)
 				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthenticatedException)
 				|| (ex instanceof com.wl4g.devops.common.exception.iam.UnauthorizedException)) {
-			// return Exceptions.getRootCausesString(ex);
-			return Exceptions.getMessage(ex);
+			// return getRootCausesString(ex);
+			return getMessage(ex);
 		}
 
 		// Using next chain configuring.
