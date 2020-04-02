@@ -4,7 +4,7 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
  
-!function(window, document){
+(function(window, document){
 	var g_modules = {
 		jqModule: { // JQuery
 			stable: "jquery-3.3.1.min.js",
@@ -64,14 +64,14 @@
 		}
 	};
 	var g_dependencies = [{
-		name: "UI", // 需与该模块在window中的对象名一致, @see:[MARK1]
+		name: "IAMUi", // 需与该模块在window中的对象名一致, @see:[MARK1]
 		features: ["iamUi", "iamSdkUi", "IamUI", "IamSdkUI"],
 		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "commonModule", "cryptoModule", "coreModule",
 			"captchaJigsawModule", "uiModule"],
 		sync: !1
 	},
 	{
-		name: "Core", // 需与该模块在window中的对象名一致, @see:MARK1
+		name: "IAMCore", // 需与该模块在window中的对象名一致, @see:MARK1
 		features: ["iamCore", "iamSdkCore", "IamCore", "IamSdkCore"],
 		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "cryptoModule", "coreModule", "captchaJigsawModule"],
 		sync: !1
@@ -207,7 +207,7 @@
 							script.onload = script.onreadystatechange = function(e) {
 								if (!script.readyState || script.readyState == 'loaded' || script.readyState == 'complete') {
 					            	console.debug("Loaded scripts feature: "+feature+", readyState: "+ this.readyState);
-									callback(window.IAM[name]); // [MARK1]
+									callback(new window[name]); // [MARK1]
 								}
 					        };
 						}
@@ -276,4 +276,4 @@
 		}
 	}
 
-}(window, document);
+})(window, document);

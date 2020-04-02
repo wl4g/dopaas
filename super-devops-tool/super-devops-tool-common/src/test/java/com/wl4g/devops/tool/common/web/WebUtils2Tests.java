@@ -74,7 +74,7 @@ public class WebUtils2Tests {
 		out.println(toQueryParams("application=iam-example&gt=aaa&redirect_url=http://my.com/index/#/me"));
 
 		out.println("-------------3333-------------------");
-		out.println(extractWildcardHostName("http://*.aaa.anjiancloud.test/API/v2"));
+		out.println(extractWildcardEndpoint("http://*.aaa.anjiancloud.test/API/v2"));
 
 		out.println("-------------1111-------------------");
 		out.println(isSameWildcardOrigin("http://*.aa.domain.com/api/v2", "http://bb.aa.domain.com/api/v2", true));

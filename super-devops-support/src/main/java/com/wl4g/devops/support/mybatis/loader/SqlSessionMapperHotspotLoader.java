@@ -20,6 +20,8 @@ import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.lang.Assert2.state;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.Thread.sleep;
+import static java.lang.String.format;
+import static java.lang.System.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.replace;
@@ -29,6 +31,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -147,21 +150,22 @@ public final class SqlSessionMapperHotspotLoader implements ApplicationRunner {
 		// 清理Mybatis的所有映射文件缓存, 目前由于未找到清空被修改文件的缓存的key值, 暂时仅支持全部清理, 然后全部加载
 		doCleanupOlderCacheConfig(configuration);
 
+		long begin = currentTimeMillis();
 		for (Resource rs : mapperLocations) {
 			try {
 				XMLMapperBuilder builder = new XMLMapperBuilder(rs.getInputStream(), configuration, rs.toString(),
 						configuration.getSqlFragments()); // Reload.
 				builder.parse();
-				if (log.isInfoEnabled()) {
-					log.info("Refreshed for: {}", rs);
-				}
+				log.debug("Refreshed for: {}", rs);
 			} catch (IOException e) {
-				log.error(String.format("Failed to refresh mapper for: %s", rs), e);
+				log.error(format("Failed to refresh mapper for: %s", rs), e);
 			}
 		}
+		long now = currentTimeMillis();
+		out.println(format("%s - Refreshed mappers: %s, cost: %sms", new Date(), mapperLocations.length, (now - begin)));
 
 		// Update refresh time.
-		lastRefreshTime.set(System.currentTimeMillis());
+		lastRefreshTime.set(now);
 	}
 
 	/**
@@ -172,7 +176,7 @@ public final class SqlSessionMapperHotspotLoader implements ApplicationRunner {
 	 */
 	private boolean isChanged() throws IOException {
 		if (lastRefreshTime.get() <= 0) { // Just initialized?
-			lastRefreshTime.set(System.currentTimeMillis());
+			lastRefreshTime.set(currentTimeMillis());
 			return false;
 		}
 		for (Resource rs : mapperLocations) {
