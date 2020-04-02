@@ -49,9 +49,8 @@
             <columnOverride column="description" javaType="java.lang.String" jdbcType="VARCHAR" />
         </table>-->
 
-        <table tableName="umc_custom_engine" domainObjectName="CustomEngine"
+        <table tableName="umc_custom_datasource_properties" domainObjectName="CustomDataSourceProperties"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-            <columnOverride column="code_content" javaType="java.lang.String" jdbcType="VARCHAR" />
         </table>
 
         <!--<table tableName="umc_custom_alarm_event" domainObjectName="CustomAlarmEvent"

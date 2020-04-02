@@ -16,6 +16,7 @@
 package com.wl4g.devops.umc.service;
 
 import com.wl4g.devops.common.bean.umc.CustomDataSource;
+import com.wl4g.devops.common.bean.umc.datasouces.BaseDataSource;
 import com.wl4g.devops.common.bean.umc.model.DataSourceProvide;
 import com.wl4g.devops.page.PageModel;
 
@@ -29,9 +30,9 @@ public interface CustomDataSourceService {
 
 	PageModel list(PageModel pm, String name);
 
-	CustomDataSource detal(Integer id);
+	BaseDataSource detal(Integer id);
 
-	void save(CustomDataSource customDatasource);
+	void save(BaseDataSource baseDataSource);
 
 	void del(Integer id);
 

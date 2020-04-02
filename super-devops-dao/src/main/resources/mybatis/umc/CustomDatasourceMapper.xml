@@ -5,34 +5,48 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="provider" jdbcType="VARCHAR" property="provider" />
-    <result column="url" jdbcType="VARCHAR" property="url" />
-    <result column="username" jdbcType="VARCHAR" property="username" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+
+    <collection property="customDataSourceProperties" javaType="list" ofType="com.wl4g.devops.common.bean.umc.CustomDataSourceProperties">
+      <id column="pid" jdbcType="INTEGER" property="id" />
+      <result column="data_source_id" jdbcType="INTEGER" property="dataSourceId" />
+      <result column="key" jdbcType="VARCHAR" property="key" />
+      <result column="value" jdbcType="VARCHAR" property="value" />
+    </collection>
+
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, provider, url, username, password, status, create_date, create_by, update_date, 
+    id, name, provider, status, create_date, create_by, update_date,
     update_by, del_flag
   </sql>
+  <sql id="Base_Column_List_d">
+    d.id, d.name, d.provider, d.status, d.create_date, d.create_by, d.update_date,
+    update_by, del_flag
+  </sql>
+
+  <sql id="Properties_Column_List">
+    p.id pid, p.data_source_id, p.key, p.value
+  </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
-    <include refid="Base_Column_List" />
-    from umc_custom_datasource
-    where id = #{id,jdbcType=INTEGER}
+    <include refid="Base_Column_List_d" />,<include refid="Properties_Column_List" />
+    from umc_custom_datasource d left join umc_custom_datasource_properties p on p.data_source_id = d.id
+    where d.id = #{id,jdbcType=INTEGER}
   </select>
 
   <select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
-    from umc_custom_datasource
-    where del_flag!=1
+    <include refid="Base_Column_List_d" />,<include refid="Properties_Column_List" />
+    from umc_custom_datasource d left join umc_custom_datasource_properties p on p.data_source_id = d.id
+    where d.del_flag!=1
     <if test="name != null and name != ''" >
-      AND name  = #{name,jdbcType=VARCHAR}
+      AND d.name  = #{name,jdbcType=VARCHAR}
     </if>
   </select>
 
@@ -42,13 +56,11 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.CustomDataSource">
     insert into umc_custom_datasource (id, name, provider, 
-      url, username, password, 
-      status, create_date, create_by, 
+      status, create_date, create_by,
       update_date, update_by, del_flag
       )
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{provider,jdbcType=VARCHAR}, 
-      #{url,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{status,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}
       )
   </insert>
@@ -63,15 +75,6 @@
       </if>
       <if test="provider != null">
         provider,
-      </if>
-      <if test="url != null">
-        url,
-      </if>
-      <if test="username != null">
-        username,
-      </if>
-      <if test="password != null">
-        password,
       </if>
       <if test="status != null">
         status,
@@ -102,15 +105,6 @@
       <if test="provider != null">
         #{provider,jdbcType=VARCHAR},
       </if>
-      <if test="url != null">
-        #{url,jdbcType=VARCHAR},
-      </if>
-      <if test="username != null">
-        #{username,jdbcType=VARCHAR},
-      </if>
-      <if test="password != null">
-        #{password,jdbcType=VARCHAR},
-      </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
       </if>
@@ -140,15 +134,6 @@
       <if test="provider != null">
         provider = #{provider,jdbcType=VARCHAR},
       </if>
-      <if test="url != null">
-        url = #{url,jdbcType=VARCHAR},
-      </if>
-      <if test="username != null">
-        username = #{username,jdbcType=VARCHAR},
-      </if>
-      <if test="password != null">
-        password = #{password,jdbcType=VARCHAR},
-      </if>
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
@@ -174,9 +159,6 @@
     update umc_custom_datasource
     set name = #{name,jdbcType=VARCHAR},
       provider = #{provider,jdbcType=VARCHAR},
-      url = #{url,jdbcType=VARCHAR},
-      username = #{username,jdbcType=VARCHAR},
-      password = #{password,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
