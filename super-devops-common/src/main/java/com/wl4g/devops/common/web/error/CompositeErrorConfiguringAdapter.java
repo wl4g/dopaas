@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.common.web.error;
 
-import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableList;
 
 import org.springframework.core.annotation.Order;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static java.util.Collections.sort;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -74,7 +74,7 @@ public class CompositeErrorConfiguringAdapter implements ErrorConfiguring {
 			}
 		}
 		// Fallback.
-		return RetCode.SYS_ERR.getErrcode();
+		return SYS_ERR.getErrcode();
 	}
 
 	@Override

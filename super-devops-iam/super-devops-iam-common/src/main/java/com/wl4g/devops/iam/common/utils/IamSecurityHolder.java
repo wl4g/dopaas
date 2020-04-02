@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
@@ -92,8 +93,8 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	public static IamPrincipalInfo getPrincipalInfo(boolean assertion) {
 		IamPrincipalInfo info = getBindValue(KEY_AUTHC_ACCOUNT_INFO);
 		if (assertion) {
-			notNull(info,
-					"Authentication subject is empty. The unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
+			notNull(info, UnauthenticatedException.class,
+					"Authentication subject empty. unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
 		}
 		return info;
 	}
@@ -106,8 +107,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @throws UnknownSessionException
 	 */
 	public static void checkSession() throws UnknownSessionException {
-		notNull(getSubject().getSession(false), UnknownSessionException.class,
-				"There is no session in the current subject. Do you not complete some pre logic (e.g, the logic of creating session)?");
+		notNull(getSubject().getSession(false), UnknownSessionException.class, "No session in current subject.");
 	}
 
 	/**

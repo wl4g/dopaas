@@ -17,7 +17,7 @@ package com.wl4g.devops.common.web;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
-import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
+import com.wl4g.devops.common.exception.restful.BizInvalidParamsRestfulException;
 import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
 import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
 import org.springframework.http.HttpStatus;
@@ -63,6 +63,7 @@ public class RespBase<D> implements Serializable {
 
 	private RetCode code = RetCode.OK;
 	private String status = DEFAULT_STATUS; // [Extensible]
+	private String requestId = DEFAULT_REQUESTID; // [Extensible]
 	private String message = EMPTY;
 	@SuppressWarnings("unchecked")
 	private D data = (D) DEFAULT_DATA;
@@ -128,7 +129,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Get status
+	 * Gets status
 	 * 
 	 * @return
 	 */
@@ -146,6 +147,27 @@ public class RespBase<D> implements Serializable {
 		if (!isBlank(status)) {
 			this.status = status;
 		}
+		return this;
+	}
+
+	/**
+	 * Gets current requestId.
+	 * 
+	 * @return
+	 */
+	public String getRequestId() {
+		return requestId;
+	}
+
+	/**
+	 * Sets current requestId.
+	 * 
+	 * @param requestId
+	 * @return
+	 */
+
+	public RespBase<D> setRequestId(String requestId) {
+		this.requestId = requestId;
 		return this;
 	}
 
@@ -189,9 +211,9 @@ public class RespBase<D> implements Serializable {
 		if (isNull(data))
 			return this;
 		if (checkDataAvailable()) // Data already payLoad ?
-			throw new IllegalStateException(
-					format("RespBase.data already payLoad, In order to set it successful the data node must be the initial value or empty. - %s",
-							getData()));
+			throw new IllegalStateException(format(
+					"RespBase.data already payLoad, In order to set it successful the data node must be the initial value or empty. - %s",
+					getData()));
 
 		this.data = data;
 		return this;
@@ -340,15 +362,15 @@ public class RespBase<D> implements Serializable {
 	 * @return
 	 * @see {@link RESTfulException}
 	 * @see {@link BizRuleRestrictRestfulException}
-	 * @see {@link BizInvalidArgRestfulException}
+	 * @see {@link BizInvalidParamsRestfulException}
 	 * @see {@link ServiceUnavailableRestfulException}
 	 */
 	public final static RetCode getRestfulCode(Throwable th, RetCode defaultCode) {
 		if (nonNull(th)) {
 			if (th instanceof BizRuleRestrictRestfulException) {
 				return ((BizRuleRestrictRestfulException) th).getCode();
-			} else if (th instanceof BizInvalidArgRestfulException) {
-				return ((BizInvalidArgRestfulException) th).getCode();
+			} else if (th instanceof BizInvalidParamsRestfulException) {
+				return ((BizInvalidParamsRestfulException) th).getCode();
 			} else if (th instanceof ServiceUnavailableRestfulException) {
 				return ((ServiceUnavailableRestfulException) th).getCode();
 			}
@@ -522,76 +544,94 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Response code definitions
+	 * HTTP response code definitions. </br>
 	 * 
 	 * @author wangl.sir
 	 * @version v1.0 2019年1月10日
 	 * @since
+	 * @see <a href="https://www.ietf.org/rfc/rfc2616.txt">RFC1216</a>
+	 * @see <a href=
+	 *      "https://tools.ietf.org/html/rfc2324#section-2.3.2">RFC2314</a>
 	 */
 	public abstract static class RetCode {
 
 		/**
-		 * Successful code<br/>
+		 * Successful code </br>
 		 * {@link HttpStatus.OK}
 		 */
 		final public static RetCode OK = new RetCode(HttpStatus.OK.value(), "Ok") {
 		};
 
 		/**
-		 * Parameter error<br/>
+		 * Parameter error </br>
 		 * {@link HttpStatus.BAD_REQUEST}
 		 */
-		final public static RetCode PARAM_ERR = new RetCode(BAD_REQUEST.value(), "Parameter error") {
+		final public static RetCode PARAM_ERR = new RetCode(BAD_REQUEST.value(), "Bad parameters") {
 		};
 
 		/**
-		 * Parameter error<br/>
-		 * {@link HttpStatus.NOT_FOUND}
-		 */
-		final public static RetCode NOT_FOUND_ERR = new RetCode(NOT_FOUND.value(), "Parameter error") {
-		};
-
-		/**
-		 * Business constraints<br/>
-		 * {@link HttpStatus.NOT_IMPLEMENTED}
-		 */
-		final public static RetCode BIZ_ERR = new RetCode(EXPECTATION_FAILED.value(), "Business restricted") {
-		};
-
-		/**
-		 * Business locked constraints<br/>
-		 * {@link HttpStatus.LOCKED}
-		 */
-		final public static RetCode LOCKD_ERR = new RetCode(LOCKED.value(), "Locked") {
-		};
-
-		/**
-		 * Unauthenticated<br/>
+		 * Unauthenticated </br>
 		 * {@link HttpStatus.UNAUTHORIZED}
 		 */
 		final public static RetCode UNAUTHC = new RetCode(UNAUTHORIZED.value(), "Unauthenticated") {
 		};
 
 		/**
-		 * Second Uncertified<br/>
-		 * {@link HttpStatus.PRECONDITION_FAILED}
-		 */
-		final public static RetCode SECOND_UNAUTH = new RetCode(PRECONDITION_FAILED.value(), "Second uncertified") {
-		};
-
-		/**
-		 * Unauthorized<br/>
+		 * Unauthorized </br>
 		 * {@link HttpStatus.FORBIDDEN}
 		 */
 		final public static RetCode UNAUTHZ = new RetCode(FORBIDDEN.value(), "Unauthorized") {
 		};
 
 		/**
-		 * System abnormality<br/>
+		 * Not found </br>
+		 * {@link HttpStatus.NOT_FOUND}
+		 */
+		final public static RetCode NOT_FOUND_ERR = new RetCode(NOT_FOUND.value(), "Not found") {
+		};
+
+		/**
+		 * Business constraints </br>
+		 * {@link HttpStatus.NOT_IMPLEMENTED}
+		 */
+		final public static RetCode BIZ_ERR = new RetCode(EXPECTATION_FAILED.value(), "Business restricted") {
+		};
+
+		/**
+		 * Business locked constraints </br>
+		 * {@link HttpStatus.LOCKED}
+		 */
+		final public static RetCode LOCKD_ERR = new RetCode(LOCKED.value(), "Resources locked") {
+		};
+
+		/**
+		 * Precondition limited </br>
+		 * {@link HttpStatus.PRECONDITION_FAILED}
+		 */
+		final public static RetCode PRECONDITITE_LIMITED = new RetCode(PRECONDITION_FAILED.value(), "Precondition limited") {
+		};
+
+		/**
+		 * Unsuppported </br>
+		 * {@link HttpStatus.NOT_IMPLEMENTED}
+		 */
+		final public static RetCode UNSUPPORTED = new RetCode(NOT_IMPLEMENTED.value(), "Unsuppported") {
+		};
+
+		/**
+		 * System abnormality </br>
 		 * {@link HttpStatus.SERVICE_UNAVAILABLE}
 		 */
 		final public static RetCode SYS_ERR = new RetCode(SERVICE_UNAVAILABLE.value(),
 				"Service unavailable, please try again later") {
+		};
+
+		/**
+		 * Unavailable For Legal Reasons </br>
+		 * {@link HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS}
+		 */
+		final public static RetCode LEGAL_ERR = new RetCode(UNAVAILABLE_FOR_LEGAL_REASONS.value(),
+				"Not available for legal reasons") {
 		};
 
 		/**
@@ -791,6 +831,11 @@ public class RespBase<D> implements Serializable {
 	 * Default status value.
 	 */
 	final public static String DEFAULT_STATUS = "Normal";
+
+	/**
+	 * Default requestId value.
+	 */
+	final public static String DEFAULT_REQUESTID = null;
 
 	/**
 	 * Default data value.</br>

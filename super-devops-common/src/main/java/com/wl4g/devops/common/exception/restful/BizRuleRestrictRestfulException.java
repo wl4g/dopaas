@@ -36,7 +36,7 @@ public interface BizRuleRestrictRestfulException extends RESTfulException {
 	 */
 	@Override
 	default RetCode getCode() {
-		return RetCode.SECOND_UNAUTH;
+		return RetCode.PRECONDITITE_LIMITED;
 	}
 
 }

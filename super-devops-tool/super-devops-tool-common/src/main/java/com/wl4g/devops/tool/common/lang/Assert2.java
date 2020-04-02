@@ -90,7 +90,7 @@ public abstract class Assert2 {
 	 */
 	public static void state(boolean expression, String fmtMessage, Object... args) {
 		if (!expression) {
-			throw new IllegalStateException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalStateException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -123,7 +123,7 @@ public abstract class Assert2 {
 	 */
 	public static void isTrue(boolean expression, String fmtMessage, Object... args) {
 		if (!expression) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -179,7 +179,7 @@ public abstract class Assert2 {
 	 */
 	public static void isNull(Object object, String fmtMessage, Object... args) {
 		if (object != null) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -210,7 +210,7 @@ public abstract class Assert2 {
 	 */
 	public static void notNull(Object object, String fmtMessage, Object... args) {
 		if (object == null) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -266,7 +266,7 @@ public abstract class Assert2 {
 	 */
 	public static void hasLength(String text, String fmtMessage, Object... args) {
 		if (!isNotBlank(text)) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -301,7 +301,7 @@ public abstract class Assert2 {
 	 */
 	public static void hasText(String text, String fmtMessage, Object... args) {
 		if (!isNotBlank(text)) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -340,7 +340,7 @@ public abstract class Assert2 {
 	 * @param argName
 	 */
 	public static void hasTextOf(String text, String argName) {
-		hasText(text, argName + " must have text; it must not be null, empty, or blank");
+		hasText(text, argName + " must not be empty");
 	}
 
 	/**
@@ -361,7 +361,7 @@ public abstract class Assert2 {
 	 */
 	public static void doesNotContain(String textToSearch, String substring, String fmtMessage, Object... args) {
 		if (isNotBlank(textToSearch) && isNotBlank(substring) && textToSearch.contains(substring)) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -455,7 +455,7 @@ public abstract class Assert2 {
 		if (array != null) {
 			for (Object element : array) {
 				if (element == null) {
-					throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+					throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 				}
 			}
 		}
@@ -518,7 +518,7 @@ public abstract class Assert2 {
 	 */
 	public static void notEmpty(Collection<?> collection, String fmtMessage, Object... args) {
 		if (collection == null || collection.isEmpty()) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -575,7 +575,7 @@ public abstract class Assert2 {
 	 */
 	public static void notEmpty(Map<?, ?> map, String fmtMessage, Object... args) {
 		if (map == null || map.isEmpty()) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -833,7 +833,7 @@ public abstract class Assert2 {
 		RuntimeException th = newRuntimeExceptionInstance(exceptionClass);
 		// Init cause message
 		try {
-			detailMessageField.set(th, "[Assertion failed] - " + doFormat(fmtMessage, args));
+			detailMessageField.set(th, ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		} catch (Exception ex) {
 			throw new Error("Unexpected reflection exception - " + ex.getClass().getName() + ": " + ex.getMessage());
 		}
@@ -871,6 +871,10 @@ public abstract class Assert2 {
 		}
 	}
 
+	/**
+	 * @see new IllegalArgumentException("[Assertion failed] - xxx required");
+	 */
+	final private static String ASSERT_FAILED_PREFIX = "[AF] - ";
 	final private static String NEW_RUNTIMEEXCEPTION_INSTANCE_METHOD = Assert2.class.getName() + "#newRuntimeExceptionInstance";
 	final private static String OBJENSIS_CLASS = "org.springframework.objenesis.ObjenesisStd";
 	final private static Object objenesis;
