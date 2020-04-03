@@ -78,7 +78,7 @@ public class HandshakeResult implements Serializable {
 	public void setAlgorithms(List<String> algorithms) {
 		if (!CollectionUtils.isEmpty(algorithms)) {
 			for (String alg : algorithms) {
-				if (this.algorithms.contains(alg)) {
+				if (!this.algorithms.contains(alg)) {
 					this.algorithms.add(alg);
 				}
 			}

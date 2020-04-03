@@ -65,15 +65,16 @@
 	};
 	var g_dependencies = [{
 		name: "IAMUi", // 需与该模块在window中的对象名一致, @see:[MARK1]
-		features: ["iamUi", "iamSdkUi", "IamUI", "IamSdkUI"],
+		features: ["iamUi", "IamUI", "IamUi", "iamSdkUi", "IamSdkUI"],
 		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "commonModule", "cryptoModule", "coreModule",
 			"captchaJigsawModule", "uiModule"],
 		sync: !1
 	},
 	{
 		name: "IAMCore", // 需与该模块在window中的对象名一致, @see:MARK1
-		features: ["iamCore", "iamSdkCore", "IamCore", "IamSdkCore"],
-		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "cryptoModule", "coreModule", "captchaJigsawModule"],
+		features: ["iamCore", "IamCore", "iamSdkCore", "IamSdkCore"],
+		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "commonModule", "cryptoModule", "coreModule", 
+			"captchaJigsawModule"],
 		sync: !1
 	}];
 
@@ -122,7 +123,8 @@
 		setModules.sort(function(a, b){
 			return a.ratio - b.ratio;
 		});
-		return {"name": moduleName, "modules": setModules};
+
+		return (!moduleName||setModules.length ==0) ? null : {"name": moduleName,"modules":setModules};
 	}
 
 	// Using modules.
@@ -167,7 +169,7 @@
 		return settings;
 	})();
 
-	window.IAM.Modules = {
+	window.IAM.Module = {
 		/**
 		 * Use load(css and js) specification module JSSDK API.
 		 * 
@@ -175,8 +177,8 @@
 		 * @param callback Loaded callback function.
 		 **/
 		use: function(feature, callback){
-			IAM.Modules.useCss(feature, function(){});
-			IAM.Modules.useJs(feature, callback);
+			IAM.Module.useCss(feature, function(){});
+			IAM.Module.useJs(feature, callback);
 		},
 		useJs: function(feature, callback){
 			if(Object.prototype.toString.call(feature) == '[object Function]' || !feature || callback == null || !callback) {
@@ -189,6 +191,7 @@
 
 			window.onload = function(){
 				var depends = getDependModules(feature);
+				if(!depends) throw Error("No such module feature of '"+ feature +"'");
 				var scriptUrls = depends.modules.map(d=>{
 					var t = (cache == 'true') ? 1 : new Date().getTime();
 					return d[mode]+"?t="+t;
@@ -247,6 +250,7 @@
 			var mode = _modules_settings.mode;
 
 			var depends = getDependModules(feature);
+			if(!depends) throw Error("No such module feature of '"+ feature +"'");
 			var cssUrls = depends.modules.filter(d=>d["css_"+mode]!=null&&d["css_"+mode]!="").map(d=>{
 				var t = (cache == 'true') ? 1 : new Date().getTime();
 				return d["css_"+mode]+"?t="+t;
