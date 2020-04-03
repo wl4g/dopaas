@@ -16,12 +16,14 @@
 package com.wl4g.devops.umc.web;
 
 import com.wl4g.devops.common.bean.umc.CustomEngine;
+import com.wl4g.devops.common.bean.umc.CustomEngineModel;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.tool.common.task.QuartzCronUtils;
 import com.wl4g.devops.umc.service.CustomEngineService;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,10 +53,25 @@ public class CustomEngineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(@RequestBody CustomEngine customEngine) {
-		log.info("into CustomDatasourceController.save prarms::" + "customEngine = {} ", customEngine);
-		notNull(customEngine, "customEngine is null");
+	public RespBase<?> save(@RequestBody CustomEngineModel customEngineModel) {
+		log.info("into CustomDatasourceController.save prarms::" + "customEngine = {} ", customEngineModel);
+		notNull(customEngineModel, "customEngine is null");
 		RespBase<Object> resp = RespBase.create();
+
+		CustomEngine customEngine = new CustomEngine();
+		BeanUtils.copyProperties(customEngineModel,customEngine,"notifyGroupIds");
+
+		Integer[] notifyGroupIds = customEngineModel.getNotifyGroupIds();
+		StringBuilder stringBuilder = new StringBuilder();
+		for(int i = 0;i<  notifyGroupIds.length;i++){
+			if(i==notifyGroupIds.length-1){
+				stringBuilder.append(notifyGroupIds[i]);
+			}else{
+				stringBuilder.append(notifyGroupIds[i]).append(",");
+			}
+		}
+		customEngine.setNotifyGroupIds(stringBuilder.toString());
+
 		customEngineService.save(customEngine);
 		return resp;
 	}
@@ -63,7 +80,18 @@ public class CustomEngineController extends BaseController {
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		CustomEngine customEngine = customEngineService.detal(id);
-		resp.setData(customEngine);
+
+		CustomEngineModel customEngineModel = new CustomEngineModel();
+		BeanUtils.copyProperties(customEngine,customEngineModel,"notifyGroupIds");
+		if(StringUtils.isNotBlank(customEngine.getNotifyGroupIds())){
+			String[] split = customEngine.getNotifyGroupIds().split(",");
+			Integer[] integers = new Integer[split.length];
+			for(int i = 0;i<split.length ;i++){
+				integers[i] = Integer.valueOf(split[i]);
+			}
+			customEngineModel.setNotifyGroupIds(integers);
+		}
+		resp.setData(customEngineModel);
 		return resp;
 	}
 

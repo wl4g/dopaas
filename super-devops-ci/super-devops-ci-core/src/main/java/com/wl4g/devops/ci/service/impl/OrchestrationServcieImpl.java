@@ -31,6 +31,7 @@ import com.wl4g.devops.tool.common.lang.Assert2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -89,6 +90,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
 
         List<OrchestrationPipeline> oldOrchestrationPipelines = orchestrationPipelineDao.selectByOrchestrationId(orchestrationId);
         cleanOldOrchestrationPipelines(oldOrchestrationPipelines, orchestrationPipelines);
+        cleanRepeat(orchestrationPipelines);
 
         for (OrchestrationPipeline orchestrationPipeline : orchestrationPipelines) {
             if (Objects.isNull(orchestrationPipeline.getPipelineId())) {
@@ -120,6 +122,19 @@ public class OrchestrationServcieImpl implements OrchestrationService {
                 orchestrationPipelineDao.deleteByPrimaryKey(oldOrchestrationPipeline.getId());
             }
         }
+    }
+
+
+    private void cleanRepeat(List<OrchestrationPipeline> orchestrationPipelines){
+        List<OrchestrationPipeline> needRemove = new ArrayList<>();
+        for(int i = 0;i < orchestrationPipelines.size();i++){
+            for(int j = i+1;j < orchestrationPipelines.size();j++){
+                if(orchestrationPipelines.get(i).getPipelineId().intValue() == orchestrationPipelines.get(i).getPipelineId().intValue()){
+                    needRemove.add(orchestrationPipelines.get(i));
+                }
+            }
+        }
+        orchestrationPipelines.removeAll(needRemove);
     }
 
     @Override
