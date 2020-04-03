@@ -16,6 +16,7 @@
 package com.wl4g.devops.umc.service;
 
 import com.wl4g.devops.common.bean.umc.CustomDataSource;
+import com.wl4g.devops.common.bean.umc.CustomDataSourceProperties;
 import com.wl4g.devops.common.bean.umc.datasouces.BaseDataSource;
 import com.wl4g.devops.common.bean.umc.model.DataSourceProvide;
 import com.wl4g.devops.page.PageModel;
@@ -36,8 +37,14 @@ public interface CustomDataSourceService {
 
 	void del(Integer id);
 
-	void testConnect(DataSourceProvide dataSourceProvide, String url, String username, String password,Integer id) throws Exception;
+	void testConnect(DataSourceProvide dataSourceProvide, String url, String username, String password, Integer id) throws Exception;
 
 	List<CustomDataSource> dataSources();
+
+	CustomDataSource model2Properties(BaseDataSource baseDataSource);
+
+	List<CustomDataSourceProperties> objectToCustomDataSourceProperties(Object obj, Integer dataSourceId) throws IllegalAccessException;
+
+	<T extends BaseDataSource> T properties2Model(CustomDataSource customDataSource);
 
 }

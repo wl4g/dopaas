@@ -153,7 +153,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
     }
 
 
-    private CustomDataSource model2Properties(BaseDataSource baseDataSource){
+    public CustomDataSource model2Properties(BaseDataSource baseDataSource){
         CustomDataSource customDataSource = new CustomDataSource();
         customDataSource.setId(baseDataSource.getId());
         customDataSource.setName(baseDataSource.getName());
@@ -215,7 +215,7 @@ public class CustomDataSourceServiceImpl implements CustomDataSourceService {
     }
 
 
-    private  <T extends BaseDataSource> T properties2Model(CustomDataSource customDataSource){
+    public  <T extends BaseDataSource> T properties2Model(CustomDataSource customDataSource){
         String[] ignores = new String[]{"id","name","provider","status","delFlag","createBy","createDate","updateBy","updateDate","remark",};
         if(MYSQL.toString().equalsIgnoreCase(customDataSource.getProvider())){
             MysqlDataSource mysqlDataSource = new MysqlDataSource();
