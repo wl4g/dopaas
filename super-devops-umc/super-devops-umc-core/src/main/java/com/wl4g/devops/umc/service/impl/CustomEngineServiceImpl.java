@@ -21,6 +21,7 @@ import com.wl4g.devops.common.bean.umc.CustomEngine;
 import com.wl4g.devops.dao.umc.CustomEngineDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.CustomEngineService;
+import com.wl4g.devops.umc.timing.EngineTaskScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,9 @@ public class CustomEngineServiceImpl implements CustomEngineService {
 
     @Autowired
     private CustomEngineDao customEngineDao;
+
+    @Autowired
+    private EngineTaskScheduler engineTaskScheduler;
 
     @Override
     public PageModel list(PageModel pm, String name) {
@@ -59,6 +63,8 @@ public class CustomEngineServiceImpl implements CustomEngineService {
             customEngine.setStatus(1);
             customEngineDao.insertSelective(customEngine);
         }
+
+        engineTaskScheduler.refreshTimingPipeline(customEngine);
     }
 
     @Override
@@ -68,6 +74,8 @@ public class CustomEngineServiceImpl implements CustomEngineService {
         customEngine.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         customEngine.preUpdate();
         customEngineDao.updateByPrimaryKeySelective(customEngine);
+
+        engineTaskScheduler.stopTimingPipeline(customEngine);
     }
 
 
