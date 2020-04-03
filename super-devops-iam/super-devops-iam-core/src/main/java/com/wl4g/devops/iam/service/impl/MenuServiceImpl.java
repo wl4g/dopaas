@@ -22,6 +22,7 @@ import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.service.GroupService;
 import com.wl4g.devops.iam.service.MenuService;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -83,6 +84,7 @@ public class MenuServiceImpl implements MenuService {
 
 	@Override
 	public void save(Menu menu) {
+		checkSort(menu);
 		if (menu.getId() != null) {
 			update(menu);
 		} else {
@@ -125,6 +127,18 @@ public class MenuServiceImpl implements MenuService {
 	private void update(Menu menu) {
 		menu.preUpdate();
 		menuDao.updateByPrimaryKeySelective(menu);
+	}
+
+	private void checkSort(Menu menu){
+		List<Menu> menus = menuDao.selectByParentId(menu.getParentId());
+		boolean hadSame = false;
+		for(Menu m : menus){
+			if(menu.getSort().equals(m.getSort()) && !m.getId().equals(menu.getId())){
+				hadSame = true;
+				break;
+			}
+		}
+		Assert2.isTrue(!hadSame,"menu's sort repeat");
 	}
 
 	private Set<Menu> getMenusSet() {
