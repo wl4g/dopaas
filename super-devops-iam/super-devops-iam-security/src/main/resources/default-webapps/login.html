@@ -12,14 +12,14 @@
 	<!-- <script type="text/javascript" src="//g.alicdn.com/AWSC/AWSC/awsc.js"></script> -->
 	<script type="text/javascript" src="./sdk/2.0.0/js/IAM.js" path="./sdk/2.0.0/" cache="false" mode="grey"></script>
 	<script type="text/javascript">
-		IAM.Modules.use("IamUI", function(uiModule){
+		IAM.Module.use("IamUI", function(uiModule){
 			console.log("******* IAM JSSDK loaded completed! *******");
-			$(function(){
+			$(function() {
 				// e.g. http://127.0.0.1:14040/iam-server
 				// e.g. http://localhost:14040/iam-server
 				// e.g. http://iam.wl4g.debug/iam-server
-				var iamServerUri = "http://localhost:14040/iam-server";
-				uiModule.initUI(document.getElementById("content-right"), iamServerUri);
+				var iamServerBaseUri = "http://localhost:14040/iam-server";
+				uiModule.initUI(document.getElementById("content-right"), iamServerBaseUri);
 			});
 		});
 	</script>

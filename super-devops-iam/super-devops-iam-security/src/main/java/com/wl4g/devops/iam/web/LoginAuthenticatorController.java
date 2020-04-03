@@ -40,7 +40,9 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.IamVersion.*;
+import static com.wl4g.devops.tool.common.codec.Base58.*;
 import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.checkSession;
 import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
@@ -99,10 +101,11 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 		checkPreHandle(request, false);
 
 		RespBase<Object> resp = RespBase.create(sessionStatus());
-		// --- Reponed handshake result. ---
+		// Reponed handshake result.
 		HandshakeResult handshake = new HandshakeResult(V2_0_0.getVersion());
 		// Current supports crypt algorithms.
-		handshake.setAlgorithms(cryptAdapter.getRunningKinds().stream().map(k -> k.getAlgorithm()).collect(toList()));
+		handshake.setAlgorithms(
+				cryptAdapter.getRunningKinds().stream().map(k -> encode(k.getAlgorithm().getBytes(UTF_8))).collect(toList()));
 		// Assgin sessionKeyId
 		handshake.setSessionKey(config.getCookie().getName());
 		handshake.setSessionValue(getSession(true).getId());
