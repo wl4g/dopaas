@@ -17,6 +17,8 @@ package com.wl4g.devops.iam.web.model;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * Simple Risk control UMID result
  * 
@@ -30,6 +32,7 @@ public class SimpleRcmTokenResult implements Serializable {
 	/**
 	 * Risk control UMID token.
 	 */
+	@NotBlank
 	private String umidToken;
 
 	public SimpleRcmTokenResult() {

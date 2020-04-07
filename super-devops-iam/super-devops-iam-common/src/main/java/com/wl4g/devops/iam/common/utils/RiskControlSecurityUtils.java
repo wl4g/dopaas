@@ -38,7 +38,7 @@ public abstract class RiskControlSecurityUtils extends AuthenticatingUtils {
 	//
 
 	/**
-	 * Gets version1 MFA factor(e.g. Client remote IP and loginId)
+	 * Gets version1 risk factor(e.g. Client remote IP and loginId)
 	 *
 	 * @param remoteHost
 	 * @param uid

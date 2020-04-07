@@ -89,23 +89,23 @@
 			},
 		},
 		handshake: {
-			sessionKey: null,
-			sessionValue: null,
-			algorithms: [],
+			sk: null, // sessionKey
+			sv: null, // sessionValue
+			algs: [], // algorithms
 			handleSessionTo: function(param){
 				// 手动提交session(解决跨顶级域名共享cookie失效问题, 如, chrome80+)
-				if(!Common.Util.isAnyEmpty(runtime.handshake.sessionKey, runtime.handshake.sessionValue)){
+				if(!Common.Util.isAnyEmpty(runtime.handshake.sk, runtime.handshake.sv)){
 					if(Common.Util.isObject(param)){
-						param[runtime.handshake.sessionKey] = runtime.handshake.sessionValue;
+						param[runtime.handshake.sk] = runtime.handshake.sv;
 					} else if (Common.Util.isMap(param)) {
-						param.set(runtime.handshake.sessionKey, runtime.handshake.sessionValue);
+						param.set(runtime.handshake.sk, runtime.handshake.sv);
 					}
 				}
 			},
 			// 提交认证等相关请求时，选择非对称加密算法
 			handleChooseSecureAlg: function() {
-				for (index in runtime.handshake.algorithms) {
-					var alg = Common.Util.decodeBase58(runtime.handshake.algorithms[index]);
+				for (index in runtime.handshake.algs) {
+					var alg = Common.Util.decodeBase58(runtime.handshake.algs[index]);
 					if (alg.startsWith(constant.useSecureAlgorithmName)) {
 						return alg;
 					}
@@ -667,15 +667,11 @@
 				}
 
 				_InitSafeCheck(function(checkCaptcha, checkGeneric, checkSms){
-					// 获取Server公钥信息
+					// 生成client公钥(用于获取认证成功后加密接口的密钥)
+					runtime.clientSecret = IAMCrypto.RSA.generateKey();
+					// 获取Server公钥(用于提交账号密码)
 					var secret = Common.Util.checkEmpty("Secret is empty", checkGeneric.secret);
-					// 获取session信息(为解决新版浏览器会阻止非顶级域名的cors共享策略, 即正确配置了allowd-header,withCredentials等也会被阻止, 如chrom80+开始)
-					var sessionKey = Common.Util.checkEmpty("sessionKey is empty", checkGeneric.sessionKey);
-					var sessionValue = Common.Util.checkEmpty("sessionValue is empty", checkGeneric.sessionValue);
-
-					// 生成client公钥
-					runtime.clientSecret = IAM.Crypto.RSA.generateKey();
-					var credentials = encodeURIComponent(IAM.Crypto.RSA.encryptToHexString(secret, plainPasswd));
+					var credentials = encodeURIComponent(IAMCrypto.RSA.encryptToHexString(secret, plainPasswd));
 					// 已校验的验证码Token(如果有)
 					var verifiedToken = "";
 					if(runtime.safeCheck.checkCaptcha.enabled){
@@ -709,8 +705,6 @@
 					loginParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
 					// 设备指纹umidToken(初始化页面时获取, 必须)
 					loginParam.set("{umidTokenKey}", runtime.um.getUmidTokenValue());
-					// Submit manually(Solve cross-cookie issues)
-					loginParam.set(sessionKey, sessionValue);
 					// 请求提交登录
 					doIamRequest("post", "{accountSubmitUri}", loginParam, function(resp){
 						// 解锁登录按钮
@@ -841,9 +835,10 @@
 
 	// 提交基于IAM特征的请求(如，设置跨域允许cookie,表单,post等)
 	var doIamRequest = function(method, urlAndKey, paramMap, success, error) {
-		runtime.handshake.handleSessionTo(paramMap);
 		// 默认公共参数
 		paramMap.set("{responseType}", Common.Util.checkEmpty("definition.responseTypeValue", settings.definition.responseTypeValue));
+		// 手动提交session
+		runtime.handshake.handleSessionTo(paramMap);
 		// 拼接生成请求URL
 		var _url = Common.Util.checkEmpty("deploy.baseUri", settings.deploy.baseUri);
 		if(urlAndKey.startsWith("{") && urlAndKey.endsWith("}")) { // Build API URI
@@ -871,7 +866,7 @@
 	window.IAMCore = function(){}
 	IAMCore.prototype.init = function(opt) {
 		// 初始化配置
-		_configure(opt);
+		_configure(opt);debugger
 		// 初始化获取设备umidToken
         runtime.um.getUmidTokenPromise().then(umidToken => {
         	// 初始化握手建立连接(非首次访问有umidToken缓存)

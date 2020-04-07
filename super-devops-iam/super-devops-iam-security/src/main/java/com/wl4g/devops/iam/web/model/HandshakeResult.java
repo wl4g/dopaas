@@ -22,7 +22,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
 import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Pre-processing handshake result model. {@link HandshakeResult}
@@ -37,21 +42,29 @@ public class HandshakeResult implements Serializable {
 	/**
 	 * Iam server version.
 	 */
+	@NotBlank
+	@JsonProperty("v")
 	private String version;
 
 	/**
 	 * Applied secretKey algorithms.
 	 */
+	@NotEmpty
+	@JsonProperty("algs")
 	private List<String> algorithms = new ArrayList<>();
 
 	/**
 	 * Session keyname.
 	 */
+	@NotBlank
+	@JsonProperty("sk")
 	private String sessionKey;
 
 	/**
 	 * Session value.
 	 */
+	@NotBlank
+	@JsonProperty("sv")
 	private Serializable sessionValue;
 
 	public HandshakeResult() {

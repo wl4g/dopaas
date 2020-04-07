@@ -73,7 +73,7 @@
 			var applyTokenCrc = Common.Util.Crc16CheckSum.crc16Modbus(runtime.applyModel.applyToken);
 			var tmpX = CryptoJS.enc.Hex.stringify(CryptoJS.SHA512(left + runtime.applyModel.applyToken)).substring(31, 97) + (left*applyTokenCrc);
             // Do encryption x-position.
-			var cipherX = IAM.Crypto.RSA.encryptToHexString(runtime.applyModel.secret, tmpX);
+			var cipherX = IAMCrypto.RSA.encryptToHexString(runtime.applyModel.secret, tmpX);
             var ret = null;
             var verifyData = {
                 applyToken: runtime.applyModel.applyToken,
