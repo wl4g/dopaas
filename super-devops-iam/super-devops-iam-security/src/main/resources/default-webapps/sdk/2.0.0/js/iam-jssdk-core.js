@@ -9,31 +9,31 @@
     var constant = {
         baseUriStoredKey : '__IAM_BASEURI',
         umidTokenStorageKey : '__IAM_UMIDTOKEN',
-        useSecureAlgorithmName: 'RSA', // 提交认证等相关请求时，选择非对称加密算法（ 默认：RSA）
+        useSecureAlgorithmName: 'RSA', // 提交认证相关请求时，选择的非对称加密算法（ 默认：RSA）
     };
 
 	// 运行时状态值/全局变量/临时缓存
 	var runtime = {
-		um: {
-			_umidTokenValue: null,
-			getUmidTokenValue: function() {
-				return Common.Util.checkEmpty("Fatal error, _umidTokenValue is null, No attention to call order (must be executed after " +
-						"runtime.um.getUmidTokenPromise())", runtime.um._umidTokenValue);
+		umid: {
+			_value: null,
+			getValue: function() {
+				return Common.Util.checkEmpty("Fatal error, umidToken value is null, No attention to call order (must be executed after " +
+						"runtime.umid.getValuePromise())", runtime.umid._value);
 			},
-			_currentlyInGettingUmidTokenPromise: null, // 仅getUmidTokenPromise使用
-			getUmidTokenPromise: function() {
+			_currentlyInGettingValuePromise: null, // 仅umid.getValuePromise使用
+			getValuePromise: function() {
 				// 若当前正在获取umidToken直接返回该promise对象（解决并发调用问题）
-				if (runtime.um._currentlyInGettingUmidTokenPromise) {
-					return runtime.um._currentlyInGettingUmidTokenPromise;
+				if (runtime.umid._currentlyInGettingValuePromise) {
+					return runtime.umid._currentlyInGettingValuePromise;
 				}
 				// 首先从缓存获取
 				var cacheUmidToken = Common.Util.Codec.decodeBase58(sessionStorage.getItem(constant.umidTokenStorageKey));
 				if(!Common.Util.isEmpty(cacheUmidToken)) {
-					runtime.um._umidTokenValue = cacheUmidToken;
+					runtime.umid._value = cacheUmidToken;
 					return new Promise((reslove, reject) => reslove(cacheUmidToken));
 				}
 				// 新请求获取umidToken/uaToken等(页面加载时调用一次即可)
-				return (runtime.um._currentlyInGettingUmidTokenPromise = new Promise((reslove, reject) => {
+				return (runtime.umid._currentlyInGettingValuePromise = new Promise((reslove, reject) => {
 					// 获取设备指纹信息
 					Common.Util.getFingerprint({}, function(fpObj){
 						var umItem = new Map();
@@ -76,8 +76,8 @@
 								sessionStorage.setItem(constant.umidTokenStorageKey, encodeUmidToken);
 								// Completed
 								reslove(res.data.umidToken);
-								runtime.um._umidTokenValue = res.data.umidToken;
-								runtime.um._currentlyInGettingUmidTokenPromise = null;
+								runtime.umid._value = res.data.umidToken;
+								runtime.umid._currentlyInGettingValuePromise = null;
 							}
 						}, function(errmsg){
 							console.warn("Failed to gets umidToken, " + errmsg);
@@ -89,23 +89,25 @@
 			},
 		},
 		handshake: {
-			sk: null, // sessionKey
-			sv: null, // sessionValue
-			algs: [], // algorithms
+			_value: {
+				sk: null, // sessionKey
+				sv: null, // sessionValue
+				algs: [], // algorithms
+			},
 			handleSessionTo: function(param){
 				// 手动提交session(解决跨顶级域名共享cookie失效问题, 如, chrome80+)
-				if(!Common.Util.isAnyEmpty(runtime.handshake.sk, runtime.handshake.sv)){
+				if(!Common.Util.isAnyEmpty(runtime.handshake._value.sk, runtime.handshake._value.sv)){
 					if(Common.Util.isObject(param)){
-						param[runtime.handshake.sk] = runtime.handshake.sv;
+						param[runtime.handshake._value.sk] = runtime.handshake._value.sv;
 					} else if (Common.Util.isMap(param)) {
-						param.set(runtime.handshake.sk, runtime.handshake.sv);
+						param.set(runtime.handshake._value.sk, runtime.handshake._value.sv);
 					}
 				}
 			},
 			// 提交认证等相关请求时，选择非对称加密算法
 			handleChooseSecureAlg: function() {
-				for (index in runtime.handshake.algs) {
-					var alg = Common.Util.decodeBase58(runtime.handshake.algs[index]);
+				for (index in runtime.handshake._value.algs) {
+					var alg = Common.Util.decodeBase58(runtime.handshake._value.algs[index]);
 					if (alg.startsWith(constant.useSecureAlgorithmName)) {
 						return alg;
 					}
@@ -367,7 +369,7 @@
 	};
 
 	// Configure settings
-	var _configure = function(obj) {
+	var _initConfigure = function(obj) {
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = $.extend(true, settings, obj);
 		console.debug("Default iamBaseURI: "+ settings.deploy.baseUri);
@@ -432,7 +434,7 @@
 	var getApplyCaptchaUrl = function() {
 		var paramMap = new Map();
 		// umidToken参数
-		paramMap.set(Common.Util.checkEmpty("definition.umidTokenKey",settings.definition.umidTokenKey), runtime.um.getUmidTokenValue());
+		paramMap.set(Common.Util.checkEmpty("definition.umidTokenKey",settings.definition.umidTokenKey), runtime.umid.getValue());
 		paramMap.set(Common.Util.checkEmpty("definition.verifyTypeKey",settings.definition.verifyTypeKey), Common.Util.checkEmpty("captcha.use",settings.captcha.use));
 		paramMap.set(Common.Util.checkEmpty("definition.responseType",settings.definition.responseType), Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue));
 		runtime.handshake.handleSessionTo(paramMap);
@@ -444,7 +446,7 @@
 	var getVerifyAnalysisUrl = function() {
 		var paramMap = new Map();
 		// umidToken参数
-		paramMap.set(Common.Util.checkEmpty("definition.umidTokenKey",settings.definition.umidTokenKey),runtime.um.getUmidToken());
+		paramMap.set(Common.Util.checkEmpty("definition.umidTokenKey",settings.definition.umidTokenKey),runtime.umid.getUmidToken());
 		paramMap.set(Common.Util.checkEmpty("definition.verifyTypeKey",settings.definition.verifyTypeKey),Common.Util.checkEmpty("captcha.use", settings.captcha.use));
 		//paramMap.set(Common.Util.checkEmpty("definition.verifyTypeKey",settings.definition.verifyTypeKey),Common.Util.checkEmpty("applyModel.verifyType",runtime.applyModel.verifyType));
 		paramMap.set(Common.Util.checkEmpty("definition.responseType", settings.definition.responseType),Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue));
@@ -578,7 +580,7 @@
 			var checkParam = new Map();
 			checkParam.set("{principalKey}", principal);
 			checkParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
-			checkParam.set("{umidTokenKey}", runtime.um.getUmidTokenValue());
+			checkParam.set("{umidTokenKey}", runtime.umid.getValue());
 			checkParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
 			doIamRequest("post", "{checkUri}", checkParam, function(res){
 				// 初始化完成回调
@@ -620,7 +622,7 @@
 							captchaParam.put("{verifyDataKey}", captcha);
 							captchaParam.put("{applyTokenKey}", _check("applyModel.applyToken", runtime.applyModel.applyToken));
 							captchaParam.put("{verifyTypeKey}", _check("applyModel.verifyType", runtime.applyModel.verifyType));
-							captchaParam.set("{umidTokenKey}", runtime.um.getUmidTokenValue());
+							captchaParam.set("{umidTokenKey}", runtime.umid.getValue());
 							// 提交验证码
 							doIamRequest("post", getVerifyAnalysisUrl(), captchaParam, function(res){
 								runtime.flags.isVerifying = false; // Reset verify status.
@@ -704,7 +706,7 @@
 					loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
 					loginParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
 					// 设备指纹umidToken(初始化页面时获取, 必须)
-					loginParam.set("{umidTokenKey}", runtime.um.getUmidTokenValue());
+					loginParam.set("{umidTokenKey}", runtime.umid.getValue());
 					// 请求提交登录
 					doIamRequest("post", "{accountSubmitUri}", loginParam, function(resp){
 						// 解锁登录按钮
@@ -866,9 +868,9 @@
 	window.IAMCore = function(){}
 	IAMCore.prototype.init = function(opt) {
 		// 初始化配置
-		_configure(opt);debugger
+		_initConfigure(opt);debugger
 		// 初始化获取设备umidToken
-        runtime.um.getUmidTokenPromise().then(umidToken => {
+        runtime.umid.getValuePromise().then(umidToken => {
         	// 初始化握手建立连接(非首次访问有umidToken缓存)
         	_InitHandshake(umidToken);
         });
@@ -878,8 +880,8 @@
         return window.sessionStorage.getItem(constant.baseUriStoredKey);
     };
     IAMCore.prototype.withAccountAuthenticator = function() {
-    	// 在getUmidTokenPromise内部执行是为了确保执行顺序
-    	runtime.um.getUmidTokenPromise().then(umidToken => {
+    	// 在getValuePromise内部执行是为了确保执行顺序
+    	runtime.umid.getValuePromise().then(umidToken => {
     		// 初始化绑定账号认证器
 			_InitAccountAuthenticator();
 			// 申请过SMS验证码?
@@ -906,22 +908,22 @@
 		return this;
 	};
 	IAMCore.prototype.withSMSAuthenticator = function() {
-		// 在getUmidTokenPromise内部执行是为了确保执行顺序
-    	runtime.um.getUmidTokenPromise().then(umidToken => _InitSMSAuthenticator());
+		// 在getValuePromise内部执行是为了确保执行顺序
+    	runtime.umid.getValuePromise().then(umidToken => _InitSMSAuthenticator());
     	return this;
 	};
 	IAMCore.prototype.withSNSAuthenticator = function() {
-		// 在getUmidTokenPromise内部执行是为了确保执行顺序
-    	runtime.um.getUmidTokenPromise().then(umidToken => _InitSNSAuthenticator());
+		// 在getValuePromise内部执行是为了确保执行顺序
+    	runtime.umid.getValuePromise().then(umidToken => _InitSNSAuthenticator());
 		return this;
 	};
 	IAMCore.prototype.withCaptchaVerifier = function() {
-		// 在getUmidTokenPromise内部执行是为了确保执行顺序
-    	runtime.um.getUmidTokenPromise().then(umidToken => _InitCaptchaVerifier());
+		// 在getValuePromise内部执行是为了确保执行顺序
+    	runtime.umid.getValuePromise().then(umidToken => _InitCaptchaVerifier());
 		return this;
 	};
 	IAMCore.prototype.getUMToken = function() {
-		return runtim.um.getUmidTokenValue();
+		return runtim.umid.getValue();
 	};
 
 })(window, document);
