@@ -41,9 +41,11 @@ public class CustomHistoryServiceImpl implements CustomHistoryService {
     public PageModel list(PageModel pm, String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
         List<CustomHistory> list = customHistoryDao.list(name);
-        for(CustomHistory customHistory : list){
-            customHistory.setCostTime(customHistory.getEndTime().getTime()-customHistory.getStartTime().getTime());
-        }
+        /*for(CustomHistory customHistory : list){
+            if(Objects.nonNull(customHistory.getEndTime())&& Objects.nonNull(customHistory.getStartTime())){
+                customHistory.setCostTime(customHistory.getEndTime().getTime()-customHistory.getStartTime().getTime());
+            }
+        }*/
         pm.setRecords(list);
         return pm;
     }

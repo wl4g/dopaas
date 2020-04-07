@@ -6,6 +6,7 @@
     <result column="custom_engine_id" jdbcType="INTEGER" property="customEngineId" />
     <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="cost_time" jdbcType="BIGINT" property="costTime" />
     <result column="state" jdbcType="INTEGER" property="state" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
 
@@ -14,11 +15,11 @@
 
   </resultMap>
   <sql id="Base_Column_List">
-    id, custom_engine_id, start_time, end_time, state, create_by
+    id, custom_engine_id, start_time, end_time,cost_time, state, create_by
   </sql>
 
   <sql id="Base_Column_List_h">
-    h.id, h.custom_engine_id, h.start_time, h.end_time, h.state, h.create_by
+    h.id, h.custom_engine_id, h.start_time, h.end_time,h.cost_time, h.state, h.create_by
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -46,10 +47,10 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.CustomHistory">
     insert into umc_custom_history (id, custom_engine_id, start_time, 
-      end_time, state, create_by
+      end_time,cost_time, state, create_by
       )
     values (#{id,jdbcType=INTEGER}, #{customEngineId,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, 
-      #{endTime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}
+      #{endTime,jdbcType=TIMESTAMP},#{costTime,jdbcType=BIGINT}, #{state,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.CustomHistory">
@@ -66,6 +67,9 @@
       </if>
       <if test="endTime != null">
         end_time,
+      </if>
+      <if test="costTime != null">
+        cost_time,
       </if>
       <if test="state != null">
         state,
@@ -87,6 +91,9 @@
       <if test="endTime != null">
         #{endTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="costTime != null">
+        #{costTime,jdbcType=BIGINT},
+      </if>
       <if test="state != null">
         #{state,jdbcType=INTEGER},
       </if>
@@ -107,6 +114,9 @@
       <if test="endTime != null">
         end_time = #{endTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="costTime != null">
+        cost_time = #{costTime,jdbcType=BIGINT},
+      </if>
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
       </if>
@@ -121,6 +131,7 @@
     set custom_engine_id = #{customEngineId,jdbcType=INTEGER},
       start_time = #{startTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP},
+      cost_time = #{costTime,jdbcType=BIGINT},
       state = #{state,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
