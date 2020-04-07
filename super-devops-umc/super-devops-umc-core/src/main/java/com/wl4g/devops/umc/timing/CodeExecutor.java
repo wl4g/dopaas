@@ -9,13 +9,13 @@ import com.wl4g.devops.common.bean.umc.datasouces.MysqlDataSource;
 import com.wl4g.devops.dao.umc.CustomAlarmEventDao;
 import com.wl4g.devops.dao.umc.CustomDatasourceDao;
 import com.wl4g.devops.dao.umc.CustomHistoryDao;
+import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 import com.wl4g.devops.umc.service.CustomDataSourceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
-import java.sql.SQLException;
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -23,6 +23,8 @@ import java.util.Date;
  * @date 2020-04-03 16:04:00
  */
 public class CodeExecutor {
+
+    SmartLogger log = SmartLoggerFactory.getLogger(getClass());
 
     @Autowired
     private CustomHistoryDao customHistoryDao;
@@ -40,33 +42,27 @@ public class CodeExecutor {
     private DemoEngine demoEngine;
 
 
-    public void executeCode(CustomEngine customEngine){
+    public void executeCode(CustomEngine customEngine) {
         CustomHistory customHistory = beforeStart(customEngine.getId());
-        //TODO execute code
 
         CustomDataSource customDataSource = customDatasourceDao.selectByPrimaryKey(customEngine.getDatasourceId());
         BaseDataSource baseDataSource = customDataSourceService.properties2Model(customDataSource);
 
-
-        if(baseDataSource instanceof MysqlDataSource){
+        if (baseDataSource instanceof MysqlDataSource) {
             MysqlDataSource mysqlDataSource = (MysqlDataSource) baseDataSource;
 
-            DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-            DataSource dataSource = dataSourceBuilder
-                    .url(mysqlDataSource.getUrl())
-                    .username(mysqlDataSource.getUsername())
-                    .password(mysqlDataSource.getPassword()).driverClassName("com.mysql.jdbc.Driver")
-                    .build();
-            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-            jdbcTemplate.setFetchSize(1);
+            SingleDataSource singleDataSource = new SingleDataSource("com.mysql.jdbc.Driver",mysqlDataSource.getUrl(),
+                    mysqlDataSource.getUsername(), mysqlDataSource.getPassword());
+
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(singleDataSource);
 
             //demoEngine
-            demoEngine.executeCode(jdbcTemplate,customEngine);
+            demoEngine.executeCode(jdbcTemplate, customEngine);
 
-            try {//close connection
-                dataSource.getConnection().close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            try {
+                singleDataSource.close();
+            } catch (IOException e) {
+                log.error("singleDataSource close fail",e);
             }
         }
 
@@ -74,7 +70,7 @@ public class CodeExecutor {
     }
 
 
-    private CustomHistory beforeStart(Integer customEngineId){
+    private CustomHistory beforeStart(Integer customEngineId) {
         CustomHistory customHistory = new CustomHistory();
         customHistory.setCustomEngineId(customEngineId);
         customHistory.setState(1);
@@ -86,15 +82,15 @@ public class CodeExecutor {
         return customHistory;
     }
 
-    private void afterEnd(CustomHistory customHistory){
+    private void afterEnd(CustomHistory customHistory) {
         customHistory.setEndTime(new Date());
-        customHistory.setCostTime(customHistory.getEndTime().getTime()-customHistory.getStartTime().getTime());
+        customHistory.setCostTime(customHistory.getEndTime().getTime() - customHistory.getStartTime().getTime());
         customHistory.preUpdate();
         customHistory.setState(5);
         customHistoryDao.updateByPrimaryKeySelective(customHistory);
     }
 
-    public void saveAlarmEvent(CustomEngine customEngine,String message){
+    public void saveAlarmEvent(CustomEngine customEngine, String message) {
         CustomAlarmEvent customAlarmEvent = new CustomAlarmEvent();
         customAlarmEvent.setCustomEngineId(customEngine.getId());
         customAlarmEvent.setNotifyGroupIds(customEngine.getNotifyGroupIds());
@@ -104,11 +100,6 @@ public class CodeExecutor {
 
         //TODO semd message
     }
-
-
-
-
-
 
 
 }
