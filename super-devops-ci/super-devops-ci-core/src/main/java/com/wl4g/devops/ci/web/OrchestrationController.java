@@ -69,9 +69,9 @@ public class OrchestrationController extends BaseController {
 	}
 
 	@RequestMapping("/run")
-	public RespBase<?> run(Integer id, String remark, @NotNull String taskTraceId, @NotNull Integer taskTraceType, String annex) {
+	public RespBase<?> run(Integer id, String remark, @NotNull String trackId, @NotNull Integer trackType, String annex) {
 		RespBase<Object> resp = RespBase.create();
-		orchestrationService.run(id,remark, taskTraceId, taskTraceType, annex);
+		orchestrationService.run(id,remark, trackId, trackType, annex);
 		return resp;
 	}
 

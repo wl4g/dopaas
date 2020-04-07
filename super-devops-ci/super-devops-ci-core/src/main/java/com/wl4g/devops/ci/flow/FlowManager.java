@@ -5,6 +5,7 @@ import com.wl4g.devops.ci.bean.RunModel;
 import com.wl4g.devops.ci.bean.RunModel.Pipeline;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.PipelineManager;
+import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.common.bean.ci.Orchestration;
 import com.wl4g.devops.common.bean.ci.OrchestrationPipeline;
 import com.wl4g.devops.dao.ci.OrchestrationDao;
@@ -188,8 +189,8 @@ public class FlowManager {
      * @param pipelineModel
      */
     public void master2slave(PipelineModel pipelineModel,String remark, String taskTraceId, Integer taskTraceType, String annex){
-    	//TODO
-        //pipeliner.runPipeline(new NewParameter(pipelineModel.getPipeId(), remark, taskTraceId, taskTraceType, annex),pipelineModel);
+		log.info("FlowManager.master2slave prarms::"+ "pipelineModel = {} , remark = {} , taskTraceId = {} , taskTraceType = {} , annex = {} ", pipelineModel, remark, taskTraceId, taskTraceType, annex );
+        pipeliner.runPipeline(new NewParameter(pipelineModel.getPipeId(), remark, taskTraceId, taskTraceType, annex),pipelineModel);
     }
 
     private static GenericTaskRunner<RunnerProperties> createGenericTaskRunner(int concurrencyPoolSize) throws Exception {
