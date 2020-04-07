@@ -26,6 +26,8 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author vjay
  * @date 2019-11-12 11:03:00
@@ -67,9 +69,9 @@ public class OrchestrationController extends BaseController {
 	}
 
 	@RequestMapping("/run")
-	public RespBase<?> run(Integer id) {
+	public RespBase<?> run(Integer id, String remark, @NotNull String taskTraceId, @NotNull Integer taskTraceType, String annex) {
 		RespBase<Object> resp = RespBase.create();
-		orchestrationService.run(id);
+		orchestrationService.run(id,remark, taskTraceId, taskTraceType, annex);
 		return resp;
 	}
 

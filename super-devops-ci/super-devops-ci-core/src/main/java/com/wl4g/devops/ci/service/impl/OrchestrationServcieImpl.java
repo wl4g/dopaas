@@ -151,14 +151,14 @@ public class OrchestrationServcieImpl implements OrchestrationService {
     }
 
     @Override
-    public void run(Integer id) {
+    public void run(Integer id,String remark, String taskTraceId, Integer taskTraceType, String annex) {
         Assert2.notNullOf(id, "id");
         Assert2.isTrue(!isMaxRuner(),"Runner is biggest , cant not create any more");
         Orchestration orchestration = orchestrationDao.selectByPrimaryKey(id);
         Assert2.notNullOf(orchestration, "orchestration");
         orchestration.setStatus(1);
         orchestrationDao.updateByPrimaryKeySelective(orchestration);
-        flowManager.runOrchestration(orchestration);
+        flowManager.runOrchestration(orchestration,remark, taskTraceId, taskTraceType, annex);
 
     }
 
