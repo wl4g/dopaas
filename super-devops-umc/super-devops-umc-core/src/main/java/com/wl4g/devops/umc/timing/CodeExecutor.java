@@ -51,12 +51,14 @@ public class CodeExecutor {
         if(baseDataSource instanceof MysqlDataSource){
             MysqlDataSource mysqlDataSource = (MysqlDataSource) baseDataSource;
 
-            DataSource dataSource = DataSourceBuilder.create()
+            DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
+            DataSource dataSource = dataSourceBuilder
                     .url(mysqlDataSource.getUrl())
                     .username(mysqlDataSource.getUsername())
                     .password(mysqlDataSource.getPassword()).driverClassName("com.mysql.jdbc.Driver")
                     .build();
             JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+            jdbcTemplate.setFetchSize(1);
 
             //demoEngine
             demoEngine.executeCode(jdbcTemplate,customEngine);
@@ -88,6 +90,7 @@ public class CodeExecutor {
         customHistory.setEndTime(new Date());
         customHistory.setCostTime(customHistory.getEndTime().getTime()-customHistory.getStartTime().getTime());
         customHistory.preUpdate();
+        customHistory.setState(5);
         customHistoryDao.updateByPrimaryKeySelective(customHistory);
     }
 

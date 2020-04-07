@@ -14,18 +14,18 @@ public class DemoEngine {
     private CodeExecutor codeExecutor;
 
 
-    public void executeCode(JdbcTemplate jdbcTemplate, CustomEngine customEngine){
+    public void executeCode(JdbcTemplate jdbcTemplate, CustomEngine customEngine) {
 
 
-            //TODO this code will get from db
-            Integer count = jdbcTemplate.queryForObject("select count(1) from sys_dict", Integer.class);
-            if(count>10){
-                //...
-                codeExecutor.saveAlarmEvent(customEngine,".......");
-            }else{
-                //...
-            }
-
+        //TODO this code will get from db
+        String sql = "select count(1) from sys_dict";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+        if (count > 10) {
+            //...
+            codeExecutor.saveAlarmEvent(customEngine, ".......");
+        } else {
+            //...
+        }
 
 
     }
