@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.config;
 
 import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.core.DefaultPipelineManager;
+import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.flow.FlowManager;
@@ -24,17 +25,12 @@ import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
 import com.wl4g.devops.ci.pcm.jira.JiraPcmOperator;
 import com.wl4g.devops.ci.pcm.redmine.RedminePcmOperator;
-import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
-import com.wl4g.devops.ci.pipeline.deploy.Python3PipeDeployer;
-import com.wl4g.devops.ci.pipeline.deploy.RktNativePipeDeployer;
-import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
-import com.wl4g.devops.ci.pipeline.deploy.GolangModPipeDeployer;
-import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
-import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
-import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.*;
 import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
+import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
+import com.wl4g.devops.ci.tool.LogPipelineCleaner;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.ci.vcs.alicode.AlicodeVcsOperator;
@@ -43,14 +39,10 @@ import com.wl4g.devops.ci.vcs.coding.CodingVcsOperator;
 import com.wl4g.devops.ci.vcs.gitee.GiteeVcsOperator;
 import com.wl4g.devops.ci.vcs.github.GithubVcsOperator;
 import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
-import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
-import com.wl4g.devops.ci.tool.LogPipelineCleaner;
 import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.framework.beans.PrototypeAlias;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -173,6 +165,13 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
+	@PrototypeAlias({ PipelineKind.VIEW_NATIVE })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public ViewNativePipelineProvider viewNativePipelineProvider(PipelineContext context) {
+		return new ViewNativePipelineProvider(context);
+	}
+
+	@Bean
 	@PrototypeAlias({ PipelineKind.PYTHON3_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public Python3PipelineProvider python3StandardPipelineProvider(PipelineContext context) {
@@ -214,6 +213,13 @@ public class CiCdAutoConfiguration {
 	public NpmViewPipeDeployer npmViewPipeDeployer(NpmViewPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryInstance> taskHistoryInstances) {
 		return new NpmViewPipeDeployer(provider, instance, taskHistoryInstances);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public ViewNativePipeDeployer viewNativePipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,
+														 List<TaskHistoryInstance> taskHistoryInstances) {
+		return new ViewNativePipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean

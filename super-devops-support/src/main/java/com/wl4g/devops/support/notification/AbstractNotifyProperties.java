@@ -15,25 +15,20 @@
  */
 package com.wl4g.devops.support.notification;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static java.lang.String.format;
-import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.replace;
-import static org.apache.commons.lang3.StringUtils.replaceIgnoreCase;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.validation.constraints.NotEmpty;
-
-import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
+import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.lang3.StringUtils.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Abstract Notify configuration properties.
@@ -97,7 +92,7 @@ public abstract class AbstractNotifyProperties implements NotifyProperties {
 
 		// Gets template content
 		String tplContent = getTemplates().getProperty(templateKey);
-		hasTextOf(templateKey, format("No such notification template content key of: %s", templateKey));
+		hasTextOf(tplContent, format("No such notification template content key of: %s", templateKey));
 
 		// Resolving template message
 		StringBuffer template = new StringBuffer(tplContent);
@@ -106,9 +101,9 @@ public abstract class AbstractNotifyProperties implements NotifyProperties {
 			template.setLength(0);
 			String key = "${" + k + "}";
 			if (isCaseSensitive()) {
-				template.append(replace(template0, key, (String) v));
+				template.append(replace(template0, key, valueOf(v)));
 			} else {
-				template.append(replaceIgnoreCase(template0, key, (String) v));
+				template.append(replaceIgnoreCase(template0, key, valueOf(v)));
 			}
 		});
 
