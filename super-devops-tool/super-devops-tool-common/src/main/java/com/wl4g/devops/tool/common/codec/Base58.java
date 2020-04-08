@@ -87,7 +87,6 @@ public abstract class Base58 {
 		// Transform the String to a base58 byte sequence
 		for (int i = 0; i < input.length(); ++i) {
 			char c = input.charAt(i);
-
 			int digit58 = -1;
 			if (c >= 0 && c < 128) {
 				digit58 = INDEXES[c];
@@ -95,7 +94,6 @@ public abstract class Base58 {
 			if (digit58 < 0) {
 				throw new IllegalArgumentException("Illegal character " + c + " at " + i);
 			}
-
 			input58[i] = (byte) digit58;
 		}
 		// Count leading zeroes

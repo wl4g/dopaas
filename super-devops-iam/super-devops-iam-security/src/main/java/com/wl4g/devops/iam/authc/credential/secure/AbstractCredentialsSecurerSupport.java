@@ -229,21 +229,21 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 */
 	protected CredentialsToken resolves(@NotNull CredentialsToken token) {
 		// Determine keyPairSpec
-		KeyPairSpec keySpec = determineSecretKeySpecPair(token.getKind(), token.getPrincipal());
+		KeyPairSpec keyPairSpec = determineSecretKeySpecPair(token.getKind(), token.getPrincipal());
 
 		if (log.isInfoEnabled()) {
-			String publicBase64String = keySpec.getPubHexString();
+			String publicBase64String = keyPairSpec.getPubHexString();
 
 			String pattern = "Determined keypair is principal: {}, publicKey: {}, privateKey: {}";
 			String privateBase64String = "******";
 			if (log.isDebugEnabled()) {
-				privateBase64String = keySpec.getBase64String();
+				privateBase64String = keyPairSpec.getBase64String();
 				log.debug(pattern, token.getPrincipal(), publicBase64String, privateBase64String);
 			}
 		}
 
 		// Mysterious decryption them.
-		final String plainCredentials = cryptAdapter.forOperator(token.getKind()).decryptWithHex(keySpec, token.getCredentials());
+		final String plainCredentials = cryptAdapter.forOperator(token.getKind()).decryptWithHex(keyPairSpec.getKeySpec(), token.getCredentials());
 		return new CredentialsToken(token.getPrincipal(), plainCredentials, token.getKind(), true);
 	}
 

@@ -233,6 +233,7 @@
 	 		},
 			// 定义验证码显示面板配置
 			captcha: {
+				enable: true,
 				use: "VerifyWithJigsawGraph", // default by 'VerifyWithGifGraph'
 				panel: document.getElementById("captcha_panel"), // Jigsaw验证码时必须
 				img: document.getElementById("codeimg"), // 验证码显示 img对象（仅jpeg/gif时需要）
@@ -246,6 +247,7 @@
 			},
 			// 登录认证配置
 			account: {
+				enable: true,
 				submitBtn: document.getElementById("iam_submit"), // 登录提交触发对象
 				principal: document.getElementById("user_name"), // 必填，获取填写的登录用户名
 				credential: document.getElementById("password"), // 获取登录账号密码，账号登录时必填
@@ -263,6 +265,7 @@
 				}
 			},
 			sms: { // SMS认证配置
+				enable: true,
 				submitBtn: document.getElementById("phone_submit"), // 登录提交触发对象
 				sendSmsBtn: document.getElementById("code-get"), // 发送SMS验证码对象
 				mobileArea: $(".select-area"), // 手机号区域select对象
@@ -283,6 +286,7 @@
 			},
 			// SNS授权配置
 			sns: {
+				enable: true,
 				// 定义必须的请求参数
 				required: {
 					getWhich: function () { // 执行操作类型，必须：当使用登录功能时值填"login",当使用绑定功能时值填"bind"
@@ -323,7 +327,7 @@
 					return true;
 				}
 			}
-		}).withAccountAuthenticator().withSMSAuthenticator().withSNSAuthenticator().withCaptchaVerifier();
+		});
 	}
 
 	// 监听panelType为pagePanel类型的SNS授权回调

@@ -177,6 +177,8 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 
 	@Override
 	protected void applyDefaultIfNecessary() {
+		super.applyDefaultIfNecessary();
+
 		// Default URL filter chain.
 		addDefaultFilterChain();
 

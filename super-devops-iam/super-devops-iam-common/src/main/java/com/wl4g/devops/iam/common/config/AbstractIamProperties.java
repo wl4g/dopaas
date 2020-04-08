@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.config;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;
 
@@ -90,6 +91,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	private CipherProperties cipher = new CipherProperties();
 
 	/**
+	 * Application name. e.g. http://host:port/{serviceName}/shiro-cas
+	 */
+	private String serviceName;
+
+	/**
 	 * Redirect to login URI.</br>
 	 * e.g. </br>
 	 * In IAM-Client: {iam-server-uri}/authenticator </br>
@@ -112,6 +118,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @return
 	 */
 	protected abstract String getUnauthorizedUri();
+
+	public String getServiceName() {
+		return serviceName;
+	}
+
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
 
 	public Map<String, String> getFilterChain() {
 		return filterChain;
@@ -174,15 +188,21 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	/**
 	 * Apply default properties if necessary.
 	 */
-	protected abstract void applyDefaultIfNecessary();
+	protected void applyDefaultIfNecessary() {
+		// Sets Service name defaults.
+		if (isBlank(getServiceName())) {
+			setServiceName(environment.getProperty("spring.application.name"));
+		}
+	}
 
 	/**
 	 * Validation.
 	 */
 	protected void validation() {
-		hasText(getLoginUri(), "'loginUri' must be empty.");
-		hasText(getSuccessUri(), "'successUri' must be empty.");
-		hasText(getUnauthorizedUri(), "'unauthorizedUri' must be empty.");
+		hasTextOf(getServiceName(), "serviceName");
+		hasTextOf(getLoginUri(), "'loginUri' must be empty.");
+		hasTextOf(getSuccessUri(), "'successUri' must be empty.");
+		hasTextOf(getUnauthorizedUri(), "'unauthorizedUri' must be empty.");
 	}
 
 	/**

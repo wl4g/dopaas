@@ -15,14 +15,14 @@
 	// 运行时状态值/全局变量/临时缓存
 	var runtime = {
 		umid: {
-			_value: null,
+			_value: null, // umidToken
 			getValue: function() {
 				return Common.Util.checkEmpty("Fatal error, umidToken value is null, No attention to call order (must be executed after " +
 						"runtime.umid.getValuePromise())", runtime.umid._value);
 			},
 			_currentlyInGettingValuePromise: null, // 仅umid.getValuePromise使用
 			getValuePromise: function() {
-				// 若当前正在获取umidToken直接返回该promise对象（解决并发调用问题）
+				// 若当前正在获取umidToken直接返回该promise对象（解决并发调用）
 				if (runtime.umid._currentlyInGettingValuePromise) {
 					return runtime.umid._currentlyInGettingValuePromise;
 				}
@@ -83,16 +83,49 @@
 							console.warn("Failed to gets umidToken, " + errmsg);
 							Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 异常回调
 							reject(errmsg);
-						});
+						}, false);
 					});
 				}));
 			},
 		},
 		handshake: {
-			_value: {
-				sk: null, // sessionKey
-				sv: null, // sessionValue
-				algs: [], // algorithms
+			/**
+			 * _value: {
+			 *  sk: null, // sessionKey
+			 *	sv: null, // sessionValue
+			 *	algs: [], // algorithms
+			 * }
+			 */
+			_value: null,
+			getValue: function() {
+				return Common.Util.checkEmpty("Fatal error, handshake value is null, No attention to call order (must be executed after " +
+						"runtime.handshake.getValuePromise())", runtime.handshake._value);
+			},
+			_currentlyInGettingValuePromise: null, // 仅handshake.getValuePromise使用
+			getValuePromise: function(umidToken) {
+				// 若当前正在获取handshake._value直接返回该promise对象（解决并发调用）
+				if (runtime.handshake._currentlyInGettingValuePromise) {
+					return runtime.handshake._currentlyInGettingValuePromise;
+				}
+				// 若已有值
+				if(!Common.Util.isEmpty(runtime.handshake._value)) {
+					return new Promise((reslove, reject) => reslove(runtime.handshake._value));
+				}
+				// 新请求获取handshake._value等(页面加载时调用一次即可)
+				return (runtime.handshake._currentlyInGettingValuePromise = new Promise((reslove, reject) => {
+					var handshakeParam = new Map();
+					handshakeParam.set("{umidTokenKey}", Common.Util.checkEmpty("umidToken", umidToken));
+					doIamRequest("post", "{handshakeUri}", handshakeParam, function(res) {
+						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
+						if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
+							runtime.handshake._value = $.extend(true, runtime.handshake._value, res.data);
+							reslove(runtime.handshake._value);
+						}
+					}, function(errmsg){
+						console.log("Failed to handshake, " + errmsg);
+						Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 异常回调
+					}, false);
+				}));
 			},
 			handleSessionTo: function(param){
 				// 手动提交session(解决跨顶级域名共享cookie失效问题, 如, chrome80+)
@@ -106,10 +139,11 @@
 			},
 			// 提交认证等相关请求时，选择非对称加密算法
 			handleChooseSecureAlg: function() {
-				for (index in runtime.handshake._value.algs) {
-					var alg = Common.Util.decodeBase58(runtime.handshake._value.algs[index]);
+				var _algs = runtime.handshake.getValue().algs;
+				for (index in _algs) {
+					var alg = Common.Util.Codec.decodeBase58(_algs[index]);
 					if (alg.startsWith(constant.useSecureAlgorithmName)) {
-						return alg;
+						return _algs[index]; // 提交也使用编码的字符串
 					}
 				}
 				throw Error('No such secure algoritm of: ' + constant.useSecureAlgorithmName);
@@ -117,7 +151,7 @@
 		},
 		safeCheck: { // Safe check result
 			checkGeneric: {
-				secret: null,
+				secretKey: null,
 			},
 			checkCaptcha: {
 				enabled: false,
@@ -130,7 +164,7 @@
 				remainDelayMs: null,
 			}
 		},
-		clientSecret: { }, // Authenticating clientSecret info
+		clientSecretKey: {}, // Authenticating clientSecretKey info
 		applyModel: { // Apply captcha result.
 			primaryImg: null,
 			applyToken: null,
@@ -194,7 +228,7 @@
 			}, function(req, status, errmsg){
 				console.debug("Failed to apply captcha, " + errmsg);
 				Common.Util.checkEmpty("captcha.onError", settings.captcha.onError)(errmsg);
-			});
+			}, true);
 		}
 	};
 
@@ -209,7 +243,7 @@
 			refreshUrlKey: "refresh_url", // 刷新URL参数名
 			principalKey: "principal", // 提交账号参数名
 			credentialKey: "credential", // 提交账号凭据(如：静态密码/SMS验证码)参数名
-			clientSecretKey: "clientSecret", // 客户端秘钥(公钥)参数名
+			clientSecretKey: "clientSecretKey", // 客户端秘钥(公钥)参数名
 			verifyTypeKey: "verifyType", // 验证码verifier别名参数名（通用）
 			applyTokenKey: "applyToken", // 申请的验证码f返回token参数名（通用）
 			verifyDataKey: "verifyData", // 提交验证码参数名（通用：simple/gif/jigsaw）
@@ -252,6 +286,7 @@
  		},
 		// 图像验证码配置
 		captcha: {
+			enable: false,
 			use: "VerifyWithGifGraph", // Default use gif
 			panel: null,
 			img: null,
@@ -313,6 +348,7 @@
 		},
 		// 账号认证配置
 		account: {
+			enable: false,
 			submitBtn: null, // 登录提交触发对象
 			principal: null, // 登录账号input对象
 			credential: null, // 登录凭据input对象
@@ -330,6 +366,7 @@
 		},
 		// SMS认证配置
 		sms: {
+			enable: false,
 			submitBtn: null, // 登录提交触发对象
 			sendSmsBtn: null, // 发送SMS动态密码对象
 			mobileArea: null, // 手机号区域select对象
@@ -348,6 +385,7 @@
 		},
 		// SNS授权认证配置
 		sns: {
+			enable: false,
 			required: { // 必须的参数
 				getWhich: function(provider, panelType){ // 获取参数'which'
 					throw "Unsupported errors, please implement to support get which function";
@@ -406,7 +444,7 @@
         console.debug("Using overlay iamBaseURI: "+ settings.deploy.baseUri);
 	};
 
-	// 请求连接到第三方社交网络URL
+	// Gets URL to request a connection to a sns provider
 	var getSnsConnectUrl = function(provider, panelType){
 		var required = Common.Util.checkEmpty("sns.required", settings.sns.required);
 		var which = Common.Util.checkEmpty("required.getWhich", required.getWhich(provider, panelType));
@@ -525,7 +563,13 @@
 	};
 
 	// Init SNS authorize authentication login implement.
-	var _InitSNSAuthenticator = function(){
+	var _InitSNSAuthenticator = function() {
+		// Check authenticator enable?
+		if (!settings.sns.enable) {
+			console.warn("SNS authenticator not enable!");
+			return;
+		}
+
 		var providerMap = Common.Util.checkEmpty("sns.provider", settings.sns.provider);
 		for(var provider in providerMap){ // provider为服务商名
 			// 获取服务商配置信息
@@ -550,21 +594,6 @@
 				snsViewReader(connectUrl, panelType);
 			}
 		}
-	};
-
-	// 请求握手建立连接
-	var _InitHandshake = function(umidToken) {
-		var handshakeParam = new Map();
-		handshakeParam.set("{umidTokenKey}", Common.Util.checkEmpty("runtime.getUmidToken", umidToken));
-		doIamRequest("post", "{handshakeUri}", handshakeParam, function(res) {
-			var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
-			if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
-				runtime.handshake = $.extend(true, runtime.handshake, res.data);
-			}
-		}, function(errmsg){
-			console.log("Failed to handshake, " + errmsg);
-			Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 异常回调
-		});
 	};
 
 	// 请求安全检查
@@ -593,12 +622,18 @@
 			}, function(errmsg){
 				console.log("Failed to safe check, " + errmsg);
 				Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 登录异常回调
-			});
+			}, true);
 		});
 	};
 
 	// Init captcha verifier implement.
-	var _InitCaptchaVerifier = function(){
+	var _InitCaptchaVerifier = function() {
+		// Check authenticator enable?
+		if (!settings.captcha.enable) {
+			console.warn("Captcha verifier not enable!");
+			return;
+		}
+
 		$(function(){
 			// 初始刷新验证码
 			resetCaptcha();
@@ -638,7 +673,7 @@
 								runtime.flags.isVerifying = false; // Reset verify status.
 								resetCaptcha();
 								settings.captcha.onError(errmsg); // Call after captcha error.
-							});
+							}, true);
 						}
 
 					}
@@ -649,6 +684,12 @@
 
 	// Init Account login implements.
 	var _InitAccountAuthenticator = function() {
+		// Check authenticator enable?
+		if (!settings.account.enable) {
+			console.warn("Account authenticator not enable!");
+			return;
+		}
+
 		$(function(){
 			// Init bind key-enter auto submit.
 			$(document).bind("keydown",function(event) {
@@ -670,10 +711,10 @@
 
 				_InitSafeCheck(function(checkCaptcha, checkGeneric, checkSms){
 					// 生成client公钥(用于获取认证成功后加密接口的密钥)
-					runtime.clientSecret = IAMCrypto.RSA.generateKey();
+					runtime.clientSecretKey = IAMCrypto.RSA.generateKey();
 					// 获取Server公钥(用于提交账号密码)
-					var secret = Common.Util.checkEmpty("Secret is empty", checkGeneric.secret);
-					var credentials = encodeURIComponent(IAMCrypto.RSA.encryptToHexString(secret, plainPasswd));
+					var secretKey = Common.Util.checkEmpty("Secret is empty", checkGeneric.secretKey);
+					var credentials = encodeURIComponent(IAMCrypto.RSA.encryptToHexString(secretKey, plainPasswd));
 					// 已校验的验证码Token(如果有)
 					var verifiedToken = "";
 					if(runtime.safeCheck.checkCaptcha.enabled){
@@ -700,7 +741,7 @@
 					loginParam.set("{principalKey}", principal);
 					//loginParam.set("{principalKey}", Common.Util.Codec.toHex(principal));
 					loginParam.set("{credentialKey}", credentials);
-					loginParam.set("{clientSecretKey}", runtime.clientSecret.publicKeyHex);
+					loginParam.set("{clientSecretKey}", runtime.clientSecretKey.publicKeyHex);
 					loginParam.set("{clientRefKey}", clientRef());
 					loginParam.set("{verifiedTokenKey}", verifiedToken);
 					loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
@@ -729,7 +770,7 @@
 						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
 						runtime.verifiedModel.verifiedToken = ""; // Clear
 						settings.account.onError(errmsg); // 登录异常回调
-					});
+					}, true);
 				});
 			});
 		});
@@ -737,6 +778,12 @@
 
 	// Init SMS authentication implements.
 	var _InitSMSAuthenticator = function(){
+		// Check authenticator enable?
+		if (!settings.sms.enable) {
+			console.warn("SMS authenticator not enable!");
+			return;
+		}
+
 		$(function(){
 			// 绑定申请SMS验证码按钮点击事件
 			$(Common.Util.checkEmpty("sms.sendSmsBtn", settings.sms.sendSmsBtn)).click(function(){
@@ -785,7 +832,7 @@
 					}
 				}, function(errmsg){
 					settings.sms.onError(errmsg); // 申请失败回调
-				});
+				}, true);
 			});
 			// 绑定SMS登录提交按钮点击事件
 			$(Common.Util.checkEmpty("sms.submitBtn", settings.sms.submitBtn)).click(function(){
@@ -812,8 +859,33 @@
 					}
 				}, function(errmsg){
 					settings.sms.onError(errmsg); // SMS登录失败回调
-				});
+				}, true);
 			});
+
+			// 上次申请过SMS验证码?刷新页面之后倒计时继续
+			if(runtime.safeCheck.checkSms.enabled) {
+				// 填充mobile number.
+				$(settings.sms.mobile).val(runtime.safeCheck.checkSms.mobileNum);
+				// 继续倒计时
+				var remainDelaySec = runtime.safeCheck.checkSms.remainDelayMs/1000;
+				var num = parseInt(remainDelaySec);
+				var timer = setInterval(() => {
+					var sendSmsBtn = $(settings.sms.sendSmsBtn);
+					if (num < 1) {
+						sendSmsBtn.attr('disabled', false);
+						var getBtnText = "新获取验证码";
+						if(!Common.Util.isZhCN()){
+							getBtnText = "Get verify code";
+						}
+						sendSmsBtn.text(getBtnText);
+						clearInterval(timer);
+					} else {
+						sendSmsBtn.attr('disabled', true);
+						sendSmsBtn.text(num + 's');
+						num--;
+					}
+				}, 1000);
+			}
 		});
 	};
 
@@ -836,11 +908,13 @@
 	};
 
 	// 提交基于IAM特征的请求(如，设置跨域允许cookie,表单,post等)
-	var doIamRequest = function(method, urlAndKey, paramMap, success, error) {
+	var doIamRequest = function(method, urlAndKey, paramMap, success, error, sessionIfNecessary) {
 		// 默认公共参数
 		paramMap.set("{responseType}", Common.Util.checkEmpty("definition.responseTypeValue", settings.definition.responseTypeValue));
-		// 手动提交session
-		runtime.handshake.handleSessionTo(paramMap);
+		// 手动提交session(若有必要)
+		if (sessionIfNecessary) {
+			runtime.handshake.handleSessionTo(paramMap);
+		}
 		// 拼接生成请求URL
 		var _url = Common.Util.checkEmpty("deploy.baseUri", settings.deploy.baseUri);
 		if(urlAndKey.startsWith("{") && urlAndKey.endsWith("}")) { // Build API URI
@@ -868,60 +942,21 @@
 	window.IAMCore = function(){}
 	IAMCore.prototype.init = function(opt) {
 		// 初始化配置
-		_initConfigure(opt);debugger
+		_initConfigure(opt);
 		// 初始化获取设备umidToken
-        runtime.umid.getValuePromise().then(umidToken => {
-        	// 初始化握手建立连接(非首次访问有umidToken缓存)
-        	_InitHandshake(umidToken);
-        });
+        runtime.umid.getValuePromise()
+        	.then(umidToken => runtime.handshake.getValuePromise(umidToken))
+        	.then(handshakeValue => { // 为确保执行顺序（1，获取umidToken；2，请求handshake；3，初始绑定各种认证器）
+    			_InitAccountAuthenticator();
+        		_InitSMSAuthenticator();
+        		_InitSNSAuthenticator();
+        		_InitCaptchaVerifier();
+        	});
         return this;
 	};
 	IAMCore.prototype.getIamBaseUri = function() {
         return window.sessionStorage.getItem(constant.baseUriStoredKey);
     };
-    IAMCore.prototype.withAccountAuthenticator = function() {
-    	// 在getValuePromise内部执行是为了确保执行顺序
-    	runtime.umid.getValuePromise().then(umidToken => {
-    		// 初始化绑定账号认证器
-			_InitAccountAuthenticator();
-			// 申请过SMS验证码?
-			if(runtime.safeCheck.checkSms.enabled){
-				// 填充mobile number.
-				$(settings.sms.mobile).val(runtime.safeCheck.checkSms.mobileNum);
-				// 继续倒计时
-				var remainDelaySec = runtime.safeCheck.checkSms.remainDelayMs/1000;
-				var num = parseInt(remainDelaySec);
-				var timer = setInterval(() => {
-					var sendSmsBtn = $(settings.sms.sendSmsBtn);
-					if (num < 1) {
-						sendSmsBtn.attr('disabled', false);
-						sendSmsBtn.text('获取');
-						clearInterval(timer);
-					} else {
-						sendSmsBtn.attr('disabled', true);
-						sendSmsBtn.text(num + 's');
-						num--;
-					}
-				}, 1000);
-			}
-    	});
-		return this;
-	};
-	IAMCore.prototype.withSMSAuthenticator = function() {
-		// 在getValuePromise内部执行是为了确保执行顺序
-    	runtime.umid.getValuePromise().then(umidToken => _InitSMSAuthenticator());
-    	return this;
-	};
-	IAMCore.prototype.withSNSAuthenticator = function() {
-		// 在getValuePromise内部执行是为了确保执行顺序
-    	runtime.umid.getValuePromise().then(umidToken => _InitSNSAuthenticator());
-		return this;
-	};
-	IAMCore.prototype.withCaptchaVerifier = function() {
-		// 在getValuePromise内部执行是为了确保执行顺序
-    	runtime.umid.getValuePromise().then(umidToken => _InitCaptchaVerifier());
-		return this;
-	};
 	IAMCore.prototype.getUMToken = function() {
 		return runtim.umid.getValue();
 	};

@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.summarizingDouble;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.hasText;
@@ -128,11 +129,11 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		}
 
 		// DECRYPT slider block x-position.
-		KeyPairSpec keySpec = getBindValue(model.getApplyToken(), true);
-		String plainX = cryptAdapter.forOperator(kind).decryptWithHex(keySpec, model.getX());
+		KeyPairSpec keyPairSpec = getBindValue(model.getApplyToken(), true);
+		String plainX = cryptAdapter.forOperator(kind).decryptWithHex(keyPairSpec.getKeySpec(), model.getX());
 		hasText(plainX, "Invalid x-position, unable to resolve.");
 		// Parsing additional algorithmic salt.
-		isTrue(plainX.length() > 66, String.format("Failed to analyze jigsaw, illegal additional ciphertext. '%s'", plainX));
+		isTrue(plainX.length() > 66, format("Failed to analyze jigsaw, illegal additional ciphertext. '%s'", plainX));
 
 		log.debug("Jigsaw analyze decrypt plain x-position: {}, cipher x-position: {}", plainX, model.getX());
 

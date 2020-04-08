@@ -162,16 +162,6 @@ public abstract class WebUtils2 {
 	/**
 	 * Is true <br/>
 	 * 
-	 * @param value
-	 * @return Return TRUE with true/t/y/yes/on/1/enabled
-	 */
-	public static boolean isTrue(String value) {
-		return isTrue(value, false);
-	}
-
-	/**
-	 * Is true <br/>
-	 * 
 	 * @param request
 	 * @param value
 	 * @param defaultValue
@@ -185,16 +175,21 @@ public abstract class WebUtils2 {
 	 * Is true <br/>
 	 * 
 	 * @param value
+	 * @return Return TRUE with true/t/y/yes/on/1/enabled
+	 */
+	public static boolean isTrue(String value) {
+		return isTrue(value, false);
+	}
+
+	/**
+	 * Is true <br/>
+	 * 
+	 * @param value
 	 * @param defaultValue
 	 * @return Return TRUE with true/t/y/yes/on/1/enabled
 	 */
 	public static boolean isTrue(String value, boolean defaultValue) {
-		if (isBlank(value)) {
-			return defaultValue;
-		}
-		return (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("t") || value.equalsIgnoreCase("1")
-				|| value.equalsIgnoreCase("enabled") || value.equalsIgnoreCase("y") || value.equalsIgnoreCase("yes")
-				|| value.equalsIgnoreCase("on"));
+		return StringUtils2.isTrue(value, defaultValue);
 	}
 
 	/**

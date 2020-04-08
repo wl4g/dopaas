@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.iam.crypto;
 
+import java.security.spec.KeySpec; 
+
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.crypto.asymmetric.RSACryptor;
-import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.RSAKeyPairSpec;
 
 /**
@@ -39,13 +40,13 @@ public final class RSASecureCryptService extends AbstractAsymmetricCryptService<
 	}
 
 	@Override
-	public String encryptWithHex(KeyPairSpec keySpec, String plaintext) {
-		return cryptor.getInstance(keySpec).encrypt(plaintext);
+	public String encryptWithHex(KeySpec keySpec, String plaintext) {
+		return cryptor.encrypt(keySpec, plaintext);
 	}
 
 	@Override
-	public String decryptWithHex(KeyPairSpec keySpec, String hexCiphertext) {
-		return cryptor.getInstance(keySpec).decrypt(hexCiphertext);
+	public String decryptWithHex(KeySpec keySpec, String hexCiphertext) {
+		return cryptor.decrypt(keySpec, hexCiphertext);
 	}
 
 	@Override

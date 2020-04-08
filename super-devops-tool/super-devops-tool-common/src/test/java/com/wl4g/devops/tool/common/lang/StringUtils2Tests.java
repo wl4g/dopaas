@@ -15,14 +15,43 @@
  */
 package com.wl4g.devops.tool.common.lang;
 
+import java.util.regex.Pattern;
+
 import static java.util.Locale.US;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static com.wl4g.devops.tool.common.lang.StringUtils2.*;
 
 public class StringUtils2Tests {
 
 	public static void main(String[] args) {
 		String r = randomAlphanumeric(59).toUpperCase(US);
 		System.out.println(r);
+
+		ExpressVo vo = createRandomExpres(1, 10);
+		System.out.println(vo.getExpression());
+		System.out.println(vo.getResult());
+
+		Object o = 1.0d;
+		System.out.println(String.valueOf(o.toString()));
+		System.out.println("=============");
+		System.out.println(eqIgnCase("1.0", o));
+		System.out.println(equalsIgnoreCase("1.0", o.toString()));
+
+		Pattern p = Pattern.compile(
+				"^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$|^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|X)$");
+		System.out.println(p.matcher("36060219890331301X").find());
+
+		String msg = "H {\"aaa\":\"bbb\"}";
+		System.out.println(unpackingMessage(msg));
+
+		System.out.println("============");
+		System.out.println(isURL("https://mp.domain.com/mp/index"));
+		System.out.println(isDomain("www.next.mp.domain.com"));
+		System.out.println(isDomain("*.mp.domain.com"));
+		System.out.println(isDomain("www.*.mp.domain.com"));
+		System.out.println(isDomain("www..mp.domain.com"));
+		System.out.println(isDomain("www.123-est.domain.com"));
+		System.out.println(isDomain("www.123_est.domain.com"));
 	}
 
 }

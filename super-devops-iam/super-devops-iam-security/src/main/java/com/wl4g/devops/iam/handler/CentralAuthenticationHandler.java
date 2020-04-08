@@ -66,6 +66,7 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Default authentication handler implements
@@ -220,23 +221,24 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		boolean logoutAll = true;
 		// Get bind session grant information
 		GrantTicketInfo grantInfo = getGrantTicketInfo(subject.getSession());
-		log.debug("Get grant information bound the session is [{}]", grantInfo);
+		log.debug("Got grantInfo: [{}] with sessionId: [{}]", grantInfo, subject.getSession().getId());
 
-		if (grantInfo != null && grantInfo.hasApplications()) {
-			/*
-			 * Query applications by bind session names
-			 */
+		if (!isNull(grantInfo) && grantInfo.hasApplications()) {
+			// Query applications by bind session names
 			Set<String> appNames = grantInfo.getApplications().keySet();
+			// Cleanup this(Solve the dead cycle).
+			appNames.remove(config.getServiceName());
+
 			List<ApplicationInfo> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
-			if (apps == null || apps.isEmpty()) {
-				throw new IamException(String.format("Find application information is empty. %s", appNames));
-			}
-			// logout all
-			logoutAll = processLogoutAll(subject, grantInfo, apps);
+			if (!isEmpty(apps)) {
+				// logout all
+				logoutAll = handleLogoutSessionAll(subject, grantInfo, apps);
+			} else
+				log.debug("Not found logout appInfo. appNames: {}", appNames);
 		}
 
 		if (forced || logoutAll) {
-			// Logout server session
+			// Logout all sessions.
 			try {
 				/**
 				 * That's the subject Refer to
@@ -393,7 +395,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @param apps
 	 * @return
 	 */
-	private boolean processLogoutAll(Subject subject, GrantTicketInfo grantInfo, List<ApplicationInfo> apps) {
+	private boolean handleLogoutSessionAll(Subject subject, GrantTicketInfo grantInfo, List<ApplicationInfo> apps) {
 		boolean logoutAll = true; // Represents all logged-out Tags
 
 		/*
@@ -412,12 +414,11 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 				RespBase<LogoutModel> resp = restTemplate
 						.exchange(url, HttpMethod.POST, null, new ParameterizedTypeReference<RespBase<LogoutModel>>() {
 						}).getBody();
-				if (RespBase.isSuccess(resp)) {
+				if (RespBase.isSuccess(resp))
 					log.info("Logout finished for principal:{}, application:{} url:{}", subject.getPrincipal(), app.getAppName(),
 							url);
-				} else {
+				else
 					throw new IamException(resp != null ? resp.getMessage() : "No response");
-				}
 			} catch (Exception e) {
 				logoutAll = false;
 				log.error(String.format("Remote client logout failure. principal[%s] application[%s] url[%s]",

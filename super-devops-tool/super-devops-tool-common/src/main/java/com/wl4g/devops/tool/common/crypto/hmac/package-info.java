@@ -13,26 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.crypto;
-
-import java.security.MessageDigest;
-
-import org.apache.commons.codec.binary.Hex;
-
-public class DefaultDigestTests {
-
-	public static void main(String[] args) throws Exception {
-		byte[] salt = Hex.decodeHex("697db6018316b39c".toCharArray());
-		MessageDigest digest = MessageDigest.getInstance("SHA-1");
-		if (salt != null) {
-			digest.update(salt);
-		}
-		byte[] result = digest.digest("123456".getBytes());
-		for (int i = 1; i < 1024; i++) {
-			digest.reset();
-			result = digest.digest(result);
-		}
-		System.out.println(Hex.encodeHexString(result));
-	}
-
-}
+/**
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年2月8日
+ * @since
+ * @see {@link org.apache.commons.codec.digest.HmacUtils}
+ */
+package com.wl4g.devops.tool.common.crypto.hmac;
