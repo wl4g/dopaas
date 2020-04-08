@@ -15,16 +15,9 @@
  */
 package com.wl4g.devops.umc.config;
 
-import com.wl4g.devops.common.bean.umc.CustomEngine;
-import com.wl4g.devops.umc.timing.CodeExecutor;
-import com.wl4g.devops.umc.timing.DemoEngine;
 import com.wl4g.devops.umc.timing.EngineTaskScheduler;
-import com.wl4g.devops.umc.timing.TimingEngineProvider;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 /**
  * CICD auto configuration.
@@ -34,34 +27,14 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
  * @since
  */
 @Configuration
-public class EngineAutoConfiguration {
+public class EngineConfiguration {
 
 	@Bean
 	public EngineTaskScheduler engineTaskScheduler() {
 		return new EngineTaskScheduler();
 	}
 
-	@Bean
-	public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
-		return new ThreadPoolTaskScheduler();
-	}
 
-	@Bean
-	public CodeExecutor codeExecutor() {
-		return new CodeExecutor();
-	}
-
-	@Bean
-	public DemoEngine demoEngine() {
-		return new DemoEngine();
-	}
-
-
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public TimingEngineProvider timingEngineProvider(CustomEngine customEngine) {
-		return new TimingEngineProvider(customEngine);
-	}
 
 
 }

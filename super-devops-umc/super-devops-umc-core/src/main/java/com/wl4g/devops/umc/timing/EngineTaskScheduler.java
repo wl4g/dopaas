@@ -127,7 +127,10 @@ public class EngineTaskScheduler implements ApplicationRunner {
 		String key = getTimingPipelineKey(customEngine.getId());
 		ScheduledFuture<?> future = EngineTaskScheduler.map.get(key);
 		if (nonNull(future)) {
-			if (!future.cancel(true)) {
+			boolean cancel = future.cancel(true);
+			if (cancel) {
+				map.remove(key);
+			}else{
 				throw new IllegalStateException(String.format("Failed to stopped timing pipeline of '%s'", key));
 			}
 		}
