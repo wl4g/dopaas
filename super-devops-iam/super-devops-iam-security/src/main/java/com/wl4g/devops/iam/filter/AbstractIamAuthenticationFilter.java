@@ -243,7 +243,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				 * needs to be redirected to the CAS client application, then
 				 * grantTicket is required.
 				 */
-				if (isNotBlank(grantTicket)) {
+				if (!isBlank(grantTicket)) {
 					params.put(config.getParam().getGrantTicket(), grantTicket);
 				}
 
@@ -259,7 +259,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// See:org.apache.shiro.web.filter.authc.AuthenticatingFilter#executeLogin
 			throw new AuthenticationException(e);
 		} finally {
-			cleanup(token, subject, request, response); // Clean-up
+			cleanup(token, subject, request, response); // Cleanup
 		}
 
 		// Redirection has been responded and no further execution is required.
@@ -505,8 +505,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		// Placing it in http.body makes it easier for Android/iOS
 		// to get token.
-		params.put(config.getCookie().getName(), subject.getSession().getId());
 		params.put(config.getParam().getRedirectUrl(), redirectUrl);
+		params.put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 
 		// Post success secret processing.
 		postSuccessSecretTokenHandle(token, params);
@@ -515,7 +515,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
 		resp.setCode(OK).setMessage("Authentication successful");
 		resp.forMap().putAll(params);
-		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		return resp;
 	}
 
@@ -612,24 +611,23 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void postSuccessSecretTokenHandle(AuthenticationToken token, Map params) {
 		try {
-			// Deserialize the 'clientSecret' and use it to encrypt the newly
-			// generated symmetric algorithm key.
+			// Deserialize the 'clientSecretKey' and use it to encrypt the newly
+			// generated symmetric dataCipherKey.
 			if (token instanceof ClientSecretIamAuthenticationToken) {
-				// New symmetric secretKey.
-				// TODO Dynamic symmetric algorithm??
-				String secretKey = new AESCryptor().generateKey(128).toHex();
-				bind(KEY_CLIENT_SECRETKEY, secretKey);
+				// New generate dataCipherKey.
+				String hexDataCipherKey = new AESCryptor().generateKey(128).toHex();
+				bind(KEY_DATA_CIPHER_KEY, hexDataCipherKey);
 
 				// Gets SecureCryptService.
 				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
 				SecureCryptService cryptService = cryptAdapter.forOperator(kind);
 
-				// ClientSecretKey (publicKeyHex)
-				String clientSecretPubKeyHex = ((ClientSecretIamAuthenticationToken) token).getClientSecret();
-				// Encryption secretKey by clientSecretKey.
-				KeySpec keySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretPubKeyHex.toCharArray()));
-				String secretKeyHexCiphertext = cryptService.encryptWithHex(keySpec, secretKey);
-				params.put(config.getParam().getSecretKeyName(), secretKeyHexCiphertext);
+				// ClientSecretKey (hexPublicKey)
+				String clientSecretKey = ((ClientSecretIamAuthenticationToken) token).getClientSecretKey();
+				// Encryption dataCipherKey by clientSecretKey.
+				KeySpec keySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
+				String dataCipherKeyHexCiphertext = cryptService.encryptWithHex(keySpec, hexDataCipherKey);
+				params.put(config.getParam().getDataCipherKeyName(), dataCipherKeyHexCiphertext);
 			}
 		} catch (Exception e) {
 			throw new IllegalStateException(e);

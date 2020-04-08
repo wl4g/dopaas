@@ -36,6 +36,7 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSession;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_KEY;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.format;
@@ -114,8 +115,9 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			getSession().setTimeout(maxIdleTimeMs);
 
 			IamPrincipalInfo info = assertion.getPrincipalInfo();
-			// Attribute of lang
+			// Storage authenticated attributes.
 			bind(KEY_LANG_ATTRIBUTE_NAME, info.getAttributes().get(KEY_LANG_ATTRIBUTE_NAME));
+			bind(KEY_DATA_CIPHER_KEY, info.getAttributes().get(KEY_DATA_CIPHER_KEY));
 
 			// Update settings grant ticket
 			String newGrantTicket = valueOf(info.getStoredCredentials());

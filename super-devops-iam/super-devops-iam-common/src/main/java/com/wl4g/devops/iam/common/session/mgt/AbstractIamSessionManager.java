@@ -379,7 +379,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			// sid.setValue(valueOf(sessionId)+"; SameSite=None; Secure=false");
 			sid.setValue(valueOf(sessionId));
 			sid.saveTo(toHttp(request), toHttp(response));
-			log.trace("Set session ID cookie for session with id {}", sessionId);
+			log.trace("Sets sessionId to cookies of: {}", sessionId);
 		} else {
 			// Addition customize security headers.
 			toHttp(response).addHeader(getSessionIdCookie().getName(), valueOf(sessionId));

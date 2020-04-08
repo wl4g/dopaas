@@ -48,7 +48,7 @@ public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuth
 	 * The secret key that the client requests for authentication is used to
 	 * login successfully encrypted additional ticket.
 	 */
-	final private String clientSecret;
+	final private String clientSecretKey;
 
 	/**
 	 * Client user other attributes properties. (e.g.
@@ -73,15 +73,15 @@ public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuth
 		notNullOf(kind, "kind");
 		hasTextOf(clientSecret, "clientSecret");
 		this.secureAlgKind = kind;
-		this.clientSecret = clientSecret;
+		this.clientSecretKey = clientSecret;
 	}
 
 	public SecureAlgKind getSecureAlgKind() {
 		return secureAlgKind;
 	}
 
-	public String getClientSecret() {
-		return clientSecret;
+	public String getClientSecretKey() {
+		return clientSecretKey;
 	}
 
 	public Map<String, String> getUserProperties() {

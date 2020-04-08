@@ -74,7 +74,7 @@ public class SimpleRcmRecognizerController extends AbstractAuthenticatorControll
 		// Decode umdata.
 		umdata = URLDecoder.decode(umdata, "UTF-8");
 		// Parse risk control parameter.
-		Map<String, String> paramMap = parseUmdataParameter(umdata);
+		Map<String, String> paramMap = parseUmdataParameters(umdata);
 
 		// [Simple risk control processing]
 		String umidToken = handler.applyUmidToken(paramMap);
@@ -88,7 +88,7 @@ public class SimpleRcmRecognizerController extends AbstractAuthenticatorControll
 	 * @param umdata
 	 * @return
 	 */
-	private Map<String, String> parseUmdataParameter(String umdata) {
+	private Map<String, String> parseUmdataParameters(String umdata) {
 		if (isBlank(umdata) || !umdata.contains("!")) {
 			throw new IllegalArgumentException("Invalid umdata");
 		}
