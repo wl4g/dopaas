@@ -15,10 +15,9 @@
  */
 package com.wl4g.devops.tool.common.crypto.asymmetric;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static java.util.Objects.isNull;
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.security.KeyFactory;
@@ -26,6 +25,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -45,11 +45,6 @@ import com.wl4g.devops.tool.common.log.SmartLogger;
  * @since
  */
 abstract class AbstractFastAsymmCryptor implements AsymmetricCryptor {
-
-	/*
-	 * Current used encryption and decryption cipher
-	 */
-	final private static ThreadLocal<Cipher[]> currentCipherPairCache = new ThreadLocal<>();
 
 	final protected SmartLogger log = getLogger(getClass());
 
@@ -104,103 +99,71 @@ abstract class AbstractFastAsymmCryptor implements AsymmetricCryptor {
 	final public KeyPairSpec generateKeyPair(byte[] publicKey, byte[] privateKey) {
 		try {
 			// Deserialization generate keyPair.
-			PublicKey _publicKey = null;
-			if (!isNull(publicKey)) {
-				_publicKey = keyFactory.generatePublic(new X509EncodedKeySpec(publicKey));
-			}
-
-			PrivateKey _privateKey = null;
-			if (!isNull(privateKey)) {
-				_privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKey));
-			}
-
-			// Generate keySpec by keyPair.
-			KeySpec pubKeySepc = keyFactory.getKeySpec(_publicKey, getPublicKeySpecClass());
-			KeySpec privKeySepc = keyFactory.getKeySpec(_privateKey, getPrivateKeySpecClass());
-			return newKeySpec(getAlgorithmPrimary(), pubKeySepc, privKeySepc);
+			return newKeySpec(getAlgorithmPrimary(), generatePubKeySpec(publicKey), generateKeySpec(privateKey));
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
-	/**
-	 * Encrypt plain text based on the built key pair
-	 *
-	 * @param plaintext
-	 * @return
-	 */
 	@Override
-	final public String encrypt(String plaintext) {
+	public KeySpec generatePubKeySpec(byte[] publicKey) {
+		notNullOf(publicKey, "publicKey");
+		try {
+			PublicKey _publicKey = keyFactory.generatePublic(new X509EncodedKeySpec(publicKey));
+			// Generate public KeySepc.
+			return keyFactory.getKeySpec(_publicKey, getPublicKeySpecClass());
+		} catch (InvalidKeySpecException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	@Override
+	public KeySpec generateKeySpec(byte[] privateKey) {
+		notNullOf(privateKey, "privateKey");
+		try {
+			// Generate private KeySepc.
+			PrivateKey _privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKey));
+			return keyFactory.getKeySpec(_privateKey, getPrivateKeySpecClass());
+		} catch (InvalidKeySpecException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	@Override
+	final public String encrypt(KeySpec keySpec, String plaintext) {
+		notNullOf(keySpec, "keySpec");
 		if (isBlank(plaintext)) {
 			return null;
 		}
 		try {
-			Cipher[] cipherPair = currentCipherPairCache.get();
-			notEmptyOf(cipherPair, "cipherPair");
-			byte[] encrypted = cipherPair[0].doFinal(plaintext.getBytes());
+			Cipher encryptCipher = Cipher.getInstance(getPadAlgorithm());
+			// Generate publicKey
+			PublicKey pubKey = keyFactory.generatePublic(keySpec);
+			encryptCipher.init(Cipher.ENCRYPT_MODE, pubKey);
+			byte[] encrypted = encryptCipher.doFinal(plaintext.getBytes());
 			return Hex.encodeHexString(encrypted);
 		} catch (Exception e) {
-			throw new IllegalStateException(String.format("The plaintext string to be encrypted:[%s]", plaintext), e);
+			throw new IllegalStateException(format("Failed to encryption plaintext of [%s]", plaintext), e);
 		}
 	}
 
-	/**
-	 * Solve the cipher text based on the constructed key pair
-	 *
-	 * @param hexCiphertext
-	 * @return
-	 */
 	@Override
-	final public String decrypt(String hexCiphertext) {
+	final public String decrypt(KeySpec keySpec, String hexCiphertext) {
+		notNullOf(keySpec, "keySpec");
 		if (isBlank(hexCiphertext)) {
 			return null;
 		}
 		try {
-			Cipher[] cipherPair = currentCipherPairCache.get();
-			notEmptyOf(cipherPair, "cipherPair");
+			Cipher decryptCipher = Cipher.getInstance(getPadAlgorithm());
+			// Generate privateKey
+			PrivateKey key = keyFactory.generatePrivate(keySpec);
+			decryptCipher.init(Cipher.DECRYPT_MODE, key);
 			byte[] dec = Hex.decodeHex(hexCiphertext.toCharArray());
-			byte[] decrypted = cipherPair[1].doFinal(dec);
+			byte[] decrypted = decryptCipher.doFinal(dec);
 			return new String(decrypted, "UTF-8");
 		} catch (Exception e) {
-			throw new IllegalStateException(String.format("The ciphertext string to be decrypted: [%s]", hexCiphertext), e);
+			throw new IllegalStateException(format("Failed to decryption hex ciphertext of [%s]", hexCiphertext), e);
 		}
-	}
-
-	/**
-	 * Initialize the build of a password instance based on the specified key
-	 * pair
-	 *
-	 * @param keyPairSpec
-	 * @return
-	 */
-	@Override
-	final public AsymmetricCryptor getInstance(KeyPairSpec keyPairSpec) {
-		notNullOf(keyPairSpec, "keyPairSpec");
-		try {
-			// Get current cache cipherPair.
-			Cipher[] cipherPair = currentCipherPairCache.get();
-			Cipher encryptCipher = null, decryptCipher = null;
-			if (!isNull(cipherPair)) {
-				encryptCipher = cipherPair[0];
-				decryptCipher = cipherPair[1];
-			} else { // Create a cipher instance and initialize it
-				encryptCipher = Cipher.getInstance(getPadAlgorithm());
-				decryptCipher = Cipher.getInstance(getPadAlgorithm());
-			}
-
-			// Generate publicKey/privateKey to cache
-			PrivateKey key = keyFactory.generatePrivate(keyPairSpec.getKeySpec());
-			PublicKey pubKey = keyFactory.generatePublic(keyPairSpec.getPubKeySpec());
-			decryptCipher.init(Cipher.DECRYPT_MODE, key);
-			encryptCipher.init(Cipher.ENCRYPT_MODE, pubKey);
-
-			// Save to current thread cache
-			currentCipherPairCache.set(new Cipher[] { encryptCipher, decryptCipher });
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-
-		return this;
 	}
 
 	/**

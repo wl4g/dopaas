@@ -37,16 +37,16 @@ public interface IamCipherService extends Operator<CipherCryptKind> {
 	 * @param plaintext
 	 * @return
 	 */
-	byte[] encrypt(byte[] key, byte[] plaintext);
+	String encrypt(byte[] key, String plaintext);
 
 	/**
 	 * Decryption plain text.
 	 * 
 	 * @param key
-	 * @param ciphertext
+	 * @param hexCiphertext
 	 * @return
 	 */
-	byte[] decrypt(byte[] key, byte[] ciphertext);
+	String decrypt(byte[] key, String hexCiphertext);
 
 	/**
 	 * Iam symmetric secure crypt algorithm definitions.

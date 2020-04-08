@@ -16,11 +16,14 @@
 package com.wl4g.devops.iam.crypto;
 
 import com.wl4g.devops.common.framework.operator.Operator;
+import com.wl4g.devops.tool.common.codec.Base58;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import static com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+
+import java.security.spec.KeySpec;
 
 /**
  * Secretkey asymmetric secure crypt service.
@@ -38,7 +41,7 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 	 * @param plaintext
 	 * @return
 	 */
-	String encryptWithHex(KeyPairSpec keySpec, String plaintext);
+	String encryptWithHex(KeySpec keySpec, String plaintext);
 
 	/**
 	 * Decryption with hex cipher.
@@ -47,7 +50,7 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 	 * @param hexCiphertext
 	 * @return
 	 */
-	String decryptWithHex(KeyPairSpec keySpec, String hexCiphertext);
+	String decryptWithHex(KeySpec keySpec, String hexCiphertext);
 
 	/**
 	 * Generate keySpec resource.
@@ -76,6 +79,22 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 	KeyPairSpec generateKeyPair(byte[] publicKey, byte[] privateKey);
 
 	/**
+	 * Deserialization generate private KeySpec.
+	 * 
+	 * @param publicKey
+	 * @return
+	 */
+	KeySpec generatePubKeySpec(byte[] publicKey);
+
+	/**
+	 * Deserialization generate private KeySpec.
+	 * 
+	 * @param privateKey
+	 * @return
+	 */
+	KeySpec generateKeySpec(byte[] privateKey);
+
+	/**
 	 * Iam asymmetric secure crypt algorithm kind definitions.
 	 * 
 	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
@@ -101,9 +120,16 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 			return algorithm;
 		}
 
-		public static SecureAlgKind of(String cryptKind) {
-			SecureAlgKind kind = safeOf(cryptKind);
-			notNull(kind, "Illegal secure algorithm kind: %s", cryptKind);
+		public static SecureAlgKind of(String encodedAlgKind) {
+			return of(true, encodedAlgKind);
+		}
+
+		public static SecureAlgKind of(boolean decode, String algKindStr) {
+			if (decode) {
+				algKindStr = new String(Base58.decode(algKindStr));
+			}
+			SecureAlgKind kind = safeOf(algKindStr);
+			notNull(kind, "Illegal secure algorithm kind: %s", algKindStr);
 			return kind;
 		}
 

@@ -28,6 +28,8 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.wrapAndThrow;
 import static org.springframework.util.Assert.notNull;
 
 import static java.util.concurrent.TimeUnit.*;
+
+import java.security.spec.KeySpec;
 import java.util.concurrent.locks.Lock;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,16 +52,6 @@ import redis.clients.jedis.JedisCluster;
  * @since
  */
 public abstract class AbstractAsymmetricCryptService<K extends KeyPairSpec> implements SecureCryptService {
-
-	/**
-	 * Default JIGSAW initializing mutex image timeoutMs
-	 */
-	final public static long DEFAULT_LOCK_EXPIRE_MS = 60_000L;
-
-	/**
-	 * Try lock mutex timeoutMs.
-	 */
-	final public static long DEFAULT_TRYLOCK_TIMEOUT_MS = DEFAULT_LOCK_EXPIRE_MS / 2;
 
 	final protected SmartLogger log = getLogger(getClass());
 
@@ -144,6 +136,16 @@ public abstract class AbstractAsymmetricCryptService<K extends KeyPairSpec> impl
 		return cryptor.generateKeyPair(publicKey, privateKey);
 	}
 
+	@Override
+	public KeySpec generatePubKeySpec(byte[] publicKey) {
+		return cryptor.generatePubKeySpec(publicKey);
+	}
+
+	@Override
+	public KeySpec generateKeySpec(byte[] privateKey) {
+		return cryptor.generateKeySpec(privateKey);
+	}
+
 	/**
 	 * Initializing keyPairSpec pool.
 	 *
@@ -162,5 +164,15 @@ public abstract class AbstractAsymmetricCryptService<K extends KeyPairSpec> impl
 		}
 		log.info("Initialized keySpec total: {}", config.getKeyPairPools());
 	}
+
+	/**
+	 * Default JIGSAW initializing mutex image timeoutMs
+	 */
+	final public static long DEFAULT_LOCK_EXPIRE_MS = 60_000L;
+
+	/**
+	 * Try lock mutex timeoutMs.
+	 */
+	final public static long DEFAULT_TRYLOCK_TIMEOUT_MS = DEFAULT_LOCK_EXPIRE_MS / 2;
 
 }

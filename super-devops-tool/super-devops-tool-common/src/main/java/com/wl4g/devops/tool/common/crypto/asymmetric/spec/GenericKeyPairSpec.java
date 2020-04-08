@@ -16,6 +16,7 @@
 package com.wl4g.devops.tool.common.crypto.asymmetric.spec;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Map;
@@ -85,7 +86,7 @@ abstract class GenericKeyPairSpec extends KeyPairSpec {
 
 	@Override
 	public String getHexString() {
-		if (isBlank(keyHexString)) {
+		if (isBlank(keyHexString) && !isNull(getKeySpec())) {
 			try {
 				keyHexString = Hex.encodeHexString(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
 			} catch (Exception e) {
@@ -97,7 +98,7 @@ abstract class GenericKeyPairSpec extends KeyPairSpec {
 
 	@Override
 	public String getPubHexString() {
-		if (isBlank(pubKeyHexString)) {
+		if (isBlank(pubKeyHexString) && !isNull(getPubKeySpec())) {
 			try {
 				pubKeyHexString = Hex.encodeHexString(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
 			} catch (Exception e) {
@@ -109,7 +110,7 @@ abstract class GenericKeyPairSpec extends KeyPairSpec {
 
 	@Override
 	public String getBase64String() {
-		if (isBlank(keyBase64String)) {
+		if (isBlank(keyBase64String) && !isNull(getKeySpec())) {
 			try {
 				keyBase64String = Base64.encodeBase64String(getKeyFactory().generatePrivate(getKeySpec()).getEncoded());
 			} catch (Exception e) {
@@ -121,7 +122,7 @@ abstract class GenericKeyPairSpec extends KeyPairSpec {
 
 	@Override
 	public String getPubBase64String() {
-		if (isBlank(pubKeyBase64String)) {
+		if (isBlank(pubKeyBase64String) && !isNull(getPubKeySpec())) {
 			try {
 				pubKeyBase64String = Base64.encodeBase64String(getKeyFactory().generatePublic(getPubKeySpec()).getEncoded());
 			} catch (Exception e) {
@@ -133,7 +134,7 @@ abstract class GenericKeyPairSpec extends KeyPairSpec {
 
 	private KeyFactory getKeyFactory() {
 		KeyFactory kf = keyFactoryCache.get(getAlgorithm());
-		if (kf == null) {
+		if (isNull(kf)) {
 			try {
 				keyFactoryCache.put(getAlgorithm(), (kf = KeyFactory.getInstance(getAlgorithm())));
 			} catch (NoSuchAlgorithmException e) {

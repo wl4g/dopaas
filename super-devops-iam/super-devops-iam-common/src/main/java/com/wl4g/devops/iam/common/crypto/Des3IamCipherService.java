@@ -30,13 +30,13 @@ public class Des3IamCipherService extends AbstractSymmetricCipherService {
 	}
 
 	@Override
-	public byte[] encrypt(byte[] key, byte[] plaintext) {
+	public String encrypt(byte[] key, String plaintext) {
 		// TODO
 		return null;
 	}
 
 	@Override
-	public byte[] decrypt(byte[] key, byte[] ciphertext) {
+	public String decrypt(byte[] key, String ciphertext) {
 		// TODO
 		return null;
 	}

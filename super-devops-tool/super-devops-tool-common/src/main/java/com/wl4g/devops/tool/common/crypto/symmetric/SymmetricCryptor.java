@@ -15,11 +15,34 @@
  */
 package com.wl4g.devops.tool.common.crypto.symmetric;
 
+import com.wl4g.devops.tool.common.crypto.CrypticSource;
+
+/**
+ * Symmetric cirptor.
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年3月8日
+ * @since
+ */
 public interface SymmetricCryptor {
 
-	String encryptWithHex(String src);
+	/**
+	 * Encryption symmetric plain source.
+	 * 
+	 * @param cipherKey
+	 * @param plainSource
+	 * @return
+	 */
+	CrypticSource encrypt(byte[] cipherKey, CrypticSource plainSource);
 
-	String decryptWithHex(String src);
+	/**
+	 * Decryption symmetric cipher source.
+	 * 
+	 * @param cipherKey
+	 * @param cipherSource
+	 * @return
+	 */
+	CrypticSource decrypt(byte[] cipherKey, CrypticSource cipherSource);
 
 	/**
 	 * Generate symmetric algorithm key, return byte array, default length is
@@ -27,7 +50,7 @@ public interface SymmetricCryptor {
 	 * 
 	 * @return
 	 */
-	String generateAesKeyString();
+	CrypticSource generateKey();
 
 	/**
 	 * Generate symmetric algorithm key, return byte array, elg, keybit is 128
@@ -36,6 +59,27 @@ public interface SymmetricCryptor {
 	 * @param keybit
 	 * @return
 	 */
-	byte[] generateAesKey(int keybit);
+	CrypticSource generateKey(int keybit);
+
+	/**
+	 * Gets algorithm name
+	 *
+	 * @return
+	 */
+	String getAlgorithmPrimary();
+
+	/**
+	 * Gets algorithm paddings name
+	 *
+	 * @return
+	 */
+	String getPadAlgorithm();
+
+	/**
+	 * Gets symmetric key digits
+	 *
+	 * @return
+	 */
+	int getKeyBit();
 
 }

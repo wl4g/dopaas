@@ -65,13 +65,13 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
-import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
 
 import java.io.IOException;
 import java.net.URI;
+import java.security.spec.KeySpec;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,7 +81,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Hex;
+import static org.apache.commons.codec.binary.Hex.*;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -617,20 +617,19 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			if (token instanceof ClientSecretIamAuthenticationToken) {
 				// New symmetric secretKey.
 				// TODO Dynamic symmetric algorithm??
-				String secretKey = Hex.encodeHexString(new AESCryptor().generateAesKey(128));
+				String secretKey = new AESCryptor().generateKey(128).toHex();
 				bind(KEY_CLIENT_SECRETKEY, secretKey);
 
-				// Gets clientSecret (publicKeyHex)
-				String clientSecretPubKeyHex = ((ClientSecretIamAuthenticationToken) token).getClientSecret();
-
-				// Gets crypt service.
+				// Gets SecureCryptService.
 				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
 				SecureCryptService cryptService = cryptAdapter.forOperator(kind);
 
+				// ClientSecretKey (publicKeyHex)
+				String clientSecretPubKeyHex = ((ClientSecretIamAuthenticationToken) token).getClientSecret();
 				// Encryption secretKey by clientSecretKey.
-				KeyPairSpec keyPairSpec = cryptService.generateKeyPair(Hex.decodeHex(clientSecretPubKeyHex.toCharArray()), null);
-				String secretKeyCiphertextHex = cryptService.encryptWithHex(keyPairSpec, secretKey);
-				params.put(config.getParam().getSecretKeyName(), secretKeyCiphertextHex);
+				KeySpec keySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretPubKeyHex.toCharArray()));
+				String secretKeyHexCiphertext = cryptService.encryptWithHex(keySpec, secretKey);
+				params.put(config.getParam().getSecretKeyName(), secretKeyHexCiphertext);
 			}
 		} catch (Exception e) {
 			throw new IllegalStateException(e);

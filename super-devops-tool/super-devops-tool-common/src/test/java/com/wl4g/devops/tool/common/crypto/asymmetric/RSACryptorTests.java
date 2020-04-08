@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.tool.common.crypto.cipher;
+package com.wl4g.devops.tool.common.crypto.asymmetric;
 
 import com.wl4g.devops.tool.common.crypto.asymmetric.RSACryptor;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
@@ -32,7 +32,7 @@ import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 //import com.google.common.base.Charsets;
 
 //@SuppressWarnings("restriction")
-public class RsaEncryptorTests {
+public class RSACryptorTests {
 
 	public static void main(String[] args) throws Exception {
 		// Get algorithm instance
@@ -43,20 +43,15 @@ public class RsaEncryptorTests {
 		// Deserialize
 		System.out.println("Create keySpec pair:\t" + keySpecPair);
 
-		// for (int i = 0; i < 2_000; i++) {
-		// new Thread(() -> {
-		// An instance of serialized key load algorithms
-		rsa.getInstance(keySpecPair);
-
 		String plainText = "abcd";
 		System.out.println("Origin plain text:\t" + plainText);
 
 		// Encrypt plain text
-		String cipherText = rsa.encrypt(plainText);
+		String cipherText = rsa.encrypt(keySpecPair.getPubKeySpec(), plainText);
 		System.out.println("Encrypt cipher text:\t" + cipherText);
 
 		// Decrypt cipher text
-		plainText = rsa.decrypt(cipherText);
+		plainText = rsa.decrypt(keySpecPair.getKeySpec(), cipherText);
 		System.out.println("Decrypt plain text:\t" + plainText);
 		// }).start();
 		// }

@@ -15,10 +15,11 @@
  */
 package com.wl4g.devops.iam.crypto;
 
-import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import java.security.spec.KeySpec;
+
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager; 
 import com.wl4g.devops.tool.common.crypto.asymmetric.ECCCryptor;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.ECCKeyPairSpec;
-import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 /**
  * DSA cryptographic service.
@@ -39,12 +40,12 @@ public final class ECCSecureCryptService extends AbstractAsymmetricCryptService<
 	}
 
 	@Override
-	public String encryptWithHex(KeyPairSpec keySpec, String plaintext) {
+	public String encryptWithHex(KeySpec keySpec, String plaintext) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public String decryptWithHex(KeyPairSpec keySpec, String hexCiphertext) {
+	public String decryptWithHex(KeySpec keySpec, String hexCiphertext) {
 		throw new UnsupportedOperationException();
 	}
 

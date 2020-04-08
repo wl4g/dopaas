@@ -13,32 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.crypto;
+package com.wl4g.devops.tool.common.crypto.symmetric;
 
 /**
- * {@link BlowfishIamCipherService}
+ * 3DES cryptor.
  * 
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version 2020年3月29日 v1.0.0
- * @see
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年4月8日
+ * @since
  */
-public class BlowfishIamCipherService extends AbstractSymmetricCipherService {
+public class DES3Cryptor extends AbstractSymmetricCryptor {
 
 	@Override
-	public CipherCryptKind kind() {
-		return CipherCryptKind.BLOWFISH;
+	public String getAlgorithmPrimary() {
+		return "DESede";
 	}
 
 	@Override
-	public String encrypt(byte[] key, String plaintext) {
-		// TODO
-		return null;
+	public String getPadAlgorithm() {
+		return "DESede/ECB/PKCS5Padding"; // 默认
 	}
 
 	@Override
-	public String decrypt(byte[] key, String ciphertext) {
-		// TODO
-		return null;
+	public int getKeyBit() {
+		return 128;
 	}
 
 }

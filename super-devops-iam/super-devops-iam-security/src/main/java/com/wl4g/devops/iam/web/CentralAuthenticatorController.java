@@ -39,7 +39,6 @@ import com.wl4g.devops.tool.common.lang.Exceptions;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VALIDATE;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
@@ -94,12 +93,12 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 		RespBase<LogoutModel> resp = new RespBase<>();
 		try {
 			// Source application logout processing
-			String fromAppName = getCleanParam(request, config.getParam().getApplication());
-			hasTextOf(fromAppName, config.getParam().getApplication());
+			String appName = getCleanParam(request, config.getParam().getApplication());
+			// hasTextOf(fromAppName, config.getParam().getApplication());
 
 			// Using coercion ignores remote exit failures
 			boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
-			resp.setData(authHandler.logout(forced, fromAppName, request, response));
+			resp.setData(authHandler.logout(forced, appName, request, response));
 		} catch (Exception e) {
 			if (e instanceof IamException) {
 				log.error("Failed to logout. caused by:{}", Exceptions.getRootCauseMessage(e));
@@ -109,9 +108,7 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 			resp.setCode(RetCode.SYS_ERR);
 			resp.setMessage(Exceptions.getRootCauseMessage(e));
 		}
-		if (log.isInfoEnabled()) {
-			log.info("Sessions logout => ", resp);
-		}
+		log.info("Sessions logout => ", resp);
 		return resp;
 	}
 
@@ -139,9 +136,7 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 			resp.setMessage(e.getMessage());
 		}
 
-		if (log.isInfoEnabled()) {
-			log.info("Second authentication validate => {}", resp);
-		}
+		log.info("Second authentication validate => {}", resp);
 		return resp;
 	}
 
@@ -154,9 +149,7 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 	@PostMapping(URI_S_SESSION_VALIDATE)
 	@ResponseBody
 	public RespBase<SessionValidityAssertModel> sessionValidate(@NotNull @RequestBody SessionValidityAssertModel param) {
-		if (log.isInfoEnabled()) {
-			log.info("Sessions expire validate <= {}", toJSONString(param));
-		}
+		log.info("Sessions expire validate <= {}", toJSONString(param));
 
 		RespBase<SessionValidityAssertModel> resp = new RespBase<>();
 		try {
@@ -168,9 +161,7 @@ public class CentralAuthenticatorController extends AbstractAuthenticatorControl
 			resp.setMessage(e.getMessage());
 		}
 
-		if (log.isInfoEnabled()) {
-			log.info("Sessions expire validate => {}", resp);
-		}
+		log.info("Sessions expire validate => {}", resp);
 		return resp;
 	}
 

@@ -245,7 +245,7 @@ public abstract class Assert2 {
 	 * @param argName
 	 */
 	public static void notNullOf(Object object, String argName) {
-		notNull(object, argName + " is required; it must not be null");
+		notNull(object, argName + " is required");
 	}
 
 	/**
@@ -340,7 +340,7 @@ public abstract class Assert2 {
 	 * @param argName
 	 */
 	public static void hasTextOf(String text, String argName) {
-		hasText(text, argName + " must not be empty");
+		hasText(text, argName + " is required");
 	}
 
 	/**
