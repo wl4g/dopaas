@@ -451,26 +451,26 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * step, the server will return (e.g, the secretKey of AES/DES3) as the
 		 * message encryption key of the later service sensitive api.
 		 * 
-		 * @see next-step: {@link #secretKeyName}
+		 * @see next-step: {@link #dataCipherKeyName}
 		 */
 		private String clientSecretKeyName = "clientSecretKey";
 
 		/**
 		 * When the client authentication is successful, the server will respond
-		 * encrypted to the {@link #secretKeyName} (using the
+		 * encrypted to the {@link #dataCipherKeyName} (using the
 		 * {@link #clientSecretKeyName} encryption in the previous step).
 		 * 
 		 * @see prev-step: {@link #clientSecretKeyName}
 		 * @see next-step: {@link #clientSignName}
 		 */
-		private String secretKeyName = "secretKey";
+		private String dataCipherKeyName = "dataCipherKey";
 
 		/**
 		 * The signature string of the client provider. For example, the string
 		 * is calculated based on {@link #clientSecretKeyName} + sessionid and
 		 * used to verify the validity of the client's request in the future.
 		 * 
-		 * @see prev-step:{@link #secretKeyName}
+		 * @see prev-step:{@link #dataCipherKeyName}
 		 */
 		private String clientSignName = "clientSign";
 
@@ -620,12 +620,12 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			this.clientSecretKeyName = clientSecretKeyName;
 		}
 
-		public String getSecretKeyName() {
-			return secretKeyName;
+		public String getDataCipherKeyName() {
+			return dataCipherKeyName;
 		}
 
-		public void setSecretKeyName(String secretKeyName) {
-			this.secretKeyName = secretKeyName;
+		public void setDataCipherKeyName(String secretKeyName) {
+			this.dataCipherKeyName = secretKeyName;
 		}
 
 		public String getClientSignName() {

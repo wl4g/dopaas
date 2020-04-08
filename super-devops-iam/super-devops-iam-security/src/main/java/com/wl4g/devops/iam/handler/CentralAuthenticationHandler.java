@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -177,13 +178,13 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).setStoredCredentials(newGrantTicket));
 		log.info("New validated grantTicket: {}, sessionId: {}", newGrantTicket, getSessionId());
 
-		/*
-		 * Re-bind granting session => applications
-		 */
+		// Re-bind granting session => applications
 		saveGrantTicket(session, appName, newGrantTicket);
 
 		// Authorized roles and permission information.
-		assertion.getPrincipalInfo().getAttributes().put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
+		Map<String, String> attributes = assertion.getPrincipalInfo().getAttributes();
+		attributes.put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
+		attributes.put(KEY_DATA_CIPHER_KEY, getBindValue(KEY_DATA_CIPHER_KEY));
 		return assertion;
 	}
 

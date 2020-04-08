@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.common.mgt;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_CLIENT_SECRETKEY;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_KEY;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
@@ -126,7 +126,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 
 		String sessionId = (String) getSessionId();
 		String clientSign = getCleanParam(request, config.getParam().getClientSignName());
-		String clientSecretKey = (String) wsc.getSession().getAttribute(KEY_CLIENT_SECRETKEY);
+		String clientSecretKey = (String) wsc.getSession().getAttribute(KEY_DATA_CIPHER_KEY);
 		IamAuthenticationToken authcToken = (IamAuthenticationToken) wsc.getSession().getAttribute(KEY_AUTHC_TOKEN);
 		log.debug("Asserting session signature, sessionId:{}, clientSign:{}, clientSecretKey:{}, authcToken:{}", sessionId,
 				clientSign, clientSecretKey, authcToken);
