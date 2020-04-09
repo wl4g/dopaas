@@ -16,14 +16,17 @@
 package com.wl4g.devops;
 
 import com.wl4g.devops.scm.client.annotation.EnableScmClient;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableScmClient
 @EnableDiscoveryClient
-@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
+@SpringBootApplication
+@MapperScan("com.wl4g.devops.dao.*")
+@EnableTransactionManagement
 public class ScmExample {
 
 	public static void main(String[] args) {

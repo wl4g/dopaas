@@ -15,7 +15,10 @@
  */
 package com.wl4g.devops.scm.example.controller;
 
+import com.wl4g.devops.common.bean.iam.User;
+import com.wl4g.devops.dao.iam.UserDao;
 import com.wl4g.devops.scm.example.service.ExampleService;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -24,6 +27,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @RefreshScope
@@ -38,8 +42,15 @@ public class ExampleController implements ApplicationRunner {
 	@Autowired
 	private ExampleService exampleService;
 
-	@Value("${example.lastName}")
+	@Value("${example2.lastName}")
 	private String lastName;
+
+	@Value("${spring.datasource.druid.url}")
+	private String url;
+
+
+	@Autowired
+	private UserDao userDao;
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
@@ -64,10 +75,17 @@ public class ExampleController implements ApplicationRunner {
 
 
 	@RequestMapping(value = "test")
-	public String list() {
-		System.out.println("lastName = "+lastName);
-		return lastName;
+	public String test() {
+		System.out.println("url = "+url);
+		return url;
 	}
+
+	@RequestMapping(value = "test2")
+	public String test2() {
+		List<User> list = userDao.list(null, null, null);
+		return JacksonUtils.toJSONString(list);
+	}
+
 
 
 

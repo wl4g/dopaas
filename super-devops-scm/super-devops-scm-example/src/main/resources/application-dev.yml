@@ -14,7 +14,11 @@
 # Example configuration.
 example:
   firstName: 王
-  lastName: jack2
+  lastName: jack
+
+example2:
+  firstName: 王
+  lastName: jack
 
 spring:
   cloud:
@@ -22,6 +26,28 @@ spring:
       iam:
         client:
           base-uri: http://localhost:14043/scm-server
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    druid:
+      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/devops_dev?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
+      username: ${DEVOPS_DB_USER:gzsm}
+      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
+      initial-size: 10
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filters: stat,wall
+      log-slow-sql: true
 
 redis:
   passwd: ${REDIS_PASSWD:zzx!@#$%}
