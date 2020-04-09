@@ -40,9 +40,7 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_REPORT_P
 import static com.wl4g.devops.common.web.RespBase.isSuccess;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
-import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static org.apache.commons.lang3.RandomUtils.nextLong;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static org.springframework.http.HttpMethod.POST;
 
 /**
@@ -79,17 +77,17 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 		while (true) {
 			try {
 				createWatchLongPolling();
-			} catch (Throwable th) {
+			} catch (Exception th) {
 				String errtip = "Unable to watch error, causes by: {}";
 				if (log.isDebugEnabled()) {
-					log.error(errtip, getStackTrace(th));
+					log.error(errtip, th);
 				} else {
-					log.warn(errtip, getRootCausesString(th));
+					log.warn(errtip, th);
 				}
 				try {
 					Thread.sleep(nextLong(config.getLongPollDelay(), config.getLongPollMaxDelay()));
 				} catch (InterruptedException e1) {
-					log.error("", th);
+					log.error("", e1);
 				}
 			} finally {
 				watchState.compareAndSet(true, false);

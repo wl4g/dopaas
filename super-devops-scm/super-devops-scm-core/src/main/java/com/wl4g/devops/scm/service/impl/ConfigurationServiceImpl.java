@@ -17,20 +17,19 @@ package com.wl4g.devops.scm.service.impl;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
+import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.scm.*;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
-import com.wl4g.devops.common.bean.erm.AppCluster;
-import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.iam.Dict;
-import com.wl4g.devops.dao.scm.ConfigurationDao;
-import com.wl4g.devops.dao.scm.HistoryDao;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.iam.DictDao;
+import com.wl4g.devops.dao.scm.ConfigurationDao;
+import com.wl4g.devops.dao.scm.HistoryDao;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,10 +151,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 		List<String> namespaces = new ArrayList<>();
 		for (VersionContentBean vcb : vd.getConfigGurations()) {
-			Dict dict = dictDao.selectByPrimaryKey((vcb.getNamespaceId()));
-			String namespace = dict.getValue();
-			namespace = "application-" + namespace + ".yml";
-			namespaces.add(namespace);
+			namespaces.add(vcb.getNamespaceId());
 		}
 
 		// Request configuration source send to client.
