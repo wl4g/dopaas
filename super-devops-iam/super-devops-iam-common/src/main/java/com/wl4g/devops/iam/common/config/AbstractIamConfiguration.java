@@ -380,17 +380,17 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	//
 
 	@Bean
-	public IamCipherService aesIamCipherService() {
+	public AesIamCipherService aesIamCipherService() {
 		return new AesIamCipherService();
 	}
 
 	@Bean
-	public IamCipherService blowfishIamCipherService() {
+	public BlowfishIamCipherService blowfishIamCipherService() {
 		return new BlowfishIamCipherService();
 	}
 
 	@Bean
-	public IamCipherService des3IamCipherService() {
+	public Des3IamCipherService des3IamCipherService() {
 		return new Des3IamCipherService();
 	}
 
@@ -417,8 +417,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	@Bean
 	public CipherRequestSecurityFilter cipherRequestSecurityFilter(AbstractIamProperties<? extends ParamProperties> config,
 			CipherRequestWrapperFactory factory) {
-		CipherRequestSecurityFilter filter = new CipherRequestSecurityFilter(config, factory);
-		return filter;
+		return new CipherRequestSecurityFilter(config, factory);
 	}
 
 	@Bean

@@ -300,6 +300,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 */
 		private boolean enableRequestRemember = true;
 
+		/**
+		 * Whether to enable accesstoken enhanced verification.
+		 */
+		private boolean enableAccessTokenValidity = false;
+
 		public Long getGlobalSessionTimeout() {
 			return globalSessionTimeout;
 		}
@@ -330,6 +335,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public void setEnableRequestRemember(boolean enableRequestRemember) {
 			this.enableRequestRemember = enableRequestRemember;
+		}
+
+		public boolean isEnableAccessTokenValidity() {
+			return enableAccessTokenValidity;
+		}
+
+		public void setEnableAccessTokenValidity(boolean enableAccessTokenValidity) {
+			this.enableAccessTokenValidity = enableAccessTokenValidity;
 		}
 
 	}
@@ -663,6 +676,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		final public static String CIPHER_HEADER_PREFIX = "X-Iam-Cipher-";
 
 		/**
+		 * Enable data encryption request or not.
+		 */
+		private boolean enableDataCipher = false;
+
+		/**
 		 * @see {@link #setCipherParameterHeader(List)}
 		 */
 		private List<String> cipherParameterHeader = new ArrayList<String>() {
@@ -675,7 +693,18 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			}
 		};
 
+		/**
+		 * Cipher request headder name case sensitive.
+		 */
 		private boolean isCaseSensitive = false;
+
+		public boolean isEnableDataCipher() {
+			return enableDataCipher;
+		}
+
+		public void setEnableDataCipher(boolean enableDataCipher) {
+			this.enableDataCipher = enableDataCipher;
+		}
 
 		public List<String> getCipherParameterHeader() {
 			return cipherParameterHeader;

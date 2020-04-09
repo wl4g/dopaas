@@ -19,14 +19,17 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
+import org.apache.shiro.web.servlet.Cookie;
+import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_KEY;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_KEY;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMCLIENT;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
@@ -74,6 +77,7 @@ import com.wl4g.devops.iam.common.cache.JedisCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
+import com.wl4g.devops.iam.common.web.model.SessionInfo;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import java.io.IOException;
@@ -220,21 +224,33 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		if (isJSONResp(toHttp(request))) {
 			try {
 				// Make logged response JSON.
-				RespBase<String> loggedResp = makeLoggedResponse(request, subject, successUrl);
+				RespBase<String> loggedResp = makeLoggedResponse(request, response, subject, successUrl);
 
-				// Callback custom success handling.
+				// Call custom success handle.
 				coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), loggedResp.forMap());
 
 				String logged = toJSONString(loggedResp);
-				log.info("Authenticated response to - {}", loggedResp);
+				log.info("Authenticated resp to - {}", loggedResp);
 				writeJson(toHttp(response), logged);
 			} catch (IOException e) {
 				log.error("Logged response json error", e);
 			}
 		}
-		// Redirection
+		// Redirections(Native page).
 		else {
-			// Callback custom success handling.
+			// Add dataCipherKeys to cookie.
+			Cookie dataCipherKey = new SimpleCookie(config.getCookie());
+			dataCipherKey.setName(config.getParam().getDataCipherKeyName());
+			dataCipherKey.setValue(getBindValue(KEY_DATA_CIPHER_KEY));
+			dataCipherKey.saveTo(toHttp(request), toHttp(response));
+
+			// Add accessToken to cookie.
+			Cookie accessToken = new SimpleCookie(config.getCookie());
+			accessToken.setName(config.getParam().getAccessTokenName());
+			accessToken.setValue(getBindValue(KEY_ACCESSTOKEN_SIGN_KEY));
+			accessToken.saveTo(toHttp(request), toHttp(response));
+
+			// Call custom success handle.
 			coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), null);
 			log.info("Authenticated redirect to - {}", successUrl);
 			issueRedirect(request, response, successUrl);
@@ -433,20 +449,25 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeLoggedResponse()}
 	 * @param request
 	 *            Servlet request
+	 * @param response
 	 * @param redirectUri
 	 *            login success redirect URL
 	 * @return
 	 */
-	protected RespBase<String> makeLoggedResponse(ServletRequest request, Subject subject, String redirectUri) {
+	protected RespBase<String> makeLoggedResponse(ServletRequest request, ServletResponse response, Subject subject,
+			String redirectUri) {
 		hasTextOf(redirectUri, "redirectUri");
 
-		// Make message
+		// Make successful message
 		RespBase<String> resp = RespBase.create(sessionStatus());
 		resp.setCode(OK).setMessage("Authentication successful");
 		resp.forMap().put(config.getParam().getRedirectUrl(), redirectUri);
 		resp.forMap().put(config.getParam().getApplication(), config.getServiceName());
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
 		resp.forMap().put(config.getParam().getDataCipherKeyName(), getBindValue(KEY_DATA_CIPHER_KEY));
+		resp.forMap().put(config.getParam().getAccessTokenName(), getBindValue(KEY_ACCESSTOKEN_SIGN_KEY));
+		// IamClient session info.
+		resp.forMap().put(KEY_SESSION_INFO_KEY, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId())));
 		return resp;
 	}
 
@@ -465,7 +486,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	protected RespBase<Object> makeFailedResponse(AuthenticationToken token, String loginRedirectUrl, Throwable err) {
 		String errmsg = err != null ? err.getMessage() : "Authentication failure";
 
-		// Make message
+		// Make failed message
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		resp.setCode(UNAUTHC).setMessage(errmsg);
 		resp.forMap().put(config.getParam().getRedirectUrl(), loginRedirectUrl);

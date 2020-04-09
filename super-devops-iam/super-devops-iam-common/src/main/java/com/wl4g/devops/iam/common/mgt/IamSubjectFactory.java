@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.common.mgt;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_KEY;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_KEY;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
@@ -86,14 +87,10 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 			}
 		}
 
-		/**
-		 * Validation of enhanced session additional signature.
-		 * 
-		 * @see {@link }
-		 */
-		if (context.isAuthenticated()) {
+		// Validation of enhanced session additional signature.
+		if (config.getSession().isEnableAccessTokenValidity() && context.isAuthenticated()) {
 			try {
-				assertRequestSignTokenValidity(context);
+				assertRequestAccessTokenValidity(context);
 			} catch (UnauthenticatedException e) {
 				// #Forced sets notauthenticated
 				context.setAuthenticated(false);
@@ -108,13 +105,13 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	}
 
 	/**
-	 * Assertion request signature validity.
+	 * Assertion request accessToken(signature) validity.
 	 * 
 	 * @param context
 	 * @throws UnauthenticatedException
 	 * @see {@link AbstractIamAuthenticationFilter#makeLoggedResponse}
 	 */
-	final private void assertRequestSignTokenValidity(SubjectContext context) throws UnauthenticatedException {
+	final private void assertRequestAccessTokenValidity(SubjectContext context) throws UnauthenticatedException {
 		// Additional signature verification will only be performed on those
 		// who have logged in successful.
 		// e.g: Authentication requests or internal API requests does not
@@ -128,27 +125,27 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 
 		String sessionId = valueOf(session.getId());
 		String accessToken = getCleanParam(request, config.getParam().getAccessTokenName());
-		String clientSecretKey = (String) session.getAttribute(KEY_DATA_CIPHER_KEY);
+		String accessTokenSignKey = (String) session.getAttribute(KEY_ACCESSTOKEN_SIGN_KEY);
 		IamAuthenticationToken authcToken = (IamAuthenticationToken) session.getAttribute(KEY_AUTHC_TOKEN);
-		log.debug("Asserting session signature, sessionId:{}, accessToken:{}, clientSecretKey:{}, authcToken:{}", sessionId,
-				accessToken, clientSecretKey, authcToken);
+		log.debug("Asserting session signature, sessionId:{}, accessToken:{}, accessTokenSignKey:{}, authcToken:{}", sessionId,
+				accessToken, accessTokenSignKey, authcToken);
 
 		// Only the account-password authentication is verified.
 		if (authcToken instanceof ClientSecretIamAuthenticationToken) {
-			hasText(accessToken, UnauthenticatedException.class, "client sign is required");
+			hasText(accessToken, UnauthenticatedException.class, "accessToken is required");
 			hasText(sessionId, UnauthenticatedException.class, "sessionId is required");
-			hasTextOf(clientSecretKey, "clientSecretKey"); // Shouldn't here
+			hasTextOf(accessTokenSignKey, "accessTokenSignKey"); // Shouldn't-here
 
 			// Calculate signature
-			final byte[] validSign = getHmacSha1(clientSecretKey.getBytes(UTF_8)).doFinal(sessionId.getBytes(UTF_8));
-			log.debug("Asserted signature, sessionId:{}, accessToken:{}, clientSecretKey:{}, validSign:{}, authcToken:{}",
-					accessToken, sessionId, clientSecretKey, validSign, authcToken);
+			final byte[] validSign = getHmacSha1(accessTokenSignKey.getBytes(UTF_8)).doFinal(sessionId.getBytes(UTF_8));
+			log.debug("Asserted accessToken of sessionId:{}, accessToken:{}, accessTokenSignKey:{}, validSign:{}, authcToken:{}",
+					accessToken, sessionId, accessTokenSignKey, validSign, authcToken);
 
 			// Compare signature's
 			if (!isEqual(accessToken.getBytes(UTF_8), validSign)) {
 				throw new UnauthenticatedException(
-						format("Illegal authentication credentials signature. accessToken: {}, clientSecretKey: {}", accessToken,
-								clientSecretKey));
+						format("Illegal authentication credentials signature. accessToken: {}, accessTokenSignKey: {}",
+								accessToken, accessTokenSignKey));
 			}
 		}
 

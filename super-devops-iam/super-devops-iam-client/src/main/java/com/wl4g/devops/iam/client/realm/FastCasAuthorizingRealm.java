@@ -36,6 +36,8 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSession;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_KEY;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_KEY;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
 import static java.lang.Boolean.parseBoolean;
@@ -44,8 +46,6 @@ import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
 
 import java.util.Date;
 
@@ -92,11 +92,11 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	protected IamAuthenticationInfo doAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		String granticket = EMPTY;
 		try {
-			notNull(token, "'authenticationToken' must not be null");
-			FastCasAuthenticationToken fctk = (FastCasAuthenticationToken) token;
+			notNullOf(token, "authenticationToken");
+			FastCasAuthenticationToken ftk = (FastCasAuthenticationToken) token;
 
 			// Get request flash grant ticket(May be empty)
-			granticket = (String) fctk.getCredentials();
+			granticket = (String) ftk.getCredentials();
 
 			// Contact CAS remote server to validate ticket
 			TicketValidatedAssertModel<IamPrincipalInfo> assertion = doRequestRemoteTicketValidation(granticket);
@@ -118,15 +118,16 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			// Storage authenticated attributes.
 			bind(KEY_LANG_ATTRIBUTE_NAME, info.getAttributes().get(KEY_LANG_ATTRIBUTE_NAME));
 			bind(KEY_DATA_CIPHER_KEY, info.getAttributes().get(KEY_DATA_CIPHER_KEY));
+			bind(KEY_ACCESSTOKEN_SIGN_KEY, info.getAttributes().get(KEY_ACCESSTOKEN_SIGN_KEY));
 
 			// Update settings grant ticket
 			String newGrantTicket = valueOf(info.getStoredCredentials());
-			fctk.setCredentials(newGrantTicket);
+			ftk.setCredentials(newGrantTicket);
 
 			// Attribute of remember
 			String principal = assertion.getPrincipalInfo().getPrincipal();
-			fctk.setPrincipal(principal); // MARK1
-			fctk.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
+			ftk.setPrincipal(principal); // MARK1
+			ftk.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
 			log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
 
 			// Authenticate attributes.(roles/permissions/rememberMe)

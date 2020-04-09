@@ -21,14 +21,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ClassUtils;
 
+import com.wl4g.devops.common.exception.framework.InvalidDependsSpecificationException;
+
 /**
- * Dependency jar checker.
+ * Dependencies jars checker.
  * 
  * @author Wangl.sir
  * @version v1.0.0 2019-09-24
  * @since
  */
-public class DependencyJarRuntimeChecker implements InitializingBean {
+public class DependenciesJarsRuntimeChecker implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -36,7 +38,7 @@ public class DependencyJarRuntimeChecker implements InitializingBean {
 		 * Check: hibernate-validate-6.x.jar/validation-api-2.x.jar
 		 */
 		if (!ClassUtils.isPresent("javax.validation.constraints.NotBlank", Thread.currentThread().getContextClassLoader())) {
-			throw new InvalidDependencyVersionException(
+			throw new InvalidDependsSpecificationException(
 					"Incompatible version dependency errors, requiring: validation-api-2.x and hibernate-validate-6.x, because which may result in runtime unknown errors");
 		}
 
@@ -47,8 +49,8 @@ public class DependencyJarRuntimeChecker implements InitializingBean {
 	public static class DependencyJarRuntimeCheckerAutoConfiguration {
 
 		@Bean
-		public DependencyJarRuntimeChecker dependencyJarRuntimeChecker() {
-			return new DependencyJarRuntimeChecker();
+		public DependenciesJarsRuntimeChecker dependencyJarRuntimeChecker() {
+			return new DependenciesJarsRuntimeChecker();
 		}
 
 	}

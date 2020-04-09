@@ -38,7 +38,7 @@ public interface CipherRequestWrapperFactory {
 	 */
 	default CipherRequestWrapper newRequestWrapper(AbstractIamProperties<? extends ParamProperties> config,
 			HttpServletRequest request) {
-		return new DefaultCipherRequestWrapper(config, request);
+		return new AesCipherRequestWrapper(config, request);
 	}
 
 }

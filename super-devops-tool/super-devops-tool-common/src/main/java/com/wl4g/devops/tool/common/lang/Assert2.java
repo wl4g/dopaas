@@ -164,6 +164,19 @@ public abstract class Assert2 {
 	}
 
 	/**
+	 * Assert a boolean expression, throwing an {@code IllegalArgumentException}
+	 * if the expression evaluates to {@code false}.
+	 * 
+	 * @param expression
+	 *            a boolean expression
+	 * @param exceptionClass
+	 * @param argName
+	 */
+	public static void isTrueOf(boolean expression, Class<? extends RuntimeException> exceptionClass, String argName) {
+		isTrue(expression, exceptionClass, argName + " condition must be true");
+	}
+
+	/**
 	 * Assert that an object is {@code null}.
 	 * 
 	 * <pre class="code">
@@ -246,6 +259,18 @@ public abstract class Assert2 {
 	 */
 	public static void notNullOf(Object object, String argName) {
 		notNull(object, argName + " is required");
+	}
+
+	/**
+	 * Assert that an object is not {@code null}.
+	 * 
+	 * @param object
+	 *            the object to check
+	 * @param exceptionClass
+	 * @param argName
+	 */
+	public static void notNullOf(Object object, Class<? extends RuntimeException> exceptionClass, String argName) {
+		notNull(object, exceptionClass, argName + " is required");
 	}
 
 	/**
@@ -344,6 +369,20 @@ public abstract class Assert2 {
 	}
 
 	/**
+	 * Assert that the given String contains valid text content; that is, it
+	 * must not be {@code null} and must contain at least one non-whitespace
+	 * character.
+	 * 
+	 * @param text
+	 *            the String to check
+	 * @param exceptionClass
+	 * @param argName
+	 */
+	public static void hasTextOf(String text, Class<? extends RuntimeException> exceptionClass, String argName) {
+		hasText(text, exceptionClass, argName + " is required");
+	}
+
+	/**
 	 * Assert that the given text does not contain the given substring.
 	 * 
 	 * <pre class="code">
@@ -433,6 +472,19 @@ public abstract class Assert2 {
 	 */
 	public static void notEmptyOf(Object[] array, String argName) {
 		notEmpty(array, argName + " must not be empty: it must contain at least 1 element");
+	}
+
+	/**
+	 * Assert that an array contains elements; that is, it must not be
+	 * {@code null}
+	 * 
+	 * @param array
+	 *            the array to check
+	 * @param exceptionClass
+	 * @param argName
+	 */
+	public static void notEmptyOf(Object[] array, Class<? extends RuntimeException> exceptionClass, String argName) {
+		notEmpty(array, exceptionClass, argName + " must not be empty: it must contain at least 1 element");
 	}
 
 	/**
@@ -589,6 +641,19 @@ public abstract class Assert2 {
 	 */
 	public static void notEmptyOf(Map<?, ?> map, String argName) {
 		notEmpty(map, argName + " must not be empty; it must contain at least one entry");
+	}
+
+	/**
+	 * Assert that a Map contains entries; that is, it must not be {@code null}
+	 * and must contain at least one entry.
+	 * 
+	 * @param map
+	 *            the map to check
+	 * @param exceptionClass
+	 * @param argName
+	 */
+	public static void notEmptyOf(Map<?, ?> map, Class<? extends RuntimeException> exceptionClass, String argName) {
+		notEmpty(map, exceptionClass, argName + " must not be empty; it must contain at least one entry");
 	}
 
 	/**

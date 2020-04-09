@@ -185,6 +185,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		Map<String, String> attributes = assertion.getPrincipalInfo().getAttributes();
 		attributes.put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
 		attributes.put(KEY_DATA_CIPHER_KEY, getBindValue(KEY_DATA_CIPHER_KEY));
+		attributes.put(KEY_ACCESSTOKEN_SIGN_KEY, getBindValue(KEY_ACCESSTOKEN_SIGN_KEY));
 		return assertion;
 	}
 

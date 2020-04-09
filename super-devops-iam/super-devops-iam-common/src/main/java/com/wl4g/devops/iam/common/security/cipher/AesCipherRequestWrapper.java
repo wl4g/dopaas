@@ -15,28 +15,43 @@
  */
 package com.wl4g.devops.iam.common.security.cipher;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_KEY;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 
 /**
- * Default ciper parameters {@link HttpServletRequestWrapper} implements.
+ * Default AES cipher parameters {@link HttpServletRequestWrapper} implements.
  *
  * @author wangl.sir
  * @version v1.0 2019年4月26日
  * @since
  */
-public class DefaultCipherRequestWrapper extends CipherRequestWrapper {
+public class AesCipherRequestWrapper extends CipherRequestWrapper {
 
-	public DefaultCipherRequestWrapper(AbstractIamProperties<? extends ParamProperties> config, HttpServletRequest request) {
+	public AesCipherRequestWrapper(AbstractIamProperties<? extends ParamProperties> config, HttpServletRequest request) {
 		super(config, request);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected String doDecryptParameterValue(String value) {
-		return value;
+		// Gets data cipherKey.
+		String dataCipherKey = getBindValue(KEY_DATA_CIPHER_KEY);
+		hasTextOf(dataCipherKey, "dataCipherKey");
+		// Decryption data ciphertext.
+		CrypticSource res = new AESCryptor().decrypt(dataCipherKey.getBytes(UTF_8), new CrypticSource(value));
+
+		log.debug("Decryption data cipherValue: {}, plainValue: {}", () -> value, () -> res.toString());
+		return res.toString();
 	}
 
 }

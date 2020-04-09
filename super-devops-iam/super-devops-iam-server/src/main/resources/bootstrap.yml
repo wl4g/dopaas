@@ -42,7 +42,10 @@ spring:
           sms-expire-ms: 300000
         cache:
           prefix: ${spring.application.name}_
+        cipher:
+          enable-data-cipher: true
         session:
+          enable-access-token-validity: true
           global-session-timeout: 1800_000
           session-validation-interval: 360_000
         cookie:
