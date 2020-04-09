@@ -41,13 +41,13 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
- * {@link SimpleRcmRecognizerHandler}
+ * {@link SimpleRcmEvaluatorHandler}
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月25日
  * @since
  */
-public class SimpleRcmRecognizerHandler implements RiskRecognizerHandler, InitializingBean {
+public class SimpleRcmEvaluatorHandler implements RiskEvaluatorHandler, InitializingBean {
 
 	final protected SmartLogger log = getLogger(getClass());
 

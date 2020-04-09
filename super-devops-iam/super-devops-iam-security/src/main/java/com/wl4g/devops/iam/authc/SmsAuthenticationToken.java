@@ -45,9 +45,9 @@ public class SmsAuthenticationToken extends ClientSecretIamAuthenticationToken {
 	 */
 	final private String smsCode;
 
-	public SmsAuthenticationToken(final SecureAlgKind secureAlgKind, final String clientSecret, final String remoteHost,
+	public SmsAuthenticationToken(final SecureAlgKind secureAlgKind, final String clientSecretKey, final String remoteHost,
 			final String action, final String principal, final String smsCode) {
-		super(secureAlgKind, clientSecret, remoteHost);
+		super(secureAlgKind, clientSecretKey, remoteHost);
 		hasTextOf(action, "action");
 		hasTextOf(principal, "principal");
 		hasTextOf(smsCode, "smsCode");

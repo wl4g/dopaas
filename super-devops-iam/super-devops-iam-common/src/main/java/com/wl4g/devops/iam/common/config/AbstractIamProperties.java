@@ -456,23 +456,28 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		private String clientSecretKeyName = "clientSecretKey";
 
 		/**
+		 * When the authentication is successful, the access token is generated.
+		 * It is used to enhance the session based verification logic
+		 * (originally the idea comes from JWT). In fact, it is a signature of
+		 * hmacSHA1("signKey", sessionid + umid). Verification logic: the
+		 * signature value calculated by the server is equal to the signature
+		 * value submitted by the client, that is, the verification passes.
+		 * 
+		 * @see {@link com.wl4g.devops.common.constants.IAMDevOpsConstants#KEY_ACCESSTOKEN_SIGN_KEY}
+		 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
+		 * @see prev-step:{@link #dataCipherKeyName}
+		 */
+		private String accessTokenName = "accessToken";
+
+		/**
 		 * When the client authentication is successful, the server will respond
 		 * encrypted to the {@link #dataCipherKeyName} (using the
 		 * {@link #clientSecretKeyName} encryption in the previous step).
 		 * 
 		 * @see prev-step: {@link #clientSecretKeyName}
-		 * @see next-step: {@link #clientSignName}
+		 * @see next-step: {@link #accessTokenName}
 		 */
 		private String dataCipherKeyName = "dataCipherKey";
-
-		/**
-		 * The signature string of the client provider. For example, the string
-		 * is calculated based on {@link #clientSecretKeyName} + sessionid and
-		 * used to verify the validity of the client's request in the future.
-		 * 
-		 * @see prev-step:{@link #dataCipherKeyName}
-		 */
-		private String clientSignName = "clientSign";
 
 		// --- Client's secret & signature.] ---
 
@@ -620,20 +625,20 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			this.clientSecretKeyName = clientSecretKeyName;
 		}
 
+		public String getAccessTokenName() {
+			return accessTokenName;
+		}
+
+		public void setAccessTokenName(String accessTokenName) {
+			this.accessTokenName = accessTokenName;
+		}
+
 		public String getDataCipherKeyName() {
 			return dataCipherKeyName;
 		}
 
-		public void setDataCipherKeyName(String secretKeyName) {
-			this.dataCipherKeyName = secretKeyName;
-		}
-
-		public String getClientSignName() {
-			return clientSignName;
-		}
-
-		public void setClientSignName(String clientSignName) {
-			this.clientSignName = clientSignName;
+		public void setDataCipherKeyName(String dataCipherKeyName) {
+			this.dataCipherKeyName = dataCipherKeyName;
 		}
 
 	}

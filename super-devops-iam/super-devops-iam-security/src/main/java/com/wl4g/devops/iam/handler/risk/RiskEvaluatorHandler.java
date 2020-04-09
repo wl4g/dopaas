@@ -28,13 +28,13 @@ import javax.validation.constraints.NotNull;
 /**
  * Risk control identification handler.
  * 
- * {@link RiskRecognizerHandler}
+ * {@link RiskEvaluatorHandler}
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月25日
  * @since
  */
-public interface RiskRecognizerHandler {
+public interface RiskEvaluatorHandler {
 
 	/**
 	 * Apply UMID token string.</br>

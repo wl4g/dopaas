@@ -55,6 +55,7 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.authc.ClientSecretIamAuthenticationToken;
+import com.wl4g.devops.iam.authc.GenericAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
@@ -480,10 +481,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @param successUrl
 	 *            login success redirect URL
 	 * @return
+	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected RespBase<String> makeLoggedResponse(AuthenticationToken token, Subject subject, ServletRequest request,
-			String grantTicket, String successUrl, Map params) {
+			String grantTicket, String successUrl, Map params) throws Exception {
 		hasTextOf(successUrl, "successUrl");
 
 		// Redirection URL
@@ -509,7 +511,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		params.put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 
 		// Post success secret processing.
-		postSuccessSecretTokenHandle(token, params);
+		postSuccessSecretTokensHandle(token, params);
 
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
@@ -607,30 +609,31 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @param token
 	 * @param params
 	 * @return
+	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void postSuccessSecretTokenHandle(AuthenticationToken token, Map params) {
-		try {
-			// Deserialize the 'clientSecretKey' and use it to encrypt the newly
-			// generated symmetric dataCipherKey.
-			if (token instanceof ClientSecretIamAuthenticationToken) {
-				// New generate dataCipherKey.
-				String hexDataCipherKey = new AESCryptor().generateKey(128).toHex();
-				bind(KEY_DATA_CIPHER_KEY, hexDataCipherKey);
+	protected void postSuccessSecretTokensHandle(AuthenticationToken token, Map params) throws Exception {
+		// Use 'clientsecretkey' to encrypt the newly generated symmetric
+		// key 'datacipherkey'
+		if (token instanceof ClientSecretIamAuthenticationToken) {
+			// New generate dataCipherKey.
+			String hexDataCipherKey = new AESCryptor().generateKey(128).toHex();
+			bind(KEY_DATA_CIPHER_KEY, hexDataCipherKey);
 
-				// Gets SecureCryptService.
-				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
-				SecureCryptService cryptService = cryptAdapter.forOperator(kind);
+			// Gets SecureCryptService.
+			SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
+			SecureCryptService cryptService = cryptAdapter.forOperator(kind);
 
-				// ClientSecretKey (hexPublicKey)
-				String clientSecretKey = ((ClientSecretIamAuthenticationToken) token).getClientSecretKey();
-				// Encryption dataCipherKey by clientSecretKey.
-				KeySpec keySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
-				String dataCipherKeyHexCiphertext = cryptService.encryptWithHex(keySpec, hexDataCipherKey);
-				params.put(config.getParam().getDataCipherKeyName(), dataCipherKeyHexCiphertext);
-			}
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
+			// ClientSecretKey (hexPublicKey)
+			String clientSecretKey = ((ClientSecretIamAuthenticationToken) token).getClientSecretKey();
+			// Encryption dataCipherKey by clientSecretKey.
+			KeySpec keySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
+			String dataCipherKeyHexCiphertext = cryptService.encryptWithHex(keySpec, hexDataCipherKey);
+			params.put(config.getParam().getDataCipherKeyName(), dataCipherKeyHexCiphertext);
+		}
+
+		if (token instanceof GenericAuthenticationToken) {
+
 		}
 
 	}

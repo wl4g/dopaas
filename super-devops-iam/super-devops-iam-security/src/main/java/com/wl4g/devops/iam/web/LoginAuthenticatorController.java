@@ -21,7 +21,7 @@ import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
-import com.wl4g.devops.iam.handler.risk.RiskRecognizerHandler;
+import com.wl4g.devops.iam.handler.risk.RiskEvaluatorHandler;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyCodeWrapper;
 import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
@@ -85,7 +85,7 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 * Risk control recognizer handler.
 	 */
 	@Autowired
-	protected RiskRecognizerHandler riskRecognizerHandler;
+	protected RiskEvaluatorHandler riskRecognizerHandler;
 
 	@Autowired
 	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
@@ -231,8 +231,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 	 * 
 	 * @param request
 	 */
-	private void checkPreHandle(HttpServletRequest request, boolean checkSessionKeyId) {
-		if (checkSessionKeyId) {
+	private void checkPreHandle(HttpServletRequest request, boolean checkSessionKey) {
+		if (checkSessionKey) {
 			// Check sessionKeyId
 			// @see:com.wl4g.devops.iam.web.LoginAuthenticatorController#handhake()
 			checkSession();

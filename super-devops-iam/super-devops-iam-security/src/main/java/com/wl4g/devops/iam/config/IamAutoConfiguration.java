@@ -78,7 +78,7 @@ import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
-import com.wl4g.devops.iam.handler.risk.SimpleRcmRecognizerHandler;
+import com.wl4g.devops.iam.handler.risk.SimpleRcmEvaluatorHandler;
 import com.wl4g.devops.iam.realm.AbstractAuthorizingRealm;
 import com.wl4g.devops.iam.realm.DingtalkAuthorizingRealm;
 import com.wl4g.devops.iam.realm.FacebookAuthorizingRealm;
@@ -531,8 +531,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public SimpleRcmRecognizerHandler simpleRiskRecognizerHandler() {
-		return new SimpleRcmRecognizerHandler();
+	public SimpleRcmEvaluatorHandler simpleRiskRecognizerHandler() {
+		return new SimpleRcmEvaluatorHandler();
 	}
 
 	// ==============================
