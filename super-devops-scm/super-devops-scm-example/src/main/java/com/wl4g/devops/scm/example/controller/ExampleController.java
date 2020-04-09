@@ -17,6 +17,7 @@ package com.wl4g.devops.scm.example.controller;
 
 import com.wl4g.devops.scm.example.service.ExampleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -36,6 +37,9 @@ public class ExampleController implements ApplicationRunner {
 
 	@Autowired
 	private ExampleService exampleService;
+
+	@Value("${example.lastName}")
+	private String lastName;
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
@@ -58,7 +62,14 @@ public class ExampleController implements ApplicationRunner {
 		thread.start();
 	}
 
-	
+
+	@RequestMapping(value = "test")
+	public String list() {
+		System.out.println("lastName = "+lastName);
+		return lastName;
+	}
+
+
 
 
 }

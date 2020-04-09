@@ -15,19 +15,20 @@
  */
 package com.wl4g.devops.iam.notification;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
 import com.wl4g.devops.IamServer;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.wl4g.devops.support.config.NotificationAutoConfiguration.*;
+import static com.wl4g.devops.support.config.NotificationAutoConfiguration.KEY_NOTIFY_PREFIX;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IamServer.class, properties = { KEY_NOTIFY_PREFIX + ".vms.enable=true",
@@ -38,6 +39,7 @@ import static com.wl4g.devops.support.config.NotificationAutoConfiguration.*;
 		KEY_NOTIFY_PREFIX + ".vms.aliyun.calledShowNumber=055162153866",
 		KEY_NOTIFY_PREFIX + ".vms.aliyun.templates.tts1=TTS_184820765",
 		KEY_NOTIFY_PREFIX + ".vms.aliyun.templates.tts2=TTS_184825642" })
+@FixMethodOrder(MethodSorters.JVM)
 public class CompositeMessageNotifierTests {
 
 	@Autowired

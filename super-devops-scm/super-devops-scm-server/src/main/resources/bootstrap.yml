@@ -25,6 +25,12 @@ spring:
         #long-polling-timeout: 30000
         #connect-timeout: 5000
         #max-response-size: 65535
+      iam: # IAM client configuration.
+        client: # IAM client configuration.
+          service-name: ${spring.application.name}
+          use-remember-redirect: false
+          filter-chain:
+            /endpoint/**: anon # Public rule release
 
 # ### Server configuration. ###
 server:

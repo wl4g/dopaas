@@ -14,7 +14,7 @@
 # Example configuration.
 example:
   firstName: 王
-  lastName: jack
+  lastName: jack2
 
 spring:
   cloud:
@@ -22,3 +22,10 @@ spring:
       iam:
         client:
           base-uri: http://localhost:14043/scm-server
+
+redis:
+  passwd: ${REDIS_PASSWD:zzx!@#$%}
+  connect-timeout: 10000
+  max-attempts: 10
+  # Redis's cluster nodes.
+  nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
