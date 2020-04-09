@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.common.core;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -31,10 +33,10 @@ import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.util.Assert;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * IAM customize shiro-spring filter factory bean
@@ -45,7 +47,7 @@ import org.springframework.util.Assert;
  */
 public class IamShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	private FilterChainManager chainManager;
 
@@ -56,9 +58,7 @@ public class IamShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 
 	@Override
 	protected AbstractShiroFilter createInstance() throws Exception {
-		if (log.isDebugEnabled()) {
-			log.debug("Creating Shiro Filter instance...");
-		}
+		log.debug("Creating Shiro Filter instance...");
 
 		SecurityManager securityManager = this.getSecurityManager();
 		if (securityManager == null) {

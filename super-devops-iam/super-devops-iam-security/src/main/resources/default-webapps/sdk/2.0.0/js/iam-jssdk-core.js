@@ -127,13 +127,13 @@
 					}, false);
 				}));
 			},
-			handleSessionTo: function(param){
+			handleSessionTo: function(param) {
 				// 手动提交session(解决跨顶级域名共享cookie失效问题, 如, chrome80+)
-				if(!Common.Util.isAnyEmpty(runtime.handshake._value.sk, runtime.handshake._value.sv)){
+				if(!Common.Util.isAnyEmpty(runtime.handshake._value.session.sk, runtime.handshake._value.session.sv)){
 					if(Common.Util.isObject(param)){
-						param[runtime.handshake._value.sk] = runtime.handshake._value.sv;
+						param[runtime.handshake._value.session.sk] = runtime.handshake._value.session.sv;
 					} else if (Common.Util.isMap(param)) {
-						param.set(runtime.handshake._value.sk, runtime.handshake._value.sv);
+						param.set(runtime.handshake._value.session.sk, runtime.handshake._value.session.sv);
 					}
 				}
 			},

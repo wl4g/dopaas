@@ -13,18 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.kit.runtime;
+package com.wl4g.devops.common.exception.framework;
 
-/**
- * Invalid dependency version exception.
- * 
- * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2018年4月11日
- * @since
- */
-public class InvalidDependencyVersionException extends RuntimeException {
+import com.wl4g.devops.common.exception.DevOpsException;
+
+public class SpecificationException extends DevOpsException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -32,7 +25,7 @@ public class InvalidDependencyVersionException extends RuntimeException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public InvalidDependencyVersionException() {
+	public SpecificationException() {
 		super();
 	}
 
@@ -45,7 +38,7 @@ public class InvalidDependencyVersionException extends RuntimeException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public InvalidDependencyVersionException(String message) {
+	public SpecificationException(String message) {
 		super(message);
 	}
 
@@ -66,7 +59,7 @@ public class InvalidDependencyVersionException extends RuntimeException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public InvalidDependencyVersionException(String message, Throwable cause) {
+	public SpecificationException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -84,7 +77,7 @@ public class InvalidDependencyVersionException extends RuntimeException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public InvalidDependencyVersionException(Throwable cause) {
+	public SpecificationException(Throwable cause) {
 		super(cause);
 	}
 

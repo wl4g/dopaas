@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.web.model;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,10 +24,12 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wl4g.devops.iam.common.web.model.SessionInfo;
 
 /**
  * Pre-processing handshake result model. {@link HandshakeResult}
@@ -54,18 +56,11 @@ public class HandshakeResult implements Serializable {
 	private List<String> algorithms = new ArrayList<>();
 
 	/**
-	 * Session keyname.
+	 * Session info.
 	 */
-	@NotBlank
-	@JsonProperty("sk")
-	private String sessionKey;
-
-	/**
-	 * Session value.
-	 */
-	@NotBlank
-	@JsonProperty("sv")
-	private Serializable sessionValue;
+	@NotNull
+	@JsonProperty(KEY_SESSION_INFO_KEY)
+	private SessionInfo session = new SessionInfo();
 
 	public HandshakeResult() {
 		super();
@@ -98,23 +93,13 @@ public class HandshakeResult implements Serializable {
 		}
 	}
 
-	public String getSessionKey() {
-		return sessionKey;
+	public SessionInfo getSession() {
+		return session;
 	}
 
-	public HandshakeResult setSessionKey(String sessionKey) {
-		hasTextOf(sessionKey, "sessionKey");
-		this.sessionKey = sessionKey;
-		return this;
-	}
-
-	public Serializable getSessionValue() {
-		return sessionValue;
-	}
-
-	public HandshakeResult setSessionValue(Serializable sessionValue) {
-		notNullOf(sessionValue, "sessionValue");
-		this.sessionValue = sessionValue;
+	public HandshakeResult setSessionInfo(SessionInfo session) {
+		notNullOf(session, "session");
+		this.session = session;
 		return this;
 	}
 

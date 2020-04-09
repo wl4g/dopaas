@@ -63,6 +63,12 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String KEY_ACCESSTOKEN_SIGN_KEY = "accessTokenSignKey";
 
 	/**
+	 * iamServer/iamClient the JSON node key that response the session
+	 * information.
+	 */
+	final public static String KEY_SESSION_INFO_KEY = "session";
+
+	/**
 	 * IAM system service role parameter name.</br>
 	 * Can be used for user-client interception of unregistered state
 	 * processing.

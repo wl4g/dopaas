@@ -183,13 +183,13 @@ public class SmartLogger implements Logger {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void debug(String format, Callable<Object>... call) {
+	public void debug(String format, Callable<Object>... calls) {
 		if (orig.isDebugEnabled()) {
-			if (!isNull(call)) {
-				Object[] args = new Object[call.length];
-				for (int i = 0; i < call.length; i++) {
+			if (!isNull(calls)) {
+				Object[] args = new Object[calls.length];
+				for (int i = 0; i < calls.length; i++) {
 					try {
-						args[i] = call[i].call();
+						args[i] = calls[i].call();
 					} catch (Exception e) {
 						error("", e);
 					}
@@ -280,13 +280,13 @@ public class SmartLogger implements Logger {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void info(String format, Callable<Object>... call) {
+	public void info(String format, Callable<Object>... calls) {
 		if (orig.isInfoEnabled()) {
-			if (!isNull(call)) {
-				Object[] args = new Object[call.length];
-				for (int i = 0; i < call.length; i++) {
+			if (!isNull(calls)) {
+				Object[] args = new Object[calls.length];
+				for (int i = 0; i < calls.length; i++) {
 					try {
-						args[i] = call[i].call();
+						args[i] = calls[i].call();
 					} catch (Exception e) {
 						error("", e);
 					}
@@ -377,13 +377,13 @@ public class SmartLogger implements Logger {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void warn(String format, Callable<Object>... call) {
+	public void warn(String format, Callable<Object>... calls) {
 		if (orig.isWarnEnabled()) {
-			if (!isNull(call)) {
-				Object[] args = new Object[call.length];
-				for (int i = 0; i < call.length; i++) {
+			if (!isNull(calls)) {
+				Object[] args = new Object[calls.length];
+				for (int i = 0; i < calls.length; i++) {
 					try {
-						args[i] = call[i].call();
+						args[i] = calls[i].call();
 					} catch (Exception e) {
 						error("", e);
 					}
@@ -474,13 +474,13 @@ public class SmartLogger implements Logger {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void error(String format, Callable<Object>... call) {
+	public void error(String format, Callable<Object>... calls) {
 		if (orig.isErrorEnabled()) {
-			if (!isNull(call)) {
-				Object[] args = new Object[call.length];
-				for (int i = 0; i < call.length; i++) {
+			if (!isNull(calls)) {
+				Object[] args = new Object[calls.length];
+				for (int i = 0; i < calls.length; i++) {
 					try {
-						args[i] = call[i].call();
+						args[i] = calls[i].call();
 					} catch (Exception e) {
 						error("", e);
 					}

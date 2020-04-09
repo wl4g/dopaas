@@ -89,7 +89,7 @@ public class SimpleRcmEvaluatorController extends AbstractAuthenticatorControlle
 	 * @param umdata
 	 * @return
 	 */
-	private Map<String, String> parseUmdataParameters(String umdata) {
+	public static Map<String, String> parseUmdataParameters(String umdata) {
 		if (isBlank(umdata) || !umdata.contains("!")) {
 			throw new IllegalArgumentException("Invalid umdata");
 		}

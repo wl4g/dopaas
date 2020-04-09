@@ -633,7 +633,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		}
 
 		if (token instanceof GenericAuthenticationToken) {
-
+			params.put(config.getParam().getAccessTokenName(), "");
 		}
 
 	}

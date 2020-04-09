@@ -39,6 +39,14 @@ public class KeyValue implements Serializable {
 	 */
 	private Object value;
 
+	public KeyValue() {
+	}
+
+	public KeyValue(Object key, Object value) {
+		setKey(key);
+		setValue(value);
+	}
+
 	@SuppressWarnings("unchecked")
 	public <K> K getKey() {
 		return (K) key;

@@ -107,8 +107,8 @@ public class LoginAuthenticatorController extends AbstractAuthenticatorControlle
 		handshake.setAlgorithms(
 				cryptAdapter.getRunningKinds().stream().map(k -> encode(k.getAlgorithm().getBytes(UTF_8))).collect(toList()));
 		// Assgin sessionKeyId
-		handshake.setSessionKey(config.getCookie().getName());
-		handshake.setSessionValue(getSession(true).getId());
+		handshake.getSession().setSessionKey(config.getParam().getSid());
+		handshake.getSession().setSessionValue(getSession(true).getId());
 		resp.setData(handshake);
 		return resp;
 	}
