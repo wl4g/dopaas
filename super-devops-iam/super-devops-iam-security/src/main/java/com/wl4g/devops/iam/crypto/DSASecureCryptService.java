@@ -28,7 +28,7 @@ import com.wl4g.devops.tool.common.crypto.asymmetric.spec.DSAKeyPairSpec;
  * @version v1.0 2019-08-30
  * @since
  */
-public final class DSASecureCryptService extends AbstractAsymmetricCryptService<DSAKeyPairSpec> {
+public final class DSASecureCryptService extends AbstractAymmetricSecureCryptService<DSAKeyPairSpec> {
 
 	public DSASecureCryptService(JedisLockManager lockManager) {
 		super(lockManager, new DSACryptor());

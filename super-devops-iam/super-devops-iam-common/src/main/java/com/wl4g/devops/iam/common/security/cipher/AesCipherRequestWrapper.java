@@ -47,10 +47,11 @@ public class AesCipherRequestWrapper extends CipherRequestWrapper {
 		// Gets data cipherKey.
 		String dataCipherKey = getBindValue(KEY_DATA_CIPHER_KEY);
 		hasTextOf(dataCipherKey, "dataCipherKey");
+
 		// Decryption data ciphertext.
 		CrypticSource res = new AESCryptor().decrypt(dataCipherKey.getBytes(UTF_8), new CrypticSource(value));
-
 		log.debug("Decryption data cipherValue: {}, plainValue: {}", () -> value, () -> res.toString());
+
 		return res.toString();
 	}
 
