@@ -246,6 +246,9 @@ public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<Ru
 
 		private static final long serialVersionUID = 1569807245009223834L;
 
+		public PublishConfigWrapper() {
+		}
+
 		public PublishConfigWrapper(PreRelease pre) {
 			super(pre.getCluster(), pre.getNamespaces(), pre.getMeta());
 			setInstances(pre.getInstances());

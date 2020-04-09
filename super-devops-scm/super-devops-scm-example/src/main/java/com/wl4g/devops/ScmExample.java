@@ -18,11 +18,12 @@ package com.wl4g.devops;
 import com.wl4g.devops.scm.client.annotation.EnableScmClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @EnableScmClient
-@SpringBootApplication
 @EnableDiscoveryClient
+@SpringBootApplication(exclude={DataSourceAutoConfiguration.class})
 public class ScmExample {
 
 	public static void main(String[] args) {
