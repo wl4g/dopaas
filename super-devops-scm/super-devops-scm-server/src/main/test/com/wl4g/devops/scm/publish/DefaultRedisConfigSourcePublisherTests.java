@@ -25,9 +25,11 @@ import java.util.Map;
 public class DefaultRedisConfigSourcePublisherTests {
 
     @Autowired
-    private JedisService jedisServicel;
+    private JedisService jedisService;
+
     @Test
-    public void setObjectTTest(){
+    public void setObjectTTest() {
+
         DefaultRedisConfigSourcePublisher.PublishConfigWrapper wrapper = new DefaultRedisConfigSourcePublisher.PublishConfigWrapper();
         wrapper.setCluster("scm-example");
         PreRelease preRelease = new PreRelease();
@@ -37,19 +39,19 @@ public class DefaultRedisConfigSourcePublisherTests {
         user.setName("123");
 
         Map map = new HashMap();
-        map.put("a","qwertyuiopsghjklzvbnm");
-        map.put("b",1);
+        map.put("a", "qwertyuiopsghjklzvbnm");
+        map.put("b", 1);
 
 
-        String s = jedisServicel.setObjectT("scm_pub_config_scm-example", user, 0);
+        String s = jedisService.setObjectT("scm_pub_config_scm-example", user, 0);
         System.out.println(s);
     }
 
     //@Test
-    public void setObjectAsJsonTest(){
+    public void setObjectAsJsonTest() {
         DefaultRedisConfigSourcePublisher.PublishConfigWrapper wrapper = new DefaultRedisConfigSourcePublisher.PublishConfigWrapper();
         wrapper.setCluster("scm-example");
-        jedisServicel.setObjectAsJson("scm_pub_config_scm-example",wrapper,0);
+        jedisService.setObjectAsJson("scm_pub_config_scm-example", wrapper, 0);
     }
 
     public static class User implements Serializable {
@@ -64,7 +66,6 @@ public class DefaultRedisConfigSourcePublisherTests {
             this.name = name;
         }
     }
-
 
 
 }
