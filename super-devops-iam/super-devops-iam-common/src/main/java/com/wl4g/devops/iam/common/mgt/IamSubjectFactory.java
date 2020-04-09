@@ -131,23 +131,23 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 				accessToken, accessTokenSignKey, authcToken);
 
 		// Only the account-password authentication is verified.
-		if (authcToken instanceof ClientSecretIamAuthenticationToken) {
-			hasText(accessToken, UnauthenticatedException.class, "accessToken is required");
-			hasText(sessionId, UnauthenticatedException.class, "sessionId is required");
-			hasTextOf(accessTokenSignKey, "accessTokenSignKey"); // Shouldn't-here
-
-			// Calculate signature
-			final byte[] validSign = getHmacSha1(accessTokenSignKey.getBytes(UTF_8)).doFinal(sessionId.getBytes(UTF_8));
-			log.debug("Asserted accessToken of sessionId:{}, accessToken:{}, accessTokenSignKey:{}, validSign:{}, authcToken:{}",
-					accessToken, sessionId, accessTokenSignKey, validSign, authcToken);
-
-			// Compare signature's
-			if (!isEqual(accessToken.getBytes(UTF_8), validSign)) {
-				throw new UnauthenticatedException(
-						format("Illegal authentication credentials signature. accessToken: {}, accessTokenSignKey: {}",
-								accessToken, accessTokenSignKey));
-			}
-		}
+//		if (authcToken instanceof ClientSecretIamAuthenticationToken) {
+//			hasText(accessToken, UnauthenticatedException.class, "accessToken is required");
+//			hasText(sessionId, UnauthenticatedException.class, "sessionId is required");
+//			hasTextOf(accessTokenSignKey, "accessTokenSignKey"); // Shouldn't-here
+//
+//			// Calculate signature
+//			final byte[] validSign = getHmacSha1(accessTokenSignKey.getBytes(UTF_8)).doFinal(sessionId.getBytes(UTF_8));
+//			log.debug("Asserted accessToken of sessionId:{}, accessToken:{}, accessTokenSignKey:{}, validSign:{}, authcToken:{}",
+//					accessToken, sessionId, accessTokenSignKey, validSign, authcToken);
+//
+//			// Compare signature's
+//			if (!isEqual(accessToken.getBytes(UTF_8), validSign)) {
+//				throw new UnauthenticatedException(
+//						format("Illegal authentication credentials signature. accessToken: {}, accessTokenSignKey: {}",
+//								accessToken, accessTokenSignKey));
+//			}
+//		}
 
 	}
 

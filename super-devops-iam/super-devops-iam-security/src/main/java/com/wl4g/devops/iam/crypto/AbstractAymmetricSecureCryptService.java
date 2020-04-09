@@ -51,7 +51,7 @@ import redis.clients.jedis.JedisCluster;
  * @version v1.0 2019-08-30
  * @since
  */
-public abstract class AbstractAsymmetricCryptService<K extends KeyPairSpec> implements SecureCryptService {
+public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec> implements SecureCryptService {
 
 	final protected SmartLogger log = getLogger(getClass());
 
@@ -83,7 +83,7 @@ public abstract class AbstractAsymmetricCryptService<K extends KeyPairSpec> impl
 	protected JedisService jedisService;
 
 	@SuppressWarnings("unchecked")
-	public AbstractAsymmetricCryptService(JedisLockManager lockManager, AsymmetricCryptor cryptor) {
+	public AbstractAymmetricSecureCryptService(JedisLockManager lockManager, AsymmetricCryptor cryptor) {
 		notNullOf(lockManager, "lockManager");
 		notNullOf(cryptor, "cryptor");
 		this.cryptor = cryptor;
