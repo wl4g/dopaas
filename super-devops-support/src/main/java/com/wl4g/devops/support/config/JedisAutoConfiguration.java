@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.support.redis.EnhancedJedisCluster;
 import com.wl4g.devops.support.redis.JedisClusterFactoryBean;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.tool.common.log.SmartLogger;
@@ -73,7 +74,7 @@ public class JedisAutoConfiguration {
 
 	@Bean(BEAN_NAME_REDIS)
 	@ConditionalOnBean(JedisProperties.class)
-	public JedisService jedisService(JedisCluster jedisCluster) {
+	public JedisService jedisService(EnhancedJedisCluster jedisCluster) {
 		return new JedisService(jedisCluster);
 	}
 

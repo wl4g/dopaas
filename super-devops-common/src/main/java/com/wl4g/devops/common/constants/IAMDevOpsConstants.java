@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.constants;
 
-import com.google.common.base.Charsets;
+import static com.google.common.base.Charsets.*;
 
 /**
  * DevOps SCM Constants.
@@ -44,6 +44,23 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeKey";
 	/** authentication accountInfo save session key-name */
 	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttributeKey";
+	/**
+	 * This key is generated when the authentication is successful and can be
+	 * used to encrypt and decrypt the transmission data of some sensitive api.
+	 */
+	final public static String KEY_DATA_CIPHER_KEY = "dataCipherKey";
+	/**
+	 * When authentication is successful, a key for the access token is
+	 * generated. It is used to enhance session based validation logic (the
+	 * original idea came from JWT). In fact, it is the signature of hmacha1
+	 * ("signkey", sessionid + UMID). Validation logic: the signature value
+	 * calculated by the server is equal to the signature value submitted by the
+	 * client, that is, the validation is passed.
+	 * 
+	 * @see {@link com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties#accessTokenName}
+	 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
+	 */
+	final public static String KEY_ACCESSTOKEN_SIGN_KEY = "accessTokenSignKey";
 
 	/**
 	 * IAM system service role parameter name.</br>
@@ -76,9 +93,9 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/** IAM server logout API URI. */
 	final public static String URI_S_LOGOUT = "logout";
 	/** IAM server secondary authentication validate API URI. */
-	final public static String URI_S_SECOND_VALIDATE = "second-validate";
+	final public static String URI_S_SECOND_VALIDATE = "secondValidate";
 	/** IAM server seesions authentication validate API URI. */
-	final public static String URI_S_SESSION_VALIDATE = "session-validate";
+	final public static String URI_S_SESSION_VALIDATE = "sessionValidate";
 
 	/**
 	 * Callback Processing and Path in third party social networks services
@@ -190,11 +207,11 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Security verifier for jigsaw captcha image cache name.
 	 */
-	final public static byte[] CACHE_VERIFY_JIGSAW_IMG = "captcha_jigsaw_imgcache_".getBytes(Charsets.UTF_8);
+	final public static byte[] CACHE_VERIFY_JIGSAW_IMG = "captcha_jigsaw_imgcache_".getBytes(UTF_8);
 	/**
 	 * Cryptographic service cache name.
 	 */
-	final public static byte[] CACHE_CRYPTO = "crypto_keypairs".getBytes(Charsets.UTF_8);
+	final public static byte[] CACHE_CRYPTO = "crypto_keypairs".getBytes(UTF_8);
 	/** Simple risk control handler umidToken cache key. */
 	final public static String CACHE_SIMPLE_RCM_UMIDTOKEN = "simpleUmidToken_";
 
@@ -202,12 +219,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * The public key index by logged-in users
 	 */
 	final public static String KEY_SECRET_INFO = "applySecretInfo";
-	/**
-	 * When the authentication is successful, the access token will be returned.
-	 * The client then uses sessionid + accesstoken as the credential to access
-	 * the business API.
-	 */
-	final public static String KEY_DATA_CIPHER_KEY = "dataCipherKey";
 
 	/**
 	 * Limiter login failure prefix based on user-name.

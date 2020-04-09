@@ -24,6 +24,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.security.MessageDigest.isEqual;
 import static java.util.Objects.isNull;
 
@@ -35,6 +36,7 @@ import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
@@ -75,17 +77,17 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		if (context.isAuthenticated()) {
 			AuthenticationToken token = context.getAuthenticationToken();
 			if (!isNull(token) && token instanceof RememberMeAuthenticationToken) {
-				RememberMeAuthenticationToken iamCasToken = (RememberMeAuthenticationToken) token;
+				RememberMeAuthenticationToken tk = (RememberMeAuthenticationToken) token;
 				// set the authenticated flag of the context to true only if the
 				// CAS subject is not in a remember me mode
-				if (iamCasToken.isRememberMe()) {
+				if (tk.isRememberMe()) {
 					context.setAuthenticated(false);
 				}
 			}
 		}
 
 		/**
-		 * Validation of enhanced sessionid additional signature.
+		 * Validation of enhanced session additional signature.
 		 * 
 		 * @see {@link }
 		 */
@@ -117,43 +119,38 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		// who have logged in successful.
 		// e.g: Authentication requests or internal API requests does not
 		// require signature verification.
-		if (context.isAuthenticated() || isNull(context.getSession())) {
+		if (context.isAuthenticated() || isNull(context.getSession()))
 			return;
-		}
 
 		WebSubjectContext wsc = (WebSubjectContext) context;
+		Session session = wsc.getSession();
 		HttpServletRequest request = toHttp(wsc.resolveServletRequest());
 
-		String sessionId = (String) getSessionId();
-		String clientSign = getCleanParam(request, config.getParam().getClientSignName());
-		String clientSecretKey = (String) wsc.getSession().getAttribute(KEY_DATA_CIPHER_KEY);
-		IamAuthenticationToken authcToken = (IamAuthenticationToken) wsc.getSession().getAttribute(KEY_AUTHC_TOKEN);
-		log.debug("Asserting session signature, sessionId:{}, clientSign:{}, clientSecretKey:{}, authcToken:{}", sessionId,
-				clientSign, clientSecretKey, authcToken);
+		String sessionId = valueOf(session.getId());
+		String accessToken = getCleanParam(request, config.getParam().getAccessTokenName());
+		String clientSecretKey = (String) session.getAttribute(KEY_DATA_CIPHER_KEY);
+		IamAuthenticationToken authcToken = (IamAuthenticationToken) session.getAttribute(KEY_AUTHC_TOKEN);
+		log.debug("Asserting session signature, sessionId:{}, accessToken:{}, clientSecretKey:{}, authcToken:{}", sessionId,
+				accessToken, clientSecretKey, authcToken);
 
-		// Only the password authentication is verified.
-		// if (authcToken instanceof ClientSecretIamAuthenticationToken) {
-		// hasText(clientSign, UnauthenticatedException.class, "client sign is
-		// required");
-		// hasText(sessionId, UnauthenticatedException.class, "sessionId is
-		// required");
-		// hasTextOf(clientSecretKey, "clientSecretKey"); // Shouldn't here
-		//
-		// // Calculate signature
-		// final byte[] validSign =
-		// getHmacSha1(clientSecretKey.getBytes(UTF_8)).doFinal(sessionId.getBytes(UTF_8));
-		// log.debug("Asserted signatur, sessionId:{}, clientSign:{},
-		// clientSecretKey:{}, validSign:{}, authcToken:{}",
-		// clientSign, sessionId, clientSecretKey, validSign, authcToken);
-		//
-		// // Compare signature's
-		// if (!isEqual(clientSign.getBytes(UTF_8), validSign)) {
-		// throw new UnauthenticatedException(
-		// format("Illegal authentication credentials signature. clientSign: {},
-		// clientSecretKey: {}", clientSign,
-		// clientSecretKey));
-		// }
-		// }
+		// Only the account-password authentication is verified.
+		if (authcToken instanceof ClientSecretIamAuthenticationToken) {
+			hasText(accessToken, UnauthenticatedException.class, "client sign is required");
+			hasText(sessionId, UnauthenticatedException.class, "sessionId is required");
+			hasTextOf(clientSecretKey, "clientSecretKey"); // Shouldn't here
+
+			// Calculate signature
+			final byte[] validSign = getHmacSha1(clientSecretKey.getBytes(UTF_8)).doFinal(sessionId.getBytes(UTF_8));
+			log.debug("Asserted signature, sessionId:{}, accessToken:{}, clientSecretKey:{}, validSign:{}, authcToken:{}",
+					accessToken, sessionId, clientSecretKey, validSign, authcToken);
+
+			// Compare signature's
+			if (!isEqual(accessToken.getBytes(UTF_8), validSign)) {
+				throw new UnauthenticatedException(
+						format("Illegal authentication credentials signature. accessToken: {}, clientSecretKey: {}", accessToken,
+								clientSecretKey));
+			}
+		}
 
 	}
 
