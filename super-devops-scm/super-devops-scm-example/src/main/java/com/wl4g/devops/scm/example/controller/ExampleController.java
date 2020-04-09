@@ -15,8 +15,7 @@
  */
 package com.wl4g.devops.scm.example.controller;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.wl4g.devops.scm.example.service.ExampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -24,7 +23,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.devops.scm.example.service.ExampleService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RefreshScope
 @RestController
@@ -58,5 +57,8 @@ public class ExampleController implements ApplicationRunner {
 		});
 		thread.start();
 	}
+
+	
+
 
 }

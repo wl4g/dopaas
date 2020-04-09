@@ -81,6 +81,9 @@
 	<insert id="insert" parameterType="releaseHistory" useGeneratedKeys="true" keyProperty="id">
 		insert into scm_release_history
 		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="id != null">
+				id,
+			</if>
 			<if test="versionid != null">
 				version_id,
 			</if>
@@ -110,6 +113,9 @@
 			<!--</if>-->
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id != null">
+				#{id},
+			</if>
 			<if test="versionid != null">
 				#{versionid},
 			</if>
@@ -181,8 +187,11 @@
 	</select>
 	<!--回滚应用  scm_release_detail -->
 	<insert id="insertDetail" parameterType="releaseDetail" useGeneratedKeys="true" keyProperty="id">
-		insert into scm_release_detail (release_id,instance_id,result)
+		insert into scm_release_detail (id,release_id,instance_id,result)
 		<trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id!=null and id!=''">
+				#{id},
+			</if>
 			<if test="releaseId!=null and releaseId!=''">
 				#{releaseId},
 			</if>

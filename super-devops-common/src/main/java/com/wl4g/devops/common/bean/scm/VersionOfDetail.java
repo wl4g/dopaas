@@ -20,15 +20,15 @@ import java.util.List;
 public class VersionOfDetail extends ConfigVersion {
 	private static final long serialVersionUID = 987629446638218612L;
 
-	private int envId; // 环境
+	private String envId; // 环境
 	private List<String> nodeIdList;// 节点集合
 	private List<VersionContentBean> configGurations;
 
-	public int getEnvId() {
+	public String getEnvId() {
 		return envId;
 	}
 
-	public void setEnvId(int envId) {
+	public void setEnvId(String envId) {
 		this.envId = envId;
 	}
 

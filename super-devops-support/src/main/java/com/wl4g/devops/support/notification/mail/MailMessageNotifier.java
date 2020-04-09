@@ -28,7 +28,6 @@ import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * {@link MailMessageNotifier}, Full compatibility with native spring mail!
@@ -87,7 +86,7 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
                  */
                 simpleMsg.setFrom(simpleMsg.getFrom() + "<" + config.getUsername() + ">");
                 simpleMsg.setTo(msg.getToObjects().stream().map(to -> to = to + "<" + to + ">").collect(toList()).toArray(new String[]{}));
-                simpleMsg.setSubject(msg.getParameterAsString(KEY_MAILMSG_SUBJECT, EMPTY));
+                simpleMsg.setSubject(msg.getParameterAsString(KEY_MAILMSG_SUBJECT, "Super Devops Messages"));
                 simpleMsg.setSentDate(msg.getParameter(KEY_MSG_SENDDATE, new Date()));
                 simpleMsg.setBcc(safeList(msg.getParameter(KEY_MAILMSG_BCC)).toArray(new String[]{}));
                 simpleMsg.setCc(safeList(msg.getParameter(KEY_MAILMSG_CC)).toArray(new String[]{}));
