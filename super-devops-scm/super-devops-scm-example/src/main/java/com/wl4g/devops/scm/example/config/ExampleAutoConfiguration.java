@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.scm.example.config;
 
+import com.wl4g.devops.scm.example.service.Example2;
 import com.wl4g.devops.scm.example.service.ExampleService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -30,6 +31,11 @@ public class ExampleAutoConfiguration {
 	public ExampleService exampleService() {
 		System.out.println("@Bean create exampleService");
 		return new ExampleService();
+	}
+
+	@Bean
+	public Example2 example2(){
+		return new Example2();
 	}
 
 }
