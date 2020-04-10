@@ -16,6 +16,7 @@
 package com.wl4g.devops.support.redis;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
@@ -35,6 +36,7 @@ import java.util.Map.Entry;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import com.wl4g.devops.common.exception.framework.ArgumentsSpecificationException;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import redis.clients.jedis.BinaryJedisCluster;
 import redis.clients.jedis.BinaryJedisPubSub;
@@ -69,6 +71,8 @@ import redis.clients.util.SafeEncoder;
  * @see
  */
 public class EnhancedJedisCluster extends JedisCluster {
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	public EnhancedJedisCluster(HostAndPort node) {
 		this(Collections.singleton(node), DEFAULT_TIMEOUT);
@@ -1931,7 +1935,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 
 	@Override
 	public Object eval(final String script, final List<String> keys, final List<String> args) {
-		checkArgumentsSpecification(keys);
+		SpecificationUtil.checkArgumentsSpecification(keys);
 		return new EnhancedJedisClusterCommand<Object>(connectionHandler, maxAttempts) {
 			@Override
 			public Object doExecute(Jedis connection) {
@@ -1952,7 +1956,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 
 	@Override
 	public Object evalsha(final String sha1, final List<String> keys, final List<String> args) {
-		checkArgumentsSpecification(keys);
+		SpecificationUtil.checkArgumentsSpecification(keys);
 		return new EnhancedJedisClusterCommand<Object>(connectionHandler, maxAttempts) {
 			@Override
 			public Object doExecute(Jedis connection) {
@@ -3517,7 +3521,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 
 	@Override
 	public Object eval(final byte[] script, final List<byte[]> keys, final List<byte[]> args) {
-		checkArgumentsSpecification(keys);
+		SpecificationUtil.checkArgumentsSpecification(keys);
 		return new EnhancedJedisClusterCommand<Object>(connectionHandler, maxAttempts) {
 			@Override
 			public Object doExecute(Jedis connection) {
@@ -4184,7 +4188,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 	 * @throws ArgumentsSpecificationException
 	 */
 	protected void checkArgumentsSpecification(final byte[]... keys) throws ArgumentsSpecificationException {
-		checkArgumentsSpecification(asList(keys));
+		SpecificationUtil.checkArgumentsSpecification(asList(keys));
 	}
 
 	/**
@@ -4194,30 +4198,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 	 * @throws ArgumentsSpecificationException
 	 */
 	protected void checkArgumentsSpecification(final String... keys) throws ArgumentsSpecificationException {
-		checkArgumentsSpecification(asList(keys));
-	}
-
-	/**
-	 * Check input argument names specification.
-	 * 
-	 * @param keys
-	 * @throws ArgumentsSpecificationException
-	 */
-	public static void checkArgumentsSpecification(final List<?> keys) throws ArgumentsSpecificationException {
-		notNullOf(keys, "jedis operation key");
-		for (Object key : keys) {
-			if (key instanceof String) {
-				// The check exclusion key contains special characters such as
-				// '-', '$', ' ' etc and so on.
-				for (char c : key.toString().toCharArray()) {
-					if (!(isNumeric(valueOf(c)) || isAlpha(valueOf(c)) || safeKeyChars.contains(c))) {
-						throw new ArgumentsSpecificationException(
-								format("The keys: '%s' there are unsafe characters, because the binary security mechanism of redis will make it impossible to gets",
-										keys));
-					}
-				}
-			}
-		}
+		SpecificationUtil.checkArgumentsSpecification(asList(keys));
 	}
 
 	/**
@@ -4237,15 +4218,69 @@ public class EnhancedJedisCluster extends JedisCluster {
 	final private static Method PARAMS_MATCH;
 
 	/**
-	 * Redis key-name safe characters.
+	 * Check redis key specification utils.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2020年4月10日
+	 * @since
 	 */
-	final private static List<Character> safeKeyChars = new ArrayList<Character>(2) {
-		private static final long serialVersionUID = -7144798722787955277L;
-		{
-			add(':');
-			add('_');
+	public static abstract class SpecificationUtil {
+
+		final private static SmartLogger log = getLogger(SpecificationUtil.class);
+
+		/**
+		 * Check input argument names specification.
+		 * 
+		 * @param keys
+		 * @throws ArgumentsSpecificationException
+		 */
+		public static void checkArgumentsSpecification(final List<?> keys) throws ArgumentsSpecificationException {
+			notNullOf(keys, "jedis operation key");
+			for (Object key : keys) {
+				if (key instanceof String) {
+					// The check exclusion key contains special characters such
+					// as
+					// '-', '$', ' ' etc and so on.
+					String warning = format(
+							"The keys: '%s' there are unsafe characters, because the binary security mechanism of redis will make it impossible to gets",
+							keys);
+					for (char c : key.toString().toCharArray()) {
+						if (!(isNumeric(valueOf(c)) || isAlpha(valueOf(c)) || safeKeyChars.contains(c))) {
+							// Warning keyChars
+							if (warnKeyChars.contains(c)) {
+								log.warn(warning);
+								return;
+							} else {
+								throw new ArgumentsSpecificationException(warning);
+							}
+						}
+					}
+				}
+			}
 		}
-	};
+
+		/**
+		 * Redis key-name safe characters.
+		 */
+		final private static List<Character> safeKeyChars = new ArrayList<Character>(4) {
+			private static final long serialVersionUID = -7144798722787955277L;
+			{
+				add(':');
+				add('_');
+			}
+		};
+
+		/**
+		 * Redis key-name safe characters.
+		 */
+		final private static List<Character> warnKeyChars = new ArrayList<Character>(4) {
+			private static final long serialVersionUID = -7144798722787955277L;
+			{
+				add('&');
+			}
+		};
+
+	}
 
 	static {
 		Method mothod = null;
