@@ -23,6 +23,7 @@ spring:
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
+            /hook/**: anon # Public rule release
       support:
         cli:
           enabled: true
