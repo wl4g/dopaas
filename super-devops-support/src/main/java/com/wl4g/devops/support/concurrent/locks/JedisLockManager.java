@@ -43,7 +43,7 @@ import static org.springframework.util.Assert.notNull;
  * @since
  */
 public class JedisLockManager {
-	final protected static String NAMESPACE = "reentrantUnfairLock-";
+	final protected static String NAMESPACE = "reentrantUnfairLock.";
 	final protected static String NXXX = "NX";
 	final protected static String EXPX = "PX";
 	final protected static long FRAME_INTERVAL_MS = 50L;
