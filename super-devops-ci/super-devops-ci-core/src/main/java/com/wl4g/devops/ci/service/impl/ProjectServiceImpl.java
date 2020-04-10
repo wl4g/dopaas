@@ -30,7 +30,6 @@ import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.page.PageModel;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +89,7 @@ public class ProjectServiceImpl implements ProjectService {
 		int result = projectDao.insertSelective(project);
 		if (project.getDependencies() != null) {
 			for (Dependency dependency : project.getDependencies()) {
-				if (dependency.getDependentId() != null && StringUtils.isNotBlank(dependency.getBranch())) {
+				if (dependency.getDependentId() != null) {
 					dependency.setProjectId(project.getId());
 					dependency.preInsert();
 					dependencyDao.insertSelective(dependency);
@@ -110,7 +109,7 @@ public class ProjectServiceImpl implements ProjectService {
 		dependencyDao.deleteByProjectId(project.getId());
 		if (project.getDependencies() != null) {
 			for (Dependency dependency : project.getDependencies()) {
-				if (dependency.getDependentId() != null && StringUtils.isNotBlank(dependency.getBranch())) {
+				if (dependency.getDependentId() != null) {
 					dependency.setProjectId(project.getId());
 					dependency.preInsert();
 					dependencyDao.insertSelective(dependency);
