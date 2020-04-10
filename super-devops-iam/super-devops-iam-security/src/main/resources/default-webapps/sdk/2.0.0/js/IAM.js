@@ -3,7 +3,6 @@
  * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
- 
 (function(window, document){
 	var g_modules = {
 		jqModule: { // JQuery
@@ -107,9 +106,9 @@
 			}
 		}
 		// 去重
-		let setModules = [modules[0]];
-		for(let i=1; i < modules.length; i++){
-			let flag = false;
+		var setModules = [modules[0]];
+		for(var i=1; i < modules.length; i++){
+			var flag = false;
 			for(var j=0; j < setModules.length; j++){
 	        	if(modules[i].stable == setModules[j].stable || modules[i].grey == setModules[j].grey){
 		        	flag = true;
@@ -138,19 +137,21 @@
 	 * @return.param mode Operating mode (or environment) Optional: stable | grey
 	 **/
 	var _modules_settings = (function(){
-		let scripts = document.getElementsByTagName("script");
+		var scripts = document.getElementsByTagName("script");
 		var curScript = scripts[scripts.length - 1]; // 最后一个script元素，即引用了本文件的script元素
 		curScript = document.currentScript || curScript;
 		// Gets default path(<script src=http://cdn.wl4g.com/iamjssdk/2.0.0/js/IAM.js  => defaultPath=http://cdn.wl4g.com/iamjssdk/2.0.0).
-		var src = curScript.getAttribute("src");
 		var defaultPath = "./";
-		var parts = src.split("/");
-		if(src.toLocaleUpperCase().startsWith("HTTP")){
-			defaultPath = ""; // reset
-			for(var i=0; i<parts.length; i++){
-			    if(i<parts.length-2){
-			        defaultPath += parts[i]+"/";
-			    }
+		var src = curScript.getAttribute("src");
+		if(src) {
+			var parts = src.split("/");
+			if(src.toLocaleUpperCase().startsWith("HTTP")){
+				defaultPath = ""; // reset
+				for(var i=0; i<parts.length; i++){
+				    if(i<parts.length-2){
+				        defaultPath += parts[i]+"/";
+				    }
+				}
 			}
 		}
 		var settings = {
@@ -192,14 +193,14 @@
 			window.onload = function(){
 				var depends = getDependModules(feature);
 				if(!depends) throw Error("No such module feature of '"+ feature +"'");
-				var scriptUrls = depends.modules.map(d=>{
+				var scriptUrls = depends.modules.map(d => {
 					var t = (cache == 'true') ? 1 : new Date().getTime();
 					return d[mode]+"?t="+t;
 				});
 				// Loading multiple scripts.
 				(function loadScripts(name, urls, path) {
 					urls.forEach(function(src, i) {
-						let script = document.createElement('script');
+						var script = document.createElement('script');
 						script.type = 'text/javascript';
 						script.charset = 'UTF-8';
 						script.src = (path || "") + src;
@@ -251,14 +252,14 @@
 
 			var depends = getDependModules(feature);
 			if(!depends) throw Error("No such module feature of '"+ feature +"'");
-			var cssUrls = depends.modules.filter(d=>d["css_"+mode]!=null&&d["css_"+mode]!="").map(d=>{
+			var cssUrls = depends.modules.filter(d => d["css_"+mode] != null && d["css_"+mode] != "").map(d => {
 				var t = (cache == 'true') ? 1 : new Date().getTime();
 				return d["css_"+mode]+"?t="+t;
 			});
 			// Loading multiple css
 			(function loadCss(name, urls, path) {
 				urls.forEach(function(src, i) {
-					let link = document.createElement('link');
+					var link = document.createElement('link');
 					link.rel = 'stylesheet';
 					link.charset = 'UTF-8';
 					link.href = (path || "") + src;
