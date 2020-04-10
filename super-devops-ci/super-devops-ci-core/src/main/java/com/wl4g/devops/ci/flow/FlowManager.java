@@ -24,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 
 import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.*;
+import static java.util.Objects.isNull;
 
 /**
  * @author vjay
@@ -163,7 +164,7 @@ public class FlowManager {
                                 // the status get from redis
 								Pipeline pipeline = getPipeline(pipelineModel.getRunId(), pipelineModel.getPipeId());
 
-								if(!Objects.isNull(pipeline)&&!StringUtils.equalsAny(pipeline.getStatus(),SUCCESS.toString(),FAILED.toString())){ // RUNNING_DEPLOY
+								if(!isNull(pipeline)&&!StringUtils.equalsAny(pipeline.getStatus(),SUCCESS.toString(),FAILED.toString())){ // RUNNING_DEPLOY
 									batchFinish = false;
                                     break;
                                 }
@@ -252,7 +253,7 @@ public class FlowManager {
 	 */
 	public void pipelineComplete(PipelineModel pipelineModel) {
 		RunModel runModel = getRunModel(pipelineModel.getRunId());
-		if(Objects.isNull(runModel)){
+		if(isNull(runModel)){
 		    return;
         }
 		List<Pipeline> pipelines = runModel.getPipelines();
@@ -330,7 +331,7 @@ public class FlowManager {
 		}
 		/*List<RunModel> runModels = JacksonUtils.parseJSON(s, new TypeReference<List<RunModel>>() {
 		});*/
-		if (Objects.isNull(runModels)) {
+		if (isNull(runModels)) {
 			runModels = new ArrayList<>();
 		}
 		return runModels;
@@ -357,6 +358,22 @@ public class FlowManager {
 			}
 		}
 		return alreadBuild.contains(projectId);
+	}
+
+	public boolean isPipelineRunning(Integer pipelineId){
+		if(isNull(pipelineId)){
+			return false;
+		}
+		List<RunModel> runModels = getRunModels();
+		for(RunModel runModel : runModels){
+			List<Pipeline> pipelines = runModel.getPipelines();
+			for(Pipeline pipeline : pipelines){
+				if(pipelineId.equals(pipeline.getPipeId())){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private void getAlreadyBuildModules(Pipeline pipeline, Set<String> alreadBuild) {
