@@ -45,6 +45,8 @@ public interface ProjectService {
 
 	List<String> getBranchs(Integer appClusterId, Integer tarOrBranch);
 
+	List<String> getBranchsByProjectId(Integer projectId, Integer tarOrBranch);
+
 	List<CompositeBasicVcsProjectModel> vcsProjects(Integer vcsId, String projectName);
 
 }
