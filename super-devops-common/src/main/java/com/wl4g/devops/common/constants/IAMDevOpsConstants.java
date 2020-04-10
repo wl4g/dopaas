@@ -38,12 +38,8 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Authentication principal language attribute name.
 	 */
-	final public static String KEY_LANG_ATTRIBUTE_NAME = "authzPrincipalLangAttributeName";
+	final public static String KEY_LANG_ATTRIBUTE_NAME = "principalLangAttributeName";
 
-	/** authentication token save session key-name */
-	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeKey";
-	/** authentication accountInfo save session key-name */
-	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttributeKey";
 	/**
 	 * This key is generated when the authentication is successful and can be
 	 * used to encrypt and decrypt the transmission data of some sensitive api.
@@ -61,6 +57,11 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
 	 */
 	final public static String KEY_ACCESSTOKEN_SIGN_KEY = "accessTokenSignKey";
+
+	/** authentication token save session key-name */
+	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeKey";
+	/** authentication accountInfo save session key-name */
+	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttributeKey";
 
 	/**
 	 * iamServer/iamClient the JSON node key that response the session

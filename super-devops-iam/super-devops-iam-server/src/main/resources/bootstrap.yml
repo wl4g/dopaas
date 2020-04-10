@@ -43,9 +43,9 @@ spring:
         cache:
           prefix: ${spring.application.name}_
         cipher:
-          enable-data-cipher: true
+          enable-data-cipher: false
         session:
-          enable-access-token-validity: true
+          enable-access-token-validity: false
           global-session-timeout: 1800_000
           session-validation-interval: 360_000
         cookie:

@@ -18,20 +18,20 @@ package com.wl4g.devops.iam.common.mgt;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_KEY;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_KEY;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.devops.tool.common.codec.Base58.encode;
+import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
-import static java.security.MessageDigest.isEqual;
 import static java.util.Objects.isNull;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 
-import static org.apache.commons.codec.digest.HmacUtils.getHmacSha1;
+import static org.apache.commons.codec.digest.HmacUtils.hmacSha256Hex;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -124,31 +124,45 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		HttpServletRequest request = toHttp(wsc.resolveServletRequest());
 
 		String sessionId = valueOf(session.getId());
-		String accessToken = getCleanParam(request, config.getParam().getAccessTokenName());
 		String accessTokenSignKey = (String) session.getAttribute(KEY_ACCESSTOKEN_SIGN_KEY);
+		final String accessToken = getCleanParam(request, config.getParam().getAccessTokenName());
 		IamAuthenticationToken authcToken = (IamAuthenticationToken) session.getAttribute(KEY_AUTHC_TOKEN);
-		log.debug("Asserting session signature, sessionId:{}, accessToken:{}, accessTokenSignKey:{}, authcToken:{}", sessionId,
-				accessToken, accessTokenSignKey, authcToken);
+		log.debug("Asserting accessToken, sessionId:{}, accessTokenSignKey: {}, authcToken: {}, accessToken: {}", sessionId,
+				accessTokenSignKey, authcToken, accessToken);
 
 		// Only the account-password authentication is verified.
-//		if (authcToken instanceof ClientSecretIamAuthenticationToken) {
-//			hasText(accessToken, UnauthenticatedException.class, "accessToken is required");
-//			hasText(sessionId, UnauthenticatedException.class, "sessionId is required");
-//			hasTextOf(accessTokenSignKey, "accessTokenSignKey"); // Shouldn't-here
-//
-//			// Calculate signature
-//			final byte[] validSign = getHmacSha1(accessTokenSignKey.getBytes(UTF_8)).doFinal(sessionId.getBytes(UTF_8));
-//			log.debug("Asserted accessToken of sessionId:{}, accessToken:{}, accessTokenSignKey:{}, validSign:{}, authcToken:{}",
-//					accessToken, sessionId, accessTokenSignKey, validSign, authcToken);
-//
-//			// Compare signature's
-//			if (!isEqual(accessToken.getBytes(UTF_8), validSign)) {
-//				throw new UnauthenticatedException(
-//						format("Illegal authentication credentials signature. accessToken: {}, accessTokenSignKey: {}",
-//								accessToken, accessTokenSignKey));
-//			}
-//		}
+		// if (authcToken instanceof ClientSecretIamAuthenticationToken) {
+		hasText(accessToken, UnauthenticatedException.class, "accessToken is required");
+		hasText(sessionId, UnauthenticatedException.class, "sessionId is required");
+		hasTextOf(accessTokenSignKey, "accessTokenSignKey"); // Shouldn't-here
 
+		// Calculating accessToken(signature).
+		final String validAccessToken = getAccessToken(session, accessTokenSignKey);
+		log.debug(
+				"Asserted accessToken of sessionId: {}, accessTokenSignKey: {}, validAccessToken: {}, accessToken: {}, authcToken: {}",
+				sessionId, accessTokenSignKey, validAccessToken, accessToken, authcToken);
+
+		// Compare accessToken(signature)
+		if (!accessToken.equals(validAccessToken)) {
+			throw new UnauthenticatedException(
+					format("Illegal authentication credentials signature. accessToken: {}, accessTokenSignKey: {}", accessToken,
+							accessTokenSignKey));
+		}
+		// }
+
+	}
+
+	/**
+	 * Gets new generate accessToken string.
+	 * 
+	 * @param session
+	 * @param accessTokenSignKey
+	 * @return
+	 */
+	final public static String getAccessToken(@NotBlank final Session session, @NotBlank final String accessTokenSignKey) {
+		notNullOf(session, "session");
+		hasTextOf(accessTokenSignKey, "accessTokenSignKey");
+		return encode(hmacSha256Hex(toBytes(accessTokenSignKey), valueOf(session.getId()).getBytes(UTF_8)).getBytes(UTF_8));
 	}
 
 }
