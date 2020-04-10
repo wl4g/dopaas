@@ -184,7 +184,9 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Authorized roles and permission information.
 		Map<String, String> attributes = assertion.getPrincipalInfo().getAttributes();
 		attributes.put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
+		// Sets dataCipherKey
 		attributes.put(KEY_DATA_CIPHER_KEY, getBindValue(KEY_DATA_CIPHER_KEY));
+		// Sets accessToken
 		attributes.put(KEY_ACCESSTOKEN_SIGN_KEY, getBindValue(KEY_ACCESSTOKEN_SIGN_KEY));
 		return assertion;
 	}

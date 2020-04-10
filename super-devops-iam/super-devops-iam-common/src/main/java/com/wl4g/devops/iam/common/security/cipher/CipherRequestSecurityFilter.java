@@ -67,6 +67,8 @@ public final class CipherRequestSecurityFilter extends OncePerRequestFilter {
 			// If it is an encrypted parameter request, it is wrapped as a
 			// decryptable request.
 			filterChain.doFilter(factory.newRequestWrapper(config, request), response);
+		} else {
+			filterChain.doFilter(request, response);
 		}
 
 	}

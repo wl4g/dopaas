@@ -244,7 +244,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 *            Whether to UN-bundle
 	 * @return
 	 */
-	public static <T> T getBindValue(String sessionKey, boolean unbind) throws InvalidSessionException {
+	public static <T> T getBindValue(String sessionKey, @Deprecated boolean unbind) throws InvalidSessionException {
 		try {
 			return getBindValue(sessionKey);
 		} finally {
@@ -262,13 +262,13 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T getBindValue(String sessionKey) throws InvalidSessionException {
 		hasTextOf(sessionKey, "sessionKey");
-		// Get bind value.
+		// Gets bind value.
 		T value = (T) getSession().getAttribute(sessionKey);
-		// Get value TTL.
+		// Gets value TTL.
 		SessionValueTTL ttl = (SessionValueTTL) getSession().getAttribute(getExpireKey(sessionKey));
-		if (ttl != null) { // Need to check expiration
-			if ((System.currentTimeMillis() - ttl.getCreateTime()) >= ttl.getExpireMs()) { // Expired?
-				unbind(sessionKey); // Cleanup
+		if (!isNull(ttl)) { // Need to check expiration
+			if ((currentTimeMillis() - ttl.getCreateTime()) >= ttl.getExpireMs()) { // Expired?
+				unbind(sessionKey); // Remove
 				return null; // Because it's expired.
 			}
 		}
@@ -333,7 +333,9 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	public static <T> T bind(String sessionKey, T value, long expireMs) throws InvalidSessionException {
 		isTrue(expireMs > 0, "Expire time must be greater than 0");
 		bind(sessionKey, value);
-		bind(getExpireKey(sessionKey), new SessionValueTTL(expireMs));
+		if (!isNull(value)) {
+			bind(getExpireKey(sessionKey), new SessionValueTTL(expireMs));
+		}
 		return value;
 	}
 
@@ -345,7 +347,9 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 */
 	public static <T> T bind(String sessionKey, T value) throws InvalidSessionException {
 		hasTextOf(sessionKey, "sessionKey");
-		getSession().setAttribute(sessionKey, value);
+		if (!isNull(value)) {
+			getSession().setAttribute(sessionKey, value);
+		}
 		return value;
 	}
 
