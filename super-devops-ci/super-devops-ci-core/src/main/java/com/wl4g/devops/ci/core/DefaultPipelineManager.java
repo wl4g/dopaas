@@ -26,21 +26,20 @@ import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.common.bean.iam.Contact;
-import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.iam.Contact;
+import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.framework.beans.AliasPrototypeBeanFactory;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.*;
-import com.wl4g.devops.dao.iam.ContactDao;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
+import com.wl4g.devops.dao.iam.ContactDao;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
-import com.wl4g.devops.tool.common.lang.Assert2;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -122,9 +121,6 @@ public class DefaultPipelineManager implements PipelineManager {
 		notNull(task.getAppClusterId(), "Task clusterId must not be null.");
 		AppCluster appCluster = appClusterDao.selectByPrimaryKey(task.getAppClusterId());
 		notNull(appCluster, "not found this app");
-
-		//check pipeline is running
-		Assert2.isTrue(!flowManager.isPipelineRunning(param.getTaskId()),"this pipeline is running, Please try later");
 
 		List<AppInstance> instances = new ArrayList<>();
 		for (String instanceId : instanceIds) {

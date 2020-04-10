@@ -84,7 +84,7 @@ public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyPrope
                  * Preset from account, otherwise it would be wrong: 501 mail from
                  * address must be same as authorization user.
                  */
-                simpleMsg.setFrom(simpleMsg.getFrom() + "<" + config.getUsername() + ">");
+                simpleMsg.setFrom(config.getUsername() + "<" + config.getUsername() + ">");
                 simpleMsg.setTo(msg.getToObjects().stream().map(to -> to = to + "<" + to + ">").collect(toList()).toArray(new String[]{}));
                 simpleMsg.setSubject(msg.getParameterAsString(KEY_MAILMSG_SUBJECT, "Super Devops Messages"));
                 simpleMsg.setSentDate(msg.getParameter(KEY_MSG_SENDDATE, new Date()));

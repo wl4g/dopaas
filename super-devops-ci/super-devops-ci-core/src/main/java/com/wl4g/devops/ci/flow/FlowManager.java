@@ -13,6 +13,7 @@ import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.support.redis.ScanCursor;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ public class FlowManager {
 	@Autowired
 	private OrchestrationDao orchestrationDao;
 
-	public static final String REDIS_CI_RUN_PRE = "CI-RUN-";//redis key
+	public static final String REDIS_CI_RUN_PRE = "CI_RUN_";//redis key
 
 	public static final int REDIS_CI_RUN_SCAN_BATCH = 10;//redis scan batch
 	
@@ -111,7 +112,7 @@ public class FlowManager {
         long currentTimeMillis = System.currentTimeMillis();
         RunModel runModel = new RunModel();
         runModel.setCreateTime(currentTimeMillis);
-        runModel.setRunId(REDIS_CI_RUN_PRE + orchestrationId + "-" + currentTimeMillis);
+        runModel.setRunId(REDIS_CI_RUN_PRE + orchestrationId + "_" + currentTimeMillis);
         runModel.setType("FLOW");
         List<List<PipelineModel>> pipelineSort = new ArrayList<>();
         List<Pipeline> pipelines = new ArrayList<>();
@@ -219,6 +220,9 @@ public class FlowManager {
 	 * @return
 	 */
 	public PipelineModel buildPipeline(Integer pipelineId) {
+		//check pipeline is running
+		Assert2.isTrue(!isPipelineRunning(pipelineId),"this pipeline is running, Please try later");
+
 		long currentTimeMillis = System.currentTimeMillis();
 		PipelineModel pipelineModel = new PipelineModel();
 		pipelineModel.setPipeId(pipelineId);
@@ -228,7 +232,7 @@ public class FlowManager {
 		pipelineModel.setAttempting(1);
 		RunModel runModel = new RunModel();
 		runModel.setCreateTime(currentTimeMillis);
-		runModel.setRunId(REDIS_CI_RUN_PRE + pipelineId + "-" + currentTimeMillis);
+		runModel.setRunId(REDIS_CI_RUN_PRE + pipelineId + "_" + currentTimeMillis);
 		runModel.setType("PIPE");
 		List<Pipeline> pipelines = new ArrayList<>();
 		pipelines.add(pipelineModel);
@@ -291,7 +295,7 @@ public class FlowManager {
 
 		//update db status
 		runId = runId.replaceAll(REDIS_CI_RUN_PRE,"");
-		String[] split = runId.split("-");
+		String[] split = runId.split("_");
 		Orchestration orchestration = new Orchestration();
 		orchestration.setId(Integer.valueOf(split[0]));
 		orchestration.setStatus(5);
@@ -322,12 +326,12 @@ public class FlowManager {
 	}
 
 	private List<RunModel> getRunModels() {
-		ScanCursor<RunModel> scan = jedisService.scan(REDIS_CI_RUN_PRE, REDIS_CI_RUN_SCAN_BATCH, RunModel.class);
+		ScanCursor<String> scan = jedisService.scan(REDIS_CI_RUN_PRE+"*", REDIS_CI_RUN_SCAN_BATCH, String.class);
 		List<RunModel> runModels = new ArrayList<>();
 
 		while (scan.hasNext()){
-			RunModel next = scan.next();
-			runModels.add(next);
+			String next = scan.next();
+			runModels.add(JacksonUtils.parseJSON(next,RunModel.class));
 		}
 		/*List<RunModel> runModels = JacksonUtils.parseJSON(s, new TypeReference<List<RunModel>>() {
 		});*/
