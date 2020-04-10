@@ -3,9 +3,7 @@
  * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
-
 (function(window, document){
-	
 	// Exposing IAM UI
 	window.IAMUi = function(){};
 
@@ -19,13 +17,17 @@
 	 * 
 	 * @param renderId Render target object element id.
 	 **/
-	IAMUi.prototype.initUI = function(renderObj, iamServerBaseUri) {
+	IAMUi.prototype.initUI = function(renderObj, iamCoreConfig) {
 		if(!renderObj || renderObj == undefined){
 			throw Error("IAM JSSDK UI (renderObj) is required!");
 		}
-		if(!iamServerBaseUri || iamServerBaseUri == undefined || iamServerBaseUri.trim().length<=0){
-			console.warn("Init 'iamServerBaseUri' not configure, already used default!");
-			iamServerBaseUri = null; // Init
+		if(!iamCoreConfig){
+			console.warn("Init 'iamCoreConfig' not configure, already used defaults !");
+			iamCoreConfig = $.extend(true, {}, {
+	    		baseUri: "http://localhost:14040/iam-server", // Using auto extra configure
+	   			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+	 			deaultContextPath: "/iam-server" // IAMServerd的context-path
+	 		});
 		}
 
 		console.debug("Initializing IAM JSSDK UI...");
@@ -48,8 +50,7 @@
 							扫码登录
 						</span>
 					</div>
-					<div class="login-form-tip" id="err_tip">
-					</div>
+					<div class="login-form-tip" id="err_tip"></div>
 					<div class="login-form-body">
 						<!-- 密码登录-->
 						<div class="login-form-panel active" id="login_account_panel">
@@ -57,19 +58,19 @@
 								<div class="login-form-item">
 									<i class="icon-user">
 									</i>
-									<input class="inp" id="user_name" name="username" placeholder="请输入账号"
+									<input class="inp" id="iam_jssdk_account_username" name="username" placeholder="请输入账号"
 									maxlength="20">
 								</div>
 								<div class="login-form-item">
 									<i class="icon-pass">
 									</i>
-									<input class="inp" id="password" name="password" type="password" placeholder="请输入密码"
+									<input class="inp" id="iam_jssdk_account_password" name="iam_jssdk_account_password" type="password" placeholder="请输入密码"
 									maxlength="35" autocapitalize="off" autocomplete="off">
 								</div>
-								<div class="login-form-item" id="captcha_panel">
+								<div class="login-form-item" id="iam_jssdk_captcha_panel">
 									<!-- 拖动验证-->
 								</div>
-								<input class="btn" id="iam_submit" type="button" value="登录">
+								<input class="btn" id="iam_jssdk_account_submit_btn" type="button" value="登录">
 							</form>
 						</div>
 						<!-- 手机登录-->
@@ -113,14 +114,14 @@
 								</i>
 								<input id="codeNumber" class="inp" type="text" placeholder="请输入短信动态码"
 								name="codeNumber" maxlength=6>
-								<button class="btn-code" type="button" id="code-get">
+								<button class="btn-code" type="button" id="iam_jssdk_sms_getcode_btn">
 									获取
 								</button>
 								<p class="err-info pass-err">
 									请输入短信验证码
 								</p>
 							</div>
-							<input class="btn" id="phone_submit" type="button" value="登录">
+							<input class="btn" id="iam_jssdk_sms_submit_btn" type="button" value="登录">
 						</div>
 						<!-- 微信登录-->
 						<div class="login-form-panel" id="login_scan_panel">
@@ -145,7 +146,7 @@
 		initUITab();
 
 		// 绑定IAM SDK事件
-		initUISDK(iamServerBaseUri);
+		initUISDK(iamCoreConfig);
 	};
 
 	// Exposing IAMCore object
@@ -198,18 +199,18 @@
 	        }
 	    });
 	}
-	
-	// 绑定IAM SDK事件
-	function initUISDK(iamServerBaseUri) {
+
+	// 绑定IAM UI SDK事件
+	function initUISDK(iamCoreConfig) {
 		Common.Util.printSafeWarn("This browser function is for developers only. Please do not paste and execute any content here, which may cause your account to be attacked and bring you loss!");
 		runtime.iamCore = new IAMCore();
 		runtime.iamCore.init({
-			deploy: {
-	    		//baseUri: "http://localhost:14040/iam-server", // Using auto extra configure
-	   			baseUri: iamServerBaseUri,
-	   			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
-	 			deaultContextPath: "/iam-server" // IAMServerd的context-path
-	 		},
+			//deploy: {
+	    	//	baseUri: "http://localhost:14040/iam-server", // Using auto extra configure
+	   		//	defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+	 		//	deaultContextPath: "/iam-server" // IAMServerd的context-path
+	 		//},
+			deploy: iamCoreConfig,
 	 		// 初始相关配置(Event)
 	 		init: {
 	 			onPostCheck: function(res) {
@@ -235,9 +236,9 @@
 			captcha: {
 				enable: true,
 				use: "VerifyWithJigsawGraph", // default by 'VerifyWithGifGraph'
-				panel: document.getElementById("captcha_panel"), // Jigsaw验证码时必须
-				img: document.getElementById("codeimg"), // 验证码显示 img对象（仅jpeg/gif时需要）
-				input: document.getElementById("captcha_input"), // 验证码input对象（仅jpeg/gif时需要）
+				panel: document.getElementById("iam_jssdk_captcha_panel"), // Jigsaw验证码时必须
+				img: document.getElementById("iam_jssdk_captcha_img"), // 验证码显示 img对象（仅jpeg/gif时需要）
+				input: document.getElementById("iam_jssdk_captcha_input"), // 验证码input对象（仅jpeg/gif时需要）
 				onSuccess: function(verifiedToken) {
 					console.debug("Captcha verify successful. verifiedToken is "+ verifiedToken);
 				},
@@ -248,31 +249,31 @@
 			// 登录认证配置
 			account: {
 				enable: true,
-				submitBtn: document.getElementById("iam_submit"), // 登录提交触发对象
-				principal: document.getElementById("user_name"), // 必填，获取填写的登录用户名
-				credential: document.getElementById("password"), // 获取登录账号密码，账号登录时必填
+				submitBtn: document.getElementById("iam_jssdk_account_submit_btn"), // 登录提交触发对象
+				principal: document.getElementById("iam_jssdk_account_username"), // 必填，获取填写的登录用户名
+				credential: document.getElementById("iam_jssdk_account_password"), // 获取登录账号密码，账号登录时必填
 				onBeforeSubmit: function (principal, plainPasswd, captcha) { // 提交之前
-					//console.log("准备提交登录....");
+					console.debug("Iam account login... principal: "+ principal+", plainPasswd: ******, captcha: "+captcha);
 					return true;
 				},
 				onSuccess: function (principal, redirectUrl) {
-					//console.log("登录成功!");
+					console.debug("Iam account login successful !");
 					return true; // 返回false会阻止自动调整
 				},
 				onError: function (errmsg) {
-					console.error("登录失败. " + errmsg);
+					console.error("Failed login. "+ errmsg);
 					$("#err_tip").text(errmsg).show().delay(5000).hide(100);
 				}
 			},
 			sms: { // SMS认证配置
 				enable: true,
-				submitBtn: document.getElementById("phone_submit"), // 登录提交触发对象
-				sendSmsBtn: document.getElementById("code-get"), // 发送SMS验证码对象
+				submitBtn: document.getElementById("iam_jssdk_sms_submit_btn"), // 登录提交触发对象
+				sendSmsBtn: document.getElementById("iam_jssdk_sms_getcode_btn"), // 发送SMS验证码对象
 				mobileArea: $(".select-area"), // 手机号区域select对象
 				mobile: document.getElementById("user_phone"), // 手机号input对象
 				smsCode: document.getElementById("codeNumber"), // SMS验证码input对象
 				onBeforeSubmit: function (mobileNum, smsCode) {
-					//console.log("准备提交登录....");
+					console.debug("Iam sms login ... mobileNum: "+ mobileNum);
 					return true;
 				},
 				onSuccess: function(resp){
