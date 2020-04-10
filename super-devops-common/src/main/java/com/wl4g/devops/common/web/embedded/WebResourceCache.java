@@ -18,6 +18,7 @@ package com.wl4g.devops.common.web.embedded;
 import static java.util.Objects.isNull;
 
 import org.springframework.cache.Cache;
+import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 
 /**
@@ -79,8 +80,8 @@ public interface WebResourceCache {
 
 		@Override
 		public byte[] get(Object key) {
-			Object value = cache.get(key);
-			return isNull(value) ? null : (byte[]) value;
+			ValueWrapper value = cache.get(key);
+			return isNull(value) ? null : (byte[]) value.get();
 		}
 
 		@Override

@@ -115,7 +115,7 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 					buf = preResponesPropertiesSet(filepath, toByteArray(in), request);
 
 					// Check cache?
-					if (!isCache(filepath, request)) {
+					if (isCache(filepath, request)) {
 						cache.put(filepath, buf);
 					}
 				} else { // Not found
@@ -139,7 +139,7 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 	 * @return
 	 */
 	protected boolean isCache(String filepath, HttpServletRequest request) {
-		return isJVMDebugging;
+		return !isJVMDebugging;
 	}
 
 	/**
