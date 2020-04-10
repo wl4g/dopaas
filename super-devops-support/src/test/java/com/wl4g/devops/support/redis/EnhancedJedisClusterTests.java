@@ -26,6 +26,8 @@ public class EnhancedJedisClusterTests {
 		SpecificationUtil.checkArgumentsSpecification(asList("safecloud_support_appinfo_admin"));
 		System.out.println("-----22-----");
 		SpecificationUtil.checkArgumentsSpecification(asList("3342701404111872&&800492841ab644dc8ea01c683a809255BELONGANNUPXIN"));
+		System.out.println("-----33-----");
+		SpecificationUtil.checkArgumentsSpecification(asList("3342701404111872-800492841ab644dc8ea01c683a809255BELONGANNUPXIN"));
 	}
 
 }

@@ -4242,7 +4242,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 					// as
 					// '-', '$', ' ' etc and so on.
 					String warning = format(
-							"The keys: '%s' there are unsafe characters, because the binary security mechanism of redis will make it impossible to gets",
+							"The operation redis keys: '%s' there are unsafe characters, Because of the binary safety mechanism of redis, it may not be got",
 							keys);
 					for (char c : key.toString().toCharArray()) {
 						if (!(isNumeric(valueOf(c)) || isAlpha(valueOf(c)) || safeKeyChars.contains(c))) {
