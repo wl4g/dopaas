@@ -619,27 +619,33 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Use 'clientsecretkey' to encrypt the newly generated symmetric
 		// key 'datacipherkey'
 		if (token instanceof ClientSecretIamAuthenticationToken) {
-			// New generate dataCipherKey.
-			String hexDataCipherKey = new AESCryptor().generateKey(128).toHex();
-			bind(KEY_DATA_CIPHER_KEY, hexDataCipherKey);
-
-			// Gets SecureCryptService.
-			SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
-			SecureCryptService cryptService = cryptAdapter.forOperator(kind);
-
-			// ClientSecretKey (hexPublicKey)
-			String clientSecretKey = ((ClientSecretIamAuthenticationToken) token).getClientSecretKey();
-			// Encryption dataCipherKey by clientSecretKey.
-			KeySpec pubKeySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
-			String dataCipherKeyHexCiphertext = cryptService.encryptWithHex(pubKeySpec, hexDataCipherKey);
+			// Generate dataCipherKey
+			String dataCipherKeyHexCiphertext = null;
+			if (config.getCipher().isEnableDataCipher()) {
+				// New generate dataCipherKey.
+				String hexDataCipherKey = new AESCryptor().generateKey(128).toHex();
+				bind(KEY_DATA_CIPHER_KEY, hexDataCipherKey);
+				// Gets SecureCryptService.
+				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
+				SecureCryptService cryptService = cryptAdapter.forOperator(kind);
+				// ClientSecretKey (hexPublicKey)
+				String clientSecretKey = ((ClientSecretIamAuthenticationToken) token).getClientSecretKey();
+				// Encryption dataCipherKey by clientSecretKey.
+				KeySpec pubKeySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
+				dataCipherKeyHexCiphertext = cryptService.encryptWithHex(pubKeySpec, hexDataCipherKey);
+			}
 			params.put(config.getParam().getDataCipherKeyName(), dataCipherKeyHexCiphertext);
 
-			// Generate accessTokenSignKey.
-			byte[] sessionId = toBytes(getSessionId().toString());
-			String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN_KEY, sha512().hashBytes(sessionId).toString());
-			// Generate accessToken.
-			final String accessToken = getAccessToken(subject.getSession(), accessTokenSignKey);
+			// Generate accessToken
+			String accessToken = null;
+			if (config.getSession().isEnableAccessTokenValidity()) {
+				byte[] sessionId = toBytes(getSessionId().toString());
+				// Create accessTokenSignKey.
+				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN_KEY, sha512().hashBytes(sessionId).toString());
+				accessToken = getAccessToken(subject.getSession(), accessTokenSignKey);
+			}
 			params.put(config.getParam().getAccessTokenName(), accessToken);
+
 		}
 
 	}
