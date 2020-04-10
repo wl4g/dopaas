@@ -64,7 +64,7 @@
 							umdata = Common.Util.Codec.encodeBase58(umdata);
 						}
 						umdata = n + "!" + umdata;
-						console.debug("Generated apply umidToken data: "+ umdata)
+						console.debug("Generated apply umidToken data: "+ umdata);
 						umidParam.set("umdata", umdata);
 						doIamRequest("post", "{applyUmTokenUri}", umidParam, function(res){
 							Common.Util.checkEmpty("init.onPostUmidToken", settings.init.onPostUmidToken)(res); //获得token回调
@@ -939,7 +939,7 @@
 	};
 
 	// Exposing core APIs
-	window.IAMCore = function(){}
+	window.IAMCore = function(){};
 	IAMCore.prototype.init = function(opt) {
 		// 初始化配置
 		_initConfigure(opt);
