@@ -29,8 +29,6 @@ public class Dependency extends BaseBean implements Serializable {
 
 	private Integer dependentId;
 
-	private String branch;
-
 	private String projectName;
 
 	private String parentName;
@@ -67,14 +65,6 @@ public class Dependency extends BaseBean implements Serializable {
 		this.dependentId = dependentId;
 	}
 
-	public String getBranch() {
-		return branch;
-	}
-
-	public void setBranch(String branch) {
-		this.branch = branch;
-	}
-
 	public String getProjectName() {
 		return projectName;
 	}
@@ -108,7 +98,7 @@ public class Dependency extends BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Dependency{" + "id=" + id + ", projectId=" + projectId + ", dependentId=" + dependentId + ", branch='" + branch
-				+ '\'' + ", projectName='" + projectName + '\'' + ", parentName='" + parentName + '\'' + '}';
+		return "Dependency{" + "id=" + id + ", projectId=" + projectId + ", dependentId=" + dependentId
+				 + ", projectName='" + projectName + '\'' + ", parentName='" + parentName + '\'' + '}';
 	}
 }
