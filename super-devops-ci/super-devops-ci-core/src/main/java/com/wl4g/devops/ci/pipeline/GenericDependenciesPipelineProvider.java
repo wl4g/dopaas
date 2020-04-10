@@ -22,6 +22,7 @@ import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -94,6 +95,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		pipelineModel.setStatus(RUNNING_BUILD.toString());
 		pipelineModel.setModules(modules);
 		flowManager.pipelineStateChange(pipelineModel);
+
+		log.info(writeBuildLog("Analyzed pipelineModel=%s", JacksonUtils.toJSONString(pipelineModel)));
 
 		// Build of dependencies sub-modules.
 		for (Dependency depd : dependencies) {
