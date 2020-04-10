@@ -40,6 +40,7 @@ import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -121,6 +122,9 @@ public class DefaultPipelineManager implements PipelineManager {
 		notNull(task.getAppClusterId(), "Task clusterId must not be null.");
 		AppCluster appCluster = appClusterDao.selectByPrimaryKey(task.getAppClusterId());
 		notNull(appCluster, "not found this app");
+
+		//check pipeline is running
+		Assert2.isTrue(!flowManager.isPipelineRunning(param.getTaskId()),"this pipeline is running, Please try later");
 
 		List<AppInstance> instances = new ArrayList<>();
 		for (String instanceId : instanceIds) {
