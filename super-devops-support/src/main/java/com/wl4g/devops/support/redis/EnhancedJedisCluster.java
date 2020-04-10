@@ -4203,17 +4203,16 @@ public class EnhancedJedisCluster extends JedisCluster {
 	 * @param keys
 	 * @throws ArgumentsSpecificationException
 	 */
-	protected void checkArgumentsSpecification(final List<?> keys) throws ArgumentsSpecificationException {
+	public static void checkArgumentsSpecification(final List<?> keys) throws ArgumentsSpecificationException {
 		notNullOf(keys, "jedis operation key");
 		for (Object key : keys) {
 			if (key instanceof String) {
-				// The check exclusion key contains special characters such as'
-				// -
-				// ',', ''and so on.
-				for (char c : keys.toString().toCharArray()) {
+				// The check exclusion key contains special characters such as
+				// '-', '$', ' ' etc and so on.
+				for (char c : key.toString().toCharArray()) {
 					if (!(isNumeric(valueOf(c)) || isAlpha(valueOf(c)) || safeKeyChars.contains(c))) {
 						throw new ArgumentsSpecificationException(
-								format("The key: '%s' there are unsafe characters, because the binary security mechanism of redis will make it impossible to get",
+								format("The keys: '%s' there are unsafe characters, because the binary security mechanism of redis will make it impossible to gets",
 										keys));
 					}
 				}
