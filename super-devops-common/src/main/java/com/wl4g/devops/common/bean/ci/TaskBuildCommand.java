@@ -18,6 +18,7 @@ package com.wl4g.devops.common.bean.ci;
 import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Task pipeline building commands bean.
@@ -39,6 +40,10 @@ public class TaskBuildCommand extends BaseBean implements Serializable {
 	private String command;
 
 	private String projectName;
+
+	private String branch;
+
+	private List<String> branchs;
 
 	public Integer getTaskId() {
 		return taskId;
@@ -78,5 +83,21 @@ public class TaskBuildCommand extends BaseBean implements Serializable {
 
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
+	}
+
+	public String getBranch() {
+		return branch;
+	}
+
+	public void setBranch(String branch) {
+		this.branch = branch;
+	}
+
+	public List<String> getBranchs() {
+		return branchs;
+	}
+
+	public void setBranchs(List<String> branchs) {
+		this.branchs = branchs;
 	}
 }
