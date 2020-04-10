@@ -47,6 +47,7 @@ import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+import static com.google.common.hash.Hashing.*;
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
@@ -55,7 +56,6 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.authc.ClientSecretIamAuthenticationToken;
-import com.wl4g.devops.iam.authc.GenericAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
@@ -68,6 +68,8 @@ import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.iam.common.mgt.IamSubjectFactory.getAccessToken;
+import static com.wl4g.devops.tool.common.codec.Encodes.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
 
 import java.io.IOException;
@@ -511,7 +513,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		params.put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 
 		// Post success secret processing.
-		postSuccessSecretTokensHandle(token, params);
+		postSuccessSecretTokensHandle(token, subject, params);
 
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
@@ -607,12 +609,13 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * Post secret/token and signnature processing.
 	 * 
 	 * @param token
+	 * @param subject
 	 * @param params
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void postSuccessSecretTokensHandle(AuthenticationToken token, Map params) throws Exception {
+	protected void postSuccessSecretTokensHandle(AuthenticationToken token, Subject subject, Map params) throws Exception {
 		// Use 'clientsecretkey' to encrypt the newly generated symmetric
 		// key 'datacipherkey'
 		if (token instanceof ClientSecretIamAuthenticationToken) {
@@ -627,13 +630,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// ClientSecretKey (hexPublicKey)
 			String clientSecretKey = ((ClientSecretIamAuthenticationToken) token).getClientSecretKey();
 			// Encryption dataCipherKey by clientSecretKey.
-			KeySpec keySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
-			String dataCipherKeyHexCiphertext = cryptService.encryptWithHex(keySpec, hexDataCipherKey);
+			KeySpec pubKeySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
+			String dataCipherKeyHexCiphertext = cryptService.encryptWithHex(pubKeySpec, hexDataCipherKey);
 			params.put(config.getParam().getDataCipherKeyName(), dataCipherKeyHexCiphertext);
-		}
 
-		if (token instanceof GenericAuthenticationToken) {
-			params.put(config.getParam().getAccessTokenName(), "");
+			// Generate accessTokenSignKey.
+			byte[] sessionId = toBytes(getSessionId().toString());
+			String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN_KEY, sha512().hashBytes(sessionId).toString());
+			// Generate accessToken.
+			final String accessToken = getAccessToken(subject.getSession(), accessTokenSignKey);
+			params.put(config.getParam().getAccessTokenName(), accessToken);
 		}
 
 	}

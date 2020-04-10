@@ -484,7 +484,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeFailedResponse()}
 	 */
 	protected RespBase<Object> makeFailedResponse(AuthenticationToken token, String loginRedirectUrl, Throwable err) {
-		String errmsg = err != null ? err.getMessage() : "Authentication failure";
+		String errmsg = !isNull(err) ? err.getMessage() : "Authentication failure";
 
 		// Make failed message
 		RespBase<Object> resp = RespBase.create(sessionStatus());

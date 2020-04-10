@@ -64,7 +64,7 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 	/**
 	 * Verifier type.
 	 */
-	final private VerifyKind verifyType;
+	final private VerifyKind verifyKind;
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
 			final String credentials, final SecureAlgKind kind, final String clientSecret, final String clientRef,
@@ -74,18 +74,18 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
 			final String credentials, final SecureAlgKind secureAlgKind, final String clientSecret, final String clientRef,
-			final String verifiedToken, final VerifyKind verifyType, final boolean rememberMe) {
+			final String verifiedToken, final VerifyKind verifyKind, final boolean rememberMe) {
 		super(secureAlgKind, clientSecret, remoteHost, redirectInfo);
 		hasTextOf(principal, "principal");
 		hasTextOf(credentials, "credentials");
 		hasTextOf(clientRef, "clientRef");
 		// hasTextOf(verifiedToken, "verifiedToken");
-		notNullOf(verifyType, "verifyType");
+		notNullOf(verifyKind, "verifyKind");
 		this.principal = principal;
 		this.credentials = credentials;
 		this.clientRef = ClientRef.of(clientRef);
 		this.verifiedToken = verifiedToken;
-		this.verifyType = verifyType;
+		this.verifyKind = verifyKind;
 		this.rememberMe = rememberMe;
 	}
 
@@ -115,13 +115,13 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 
 	@Override
 	public VerifyKind getVerifyType() {
-		return verifyType;
+		return verifyKind;
 	}
 
 	@Override
 	public String toString() {
 		return "GenericAuthenticationToken [principal=" + principal + ", credentials=" + credentials + ", rememberMe="
-				+ rememberMe + ", clientRef=" + clientRef + ", verifiedToken=" + verifiedToken + ", verifyType=" + verifyType
+				+ rememberMe + ", clientRef=" + clientRef + ", verifiedToken=" + verifiedToken + ", verifyType=" + verifyKind
 				+ ", userProperties=" + getUserProperties() + "]";
 	}
 

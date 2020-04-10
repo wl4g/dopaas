@@ -43,6 +43,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRI
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -99,22 +100,22 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			granticket = (String) ftk.getCredentials();
 
 			// Contact CAS remote server to validate ticket
-			TicketValidatedAssertModel<IamPrincipalInfo> assertion = doRequestRemoteTicketValidation(granticket);
+			TicketValidatedAssertModel<IamPrincipalInfo> validated = doRequestRemoteTicketValidation(granticket);
 
 			// Grant ticket assertion .
-			assertTicketValidation(assertion);
+			assertTicketValidation(validated);
 
 			/**
 			 * {@link JedisIamSessionDAO#update()} </br>
 			 * Update session expire date time.
 			 */
-			Date validUntilDate = assertion.getValidUntilDate();
-			long maxIdleTimeMs = validUntilDate.getTime() - System.currentTimeMillis();
+			Date validUntilDate = validated.getValidUntilDate();
+			long maxIdleTimeMs = validUntilDate.getTime() - currentTimeMillis();
 			state(maxIdleTimeMs > 0, format("Remote authenticated response session expired time: %s invalid, maxIdleTimeMs: %s",
 					validUntilDate, maxIdleTimeMs));
 			getSession().setTimeout(maxIdleTimeMs);
 
-			IamPrincipalInfo info = assertion.getPrincipalInfo();
+			IamPrincipalInfo info = validated.getPrincipalInfo();
 			// Storage authenticated attributes.
 			bind(KEY_LANG_ATTRIBUTE_NAME, info.getAttributes().get(KEY_LANG_ATTRIBUTE_NAME));
 			bind(KEY_DATA_CIPHER_KEY, info.getAttributes().get(KEY_DATA_CIPHER_KEY));
@@ -125,7 +126,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			ftk.setCredentials(newGrantTicket);
 
 			// Attribute of remember
-			String principal = assertion.getPrincipalInfo().getPrincipal();
+			String principal = validated.getPrincipalInfo().getPrincipal();
 			ftk.setPrincipal(principal); // MARK1
 			ftk.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
 			log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
