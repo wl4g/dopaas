@@ -140,6 +140,15 @@ public class DefaultEmbeddedWebappsAutoConfiguration extends OptionalPrefixContr
 			}
 		};
 
+		public GenericEmbeddedWebappsProperties() {
+			super();
+		}
+
+		public GenericEmbeddedWebappsProperties(String baseUri, String webappLocation) {
+			setBaseUri(baseUri);
+			setWebappLocation(webappLocation);
+		}
+
 		public String getBaseUri() {
 			return baseUri;
 		}

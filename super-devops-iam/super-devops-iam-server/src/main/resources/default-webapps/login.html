@@ -10,7 +10,7 @@
 	<!-- https://cdn.bootcss.com/font-awesome/5.7.2/css/all.min.css -->
 	<!-- @Authors: <Wanglsir@gmail.com, 983708408@qq.com> -->
 	<!-- <script type="text/javascript" src="//g.alicdn.com/AWSC/AWSC/awsc.js"></script> -->
-	<script type="text/javascript" src="./sdk/2.0.0/js/IAM.js" path="./sdk/2.0.0/" cache="false" mode="grey"></script>
+	<script type="text/javascript" src="../sdk/2.0.0/js/IAM.js" path="../sdk/2.0.0/" cache="false" mode="grey"></script>
 	<script type="text/javascript">
 		IAM.Module.use("IamUI", function(uiModule){
 			console.log("******* IAM JSSDK loaded completed! *******");
@@ -19,9 +19,9 @@
 					// e.g. http://127.0.0.1:14040/iam-server
 					// e.g. http://localhost:14040/iam-server
 					// e.g. http://iam.wl4g.debug/iam-server
-		    		//baseUri: "http://localhost:14040/iam-server",
+                    //baseUri: "http://localhost:14040/iam-server",
 		   			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
-		 			deaultContextPath: "/iam-server"
+		   			defaultContextPath: "/iam-server"
 		 		});
 			});
 		});
