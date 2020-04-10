@@ -15,11 +15,14 @@
 		IAM.Module.use("IamUI", function(uiModule){
 			console.log("******* IAM JSSDK loaded completed! *******");
 			$(function() {
-				// e.g. http://127.0.0.1:14040/iam-server
-				// e.g. http://localhost:14040/iam-server
-				// e.g. http://iam.wl4g.debug/iam-server
-				var iamServerBaseUri = "http://localhost:14040/iam-server";
-				uiModule.initUI(document.getElementById("content-right"), iamServerBaseUri);
+				uiModule.initUI(document.getElementById("content-right"), {
+					// e.g. http://127.0.0.1:14040/iam-server
+					// e.g. http://localhost:14040/iam-server
+					// e.g. http://iam.wl4g.debug/iam-server
+		    		//baseUri: "http://localhost:14040/iam-server",
+		   			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+		 			deaultContextPath: "/iam-server"
+		 		});
 			});
 		});
 	</script>
