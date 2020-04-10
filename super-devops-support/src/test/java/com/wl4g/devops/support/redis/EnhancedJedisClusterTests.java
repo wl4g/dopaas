@@ -17,10 +17,15 @@ package com.wl4g.devops.support.redis;
 
 import static java.util.Arrays.asList;
 
+import com.wl4g.devops.support.redis.EnhancedJedisCluster.SpecificationUtil;
+
 public class EnhancedJedisClusterTests {
 
 	public static void main(String[] args) {
-		EnhancedJedisCluster.checkArgumentsSpecification(asList("safecloud_support_appinfo_admin"));
+		System.out.println("-----11-----");
+		SpecificationUtil.checkArgumentsSpecification(asList("safecloud_support_appinfo_admin"));
+		System.out.println("-----22-----");
+		SpecificationUtil.checkArgumentsSpecification(asList("3342701404111872&&800492841ab644dc8ea01c683a809255BELONGANNUPXIN"));
 	}
 
 }
