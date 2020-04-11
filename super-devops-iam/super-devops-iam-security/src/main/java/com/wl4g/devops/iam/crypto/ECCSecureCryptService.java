@@ -40,12 +40,12 @@ public final class ECCSecureCryptService extends AbstractAymmetricSecureCryptSer
 	}
 
 	@Override
-	public String encryptWithHex(KeySpec keySpec, String plaintext) {
+	public String encrypt(KeySpec keySpec, String plaintext) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public String decryptWithHex(KeySpec keySpec, String hexCiphertext) {
+	public String decrypt(KeySpec keySpec, String hexCiphertext) {
 		throw new UnsupportedOperationException();
 	}
 

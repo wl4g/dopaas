@@ -632,7 +632,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				String clientSecretKey = ((ClientSecretIamAuthenticationToken) token).getClientSecretKey();
 				// Encryption dataCipherKey by clientSecretKey.
 				KeySpec pubKeySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
-				dataCipherKeyHexCiphertext = cryptService.encryptWithHex(pubKeySpec, hexDataCipherKey);
+				dataCipherKeyHexCiphertext = cryptService.encrypt(pubKeySpec, hexDataCipherKey);
 			}
 			params.put(config.getParam().getDataCipherKeyName(), dataCipherKeyHexCiphertext);
 

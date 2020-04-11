@@ -36,7 +36,7 @@ import com.wl4g.devops.iam.handler.AuthenticationHandler;
  * @version v1.0 2019年1月22日
  * @since
  */
-public abstract class AbstractAuthenticatorController extends BaseController implements InitializingBean {
+public abstract class AbstractAuthenticatorEndpoint extends BaseController implements InitializingBean {
 
 	/**
 	 * IAM server properties configuration

@@ -18,7 +18,7 @@ package com.wl4g.devops.tool.common.crypto.asymmetric;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static java.util.Objects.isNull;
 
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -31,9 +31,9 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
+import static javax.crypto.Cipher.*;
 
-import org.apache.commons.codec.binary.Hex;
-
+import com.wl4g.devops.tool.common.crypto.CrypticSource;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
@@ -72,7 +72,7 @@ abstract class AbstractFastAsymmCryptor implements AsymmetricCryptor {
 	 * @return
 	 */
 	@Override
-	final public KeyPairSpec generateKeySpecPair() {
+	final public KeyPairSpec generateKeyPair() {
 		try {
 			// Generate keyPair.
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance(getAlgorithmPrimary());
@@ -130,40 +130,41 @@ abstract class AbstractFastAsymmCryptor implements AsymmetricCryptor {
 	}
 
 	@Override
-	final public String encrypt(KeySpec keySpec, String plaintext) {
+	public CrypticSource encrypt(KeySpec keySpec, final CrypticSource plainSource) {
 		notNullOf(keySpec, "keySpec");
-		if (isBlank(plaintext)) {
+		if (isNull(plainSource))
 			return null;
-		}
+
 		try {
-			Cipher encryptCipher = Cipher.getInstance(getPadAlgorithm());
+			Cipher eCipher = Cipher.getInstance(getPadAlgorithm());
 			// Generate publicKey
 			PublicKey pubKey = keyFactory.generatePublic(keySpec);
-			encryptCipher.init(Cipher.ENCRYPT_MODE, pubKey);
-			byte[] encrypted = encryptCipher.doFinal(plaintext.getBytes());
-			return Hex.encodeHexString(encrypted);
+			eCipher.init(ENCRYPT_MODE, pubKey);
+			byte[] cipherArray = eCipher.doFinal(plainSource.getBytes());
+			return new CrypticSource(cipherArray);
 		} catch (Exception e) {
-			throw new IllegalStateException(format("Failed to encryption plaintext of [%s]", plaintext), e);
+			throw new IllegalStateException(format("Failed to encryption plaintext of [%s]", plainSource), e);
 		}
+
 	}
 
 	@Override
-	final public String decrypt(KeySpec keySpec, String hexCiphertext) {
+	public CrypticSource decrypt(KeySpec keySpec, final CrypticSource cipherSource) {
 		notNullOf(keySpec, "keySpec");
-		if (isBlank(hexCiphertext)) {
+		if (isNull(cipherSource))
 			return null;
-		}
+
 		try {
-			Cipher decryptCipher = Cipher.getInstance(getPadAlgorithm());
+			Cipher dCipher = Cipher.getInstance(getPadAlgorithm());
 			// Generate privateKey
 			PrivateKey key = keyFactory.generatePrivate(keySpec);
-			decryptCipher.init(Cipher.DECRYPT_MODE, key);
-			byte[] dec = Hex.decodeHex(hexCiphertext.toCharArray());
-			byte[] decrypted = decryptCipher.doFinal(dec);
-			return new String(decrypted, "UTF-8");
+			dCipher.init(DECRYPT_MODE, key);
+			byte[] plainArray = dCipher.doFinal(cipherSource.getBytes());
+			return new CrypticSource(plainArray);
 		} catch (Exception e) {
-			throw new IllegalStateException(format("Failed to decryption hex ciphertext of [%s]", hexCiphertext), e);
+			throw new IllegalStateException(format("Failed to decryption hex ciphertext of [%s]", cipherSource), e);
 		}
+
 	}
 
 	/**

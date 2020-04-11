@@ -17,6 +17,7 @@ package com.wl4g.devops.tool.common.crypto.asymmetric;
 
 import java.security.spec.KeySpec;
 
+import com.wl4g.devops.tool.common.crypto.CrypticSource;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 /**
@@ -31,14 +32,14 @@ import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 public interface AsymmetricCryptor {
 
 	/**
-	 * Generate keySpecPair
+	 * Generate KeyPairSpec
 	 *
 	 * @return
 	 */
-	KeyPairSpec generateKeySpecPair();
+	KeyPairSpec generateKeyPair();
 
 	/**
-	 * Deserialization generate keyPair.
+	 * Generate KeyPairSpec.
 	 * 
 	 * @param publicKey
 	 * @param privateKey
@@ -66,19 +67,19 @@ public interface AsymmetricCryptor {
 	 * Encrypt plain text based on the built key pair
 	 *
 	 * @param keySpec
-	 * @param plaintext
+	 * @param plainSource
 	 * @return
 	 */
-	String encrypt(KeySpec keySpec, String plaintext);
+	CrypticSource encrypt(final KeySpec keySpec, final CrypticSource plainSource);
 
 	/**
 	 * Decryption the hex ciphertext based on the constructed key pair
 	 *
 	 * @param keySpec
-	 * @param hexCiphertext
+	 * @param cipherSource
 	 * @return
 	 */
-	String decrypt(KeySpec keySpec, String hexCiphertext);
+	CrypticSource decrypt(final KeySpec keySpec, final CrypticSource cipherSource);
 
 	/**
 	 * Gets algorithm name

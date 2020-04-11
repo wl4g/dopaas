@@ -130,7 +130,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 		// DECRYPT slider block x-position.
 		KeyPairSpec keyPairSpec = getBindValue(model.getApplyToken(), true);
-		String plainX = cryptAdapter.forOperator(kind).decryptWithHex(keyPairSpec.getKeySpec(), model.getX());
+		String plainX = cryptAdapter.forOperator(kind).decrypt(keyPairSpec.getKeySpec(), model.getX());
 		hasText(plainX, "Invalid x-position, unable to resolve.");
 		// Parsing additional algorithmic salt.
 		isTrue(plainX.length() > 66, format("Failed to analyze jigsaw, illegal additional ciphertext. '%s'", plainX));

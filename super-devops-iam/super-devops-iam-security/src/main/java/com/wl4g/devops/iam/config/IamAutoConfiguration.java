@@ -99,7 +99,7 @@ import com.wl4g.devops.iam.verification.SecurityVerifier;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.PrintSmsHandleSender;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.SmsHandleSender;
-import com.wl4g.devops.iam.web.CentralAuthenticatorController;
+import com.wl4g.devops.iam.web.CentralAuthenticatorEndpoint;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 /**
@@ -573,8 +573,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public CentralAuthenticatorController centralAuthenticatorController() {
-		return new CentralAuthenticatorController();
+	public CentralAuthenticatorEndpoint centralAuthenticatorController() {
+		return new CentralAuthenticatorEndpoint();
 	}
 
 	@Bean

@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.tool.common.crypto.hmac;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
-import com.wl4g.devops.tool.common.lang.Assert2;
 
 /**
  * PBKDF2 deriveKey utility.
@@ -37,27 +37,27 @@ public class Pbkdf2Utils {
 	 * 
 	 * @param password
 	 * @param salt
-	 * @param iterationCount
+	 * @param iterations
 	 * @param dkLen
 	 * @return
 	 * @throws InvalidKeyException
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static String pbkdf2(String password, String salt, int iterationCount, int dkLen)
+	public static String pbkdf2(String password, String salt, int iterations, int dkLen)
 			throws InvalidKeyException, NoSuchAlgorithmException {
-		Assert2.hasTextOf(password, "Password");
-		Assert2.hasTextOf(salt, "Salt");
+		hasTextOf(password, "Password");
+		hasTextOf(salt, "Salt");
 
 		if (dkLen != 16 && dkLen != 24 && dkLen != 32) {
 			dkLen = 16;
 		}
-		if (iterationCount < 0) {
-			iterationCount = 0;
+		if (iterations < 0) {
+			iterations = 0;
 		}
 
 		byte[] _password = password.getBytes();
 		byte[] _salt = salt.getBytes();
-		byte[] key = Pbkdf2Utils.deriveKey(_password, _salt, iterationCount, dkLen);
+		byte[] key = Pbkdf2Utils.deriveKey(_password, _salt, iterations, dkLen);
 		return new String(key);
 	}
 

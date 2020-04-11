@@ -31,7 +31,7 @@ import com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm;
 import com.wl4g.devops.iam.client.validation.ExpiredSessionIamValidator;
 import com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator;
 import com.wl4g.devops.iam.client.validation.IamValidator;
-import com.wl4g.devops.iam.client.web.ClientAuthenticatorController;
+import com.wl4g.devops.iam.client.web.ClientAuthenticatorEndpoint;
 import com.wl4g.devops.iam.client.session.mgt.IamClientSessionManager;
 import com.wl4g.devops.iam.client.authc.aop.SecondAuthenticateAspect;
 import com.wl4g.devops.iam.client.authc.aop.SecondAuthenticateProcessor;
@@ -251,8 +251,8 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public ClientAuthenticatorController clientAuthenticatorController() {
-		return new ClientAuthenticatorController();
+	public ClientAuthenticatorEndpoint clientAuthenticatorController() {
+		return new ClientAuthenticatorEndpoint();
 	}
 
 	@Bean

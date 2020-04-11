@@ -41,7 +41,7 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 	 * @param plaintext
 	 * @return
 	 */
-	String encryptWithHex(KeySpec keySpec, String plaintext);
+	String encrypt(KeySpec keySpec, String plaintext);
 
 	/**
 	 * Decryption with hex cipher.
@@ -50,7 +50,7 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 	 * @param hexCiphertext
 	 * @return
 	 */
-	String decryptWithHex(KeySpec keySpec, String hexCiphertext);
+	String decrypt(KeySpec keySpec, String hexCiphertext);
 
 	/**
 	 * Generate keySpec resource.

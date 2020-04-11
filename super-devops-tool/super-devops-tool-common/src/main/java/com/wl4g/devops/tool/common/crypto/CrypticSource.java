@@ -21,6 +21,7 @@ package com.wl4g.devops.tool.common.crypto;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static java.util.Objects.isNull;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -41,27 +42,43 @@ import com.wl4g.devops.tool.common.codec.Base58;
 public class CrypticSource implements Serializable {
 	private static final long serialVersionUID = 9127527471762896518L;
 
-	private final byte[] bytes;
+	/**
+	 * Origin data bytes.
+	 */
+	final byte[] bytes;
+
+	/**
+	 * Transient cache hex string.
+	 */
 	private transient String cachedHex;
+
+	/**
+	 * Transient cache base64 string.
+	 */
 	private transient String cachedBase64;
 
-	public CrypticSource(final byte[] bytes) {
-		notNullOf(bytes, "bytes");
-		this.bytes = bytes;
+	/**
+	 * Transient cache base58 string.
+	 */
+	private transient String cachedBase58;
+
+	public CrypticSource(final byte[] plainArray) {
+		notNullOf(plainArray, "plainArray");
+		this.bytes = plainArray;
 	}
 
 	/**
 	 * Creates an instance by converting the characters to a byte array (assumes
 	 * UTF-8 encoding).
 	 *
-	 * @param chars
+	 * @param plainChars
 	 *            the source characters to use to create the underlying byte
 	 *            array.
 	 * @since 1.1
 	 */
-	public CrypticSource(final char[] chars) {
-		notNullOf(chars, "chars");
-		this.bytes = new String(chars).getBytes(UTF_8);
+	public CrypticSource(final char[] plainChars) {
+		notNullOf(plainChars, "plainChars");
+		this.bytes = new String(plainChars).getBytes(UTF_8);
 	}
 
 	/**
@@ -83,21 +100,28 @@ public class CrypticSource implements Serializable {
 	}
 
 	public boolean isEmpty() {
-		return this.bytes == null || this.bytes.length == 0;
+		return isNull(bytes) || bytes.length == 0;
 	}
 
-	public String toHex() {
+	public synchronized String toHex() {
 		if (this.cachedHex == null) {
 			this.cachedHex = Hex.encodeHexString(getBytes());
 		}
 		return this.cachedHex;
 	}
 
-	public String toBase64() {
+	public synchronized String toBase64() {
 		if (this.cachedBase64 == null) {
 			this.cachedBase64 = Base64.encodeBase64String(getBytes());
 		}
 		return this.cachedBase64;
+	}
+
+	public synchronized String toBase58() {
+		if (this.cachedBase58 == null) {
+			this.cachedBase58 = Base58.encode(getBytes());
+		}
+		return this.cachedBase58;
 	}
 
 	public boolean equals(final CrypticSource o) {
@@ -146,16 +170,6 @@ public class CrypticSource implements Serializable {
 	}
 
 	/**
-	 * Create {@link CrypticSource} with base64 byte array.
-	 * 
-	 * @param base64Array
-	 * @return
-	 */
-	public static CrypticSource fromBase64(final byte[] base64Array) {
-		return new CrypticSource(Base64.decodeBase64(base64Array));
-	}
-
-	/**
 	 * Create {@link CrypticSource} with base64 string.
 	 * 
 	 * @param base64
@@ -163,6 +177,16 @@ public class CrypticSource implements Serializable {
 	 */
 	public static CrypticSource fromBase64(final String base64) {
 		return new CrypticSource(Base64.decodeBase64(base64));
+	}
+
+	/**
+	 * Create {@link CrypticSource} with base64 byte array.
+	 * 
+	 * @param base64Array
+	 * @return
+	 */
+	public static CrypticSource fromBase64(final byte[] base64Array) {
+		return new CrypticSource(Base64.decodeBase64(base64Array));
 	}
 
 	/**

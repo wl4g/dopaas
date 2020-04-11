@@ -40,7 +40,7 @@ import static java.util.Objects.nonNull;
  */
 @IamApiV1Controller
 @ResponseBody
-public class IamServerApiV1Controller extends GenericApiController {
+public class IamServerApiV1Endpoint extends GenericApiController {
 
 	/**
 	 * Convert wrap {@link IamSession} to {@link SessionAttributeModel}. </br>

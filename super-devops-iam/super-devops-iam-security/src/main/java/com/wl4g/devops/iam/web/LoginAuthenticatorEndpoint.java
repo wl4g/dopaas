@@ -67,7 +67,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
  * @since
  */
 @LoginAuthController
-public class LoginAuthenticatorController extends AbstractAuthenticatorController {
+public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 
 	/**
 	 * Composite verification handler.
