@@ -54,7 +54,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SESSION_
  * @since
  */
 @IamController
-public class CentralAuthenticatorController extends AbstractAuthenticatorController {
+public class CentralAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 
 	/**
 	 * Verification based on 'cas1' extension protocol.

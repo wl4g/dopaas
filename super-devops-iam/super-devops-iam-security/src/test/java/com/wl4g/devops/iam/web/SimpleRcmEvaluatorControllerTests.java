@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.web;
 
-import static com.wl4g.devops.iam.web.SimpleRcmEvaluatorController.*;
+import static com.wl4g.devops.iam.web.SimpleRcmEvaluatorEndpoint.*;
 
 import java.util.Map;
 

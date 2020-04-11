@@ -40,7 +40,7 @@ import com.wl4g.devops.tool.common.lang.Exceptions;
  * @since
  */
 @IamController
-public class ClientAuthenticatorController extends BaseController {
+public class ClientAuthenticatorEndpoint extends BaseController {
 
 	/**
 	 * IAM client logout

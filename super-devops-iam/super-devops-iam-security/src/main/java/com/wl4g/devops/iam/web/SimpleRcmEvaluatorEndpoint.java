@@ -52,7 +52,7 @@ import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
  * @since
  */
 @SimpleRcmController
-public class SimpleRcmEvaluatorController extends AbstractAuthenticatorController {
+public class SimpleRcmEvaluatorEndpoint extends AbstractAuthenticatorEndpoint {
 
 	@Autowired
 	protected SimpleRcmEvaluatorHandler handler;

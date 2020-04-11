@@ -89,7 +89,7 @@ public interface AuthenticationHandler {
 	 * The Iam server logs out with two entries: <br/>
 	 * 1: access http://iam-client/logout <br/>
 	 * 2: direct access http://iam-server/logout <br/>
-	 * {@link com.wl4g.devops.iam.web.CentralAuthenticatorController#logout()}
+	 * {@link com.wl4g.devops.iam.web.CentralAuthenticatorEndpoint#logout()}
 	 * {@link com.wl4g.devops.iam.filter.LogoutAuthenticationFilter#preHandle()}
 	 *
 	 * @param forced

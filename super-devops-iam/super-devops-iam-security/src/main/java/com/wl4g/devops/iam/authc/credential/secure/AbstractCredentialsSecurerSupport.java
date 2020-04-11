@@ -146,7 +146,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 * 
 	 * @param principal
 	 * @return
-	 * @see {@link com.wl4g.devops.iam.web.LoginAuthenticatorController#handhake()}
+	 * @see {@link com.wl4g.devops.iam.web.LoginAuthenticatorEndpoint#handhake()}
 	 */
 	@Override
 	public String applySecret(@NotNull SecureAlgKind kind, @NotNull String principal) {
@@ -243,7 +243,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		}
 
 		// Mysterious decryption them.
-		final String plainCredentials = cryptAdapter.forOperator(token.getKind()).decryptWithHex(keyPairSpec.getKeySpec(), token.getCredentials());
+		final String plainCredentials = cryptAdapter.forOperator(token.getKind()).decrypt(keyPairSpec.getKeySpec(), token.getCredentials());
 		return new CredentialsToken(token.getPrincipal(), plainCredentials, token.getKind(), true);
 	}
 
