@@ -53,16 +53,16 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 	String decrypt(KeySpec keySpec, String hexCiphertext);
 
 	/**
-	 * Generate keySpec resource.
+	 * Gets borrow keyPairSpec.
 	 *
 	 * @return
 	 */
-	default KeyPairSpec generateKeyBorrow() {
+	default KeyPairSpec borrowKeyPair() {
 		return generateKeyBorrow(-1);
 	}
 
 	/**
-	 * Generate keySpec resource.
+	 * Generate keyPairSpec.
 	 *
 	 * @param index
 	 * @return
@@ -70,7 +70,14 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 	KeyPairSpec generateKeyBorrow(int index);
 
 	/**
-	 * Deserialization generate keyPair.
+	 * Generate keyPairSpec.
+	 * 
+	 * @return
+	 */
+	KeyPairSpec generateKeyPair();
+
+	/**
+	 * Generate keyPairSpec by publicKey and privateKey.
 	 * 
 	 * @param publicKey
 	 * @param privateKey

@@ -4239,15 +4239,13 @@ public class EnhancedJedisCluster extends JedisCluster {
 			for (Object key : keys) {
 				if (key instanceof String) {
 					// The check exclusion key contains special characters such
-					// as
-					// '-', '$', ' ' etc and so on.
-					String warning = format(
-							"The operation redis keys: '%s' there are unsafe characters, Because of the binary safety mechanism of redis, it may not be got",
-							keys);
+					// as '-', '$', ' ' etc and so on.
 					for (char c : key.toString().toCharArray()) {
+						String warning = format(
+								"The operation redis keys: %s there are unsafe characters: '%s', Because of the binary safety mechanism of redis, it may not be got",
+								keys, c);
 						if (!(isNumeric(valueOf(c)) || isAlpha(valueOf(c)) || safeKeyChars.contains(c))) {
-							// Warning keyChars
-							if (warnKeyChars.contains(c)) {
+							if (warnKeyChars.contains(c)) { // Warning key chars
 								log.warn(warning);
 								return;
 							} else {
@@ -4267,6 +4265,8 @@ public class EnhancedJedisCluster extends JedisCluster {
 			{
 				add(':');
 				add('_');
+				add('.');
+				add('@');
 			}
 		};
 
@@ -4277,6 +4277,8 @@ public class EnhancedJedisCluster extends JedisCluster {
 			private static final long serialVersionUID = -7144798722787955277L;
 			{
 				add('&');
+				add('!');
+				add('*');
 			}
 		};
 

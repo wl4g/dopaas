@@ -26,6 +26,7 @@ import com.wl4g.devops.tool.common.resource.StreamResource;
 import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
 import com.wl4g.devops.tool.common.resource.resolver.ResourcePatternResolver;
 
+import static com.google.common.io.ByteStreams.*;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.tool.common.jvm.JvmRuntimeKit.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
@@ -45,8 +46,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import static com.google.common.io.ByteStreams.*;
 
 /**
  * Embedded webapps view controller
@@ -105,30 +104,40 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 	protected void doResponseFile(String filepath, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		notNullOf(filepath, "filepath");
 
-		// Get buffer cache
-		byte[] buf = cache.get(filepath);
-		if (isNull(buf)) {
-			try (InputStream in = getResourceAsStream(filepath);) {
-				if (nonNull(in)) {
-					log.debug("Request access file: {}", filepath);
-					// Call pre-processing
-					buf = preResponesPropertiesSet(filepath, toByteArray(in), request);
+		// Call pre-processing
+		if (preResponesPropertiesSet(filepath, request)) {
+			log.debug("Accessing file: {}", filepath);
 
-					// Check cache?
-					if (isCache(filepath, request)) {
-						cache.put(filepath, buf);
+			// Gets buffer cache
+			byte[] buf = cache.get(filepath);
+			if (isNull(buf)) {
+				try (InputStream in = getResourceAsStream(filepath);) {
+					if (nonNull(in)) {
+						buf = toByteArray(in);
+
+						// Check cache?
+						if (isCache(filepath, request)) {
+							cache.put(filepath, buf);
+						}
+					} else {
+						// Call post properties.
+						postResponsePropertiesSet(response);
+						// Response not found.
+						write(response, NOT_FOUND.value(), TEXT_HTML_VALUE, "Not Found".getBytes(UTF_8));
+						return;
 					}
-				} else { // Not found
-					write(response, NOT_FOUND.value(), TEXT_HTML_VALUE, "Not Found".getBytes(UTF_8));
-					return;
 				}
 			}
-		}
-		// Post response properties.
-		postResponsePropertiesSet(response);
+			// Call post properties.
+			postResponsePropertiesSet(response);
 
-		// Response file.
-		write(response, OK.value(), getContentType(filepath), buf);
+			// Response file.
+			write(response, OK.value(), getContentType(filepath), buf);
+		} else {
+			log.debug("Forbidden access file: {}", filepath);
+			// Response forbidden.
+			write(response, FORBIDDEN.value(), TEXT_HTML_VALUE, "Forbidden".getBytes(UTF_8));
+		}
 	}
 
 	/**
@@ -146,12 +155,11 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 	 * Pre-processing response properties set.
 	 * 
 	 * @param filepath
-	 * @param buf
 	 * @param request
 	 * @return
 	 */
-	protected byte[] preResponesPropertiesSet(String filepath, byte[] buf, HttpServletRequest request) {
-		return buf;
+	protected boolean preResponesPropertiesSet(String filepath, HttpServletRequest request) {
+		return true;
 	}
 
 	/**
