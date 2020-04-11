@@ -16,8 +16,9 @@
 package com.wl4g.devops.common.exception.framework;
 
 import com.wl4g.devops.common.exception.DevOpsException;
+import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
 
-public class SpecificationException extends DevOpsException {
+public class SpecificationException extends DevOpsException implements ServiceUnavailableRestfulException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**

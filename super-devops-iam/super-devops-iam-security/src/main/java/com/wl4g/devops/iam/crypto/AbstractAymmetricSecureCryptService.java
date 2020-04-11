@@ -35,6 +35,8 @@ import java.util.concurrent.locks.Lock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 
+import static com.wl4g.devops.tool.common.crypto.CrypticSource.*;
+import com.wl4g.devops.tool.common.crypto.CrypticSource;
 import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.redis.JedisService;
@@ -95,6 +97,16 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 	}
 
 	@Override
+	public String encrypt(KeySpec keySpec, String plaintext) {
+		return cryptor.encrypt(keySpec, new CrypticSource(plaintext)).toHex();
+	}
+
+	@Override
+	public String decrypt(KeySpec keySpec, String hexCiphertext) {
+		return cryptor.decrypt(keySpec, fromHex(hexCiphertext)).toString();
+	}
+
+	@Override
 	public KeyPairSpec generateKeyBorrow(int index) {
 		if (index < 0 || index >= config.getKeyPairPools()) {
 			int _index = current().nextInt(config.getKeyPairPools());
@@ -124,12 +136,10 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 		return keySpec;
 	}
 
-	/**
-	 * Generate keySpec.
-	 *
-	 * @return
-	 */
-	protected abstract KeyPairSpec generateKeySpec();
+	@Override
+	public KeyPairSpec generateKeyPair() {
+		return cryptor.generateKeyPair();
+	}
 
 	@Override
 	public KeyPairSpec generateKeyPair(byte[] publicKey, byte[] privateKey) {
@@ -154,8 +164,8 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 	private synchronized void doInitializingKeyPairSpecAll() {
 		// Create generate cryptic keyPairs
 		for (int index = 0; index < config.getKeyPairPools(); index++) {
-			// Generate keySpec.
-			KeyPairSpec keySpec = generateKeySpec();
+			// Generation keyPairSpec.
+			KeyPairSpec keySpec = generateKeyPair();
 			// Storage to cache.
 			jedisService.getJedisCluster().hset(CACHE_CRYPTO, toBytes(String.valueOf(index)), serialize(keySpec));
 			jedisService.getJedisCluster().expire(CACHE_CRYPTO, config.getKeyPairExpireMs());

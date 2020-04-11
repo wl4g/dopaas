@@ -114,7 +114,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Gets crypt algorithm(RSA/DSA/ECC..) secretKey.(Used to encrypt
 		// sliding X position)
-		KeyPairSpec keySpec = cryptAdapter.forOperator(kind).generateKeyBorrow();
+		KeyPairSpec keySpec = cryptAdapter.forOperator(kind).borrowKeyPair();
 		String applyToken = "capt" + randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
 		bind(applyToken, keySpec, DEFAULT_APPLY_TOKEN_EXPIREMS);
 		log.debug("Apply captcha for applyToken: {}, secretKey: {}", applyToken, keySpec);

@@ -15,11 +15,14 @@
  */
 package com.wl4g.devops.iam.web;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.wl4g.devops.common.config.DefaultEmbeddedWebappsAutoConfiguration.GenericEmbeddedWebappsProperties;
 import com.wl4g.devops.common.web.embedded.GenericEmbeddedWebappsEndpoint;
+import static com.wl4g.devops.tool.common.jvm.JvmRuntimeKit.*;
 
 /**
- * Jssdk webapps endpoint controller.
+ * Jssdk embedded webapps endpoint.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月10日
@@ -30,5 +33,20 @@ public class JssdkWebappsEndpoint extends GenericEmbeddedWebappsEndpoint {
 	public JssdkWebappsEndpoint(GenericEmbeddedWebappsProperties config) {
 		super(config);
 	}
+
+	@Override
+	protected boolean preResponesPropertiesSet(String filepath, HttpServletRequest request) {
+		// Only debug mode can access source code file.
+		if (isJVMDebugging) {
+			return true;
+		} else if (filepath.contains(PATH_JSSDK_JS_FILE)) {
+			return filepath.contains(PATH_JSSDK_MIN_FILE);
+		} else {
+			return true;
+		}
+	}
+
+	final public static String PATH_JSSDK_MIN_FILE = ".min.";
+	final public static String PATH_JSSDK_JS_FILE = ".js";
 
 }

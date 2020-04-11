@@ -15,9 +15,7 @@
  */
 package com.wl4g.devops.iam.crypto;
 
-import java.security.spec.KeySpec;
-
-import com.wl4g.devops.support.concurrent.locks.JedisLockManager; 
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.crypto.asymmetric.ECCCryptor;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.ECCKeyPairSpec;
 
@@ -37,21 +35,6 @@ public final class ECCSecureCryptService extends AbstractAymmetricSecureCryptSer
 	@Override
 	public SecureAlgKind kind() {
 		return SecureAlgKind.ECC;
-	}
-
-	@Override
-	public String encrypt(KeySpec keySpec, String plaintext) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String decrypt(KeySpec keySpec, String hexCiphertext) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected ECCKeyPairSpec generateKeySpec() {
-		throw new UnsupportedOperationException();
 	}
 
 }
