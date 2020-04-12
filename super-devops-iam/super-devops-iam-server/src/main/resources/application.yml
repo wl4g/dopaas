@@ -20,7 +20,7 @@ spring:
         /**:
           allowsMethods: GET,POST
           allowsHeaders:
-            - X-Iam-Authentication-Token
+            - X-Iam-*
           # Note: Some latest browsers, such as chrome 80.x+, only support sharing with the sub domain of the top-level domain name CORS.
           # You can also manually turn off the chrome switch(@see https://chromestatus.com/features/5088147346030592), visit chrome://flags
           # and search for samesite, find the options [SameSite by default cookies] and [Cookies without SameSite must be secure] set 
