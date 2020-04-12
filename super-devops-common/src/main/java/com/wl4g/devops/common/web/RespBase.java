@@ -17,7 +17,7 @@ package com.wl4g.devops.common.web;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
-import com.wl4g.devops.common.exception.restful.BizInvalidParamsRestfulException;
+import com.wl4g.devops.common.exception.restful.InvalidParamsRestfulException;
 import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
 import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
 import org.springframework.http.HttpStatus;
@@ -362,15 +362,15 @@ public class RespBase<D> implements Serializable {
 	 * @return
 	 * @see {@link RESTfulException}
 	 * @see {@link BizRuleRestrictRestfulException}
-	 * @see {@link BizInvalidParamsRestfulException}
+	 * @see {@link InvalidParamsRestfulException}
 	 * @see {@link ServiceUnavailableRestfulException}
 	 */
 	public final static RetCode getRestfulCode(Throwable th, RetCode defaultCode) {
 		if (nonNull(th)) {
 			if (th instanceof BizRuleRestrictRestfulException) {
 				return ((BizRuleRestrictRestfulException) th).getCode();
-			} else if (th instanceof BizInvalidParamsRestfulException) {
-				return ((BizInvalidParamsRestfulException) th).getCode();
+			} else if (th instanceof InvalidParamsRestfulException) {
+				return ((InvalidParamsRestfulException) th).getCode();
 			} else if (th instanceof ServiceUnavailableRestfulException) {
 				return ((ServiceUnavailableRestfulException) th).getCode();
 			}

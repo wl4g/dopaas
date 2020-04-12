@@ -137,7 +137,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		hasTextOf(accessTokenSignKey, "accessTokenSignKey"); // Shouldn't-here
 
 		// Calculating accessToken(signature).
-		final String validAccessToken = getAccessToken(session, accessTokenSignKey);
+		final String validAccessToken = generateAccessToken(session, accessTokenSignKey);
 		log.debug(
 				"Asserted accessToken of sessionId: {}, accessTokenSignKey: {}, validAccessToken: {}, accessToken: {}, authcToken: {}",
 				sessionId, accessTokenSignKey, validAccessToken, accessToken, authcToken);
@@ -153,13 +153,13 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	}
 
 	/**
-	 * Gets new generate accessToken string.
+	 * Generate new generate accessToken string.
 	 * 
 	 * @param session
 	 * @param accessTokenSignKey
 	 * @return
 	 */
-	final public static String getAccessToken(@NotBlank final Session session, @NotBlank final String accessTokenSignKey) {
+	final public static String generateAccessToken(@NotBlank final Session session, @NotBlank final String accessTokenSignKey) {
 		notNullOf(session, "session");
 		hasTextOf(accessTokenSignKey, "accessTokenSignKey");
 		return encode(hmacSha256Hex(toBytes(accessTokenSignKey), valueOf(session.getId()).getBytes(UTF_8)).getBytes(UTF_8));

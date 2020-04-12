@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.CipherProperties.*;
+
+import com.wl4g.devops.common.exception.iam.UnableDecryptionCipherParameterException;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.tool.common.log.SmartLogger;
@@ -102,7 +104,8 @@ public abstract class CipherRequestWrapper extends HttpServletRequestWrapper {
 					}
 				}
 			} catch (Exception ex) {
-				throw new IllegalArgumentException(format("Decrypting cipher request failure of parameter: %s ", paramValue), ex);
+				throw new UnableDecryptionCipherParameterException(
+						format("Unable decrypting cipher parameter failure of: %s ", paramValue), ex);
 			}
 		}
 
