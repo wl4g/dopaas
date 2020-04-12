@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.exception.ci;
+package com.wl4g.devops.common.exception.iam;
 
 import com.wl4g.devops.common.exception.restful.InvalidParamsRestfulException;
 
-public class PipelineIntegrationBuildingException extends CiException implements InvalidParamsRestfulException {
-	private static final long serialVersionUID = -7034899390745766939L;
+public class UnableDecryptionCipherParameterException extends IamException implements InvalidParamsRestfulException {
+	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
 	 * Constructs a new runtime exception with {@code null} as its detail
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public PipelineIntegrationBuildingException() {
+	public UnableDecryptionCipherParameterException() {
 		super();
 	}
 
@@ -38,7 +38,7 @@ public class PipelineIntegrationBuildingException extends CiException implements
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public PipelineIntegrationBuildingException(String message) {
+	public UnableDecryptionCipherParameterException(String message) {
 		super(message);
 	}
 
@@ -59,7 +59,7 @@ public class PipelineIntegrationBuildingException extends CiException implements
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public PipelineIntegrationBuildingException(String message, Throwable cause) {
+	public UnableDecryptionCipherParameterException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -77,7 +77,7 @@ public class PipelineIntegrationBuildingException extends CiException implements
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public PipelineIntegrationBuildingException(Throwable cause) {
+	public UnableDecryptionCipherParameterException(Throwable cause) {
 		super(cause);
 	}
 

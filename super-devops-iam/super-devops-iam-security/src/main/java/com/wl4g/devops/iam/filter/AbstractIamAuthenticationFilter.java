@@ -68,7 +68,7 @@ import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.log.SmartLogger;
-import static com.wl4g.devops.iam.common.mgt.IamSubjectFactory.getAccessToken;
+import static com.wl4g.devops.iam.common.mgt.IamSubjectFactory.generateAccessToken;
 import static com.wl4g.devops.tool.common.codec.Encodes.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
 
@@ -642,7 +642,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				byte[] sessionId = toBytes(getSessionId().toString());
 				// Create accessTokenSignKey.
 				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN_KEY, sha512().hashBytes(sessionId).toString());
-				accessToken = getAccessToken(subject.getSession(), accessTokenSignKey);
+				accessToken = generateAccessToken(subject.getSession(), accessTokenSignKey);
 			}
 			params.put(config.getParam().getAccessTokenName(), accessToken);
 

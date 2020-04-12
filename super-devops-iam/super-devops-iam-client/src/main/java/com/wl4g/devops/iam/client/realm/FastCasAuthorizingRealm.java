@@ -164,7 +164,14 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 * @return
 	 */
 	private TicketValidatedAssertModel<IamPrincipalInfo> doRequestRemoteTicketValidation(String ticket) {
-		return ticketValidator.validate(new TicketValidateModel(ticket, config.getServiceName()));
+		/**
+		 * The purpose of this function is to make iam-server a new child,
+		 * dataCipherKey/accesstoken.
+		 * 
+		 * @see:com.wl4g.devops.iam.handler.CentralAuthenticationHandler.validate(TicketValidateModel)
+		 */
+		String sessionId = valueOf(getSession(true).getId());
+		return ticketValidator.validate(new TicketValidateModel(ticket, config.getServiceName(), sessionId));
 	}
 
 	/**
