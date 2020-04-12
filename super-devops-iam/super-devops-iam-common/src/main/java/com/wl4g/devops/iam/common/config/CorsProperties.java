@@ -18,14 +18,17 @@ package com.wl4g.devops.iam.common.config;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import static java.util.Locale.*;
 
 import org.springframework.http.HttpMethod;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 
 import com.wl4g.devops.tool.common.collection.RegisteredSetList;
@@ -263,9 +266,15 @@ public class CorsProperties implements Serializable {
 	public static class AdvancedCorsConfiguration extends CorsConfiguration {
 
 		/**
-		 * <font color=red><b>Note:</b> "allowsOrigin" may have a "*" wildcard
-		 * character.</br>
-		 * e.g. http://*.mydomain.com </font>
+		 * <b>Note:</b> "allowsOrigin" may have a "*" wildcard character.</br>
+		 * </br>
+		 * 
+		 * For example supports:
+		 * 
+		 * <pre>
+		 *	http://*.domain.com      ->  http://aa.domain.com
+		 *	http://*.aa.domain.com:* ->  http://bb.aa.domain.com:8443
+		 * </pre>
 		 */
 		@Override
 		public String checkOrigin(String requestOrigin) {
@@ -293,7 +302,7 @@ public class CorsProperties implements Serializable {
 				if (equalsIgnoreCase(requestOrigin, allowedOrigin)) {
 					return requestOrigin;
 				}
-				// e.g. allowedOrigin => "http://*.aa.mydomain.com"
+				// e.g: allowedOrigin => "http://*.aa.mydomain.com"
 				if (isSameWildcardOrigin(allowedOrigin, requestOrigin, true)) {
 					return requestOrigin;
 				}
@@ -301,13 +310,62 @@ public class CorsProperties implements Serializable {
 			return null;
 		}
 
+		/**
+		 * <b>Note:</b> "allowedHeader" may have a "*" wildcard character.</br>
+		 * </br>
+		 * 
+		 * For example supports:
+		 * 
+		 * <pre>
+		 *	X-Iam-*                  ->  X-Iam-AccessToken, X-Iam-Authentication-Code
+		 *	X-Iam-Authentication-*   ->  X-Iam-Authentication-Code
+		 * </pre>
+		 */
+		@Override
+		public List<String> checkHeaders(List<String> requestHeaders) {
+			if (requestHeaders == null) {
+				return null;
+			}
+			if (requestHeaders.isEmpty()) {
+				return Collections.emptyList();
+			}
+			if (ObjectUtils.isEmpty(getAllowedHeaders())) {
+				return null;
+			}
+
+			boolean allowAnyHeader = getAllowedHeaders().contains(ALL);
+			List<String> result = new ArrayList<String>(requestHeaders.size());
+			for (String requestHeader : requestHeaders) {
+				if (StringUtils.hasText(requestHeader)) {
+					requestHeader = requestHeader.trim();
+					if (allowAnyHeader) {
+						result.add(requestHeader);
+					} else {
+						for (String allowedHeader : getAllowedHeaders()) {
+							// e.g: allowedHeader => "X-Iam-*"
+							if (allowedHeader.contains(ALL)) {
+								String allowedHeaderPrefix = allowedHeader.substring(allowedHeader.indexOf(ALL) + 1);
+								if (requestHeader.startsWith(allowedHeaderPrefix)) {
+									result.add(requestHeader);
+									break;
+								}
+							} else if (requestHeader.equalsIgnoreCase(allowedHeader)) {
+								result.add(requestHeader);
+								break;
+							}
+						}
+					}
+				}
+			}
+			return (result.isEmpty() ? null : result);
+		}
+
 		@Override
 		public void addAllowedMethod(String method) {
 			if (!isBlank(method)) {
 				// Add for invalid method check.
-				isTrue(Objects.nonNull(HttpMethod.resolve(method.toUpperCase(Locale.ENGLISH))),
-						"Invalid allowed http method: '%s'", method);
-				super.addAllowedMethod(method.toUpperCase(Locale.ENGLISH));
+				isTrue(Objects.nonNull(HttpMethod.resolve(method.toUpperCase(US))), "Invalid allowed http method: '%s'", method);
+				super.addAllowedMethod(method.toUpperCase(US));
 			}
 		}
 

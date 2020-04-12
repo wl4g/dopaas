@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.webjars.editor;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +24,7 @@ import com.wl4g.devops.webjars.config.WebIdeProperties;
 import com.wl4g.devops.webjars.editor.model.CompleteRequest;
 
 /**
- * WebIdeController
+ * {@link WebIdeEndpoint}
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月31日
@@ -34,16 +32,14 @@ import com.wl4g.devops.webjars.editor.model.CompleteRequest;
  */
 public class WebIdeEndpoint extends GenericEmbeddedWebappsEndpoint {
 
+	/**
+	 * {@link WebIdeCompleter}
+	 */
 	@Autowired
 	protected WebIdeCompleter completer;
 
 	public WebIdeEndpoint(WebIdeProperties config) {
 		super(config);
-	}
-
-	@Override
-	protected byte[] preResponesPropertiesSet(String filepath, byte[] buf, HttpServletRequest request) {
-		return super.preResponesPropertiesSet(filepath, buf, request);
 	}
 
 	@PostMapping(path = "complete")
