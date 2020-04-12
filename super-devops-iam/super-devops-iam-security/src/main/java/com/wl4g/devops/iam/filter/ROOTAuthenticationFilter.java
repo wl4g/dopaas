@@ -51,7 +51,7 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		log.info("Request of: {}", () -> getFullRequestURL(toHttp(request)));
+		log.info("Request url: '{}'", () -> getFullRequestURL(toHttp(request)));
 
 		// Logged-in or login page request passed
 		return (getSubject(request, response).isAuthenticated() || isLoginRequest(request, response)

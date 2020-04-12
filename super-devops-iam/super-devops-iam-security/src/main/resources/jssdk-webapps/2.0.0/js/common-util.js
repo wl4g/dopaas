@@ -179,6 +179,24 @@
 			}
 			return formData;
 		},
+		toUrlQueryParam: function(url) {
+		    if(!url) {
+		        return null;
+		    }
+		    var index = url.lastIndexOf("?");
+		    if(index >= 0) {
+		        url = url.substring(index+1);
+		    }
+		    var paramPairs = url.split("&");
+		    var paramsMap = new Map();
+		    for (var i=0; i<paramPairs.length; i++) {
+		        var parts = paramPairs[i].split("=");
+		        if (parts.length >= 2) {
+		            paramsMap.set(parts[0], parts[1]);
+		        }
+		    }
+		    return paramsMap;
+		},
 		Codec: {
 			encodeBase58: function(plaintext){ // 明文字符串base58编码
 				if(!plaintext) { return null; }
