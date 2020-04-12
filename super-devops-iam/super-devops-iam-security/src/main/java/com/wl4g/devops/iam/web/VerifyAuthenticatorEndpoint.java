@@ -44,7 +44,6 @@ import static com.wl4g.devops.iam.verification.SmsSecurityVerifier.MobileNumber.
 import static com.wl4g.devops.iam.web.model.SmsCheckResult.KEY_SMS_CHECK;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
@@ -76,7 +75,7 @@ public class VerifyAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value = URI_S_VERIFY_APPLY_CAPTCHA, method = { GET })
+	@RequestMapping(value = URI_S_VERIFY_APPLY_CAPTCHA, method = { POST })
 	@ResponseBody
 	public RespBase<?> applyCaptcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
@@ -128,7 +127,7 @@ public class VerifyAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	 * @throws IOException
 	 * @throws NoSuchOperatorException
 	 */
-	@RequestMapping(value = URI_S_VERIFY_SMS_APPLY, method = { GET })
+	@RequestMapping(value = URI_S_VERIFY_SMS_APPLY, method = { POST })
 	@ResponseBody
 	public RespBase<?> applySmsCode(HttpServletRequest request, HttpServletResponse response)
 			throws NoSuchOperatorException, IOException {
