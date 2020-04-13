@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.devops.dao.umc.CustomAlarmEventDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.umc.CustomAlarmEvent">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="custom_engine_id" jdbcType="INTEGER" property="customEngineId" />
+    <result column="notify_group_ids" jdbcType="VARCHAR" property="notifyGroupIds" />
+    <result column="message" jdbcType="VARCHAR" property="message" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+
+    <!--other-->
+    <result column="engine_name" jdbcType="VARCHAR" property="engineName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, custom_engine_id, notify_group_ids, message, create_date
+  </sql>
+  <sql id="Base_Column_List_e">
+    e.id, e.custom_engine_id, e.notify_group_ids, e.message, e.create_date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from umc_custom_alarm_event
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List_e" />,en.name engine_name
+    from umc_custom_alarm_event e
+    left join umc_custom_engine en on en.id=e.custom_engine_id
+    where en.del_flag!=1
+    <if test="name != null and name != ''" >
+      AND en.name LIKE CONCAT('%','${name}','%')
+    </if>
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from umc_custom_alarm_event
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.umc.CustomAlarmEvent">
+    insert into umc_custom_alarm_event (id, custom_engine_id, notify_group_ids, 
+      message,create_date)
+    values (#{id,jdbcType=INTEGER}, #{customEngineId,jdbcType=INTEGER}, #{notifyGroupIds,jdbcType=VARCHAR}, 
+      #{message,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.umc.CustomAlarmEvent">
+    insert into umc_custom_alarm_event
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="customEngineId != null">
+        custom_engine_id,
+      </if>
+      <if test="notifyGroupIds != null">
+        notify_group_ids,
+      </if>
+      <if test="message != null">
+        message,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="customEngineId != null">
+        #{customEngineId,jdbcType=INTEGER},
+      </if>
+      <if test="notifyGroupIds != null">
+        #{notifyGroupIds,jdbcType=VARCHAR},
+      </if>
+      <if test="message != null">
+        #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.umc.CustomAlarmEvent">
+    update umc_custom_alarm_event
+    <set>
+      <if test="customEngineId != null">
+        custom_engine_id = #{customEngineId,jdbcType=INTEGER},
+      </if>
+      <if test="notifyGroupIds != null">
+        notify_group_ids = #{notifyGroupIds,jdbcType=VARCHAR},
+      </if>
+      <if test="message != null">
+        message = #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.umc.CustomAlarmEvent">
+    update umc_custom_alarm_event
+    set custom_engine_id = #{customEngineId,jdbcType=INTEGER},
+      notify_group_ids = #{notifyGroupIds,jdbcType=VARCHAR},
+      message = #{message,jdbcType=VARCHAR},create_date = #{createDate,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

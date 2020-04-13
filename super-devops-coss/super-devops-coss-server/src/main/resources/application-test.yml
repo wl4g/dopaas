@@ -38,6 +38,7 @@ spring:
         hdfs:
           endpoint-hdfs-root-uri: hdfs://owner-node3:8020/coss-bucket
         native:
+          http://coss.${DEVOPS_DOMAIN_TOP:anjiancloud.alpha}/coss-server/webservice/download
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

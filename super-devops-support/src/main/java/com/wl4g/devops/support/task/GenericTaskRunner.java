@@ -48,6 +48,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public abstract class GenericTaskRunner<C extends RunnerProperties>
 		implements Closeable, Runnable, ApplicationRunner, DisposableBean {
+
 	final protected SmartLogger log = getLogger(getClass());
 
 	/** Running state. */

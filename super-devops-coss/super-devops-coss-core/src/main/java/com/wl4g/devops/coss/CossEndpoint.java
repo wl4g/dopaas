@@ -15,29 +15,18 @@
  */
 package com.wl4g.devops.coss;
 
-import static java.lang.String.format;
+import com.wl4g.devops.common.framework.operator.Operator;
+import com.wl4g.devops.coss.exception.CossException;
+import com.wl4g.devops.coss.exception.ServerCossException;
+import com.wl4g.devops.coss.model.*;
+import com.wl4g.devops.coss.model.bucket.Bucket;
+import com.wl4g.devops.coss.model.bucket.BucketList;
+import com.wl4g.devops.coss.model.bucket.BucketMetadata;
 
 import java.io.InputStream;
 import java.net.URL;
 
-import com.wl4g.devops.common.framework.operator.Operator;
-import com.wl4g.devops.coss.model.ACL;
-import com.wl4g.devops.coss.model.AccessControlList;
-import com.wl4g.devops.coss.model.CopyObjectResult;
-import com.wl4g.devops.coss.model.ObjectAcl;
-import com.wl4g.devops.coss.model.ObjectListing;
-import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.ObjectSummary;
-import com.wl4g.devops.coss.model.ObjectSymlink;
-import com.wl4g.devops.coss.model.ObjectValue;
-import com.wl4g.devops.coss.model.PutObjectResult;
-import com.wl4g.devops.coss.model.RestoreObjectRequest;
-import com.wl4g.devops.coss.model.RestoreObjectResult;
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
-import com.wl4g.devops.coss.model.bucket.BucketMetadata;
-import com.wl4g.devops.coss.exception.CossException;
-import com.wl4g.devops.coss.exception.ServerCossException;
+import static java.lang.String.format;
 
 /**
  * Composite object storage server file system API.
@@ -196,6 +185,8 @@ public interface CossEndpoint extends Operator<CossProvider> {
 		return putObject(bucketName, key, input, null);
 	}
 
+	PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata);
+
 	/**
 	 * Uploads the file to the {@link Bucket} from the @{link InputStream} with
 	 * the {@link ObjectMetadata} information。
@@ -283,7 +274,7 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @param request
 	 * @return A {@link RestoreObjectResult} instance.
 	 */
-	RestoreObjectResult restoreObject(RestoreObjectRequest request) throws CossException, ServerCossException;
+	RestoreObjectResult restoreObject(RestoreObjectRequest request,String bucketName, String key) throws CossException, ServerCossException;
 
 	/**
 	 * Gets the Access Control List (ACL) of the OSS object.

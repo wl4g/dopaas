@@ -26,6 +26,7 @@ import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 import static java.lang.Thread.interrupted;
 import static java.lang.Thread.sleep;
@@ -260,7 +261,7 @@ public class JedisLockManager {
 			} else if (res instanceof Number) {
 				return ((Number) res).longValue() >= 1L;
 			} else {
-				throw new IllegalStateException(String.format("Unknown acquired state for %s", res));
+				throw new IllegalStateException(format("Unknown acquired state for %s", res));
 			}
 		}
 

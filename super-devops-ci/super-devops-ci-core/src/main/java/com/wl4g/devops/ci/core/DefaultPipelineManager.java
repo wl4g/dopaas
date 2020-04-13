@@ -26,16 +26,16 @@ import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.common.bean.iam.Contact;
-import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.iam.Contact;
+import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.framework.beans.AliasPrototypeBeanFactory;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.*;
-import com.wl4g.devops.dao.iam.ContactDao;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
+import com.wl4g.devops.dao.iam.ContactDao;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
@@ -280,27 +280,33 @@ public class DefaultPipelineManager implements PipelineManager {
 				provider.execute();
 				log.info("Pipeline execute completed of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
 
-				postPipelineRunSuccess(taskId, provider);
-
 				// flow status
 				pipelineModel.setStatus(SUCCESS.toString());
 				flowManager.pipelineStateChange(pipelineModel);
+
+				postPipelineRunSuccess(taskId, provider);
 			} catch (Throwable e) {
 				log.error(format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
 						provider.getClass().getSimpleName()), e);
 				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), getStackTraceAsString(e));
 
 				// Update status.
-				log.info("Updating pipeline job status to {} of taskId: {}", TASK_STATUS_STOP, taskId);
-				taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, getStackTraceAsString(e));
-
-				// Failed process.
-				log.info("Post pipeline executeing of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
-				postPipelineRunFailure(taskId, provider, e);
+				TaskHistory taskHistory = taskHistoryService.getById(taskId);
+				if(TASK_STATUS_STOPING == taskHistory.getStatus()){
+					log.info("Updating pipeline job status to {} of taskId: {}", TASK_STATUS_STOP, taskId);
+					taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_STOP, getStackTraceAsString(e));
+				}else{
+					log.info("Updating pipeline job status to {} of taskId: {}", TASK_STATUS_FAIL, taskId);
+					taskHistoryService.updateStatusAndResult(taskId, TASK_STATUS_FAIL, getStackTraceAsString(e));
+				}
 
 				// flow status
 				pipelineModel.setStatus(FAILED.toString());
 				flowManager.pipelineStateChange(pipelineModel);
+
+				// Failed process.
+				log.info("Post pipeline executeing of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
+				postPipelineRunFailure(taskId, provider, e);
 			} finally {
 				// Log file end EOF.
 				writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
@@ -391,28 +397,33 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param message
 	 */
 	protected void notificationResult(Integer contactGroupId, Integer taskId, String result) {
-		List<Contact> contacts = contactDao.getContactByGroupIds(asList(contactGroupId));
-		for (Contact contact : contacts) {
+		try{
+			List<Contact> contacts = contactDao.getContactByGroupIds(asList(contactGroupId));
+			for (Contact contact : contacts) {
 
-			// new
-			List<ContactChannel> contactChannels = contact.getContactChannels();
-			if (CollectionUtils.isEmpty(contactChannels)) {
-				continue;
-			}
-			for (ContactChannel contactChannel : contactChannels) {
-				if (1 != contactChannel.getEnable()) {
+				// new
+				List<ContactChannel> contactChannels = contact.getContactChannels();
+				if (CollectionUtils.isEmpty(contactChannels)) {
 					continue;
 				}
+				for (ContactChannel contactChannel : contactChannels) {
+					if (1 != contactChannel.getEnable()) {
+						continue;
+					}
 
-				GenericNotifyMessage msg = new GenericNotifyMessage(contactChannel.getPrimaryAddress(), "tpl3");
-				// Common parameters.
-				msg.addParameter("isSuccess", result);
-				msg.addParameter("pipelineId", taskId);
+					GenericNotifyMessage msg = new GenericNotifyMessage(contactChannel.getPrimaryAddress(), "tpl3");
+					// Common parameters.
+					msg.addParameter("isSuccess", result);
+					msg.addParameter("pipelineId", taskId);
 
-				notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
+					notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
+				}
+
 			}
-
+		}catch (Exception e){
+			log.error("send message fail",e);
 		}
+
 	}
 
 	/**

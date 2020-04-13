@@ -149,7 +149,9 @@ public class JedisService {
 			if (cacheSeconds > 0) {
 				result = cluster.setex(getBytesKey(key), cacheSeconds, serialize(value));
 			} else {
-				result = cluster.set(getBytesKey(key), serialize(value));
+				byte[] serialize = serialize(value);
+				System.out.println(serialize.length);
+				result = cluster.set(getBytesKey(key), serialize);
 			}
 			log.debug("setObjectT {} = {}", key, value);
 			return result;

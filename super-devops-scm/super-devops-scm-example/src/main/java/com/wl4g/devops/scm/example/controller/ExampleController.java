@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.scm.example.controller;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.wl4g.devops.common.bean.iam.User;
+import com.wl4g.devops.dao.iam.UserDao;
+import com.wl4g.devops.scm.example.service.ExampleService;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -24,7 +26,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.devops.scm.example.service.ExampleService;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RefreshScope
 @RestController
@@ -38,13 +41,16 @@ public class ExampleController implements ApplicationRunner {
 	@Autowired
 	private ExampleService exampleService;
 
+	@Autowired
+	private UserDao userDao;
+
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		if (!running.compareAndSet(false, true)) {
 			return;
 		}
 
-		System.out.println("ExampleService#afterPropertiesSet()..." + this);
+		System.out.println("ExampleService#run()..." + this);
 		thread = new Thread(() -> {
 			while (true) {
 				System.out.println("ExampleService " + thread.getName() + ", firstName=" + exampleService.getFirstName()
@@ -57,6 +63,12 @@ public class ExampleController implements ApplicationRunner {
 			}
 		});
 		thread.start();
+	}
+
+	@RequestMapping(value = "test1")
+	public String test1() {
+		List<User> list = userDao.list(null, null, null);
+		return JacksonUtils.toJSONString(list);
 	}
 
 }

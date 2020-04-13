@@ -15,129 +15,130 @@
  */
 package com.wl4g.devops.support.notification.mail;
 
-import static java.lang.String.format;
-import static java.util.Arrays.asList;
-import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
-import java.util.Date;
-import java.util.Properties;
-
+import com.wl4g.devops.support.notification.AbstractMessageNotifier;
+import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMailMessage;
 
-import com.wl4g.devops.support.notification.AbstractMessageNotifier;
-import com.wl4g.devops.support.notification.GenericNotifyMessage;
+import java.util.Date;
+import java.util.Properties;
+
+import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toList;
 
 /**
  * {@link MailMessageNotifier}, Full compatibility with native spring mail!
- * 
+ *
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
 public class MailMessageNotifier extends AbstractMessageNotifier<MailNotifyProperties> {
 
-	/**
-	 * Java mail sender.
-	 */
-	final protected JavaMailSenderImpl mailSender;
+    /**
+     * Java mail sender.
+     */
+    final protected JavaMailSenderImpl mailSender;
 
-	public MailMessageNotifier(MailNotifyProperties config) {
-		super(config);
-		this.mailSender = new JavaMailSenderImpl();
-		if (!isNull(config.getProperties())) {
-			this.mailSender.setJavaMailProperties(new Properties() {
-				private static final long serialVersionUID = 1395782904610029089L;
-				{
-					putAll(config.getProperties());
-				}
-			});
-		}
-		this.mailSender.setDefaultEncoding(config.getDefaultEncoding().name());
-		this.mailSender.setProtocol(config.getProtocol());
-		this.mailSender.setHost(config.getHost());
-		this.mailSender.setPort(config.getPort());
-		this.mailSender.setUsername(config.getUsername());
-		this.mailSender.setPassword(config.getPassword());
-	}
+    public MailMessageNotifier(MailNotifyProperties config) {
+        super(config);
+        this.mailSender = new JavaMailSenderImpl();
+        if (!isNull(config.getProperties())) {
+            this.mailSender.setJavaMailProperties(new Properties() {
+                private static final long serialVersionUID = 1395782904610029089L;
 
-	@Override
-	public NotifierKind kind() {
-		return NotifierKind.Mail;
-	}
+                {
+                    putAll(config.getProperties());
+                }
+            });
+        }
+        this.mailSender.setDefaultEncoding(config.getDefaultEncoding().name());
+        this.mailSender.setProtocol(config.getProtocol());
+        this.mailSender.setHost(config.getHost());
+        this.mailSender.setPort(config.getPort());
+        this.mailSender.setUsername(config.getUsername());
+        this.mailSender.setPassword(config.getPassword());
+    }
 
-	/**
-	 * Send mail messages.
-	 * 
-	 * @param simpleMessages
-	 */
-	@Override
-	public void send(GenericNotifyMessage msg) {
-		String mailMsgType = msg.getParameterAsString(KEY_MAILMSG_TYPE, "simple");
-		switch (mailMsgType) {
-		case KEY_MAILMSG_VALUE_SIMPLE:
-			SimpleMailMessage simpleMsg = new SimpleMailMessage();
-			// Add "<>" symbol to send out?
-			/*
-			 * Preset from account, otherwise it would be wrong: 501 mail from
-			 * address must be same as authorization user.
-			 */
-			simpleMsg.setFrom(simpleMsg.getFrom() + "<" + config.getUsername() + ">");
-			simpleMsg.setSubject(msg.getParameterAsString(KEY_MAILMSG_SUBJECT, EMPTY));
-			simpleMsg.setSentDate(msg.getParameter(KEY_MSG_SENDDATE, new Date()));
-			simpleMsg.setBcc(asList(msg.getParameter(KEY_MAILMSG_BCC)).toArray(new String[] {}));
-			simpleMsg.setCc(asList(msg.getParameter(KEY_MAILMSG_CC)).toArray(new String[] {}));
-			simpleMsg.setReplyTo(msg.getParameter(KEY_MAILMSG_REPLYTO));
-			simpleMsg.setText(config.getResolvedMessage(msg.getTemplateKey(), msg.getParameters()));
+    @Override
+    public NotifierKind kind() {
+        return NotifierKind.Mail;
+    }
 
-			mailSender.send(simpleMsg);
-			break;
-		case KEY_MAILMSG_VALUE_MIME: // TODO implements!!!
-			log.warn("No implements MimeMailMessage!!!");
-			break;
-		default:
-			throw new UnsupportedOperationException(format("No supported mail message type of %s", mailMsgType));
-		}
+    /**
+     * Send mail messages.
+     *
+     * @param simpleMessages
+     */
+    @Override
+    public void send(GenericNotifyMessage msg) {
+        String mailMsgType = msg.getParameterAsString(KEY_MAILMSG_TYPE, "simple");
+        switch (mailMsgType) {
+            case KEY_MAILMSG_VALUE_SIMPLE:
+                SimpleMailMessage simpleMsg = new SimpleMailMessage();
+                // Add "<>" symbol to send out?
+                /*
+                 * Preset from account, otherwise it would be wrong: 501 mail from
+                 * address must be same as authorization user.
+                 */
+                simpleMsg.setFrom(config.getUsername() + "<" + config.getUsername() + ">");
+                simpleMsg.setTo(msg.getToObjects().stream().map(to -> to = to + "<" + to + ">").collect(toList()).toArray(new String[]{}));
+                simpleMsg.setSubject(msg.getParameterAsString(KEY_MAILMSG_SUBJECT, "Super Devops Messages"));
+                simpleMsg.setSentDate(msg.getParameter(KEY_MSG_SENDDATE, new Date()));
+                simpleMsg.setBcc(safeList(msg.getParameter(KEY_MAILMSG_BCC)).toArray(new String[]{}));
+                simpleMsg.setCc(safeList(msg.getParameter(KEY_MAILMSG_CC)).toArray(new String[]{}));
+                simpleMsg.setReplyTo(msg.getParameter(KEY_MAILMSG_REPLYTO));
+                simpleMsg.setText(config.getResolvedMessage(msg.getTemplateKey(), msg.getParameters()));
 
-	}
+                mailSender.send(simpleMsg);
+                break;
+            case KEY_MAILMSG_VALUE_MIME: // TODO implements!!!
+                log.warn("No implements MimeMailMessage!!!");
+                break;
+            default:
+                throw new UnsupportedOperationException(format("No supported mail message type of %s", mailMsgType));
+        }
 
-	@Override
-	public <R> R sendForReply(GenericNotifyMessage message) {
-		throw new UnsupportedOperationException();
-	}
+    }
 
-	/**
-	 * Send mail message type definitions. </br>
-	 * 
-	 * <pre>
-	 * <b>simple</b> => {@link SimpleMailMessage}
-	 * <b>mime</b> => {@link MimeMailMessage}
-	 * </pre>
-	 */
-	final public static String KEY_MAILMSG_TYPE = "mailMsgType";
-	final public static String KEY_MAILMSG_VALUE_SIMPLE = "simple";
-	final public static String KEY_MAILMSG_VALUE_MIME = "mime";
+    @Override
+    public <R> R sendForReply(GenericNotifyMessage message) {
+        throw new UnsupportedOperationException();
+    }
 
-	/**
-	 * Mail message builder subject keyname.
-	 */
-	final public static String KEY_MAILMSG_SUBJECT = "mailMsgSubject";
+    /**
+     * Send mail message type definitions. </br>
+     *
+     * <pre>
+     * <b>simple</b> => {@link SimpleMailMessage}
+     * <b>mime</b> => {@link MimeMailMessage}
+     * </pre>
+     */
+    final public static String KEY_MAILMSG_TYPE = "mailMsgType";
+    final public static String KEY_MAILMSG_VALUE_SIMPLE = "simple";
+    final public static String KEY_MAILMSG_VALUE_MIME = "mime";
 
-	/**
-	 * Mail message builder replyTo keyname.
-	 */
-	final public static String KEY_MAILMSG_REPLYTO = "mailMsgReplyTo";
+    /**
+     * Mail message builder subject keyname.
+     */
+    final public static String KEY_MAILMSG_SUBJECT = "mailMsgSubject";
 
-	/**
-	 * Mail message builder cc keyname.
-	 */
-	final public static String KEY_MAILMSG_CC = "mailMsgCc";
+    /**
+     * Mail message builder replyTo keyname.
+     */
+    final public static String KEY_MAILMSG_REPLYTO = "mailMsgReplyTo";
 
-	/**
-	 * Mail message builder bcc keyname.
-	 */
-	final public static String KEY_MAILMSG_BCC = "mailMsgBcc";
+    /**
+     * Mail message builder cc keyname.
+     */
+    final public static String KEY_MAILMSG_CC = "mailMsgCc";
+
+    /**
+     * Mail message builder bcc keyname.
+     */
+    final public static String KEY_MAILMSG_BCC = "mailMsgBcc";
 
 }

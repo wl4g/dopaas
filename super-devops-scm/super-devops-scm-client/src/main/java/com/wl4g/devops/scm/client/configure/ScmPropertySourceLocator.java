@@ -50,8 +50,8 @@ import java.util.Map.Entry;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.AUTHORIZATION;
-import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.availableReleaseMeta;
-import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.releaseReset;
+import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.getReleaseMeta;
+import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.pollReleaseMeta;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -106,7 +106,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 			// Fetch release URL.
 			String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_GET;
 			// Create release get
-			ReleaseMeta meta = availableReleaseMeta(false);
+			ReleaseMeta meta = getReleaseMeta(false);
 			GetRelease get = new GetRelease(info.getAppName(), config.getNamespaces(), meta, info.getInstance());
 
 			// To parameters
@@ -144,7 +144,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 			}
 			return release;
 		} finally {
-			releaseReset();
+			pollReleaseMeta();
 		}
 	}
 
@@ -154,7 +154,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	 * @param release
 	 */
 	public void resolvesCipherSource(ReleaseMessage release) {
-		log.trace("Resolver cipher configuration propertySource ...");
+		log.debug("Resolver cipher configuration propertySource ...");
 
 		for (ReleasePropertySource ps : release.getPropertySources()) {
 			ps.getSource().forEach((key, value) -> {

@@ -172,10 +172,10 @@ public class TaskController extends BaseController {
 
 	@RequestMapping(value = "/getDependencys")
 	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
-	public RespBase<?> getDependencys(Integer appClusterId) {
+	public RespBase<?> getDependencys(Integer appClusterId, Integer taskId) {
 		Assert.notNull(appClusterId, "appClusterId is null");
 		RespBase<Object> resp = RespBase.create();
-		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(appClusterId);
+		List<TaskBuildCommand> taskBuildCommands = taskService.getDependency(appClusterId, taskId);
 		resp.forMap().put("list", taskBuildCommands);
 		return resp;
 	}

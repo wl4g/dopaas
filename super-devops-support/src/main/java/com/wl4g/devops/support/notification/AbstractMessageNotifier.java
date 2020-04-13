@@ -15,18 +15,21 @@
  */
 package com.wl4g.devops.support.notification;
 
+import com.wl4g.devops.tool.common.log.SmartLogger;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.validation.Validator;
+
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Objects.isNull;
 
 import java.lang.reflect.Method;
 
-import org.springframework.beans.factory.InitializingBean;
-
-import com.wl4g.devops.tool.common.log.SmartLogger;
-
 /**
  * {@link AbstractMessageNotifier}
- * 
+ *
  * @param <C>
  * @param <T>
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
@@ -41,6 +44,9 @@ public abstract class AbstractMessageNotifier<C extends NotifyProperties> implem
 	 */
 	final protected C config;
 
+	@Autowired
+	protected Validator validator;
+
 	public AbstractMessageNotifier(C config) {
 		notNullOf(config, "config");
 		this.config = config;
@@ -53,6 +59,12 @@ public abstract class AbstractMessageNotifier<C extends NotifyProperties> implem
 
 	@Override
 	public boolean preHandle(Method method, Object[] args) {
+		if (!isNull(args)) {
+			for (Object arg : args) {
+				validator.validate(arg);
+			}
+		}
+
 		// Check notify message templateKey
 		if (config instanceof AbstractNotifyProperties) {
 			AbstractNotifyProperties conf = (AbstractNotifyProperties) config;

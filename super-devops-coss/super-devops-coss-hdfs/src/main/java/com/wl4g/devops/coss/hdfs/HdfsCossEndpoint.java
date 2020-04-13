@@ -15,29 +15,6 @@
  */
 package com.wl4g.devops.coss.hdfs;
 
-import static java.lang.String.format;
-import static java.lang.String.valueOf;
-import static java.lang.System.currentTimeMillis;
-import static java.util.Objects.isNull;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileChecksum;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.LocatedFileStatus;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.RemoteIterator;
-import org.apache.hadoop.fs.permission.FsPermission;
-import org.apache.hadoop.io.IOUtils;
-
 import com.wl4g.devops.coss.AbstractCossEndpoint;
 import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.exception.CossException;
@@ -46,21 +23,26 @@ import com.wl4g.devops.coss.hdfs.config.HdfsCossProperties;
 import com.wl4g.devops.coss.hdfs.model.HdfsObjectListing;
 import com.wl4g.devops.coss.hdfs.model.HdfsObjectSummary;
 import com.wl4g.devops.coss.hdfs.model.bucket.HdfsBucketList;
-import com.wl4g.devops.coss.model.ACL;
-import com.wl4g.devops.coss.model.AccessControlList;
-import com.wl4g.devops.coss.model.CopyObjectResult;
-import com.wl4g.devops.coss.model.ObjectAcl;
-import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.ObjectSymlink;
-import com.wl4g.devops.coss.model.ObjectValue;
-import com.wl4g.devops.coss.model.Owner;
-import com.wl4g.devops.coss.model.PutObjectResult;
-import com.wl4g.devops.coss.model.RestoreObjectRequest;
-import com.wl4g.devops.coss.model.RestoreObjectResult;
+import com.wl4g.devops.coss.model.*;
 import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.*;
+import org.apache.hadoop.fs.permission.FsPermission;
+import org.apache.hadoop.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicLong;
+
 import static com.wl4g.devops.coss.utils.PosixFileSystemUtils.*;
-import static com.wl4g.devops.tool.common.io.FileSizeUtils.*;
+import static com.wl4g.devops.tool.common.io.FileSizeUtils.getHumanReadable;
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
+import static java.util.Objects.isNull;
 
 /**
  * File object storage based on HDFS.
@@ -260,6 +242,12 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	}
 
 	@Override
+	public PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
+		// TODO
+		return null;
+	}
+
+	@Override
 	public PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
 		PutObjectResult result = new PutObjectResult();
 		try {
@@ -307,7 +295,8 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	}
 
 	@Override
-	public RestoreObjectResult restoreObject(RestoreObjectRequest request) throws CossException, ServerCossException {
+	public RestoreObjectResult restoreObject(RestoreObjectRequest request, String bucketName, String key)
+			throws CossException, ServerCossException {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -30,7 +30,6 @@ import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.page.PageModel;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +89,7 @@ public class ProjectServiceImpl implements ProjectService {
 		int result = projectDao.insertSelective(project);
 		if (project.getDependencies() != null) {
 			for (Dependency dependency : project.getDependencies()) {
-				if (dependency.getDependentId() != null && StringUtils.isNotBlank(dependency.getBranch())) {
+				if (dependency.getDependentId() != null) {
 					dependency.setProjectId(project.getId());
 					dependency.preInsert();
 					dependencyDao.insertSelective(dependency);
@@ -110,7 +109,7 @@ public class ProjectServiceImpl implements ProjectService {
 		dependencyDao.deleteByProjectId(project.getId());
 		if (project.getDependencies() != null) {
 			for (Dependency dependency : project.getDependencies()) {
-				if (dependency.getDependentId() != null && StringUtils.isNotBlank(dependency.getBranch())) {
+				if (dependency.getDependentId() != null) {
 					dependency.setProjectId(project.getId());
 					dependency.preInsert();
 					dependencyDao.insertSelective(dependency);
@@ -174,11 +173,22 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public List<String> getBranchs(Integer appClusterId, Integer tarOrBranch) {
 		Assert.notNull(appClusterId, "id can not be null");
-
 		Project project = projectDao.getByAppClusterId(appClusterId);
 		Assert.notNull(project, "not found project ,please check you project config");
-		String url = project.getHttpUrl();
+		return getBranchByProject(project,tarOrBranch);
+	}
 
+	@Override
+	public List<String> getBranchsByProjectId(Integer projectId, Integer tarOrBranch) {
+		Assert.notNull(projectId, "id can not be null");
+		Project project = projectDao.selectByPrimaryKey(projectId);
+		Assert.notNull(project, "not found project ,please check you project config");
+		return getBranchByProject(project,tarOrBranch);
+	}
+
+
+	private List<String> getBranchByProject(Project project, Integer tarOrBranch){
+		String url = project.getHttpUrl();
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
 		vcsOperator.forOperator(project.getVcs().getProviderKind());
@@ -187,15 +197,13 @@ public class ProjectServiceImpl implements ProjectService {
 		notNullOf(vcsProjectId, "vcsProjectId");
 
 		if (tarOrBranch != null && tarOrBranch == 2) { // tag
-			List<String> branchNames = vcsOperator.forOperator(project.getVcs().getProviderKind()).getRemoteTags(project.getVcs(),
+			return vcsOperator.forOperator(project.getVcs().getProviderKind()).getRemoteTags(project.getVcs(),
 					vcsProjectId);
-			return branchNames;
 		}
 		// Branch
 		else {
-			List<String> branchNames = vcsOperator.forOperator(project.getVcs().getProviderKind())
+			return vcsOperator.forOperator(project.getVcs().getProviderKind())
 					.getRemoteBranchNames(project.getVcs(), vcsProjectId);
-			return branchNames;
 		}
 	}
 

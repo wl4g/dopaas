@@ -15,8 +15,11 @@
  */
 package com.wl4g.devops.ci.web;
 
+import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.HookParameter;
+import com.wl4g.devops.ci.core.param.NewParameter;
+import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.common.bean.ci.model.HookInfo;
 import com.wl4g.devops.common.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,9 @@ public class GitHookController extends BaseController {
 	@Autowired
 	private PipelineManager pipeliner;
 
+	@Autowired
+	private FlowManager flowManager;
+
 	/**
 	 * Receive GITLAB hook.
 	 * 
@@ -54,5 +60,13 @@ public class GitHookController extends BaseController {
 		String projectName = hook.getRepository().getName();
 		pipeliner.hookPipeline(new HookParameter(projectName, branchName));
 	}
+
+	@RequestMapping(value = "/run")
+	public void create(Integer taskId) {
+		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
+		pipeliner.runPipeline(new NewParameter(taskId, "create by hook", null, null, null),pipelineModel);
+	}
+
+
 
 }

@@ -59,4 +59,9 @@ public abstract class PipelineKind {
 	 */
 	final public static String RKT_NATIVE = "RktNative";
 
+	/**
+	 * view native ,needn't build
+	 */
+	final public static String VIEW_NATIVE = "ViewNative";
+
 }

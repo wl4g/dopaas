@@ -13,4 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client;
+package com.wl4g.devops.umc.service;
+
+import com.wl4g.devops.common.bean.umc.CustomHistory;
+import com.wl4g.devops.page.PageModel;
+
+/**
+ * @author vjay
+ * @date 2019-08-05 16:01:00
+ */
+public interface CustomHistoryService {
+
+	PageModel list(PageModel pm, String name);
+
+	CustomHistory detal(Integer id);
+
+	void save(CustomHistory customDatasource);
+
+	void del(Integer id);
+
+}
