@@ -153,7 +153,7 @@
 				    }
 				}
 				// Remove last '/'
-				defaultPath = defaultPath.substring(0, defaultPath.length()-1);
+				defaultPath = defaultPath.substring(0, defaultPath.length-1);
 			}
 		}
 		var settings = {

@@ -5,7 +5,7 @@
 	<artifactId>super-devops-iam</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>Super DevOps Identity Authentication Management Services</name>
+	<name>Super DevOps Identity Authentication Management</name>
 	<url>https://iam.super-devops.wl4g.com</url>
 	<description>A CAS-based SSO unified authentication implementation, supporting WeChat, QQ, Facebook and other SNS authentication, Opensaml API authorization, built-in interface level AOP secondary authentication implementation.</description>
 	<modules>

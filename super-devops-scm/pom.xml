@@ -5,7 +5,7 @@
 	<artifactId>super-devops-scm</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>Super DevOps Software Config Management </name>
+	<name>Super DevOps Software Config Management Services</name>
 	<url>https://scm.super-devops.wl4g.com</url>
 	<description>SCM - An Open Source Distributed Independent Configuration Center based on Spring Cloud.</description>
 	<modules>
