@@ -21,14 +21,12 @@
 		if(!renderObj || renderObj == undefined){
 			throw Error("IAM JSSDK UI (renderObj) is required!");
 		}
-		if(!iamCoreConfig){
-			console.warn("Init 'iamCoreConfig' not configure, already used defaults !");
-			iamCoreConfig = $.extend(true, {
-	    		baseUri: "http://localhost:14040/iam-server", // Using auto extra configure
-	   			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
-	 			deaultContextPath: "/iam-server" // IAMServerd的context-path
-	 		}, iamCoreConfig);
-		}
+		console.warn("Init 'iamCoreConfig' not configure, already used defaults !");
+		iamCoreConfig = $.extend(true, {
+    		baseUri: "http://localhost:14040/iam-server", // Using auto extra configure
+   			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+   			defaultContextPath: "/iam-server" // IAMServerd的context-path
+ 		}, iamCoreConfig);
 
 		console.debug("Initializing IAM JSSDK UI...");
 		// Javascript multi line string supports.

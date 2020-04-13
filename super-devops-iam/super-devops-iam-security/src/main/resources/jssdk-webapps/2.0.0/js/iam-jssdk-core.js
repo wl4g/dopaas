@@ -410,7 +410,7 @@
 	var _initConfigure = function(obj) {
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = $.extend(true, settings, obj);
-		console.debug("After merge settings: "+ settings);
+		console.debug("After merge settings: "+ JSON.stringify(settings));
 
 		if (Common.Util.isEmpty(settings.deploy.baseUri)) {
 			// 获取地址栏默认baseUri

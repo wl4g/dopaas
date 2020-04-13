@@ -162,12 +162,12 @@
 			mode: curScript.getAttribute("mode") || "stable"
 		};
 		// Print settings
-		console.debug("IAM JSSDK using settings: "+ JSON.stringify(settings));
+		console.debug("Using IAM JSSDK settings: "+ JSON.stringify(settings));
 		if(settings.cache){
 			console.debug("IAM JSSDK cache is enabled!");
 		}
 		if(settings.mode == 'grey'){
-			console.warn("IAM JSSDK using [GREY] mode!");
+			console.warn("Using IAM JSSDK [GREY] mode!");
 		}
 		return settings;
 	})();
