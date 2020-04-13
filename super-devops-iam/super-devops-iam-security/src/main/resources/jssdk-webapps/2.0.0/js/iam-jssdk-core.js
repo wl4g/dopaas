@@ -752,10 +752,8 @@
 					loginParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
 					// 设备指纹umidToken(初始化页面时获取, 必须)
 					loginParam.set("{umidTokenKey}", runtime.umid.getValue());
-					// 追加自定义参数
-					if (!Common.Util.isEmpty(settings.account.customParamMap)) {
-						Common.Util.mergeMap(loginParam, settings.account.customParamMap);
-					}
+					// 添加自定义参数
+					Common.Util.mergeMap(settings.account.customParamMap, loginParam);
 					// 请求提交登录
 					doIamRequest("post", "{accountSubmitUri}", loginParam, function(res){
 						// 解锁登录按钮
