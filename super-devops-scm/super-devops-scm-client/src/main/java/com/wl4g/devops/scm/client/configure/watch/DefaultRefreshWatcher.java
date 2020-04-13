@@ -23,6 +23,10 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
+import static com.wl4g.devops.tool.common.lang.ThreadUtils2.*;
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -34,13 +38,15 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_REPORT_POST;
 import static com.wl4g.devops.common.web.RespBase.isSuccess;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
-import static org.apache.commons.lang3.RandomUtils.nextLong;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.springframework.http.HttpMethod.POST;
 
 /**
@@ -52,8 +58,11 @@ import static org.springframework.http.HttpMethod.POST;
  */
 public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 
-	/** Watching completion state. */
-	final private AtomicBoolean watchState = new AtomicBoolean(false);
+	/** Watching connect lock. */
+	final private Lock watchLock = new ReentrantLock();
+
+	/** Watching last connected state. */
+	final private AtomicBoolean lastWatchState = new AtomicBoolean(false);
 
 	/** Retry failure exceed threshold fast-fail */
 	@Value(EXP_FASTFAIL)
@@ -71,28 +80,31 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 		this.longPollingTemplate = locator.createRestTemplate((long) (config.getLongPollTimeout() * 1.15));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
-		// Loop long-polling watcher
-		while (true) {
+		while (true) { // Loop long-polling watching
 			try {
 				createWatchLongPolling();
-			} catch (Exception th) {
-				String errtip = "Unable to watch error, causes by: {}";
-				if (log.isDebugEnabled()) {
-					log.error(errtip, th);
-				} else {
-					log.warn(errtip, th);
+
+				// Optimization: refresh the configuration only when the
+				// connection status changes from failure to success.
+				if (!lastWatchState.get()) {
+					// Records changed property names.
+					addChanged(refresher.refresh());
 				}
-				try {
-					Thread.sleep(nextLong(config.getLongPollDelay(), config.getLongPollMaxDelay()));
-				} catch (InterruptedException e1) {
-					log.error("", e1);
-				}
+				lastWatchState.set(true);
+
+			} catch (Throwable th) {
+				lastWatchState.set(false);
+				log.error("Unable to watch poll", () -> getRootCauseMessage(th));
+				log.debug("Unable to watch poll", th);
+				sleepRandom(config.getLongPollDelay(), config.getLongPollMaxDelay());
 			} finally {
-				watchState.compareAndSet(true, false);
+				watchLock.unlock();
 			}
 		}
+
 	}
 
 	/**
@@ -101,25 +113,19 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 	 * @throws Exception
 	 */
 	private void createWatchLongPolling() throws Exception {
-		if (watchState.compareAndSet(false, true)) {
-			if (log.isDebugEnabled()) {
-				log.debug("Synchronizing refresh config ... ");
-			}
+		if (watchLock.tryLock()) {
+			log.debug("Synchronizing refresh config ... ");
 
 			String url = getWatchingUrl(false);
-
 			ResponseEntity<ReleaseMeta> resp = longPollingTemplate.getForEntity(url, ReleaseMeta.class);
-			if (log.isDebugEnabled()) {
-				log.debug("Watch result <= {}", resp);
-			}
+			log.debug("Watch result <= {}", resp);
 
-			// Update watching state
-			if (resp != null) {
+			if (!isNull(resp)) {
 				switch (resp.getStatusCode()) {
 				case OK:
-					// Poll release changed
+					// Release changed info.
 					setReleaseMeta(resp.getBody());
-					// Records changed property names
+					// Records changed property names.
 					addChanged(refresher.refresh());
 					break;
 				case CHECKPOINT:
@@ -129,8 +135,7 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 				case NOT_MODIFIED: // Next long-polling
 					break;
 				default:
-					throw new IllegalStateException(
-							String.format("Unsupport scm protocal status for: '%s'", resp.getStatusCodeValue()));
+					throw new IllegalStateException(format("Unsupport scm protocal status: '%s'", resp.getStatusCodeValue()));
 				}
 			}
 		} else {

@@ -17,11 +17,9 @@ package com.wl4g.devops.scm.example.controller;
 
 import com.wl4g.devops.common.bean.iam.User;
 import com.wl4g.devops.dao.iam.UserDao;
-import com.wl4g.devops.scm.example.service.Example2;
 import com.wl4g.devops.scm.example.service.ExampleService;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -43,14 +41,6 @@ public class ExampleController implements ApplicationRunner {
 	@Autowired
 	private ExampleService exampleService;
 
-
-	@Value("${spring.datasource.druid.url}")
-	private String url;
-
-	@Autowired
-	private Example2 example2;
-
-
 	@Autowired
 	private UserDao userDao;
 
@@ -60,7 +50,7 @@ public class ExampleController implements ApplicationRunner {
 			return;
 		}
 
-		System.out.println("ExampleService#afterPropertiesSet()..." + this);
+		System.out.println("ExampleService#run()..." + this);
 		thread = new Thread(() -> {
 			while (true) {
 				System.out.println("ExampleService " + thread.getName() + ", firstName=" + exampleService.getFirstName()
@@ -75,27 +65,10 @@ public class ExampleController implements ApplicationRunner {
 		thread.start();
 	}
 
-
-	@RequestMapping(value = "test")
-	public String test() {
-		System.out.println("url = "+url);
-		return url;
-	}
-
-	@RequestMapping(value = "test2")
-	public String test2() {
+	@RequestMapping(value = "test1")
+	public String test1() {
 		List<User> list = userDao.list(null, null, null);
 		return JacksonUtils.toJSONString(list);
 	}
-
-	@RequestMapping(value = "test3")
-	public String test3() {
-		System.out.println("lastname = "+example2.getLastName());
-		return example2.getLastName();
-	}
-
-
-
-
 
 }

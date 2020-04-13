@@ -8,18 +8,8 @@
 # limitations under the License.
 #
 
-# #### Environment(Test) configuration. ####
+# #### Environment(Dev) configuration. ####
 #
-
-# Example configuration.
-example:
-  firstName: 王
-  lastName: jack
-
-example2:
-  firstName: 王
-  lastName: jack
-
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -42,10 +32,14 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
-
 redis:
   passwd: ${REDIS_PASSWD:zzx!@#$%}
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
   nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
+
+# Example configuration.
+example:
+  firstName: 王
+  lastName: jack

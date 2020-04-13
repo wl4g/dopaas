@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.support.task;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
+import com.wl4g.devops.tool.common.log.SmartLogger;
 import com.wl4g.devops.tool.common.task.SafeEnhancedScheduledTaskExecutor;
 
 import java.io.Closeable;
@@ -48,7 +48,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public abstract class GenericTaskRunner<C extends RunnerProperties>
 		implements Closeable, Runnable, ApplicationRunner, DisposableBean {
-	final protected Logger log = getLogger(getClass());
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/** Running state. */
 	final private AtomicBoolean running = new AtomicBoolean(false);
