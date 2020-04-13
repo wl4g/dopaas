@@ -50,9 +50,7 @@ public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLoca
 	 */
 	@Override
 	public PropertySource<?> locate(Environment environment) {
-		if (log.isInfoEnabled()) {
-			log.info("SCM locate config is enabled environment for: {}", environment);
-		}
+		log.info("SCM locate config is enabled environment for: {}", environment);
 
 		CompositePropertySource composite = new CompositePropertySource(SCM_REFRESH_PROPERTY_SOURCE); // By-default
 		if (environment instanceof ConfigurableEnvironment) {
