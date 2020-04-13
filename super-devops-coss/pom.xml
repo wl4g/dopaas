@@ -5,7 +5,7 @@
 	<artifactId>super-devops-coss</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>Super DevOps Composite Object Storage Service</name>
+	<name>Super DevOps Composite Object Storage Services</name>
 	<url>https://coss.super-devops.wl4g.com</url>
 	<description>COSS - A open source composite object storage system based on spring cloud.</description>
 	<modules>
