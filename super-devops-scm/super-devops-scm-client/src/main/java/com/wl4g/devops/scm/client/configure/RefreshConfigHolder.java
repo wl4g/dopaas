@@ -16,6 +16,7 @@
 package com.wl4g.devops.scm.client.configure;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static java.util.Objects.isNull;
 
 import java.util.Collection;
 import java.util.Queue;
@@ -67,13 +68,15 @@ public abstract class RefreshConfigHolder {
 	 * Sets release meta
 	 * 
 	 * @param newMeta
+	 * @return
 	 */
-	public static void setReleaseMeta(ReleaseMeta newMeta) {
-		if (newMeta == null) {
+	public static ReleaseMeta setReleaseMeta(ReleaseMeta newMeta) {
+		if (!isNull(newMeta)) {
+			releaseMeta.set(newMeta);
+		} else {
 			pollReleaseMeta();
-			return;
 		}
-		releaseMeta.set(newMeta);
+		return newMeta;
 	}
 
 	/**
