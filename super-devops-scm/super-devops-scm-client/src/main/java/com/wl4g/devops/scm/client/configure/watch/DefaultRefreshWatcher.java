@@ -103,15 +103,19 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 	public void run() {
 		while (isActive()) { // Loop long-polling watching
 			try {
-				createWatchLongPolling();
+				if (watchLock.tryLock()) {
+					createWatchLongPolling();
 
-				// [MARK1] Re-refresh configuration.
-				if (!lastWatchState.get() /* && isNull(getReleaseMeta(false)) */) {
-					// Records changed keys.
-					addChanged(refresher.refresh());
+					// [MARK1] Re-refresh configuration.
+					if (!lastWatchState
+							.get() /* && isNull(getReleaseMeta(false)) */) {
+						// Records changed keys.
+						addChanged(refresher.refresh());
+					}
+					lastWatchState.set(true);
+				} else {
+					log.warn("Skip the watch request in long polling!");
 				}
-				lastWatchState.set(true);
-
 			} catch (Throwable th) {
 				lastWatchState.set(false);
 				log.error("Unable to watch poll", () -> getRootCauseMessage(th));
@@ -130,34 +134,31 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 	 * @throws Exception
 	 */
 	private void createWatchLongPolling() throws Exception {
-		if (watchLock.tryLock()) {
-			log.debug("Synchronizing refresh config ... ");
+		log.debug("Synchronizing refresh config ... ");
 
-			String url = getWatchingUrl(false);
-			ResponseEntity<ReleaseMeta> resp = longPollingTemplate.getForEntity(url, ReleaseMeta.class);
-			log.debug("Watch result <= {}", resp);
+		String url = getWatchingUrl(false);
+		ResponseEntity<ReleaseMeta> resp = longPollingTemplate.getForEntity(url, ReleaseMeta.class);
+		log.debug("Watch result <= {}", resp);
 
-			if (!isNull(resp)) {
-				switch (resp.getStatusCode()) {
-				case OK:
-					// Release changed info.
-					setReleaseMeta(resp.getBody());
-					// Records changed property names.
-					addChanged(refresher.refresh());
-					break;
-				case CHECKPOINT:
-					// Report refresh changed
-					backendReport();
-					break;
-				case NOT_MODIFIED: // Next long-polling
-					break;
-				default:
-					throw new IllegalStateException(format("Unsupport scm protocal status: '%s'", resp.getStatusCodeValue()));
-				}
+		if (!isNull(resp)) {
+			switch (resp.getStatusCode()) {
+			case OK:
+				// Release changed info.
+				setReleaseMeta(resp.getBody());
+				// Records changed property names.
+				addChanged(refresher.refresh());
+				break;
+			case CHECKPOINT:
+				// Report refresh changed
+				backendReport();
+				break;
+			case NOT_MODIFIED: // Next long-polling
+				break;
+			default:
+				throw new IllegalStateException(format("Unsupporteds scm protocal status: '%s'", resp.getStatusCodeValue()));
 			}
-		} else {
-			log.warn("Skip the watch request in long polling!");
 		}
+
 	}
 
 	/**
