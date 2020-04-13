@@ -7,9 +7,10 @@
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="sort" property="sort" jdbcType="INTEGER" />
     <result column="command" property="command" jdbcType="VARCHAR" />
+    <result column="branch" property="branch" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, task_id, project_id, sort, command
+    id, task_id, project_id, sort, command, branch
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -32,9 +33,9 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.TaskBuildCommand" >
     insert into ci_task_history_build_command (id, task_id, project_id,
-      sort, command)
+      sort, command, branch)
     values (#{id,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
-      #{sort,jdbcType=INTEGER}, #{command,jdbcType=VARCHAR})
+      #{sort,jdbcType=INTEGER}, #{command,jdbcType=VARCHAR}, #{branch,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.TaskBuildCommand" >
     insert into ci_task_history_build_command
@@ -54,6 +55,9 @@
       <if test="command != null" >
         command,
       </if>
+      <if test="branch != null" >
+        branch,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -70,6 +74,9 @@
       </if>
       <if test="command != null" >
         #{command,jdbcType=VARCHAR},
+      </if>
+      <if test="branch != null" >
+        #{branch,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -88,6 +95,9 @@
       <if test="command != null" >
         command = #{command,jdbcType=VARCHAR},
       </if>
+      <if test="branch != null" >
+        branch = #{branch,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -96,7 +106,8 @@
     set task_id = #{taskId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
       sort = #{sort,jdbcType=INTEGER},
-      command = #{command,jdbcType=VARCHAR}
+      command = #{command,jdbcType=VARCHAR},
+      branch = #{branch,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

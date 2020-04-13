@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.DependencyService;
+import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.dao.ci.ProjectDao;
@@ -34,6 +35,8 @@ import org.springframework.util.Assert;
 import java.util.*;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
+import static java.util.Objects.isNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Task CRUD service
@@ -56,6 +59,8 @@ public class TaskServiceImpl implements TaskService {
 	private DependencyService dependencyService;
 	@Autowired
 	private TaskBuildCommandDao taskBuildCommandDao;
+	@Autowired
+	private ProjectService projectService;
 
 	@Override
 	@Transactional
@@ -179,28 +184,55 @@ public class TaskServiceImpl implements TaskService {
 		return task;
 	}
 
-	public List<TaskBuildCommand> getDependency(Integer appClusterId) {
+	@Override
+	public List<TaskBuildCommand> getDependency(Integer appClusterId, Integer taskId) {
 		Project project = projectDao.getByAppClusterId(appClusterId);
 		if (project == null) {
 			return Collections.emptyList();
 		}
+
+		List<TaskBuildCommand> oldTaskBuildCommands = taskBuildCommandDao.selectByTaskId(taskId);
+
 		LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(project.getId(), null);
 		List<TaskBuildCommand> taskBuildCommands = new ArrayList<>();
 		int i = 1;
 		for (Dependency dependency : dependencys) {
+
+			TaskBuildCommand taskBuildCommand = getTaskBuildCommands(oldTaskBuildCommands, dependency.getDependentId());
+			if(isNull(taskBuildCommand)){
+				taskBuildCommand = new TaskBuildCommand();
+			}
+
 			Project project1 = projectDao.selectByPrimaryKey(dependency.getDependentId());
 			if (project1 == null) {
 				continue;
 			}
-			TaskBuildCommand taskBuildCommand = new TaskBuildCommand();
+
 			taskBuildCommand.setProjectId(dependency.getDependentId());
 			taskBuildCommand.setProjectName(project1.getProjectName());
 			taskBuildCommand.setSort(i);
 			i++;
+
+			List<String> branchs = projectService.getBranchsByProjectId(taskBuildCommand.getProjectId(), null);
+			taskBuildCommand.setBranchs(branchs);
+
 			taskBuildCommands.add(taskBuildCommand);
 		}
 		return taskBuildCommands;
 	}
+
+	private TaskBuildCommand getTaskBuildCommands(List<TaskBuildCommand> taskBuildCommands,Integer projectId){
+		if(isEmpty(taskBuildCommands) || isNull(projectId)){
+			return null;
+		}
+		for(TaskBuildCommand taskBuildCommand : taskBuildCommands){
+			if(taskBuildCommand.getProjectId().equals(projectId)){
+				return taskBuildCommand;
+			}
+		}
+		return null;
+	}
+
 
 	@Override
 	public List<Task> getListByAppClusterId(Integer appClusterId) {

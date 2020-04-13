@@ -15,23 +15,21 @@
  */
 package com.wl4g.devops.support.notification;
 
+import com.wl4g.devops.common.web.RespBase.DataMap;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.validation.annotation.Validated;
-
-import com.wl4g.devops.common.web.RespBase.DataMap;
 
 /**
  * {@link GenericNotifyMessage}
@@ -110,6 +108,9 @@ public class GenericNotifyMessage implements NotifyMessage {
 	 */
 	public GenericNotifyMessage addToObjects(@NotEmpty String... toObjectArray) {
 		if (!isNull(toObjectArray) && toObjectArray.length > 0) {
+			for(String s : toObjectArray){
+				hasTextOf(s,"toObjects");
+			}
 			toObjects.addAll(asList(toObjectArray).stream().filter(t -> !isNull(t)).collect(toList()));
 		}
 		return this;

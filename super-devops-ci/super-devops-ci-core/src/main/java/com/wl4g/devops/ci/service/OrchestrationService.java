@@ -32,6 +32,6 @@ public interface OrchestrationService {
 
 	Orchestration detail(Integer id);
 
-	void run(Integer id);
+	void run(Integer id,String remark, String taskTraceId, Integer taskTraceType, String annex);
 
 }

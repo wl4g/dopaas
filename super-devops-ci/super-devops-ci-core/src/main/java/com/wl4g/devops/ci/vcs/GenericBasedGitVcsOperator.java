@@ -89,6 +89,8 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 
 		String projectURL = projecDir + "/.git";
 		try (Git git = Git.open(new File(projectURL))) {
+			setupCredentials(credentials, git.pull()).call();
+
 			List<Ref> refs = git.branchList().call();
 			boolean exist = false;// is branch exist
 			for (Ref ref : refs) {

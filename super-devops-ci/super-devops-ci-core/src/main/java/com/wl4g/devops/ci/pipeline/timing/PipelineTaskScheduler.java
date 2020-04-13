@@ -26,9 +26,6 @@ import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
 import com.wl4g.devops.dao.ci.TriggerDao;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
-import static java.util.Objects.nonNull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -37,11 +34,15 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
-import static org.springframework.util.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_TYPE_TIMMING;
+import static java.util.Objects.nonNull;
+import static org.springframework.util.Assert.notEmpty;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * Pipeline timing scheduler manager
@@ -153,8 +154,12 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 
 		String key = getTimingPipelineKey(trigger);
 		ScheduledFuture<?> future = PipelineTaskScheduler.map.get(key);
+
 		if (nonNull(future)) {
-			if (!future.cancel(true)) {
+			boolean cancel = future.cancel(true);
+			if (cancel) {
+				map.remove(key);
+			}else{
 				throw new IllegalStateException(String.format("Failed to stopped timing pipeline of '%s'", key));
 			}
 		}

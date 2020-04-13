@@ -15,14 +15,6 @@
  */
 package com.wl4g.devops.coss.aws;
 
-import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
-import static java.lang.String.valueOf;
-import static java.util.stream.Collectors.toList;
-
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -34,22 +26,21 @@ import com.amazonaws.services.s3.model.ListBucketsRequest;
 import com.wl4g.devops.coss.AbstractCossEndpoint;
 import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.aws.config.S3CossProperties;
-import com.wl4g.devops.coss.aws.model.S3AccessControlList;
-import com.wl4g.devops.coss.aws.model.S3CopyObjectResult;
-import com.wl4g.devops.coss.aws.model.S3ObjectAcl;
-import com.wl4g.devops.coss.aws.model.S3ObjectListing;
-import com.wl4g.devops.coss.aws.model.S3ObjectValue;
+import com.wl4g.devops.coss.aws.model.*;
 import com.wl4g.devops.coss.aws.model.bucket.S3Bucket;
 import com.wl4g.devops.coss.aws.model.bucket.S3BucketList;
 import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.exception.ServerCossException;
-import com.wl4g.devops.coss.model.ACL;
-import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.Owner;
-import com.wl4g.devops.coss.model.PutObjectResult;
-import com.wl4g.devops.coss.model.RestoreObjectRequest;
-import com.wl4g.devops.coss.model.RestoreObjectResult;
+import com.wl4g.devops.coss.model.*;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+
+import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static java.lang.String.valueOf;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Amazon S3 coss endpoint.
@@ -151,6 +142,11 @@ public class S3CossEndpoint extends AbstractCossEndpoint<S3CossProperties> {
 	}
 
 	@Override
+	public PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
+		return null;
+	}
+
+	@Override
 	public PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
 		// TODO Auto-generated method stub
 		return null;
@@ -176,7 +172,7 @@ public class S3CossEndpoint extends AbstractCossEndpoint<S3CossProperties> {
 	}
 
 	@Override
-	public RestoreObjectResult restoreObject(RestoreObjectRequest request) throws CossException, ServerCossException {
+	public RestoreObjectResult restoreObject(RestoreObjectRequest request,String bucketName, String key) throws CossException, ServerCossException {
 		// TODO Auto-generated method stub
 		return null;
 	}

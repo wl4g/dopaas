@@ -23,6 +23,7 @@ spring:
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
+            /hook/**: anon # Public rule release
       support:
         cli:
           enable: true
@@ -49,6 +50,7 @@ spring:
               templates: # https://dysms.console.aliyun.com/dysms.htm#/domestic/text/template
                 tpl1: SMS_140726862 # Alarm notice template.
                 tpl2: SMS_109490228 # VerificationCode notice template.
+                tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}
           vms:
             enable: false # Default[false]
             aliyun:
@@ -59,6 +61,7 @@ spring:
               templates:
                 tpl1: TTS_184825642 # Alarm notice template.
                 tpl2: TTS_184820765 # VerificationCode notice template.
+                tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}
   http: # Upload file limit
     multipart:
       max-file-size: 50Mb

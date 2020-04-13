@@ -16,6 +16,11 @@ spring:
   profiles:
     include: common,util
 
+mybatis:
+  configLocation: mybatis/mybatis-config.xml
+  mapperLocations: classpath:mybatis/**/*Mapper.xml
+  typeAliasesPackage: com.wl4g.devops.common.bean.*,com.wl4g.devops.common.bean.*.*
+
 # Logging configuration.
 logging:
   file: ${server.tomcat.basedir}/logs/${spring.application.name}.log

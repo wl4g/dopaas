@@ -15,45 +15,31 @@
  */
 package com.wl4g.devops.coss.aliyun;
 
-import static java.util.stream.Collectors.toList;
-
-import java.io.InputStream;
-
-import org.apache.commons.io.IOUtils;
-
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.AccessControlList;
-import com.aliyun.oss.model.Bucket;
-import com.aliyun.oss.model.BucketList;
-import com.aliyun.oss.model.BucketMetadata;
-import com.aliyun.oss.model.CannedAccessControlList;
-import com.aliyun.oss.model.OSSObject;
-import com.aliyun.oss.model.OSSSymlink;
+import com.aliyun.oss.model.*;
 import com.aliyun.oss.model.ObjectAcl;
 import com.aliyun.oss.model.ObjectListing;
 import com.aliyun.oss.model.PutObjectResult;
 import com.wl4g.devops.coss.AbstractCossEndpoint;
 import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.aliyun.config.AliyunOssProperties;
-import com.wl4g.devops.coss.aliyun.model.OssAccessControlList;
-import com.wl4g.devops.coss.aliyun.model.OssCopyObjectResult;
-import com.wl4g.devops.coss.aliyun.model.OssObjectAcl;
-import com.wl4g.devops.coss.aliyun.model.OssObjectListing;
-import com.wl4g.devops.coss.aliyun.model.OssObjectMetadata;
-import com.wl4g.devops.coss.aliyun.model.OssObjectValue;
-import com.wl4g.devops.coss.aliyun.model.OssPutObjectResult;
+import com.wl4g.devops.coss.aliyun.model.*;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucket;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucketList;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucketMetadata;
 import com.wl4g.devops.coss.exception.CossException;
 import com.wl4g.devops.coss.exception.ServerCossException;
-import com.wl4g.devops.coss.model.ACL;
+import com.wl4g.devops.coss.model.*;
 import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.ObjectSymlink;
 import com.wl4g.devops.coss.model.Owner;
-import com.wl4g.devops.coss.model.RestoreObjectRequest;
 import com.wl4g.devops.coss.model.RestoreObjectResult;
+import org.apache.commons.io.IOUtils;
+
+import java.io.InputStream;
+
+import static java.util.stream.Collectors.toList;
 
 public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 
@@ -160,6 +146,12 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 		return objectValue;
 	}
 
+	@Override
+	public com.wl4g.devops.coss.model.PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
+		//TODO
+		return null;
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public OssPutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
@@ -194,7 +186,7 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 	}
 
 	@Override
-	public RestoreObjectResult restoreObject(RestoreObjectRequest request) throws CossException, ServerCossException {
+	public RestoreObjectResult restoreObject(RestoreObjectRequest request,String bucketName, String key) throws CossException, ServerCossException {
 		// TODO Auto-generated method stub
 		return null;
 	}

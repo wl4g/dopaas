@@ -15,11 +15,12 @@
  */
 package com.wl4g.devops.scm.client.configure;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static java.util.Objects.isNull;
+
 import java.util.Collection;
 import java.util.Queue;
 import java.util.Set;
-
-import org.springframework.util.Assert;
 
 import com.google.common.collect.Queues;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
@@ -48,7 +49,42 @@ public abstract class RefreshConfigHolder {
 		throw new IllegalStateException("Can't instantiate a utility class");
 	}
 
-	public static ReleaseMeta releaseReset() {
+	/**
+	 * Gets & validate release meta
+	 * 
+	 * @param validate
+	 * @return
+	 */
+	public static ReleaseMeta getReleaseMeta(boolean validate) {
+		ReleaseMeta meta = releaseMeta.get();
+		if (validate) {
+			notNull(meta, "No available refresh releaseMeta");
+			meta.validation(validate, validate);
+		}
+		return meta;
+	}
+
+	/**
+	 * Sets release meta
+	 * 
+	 * @param newMeta
+	 * @return
+	 */
+	public static ReleaseMeta setReleaseMeta(ReleaseMeta newMeta) {
+		if (!isNull(newMeta)) {
+			releaseMeta.set(newMeta);
+		} else {
+			pollReleaseMeta();
+		}
+		return newMeta;
+	}
+
+	/**
+	 * Poll release meta.
+	 * 
+	 * @return
+	 */
+	public static ReleaseMeta pollReleaseMeta() {
 		try {
 			return releaseMeta.get();
 		} finally {
@@ -56,7 +92,12 @@ public abstract class RefreshConfigHolder {
 		}
 	}
 
-	public static Collection<ChangedRecord> changedReset() {
+	/**
+	 * Poll chanaged keys all.
+	 * 
+	 * @return
+	 */
+	public static Collection<ChangedRecord> pollChangedAll() {
 		try {
 			return changedQueue;
 		} finally {
@@ -64,27 +105,20 @@ public abstract class RefreshConfigHolder {
 		}
 	}
 
-	public static ReleaseMeta availableReleaseMeta(boolean validate) {
-		ReleaseMeta meta = releaseMeta.get();
-		if (validate) {
-			Assert.notNull(meta, "Invalid refresh available releaseMeta");
-			meta.validation(validate, validate);
-		}
-		return meta;
-	}
-
-	public static void setReleaseMeta(ReleaseMeta newMeta) {
-		if (newMeta == null) {
-			releaseReset();
-			return;
-		}
-		releaseMeta.set(newMeta);
-	}
-
+	/**
+	 * Add changed keys.
+	 * 
+	 * @param changedKeys
+	 */
 	public static void addChanged(Set<String> changedKeys) {
-		changedQueue.add(new ChangedRecord(changedKeys, availableReleaseMeta(false)));
+		changedQueue.add(new ChangedRecord(changedKeys, getReleaseMeta(false)));
 	}
 
+	/**
+	 * Gets changed keys
+	 * 
+	 * @return
+	 */
 	public static Queue<ChangedRecord> getChangedQueues() {
 		return changedQueue;
 	}

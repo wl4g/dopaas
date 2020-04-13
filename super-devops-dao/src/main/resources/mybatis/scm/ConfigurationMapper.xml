@@ -53,6 +53,9 @@
 	<insert id="insert" parameterType="versionOfDetail" useGeneratedKeys="true" keyProperty="id">
 		insert into scm_version
 		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="id != null">
+				id,
+			</if>
 			<if test="sign != null">
 				sign,
 			</if>
@@ -73,6 +76,9 @@
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="id != null">
+				#{id},
+			</if>
 			<if test="sign != null">
 				#{sign},
 			</if>
@@ -232,8 +238,8 @@
 		SELECT
 			rh.id AS "releaseId",
 			i.version_id AS "version",
-			sd.`key` AS "namespace_id",
-			sd.`value` AS "namespace",
+		vd.namespace_id AS "namespace_id",
+		vd.namespace_id AS "namespace",
 			vd.type AS "type",
 			vd.content AS "content",
 			rh.create_date AS "createDate"
@@ -241,15 +247,13 @@
 			scm_release_detail rd
 		INNER JOIN scm_release_history rh ON rh.id = rd.release_id
 		INNER JOIN app_instance i ON i.id = rd.instance_id
-		INNER JOIN app_environment e ON e.id = i.env_id
 		INNER JOIN app_cluster g ON g.id = i.cluster_id
 		INNER JOIN scm_version_detail vd ON vd.version_id = i.version_id
-		INNER JOIN sys_dict sd ON sd.key = vd.namespace_id
 		left join app_host h on h.id=i.host_id
 		<where>
 			AND g.`name` = #{cluster}
 
-			<if test="namespaces != null"><![CDATA[ AND sd.`value` IN ]]>
+			<if test="namespaces != null"><![CDATA[ AND vd.namespace_id IN ]]>
 				<foreach item="item" index="index" collection="namespaces" open="(" separator="," close=")">#{item}
 				</foreach>
 			</if>

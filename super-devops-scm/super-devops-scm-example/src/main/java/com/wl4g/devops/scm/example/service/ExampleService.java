@@ -15,13 +15,14 @@
  */
 package com.wl4g.devops.scm.example.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+
 import org.springframework.beans.factory.annotation.Value;
 
-public class ExampleService {
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+public class ExampleService {
+	final protected SmartLogger log = getLogger(getClass());
 
 	@Value("#{'${example.firstName:unname}'.toUpperCase()}-auto-${random.int(1000)}")
 	private String firstName;
