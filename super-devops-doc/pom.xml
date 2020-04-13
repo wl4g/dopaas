@@ -5,7 +5,7 @@
 	<artifactId>super-devops-doc</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>Super DevOps Doc</name>
+	<name>Super DevOps Document Management Services</name>
 	<modules>
 		<module>super-devops-doc-core</module>
 		<module>super-devops-doc-manager</module>
