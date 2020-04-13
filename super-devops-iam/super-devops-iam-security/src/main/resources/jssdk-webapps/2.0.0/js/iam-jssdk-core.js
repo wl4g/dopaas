@@ -410,7 +410,7 @@
 	var _initConfigure = function(obj) {
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = $.extend(true, settings, obj);
-		console.debug("Default iamBaseURI: "+ settings.deploy.baseUri);
+		console.debug("After merge settings: "+ settings);
 
 		if (Common.Util.isEmpty(settings.deploy.baseUri)) {
 			// 获取地址栏默认baseUri
@@ -425,9 +425,10 @@
 		 	// 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:14040/iam-server, 10.0.0.12:14046/ci-server)都部署于同一台机。
 		 	// a，当访问的地址是IP；
 		 	// b，当访问域名的后者是.debug/.local/.dev等。
-	        if (hostname == 'localhost' || hostname == '127.0.0.1' || Common.Util.isIp(hostname) || hostname.endsWith('.debug')
-	        		|| hostname.endsWith('.local') || hostname.endsWith('.dev')) {
-	        	settings.deploy.baseUri = protocol+"//"+hostname+":14040"+contextPath;
+	        if (hostname == 'localhost' || hostname == '127.0.0.1'
+	        	|| Common.Util.isIp(hostname) || hostname.endsWith('.debug')
+	        	|| hostname.endsWith('.local') || hostname.endsWith('.dev')) {
+	        	settings.deploy.baseUri = protocol + "//" + hostname + ":14040" + contextPath;
 	        }
 	        // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，(接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
 	        else {
@@ -435,13 +436,13 @@
 	        	if(hostname.indexOf("com.cn") > 0) {
 	        		topDomainName = hostname.split('.').slice(-3).join('.');
 	        	}
-	            settings.deploy.baseUri = protocol+"//"+twoDomain+"."+topDomainName+contextPath;
+	            settings.deploy.baseUri = protocol + "//" + twoDomain + "." + topDomainName + contextPath;
 	        }
+	        console.debug("Using overlay iamBaseURI: "+ settings.deploy.baseUri);
 	    }
 
-		// Sets iamBaseUri
+		// Storage iamBaseUri
         window.sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
-        console.debug("Using overlay iamBaseURI: "+ settings.deploy.baseUri);
 	};
 
 	// Gets URL to request a connection to a sns provider
