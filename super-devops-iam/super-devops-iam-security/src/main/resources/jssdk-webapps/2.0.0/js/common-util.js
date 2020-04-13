@@ -103,6 +103,12 @@
 			}
 			return false;
 		},
+		mergeMap: function(dst, src) {
+		    dst = dst || new Map();
+		    src = src || new Map();
+		    dst.forEach((v, k) => src.set(k, v));
+		    return src;
+		},
 		clone: function(obj) { // 或使用JSON.parse(JSON.stringify(oldObj))实现深度拷贝，注意：Object.assign(oldObj,newObj)只能浅层拷贝
 			if(!Common.Util.isEmpty(obj)){
 				var newobj = obj.constructor === Array ? [] : {};

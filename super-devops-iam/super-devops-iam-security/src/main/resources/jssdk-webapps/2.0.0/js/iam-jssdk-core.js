@@ -350,8 +350,9 @@
 		account: {
 			enable: false,
 			submitBtn: null, // 登录提交触发对象
-			principal: null, // 登录账号input对象
-			credential: null, // 登录凭据input对象
+			principalInput: null, // 登录账号input对象
+			credentialInput: null, // 登录凭据input对象
+			customParamMap: new Map(), // 提交登录附加参数
 			onBeforeSubmit: function(principal, credentials, verifiedToken){ // 默认提交之前回调实现
 				console.debug("Prepare to submit login request. principal=" + principal + ", verifiedToken=" + verifiedToken);
 				return true;
@@ -569,7 +570,7 @@
 	var _InitSNSAuthenticator = function() {
 		// Check authenticator enable?
 		if (!settings.sns.enable) {
-			console.warn("SNS authenticator not enable!");
+			console.debug("SNS authenticator not enable!");
 			return;
 		}
 
@@ -602,7 +603,7 @@
 	// 请求安全检查
 	var _InitSafeCheck = function(callback){
 		$(function(){
-			var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal, false));
+			var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput, false));
 			// 初始化前回调
 			if(!Common.Util.checkEmpty("init.onPreCheck", settings.init.onPreCheck)(principal)){
 				console.warn("Skip the init safeCheck, because onPreCheck() return false");
@@ -633,7 +634,7 @@
 	var _InitCaptchaVerifier = function() {
 		// Check authenticator enable?
 		if (!settings.captcha.enable) {
-			console.warn("Captcha verifier not enable!");
+			console.debug("Captcha verifier not enable!");
 			return;
 		}
 
@@ -689,7 +690,7 @@
 	var _InitAccountAuthenticator = function() {
 		// Check authenticator enable?
 		if (!settings.account.enable) {
-			console.warn("Account authenticator not enable!");
+			console.debug("Account authenticator not enable!");
 			return;
 		}
 
@@ -703,9 +704,9 @@
 
 			// Bind login btn click.
 			$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).click(function() {
-				var principal = encodeURIComponent(Common.Util.getEleValue("account.principal", settings.account.principal));
+				var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput));
 				// 获取明文密码并非对称加密，同时编码(否则base64字符串中有“+”号会自动转空格，导致登录失败)
-				var plainPasswd = Common.Util.getEleValue("account.credential", settings.account.credential);
+				var plainPasswd = Common.Util.getEleValue("account.credentialInput", settings.account.credentialInput);
 				// Check principal/password.
 				if(Common.Util.isAnyEmpty(principal, plainPasswd)){
 					settings.account.onError(Common.Util.isZhCN()?"请输入账户名和密码":"Please input your account and password");
@@ -745,25 +746,29 @@
 					//loginParam.set("{principalKey}", Common.Util.Codec.toHex(principal));
 					loginParam.set("{credentialKey}", credentials);
 					loginParam.set("{clientSecretKey}", runtime.clientSecretKey.publicKeyHex);
-					loginParam.set("{clientRefKey}", clientRef());
+					loginParam.set("{clientRefKey}", getClientRef());
 					loginParam.set("{verifiedTokenKey}", verifiedToken);
 					loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
 					loginParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
 					// 设备指纹umidToken(初始化页面时获取, 必须)
 					loginParam.set("{umidTokenKey}", runtime.umid.getValue());
+					// 追加自定义参数
+					if (!Common.Util.isEmpty(settings.account.customParamMap)) {
+						Common.Util.mergeMap(loginParam, settings.account.customParamMap);
+					}
 					// 请求提交登录
-					doIamRequest("post", "{accountSubmitUri}", loginParam, function(resp){
+					doIamRequest("post", "{accountSubmitUri}", loginParam, function(res){
 						// 解锁登录按钮
 						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
 
 						runtime.verifiedModel.verifiedToken = ""; // Clear
 						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-						if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){ // Failed?
+						if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
 							resetCaptcha(); // 刷新验证码
-							settings.account.onError(resp.message); // 登录失败回调
+							settings.account.onError(res.message); // 登录失败回调
 						} else { // 登录成功，直接重定向
                             $(document).unbind("keydown");
-							var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", resp.data[settings.definition.redirectUrlKey]);
+							var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", res.data[settings.definition.redirectUrlKey]);
 							if(settings.account.onSuccess(principal, redirectUrl)){
 						      Common.Util.getRootWindow(window).location.href = redirectUrl;
 							}
@@ -783,7 +788,7 @@
 	var _InitSMSAuthenticator = function(){
 		// Check authenticator enable?
 		if (!settings.sms.enable) {
-			console.warn("SMS authenticator not enable!");
+			console.debug("SMS authenticator not enable!");
 			return;
 		}
 
@@ -814,11 +819,11 @@
 				doIamRequest("post", "{smsApplyUri}", getSmsParam, function(res){
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					// 登录失败
-					if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
-						settings.sms.onError(resp.message); // 申请失败回调
+					if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){
+						settings.sms.onError(res.message); // 申请失败回调
 					} else {
-						settings.sms.onSuccess(resp); // 申请成功回调
-						var remainDelaySec = resp.data.checkSms.remainDelayMs/1000;
+						settings.sms.onSuccess(res); // 申请成功回调
+						var remainDelaySec = res.data.checkSms.remainDelayMs/1000;
 						var num = parseInt(remainDelaySec);
 						var timer = setInterval(() => {
 							var sendSmsBtn = $(settings.sms.sendSmsBtn);
@@ -854,11 +859,11 @@
 				smsLoginParam.set("{smsActionKey}", Common.Util.checkEmpty("definition.smsActionValueLogin", settings.definition.smsActionValueLogin));
 				doIamRequest("post", "{smsSubmitUri}", smsLoginParam, function(res){
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
-					if(!Common.Util.isEmpty(resp) && (resp.code != codeOkValue)){
-						settings.sms.onError(resp.message); // SMS登录失败回调
+					if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){
+						settings.sms.onError(res.message); // SMS登录失败回调
 					} else {
-						settings.sms.onSuccess(resp); // SMS登录成功回调
-						Common.Util.getRootWindow(window).location.href = resp.data.redirect_url;
+						settings.sms.onSuccess(res); // SMS登录成功回调
+						Common.Util.getRootWindow(window).location.href = res.data.redirect_url;
 					}
 				}, function(errmsg){
 					settings.sms.onError(errmsg); // SMS登录失败回调
@@ -893,7 +898,7 @@
 	};
 
 	// Client device OS type.
-	var clientRef = function(){
+	var getClientRef = function(){
 		var clientRef = null;
 		var osTypes = Common.Util.PlatformType;
 		for(var osname in osTypes){
