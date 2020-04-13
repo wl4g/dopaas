@@ -247,8 +247,8 @@
 			account: {
 				enable: true,
 				submitBtn: document.getElementById("iam_jssdk_account_submit_btn"), // 登录提交触发对象
-				principal: document.getElementById("iam_jssdk_account_username"), // 必填，获取填写的登录用户名
-				credential: document.getElementById("iam_jssdk_account_password"), // 获取登录账号密码，账号登录时必填
+				principalInput: document.getElementById("iam_jssdk_account_username"), // 必填，获取填写的登录用户名
+				credentialInput: document.getElementById("iam_jssdk_account_password"), // 获取登录账号密码，账号登录时必填
 				onBeforeSubmit: function (principal, plainPasswd, captcha) { // 提交之前
 					console.debug("Iam account login... principal: "+ principal+", plainPasswd: ******, captcha: "+captcha);
 					return true;
