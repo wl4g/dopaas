@@ -58,6 +58,12 @@ import static org.springframework.http.HttpMethod.POST;
  */
 public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 
+	/**
+	 * This is to solve the time difference between releasing the watching
+	 * interface from the server and receiving the response from the client.
+	 */
+	final public static float LONG_POLL_COST_RATIO = 1.15f;
+
 	/** Watching connect lock. */
 	final private Lock watchLock = new ReentrantLock();
 
@@ -77,20 +83,31 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 
 	@Override
 	protected void preStartupProperties() {
-		this.longPollingTemplate = locator.createRestTemplate((long) (config.getLongPollTimeout() * 1.15));
+		this.longPollingTemplate = locator.createRestTemplate((long) (config.getLongPollTimeout() * LONG_POLL_COST_RATIO));
 	}
 
+	/**
+	 * [MARK1] Scenes to refresh:
+	 * <p>
+	 * 1. The client did not connect successfully when it started, but after
+	 * multiple reconnection failures, it finally connected successfully.
+	 * </p>
+	 * <p>
+	 * 2. When the client is started, the connection is successful, and there is
+	 * an interruption in the middle of the operation. When the connection
+	 * status changes from failure to success, it will refresh.
+	 * </p>
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
-		while (true) { // Loop long-polling watching
+		while (isActive()) { // Loop long-polling watching
 			try {
 				createWatchLongPolling();
 
-				// Optimization: refresh the configuration only when the
-				// connection status changes from failure to success.
-				if (!lastWatchState.get()) {
-					// Records changed property names.
+				// [MARK1] Re-refresh configuration.
+				if (!lastWatchState.get() /* && isNull(getReleaseMeta(false)) */) {
+					// Records changed keys.
 					addChanged(refresher.refresh());
 				}
 				lastWatchState.set(true);
@@ -158,7 +175,7 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 
 		// Successful reset
 		if (isSuccess(resp)) {
-			changedReset();
+			pollChangedAll();
 		} else {
 			throw new ReportRetriesCountOutException(String.format("Backend report failure! records for %s", records.size()));
 		}
@@ -175,7 +192,7 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 			if (log.isWarnEnabled()) {
 				log.warn("Refresh report retries exceed threshold, discarded refresh changed record!");
 			}
-			changedReset();
+			pollChangedAll();
 		} else if (log.isWarnEnabled()) {
 			log.warn("Refresh report retries exceed threshold!");
 		}

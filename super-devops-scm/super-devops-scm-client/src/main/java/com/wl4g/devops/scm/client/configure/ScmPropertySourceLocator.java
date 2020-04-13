@@ -25,9 +25,8 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.InstanceHolder;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.tool.common.crypto.AesUtils;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.ParameterizedTypeReference;
@@ -50,8 +49,9 @@ import java.util.Map.Entry;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.AUTHORIZATION;
-import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.availableReleaseMeta;
-import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.releaseReset;
+import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.getReleaseMeta;
+import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.pollReleaseMeta;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpMethod.GET;
@@ -69,7 +69,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @Order(0)
 public abstract class ScmPropertySourceLocator implements PropertySourceLocator, InitializingBean {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/** SCM client configuration */
 	final protected ScmClientProperties config;
@@ -105,7 +105,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 			// Fetch release URL.
 			String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_GET;
 			// Create release get
-			ReleaseMeta meta = availableReleaseMeta(false);
+			ReleaseMeta meta = getReleaseMeta(false);
 			GetRelease get = new GetRelease(info.getAppName(), config.getNamespaces(), meta, info.getInstance());
 
 			// To parameters
@@ -143,7 +143,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 			}
 			return release;
 		} finally {
-			releaseReset();
+			pollReleaseMeta();
 		}
 	}
 
