@@ -21,12 +21,6 @@ example2:
   lastName: jack
 
 spring:
-  cloud:
-    devops:
-      iam:
-        client:
-          base-uri: http://localhost:14043/scm-server
-
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
