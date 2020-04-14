@@ -23,6 +23,7 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -162,7 +163,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Get session expire time
+	 * Gets session expire time
 	 *
 	 * @param session
 	 *            Shiro session
@@ -173,7 +174,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Get session expire time
+	 * Gets session expire time
 	 *
 	 * @param session
 	 *            Shiro session
@@ -182,7 +183,8 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	public static long getSessionExpiredTime(Session session) {
 		notNullOf(session, "session");
 		long now = currentTimeMillis();
-		long lastTime = session.getLastAccessTime().getTime();
+		Date lastATime = session.getLastAccessTime();
+		long lastTime = isNull(lastATime) ? 0 : lastATime.getTime();
 		return session.getTimeout() - (now - lastTime);
 	}
 
@@ -236,7 +238,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Get bind of session value
+	 * Gets bind of session value
 	 *
 	 * @param sessionKey
 	 *            Keys to save and session

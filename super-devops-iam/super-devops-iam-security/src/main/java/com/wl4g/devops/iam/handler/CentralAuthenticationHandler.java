@@ -37,7 +37,6 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
 import com.wl4g.devops.support.redis.ScanCursor;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
@@ -62,6 +61,7 @@ import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
+import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -133,7 +133,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		/*
 		 * Synchronize with xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
-		Subject subject = SecurityUtils.getSubject();
+		Subject subject = getSubject();
 		log.debug("Validating subject: {} by grantTicket: {}", subject, model.getTicket());
 
 		// Assertion grantCredentials info.
@@ -150,9 +150,6 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		cacheManager.getCache(CACHE_TICKET_S).remove(new EnhancedKey(model.getTicket()));
 		log.debug("Clean older grantTicket: {}", model.getTicket());
 
-		// Get current grant ticket session.
-		Session session = subject.getSession();
-
 		// --- Grant attributes setup. ---
 
 		// Grant validated start date.
@@ -163,7 +160,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * x.client.realm.FastCasAuthorizingRealm#doGetAuthenticationInfo Grant
 		 * term of validity(end date).
 		 */
-		assertion.setValidUntilDate(new Date(now + getSessionExpiredTime(session)));
+		assertion.setValidUntilDate(new Date(now + getSessionExpiredTime()));
 
 		// Updating grantCredentials info
 		/**
@@ -192,7 +189,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 		// Refresh grantCredentials info.
 		GrantApp grant = new GrantApp(newGrantTicket).setDataCipher(childDataCipherKey).setAccessTokenSignKey(accessTokenSignKey);
-		putGrantCredentials(session, grantAppname, grant);
+		putGrantCredentials(getSession(false), grantAppname, grant);
 
 		return assertion;
 	}
@@ -327,7 +324,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		log.debug("Got grantTicketInfo: {}, sessionId:{}", info, getSessionId());
 
 		// No grant ticket created or expired?
-		if (isNull(info) || info.hasApplication(model.getApplication())) {
+		if (isNull(info) || !info.hasApplication(model.getApplication())) {
 			throw new InvalidGrantTicketException("Invalid granting ticket");
 		}
 
@@ -391,7 +388,8 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * x.handler.impl.FastCasAuthenticationHandler#validate </br>
 		 * x.session.mgt.IamSessionManager#getSessionId
 		 */
-		cacheManager.getEnhancedCache(CACHE_TICKET_S).put(new EnhancedKey(grant, expireTime), session.getId().toString());
+		cacheManager.getEnhancedCache(CACHE_TICKET_S).put(new EnhancedKey(grant.getGrantTicket(), expireTime),
+				valueOf(session.getId()));
 		log.debug("Saved grantTicket: '{}' of seesionId: '{}'", grant, getSessionId(session));
 	}
 
