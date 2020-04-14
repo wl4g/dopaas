@@ -16,15 +16,18 @@
 package com.wl4g.devops.iam.handler;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_GRANT_TICKET;
 
 import javax.annotation.Resource;
 
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
+import com.wl4g.devops.iam.common.cache.EnhancedCache;
 import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
@@ -39,7 +42,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
  * @date 2018年11月29日
  * @since
  */
-public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
+public abstract class AbstractAuthenticationHandler implements AuthenticationHandler, InitializingBean {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -83,5 +86,15 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
+
+	/**
+	 * Grant ticket cache .
+	 */
+	protected EnhancedCache grantTicketCache;
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		this.grantTicketCache = cacheManager.getEnhancedCache(CACHE_GRANT_TICKET);
+	}
 
 }

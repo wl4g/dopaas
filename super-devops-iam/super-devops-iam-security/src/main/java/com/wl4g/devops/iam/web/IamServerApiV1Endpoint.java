@@ -20,12 +20,12 @@ import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.authc.WechatMpAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
 import com.wl4g.devops.iam.common.authc.ClientRef;
-import com.wl4g.devops.iam.common.session.GrantTicketInfo;
+import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.session.GrantCredentialsInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.web.GenericApiController;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribute;
-import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
@@ -107,7 +107,8 @@ public class IamServerApiV1Endpoint extends GenericApiController {
 		SessionAttribute sa = super.wrapSessionAttribute(session);
 
 		// Authentication grant applications.
-		GrantTicketInfo grantInfo = (GrantTicketInfo) session.getAttribute(CentralAuthenticationHandler.KEY_GRANTTICKET_INFO);
+		GrantCredentialsInfo grantInfo = (GrantCredentialsInfo) grantTicketCache
+				.get(new EnhancedKey(session.getId(), GrantCredentialsInfo.class));
 		if (nonNull(grantInfo) && grantInfo.hasApplications()) {
 			sa.setGrants(grantInfo.getApplications().keySet());
 		}

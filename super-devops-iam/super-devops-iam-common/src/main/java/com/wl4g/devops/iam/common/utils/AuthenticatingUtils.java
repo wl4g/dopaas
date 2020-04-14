@@ -15,11 +15,24 @@
  */
 package com.wl4g.devops.iam.common.utils;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.validation.constraints.NotBlank;
+
+import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
+
+import static org.apache.commons.codec.digest.HmacUtils.hmacSha256Hex;
 import static org.apache.commons.lang3.StringUtils.*;
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.hash.Hashing.sha512;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.tool.common.codec.Base58.encode;
+import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static java.lang.String.valueOf;
 
 /**
  * IAM authenticating security tools.
@@ -98,6 +111,56 @@ public abstract class AuthenticatingUtils extends IamSecurityHolder {
 		} catch (URISyntaxException e) {
 			throw new IllegalStateException("Can't to obtain a redirect authenticaitor URL.", e);
 		}
+	}
+
+	/**
+	 * Generate new generate accessToken string.
+	 * 
+	 * @param sessionId
+	 * 
+	 * @param parent
+	 *            Parent accessTokenSign key
+	 * @return
+	 */
+	final public static String generateAccessTokenSignKey(@NotBlank final Serializable sessionId) {
+		return generateAccessTokenSignKey(sessionId, null);
+	}
+
+	/**
+	 * Generate new generate accessToken string.
+	 * 
+	 * @param sessionId
+	 * @param parent
+	 *            Parent accessTokenSign key
+	 * @return
+	 */
+	final public static String generateAccessTokenSignKey(@NotBlank final Serializable sessionId, final String parent) {
+		notNullOf(sessionId, "sessionId");
+		byte[] sessionIdArray = toBytes(sessionId.toString() + "@" + parent);
+		return bind(KEY_ACCESSTOKEN_SIGN_KEY, sha512().hashBytes(sessionIdArray).toString());
+	}
+
+	/**
+	 * Generate new generate accessToken string.
+	 * 
+	 * @param sessionId
+	 * @param accessTokenSignKey
+	 * @return
+	 */
+	final public static String generateAccessToken(@NotBlank final Serializable sessionId,
+			@NotBlank final String accessTokenSignKey) {
+		notNullOf(sessionId, "sessionId");
+		hasTextOf(accessTokenSignKey, "accessTokenSignKey");
+		return encode(hmacSha256Hex(toBytes(accessTokenSignKey), valueOf(sessionId).getBytes(UTF_8)).getBytes(UTF_8));
+	}
+
+	/**
+	 * Generate new dataCipher key string.
+	 * 
+	 * @return
+	 */
+	final public static String generateDataCipherKey() {
+		return new AESCryptor().generateKey(128).toHex();
 	}
 
 }

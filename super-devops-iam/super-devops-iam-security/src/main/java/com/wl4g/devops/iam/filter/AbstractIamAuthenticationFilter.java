@@ -16,8 +16,8 @@
 package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
+import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.correctAuthenticaitorURI;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bindKVParameters;
@@ -47,7 +47,6 @@ import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import static com.google.common.hash.Hashing.*;
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.exception.iam.AccessRejectedException;
 import com.wl4g.devops.common.exception.iam.IamException;
@@ -66,10 +65,7 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
-import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.log.SmartLogger;
-import static com.wl4g.devops.iam.common.mgt.IamSubjectFactory.generateAccessToken;
-import static com.wl4g.devops.tool.common.codec.Encodes.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
 
 import java.io.IOException;
@@ -623,8 +619,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			String dataCipherKeyHexCiphertext = null;
 			if (config.getCipher().isEnableDataCipher()) {
 				// New generate dataCipherKey.
-				String hexDataCipherKey = new AESCryptor().generateKey(128).toHex();
-				bind(KEY_DATA_CIPHER_KEY, hexDataCipherKey);
+				String hexDataCipherKey = bind(KEY_DATA_CIPHER_KEY, generateDataCipherKey());
 				// Gets SecureCryptService.
 				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
 				SecureCryptService cryptService = cryptAdapter.forOperator(kind);
@@ -639,13 +634,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// Generate accessToken
 			String accessToken = null;
 			if (config.getSession().isEnableAccessTokenValidity()) {
-				byte[] sessionId = toBytes(getSessionId().toString());
 				// Create accessTokenSignKey.
-				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN_KEY, sha512().hashBytes(sessionId).toString());
-				accessToken = generateAccessToken(subject.getSession(), accessTokenSignKey);
+				String accessTokenSignKey = generateAccessTokenSignKey(getSessionId());
+				accessToken = generateAccessToken(getSessionId(), accessTokenSignKey);
 			}
 			params.put(config.getParam().getAccessTokenName(), accessToken);
-
 		}
 
 	}

@@ -18,6 +18,8 @@ package com.wl4g.devops.iam.common.web;
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.iam.common.cache.EnhancedCache;
+import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.session.IamSession;
@@ -27,6 +29,7 @@ import com.wl4g.devops.iam.common.web.model.SessionDestroyModel;
 import com.wl4g.devops.iam.common.web.model.SessionQueryModel;
 import com.wl4g.devops.support.redis.ScanCursor;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +43,7 @@ import java.util.List;
 
 import static com.wl4g.devops.tool.common.lang.DateUtils2.formatDate;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_GRANT_TICKET;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
 import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.CursorIndex;
 import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribute;
@@ -58,7 +62,7 @@ import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.AUTH
  */
 @Beta
 @ResponseBody
-public abstract class GenericApiController extends BaseController {
+public abstract class GenericApiController extends BaseController implements InitializingBean {
 	final public static String DEFAULT_DATE_PATTERN = "yy/MM/dd HH:mm:ss";
 
 	/**
@@ -78,6 +82,22 @@ public abstract class GenericApiController extends BaseController {
 	 */
 	@Autowired
 	protected IamSessionDAO sessionDAO;
+
+	/**
+	 * Enhanced cache manager.
+	 */
+	@Autowired
+	protected EnhancedCacheManager cacheManager;
+
+	/**
+	 * Grant ticket cache .
+	 */
+	protected EnhancedCache grantTicketCache;
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		this.grantTicketCache = cacheManager.getEnhancedCache(CACHE_GRANT_TICKET);
+	}
 
 	/**
 	 * Iterative scan gets the list of access sessions (including all clients
