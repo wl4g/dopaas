@@ -39,11 +39,14 @@ import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.subject.WebSubjectContext;
 
+import com.wl4g.devops.common.exception.iam.InvalidAccessTokenAuthenticationException;
 import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.tool.common.web.CookieUtils.getCookie;
+import static org.apache.shiro.subject.support.DefaultSubjectContext.*;
 
 /**
  * {@link org.apache.shiro.mgt.SubjectFactory Subject} implementation to be used
@@ -84,20 +87,34 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		}
 
 		// Validation of enhanced session additional signature.
-		if (config.getSession().isEnableAccessTokenValidity() && context.isAuthenticated()) {
+		if (context.isAuthenticated() && config.getSession().isEnableAccessTokenValidity()) {
 			try {
 				assertRequestAccessTokenValidity(context);
 			} catch (UnauthenticatedException e) {
 				// #Forced sets notauthenticated
 				context.setAuthenticated(false);
+				context.getSession().setAttribute(AUTHENTICATED_SESSION_KEY, false);
 				if (log.isDebugEnabled())
-					log.debug(e.getMessage(), e);
+					log.debug("Invalid accesstoken", e);
 				else
-					log.warn(e.getMessage());
+					log.warn("Invalid accesstoken. cause by: {}", e.getMessage());
 			}
 		}
 
 		return super.createSubject(context);
+	}
+
+	/**
+	 * Gets accessToken from requests.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	final protected String getRequestAccessToken(HttpServletRequest request) {
+		String accessToken = getCleanParam(request, config.getParam().getAccessTokenName());
+		accessToken = isNull(accessToken) ? request.getHeader(config.getParam().getAccessTokenName()) : accessToken;
+		accessToken = isNull(accessToken) ? getCookie(request, config.getParam().getAccessTokenName()) : accessToken;
+		return accessToken;
 	}
 
 	/**
@@ -121,8 +138,9 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 
 		String sessionId = valueOf(session.getId());
 		String accessTokenSignKey = (String) session.getAttribute(KEY_ACCESSTOKEN_SIGN_KEY);
-		final String accessToken = getCleanParam(request, config.getParam().getAccessTokenName());
 		IamAuthenticationToken authcToken = (IamAuthenticationToken) session.getAttribute(KEY_AUTHC_TOKEN);
+		// Gets request accessToken.
+		final String accessToken = getRequestAccessToken(request);
 		log.debug("Asserting accessToken, sessionId:{}, accessTokenSignKey: {}, authcToken: {}, accessToken: {}", sessionId,
 				accessTokenSignKey, authcToken, accessToken);
 
@@ -140,9 +158,8 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 
 		// Compare accessToken(signature)
 		if (!accessToken.equals(validAccessToken)) {
-			throw new UnauthenticatedException(
-					format("Illegal authentication credentials signature. accessToken: {}, accessTokenSignKey: {}", accessToken,
-							accessTokenSignKey));
+			throw new InvalidAccessTokenAuthenticationException(
+					format("Illegal authentication accessToken: {}, accessTokenSignKey: {}", accessToken, accessTokenSignKey));
 		}
 		// }
 
