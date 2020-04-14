@@ -238,17 +238,23 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		}
 		// Redirections(Native page).
 		else {
-			// Add dataCipherKeys to cookie.
-			Cookie dataCipherKey = new SimpleCookie(config.getCookie());
-			dataCipherKey.setName(config.getParam().getDataCipherKeyName());
-			dataCipherKey.setValue(getBindValue(KEY_DATA_CIPHER_KEY));
-			dataCipherKey.saveTo(toHttp(request), toHttp(response));
+			// Sets child dataCipherKeys to cookie.
+			String childDataCipherKey = getBindValue(KEY_DATA_CIPHER_KEY);
+			if (!isBlank(childDataCipherKey)) {
+				Cookie c = new SimpleCookie(config.getCookie());
+				c.setName(config.getParam().getDataCipherKeyName());
+				c.setValue(childDataCipherKey);
+				c.saveTo(toHttp(request), toHttp(response));
+			}
 
-			// Add accessToken to cookie.
-			Cookie accessToken = new SimpleCookie(config.getCookie());
-			accessToken.setName(config.getParam().getAccessTokenName());
-			accessToken.setValue(getBindValue(KEY_ACCESSTOKEN_SIGN_KEY));
-			accessToken.saveTo(toHttp(request), toHttp(response));
+			// Sets child accessToken to cookie.
+			String childAccessToken = generateChildAccessToken();
+			if (!isBlank(childAccessToken)) {
+				Cookie c = new SimpleCookie(config.getCookie());
+				c.setName(config.getParam().getAccessTokenName());
+				c.setValue(childAccessToken);
+				c.saveTo(toHttp(request), toHttp(response));
+			}
 
 			// Call custom success handle.
 			coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), null);
@@ -464,10 +470,14 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		resp.forMap().put(config.getParam().getRedirectUrl(), redirectUri);
 		resp.forMap().put(config.getParam().getApplication(), config.getServiceName());
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
-		resp.forMap().put(config.getParam().getDataCipherKeyName(), getBindValue(KEY_DATA_CIPHER_KEY));
-		resp.forMap().put(config.getParam().getAccessTokenName(), getBindValue(KEY_ACCESSTOKEN_SIGN_KEY));
-		// IamClient session info.
+		// Iam-client session info.
 		resp.forMap().put(KEY_SESSION_INFO_KEY, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId())));
+
+		// Sets child dataCipherKey. (if necessary)
+		resp.forMap().put(config.getParam().getDataCipherKeyName(), getBindValue(KEY_DATA_CIPHER_KEY));
+		// Sets child accessToken. (if necessary)
+		resp.forMap().put(config.getParam().getAccessTokenName(), generateChildAccessToken());
+
 		return resp;
 	}
 
@@ -495,7 +505,18 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		return resp;
 	}
 
-	@Override
+	/**
+	 * Generation child accessToken.
+	 * 
+	 * @return
+	 */
+	private String generateChildAccessToken() {
+		// Gets child accessTokenSign key.
+		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_KEY);
+		// Generate child accessToken
+		return isBlank(childAccessTokenSignKey) ? null : generateAccessToken(getSessionId(), childAccessTokenSignKey);
+	}
+
 	public abstract String getName();
 
 }

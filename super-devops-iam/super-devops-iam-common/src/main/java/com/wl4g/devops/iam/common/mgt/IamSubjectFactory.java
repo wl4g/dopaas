@@ -15,23 +15,19 @@
  */
 package com.wl4g.devops.iam.common.mgt;
 
-import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_KEY;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
-import static com.wl4g.devops.tool.common.codec.Base58.encode;
-import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotBlank;
 
-import static org.apache.commons.codec.digest.HmacUtils.hmacSha256Hex;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -137,7 +133,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		hasTextOf(accessTokenSignKey, "accessTokenSignKey"); // Shouldn't-here
 
 		// Calculating accessToken(signature).
-		final String validAccessToken = generateAccessToken(session, accessTokenSignKey);
+		final String validAccessToken = generateAccessToken(session.getId(), accessTokenSignKey);
 		log.debug(
 				"Asserted accessToken of sessionId: {}, accessTokenSignKey: {}, validAccessToken: {}, accessToken: {}, authcToken: {}",
 				sessionId, accessTokenSignKey, validAccessToken, accessToken, authcToken);
@@ -150,19 +146,6 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		}
 		// }
 
-	}
-
-	/**
-	 * Generate new generate accessToken string.
-	 * 
-	 * @param session
-	 * @param accessTokenSignKey
-	 * @return
-	 */
-	final public static String generateAccessToken(@NotBlank final Session session, @NotBlank final String accessTokenSignKey) {
-		notNullOf(session, "session");
-		hasTextOf(accessTokenSignKey, "accessTokenSignKey");
-		return encode(hmacSha256Hex(toBytes(accessTokenSignKey), valueOf(session.getId()).getBytes(UTF_8)).getBytes(UTF_8));
 	}
 
 }

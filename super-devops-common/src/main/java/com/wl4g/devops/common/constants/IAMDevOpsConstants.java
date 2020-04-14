@@ -183,6 +183,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String CACHE_SESSION = "session_";
 	/**
+	 * IAM server grantTicket info of application.
+	 */
+	final public static String CACHE_GRANT_TICKET = "grant_ticket_info";
+	/**
 	 * IAM server authentication authorization information storage cache name.
 	 */
 	final public static String CACHE_TICKET_S = "ticket_s_";

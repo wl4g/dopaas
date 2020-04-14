@@ -29,7 +29,8 @@ import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
 import com.wl4g.devops.iam.common.authc.model.TicketValidatedAssertModel;
 import com.wl4g.devops.iam.common.authc.model.TicketValidateModel;
 import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.session.GrantTicketInfo;
+import com.wl4g.devops.iam.common.session.GrantCredentialsInfo;
+import com.wl4g.devops.iam.common.session.GrantCredentialsInfo.GrantApp;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
@@ -56,7 +57,7 @@ import java.util.Set;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.ExpiredAuthorized;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
@@ -125,21 +126,21 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	@Override
 	public TicketValidatedAssertModel<IamPrincipalInfo> validate(TicketValidateModel model) {
 		TicketValidatedAssertModel<IamPrincipalInfo> assertion = new TicketValidatedAssertModel<>();
-		String appName = model.getApplication();
-		hasTextOf(appName, "appName");
+		String grantAppname = model.getApplication();
+		hasTextOf(grantAppname, "grantAppname");
 
-		// Get subject session of grantTicket.
+		// Get subject session of grantCredentials info.
 		/*
 		 * Synchronize with xx.xx.session.mgt.IamSessionManager#getSessionId
 		 */
 		Subject subject = SecurityUtils.getSubject();
 		log.debug("Validating subject: {} by grantTicket: {}", subject, model.getTicket());
 
-		// Assertion grantTicket.
+		// Assertion grantCredentials info.
 		assertGrantTicketValidity(subject, model);
 
 		// Check access authorized from application.
-		assertApplicationAccessAuthorized((String) subject.getPrincipal(), appName);
+		assertApplicationAccessAuthorized((String) subject.getPrincipal(), grantAppname);
 
 		// Force clearance of last grant Ticket
 		/*
@@ -159,17 +160,16 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		assertion.setValidFromDate(new Date(now));
 
 		/*
-		 * xx.xx...client.realm.FastCasAuthorizingRealm#doGetAuthenticationInfo
-		 * Grant term of validity(end date).
+		 * x.client.realm.FastCasAuthorizingRealm#doGetAuthenticationInfo Grant
+		 * term of validity(end date).
 		 */
-		long expiredMs = getSessionExpiredTime(session);
-		assertion.setValidUntilDate(new Date(now + expiredMs));
+		assertion.setValidUntilDate(new Date(now + getSessionExpiredTime(session)));
 
-		// Updating grantTicket
-		/*
-		 * Synchronize with
-		 * xx.xx.handler.impl.FastCasAuthenticationHandler#logout<br/>
-		 * xx.xx.session.mgt.IamSessionManager#getSessionId
+		// Updating grantCredentials info
+		/**
+		 * Synchronize with: </br>
+		 * x.handler.impl.FastCasAuthenticationHandler#logout() </br>
+		 * x.session.mgt.IamSessionManager#getSessionId
 		 */
 		String newGrantTicket = generateGrantTicket();
 		/**
@@ -178,38 +178,40 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).setStoredCredentials(newGrantTicket));
 		log.info("New validated grantTicket: {}, sessionId: {}", newGrantTicket, getSessionId());
 
-		// Re-bind granting session => applications
-		saveGrantTicket(session, appName, newGrantTicket);
-
-		// Authorized roles and permission information.
+		// Grants roles and permissions attributes.
 		Map<String, String> attributes = assertion.getPrincipalInfo().getAttributes();
 		attributes.put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
 
-		// TODO renew generate dataCipherKey/application accessToken
+		// Sets re-generate childDataCipherKey(grant application)
+		String childDataCipherKey = generateDataCipherKey();
+		attributes.put(KEY_DATA_CIPHER_KEY, childDataCipherKey);
+		// Sets re-generate childAccessToken(grant application)
+		String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_KEY);
+		String childAccessTokenSignKey = generateAccessTokenSignKey(model.getSessionId(), accessTokenSignKey);
+		attributes.put(KEY_ACCESSTOKEN_SIGN_KEY, childAccessTokenSignKey);
 
-		// Sets dataCipherKey
-		attributes.put(KEY_DATA_CIPHER_KEY, getBindValue(KEY_DATA_CIPHER_KEY));
-		// Sets accessToken
-		attributes.put(KEY_ACCESSTOKEN_SIGN_KEY, getBindValue(KEY_ACCESSTOKEN_SIGN_KEY));
+		// Refresh grantCredentials info.
+		GrantApp grant = new GrantApp(newGrantTicket).setDataCipher(childDataCipherKey).setAccessTokenSignKey(accessTokenSignKey);
+		putGrantCredentials(session, grantAppname, grant);
+
 		return assertion;
 	}
 
 	@Override
-	public LoggedModel loggedin(String appName, Subject subject) {
-		hasTextOf(appName, "appName");
+	public LoggedModel loggedin(String grantAppname, Subject subject) {
+		hasTextOf(grantAppname, "grantAppname");
 
 		// Check authentication.
 		if (nonNull(subject) && subject.isAuthenticated() && !isBlank((String) subject.getPrincipal())) {
-			Session session = subject.getSession(); // Session
+			Session session = subject.getSession();
 
-			// Generate grantTicket. Same: CAS/service-ticket
+			// Generate grantCredentials info. Same: CAS/service-ticket
 			String initGrantTicket = generateGrantTicket();
-			log.info("New init grantTicket: {}, appName: {}", initGrantTicket, appName);
+			log.info("New init grantTicket: {}, grantAppname: {}", initGrantTicket, grantAppname);
 
-			// Save grantInfo session => applications
-			saveGrantTicket(session, appName, initGrantTicket);
+			// Storage grantInfo session => applications
+			putGrantCredentials(session, grantAppname, new GrantApp().setGrantTicket(initGrantTicket));
 
-			// Return redirection information
 			return new LoggedModel(initGrantTicket);
 		}
 		throw new AuthenticationException("Unauthenticated");
@@ -227,7 +229,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Represents all logged-out Tags
 		boolean logoutAll = true;
 		// Get bind session grant information
-		GrantTicketInfo grantInfo = getGrantTicketInfo(subject.getSession());
+		GrantCredentialsInfo grantInfo = getGrantCredentials(subject.getSession());
 		log.debug("Got grantInfo: [{}] with sessionId: [{}]", grantInfo, subject.getSession().getId());
 
 		if (!isNull(grantInfo) && grantInfo.hasApplications()) {
@@ -285,73 +287,28 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public SessionValidityAssertModel sessionValidate(SessionValidityAssertModel assertion) {
-		hasTextOf(assertion.getApplication(), "appName");
+	public SessionValidityAssertModel sessionValidate(SessionValidityAssertModel model) {
+		hasTextOf(model.getApplication(), "grantAppname");
 
-		ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_BATCH_SIZE);
+		ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_SCAN_SIZE);
 		while (cursor.hasNext()) {
 			Session session = cursor.next();
 			// GrantTicket of session.
-			GrantTicketInfo info = getGrantTicketInfo(session);
+			GrantCredentialsInfo info = getGrantCredentials(session);
 
-			if (nonNull(info) && info.hasApplications()) {
-				String savedGrantTicket = info.getApplications().get(assertion.getApplication());
+			if (nonNull(info) && info.hasApplication(model.getApplication())) {
+				String storedTicket = info.getApplications().get(model.getApplication()).getGrantTicket();
 				// If exist grantTicket with application.
-				if (!isBlank(savedGrantTicket)) {
-					assertion.getTickets().remove(savedGrantTicket);
+				if (!isBlank(storedTicket)) {
+					model.getTickets().remove(storedTicket);
 				}
 			}
 		}
-		return assertion;
+		return model;
 	}
 
 	/**
-	 * Saved grantTicket to session => grant application<br/>
-	 *
-	 * @param session
-	 *            Session
-	 * @param grantAppName
-	 *            granting application name
-	 * @param grantTicket
-	 *            grant ticket
-	 */
-	private void saveGrantTicket(Session session, String grantAppName, String grantTicket) {
-		notNullOf(session, "session");
-		hasTextOf(grantAppName, "grantAppName");
-		hasTextOf(grantTicket, "grantTicket");
-
-		/*
-		 * See:CentralAuthenticationHandler#validate()
-		 */
-		GrantTicketInfo info = getGrantTicketInfo(session);
-		if (Objects.isNull(info)) {
-			info = new GrantTicketInfo();
-		}
-		if (info.getApplications().keySet().contains(grantAppName)) {
-			log.debug("Save grantTicket of sessionId: {} application: {}", session.getId(), grantAppName);
-		}
-
-		// Update grantTicket info and saved.
-		session.setAttribute(KEY_GRANTTICKET_INFO, info.addApplications(grantAppName, grantTicket));
-		log.debug("Updated grantTicket info to session. {}", info);
-
-		// Get session expire time
-		long expireTime = getSessionExpiredTime(session);
-		log.debug("Got sessionId: '{}', expireTime: '{}'", session.getId(), expireTime);
-
-		// Saved grantTicket => sessionId.
-		/*
-		 * Synchronize with
-		 * xx.xx.handler.impl.FastCasAuthenticationHandler#validate<br/>
-		 * xx.xx.session.mgt.IamSessionManager#getSessionId
-		 */
-		cacheManager.getEnhancedCache(CACHE_TICKET_S).put(new EnhancedKey(grantTicket, expireTime), session.getId().toString());
-		log.debug("Saved grantTicket: '{}' of seesionId: '{}'", grantTicket, getSessionId(session));
-
-	}
-
-	/**
-	 * Assert grantTicket validity </br>
+	 * Assertion grantTicket validity </br>
 	 *
 	 * @param subject
 	 * @param model
@@ -366,16 +323,16 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		}
 
 		// Get grant information
-		GrantTicketInfo info = getGrantTicketInfo(subject.getSession());
+		GrantCredentialsInfo info = getGrantCredentials(subject.getSession());
 		log.debug("Got grantTicketInfo: {}, sessionId:{}", info, getSessionId());
 
 		// No grant ticket created or expired?
-		if (isNull(info)) {
+		if (isNull(info) || info.hasApplication(model.getApplication())) {
 			throw new InvalidGrantTicketException("Invalid granting ticket");
 		}
 
-		// Validate Request appName ticket and storedTicket match?
-		String storedTicket = info.getApplications().get(model.getApplication());
+		// Validate grantTicket and storedTicket?
+		String storedTicket = info.getApplications().get(model.getApplication()).getGrantTicket();
 		if (!(model.getTicket().equals(storedTicket) && subject.isAuthenticated() && nonNull(subject.getPrincipal()))) {
 			log.warn("Invalid grantTicket: {}, appName: {}, sessionId: {}", model.getTicket(), model.getApplication(),
 					subject.getSession().getId());
@@ -385,24 +342,68 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	/**
-	 * Get bind session grantTicket information.
+	 * Gets bind session grantCredentials info.
 	 *
 	 * @param session
 	 * @return
 	 */
-	private GrantTicketInfo getGrantTicketInfo(Session session) {
-		return (GrantTicketInfo) session.getAttribute(KEY_GRANTTICKET_INFO);
+	private GrantCredentialsInfo getGrantCredentials(Session session) {
+		return (GrantCredentialsInfo) grantTicketCache.get(new EnhancedKey(session.getId(), GrantCredentialsInfo.class));
 	}
 
 	/**
-	 * Processing logout all
+	 * Storage grantCredentials to session. </br>
+	 *
+	 * @param session
+	 *            Session
+	 * @param grantAppname
+	 *            granting application name
+	 * @param grant
+	 *            grant ticket
+	 */
+	private void putGrantCredentials(Session session, String grantAppname, GrantApp grant) {
+		notNullOf(session, "session");
+		hasTextOf(grantAppname, "grantAppname");
+		notNullOf(grant, "grant");
+
+		/**
+		 * @See:{@link CentralAuthenticationHandler#validate()}
+		 */
+		GrantCredentialsInfo info = getGrantCredentials(session);
+		if (Objects.isNull(info)) {
+			info = new GrantCredentialsInfo();
+		}
+		if (info.getApplications().keySet().contains(grantAppname)) {
+			log.debug("Saved grantTicket of sessionId: {} grantAppname: {}", session.getId(), grantAppname);
+		}
+
+		// Update grantTicket info and saved.
+		grantTicketCache.put(new EnhancedKey(session.getId()), info.addApplications(grantAppname, grant));
+		log.debug("Updated grantTicket info to session. {}", info);
+
+		// Gets session expire time
+		long expireTime = getSessionExpiredTime(session);
+		log.debug("Got sessionId: '{}', expireTime: '{}'", session.getId(), expireTime);
+
+		// Save grantTicket => sessionId.
+		/**
+		 * Synchronize with: </br>
+		 * x.handler.impl.FastCasAuthenticationHandler#validate </br>
+		 * x.session.mgt.IamSessionManager#getSessionId
+		 */
+		cacheManager.getEnhancedCache(CACHE_TICKET_S).put(new EnhancedKey(grant, expireTime), session.getId().toString());
+		log.debug("Saved grantTicket: '{}' of seesionId: '{}'", grant, getSessionId(session));
+	}
+
+	/**
+	 * Handling logout all
 	 *
 	 * @param subject
 	 * @param grantInfo
 	 * @param apps
 	 * @return
 	 */
-	private boolean handleLogoutSessionAll(Subject subject, GrantTicketInfo grantInfo, List<ApplicationInfo> apps) {
+	private boolean handleLogoutSessionAll(Subject subject, GrantCredentialsInfo grantInfo, List<ApplicationInfo> apps) {
 		boolean logoutAll = true; // Represents all logged-out Tags
 
 		/*
@@ -411,8 +412,8 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		for (ApplicationInfo app : apps) {
 			hasText(app.getIntranetBaseUri(), "Application[%s] 'internalBaseUri' must not be empty", app.getAppName());
 			// GrantTicket by application name
-			String grantTicket = grantInfo.getApplications().get(app.getAppName());
-			// Application logout URL
+			String grantTicket = grantInfo.getApplications().get(app.getAppName()).getGrantTicket();
+			// Logout URL
 			String url = new StringBuffer(app.getIntranetBaseUri()).append(URI_C_BASE).append("/").append(URI_C_LOGOUT)
 					.append("?").append(config.getParam().getGrantTicket()).append("=").append(grantTicket).toString();
 
@@ -437,20 +438,19 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	/**
-	 * Generate grantTicket.
+	 * Generate grantCredentials ticket.
 	 *
 	 * @return
 	 */
 	private String generateGrantTicket() {
-		return "st" + randomAlphabetic(54, 94);
+		return "st" + randomAlphabetic(64, 128);
 	}
 
 	/**
-	 * Iteration batch size.
+	 * Scan iteration batch size.
 	 */
-	final public static int DEFAULT_BATCH_SIZE = 500;
+	final public static int DEFAULT_SCAN_SIZE = 100;
 
-	final public static String KEY_GRANTTICKET_INFO = CentralAuthenticationHandler.class.getSimpleName() + ".GRANT_TICKET";
 	final public static String[] PERMISSIVE_HOSTS = new String[] { "localhost", "127.0.0.1", "0:0:0:0:0:0:0:1" };
 
 }
