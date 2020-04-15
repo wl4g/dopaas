@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import com.wl4g.devops.common.exception.framework.ArgumentsSpecificationException;
@@ -4255,6 +4256,18 @@ public class EnhancedJedisCluster extends JedisCluster {
 					}
 				}
 			}
+		}
+		
+		/**
+		 * redis key replace "-" to "_"
+		 * @param key
+		 * @return
+		 */
+		public static String redisSpecFormat(String key) {
+			if(StringUtils.isNotBlank(key)) {
+				key = key.replaceAll("-", "_");
+			}
+			return key;
 		}
 
 		/**
