@@ -192,56 +192,59 @@
 			var cache = _modules_settings.cache;
 			var mode = _modules_settings.mode;
 
-			window.onload = function(){
-				var depends = getDependModules(feature);
-				if(!depends) throw Error("No such module feature of '"+ feature +"'");
-				var scriptUrls = depends.modules.map(d => {
-					var t = (cache == 'true') ? 1 : new Date().getTime();
-					return d[mode]+"?t="+t;
+			// When the onload event has been monitored by others, it will not be executed here
+			// (for example, in the Vue project)
+			//window.onload = function() {
+			var depends = getDependModules(feature);
+			if(!depends) throw Error("No such module feature of '"+ feature +"'");
+			var scriptUrls = depends.modules.map(d => {
+				var t = (cache == 'true') ? 1 : new Date().getTime();
+				return d[mode]+"?t="+t;
+			});
+			// Loading multiple scripts.
+			(function loadScripts(name, urls, path) {
+				urls.forEach(function(src, i) {
+					var script = document.createElement('script');
+					script.type = 'text/javascript';
+					script.charset = 'UTF-8';
+					script.src = (path || "") + src;
+					script.async = false;
+					// If last script, bind the callback event to resolve
+					if (i == urls.length - 1) {
+						// Multiple binding for browser compatibility
+						script.onload = script.onreadystatechange = function(e) {
+							if (!script.readyState || script.readyState == 'loaded' || script.readyState == 'complete') {
+				            	console.debug("Loaded scripts feature: "+feature+", readyState: "+ this.readyState);
+								callback(new window[name]); // [MARK1]
+							}
+				        };
+					}
+					// Fire the loading
+					document.head.appendChild(script);
+					//document.body.appendChild(script);
 				});
-				// Loading multiple scripts.
-				(function loadScripts(name, urls, path) {
-					urls.forEach(function(src, i) {
-						var script = document.createElement('script');
-						script.type = 'text/javascript';
-						script.charset = 'UTF-8';
-						script.src = (path || "") + src;
-						script.async = false;
-						// If last script, bind the callback event to resolve
-						if (i == urls.length - 1) {
-							// Multiple binding for browser compatibility
-							script.onload = script.onreadystatechange = function(e) {
-								if (!script.readyState || script.readyState == 'loaded' || script.readyState == 'complete') {
-					            	console.debug("Loaded scripts feature: "+feature+", readyState: "+ this.readyState);
-									callback(new window[name]); // [MARK1]
-								}
-					        };
-						}
-						// Fire the loading
-						document.body.appendChild(script);
-					});
-				})(depends.name, scriptUrls, path);
+			})(depends.name, scriptUrls, path);
 
-				// --- JQuery Versions. ---
-				//$.when(scriptUrls, $.Deferred(d => $(d.resolve))).done(function(response, status){
-				//	console.debug("Loaded script of feature: "+ feature);
-				//	callback(status);
-				//});
-	
-				//$.when($.getScript("./js/fingerprint2-v2.1.0.js"),
-				//$.getScript("./js/common-util.js"),
-				//$.getScript("./js/iam-jssdk-core.js"),
-				//$.getScript("./js/iam-jssdk-crypto.js"),
-				//$.getScript("./js/iam-jssdk-captcha-jigsaw.js"),
-				//$.getScript("./js/iam-jssdk-ui.js"),
-				//$.getScript("./js/cryptojs-4.0.0/crypto-js.min.js"),
-				//$.Deferred(function(deferred){
-				//    $(deferred.resolve);
-				//})).done(function(){
-				//	console.debug("Loaded script of feature: "+ feature);
-				//	callback("loaded");
-				//});
-			}
+			// --- JQuery Versions. ---
+			//$.when(scriptUrls, $.Deferred(d => $(d.resolve))).done(function(response, status){
+			//	console.debug("Loaded script of feature: "+ feature);
+			//	callback(status);
+			//});
+
+			//$.when($.getScript("./js/fingerprint2-v2.1.0.js"),
+			//$.getScript("./js/common-util.js"),
+			//$.getScript("./js/iam-jssdk-core.js"),
+			//$.getScript("./js/iam-jssdk-crypto.js"),
+			//$.getScript("./js/iam-jssdk-captcha-jigsaw.js"),
+			//$.getScript("./js/iam-jssdk-ui.js"),
+			//$.getScript("./js/cryptojs-4.0.0/crypto-js.min.js"),
+			//$.Deferred(function(deferred){
+			//    $(deferred.resolve);
+			//})).done(function(){
+			//	console.debug("Loaded script of feature: "+ feature);
+			//	callback("loaded");
+			//});
+			//}
 		},
 		useCss: function(feature, callback){
 			if(Object.prototype.toString.call(feature) == '[object Function]' || !feature || callback == null || !callback) {
