@@ -274,7 +274,8 @@ public interface CossEndpoint extends Operator<CossProvider> {
 	 * @param request
 	 * @return A {@link RestoreObjectResult} instance.
 	 */
-	RestoreObjectResult restoreObject(RestoreObjectRequest request,String bucketName, String key) throws CossException, ServerCossException;
+	RestoreObjectResult restoreObject(RestoreObjectRequest request, String bucketName, String key)
+			throws CossException, ServerCossException;
 
 	/**
 	 * Gets the Access Control List (ACL) of the OSS object.

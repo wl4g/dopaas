@@ -226,10 +226,8 @@ public class JedisLockManager {
 			if (currentProcessId.equals(acquiredProcessId)) {
 				// Obtain lock record once cumulatively.
 				counter.incrementAndGet();
-				if (log.isDebugEnabled()) {
-					log.debug("Reuse acquire lock for name: {}, acquiredProcessId: {}, counter: {}", name, acquiredProcessId,
-							counter);
-				}
+				log.debug("Reuse acquire lock for name: {}, acquiredProcessId: {}, counter: {}", name, acquiredProcessId,
+						counter);
 				return true;
 			} else {
 				// Not currently locked? Lock expired? Local counter reset.
