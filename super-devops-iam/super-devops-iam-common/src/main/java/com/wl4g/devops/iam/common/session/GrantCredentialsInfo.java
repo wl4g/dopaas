@@ -86,6 +86,18 @@ public class GrantCredentialsInfo implements Serializable {
 	}
 
 	/**
+	 * Gets grant credentials {@link GrantApp}.
+	 * 
+	 * @param grantAppname
+	 * @param grant
+	 * @return
+	 */
+	public GrantApp getGrantApp(String grantAppname) {
+		hasTextOf(grantAppname, "grantAppname");
+		return applications.get(grantAppname);
+	}
+
+	/**
 	 * Check whether there are authorized certification ticket by grantAppname.
 	 * 
 	 * @param grantAppname
