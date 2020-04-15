@@ -21,13 +21,8 @@
 		if(!renderObj || renderObj == undefined){
 			throw Error("IAM JSSDK UI (renderObj) is required!");
 		}
-		console.warn("Init 'iamCoreConfig' not configure, already used defaults !");
-		iamCoreConfig = $.extend(true, {
-   			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
-   			defaultContextPath: "/iam-server" // IAMServerd的context-path
- 		}, iamCoreConfig);
-
 		console.debug("Initializing IAM JSSDK UI...");
+
 		// Javascript multi line string supports.
 		// @see https://www.jb51.net/article/49480.htm
 		var loginFormHtmlStr = `
@@ -43,7 +38,7 @@
 						</span>-->
 						<span class="login-line">
 						</span>
-						<span class="login-link" id="login_link_scan" data-panel="login_scan_panel">
+						<span class="login-link" id="iam_jssdk_login_link_scan" data-panel="iam_jssdk_login_scan_panel">
 							扫码登录
 						</span>
 					</div>
@@ -101,7 +96,7 @@
 							<div class="login-form-item">
 								<i class="icon-phone">
 								</i>
-								<input id="user_phone" class="inp" name="phone" placeholder="请输入手机号" maxlength="11">
+								<input id="iam_jssdk_sms_user_phone" class="inp" name="phone" placeholder="请输入手机号" maxlength="11">
 								<p class="err-info phone-err">
 									请输入正确的手机号
 								</p>
@@ -109,8 +104,7 @@
 							<div class="login-form-item login-form-item-number">
 								<i class="icon-codeNumber">
 								</i>
-								<input id="codeNumber" class="inp" type="text" placeholder="请输入短信动态码"
-								name="codeNumber" maxlength=6>
+								<input id="iam_jssdk_sms_code" class="inp" type="text" placeholder="请输入短信动态码" maxlength=6>
 								<button class="btn-code" type="button" id="iam_jssdk_sms_getcode_btn">
 									获取
 								</button>
@@ -121,9 +115,9 @@
 							<input class="btn" id="iam_jssdk_sms_submit_btn" type="button" value="登录">
 						</div>
 						<!-- 微信登录-->
-						<div class="login-form-panel" id="login_scan_panel">
+						<div class="login-form-panel" id="iam_jssdk_login_scan_panel">
 							<div class="box-qrcode">
-								<div id="qrcode_show" style="height:255px;">
+								<div id="iam_jssdk_sns_qrcodePanel" style="height:255px;">
 								</div>
 							</div>
 							<div class="qrcode-text">
@@ -200,14 +194,14 @@
 	// 绑定IAM UI SDK事件
 	function initUISDK(iamCoreConfig) {
 		Common.Util.printSafeWarn("This browser function is for developers only. Please do not paste and execute any content here, which may cause your account to be attacked and bring you loss!");
-		runtime.iamCore = new IAMCore();
-		runtime.iamCore.init({
-			//deploy: {
-	    	//	baseUri: "http://localhost:14040/iam-server", // Using auto extra configure
-	   		//	defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
-	 		//	deaultContextPath: "/iam-server" // IAMServerd的context-path
-	 		//},
-			deploy: iamCoreConfig,
+
+		// Default settings.
+		var defaultSettings = {
+			deploy: {
+	    		//baseUri: "http://localhost:14040/iam-server", // Using auto extra configure
+	   			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+	 			deaultContextPath: "/iam-server" // IAMServerd的context-path
+	 		},
 	 		// 初始相关配置(Event)
 	 		init: {
 	 			onPostCheck: function(res) {
@@ -267,8 +261,8 @@
 				submitBtn: document.getElementById("iam_jssdk_sms_submit_btn"), // 登录提交触发对象
 				sendSmsBtn: document.getElementById("iam_jssdk_sms_getcode_btn"), // 发送SMS验证码对象
 				mobileArea: $(".select-area"), // 手机号区域select对象
-				mobile: document.getElementById("user_phone"), // 手机号input对象
-				smsCode: document.getElementById("codeNumber"), // SMS验证码input对象
+				mobile: document.getElementById("iam_jssdk_sms_user_phone"), // 手机号input对象
+				smsCode: document.getElementById("iam_jssdk_sms_code"), // SMS验证码input对象
 				onBeforeSubmit: function (mobileNum, smsCode) {
 					console.debug("Iam sms login ... mobileNum: "+ mobileNum);
 					return true;
@@ -294,7 +288,7 @@
 				},
 				// 定义内嵌授权页面配置
 				qrcodePanel: {
-					src: document.getElementById("qrcode_show"),
+					src: document.getElementById("iam_jssdk_sns_qrcodePanel"),
 					width: "250",
 					height: "260"
 				},
@@ -313,25 +307,31 @@
 					// },
 					"wechat": { // 服务商名(需与后台对应, 可选：qq/wechat/sina/github/google/dingtalk/twitter/facebook等)
 						panelType: "qrcodePanel", // 使用内嵌的方式渲染扫码授权页面
-						src: document.getElementById("login_link_scan") // 绑定Wechat授权点击事件源
+						src: document.getElementById("iam_jssdk_login_link_scan") // 绑定Wechat授权点击事件源
 					}
 				},
 				// 点击SNS服务商授权请求之前回调事件
 				onBefore: function (provider, panelType) {
 					if (provider == 'wechat') { // 只有微信等扫码登录时，才切换tab
-						changeTab('login_scan_panel', 'login_scan_pass');
+						changeTab('iam_jssdk_login_scan_panel', 'iam_jssdk_login_scan_pass');
 					}
 					// 执行后续逻辑，返回false会阻止继续
 					return true;
 				}
 			}
-		});
+		};
+
+		runtime.iamCore = new IAMCore();
+		// Overerly default settings.
+		iamCoreConfig = $.extend(true, defaultSettings, iamCoreConfig);
+		console.debug("Intializing iamCore of config properties: " + JSON.stringify(iamCoreConfig));
+		runtime.iamCore.init(iamCoreConfig);
 	}
 
 	// 监听panelType为pagePanel类型的SNS授权回调
 	$(function() {
 		window.onmessage = function (e) {
-			if(e.data) {
+			if(e && e.data && !Common.Util.isEmpty(e.data)) {
 				window.location.href = JSON.parse(e.data).refresh_url;
 			}
 		}

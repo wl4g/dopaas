@@ -16,7 +16,11 @@
 			console.log("******* IAM JSSDK loaded completed! *******");
 			$(function(){
 				var iamServerUri = null; // e.g. http://localhost:14040/iam-server/
-				uiModule.initUI(document.getElementsByTagName("body")[0], iamServerUri);
+				uiModule.initUI(document.getElementsByTagName("body")[0], {
+					deploy: {
+						baseUri: iamServerUri,
+					}
+				});
 			});
 		});
 	</script>
