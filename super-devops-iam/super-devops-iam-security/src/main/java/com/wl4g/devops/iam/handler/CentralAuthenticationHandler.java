@@ -329,7 +329,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		}
 
 		// Validate grantTicket and storedTicket?
-		String storedTicket = info.getApplications().get(model.getApplication()).getGrantTicket();
+		String storedTicket = info.getGrantApp(model.getApplication()).getGrantTicket();
 		if (!(model.getTicket().equals(storedTicket) && subject.isAuthenticated() && nonNull(subject.getPrincipal()))) {
 			log.warn("Invalid grantTicket: {}, appName: {}, sessionId: {}", model.getTicket(), model.getApplication(),
 					subject.getSession().getId());
@@ -345,7 +345,9 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @return
 	 */
 	private GrantCredentialsInfo getGrantCredentials(Session session) {
-		return (GrantCredentialsInfo) grantTicketCache.get(new EnhancedKey(session.getId(), GrantCredentialsInfo.class));
+		GrantCredentialsInfo info = (GrantCredentialsInfo) grantTicketCache
+				.get(new EnhancedKey(session.getId(), GrantCredentialsInfo.class));
+		return isNull(info) ? new GrantCredentialsInfo() : info;
 	}
 
 	/**
@@ -367,9 +369,6 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * @See:{@link CentralAuthenticationHandler#validate()}
 		 */
 		GrantCredentialsInfo info = getGrantCredentials(session);
-		if (Objects.isNull(info)) {
-			info = new GrantCredentialsInfo();
-		}
 		if (info.getApplications().keySet().contains(grantAppname)) {
 			log.debug("Saved grantTicket of sessionId: {} grantAppname: {}", session.getId(), grantAppname);
 		}
@@ -441,7 +440,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @return
 	 */
 	private String generateGrantTicket() {
-		return "st" + randomAlphabetic(64, 128);
+		return "st" + randomAlphabetic(48, 64);
 	}
 
 	/**
