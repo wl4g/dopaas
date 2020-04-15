@@ -124,9 +124,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 
 		// Build Success
 		pipelineModel.setCurrent(null);
-		pipelineModel.setStatus(RUNNING_DEPLOY.toString()); // build complete
-															// ==? pipeline
-															// complete
+		// build complete ==? pipeline complete
+		pipelineModel.setStatus(RUNNING_DEPLOY.toString());
 		flowManager.pipelineStateChange(pipelineModel);
 
 		// Call after all built dependencies completed handling.

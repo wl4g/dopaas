@@ -33,6 +33,7 @@ import com.wl4g.devops.ci.pipeline.deploy.GolangModPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.MvnAssembleTarPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.ViewNativePipeDeployer;
 import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
@@ -172,6 +173,13 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
+	@PrototypeAlias({ PipelineKind.VIEW_NATIVE })
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public ViewNativePipelineProvider viewNativePipelineProvider(PipelineContext context) {
+		return new ViewNativePipelineProvider(context);
+	}
+
+	@Bean
 	@PrototypeAlias({ PipelineKind.PYTHON3_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public Python3PipelineProvider python3StandardPipelineProvider(PipelineContext context) {
@@ -213,6 +221,13 @@ public class CiCdAutoConfiguration {
 	public NpmViewPipeDeployer npmViewPipeDeployer(NpmViewPipelineProvider provider, AppInstance instance,
 			List<TaskHistoryInstance> taskHistoryInstances) {
 		return new NpmViewPipeDeployer(provider, instance, taskHistoryInstances);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public ViewNativePipeDeployer viewNativePipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,
+			List<TaskHistoryInstance> taskHistoryInstances) {
+		return new ViewNativePipeDeployer(provider, instance, taskHistoryInstances);
 	}
 
 	@Bean

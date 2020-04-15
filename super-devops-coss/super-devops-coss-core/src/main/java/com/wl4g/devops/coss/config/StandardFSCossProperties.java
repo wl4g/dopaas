@@ -38,7 +38,6 @@ public abstract class StandardFSCossProperties {
 	@NotNull
 	private File endpointRootDir = new File("/mnt/disk1/coss-bucket");
 
-
 	private String downloadBaseUrl;
 
 	/**
@@ -51,18 +50,18 @@ public abstract class StandardFSCossProperties {
 		return endpointRootDir;
 	}
 
-	public File getBucketPath(String bucketName){
+	public File getBucketPath(String bucketName) {
 		return new File(getEndpointRootDir(), bucketName);
 	}
 
-	public File getObjectPath(String bucketName,String key){
+	public File getObjectPath(String bucketName, String key) {
 		return new File(getEndpointRootDir().getAbsolutePath() + File.separator + bucketName + File.separator + key);
 	}
 
 	public void setEndpointRootDir(File endpointRootDir) {
-		if(!endpointRootDir.exists()){
+		if (!endpointRootDir.exists()) {
 			endpointRootDir.mkdirs();
-			isTrue(endpointRootDir.exists(),"Create endpointRootDir fail");
+			isTrue(endpointRootDir.exists(), "Create endpointRootDir fail");
 		}
 		this.endpointRootDir = endpointRootDir;
 	}
@@ -141,11 +140,12 @@ public abstract class StandardFSCossProperties {
 	}
 
 	public String getBucketPathTrash() {
-		return getEndpointRootDir().getAbsolutePath()+PATH_TRASH+File.separator + System.currentTimeMillis();
+		return getEndpointRootDir().getAbsolutePath() + PATH_TRASH + File.separator + System.currentTimeMillis();
 	}
 
 	public String getObjectPathTrash(String bucketName) {
-		return getEndpointRootDir().getAbsolutePath()+File.separator+bucketName+File.separator+PATH_TRASH +File.separator + System.currentTimeMillis();
+		return getEndpointRootDir().getAbsolutePath() + File.separator + bucketName + File.separator + PATH_TRASH + File.separator
+				+ System.currentTimeMillis();
 	}
 
 	public String getDownloadBaseUrl() {

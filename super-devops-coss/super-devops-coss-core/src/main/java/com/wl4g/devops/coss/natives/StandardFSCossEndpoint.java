@@ -293,6 +293,7 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		File destinationPath = config.getObjectPath(destinationBucketName, destinationKey);
 		try {
 			Files.copy(sourcePath.toPath(), destinationPath.toPath());
+
 			ObjectStatusMetaData object = metadataManager.getObject(sourceBucketPath.getAbsolutePath(), sourcePath);
 			metadataManager.addObject(destinationBucketPath.getAbsolutePath(), destinationPath, object);
 		} catch (Exception e) {

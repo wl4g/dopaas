@@ -57,6 +57,7 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 				PublishConfigWrapper wrap = jedisService.getObjectT(key, PublishConfigWrapper.class);
 				if (wrap != null) {
 					list.add(wrap);
+					PublishConfigWrapper wrap2 = jedisService.getObjectT(key, PublishConfigWrapper.class);
 					jedisService.del(key);
 				}
 			}
