@@ -17,17 +17,28 @@ package com.wl4g.devops.support.redis;
 
 import static java.util.Arrays.asList;
 
-import com.wl4g.devops.support.redis.EnhancedJedisCluster.SpecificationUtil;
+import com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisFormatUtils;
 
 public class EnhancedJedisClusterTests {
 
 	public static void main(String[] args) {
 		System.out.println("-----11-----");
-		SpecificationUtil.checkArgumentsSpecification(asList("safecloud_support_appinfo_admin"));
+		RedisFormatUtils.checkArgumentsSpecification(asList("safecloud_support_appinfo_admin"));
+
 		System.out.println("-----22-----");
-		SpecificationUtil.checkArgumentsSpecification(asList("3342701404111872&&800492841ab644dc8ea01c683a809255BELONGANNUPXIN"));
-		System.out.println("-----33-----");
-		SpecificationUtil.checkArgumentsSpecification(asList("3342701404111872-800492841ab644dc8ea01c683a809255BELONGANNUPXIN"));
+		RedisFormatUtils.checkArgumentsSpecification(asList("3342701404111872&&800492841ab644dc8ea01c683a809255BELONGANNUPXIN"));
+
+		try {
+			System.out.println("-----33-----");
+			RedisFormatUtils
+					.checkArgumentsSpecification(asList("3342701404111872-800492841ab644dc8ea01c683a809255BELONGANNUPXIN"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("-----44-----");
+		System.out.println(RedisFormatUtils.keyFormat("3342701404111872-800492841ab644dc8ea01c683a809255BELONGANNUPXIN"));
+
 	}
 
 }

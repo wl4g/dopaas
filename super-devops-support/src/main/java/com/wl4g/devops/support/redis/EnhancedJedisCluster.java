@@ -20,7 +20,11 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isAlpha;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 import java.lang.reflect.InvocationTargetException;
@@ -33,7 +37,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import com.wl4g.devops.common.exception.framework.ArgumentsSpecificationException;
@@ -1936,7 +1939,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 
 	@Override
 	public Object eval(final String script, final List<String> keys, final List<String> args) {
-		SpecificationUtil.checkArgumentsSpecification(keys);
+		RedisFormatUtils.checkArgumentsSpecification(keys);
 		return new EnhancedJedisClusterCommand<Object>(connectionHandler, maxAttempts) {
 			@Override
 			public Object doExecute(Jedis connection) {
@@ -1957,7 +1960,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 
 	@Override
 	public Object evalsha(final String sha1, final List<String> keys, final List<String> args) {
-		SpecificationUtil.checkArgumentsSpecification(keys);
+		RedisFormatUtils.checkArgumentsSpecification(keys);
 		return new EnhancedJedisClusterCommand<Object>(connectionHandler, maxAttempts) {
 			@Override
 			public Object doExecute(Jedis connection) {
@@ -3522,7 +3525,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 
 	@Override
 	public Object eval(final byte[] script, final List<byte[]> keys, final List<byte[]> args) {
-		SpecificationUtil.checkArgumentsSpecification(keys);
+		RedisFormatUtils.checkArgumentsSpecification(keys);
 		return new EnhancedJedisClusterCommand<Object>(connectionHandler, maxAttempts) {
 			@Override
 			public Object doExecute(Jedis connection) {
@@ -4189,7 +4192,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 	 * @throws ArgumentsSpecificationException
 	 */
 	protected void checkArgumentsSpecification(final byte[]... keys) throws ArgumentsSpecificationException {
-		SpecificationUtil.checkArgumentsSpecification(asList(keys));
+		RedisFormatUtils.checkArgumentsSpecification(asList(keys));
 	}
 
 	/**
@@ -4199,7 +4202,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 	 * @throws ArgumentsSpecificationException
 	 */
 	protected void checkArgumentsSpecification(final String... keys) throws ArgumentsSpecificationException {
-		SpecificationUtil.checkArgumentsSpecification(asList(keys));
+		RedisFormatUtils.checkArgumentsSpecification(asList(keys));
 	}
 
 	/**
@@ -4219,15 +4222,15 @@ public class EnhancedJedisCluster extends JedisCluster {
 	final private static Method PARAMS_MATCH;
 
 	/**
-	 * Check redis key specification utils.
+	 * Redis key specifications format utils.
 	 * 
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020年4月10日
 	 * @since
 	 */
-	public static abstract class SpecificationUtil {
+	public static abstract class RedisFormatUtils {
 
-		final private static SmartLogger log = getLogger(SpecificationUtil.class);
+		final private static SmartLogger log = getLogger(RedisFormatUtils.class);
 
 		/**
 		 * Check input argument names specification.
@@ -4238,42 +4241,88 @@ public class EnhancedJedisCluster extends JedisCluster {
 		public static void checkArgumentsSpecification(final List<?> keys) throws ArgumentsSpecificationException {
 			notNullOf(keys, "jedis operation key");
 			for (Object key : keys) {
+				char[] _key = null;
 				if (key instanceof String) {
-					// The check exclusion key contains special characters such
-					// as '-', '$', ' ' etc and so on.
-					for (char c : key.toString().toCharArray()) {
-						String warning = format(
-								"The operation redis keys: %s there are unsafe characters: '%s', Because of the binary safety mechanism of redis, it may not be got",
-								keys, c);
-						if (!(isNumeric(valueOf(c)) || isAlpha(valueOf(c)) || safeKeyChars.contains(c))) {
-							if (warnKeyChars.contains(c)) { // Warning key chars
-								log.warn(warning);
-								return;
-							} else {
-								throw new ArgumentsSpecificationException(warning);
-							}
+					_key = key.toString().toCharArray();
+				} else if (char.class.isAssignableFrom(key.getClass())) {
+					_key = new char[] { (char) key };
+				} else if (key instanceof char[]) {
+					_key = (char[]) key;
+				}
+
+				if (isNull(_key)) {
+					continue;
+				}
+
+				// The check exclusion key contains special characters such
+				// as '-', '$', ' ' etc and so on.
+				for (char c : _key) {
+					String warning = format(
+							"The operation redis keys: %s there are unsafe characters: '%s', Because of the binary safety mechanism of redis, it may not be got",
+							keys, c);
+					if (!checkInvalidCharacter(c)) {
+						if (warnKeyChars.contains(c)) { // Warning key chars
+							log.warn(warning);
+							return;
+						} else {
+							throw new ArgumentsSpecificationException(warning);
 						}
 					}
 				}
 			}
 		}
-		
+
 		/**
-		 * redis key replace "-" to "_"
+		 * Formating redis arguments unsafe characters, e.g: '-' to '_'
+		 * 
 		 * @param key
 		 * @return
 		 */
-		public static String redisSpecFormat(String key) {
-			if(StringUtils.isNotBlank(key)) {
-				key = key.replaceAll("-", "_");
+		public static String keyFormat(String key) {
+			return keyFormat(key, '_');
+		}
+
+		/**
+		 * Formating redis arguments unsafe characters, e.g: '-' to '_'
+		 * 
+		 * @param key
+		 * @param safeChar
+		 *            Replace safe character
+		 * @return
+		 */
+		public static String keyFormat(String key, char safeChar) {
+			if (isBlank(key)) {
+				return key;
 			}
-			return key;
+			checkArgumentsSpecification(singletonList(safeChar));
+
+			// The check exclusion key contains special characters such
+			// as '-', '$', ' ' etc and so on.
+			StringBuffer _key = new StringBuffer(key.length());
+			for (char c : key.toString().toCharArray()) {
+				if (checkInvalidCharacter(c)) {
+					_key.append(c);
+				} else {
+					_key.append(safeChar);
+				}
+			}
+			return _key.toString();
+		}
+
+		/**
+		 * Check is invalid redis arguments character.
+		 * 
+		 * @param c
+		 * @return
+		 */
+		public static boolean checkInvalidCharacter(char c) {
+			return !isNull(c) && isNumeric(valueOf(c)) || isAlpha(valueOf(c)) || safeKeyChars.contains(c);
 		}
 
 		/**
 		 * Redis key-name safe characters.
 		 */
-		final private static List<Character> safeKeyChars = new ArrayList<Character>(4) {
+		final private static List<Character> safeKeyChars = unmodifiableList(new ArrayList<Character>(4) {
 			private static final long serialVersionUID = -7144798722787955277L;
 			{
 				add(':');
@@ -4281,19 +4330,19 @@ public class EnhancedJedisCluster extends JedisCluster {
 				add('.');
 				add('@');
 			}
-		};
+		});
 
 		/**
 		 * Redis key-name safe characters.
 		 */
-		final private static List<Character> warnKeyChars = new ArrayList<Character>(4) {
+		final private static List<Character> warnKeyChars = unmodifiableList(new ArrayList<Character>(4) {
 			private static final long serialVersionUID = -7144798722787955277L;
 			{
 				add('&');
 				add('!');
 				add('*');
 			}
-		};
+		});
 
 	}
 

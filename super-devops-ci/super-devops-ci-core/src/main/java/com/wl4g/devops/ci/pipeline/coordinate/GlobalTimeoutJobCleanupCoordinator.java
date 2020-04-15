@@ -37,7 +37,7 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static com.wl4g.devops.support.redis.EnhancedJedisCluster.SpecificationUtil.*;
+import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisFormatUtils.*;
 
 /**
  * Global timeout job handler finalizer.
@@ -90,7 +90,7 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 	 * @throws InterruptedException
 	 */
 	private void doInspectForTimeoutStopAndCleanup(String cleanupFinalizerLockName) throws InterruptedException {
-		Lock lock = lockManager.getLock(redisSpecFormat(cleanupFinalizerLockName));
+		Lock lock = lockManager.getLock(keyFormat(cleanupFinalizerLockName));
 		try {
 			// Cleanup timeout jobs on this node, nodes that do not
 			// acquire lock are on ready in place.
