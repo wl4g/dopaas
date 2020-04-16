@@ -22,8 +22,8 @@ import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.validation.constraints.NotBlank;
 
@@ -41,7 +41,7 @@ public class GrantCredentialsInfo implements Serializable {
 	/**
 	 * Grant credentials applications info.
 	 */
-	private Map<String, GrantApp> applications = new HashMap<>();
+	private Map<String, GrantApp> applications = new ConcurrentHashMap<>(8);
 
 	public GrantCredentialsInfo() {
 	}
