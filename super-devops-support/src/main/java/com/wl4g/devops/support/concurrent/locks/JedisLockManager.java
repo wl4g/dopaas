@@ -182,30 +182,22 @@ public class JedisLockManager {
 			String acquiredProcessId = jedisService.getJedisCluster().get(name);
 			// Current thread is holder?
 			if (!currentProcessId.equals(acquiredProcessId)) {
-				if (log.isDebugEnabled()) {
-					log.debug("No need to unlock of currentProcessId:{}, acquiredProcessId:{}, counter:{}", currentProcessId,
-							acquiredProcessId, counter);
-				}
+				log.debug("No need to unlock of currentProcessId: {}, acquiredProcessId: {}, counter: {}", currentProcessId,
+						acquiredProcessId, counter);
 				return;
 			}
 
 			// Obtain lock record once decrement.
 			counter.decrementAndGet();
-			if (log.isDebugEnabled()) {
-				log.debug("No need to unlock and reenter the stack lock layer, counter: {}", counter);
-			}
+			log.debug("No need to unlock and reenter the stack lock layer, counter: {}", counter);
 
 			if (counter.longValue() == 0L) { // All thread stack layers exited?
 				Object res = jedisService.getJedisCluster().eval(UNLOCK_LUA, singletonList(name),
 						singletonList(currentProcessId));
 				if (!assertValidity(res)) {
-					if (log.isDebugEnabled()) {
-						log.debug("Failed to unlock for %{}@{}", currentProcessId, name);
-					}
+					log.debug("Failed to unlock for %{}@{}", currentProcessId, name);
 				} else {
-					if (log.isDebugEnabled()) {
-						log.debug("Unlock successful for %{}@{}", currentProcessId, name);
-					}
+					log.debug("Unlock successful for %{}@{}", currentProcessId, name);
 				}
 			}
 		}

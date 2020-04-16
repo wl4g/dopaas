@@ -33,6 +33,7 @@ import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 /**
  * Abstract IAM authentication handler.
@@ -46,10 +47,10 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	/**
-	 * Rest template
+	 * IAM server configuration properties
 	 */
 	@Autowired
-	protected RestTemplate restTemplate;
+	protected IamProperties config;
 
 	/**
 	 * IAM security context handler
@@ -64,28 +65,34 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	protected ServerSecurityCoprocessor coprocessor;
 
 	/**
-	 * IAM server configuration properties
-	 */
-	@Autowired
-	protected IamProperties config;
-
-	/**
 	 * Key id generator
 	 */
 	@Autowired
 	protected SessionIdGenerator idGenerator;
 
 	/**
-	 * Enhanced cache manager.
+	 * Rest template
 	 */
 	@Autowired
-	protected EnhancedCacheManager cacheManager;
+	protected RestTemplate restTemplate;
 
 	/**
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
+
+	/**
+	 * Distributed locks.
+	 */
+	@Autowired
+	protected JedisLockManager lockManager;
+
+	/**
+	 * Enhanced cache manager.
+	 */
+	@Autowired
+	protected EnhancedCacheManager cacheManager;
 
 	/**
 	 * Grant ticket cache .

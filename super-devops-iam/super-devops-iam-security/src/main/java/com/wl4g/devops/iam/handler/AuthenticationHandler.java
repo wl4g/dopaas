@@ -111,7 +111,7 @@ public interface AuthenticationHandler {
 	 *            from source application name
 	 * @return
 	 */
-	SecondAuthcAssertModel secondValidate(String secondAuthCode, String appName);
+	SecondAuthcAssertModel secondaryValidate(String secondAuthCode, String appName);
 
 	/**
 	 * Sessions expired validation
