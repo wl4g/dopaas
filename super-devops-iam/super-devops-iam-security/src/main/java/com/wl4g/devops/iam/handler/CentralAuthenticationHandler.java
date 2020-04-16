@@ -204,14 +204,23 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		if (nonNull(subject) && subject.isAuthenticated() && !isBlank((String) subject.getPrincipal())) {
 			Session session = subject.getSession();
 
-			// Generate grantCredentials info. Same: CAS/service-ticket
-			String initGrantTicket = generateGrantTicket();
-			log.info("New init grantTicket: {}, grantAppname: {}", initGrantTicket, grantAppname);
+			// Generate granting ticket. Same: CAS/service-ticket
+			String grantTicket = null;
+			// If the ticket has been generated in the previous
+			// moment.(currently?)
+			GrantApp grant = getGrantCredentials(session).getGrantApp(grantAppname);
+			if (!isNull(grant)) {
+				grantTicket = grant.getGrantTicket();
+			} else {
+				// Init generate grantCredentials
+				grantTicket = generateGrantTicket();
+				log.info("New init grantTicket: {}, grantAppname: {}", grantTicket, grantAppname);
+			}
 
-			// Storage grantInfo session => applications
-			putGrantCredentials(session, grantAppname, new GrantApp().setGrantTicket(initGrantTicket));
+			// Puts grantInfo session => applications
+			putGrantCredentials(session, grantAppname, new GrantApp().setGrantTicket(grantTicket));
 
-			return new LoggedModel(initGrantTicket);
+			return new LoggedModel(grantTicket);
 		}
 		throw new AuthenticationException("Unauthenticated");
 	}
@@ -341,7 +350,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	/**
-	 * Gets bind session grantCredentials info.
+	 * Gets bind session granting credentials.
 	 *
 	 * @param session
 	 * @return
@@ -353,7 +362,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	/**
-	 * Storage grantCredentials to session. </br>
+	 * Puts grantCredentials to session. </br>
 	 *
 	 * @param session
 	 *            Session
