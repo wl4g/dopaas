@@ -31,8 +31,8 @@ import org.springframework.cglib.beans.BeanMap;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.common.exception.iam.SnsApiBindingException;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
+import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
@@ -101,7 +101,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	 * Enhanced cache manager.
 	 */
 	@Autowired
-	protected EnhancedCacheManager cacheManager;
+	protected IamCacheManager cacheManager;
 
 	/**
 	 * Delegate message source.
@@ -231,8 +231,8 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 		}
 
 		// Save to cache
-		cacheManager.getEnhancedCache(CACHE_SNSAUTH)
-				.put(new EnhancedKey(KEY_SNS_CONNECT_PARAMS + state, snsConfig.getOauth2ConnectExpireMs()), connectParamsAll);
+		cacheManager.getIamCache(CACHE_SNSAUTH)
+				.put(new CacheKey(KEY_SNS_CONNECT_PARAMS + state, snsConfig.getOauth2ConnectExpireMs()), connectParamsAll);
 	}
 
 	/**
@@ -243,8 +243,8 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	protected Map<String, String> getOauth2ConnectParameters(String state, HttpServletRequest request) {
-		return (Map<String, String>) cacheManager.getEnhancedCache(CACHE_SNSAUTH)
-				.get(new EnhancedKey(KEY_SNS_CONNECT_PARAMS + state, HashMap.class));
+		return (Map<String, String>) cacheManager.getIamCache(CACHE_SNSAUTH)
+				.get(new CacheKey(KEY_SNS_CONNECT_PARAMS + state, HashMap.class));
 	}
 
 	/**
@@ -281,7 +281,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 		 */
 		SocialAuthorizeInfo authInfo = new SocialAuthorizeInfo(provider, openId.openId(), openId.unionId(), userProfile);
 		String callbackId = generateCallbackId();
-		cacheManager.getEnhancedCache(CACHE_SNSAUTH).put(new EnhancedKey(getOAuth2CallbackKey(callbackId), 30), authInfo);
+		cacheManager.getIamCache(CACHE_SNSAUTH).put(new CacheKey(getOAuth2CallbackKey(callbackId), 30), authInfo);
 		return callbackId;
 	}
 
@@ -361,7 +361,7 @@ public abstract class AbstractSnsHandler implements SnsHandler {
 	 */
 	private void cleanup(String state) {
 		hasTextOf(state, config.getParam().getState());
-		cacheManager.getEnhancedCache(CACHE_SNSAUTH).remove(new EnhancedKey(KEY_SNS_CONNECT_PARAMS + state));
+		cacheManager.getIamCache(CACHE_SNSAUTH).remove(new CacheKey(KEY_SNS_CONNECT_PARAMS + state));
 	}
 
 	/**

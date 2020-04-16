@@ -156,7 +156,7 @@ public class SmsSecurityVerifier extends AbstractSecurityVerifier implements Ini
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.applySmsCumulator = newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
+		this.applySmsCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_SMS_COUNTER),
 				config.getMatcher().getFailFastSmsMaxDelay());
 		notNullOf(applySmsCumulator, "applyCumulator");
 	}

@@ -39,7 +39,7 @@ import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.model.LogoutModel;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
@@ -75,7 +75,7 @@ public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<Aut
 	final protected RestTemplate restTemplate;
 
 	public LogoutAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
-			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager, RestTemplate restTemplate) {
+			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager, RestTemplate restTemplate) {
 		super(config, context, coprocessor, cacheManager);
 		Assert.notNull(restTemplate, "'restTemplate' must not be null");
 		this.restTemplate = restTemplate;

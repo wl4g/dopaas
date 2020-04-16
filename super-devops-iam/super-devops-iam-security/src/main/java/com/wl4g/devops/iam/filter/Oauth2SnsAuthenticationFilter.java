@@ -27,7 +27,7 @@ import org.springframework.core.ResolvableType;
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.sns.handler.AbstractSnsHandler;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SNSAUTH;
@@ -74,13 +74,13 @@ public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthentic
 		String callbackKey = AbstractSnsHandler.getOAuth2CallbackKey(callbackId);
 		try {
 			// Get SNS OAuth2 callback info,
-			SocialAuthorizeInfo authorizedInfo = (SocialAuthorizeInfo) cacheManager.getEnhancedCache(CACHE_SNSAUTH)
-					.get(new EnhancedKey(callbackKey, SocialAuthorizeInfo.class));
+			SocialAuthorizeInfo authorizedInfo = (SocialAuthorizeInfo) cacheManager.getIamCache(CACHE_SNSAUTH)
+					.get(new CacheKey(callbackKey, SocialAuthorizeInfo.class));
 
 			// Create authentication token instance
 			return authenticationTokenConstructor.newInstance(remoteHost, redirectInfo, authorizedInfo);
 		} finally { // Cleanup temporary OAuth2 info.
-			cacheManager.getEnhancedCache(CACHE_SNSAUTH).remove(new EnhancedKey(callbackKey));
+			cacheManager.getIamCache(CACHE_SNSAUTH).remove(new CacheKey(callbackKey));
 		}
 	}
 

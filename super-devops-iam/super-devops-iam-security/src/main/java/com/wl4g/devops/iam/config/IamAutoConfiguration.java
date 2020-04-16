@@ -42,8 +42,8 @@ import com.wl4g.devops.iam.authc.credential.secure.DefaultCredentialsSecurer;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.authc.pam.ExceptionModularRealmAuthenticator;
 import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
+import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
@@ -178,7 +178,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public IamServerSessionManager iamServerSessionManager(IamSessionFactory sessionFactory, JedisIamSessionDAO sessionDao,
-			EnhancedCacheManager cacheManager, SimpleCookie cookie, IamProperties config) {
+			IamCacheManager cacheManager, SimpleCookie cookie, IamProperties config) {
 		IamServerSessionManager sessionManager = new IamServerSessionManager(config);
 		sessionManager.setSessionFactory(sessionFactory);
 		sessionManager.setSessionDAO(sessionDao);
@@ -224,7 +224,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public IamCredentialsSecurer iamCredentialsSecurer(SecureConfigureAdapter adapter, JedisCacheManager cacheManager) {
+	public IamCredentialsSecurer iamCredentialsSecurer(SecureConfigureAdapter adapter, JedisIamCacheManager cacheManager) {
 		return new DefaultCredentialsSecurer(adapter.configure(), cacheManager);
 	}
 

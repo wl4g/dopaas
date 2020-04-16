@@ -32,9 +32,9 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.cache.IamCache;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
+import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
@@ -58,10 +58,10 @@ public class SimpleRcmEvaluatorHandler implements RiskEvaluatorHandler, Initiali
 	protected IamProperties config;
 
 	/**
-	 * {@link EnhancedCacheManager}
+	 * {@link IamCacheManager}
 	 */
 	@Autowired
-	protected EnhancedCacheManager cacheManager;
+	protected IamCacheManager cacheManager;
 
 	/**
 	 * IAM security context handler
@@ -76,13 +76,13 @@ public class SimpleRcmEvaluatorHandler implements RiskEvaluatorHandler, Initiali
 	protected ServerSecurityCoprocessor coprocessor;
 
 	/**
-	 * {@link EnhancedCache}
+	 * {@link IamCache}
 	 */
-	protected EnhancedCache umidCache;
+	protected IamCache umidCache;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.umidCache = cacheManager.getEnhancedCache(CACHE_SIMPLE_RCM_UMIDTOKEN);
+		this.umidCache = cacheManager.getIamCache(CACHE_SIMPLE_RCM_UMIDTOKEN);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class SimpleRcmEvaluatorHandler implements RiskEvaluatorHandler, Initiali
 		// Generate umidToken.
 		String umidToken = randomAlphanumeric(59).toUpperCase(US);
 		// Storage umidToken=>umid
-		umidCache.put(new EnhancedKey(umidToken, 60_000), umid);
+		umidCache.put(new CacheKey(umidToken, 60_000), umid);
 
 		log.info("Created umidToken: {}, umid: {}", umidToken, umid);
 		return umidToken;

@@ -16,8 +16,8 @@
 package com.wl4g.devops.iam.authc.credential;
 
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.cache.IamCache;
+import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.config.properties.MatcherProperties;
 
@@ -53,7 +53,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	/**
 	 * EnhancedCache
 	 */
-	private EnhancedCache lockCache;
+	private IamCache lockCache;
 
 	/**
 	 * Attempts accumulator
@@ -79,12 +79,12 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		MatcherProperties matcher = config.getMatcher();
-		this.lockCache = cacheManager.getEnhancedCache(CACHE_MATCH_LOCK);
-		this.matchCumulator = newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_MATCH_COUNTER),
+		this.lockCache = cacheManager.getIamCache(CACHE_MATCH_LOCK);
+		this.matchCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_MATCH_COUNTER),
 				matcher.getFailFastMatchDelay());
-		this.applyCaptchaCumulator = newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
+		this.applyCaptchaCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
 				matcher.getFailFastCaptchaDelay());
-		this.applySmsCumulator = newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
+		this.applySmsCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_SMS_COUNTER),
 				matcher.getFailFastSmsMaxDelay());
 		this.sessionMatchCumulator = newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER, matcher.getFailFastMatchDelay());
 
@@ -184,7 +184,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		factors.forEach(f -> {
 			try {
 				log.info("Remove lock factor: {}", f);
-				lockCache.remove(new EnhancedKey(f));
+				lockCache.remove(new CacheKey(f));
 			} catch (Exception e) {
 				log.error("", e);
 			}
@@ -219,7 +219,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			cumulatedMax = Math.max(cumulatedMax, cumulated);
 
 			// Check last locked remain time(if exist)
-			String lockedPrincipal = (String) lockCache.get(new EnhancedKey(factor, String.class));
+			String lockedPrincipal = (String) lockCache.get(new CacheKey(factor, String.class));
 
 			// Previous locks have not expired
 			if (isNotBlank(lockedPrincipal)) {
@@ -241,7 +241,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			 * If lockout is required at present, Update decay counter time
 			 */
 			if (factorLock) {
-				Long remainTime = lockCache.timeToLive(new EnhancedKey(factor, matchLockDelay), principal);
+				Long remainTime = lockCache.timeToLive(new CacheKey(factor, matchLockDelay), principal);
 				log.warn(format(
 						"Matching failed, limiter factor [%s] attempts have been made to exceed the maximum limit [%s], remain time [%s Sec] [%s]",
 						factor, matchLockMaxAttempts, remainTime, factor));
@@ -291,7 +291,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			failPrincipalFactors.forEach(f -> {
 				try {
 					log.info("Remove past.failure principal factor: {}", f);
-					lockCache.remove(new EnhancedKey(f));
+					lockCache.remove(new CacheKey(f));
 				} catch (Exception e) {
 					log.error("", e);
 				}

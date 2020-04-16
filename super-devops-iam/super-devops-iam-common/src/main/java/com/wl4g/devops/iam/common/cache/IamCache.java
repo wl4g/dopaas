@@ -15,10 +15,12 @@
  */
 package com.wl4g.devops.iam.common.cache;
 
+import static com.google.common.base.Charsets.UTF_8;
+
+import java.util.Map;
+
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
-
-import com.google.common.base.Charsets;
 
 /**
  * Enhanced implementation of Shiro cache support for automatic expiratio
@@ -28,10 +30,10 @@ import com.google.common.base.Charsets;
  * @date 2018年11月29日
  * @since
  */
-public interface EnhancedCache extends Cache<EnhancedKey, Object> {
+public interface IamCache extends Cache<CacheKey, Object> {
 
-	final static byte[] NXXX = "NX".getBytes(Charsets.UTF_8);
-	final static byte[] EXPX = "PX".getBytes(Charsets.UTF_8);
+	final static byte[] NXXX = "NX".getBytes(UTF_8);
+	final static byte[] EXPX = "PX".getBytes(UTF_8);
 
 	/**
 	 * Decay counter
@@ -43,7 +45,7 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 	 *         setup
 	 * @throws CacheException
 	 */
-	Long timeToLive(final EnhancedKey key, Object value) throws CacheException;
+	Long timeToLive(final CacheKey key, Object value) throws CacheException;
 
 	/**
 	 * Get and add an atomic counter at the same time
@@ -52,7 +54,7 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 	 * @return
 	 * @throws CacheException
 	 */
-	Long incrementGet(final EnhancedKey key) throws CacheException;
+	Long incrementGet(final CacheKey key) throws CacheException;
 
 	/**
 	 * Get and add an atomic counter at the same time
@@ -62,7 +64,7 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 	 * @return
 	 * @throws CacheException
 	 */
-	Long incrementGet(final EnhancedKey key, long incrBy) throws CacheException;
+	Long incrementGet(final CacheKey key, long incrBy) throws CacheException;
 
 	/**
 	 * Acquisition and reduction of atomic counter once at a time
@@ -71,7 +73,7 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 	 * @return
 	 * @throws CacheException
 	 */
-	Long decrementGet(final EnhancedKey key) throws CacheException;
+	Long decrementGet(final CacheKey key) throws CacheException;
 
 	/**
 	 * Acquisition and reduction of atomic counter once at a time
@@ -81,7 +83,7 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 	 * @return
 	 * @throws CacheException
 	 */
-	Long decrementGet(final EnhancedKey key, long decrBy) throws CacheException;
+	Long decrementGet(final CacheKey key, long decrBy) throws CacheException;
 
 	/**
 	 * Put(If not exist)
@@ -90,6 +92,73 @@ public interface EnhancedCache extends Cache<EnhancedKey, Object> {
 	 * @param value
 	 * @return
 	 */
-	boolean putIfAbsent(final EnhancedKey key, final Object value);
+	boolean putIfAbsent(final CacheKey key, final Object value);
+
+	// --- Enhanced API. ---
+
+	/**
+	 * Puts map field.
+	 * 
+	 * @param fieldKey
+	 * @param fieldValue
+	 * @param expireMs
+	 * @return
+	 */
+	String mapPut(String fieldKey, Object fieldValue);
+
+	/**
+	 * Puts map field.
+	 * 
+	 * @param fieldKey
+	 * @param fieldValue
+	 * @param expireSec
+	 * @return
+	 */
+	String mapPut(String fieldKey, Object fieldValue, int expireSec);
+
+	/**
+	 * Puts map fields all.
+	 * 
+	 * @param map
+	 * @return
+	 */
+	String mapPutAll(Map<String, Object> map);
+
+	/**
+	 * Puts map fields all.
+	 * 
+	 * @param map
+	 * @param expireSec
+	 * @return
+	 */
+	String mapPutAll(Map<String, Object> map, int expireSec);
+
+	/**
+	 * Remove f ields map.
+	 * 
+	 * @param fieldKey
+	 * @return
+	 */
+	Long mapRemove(String fieldKey);
+
+	/**
+	 * Remove fields ma p.
+	 */
+	void mapRemoveAll();
+
+	/**
+	 * Gets field of map.
+	 * 
+	 * @param fieldKey
+	 * @return
+	 */
+	<T> T getMapField(String fieldKey);
+
+	/**
+	 * Gets fields map.
+	 * 
+	 * @return
+	 */
+	<T> Map<String, T> getMapAll();
 
 }

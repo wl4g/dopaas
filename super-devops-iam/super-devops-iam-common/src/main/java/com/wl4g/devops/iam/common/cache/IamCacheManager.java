@@ -26,14 +26,15 @@ import org.apache.shiro.cache.CacheManager;
  * @time 2017年4月13日
  * @since
  */
-public interface EnhancedCacheManager extends CacheManager {
+public interface IamCacheManager extends CacheManager {
 
 	/**
-	 * Getting enhanced cache instance
+	 * Gets {@link IamCache} instance
 	 *
 	 * @param name
 	 * @return
 	 * @throws CacheException
 	 */
-	EnhancedCache getEnhancedCache(String name) throws CacheException;
+	IamCache getIamCache(String name) throws CacheException;
+
 }

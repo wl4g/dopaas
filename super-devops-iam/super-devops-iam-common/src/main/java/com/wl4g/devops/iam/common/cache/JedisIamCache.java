@@ -15,16 +15,28 @@
  */
 package com.wl4g.devops.iam.common.cache;
 
+import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.iam.common.cache.CacheKey.*;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Collections.singletonMap;
+import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toMap;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.shiro.cache.CacheException;
-import org.apache.shiro.util.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
-import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
+
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.*;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -36,22 +48,23 @@ import redis.clients.jedis.JedisCluster;
  * @date 2018年11月30日
  * @since
  */
-public class JedisEnhancedCache implements EnhancedCache {
-	final private Logger log = LoggerFactory.getLogger(JedisEnhancedCache.class);
+public class JedisIamCache implements IamCache {
+	final protected SmartLogger log = getLogger(getClass());
+
 	private String name;
 	private JedisCluster jedisCluster;
 
-	public JedisEnhancedCache(String name, JedisCluster jedisCluster) {
+	public JedisIamCache(String name, JedisCluster jedisCluster) {
+		notNull(name, "'name' must not be null");
+		notNull(jedisCluster, "'jedisCluster' must not be null");
 		this.name = name;
 		this.jedisCluster = jedisCluster;
-		Assert.notNull(name, "'name' must not be null");
-		Assert.notNull(jedisCluster, "'jedisCluster' must not be null");
 	}
 
 	@Override
-	public Object get(final EnhancedKey key) throws CacheException {
-		Assert.notNull(key, "'key' must not be null");
-		Assert.notNull(key.getValueClass(), "'valueClass' must not be null");
+	public Object get(final CacheKey key) throws CacheException {
+		notNull(key, "'key' must not be null");
+		notNull(key.getValueClass(), "'valueClass' must not be null");
 		if (log.isDebugEnabled()) {
 			log.debug("Get key={}", key);
 		}
@@ -61,13 +74,13 @@ public class JedisEnhancedCache implements EnhancedCache {
 			return key.getDeserializer().deserialize(data, key.getValueClass());
 		}
 
-		return ProtostuffUtils.deserialize(data, key.getValueClass());
+		return deserialize(data, key.getValueClass());
 	}
 
 	@Override
-	public Object put(final EnhancedKey key, final Object value) throws CacheException {
-		Assert.notNull(key, "'key' must not be null");
-		Assert.notNull(value, "'value' must not be null");
+	public Object put(final CacheKey key, final Object value) throws CacheException {
+		notNull(key, "'key' must not be null");
+		notNull(value, "'value' must not be null");
 		if (log.isDebugEnabled()) {
 			log.debug("Put key={}, value={}", key, value);
 		}
@@ -76,7 +89,7 @@ public class JedisEnhancedCache implements EnhancedCache {
 		if (key.getSerializer() != null) { // Using a custom serializer
 			data = key.getSerializer().serialize(value);
 		} else {
-			data = ProtostuffUtils.serialize(value);
+			data = serialize(value);
 		}
 
 		String ret = null;
@@ -89,8 +102,8 @@ public class JedisEnhancedCache implements EnhancedCache {
 	}
 
 	@Override
-	public Object remove(final EnhancedKey key) throws CacheException {
-		Assert.notNull(key, "'key' must not be null");
+	public Object remove(final CacheKey key) throws CacheException {
+		notNull(key, "'key' must not be null");
 		if (log.isDebugEnabled()) {
 			log.debug("Remove key={}", key);
 		}
@@ -115,7 +128,7 @@ public class JedisEnhancedCache implements EnhancedCache {
 
 	@Deprecated
 	@Override
-	public Set<EnhancedKey> keys() {
+	public Set<CacheKey> keys() {
 		// if (log.isDebugEnabled()) {
 		// log.debug("Keys name={}", name);
 		// }
@@ -143,9 +156,9 @@ public class JedisEnhancedCache implements EnhancedCache {
 	}
 
 	@Override
-	public Long timeToLive(EnhancedKey key, Object value) throws CacheException {
-		Assert.notNull(value, "TTL key is null, please check configure");
-		Assert.notNull(value, "TTL value is null, please check configure");
+	public Long timeToLive(CacheKey key, Object value) throws CacheException {
+		notNull(value, "TTL key is null, please check configure");
+		notNull(value, "TTL value is null, please check configure");
 
 		byte[] realKey = key.getKey(name);
 		// New create.
@@ -165,12 +178,12 @@ public class JedisEnhancedCache implements EnhancedCache {
 	}
 
 	@Override
-	public Long incrementGet(EnhancedKey key) throws CacheException {
+	public Long incrementGet(CacheKey key) throws CacheException {
 		return incrementGet(key, 1);
 	}
 
 	@Override
-	public Long incrementGet(EnhancedKey key, long incrBy) throws CacheException {
+	public Long incrementGet(CacheKey key, long incrBy) throws CacheException {
 		byte[] realKey = key.getKey(name);
 		// Increment
 		Long res = jedisCluster.incrBy(key.getKey(name), incrBy);
@@ -182,12 +195,12 @@ public class JedisEnhancedCache implements EnhancedCache {
 	}
 
 	@Override
-	public Long decrementGet(EnhancedKey key) throws CacheException {
+	public Long decrementGet(CacheKey key) throws CacheException {
 		return decrementGet(key, 1);
 	}
 
 	@Override
-	public Long decrementGet(EnhancedKey key, long decrBy) throws CacheException {
+	public Long decrementGet(CacheKey key, long decrBy) throws CacheException {
 		byte[] realKey = key.getKey(name);
 		// Decrement
 		Long res = jedisCluster.decr(realKey);
@@ -199,24 +212,88 @@ public class JedisEnhancedCache implements EnhancedCache {
 	}
 
 	@Override
-	public boolean putIfAbsent(final EnhancedKey key, final Object value) {
-		Assert.notNull(key, "'key' must not be null");
-		Assert.notNull(value, "'value' must not be null");
-		if (log.isDebugEnabled()) {
-			log.debug("Put key={}, value={}", key, value);
-		}
+	public boolean putIfAbsent(final CacheKey key, final Object value) {
+		notNull(key, "'key' must not be null");
+		notNull(value, "'value' must not be null");
+		log.debug("Put key={}, value={}", key, value);
 
 		byte[] data = null;
 		if (key.getSerializer() != null) { // Using a custom serializer
 			data = key.getSerializer().serialize(value);
 		} else {
-			data = ProtostuffUtils.serialize(value);
+			data = serialize(value);
 		}
 
 		if (key.hasExpire()) {
 			return jedisCluster.set(key.getKey(name), data, NXXX, EXPX, key.getExpireMs()) != null;
 		}
-		return jedisCluster.setnx(key.getKey(name), data) != null;
+		return !isNull(jedisCluster.setnx(key.getKey(name), data));
+	}
+
+	// --- Enhanced API. ---
+
+	@Override
+	public String mapPut(String fieldKey, Object fieldValue) {
+		return mapPut(fieldKey, fieldValue, 0);
+	}
+
+	@Override
+	public String mapPut(String fieldKey, Object fieldValue, int expireSec) {
+		hasTextOf(fieldKey, "fieldKey");
+		notNull(fieldValue, "fieldValue");
+		log.debug("mapPut key={}, value={}", fieldKey, fieldValue);
+
+		return mapPutAll(singletonMap(fieldKey, serialize(fieldValue)), expireSec);
+	}
+
+	@Override
+	public String mapPutAll(Map<String, Object> map) {
+		return mapPutAll(map, 0);
+	}
+
+	@Override
+	public String mapPutAll(Map<String, Object> map, int expireSec) {
+		if (isEmpty(map))
+			return null;
+		log.debug("mapPut map={}", map);
+
+		// Convert to fields map.
+		Map<byte[], byte[]> fieldsMap = map.entrySet().stream().collect(toMap(e -> {
+			hasTextOf(e.getKey(), "fieldKey");
+			return toKeyBytes(e.getKey());
+		}, e -> {
+			notNull(e.getValue(), "fieldValue");
+			return SerializationUtils.serialize((Serializable) e.getValue());
+		}));
+		// Hash map sets
+		byte[] mapKey = toKeyBytes(name);
+		String res = jedisCluster.hmset(mapKey, fieldsMap);
+		if (expireSec != 0) {
+			jedisCluster.expire(mapKey, expireSec);
+		}
+		return res;
+	}
+
+	@Override
+	public <T> T getMapField(String fieldKey) {
+		return SerializationUtils.deserialize(jedisCluster.hget(toKeyBytes(name), toKeyBytes(fieldKey)));
+	}
+
+	@Override
+	public <T> Map<String, T> getMapAll() {
+		return safeMap(jedisCluster.hgetAll(toKeyBytes(name))).entrySet().stream()
+				.collect(toMap(e -> new String(e.getKey(), UTF_8), e -> SerializationUtils.deserialize(e.getValue())));
+	}
+
+	@Override
+	public Long mapRemove(String fieldKey) {
+		hasTextOf(fieldKey, "fieldKey");
+		return jedisCluster.hdel(toKeyBytes(name), toKeyBytes(fieldKey));
+	}
+
+	@Override
+	public void mapRemoveAll() {
+		jedisCluster.del(toKeyBytes(name));
 	}
 
 }

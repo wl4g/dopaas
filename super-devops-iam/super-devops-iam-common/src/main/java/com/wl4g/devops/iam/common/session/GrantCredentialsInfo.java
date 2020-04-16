@@ -39,49 +39,49 @@ public class GrantCredentialsInfo implements Serializable {
 	private static final long serialVersionUID = -3499216861786196071L;
 
 	/**
-	 * Grant credentials applications info.
+	 * Grant credentials grantApps info.
 	 */
-	private Map<String, GrantApp> applications = new ConcurrentHashMap<>(8);
+	private Map<String, GrantApp> grantApps = new ConcurrentHashMap<>(8);
 
 	public GrantCredentialsInfo() {
 	}
 
-	public GrantCredentialsInfo(Map<String, GrantApp> applications) {
-		setApplications(applications);
+	public GrantCredentialsInfo(Map<String, GrantApp> grantApps) {
+		setGrantApps(grantApps);
 	}
 
 	/**
-	 * Gets grant credentials applications info.
+	 * Gets grant credentials grantApps info.
 	 * 
 	 * @return
 	 */
-	public Map<String, GrantApp> getApplications() {
-		return applications;
+	public Map<String, GrantApp> getGrantApps() {
+		return grantApps;
 	}
 
 	/**
-	 * Sets grant credentials applications info.
+	 * Sets grant credentials grantApps info.
 	 * 
-	 * @param applications
+	 * @param grantApps
 	 * @return
 	 */
-	public GrantCredentialsInfo setApplications(Map<String, GrantApp> applications) {
-		notEmptyOf(applications, "applications");
-		this.applications.putAll(applications);
+	public GrantCredentialsInfo setGrantApps(Map<String, GrantApp> grantApps) {
+		notEmptyOf(grantApps, "grantApps");
+		this.grantApps.putAll(grantApps);
 		return this;
 	}
 
 	/**
-	 * Adds grant credentials {@link GrantApp}.
+	 * Puts grant credentials {@link GrantApp}.
 	 * 
 	 * @param grantAppname
 	 * @param grant
 	 * @return
 	 */
-	public GrantCredentialsInfo addApplications(String grantAppname, GrantApp grant) {
+	public GrantCredentialsInfo putGrant(String grantAppname, GrantApp grant) {
 		hasTextOf(grantAppname, "grantAppname");
-		notNullOf(grant, "grantAppInfo");
-		this.applications.put(grantAppname, grant);
+		notNullOf(grant, "grantApp");
+		this.grantApps.put(grantAppname, grant);
 		return this;
 	}
 
@@ -94,7 +94,7 @@ public class GrantCredentialsInfo implements Serializable {
 	 */
 	public GrantApp getGrantApp(String grantAppname) {
 		hasTextOf(grantAppname, "grantAppname");
-		return applications.get(grantAppname);
+		return grantApps.get(grantAppname);
 	}
 
 	/**
@@ -103,8 +103,8 @@ public class GrantCredentialsInfo implements Serializable {
 	 * @param grantAppname
 	 * @return
 	 */
-	public boolean hasApplication(String grantAppname) {
-		return getApplications().containsKey(grantAppname);
+	public boolean has(String grantAppname) {
+		return getGrantApps().containsKey(grantAppname);
 	}
 
 	/**
@@ -112,8 +112,8 @@ public class GrantCredentialsInfo implements Serializable {
 	 * 
 	 * @return
 	 */
-	public boolean hasApplications() {
-		return !isEmpty(getApplications());
+	public boolean hasEmpty() {
+		return !isEmpty(getGrantApps());
 	}
 
 	@Override

@@ -31,7 +31,7 @@ import com.google.common.base.Charsets;
  * @time 2017年6月20日
  * @since
  */
-public class EnhancedKey implements Serializable {
+public class CacheKey implements Serializable {
 	private static final long serialVersionUID = 3452072504066624385L;
 
 	private String key;
@@ -40,27 +40,27 @@ public class EnhancedKey implements Serializable {
 	private Serializer serializer;
 	private Deserializer deserializer;
 
-	public EnhancedKey(Serializable key) {
+	public CacheKey(Serializable key) {
 		this(key, -1); // -1:not overdue
 	}
 
-	public EnhancedKey(byte[] key) {
+	public CacheKey(byte[] key) {
 		this.key = new String(key);
 		this.expire = 0;
 	}
 
-	public EnhancedKey(Serializable key, Class<?> valueClass) {
+	public CacheKey(Serializable key, Class<?> valueClass) {
 		Assert.notNull(key, "'key' must not be null");
 		Assert.notNull(valueClass, "'valueClass' must not be null");
 		this.key = key.toString();
 		this.valueClass = valueClass;
 	}
 
-	public EnhancedKey(Serializable key, long expireMs) {
+	public CacheKey(Serializable key, long expireMs) {
 		this(key, (int) TimeUnit.MILLISECONDS.toSeconds(expireMs));
 	}
 
-	public EnhancedKey(Serializable key, int expireSec) {
+	public CacheKey(Serializable key, int expireSec) {
 		Assert.notNull(key, "'key' must not be null");
 		this.key = key.toString();
 		this.expire = expireSec;
@@ -93,7 +93,7 @@ public class EnhancedKey implements Serializable {
 		return valueClass;
 	}
 
-	public EnhancedKey serializer(Serializer serializer) {
+	public CacheKey serializer(Serializer serializer) {
 		Assert.notNull(serializer, "'serializer' must not be null");
 		this.serializer = serializer;
 		return this;
@@ -103,7 +103,7 @@ public class EnhancedKey implements Serializable {
 		return serializer;
 	}
 
-	public EnhancedKey deserializer(Deserializer deserializer) {
+	public CacheKey deserializer(Deserializer deserializer) {
 		Assert.notNull(deserializer, "'deserializer' must not be null");
 		this.deserializer = deserializer;
 		return this;
@@ -117,6 +117,10 @@ public class EnhancedKey implements Serializable {
 	public String toString() {
 		return "EnhancedKey [" + (key != null ? "key=" + key + ", " : "") + (expire != null ? "expire=" + expire + ", " : "")
 				+ (valueClass != null ? "valueClass=" + valueClass : "") + "]";
+	}
+
+	public static byte[] toKeyBytes(String key) {
+		return toKeyBytes(null, key);
 	}
 
 	public static byte[] toKeyBytes(String prefix, String key) {
