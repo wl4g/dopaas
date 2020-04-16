@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.TaskBuildCommand;
@@ -230,7 +231,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// Checked out? pull and merge.
 		if (getVcsOperator(project).hasLocalRepository(projectDir)) {
 			log.info(writeBuildLog("Pulling project source to '%s:%s' ...", branch, projectDir));
-			getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir, branch);
+			getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir, branch, VcsOperator.VcsAction.of(taskHisy.getBranchType()));
 		} else { // Unchecked out? new clone & checkout.
 			log.info(writeBuildLog("New checkout project source to '%s:%s' ...", branch, projectDir));
 			getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);

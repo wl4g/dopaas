@@ -17,7 +17,15 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
+import com.wl4g.devops.common.bean.ci.Project;
+import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
+
+import java.io.File;
+
+import static java.lang.String.format;
 
 /**
  * Pipeline provider for deployment Spring-boot executable jar project.
@@ -33,13 +41,25 @@ public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvi
 	}
 
 	@Override
-	public void execute() throws Exception {
-		throw new UnsupportedOperationException();
-	}
+	protected void postModuleBuiltCommand() throws Exception {
+		//TODO need tar Executable's Jar?
 
-	@Override
-	public void rollback() throws Exception {
-		throw new UnsupportedOperationException();
+		Project project = getContext().getProject();
+		String prgramInstallFileName = config.getPrgramInstallFileName(getContext().getAppCluster().getName());
+		TaskHistory taskHistory = getContext().getTaskHistory();
+		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
+		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
+		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
+
+		String tarCommand = format("cd %s/target\nmkdir %s\ncp *.jar %s/\ntar -cvf %s/target/%s.tar %s", projectDir,
+				prgramInstallFileName, prgramInstallFileName, projectDir, prgramInstallFileName,prgramInstallFileName);
+		log.info(writeBuildLog("view native built, packing the assets file command: %s", tarCommand));
+
+		// Execution command.
+		// TODO timeoutMs?
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
+				.setStdout(jobLogFile).setStderr(jobLogFile);
+		pm.execWaitForComplete(cmd);
 	}
 
 	@Override
