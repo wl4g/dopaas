@@ -181,15 +181,22 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		attributes.put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
 
 		// Sets re-generate childDataCipherKey(grant application)
-		String childDataCipherKey = generateDataCipherKey();
-		attributes.put(KEY_DATA_CIPHER_KEY, childDataCipherKey);
+		String childDataCipherKey = null;
+		if (config.getCipher().isEnableDataCipher()) {
+			childDataCipherKey = generateDataCipherKey();
+			attributes.put(KEY_DATA_CIPHER_KEY, childDataCipherKey);
+		}
 		// Sets re-generate childAccessToken(grant application)
-		String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_KEY);
-		String childAccessTokenSignKey = generateAccessTokenSignKey(model.getSessionId(), accessTokenSignKey);
-		attributes.put(KEY_ACCESSTOKEN_SIGN_KEY, childAccessTokenSignKey);
+		String childAccessTokenSignKey = null;
+		if (config.getSession().isEnableAccessTokenValidity()) {
+			String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_KEY);
+			childAccessTokenSignKey = generateAccessTokenSignKey(model.getSessionId(), accessTokenSignKey);
+			attributes.put(KEY_ACCESSTOKEN_SIGN_KEY, childAccessTokenSignKey);
+		}
 
-		// Refresh grantCredentials info.
-		GrantApp grant = new GrantApp(newGrantTicket).setDataCipher(childDataCipherKey).setAccessTokenSignKey(accessTokenSignKey);
+		// Storage grantCredentials info.
+		GrantApp grant = new GrantApp(newGrantTicket).setDataCipher(childDataCipherKey)
+				.setAccessTokenSignKey(childAccessTokenSignKey);
 		putGrantCredentials(getSession(false), grantAppname, grant);
 
 		return assertion;

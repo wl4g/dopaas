@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.common.session;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
 
@@ -31,6 +33,13 @@ public class IamSessionTests {
 		byte[] res = ProtostuffUtils.serialize(session);
 		IamSession s2 = ProtostuffUtils.deserialize(res, IamSession.class);
 		System.out.println(s2.getAttribute("userProfile"));
+
+		System.out.println("-----------------");
+
+		byte[] data = SerializationUtils.serialize(new IamSession("111"));
+		IamSession s = SerializationUtils.deserialize(data);
+		System.out.println(s);
+
 	}
 
 }

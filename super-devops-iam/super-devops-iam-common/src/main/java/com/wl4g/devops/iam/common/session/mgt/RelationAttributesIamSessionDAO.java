@@ -30,6 +30,7 @@ import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
@@ -67,6 +68,15 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 	}
 
 	@Override
+	public Serializable create(Session session) {
+		try {
+			return super.create(session);
+		} finally {
+			((IamSession) session).setRelationAttrsCache(relationAttrsCache);
+		}
+	}
+
+	@Override
 	public void update(final Session session) throws UnknownSessionException {
 		if (isNull(session) || isNull(session.getId()))
 			return;
@@ -80,6 +90,7 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 
 		// Update session latest expiration time to timeout.
 		doPutIamSession(session);
+		((IamSession) session).setRelationAttrsCache(relationAttrsCache);
 	}
 
 	@Override
@@ -90,6 +101,7 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 		log.debug("Deletion {} ", session.getId());
 		doDeleteIamSession(session);
 
+		((IamSession) session).setRelationAttrsCache(relationAttrsCache);
 		// Remove all relation attributes.
 		relationAttrsCache.mapRemoveAll();
 	}
@@ -100,7 +112,11 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 			return null;
 
 		log.debug("doReadSession {}", sessionId);
-		return doReadIamSession(sessionId);
+		Session session = doReadIamSession(sessionId);
+		if (!isNull(session)) {
+			((IamSession) session).setRelationAttrsCache(relationAttrsCache);
+		}
+		return session;
 	}
 
 	protected abstract void doPutIamSession(final Session session);
