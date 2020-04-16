@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.common.cache;
 
 import static com.google.common.base.Charsets.UTF_8;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.shiro.cache.Cache;
@@ -104,7 +105,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @param expireMs
 	 * @return
 	 */
-	String mapPut(String fieldKey, Object fieldValue);
+	String mapPut(String fieldKey, Serializable fieldValue);
 
 	/**
 	 * Puts map field.
@@ -114,7 +115,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @param expireSec
 	 * @return
 	 */
-	String mapPut(String fieldKey, Object fieldValue, int expireSec);
+	String mapPut(String fieldKey, Serializable fieldValue, int expireSec);
 
 	/**
 	 * Puts map fields all.
@@ -122,7 +123,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @param map
 	 * @return
 	 */
-	String mapPutAll(Map<String, Object> map);
+	String mapPutAll(Map<String, Serializable> map);
 
 	/**
 	 * Puts map fields all.
@@ -131,7 +132,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @param expireSec
 	 * @return
 	 */
-	String mapPutAll(Map<String, Object> map, int expireSec);
+	String mapPutAll(Map<String, Serializable> map, int expireSec);
 
 	/**
 	 * Remove f ields map.

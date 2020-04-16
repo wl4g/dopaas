@@ -247,7 +247,16 @@ public class IamSession implements ValidatingSession, Serializable {
 	}
 
 	/**
-	 * Get {@link IamSession} priary principal.
+	 * Sets relation attributes cache.
+	 * 
+	 * @param relationAttrsCache
+	 */
+	public void setRelationAttrsCache(IamCache relationAttrsCache) {
+		this.relationAttrsCache = relationAttrsCache;
+	}
+
+	/**
+	 * Gets {@link IamSession} priary principal.
 	 *
 	 * @see {@link org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal()}
 	 * @return
@@ -404,9 +413,9 @@ public class IamSession implements ValidatingSession, Serializable {
 		if (isNull(value)) {
 			removeAttribute(key);
 		} else {
-			if (isRelationAttrKey(key)) {
+			if (/* (value instanceof Serializable) && */ isRelationAttrKey(key)) {
 				// Put relation attribute.
-				relationAttrsCache.mapPut(valueOf(key), value);
+				relationAttrsCache.mapPut(valueOf(key), (Serializable) value);
 			} else {
 				getAttributesLazy().put(key, value);
 			}
