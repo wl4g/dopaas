@@ -134,7 +134,7 @@ public class IamSession implements ValidatingSession, Serializable {
 	private Map<Object, Object> attributes;
 
 	/** Relations attributes {@link IamCache} */
-	protected IamCache relationAttrsCache;
+	protected transient IamCache relationAttrsCache;
 
 	public IamSession() {
 	}
