@@ -15,15 +15,14 @@
  */
 package com.wl4g.devops.ci.vcs.alicode;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.springframework.http.HttpEntity;
-
 import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
 import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.tool.common.annotation.Reserved;
+import org.springframework.http.HttpEntity;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * VCS operator for ALICODE.
@@ -72,8 +71,8 @@ public class AlicodeVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	public <T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName) {
-		super.checkoutAndPull(credentials, projecDir, branchName);
+	public <T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName,VcsAction action) {
+		super.checkoutAndPull(credentials, projecDir, branchName, action);
 		throw new UnsupportedOperationException();
 	}
 

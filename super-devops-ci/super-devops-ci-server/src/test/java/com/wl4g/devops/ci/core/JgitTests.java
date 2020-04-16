@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  * @author vjay
  * @date 2020-04-15 16:13:00
  */
-public class JgitTest {
+public class JgitTests {
 
     final private  static String projectDir = "/Users/vjay/.ci-workspace/sources/safecloud-devops-datachecker";
     final private  static String remoteUrl = "http://git.anjiancloud.repo/heweijie/safecloud-devops-datachecker.git";
@@ -88,7 +88,7 @@ public class JgitTest {
     }
 
     @Test
-    public void checkout() throws IOException, GitAPIException {//use this,  meger checkout branch and tag
+    public void checkoutTest() throws IOException, GitAPIException {//use this,  meger checkout branch and tag
         String branchName = "branch1";
 
         Git git = Git.open(new File(gitPath));
@@ -129,7 +129,7 @@ public class JgitTest {
 
 
     @Test
-    public void branchs() throws IOException, GitAPIException {
+    public void branchListTest() throws IOException, GitAPIException {
             Git git = Git.open(new File(gitPath));
             ListBranchCommand listBranchCommand = git.branchList();
             List<Ref> call = listBranchCommand.call();
@@ -139,7 +139,7 @@ public class JgitTest {
     }
 
     @Test
-    public void tags() throws IOException, GitAPIException {
+    public void tagListTest() throws IOException, GitAPIException {
         Git git = Git.open(new File(gitPath));
         /*ListTagCommand listTagCommand = git.tagList();
         List<Ref> call = listTagCommand.call();

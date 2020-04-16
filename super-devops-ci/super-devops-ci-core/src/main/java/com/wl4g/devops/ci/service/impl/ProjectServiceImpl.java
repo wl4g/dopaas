@@ -171,23 +171,23 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public List<String> getBranchs(Integer appClusterId, Integer tarOrBranch) {
+	public List<String> getBranchs(Integer appClusterId, Integer tagOrBranch) {
 		Assert.notNull(appClusterId, "id can not be null");
 		Project project = projectDao.getByAppClusterId(appClusterId);
 		Assert.notNull(project, "not found project ,please check you project config");
-		return getBranchByProject(project,tarOrBranch);
+		return getBranchByProject(project,tagOrBranch);
 	}
 
 	@Override
-	public List<String> getBranchsByProjectId(Integer projectId, Integer tarOrBranch) {
+	public List<String> getBranchsByProjectId(Integer projectId, Integer tagOrBranch) {
 		Assert.notNull(projectId, "id can not be null");
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		Assert.notNull(project, "not found project ,please check you project config");
-		return getBranchByProject(project,tarOrBranch);
+		return getBranchByProject(project,tagOrBranch);
 	}
 
 
-	private List<String> getBranchByProject(Project project, Integer tarOrBranch){
+	private List<String> getBranchByProject(Project project, Integer tagOrBranch){
 		String url = project.getHttpUrl();
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
@@ -196,7 +196,7 @@ public class ProjectServiceImpl implements ProjectService {
 				projectName);
 		notNullOf(vcsProjectId, "vcsProjectId");
 
-		if (tarOrBranch != null && tarOrBranch == 2) { // tag
+		if (tagOrBranch != null && tagOrBranch == 2) { // tag
 			return vcsOperator.forOperator(project.getVcs().getProviderKind()).getRemoteTags(project.getVcs(),
 					vcsProjectId);
 		}

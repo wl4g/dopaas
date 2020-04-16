@@ -130,7 +130,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	private boolean checkCommittedChanged(VcsOperator vcsOperator) throws Exception {
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 		if (vcsOperator.hasLocalRepository(projectDir)) {
-			vcsOperator.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName());
+			vcsOperator.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName(), VcsOperator.VcsAction.safeOf(task.getBranchType()));
 		} else {
 			vcsOperator.clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
 		}

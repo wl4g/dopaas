@@ -72,8 +72,8 @@ public class CodingVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	public <T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName) {
-		super.checkoutAndPull(credentials, projecDir, branchName);
+	public <T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName, VcsAction action) {
+		super.checkoutAndPull(credentials, projecDir, branchName, action);
 		throw new UnsupportedOperationException();
 	}
 

@@ -170,14 +170,14 @@ public class ProjectController extends BaseController {
 	 * drop-down.
 	 * 
 	 * @param appClusterId
-	 * @param tarOrBranch
+	 * @param tagOrBranch
 	 * @return
 	 */
 	@RequestMapping(value = "/getBranchs")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> getBranchs(Integer appClusterId, Integer tarOrBranch) {
+	public RespBase<?> getBranchs(Integer appClusterId, Integer tagOrBranch) {
 		RespBase<Object> resp = RespBase.create();
-		List<String> branchs = projectService.getBranchs(appClusterId, tarOrBranch);
+		List<String> branchs = projectService.getBranchs(appClusterId, tagOrBranch);
 		resp.forMap().put("branchNames", branchs);
 		return resp;
 	}
