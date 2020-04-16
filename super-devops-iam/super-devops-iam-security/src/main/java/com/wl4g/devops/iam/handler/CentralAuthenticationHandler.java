@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.ExpiredAuthorized;
@@ -64,6 +65,7 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
+import static java.util.concurrent.TimeUnit.*;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -137,7 +139,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		log.debug("Validating subject: {} by grantTicket: {}", subject, model.getTicket());
 
 		// Assertion grantCredentials info.
-		assertGrantTicketValidity(subject, model);
+		assertGrantingTicketValidity(subject, model);
 
 		// Check access authorized from application.
 		assertApplicationAccessAuthorized((String) subject.getPrincipal(), grantAppname);
@@ -262,7 +264,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	@Override
-	public SecondAuthcAssertModel secondValidate(String secondAuthCode, String appName) {
+	public SecondAuthcAssertModel secondaryValidate(String secondAuthCode, String appName) {
 		EnhancedKey ekey = new EnhancedKey(secondAuthCode, SecondAuthcAssertModel.class);
 		try {
 			/*
@@ -305,14 +307,14 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	/**
-	 * Assertion grantTicket validity </br>
+	 * Assertion granting ticket validity </br>
 	 *
 	 * @param subject
 	 * @param model
 	 * @throws InvalidGrantTicketException
 	 * @see {@link com.wl4g.devops.iam.handler.CentralAuthenticationHandler#loggedin}
 	 */
-	private void assertGrantTicketValidity(Subject subject, TicketValidateModel model) throws InvalidGrantTicketException {
+	private void assertGrantingTicketValidity(Subject subject, TicketValidateModel model) throws InvalidGrantTicketException {
 		if (isBlank(model.getTicket())) {
 			log.warn("Invalid grantTicket, application: {}, sessionId: {}", model.getTicket(), model.getApplication(),
 					subject.getSession().getId());
@@ -373,19 +375,28 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			log.debug("Saved grantTicket of sessionId: {} grantAppname: {}", session.getId(), grantAppname);
 		}
 
-		// Update grantTicket info and saved.
-		grantTicketCache.put(new EnhancedKey(session.getId()), info.addApplications(grantAppname, grant));
-		log.debug("Updated grantTicket info to session. {}", info);
+		// Gets granting credentials lock
+		Lock lock = getGrantingCredentialsLock(session);
+		try {
+			if (lock.tryLock(DEFAULT_LOCK_CREDENTIALS_EXPIRE, MILLISECONDS)) {
+				// Updating grantTicket
+				grantTicketCache.put(new EnhancedKey(session.getId()), info.addApplications(grantAppname, grant));
+				log.debug("Updated granting credentials to session. {}", info);
+			}
+		} catch (InterruptedException e) {
+			throw new IllegalStateException("Could't puts granting credentials, already lock exist!", e);
+		} finally {
+			lock.unlock();
+		}
 
 		// Gets session expire time
 		long expireTime = getSessionExpiredTime(session);
 		log.debug("Got sessionId: '{}', expireTime: '{}'", session.getId(), expireTime);
 
-		// Save grantTicket => sessionId.
+		// Sets grantTicket => sessionId.
 		/**
-		 * Synchronize with: </br>
-		 * x.handler.impl.FastCasAuthenticationHandler#validate </br>
-		 * x.session.mgt.IamSessionManager#getSessionId
+		 * @see {@link com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator#validate()}
+		 * @see {@link com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager#getSessionId()}
 		 */
 		cacheManager.getEnhancedCache(CACHE_TICKET_S).put(new EnhancedKey(grant.getGrantTicket(), expireTime),
 				valueOf(session.getId()));
@@ -444,10 +455,30 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	/**
+	 * Gets granting credentials lock
+	 * 
+	 * @param session
+	 * @return
+	 */
+	private Lock getGrantingCredentialsLock(Session session) {
+		notNullOf(session, "session");
+		final String lockName = GrantCredentialsInfo.class.getSimpleName() + "_" + session.getId();
+		return lockManager.getLock(lockName, DEFAULT_LOCK_CREDENTIALS_EXPIRE, MILLISECONDS);
+	}
+
+	/**
 	 * Scan iteration batch size.
 	 */
 	final public static int DEFAULT_SCAN_SIZE = 100;
 
+	/**
+	 * Default gets {@link GrantCredentialsInfo} lock expirtion(ms)
+	 */
+	final public static long DEFAULT_LOCK_CREDENTIALS_EXPIRE = 5000L;
+
+	/**
+	 * Permissived whitelist hosts.
+	 */
 	final public static String[] PERMISSIVE_HOSTS = new String[] { "localhost", "127.0.0.1", "0:0:0:0:0:0:0:1" };
 
 }

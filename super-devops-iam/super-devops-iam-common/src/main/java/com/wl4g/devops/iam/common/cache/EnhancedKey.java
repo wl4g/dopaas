@@ -31,7 +31,8 @@ import com.google.common.base.Charsets;
  * @time 2017年6月20日
  * @since
  */
-public class EnhancedKey {
+public class EnhancedKey implements Serializable {
+	private static final long serialVersionUID = 3452072504066624385L;
 
 	private String key;
 	private Integer expire; // 0 means never expired.

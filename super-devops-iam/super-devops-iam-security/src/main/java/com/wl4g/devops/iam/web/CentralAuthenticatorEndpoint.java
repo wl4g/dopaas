@@ -120,7 +120,7 @@ public class CentralAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint 
 	 */
 	@PostMapping(URI_S_SECOND_VALIDATE)
 	@ResponseBody
-	public RespBase<SecondAuthcAssertModel> seondValidate(HttpServletRequest request) {
+	public RespBase<SecondAuthcAssertModel> secondaryValidate(HttpServletRequest request) {
 		log.info("Second authentication validate <= {}", getFullRequestURL(request));
 
 		RespBase<SecondAuthcAssertModel> resp = new RespBase<>();
@@ -129,7 +129,7 @@ public class CentralAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint 
 			String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondAuthCode());
 			String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
 			// Secondary authentication assertion.
-			resp.setData(authHandler.secondValidate(secondAuthCode, fromAppName));
+			resp.setData(authHandler.secondaryValidate(secondAuthCode, fromAppName));
 		} catch (Exception e) {
 			log.error("Failed to second authentication validate.", e);
 			resp.setCode(RetCode.SYS_ERR);
