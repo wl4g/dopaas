@@ -39,7 +39,7 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.configure.SecureConfig;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
@@ -67,7 +67,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	/**
 	 * Credential cache manager.
 	 */
-	final protected EnhancedCacheManager cacheManager;
+	final protected IamCacheManager cacheManager;
 
 	/**
 	 * The 'private' part of the hash salt.
@@ -92,7 +92,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	@Autowired(required = false)
 	protected CredentialsSecurerAdapter delegate;
 
-	protected AbstractCredentialsSecurerSupport(SecureConfig config, EnhancedCacheManager cacheManager) {
+	protected AbstractCredentialsSecurerSupport(SecureConfig config, IamCacheManager cacheManager) {
 		notNullOf(config, "secureConfig");
 		notNullOf(config.getPrivateSalt(), "privateSalt");
 		notNullOf(config.getPreCryptPoolSize(), "cryptSize");

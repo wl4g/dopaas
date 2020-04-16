@@ -20,19 +20,20 @@ import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.authc.WechatMpAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
 import com.wl4g.devops.iam.common.authc.ClientRef;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
 import com.wl4g.devops.iam.common.session.GrantCredentialsInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
-import com.wl4g.devops.iam.common.web.GenericApiController;
+import com.wl4g.devops.iam.common.web.GenericApiEndpoint;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
-import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribute;
+import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.IamSessionInfo;
+import static com.wl4g.devops.iam.handler.CentralAuthenticationHandler.*;
+
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
 import static java.util.Objects.nonNull;
 
 /**
- * IAM server API v1 controller.
+ * IAM server API V1 controller.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年10月31日
@@ -40,7 +41,7 @@ import static java.util.Objects.nonNull;
  */
 @IamApiV1Controller
 @ResponseBody
-public class IamServerApiV1Endpoint extends GenericApiController {
+public class IamServerApiV1Endpoint extends GenericApiEndpoint {
 
 	/**
 	 * Convert wrap {@link IamSession} to {@link SessionAttributeModel}. </br>
@@ -51,7 +52,8 @@ public class IamServerApiV1Endpoint extends GenericApiController {
 	 * <pre>
 	 *    {
 	 * 	  "code": 200,
-	 * 	  "status": "normal",
+	 * 	  "status": "Normal",
+	 * 	  "requestId": null,
 	 * 	  "message": "ok",
 	 * 	  "data": {
 	 * 	    "sessions": [
@@ -103,14 +105,13 @@ public class IamServerApiV1Endpoint extends GenericApiController {
 	 * @return
 	 */
 	@Override
-	protected SessionAttribute wrapSessionAttribute(IamSession session) {
-		SessionAttribute sa = super.wrapSessionAttribute(session);
+	protected IamSessionInfo toIamSessionInfo(IamSession session) {
+		IamSessionInfo sa = super.toIamSessionInfo(session);
 
 		// Authentication grant applications.
-		GrantCredentialsInfo grantInfo = (GrantCredentialsInfo) grantTicketCache
-				.get(new EnhancedKey(session.getId(), GrantCredentialsInfo.class));
-		if (nonNull(grantInfo) && grantInfo.hasApplications()) {
-			sa.setGrants(grantInfo.getApplications().keySet());
+		GrantCredentialsInfo info = (GrantCredentialsInfo) getGrantCredentials(session);
+		if (nonNull(info) && info.hasEmpty()) {
+			sa.setGrants(info.getGrantApps().keySet());
 		}
 
 		// Authentication client type.

@@ -55,7 +55,7 @@ import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
 import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamFilterChainManager;
 import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
@@ -189,9 +189,9 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public JedisCacheManager jedisCacheManager(AbstractIamProperties<? extends ParamProperties> config,
+	public JedisIamCacheManager jedisIamCacheManager(AbstractIamProperties<? extends ParamProperties> config,
 			JedisCluster jedisCluster) {
-		return new JedisCacheManager(config.getCache().getPrefix(), jedisCluster);
+		return new JedisIamCacheManager(config.getCache().getPrefix(), jedisCluster);
 	}
 
 	@Bean
@@ -201,7 +201,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 
 	@Bean
 	public JedisIamSessionDAO jedisIamSessionDAO(AbstractIamProperties<? extends ParamProperties> config,
-			JedisCacheManager cacheManager, IamUidSessionIdGenerator sessionIdGenerator) {
+			JedisIamCacheManager cacheManager, IamUidSessionIdGenerator sessionIdGenerator) {
 		JedisIamSessionDAO sessionDAO = new JedisIamSessionDAO(config, cacheManager);
 		sessionDAO.setSessionIdGenerator(sessionIdGenerator);
 		return sessionDAO;

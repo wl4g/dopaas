@@ -24,7 +24,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
@@ -59,7 +59,7 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	 * Using Distributed Cache to Ensure Concurrency Control under Multi-Node
 	 */
 	@Autowired
-	protected EnhancedCacheManager cacheManager;
+	protected IamCacheManager cacheManager;
 
 	/**
 	 * IAM credentials securer

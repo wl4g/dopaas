@@ -71,9 +71,9 @@ import com.wl4g.devops.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCache;
+import com.wl4g.devops.iam.common.cache.CacheKey;
+import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
@@ -155,7 +155,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * Using distributedc ache to Ensure Concurrency Control under
 	 * Mutilate-Node.
 	 */
-	final protected EnhancedCache cache;
+	final protected IamCache cache;
 
 	/**
 	 * Accumulator used to restrict redirection authentication.
@@ -170,7 +170,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 
 	@SuppressWarnings("deprecation")
 	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
-			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
 		notNull(config, "'config' must not be null");
 		notNull(context, "'context' must not be null");
 		notNull(coprocessor, "'interceptor' must not be null");
@@ -178,7 +178,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		this.config = config;
 		this.configurer = context;
 		this.coprocessor = coprocessor;
-		this.cache = cacheManager.getEnhancedCache(CACHE_TICKET_C);
+		this.cache = cacheManager.getIamCache(CACHE_TICKET_C);
 		this.failedCumulator = newSessionCumulator(KEY_TRY_REDIRECT_AUTHC, 10_000L);
 	}
 
@@ -215,7 +215,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * IamClientSessionManager#getSessionId
 		 */
 		long expiredMs = getSessionExpiredTime();
-		cache.put(new EnhancedKey(grantTicket, expiredMs), getSessionId(subject));
+		cache.put(new CacheKey(grantTicket, expiredMs), getSessionId(subject));
 
 		// Determine success URL
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);

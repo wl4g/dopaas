@@ -18,8 +18,8 @@ package com.wl4g.devops.iam.common.web;
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCache;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.session.IamSession;
@@ -42,11 +42,9 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.wl4g.devops.tool.common.lang.DateUtils2.formatDate;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_GRANT_TICKET;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_SESSION;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.CursorIndex;
-import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribute;
+import static com.wl4g.devops.iam.common.web.model.SessionAttributeModel.IamSessionInfo;
 import static com.wl4g.devops.support.redis.ScanCursor.CursorWrapper.*;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
@@ -62,7 +60,7 @@ import static org.apache.shiro.web.subject.support.DefaultWebSubjectContext.AUTH
  */
 @Beta
 @ResponseBody
-public abstract class GenericApiController extends BaseController implements InitializingBean {
+public abstract class GenericApiEndpoint extends BaseController implements InitializingBean {
 	final public static String DEFAULT_DATE_PATTERN = "yy/MM/dd HH:mm:ss";
 
 	/**
@@ -87,16 +85,16 @@ public abstract class GenericApiController extends BaseController implements Ini
 	 * Enhanced cache manager.
 	 */
 	@Autowired
-	protected EnhancedCacheManager cacheManager;
+	protected IamCacheManager cacheManager;
 
 	/**
-	 * Grant ticket cache .
+	 * Relations attributes {@link IamCache}
 	 */
-	protected EnhancedCache grantTicketCache;
+	protected IamCache relationAttrsCache;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.grantTicketCache = cacheManager.getEnhancedCache(CACHE_GRANT_TICKET);
+		this.relationAttrsCache = cacheManager.getIamCache(CACHE_RELATION_ATTRS);
 	}
 
 	/**
@@ -156,28 +154,24 @@ public abstract class GenericApiController extends BaseController implements Ini
 	@GetMapping(path = URI_S_API_V1_SESSION)
 	public RespBase<?> getSessions(@Validated SessionQueryModel query) throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		if (log.isInfoEnabled()) {
-			log.info("Get sessions by <= {}", query);
-		}
+		log.info("Get sessions by <= {}", query);
 
 		// Priority search principal.
 		if (!isBlank(query.getPrincipal())) {
 			Collection<IamSession> ss = sessionDAO.getAccessSessions(query.getPrincipal());
-			List<SessionAttribute> sas = ss.stream().map(s -> wrapSessionAttribute(s)).collect(toList());
+			List<IamSessionInfo> sas = ss.stream().map(s -> toIamSessionInfo(s)).collect(toList());
 			resp.setData(new SessionAttributeModel(new CursorIndex(false), sas));
 		} else {
 			// Do scan sessions all.
 			ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(parse(query.getCursor()), query.getLimit());
 			// Convert to SessionAttribute.
-			List<SessionAttribute> sas = sc.readValues().stream().map(s -> wrapSessionAttribute(s)).collect(toList());
+			List<IamSessionInfo> sas = sc.readValues().stream().map(s -> toIamSessionInfo(s)).collect(toList());
 			// Setup response attributes.
 			CursorIndex index = new CursorIndex(sc.getCursor().getCursorString(), sc.getCursor().getHasNext());
 			resp.setData(new SessionAttributeModel(index, sas));
 		}
 
-		if (log.isInfoEnabled()) {
-			log.info("Get sessions => {}", resp.asJson());
-		}
+		log.info("Get sessions => {}", resp.asJson());
 		return resp;
 	}
 
@@ -191,9 +185,7 @@ public abstract class GenericApiController extends BaseController implements Ini
 	@PostMapping(path = URI_S_API_V1_SESSION)
 	public RespBase<?> destroySessions(@Validated @RequestBody SessionDestroyModel destroy) throws Exception {
 		RespBase<String> resp = RespBase.create();
-		if (log.isInfoEnabled()) {
-			log.info("Destroy sessions by <= {}", destroy);
-		}
+		log.info("Destroy sessions by <= {}", destroy);
 
 		// Destroy with sessionIds.
 		if (!isBlank(destroy.getSessionId())) {
@@ -205,9 +197,7 @@ public abstract class GenericApiController extends BaseController implements Ini
 			sessionDAO.removeAccessSession(destroy.getPrincipal());
 		}
 
-		if (log.isInfoEnabled()) {
-			log.info("Destroy sessions => {}", resp);
-		}
+		log.info("Destroy sessions => {}", resp);
 		return resp;
 	}
 
@@ -271,8 +261,8 @@ public abstract class GenericApiController extends BaseController implements Ini
 	 * @param session
 	 * @return
 	 */
-	protected SessionAttribute wrapSessionAttribute(IamSession session) {
-		SessionAttribute sa = new SessionAttribute();
+	protected IamSessionInfo toIamSessionInfo(IamSession session) {
+		IamSessionInfo sa = new IamSessionInfo();
 		sa.setId(String.valueOf(session.getId()));
 		if (nonNull(session.getLastAccessTime())) {
 			sa.setLastAccessTime(formatDate(session.getLastAccessTime(), DEFAULT_DATE_PATTERN));

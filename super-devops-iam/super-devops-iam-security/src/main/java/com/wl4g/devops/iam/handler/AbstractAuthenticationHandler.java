@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.handler;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_GRANT_TICKET;
 
 import javax.annotation.Resource;
 
@@ -27,8 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
@@ -92,16 +90,10 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	 * Enhanced cache manager.
 	 */
 	@Autowired
-	protected EnhancedCacheManager cacheManager;
-
-	/**
-	 * Grant ticket cache .
-	 */
-	protected EnhancedCache grantTicketCache;
+	protected IamCacheManager cacheManager;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.grantTicketCache = cacheManager.getEnhancedCache(CACHE_GRANT_TICKET);
 	}
 
 }

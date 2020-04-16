@@ -53,8 +53,8 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
+import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
@@ -87,7 +87,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * Enhanced cache manager.
 	 */
 	@Autowired
-	protected EnhancedCacheManager cacheManager;
+	protected IamCacheManager cacheManager;
 
 	/**
 	 * IAM session DAO.
@@ -158,7 +158,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			/**
 			 * {@link CentralAuthenticationHandler#loggedin()}
 			 */
-			sessionId = (String) cacheManager.getCache(cacheName).get(new EnhancedKey(grantTicket, String.class));
+			sessionId = (String) cacheManager.getCache(cacheName).get(new CacheKey(grantTicket, String.class));
 			log.debug("Use ticket sid: '{}', grantTicket: '{}'", sessionId, grantTicket);
 			if (checkSessionValidity(sessionId)) {
 				return sessionId;

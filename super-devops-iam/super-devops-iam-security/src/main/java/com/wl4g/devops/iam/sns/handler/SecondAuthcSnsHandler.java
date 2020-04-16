@@ -36,7 +36,7 @@ import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Stat
 import com.google.common.base.Splitter;
 import com.wl4g.devops.iam.common.authc.SecondAuthenticationException;
 import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;
@@ -151,8 +151,8 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 		 * See:xx.iam.handler.DefaultAuthenticationHandler#secondValidate()
 		 */
 		String secondAuthCode = generateSecondAuthcCode(sourceApp);
-		EnhancedKey ekey = new EnhancedKey(secondAuthCode, snsConfig.getOauth2ConnectExpireMs());
-		cacheManager.getEnhancedCache(SECOND_AUTHC_CACHE).put(ekey, model);
+		CacheKey ekey = new CacheKey(secondAuthCode, snsConfig.getOauth2ConnectExpireMs());
+		cacheManager.getIamCache(SECOND_AUTHC_CACHE).put(ekey, model);
 		log.info("Saved secondary authentication. {}[{}], result[{}]", config.getParam().getSecondAuthCode(), secondAuthCode,
 				model);
 

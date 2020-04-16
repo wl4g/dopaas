@@ -28,10 +28,11 @@ import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
 import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
 import com.wl4g.devops.iam.common.authc.model.TicketValidatedAssertModel;
 import com.wl4g.devops.iam.common.authc.model.TicketValidateModel;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.session.GrantCredentialsInfo;
 import com.wl4g.devops.iam.common.session.GrantCredentialsInfo.GrantApp;
 import com.wl4g.devops.iam.common.session.IamSession;
+import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
@@ -53,7 +54,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.ExpiredAuthorized;
@@ -65,7 +65,6 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
-import static java.util.concurrent.TimeUnit.*;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -149,7 +148,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * Synchronize with
 		 * xx.xx.handler.impl.FastCasAuthenticationHandler#validate#loggedin
 		 */
-		cacheManager.getCache(CACHE_TICKET_S).remove(new EnhancedKey(model.getTicket()));
+		cacheManager.getCache(CACHE_TICKET_S).remove(new CacheKey(model.getTicket()));
 		log.debug("Clean older grantTicket: {}", model.getTicket());
 
 		// --- Grant attributes setup. ---
@@ -234,22 +233,22 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		coprocessor.preLogout(new LogoutAuthenticationToken(getPrincipal(false), getHttpRemoteAddr(request)), toHttp(request),
 				toHttp(response));
 
-		// Represents all logged-out Tags
+		// Represents all loggout Tags
 		boolean logoutAll = true;
 		// Get bind session grant information
-		GrantCredentialsInfo grantInfo = getGrantCredentials(subject.getSession());
-		log.debug("Got grantInfo: [{}] with sessionId: [{}]", grantInfo, subject.getSession().getId());
+		GrantCredentialsInfo info = getGrantCredentials(subject.getSession());
+		log.debug("Got grantInfo: [{}] with sessionId: [{}]", info, subject.getSession().getId());
 
-		if (!isNull(grantInfo) && grantInfo.hasApplications()) {
+		if (!isNull(info) && info.hasEmpty()) {
 			// Query applications by bind session names
-			Set<String> appNames = grantInfo.getApplications().keySet();
+			Set<String> appNames = info.getGrantApps().keySet();
 			// Cleanup this(Solve the dead cycle).
 			appNames.remove(config.getServiceName());
 
 			List<ApplicationInfo> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
 			if (!isEmpty(apps)) {
 				// logout all
-				logoutAll = handleLogoutSessionAll(subject, grantInfo, apps);
+				logoutAll = handleLogoutSessionAll(subject, info, apps);
 			} else
 				log.debug("Not found logout appInfo. appNames: {}", appNames);
 		}
@@ -274,14 +273,13 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 	@Override
 	public SecondAuthcAssertModel secondaryValidate(String secondAuthCode, String appName) {
-		EnhancedKey ekey = new EnhancedKey(secondAuthCode, SecondAuthcAssertModel.class);
+		CacheKey ekey = new CacheKey(secondAuthCode, SecondAuthcAssertModel.class);
 		try {
 			/*
 			 * Save authorized info to cache. See:
 			 * xx.iam.sns.handler.SecondAuthcSnsHandler#afterCallbackSet()
 			 */
-			SecondAuthcAssertModel assertion = (SecondAuthcAssertModel) cacheManager.getEnhancedCache(SECOND_AUTHC_CACHE)
-					.get(ekey);
+			SecondAuthcAssertModel assertion = (SecondAuthcAssertModel) cacheManager.getIamCache(SECOND_AUTHC_CACHE).get(ekey);
 			// Check assertion expired
 			if (assertion == null) {
 				assertion = new SecondAuthcAssertModel(ExpiredAuthorized);
@@ -290,7 +288,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			return assertion;
 		} finally { // Release authentication code
 			log.info("Remove release second authentication info. key[{}]", new String(ekey.getKey()));
-			cacheManager.getEnhancedCache(SECOND_AUTHC_CACHE).remove(ekey);
+			cacheManager.getIamCache(SECOND_AUTHC_CACHE).remove(ekey);
 		}
 	}
 
@@ -304,8 +302,8 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			// GrantTicket of session.
 			GrantCredentialsInfo info = getGrantCredentials(session);
 
-			if (nonNull(info) && info.hasApplication(model.getApplication())) {
-				String storedTicket = info.getApplications().get(model.getApplication()).getGrantTicket();
+			if (nonNull(info) && info.has(model.getApplication())) {
+				String storedTicket = info.getGrantApps().get(model.getApplication()).getGrantTicket();
 				// If exist grantTicket with application.
 				if (!isBlank(storedTicket)) {
 					model.getTickets().remove(storedTicket);
@@ -335,7 +333,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		log.debug("Got grantTicketInfo: {}, sessionId:{}", info, getSessionId());
 
 		// No grant ticket created or expired?
-		if (isNull(info) || !info.hasApplication(model.getApplication())) {
+		if (isNull(info) || !info.has(model.getApplication())) {
 			throw new InvalidGrantTicketException("Invalid granting ticket");
 		}
 
@@ -350,77 +348,14 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	/**
-	 * Gets bind session granting credentials.
-	 *
-	 * @param session
-	 * @return
-	 */
-	private GrantCredentialsInfo getGrantCredentials(Session session) {
-		GrantCredentialsInfo info = (GrantCredentialsInfo) grantTicketCache
-				.get(new EnhancedKey(session.getId(), GrantCredentialsInfo.class));
-		return isNull(info) ? new GrantCredentialsInfo() : info;
-	}
-
-	/**
-	 * Puts grantCredentials to session. </br>
-	 *
-	 * @param session
-	 *            Session
-	 * @param grantAppname
-	 *            granting application name
-	 * @param grant
-	 *            grant ticket
-	 */
-	private void putGrantCredentials(Session session, String grantAppname, GrantApp grant) {
-		notNullOf(session, "session");
-		hasTextOf(grantAppname, "grantAppname");
-		notNullOf(grant, "grant");
-
-		/**
-		 * @See:{@link CentralAuthenticationHandler#validate()}
-		 */
-		GrantCredentialsInfo info = getGrantCredentials(session);
-		if (info.getApplications().keySet().contains(grantAppname)) {
-			log.debug("Saved grantTicket of sessionId: {} grantAppname: {}", session.getId(), grantAppname);
-		}
-
-		// Gets granting credentials lock
-		Lock lock = getGrantingCredentialsLock(session);
-		try {
-			if (lock.tryLock(DEFAULT_LOCK_CREDENTIALS_EXPIRE, MILLISECONDS)) {
-				// Updating grantTicket
-				grantTicketCache.put(new EnhancedKey(session.getId()), info.addApplications(grantAppname, grant));
-				log.debug("Updated granting credentials to session. {}", info);
-			}
-		} catch (InterruptedException e) {
-			throw new IllegalStateException("Could't puts granting credentials, already lock exist!", e);
-		} finally {
-			lock.unlock();
-		}
-
-		// Gets session expire time
-		long expireTime = getSessionExpiredTime(session);
-		log.debug("Got sessionId: '{}', expireTime: '{}'", session.getId(), expireTime);
-
-		// Sets grantTicket => sessionId.
-		/**
-		 * @see {@link com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator#validate()}
-		 * @see {@link com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager#getSessionId()}
-		 */
-		cacheManager.getEnhancedCache(CACHE_TICKET_S).put(new EnhancedKey(grant.getGrantTicket(), expireTime),
-				valueOf(session.getId()));
-		log.debug("Saved grantTicket: '{}' of seesionId: '{}'", grant, getSessionId(session));
-	}
-
-	/**
-	 * Handling logout all
+	 * Handle logout all
 	 *
 	 * @param subject
-	 * @param grantInfo
+	 * @param info
 	 * @param apps
 	 * @return
 	 */
-	private boolean handleLogoutSessionAll(Subject subject, GrantCredentialsInfo grantInfo, List<ApplicationInfo> apps) {
+	private boolean handleLogoutSessionAll(Subject subject, GrantCredentialsInfo info, List<ApplicationInfo> apps) {
 		boolean logoutAll = true; // Represents all logged-out Tags
 
 		/*
@@ -429,7 +364,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		for (ApplicationInfo app : apps) {
 			hasText(app.getIntranetBaseUri(), "Application[%s] 'internalBaseUri' must not be empty", app.getAppName());
 			// GrantTicket by application name
-			String grantTicket = grantInfo.getApplications().get(app.getAppName()).getGrantTicket();
+			String grantTicket = info.getGrantApps().get(app.getAppName()).getGrantTicket();
 			// Logout URL
 			String url = new StringBuffer(app.getIntranetBaseUri()).append(URI_C_BASE).append("/").append(URI_C_LOGOUT)
 					.append("?").append(config.getParam().getGrantTicket()).append("=").append(grantTicket).toString();
@@ -464,15 +399,50 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	}
 
 	/**
-	 * Gets granting credentials lock
-	 * 
+	 * Puts grantCredentials to session. </br>
+	 *
+	 * @param session
+	 *            Session
+	 * @param grantAppname
+	 *            granting application name
+	 * @param grant
+	 *            grant ticket
+	 */
+	private void putGrantCredentials(Session session, String grantAppname, GrantApp grant) {
+		notNullOf(session, "session");
+		hasTextOf(grantAppname, "grantAppname");
+		notNullOf(grant, "grant");
+
+		/**
+		 * @See {@link CentralAuthenticationHandler#validate()}
+		 */
+		GrantCredentialsInfo info = getGrantCredentials(session);
+		if (info.has(grantAppname)) {
+			log.debug("Sets grantTicket of sessionId: {} grantAppname: {}", session.getId(), grantAppname);
+		}
+		// Updating grantTicket.
+		session.setAttribute(new RelationAttrKey(KEY_GRANTCREDENTIALS), info.putGrant(grantAppname, grant));
+		log.debug("Updated granting credentials to session. {}", info);
+
+		// Sets grantTicket => sessionId.
+		/**
+		 * @see {@link com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator#validate()}
+		 * @see {@link com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager#getSessionId()}
+		 */
+		long expireTime = getSessionExpiredTime(session); // Expiration time
+		cacheManager.getIamCache(CACHE_TICKET_S).put(new CacheKey(grant.getGrantTicket(), expireTime), valueOf(session.getId()));
+		log.debug("Sets grantTicket: '{}' of seesionId: '{}', expireTime: '{}'", grant, getSessionId(session), expireTime);
+	}
+
+	/**
+	 * Gets bind session granting credentials.
+	 *
 	 * @param session
 	 * @return
 	 */
-	private Lock getGrantingCredentialsLock(Session session) {
-		notNullOf(session, "session");
-		final String lockName = GrantCredentialsInfo.class.getSimpleName() + "_" + session.getId();
-		return lockManager.getLock(lockName, DEFAULT_LOCK_CREDENTIALS_EXPIRE, MILLISECONDS);
+	public static GrantCredentialsInfo getGrantCredentials(Session session) {
+		GrantCredentialsInfo info = (GrantCredentialsInfo) session.getAttribute(new RelationAttrKey(KEY_GRANTCREDENTIALS));
+		return isNull(info) ? new GrantCredentialsInfo() : info;
 	}
 
 	/**
@@ -484,6 +454,11 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * Default gets {@link GrantCredentialsInfo} lock expirtion(ms)
 	 */
 	final public static long DEFAULT_LOCK_CREDENTIALS_EXPIRE = 5000L;
+
+	/**
+	 * IAM server grantTicket info of application.
+	 */
+	final public static String KEY_GRANTCREDENTIALS = "grantCredentials";
 
 	/**
 	 * Permissived whitelist hosts.

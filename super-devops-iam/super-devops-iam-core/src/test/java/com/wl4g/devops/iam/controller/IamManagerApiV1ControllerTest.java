@@ -23,7 +23,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.CursorIndex;
-import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.SessionAttribute;
+import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.IamSessionInfo;
 
 public class IamManagerApiV1ControllerTest {
 
@@ -57,7 +57,7 @@ public class IamManagerApiV1ControllerTest {
 	static SessionAttributeModel newSessionAttributeModel() {
 		SessionAttributeModel sam = new SessionAttributeModel();
 		sam.setIndex(new CursorIndex("0@5", false));
-		SessionAttribute sa1 = new SessionAttribute();
+		IamSessionInfo sa1 = new IamSessionInfo();
 		sa1.setId("1111");
 		sa1.setAuthenticated(false);
 		sa1.setExpired(false);

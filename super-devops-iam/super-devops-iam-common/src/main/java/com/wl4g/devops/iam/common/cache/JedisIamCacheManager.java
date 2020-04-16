@@ -33,14 +33,14 @@ import redis.clients.jedis.JedisCluster;
  * @time 2017年4月13日
  * @since
  */
-public class JedisCacheManager implements EnhancedCacheManager {
+public class JedisIamCacheManager implements IamCacheManager {
 
-	final private Map<String, EnhancedCache> caching = new ConcurrentHashMap<>();
+	final private Map<String, IamCache> caching = new ConcurrentHashMap<>();
 
 	private String prefix;
 	private JedisCluster jedisCluster;
 
-	public JedisCacheManager(String prefix, JedisCluster jedisCluster) {
+	public JedisIamCacheManager(String prefix, JedisCluster jedisCluster) {
 		Assert.notNull(prefix, "'prefix' must not be null");
 		Assert.notNull(jedisCluster, "'jedisCluster' must not be null");
 		this.prefix = prefix;
@@ -53,8 +53,8 @@ public class JedisCacheManager implements EnhancedCacheManager {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Cache<EnhancedKey, Object> getCache(String name) throws CacheException {
-		return getEnhancedCache(name);
+	public Cache<CacheKey, Object> getCache(String name) throws CacheException {
+		return getIamCache(name);
 	}
 
 	/**
@@ -65,11 +65,11 @@ public class JedisCacheManager implements EnhancedCacheManager {
 	 * @throws CacheException
 	 */
 	@Override
-	public EnhancedCache getEnhancedCache(String name) throws CacheException {
+	public IamCache getIamCache(String name) throws CacheException {
 		String cacheName = getCacheName(name);
-		EnhancedCache cache = caching.get(cacheName);
+		IamCache cache = caching.get(cacheName);
 		if (Objects.isNull(cache)) {
-			caching.put(cacheName, (cache = new JedisEnhancedCache(cacheName, jedisCluster)));
+			caching.put(cacheName, (cache = new JedisIamCache(cacheName, jedisCluster)));
 		}
 		return cache;
 	}
