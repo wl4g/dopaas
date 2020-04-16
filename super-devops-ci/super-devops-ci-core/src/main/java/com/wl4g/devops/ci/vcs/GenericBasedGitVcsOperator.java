@@ -20,14 +20,8 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.bean.ci.Vcs.VcsAuthType;
-
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jgit.api.CloneCommand;
-import org.eclipse.jgit.api.CreateBranchCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PullResult;
-import org.eclipse.jgit.api.TransportCommand;
-import org.eclipse.jgit.api.TransportConfigCallback;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -86,21 +80,30 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
 	@Override
 	public PullResult checkoutAndPull(Vcs credentials, String projecDir, String branchName) {
 		super.checkoutAndPull(credentials, projecDir, branchName);
-
 		String projectURL = projecDir + "/.git";
 		try (Git git = Git.open(new File(projectURL))) {
-			setupCredentials(credentials, git.pull()).call();
-
+			//fetch
+			setupCredentials(credentials, git.fetch().setTagOpt(TagOpt.FETCH_TAGS)).call();
+			//if branchName is tag,checkout tag
+			List<Ref> tags = git.tagList().call();
+			for(Ref ref : tags){
+				if(StringUtils.equals(branchName,getBranchName(ref))){
+					git.checkout().setName(branchName).call();
+					return null;
+				}
+			}
+			// branchName is not tag,checkout branch
 			List<Ref> refs = git.branchList().call();
 			boolean exist = false;// is branch exist
 			for (Ref ref : refs) {
 				String branchNameHad = getBranchName(ref);
 				if (StringUtils.equals(branchName, branchNameHad)) {
 					exist = true;
+					break;
 				}
 			}
 			if (exist) { // Exist to checkout
-				git.checkout().setName(branchName).call();
+				git.checkout().setName(branchName).setForceRefUpdate(true).call();
 			} else { // Not exist to checkout & create local branch
 				git.checkout().setCreateBranch(true).setName(branchName).setStartPoint("origin/" + branchName)
 						.setForceRefUpdate(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();

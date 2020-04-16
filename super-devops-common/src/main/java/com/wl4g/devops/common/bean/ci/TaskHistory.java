@@ -44,6 +44,8 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private String providerKind;
 
+	private String branchType;
+
 	private String result;
 
 	private String projectName;
@@ -251,5 +253,13 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	public void setAssetsPath(String assetsPath) {
 		this.assetsPath = assetsPath;
+	}
+
+	public String getBranchType() {
+		return branchType;
+	}
+
+	public void setBranchType(String branchType) {
+		this.branchType = branchType;
 	}
 }

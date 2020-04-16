@@ -11,6 +11,7 @@
     <result column="sha_local" property="shaLocal" jdbcType="VARCHAR" />
     <result column="ref_id" property="refId" jdbcType="INTEGER" />
     <result column="provider_kind" property="providerKind" jdbcType="VARCHAR" />
+    <result column="branch_type" property="branchType" jdbcType="VARCHAR" />
     <result column="build_command" property="buildCommand" jdbcType="VARCHAR" />
     <result column="pre_command" property="preCommand" jdbcType="VARCHAR" />
     <result column="post_command" property="postCommand" jdbcType="VARCHAR" />
@@ -39,11 +40,11 @@
     <result column="result" property="result" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, type, project_id, status, branch_name, sha_git,sha_local, ref_id,provider_kind,build_command,pre_command,post_command, remark, del_flag, create_date,
+    id, type, project_id, status, branch_name, sha_git,sha_local, ref_id,provider_kind, branch_type ,build_command,pre_command,post_command, remark, del_flag, create_date,
     create_by, update_date, update_by,result,contact_group_id,track_id,track_type,cost_time,env_type,annex,parent_app_home,assets_path
   </sql>
   <sql id="Base_Column_List_t" >
-    t.id, t.type, t.project_id, t.status, t.branch_name, t.sha_git,t.sha_local, t.ref_id,t.provider_kind,t.build_command,t.pre_command,t.post_command, t.remark, t.del_flag, t.create_date,
+    t.id, t.type, t.project_id, t.status, t.branch_name, t.sha_git,t.sha_local, t.ref_id,t.provider_kind, t.branch_type, t.build_command,t.pre_command,t.post_command, t.remark, t.del_flag, t.create_date,
     t.create_by, t.update_date, t.update_by,t.result,t.contact_group_id,t.track_id,t.track_type,t.cost_time,t.env_type,t.annex,t.parent_app_home,t.assets_path
   </sql>
   <sql id="Blob_Column_List" >
@@ -64,12 +65,12 @@
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.TaskHistory" >
     insert into ci_task_history (id, type, project_id,
       status, branch_name, sha_git,sha_local,
-      ref_id, provider_kind,build_command,pre_command,post_command,remark, del_flag,
+      ref_id, provider_kind, branch_type, build_command,pre_command,post_command,remark, del_flag,
       create_date, create_by, update_date, 
       update_by, result,contact_group_id,track_id,track_type,cost_time,env_type,annex,parent_app_home,assets_path)
     values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{branchName,jdbcType=VARCHAR}, #{shaGit,jdbcType=VARCHAR},#{shaLocal,jdbcType=VARCHAR},
-      #{refId,jdbcType=INTEGER},#{providerKind,jdbcType=VARCHAR},#{buildCommand,jdbcType=VARCHAR},#{preCommand,jdbcType=VARCHAR},
+      #{refId,jdbcType=INTEGER},#{providerKind,jdbcType=VARCHAR}, #{branchType,jdbcType=VARCHAR}, #{buildCommand,jdbcType=VARCHAR},#{preCommand,jdbcType=VARCHAR},
       #{postCommand,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR}, #{result,jdbcType=LONGVARCHAR}, #{contactGroupId,jdbcType=INTEGER},
@@ -105,6 +106,9 @@
       </if>
       <if test="providerKind != null" >
         provider_kind,
+      </if>
+      <if test="branchType != null" >
+        branch_type,
       </if>
       <if test="buildCommand != null" >
         build_command,
@@ -189,6 +193,9 @@
       <if test="providerKind != null" >
         #{providerKind,jdbcType=VARCHAR},
       </if>
+      <if test="branchType != null" >
+        #{branchType,jdbcType=VARCHAR},
+      </if>
       <if test="buildCommand != null" >
         #{buildCommand,jdbcType=VARCHAR},
       </if>
@@ -272,6 +279,9 @@
       <if test="providerKind != null" >
         provider_kind = #{providerKind,jdbcType=VARCHAR},
       </if>
+      <if test="branchType != null" >
+        branch_type = #{branchType,jdbcType=VARCHAR},
+      </if>
       <if test="buildCommand != null" >
         build_command = #{buildCommand,jdbcType=VARCHAR},
       </if>
@@ -339,6 +349,7 @@
       sha_local = #{shaLocal,jdbcType=VARCHAR},
       ref_id = #{refId,jdbcType=INTEGER},
       provider_kind = #{providerKind,jdbcType=VARCHAR},
+      branch_type = #{branchType,jdbcType=VARCHAR},
       build_command = #{buildCommand,jdbcType=VARCHAR},
       pre_command = #{preCommand,jdbcType=VARCHAR},
       post_command = #{postCommand,jdbcType=VARCHAR},
@@ -369,6 +380,7 @@
       sha_local = #{shaLocal,jdbcType=VARCHAR},
       ref_id = #{refId,jdbcType=INTEGER},
       provider_kind = #{providerKind,jdbcType=VARCHAR},
+      branch_type = #{branchType,jdbcType=VARCHAR},
       build_command = #{buildCommand,jdbcType=VARCHAR},
       pre_command = #{preCommand,jdbcType=VARCHAR},
       post_command = #{postCommand,jdbcType=VARCHAR},
