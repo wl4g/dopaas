@@ -37,6 +37,7 @@ import java.text.DateFormat;
 import java.util.*;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptySet;
@@ -247,6 +248,16 @@ public class IamSession implements ValidatingSession, Serializable {
 	}
 
 	/**
+	 * Gets relation attributes cache.
+	 * 
+	 * @return relationAttrsCache
+	 */
+	public IamCache getRelationAttrsCache() {
+		notNullOf(relationAttrsCache, "relationAttrsCache");
+		return this.relationAttrsCache;
+	}
+
+	/**
 	 * Sets relation attributes cache.
 	 * 
 	 * @param relationAttrsCache
@@ -398,7 +409,7 @@ public class IamSession implements ValidatingSession, Serializable {
 	@Override
 	public Object getAttribute(Object key) {
 		if (isRelationAttrKey(key)) {
-			return relationAttrsCache.getMapField(valueOf(key));
+			return getRelationAttrsCache().getMapField(valueOf(key));
 		}
 		Map<Object, Object> attributes = getAttributes();
 		if (isNull(attributes)) {
@@ -415,7 +426,7 @@ public class IamSession implements ValidatingSession, Serializable {
 		} else {
 			if (/* (value instanceof Serializable) && */ isRelationAttrKey(key)) {
 				// Put relation attribute.
-				relationAttrsCache.mapPut(valueOf(key), (Serializable) value);
+				getRelationAttrsCache().mapPut(valueOf(key), (Serializable) value);
 			} else {
 				getAttributesLazy().put(key, value);
 			}
@@ -431,7 +442,7 @@ public class IamSession implements ValidatingSession, Serializable {
 		} else {
 			if (isRelationAttrKey(key)) {
 				// Removing relation attribute.
-				return relationAttrsCache.mapRemove(valueOf(key));
+				return getRelationAttrsCache().mapRemove(valueOf(key));
 			} else {
 				return attributes.remove(key);
 			}
@@ -718,7 +729,5 @@ public class IamSession implements ValidatingSession, Serializable {
 		}
 
 	}
-
-	final public static String KEY_RELATION_ATTR_PREFIX = "relation:";
 
 }

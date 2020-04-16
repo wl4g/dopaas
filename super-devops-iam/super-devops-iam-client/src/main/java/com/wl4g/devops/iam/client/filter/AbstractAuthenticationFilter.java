@@ -152,10 +152,9 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	final protected ClientSecurityCoprocessor coprocessor;
 
 	/**
-	 * Using distributedc ache to Ensure Concurrency Control under
-	 * Mutilate-Node.
+	 * Client ticket distributed cache
 	 */
-	final protected IamCache cache;
+	final protected IamCache clientTicketCache;
 
 	/**
 	 * Accumulator used to restrict redirection authentication.
@@ -178,7 +177,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		this.config = config;
 		this.configurer = context;
 		this.coprocessor = coprocessor;
-		this.cache = cacheManager.getIamCache(CACHE_TICKET_C);
+		this.clientTicketCache = cacheManager.getIamCache(CACHE_TICKET_C);
 		this.failedCumulator = newSessionCumulator(KEY_TRY_REDIRECT_AUTHC, 10_000L);
 	}
 
@@ -215,7 +214,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * IamClientSessionManager#getSessionId
 		 */
 		long expiredMs = getSessionExpiredTime();
-		cache.put(new CacheKey(grantTicket, expiredMs), getSessionId(subject));
+		clientTicketCache.put(new CacheKey(grantTicket, expiredMs), getSessionId(subject));
 
 		// Determine success URL
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
@@ -471,7 +470,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		resp.forMap().put(config.getParam().getApplication(), config.getServiceName());
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
 		// Iam-client session info.
-		resp.forMap().put(KEY_SESSION_INFO_KEY, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId())));
+		resp.forMap().put(KEY_SESSION_INFO_KEY, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
 
 		// Sets child dataCipherKey. (if necessary)
 		resp.forMap().put(config.getParam().getDataCipherKeyName(), getBindValue(KEY_DATA_CIPHER_KEY));

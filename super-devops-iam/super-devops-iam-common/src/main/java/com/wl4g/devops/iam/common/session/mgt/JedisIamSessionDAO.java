@@ -74,6 +74,12 @@ public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 		ScanParams params = new ScanParams().count(limit).match(match);
 		JedisCluster jedisCluster = ((JedisIamCacheManager) cacheManager).getJedisCluster();
 		return new ScanCursor<IamSession>(jedisCluster, cursor, IamSession.class, params) {
+			@Override
+			public synchronized IamSession next() {
+				IamSession s = super.next();
+				awareRelationCache(s);
+				return s;
+			}
 		}.open();
 	}
 
@@ -84,6 +90,7 @@ public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 		while (sc.hasNext()) {
 			IamSession s = sc.next();
 			if (nonNull(s)) {
+				awareRelationCache(s);
 				Object primaryPrincipal = s.getPrimaryPrincipal();
 				if (nonNull(primaryPrincipal) && primaryPrincipal.equals(principal)) {
 					principalSessions.add(s);

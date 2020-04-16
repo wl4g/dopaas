@@ -330,9 +330,9 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 */
 	private void assertGrantingTicketValidity(Subject subject, TicketValidateModel model) throws InvalidGrantTicketException {
 		if (isBlank(model.getTicket())) {
-			log.warn("Invalid grantTicket, application: {}, sessionId: {}", model.getTicket(), model.getApplication(),
-					subject.getSession().getId());
-			throw new InvalidGrantTicketException("Invalid granting ticket");
+			log.warn("Invalid grantTicket: {}, application: {}, sessionId: {}", model.getTicket(), model.getApplication(),
+					getSessionId(subject));
+			throw new InvalidGrantTicketException("Invalid granting ticket and is required");
 		}
 
 		// Get grant information
@@ -341,7 +341,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 		// No grant ticket created or expired?
 		if (isNull(info) || !info.has(model.getApplication())) {
-			throw new InvalidGrantTicketException("Invalid granting ticket");
+			throw new InvalidGrantTicketException("Invalid granting ticket application");
 		}
 
 		// Validate grantTicket and storedTicket?

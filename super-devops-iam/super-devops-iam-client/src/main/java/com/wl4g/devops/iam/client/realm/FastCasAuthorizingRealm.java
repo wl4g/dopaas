@@ -138,7 +138,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			// SimpleCredentialsMatcher checks.
 			return new FastAuthenticationInfo(info, principals, getName());
 		} catch (Exception e) {
-			throw new CredentialsException(String.format("Unable to validate ticket [%s]", granticket), e);
+			throw new CredentialsException(format("Unable to validate ticket [%s]", granticket), e);
 		}
 	}
 

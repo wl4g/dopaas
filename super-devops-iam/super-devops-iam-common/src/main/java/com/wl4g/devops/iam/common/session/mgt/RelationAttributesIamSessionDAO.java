@@ -72,6 +72,7 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 		try {
 			return super.create(session);
 		} finally {
+			// Sets relation cache.
 			((IamSession) session).setRelationAttrsCache(relationAttrsCache);
 		}
 	}
@@ -90,7 +91,7 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 
 		// Update session latest expiration time to timeout.
 		doPutIamSession(session);
-		((IamSession) session).setRelationAttrsCache(relationAttrsCache);
+		awareRelationCache(session);
 	}
 
 	@Override
@@ -100,8 +101,8 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 
 		log.debug("Deletion {} ", session.getId());
 		doDeleteIamSession(session);
+		awareRelationCache(session);
 
-		((IamSession) session).setRelationAttrsCache(relationAttrsCache);
 		// Remove all relation attributes.
 		relationAttrsCache.mapRemoveAll();
 	}
@@ -113,16 +114,44 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 
 		log.debug("doReadSession {}", sessionId);
 		Session session = doReadIamSession(sessionId);
+		awareRelationCache(session);
+		return session;
+	}
+
+	/**
+	 * Aware sets relation cache
+	 * 
+	 * @param session
+	 * @return
+	 */
+	protected Session awareRelationCache(final Session session) {
+		// Sets relation cache.
 		if (!isNull(session)) {
 			((IamSession) session).setRelationAttrsCache(relationAttrsCache);
 		}
 		return session;
 	}
 
+	/**
+	 * doPutIamSession
+	 * 
+	 * @param session
+	 */
 	protected abstract void doPutIamSession(final Session session);
 
+	/**
+	 * doDeleteIamSession
+	 * 
+	 * @param session
+	 */
 	protected abstract void doDeleteIamSession(final Session session);
 
+	/**
+	 * doReadIamSession
+	 * 
+	 * @param sessionId
+	 * @return
+	 */
 	protected abstract Session doReadIamSession(final Serializable sessionId);
 
 }
