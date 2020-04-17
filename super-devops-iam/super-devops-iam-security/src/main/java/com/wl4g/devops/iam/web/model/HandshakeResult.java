@@ -59,7 +59,7 @@ public class HandshakeResult implements Serializable {
 	 * Session info.
 	 */
 	@NotNull
-	@JsonProperty(KEY_SESSION_INFO_KEY)
+	@JsonProperty(KEY_SESSIONINFO_NAME)
 	private SessionInfo session = new SessionInfo();
 
 	public HandshakeResult() {

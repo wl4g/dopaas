@@ -75,7 +75,6 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 */
 	private Cumulator applySmsCumulator;
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		MatcherProperties matcher = config.getMatcher();

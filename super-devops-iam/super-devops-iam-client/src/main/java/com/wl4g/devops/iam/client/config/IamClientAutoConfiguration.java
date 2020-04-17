@@ -87,7 +87,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	public IamClientSessionManager iamClientSessionManager(IamSessionFactory sessionFactory, JedisIamSessionDAO sessionDAO,
 			IamCacheManager cacheManager, SimpleCookie cookie, IamClientProperties config,
 			@Qualifier(BEAN_SESSION_VALIDATOR) IamValidator validator) {
-		IamClientSessionManager sessionManager = new IamClientSessionManager(config, validator);
+		IamClientSessionManager sessionManager = new IamClientSessionManager(config, cacheManager, validator);
 		sessionManager.setSessionFactory(sessionFactory);
 		sessionManager.setSessionDAO(sessionDAO);
 		sessionManager.setSessionIdCookie(cookie);

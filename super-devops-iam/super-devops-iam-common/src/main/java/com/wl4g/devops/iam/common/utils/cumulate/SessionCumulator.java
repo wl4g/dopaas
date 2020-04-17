@@ -42,7 +42,6 @@ import com.wl4g.devops.tool.common.log.SmartLogger;
  * @since
  * @see {@link DefaultCumulator}
  */
-@Deprecated
 public class SessionCumulator implements Cumulator {
 	final private SmartLogger log = getLogger(getClass());
 

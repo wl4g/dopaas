@@ -15,13 +15,14 @@
  */
 package com.wl4g.devops.iam.common.cache;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
-import org.apache.shiro.util.Assert;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -41,8 +42,8 @@ public class JedisIamCacheManager implements IamCacheManager {
 	private JedisCluster jedisCluster;
 
 	public JedisIamCacheManager(String prefix, JedisCluster jedisCluster) {
-		Assert.notNull(prefix, "'prefix' must not be null");
-		Assert.notNull(jedisCluster, "'jedisCluster' must not be null");
+		notNullOf(prefix, "prefix");
+		notNullOf(jedisCluster, "jedisCluster");
 		this.prefix = prefix;
 		this.jedisCluster = jedisCluster;
 	}
@@ -75,7 +76,7 @@ public class JedisIamCacheManager implements IamCacheManager {
 	}
 
 	private String getCacheName(String name) {
-		return this.prefix + name;
+		return prefix + name;
 	}
 
 }

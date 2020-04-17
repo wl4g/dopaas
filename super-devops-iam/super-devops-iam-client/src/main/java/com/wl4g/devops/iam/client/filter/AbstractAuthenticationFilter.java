@@ -167,7 +167,6 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
 
-	@SuppressWarnings("deprecation")
 	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
 			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
 		notNull(config, "'config' must not be null");
@@ -214,7 +213,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * IamClientSessionManager#getSessionId
 		 */
 		long expiredMs = getSessionExpiredTime();
-		clientTicketCache.put(new CacheKey(grantTicket, expiredMs), getSessionId(subject));
+		clientTicketCache.put(new CacheKey(grantTicket, expiredMs), valueOf(getSessionId(subject)));
 
 		// Determine success URL
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
@@ -470,7 +469,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		resp.forMap().put(config.getParam().getApplication(), config.getServiceName());
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
 		// Iam-client session info.
-		resp.forMap().put(KEY_SESSION_INFO_KEY, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
+		resp.forMap().put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
 
 		// Sets child dataCipherKey. (if necessary)
 		resp.forMap().put(config.getParam().getDataCipherKeyName(), getBindValue(KEY_DATA_CIPHER_KEY));
