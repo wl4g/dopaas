@@ -368,6 +368,12 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-vcs-core</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-rcm-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
@@ -381,6 +387,12 @@
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-rcm-client</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-vcs-manager</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>

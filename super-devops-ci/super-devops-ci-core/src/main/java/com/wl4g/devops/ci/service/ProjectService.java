@@ -43,9 +43,9 @@ public interface ProjectService {
 
 	int updateLockStatus(Integer id, Integer lockStatus);
 
-	List<String> getBranchs(Integer appClusterId, Integer tarOrBranch);
+	List<String> getBranchs(Integer appClusterId, Integer tagOrBranch);
 
-	List<String> getBranchsByProjectId(Integer projectId, Integer tarOrBranch);
+	List<String> getBranchsByProjectId(Integer projectId, Integer tagOrBranch);
 
 	List<CompositeBasicVcsProjectModel> vcsProjects(Integer vcsId, String projectName);
 

@@ -70,6 +70,7 @@
 		<module>super-devops-doc</module>
 		<module>super-devops-coss</module>
 		<module>super-devops-rcm</module>
+		<module>super-devops-vcs</module>
 		<!-- <module>super-devops-esm</module> -->
 		<!-- <module>super-devops-im</module> -->
 	</modules>
