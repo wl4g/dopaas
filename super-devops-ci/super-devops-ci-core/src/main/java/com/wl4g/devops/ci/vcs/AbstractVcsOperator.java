@@ -153,7 +153,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public <T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName) {
+	public <T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName, VcsAction action) {
 		notNull(credentials, "Checkout & pull credentials is requires.");
 		hasText(projecDir, "Checkout & pull projecDir can't is empty");
 		hasText(branchName, "Checkout & pull branchName can't is empty");

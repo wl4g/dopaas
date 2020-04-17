@@ -136,7 +136,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Obtain task history.
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
 				task.getBranchName(), null, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, param.getTaskTraceId(), param.getTaskTraceType(),
+				task.getProviderKind(), task.getBranchType(), task.getContactGroupId(), taskBuildCmds, param.getTaskTraceId(), param.getTaskTraceType(),
 				param.getRemark(), task.getEnvType(), param.getAnnex(), task.getParentAppHome(), task.getAssetsPath());
 
 		// Execution pipeline job.
@@ -173,7 +173,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
 				TASK_STATUS_CREATE, bakTaskHisy.getBranchName(), bakTaskHisy.getShaGit(), param.getTaskId(),
 				bakTaskHisy.getBuildCommand(), bakTaskHisy.getPreCommand(), bakTaskHisy.getPostCommand(),
-				bakTaskHisy.getProviderKind(), bakTaskHisy.getContactGroupId(), commands, bakTaskHisy.getTrackId(),
+				bakTaskHisy.getProviderKind(), bakTaskHisy.getBranchType(),bakTaskHisy.getContactGroupId(), commands, bakTaskHisy.getTrackId(),
 				bakTaskHisy.getTrackType(), bakTaskHisy.getRemark(), bakTaskHisy.getEnvType(), bakTaskHisy.getAnnex(),
 				bakTaskHisy.getParentAppHome(), bakTaskHisy.getAssetsPath());
 
@@ -212,7 +212,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(task.getId());
 		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
 				param.getBranchName(), sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getProviderKind(), task.getContactGroupId(), taskBuildCmds, null, null, null, task.getEnvType(), null,
+				task.getProviderKind(), task.getBranchType(), task.getContactGroupId(), taskBuildCmds, null, null, null, task.getEnvType(), null,
 				task.getParentAppHome(), task.getAssetsPath());
 
 		PipelineModel pipelineModel = flowManager.buildPipeline(task.getId());

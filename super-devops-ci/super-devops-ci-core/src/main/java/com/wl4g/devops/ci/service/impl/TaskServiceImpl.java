@@ -185,7 +185,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public List<TaskBuildCommand> getDependency(Integer appClusterId, Integer taskId) {
+	public List<TaskBuildCommand> getDependency(Integer appClusterId, Integer taskId, Integer tagOrBranch) {
 		Project project = projectDao.getByAppClusterId(appClusterId);
 		if (project == null) {
 			return Collections.emptyList();
@@ -213,7 +213,7 @@ public class TaskServiceImpl implements TaskService {
 			taskBuildCommand.setSort(i);
 			i++;
 
-			List<String> branchs = projectService.getBranchsByProjectId(taskBuildCommand.getProjectId(), null);
+			List<String> branchs = projectService.getBranchsByProjectId(taskBuildCommand.getProjectId(), tagOrBranch);
 			taskBuildCommand.setBranchs(branchs);
 
 			taskBuildCommands.add(taskBuildCommand);

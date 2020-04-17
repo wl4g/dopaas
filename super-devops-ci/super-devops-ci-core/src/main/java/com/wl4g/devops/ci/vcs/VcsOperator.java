@@ -16,15 +16,15 @@
 package com.wl4g.devops.ci.vcs;
 
 import com.google.common.annotations.Beta;
-
-import static com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.framework.operator.Operator;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
 
+import static com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.notNull;
 
@@ -138,7 +138,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 *            project local VCS repository directory absolute path.
 	 * @param branchName
 	 */
-	<T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName);
+	<T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName, VcsAction action);
 
 	/**
 	 * Delete (local) branch.
@@ -248,6 +248,56 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 		final public static VcsProviderKind of(Integer vcsProvider) {
 			VcsProviderKind type = safeOf(vcsProvider);
 			notNull(type, String.format("Unsupported VCS provider for %s", vcsProvider));
+			return type;
+		}
+
+	}
+
+	public static enum VcsAction {
+
+		/** Branch . */
+		BRANCH("1"),
+
+		/** Tag. */
+		TAG("2");
+
+		final private String value;
+
+		private VcsAction(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		/**
+		 * Safe converter string to {@link VcsAction}
+		 *
+		 * @param action
+		 * @return
+		 */
+		final public static VcsAction safeOf(String action) {
+			if (isNull(action)) {
+				return null;
+			}
+			for (VcsAction t : values()) {
+				if (StringUtils.equals(action,t.getValue())) {
+					return t;
+				}
+			}
+			return null;
+		}
+
+		/**
+		 * Converter string to {@link VcsAction}
+		 *
+		 * @param action
+		 * @return
+		 */
+		final public static VcsAction of(String action) {
+			VcsAction type = safeOf(action);
+			notNull(type, String.format("Unsupported VCS provider for %s", action));
 			return type;
 		}
 
