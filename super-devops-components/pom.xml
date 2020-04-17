@@ -10,7 +10,7 @@
 	<url>https://conponents.super-devops.wl4g.com</url>
 	<description>A Super Devops module of components.</description>
 	<modules>
-		<module>super-devops-components-webplugin</module>
+		<module>components-webplugin</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
