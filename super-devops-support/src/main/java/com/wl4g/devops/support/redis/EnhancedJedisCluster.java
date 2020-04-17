@@ -20,6 +20,8 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
@@ -31,7 +33,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,6 +68,8 @@ import redis.clients.util.JedisClusterHashTagUtil;
 import redis.clients.util.KeyMergeUtil;
 import redis.clients.util.SafeEncoder;
 
+import static com.wl4g.devops.support.redis.EnhancedJedisClusterCommand.EnhancedJedisClusterConntionHandler;
+
 /**
  * {@link EnhancedJedisCluster}
  * 
@@ -78,85 +81,25 @@ public class EnhancedJedisCluster extends JedisCluster {
 
 	final protected SmartLogger log = getLogger(getClass());
 
-	public EnhancedJedisCluster(HostAndPort node) {
-		this(Collections.singleton(node), DEFAULT_TIMEOUT);
-	}
-
-	public EnhancedJedisCluster(HostAndPort node, int timeout) {
-		this(Collections.singleton(node), timeout, DEFAULT_MAX_REDIRECTIONS);
-	}
-
-	@SuppressWarnings("rawtypes")
-	public EnhancedJedisCluster(HostAndPort node, int timeout, int maxAttempts) {
-		this(Collections.singleton(node), timeout, maxAttempts, new GenericObjectPoolConfig());
-	}
-
-	@SuppressWarnings("rawtypes")
-	public EnhancedJedisCluster(HostAndPort node, final GenericObjectPoolConfig poolConfig) {
-		this(Collections.singleton(node), DEFAULT_TIMEOUT, DEFAULT_MAX_REDIRECTIONS, poolConfig);
-	}
-
-	@SuppressWarnings("rawtypes")
-	public EnhancedJedisCluster(HostAndPort node, int timeout, final GenericObjectPoolConfig poolConfig) {
-		this(Collections.singleton(node), timeout, DEFAULT_MAX_REDIRECTIONS, poolConfig);
-	}
-
-	@SuppressWarnings("rawtypes")
-	public EnhancedJedisCluster(HostAndPort node, int timeout, int maxAttempts, final GenericObjectPoolConfig poolConfig) {
-		this(Collections.singleton(node), timeout, maxAttempts, poolConfig);
-	}
-
 	@SuppressWarnings("rawtypes")
 	public EnhancedJedisCluster(HostAndPort node, int connectionTimeout, int soTimeout, int maxAttempts,
 			final GenericObjectPoolConfig poolConfig) {
-		super(Collections.singleton(node), connectionTimeout, soTimeout, maxAttempts, poolConfig);
-	}
-
-	@SuppressWarnings("rawtypes")
-	public EnhancedJedisCluster(HostAndPort node, int connectionTimeout, int soTimeout, int maxAttempts, String password,
-			final GenericObjectPoolConfig poolConfig) {
-		super(Collections.singleton(node), connectionTimeout, soTimeout, maxAttempts, password, poolConfig);
-	}
-
-	public EnhancedJedisCluster(Set<HostAndPort> nodes) {
-		this(nodes, DEFAULT_TIMEOUT);
-	}
-
-	public EnhancedJedisCluster(Set<HostAndPort> nodes, int timeout) {
-		this(nodes, timeout, DEFAULT_MAX_REDIRECTIONS);
-	}
-
-	@SuppressWarnings("rawtypes")
-	public EnhancedJedisCluster(Set<HostAndPort> nodes, int timeout, int maxAttempts) {
-		this(nodes, timeout, maxAttempts, new GenericObjectPoolConfig());
-	}
-
-	@SuppressWarnings("rawtypes")
-	public EnhancedJedisCluster(Set<HostAndPort> nodes, final GenericObjectPoolConfig poolConfig) {
-		this(nodes, DEFAULT_TIMEOUT, DEFAULT_MAX_REDIRECTIONS, poolConfig);
-	}
-
-	@SuppressWarnings("rawtypes")
-	public EnhancedJedisCluster(Set<HostAndPort> nodes, int timeout, final GenericObjectPoolConfig poolConfig) {
-		this(nodes, timeout, DEFAULT_MAX_REDIRECTIONS, poolConfig);
-	}
-
-	@SuppressWarnings("rawtypes")
-	public EnhancedJedisCluster(Set<HostAndPort> jedisClusterNode, int timeout, int maxAttempts,
-			final GenericObjectPoolConfig poolConfig) {
-		super(jedisClusterNode, timeout, maxAttempts, poolConfig);
+		this(singleton(node), connectionTimeout, soTimeout, maxAttempts, null, poolConfig);
 	}
 
 	@SuppressWarnings("rawtypes")
 	public EnhancedJedisCluster(Set<HostAndPort> jedisClusterNode, int connectionTimeout, int soTimeout, int maxAttempts,
 			final GenericObjectPoolConfig poolConfig) {
-		super(jedisClusterNode, connectionTimeout, soTimeout, maxAttempts, poolConfig);
+		this(jedisClusterNode, connectionTimeout, soTimeout, maxAttempts, null, poolConfig);
 	}
 
 	@SuppressWarnings("rawtypes")
 	public EnhancedJedisCluster(Set<HostAndPort> jedisClusterNode, int connectionTimeout, int soTimeout, int maxAttempts,
 			String password, final GenericObjectPoolConfig poolConfig) {
-		super(jedisClusterNode, connectionTimeout, soTimeout, maxAttempts, password, poolConfig);
+		super(emptySet(), connectionTimeout, soTimeout, maxAttempts, null, null);
+		// Overly jedisCluster connection handler
+		this.connectionHandler = new EnhancedJedisClusterConntionHandler(jedisClusterNode, poolConfig, connectionTimeout,
+				soTimeout, password);
 	}
 
 	@Override
