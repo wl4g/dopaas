@@ -99,10 +99,12 @@ public abstract class EnhancedJedisClusterCommand<T> extends JedisClusterCommand
 					// Friendly tip: Whether redis cluster config is not
 					// standard
 					if (isBlank(parseString(tip).getHost())) {
-						tip += ", Please check the redis cluster configuration. e.g: listen(0.0.0.0:6379)? (it is recommended to explicitly listen to the host address!)";
+						tip = format(
+								"'%s', Please check the redis cluster configuration. e.g: listen(0.0.0.0:6379)? (it is recommended to explicitly listen to the host address!)",
+								tip);
 					}
 				}
-				throw new JedisException(format("Couldn't get a resource of '%s'", tip), ex);
+				throw new JedisException(format("Couldn't get a resource, %s", tip), ex);
 			}
 		}
 
