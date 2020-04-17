@@ -19,7 +19,6 @@ package com.wl4g.devops.vcs.operator.bitbucket;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.tool.common.annotation.Reserved;
 import com.wl4g.devops.vcs.operator.AbstractVcsOperator;
-import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
 import org.springframework.http.HttpEntity;
 
 import java.util.List;
@@ -54,13 +53,6 @@ public class BitbucketVcsOperator extends AbstractVcsOperator {
 	@Override
 	public Integer getRemoteProjectId(Vcs credentials, String projectName) {
 		super.getRemoteProjectId(credentials, projectName);
-		throw new UnsupportedOperationException();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<CompositeBasicVcsProjectModel> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
-		super.searchRemoteProjects(credentials, projectName, limit);
 		throw new UnsupportedOperationException();
 	}
 

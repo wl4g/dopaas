@@ -17,17 +17,17 @@ package com.wl4g.devops.vcs.operator;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
@@ -57,7 +57,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	 * @param typeRef
 	 * @return
 	 */
-	protected <T> T doRemoteExchange(Vcs credentials, String url, TypeReference<T> typeRef) {
+	protected <T> T doRemoteExchange(Vcs credentials, String url,HttpHeaders headers, TypeReference<T> typeRef) {
 		// Create httpEntity.
 		HttpEntity<String> entity = createVcsRequestHttpEntity(credentials);
 
@@ -69,6 +69,9 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		}
 		if (log.isInfoEnabled()) {
 			log.info("Vcs remote response <= {}", resp.getBody());
+		}
+		if(Objects.nonNull(headers)){
+			headers.putAll(resp.getHeaders());
 		}
 		return parseJSON(resp.getBody(), typeRef);
 	}
@@ -113,7 +116,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
+	public <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName, int limit, PageModel pm) {
 		notNull(credentials, "Search remote projects credentials can't is null.");
 		/*
 		 * The item name to be searched can be empty. If it is empty, it means
@@ -131,6 +134,11 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		factory.setReadTimeout(60_000);
 		factory.setMaxResponseSize(1024 * 1024 * 10);
 		this.restTemplate = new RestTemplate(factory);
+	}
+
+	@Override
+	public <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, int limit) {
+		return null;
 	}
 
 }

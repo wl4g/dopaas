@@ -18,7 +18,6 @@ package com.wl4g.devops.vcs.operator.gitee;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.tool.common.annotation.Reserved;
 import com.wl4g.devops.vcs.operator.AbstractVcsOperator;
-import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
@@ -65,11 +64,5 @@ public class GiteeVcsOperator extends AbstractVcsOperator {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<CompositeBasicVcsProjectModel> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
-		super.searchRemoteProjects(credentials, projectName, limit);
-		throw new UnsupportedOperationException();
-	}
 
 }

@@ -19,7 +19,6 @@ package com.wl4g.devops.vcs.operator.alicode;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.tool.common.annotation.Reserved;
 import com.wl4g.devops.vcs.operator.AbstractVcsOperator;
-import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
 import org.springframework.http.HttpEntity;
 
 import java.util.List;
@@ -56,14 +55,6 @@ public class AlicodeVcsOperator extends AbstractVcsOperator {
 		super.getRemoteProjectId(credentials, projectName);
 		throw new UnsupportedOperationException();
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<CompositeBasicVcsProjectModel> searchRemoteProjects(Vcs credentials, String projectName, int limit) {
-		super.searchRemoteProjects(credentials, projectName, limit);
-		throw new UnsupportedOperationException();
-	}
-
 
 	@Override
 	protected HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials) {
