@@ -24,6 +24,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,6 +56,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.containsAny;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -223,6 +225,51 @@ public abstract class WebUtils2 {
 	}
 
 	/**
+	 * Map to query URL
+	 * 
+	 * @param uri
+	 * @param queryParams
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static String applyQueryURL(String uri, Map queryParams) {
+		if (CollectionUtils2.isEmpty(queryParams) || isBlank(uri)) {
+			return uri;
+		}
+
+		URI _uri = URI.create(uri);
+		// Merge origin-older uri query parameters.
+		Map<String, String> mergeParams = new HashMap<>(toQueryParams(_uri.getQuery()));
+		mergeParams.putAll(queryParams);
+		// Gets base URI.
+		StringBuffer url = new StringBuffer(uri); // Relative path?
+		if (!isAnyBlank(_uri.getScheme(), _uri.getHost())) {
+			url.setLength(0); // Reset
+			url.append(getBaseURIForDefault(_uri.getScheme(), _uri.getHost(), _uri.getPort()));
+			url.append(_uri.getPath());
+		}
+		if (url.lastIndexOf("?") == -1) {
+			url.append("?");
+		}
+
+		// To URI parameters string
+		for (Iterator<?> it = mergeParams.keySet().iterator(); it.hasNext();) {
+			Object key = it.next();
+			url.append(key);
+			url.append("=");
+			// Prevents any occurrence of a value string null
+			Object value = mergeParams.get(key);
+			if (value != null) {
+				url.append(value); // "null"
+			}
+			if (it.hasNext()) {
+				url.append("&");
+			}
+		}
+		return url.toString();
+	}
+
+	/**
 	 * Reject http request methods.
 	 * 
 	 * @param allowMode
@@ -280,40 +327,6 @@ public abstract class WebUtils2 {
 			hasTextOf(cleanedValue, paramName);
 		}
 		return cleanedValue;
-	}
-
-	/**
-	 * Map to query URL
-	 * 
-	 * @param uri
-	 * @param queryParams
-	 * @return
-	 */
-	@SuppressWarnings("rawtypes")
-	public static String applyQueryURL(String uri, Map queryParams) {
-		if (CollectionUtils2.isEmpty(queryParams)) {
-			return uri;
-		}
-
-		StringBuffer url = new StringBuffer(StringUtils.isEmpty(uri) ? "" : uri);
-		if (url.lastIndexOf("?") == -1) {
-			url.append("?");
-		}
-		// To URI parameters string
-		for (Iterator<?> it = queryParams.keySet().iterator(); it.hasNext();) {
-			Object key = it.next();
-			url.append(key);
-			url.append("=");
-			// Prevents any occurrence of a value string null
-			Object value = queryParams.get(key);
-			if (value != null) {
-				url.append(value); // "null"
-			}
-			if (it.hasNext()) {
-				url.append("&");
-			}
-		}
-		return url.toString();
 	}
 
 	/**

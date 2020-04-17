@@ -24,12 +24,10 @@ import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.shiro.cache.CacheException;
 
 import com.google.common.base.Charsets;
@@ -63,11 +61,9 @@ public class JedisIamCache implements IamCache {
 
 	@Override
 	public Object get(final CacheKey key) throws CacheException {
-		notNull(key, "'key' must not be null");
-		notNull(key.getValueClass(), "'valueClass' must not be null");
-		if (log.isDebugEnabled()) {
-			log.debug("Get key={}", key);
-		}
+		notNullOf(key, "key");
+		notNullOf(key.getValueClass(), "valueClass");
+		log.debug("Get key={}", key);
 
 		byte[] data = jedisCluster.get(key.getKey(name));
 		if (key.getDeserializer() != null) { // Using a custom deserializer
@@ -79,11 +75,9 @@ public class JedisIamCache implements IamCache {
 
 	@Override
 	public Object put(final CacheKey key, final Object value) throws CacheException {
-		notNull(key, "'key' must not be null");
-		notNull(value, "'value' must not be null");
-		if (log.isDebugEnabled()) {
-			log.debug("Put key={}, value={}", key, value);
-		}
+		notNullOf(key, "key");
+		notNullOf(value, "value");
+		log.debug("Put key={}, value={}", key, value);
 
 		byte[] data = null;
 		if (key.getSerializer() != null) { // Using a custom serializer
@@ -104,9 +98,7 @@ public class JedisIamCache implements IamCache {
 	@Override
 	public Object remove(final CacheKey key) throws CacheException {
 		notNull(key, "'key' must not be null");
-		if (log.isDebugEnabled()) {
-			log.debug("Remove key={}", key);
-		}
+		log.debug("Remove key={}", key);
 		return jedisCluster.del(key.getKey(name));
 	}
 
@@ -233,13 +225,13 @@ public class JedisIamCache implements IamCache {
 	// --- Enhanced API. ---
 
 	@Override
-	public String mapPut(String fieldKey, Serializable fieldValue) {
+	public String mapPut(CacheKey fieldKey, Object fieldValue) {
 		return mapPut(fieldKey, fieldValue, 0);
 	}
 
 	@Override
-	public String mapPut(String fieldKey, Serializable fieldValue, int expireSec) {
-		hasTextOf(fieldKey, "fieldKey");
+	public String mapPut(CacheKey fieldKey, Object fieldValue, int expireSec) {
+		notNull(fieldKey, "fieldKey");
 		notNull(fieldValue, "fieldValue");
 		log.debug("mapPut key={}, value={}", fieldKey, fieldValue);
 
@@ -247,23 +239,23 @@ public class JedisIamCache implements IamCache {
 	}
 
 	@Override
-	public String mapPutAll(Map<String, Serializable> map) {
+	public String mapPutAll(Map<CacheKey, Object> map) {
 		return mapPutAll(map, 0);
 	}
 
 	@Override
-	public String mapPutAll(Map<String, Serializable> map, int expireSec) {
+	public String mapPutAll(Map<CacheKey, Object> map, int expireSec) {
 		if (isEmpty(map))
 			return null;
 		log.debug("mapPut map={}", map);
 
 		// Convert to fields map.
 		Map<byte[], byte[]> dataMap = map.entrySet().stream().collect(toMap(e -> {
-			hasTextOf(e.getKey(), "fieldKey");
-			return toKeyBytes(e.getKey());
+			notNull(e.getKey(), "fieldKey");
+			return e.getKey().getKey();
 		}, e -> {
 			notNull(e.getValue(), "fieldValue");
-			return SerializationUtils.serialize(e.getValue());
+			return serialize(e.getValue());
 		}));
 		// Hash map sets
 		byte[] mapKey = toKeyBytes(name);
@@ -274,21 +266,29 @@ public class JedisIamCache implements IamCache {
 		return res;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getMapField(String fieldKey) {
-		byte[] data = jedisCluster.hget(toKeyBytes(name), toKeyBytes(fieldKey));
-		return isNull(data) ? null : SerializationUtils.deserialize(data);
+	public <T> T getMapField(CacheKey fieldKey) {
+		notNullOf(fieldKey, "fieldKey");
+		notNullOf(fieldKey.getValueClass(), "valueClass");
+		byte[] data = jedisCluster.hget(toKeyBytes(name), fieldKey.getKey());
+		return isNull(data) ? null : (T) deserialize(data, fieldKey.getValueClass());
 	}
 
 	@Override
-	public <T> Map<String, T> getMapAll() {
+	public <T> Map<String, T> getMapAll(Class<T> valueClass) {
 		return safeMap(jedisCluster.hgetAll(toKeyBytes(name))).entrySet().stream()
 				.collect(toMap(e -> new String(e.getKey(), UTF_8), e -> {
 					if (isNull(e.getValue())) {
 						return null;
 					}
-					return SerializationUtils.deserialize(e.getValue());
+					return deserialize(e.getValue(), valueClass);
 				}));
+	}
+
+	@Override
+	public Map<byte[], byte[]> getMapAll() {
+		return jedisCluster.hgetAll(toKeyBytes(name));
 	}
 
 	@Override

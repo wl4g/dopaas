@@ -126,7 +126,7 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 	 */
 	protected Session awareRelationCache(final Session session) {
 		// Sets relation cache.
-		if (!isNull(session)) {
+		if (!isNull(session) && (session instanceof IamSession)) {
 			((IamSession) session).setRelationAttrsCache(relationAttrsCache);
 		}
 		return session;

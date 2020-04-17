@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.iam.common.cache;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
-
-import org.springframework.util.Assert;
 
 import com.google.common.base.Charsets;
 
@@ -50,8 +50,8 @@ public class CacheKey implements Serializable {
 	}
 
 	public CacheKey(Serializable key, Class<?> valueClass) {
-		Assert.notNull(key, "'key' must not be null");
-		Assert.notNull(valueClass, "'valueClass' must not be null");
+		notNull(key, "'key' must not be null");
+		notNull(valueClass, "'valueClass' must not be null");
 		this.key = key.toString();
 		this.valueClass = valueClass;
 	}
@@ -61,7 +61,7 @@ public class CacheKey implements Serializable {
 	}
 
 	public CacheKey(Serializable key, int expireSec) {
-		Assert.notNull(key, "'key' must not be null");
+		notNull(key, "'key' must not be null");
 		this.key = key.toString();
 		this.expire = expireSec;
 	}
@@ -94,7 +94,7 @@ public class CacheKey implements Serializable {
 	}
 
 	public CacheKey serializer(Serializer serializer) {
-		Assert.notNull(serializer, "'serializer' must not be null");
+		notNull(serializer, "'serializer' must not be null");
 		this.serializer = serializer;
 		return this;
 	}
@@ -104,7 +104,7 @@ public class CacheKey implements Serializable {
 	}
 
 	public CacheKey deserializer(Deserializer deserializer) {
-		Assert.notNull(deserializer, "'deserializer' must not be null");
+		notNull(deserializer, "'deserializer' must not be null");
 		this.deserializer = deserializer;
 		return this;
 	}
@@ -115,8 +115,9 @@ public class CacheKey implements Serializable {
 
 	@Override
 	public String toString() {
-		return "EnhancedKey [" + (key != null ? "key=" + key + ", " : "") + (expire != null ? "expire=" + expire + ", " : "")
-				+ (valueClass != null ? "valueClass=" + valueClass : "") + "]";
+		return getClass().getSimpleName() + " [" + (key != null ? "key=" + key + ", " : "")
+				+ (expire != null ? "expire=" + expire + ", " : "") + (valueClass != null ? "valueClass=" + valueClass : "")
+				+ "]";
 	}
 
 	public static byte[] toKeyBytes(String key) {
@@ -124,7 +125,7 @@ public class CacheKey implements Serializable {
 	}
 
 	public static byte[] toKeyBytes(String prefix, String key) {
-		Assert.notNull(key, "'key' must not be null");
+		notNull(key, "'key' must not be null");
 		return ((prefix == null ? "" : prefix) + key).getBytes(Charsets.UTF_8);
 	}
 
