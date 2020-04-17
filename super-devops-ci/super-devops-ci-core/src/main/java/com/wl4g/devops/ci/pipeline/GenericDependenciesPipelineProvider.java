@@ -219,6 +219,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	private void pullSourceAndBuild(Integer projectId, String branch, String buildCommand) throws Exception {
 		log.info("Pipeline building for projectId: {}", projectId);
 
+		TaskHistory taskHisy = getContext().getTaskHistory();
+
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		notNull(project, format("Not found project by %s", projectId));
 
