@@ -23,9 +23,9 @@ import org.springframework.context.annotation.Configuration;
 
 import static com.wl4g.devops.webjars.config.WebIdeProperties.*;
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
-import com.wl4g.devops.webjars.editor.DefaultWebIdeCompleter;
-import com.wl4g.devops.webjars.editor.WebIdeCompleter;
-import com.wl4g.devops.webjars.editor.WebIdeEndpoint;
+import com.wl4g.devops.webjars.webide.DefaultWebIdeCompleter;
+import com.wl4g.devops.webjars.webide.WebIdeCompleter;
+import com.wl4g.devops.webjars.webide.WebIdeEndpoint;
 
 /**
  * WebIDE auto configuration.
