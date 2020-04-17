@@ -18,6 +18,8 @@ package com.wl4g.devops.vcs.operator;
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.framework.operator.Operator;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 
 import java.util.List;
@@ -74,8 +76,8 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName) {
-		return searchRemoteProjects(credentials, projectName, Integer.MAX_VALUE);
+	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName,PageModel pm) {
+		return searchRemoteProjects(credentials, groupId, projectName, Integer.MAX_VALUE, pm);
 	}
 
 	/**
@@ -89,9 +91,32 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 *            Page limit maximum
 	 * @return
 	 */
-	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName, int limit);
+	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName, int limit, PageModel pm);
 
 
+	/**
+	 * Search find remote projects by name.(unlimited)
+	 *
+	 * @param credentials
+	 * @param projectName
+	 * @return
+	 */
+	default <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName) {
+		return searchRemoteGroups(credentials, groupName, Integer.MAX_VALUE);
+	}
+
+	/**
+	 * Search find remote projects by name.
+	 *
+	 * @param credentials
+	 * @param projectName
+	 *            The item name to be searched can be empty. If it is empty, it
+	 *            means unconditional.
+	 * @param limit
+	 *            Page limit maximum
+	 * @return
+	 */
+	<T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, int limit);
 
 	/**
 	 * VCS type definitions.

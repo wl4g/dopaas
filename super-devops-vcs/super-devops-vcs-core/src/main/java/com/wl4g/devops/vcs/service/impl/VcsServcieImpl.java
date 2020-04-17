@@ -21,13 +21,21 @@ import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
+import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
+import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
+import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import com.wl4g.devops.vcs.service.VcsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author vjay
@@ -84,6 +92,34 @@ public class VcsServcieImpl implements VcsService {
 	@Override
 	public List<Vcs> all() {
 		return vcsDao.list(null, null, null);
+	}
+
+	@Override
+	public List<VcsGroupModel> getGroups(Integer id, String groupName) {
+		Vcs vcs = vcsDao.selectByPrimaryKey(id);
+		Assert2.notNullOf(vcs,"vcs");
+		return vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteGroups(vcs, groupName);
+	}
+
+	public List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Integer vcsId, String projectName) {
+		notNullOf(vcsId, "vcsId");
+		// Gets VCS information.
+		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
+
+		// Search remote projects.
+		List<VcsProjectModel> projects = vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, null, projectName,null);
+		return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
+	}
+
+	public List<VcsProjectModel> getProjects(PageModel pm, Integer vcsId, Integer groupId, String projectName) {
+		notNullOf(vcsId, "vcsId");
+		// Gets VCS information.
+		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
+		Assert2.notNullOf(vcs,"vcs");
+
+		// Search remote projects.
+		List<VcsProjectModel> projects = vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, groupId, projectName,pm);
+		return projects;
 	}
 
 

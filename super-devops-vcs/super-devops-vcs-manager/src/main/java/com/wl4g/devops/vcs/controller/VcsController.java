@@ -19,10 +19,14 @@ import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
+import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 import com.wl4g.devops.vcs.service.VcsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author vjay
@@ -34,6 +38,7 @@ public class VcsController extends BaseController {
 
 	@Autowired
 	private VcsService vcsService;
+
 
 	@RequestMapping("/list")
 	public RespBase<?> list(PageModel pm, String name, String providerKind, Integer authType) {
@@ -68,6 +73,31 @@ public class VcsController extends BaseController {
 	public RespBase<?> all() {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(vcsService.all());
+		return resp;
+	}
+
+	@RequestMapping(value = "/vcsProjects")
+	public RespBase<?> searchVcsProjects(Integer vcsId, String projectName) {
+		RespBase<Object> resp = RespBase.create();
+		List<CompositeBasicVcsProjectModel> remoteProjects = vcsService.getProjectsToCompositeBasic(vcsId, projectName);
+		resp.setData(remoteProjects);
+		return resp;
+	}
+
+	@RequestMapping("/getGroups")
+	public RespBase<?> getGroups(Integer id, String groupName) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(vcsService.getGroups(id, groupName));
+		return resp;
+	}
+
+
+	@RequestMapping(value = "/getProjects")
+	public RespBase<?> getProjects(PageModel pm, Integer vcsId, Integer groupId ,String projectName) {
+		RespBase<Object> resp = RespBase.create();
+		List<VcsProjectModel> projects = vcsService.getProjects(pm, vcsId, groupId, projectName);
+		pm.setRecords(projects);
+		resp.setData(pm);
 		return resp;
 	}
 
