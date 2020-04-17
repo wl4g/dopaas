@@ -11,11 +11,11 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: coss-example
+  application.name: webjars-example
 
 # ### Server configuration. ###
 server:
-  port: 14061
+  port: 14070
   sessionTimeout: 30
   contextPath: /${spring.application.name}
   tomcat:

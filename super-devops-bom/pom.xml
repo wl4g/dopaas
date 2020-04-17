@@ -128,13 +128,13 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-components-webplugin</artifactId>
+				<artifactId>super-devops-components-webjars</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-components-webplugin-core</artifactId>
+				<artifactId>super-devops-components-webjars-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
