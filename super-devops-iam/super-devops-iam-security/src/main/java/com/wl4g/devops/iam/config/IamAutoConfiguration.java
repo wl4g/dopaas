@@ -179,7 +179,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	@Bean
 	public IamServerSessionManager iamServerSessionManager(IamSessionFactory sessionFactory, JedisIamSessionDAO sessionDao,
 			IamCacheManager cacheManager, SimpleCookie cookie, IamProperties config) {
-		IamServerSessionManager sessionManager = new IamServerSessionManager(config);
+		IamServerSessionManager sessionManager = new IamServerSessionManager(config, cacheManager);
 		sessionManager.setSessionFactory(sessionFactory);
 		sessionManager.setSessionDAO(sessionDao);
 		sessionManager.setSessionIdCookie(cookie);

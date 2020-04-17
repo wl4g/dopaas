@@ -33,6 +33,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisFormatUtils.*;
 
 /**
  * IAM abstract configuration properties.
@@ -223,7 +224,9 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public String getPrefix() {
 			if (isBlank(prefix)) {
-				setPrefix(environment.getProperty("spring.application.name") + "_iam_");
+				// e.g: iam-server => iam_server
+				String defaultCachePrefix = keyFormat(environment.getProperty("spring.application.name"), '_');
+				setPrefix(defaultCachePrefix);
 			}
 			hasText(prefix, "Cache prefix must not be empty.");
 			return prefix;
