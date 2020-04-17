@@ -119,7 +119,19 @@
 	</distributionManagement>
 	<dependencyManagement>
 		<dependencies>
-			<!-- Dependencies moudle's -->
+			<!-- Dependencies module's -->
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-components</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-components-webplugin</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-tool-common</artifactId>

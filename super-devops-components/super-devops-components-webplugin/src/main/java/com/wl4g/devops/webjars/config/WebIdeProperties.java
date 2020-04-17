@@ -28,7 +28,7 @@ public class WebIdeProperties extends GenericEmbeddedWebappsProperties {
 
 	final public static String KEY_WEBIDE_PREFIX = "spring.cloud.devops.webjars.webide";
 	final public static String URI_WEBIDE_BASE = "/webide";
-	final public static String PATH_WEBIDE_WEBAPPS = "classpath*:/webapps-plugin" + URI_WEBIDE_BASE;
+	final public static String PATH_WEBIDE_WEBAPPS = "classpath*:/plugin-webapps" + URI_WEBIDE_BASE;
 
 	public WebIdeProperties() {
 		setBaseUri(URI_WEBIDE_BASE);

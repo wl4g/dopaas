@@ -13,48 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.webjars.editor.model;
+package com.wl4g.devops.webjars.webide;
+
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.webjars.webide.model.CompleteRequest;
 
 /**
- * Request complete model.
+ * Default webide completer.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年3月31日
  * @since
  */
-public class CompleteRequest {
+public class DefaultWebIdeCompleter implements WebIdeCompleter {
 
-	private int start;
-	private String line;
-	private String input;
-
-	public int getStart() {
-		return start;
-	}
-
-	public void setStart(int start) {
-		this.start = start;
-	}
-
-	public String getLine() {
-		return line;
-	}
-
-	public void setLine(String line) {
-		this.line = line;
-	}
-
-	public String getInput() {
-		return input;
-	}
-
-	public void setInput(String input) {
-		this.input = input;
-	}
+	final protected SmartLogger log = getLogger(getClass());
 
 	@Override
-	public String toString() {
-		return "CompleteRequest [start=" + start + ", line=" + line + ", input=" + input + "]";
+	public String complete(CompleteRequest req) {
+		log.debug("On completion of start: {}, line: {}, input: {}", req.getStart(), req.getLine(), req.getInput());
+		return req.getInput();
 	}
 
 }
