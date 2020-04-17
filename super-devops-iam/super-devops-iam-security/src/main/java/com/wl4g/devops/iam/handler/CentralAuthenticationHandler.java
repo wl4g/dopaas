@@ -448,7 +448,8 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @return
 	 */
 	public static GrantCredentialsInfo getGrantCredentials(Session session) {
-		GrantCredentialsInfo info = (GrantCredentialsInfo) session.getAttribute(new RelationAttrKey(KEY_GRANTCREDENTIALS));
+		GrantCredentialsInfo info = (GrantCredentialsInfo) session
+				.getAttribute(new RelationAttrKey(KEY_GRANTCREDENTIALS, GrantCredentialsInfo.class));
 		return isNull(info) ? new GrantCredentialsInfo() : info;
 	}
 

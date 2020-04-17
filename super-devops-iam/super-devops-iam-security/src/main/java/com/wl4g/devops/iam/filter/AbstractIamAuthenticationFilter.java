@@ -27,7 +27,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.tool.common.web.WebUtils2.applyQueryURL;
+import static com.wl4g.devops.tool.common.web.WebUtils2.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getBaseURIForDefault;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
@@ -36,6 +36,7 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static java.lang.String.format;
+import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -66,6 +67,7 @@ import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
 
 import java.io.IOException;
@@ -476,40 +478,35 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 *            from application name
 	 * @param grantTicket
 	 *            logged information model
-	 * @param successUrl
+	 * @param callbackUrl
 	 *            login success redirect URL
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected RespBase<String> makeLoggedResponse(AuthenticationToken token, Subject subject, ServletRequest request,
-			String grantTicket, String successUrl, Map params) throws Exception {
-		hasTextOf(successUrl, "successUrl");
+			String grantTicket, String callbackUrl, Map params) throws Exception {
+		hasTextOf(callbackUrl, "successCallbackUrl");
 
 		// Redirection URL
-		StringBuffer successRedirectUrl = new StringBuffer(successUrl);
+		String successRedirectUrl = callbackUrl;
 		if (isNotBlank(grantTicket)) {
-			if (successRedirectUrl.lastIndexOf("?") > 0) {
-				successRedirectUrl.append("&");
-			} else {
-				successRedirectUrl.append("?");
-			}
-			successRedirectUrl.append(config.getParam().getGrantTicket()).append("=").append(grantTicket);
+			successRedirectUrl = applyQueryURL(callbackUrl, singletonMap(config.getParam().getGrantTicket(), grantTicket));
 		}
 
-		// Relative path?
-		String redirectUrl = successRedirectUrl.toString();
-		if (startsWith(redirectUrl, "/")) {
-			redirectUrl = getRFCBaseURI(toHttp(request), true) + successRedirectUrl;
+		// Generate absoulte full redirectUrl.
+		String fullRedirectUrl = successRedirectUrl.toString();
+		if (startsWith(fullRedirectUrl, "/")) { // Relative path?
+			fullRedirectUrl = getRFCBaseURI(toHttp(request), true) + successRedirectUrl;
 		}
 
 		// Placing it in http.body makes it easier for Android/iOS
 		// to get token.
-		params.put(config.getParam().getRedirectUrl(), redirectUrl);
+		params.put(config.getParam().getRedirectUrl(), fullRedirectUrl);
 		params.put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 
-		// Post success secret processing.
-		postSuccessSecretTokensHandle(token, subject, params);
+		// Post success secret tokens
+		postHandleSuccessSecretTokens(token, subject, params);
 
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
@@ -611,7 +608,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void postSuccessSecretTokensHandle(AuthenticationToken token, Subject subject, Map params) throws Exception {
+	protected void postHandleSuccessSecretTokens(AuthenticationToken token, Subject subject, Map params) throws Exception {
 		// Use 'clientsecretkey' to encrypt the newly generated symmetric
 		// key 'datacipherkey'
 		if (token instanceof ClientSecretIamAuthenticationToken) {

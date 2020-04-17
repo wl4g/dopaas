@@ -43,6 +43,7 @@ import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
 import static java.lang.System.*;
+import static java.util.Collections.singletonMap;
 import static com.wl4g.devops.tool.common.web.WebUtils2.*;
 
 public class WebUtils2Tests {
@@ -104,6 +105,14 @@ public class WebUtils2Tests {
 		} catch (Exception e) {
 			out.println("reject2 -- ERROR");
 		}
+
+		out.println("-------------6666-------------------");
+		out.println(applyQueryURL("http://iam.wl4g.com/api/v2?response_type=json", singletonMap("aa", 11)));
+		out.println(applyQueryURL("http://iam.wl4g.com/api/v2?response_type=json&", singletonMap("aa", 11)));
+		out.println(applyQueryURL("http://iam.wl4g.com/api/v2", singletonMap("aa", 11)));
+		out.println(applyQueryURL("/api/v2?response_type=json", singletonMap("bb", 22)));
+		out.println(applyQueryURL("api/v2?response_type=json&", singletonMap("bb", 22)));
+		out.println(applyQueryURL("/api/v2", singletonMap("bb", 22)));
 
 	}
 

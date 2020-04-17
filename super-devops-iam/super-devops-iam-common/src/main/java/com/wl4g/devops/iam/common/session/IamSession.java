@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.common.session;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
@@ -36,7 +37,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.*;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.valueOf;
@@ -409,13 +410,9 @@ public class IamSession implements ValidatingSession, Serializable {
 	@Override
 	public Object getAttribute(Object key) {
 		if (isRelationAttrKey(key)) {
-			return getRelationAttrsCache().getMapField(valueOf(key));
+			return getRelationAttrsCache().getMapField((RelationAttrKey) key);
 		}
-		Map<Object, Object> attributes = getAttributes();
-		if (isNull(attributes)) {
-			return null;
-		}
-		return attributes.get(key);
+		return safeMap(getAttributes()).get(key);
 	}
 
 	@JsonIgnore
@@ -424,9 +421,9 @@ public class IamSession implements ValidatingSession, Serializable {
 		if (isNull(value)) {
 			removeAttribute(key);
 		} else {
-			if (/* (value instanceof Serializable) && */ isRelationAttrKey(key)) {
+			if (isRelationAttrKey(key)) {
 				// Put relation attribute.
-				getRelationAttrsCache().mapPut(valueOf(key), (Serializable) value);
+				getRelationAttrsCache().mapPut((RelationAttrKey) key, value);
 			} else {
 				getAttributesLazy().put(key, value);
 			}
@@ -706,26 +703,27 @@ public class IamSession implements ValidatingSession, Serializable {
 	 * @version v1.0 2020年4月16日
 	 * @since
 	 */
-	public static class RelationAttrKey implements Serializable {
+	public static class RelationAttrKey extends CacheKey {
 		private static final long serialVersionUID = -999087974868579671L;
 
-		/**
-		 * Real attribute key.
-		 */
-		final private String key;
-
-		public RelationAttrKey(String key) {
-			hasTextOf(key, "key");
-			this.key = key;
+		public RelationAttrKey(Serializable key) {
+			super(key);
 		}
 
-		public String getKey() {
-			return key;
+		public RelationAttrKey(byte[] key) {
+			super(key);
 		}
 
-		@Override
-		public String toString() {
-			return key;
+		public RelationAttrKey(Serializable key, Class<?> valueClass) {
+			super(key, valueClass);
+		}
+
+		public RelationAttrKey(Serializable key, long expireMs) {
+			super(key, expireMs);
+		}
+
+		public RelationAttrKey(Serializable key, int expireSec) {
+			super(key, expireSec);
 		}
 
 	}

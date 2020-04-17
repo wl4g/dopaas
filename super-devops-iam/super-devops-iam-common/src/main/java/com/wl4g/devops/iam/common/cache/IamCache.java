@@ -17,7 +17,6 @@ package com.wl4g.devops.iam.common.cache;
 
 import static com.google.common.base.Charsets.UTF_8;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.shiro.cache.Cache;
@@ -46,7 +45,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 *         setup
 	 * @throws CacheException
 	 */
-	Long timeToLive(final CacheKey key, Object value) throws CacheException;
+	Long timeToLive(CacheKey key, Object value) throws CacheException;
 
 	/**
 	 * Get and add an atomic counter at the same time
@@ -55,7 +54,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @return
 	 * @throws CacheException
 	 */
-	Long incrementGet(final CacheKey key) throws CacheException;
+	Long incrementGet(CacheKey key) throws CacheException;
 
 	/**
 	 * Get and add an atomic counter at the same time
@@ -65,7 +64,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @return
 	 * @throws CacheException
 	 */
-	Long incrementGet(final CacheKey key, long incrBy) throws CacheException;
+	Long incrementGet(CacheKey key, long incrBy) throws CacheException;
 
 	/**
 	 * Acquisition and reduction of atomic counter once at a time
@@ -74,7 +73,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @return
 	 * @throws CacheException
 	 */
-	Long decrementGet(final CacheKey key) throws CacheException;
+	Long decrementGet(CacheKey key) throws CacheException;
 
 	/**
 	 * Acquisition and reduction of atomic counter once at a time
@@ -84,7 +83,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @return
 	 * @throws CacheException
 	 */
-	Long decrementGet(final CacheKey key, long decrBy) throws CacheException;
+	Long decrementGet(CacheKey key, long decrBy) throws CacheException;
 
 	/**
 	 * Put(If not exist)
@@ -93,7 +92,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @param value
 	 * @return
 	 */
-	boolean putIfAbsent(final CacheKey key, final Object value);
+	boolean putIfAbsent(CacheKey key, Object value);
 
 	// --- Enhanced API. ---
 
@@ -105,7 +104,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @param expireMs
 	 * @return
 	 */
-	String mapPut(String fieldKey, Serializable fieldValue);
+	String mapPut(CacheKey fieldKey, Object fieldValue);
 
 	/**
 	 * Puts map field.
@@ -115,7 +114,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @param expireSec
 	 * @return
 	 */
-	String mapPut(String fieldKey, Serializable fieldValue, int expireSec);
+	String mapPut(CacheKey fieldKey, Object fieldValue, int expireSec);
 
 	/**
 	 * Puts map fields all.
@@ -123,7 +122,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @param map
 	 * @return
 	 */
-	String mapPutAll(Map<String, Serializable> map);
+	String mapPutAll(Map<CacheKey, Object> map);
 
 	/**
 	 * Puts map fields all.
@@ -132,7 +131,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @param expireSec
 	 * @return
 	 */
-	String mapPutAll(Map<String, Serializable> map, int expireSec);
+	String mapPutAll(Map<CacheKey, Object> map, int expireSec);
 
 	/**
 	 * Remove f ields map.
@@ -153,13 +152,20 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @param fieldKey
 	 * @return
 	 */
-	<T> T getMapField(String fieldKey);
+	<T> T getMapField(CacheKey fieldKey);
 
 	/**
 	 * Gets fields map.
 	 * 
 	 * @return
 	 */
-	<T> Map<String, T> getMapAll();
+	<T> Map<String, T> getMapAll(Class<T> valueClass);
+
+	/**
+	 * Gets fields map.
+	 * 
+	 * @return
+	 */
+	Map<byte[], byte[]> getMapAll();
 
 }
