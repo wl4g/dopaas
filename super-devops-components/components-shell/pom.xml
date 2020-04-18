@@ -2,17 +2,17 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.wl4g</groupId>
-	<artifactId>super-devops-shell</artifactId>
+	<artifactId>super-devops-components-shell</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>Super DevOps Shell Plugins</name>
-	<description>Shell-cli is an open source command-line tool based on spring cloud service, which is similar to the way spark-shell works.</description>
-	<url>https://shell-cli.super-devops.wl4g.com</url>
+	<name>Super DevOps Components Shell</name>
+	<description>Shell is an open source command-line tool based on spring cloud service, which is similar to the way spark-shell works.</description>
+	<url>https://shell.super-devops.wl4g.com</url>
 	<modules>
-		<module>super-devops-shell-common</module>
-		<module>super-devops-shell-core</module>
-		<module>super-devops-shell-cli</module>
-		<module>super-devops-shell-example</module>
+		<module>shell-common</module>
+		<module>shell-core</module>
+		<module>shell-example</module>
+		<module>shell-cli</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

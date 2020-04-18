@@ -119,7 +119,7 @@
 	</distributionManagement>
 	<dependencyManagement>
 		<dependencies>
-			<!-- Dependencies module's -->
+			<!-- Components module's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-components</artifactId>
@@ -132,12 +132,39 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- Components shell dependentcie's -->
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-components-shell-common</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-components-shell-core</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-components-shell-cli</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<!-- Components webjars dependentcie's -->
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-components-webjars</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-components-webjars-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- Components tools dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-tool-common</artifactId>
@@ -176,40 +203,11 @@
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-webjars</artifactId>
-				<version>${project.parent.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-dao</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-shell-common</artifactId>
-				<version>${project.parent.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-shell-core</artifactId>
-				<version>${project.parent.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-shell-cli</artifactId>
-				<version>${project.parent.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-dao</artifactId>
-				<version>${project.parent.version}</version>
-				<scope>compile</scope>
-			</dependency>
+			<!-- IAM dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-iam-common</artifactId>
@@ -240,6 +238,7 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- CI dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-ci-core</artifactId>
@@ -252,12 +251,14 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- DJOB dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-djob-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- SCM dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-scm-common</artifactId>
@@ -282,12 +283,14 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- ERM dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-erm-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- UMC dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-umc-alarm</artifactId>
@@ -324,6 +327,7 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- Markdown doc dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-doc-core</artifactId>
@@ -336,6 +340,7 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- COSS dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-coss-common</artifactId>
@@ -378,15 +383,10 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- RCM dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-rcm-common</artifactId>
-				<version>${project.parent.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-vcs-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
@@ -411,6 +411,13 @@
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-vcs-manager</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<!-- VCS dependentcie's -->
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-vcs-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>

@@ -8,8 +8,12 @@
 	<packaging>pom</packaging>
 	<name>Super DevOps Conponents</name>
 	<url>https://conponents.super-devops.wl4g.com</url>
-	<description>A Super Devops module of components.</description>
+	<description>Integration of a super Devops general components modules.</description>
 	<modules>
+		<!-- <module>components-tools</module> -->
+		<!-- <module>components-core</module> -->
+		<!-- <module>components-support</module> -->
+		<module>components-shell</module>
 		<module>components-webjars</module>
 	</modules>
 	<properties>
