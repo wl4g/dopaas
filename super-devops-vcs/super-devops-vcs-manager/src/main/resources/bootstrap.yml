@@ -17,25 +17,13 @@ spring:
     active: dev
   cloud:
     devops:
-      default-webapps:
-        enabled: true
-        webapp-location: classpath*:/default-webapps
-        base-uri: /view
-      support:
-        cli:
-          enabled: true
       iam: # IAM client configuration.
         client: # IAM client configuration.
           service-name: ${spring.application.name}
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
-            /view/**: anon # Public rule release
-            /external/**: anon # Public rule release
-  http:
-    multipart:
-      max-file-size: 5000Mb
-      max-request-size: 5000Mb
+
 # ### Server configuration. ###
 server:
   port: 14063
@@ -50,4 +38,4 @@ server:
     access-log-enabled: false
     accesslog.directory: logs/
     backgroundProcessorDelay: 30 #seconds
-    max-thread: 50 # Max worker threads(default:200).
+    max-thread: 50 # Max worker threads(default:200)
