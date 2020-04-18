@@ -6,7 +6,7 @@
 	<artifactId>super-devops-components-webjars</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>Super DevOps Conponents</name>
+	<name>Super DevOps Conponents Webjars</name>
 	<url>https://conponents.super-devops.wl4g.com</url>
 	<description>A Super Devops module of components webjars.</description>
 	<modules>

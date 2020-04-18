@@ -37,11 +37,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-shell-cli</artifactId>
+			<artifactId>super-devops-components-shell-cli</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-shell-core</artifactId>
+			<artifactId>super-devops-components-shell-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

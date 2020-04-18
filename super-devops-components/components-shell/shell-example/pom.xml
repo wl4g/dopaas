@@ -2,18 +2,19 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>super-devops-shell-core</artifactId>
+	<artifactId>super-devops-components-shell-example</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps Shell Core</name>
+	<name>Super DevOps Components Shell Example</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>super-devops-shell</artifactId>
+		<artifactId>super-devops-components-shell</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
+		<final.name>shell-example</final.name>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -29,14 +30,24 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-common</artifactId>
+			<artifactId>super-devops-components-shell-cli</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-shell-common</artifactId>
+			<artifactId>super-devops-components-shell-core</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
+		<finalName>${final.name}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>script/**</exclude>
+				</excludes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -48,6 +59,15 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/*Tests.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
 				<executions>
 					<execution>
@@ -55,6 +75,26 @@
 						<phase>verify</phase>
 						<goals>
 							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<finalName>${final.name}-${project.version}-bin</finalName>
+					<!-- not append assembly id in release file name -->
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptors>
+						<descriptor>src/main/assemble/package.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>

@@ -2,13 +2,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>super-devops-shell-cli</artifactId>
+	<artifactId>super-devops-components-shell-cli</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps Shell Cli</name>
+	<name>Super DevOps Components Shell Cli</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>super-devops-shell</artifactId>
+		<artifactId>super-devops-components-shell</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -30,7 +30,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-shell-common</artifactId>
+			<artifactId>super-devops-components-shell-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jline</groupId>
