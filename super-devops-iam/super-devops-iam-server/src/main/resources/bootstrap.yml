@@ -40,8 +40,6 @@ spring:
           fail-fast-sms-max-delay: 1800000
           fail-fast-sms-delay: 90000
           sms-expire-ms: 300000
-        cache:
-          prefix: ${spring.application.name}_
         cipher:
           enable-data-cipher: true
         session:

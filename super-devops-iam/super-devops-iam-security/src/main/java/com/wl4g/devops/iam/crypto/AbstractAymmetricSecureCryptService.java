@@ -16,9 +16,6 @@
 package com.wl4g.devops.iam.crypto;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_CRYPTO;
-import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.deserialize;
-import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
-import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
@@ -37,14 +34,14 @@ import org.springframework.core.ResolvableType;
 
 import static com.wl4g.devops.tool.common.crypto.CrypticSource.*;
 import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.iam.common.cache.CacheKey;
+import com.wl4g.devops.iam.common.cache.IamCache;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.tool.common.crypto.asymmetric.AsymmetricCryptor;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.tool.common.log.SmartLogger;
-
-import redis.clients.jedis.JedisCluster;
 
 /**
  * Abstract secretKey asymmetric secure crypt service.
@@ -79,10 +76,10 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 	protected CryptoProperties config;
 
 	/**
-	 * JEDIS service.
+	 * Iam cache manager.
 	 */
 	@Autowired
-	protected JedisService jedisService;
+	protected IamCacheManager cacheManager;
 
 	@SuppressWarnings("unchecked")
 	public AbstractAymmetricSecureCryptService(JedisLockManager lockManager, AsymmetricCryptor cryptor) {
@@ -115,9 +112,9 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 		}
 
 		// Load keySpec by index.
-		JedisCluster jdsCluster = jedisService.getJedisCluster();
-		byte[] keySpecBuf = jdsCluster.hget(CACHE_CRYPTO, toBytes(String.valueOf(index)));
-		if (isNull(keySpecBuf)) { // Expired?
+		IamCache cryptoCache = cacheManager.getIamCache(CACHE_CRYPTO);
+		KeyPairSpec keySpec = cryptoCache.getMapField(new CacheKey(index, keySpecClass));
+		if (isNull(keySpec)) { // Expired?
 			try {
 				if (lock.tryLock(DEFAULT_TRYLOCK_TIMEOUT_MS, MILLISECONDS)) {
 					doInitializingKeyPairSpecAll();
@@ -128,10 +125,9 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 				lock.unlock();
 			}
 			// Retry get.
-			keySpecBuf = jdsCluster.hget(CACHE_CRYPTO, toBytes(String.valueOf(index)));
+			keySpec = cryptoCache.getMapField(new CacheKey(index, keySpecClass));
 		}
 
-		KeyPairSpec keySpec = (KeyPairSpec) deserialize(keySpecBuf, keySpecClass);
 		notNull(keySpec, "Unable to borrow keySpec resource.");
 		return keySpec;
 	}
@@ -164,13 +160,11 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 	private synchronized void doInitializingKeyPairSpecAll() {
 		// Create generate cryptic keyPairs
 		for (int index = 0; index < config.getKeyPairPools(); index++) {
-			// Generation keyPairSpec.
+			// Generate keyPairSpec.
 			KeyPairSpec keySpec = generateKeyPair();
 			// Storage to cache.
-			jedisService.getJedisCluster().hset(CACHE_CRYPTO, toBytes(String.valueOf(index)), serialize(keySpec));
-			jedisService.getJedisCluster().expire(CACHE_CRYPTO, config.getKeyPairExpireMs());
-
-			log.debug("Put keySpec to cache for index {}, keySpec => {}", index, toJSONString(keySpec));
+			cacheManager.getIamCache(CACHE_CRYPTO).mapPut(new CacheKey(index, config.getKeyPairExpireMs()), keySpec);
+			log.debug("Puts keySpec to cache for index {}, keySpec => {}", index, toJSONString(keySpec));
 		}
 		log.info("Initialized keySpec total: {}", config.getKeyPairPools());
 	}

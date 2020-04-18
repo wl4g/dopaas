@@ -33,7 +33,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisFormatUtils.*;
 
 /**
  * IAM abstract configuration properties.
@@ -201,9 +200,9 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 */
 	protected void validation() {
 		hasTextOf(getServiceName(), "serviceName");
-		hasTextOf(getLoginUri(), "'loginUri' must be empty.");
-		hasTextOf(getSuccessUri(), "'successUri' must be empty.");
-		hasTextOf(getUnauthorizedUri(), "'unauthorizedUri' must be empty.");
+		hasTextOf(getLoginUri(), "loginUri");
+		hasTextOf(getSuccessUri(), "successUri");
+		hasTextOf(getUnauthorizedUri(), "unauthorizedUri");
 	}
 
 	/**
@@ -224,15 +223,15 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public String getPrefix() {
 			if (isBlank(prefix)) {
-				// e.g: iam-server => iam_server
-				String defaultCachePrefix = keyFormat(environment.getProperty("spring.application.name"), '_');
-				setPrefix(defaultCachePrefix);
+				// By default
+				setPrefix(environment.getProperty("spring.application.name"));
 			}
-			hasText(prefix, "Cache prefix must not be empty.");
+			hasTextOf(prefix, "cachePrefix");
 			return prefix;
 		}
 
 		public void setPrefix(String prefix) {
+			hasTextOf(prefix, "iamCachePrefix");
 			this.prefix = prefix;
 		}
 

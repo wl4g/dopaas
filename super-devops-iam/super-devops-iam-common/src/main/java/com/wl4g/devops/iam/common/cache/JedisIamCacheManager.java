@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.cache;
 
+import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisFormatUtils.keyFormat;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 import java.util.Map;
@@ -44,7 +45,8 @@ public class JedisIamCacheManager implements IamCacheManager {
 	public JedisIamCacheManager(String prefix, JedisCluster jedisCluster) {
 		notNullOf(prefix, "prefix");
 		notNullOf(jedisCluster, "jedisCluster");
-		this.prefix = prefix;
+		// e.g: iam-server => iam_server
+		this.prefix = keyFormat(prefix, '_');
 		this.jedisCluster = jedisCluster;
 	}
 

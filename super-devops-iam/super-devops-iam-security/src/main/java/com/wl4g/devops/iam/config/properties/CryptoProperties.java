@@ -28,7 +28,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class CryptoProperties {
 
 	private int keyPairPools = 64;
-	private int keyPairExpireMs = 600_000;
+	private long keyPairExpireMs = 600_000;
 
 	public int getKeyPairPools() {
 		return keyPairPools;
@@ -38,11 +38,11 @@ public class CryptoProperties {
 		this.keyPairPools = keyPairPools;
 	}
 
-	public int getKeyPairExpireMs() {
+	public long getKeyPairExpireMs() {
 		return keyPairExpireMs;
 	}
 
-	public void setKeyPairExpireMs(int keyPairExpireMs) {
+	public void setKeyPairExpireMs(long keyPairExpireMs) {
 		this.keyPairExpireMs = keyPairExpireMs;
 	}
 

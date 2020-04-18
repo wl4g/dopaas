@@ -226,25 +226,19 @@ public class JedisIamCache implements IamCache {
 
 	@Override
 	public String mapPut(CacheKey fieldKey, Object fieldValue) {
-		return mapPut(fieldKey, fieldValue, 0);
-	}
-
-	@Override
-	public String mapPut(CacheKey fieldKey, Object fieldValue, int expireSec) {
 		notNull(fieldKey, "fieldKey");
 		notNull(fieldValue, "fieldValue");
 		log.debug("mapPut key={}, value={}", fieldKey, fieldValue);
-
-		return mapPutAll(singletonMap(fieldKey, fieldValue), expireSec);
+		return mapPutAll(singletonMap(fieldKey, fieldValue), fieldKey.getExpire());
 	}
 
 	@Override
-	public String mapPutAll(Map<CacheKey, Object> map) {
+	public String mapPutAll(Map<Object, Object> map) {
 		return mapPutAll(map, 0);
 	}
 
 	@Override
-	public String mapPutAll(Map<CacheKey, Object> map, int expireSec) {
+	public String mapPutAll(Map<Object, Object> map, int expireSec) {
 		if (isEmpty(map))
 			return null;
 		log.debug("mapPut map={}", map);
@@ -252,7 +246,10 @@ public class JedisIamCache implements IamCache {
 		// Convert to fields map.
 		Map<byte[], byte[]> dataMap = map.entrySet().stream().collect(toMap(e -> {
 			notNull(e.getKey(), "fieldKey");
-			return e.getKey().getKey();
+			if (e.getKey() instanceof CacheKey) {
+				return ((CacheKey) e.getKey()).getKey();
+			}
+			return serialize(e.getKey());
 		}, e -> {
 			notNull(e.getValue(), "fieldValue");
 			return serialize(e.getValue());

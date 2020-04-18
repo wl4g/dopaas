@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.common.constants;
 
-import static com.google.common.base.Charsets.*;
-
 /**
  * DevOps SCM Constants.
  * 
@@ -83,7 +81,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * {@link IamSession} relation attributes cache name.
 	 */
-	final public static String CACHE_RELATION_ATTRS = "iam:session:attrs:";
+	final public static String CACHE_RELATION_ATTRS = ":iam:session:attrs:";
 
 	//
 	// Server configuration.
@@ -185,46 +183,46 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * IAM server authentication session stored cache name.
 	 */
-	final public static String CACHE_SESSION = "iam:session:";
+	final public static String CACHE_SESSION = ":iam:session:";
 	/**
 	 * IAM server authentication authorization information storage cache name.
 	 */
-	final public static String CACHE_TICKET_S = "iam:ticket:s:";
+	final public static String CACHE_TICKET_S = ":iam:ticket:s:";
 	/**
 	 * IAM client authentication authorization information storage cache name.
 	 */
-	final public static String CACHE_TICKET_C = "iam:ticket:s:";
+	final public static String CACHE_TICKET_C = ":iam:ticket:s:";
 
 	/**
 	 * Login authentication related processing cache name.
 	 */
-	final public static String CACHE_SNSAUTH = "iam:snsauth:";
+	final public static String CACHE_SNSAUTH = ":iam:snsauth:";
 	/**
 	 * IAM server matching CAPTCHA verification failure counter cache name.
 	 */
-	final public static String CACHE_FAILFAST_CAPTCHA_COUNTER = "iam:counter:captcha:";
+	final public static String CACHE_FAILFAST_CAPTCHA_COUNTER = ":iam:counter:captcha:";
 	/**
 	 * IAM server matching SMS verification failure counter cache name.
 	 */
-	final public static String CACHE_FAILFAST_SMS_COUNTER = "iam:counter:sms:";
+	final public static String CACHE_FAILFAST_SMS_COUNTER = ":iam:counter:sms:";
 	/**
 	 * IAM server matching verification failure counter cache name.
 	 */
-	final public static String CACHE_FAILFAST_MATCH_COUNTER = "iam:counter:credentials:";
+	final public static String CACHE_FAILFAST_MATCH_COUNTER = ":iam:counter:credentials:";
 	/**
 	 * Login failure overrun, lock cache name.
 	 */
-	final public static String CACHE_MATCH_LOCK = "iam:lock:credentials:";
+	final public static String CACHE_MATCH_LOCK = ":iam:lock:credentials:";
 	/**
 	 * Security verifier for jigsaw captcha image cache name.
 	 */
-	final public static byte[] CACHE_VERIFY_JIGSAW_IMG = "iam:verify:jigsaw:imgs".getBytes(UTF_8);
+	final public static String CACHE_VERIFY_JIGSAW_IMG = ":iam:verify:jigsaw:imgs";
 	/**
 	 * Cryptographic service cache name.
 	 */
-	final public static byte[] CACHE_CRYPTO = "iam:crypto:keypairs".getBytes(UTF_8);
+	final public static String CACHE_CRYPTO = ":iam:crypto:keypairs";
 	/** Simple risk control handler umidToken cache key. */
-	final public static String CACHE_SIMPLE_RCM_UMIDTOKEN = "iam:rcm:simpleumidtoken:";
+	final public static String CACHE_SIMPLE_RCM_UMIDTOKEN = ":iam:rcm:simpleumidtoken:";
 
 	/**
 	 * The public key index by logged-in users

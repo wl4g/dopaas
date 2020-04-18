@@ -107,22 +107,12 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	String mapPut(CacheKey fieldKey, Object fieldValue);
 
 	/**
-	 * Puts map field.
-	 * 
-	 * @param fieldKey
-	 * @param fieldValue
-	 * @param expireSec
-	 * @return
-	 */
-	String mapPut(CacheKey fieldKey, Object fieldValue, int expireSec);
-
-	/**
 	 * Puts map fields all.
 	 * 
 	 * @param map
 	 * @return
 	 */
-	String mapPutAll(Map<CacheKey, Object> map);
+	String mapPutAll(Map<Object, Object> map);
 
 	/**
 	 * Puts map fields all.
@@ -131,7 +121,7 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * @param expireSec
 	 * @return
 	 */
-	String mapPutAll(Map<CacheKey, Object> map, int expireSec);
+	String mapPutAll(Map<Object, Object> map, int expireSec);
 
 	/**
 	 * Remove f ields map.
