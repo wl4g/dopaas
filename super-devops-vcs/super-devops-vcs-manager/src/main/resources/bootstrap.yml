@@ -18,6 +18,16 @@ spring:
   cloud:
     devops:
       iam: # IAM client configuration.
+        cors:
+          enabled: true # Default: true
+          rules:
+            /**:
+              allowsMethods: GET,POST
+              allowsHeaders:
+                - X-Iam-*
+              allowCredentials: true
+              allowsOrigins:
+                #- '*'
         client: # IAM client configuration.
           service-name: ${spring.application.name}
           use-remember-redirect: false
