@@ -11,18 +11,17 @@
 # #### Environment(Test) configuration. ####
 #
 spring:
-  web:
-    cors:
-      rules:
-        /**:
-          allowsOrigins:
-            - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
-            - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
-            - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
-            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
   cloud:
     devops:
       iam:
+        cors:
+          rules:
+            /**:
+              allowsOrigins:
+                - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
+                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}

@@ -11,18 +11,17 @@
 # #### Environment(Prod) configuration. ####
 #
 spring:
-  web:
-    cors:
-      rules:
-        /**:
-          allowsOrigins:
-            - https://${DEVOPS_DOMAIN_TOP:wl4g.com}
-            - http://${DEVOPS_DOMAIN_TOP:wl4g.com}
-            - https://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
-            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
   cloud:
     devops:
       iam:
+        cors:
+          rules:
+            /**:
+              allowsOrigins:
+                - https://${DEVOPS_DOMAIN_TOP:wl4g.com}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.com}
+                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.com}      
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
