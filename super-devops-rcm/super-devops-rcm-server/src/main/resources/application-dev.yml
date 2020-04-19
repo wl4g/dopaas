@@ -11,23 +11,22 @@
 # #### Environment(Test) configuration. ####
 #
 spring:
-  web:
-    cors:
-      rules:
-        /**:
-          allowsOrigins:
-            - https://${DEVOPS_DOMAIN_TOP:wl4g.debug}
-            - http://${DEVOPS_DOMAIN_TOP:wl4g.debug}
-            - https://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
-            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
-            - http://localhost:8080
-            - http://localhost:14040
-            - http://127.0.0.1:8080
-            - http://127.0.0.1:14040
-            #- '*'
   cloud:
     devops:
       iam:
+        cors:
+          rules:
+            /**:
+              allowsOrigins:
+                #- http://${DEVOPS_DOMAIN_TOP:wl4g.debug}
+                #- http://${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
+                #- http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
+                #- http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
+                #- http://localhost:8080
+                #- http://localhost:14040
+                #- http://127.0.0.1:8080
+                #- http://127.0.0.1:14040
+                - '*'
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
@@ -37,14 +36,7 @@ spring:
           server-uri: http://wl4g.debug:14040/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
           success-uri: http://wl4g.debug:8080/#/oss/buckets
-      coss:
-        aliyunoss:
-          accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
-          accessKeySecret: ${aliyun.secret}
-        hdfs:
-          endpoint-hdfs-root-uri: hdfs://owner-node3:8020/coss-bucket
-        native:
-          endpointRootDir: /tmp/coss-bucket
+
   # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

@@ -54,7 +54,7 @@ import static org.springframework.web.cors.CorsConfiguration.ALL;
 public class CorsProperties implements Serializable {
 	final private static long serialVersionUID = -5701992202765239835L;
 
-	final public static String KEY_CORS_PREFIX = "spring.web.cors";
+	final public static String KEY_CORS_PREFIX = "spring.cloud.devops.iam.cors";
 
 	/**
 	 * {@link CorsRule}

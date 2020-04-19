@@ -10,23 +10,6 @@
 
 # #### Environment base configuration. ####
 #
-spring:
-  web:
-    cors:
-      enabled: true # Default: true
-      rules:
-        /**:
-          allowsMethods: GET,POST
-          allowsHeaders:
-            - X-Iam-Authentication-Token
-          allowCredentials: true
-          allowsOrigins:
-            #- '*'
-    xss:
-      enabled: true # Default: true
-      internal-protect: true # Default: true
-      expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..)) or
-                  execution(* com.wl4g.devops.iam.example.*.*Controller.*(..))
 
 # Mybatis configuration.
 mybatis:
