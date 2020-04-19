@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-vcs-core</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps vcs Core</name>
+	<name>Super DevOps VCS Core</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
