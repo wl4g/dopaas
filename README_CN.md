@@ -1,5 +1,5 @@
 ![DevSecOps](shots/logo.jpg)
-## 一站式DevSecOps解决方案，整个软件生命周期和微服务配置监控和管理，包括CI/CD、统一监控、链路追踪、统一认证、统一配置、日志分析、弹性伸缩、调度中心、控制台工具、HBase等运维工具、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
+## 一站式的DevSecOps SaaS平台，基于SpringCloud开发, 主要功能模块: 持续交付CI/CD、认证中心、监控中心、配置中心、资源管理中心、调度中心、弹性伸缩、shell工具、各种工具组件(如HBase/OSS运维)、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
 
 [![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
