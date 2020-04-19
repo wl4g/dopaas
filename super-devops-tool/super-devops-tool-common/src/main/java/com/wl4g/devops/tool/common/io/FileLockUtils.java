@@ -18,51 +18,52 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
  */
 public abstract class FileLockUtils {
 
-    final private static SmartLogger log = getLogger(FileLockUtils.class);
+	final private static SmartLogger log = getLogger(FileLockUtils.class);
 
-    /**
-     * Try lock
-     * @param file
-     * @param processor
-     * @param <R>
-     * @return
-     * @throws Exception
-     */
-    public static <R> R doTryLock(File file, ProcessFunction<FileLock, R> processor) throws Exception {
-        //给该文件加锁
-        RandomAccessFile randomAccessFile = null;
-        FileChannel fileChannel = null;
-        FileLock fileLock = null;
-        try {
-            randomAccessFile = new RandomAccessFile(file, "rw");
-            fileChannel = randomAccessFile.getChannel();
-            fileLock = fileChannel.tryLock();
-            return processor.process(fileLock);
-        } catch (OverlappingFileLockException ofe) {
-        } finally {
-            try {
-                if (fileLock != null) {
-                    fileLock.release();
-                }
-            } catch (IOException e1) {
-                log.error(e1.getMessage(), e1);
-            }
-            try {
-                if (fileChannel != null) {
-                    fileChannel.close();
-                }
-            } catch (IOException e2) {
-                log.error(e2.getMessage(), e2);
-            }
-            try {
-                if (randomAccessFile != null) {
-                    randomAccessFile.close();
-                }
-            } catch (IOException e3) {
-                log.error(e3.getMessage(), e3);
-            }
-        }
-        return null;
-    }
+	/**
+	 * Try lock
+	 * 
+	 * @param file
+	 * @param processor
+	 * @param <R>
+	 * @return
+	 * @throws Exception
+	 */
+	public static <R> R doTryLock(File file, ProcessFunction<FileLock, R> processor) throws Exception {
+		// 给该文件加锁
+		RandomAccessFile randomAccessFile = null;
+		FileChannel fileChannel = null;
+		FileLock fileLock = null;
+		try {
+			randomAccessFile = new RandomAccessFile(file, "rw");
+			fileChannel = randomAccessFile.getChannel();
+			fileLock = fileChannel.tryLock();
+			return processor.process(fileLock);
+		} catch (OverlappingFileLockException ofe) {
+		} finally {
+			try {
+				if (fileLock != null) {
+					fileLock.release();
+				}
+			} catch (IOException e1) {
+				log.error(e1.getMessage(), e1);
+			}
+			try {
+				if (fileChannel != null) {
+					fileChannel.close();
+				}
+			} catch (IOException e2) {
+				log.error(e2.getMessage(), e2);
+			}
+			try {
+				if (randomAccessFile != null) {
+					randomAccessFile.close();
+				}
+			} catch (IOException e3) {
+				log.error(e3.getMessage(), e3);
+			}
+		}
+		return null;
+	}
 
 }

@@ -145,16 +145,16 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- Components webjars dependentcie's -->
+			<!-- Components WebIDE dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-components-webjars</artifactId>
+				<artifactId>super-devops-components-webide</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-components-webjars-core</artifactId>
+				<artifactId>super-devops-components-webide-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
