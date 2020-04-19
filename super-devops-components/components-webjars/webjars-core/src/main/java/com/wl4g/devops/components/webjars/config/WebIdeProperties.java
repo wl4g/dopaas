@@ -26,8 +26,8 @@ import com.wl4g.devops.common.config.DefaultEmbeddedWebappsAutoConfiguration.Gen
  */
 public class WebIdeProperties extends GenericEmbeddedWebappsProperties {
 
-	final public static String KEY_WEBIDE_PREFIX = "spring.cloud.devops.components.webjars";
-	final public static String URI_WEBIDE_BASE = "/webide";
+	final public static String KEY_WEBIDE_PREFIX = "spring.cloud.devops.components.webjars.nativejs-editor";
+	final public static String URI_WEBIDE_BASE = "/webide/nativejs-editor";
 	final public static String PATH_WEBIDE_WEBAPPS = "classpath*:/plugin-webapps" + URI_WEBIDE_BASE;
 
 	public WebIdeProperties() {
