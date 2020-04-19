@@ -43,7 +43,7 @@ import java.util.Set;
 import static com.google.common.hash.Hashing.md5;
 import static com.wl4g.devops.coss.model.ACL.*;
 import static com.wl4g.devops.coss.model.metadata.ObjectsStatusMetaData.ObjectStatusMetaData;
-import static com.wl4g.devops.tool.common.io.FileUtils.deleteAnyone;
+import static com.wl4g.devops.tool.common.io.FileDeletionUtils.deleteAnyone;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;

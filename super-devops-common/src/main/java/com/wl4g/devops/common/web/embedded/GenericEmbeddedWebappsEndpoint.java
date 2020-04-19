@@ -114,7 +114,8 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 				try (InputStream in = getResourceAsStream(filepath);) {
 					if (nonNull(in)) {
 						buf = toByteArray(in);
-
+						// Decorate
+						buf = decorateResource(filepath, buf);
 						// Check cache?
 						if (isCache(filepath, request)) {
 							cache.put(filepath, buf);
@@ -160,6 +161,17 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 	 */
 	protected boolean preResponesPropertiesSet(String filepath, HttpServletRequest request) {
 		return true;
+	}
+
+	/**
+	 * Decorate resources
+	 * 
+	 * @param filepath
+	 * @param fileBuf
+	 * @return
+	 */
+	protected byte[] decorateResource(String filepath, byte[] fileBuf) {
+		return fileBuf;
 	}
 
 	/**
