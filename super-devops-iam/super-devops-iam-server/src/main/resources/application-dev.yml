@@ -11,23 +11,26 @@
 # #### Environment(Test) configuration. ####
 #
 spring:
-  web:
-    cors:
-      rules:
-        /**:
-          allowsOrigins:
-            #- http://${DEVOPS_DOMAIN_TOP:wl4g.debug}
-            #- http://${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
-            #- http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
-            #- http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
-            #- http://localhost:8080
-            #- http://localhost:14040
-            #- http://127.0.0.1:8080
-            #- http://127.0.0.1:14040
-            - '*'
   cloud:
     devops:
       iam: # IAM configuration.
+        cors:
+          rules:
+            /**:
+              allowsOrigins:
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.dev}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.dev:${server.port}}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.local}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.local:${server.port}}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.debug}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
+                - http://localhost:8080
+                - http://localhost:14040
+                - http://127.0.0.1:8080
+                - http://127.0.0.1:14040
+                #- '*'
         login-uri: /view/login.html
         #login-uri: http://localhost:8080/#/login # See: super-devops-view
         unauthorized-uri: /view/403.html
@@ -55,7 +58,8 @@ spring:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
             redirect-url: http://passport.wl4g.com${server.contextPath}/sns/qq/callback
-  datasource:
+  # Spring datasource configuration.
+  datasource:            
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:

@@ -13,10 +13,27 @@
 spring:
   application.name: scm-server
   profiles:
+    include: common,support,util
     active: dev
   cloud: # Spring cloud configuration.
     # Devops configuration.
-    devops: 
+    devops:
+      iam: # IAM client configuration.
+        cors:
+          enabled: true # Default: true
+          rules:
+            /**:
+              allowsMethods: GET,POST
+              allowsHeaders:
+                - X-Iam-*
+              allowCredentials: true
+              allowsOrigins:
+                #- '*'
+        client: # IAM client configuration.
+          service-name: ${spring.application.name}
+          use-remember-redirect: false
+          filter-chain:
+            /endpoint/**: anon # Public rule release
       scm: # SCM server configuration.
         #core-pool-size: 10
         #max-pool-size: 25
@@ -25,12 +42,6 @@ spring:
         #long-polling-timeout: 30000
         #connect-timeout: 5000
         #max-response-size: 65535
-      iam: # IAM client configuration.
-        client: # IAM client configuration.
-          service-name: ${spring.application.name}
-          use-remember-redirect: false
-          filter-chain:
-            /endpoint/**: anon # Public rule release
 
 # ### Server configuration. ###
 server:

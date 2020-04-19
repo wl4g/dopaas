@@ -11,18 +11,17 @@
 # #### Environment(Prod) configuration. ####
 #
 spring:
-  web:
-    cors:
-      rules:
-        /**:
-          allowsOrigins:
-            - https://${DEVOPS_DOMAIN_TOP:wl4g.com}
-            - http://${DEVOPS_DOMAIN_TOP:wl4g.com}
-            - https://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
-            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
   cloud:
     devops:
       iam:
+        cors:
+          rules:
+            /**:
+              allowsOrigins:
+                - https://${DEVOPS_DOMAIN_TOP:wl4g.com}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.com}
+                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
         login-uri: https://devops.${DEVOPS_DOMAIN_TOP:wl4g.com}/#/login
         unauthorized-uri: /view/403.html
         success-endpoint: umc-manager@https://umc.${DEVOPS_DOMAIN_TOP:wl4g.com}/umc-manager
@@ -48,6 +47,7 @@ spring:
             app-id: 101542056 # Public testing.
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
             redirect-url: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}{server.contextPath}/sns/qq/callback
+  # Spring datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver

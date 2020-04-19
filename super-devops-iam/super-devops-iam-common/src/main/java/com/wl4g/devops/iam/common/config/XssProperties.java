@@ -20,10 +20,12 @@ import static java.lang.String.format;
 import java.io.Serializable;
 import java.util.Locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
+
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * XSS configuration properties
@@ -35,9 +37,9 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
 public class XssProperties implements InitializingBean, Serializable {
 	final private static long serialVersionUID = -5701992202744439835L;
 
-	final public static String KEY_XSS_PREFIX = "spring.web.xss";
+	final public static String KEY_XSS_PREFIX = "spring.cloud.devops.iam.xss";
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Enable internal protection, which merges expressions of internal

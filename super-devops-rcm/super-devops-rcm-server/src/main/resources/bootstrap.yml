@@ -18,22 +18,21 @@ spring:
   cloud:
     devops:
       iam: # IAM client configuration.
+        cors:
+          enabled: true # Default: true
+          rules:
+            /**:
+              allowsMethods: GET,POST
+              allowsHeaders:
+                - X-Iam-*
+              allowCredentials: true
+              allowsOrigins:
+                #- '*'
         client: # IAM client configuration.
           service-name: ${spring.application.name}
           use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
-      coss:
-        aliyunoss:
-          enable: true
-          endpoint: oss-cn-shenzhen.aliyuncs.com
-        hdfs:
-          enable: true
-          user: root
-        native:
-          enable: true
-          #user: ${spring.application.name}
-          endpointRootDir: /mnt/disk1/coss-bucket
 
 # ### Server configuration. ###
 server:

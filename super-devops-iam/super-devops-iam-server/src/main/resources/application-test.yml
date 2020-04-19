@@ -11,18 +11,17 @@
 # #### Environment(Test) configuration. ####
 #
 spring:
-  web:
-    cors:
-      rules:
-        /**:
-          allowsOrigins:
-            - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
-            - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
-            - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
-            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
   cloud:
     devops:
       iam: # IAM configuration.
+        cors:
+          rules:
+            /**:
+              allowsOrigins:
+                - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
+                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
         #login-uri: /view/login.html
         login-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/login
         unauthorized-uri: /view/403.html
@@ -49,6 +48,7 @@ spring:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
             redirect-url: http://passport.wl4g.com${server.contextPath}/sns/qq/callback
+  # Spring datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
