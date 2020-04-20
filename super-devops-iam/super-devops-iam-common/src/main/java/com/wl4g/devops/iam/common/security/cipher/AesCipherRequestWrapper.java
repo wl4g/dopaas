@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.common.security.cipher;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_KEY;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 
@@ -45,7 +45,7 @@ public class AesCipherRequestWrapper extends CipherRequestWrapper {
 	@Override
 	protected String doDecryptParameterValue(String value) {
 		// Gets data cipherKey.
-		String dataCipherKey = getBindValue(KEY_DATA_CIPHER_KEY);
+		String dataCipherKey = getBindValue(KEY_DATA_CIPHER);
 		hasTextOf(dataCipherKey, "dataCipherKey");
 
 		// Decryption data ciphertext.

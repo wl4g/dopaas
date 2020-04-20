@@ -63,14 +63,14 @@
 		}
 	};
 	var g_dependencies = [{
-		name: "IAMUi", // 需与该模块在window中的对象名一致, @see:[MARK1]
+		name: "IAMUi", // 需与SDK的类名一致, @see:[MARK1]
 		features: ["iamUi", "IamUI", "IamUi", "iamSdkUi", "IamSdkUI"],
 		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "commonModule", "cryptoModule", "coreModule",
 			"captchaJigsawModule", "uiModule"],
 		sync: !1
 	},
 	{
-		name: "IAMCore", // 需与该模块在window中的对象名一致, @see:MARK1
+		name: "IAMCore", // 需与SDK的类名一致, @see:[MARK1]
 		features: ["iamCore", "IamCore", "iamSdkCore", "IamSdkCore"],
 		depends: ["fpWebModule", "jqModule", "cryptoJSModule", "commonModule", "cryptoModule", "coreModule", 
 			"captchaJigsawModule"],
@@ -201,6 +201,12 @@
 				var t = (cache == 'true') ? 1 : new Date().getTime();
 				return d[mode]+"?t="+t;
 			});
+			// Already load?
+			if(window[depends.name]) {
+				console.debug("Skip already load script module '" + name + "'");
+				callback(new window[depends.name]); // [MARK2]
+				return;
+			}
 			// Loading multiple scripts.
 			(function loadScripts(name, urls, path) {
 				urls.forEach(function(src, i) {
@@ -261,6 +267,12 @@
 				var t = (cache == 'true') ? 1 : new Date().getTime();
 				return d["css_"+mode]+"?t="+t;
 			});
+			// Already load?
+			if(window[depends.name]) {
+				console.debug("Skip already load css module '" + depends.name + "'");
+				callback();
+				return;
+			}
 			// Loading multiple css
 			(function loadCss(name, urls, path) {
 				urls.forEach(function(src, i) {

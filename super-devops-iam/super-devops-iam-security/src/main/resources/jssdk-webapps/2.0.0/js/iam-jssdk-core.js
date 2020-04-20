@@ -357,8 +357,8 @@
 				console.debug("Prepare to submit login request. principal=" + principal + ", verifiedToken=" + verifiedToken);
 				return true;
 			},
-			onSuccess: function(principal, redirectUrl){ // 登录成功回调
-				console.info("Sign in successfully. " + principal + ", " + redirectUrl);
+			onSuccess: function(data){ // 登录成功回调
+				console.info("Sign in successfully. " + data.principal + ", " + data.redirectUrl);
 				return true;
 			},
 			onError: function(errmsg){ // 登录异常回调
@@ -767,8 +767,8 @@
 						} else { // 登录成功，直接重定向
                             $(document).unbind("keydown");
 							var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", res.data[settings.definition.redirectUrlKey]);
-							if(settings.account.onSuccess(principal, redirectUrl)){
-						      Common.Util.getRootWindow(window).location.href = redirectUrl;
+							if(settings.account.onSuccess(res.data)){
+								Common.Util.getRootWindow(window).location.href = redirectUrl;
 							}
 						}
 					}, function(errmsg){

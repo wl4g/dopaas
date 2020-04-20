@@ -83,10 +83,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.apache.commons.codec.binary.Hex.*;
+
+import org.apache.commons.codec.DecoderException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
+import org.apache.shiro.web.servlet.Cookie;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -225,13 +229,14 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			if (isJSONResponse(request)) {
 				try {
 					// Make logged JSON.
-					RespBase<String> loggedResp = makeLoggedResponse(token, subject, request, grantTicket,
-							redirect.getRedirectUrl(), params);
+					Map jsonParams = new HashMap(params);
+					RespBase<String> resp = makeLoggedResponse(token, subject, request, response, grantTicket,
+							redirect.getRedirectUrl(), jsonParams);
 
 					// Call authenticated success.
-					coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), loggedResp.asMap());
+					coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), resp.asMap());
 
-					String logged = toJSONString(loggedResp);
+					String logged = toJSONString(resp);
 					log.info("Response to success - {}", logged);
 
 					writeJson(toHttp(response), logged);
@@ -248,8 +253,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 					params.put(config.getParam().getGrantTicket(), grantTicket);
 				}
 
-				// Handle success processing.
+				// Call success handle.
 				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), params);
+
+				// Sets secret tokens to cookies.
+				setSuccessSecretTokens2Cookie(token, request, response);
 
 				log.info("Redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), params);
 				issueRedirect(request, response, redirect.getRedirectUrl(), params, true);
@@ -485,7 +493,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected RespBase<String> makeLoggedResponse(AuthenticationToken token, Subject subject, ServletRequest request,
-			String grantTicket, String callbackUrl, Map params) throws Exception {
+			ServletResponse response, String grantTicket, String callbackUrl, Map params) throws Exception {
 		hasTextOf(callbackUrl, "successCallbackUrl");
 
 		// Redirection URL
@@ -505,8 +513,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		params.put(config.getParam().getRedirectUrl(), fullRedirectUrl);
 		params.put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 
-		// Post success secret tokens
-		postHandleSuccessSecretTokens(token, subject, params);
+		// Handling secret tokens
+		postHandleSuccessSecretTokens(token, subject, params, request, response);
 
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
@@ -599,45 +607,76 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	}
 
 	/**
-	 * Post secret/token and signnature processing.
+	 * Post secret and tokens/signature handling.
 	 * 
 	 * @param token
 	 * @param subject
 	 * @param params
+	 * @param request
+	 * @param response
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void postHandleSuccessSecretTokens(AuthenticationToken token, Subject subject, Map params) throws Exception {
-		// Use 'clientsecretkey' to encrypt the newly generated symmetric
-		// key 'datacipherkey'
+	protected void postHandleSuccessSecretTokens(AuthenticationToken token, Subject subject, Map params, ServletRequest request,
+			ServletResponse response) throws Exception {
+
+		// Sets secret tokens to cookies.
+		String[] tokens = setSuccessSecretTokens2Cookie(token, request, response);
+
+		// Sets secret tokens to ressponse.
+		params.put(config.getParam().getDataCipherKeyName(), tokens[0]);
+		params.put(config.getParam().getAccessTokenName(), tokens[1]);
+	}
+
+	/**
+	 * Sets secret and tokens/signature to cookies handling.
+	 * 
+	 * @param token
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws DecoderException
+	 */
+	protected String[] setSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request, ServletResponse response)
+			throws DecoderException {
+
+		String dataCipherKeyHexCiphertext = null, accessToken = null;
 		if (token instanceof ClientSecretIamAuthenticationToken) {
-			// Generate dataCipherKey
-			String dataCipherKeyHexCiphertext = null;
+			// Sets dataCipherKey
 			if (config.getCipher().isEnableDataCipher()) {
 				// New generate dataCipherKey.
-				String hexDataCipherKey = bind(KEY_DATA_CIPHER_KEY, generateDataCipherKey());
+				String hexDataCipherKey = bind(KEY_DATA_CIPHER, generateDataCipherKey());
 				// Gets SecureCryptService.
 				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
 				SecureCryptService cryptService = cryptAdapter.forOperator(kind);
-				// ClientSecretKey (hexPublicKey)
+				// Use clientSecretKey(hexPublicKey) to encrypt the newly
+				// generate symmetric dataCipherKey
 				String clientSecretKey = ((ClientSecretIamAuthenticationToken) token).getClientSecretKey();
 				// Encryption dataCipherKey by clientSecretKey.
 				KeySpec pubKeySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
 				dataCipherKeyHexCiphertext = cryptService.encrypt(pubKeySpec, hexDataCipherKey);
+				// Set to cookies
+				Cookie c = new SimpleCookie(config.getCookie());
+				c.setName(config.getParam().getDataCipherKeyName());
+				c.setValue(dataCipherKeyHexCiphertext);
+				c.saveTo(toHttp(request), toHttp(response));
 			}
-			params.put(config.getParam().getDataCipherKeyName(), dataCipherKeyHexCiphertext);
 
-			// Generate accessToken
-			String accessToken = null;
+			// Sets accessToken
 			if (config.getSession().isEnableAccessTokenValidity()) {
 				// Create accessTokenSignKey.
-				String accessTokenSignKey = generateAccessTokenSignKey(getSessionId());
+				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN, generateAccessTokenSignKey(getSessionId()));
 				accessToken = generateAccessToken(getSessionId(), accessTokenSignKey);
+				Cookie c = new SimpleCookie(config.getCookie());
+				c.setName(config.getParam().getAccessTokenName());
+				c.setValue(accessToken);
+				c.saveTo(toHttp(request), toHttp(response));
 			}
-			params.put(config.getParam().getAccessTokenName(), accessToken);
+
 		}
 
+		return new String[] { dataCipherKeyHexCiphertext, accessToken };
 	}
 
 	/**
