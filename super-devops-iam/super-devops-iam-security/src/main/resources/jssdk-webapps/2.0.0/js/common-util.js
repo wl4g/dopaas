@@ -153,13 +153,13 @@
 		    mua.SmartPhone = mua.Mobile && !mua.Tablet;
 		    return mua;
 		})(),
-		int2char(n) {
+		int2char: function(n) {
 		    return "0123456789abcdefghijklmnopqrstuvwxyz".charAt(n);
 		},
-		language() {
+		language: function() {
 		    return (navigator.language || navigator.browserLanguage || navigator.systemLanguage).toLowerCase();
 		},
-		isZhCN() {
+		isZhCN: function() {
 		    return Common.Util.language().indexOf('zh') >= 0;
 		},
 		// Convertion paramMap to formData url
@@ -325,16 +325,17 @@
 	                str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" "))
 	            );
 	        },
-	        base64ToHex(s) { // convert a base64 string to hex
+	        base64ToHex: function(str) { // convert a base64 string to hex
+	        	if(!str) { return null; }
 			    var ret = "";
 			    var i;
 			    var k = 0; // b64 state, 0-3
 			    var slop = 0;
-			    for (i = 0; i < s.length; ++i) {
-			        if (s.charAt(i) == "=") {
+			    for (var i = 0; i < str.length(); ++i) {
+			        if (str.charAt(i) == "=") {
 			            break;
 			        }
-			        var v = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".indexOf(s.charAt(i));
+			        var v = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".indexOf(str.charAt(i));
 			        if (v < 0) {
 			            continue;
 			        }
