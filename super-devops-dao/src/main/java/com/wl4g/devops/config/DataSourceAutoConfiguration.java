@@ -20,7 +20,8 @@ import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.support.mybatis.session.MultipleSqlSessionFactoryBean;
-import com.wl4g.devops.tool.common.crypto.AesUtils;
+import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 
 import org.apache.ibatis.plugin.Interceptor;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -46,6 +47,9 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
 
 import javax.sql.DataSource;
+
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -81,12 +85,14 @@ public class DataSourceAutoConfiguration {
 		datasource.setUrl(prop.getUrl());
 		datasource.setUsername(prop.getUsername());
 		String plain = prop.getPassword();
-		if (String.valueOf(this.env.getProperty("spring.profiles.active")).equalsIgnoreCase("prod")) {
+		if (valueOf(env.getProperty("spring.profiles.active")).equalsIgnoreCase("prod")) {
 			try {
-				plain = new AesUtils().decrypt(prop.getPassword());
+				// TODO using dynamic cipherKey??
+				byte[] cipherKey = AESCryptor.getEnvCipherKey("DEVOPS_CIPHER_KEY");
+				plain = new AESCryptor().decrypt(cipherKey, CrypticSource.fromHex(prop.getPassword())).toString();
 			} catch (Throwable th) {
-				throw new IllegalStateException(
-						String.format("Unable to decryption database password for '%s'", prop.getPassword()), th);
+				throw new IllegalStateException(format("Unable to decryption database password for '%s'", prop.getPassword()),
+						th);
 			}
 		}
 		datasource.setPassword(plain);
@@ -172,7 +178,7 @@ public class DataSourceAutoConfiguration {
 		// Define metadataReader
 		MetadataReaderFactory metadataReaderFty = new CachingMetadataReaderFactory(resolver);
 
-		for (String pkg : this.typeAliasesPackage.split(",")) {
+		for (String pkg : typeAliasesPackage.split(",")) {
 			// Get location
 			String location = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + ClassUtils.convertClassNameToResourcePath(pkg)
 					+ "**/*.class";

@@ -22,13 +22,16 @@ import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;
 import io.protostuff.Schema;
 import io.protostuff.runtime.RuntimeSchema;
+
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static java.util.Objects.isNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.SortedMap;
 import java.util.Stack;
 import java.util.TreeMap;
@@ -142,9 +145,9 @@ public abstract class ProtostuffUtils {
 	 * @return Deserialized object set
 	 */
 	public static <T> T deserialize(byte[] data, Class<T> clazz) {
-		if (Objects.isNull(data) || Objects.isNull(clazz)) {
+		notNullOf(clazz, "objectClass");
+		if (isNull(data))
 			return null;
-		}
 
 		try {
 			// Simple type conversion
@@ -162,7 +165,7 @@ public abstract class ProtostuffUtils {
 			}
 			return bean;
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new IllegalStateException(e);
 		}
 	}
 

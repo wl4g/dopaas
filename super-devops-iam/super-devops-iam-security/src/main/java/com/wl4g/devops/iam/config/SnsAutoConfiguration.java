@@ -25,7 +25,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE
 import java.util.List;
 
 import com.wl4g.devops.iam.annotation.SnsController;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.config.properties.SnsProperties;
@@ -97,7 +97,7 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public LoginSnsHandler loginSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
-			ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+			ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
 		return new LoginSnsHandler(config, snsConfig, connectFactory, context);
 	}
 

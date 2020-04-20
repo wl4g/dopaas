@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.common.config;
 
-import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -24,6 +23,8 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.NameableFilter;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
+import static com.wl4g.devops.iam.common.config.XssProperties.*;
+import static com.wl4g.devops.iam.common.config.CorsProperties.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.notNull;
@@ -49,21 +50,30 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
-import com.wl4g.devops.iam.common.attacks.csrf.CorsResolveSecurityFilter;
-import com.wl4g.devops.iam.common.attacks.csrf.CorsResolveSecurityFilter.AdvancedCorsProcessor;
-import com.wl4g.devops.iam.common.attacks.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamFilterChainManager;
 import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
+import com.wl4g.devops.iam.common.crypto.AesIamCipherService;
+import com.wl4g.devops.iam.common.crypto.BlowfishIamCipherService;
+import com.wl4g.devops.iam.common.crypto.IamCipherService;
+import com.wl4g.devops.iam.common.crypto.IamCipherService.CipherCryptKind;
+import com.wl4g.devops.iam.common.crypto.Des3IamCipherService;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
+import com.wl4g.devops.iam.common.security.cipher.CipherRequestSecurityFilter;
+import com.wl4g.devops.iam.common.security.cipher.CipherRequestWrapper;
+import com.wl4g.devops.iam.common.security.cipher.CipherRequestWrapperFactory;
+import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter;
+import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter.AdvancedCorsProcessor;
+import com.wl4g.devops.iam.common.security.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.devops.iam.common.session.mgt.support.IamUidSessionIdGenerator;
@@ -106,10 +116,9 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public EnhancedModularRealmAuthorizer enhancedModularRealmAuthorizer() {
+	public EnhancedModularRealmAuthorizer enhancedModularRealmAuthorizer(List<AbstractPermittingAuthorizingRealm> realms) {
 		// Register define realm.
-		List<Realm> realms = actx.getBeansOfType(AbstractPermittingAuthorizingRealm.class).values().stream().collect(toList());
-		return new EnhancedModularRealmAuthorizer(realms);
+		return new EnhancedModularRealmAuthorizer(realms.stream().collect(toList()));
 	}
 
 	@Bean
@@ -174,14 +183,15 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public IamSubjectFactory iamSubjectFactory() {
-		return new IamSubjectFactory();
+	@ConditionalOnMissingBean
+	public IamSubjectFactory iamSubjectFactory(AbstractIamProperties<? extends ParamProperties> config) {
+		return new IamSubjectFactory(config);
 	}
 
 	@Bean
-	public JedisCacheManager jedisCacheManager(AbstractIamProperties<? extends ParamProperties> config,
+	public JedisIamCacheManager jedisIamCacheManager(AbstractIamProperties<? extends ParamProperties> config,
 			JedisCluster jedisCluster) {
-		return new JedisCacheManager(config.getCache().getPrefix(), jedisCluster);
+		return new JedisIamCacheManager(config.getCache().getPrefix(), jedisCluster);
 	}
 
 	@Bean
@@ -191,7 +201,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 
 	@Bean
 	public JedisIamSessionDAO jedisIamSessionDAO(AbstractIamProperties<? extends ParamProperties> config,
-			JedisCacheManager cacheManager, IamUidSessionIdGenerator sessionIdGenerator) {
+			JedisIamCacheManager cacheManager, IamUidSessionIdGenerator sessionIdGenerator) {
 		JedisIamSessionDAO sessionDAO = new JedisIamSessionDAO(config, cacheManager);
 		sessionDAO.setSessionIdGenerator(sessionIdGenerator);
 		return sessionDAO;
@@ -274,8 +284,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	//
 
 	@Bean
-	@ConditionalOnProperty(name = XssProperties.PREFIX + ".enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = XssProperties.PREFIX)
+	@ConditionalOnProperty(name = KEY_XSS_PREFIX + ".enabled", matchIfMissing = true)
+	@ConfigurationProperties(prefix = KEY_XSS_PREFIX)
 	public XssProperties xssProperties() {
 		return new XssProperties();
 	}
@@ -295,7 +305,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 
 	@Bean
 	@ConditionalOnBean(XssSecurityResolveInterceptor.class)
-	public AspectJExpressionPointcutAdvisor xssSecurityResolveAspectJExpressionPointcutAdvisor(XssProperties config,
+	public AspectJExpressionPointcutAdvisor xssSecurityResolverAspectJExpressionPointcutAdvisor(XssProperties config,
 			XssSecurityResolveInterceptor advice) {
 		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
 		advisor.setExpression(config.getExpression());
@@ -308,23 +318,25 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	//
 
 	@Bean
-	@ConditionalOnProperty(name = "spring.web.cors.enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = "spring.web.cors")
+	@ConditionalOnProperty(name = KEY_CORS_PREFIX + ".enabled", matchIfMissing = true)
+	@ConfigurationProperties(prefix = KEY_CORS_PREFIX)
 	public CorsProperties corsProperties() {
 		return new CorsProperties();
 	}
 
 	@Bean
+	@ConditionalOnBean(CorsProperties.class)
 	public AdvancedCorsProcessor advancedCorsProcessor() {
 		return new AdvancedCorsProcessor();
 	}
 
 	@Bean
-	public CorsResolveSecurityFilter corsResolveSecurityFilter(CorsProperties config, AdvancedCorsProcessor corsProcessor) {
+	@ConditionalOnBean(CorsProperties.class)
+	public CorsSecurityFilter corsSecurityFilter(CorsProperties config, AdvancedCorsProcessor corsProcessor) {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		// Merger transformation configuration
-		config.getRules().forEach(rule -> source.registerCorsConfiguration(rule.getPath(), rule.toSpringCorsConfiguration()));
-		CorsResolveSecurityFilter filter = new CorsResolveSecurityFilter(source);
+		config.getRules().forEach((key, rule) -> source.registerCorsConfiguration(key, rule.toSpringCorsConfiguration()));
+		CorsSecurityFilter filter = new CorsSecurityFilter(source);
 		filter.setCorsProcessor(corsProcessor);
 		return filter;
 	}
@@ -353,10 +365,66 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	 */
 	@Bean
 	@ConditionalOnBean(CorsProperties.class)
-	public FilterRegistrationBean corsResolveSecurityFilterBean(CorsResolveSecurityFilter filter) {
+	public FilterRegistrationBean corsResolveSecurityFilterBean(CorsSecurityFilter filter) {
 		// Register CORS filter
 		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
-		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 10);
+		filterBean.setOrder(ORDER_CORS_PRECEDENCE);
+		// Cannot use '/*' or it will not be added to the container chain (only
+		// '/**')
+		filterBean.addUrlPatterns("/*");
+		return filterBean;
+	}
+
+	//
+	// C I P H E R _ A N D _ F I L T E R _ C O N F I G's.
+	//
+
+	@Bean
+	public AesIamCipherService aesIamCipherService() {
+		return new AesIamCipherService();
+	}
+
+	@Bean
+	public BlowfishIamCipherService blowfishIamCipherService() {
+		return new BlowfishIamCipherService();
+	}
+
+	@Bean
+	public Des3IamCipherService des3IamCipherService() {
+		return new Des3IamCipherService();
+	}
+
+	@Bean
+	public GenericOperatorAdapter<CipherCryptKind, IamCipherService> compositeIamCipherServiceAdapter(
+			List<IamCipherService> cipherServices) {
+		return new GenericOperatorAdapter<CipherCryptKind, IamCipherService>(cipherServices) {
+		};
+	}
+
+	/**
+	 * Can be used to extend and create a custom {@link CipherRequestWrapper}
+	 * instance.
+	 * 
+	 * @return
+	 */
+	@Bean
+	@ConditionalOnMissingBean
+	public CipherRequestWrapperFactory cipherRequestWrapperFactory() {
+		return new CipherRequestWrapperFactory() {
+		};
+	}
+
+	@Bean
+	public CipherRequestSecurityFilter cipherRequestSecurityFilter(AbstractIamProperties<? extends ParamProperties> config,
+			CipherRequestWrapperFactory factory) {
+		return new CipherRequestSecurityFilter(config, factory);
+	}
+
+	@Bean
+	public FilterRegistrationBean cipherRequestSecurityFilterBean(CipherRequestSecurityFilter filter) {
+		// Register cipher filter
+		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		filterBean.setOrder(ORDER_CIPHER_PRECEDENCE);
 		// Cannot use '/*' or it will not be added to the container chain (only
 		// '/**')
 		filterBean.addUrlPatterns("/*");
@@ -371,5 +439,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	public IamErrorConfiguring iamErrorConfiguring() {
 		return new IamErrorConfiguring();
 	}
+
+	final public static int ORDER_CORS_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 10;
+	final public static int ORDER_CIPHER_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 11;
 
 }

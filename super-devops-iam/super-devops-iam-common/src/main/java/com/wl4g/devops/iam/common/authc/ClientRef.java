@@ -35,11 +35,6 @@ public enum ClientRef {
 	iOS("iOS"),
 
 	/**
-	 * Client MAC platform.
-	 */
-	Mac("Mac"),
-
-	/**
 	 * Client iPad platform.
 	 */
 	IPad("IPad"),
@@ -60,9 +55,49 @@ public enum ClientRef {
 	Windows("Windows"),
 
 	/**
+	 * Client MAC platform.
+	 */
+	Mac("Mac"),
+
+	/**
 	 * Client linux platform.
 	 */
 	Linux("Linux"),
+
+	/**
+	 * Client SunOS platform.
+	 */
+	SunOS("SunOS"),
+
+	/**
+	 * Client FreeBSD platform.
+	 */
+	FreeBSD("FreeBSD"),
+
+	/**
+	 * Client OpenBSD platform.
+	 */
+	OpenBSD("OpenBSD"),
+
+	/**
+	 * Client Solaris platform.
+	 */
+	Solaris("Solaris"),
+
+	/**
+	 * Client AIX platform.
+	 */
+	AIX("AIX"),
+
+	/**
+	 * Client Irix platform.
+	 */
+	Irix("Irix"),
+
+	/**
+	 * Client HP-UX platform.
+	 */
+	HP_UX("HP-UX"),
 
 	/**
 	 * Client unknown platform.

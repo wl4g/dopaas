@@ -905,7 +905,33 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 		return path.substring(extIndex + 1);
 	}
 
-	// --- Spring Util. ---
+	/**
+	 * Is true <br/>
+	 * 
+	 * @param value
+	 * @return Return TRUE with true/t/y/yes/on/1/enabled
+	 */
+	public static boolean isTrue(String value) {
+		return isTrue(value, false);
+	}
+
+	/**
+	 * Is true <br/>
+	 * 
+	 * @param value
+	 * @param defaultValue
+	 * @return Return TRUE with true/t/y/yes/on/1/enabled
+	 */
+	public static boolean isTrue(String value, boolean defaultValue) {
+		if (isBlank(value)) {
+			return defaultValue;
+		}
+		return (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("t") || value.equalsIgnoreCase("1")
+				|| value.equalsIgnoreCase("enabled") || value.equalsIgnoreCase("y") || value.equalsIgnoreCase("yes")
+				|| value.equalsIgnoreCase("on"));
+	}
+
+	// --- Spring StringUtils. ---
 
 	/**
 	 * Take an array of strings and split each element based on the given
@@ -2496,34 +2522,6 @@ public abstract class StringUtils2 extends org.apache.commons.lang3.StringUtils 
 			}
 			return false;
 		}
-	}
-
-	public static void main(String[] args) {
-		ExpressVo vo = createRandomExpres(1, 10);
-		System.out.println(vo.getExpression());
-		System.out.println(vo.getResult());
-
-		Object o = 1.0d;
-		System.out.println(String.valueOf(o.toString()));
-		System.out.println("=============");
-		System.out.println(eqIgnCase("1.0", o));
-		System.out.println(equalsIgnoreCase("1.0", o.toString()));
-
-		Pattern p = Pattern.compile(
-				"^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$|^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|X)$");
-		System.out.println(p.matcher("36060219890331301X").find());
-
-		String msg = "H {\"aaa\":\"bbb\"}";
-		System.out.println(unpackingMessage(msg));
-
-		System.out.println("============");
-		System.out.println(isURL("https://mp.domain.com/mp/index"));
-		System.out.println(isDomain("www.next.mp.domain.com"));
-		System.out.println(isDomain("*.mp.domain.com"));
-		System.out.println(isDomain("www.*.mp.domain.com"));
-		System.out.println(isDomain("www..mp.domain.com"));
-		System.out.println(isDomain("www.123-est.domain.com"));
-		System.out.println(isDomain("www.123_est.domain.com"));
 	}
 
 }

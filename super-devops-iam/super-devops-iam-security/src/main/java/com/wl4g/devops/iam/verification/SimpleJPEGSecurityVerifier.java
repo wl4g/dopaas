@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.iam.verification;
 
-import com.wl4g.devops.iam.verification.model.SimpleApplyImgModel;
-import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.devops.iam.verification.model.GenericApplyResult;
+import com.wl4g.devops.iam.verification.model.GenericVerifyResult;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -48,26 +49,26 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 	final private static Font DEFAULT_FONT = defaultFont();
 
 	@Override
-	public VerifyType verifyType() {
-		return VerifyType.GRAPH_SIMPLE;
+	public VerifyKind kind() {
+		return VerifyKind.GRAPH_SIMPLE;
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, KeyPairSpec keySpec)
-			throws IOException {
+	protected Object postApplyGraphProperties(@NotNull SecureAlgKind kind, String applyToken, VerifyCodeWrapper codeWrap,
+			KeyPairSpec keySpec) throws IOException {
 		// Generate image & to base64 string.
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ImageIO.write(createImage(codeWrap.getCode()), "JPEG", out);
 
 		// Build model
-		SimpleApplyImgModel model = new SimpleApplyImgModel(applyToken, verifyType().getAlias());
+		GenericApplyResult model = new GenericApplyResult(applyToken, kind().getAlias());
 		model.setPrimaryImg(convertToBase64(out.toByteArray()));
 		return model;
 	}
 
 	@Override
 	protected Object getRequestVerifyCode(@NotBlank String params, @NotNull HttpServletRequest request) {
-		SimpleVerifyImgModel model = parseJSON(params, SimpleVerifyImgModel.class);
+		GenericVerifyResult model = parseJSON(params, GenericVerifyResult.class);
 		validator.validate(model);
 		return model;
 	}

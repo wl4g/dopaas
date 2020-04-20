@@ -33,7 +33,7 @@ import com.wl4g.devops.umc.rule.RuleConfigManager;
  */
 @ShellComponent
 public class AlarmConsole {
-	final public static String SHELL_GROUP = "Umc alarm commands.";
+	final public static String SHELL_GROUP = "UMC alarms";
 
 	protected Logger log = LoggerFactory.getLogger(getClass());
 

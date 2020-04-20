@@ -15,23 +15,26 @@
  */
 package com.wl4g.devops.iam.common.utils;
 
+import static com.wl4g.devops.iam.common.session.NoOpSession.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static java.lang.System.currentTimeMillis;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.shiro.util.Assert.hasText;
-import static org.apache.shiro.util.Assert.isTrue;
-import static org.apache.shiro.util.Assert.notEmpty;
-import static org.springframework.util.Assert.notNull;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.subject.Subject;
-import org.springframework.util.Assert;
 
+import com.wl4g.devops.iam.common.session.NoOpSession;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
 /**
@@ -48,43 +51,80 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	// --- Principal and session's. ---
 
 	/**
-	 * Getting current authenticate principal name.
+	 * Gets current authenticated principal name.
 	 *
-	 * @param create
 	 * @return
 	 */
 	public static String getPrincipal() {
+		return getPrincipal(true);
+	}
+
+	/**
+	 * Gets current authenticated principal name.
+	 *
+	 * @param assertion
+	 * @return
+	 */
+	public static String getPrincipal(boolean assertion) {
 		Object principal = getSubject().getPrincipal();
-		notNull(principal,
-				"The authentication subject is empty. The unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
+		if (assertion) {
+			notNull(principal,
+					"The authentication subject is empty. The unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
+		}
 		return (String) principal;
 	}
 
 	/**
-	 * Get current authenticate principal {@link IamPrincipalInfo}
+	 * Gets current authenticate principal {@link IamPrincipalInfo}
 	 * 
 	 * @return
 	 * @see {@link com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm#doGetAuthenticationInfo(AuthenticationToken)}
 	 */
 	public static IamPrincipalInfo getPrincipalInfo() {
+		return getPrincipalInfo(true);
+	}
+
+	/**
+	 * Gets current authenticate principal {@link IamPrincipalInfo}
+	 * 
+	 * @param assertion
+	 * @return
+	 * @see {@link com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm#doGetAuthenticationInfo(AuthenticationToken)}
+	 */
+	public static IamPrincipalInfo getPrincipalInfo(boolean assertion) {
 		IamPrincipalInfo info = getBindValue(KEY_AUTHC_ACCOUNT_INFO);
-		notNull(info,
-				"Authentication subject is empty. The unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
+		if (assertion) {
+			notNull(info, UnauthenticatedException.class,
+					"Authentication subject empty. unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
+		}
 		return info;
 	}
 
 	/**
-	 * Getting current session
+	 * Check if the current topic session is available. </br>
+	 * Note: it only checks whether the current session exists. If it exists, it
+	 * does not check the validity of the session
+	 * 
+	 * @throws UnknownSessionException
+	 */
+	public static void checkSession() throws UnknownSessionException {
+		notNull(getSubject().getSession(false), UnknownSessionException.class, "No session in current subject.");
+	}
+
+	/**
+	 * Gets current session, If there is no session currently,
+	 * {@link NoOpSession#DefaultNoOpSession} will be returned
 	 *
 	 * @param create
 	 * @return
 	 */
 	public static Session getSession() {
-		return getSubject().getSession(true);
+		Session session = getSession(false);
+		return isNull(session) ? DefaultNoOpSession : session;
 	}
 
 	/**
-	 * Getting current session
+	 * Gets current session
 	 *
 	 * @param create
 	 * @return
@@ -94,7 +134,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Getting session-id
+	 * Gets session-id
 	 *
 	 * @return
 	 */
@@ -103,28 +143,27 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Getting session-id
+	 * Gets session-id
 	 *
 	 * @param subject
 	 * @return
 	 */
 	public static Serializable getSessionId(Subject subject) {
-		Session session = subject.getSession();
-		return (session != null) ? session.getId() : null;
+		return getSessionId(subject.getSession(false));
 	}
 
 	/**
-	 * Getting session-id
+	 * Gets session-id
 	 *
 	 * @param session
 	 * @return
 	 */
 	public static Serializable getSessionId(Session session) {
-		return (session != null) ? session.getId() : null;
+		return !isNull(session) ? session.getId() : null;
 	}
 
 	/**
-	 * Get session expire time
+	 * Gets session expire time
 	 *
 	 * @param session
 	 *            Shiro session
@@ -135,16 +174,17 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Get session expire time
+	 * Gets session expire time
 	 *
 	 * @param session
 	 *            Shiro session
 	 * @return Current remaining expired milliseconds of the session
 	 */
 	public static long getSessionExpiredTime(Session session) {
-		Assert.notNull(session, "'session' must not be null");
-		long now = System.currentTimeMillis();
-		long lastTime = session.getLastAccessTime().getTime();
+		notNullOf(session, "session");
+		long now = currentTimeMillis();
+		Date lastATime = session.getLastAccessTime();
+		long lastTime = isNull(lastATime) ? 0 : lastATime.getTime();
 		return session.getTimeout() - (now - lastTime);
 	}
 
@@ -181,8 +221,8 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @return Is there a value in session that matches the target
 	 */
 	public static boolean withIn(String sessionKey, Object target) {
-		Assert.notNull(sessionKey, "'sessionKey' must not be null");
-		Assert.notNull(target, "'target' must not be null");
+		notNullOf(sessionKey, "sessionKey");
+		notNullOf(target, "withInSessionTarget");
 
 		Object sessionValue = getBindValue(sessionKey);
 		if (sessionValue != null) {
@@ -198,7 +238,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Get bind of session value
+	 * Gets bind of session value
 	 *
 	 * @param sessionKey
 	 *            Keys to save and session
@@ -206,7 +246,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 *            Whether to UN-bundle
 	 * @return
 	 */
-	public static <T> T getBindValue(String sessionKey, boolean unbind) throws InvalidSessionException {
+	public static <T> T getBindValue(String sessionKey, @Deprecated boolean unbind) throws InvalidSessionException {
 		try {
 			return getBindValue(sessionKey);
 		} finally {
@@ -223,14 +263,14 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getBindValue(String sessionKey) throws InvalidSessionException {
-		Assert.hasText(sessionKey, "Session key must not be empty.");
-		// Get bind value.
+		hasTextOf(sessionKey, "sessionKey");
+		// Gets bind value.
 		T value = (T) getSession().getAttribute(sessionKey);
-		// Get value TTL.
+		// Gets value TTL.
 		SessionValueTTL ttl = (SessionValueTTL) getSession().getAttribute(getExpireKey(sessionKey));
-		if (ttl != null) { // Need to check expiration
-			if ((System.currentTimeMillis() - ttl.getCreateTime()) >= ttl.getExpireMs()) { // Expired?
-				unbind(sessionKey); // Cleanup
+		if (!isNull(ttl)) { // Need to check expiration
+			if ((currentTimeMillis() - ttl.getCreateTime()) >= ttl.getExpireMs()) { // Expired?
+				unbind(sessionKey); // Remove
 				return null; // Because it's expired.
 			}
 		}
@@ -246,8 +286,8 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> T extParameterValue(String sessionKey, String paramKey) throws InvalidSessionException {
-		Assert.notNull(sessionKey, "'sessionKey' must not be null");
-		Assert.notNull(paramKey, "'paramKey' must not be null");
+		notNullOf(sessionKey, "sessionKey");
+		notNullOf(paramKey, "paramKey");
 
 		// Extract parameter
 		Map parameter = (Map) getBindValue(sessionKey);
@@ -264,9 +304,9 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @param keyValues
 	 */
 	public static void bindKVParameters(String sessionKey, Object... keyValues) throws InvalidSessionException {
-		hasText(sessionKey, "'sessionKey' must not be null");
-		notEmpty(keyValues, "'keyValues' must not be null");
-		isTrue(keyValues.length % 2 == 0, "Illegal 'keyValues' length");
+		hasTextOf(sessionKey, "sessionKey");
+		notEmptyOf(keyValues, "keyValues");
+		isTrueOf(keyValues.length % 2 == 0, "Illegal 'keyValues' length");
 
 		// Extract key values
 		Map<Object, Object> parameters = new HashMap<>();
@@ -293,9 +333,11 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @return
 	 */
 	public static <T> T bind(String sessionKey, T value, long expireMs) throws InvalidSessionException {
-		Assert.isTrue(expireMs > 0, "Expire time must be greater than 0");
+		isTrue(expireMs > 0, "Expire time must be greater than 0");
 		bind(sessionKey, value);
-		bind(getExpireKey(sessionKey), new SessionValueTTL(expireMs));
+		if (!isNull(value)) {
+			bind(getExpireKey(sessionKey), new SessionValueTTL(expireMs));
+		}
 		return value;
 	}
 
@@ -306,8 +348,10 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @param value
 	 */
 	public static <T> T bind(String sessionKey, T value) throws InvalidSessionException {
-		Assert.hasText(sessionKey, "Session key must not be empty.");
-		getSession().setAttribute(sessionKey, value);
+		hasTextOf(sessionKey, "sessionKey");
+		if (!isNull(value)) {
+			getSession().setAttribute(sessionKey, value);
+		}
 		return value;
 	}
 
@@ -318,7 +362,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @return
 	 */
 	public static boolean unbind(String sessionKey) throws InvalidSessionException {
-		Assert.notNull(sessionKey, "'sessionKey' must not be null");
+		hasTextOf(sessionKey, "sessionKey");
 		getSession().removeAttribute(getExpireKey(sessionKey)); // TTL-attribute?
 		return getSession().removeAttribute(sessionKey) != null;
 	}
@@ -330,7 +374,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @return
 	 */
 	private static String getExpireKey(String sessionKey) {
-		Assert.hasText(sessionKey, "'sessionKey' must not be empty");
+		hasTextOf(sessionKey, "sessionKey");
 		return KEY_ATTR_TTL_PREFIX + sessionKey;
 	}
 
@@ -359,8 +403,8 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 		}
 
 		public SessionValueTTL(Long createTime, Long expireMs) {
-			Assert.state(createTime != null, "'createTime' must not be null.");
-			Assert.state(expireMs != null, "'expireMs' must not be null.");
+			stateOf(createTime != null, "'createTime' must not be null.");
+			stateOf(expireMs != null, "'expireMs' must not be null.");
 			this.createTime = createTime;
 			this.expireMs = expireMs;
 		}

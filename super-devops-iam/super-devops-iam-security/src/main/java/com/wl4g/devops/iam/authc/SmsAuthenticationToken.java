@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import static org.springframework.util.Assert.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
-import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 
 /**
  * SMS authentication token
@@ -27,8 +27,13 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
  * @date 2018年11月19日
  * @since
  */
-public class SmsAuthenticationToken extends AbstractIamAuthenticationToken {
+public class SmsAuthenticationToken extends ClientSecretIamAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
+
+	/**
+	 * SMS authenticating action.
+	 */
+	final private Action action;
 
 	/**
 	 * Principal(e.g. user-name or mobile number etc)
@@ -40,18 +45,12 @@ public class SmsAuthenticationToken extends AbstractIamAuthenticationToken {
 	 */
 	final private String smsCode;
 
-	final private Action action;
-
-	public SmsAuthenticationToken() {
-		this.principal = null;
-		this.smsCode = null;
-		this.action = null;
-	}
-
-	public SmsAuthenticationToken(final String remoteHost, final String action, final String principal, final String smsCode) {
-		super(remoteHost);
-		hasText(principal, "Dynamic principal must not be empty");
-		hasText(smsCode, "Dynamic smsCode credentials must not be empty");
+	public SmsAuthenticationToken(final SecureAlgKind secureAlgKind, final String clientSecretKey, final String remoteHost,
+			final String action, final String principal, final String smsCode) {
+		super(secureAlgKind, clientSecretKey, remoteHost);
+		hasTextOf(action, "action");
+		hasTextOf(principal, "principal");
+		hasTextOf(smsCode, "smsCode");
 		this.action = Action.of(action);
 		this.principal = principal;
 		this.smsCode = smsCode;

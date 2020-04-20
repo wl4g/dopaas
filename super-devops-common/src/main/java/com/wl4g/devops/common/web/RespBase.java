@@ -17,7 +17,7 @@ package com.wl4g.devops.common.web;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
-import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
+import com.wl4g.devops.common.exception.restful.InvalidParamsRestfulException;
 import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
 import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
 import org.springframework.http.HttpStatus;
@@ -63,6 +63,7 @@ public class RespBase<D> implements Serializable {
 
 	private RetCode code = RetCode.OK;
 	private String status = DEFAULT_STATUS; // [Extensible]
+	private String requestId = DEFAULT_REQUESTID; // [Extensible]
 	private String message = EMPTY;
 	@SuppressWarnings("unchecked")
 	private D data = (D) DEFAULT_DATA;
@@ -95,7 +96,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Get response code value.
+	 * Gets response code value.
 	 * 
 	 * @return
 	 */
@@ -104,7 +105,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Setup response code of {@link RetCode}.
+	 * Sets response code of {@link RetCode}.
 	 * 
 	 * @param retCode
 	 * @return
@@ -117,7 +118,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Setup response code of int.
+	 * Sets response code of int.
 	 * 
 	 * @param retCode
 	 * @return
@@ -128,7 +129,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Get status
+	 * Gets status
 	 * 
 	 * @return
 	 */
@@ -137,7 +138,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Setup status.
+	 * Sets status.
 	 * 
 	 * @param status
 	 * @return
@@ -150,7 +151,28 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Get error message text.
+	 * Gets current requestId.
+	 * 
+	 * @return
+	 */
+	public String getRequestId() {
+		return requestId;
+	}
+
+	/**
+	 * Sets current requestId.
+	 * 
+	 * @param requestId
+	 * @return
+	 */
+
+	public RespBase<D> setRequestId(String requestId) {
+		this.requestId = requestId;
+		return this;
+	}
+
+	/**
+	 * Gets error message text.
 	 * 
 	 * @return
 	 */
@@ -159,7 +181,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Setup error message text.
+	 * Sets error message text.
 	 * 
 	 * @return
 	 */
@@ -169,7 +191,7 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Get response data node of {@link Object}.
+	 * Gets response data node of {@link Object}.
 	 * 
 	 * @return
 	 */
@@ -180,26 +202,25 @@ public class RespBase<D> implements Serializable {
 	// --- Expanded's. ---.
 
 	/**
-	 * Setup response bean to data.
+	 * Sets response bean to data.
 	 * 
 	 * @param data
 	 * @return
 	 */
 	public RespBase<D> setData(D data) {
-		if (isNull(data)) {
+		if (isNull(data))
 			return this;
-		}
-		if (isAvailablePayload()) { // Data already payLoad ?
-			throw new IllegalStateException(String.format(
+		if (checkDataAvailable()) // Data already payLoad ?
+			throw new IllegalStateException(format(
 					"RespBase.data already payLoad, In order to set it successful the data node must be the initial value or empty. - %s",
 					getData()));
-		}
+
 		this.data = data;
 		return this;
 	}
 
 	/**
-	 * Setup error throwable, does not set response status code.
+	 * Sets error throwable, does not set response status code.
 	 * 
 	 * @param th
 	 * @return
@@ -233,14 +254,18 @@ public class RespBase<D> implements Serializable {
 	@SuppressWarnings({ "unchecked" })
 	@JsonIgnore
 	public synchronized DataMap<Object> asMap() {
-		if (data instanceof Map) { // type of Map ?
-			return (DataMap<Object>) data;
-		}
-		return (DataMap<Object>) (data = (D) convertBean(data, DataMap.class));
+		if (isNull(getData()))
+			return null;
+		if (data instanceof Map) // Type of Map ?
+			return (DataMap<Object>) getData();
+
+		setData((D) convertBean(data, DataMap.class));
+		return (DataMap<Object>) getData();
 	}
 
 	/**
-	 * Build for response data node of {@link DataMap}.
+	 * Build {@link DataMap} instance for response data body.(if
+	 * {@link RespBase#getData()} is null)
 	 * 
 	 * @see {@link RespBase#getData()}
 	 * @return
@@ -248,7 +273,7 @@ public class RespBase<D> implements Serializable {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@JsonIgnore
 	public synchronized DataMap<Object> forMap() {
-		if (!isAvailablePayload()) { // Data unalready ?
+		if (!checkDataAvailable()) { // Data unalready ?
 			data = (D) new DataMap<>(); // Init
 		} else {
 			// Convert to DataMap.
@@ -256,14 +281,14 @@ public class RespBase<D> implements Serializable {
 			 * ###[Note(scene): This logic is to solve the data analysis of, for
 			 * example:{@link org.springframework.web.client.RestTemplate}.response]
 			 */
-			if (data instanceof Map) { // e.g.LinkedHashMap
+			if (data instanceof Map) { // e.g:LinkedHashMap
 				if (data instanceof DataMap) {
 					this.data = (D) data;
 				} else {
 					this.data = (D) new DataMap<>((Map) data);
 				}
 			} else {
-				String errmsg = String.format(
+				String errmsg = format(
 						"Illegal type compatible operation, because RespBase.data has initialized the available data, class type is: %s, and forMap() requires RespBase.data to be uninitialized or the initialized data type is must an instance of Map",
 						data.getClass());
 				throw new UnsupportedOperationException(errmsg);
@@ -280,10 +305,13 @@ public class RespBase<D> implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	@JsonIgnore
-	public DataMap<Object> buildNode(String nodeKey) {
+	public synchronized DataMap<Object> forMapNode(String nodeKey) {
 		hasText(nodeKey, "RespBase build datamap nodeKey name can't be empty");
-		DataMap<Object> nodeMap = new DataMap<>();
-		forMap().put(nodeKey, (D) nodeMap);
+		DataMap<Object> data = forMap();
+		DataMap<Object> nodeMap = (DataMap<Object>) data.get(nodeKey);
+		if (isNull(nodeMap)) {
+			data.put(nodeKey, (D) (nodeMap = new DataMap<>()));
+		}
 		return nodeMap;
 	}
 
@@ -294,8 +322,8 @@ public class RespBase<D> implements Serializable {
 	 * 
 	 * @return
 	 */
-	private boolean isAvailablePayload() {
-		return nonNull(data) && data != DEFAULT_DATA;
+	private boolean checkDataAvailable() {
+		return nonNull(getData()) && getData() != DEFAULT_DATA;
 	}
 
 	/**
@@ -334,15 +362,15 @@ public class RespBase<D> implements Serializable {
 	 * @return
 	 * @see {@link RESTfulException}
 	 * @see {@link BizRuleRestrictRestfulException}
-	 * @see {@link BizInvalidArgRestfulException}
+	 * @see {@link InvalidParamsRestfulException}
 	 * @see {@link ServiceUnavailableRestfulException}
 	 */
 	public final static RetCode getRestfulCode(Throwable th, RetCode defaultCode) {
 		if (nonNull(th)) {
 			if (th instanceof BizRuleRestrictRestfulException) {
 				return ((BizRuleRestrictRestfulException) th).getCode();
-			} else if (th instanceof BizInvalidArgRestfulException) {
-				return ((BizInvalidArgRestfulException) th).getCode();
+			} else if (th instanceof InvalidParamsRestfulException) {
+				return ((InvalidParamsRestfulException) th).getCode();
 			} else if (th instanceof ServiceUnavailableRestfulException) {
 				return ((ServiceUnavailableRestfulException) th).getCode();
 			}
@@ -387,7 +415,7 @@ public class RespBase<D> implements Serializable {
 	 * @return
 	 */
 	public final static boolean eq(RespBase<?> resp, RetCode retCode) {
-		return resp != null && retCode.getErrcode() == resp.getCode();
+		return !isNull(resp) && retCode.getErrcode() == resp.getCode();
 	}
 
 	/**
@@ -516,76 +544,94 @@ public class RespBase<D> implements Serializable {
 	}
 
 	/**
-	 * Response code definitions
+	 * HTTP response code definitions. </br>
 	 * 
 	 * @author wangl.sir
 	 * @version v1.0 2019年1月10日
 	 * @since
+	 * @see <a href="https://www.ietf.org/rfc/rfc2616.txt">RFC1216</a>
+	 * @see <a href=
+	 *      "https://tools.ietf.org/html/rfc2324#section-2.3.2">RFC2314</a>
 	 */
 	public abstract static class RetCode {
 
 		/**
-		 * Successful code<br/>
+		 * Successful code </br>
 		 * {@link HttpStatus.OK}
 		 */
 		final public static RetCode OK = new RetCode(HttpStatus.OK.value(), "Ok") {
 		};
 
 		/**
-		 * Parameter error<br/>
+		 * Parameter error </br>
 		 * {@link HttpStatus.BAD_REQUEST}
 		 */
-		final public static RetCode PARAM_ERR = new RetCode(BAD_REQUEST.value(), "Parameter error") {
+		final public static RetCode PARAM_ERR = new RetCode(BAD_REQUEST.value(), "Bad parameters") {
 		};
 
 		/**
-		 * Parameter error<br/>
-		 * {@link HttpStatus.NOT_FOUND}
-		 */
-		final public static RetCode NOT_FOUND_ERR = new RetCode(NOT_FOUND.value(), "Parameter error") {
-		};
-
-		/**
-		 * Business constraints<br/>
-		 * {@link HttpStatus.NOT_IMPLEMENTED}
-		 */
-		final public static RetCode BIZ_ERR = new RetCode(EXPECTATION_FAILED.value(), "Business restricted") {
-		};
-
-		/**
-		 * Business locked constraints<br/>
-		 * {@link HttpStatus.LOCKED}
-		 */
-		final public static RetCode LOCKD_ERR = new RetCode(LOCKED.value(), "Locked") {
-		};
-
-		/**
-		 * Unauthenticated<br/>
+		 * Unauthenticated </br>
 		 * {@link HttpStatus.UNAUTHORIZED}
 		 */
 		final public static RetCode UNAUTHC = new RetCode(UNAUTHORIZED.value(), "Unauthenticated") {
 		};
 
 		/**
-		 * Second Uncertified<br/>
-		 * {@link HttpStatus.PRECONDITION_FAILED}
-		 */
-		final public static RetCode SECOND_UNAUTH = new RetCode(PRECONDITION_FAILED.value(), "Second uncertified") {
-		};
-
-		/**
-		 * Unauthorized<br/>
+		 * Unauthorized </br>
 		 * {@link HttpStatus.FORBIDDEN}
 		 */
 		final public static RetCode UNAUTHZ = new RetCode(FORBIDDEN.value(), "Unauthorized") {
 		};
 
 		/**
-		 * System abnormality<br/>
+		 * Not found </br>
+		 * {@link HttpStatus.NOT_FOUND}
+		 */
+		final public static RetCode NOT_FOUND_ERR = new RetCode(NOT_FOUND.value(), "Not found") {
+		};
+
+		/**
+		 * Business constraints </br>
+		 * {@link HttpStatus.NOT_IMPLEMENTED}
+		 */
+		final public static RetCode BIZ_ERR = new RetCode(EXPECTATION_FAILED.value(), "Business restricted") {
+		};
+
+		/**
+		 * Business locked constraints </br>
+		 * {@link HttpStatus.LOCKED}
+		 */
+		final public static RetCode LOCKD_ERR = new RetCode(LOCKED.value(), "Resources locked") {
+		};
+
+		/**
+		 * Precondition limited </br>
+		 * {@link HttpStatus.PRECONDITION_FAILED}
+		 */
+		final public static RetCode PRECONDITITE_LIMITED = new RetCode(PRECONDITION_FAILED.value(), "Precondition limited") {
+		};
+
+		/**
+		 * Unsuppported </br>
+		 * {@link HttpStatus.NOT_IMPLEMENTED}
+		 */
+		final public static RetCode UNSUPPORTED = new RetCode(NOT_IMPLEMENTED.value(), "Unsuppported") {
+		};
+
+		/**
+		 * System abnormality </br>
 		 * {@link HttpStatus.SERVICE_UNAVAILABLE}
 		 */
 		final public static RetCode SYS_ERR = new RetCode(SERVICE_UNAVAILABLE.value(),
 				"Service unavailable, please try again later") {
+		};
+
+		/**
+		 * Unavailable For Legal Reasons </br>
+		 * {@link HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS}
+		 */
+		final public static RetCode LEGAL_ERR = new RetCode(UNAVAILABLE_FOR_LEGAL_REASONS.value(),
+				"Not available for legal reasons") {
 		};
 
 		/**
@@ -649,7 +695,7 @@ public class RespBase<D> implements Serializable {
 			if (nonNull(retCode)) {
 				return retCode;
 			}
-			throw new IllegalArgumentException(String.format("'%s'", nameOrCode));
+			throw new IllegalArgumentException(format("'%s'", nameOrCode));
 		}
 
 		/**
@@ -785,6 +831,11 @@ public class RespBase<D> implements Serializable {
 	 * Default status value.
 	 */
 	final public static String DEFAULT_STATUS = "Normal";
+
+	/**
+	 * Default requestId value.
+	 */
+	final public static String DEFAULT_REQUESTID = null;
 
 	/**
 	 * Default data value.</br>

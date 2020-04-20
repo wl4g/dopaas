@@ -22,7 +22,7 @@ import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.ByteSource.Util;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.configure.SecureConfig;
 
 /**
@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.configure.SecureConfig;
  */
 public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport {
 
-	public DefaultCredentialsSecurer(SecureConfig config, EnhancedCacheManager cacheManager) {
+	public DefaultCredentialsSecurer(SecureConfig config, IamCacheManager cacheManager) {
 		super(config, cacheManager);
 	}
 

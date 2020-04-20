@@ -16,16 +16,17 @@
 package com.wl4g.devops.iam.verification;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.config.properties.MatcherProperties;
-import com.wl4g.devops.iam.crypto.CryptService;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.iam.crypto.SecureCryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +34,6 @@ import javax.validation.constraints.NotNull;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_MATCH_COUNTER;
@@ -42,6 +42,11 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.newCumulator;
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.newSessionCumulator;
 import static com.wl4g.devops.tool.common.codec.Encodes.encodeBase64;
+import static com.wl4g.devops.tool.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.state;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getRequestParam;
+import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 /**
@@ -70,10 +75,10 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	final public static int DEFAULT_APPLY_TOKEN_BIT = 48;
 
 	/**
-	 * RSA cryptoGrapic service.
+	 * Secure asymmetric cryptic service.
 	 */
 	@Autowired
-	protected CryptService cryptService;
+	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
 
 	/**
 	 * Matching attempts accumulator
@@ -102,32 +107,33 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	public Object doApply(String owner, @NotNull List<String> factors, @NotNull HttpServletRequest request) throws IOException {
 		// Check and generate apply UUID.
 		VerifyCodeWrapper wrap = getVerifyCode(true);
-		Assert.state(Objects.nonNull(wrap), "Failed to apply captcha.");
+		state(nonNull(wrap), "Failed to apply captcha.");
 
-		// Get RSA key.(Used to encrypt sliding X position)
-		KeyPairSpec keySpec = cryptService.borrow();
+		// Gets choosed secure algorithm.
+		SecureAlgKind kind = SecureAlgKind.of(getRequestParam(request, config.getParam().getSecretAlgKindName(), true));
+
+		// Gets crypt algorithm(RSA/DSA/ECC..) secretKey.(Used to encrypt
+		// sliding X position)
+		KeyPairSpec keySpec = cryptAdapter.forOperator(kind).borrowKeyPair();
 		String applyToken = "capt" + randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
 		bind(applyToken, keySpec, DEFAULT_APPLY_TOKEN_EXPIREMS);
-		if (log.isDebugEnabled()) {
-			log.debug("Apply captcha for applyToken: {}, secretKey: {}", applyToken, keySpec);
-		}
+		log.debug("Apply captcha for applyToken: {}, secretKey: {}", applyToken, keySpec);
 
 		// Custom processing.
-		return postApplyGraphProperties(applyToken, wrap, keySpec);
+		return postApplyGraphProperties(kind, applyToken, wrap, keySpec);
 	}
 
 	@Override
 	public boolean isEnabled(@NotNull List<String> factors) {
-		Assert.isTrue(!CollectionUtils.isEmpty(factors), "factors must not be empty");
+		notEmptyOf(factors, "factors");
 		int enabledCaptchaMaxAttempts = config.getMatcher().getEnabledCaptchaMaxAttempts();
 
 		// Cumulative number of matches based on cache, If the number of
 		// failures exceeds the upper limit, verification is enabled
 		Long matchCount = matchCumulator.getCumulatives(factors);
-		String msg1 = String.format("Logon match count: %s, factors: %s", matchCount, factors);
-		if (log.isDebugEnabled()) {
-			log.debug(msg1);
-		}
+		String msg1 = format("Logon match count: %s, factors: %s", matchCount, factors);
+		log.debug(msg1);
+
 		// Login matching failures exceed the upper limit.
 		if (matchCount >= enabledCaptchaMaxAttempts) {
 			log.warn(msg1);
@@ -136,10 +142,9 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Cumulative number of matches based on session.
 		long sessionMatchCount = sessionMatchCumulator.getCumulatives(factors);
-		String msg2 = String.format("Logon session match count: %s, factors: %s", matchCount, factors);
-		if (log.isDebugEnabled()) {
-			log.debug(msg2);
-		}
+		String msg2 = format("Logon session match count: %s, factors: %s", matchCount, factors);
+		log.debug(msg2);
+
 		// Graphic verify-code apply over the upper limit.
 		if (sessionMatchCount >= enabledCaptchaMaxAttempts) {
 			log.warn(msg2);
@@ -158,8 +163,8 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * @return
 	 * @throws IOException
 	 */
-	protected abstract Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, KeyPairSpec keyspec)
-			throws IOException;
+	protected abstract Object postApplyGraphProperties(@NotNull SecureAlgKind kind, String applyToken, VerifyCodeWrapper codeWrap,
+			KeyPairSpec keyspec) throws IOException;
 
 	@Override
 	protected long getVerifyCodeExpireMs() {
@@ -172,9 +177,8 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Cumulative number of applications based on caching.
 		long applyCaptchaCount = applyCaptchaCumulator.accumulate(factors, 1);
-		if (log.isDebugEnabled()) {
-			log.debug("Check graph verifyCode apply, for apply count: {}", applyCaptchaCount);
-		}
+		log.debug("Check graph verifyCode apply, for apply count: {}", applyCaptchaCount);
+
 		if (applyCaptchaCount >= failFastCaptchaMaxAttempts) {
 			log.warn("Too many times to apply for graph verify-code, actual: {}, maximum: {}, factors: {}", applyCaptchaCount,
 					failFastCaptchaMaxAttempts, factors);
@@ -183,10 +187,9 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Cumulative number of applications based on session
 		long sessionApplyCaptchaCount = sessionApplyCaptchaCumulator.accumulate(factors, 1);
-		if (log.isDebugEnabled()) {
-			log.debug("Check graph verifyCode apply, for session apply count: {}, sessionId: {}", sessionApplyCaptchaCount,
-					getSessionId());
-		}
+		log.debug("Check graph verifyCode apply, for session apply count: {}, sessionId: {}", sessionApplyCaptchaCount,
+				getSessionId());
+
 		// Exceeding the limit
 		if (sessionApplyCaptchaCount >= failFastCaptchaMaxAttempts) {
 			log.warn("Too many times to apply for session graph verify-code, actual: {}, maximum: {}, factors: {}",
@@ -230,8 +233,8 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	 * @param suffix
 	 * @return
 	 */
-	private EnhancedCache getCache(String suffix) {
-		return cacheManager.getEnhancedCache(suffix);
+	private IamCache getCache(String suffix) {
+		return cacheManager.getIamCache(suffix);
 	}
 
 }

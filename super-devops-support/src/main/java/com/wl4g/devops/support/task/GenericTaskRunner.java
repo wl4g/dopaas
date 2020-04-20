@@ -208,7 +208,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * @return
 	 */
 	protected boolean isActive() {
-		return boss != null && !boss.isInterrupted() && running.get();
+		return nonNull(boss) && !boss.isInterrupted() && running.get();
 	}
 
 	/**

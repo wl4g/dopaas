@@ -1,5 +1,5 @@
 ![DevSecOps](shots/logo.jpg)
-## 一站式面向微服务轻量级DevSecOps解决方案，支持CI/CD、统一监控、链路追踪、统一认证、统一配置、日志分析、弹性伸缩、调度中心、控制台服务、HBase运维工具、文档管理、版本控制等
+## 一站式的DevSecOps SaaS平台，基于SpringCloud开发, 主要功能模块: 持续交付CI/CD、认证中心、监控中心、配置中心、资源管理中心、调度中心、弹性伸缩、shell工具、各种工具组件(如HBase/OSS运维)、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
 
 [![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
@@ -57,8 +57,7 @@ docker run -itd \
 --name=redis_cluster \
 wl4g/redis-cluster:latest /sbin/init -XlistenIp='127.0.0.1' -XredisPassword='zzx!@#$%'
 ```
-国内的朋友, 如果需要加速(需>=1.10.0):
-您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器
+国内的朋友推荐使用阿里云镜像加速(>=1.10.0), 修改配置文件/etc/docker/daemon.json
 ```
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json <<-'EOF'
@@ -69,14 +68,16 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
-(阿里VPC)使用镜像1: registry-vpc.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
-或使用镜像2: registry.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
+- 4.1 pull的时候将镜像名(wl4g/redis-cluster:latest)改为: registry.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
+- 4.2 如果是阿里vpc的机器, 走vpc内网更快地飞起来(限华南1): registry-vpc.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
 
-### 更多子模块文档
+### 所有子系统文档
 - [CI](super-devops-ci/README_CN.md)            &nbsp;&nbsp;    持续集成部署模块（持续迭代）, CICD构建流等
-- [ESM](super-devops-esm/README_CN.md)          &nbsp;&nbsp;    弹性伸缩管理, 集成k8s、docker，基于CPU、网络流量自动或手动容器伸缩的管理
+- [ESM](super-devops-esm/README_CN.md)          &nbsp;&nbsp;    弹性伸缩管理, 集成K8s、Docker，基于CPU、网络流量自动或手动容器伸缩的管理
 - [SCM](super-devops-scm/README_CN.md)          &nbsp;&nbsp;    配置服务中心, 支持在线配置热更新如：DataSource、RedisClient等
-- [SRM](super-devops-srm/README_CN.md)          &nbsp;&nbsp;    软件资源环境管理, 如，ELK日志分析、二进制编译产物包等
+- [ERM](super-devops-erm/README_CN.md)          &nbsp;&nbsp;    基础资源环境管理, 如ELK日志分析、二进制编译产物包等
+- [DJOB](super-devops-djob/README_CN.md)        &nbsp;&nbsp;    基于SpringCloud分布式调度平台, 默认是基于ElasticJob增强实现
+- [COSS](super-devops-coss/README_CN.md)        &nbsp;&nbsp;    基于SpringCloud复合对象存储服, 支持 NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS 等
 - [SHELL](super-devops-shell/README_CN.md)      &nbsp;&nbsp;    Shell Cli, 给应用添加类似hbase-shell的控制台功能
 - [DOC](super-devops-doc/README_CN.md)          &nbsp;&nbsp;    API文档服务, 在线API文档查阅
 - [IAM](super-devops-iam/README_CN.md)          &nbsp;&nbsp;    统一身份识别与访问管理服务，支持SSO/CAS、oauth2、opensaml等

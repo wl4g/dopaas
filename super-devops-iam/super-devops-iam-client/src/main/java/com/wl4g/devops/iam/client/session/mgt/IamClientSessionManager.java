@@ -33,6 +33,7 @@ import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAV
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.validation.IamValidator;
 import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager;
 import com.wl4g.devops.support.redis.ScanCursor;
@@ -50,16 +51,16 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 	/**
 	 * Iteration batch size.
 	 */
-	final private static int DEFAULT_BATCH_SIZE = 1000;
+	final private static int DEFAULT_BATCH_SIZE = 100;
 
 	/**
 	 * Expire session validator
 	 */
 	final protected IamValidator<SessionValidityAssertModel, SessionValidityAssertModel> validator;
 
-	public IamClientSessionManager(IamClientProperties config,
+	public IamClientSessionManager(IamClientProperties config, IamCacheManager cacheManager,
 			IamValidator<SessionValidityAssertModel, SessionValidityAssertModel> validator) {
-		super(config, CACHE_TICKET_C);
+		super(config, cacheManager, CACHE_TICKET_C);
 		this.validator = validator;
 	}
 

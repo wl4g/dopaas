@@ -50,12 +50,12 @@ public class CoreCossAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean(NativeFSCossProperties.class)
-	public CossEndpoint nativeCossEndpoint(NativeFSCossProperties config) {
+	public NativeCossEndpoint nativeCossEndpoint(NativeFSCossProperties config) {
 		return new NativeCossEndpoint(config);
 	}
 
 	@Bean
-	public GenericOperatorAdapter<CossProvider, CossEndpoint> compositeCossEndpoint(List<CossEndpoint> endpoints) {
+	public GenericOperatorAdapter<CossProvider, CossEndpoint> compositeCossEndpointAdapter(List<CossEndpoint> endpoints) {
 		return new GenericOperatorAdapter<CossProvider, CossEndpoint>(endpoints) {
 		};
 	}

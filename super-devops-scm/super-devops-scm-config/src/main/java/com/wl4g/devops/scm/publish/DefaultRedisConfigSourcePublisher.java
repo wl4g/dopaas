@@ -60,21 +60,16 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 					PublishConfigWrapper wrap2 = jedisService.getObjectT(key, PublishConfigWrapper.class);
 					jedisService.del(key);
 				}
-
 			}
 		}
 
-		if (log.isDebugEnabled()) {
-			log.debug("Extract published config for - ({}), {}", list.size(), list);
-		}
+		log.debug("Extract published config for - ({}), {}", list.size(), list);
 		return list;
 	}
 
 	@Override
 	protected void publishConfig(PublishConfigWrapper wrap) {
-		if (log.isDebugEnabled()) {
-			log.debug("Put published config for - {}", wrap);
-		}
+		log.debug("Put published config for - {}", wrap);
 
 		// Storage group name
 		jedisService.setSetObjectAdd(CACHE_PUB_GROUPS, wrap.getCluster());

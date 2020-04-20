@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.filter;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
@@ -24,13 +25,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.util.Assert;
-
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.iam.authc.RootAuthenticationToken;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 
 /**
  * Root path authentication routing filter.<br/>
@@ -49,12 +48,10 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
 public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<IamAuthenticationToken> {
 	final public static String NAME = "rootFilter";
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		if (log.isInfoEnabled()) {
-			String url = getFullRequestURL(toHttp(request));
-			log.info("Request of: {}", url);
-		}
+		log.debug("Request url: '{}'", () -> getFullRequestURL(toHttp(request)));
 
 		// Logged-in or login page request passed
 		return (getSubject(request, response).isAuthenticated() || isLoginRequest(request, response)
@@ -79,7 +76,7 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 	}
 
 	@Override
-	protected IamAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+	protected IamAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		return new RootAuthenticationToken(remoteHost, redirectInfo);
 	}
@@ -104,7 +101,7 @@ public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<Ia
 	 * @return
 	 */
 	protected boolean matchRequest(String defineUrl, ServletRequest request, ServletResponse response) {
-		Assert.hasText(defineUrl, "'defineUrl' is empty");
+		hasTextOf(defineUrl, "defineUrl");
 		// Relative path and complete path matching
 		return (pathsMatch(defineUrl, request) || defineUrl.equals(getFullRequestURL(toHttp(request), false)));
 	}

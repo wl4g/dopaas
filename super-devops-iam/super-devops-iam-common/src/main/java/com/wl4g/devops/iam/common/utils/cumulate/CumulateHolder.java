@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.iam.common.utils.cumulate;
 
-import org.springframework.util.Assert;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
+import com.wl4g.devops.iam.common.cache.IamCache;
 
 /**
  * Accumulator tools
@@ -36,8 +37,8 @@ public abstract class CumulateHolder {
 	 *            Expired milliseconds
 	 * @return
 	 */
-	public static Cumulator newCumulator(EnhancedCache cache, long expireMs) {
-		Assert.notNull(cache, "cache is null, please check configure");
+	public static Cumulator newCumulator(IamCache cache, long expireMs) {
+		notNullOf(cache, "defaultCumulator.cache");
 		return new DefaultCumulator(cache, expireMs);
 	}
 
@@ -51,6 +52,7 @@ public abstract class CumulateHolder {
 	 * @return
 	 */
 	public static Cumulator newSessionCumulator(String name, long expireMs) {
+		hasTextOf(name, "sessionCumulator.name");
 		return new SessionCumulator(name, expireMs);
 	}
 

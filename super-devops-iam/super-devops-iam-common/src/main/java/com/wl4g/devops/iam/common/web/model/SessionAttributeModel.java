@@ -49,13 +49,13 @@ public class SessionAttributeModel implements Serializable {
 	/**
 	 * Session attributes.
 	 */
-	private Collection<SessionAttribute> sessions = new ArrayList<>(2);
+	private Collection<IamSessionInfo> sessions = new ArrayList<>(4);
 
 	public SessionAttributeModel() {
 		super();
 	}
 
-	public SessionAttributeModel(CursorIndex index, List<SessionAttribute> sessions) {
+	public SessionAttributeModel(CursorIndex index, List<IamSessionInfo> sessions) {
 		super();
 		this.index = index;
 		this.sessions = sessions;
@@ -69,11 +69,11 @@ public class SessionAttributeModel implements Serializable {
 		this.index = index;
 	}
 
-	public Collection<SessionAttribute> getSessions() {
+	public Collection<IamSessionInfo> getSessions() {
 		return sessions;
 	}
 
-	public void setSessions(Collection<SessionAttribute> sessions) {
+	public void setSessions(Collection<IamSessionInfo> sessions) {
 		this.sessions = sessions;
 	}
 
@@ -145,7 +145,7 @@ public class SessionAttributeModel implements Serializable {
 	 * @version v1.0.0 2019-10-31
 	 * @since
 	 */
-	public static class SessionAttribute implements Serializable {
+	public static class IamSessionInfo implements Serializable {
 		private static final long serialVersionUID = 1990530522326712114L;
 
 		private String id;

@@ -5,7 +5,7 @@
 	<artifactId>super-devops-erm</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>Super DevOps Erm</name>
+	<name>Super DevOps Environment Resources Management</name>
 	<modules>
 		<module>super-devops-erm-manager</module>
 		<module>super-devops-erm-core</module>

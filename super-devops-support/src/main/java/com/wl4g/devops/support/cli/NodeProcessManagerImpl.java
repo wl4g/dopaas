@@ -38,6 +38,7 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.redis.JedisService;
 
 import static com.wl4g.devops.support.cli.destroy.DestroySignalMessage.DestroyState.*;
+import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisFormatUtils.*;
 
 /**
  * Implementation of distributed destroable command process based on jedis
@@ -118,7 +119,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	 * @throws InterruptedException
 	 */
 	private void doInspectForProcessesDestroy(String destroyLockName) throws InterruptedException {
-		Lock lock = lockManager.getLock(destroyLockName);
+		Lock lock = lockManager.getLock(keyFormat(destroyLockName));
 		try {
 			// Let cluster this node process destroy, nodes that do not
 			// acquire lock are on ready in place.

@@ -21,7 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
 
@@ -38,12 +39,14 @@ public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<Sms
 	final public static String NAME = "sms";
 
 	@Override
-	protected SmsAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+	protected SmsAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		String action = getCleanParam(request, config.getParam().getSmsActionName());
-		String principal = getCleanParam(request, config.getParam().getPrincipalName());
-		String smsCode = getCleanParam(request, config.getParam().getCredentialName());
-		return new SmsAuthenticationToken(remoteHost, action, principal, smsCode);
+		final String action = getCleanParam(request, config.getParam().getSmsActionName());
+		final String principal = getCleanParam(request, config.getParam().getPrincipalName());
+		final String smsCode = getCleanParam(request, config.getParam().getCredentialName());
+		final String algKind = getCleanParam(request, config.getParam().getSecretAlgKindName());
+		final String clientSecret = getCleanParam(request, config.getParam().getClientSecretKeyName());
+		return new SmsAuthenticationToken(SecureAlgKind.of(algKind), clientSecret, remoteHost, action, principal, smsCode);
 	}
 
 	@Override

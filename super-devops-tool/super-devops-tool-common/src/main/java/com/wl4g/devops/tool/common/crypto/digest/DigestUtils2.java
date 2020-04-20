@@ -26,6 +26,6 @@ import org.apache.commons.codec.digest.DigestUtils;
  * @see {@link org.apache.commons.codec.digest.DigestUtils}
  * @see {@link com.google.common.hash.Hashing}
  */
-public class DigestUtils2 extends DigestUtils {
+public abstract class DigestUtils2 extends DigestUtils {
 
 }

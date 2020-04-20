@@ -166,7 +166,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 
 			// If and only if the client is a browser and not an XHR request
 			// returns to the page, otherwise it returns to JSON.
-			if (isJSONResponse(request)) {
+			if (isJSONResp(request)) {
 				RespBase<Object> resp = new RespBase<>(RetCode.newCode(status, errmsg));
 				if (!(uriOrTpl instanceof Template)) {
 					resp.forMap().put(DEFAULT_REDIRECT_KEY, uriOrTpl);

@@ -34,7 +34,9 @@ import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.tool.common.crypto.AesUtils;
+import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.util.List;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_END;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOG_FILE_START;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
@@ -226,8 +229,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Override
 	public char[] getUsableCipherSshKey(String sshkey) throws Exception {
 		// Obtain text-plain privateKey(RSA)
-		String cipherKey = config.getDeploy().getCipherKey();
-		char[] sshkeyPlain = new AesUtils(cipherKey).decrypt(sshkey).toCharArray();
+		byte[] cipherKey = config.getDeploy().getCipherKey().getBytes(UTF_8);
+		char[] sshkeyPlain = new AESCryptor().decrypt(cipherKey, CrypticSource.fromHex(sshkey)).toString().toCharArray();
 
 		log.info(writeBuildLog("Decryption plain sshkey: %s => %s", cipherKey, "******"));
 		return sshkeyPlain;

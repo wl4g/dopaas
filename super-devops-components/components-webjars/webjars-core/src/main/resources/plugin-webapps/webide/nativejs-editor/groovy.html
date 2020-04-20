@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="x-dns-prefetch-control" content="on"/>
+    <title>groovy在线编译器,groovy在线代码执行,在线测试代码</title>
+    <meta content="text/html; charset=utf-8" http-equiv=content-type>
+    <meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+    <meta HTTP-EQUIV="expires" CONTENT="0">
+    <meta name=robots content=index,follow>
+    <meta name="renderer" content="webkit">
+    <meta name=keywords content="groovy在线测试,groovy代码在线执行,groovy在线编译器">
+    <meta name=description content="groovy代码在线测试，groovy在线编译器,这工具是为了测试工小段groovy代码执行结果而诞生的。">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="./css/bootstrap-theme.min.css">
+    <style>
+        body {
+            padding-top: 0px;
+        }
+        .starter-template {
+            padding: 40px 15px;
+
+        }
+        .CodeMirror {
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+        .lead a {
+            font-size: 14px;
+        }
+        .list-inline > li {
+            display: inline-block;
+            padding-right: 5px;
+            padding-left: 5px;
+            width: 110px;
+            font-size: 16px;
+
+        }
+        .list-inline a {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="starter-template">
+        <style type="text/css" media="screen">
+            #editor {
+            // position: absolute;
+                width: 100%;
+                height: 400px;
+                float: left;
+                font-size: 14px;
+            }
+        </style>
+        <div id="editor">class Greet {
+            def name
+            Greet(who) { name = who[0].toUpperCase() +
+            who[1..-1] }
+            def salute() { println "Hello !" }
+            }
+            g = new Greet('world') // create object
+            g.salute()
+        </div>
+        <textarea rows="20" cols="100" id="editorBox" style="width: 100%;">
+			class Greet {
+				def name
+				Greet(who) { name = who[0].toUpperCase() +
+								who[1..-1] }
+				def salute() { println "Hello !" }
+			}
+
+			g = new Greet('world')  // create object
+			g.salute()
+		</textarea>
+        <div style="float:left;width: 100%; margin-top: 20px;">
+            <button type="submit" class="btn btn-default" id='btn'>run (ctrl+x)</button>
+            <button class="btn btn-default" id="btninput">输入</button>
+            <button class="btn btn-default" id='btncp'>copy</button>
+        </div>
+        <div id="stdindiv" style="float:left;width: 100%; margin-top: 3px;">
+            <div>输入：</div>
+            <textarea rows="3" cols="100" id="stdin" style="width: 100%;">123
+				haha2
+			</textarea>
+        </div>
+        <div style="float:left;width: 100%; margin: 10px 10px 10px 10px">
+            <div class="radio-inline">
+                <label>
+                    <input type="radio" name="optionsRadios" id="Radiostxt" value="txt">
+                    文本方式显示
+                </label>
+            </div>
+            <div class="radio-inline">
+                <label>
+                    <input type="radio" name="optionsRadios" id="Radioshtml" value="html" checked>
+                    html方式显示
+                </label>
+            </div>
+        </div>
+        
+        <div style="float:left;width: 100%; margin-bottom: 100px">
+            <div style="float:left;width: 100%;" id='cc'></div>
+            <textarea rows="20" cols="100" id="kk" style="width: 100%;"></textarea>
+        </div>
+        <div style="float:left;width: 100%;">
+		
+        </div>
+    </div>
+</div>
+<script src="./js/jquery.min.js"></script>
+<script src="./js/ace.js"></script>
+<script src="./js/dooccn-core-all.min.js"></script>
+<!--
+<script src="./js/jstorage.min.js"></script>
+<script src="./js/base64.min.js"></script>
+<script src="./js/ace.js"></script>
+<script src="./js/ext-language_tools.min.js"></script>
+-->
+<script type="text/javascript">
+	var codetype = "groovy"; // golang|groovy|java|c_cpp|objectivec|csharp|sh|r|lua|javascript|ruby|assembly_x86
+	var unid = "5e81961905016";
+</script>
+<script src="./js/runcode.js"></script>
+<script type="text/javascript">
+	if (ie_error()) {
+		$('#editor').hide();
+	} else {
+		$('#editorBox').hide();
+		ace.require("ace/ext/language_tools");
+		var editor = ace.edit("editor");
+		editor.setOptions({
+			enableBasicAutocompletion: true,
+			enableSnippets: true,
+			enableLiveAutocompletion: true
+		});
+		editor.setTheme("ace/theme/monokai");
+		editor.getSession().setMode("ace/mode/"+codetype);
+	}
+</script>
+<script type="text/javascript">
+	function getCodeTxt() {
+		if (typeof(editor) == "undefined") {
+			return $('#editorBox').text();
+		} else {
+			return editor.getValue();
+		}
+	}
+
+	function setCodeTxt(value) {
+		if (typeof(editor) == "undefined") {
+			$('#editorBox').val(value);
+		} else {
+			editor.setValue(value, -1);
+		}
+	}
+
+	var code_default = getCodeTxt();
+	var storage = $.jStorage.get(codetype, null);
+	if (storage) {
+		setCodeTxt(storage);
+	}
+
+	$('#txt_d').click(function () {
+		setCodeTxt(code_default);
+	})
+	$('#stdindiv').hide();
+	$('#btninput').click(function () {
+		$('#stdindiv').toggle();
+	});
+	$('#shareCode').click(function () {
+		var code = getCodeTxt();
+		$.ajax({
+			type: "POST",
+			url: "../shareCode.php",
+			data: {"code": code},
+			success: function (msg) {
+				surl = window.location.href.split('#');
+				var shareurl = surl[0] + '#id/' + msg
+				//$('#shareUrl').val(surl[0]+'#id/'+msg);
+				var mmtxt = "分享网址：\n" + shareurl;
+				var mmhtml = "分享网址：<br><a target='_blank' href='" + shareurl + "'>" + shareurl + "</a>";
+				setHtml(mmhtml);
+				setTextarea(mmtxt);
+				//alert(msg);
+			},
+			error: function () {
+
+			}
+		});
+	});
+	//alert(window.location.hash)
+	pp = window.location.hash.split('#id/');
+	if (pp.length == 2) {
+		codeid = pp[1];
+		$.ajax({
+			type: "GET",
+			url: "../shareCode.php?id=" + codeid,
+			data: {},
+			success: function (msg) {
+				setCodeTxt(msg);
+			},
+			error: function () {
+
+			}
+		});
+	}
+</script>
+
+<script type="text/javascript">
+	var apiurl = 'http://runcode-api2-ng.dooccn.com';
+	//var apiurl='http://127.0.0.1:3900';
+	jQuery.support.cors = true;
+
+	function runcodenew() {
+		if (isrun) return;
+		isrun = true;
+		ttt = setTimeout(setRun, 20000);
+
+		setHtml("执行中......");
+		setTextarea("执行中......");
+		var html = getCodeTxt();
+		html = Base64.encode(html);
+		var stdin = $('#stdin').val();
+		var langid = 31;
+		var json = {
+			language: langid,
+			code: html,
+			stdin: stdin
+		};
+		console.log(json);
+		$.post(apiurl + "/compile2", json,
+		function(data, error, xhr) {
+			if (data.output.length > 0) {
+				isrun = false;
+			} else {
+				isrun = false;
+			}
+			setHtml(data.output + "<br>\r\n" + data.errors);
+			setTextarea(data.output + "\r\n\r\n" + data.errors);
+		});
+
+	}
+
+	var isrun = false;
+	var htmlshow = true;
+	var txtshow = true;
+
+	function setHtml(html) {
+		if (htmlshow == false) return;
+		$('#cc').html(html);
+	}
+
+	function setTextarea(value) {
+		if (txtshow == false) return;
+		$('#kk').val(value);
+	}
+
+	var ttt;
+
+	function setRun() {
+		isrun = false;
+	}
+
+	$('#btn').click(runcodenew);
+
+	var showtype = $.jStorage.get('showtype-' + codetype, 'txt');
+	$('#Radios' + showtype).attr('checked', true);
+	var showselect = function() {
+		var selectedvalue = $("input:radio[name=optionsRadios]:checked").val();
+		//alert($selectedvalue);
+		$.jStorage.set('showtype-' + codetype, selectedvalue);
+		if (selectedvalue == 'html') {
+			htmlshow = true;
+			txtshow = false;
+			$('#cc').show();
+			$('#kk').hide();
+
+		} else if (selectedvalue == 'txt') {
+			htmlshow = false;
+			txtshow = true;
+			$('#cc').hide();
+			$('#kk').show();
+
+		}
+	}
+	$("input[name=optionsRadios]:radio").change(showselect);
+	showselect();
+</script>
+
+<script type="text/javascript">
+	setInterval(function() {
+		var code = getCodeTxt();
+		var storage = $.jStorage.get(codetype, null);
+		if (storage != code) {
+			$.jStorage.set(codetype, code);
+		}
+	},
+	1000);
+
+	function hotkey() {
+		var a = window.event.keyCode;
+		//alert(a);
+		if ((a == 88) && (event.ctrlKey)) {
+			$('#btn').click();
+		}
+	} // end hotkey
+	document.onkeydown = hotkey;
+</script>
+</body>
+</html>

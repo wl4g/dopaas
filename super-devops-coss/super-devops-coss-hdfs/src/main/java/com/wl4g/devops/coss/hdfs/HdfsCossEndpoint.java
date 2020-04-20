@@ -33,6 +33,7 @@ import org.apache.hadoop.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -78,7 +79,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	}
 
 	@Override
-	public boolean preHandle(Object[] args) {
+	public boolean preHandle(Method method, Object[] args) {
 		checkAndInitializingHdfsFileSystem();
 		return true;
 	}
@@ -242,7 +243,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 
 	@Override
 	public PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
-		//TODO
+		// TODO
 		return null;
 	}
 
@@ -294,7 +295,8 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	}
 
 	@Override
-	public RestoreObjectResult restoreObject(RestoreObjectRequest request,String bucketName, String key) throws CossException, ServerCossException {
+	public RestoreObjectResult restoreObject(RestoreObjectRequest request, String bucketName, String key)
+			throws CossException, ServerCossException {
 		// TODO Auto-generated method stub
 		return null;
 	}

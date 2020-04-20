@@ -21,7 +21,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.gluster.GlusterFsCossEndpoint;
 
 @Configuration
@@ -37,7 +36,7 @@ public class GlusterCossAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean(GlusterFsCossProperties.class)
-	public CossEndpoint glusterFsCossEndpoint(GlusterFsCossProperties config) {
+	public GlusterFsCossEndpoint glusterFsCossEndpoint(GlusterFsCossProperties config) {
 		return new GlusterFsCossEndpoint(config);
 	}
 

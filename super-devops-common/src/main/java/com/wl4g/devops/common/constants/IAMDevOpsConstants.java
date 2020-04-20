@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2017 ~ 2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 package com.wl4g.devops.common.constants;
-
-import com.google.common.base.Charsets;
 
 /**
  * DevOps SCM Constants.
@@ -38,7 +36,30 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Authentication principal language attribute name.
 	 */
-	final public static String KEY_LANG_ATTRIBUTE_NAME = "authzPrincipalLangAttributeName";
+	final public static String KEY_LANG_ATTRIBUTE_NAME = "principalLangAttributeName";
+
+	/**
+	 * This key is generated when the authentication is successful and can be
+	 * used to encrypt and decrypt the transmission data of some sensitive api.
+	 */
+	final public static String KEY_DATA_CIPHER = "dataCipherKey";
+	/**
+	 * When authentication is successful, a key for the access token is
+	 * generated. It is used to enhance session based validation logic (the
+	 * original idea came from JWT). In fact, it is the signature of hmacha1
+	 * ("signkey", sessionid + UMID). Validation logic: the signature value
+	 * calculated by the server is equal to the signature value submitted by the
+	 * client, that is, the validation is passed.
+	 * 
+	 * @see {@link com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties#accessTokenName}
+	 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
+	 */
+	final public static String KEY_ACCESSTOKEN_SIGN = "accessTokenSignKey";
+	/**
+	 * iamServer/iamClient the JSON node key that response the session
+	 * information.
+	 */
+	final public static String KEY_SESSIONINFO_NAME = "session";
 
 	/** authentication token save session key-name */
 	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeKey";
@@ -56,6 +77,11 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * IAM Client-server interactive authentication CAS protocol URI
 	 */
 	final public static String URI_AUTHENTICATOR = "/authenticator";
+
+	/**
+	 * {@link IamSession} relation attributes cache name.
+	 */
+	final public static String CACHE_RELATION_ATTRS = ":iam:session:attrs:";
 
 	//
 	// Server configuration.
@@ -76,9 +102,9 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/** IAM server logout API URI. */
 	final public static String URI_S_LOGOUT = "logout";
 	/** IAM server secondary authentication validate API URI. */
-	final public static String URI_S_SECOND_VALIDATE = "second-validate";
+	final public static String URI_S_SECOND_VALIDATE = "secondValidate";
 	/** IAM server seesions authentication validate API URI. */
-	final public static String URI_S_SESSION_VALIDATE = "session-validate";
+	final public static String URI_S_SESSION_VALIDATE = "sessionValidate";
 
 	/**
 	 * Callback Processing and Path in third party social networks services
@@ -105,21 +131,13 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String URI_S_WECHAT_MP_RECEIVE = "receive";
 
-	/** Based URI with verifier authenticator controller. */
-	final public static String URI_S_VERIFY_BASE = "/verify";
-	/** URI for apply for CAPTCHA. */
-	final public static String URI_S_VERIFY_APPLY_CAPTCHA = "applycaptcha";
-	/** URI for verify analyze for CAPTCHA. */
-	final public static String URI_S_VERIFY_ANALYZE_CAPTCHA = "verifyAnalyze";
-	/** URI for apply for verify-code. */
-	final public static String URI_S_VERIFY_SMS_APPLY = "applysmsverify";
-
 	/** Based URI with login authenticator controller. */
 	final public static String URI_S_LOGIN_BASE = "/login";
 	/**
-	 * Apply sessionID, For example for mobile use.
+	 * Pre-processing handshake, e.g, apply sessionKeyId, All clients are
+	 * unified, including PC/WEB/iOS/Andriod/WechatMp/WechatApplet
 	 */
-	final public static String URI_S_LOGIN_APPLY_SESSION = "sessions";
+	final public static String URI_S_LOGIN_HANDSHAKE = "/handshake";
 	/**
 	 * Initialization before login checks whether authentication code is
 	 * enabled, etc.
@@ -131,6 +149,27 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Get the error information stored in the current session
 	 */
 	final public static String URI_S_LOGIN_ERRREAD = "errread";
+
+	/** Based URI with verifier authenticator controller. */
+	final public static String URI_S_VERIFY_BASE = "/verify";
+	/** URI for apply for CAPTCHA. */
+	final public static String URI_S_VERIFY_APPLY_CAPTCHA = "applycaptcha";
+	/** URI for verify analyze for CAPTCHA. */
+	final public static String URI_S_VERIFY_ANALYSIS_CAPTCHA = "verifyanalysis";
+	/** URI for apply for verify-code. */
+	final public static String URI_S_VERIFY_SMS_APPLY = "applysmsverify";
+
+	/** Based URI with simple risk control controller. */
+	final public static String URI_S_RCM_BASE = "/rcm";
+	/**
+	 * Before requesting authentication, the client needs to submit the device
+	 * fingerprint um, UA and other information to obtain the corresponding
+	 * token, so as to solve the risk control detection. Note: it is a simple
+	 * version of the implementation of risk control inspection. It is
+	 * recommended to use a more professional external RiskControlService in the
+	 * production environment.
+	 */
+	final public static String URI_S_RCM_UMTOKEN_APPLY = "applyumtoken";
 
 	/**
 	 * Generic API v1 base URL.
@@ -144,51 +183,52 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * IAM server authentication session stored cache name.
 	 */
-	final public static String CACHE_SESSION = "session_";
+	final public static String CACHE_SESSION = ":iam:session:";
 	/**
 	 * IAM server authentication authorization information storage cache name.
 	 */
-	final public static String CACHE_TICKET_S = "ticket_s_";
+	final public static String CACHE_TICKET_S = ":iam:ticket:s:";
 	/**
 	 * IAM client authentication authorization information storage cache name.
 	 */
-	final public static String CACHE_TICKET_C = "ticket_c_";
+	final public static String CACHE_TICKET_C = ":iam:ticket:s:";
 
 	/**
 	 * Login authentication related processing cache name.
 	 */
-	final public static String CACHE_SNSAUTH = "snsauth_";
+	final public static String CACHE_SNSAUTH = ":iam:snsauth:";
 	/**
 	 * IAM server matching CAPTCHA verification failure counter cache name.
 	 */
-	final public static String CACHE_FAILFAST_CAPTCHA_COUNTER = "captcha_counter_";
+	final public static String CACHE_FAILFAST_CAPTCHA_COUNTER = ":iam:counter:captcha:";
 	/**
 	 * IAM server matching SMS verification failure counter cache name.
 	 */
-	final public static String CACHE_FAILFAST_SMS_COUNTER = "sms_counter_";
+	final public static String CACHE_FAILFAST_SMS_COUNTER = ":iam:counter:sms:";
 	/**
 	 * IAM server matching verification failure counter cache name.
 	 */
-	final public static String CACHE_FAILFAST_MATCH_COUNTER = "match_counter_";
+	final public static String CACHE_FAILFAST_MATCH_COUNTER = ":iam:counter:credentials:";
 	/**
 	 * Login failure overrun, lock cache name.
 	 */
-	final public static String CACHE_MATCH_LOCK = "match_lock_";
-
+	final public static String CACHE_MATCH_LOCK = ":iam:lock:credentials:";
 	/**
 	 * Security verifier for jigsaw captcha image cache name.
 	 */
-	final public static byte[] CACHE_VERIFY_JIGSAW_IMG = "captcha_jigsaw_imgcache_".getBytes(Charsets.UTF_8);
-
+	final public static String CACHE_VERIFY_JIGSAW_IMG = ":iam:verify:jigsaw:imgs";
 	/**
 	 * Cryptographic service cache name.
 	 */
-	final public static byte[] CACHE_CRYPTO = "crypto_keypairs".getBytes(Charsets.UTF_8);
+	final public static String CACHE_CRYPTO = ":iam:crypto:keypairs";
+	/** Simple risk control handler umidToken cache key. */
+	final public static String CACHE_SIMPLE_RCM_UMIDTOKEN = ":iam:rcm:simpleumidtoken:";
 
 	/**
 	 * The public key index by logged-in users
 	 */
-	final public static String KEY_SECRET_INDEX = "securerSecretKeyPairIndex";
+	final public static String KEY_SECRET_INFO = "applySecretInfo";
+
 	/**
 	 * Limiter login failure prefix based on user-name.
 	 */
@@ -205,7 +245,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Error information for saving iam-related operations to sessions.
 	 */
 	final public static String KEY_ERR_SESSION_SAVED = "errorTipsInfo";
-
 	/**
 	 * IAM system service role: iam-server.</br>
 	 * Can be used for user-client interception of unregistered state
