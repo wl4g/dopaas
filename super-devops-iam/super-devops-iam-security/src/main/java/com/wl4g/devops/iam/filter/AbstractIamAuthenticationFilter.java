@@ -632,7 +632,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			String accessToken = null;
 			if (config.getSession().isEnableAccessTokenValidity()) {
 				// Create accessTokenSignKey.
-				String accessTokenSignKey = generateAccessTokenSignKey(getSessionId());
+				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN, generateAccessTokenSignKey(getSessionId()));
 				accessToken = generateAccessToken(getSessionId(), accessTokenSignKey);
 			}
 			params.put(config.getParam().getAccessTokenName(), accessToken);
