@@ -30,11 +30,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-coss-client</artifactId>
+			<artifactId>super-devops-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-common</artifactId>
+			<artifactId>super-devops-coss-client</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

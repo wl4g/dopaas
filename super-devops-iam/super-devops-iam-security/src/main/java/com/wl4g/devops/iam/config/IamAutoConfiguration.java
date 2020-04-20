@@ -30,20 +30,20 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestTemplate;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.kit.access.IPAccessControl;
-import com.wl4g.devops.iam.authc.credential.GeneralCredentialsHashedMatcher;
+import com.wl4g.devops.iam.authc.credential.GenericCredentialsHashedMatcher;
 import com.wl4g.devops.iam.authc.credential.Oauth2AuthorizingBoundMatcher;
 import com.wl4g.devops.iam.authc.credential.SmsCredentialsHashedMatcher;
 import com.wl4g.devops.iam.authc.credential.secure.DefaultCredentialsSecurer;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
 import com.wl4g.devops.iam.authc.pam.ExceptionModularRealmAuthenticator;
 import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
+import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamConfiguration;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
@@ -55,17 +55,19 @@ import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.AnynothingSecurityCoprocessor;
 import com.wl4g.devops.iam.configure.DefaultSecureConfigureAdapter;
 import com.wl4g.devops.iam.configure.SecureConfigureAdapter;
-import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
-import com.wl4g.devops.iam.crypto.CryptService;
-import com.wl4g.devops.iam.crypto.RSACryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService;
+import com.wl4g.devops.iam.crypto.DSASecureCryptService;
+import com.wl4g.devops.iam.crypto.ECCSecureCryptService;
+import com.wl4g.devops.iam.crypto.RSASecureCryptService;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter;
 import com.wl4g.devops.iam.filter.DingtalkAuthenticationFilter;
 import com.wl4g.devops.iam.filter.FacebookAuthenticationFilter;
 import com.wl4g.devops.iam.filter.QrcodeAuthenticationFilter;
 import com.wl4g.devops.iam.filter.ROOTAuthenticationFilter;
 import com.wl4g.devops.iam.filter.SinaAuthenticationFilter;
-import com.wl4g.devops.iam.filter.GeneralAuthenticationFilter;
+import com.wl4g.devops.iam.filter.GenericAuthenticationFilter;
 import com.wl4g.devops.iam.filter.GithubAuthenticationFilter;
 import com.wl4g.devops.iam.filter.GoogleAuthenticationFilter;
 import com.wl4g.devops.iam.filter.InternalWhiteListServerAuthenticationFilter;
@@ -76,12 +78,13 @@ import com.wl4g.devops.iam.filter.TwitterAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatAuthenticationFilter;
 import com.wl4g.devops.iam.filter.WechatMpAuthenticationFilter;
 import com.wl4g.devops.iam.handler.CentralAuthenticationHandler;
+import com.wl4g.devops.iam.handler.risk.SimpleRcmEvaluatorHandler;
 import com.wl4g.devops.iam.realm.AbstractAuthorizingRealm;
 import com.wl4g.devops.iam.realm.DingtalkAuthorizingRealm;
 import com.wl4g.devops.iam.realm.FacebookAuthorizingRealm;
 import com.wl4g.devops.iam.realm.QrcodeAuthorizingRealm;
 import com.wl4g.devops.iam.realm.SinaAuthorizingRealm;
-import com.wl4g.devops.iam.realm.GeneralAuthorizingRealm;
+import com.wl4g.devops.iam.realm.GenericAuthorizingRealm;
 import com.wl4g.devops.iam.realm.GithubAuthorizingRealm;
 import com.wl4g.devops.iam.realm.GoogleAuthorizingRealm;
 import com.wl4g.devops.iam.realm.QQAuthorizingRealm;
@@ -90,13 +93,13 @@ import com.wl4g.devops.iam.realm.TwitterAuthorizingRealm;
 import com.wl4g.devops.iam.realm.WechatAuthorizingRealm;
 import com.wl4g.devops.iam.realm.WechatMpAuthorizingRealm;
 import com.wl4g.devops.iam.session.mgt.IamServerSessionManager;
-import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SimpleJPEGSecurityVerifier;
+import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
 import com.wl4g.devops.iam.verification.SecurityVerifier;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.PrintSmsHandleSender;
 import com.wl4g.devops.iam.verification.SmsSecurityVerifier.SmsHandleSender;
-import com.wl4g.devops.iam.web.CentralAuthenticatorController;
+import com.wl4g.devops.iam.web.CentralAuthenticatorEndpoint;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 /**
@@ -121,8 +124,25 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public CryptService rsaCryptoService(JedisLockManager lockManager) {
-		return new RSACryptService(lockManager);
+	public RSASecureCryptService rsaSecureCryptService(JedisLockManager lockManager) {
+		return new RSASecureCryptService(lockManager);
+	}
+
+	@Bean
+	public DSASecureCryptService dsaSecureCryptService(JedisLockManager lockManager) {
+		return new DSASecureCryptService(lockManager);
+	}
+
+	// @Bean
+	public ECCSecureCryptService eccSecureCryptService(JedisLockManager lockManager) {
+		return new ECCSecureCryptService(lockManager);
+	}
+
+	@Bean
+	public GenericOperatorAdapter<SecureAlgKind, SecureCryptService> compositeCryptServiceAdapter(
+			List<SecureCryptService> cryptServices) {
+		return new GenericOperatorAdapter<SecureAlgKind, SecureCryptService>(cryptServices) {
+		};
 	}
 
 	// ==============================
@@ -158,8 +178,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public IamServerSessionManager iamServerSessionManager(IamSessionFactory sessionFactory, JedisIamSessionDAO sessionDao,
-			EnhancedCacheManager cacheManager, SimpleCookie cookie, IamProperties config) {
-		IamServerSessionManager sessionManager = new IamServerSessionManager(config);
+			IamCacheManager cacheManager, SimpleCookie cookie, IamProperties config) {
+		IamServerSessionManager sessionManager = new IamServerSessionManager(config, cacheManager);
 		sessionManager.setSessionFactory(sessionFactory);
 		sessionManager.setSessionDAO(sessionDao);
 		sessionManager.setSessionIdCookie(cookie);
@@ -177,8 +197,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public GeneralCredentialsHashedMatcher generalCredentialsHashedMatcher() {
-		return new GeneralCredentialsHashedMatcher();
+	public GenericCredentialsHashedMatcher genericCredentialsHashedMatcher() {
+		return new GenericCredentialsHashedMatcher();
 	}
 
 	@Bean
@@ -204,7 +224,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public IamCredentialsSecurer iamCredentialsSecurer(SecureConfigureAdapter adapter, JedisCacheManager cacheManager) {
+	public IamCredentialsSecurer iamCredentialsSecurer(SecureConfigureAdapter adapter, JedisIamCacheManager cacheManager) {
 		return new DefaultCredentialsSecurer(adapter.configure(), cacheManager);
 	}
 
@@ -254,8 +274,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public GeneralAuthenticationFilter generalAuthenticationFilter() {
-		return new GeneralAuthenticationFilter();
+	public GenericAuthenticationFilter genericAuthenticationFilter() {
+		return new GenericAuthenticationFilter();
 	}
 
 	@Bean
@@ -357,7 +377,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public FilterRegistrationBean generalFilterRegistrationBean(GeneralAuthenticationFilter filter) {
+	public FilterRegistrationBean genericFilterRegistrationBean(GenericAuthenticationFilter filter) {
 		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
 		registration.setEnabled(false);
 		return registration;
@@ -418,8 +438,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public GeneralAuthorizingRealm generalAuthorizingRealm(GeneralCredentialsHashedMatcher matcher) {
-		return new GeneralAuthorizingRealm(matcher);
+	public GenericAuthorizingRealm genericAuthorizingRealm(GenericCredentialsHashedMatcher matcher) {
+		return new GenericAuthorizingRealm(matcher);
 	}
 
 	@Bean
@@ -430,7 +450,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public QrcodeAuthorizingRealm qrcodeAuthorizingRealm(GeneralCredentialsHashedMatcher matcher) {
+	public QrcodeAuthorizingRealm qrcodeAuthorizingRealm(GenericCredentialsHashedMatcher matcher) {
 		return new QrcodeAuthorizingRealm(matcher);
 	}
 
@@ -506,9 +526,13 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public CentralAuthenticationHandler centralAuthenticationHandler(RestTemplate restTemplate,
-			ServerSecurityConfigurer configurer) {
-		return new CentralAuthenticationHandler(configurer, restTemplate);
+	public CentralAuthenticationHandler centralAuthenticationHandler() {
+		return new CentralAuthenticationHandler();
+	}
+
+	@Bean
+	public SimpleRcmEvaluatorHandler simpleRiskRecognizerHandler() {
+		return new SimpleRcmEvaluatorHandler();
 	}
 
 	// ==============================
@@ -533,6 +557,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	public SmsSecurityVerifier smsVerification() {
 		return new SmsSecurityVerifier();
 	}
@@ -548,8 +573,8 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public CentralAuthenticatorController centralAuthenticatorController() {
-		return new CentralAuthenticatorController();
+	public CentralAuthenticatorEndpoint centralAuthenticatorController() {
+		return new CentralAuthenticatorEndpoint();
 	}
 
 	@Bean

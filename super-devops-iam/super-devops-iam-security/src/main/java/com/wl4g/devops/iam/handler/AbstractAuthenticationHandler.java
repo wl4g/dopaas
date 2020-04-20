@@ -20,17 +20,18 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 import javax.annotation.Resource;
 
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
-import org.apache.shiro.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 
 /**
  * Abstract IAM authentication handler.
@@ -40,18 +41,8 @@ import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
  * @date 2018年11月29日
  * @since
  */
-public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
+public abstract class AbstractAuthenticationHandler implements AuthenticationHandler, InitializingBean {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
-
-	/**
-	 * Rest template
-	 */
-	final protected RestTemplate restTemplate;
-
-	/**
-	 * IAM security context handler
-	 */
-	final protected ServerSecurityConfigurer configurer;
 
 	/**
 	 * IAM server configuration properties
@@ -60,16 +51,10 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	protected IamProperties config;
 
 	/**
-	 * Key id generator
+	 * IAM security context handler
 	 */
 	@Autowired
-	protected SessionIdGenerator idGenerator;
-
-	/**
-	 * Enhanced cache manager.
-	 */
-	@Autowired
-	protected EnhancedCacheManager cacheManager;
+	protected ServerSecurityConfigurer configurer;
 
 	/**
 	 * IAM server security processor
@@ -78,16 +63,37 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 	protected ServerSecurityCoprocessor coprocessor;
 
 	/**
+	 * Key id generator
+	 */
+	@Autowired
+	protected SessionIdGenerator idGenerator;
+
+	/**
+	 * Rest template
+	 */
+	@Autowired
+	protected RestTemplate restTemplate;
+
+	/**
 	 * Delegate message source.
 	 */
 	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
 	protected SessionDelegateMessageBundle bundle;
 
-	public AbstractAuthenticationHandler(ServerSecurityConfigurer context, RestTemplate restTemplate) {
-		Assert.notNull(context, "'context' must not be null");
-		Assert.notNull(restTemplate, "'restTemplate' must not be null");
-		this.restTemplate = restTemplate;
-		this.configurer = context;
+	/**
+	 * Distributed locks.
+	 */
+	@Autowired
+	protected JedisLockManager lockManager;
+
+	/**
+	 * Enhanced cache manager.
+	 */
+	@Autowired
+	protected IamCacheManager cacheManager;
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
 	}
 
 }

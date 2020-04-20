@@ -16,8 +16,6 @@
 package com.wl4g.devops.iam.captcha.config;
 
 import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "spring.cloud.devops.iam.captcha")
@@ -92,13 +90,11 @@ public class CaptchaProperties {
 	 */
 	public static class JigsawProperties {
 
-		final protected Logger log = LoggerFactory.getLogger(getClass());
-
 		/** Jigsaw image cache pool size. */
 		private int poolImgSize = 64;
 
-		/** Jigsaw image cache expireMs. */
-		private int poolImgExpireSec = 2 * 60;
+		/** Jigsaw image cache expireSec. */
+		private int poolImgExpireSec = 30 * 60;
 
 		/** Source image directory. */
 		private String sourceDir;

@@ -18,18 +18,18 @@ package com.wl4g.devops.iam.authc.credential;
 import javax.annotation.Resource;
 
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * IAM based matcher
@@ -41,7 +41,7 @@ import com.wl4g.devops.iam.verification.CompositeSecurityVerifierAdapter;
  */
 public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * IAM verification handler
@@ -59,7 +59,7 @@ public abstract class IamBasedMatcher extends SimpleCredentialsMatcher {
 	 * Using Distributed Cache to Ensure Concurrency Control under Multi-Node
 	 */
 	@Autowired
-	protected EnhancedCacheManager cacheManager;
+	protected IamCacheManager cacheManager;
 
 	/**
 	 * IAM credentials securer

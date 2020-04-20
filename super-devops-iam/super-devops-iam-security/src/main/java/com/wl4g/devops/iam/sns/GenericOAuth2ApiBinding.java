@@ -35,7 +35,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Charsets;
 import com.wl4g.devops.common.exception.iam.SnsApiBindingException;
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
+import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.config.properties.SnsProperties.AbstractSocialProperties;
 import com.wl4g.devops.iam.sns.support.OAuth2GrantType;
 import com.wl4g.devops.iam.sns.support.OAuth2ResponseType;
@@ -71,7 +71,7 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 
 	final protected C config;
 	final protected RestTemplate restTemplate;
-	final protected EnhancedCache cache;
+	final protected IamCache cache;
 
 	public GenericOAuth2ApiBinding(C config, RestTemplate restTemplate, CacheManager cacheManager) {
 		notNull(config, "'config' is null, please check the configure");
@@ -81,8 +81,8 @@ public abstract class GenericOAuth2ApiBinding<C extends AbstractSocialProperties
 		this.restTemplate = restTemplate;
 		Object cacheObject = cacheManager.getCache(DEFAULT_CACHE_NAME);
 		notNull(cacheObject, "'cacheObject' is null, please check the configure");
-		isInstanceOf(EnhancedCache.class, cacheObject);
-		this.cache = (EnhancedCache) cacheObject;
+		isInstanceOf(IamCache.class, cacheObject);
+		this.cache = (IamCache) cacheObject;
 	}
 
 	//

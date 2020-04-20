@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.common.authc.model;
 
+import javax.validation.constraints.NotBlank;
+
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 
 public final class TicketValidateModel extends BaseAssertModel {
@@ -26,23 +28,42 @@ public final class TicketValidateModel extends BaseAssertModel {
 	 */
 	private String ticket;
 
+	/**
+	 * Currently sessionId.
+	 */
+	@NotBlank
+	private String sessionId;
+
 	public TicketValidateModel() {
 		super();
 	}
 
-	public TicketValidateModel(String ticket, String application) {
+	public TicketValidateModel(String ticket, String application, String sessionId) {
 		super(application);
-		this.ticket = ticket;
+		setTicket(ticket);
+		setSessionId(sessionId);
 	}
 
 	public final String getTicket() {
 		return ticket;
 	}
 
-	public final void setTicket(String ticket) {
+	public final TicketValidateModel setTicket(String ticket) {
 		if (!StringUtils2.isEmpty(ticket) && !"NULL".equalsIgnoreCase(ticket)) {
 			this.ticket = ticket;
 		}
+		return this;
+	}
+
+	public final String getSessionId() {
+		return sessionId;
+	}
+
+	public final TicketValidateModel setSessionId(String sessionId) {
+		if (!StringUtils2.isEmpty(sessionId) && !"NULL".equalsIgnoreCase(sessionId)) {
+			this.sessionId = sessionId;
+		}
+		return this;
 	}
 
 }

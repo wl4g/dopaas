@@ -24,14 +24,16 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import static java.util.Locale.*;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,12 +46,17 @@ import com.wl4g.devops.tool.common.collection.CollectionUtils2;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 
+import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.StringUtils2.isDomain;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.*;
+import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
+import static org.apache.commons.lang3.StringUtils.containsAny;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -157,16 +164,6 @@ public abstract class WebUtils2 {
 	/**
 	 * Is true <br/>
 	 * 
-	 * @param value
-	 * @return Return TRUE with true/t/y/yes/on/1/enabled
-	 */
-	public static boolean isTrue(String value) {
-		return isTrue(value, false);
-	}
-
-	/**
-	 * Is true <br/>
-	 * 
 	 * @param request
 	 * @param value
 	 * @param defaultValue
@@ -180,16 +177,21 @@ public abstract class WebUtils2 {
 	 * Is true <br/>
 	 * 
 	 * @param value
+	 * @return Return TRUE with true/t/y/yes/on/1/enabled
+	 */
+	public static boolean isTrue(String value) {
+		return isTrue(value, false);
+	}
+
+	/**
+	 * Is true <br/>
+	 * 
+	 * @param value
 	 * @param defaultValue
 	 * @return Return TRUE with true/t/y/yes/on/1/enabled
 	 */
 	public static boolean isTrue(String value, boolean defaultValue) {
-		if (isBlank(value)) {
-			return defaultValue;
-		}
-		return (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("t") || value.equalsIgnoreCase("1")
-				|| value.equalsIgnoreCase("enabled") || value.equalsIgnoreCase("y") || value.equalsIgnoreCase("yes")
-				|| value.equalsIgnoreCase("on"));
+		return StringUtils2.isTrue(value, defaultValue);
 	}
 
 	/**
@@ -229,23 +231,34 @@ public abstract class WebUtils2 {
 	 * @param queryParams
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static String applyQueryURL(String uri, Map queryParams) {
-		if (CollectionUtils2.isEmpty(queryParams)) {
+		if (CollectionUtils2.isEmpty(queryParams) || isBlank(uri)) {
 			return uri;
 		}
 
-		StringBuffer url = new StringBuffer(StringUtils.isEmpty(uri) ? "" : uri);
+		URI _uri = URI.create(uri);
+		// Merge origin-older uri query parameters.
+		Map<String, String> mergeParams = new HashMap<>(toQueryParams(_uri.getQuery()));
+		mergeParams.putAll(queryParams);
+		// Gets base URI.
+		StringBuffer url = new StringBuffer(uri); // Relative path?
+		if (!isAnyBlank(_uri.getScheme(), _uri.getHost())) {
+			url.setLength(0); // Reset
+			url.append(getBaseURIForDefault(_uri.getScheme(), _uri.getHost(), _uri.getPort()));
+			url.append(_uri.getPath());
+		}
 		if (url.lastIndexOf("?") == -1) {
 			url.append("?");
 		}
+
 		// To URI parameters string
-		for (Iterator<?> it = queryParams.keySet().iterator(); it.hasNext();) {
+		for (Iterator<?> it = mergeParams.keySet().iterator(); it.hasNext();) {
 			Object key = it.next();
 			url.append(key);
 			url.append("=");
 			// Prevents any occurrence of a value string null
-			Object value = queryParams.get(key);
+			Object value = mergeParams.get(key);
 			if (value != null) {
 				url.append(value); // "null"
 			}
@@ -254,6 +267,66 @@ public abstract class WebUtils2 {
 			}
 		}
 		return url.toString();
+	}
+
+	/**
+	 * Reject http request methods.
+	 * 
+	 * @param allowMode
+	 * @param request
+	 * @param response
+	 * @param methods
+	 * @throws UnsupportedOperationException
+	 */
+	public static void rejectRequestMethod(boolean allowMode, ServletRequest request, ServletResponse response, String... methods)
+			throws UnsupportedOperationException {
+		notNullOf(request, "request");
+		notNullOf(response, "response");
+		if (!isEmptyArray(methods)) {
+			HttpServletRequest req = (HttpServletRequest) request;
+			HttpServletResponse resp = (HttpServletResponse) response;
+			boolean rejected1 = true, rejected2 = false;
+			for (String method : methods) {
+				if (method.equalsIgnoreCase(req.getMethod())) {
+					if (allowMode) {
+						rejected1 = false;
+					} else {
+						rejected2 = true;
+					}
+					break;
+				}
+			}
+			if ((allowMode && rejected1) || (!allowMode && rejected2)) {
+				resp.setStatus(405);
+				throw new UnsupportedOperationException(format("No support '%s' request method", req.getMethod()));
+			}
+		}
+	}
+
+	/**
+	 * Convenience method that returns a request parameter value, first running
+	 * it through {@link StringUtils#clean(String)}.
+	 *
+	 * @param request
+	 *            the servlet request.
+	 * @param paramName
+	 *            the parameter name.
+	 * @return the clean param value, or null if the param does not exist or is
+	 *         empty.
+	 */
+	public static String getRequestParam(ServletRequest request, String paramName, boolean required) {
+		String paramValue = request.getParameter(paramName);
+		String cleanedValue = paramValue;
+		if (paramValue != null) {
+			cleanedValue = paramValue.trim();
+			if (cleanedValue.equals(EMPTY)) {
+				cleanedValue = null;
+			}
+		}
+		if (required) {
+			hasTextOf(cleanedValue, paramName);
+		}
+		return cleanedValue;
 	}
 
 	/**
@@ -328,7 +401,7 @@ public abstract class WebUtils2 {
 	 */
 	public static String safeEncodeURL(String url) {
 		try {
-			if (!contains(trimToEmpty(url).toLowerCase(Locale.US), URL_SEPAR_SLASH)) {
+			if (!contains(trimToEmpty(url).toLowerCase(US), URL_SEPAR_SLASH)) {
 				return URLEncoder.encode(url, "UTF-8");
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -346,7 +419,7 @@ public abstract class WebUtils2 {
 	 */
 	public static String safeDecodeURL(String url) {
 		try {
-			if (contains(trimToEmpty(url).toLowerCase(Locale.US), URL_SEPAR_SLASH)) {
+			if (containsAny(trimToEmpty(url).toLowerCase(US), URL_SEPAR_SLASH, URL_SEPAR_QUEST, URL_SEPAR_COLON)) {
 				return URLDecoder.decode(url, "UTF-8");
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -381,98 +454,109 @@ public abstract class WebUtils2 {
 	}
 
 	/**
-	 * Check whether the domain address belongs to the same origin.
+	 * Check whether the wildcard domain uri belongs to the same origin. </br>
 	 * 
-	 * e.g.<br/>
-	 * isMatchWithOrigin("http://*.aa.domain.com/API/v2",
-	 * "http://bb.aa.domain.com/API/v2", true)==true</br>
-	 * isMatchWithOrigin("http://*.aa.domain.com/API/v2",
-	 * "https://bb.aa.domain.com/API/v2", true)==false</br>
-	 * isMatchWithOrigin("http://*.aa.domain.com/api/v2/",
-	 * "http://bb.aa.domain.com/API/v2", true)==true</br>
-	 * isMatchWithOrigin("http://bb.*.domain.com", "https://bb.aa.domain.com",
-	 * false)==true</br>
-	 * isMatchWithOrigin("http://*.aa.domain.com", "https://bb.aa.domain.com",
-	 * true)==false</br>
-	 * isSameWithOrigin("http://*.aa.domain.com:8080",
-	 * "http://bb.aa.domain.com:8080/", true)==true</br>
+	 * e.g:
 	 * 
-	 * @param definitionUrl
-	 * @param requestUrl
+	 * <pre>
+	 * {@link #isSameWildcardOrigin}("http://*.aa.domain.com/API/v2", "http://bb.aa.domain.com/API/v2", true) == true
+	 * {@link #isSameWildcardOrigin}("http://*.aa.domain.com/API/v2", "https://bb.aa.domain.com/API/v2", true) == false
+	 * {@link #isSameWildcardOrigin}("http://*.aa.domain.com/api/v2/", "http://bb.aa.domain.com/API/v2", true) == true
+	 * {@link #isSameWildcardOrigin}("http://bb.*.domain.com", "https://bb.aa.domain.com", false) == true
+	 * {@link #isSameWildcardOrigin}("http://*.aa.domain.com", "https://bb.aa.domain.com", true) == false
+	 * {@link #isSameWildcardOrigin}("http://*.aa.domain.com:8080", "http://bb.aa.domain.com:8080/", true) == true
+	 * {@link #isSameWildcardOrigin}("http://*.aa.domain.com:8080", "http://bb.aa.domain.com:8443/v2/xx", true) == true
+	 * {@link #isSameWildcardOrigin}("http://*.aa.domain.com:*", "http://bb.aa.domain.com:8443/v2/xx", true) == true
+	 * </pre>
+	 * 
+	 * @param defWildcardUri
+	 *            Definition wildcard URI
+	 * @param requestUri
 	 * @param checkScheme
 	 * @return
 	 */
-	public static boolean isSameWithOrigin(String definitionUrl, String requestUrl, boolean checkScheme) {
-		if (isBlank(definitionUrl) || isBlank(requestUrl)) {
+	public static boolean isSameWildcardOrigin(String defWildcardUri, String requestUri, boolean checkScheme) {
+		if (isBlank(defWildcardUri) || isBlank(requestUri))
 			return false;
-		}
-		// URL equaled?
-		if (definitionUrl.equals(requestUrl)) {
+		if (defWildcardUri.equals(requestUri)) // URL equaled?
 			return true;
-		}
-		// Scheme mismatch?
-		boolean schemeMatched = false;
-		try {
-			schemeMatched = new URI(definitionUrl).getScheme().equalsIgnoreCase(new URI(requestUrl).getScheme());
-			if (checkScheme && !schemeMatched) {
-				return false;
-			}
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
 
-		// Domain equaled?
-		String domaina = extractDomainString(definitionUrl);
-		String domainb = extractDomainString(requestUrl);
-		if (equalsIgnoreCase(domaina, domainb)) {
+		// Scheme matched?
+		URI uri1 = URI.create(defWildcardUri);
+		URI uri2 = URI.create(requestUri);
+		final boolean schemeMatched = uri1.getScheme().equalsIgnoreCase(uri2.getScheme());
+		if (checkScheme && !schemeMatched)
+			return false;
+
+		// Hostname equaled?
+		String hostname1 = extractWildcardEndpoint(defWildcardUri);
+		String hostname2 = extractWildcardEndpoint(requestUri);
+		if (equalsIgnoreCase(hostname1, hostname2))
 			return true;
-		}
 
-		// Domain wildCard matched?
-		boolean wildcardDomainMatched = false;
-		String[] parts1 = split(domaina, ".");
-		String[] parts2 = split(domainb, ".");
+		// Hostname wildcard matched?
+		boolean wildcardHostnameMatched = false;
+		String[] parts1 = split(hostname1, ".");
+		String[] parts2 = split(hostname2, ".");
 		for (int i = 0; i < parts1.length; i++) {
 			if (equalsIgnoreCase(parts1[i], "*")) {
-				if (i < (domaina.length() - 1) && i < (domainb.length() - 1)) {
+				if (i < (hostname1.length() - 1) && i < (hostname2.length() - 1)) {
 					String compare1 = join(parts1, ".", i + 1, parts1.length);
 					String compare2 = join(parts2, ".", i + 1, parts2.length);
 					if (equalsIgnoreCase(compare1, compare2)) {
-						wildcardDomainMatched = true;
+						wildcardHostnameMatched = true;
 						break;
 					}
 				}
 			}
 		}
-
-		// Check scheme match.
-		if (checkScheme && wildcardDomainMatched) {
+		// Check scheme matched.
+		if (checkScheme && wildcardHostnameMatched) {
 			return schemeMatched;
 		}
 
-		return wildcardDomainMatched;
+		return wildcardHostnameMatched;
 	}
 
 	/**
-	 * Extract domain text from URL.
+	 * Extract domain text from {@link URI}. </br>
+	 * Uri resolution cannot be used here because it may fail when there are
+	 * wildcards, e.g,
+	 * {@link URI#create}("http://*.aa.domain.com/api/v2/).gethost() is
+	 * null.</br>
 	 * 
-	 * @param url
+	 * <pre>
+	 * {@link #extractWildcardHostName}("http://*.domain.com/v2/xx") == *.domain.com
+	 * {@link #extractWildcardHostName}("http://*.aa.domain.com:*") == *.aa.domain.com
+	 * {@link #extractWildcardHostName}("http://*.bb.domain.com:8080/v2/xx") == *.bb.domain.com
+	 * </pre>
+	 * 
+	 * @param wildcardUri
 	 * @return
 	 */
-	public static String extractDomainString(String url) {
-		if (isEmpty(url)) {
+	public static String extractWildcardEndpoint(String wildcardUri) {
+		if (isEmpty(wildcardUri))
 			return EMPTY;
-		}
-		url = trimToEmpty(safeEncodeURL(url)).toLowerCase(Locale.US);
-		String noPrefix = url.substring(url.indexOf(URL_SEPAR_PROTO) + URL_SEPAR_PROTO.length());
+
+		wildcardUri = trimToEmpty(safeEncodeURL(wildcardUri)).toLowerCase(US);
+		String noPrefix = wildcardUri.substring(wildcardUri.indexOf(URL_SEPAR_PROTO) + URL_SEPAR_PROTO.length());
 		int slashIndex = noPrefix.indexOf(URL_SEPAR_SLASH);
-		String domain = noPrefix;
+		String serverName = noPrefix;
 		if (slashIndex > 0) {
-			domain = noPrefix.substring(0, slashIndex);
+			serverName = noPrefix.substring(0, slashIndex);
 		}
-		Assert2.isTrue(domain.indexOf("*") == domain.lastIndexOf("*"),
-				String.format("Illegal domain name format: %s, contains multiple wildcards!", domain));
-		return safeDecodeURL(domain);
+
+		// Check domain illegal?
+		// e.g, http://*.domain.com:8080[allow]
+		// http://*.domain.com:*[allow]
+		// http://*.aa.*.domain.com[noallow]
+		String hostname = serverName;
+		if (serverName.contains(URL_SEPAR_COLON)) {
+			hostname = serverName.substring(0, serverName.indexOf(URL_SEPAR_COLON));
+		}
+		Assert2.isTrue(hostname.indexOf("*") == hostname.lastIndexOf("*"), "Illegal serverName: %s, contains multiple wildcards!",
+				serverName);
+		return safeDecodeURL(hostname);
 	}
 
 	/**
@@ -489,8 +573,8 @@ public abstract class WebUtils2 {
 	 * @return
 	 */
 	public static boolean withInDomain(String domain, String url) {
-		Assert2.notNull(domain, "'domain' must not be null");
-		Assert2.notNull(url, "'requestUrl' must not be null");
+		notNull(domain, "'domain' must not be null");
+		notNull(url, "'requestUrl' must not be null");
 		try {
 			String hostname = new URI(safeDecodeURL(cleanURI(url))).getHost();
 			if (!domain.contains("*")) {
@@ -549,7 +633,7 @@ public abstract class WebUtils2 {
 	public static String getRFCBaseURI(HttpServletRequest request, boolean hasCtxPath) {
 		// Context path
 		String ctxPath = request.getContextPath();
-		Assert2.notNull(ctxPath, "Http request contextPath must not be null");
+		notNull(ctxPath, "Http request contextPath must not be null");
 		ctxPath = !hasCtxPath ? "" : ctxPath;
 		// Scheme
 		String scheme = request.getScheme();
@@ -601,8 +685,8 @@ public abstract class WebUtils2 {
 	 * @return
 	 */
 	public static String getBaseURIForDefault(String scheme, String serverName, int port) {
-		Assert2.notNull(scheme, "Http request scheme must not be empty");
-		Assert2.notNull(serverName, "Http request serverName must not be empty");
+		notNull(scheme, "Http request scheme must not be empty");
+		notNull(serverName, "Http request serverName must not be empty");
 		StringBuffer baseUri = new StringBuffer(scheme).append("://").append(serverName);
 		if (port > 0) {
 			Assert2.isTrue((port > 0 && port < 65536), "Http server port must be greater than 0 and less than 65536");
@@ -639,9 +723,9 @@ public abstract class WebUtils2 {
 		try {
 			String encodeUrl = safeEncodeURL(uri);
 			String pathUrl = encodeUrl, schema = EMPTY;
-			if (encodeUrl.toLowerCase(Locale.US).contains(URL_SEPAR_PROTO)) {
+			if (encodeUrl.toLowerCase(US).contains(URL_SEPAR_PROTO)) {
 				// Start from "://"
-				int startIndex = encodeUrl.toLowerCase(Locale.US).indexOf(URL_SEPAR_PROTO);
+				int startIndex = encodeUrl.toLowerCase(US).indexOf(URL_SEPAR_PROTO);
 				schema = encodeUrl.substring(0, startIndex) + URL_SEPAR_PROTO;
 				pathUrl = encodeUrl.substring(startIndex + URL_SEPAR_PROTO.length());
 			}
@@ -736,7 +820,7 @@ public abstract class WebUtils2 {
 		 * @param request
 		 * @return
 		 */
-		final public static boolean isJSONResponse(String respTypeValue, HttpServletRequest request) {
+		public static boolean isJSONResp(String respTypeValue, HttpServletRequest request) {
 			return determineJSONResponse(safeOf(respTypeValue), request);
 		}
 
@@ -746,8 +830,8 @@ public abstract class WebUtils2 {
 		 * @param request
 		 * @return
 		 */
-		final public static boolean isJSONResponse(HttpServletRequest request) {
-			return isJSONResponse(request, null);
+		public static boolean isJSONResp(HttpServletRequest request) {
+			return isJSONResp(request, null);
 		}
 
 		/**
@@ -757,8 +841,8 @@ public abstract class WebUtils2 {
 		 * @param respTypeName
 		 * @return
 		 */
-		final public static boolean isJSONResponse(HttpServletRequest request, String respTypeName) {
-			Assert2.notNull(request, "Request must not be null");
+		public static boolean isJSONResp(HttpServletRequest request, String respTypeName) {
+			notNull(request, "Request must not be null");
 
 			List<String> paramNames = Arrays.asList(RESPTYPE_NAMES);
 			if (!isBlank(respTypeName)) {
@@ -782,8 +866,8 @@ public abstract class WebUtils2 {
 		 * @param request
 		 * @return
 		 */
-		final public static boolean determineJSONResponse(ResponseType respType, HttpServletRequest request) {
-			Assert2.notNull(request, "Request must not be null");
+		private static boolean determineJSONResponse(ResponseType respType, HttpServletRequest request) {
+			notNull(request, "Request must not be null");
 			// Using default strategy
 			if (Objects.isNull(respType)) {
 				respType = ResponseType.auto;

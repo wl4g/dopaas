@@ -34,7 +34,7 @@ public interface IamSessionDAO extends SessionDAO {
 	}
 
 	/**
-	 * Get access sessions
+	 * Gets access sessions
 	 *
 	 * @param limit
 	 * @return
@@ -42,7 +42,7 @@ public interface IamSessionDAO extends SessionDAO {
 	ScanCursor<IamSession> getAccessSessions(final int limit);
 
 	/**
-	 * Get access sessions
+	 * Gets access sessions
 	 *
 	 * @param cursorString
 	 * @param limit
@@ -51,7 +51,7 @@ public interface IamSessionDAO extends SessionDAO {
 	ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, final int limit);
 
 	/**
-	 * Get access sessions by principal.
+	 * Gets access sessions by principal.
 	 *
 	 * @param principal
 	 *            Getting active sessions based on logon objects
@@ -62,7 +62,7 @@ public interface IamSessionDAO extends SessionDAO {
 	}
 
 	/**
-	 * Get access sessions by principal.
+	 * Gets access sessions by principal.
 	 *
 	 * @param cursorString
 	 * @param limit

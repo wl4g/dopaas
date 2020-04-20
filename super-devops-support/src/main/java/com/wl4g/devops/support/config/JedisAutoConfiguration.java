@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.support.config;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,22 +24,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.support.redis.EnhancedJedisCluster;
 import com.wl4g.devops.support.redis.JedisClusterFactoryBean;
 import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisException;
+import static com.wl4g.devops.support.config.JedisAutoConfiguration.JedisProperties.*;
 
 /**
  * JEDIS properties configuration.
@@ -47,29 +51,37 @@ import redis.clients.jedis.exceptions.JedisException;
  * @since
  */
 @Configuration
-@ConditionalOnClass({ JedisCluster.class, GenericObjectPoolConfig.class })
 public class JedisAutoConfiguration {
 
 	/**
 	 * Resolving spring byName injection conflict.
 	 */
-	final public static String BEAN_NAME_REDIS = "superDevopsSupportJedisService";
+	final public static String BEAN_NAME_REDIS = "JedisAutoConfiguration.JedisService.Bean";
 
 	@Bean
+	@ConditionalOnProperty(name = KEY_JEDIS_PREFIX + ".nodes", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_JEDIS_PREFIX)
+	@ConditionalOnClass(JedisCluster.class)
 	public JedisProperties jedisProperties() {
 		return new JedisProperties();
 	}
 
 	@Bean
-	@ConditionalOnMissingBean({ JedisCluster.class, JedisClusterFactoryBean.class })
+	@ConditionalOnBean(JedisProperties.class)
 	public JedisClusterFactoryBean jedisClusterFactoryBean(JedisProperties properties) {
 		return new JedisClusterFactoryBean(properties);
 	}
 
 	@Bean(BEAN_NAME_REDIS)
-	@ConditionalOnMissingBean
-	public JedisService jedisService(JedisCluster jedisCluster) {
+	@ConditionalOnBean(JedisProperties.class)
+	public JedisService jedisService(EnhancedJedisCluster jedisCluster) {
 		return new JedisService(jedisCluster);
+	}
+
+	@Bean
+	@ConditionalOnBean(JedisService.class)
+	public JedisLockManager jedisLockManager(JedisService jedisService) {
+		return new JedisLockManager(jedisService);
 	}
 
 	/**
@@ -79,12 +91,12 @@ public class JedisAutoConfiguration {
 	 * @version v1.0 2018年9月16日
 	 * @since
 	 */
-	@ConfigurationProperties(prefix = "redis")
 	public static class JedisProperties implements Serializable {
-		private static final long serialVersionUID = 1906168160146495488L;
+		final private static long serialVersionUID = 1906168160146495488L;
+		final public static String KEY_JEDIS_PREFIX = "redis";
+		final protected static Pattern DefaultNodePattern = Pattern.compile("^.+[:]\\d{1,9}\\s*$");
 
-		private static final Logger log = LoggerFactory.getLogger(JedisProperties.class);
-		private static final Pattern pattern = Pattern.compile("^.+[:]\\d{1,9}\\s*$");
+		protected SmartLogger log = getLogger(getClass());
 
 		private List<String> nodes = new ArrayList<>();
 		private String passwd;
@@ -153,7 +165,7 @@ public class JedisAutoConfiguration {
 			try {
 				Set<HostAndPort> haps = new HashSet<HostAndPort>();
 				for (String node : this.getNodes()) {
-					boolean matched = pattern.matcher(node).matches();
+					boolean matched = DefaultNodePattern.matcher(node).matches();
 					if (!matched) {
 						throw new IllegalArgumentException("illegal ip or port");
 					}

@@ -15,11 +15,8 @@
  */
 package com.wl4g.devops.iam.config.properties;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_API_V1_BASE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VERIFY_BASE;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.correctAuthenticaitorURI;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.correctAuthenticaitorURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -180,6 +177,8 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 
 	@Override
 	protected void applyDefaultIfNecessary() {
+		super.applyDefaultIfNecessary();
+
 		// Default URL filter chain.
 		addDefaultFilterChain();
 
@@ -203,13 +202,15 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	final private void addDefaultFilterChain() {
 		// Default view access files request rules.
 		getFilterChain().put(DEFAULT_VIEW_BASE_URI + "/**", "anon");
-		// SNS authenticator rules.
+		// SNS authenticator controller rules.
 		getFilterChain().put(URI_S_SNS_BASE + "/**", "anon");
-		// Login authenticator rules.
+		// Login authenticator controller rules.
 		getFilterChain().put(URI_S_LOGIN_BASE + "/**", "anon");
-		// Verify(CAPTCHA/SMS) authenticator rules.
+		// Verify(CAPTCHA/SMS) authenticator controller rules.
 		getFilterChain().put(URI_S_VERIFY_BASE + "/**", "anon");
-		// API v1 rules.
+		// RCM(Simple risk control) controller rules.
+		getFilterChain().put(URI_S_RCM_BASE + "/**", "anon");
+		// API v1 controller rules.
 		getFilterChain().put(URI_S_API_V1_BASE + "/**", InternalWhiteListServerAuthenticationFilter.NAME);
 	}
 

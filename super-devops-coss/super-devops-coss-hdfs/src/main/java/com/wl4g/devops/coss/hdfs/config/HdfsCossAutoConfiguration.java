@@ -21,7 +21,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.hdfs.HdfsCossEndpoint;
 
 @Configuration
@@ -37,7 +36,7 @@ public class HdfsCossAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean(HdfsCossProperties.class)
-	public CossEndpoint hdfsCossEndpoint(HdfsCossProperties config) {
+	public HdfsCossEndpoint hdfsCossEndpoint(HdfsCossProperties config) {
 		return new HdfsCossEndpoint(config);
 	}
 

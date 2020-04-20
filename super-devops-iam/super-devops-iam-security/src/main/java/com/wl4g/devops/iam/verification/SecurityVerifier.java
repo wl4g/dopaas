@@ -29,6 +29,8 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.util.Assert;
 import com.wl4g.devops.common.exception.iam.VerificationException;
+import com.wl4g.devops.common.framework.operator.Operator;
+import static com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
 
 /**
  * Verification handler
@@ -38,14 +40,7 @@ import com.wl4g.devops.common.exception.iam.VerificationException;
  * @date 2018年12月28日
  * @since
  */
-public abstract interface SecurityVerifier {
-
-	/**
-	 * Verifier type definition.
-	 *
-	 * @return
-	 */
-	VerifyType verifyType();
+public interface SecurityVerifier extends Operator<VerifyKind> {
 
 	/**
 	 * New create verification meta information.
@@ -123,7 +118,7 @@ public abstract interface SecurityVerifier {
 	 * @version v1.0 2019年8月29日
 	 * @since
 	 */
-	public static enum VerifyType {
+	public static enum VerifyKind {
 
 		GRAPH_SIMPLE("VerifyWithSimpleGraph"),
 
@@ -148,7 +143,7 @@ public abstract interface SecurityVerifier {
 		 */
 		final private String alias;
 
-		private VerifyType(String alias) {
+		private VerifyKind(String alias) {
 			this.alias = alias;
 		}
 
@@ -156,9 +151,9 @@ public abstract interface SecurityVerifier {
 			return alias;
 		}
 
-		public static VerifyType of(String type) {
+		public static VerifyKind of(String type) {
 			Assert.hasText(type, String.format("Parameter '%s' is required.", PARAM_VERIFYTYPE));
-			for (VerifyType t : values()) {
+			for (VerifyKind t : values()) {
 				if (t.getAlias().equals(type) || t.name().equals(type)) {
 					return t;
 				}
@@ -166,11 +161,11 @@ public abstract interface SecurityVerifier {
 			throw new IllegalArgumentException(String.format("Invalid verify type '%s'", type));
 		}
 
-		public static VerifyType of(HttpServletRequest request) {
+		public static VerifyKind of(HttpServletRequest request) {
 			return of(getCleanParam(request, PARAM_VERIFYTYPE));
 		}
 
-		public static VerifyType of(HttpServletRequest request, String paramName) {
+		public static VerifyKind of(HttpServletRequest request, String paramName) {
 			return of(getCleanParam(request, paramName));
 		}
 
@@ -181,9 +176,9 @@ public abstract interface SecurityVerifier {
 		 */
 		private static String supportAsString() {
 			StringBuffer support = new StringBuffer();
-			Iterator<VerifyType> it = Arrays.asList(values()).iterator();
+			Iterator<VerifyKind> it = Arrays.asList(values()).iterator();
 			while (it.hasNext()) {
-				VerifyType v = it.next();
+				VerifyKind v = it.next();
 				if (v == TEXT_SMS) {
 					continue;
 				}

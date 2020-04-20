@@ -26,13 +26,23 @@ package com.wl4g.devops.iam.common.authc;
 public class AuthenticatorAuthenticationToken extends AbstractIamAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
-	public AuthenticatorAuthenticationToken(String remoteHost, RedirectInfo redirectInfo) {
+	/**
+	 * Principal currently exiting
+	 */
+	final private String principal;
+
+	public AuthenticatorAuthenticationToken(final String principal, final String remoteHost, final RedirectInfo redirectInfo) {
 		super(remoteHost, redirectInfo);
+		/**
+		 * @see {@link com.wl4g.devops.iam.filter.AuthenticatorAuthenticationFilter#postCreateToken()}:MARK1
+		 */
+		// hasTextOf(principal, "principal");
+		this.principal = principal;
 	}
 
 	@Override
 	public Object getPrincipal() {
-		return null;
+		return principal;
 	}
 
 	@Override

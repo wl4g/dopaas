@@ -17,4 +17,9 @@ package com.wl4g.devops.tool.common.task;
 
 public class QuartzCronUtilsTests {
 
+	public static void main(String[] args) {
+		System.out.println(QuartzCronUtils.isValidExpression("0/5 * * * * ?"));
+		System.out.println(QuartzCronUtils.isValidExpression("999/999 * * * * ?"));
+	}
+
 }

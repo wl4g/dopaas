@@ -1,5 +1,5 @@
 # Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
-# All rights reserved. Contact us 983708408@qq.com
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,17 +13,42 @@
 spring:
   application.name: iam-server
   profiles:
+    include: common,util
     active: dev
   cloud: # Spring cloud configuration.
     devops:
-      default-webapps:
-        enabled: true
-        webapp-location: classpath*:/default-webapps
+      embedded-webapps:
+        enabled: true # Default false
         base-uri: /view
+        webapp-location: classpath*:/default-webapps
       iam: # IAM configuration.
+        cors:
+          enabled: true # Default: true
+          rules:
+            /**:
+              allowsMethods: GET,POST
+              allowsHeaders:
+                - X-Iam-*
+              # Note: Some latest browsers, such as chrome 80.x+, only support sharing with the sub domain of the top-level domain name CORS.
+              # You can also manually turn off the chrome switch(@see https://chromestatus.com/features/5088147346030592), visit chrome://flags
+              # and search for samesite, find the options [SameSite by default cookies] and [Cookies without SameSite must be secure] set 
+              # to disabled and restart chrome, but this is not recommended! For more solutions, please refer to: ideas like JWT/CAS/Oauth2 are extended.
+              #   Fortunately, iam-jssdk solves this problem.The solution is mainly through the interface token, thereby breaking the limit of cookies,
+              # and it is also very safe due to the use of a private encryption mechanism. However, the cost for such a perfect solution That is, each
+              # front end has a little intrusion transformation, that is: each request needs to manually set the current token. For more information 
+              # about iam-jssdk, please refer to: /default-webapps/sdk/{version}/js/IAM.js
+              allowCredentials: true
+              allowsOrigins:
+                #- '*'
+        xss:
+          enabled: true # Default: true
+          expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..)) or
+                      execution(* com.wl4g.devops.iam.sns.*.*Controller.*(..)) or
+                      execution(* com.wl4g.devops.iam.*.*Controller.*(..))
+#        service-name: ${spring.application.name}
 #        login-uri: /view/login.html
 #        unauthorized-uri: /view/403.html
-#        success-endpoint: iam-example@http://localhost:14041/iam-example
+#        success-endpoint: ${spring.cloud.devops.iam.service-name}@http://localhost:14041/iam-example
         filter-chain: 
           /public/**: anon # Public rule
         param: # Must be consistent with the client, otherwise authentication will never succeed
@@ -39,9 +64,10 @@ spring:
           fail-fast-sms-max-delay: 1800000
           fail-fast-sms-delay: 90000
           sms-expire-ms: 300000
-        cache:
-          prefix: ${spring.application.name}_
+        cipher:
+          enable-data-cipher: true
         session:
+          enable-access-token-validity: true
           global-session-timeout: 1800_000
           session-validation-interval: 360_000
         cookie:

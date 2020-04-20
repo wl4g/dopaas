@@ -44,8 +44,8 @@ import com.wl4g.devops.common.exception.iam.AccessPermissionDeniedException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
@@ -194,7 +194,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 
 	@Override
 	protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
-		IamAuthenticationToken tk = (IamAuthenticationToken) token;
+		AbstractIamAuthenticationToken tk = (AbstractIamAuthenticationToken) token;
 		IamAuthenticationInfo info0 = (IamAuthenticationInfo) info;
 
 		CredentialsMatcher matcher = getCredentialsMatcher();
@@ -240,7 +240,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 				// e.g.->https://sso.wl4g.com/login.html?service=mp&redirect_url=https%3A%2F%2Fmp.wl4g.com%2Fmp%2Fauthenticator
 
 				// Fallback determine redirect to application.
-				RedirectInfo fallbackRedirect = coprocessor.fallbackGetRedirectInfo(tk,
+				RedirectInfo fallbackRedirect = configurer.getFallbackRedirectInfo(tk,
 						new RedirectInfo(config.getSuccessService(), config.getSuccessUri()));
 				notNull(fallbackRedirect, "Fallback redirect info cannot be null");
 

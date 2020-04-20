@@ -22,9 +22,9 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Validator;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wl4g.devops.tool.common.log.SmartLogger;
 import com.wl4g.devops.tool.common.web.WebUtils2;
 
 /**
@@ -36,12 +36,7 @@ import com.wl4g.devops.tool.common.web.WebUtils2;
  */
 public abstract class BaseController {
 
-	/**
-	 * SpringMVC controller redirection prefix.
-	 */
-	final public static String REDIRECT_PREFIX = "redirect:";
-
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	@Autowired
 	protected Validator validator;
@@ -69,5 +64,10 @@ public abstract class BaseController {
 	protected void write(HttpServletResponse response, int status, String contentType, byte[] body) throws IOException {
 		WebUtils2.write(response, status, contentType, body);
 	}
+
+	/**
+	 * SpringMVC controller redirection prefix.
+	 */
+	final public static String REDIRECT_PREFIX = "redirect:";
 
 }

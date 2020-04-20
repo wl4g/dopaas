@@ -1,5 +1,5 @@
 ![DevSecOps](shots/logo.jpg)
-## One stop micro service-oriented lightweight DevSecOps solution, supports CI/CD, unified monitoring, link tracking, unified authentication, unified configuration, log analysis, elastic scaling, scheduling center, command-line services, HBase operation and maintenance tools, document management, version control, etc
+## One stop DevoSecOps SaaS platform developed based on spring cloud. Its main function modules are: continuous delivery of CI / CD, certification center, monitoring center, configuration center, resource management center, scheduling center, elastic scaling, shell tools, various tool components (such as HBase / OSS operation and maintenance), document management, timely communication, lightweight risk control, private object storage, version control, etc
 
 [![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
@@ -69,15 +69,17 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
-(Aliyun VPC)Use mirror1: registry-vpc.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
-Use mirror2: registry.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
+- 4.1 Change the image name (wl4g / redis-cluster: latest) to: registry.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
+- 4.2 If it is a Ali vpc machine, it will fly faster by walking the vpc intranet (Limited to South China 1): registry-vpc.cn-shenzhen.aliyuncs.com/wl4g/redis-cluster:latest
 
 
 ### Docs
 - [CI](super-devops-ci/README.md)             &nbsp;&nbsp;    Continuous integration deployment(Continuous iteration), CICD build flow, etc.
-- [ESM](super-devops-esm/README.md)           &nbsp;&nbsp;    Flexible scalability management, integrated k8s, docker, management based on CPU, network traffic automatic or manual container scaling.
+- [ESM](super-devops-esm/README.md)           &nbsp;&nbsp;    Flexible scalability management, integrated K8s, Docker, management based on CPU, network traffic automatic or manual container scaling.
 - [SCM](super-devops-scm/README.md)           &nbsp;&nbsp;    Configure the service center to support online configuration of hot updates such as DataSource, RedisClient, etc.
-- [SRM](super-devops-srm/README.md)           &nbsp;&nbsp;    Software resource environment management, such as elk log analysis, binary compilation assets, etc
+- [ERM](super-devops-erm/README_CN.md)        &nbsp;&nbsp;    Basic resource and environment management, such as elk log analysis, binary compilation package, etc
+- [DJOB](super-devops-djob/README_CN.md)      &nbsp;&nbsp;    Based on spring cloud distributed scheduling platform, the default is based on elastic-job enhanced implementation
+- [COSS](super-devops-coss/README_CN.md)      &nbsp;&nbsp;    Based on the spring cloud composite object storage service, it supports NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
 - [SHELL](super-devops-shell/README.md)       &nbsp;&nbsp;    Shell Cli, adding a hbase-shell-like console to your app
 - [DOC](super-devops-doc/README.md)           &nbsp;&nbsp;    API documentation service, online API documentation
 - [IAM](super-devops-iam/README.md)           &nbsp;&nbsp;    Unified identity and access management services, supporting SSO/CAS, oauth2, opensaml, etc.

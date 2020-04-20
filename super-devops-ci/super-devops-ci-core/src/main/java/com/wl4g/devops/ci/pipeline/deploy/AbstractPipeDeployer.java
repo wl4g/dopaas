@@ -26,7 +26,8 @@ import com.wl4g.devops.common.exception.ci.PipelineDeployingException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
-import com.wl4g.devops.tool.common.crypto.AesUtils;
+import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.io.FileIOUtils;
 import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 
@@ -37,6 +38,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
 import static com.wl4g.devops.tool.common.lang.DateUtils2.*;
@@ -203,8 +205,8 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	 */
 	protected char[] getUsableCipherSshKey(String sshkey) throws Exception {
 		// Obtain text-plain privateKey(RSA)
-		String cipherKey = config.getDeploy().getCipherKey();
-		char[] sshkeyPlain = new AesUtils(cipherKey).decrypt(sshkey).toCharArray();
+		byte[] cipherKey = config.getDeploy().getCipherKey().getBytes(UTF_8);
+		char[] sshkeyPlain = new AESCryptor().decrypt(cipherKey, CrypticSource.fromHex(sshkey)).toString().toCharArray();
 		log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
 
 		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());

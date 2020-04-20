@@ -21,7 +21,8 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
 import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
-import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
 
 /**
  * SMS dynamic credential matcher
@@ -34,9 +35,9 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyType;
 public class SmsCredentialsHashedMatcher extends AbstractAttemptsMatcher {
 
 	@Override
-	public boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors) {
+	public boolean doMatching(IamAuthenticationToken token, AuthenticationInfo info, List<String> factors) {
 		SmsAuthenticationToken tk = (SmsAuthenticationToken) token;
-		verifier.forAdapt(VerifyType.TEXT_SMS).validate(factors, (String) tk.getCredentials(), true);
+		verifier.forOperator(VerifyKind.TEXT_SMS).validate(factors, (String) tk.getCredentials(), true);
 		return true;
 	}
 

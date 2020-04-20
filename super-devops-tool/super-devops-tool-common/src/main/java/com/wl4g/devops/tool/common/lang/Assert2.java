@@ -24,9 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.wl4g.devops.tool.common.lang.ClassUtils2.*;
 import static com.wl4g.devops.tool.common.lang.StringUtils2.*;
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
 import static java.lang.Math.max;
 import static java.lang.Thread.currentThread;
 
@@ -92,7 +90,7 @@ public abstract class Assert2 {
 	 */
 	public static void state(boolean expression, String fmtMessage, Object... args) {
 		if (!expression) {
-			throw new IllegalStateException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalStateException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -125,7 +123,7 @@ public abstract class Assert2 {
 	 */
 	public static void isTrue(boolean expression, String fmtMessage, Object... args) {
 		if (!expression) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -166,6 +164,19 @@ public abstract class Assert2 {
 	}
 
 	/**
+	 * Assert a boolean expression, throwing an {@code IllegalArgumentException}
+	 * if the expression evaluates to {@code false}.
+	 * 
+	 * @param expression
+	 *            a boolean expression
+	 * @param exceptionClass
+	 * @param argName
+	 */
+	public static void isTrueOf(boolean expression, Class<? extends RuntimeException> exceptionClass, String argName) {
+		isTrue(expression, exceptionClass, argName + " condition must be true");
+	}
+
+	/**
 	 * Assert that an object is {@code null}.
 	 * 
 	 * <pre class="code">
@@ -181,7 +192,7 @@ public abstract class Assert2 {
 	 */
 	public static void isNull(Object object, String fmtMessage, Object... args) {
 		if (object != null) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -212,7 +223,7 @@ public abstract class Assert2 {
 	 */
 	public static void notNull(Object object, String fmtMessage, Object... args) {
 		if (object == null) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -247,7 +258,19 @@ public abstract class Assert2 {
 	 * @param argName
 	 */
 	public static void notNullOf(Object object, String argName) {
-		notNull(object, argName + " is required; it must not be null");
+		notNull(object, argName + " is required");
+	}
+
+	/**
+	 * Assert that an object is not {@code null}.
+	 * 
+	 * @param object
+	 *            the object to check
+	 * @param exceptionClass
+	 * @param argName
+	 */
+	public static void notNullOf(Object object, Class<? extends RuntimeException> exceptionClass, String argName) {
+		notNull(object, exceptionClass, argName + " is required");
 	}
 
 	/**
@@ -268,7 +291,7 @@ public abstract class Assert2 {
 	 */
 	public static void hasLength(String text, String fmtMessage, Object... args) {
 		if (!isNotBlank(text)) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -303,7 +326,7 @@ public abstract class Assert2 {
 	 */
 	public static void hasText(String text, String fmtMessage, Object... args) {
 		if (!isNotBlank(text)) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -342,7 +365,21 @@ public abstract class Assert2 {
 	 * @param argName
 	 */
 	public static void hasTextOf(String text, String argName) {
-		hasText(text, argName + " must have text; it must not be null, empty, or blank");
+		hasText(text, argName + " is required");
+	}
+
+	/**
+	 * Assert that the given String contains valid text content; that is, it
+	 * must not be {@code null} and must contain at least one non-whitespace
+	 * character.
+	 * 
+	 * @param text
+	 *            the String to check
+	 * @param exceptionClass
+	 * @param argName
+	 */
+	public static void hasTextOf(String text, Class<? extends RuntimeException> exceptionClass, String argName) {
+		hasText(text, exceptionClass, argName + " is required");
 	}
 
 	/**
@@ -363,7 +400,7 @@ public abstract class Assert2 {
 	 */
 	public static void doesNotContain(String textToSearch, String substring, String fmtMessage, Object... args) {
 		if (isNotBlank(textToSearch) && isNotBlank(substring) && textToSearch.contains(substring)) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -438,6 +475,19 @@ public abstract class Assert2 {
 	}
 
 	/**
+	 * Assert that an array contains elements; that is, it must not be
+	 * {@code null}
+	 * 
+	 * @param array
+	 *            the array to check
+	 * @param exceptionClass
+	 * @param argName
+	 */
+	public static void notEmptyOf(Object[] array, Class<? extends RuntimeException> exceptionClass, String argName) {
+		notEmpty(array, exceptionClass, argName + " must not be empty: it must contain at least 1 element");
+	}
+
+	/**
 	 * Assert that an array contains no {@code null} elements.
 	 * <p>
 	 * Note: Does not complain if the array is empty!
@@ -457,7 +507,7 @@ public abstract class Assert2 {
 		if (array != null) {
 			for (Object element : array) {
 				if (element == null) {
-					throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+					throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 				}
 			}
 		}
@@ -520,7 +570,7 @@ public abstract class Assert2 {
 	 */
 	public static void notEmpty(Collection<?> collection, String fmtMessage, Object... args) {
 		if (collection == null || collection.isEmpty()) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -577,7 +627,7 @@ public abstract class Assert2 {
 	 */
 	public static void notEmpty(Map<?, ?> map, String fmtMessage, Object... args) {
 		if (map == null || map.isEmpty()) {
-			throw new IllegalArgumentException("[Assertion failed] - " + doFormat(fmtMessage, args));
+			throw new IllegalArgumentException(ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
 		}
 	}
 
@@ -591,6 +641,19 @@ public abstract class Assert2 {
 	 */
 	public static void notEmptyOf(Map<?, ?> map, String argName) {
 		notEmpty(map, argName + " must not be empty; it must contain at least one entry");
+	}
+
+	/**
+	 * Assert that a Map contains entries; that is, it must not be {@code null}
+	 * and must contain at least one entry.
+	 * 
+	 * @param map
+	 *            the map to check
+	 * @param exceptionClass
+	 * @param argName
+	 */
+	public static void notEmptyOf(Map<?, ?> map, Class<? extends RuntimeException> exceptionClass, String argName) {
+		notEmpty(map, exceptionClass, argName + " must not be empty; it must contain at least one entry");
 	}
 
 	/**
@@ -831,10 +894,14 @@ public abstract class Assert2 {
 	 * @param fmtMessage
 	 * @param args
 	 */
-	public static void doAssertHandle(Class<? extends RuntimeException> exceptionClass, String fmtMessage, Object... args) {
+	private static void doAssertHandle(Class<? extends RuntimeException> exceptionClass, String fmtMessage, Object... args) {
 		RuntimeException th = newRuntimeExceptionInstance(exceptionClass);
 		// Init cause message
-		setField(detailMessageField, th, "[Assertion failed] - " + doFormat(fmtMessage, args));
+		try {
+			detailMessageField.set(th, ASSERT_FAILED_PREFIX + doFormat(fmtMessage, args));
+		} catch (Exception ex) {
+			throw new Error("Unexpected reflection exception - " + ex.getClass().getName() + ": " + ex.getMessage());
+		}
 
 		// Remove useless stack elements
 		StackTraceElement[] stackEles = th.getStackTrace();
@@ -861,14 +928,18 @@ public abstract class Assert2 {
 	private static RuntimeException newRuntimeExceptionInstance(Class<? extends RuntimeException> exceptionClass) {
 		try {
 			if (objenesis != null) {
-				return (RuntimeException) invokeMethod(objenesisStdNewInstanceMethod, objenesis, exceptionClass);
+				return (RuntimeException) objenesisStdNewInstanceMethod.invoke(objenesis, new Object[] { exceptionClass });
 			}
 			return (RuntimeException) exceptionClass.newInstance();
-		} catch (Exception e) {
-			throw new Error(e);
+		} catch (Exception ex) {
+			throw new Error("Unexpected reflection exception - " + ex.getClass().getName() + ": " + ex.getMessage());
 		}
 	}
 
+	/**
+	 * @see new IllegalArgumentException("[Assertion failed] - xxx required");
+	 */
+	final private static String ASSERT_FAILED_PREFIX = "[AF] - ";
 	final private static String NEW_RUNTIMEEXCEPTION_INSTANCE_METHOD = Assert2.class.getName() + "#newRuntimeExceptionInstance";
 	final private static String OBJENSIS_CLASS = "org.springframework.objenesis.ObjenesisStd";
 	final private static Object objenesis;
@@ -877,31 +948,34 @@ public abstract class Assert2 {
 	final private static Field causeField;
 
 	static {
-		detailMessageField = findField(Throwable.class, "detailMessage", String.class);
-		causeField = findField(Throwable.class, "cause", Throwable.class);
-		makeAccessible(detailMessageField);
-		makeAccessible(causeField);
-
-		Object _objenesis = null;
-		Method _objenesisStdNewInstanceMethod = null;
 		try {
-			Class<?> objenesisClass = forName(OBJENSIS_CLASS, currentThread().getContextClassLoader());
-			if (!Objects.isNull(objenesisClass)) {
-				_objenesisStdNewInstanceMethod = findMethod(objenesisClass, "newInstance", Class.class);
-				// Objenesis object.
-				for (Constructor<?> c : objenesisClass.getConstructors()) {
-					Class<?>[] paramClasses = c.getParameterTypes();
-					if (paramClasses != null && paramClasses.length == 1 && boolean.class.isAssignableFrom(paramClasses[0])) {
-						_objenesis = c.newInstance(new Object[] { true });
-						break;
+			detailMessageField = Throwable.class.getDeclaredField("detailMessage");
+			causeField = Throwable.class.getDeclaredField("cause");
+			detailMessageField.setAccessible(true);
+			causeField.setAccessible(true);
+
+			Object _objenesis = null;
+			Method _objenesisStdNewInstanceMethod = null;
+			try {
+				Class<?> objenesisClass = Class.forName(OBJENSIS_CLASS, false, currentThread().getContextClassLoader());
+				if (!Objects.isNull(objenesisClass)) {
+					_objenesisStdNewInstanceMethod = objenesisClass.getMethod("newInstance", Class.class);
+					// Objenesis object.
+					for (Constructor<?> c : objenesisClass.getConstructors()) {
+						Class<?>[] paramClasses = c.getParameterTypes();
+						if (paramClasses != null && paramClasses.length == 1 && boolean.class.isAssignableFrom(paramClasses[0])) {
+							_objenesis = c.newInstance(new Object[] { true });
+							break;
+						}
 					}
 				}
+			} catch (ClassNotFoundException e) { // Ignore
 			}
-		} catch (Exception e) { // Ignore
+			objenesis = _objenesis;
+			objenesisStdNewInstanceMethod = _objenesisStdNewInstanceMethod;
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
 		}
-		objenesis = _objenesis;
-		objenesisStdNewInstanceMethod = _objenesisStdNewInstanceMethod;
-
 	}
 
 }

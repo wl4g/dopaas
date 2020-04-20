@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.common.exception.ci;
 
-import com.wl4g.devops.common.exception.restful.BizInvalidArgRestfulException;
+import com.wl4g.devops.common.exception.restful.InvalidParamsRestfulException;
 
-public class BadCommandScriptException extends CiException implements BizInvalidArgRestfulException {
+public class BadCommandScriptException extends CiException implements InvalidParamsRestfulException {
 	private static final long serialVersionUID = -7034899390745766939L;
 
 	/**

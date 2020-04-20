@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.config.properties;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 
 /**
  * IAM server parameters configuration properties
@@ -29,11 +30,6 @@ public class ServerParamProperties extends ParamProperties {
 	private static final long serialVersionUID = 3258460473711285504L;
 
 	/**
-	 * Account parameter name at login time of account password.
-	 */
-	private String principalName = "principal";
-
-	/**
 	 * Password parameter name at login time of account password.
 	 */
 	private String credentialName = "credential";
@@ -44,6 +40,18 @@ public class ServerParamProperties extends ParamProperties {
 	private String clientRefName = "client_ref";
 
 	/**
+	 * UmidToken parameter name.
+	 */
+	private String umidTokenName = "umidToken";
+
+	/**
+	 * Secure asymmetric cryptic algorithm name.
+	 * 
+	 * @see {@link SecureAlgKind }
+	 */
+	private String secretAlgKindName = "alg";
+
+	/**
 	 * Verification verifiedToken parameter name.
 	 */
 	private String verifiedTokenName = "verifiedToken";
@@ -52,14 +60,6 @@ public class ServerParamProperties extends ParamProperties {
 	 * Dynamic verification code operation action type parameter key-name.
 	 */
 	private String smsActionName = "action";
-
-	public String getPrincipalName() {
-		return principalName;
-	}
-
-	public void setPrincipalName(String loginUsername) {
-		this.principalName = loginUsername;
-	}
 
 	public String getCredentialName() {
 		return credentialName;
@@ -75,6 +75,22 @@ public class ServerParamProperties extends ParamProperties {
 
 	public void setClientRefName(String clientRefName) {
 		this.clientRefName = clientRefName;
+	}
+
+	public String getUmidTokenName() {
+		return umidTokenName;
+	}
+
+	public void setUmidTokenName(String umidTokenName) {
+		this.umidTokenName = umidTokenName;
+	}
+
+	public String getSecretAlgKindName() {
+		return secretAlgKindName;
+	}
+
+	public void setSecretAlgKindName(String cryptAlgKindName) {
+		this.secretAlgKindName = cryptAlgKindName;
 	}
 
 	public String getVerifiedTokenName() {

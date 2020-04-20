@@ -23,6 +23,7 @@ import com.wl4g.devops.iam.authc.credential.secure.CredentialsSecurer;
 import com.wl4g.devops.iam.authc.credential.secure.CredentialsToken;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.service.GroupService;
 import com.wl4g.devops.iam.service.UserService;
 import com.wl4g.devops.page.PageModel;
@@ -111,7 +112,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void save(User user) {
 		if (StringUtils.isNotBlank(user.getPassword())) {
-			String signature = credentialsSecurer.signature(new CredentialsToken(user.getUserName(), user.getPassword()));
+			// TODO Dynamic choosed algorithm!!
+			String signature = credentialsSecurer
+					.signature(new CredentialsToken(user.getUserName(), user.getPassword(), SecureAlgKind.RSA));
 			user.setPassword(signature);
 			sessionDAO.removeAccessSession(user.getUserName());
 		}

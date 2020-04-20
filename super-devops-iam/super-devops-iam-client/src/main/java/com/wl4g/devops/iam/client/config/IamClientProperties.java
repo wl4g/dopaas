@@ -16,15 +16,16 @@
 package com.wl4g.devops.iam.client.config;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.Assert.notNull;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils;
 import com.wl4g.devops.iam.client.config.IamClientProperties.ClientParamProperties;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 @ConfigurationProperties(prefix = "spring.cloud.devops.iam.client")
 public class IamClientProperties extends AbstractIamProperties<ClientParamProperties> implements InitializingBean {
@@ -46,11 +47,6 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	 * controlled by iam-server.
 	 */
 	private String loginUri;
-
-	/**
-	 * Application name. e.g. http://host:port/{serviceName}/shiro-cas
-	 */
-	private String serviceName;
 
 	/**
 	 * This success(index) page URI
@@ -108,14 +104,6 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 		this.serverUri = baseUri;
 	}
 
-	public String getServiceName() {
-		return serviceName;
-	}
-
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
-	}
-
 	@Override
 	public String getSuccessUri() {
 		return successUri;
@@ -162,21 +150,18 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 
 	@Override
 	protected void validation() {
-		notNull(getServerUri(), "'baseUri' must be empty.");
-		notNull(getServiceName(), "'serviceName' must be empty.");
-		notNull(getFilterChain(), "'filterChain' must be empty.");
 		super.validation();
+		hasTextOf(getServerUri(), "serverBaseUri");
+		notNullOf(getFilterChain(), "filterChain");
 	}
 
 	@Override
 	protected void applyDefaultIfNecessary() {
-		// Service name.
-		if (isBlank(getServiceName())) {
-			setServiceName(environment.getProperty("spring.application.name"));
-		}
-		// Login URI.
+		super.applyDefaultIfNecessary();
+
+		// Login page URI.
 		if (isBlank(getLoginUri())) {
-			setLoginUri(AuthenticatingSecurityUtils.correctAuthenticaitorURI(getServerUri()));
+			setLoginUri(correctAuthenticaitorURI(getServerUri()));
 		}
 	}
 

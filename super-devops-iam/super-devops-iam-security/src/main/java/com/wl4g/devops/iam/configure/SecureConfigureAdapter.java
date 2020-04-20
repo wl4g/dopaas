@@ -24,6 +24,11 @@ package com.wl4g.devops.iam.configure;
  */
 public interface SecureConfigureAdapter {
 
+	/**
+	 * Credenticals securer configuring.
+	 * 
+	 * @return
+	 */
 	SecureConfig configure();
 
 }

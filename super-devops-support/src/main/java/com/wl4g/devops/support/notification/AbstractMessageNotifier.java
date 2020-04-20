@@ -25,6 +25,8 @@ import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 
+import java.lang.reflect.Method;
+
 /**
  * {@link AbstractMessageNotifier}
  *
@@ -35,51 +37,51 @@ import static java.util.Objects.isNull;
  * @see
  */
 public abstract class AbstractMessageNotifier<C extends NotifyProperties> implements MessageNotifier, InitializingBean {
-    final protected SmartLogger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
-    /**
-     * Notify properties.
-     */
-    final protected C config;
+	/**
+	 * Notify properties.
+	 */
+	final protected C config;
 
-    @Autowired
-    protected Validator validator;
+	@Autowired
+	protected Validator validator;
 
-    public AbstractMessageNotifier(C config) {
-        notNullOf(config, "config");
-        this.config = config;
-    }
+	public AbstractMessageNotifier(C config) {
+		notNullOf(config, "config");
+		this.config = config;
+	}
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+	@Override
+	public void afterPropertiesSet() throws Exception {
 
-    }
+	}
 
-    @Override
-    public boolean preHandle(Object[] args) {
-        if (!isNull(args)) {
-            for (Object arg : args) {
-                validator.validate(arg);
-            }
-        }
+	@Override
+	public boolean preHandle(Method method, Object[] args) {
+		if (!isNull(args)) {
+			for (Object arg : args) {
+				validator.validate(arg);
+			}
+		}
 
-        // Check notify message templateKey
-        if (config instanceof AbstractNotifyProperties) {
-            AbstractNotifyProperties conf = (AbstractNotifyProperties) config;
-            for (Object arg : args) {
-                if (arg instanceof GenericNotifyMessage) {
-                    GenericNotifyMessage msg = (GenericNotifyMessage) arg;
-                    // No such templateKey?
-                    if (!conf.hasTemplateKey(msg.getTemplateKey())) {
-                        log.warn("No such notification template key of: {}", msg.getTemplateKey());
-                        return false;
-                    }
-                    break;
-                }
-            }
-        }
+		// Check notify message templateKey
+		if (config instanceof AbstractNotifyProperties) {
+			AbstractNotifyProperties conf = (AbstractNotifyProperties) config;
+			for (Object arg : args) {
+				if (arg instanceof GenericNotifyMessage) {
+					GenericNotifyMessage msg = (GenericNotifyMessage) arg;
+					// No such templateKey?
+					if (!conf.hasTemplateKey(msg.getTemplateKey())) {
+						log.warn("No such notification template key of: {}", msg.getTemplateKey());
+						return false;
+					}
+					break;
+				}
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
 }

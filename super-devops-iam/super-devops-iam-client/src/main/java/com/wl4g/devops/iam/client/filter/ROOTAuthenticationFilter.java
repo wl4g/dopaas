@@ -36,7 +36,7 @@ import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 
 /**
  * This filter validates the CAS service ticket to authenticate the user. It
@@ -62,7 +62,7 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 	final public static String NAME = "rootFilter";
 
 	public ROOTAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
-			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
 		super(config, context, coprocessor, cacheManager);
 	}
 
@@ -79,7 +79,7 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 	 *             if there is an error processing the request.
 	 */
 	@Override
-	protected FastCasAuthenticationToken createAuthenticationToken(HttpServletRequest request, HttpServletResponse response)
+	protected FastCasAuthenticationToken doCreateToken(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String ticket = getCleanParam(request, config.getParam().getGrantTicket());
 		return new FastCasAuthenticationToken(ticket);
@@ -87,9 +87,7 @@ public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastC
 
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		if (log.isDebugEnabled()) {
-			log.debug("ROOT requestURL: {}", getFullRequestURL(toHttp(request)));
-		}
+		log.debug("ROOT requestURL: {}", getFullRequestURL(toHttp(request)));
 
 		/**
 		 * See:{@link com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter#getClearSavedRememberUrl()}

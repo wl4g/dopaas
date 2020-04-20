@@ -38,18 +38,18 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
  * @date 2018年11月29日
  * @since
  */
-public abstract interface AuthenticationHandler {
+public interface AuthenticationHandler {
 
 	/**
 	 * Assertion the validity of the request parameters before executing the
 	 * login. (that is, verify that the <b>'source application'</b> and the
 	 * secure callback <b>'redirectUrl'</b> are legitimate)
 	 *
-	 * @param fromAppName
+	 * @param appName
 	 * @param redirectUrl
 	 * @throws IllegalCallbackDomainException
 	 */
-	void checkAuthenticateRedirectValidity(String fromAppName, String redirectUrl) throws IllegalCallbackDomainException;
+	void checkAuthenticateRedirectValidity(String appName, String redirectUrl) throws IllegalCallbackDomainException;
 
 	/**
 	 * Assertion whether the current login account has permission to access the
@@ -57,11 +57,11 @@ public abstract interface AuthenticationHandler {
 	 * and <b>'application'</b>)
 	 *
 	 * @param principal
-	 * @param fromAppName
+	 * @param appName
 	 *            From source application
 	 * @throws IllegalApplicationAccessException
 	 */
-	void assertApplicationAccessAuthorized(String principal, String fromAppName) throws IllegalApplicationAccessException;
+	void assertApplicationAccessAuthorized(String principal, String appName) throws IllegalApplicationAccessException;
 
 	/**
 	 * Validate application request ticket
@@ -75,13 +75,13 @@ public abstract interface AuthenticationHandler {
 	/**
 	 * Shiro authentication success callback process.
 	 *
-	 * @param fromAppName
+	 * @param appName
 	 *            from source application name
 	 * @param subject
 	 *            Shiro subject
 	 * @return Redirect callback information
 	 */
-	LoggedModel loggedin(String fromAppName, Subject subject);
+	LoggedModel loggedin(String appName, Subject subject);
 
 	/**
 	 * Logout server session, including all external applications logged-in<br/>
@@ -89,29 +89,29 @@ public abstract interface AuthenticationHandler {
 	 * The Iam server logs out with two entries: <br/>
 	 * 1: access http://iam-client/logout <br/>
 	 * 2: direct access http://iam-server/logout <br/>
-	 * {@link com.wl4g.devops.iam.web.CentralAuthenticatorController#logout()}
+	 * {@link com.wl4g.devops.iam.web.CentralAuthenticatorEndpoint#logout()}
 	 * {@link com.wl4g.devops.iam.filter.LogoutAuthenticationFilter#preHandle()}
 	 *
 	 * @param forced
 	 *            logout forced
-	 * @param fromAppName
+	 * @param appName
 	 *            from source application name
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	LogoutModel logout(boolean forced, String fromAppName, HttpServletRequest request, HttpServletResponse response);
+	LogoutModel logout(boolean forced, String appName, HttpServletRequest request, HttpServletResponse response);
 
 	/**
 	 * Validation application secondary authentication
 	 *
 	 * @param secondAuthCode
 	 *            Secondary authentication code
-	 * @param fromAppName
+	 * @param appName
 	 *            from source application name
 	 * @return
 	 */
-	SecondAuthcAssertModel secondValidate(String secondAuthCode, String fromAppName);
+	SecondAuthcAssertModel secondaryValidate(String secondAuthCode, String appName);
 
 	/**
 	 * Sessions expired validation

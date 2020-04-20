@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
 
 import com.wl4g.devops.support.config.JedisAutoConfiguration.JedisProperties;
 
@@ -43,12 +42,12 @@ import redis.clients.jedis.JedisCluster;
 public class JedisClusterFactoryBean implements FactoryBean<JedisCluster>, InitializingBean {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	private JedisProperties config;
+	final private JedisProperties config;
 	private JedisCluster jedisCluster;
 
-	public JedisClusterFactoryBean(JedisProperties properties) {
-		this.config = properties;
-		Assert.notNull(properties, "'properties' must not be null");
+	public JedisClusterFactoryBean(JedisProperties config) {
+		notNullOf(config, "jedisProperties");
+		this.config = config;
 	}
 
 	@Override

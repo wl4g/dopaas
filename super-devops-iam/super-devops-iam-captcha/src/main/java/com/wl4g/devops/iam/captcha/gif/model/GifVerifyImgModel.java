@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.captcha.gif.model;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
+import com.wl4g.devops.iam.verification.model.GenericVerifyResult;
 
 /**
  * GIF simple image model
@@ -26,7 +26,7 @@ import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
  * @version v1.0 2019年9月4日
  * @since
  */
-public class GifVerifyImgModel extends SimpleVerifyImgModel {
+public class GifVerifyImgModel extends GenericVerifyResult {
 	private static final long serialVersionUID = -5475719110868579286L;
 
 	public GifVerifyImgModel() {

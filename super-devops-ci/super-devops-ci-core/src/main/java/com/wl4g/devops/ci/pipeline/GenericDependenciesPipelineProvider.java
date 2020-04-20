@@ -105,7 +105,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		for (Dependency depd : dependencies) {
 
 			// Is dependency Already build
-			if(flowManager.isDependencyBuilded(depd.getDependentId().toString())){
+			if (flowManager.isDependencyBuilded(depd.getDependentId().toString())) {
 				continue;
 			}
 
@@ -113,7 +113,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			flowManager.pipelineStateChange(pipelineModel);
 			TaskBuildCommand taskBuildCommand = extractDependencyBuildCommand(commands, depd.getDependentId());
 
-			Assert2.notNullOf(taskBuildCommand,"taskBuildCommand");
+			Assert2.notNullOf(taskBuildCommand, "taskBuildCommand");
 			doMutexBuildModuleInDependencies(depd.getDependentId(), taskBuildCommand.getBranch(), taskBuildCommand.getCommand());
 
 		}
@@ -121,18 +121,17 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// Build for primary(self).
 		pipelineModel.setCurrent(taskHisy.getProjectId().toString());
 		flowManager.pipelineStateChange(pipelineModel);
-		doMutexBuildModuleInDependencies(taskHisy.getProjectId(),  taskHisy.getBranchName(), taskHisy.getBuildCommand());
+		doMutexBuildModuleInDependencies(taskHisy.getProjectId(), taskHisy.getBranchName(), taskHisy.getBuildCommand());
 
 		// Build Success
 		pipelineModel.setCurrent(null);
-		pipelineModel.setStatus(RUNNING_DEPLOY.toString()); //build complete ==? pipeline complete
+		// build complete ==? pipeline complete
+		pipelineModel.setStatus(RUNNING_DEPLOY.toString());
 		flowManager.pipelineStateChange(pipelineModel);
 
 		// Call after all built dependencies completed handling.
 		postBuiltModulesDependencies();
 	}
-
-
 
 	/**
 	 * Handing after all dependency modules are built, For example, set the
@@ -183,8 +182,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 				lock.unlock();
 			}
 		} else {
-			String buildWaitMsg = writeBuildLog(
-					"Waiting to build dependency, for timeout: %sms,  projectId: %s ...",
+			String buildWaitMsg = writeBuildLog("Waiting to build dependency, for timeout: %sms,  projectId: %s ...",
 					config.getBuild().getJobTimeoutMs(), projectId);
 			log.info(buildWaitMsg);
 
@@ -222,8 +220,9 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		log.info("Pipeline building for projectId: {}", projectId);
 
 		TaskHistory taskHisy = getContext().getTaskHistory();
+
 		Project project = projectDao.selectByPrimaryKey(projectId);
-		notNull(project, String.format("Not found project by %s", projectId));
+		notNull(project, format("Not found project by %s", projectId));
 
 		// Obtain project source from VCS.
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();

@@ -33,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-shell-core</artifactId>
+			<artifactId>super-devops-components-shell-core</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

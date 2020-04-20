@@ -21,25 +21,25 @@ import java.util.Set;
 
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
-import org.apache.shiro.session.mgt.eis.AbstractSessionDAO;
-import org.apache.shiro.util.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SESSION;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static java.util.Objects.nonNull;
-import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.google.common.base.Charsets;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.CacheKey;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
+import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.session.IamSession;
+import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.redis.ScanCursor;
 import com.wl4g.devops.support.redis.ScanCursor.CursorWrapper;
 
+import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.ScanParams;
 
 /**
@@ -50,62 +50,21 @@ import redis.clients.jedis.ScanParams;
  * @date 2018年11月28日
  * @since
  */
-public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSessionDAO {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 
 	/**
-	 * IAM properties
+	 * Distributed locks.
 	 */
-	final private AbstractIamProperties<? extends ParamProperties> config;
+	@Autowired
+	protected JedisLockManager lockManager;
 
-	/**
-	 * Jedis cache manager.
-	 */
-	final private JedisCacheManager cacheManager;
-
-	public JedisIamSessionDAO(AbstractIamProperties<? extends ParamProperties> config, JedisCacheManager cacheManager) {
-		Assert.notNull(config, "'config' must not be null");
-		Assert.notNull(cacheManager, "'cacheManager' must not be null");
-		this.config = config;
-		this.cacheManager = cacheManager;
-	}
-
-	@Override
-	public void update(final Session session) throws UnknownSessionException {
-		if (session == null || session.getId() == null) {
-			return;
-		}
-		// Get logged ID
-		// PrincipalCollection pc = (PrincipalCollection)
-		// session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
-		// String principalId = pc != null ?
-		// pc.getPrimaryPrincipal().toString() : "";
-
-		if (log.isDebugEnabled()) {
-			log.debug("update {}", session.getId());
-		}
-
-		/**
-		 * Update session latest expiration time to timeout time
-		 */
-		cacheManager.getEnhancedCache(CACHE_SESSION).put(new EnhancedKey(session.getId(), session.getTimeout()), session);
-	}
-
-	@Override
-	public void delete(final Session session) {
-		if (session == null || session.getId() == null) {
-			return;
-		}
-
-		if (log.isDebugEnabled()) {
-			log.debug("delete {} ", session.getId());
-		}
-		cacheManager.getEnhancedCache(CACHE_SESSION).remove(new EnhancedKey(session.getId()));
+	public JedisIamSessionDAO(AbstractIamProperties<? extends ParamProperties> config, IamCacheManager cacheManager) {
+		super(config, cacheManager);
 	}
 
 	@Override
 	public ScanCursor<IamSession> getAccessSessions(final int limit) {
-		return getAccessSessions(new CursorWrapper(), 200);
+		return getAccessSessions(new CursorWrapper(), 100);
 	}
 
 	@Override
@@ -113,7 +72,14 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 		isTrue(limit > 0, "accessSessions batchSize must >0");
 		byte[] match = (config.getCache().getPrefix() + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
 		ScanParams params = new ScanParams().count(limit).match(match);
-		return new ScanCursor<IamSession>(cacheManager.getJedisCluster(), cursor, IamSession.class, params) {
+		JedisCluster jedisCluster = ((JedisIamCacheManager) cacheManager).getJedisCluster();
+		return new ScanCursor<IamSession>(jedisCluster, cursor, IamSession.class, params) {
+			@Override
+			public synchronized IamSession next() {
+				IamSession s = super.next();
+				awareRelationCache(s);
+				return s;
+			}
 		}.open();
 	}
 
@@ -124,6 +90,7 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 		while (sc.hasNext()) {
 			IamSession s = sc.next();
 			if (nonNull(s)) {
+				awareRelationCache(s);
 				Object primaryPrincipal = s.getPrimaryPrincipal();
 				if (nonNull(primaryPrincipal) && primaryPrincipal.equals(principal)) {
 					principalSessions.add(s);
@@ -135,26 +102,20 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 
 	@Override
 	public void removeAccessSession(Object principal) {
-		if (log.isDebugEnabled()) {
-			log.debug("removeActiveSession principal: {} ", principal);
-		}
+		log.debug("removeActiveSession principal: {} ", principal);
 
 		Set<IamSession> sessions = getAccessSessions(principal);
 		if (!isEmpty(sessions)) {
 			for (IamSession s : sessions) {
 				delete(s);
-				if (log.isDebugEnabled()) {
-					log.debug("Removed iam session for principal: {}, session: {}", principal, s);
-				}
+				log.debug("Removed iam session for principal: {}, session: {}", principal, s);
 			}
 		}
 	}
 
 	@Override
 	protected Serializable doCreate(Session session) {
-		if (log.isDebugEnabled()) {
-			log.debug("doCreate {}", session.getId());
-		}
+		log.debug("doCreate {}", session.getId());
 		Serializable sessionId = generateSessionId(session);
 		assignSessionId(session, sessionId);
 		update(session);
@@ -162,21 +123,8 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 	}
 
 	@Override
-	protected Session doReadSession(final Serializable sessionId) {
-		if (sessionId == null) {
-			return null;
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("doReadSession {}", sessionId);
-		}
-		return (Session) cacheManager.getEnhancedCache(CACHE_SESSION).get(new EnhancedKey(sessionId, IamSession.class));
-	}
-
-	@Override
 	public Session readSession(Serializable sessionId) throws UnknownSessionException {
-		if (log.isDebugEnabled()) {
-			log.debug("readSession {}", sessionId);
-		}
+		log.debug("readSession {}", sessionId);
 		try {
 			return super.readSession(sessionId);
 		} catch (UnknownSessionException e) {
@@ -187,6 +135,22 @@ public class JedisIamSessionDAO extends AbstractSessionDAO implements IamSession
 	@Override
 	public void assignSessionId(Session session, Serializable sessionId) {
 		((IamSession) session).setId((String) sessionId);
+	}
+
+	@Override
+	protected void doPutIamSession(Session session) {
+		// Update session latest expiration time to timeout.
+		cacheManager.getIamCache(CACHE_SESSION).put(new CacheKey(session.getId(), session.getTimeout()), session);
+	}
+
+	@Override
+	protected void doDeleteIamSession(Session session) {
+		cacheManager.getIamCache(CACHE_SESSION).remove(new CacheKey(session.getId()));
+	}
+
+	@Override
+	protected Session doReadIamSession(Serializable sessionId) {
+		return (Session) cacheManager.getIamCache(CACHE_SESSION).get(new CacheKey(sessionId, IamSession.class));
 	}
 
 }

@@ -1,29 +1,29 @@
-### 一个基于CAS协议的SSO统一认证实现，支持WeChat、QQ、Facebook等SNS授权认证，Opensaml开放API授权，内置接口级AOP二次认证实现
+### 一个基于CAS协议的SSO登录认证企业级增强实现(PC/Android/iOS/WechatMp统一接口)，还支持QQ/Facebook等社交SNS授权认证，提供Opensaml开放API授权，内置接口级AOP二次认证实现等.
 
-一、快速入门
-- 1，服务端集成：
-    - 1.1，独立运行模式，使用iam的数据库表，适用于新系统集成，
-    - 1.2，依赖嵌入模式，使用外部自定义数据库表，适用于旧系统改造集成，
-    - 1.3，所有支持的yml配置，
+#### 一、快速入门
+#####	- 1，服务端集成：
+    	- 1.1，独立运行模式，使用iam的数据库表，适用于新系统集成，
+    	- 1.2，依赖嵌入模式，使用外部自定义数据库表，适用于旧系统改造集成，
+    	- 1.3，所有支持的yml配置，
 
-- 2，客户端集成：
-    - 2.1，PC集成(前后端分离)
-    - 2.2，[安卓端接入（全局认证拦截器）](super-devops-iam-example/src/main/java/com/wl4g/devops/iam/example/android/AndroidIamUserCoordinator.java)
-	- 2.3，微信公众号集成，
-	- 2.4，服务端所有支持的yml配置:
+#####	- 2，客户端集成：
+    	- 2.1，PC集成(前后端分离)
+    	- 2.2，[安卓端接入（全局认证拦截器）](super-devops-iam-example/src/main/java/com/wl4g/devops/iam/example/android/AndroidIamUserCoordinator.java)
+		- 2.3，微信公众号集成，
+		- 2.4，服务端所有支持的yml配置(以及默认值):
 ```
 spring:
   cloud:
     devops:
-      iam: # IAM server configuration.
-        default-view-loader-path: classpath:/default-view/
-        default-view-base-uri: /view
-        login-uri: /default-view/login.html
-        success-uri: /default-view/index.html
-        unauthorized-uri: /default-view/403.html
-        filter-chain: 
-          /public/**: anon # Public rule release
-          /test/**: anon # Testing rule release
+      iam: # IAM configuration.
+        #login-uri: /view/login.html
+        login-uri: http://localhost:8080/#/login # Default, see:super-devops-view
+        unauthorized-uri: /view/403.html
+        success-endpoint: ${spring.application.name}@/view/index.html # Default
+        acl:
+          secure: false # Turn off protection will trust any same intranet IP.
+          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
         param: # Must be consistent with the client, otherwise authentication will never succeed
           sid: __sid
           sid-save-cookie: __cookie
@@ -40,8 +40,6 @@ spring:
           second-auth-code: secondAuthCode
           funcId: function
           i18n-lang: lang
-        strategy: # Authentication api interactive strategy configuration.
-          response-template: '{"code":${code},"message":"${message}","status":"${status}","data":"${data}"}'
         matcher:
           fail-fast-match-max-attempts: 10
           fail-fast-match-delay: 3600000
@@ -60,23 +58,35 @@ spring:
           session-validation-interval: 1500000
         cookie:
           name: IAMTOKEN_TGC
-        authc-internal-access:
-          secure: true
-          allowIp: 127.0.0.1
-          denyIp:
         captcha:
-          enabled: true
+          #jigsaw:
+            #source-dir: ${server.tomcat.basedir}/data/jigsaw-maternal
+        sns: # SNS configuration.
+          oauth2-connect-expire-ms: 60_000 # oauth2 connect processing expire time
+          wechat-mp:
+            app-id: yourappid
+            app-secret: yoursecret
+            redirect-url: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}${server.contextPath}/sns/wechatmp/callback
+          wechat:
+            app-id: yourappid
+            app-secret: yoursecret
+            redirect-url: http://passport.wl4g.com${server.contextPath}/sns/wechat/callback
+            #href: https://cdn.wl4g.com/static/css/wx.css
+          qq:
+            app-id: 101542056
+            app-secret: yoursecret
+            redirect-url: http://passport.wl4g.com${server.contextPath}/sns/qq/callback
 ```
-	>> 2.5，客户端所有支持的yml配置:
+	- 2.5，客户端所有支持的yml配置项(以及默认值):
 ```
 spring:
   cloud:
     devops:
       iam: # IAM client configuration.
-        authc-internal-access:
-          enable: true
-          allow-ip: 127.0.0.1
-          deny-ip: 
+        acl:
+          secure: false # Turn off protection will trust any same intranet IP.
+          allowIpRange: 127.0.0.1
+          denyIpRange: 
         client: # IAM client configuration.
           service-name: ${spring.application.name}
           # Authentication center api base uri
@@ -112,8 +122,11 @@ spring:
             name: IAMTOKEN_${spring.application.name}
 ```
 
-二、二次开发
-> * 3.1、客户端二次开发
-> * 3.2、服务端二次开发
+#### 二、认证机制原理
 
-###### [Reference](https://www.zybuluo.com/mdeditor)
+
+#### 三、二次开发指南
+#####	- 3.1、客户端二次开发
+#####	- 3.2、服务端二次开发
+
+###### [Reference](http://github.com/wl4g/super-devops)

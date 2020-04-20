@@ -27,7 +27,6 @@ import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
-import com.wl4g.devops.dao.iam.DictDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
@@ -64,8 +63,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	private AppInstanceDao appInstanceDao;
 	@Autowired
 	private ConfigContextHandler contextHandler;
-	@Autowired
-	private DictDao dictDao;
 
 	@Override
 	public void configure(VersionOfDetail vd) {
@@ -104,7 +101,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		if (null != vd.getConfigGurations() && !vd.getConfigGurations().isEmpty()) {
 			Map<String, Object> vMap = new HashMap<>();
 			vMap.put("vid", vd.getId());
-			for(VersionContentBean versionContentBean : vd.getConfigGurations()){
+			for (VersionContentBean versionContentBean : vd.getConfigGurations()) {
 				versionContentBean.preInsert();
 			}
 			vMap.put("configGurations", vd.getConfigGurations());

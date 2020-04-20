@@ -21,13 +21,19 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.URL_SESSION_ID_SOURCE;
+import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
 import static java.lang.Boolean.TRUE;
+import static java.lang.String.valueOf;
+import static java.util.Objects.isNull;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -43,21 +49,23 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
-import org.apache.shiro.session.mgt.SimpleSession;
-import org.apache.shiro.util.Assert;
+import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
+import com.wl4g.devops.iam.common.cache.CacheKey;
+import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
+import com.wl4g.devops.iam.common.session.GrantCredentialsInfo;
+import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Abstract custom IAM session management
@@ -69,12 +77,12 @@ import com.wl4g.devops.tool.common.lang.StringUtils2;
  */
 public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<? extends ParamProperties>>
 		extends DefaultWebSessionManager {
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
-	 * Cache name
+	 * {@link GrantCredentialsInfo} granting ticket cache.
 	 */
-	final protected String cacheName;
+	final protected IamCache ticketCache;
 
 	/**
 	 * Abstract IAM properties configuration
@@ -84,8 +92,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	/**
 	 * Enhanced cache manager.
 	 */
-	@Autowired
-	protected EnhancedCacheManager cacheManager;
+	final protected IamCacheManager cacheManager;
 
 	/**
 	 * IAM session DAO.
@@ -99,11 +106,13 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	@Autowired
 	protected SecurityCoprocessor coprocessor;
 
-	public AbstractIamSessionManager(C config, String cacheName) {
-		Assert.notNull(config, "'config' must not be null");
-		Assert.notNull(cacheName, "'cacheName' must not be null");
+	public AbstractIamSessionManager(C config, IamCacheManager cacheManager, String ticketCache) {
+		notNullOf(config, "IamProperties");
+		notNullOf(cacheManager, "cacheManager");
+		hasTextOf(ticketCache, "ticketCacheName");
 		this.config = config;
-		this.cacheName = cacheName;
+		this.cacheManager = cacheManager;
+		this.ticketCache = cacheManager.getIamCache(ticketCache);
 	}
 
 	@Override
@@ -114,55 +123,64 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		// return null;
 		// }
 
-		// Call extra get SID.
-		Serializable sessionId = coprocessor.preGetSessionId(request, response);
-		if (checkAvailable(sessionId)) {
+		// Using extra custom session.
+		Serializable sessionId = coprocessor.preGetSessionId(toHttp(request), toHttp(response));
+		if (checkSessionValidity(sessionId)) {
 			log.debug("Use extra sid '{}'", sessionId);
+			// Sets session states
+			setSessionStates(request, response, sessionId);
+			// Storage sessions
+			saveSessionIdCookieIfNecessary(request, response, sessionId);
 			return sessionId;
+		}
+
+		// Using protocol internal ticket session.
+		if (isProtocolInternalRequest(request, response)) {
+			String grantTicket = getCleanParam(request, config.getParam().getGrantTicket());
+			if (checkSessionValidity(grantTicket)) {
+				/**
+				 * {@link CentralAuthenticationHandler#loggedin()}
+				 */
+				sessionId = (String) ticketCache.get(new CacheKey(grantTicket, String.class));
+				log.debug("Use ticket sid: '{}', grantTicket: '{}'", sessionId, grantTicket);
+				if (checkSessionValidity(sessionId))
+					return sessionId;
+				else
+					log.warn("Cannot gets sid with grantTicket: '{}'", grantTicket);
+			}
+			return null;
 		}
 
 		// Using URLs session. e.g.
 		// http://localhost/project?__sid=xxx&__cookie=yes
 		sessionId = getCleanParam(request, config.getParam().getSid());
-		if (checkAvailable(sessionId)) {
+		if (checkSessionValidity(sessionId)) {
 			log.debug("Use url sid '{}'", sessionId);
-			// Storage session.
-			storageTokenIfNecessary(request, response, sessionId);
-
-			// Set the current session state. (session sources and URL)
-			request.setAttribute(REFERENCED_SESSION_ID_SOURCE, URL_SESSION_ID_SOURCE);
-			request.setAttribute(REFERENCED_SESSION_ID, sessionId);
-			request.setAttribute(REFERENCED_SESSION_ID_IS_VALID, TRUE);
+			// Sets session states
+			setSessionStates(request, response, sessionId);
+			// Storage sessions
+			saveSessionIdCookieIfNecessary(request, response, sessionId);
 			return sessionId;
 		}
 
 		// Using cookie in URLs session.(e.g. Android/iOS/WechatApplet)
 		sessionId = getCleanParam(request, config.getCookie().getName());
-		if (checkAvailable(sessionId)) {
+		if (checkSessionValidity(sessionId)) {
 			log.debug("Use url cookie sid '{}'", sessionId);
+			// Sets session states
+			setSessionStates(request, response, sessionId);
+			// Storage sessions
+			saveSessionIdCookieIfNecessary(request, response, sessionId);
 			return sessionId;
 		}
 
 		// Using header session.(e.g. Android/iOS/WechatApplet)
 		sessionId = toHttp(request).getHeader(config.getCookie().getName());
-		if (checkAvailable(sessionId)) {
+		if (checkSessionValidity(sessionId)) {
 			log.debug("Use header cookie sid '{}'", sessionId);
+			// Sets session states
+			setSessionStates(request, response, sessionId);
 			return sessionId;
-		}
-
-		// Using grant ticket session.
-		String grantTicket = getCleanParam(request, config.getParam().getGrantTicket());
-		if (checkAvailable(grantTicket)) {
-			/**
-			 * {@link CentralAuthenticationHandler#loggedin()}
-			 */
-			sessionId = (String) cacheManager.getCache(cacheName).get(new EnhancedKey(grantTicket, String.class));
-			log.debug("Use ticket sid: '{}', grantTicket: '{}'", sessionId, grantTicket);
-			if (checkAvailable(sessionId)) {
-				return sessionId;
-			} else {
-				log.warn("Cannot get sid with grantTicket: '{}'", grantTicket);
-			}
 		}
 
 		// Using default cookie session.
@@ -306,9 +324,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		try {
 			return super.start(context);
 		} catch (NullPointerException e) {
-			SimpleSession session = new SimpleSession();
-			session.setId(0);
-			return session;
+			return new IamSession(0);
 		}
 	}
 
@@ -325,7 +341,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 				throw new IllegalArgumentException("sessionId cannot be null when persisting for subsequent requests.");
 			}
 			// Storage session token
-			storageTokenIfNecessary(request, response, session.getId().toString());
+			saveSessionIdCookieIfNecessary(request, response, session.getId().toString());
 		} else {
 			log.debug("Session ID cookie is disabled.  No cookie has been set for new session with id {}", session.getId());
 		}
@@ -351,37 +367,72 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * safeCheckText("12345") == true<br/>
 	 * safeCheckText(" 12345 ") == true<br/>
 	 *
-	 * @param str
+	 * @param sid
 	 * @return
 	 */
-	protected boolean checkAvailable(Serializable str) {
-		return str != null && isNotBlank(str.toString()) && !str.toString().equalsIgnoreCase("NULL");
+	protected boolean checkSessionValidity(Serializable sid) {
+		return !isNull(sid) && isNotBlank(sid.toString()) && !sid.toString().equalsIgnoreCase("NULL");
 	}
 
 	/**
-	 * Storage session token(cookie)
+	 * Storage session tokens to cookie.
 	 *
 	 * @param request
 	 * @param response
 	 * @param sessionId
 	 */
-	private void storageTokenIfNecessary(ServletRequest request, ServletResponse response, Serializable sessionId) {
-		/*
-		 * When a browser request or display specifies that cookies need to
-		 * saved.
-		 */
-		boolean isSidSave = isTrue(request, config.getParam().getSidSaveCookie());
-		if (isSidSave || isBrowser(toHttp(request)) || !isJSONResponse(toHttp(request))) {
-			Cookie cookie = new SimpleCookie(getSessionIdCookie());
-			cookie.setValue(String.valueOf(sessionId));
-			// Save to response.
-			cookie.saveTo(toHttp(request), toHttp(response));
-			log.trace("Set session ID cookie for session with id {}", sessionId);
+	private void saveSessionIdCookieIfNecessary(ServletRequest request, ServletResponse response, Serializable sessionId) {
+		if (isNull(sessionId))
+			return;
+
+		// When a browser request or display specifies that cookies need to
+		// saved.
+		boolean isSaveCookie = isTrue(request, config.getParam().getSidSaveCookie());
+		if (isSaveCookie || isBrowser(toHttp(request))) {
+			// Sets session cookie.
+			Cookie sid = new SimpleCookie(getSessionIdCookie());
+			// sid.setValue(valueOf(sessionId)+"; SameSite=None; Secure=false");
+			sid.setValue(valueOf(sessionId));
+			sid.saveTo(toHttp(request), toHttp(response));
+			log.trace("Sets sessionId to cookies of: {}", sessionId);
 		} else {
 			// Addition customize security headers.
-			toHttp(response).addHeader(getSessionIdCookie().getName(), String.valueOf(sessionId));
+			toHttp(response).addHeader(getSessionIdCookie().getName(), valueOf(sessionId));
 		}
 
 	}
+
+	/**
+	 * Sets the session state. (session sources and URL)
+	 * 
+	 * @param request
+	 * @param response
+	 * @param sessionId
+	 */
+	private void setSessionStates(ServletRequest request, ServletResponse response, Serializable sessionId) {
+		request.setAttribute(REFERENCED_SESSION_ID, sessionId);
+		request.setAttribute(REFERENCED_SESSION_ID_SOURCE, URL_SESSION_ID_SOURCE);
+		request.setAttribute(REFERENCED_SESSION_ID_IS_VALID, TRUE);
+	}
+
+	/**
+	 * Check is iam protocol internal request.
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	private boolean isProtocolInternalRequest(ServletRequest request, ServletResponse response) {
+		String requestPath = getPathWithinApplication(toHttp(request));
+		for (String pattern : defaultInternalPathPatterns) {
+			if (defaultAntMatcher.matchStart(pattern, requestPath)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	final private static AntPathMatcher defaultAntMatcher = new AntPathMatcher();
+	final private static String[] defaultInternalPathPatterns = { (URI_C_BASE + "/**"), (URI_S_BASE + "/**") };
 
 }

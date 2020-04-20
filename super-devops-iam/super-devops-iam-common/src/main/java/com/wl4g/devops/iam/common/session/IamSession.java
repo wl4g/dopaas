@@ -16,6 +16,10 @@
 package com.wl4g.devops.iam.common.session;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wl4g.devops.iam.common.cache.CacheKey;
+import com.wl4g.devops.iam.common.cache.IamCache;
+import com.wl4g.devops.tool.common.log.SmartLogger;
+
 import io.protostuff.Tag;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.InvalidSessionException;
@@ -25,8 +29,6 @@ import org.apache.shiro.session.mgt.SimpleSession;
 import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -34,8 +36,12 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
+import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.valueOf;
+import static java.util.Collections.emptySet;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.shiro.subject.support.DefaultSubjectContext.PRINCIPALS_SESSION_KEY;
@@ -57,7 +63,7 @@ public class IamSession implements ValidatingSession, Serializable {
 	// changes do not require a change to this number. If you need to generate
 	// a new number in this case, use the JDK's 'serialver' program to generate
 	// it.
-	private static final transient Logger log = LoggerFactory.getLogger(SimpleSession.class);
+	private static final transient SmartLogger log = getLogger(IamSession.class);
 
 	protected static final transient long MILLIS_PER_SECOND = 1000;
 	protected static final transient long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
@@ -97,15 +103,19 @@ public class IamSession implements ValidatingSession, Serializable {
 	//
 	// ==============================================================
 
+	/** That session ID. */
 	@Tag(value = 1, alias = "id")
 	private Serializable id;
 
+	/** That session create timestamp. */
 	@Tag(value = 2, alias = "startTimestamp")
 	private Date startTimestamp = new Date();
 
+	/** That session destroy timestamp. */
 	@Tag(value = 3, alias = "stopTimestamp")
 	private Date stopTimestamp;
 
+	/** That session expired. */
 	@Tag(value = 4, alias = "lastAccessTime")
 	private Date lastAccessTime;
 
@@ -113,14 +123,20 @@ public class IamSession implements ValidatingSession, Serializable {
 	@Tag(value = 5, alias = "timeout")
 	private long timeout = DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT;
 
+	/** That session expired. */
 	@Tag(value = 6, alias = "expired")
 	private boolean expired;
 
+	/** Remote client host. */
 	@Tag(value = 7, alias = "host")
 	private String host;
 
+	/** Attributes properties. */
 	@Tag(value = 8, alias = "attributes")
 	private Map<Object, Object> attributes;
+
+	/** Relations attributes {@link IamCache} */
+	protected transient IamCache relationAttrsCache;
 
 	public IamSession() {
 	}
@@ -233,7 +249,26 @@ public class IamSession implements ValidatingSession, Serializable {
 	}
 
 	/**
-	 * Get {@link IamSession} priary principal.
+	 * Gets relation attributes cache.
+	 * 
+	 * @return relationAttrsCache
+	 */
+	public IamCache getRelationAttrsCache() {
+		notNullOf(relationAttrsCache, "relationAttrsCache");
+		return this.relationAttrsCache;
+	}
+
+	/**
+	 * Sets relation attributes cache.
+	 * 
+	 * @param relationAttrsCache
+	 */
+	public void setRelationAttrsCache(IamCache relationAttrsCache) {
+		this.relationAttrsCache = relationAttrsCache;
+	}
+
+	/**
+	 * Gets {@link IamSession} priary principal.
 	 *
 	 * @see {@link org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal()}
 	 * @return
@@ -362,39 +397,52 @@ public class IamSession implements ValidatingSession, Serializable {
 	}
 
 	@JsonIgnore
+	@Override
 	public Collection<Object> getAttributeKeys() throws InvalidSessionException {
 		Map<Object, Object> attributes = getAttributes();
-		if (attributes == null) {
-			return Collections.emptySet();
+		if (isNull(attributes)) {
+			return emptySet();
 		}
-		return attributes.keySet().stream().collect(Collectors.toList());
+		return attributes.keySet();
 	}
 
 	@JsonIgnore
+	@Override
 	public Object getAttribute(Object key) {
-		Map<Object, Object> attributes = getAttributes();
-		if (attributes == null) {
-			return null;
+		if (isRelationAttrKey(key)) {
+			return getRelationAttrsCache().getMapField((RelationAttrKey) key);
 		}
-		return attributes.get(key);
+		return safeMap(getAttributes()).get(key);
 	}
 
 	@JsonIgnore
+	@Override
 	public void setAttribute(Object key, Object value) {
-		if (value == null) {
+		if (isNull(value)) {
 			removeAttribute(key);
 		} else {
-			getAttributesLazy().put(key, value);
+			if (isRelationAttrKey(key)) {
+				// Put relation attribute.
+				getRelationAttrsCache().mapPut((RelationAttrKey) key, value);
+			} else {
+				getAttributesLazy().put(key, value);
+			}
 		}
 	}
 
 	@JsonIgnore
+	@Override
 	public Object removeAttribute(Object key) {
 		Map<Object, Object> attributes = getAttributes();
-		if (attributes == null) {
+		if (isNull(attributes)) {
 			return null;
 		} else {
-			return attributes.remove(key);
+			if (isRelationAttrKey(key)) {
+				// Removing relation attribute.
+				return getRelationAttrsCache().mapRemove(valueOf(key));
+			} else {
+				return attributes.remove(key);
+			}
 		}
 	}
 
@@ -638,18 +686,46 @@ public class IamSession implements ValidatingSession, Serializable {
 		return (bitMask & fieldBitMask) != 0;
 	}
 
-	// public static void main(String[] args) {
-	// IamSession session = new IamSession();
-	// session.setHost("127.0.0.1");
-	// SocialAuthorizeInfo info = new SocialAuthorizeInfo("provideraaaa",
-	// "openIdbbbb");
-	// info.getUserProfile().put("a1", 11);
-	// info.getUserProfile().put("b2", "2222");
-	// session.setAttribute("userProfile", info);
-	//
-	// byte[] res = ProtostuffUtils.serialize(session);
-	// IamSession s2 = ProtostuffUtils.deserialize(res, IamSession.class);
-	// System.out.println(s2.getAttribute("userProfile"));
-	// }
+	/**
+	 * Check is relation attribute key.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public static boolean isRelationAttrKey(Object key) {
+		return !isNull(key) && (key instanceof RelationAttrKey);
+	}
+
+	/**
+	 * Relation attribute key.
+	 * 
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2020年4月16日
+	 * @since
+	 */
+	public static class RelationAttrKey extends CacheKey {
+		private static final long serialVersionUID = -999087974868579671L;
+
+		public RelationAttrKey(Serializable key) {
+			super(key);
+		}
+
+		public RelationAttrKey(byte[] key) {
+			super(key);
+		}
+
+		public RelationAttrKey(Serializable key, Class<?> valueClass) {
+			super(key, valueClass);
+		}
+
+		public RelationAttrKey(Serializable key, long expireMs) {
+			super(key, expireMs);
+		}
+
+		public RelationAttrKey(Serializable key, int expireSec) {
+			super(key, expireSec);
+		}
+
+	}
 
 }

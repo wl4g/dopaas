@@ -19,12 +19,13 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
-import static com.wl4g.devops.common.web.RespBase.RetCode.SECOND_UNAUTH;
+import static com.wl4g.devops.common.web.RespBase.RetCode.PRECONDITITE_LIMITED;
 import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAVE_GRANT_TICKET;
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.Authenticated;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
-import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
+import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResp;
+import static java.lang.String.format;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 
 import java.util.HashMap;
@@ -123,8 +124,8 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 		String redirectUrl = buildConnectAuthenticatingUrl(http, annotation);
 
 		// Response JSON message
-		if (isJSONResponse(http.getRequest())) {
-			RespBase<String> resp = new RespBase<>(SECOND_UNAUTH, STATUS_SECOND_UNAUTHC, MSG_SECOND_UNAUTHC, null);
+		if (isJSONResp(http.getRequest())) {
+			RespBase<String> resp = new RespBase<>(PRECONDITITE_LIMITED, STATUS_SECOND_UNAUTHC, MSG_SECOND_UNAUTHC, null);
 			resp.forMap().put(config.getParam().getRedirectUrl(), redirectUrl);
 			resp.setMessage(errdesc);
 			writeJson(http.getResponse(), toJSONString(resp));
@@ -249,7 +250,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 				throw new SecondAuthenticationException(assertion.getErrdesc());
 			}
 		} else {
-			throw new IamException(String.format("System internal error. %s", JacksonUtils.toJSONString(resp)));
+			throw new IamException(format("System internal error. %s", JacksonUtils.toJSONString(resp)));
 		}
 	}
 

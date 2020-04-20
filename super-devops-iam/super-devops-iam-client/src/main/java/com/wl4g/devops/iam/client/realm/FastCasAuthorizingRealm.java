@@ -36,13 +36,17 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSession;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
 import static java.lang.Boolean.parseBoolean;
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
 
 import java.util.Date;
 
@@ -89,44 +93,43 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	protected IamAuthenticationInfo doAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		String granticket = EMPTY;
 		try {
-			notNull(token, "'authenticationToken' must not be null");
-			FastCasAuthenticationToken fctk = (FastCasAuthenticationToken) token;
+			notNullOf(token, "authenticationToken");
+			FastCasAuthenticationToken ftk = (FastCasAuthenticationToken) token;
 
 			// Get request flash grant ticket(May be empty)
-			granticket = (String) fctk.getCredentials();
+			granticket = (String) ftk.getCredentials();
 
 			// Contact CAS remote server to validate ticket
-			TicketValidatedAssertModel<IamPrincipalInfo> assertion = doRequestRemoteTicketValidation(granticket);
+			TicketValidatedAssertModel<IamPrincipalInfo> validated = doRequestRemoteTicketValidation(granticket);
 
 			// Grant ticket assertion .
-			assertTicketValidation(assertion);
+			assertTicketValidation(validated);
 
 			/**
 			 * {@link JedisIamSessionDAO#update()} </br>
 			 * Update session expire date time.
 			 */
-			Date validUntilDate = assertion.getValidUntilDate();
-			long maxIdleTimeMs = validUntilDate.getTime() - System.currentTimeMillis();
-			state(maxIdleTimeMs > 0,
-					String.format("Remote authenticated response session expired time: %s invalid, maxIdleTimeMs: %s",
-							validUntilDate, maxIdleTimeMs));
+			Date validUntilDate = validated.getValidUntilDate();
+			long maxIdleTimeMs = validUntilDate.getTime() - currentTimeMillis();
+			state(maxIdleTimeMs > 0, format("Remote authenticated response session expired time: %s invalid, maxIdleTimeMs: %s",
+					validUntilDate, maxIdleTimeMs));
 			getSession().setTimeout(maxIdleTimeMs);
 
-			IamPrincipalInfo info = assertion.getPrincipalInfo();
-			// Attribute of lang
+			IamPrincipalInfo info = validated.getPrincipalInfo();
+			// Storage authenticated attributes.
 			bind(KEY_LANG_ATTRIBUTE_NAME, info.getAttributes().get(KEY_LANG_ATTRIBUTE_NAME));
+			bind(KEY_DATA_CIPHER, info.getAttributes().get(KEY_DATA_CIPHER));
+			bind(KEY_ACCESSTOKEN_SIGN, info.getAttributes().get(KEY_ACCESSTOKEN_SIGN));
 
 			// Update settings grant ticket
-			String newGrantTicket = String.valueOf(info.getStoredCredentials());
-			fctk.setCredentials(newGrantTicket);
+			String newGrantTicket = valueOf(info.getStoredCredentials());
+			ftk.setCredentials(newGrantTicket);
 
 			// Attribute of remember
-			String principal = assertion.getPrincipalInfo().getPrincipal();
-			fctk.setPrincipal(principal); // MARK1
-			fctk.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
-			if (log.isInfoEnabled()) {
-				log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
-			}
+			String principal = validated.getPrincipalInfo().getPrincipal();
+			ftk.setPrincipal(principal); // MARK1
+			ftk.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
+			log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
 
 			// Authenticate attributes.(roles/permissions/rememberMe)
 			PrincipalCollection principals = createPermitPrincipalCollection(info);
@@ -135,7 +138,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			// SimpleCredentialsMatcher checks.
 			return new FastAuthenticationInfo(info, principals, getName());
 		} catch (Exception e) {
-			throw new CredentialsException(String.format("Unable to validate ticket [%s]", granticket), e);
+			throw new CredentialsException(format("Unable to validate ticket [%s]", granticket), e);
 		}
 	}
 
@@ -161,7 +164,14 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	 * @return
 	 */
 	private TicketValidatedAssertModel<IamPrincipalInfo> doRequestRemoteTicketValidation(String ticket) {
-		return ticketValidator.validate(new TicketValidateModel(ticket, config.getServiceName()));
+		/**
+		 * The purpose of this function is to make iam-server a new child,
+		 * dataCipherKey/accesstoken.
+		 * 
+		 * @see:com.wl4g.devops.iam.handler.CentralAuthenticationHandler.validate(TicketValidateModel)
+		 */
+		String sessionId = valueOf(getSession(true).getId());
+		return ticketValidator.validate(new TicketValidateModel(ticket, config.getServiceName(), sessionId));
 	}
 
 	/**

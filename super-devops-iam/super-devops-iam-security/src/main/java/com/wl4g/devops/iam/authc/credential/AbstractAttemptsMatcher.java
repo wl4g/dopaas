@@ -16,22 +16,25 @@
 package com.wl4g.devops.iam.authc.credential;
 
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder;
+import com.wl4g.devops.iam.common.cache.IamCache;
+import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.config.properties.MatcherProperties;
 
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.*;
+import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
+import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.Assert.notEmpty;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.LockedAccountException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -50,7 +53,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	/**
 	 * EnhancedCache
 	 */
-	private EnhancedCache lockCache;
+	private IamCache lockCache;
 
 	/**
 	 * Attempts accumulator
@@ -73,13 +76,32 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	private Cumulator applySmsCumulator;
 
 	@Override
+	public void afterPropertiesSet() throws Exception {
+		MatcherProperties matcher = config.getMatcher();
+		this.lockCache = cacheManager.getIamCache(CACHE_MATCH_LOCK);
+		this.matchCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_MATCH_COUNTER),
+				matcher.getFailFastMatchDelay());
+		this.applyCaptchaCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
+				matcher.getFailFastCaptchaDelay());
+		this.applySmsCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_SMS_COUNTER),
+				matcher.getFailFastSmsMaxDelay());
+		this.sessionMatchCumulator = newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER, matcher.getFailFastMatchDelay());
+
+		notNullOf(lockCache, "matcherLockCache");
+		notNullOf(matchCumulator, "matchCumulator");
+		notNullOf(applyCaptchaCumulator, "applyCaptchaCumulator");
+		notNullOf(applySmsCumulator, "applySmsCumulator");
+		notNullOf(sessionMatchCumulator, "sessionMatchCumulator");
+	}
+
+	@Override
 	public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
 		IamAuthenticationToken tk = (IamAuthenticationToken) token;
 		// Get preparatory signIn principal
 		String principal = (String) tk.getPrincipal();
 
 		// Fail limiter factor keys
-		List<String> factors = createLimitFactors(tk.getHost(), principal);
+		List<String> factors = getV1Factors(tk.getHost(), principal);
 		notEmpty(factors, "LimitFactors can't empty");
 
 		Long cumulatedMaxFailCount = 0L;
@@ -96,17 +118,15 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 		}
 
 		// Credentials verification
-		final boolean matched = doMatching(token, info, factors);
+		final boolean matched = doMatching((IamAuthenticationToken) token, info, factors);
 		if (matched) { // Matched successful processing
 			postSuccessProcess(principal, factors);
 		} else {
 			cumulatedMaxFailCount = postFailureProcess(principal, factors);
 		}
 
-		if (log.isInfoEnabled()) {
-			log.info("Match principal: {}, matched: {}, cumulatedMaxFailCount: {}, factors: {}, token: {}", principal, matched,
-					cumulatedMaxFailCount, factors, tk);
-		}
+		log.info("Match principal: {}, matched: {}, cumulatedMaxFailCount: {}, factors: {}, token: {}", principal, matched,
+				cumulatedMaxFailCount, factors, tk);
 		// This is an accident.
 		return matched;
 	}
@@ -119,7 +139,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 * @param factors
 	 * @return
 	 */
-	protected abstract boolean doMatching(AuthenticationToken token, AuthenticationInfo info, List<String> factors);
+	protected abstract boolean doMatching(IamAuthenticationToken token, AuthenticationInfo info, List<String> factors);
 
 	/**
 	 * After matched failure processing
@@ -134,17 +154,15 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 		// Cumulative increase of session matching count by 1
 		long sessioinMatchCountMax = sessionMatchCumulator.accumulate(factors, 1);
-		if (log.isDebugEnabled()) {
-			log.debug("Principal {} match failed accumulative matchCountMax: {}, sessioinMatchCountMax: {}, factor: {}",
-					principal, matchCountMax, sessioinMatchCountMax, factors);
-		}
+		log.debug("Principal {} match failed accumulative matchCountMax: {}, sessioinMatchCountMax: {}, factor: {}", principal,
+				matchCountMax, sessioinMatchCountMax, factors);
 
 		// Record all accounts that have failed to log in in this session.
 		List<String> failPrincipalFactors = getBindValue(KEY_FAIL_PRINCIPAL_FACTORS);
-		if (null == failPrincipalFactors) {
+		if (isNull(failPrincipalFactors)) {
 			failPrincipalFactors = new ArrayList<>();
 		}
-		failPrincipalFactors.add(createUIDLimitFactor(principal));
+		failPrincipalFactors.add(getUIDFactor(principal));
 		bind(KEY_FAIL_PRINCIPAL_FACTORS, failPrincipalFactors);
 
 		return matchCountMax;
@@ -158,18 +176,14 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	 */
 	protected void postSuccessProcess(String principal, List<String> factors) {
 		// Destroy all cumulators
+		log.debug("Principal: {} matched success, cleaning factors: {}", principal, factors);
 		destroyCumulators(factors);
-		if (log.isDebugEnabled()) {
-			log.debug("Principal {} matched success, cleaning factors: {}", principal, factors);
-		}
 
 		// Clean all locker(if exists)
 		factors.forEach(f -> {
 			try {
-				if (log.isInfoEnabled()) {
-					log.info("Remove lock factor: {}", f);
-				}
-				lockCache.remove(new EnhancedKey(f));
+				log.info("Remove lock factor: {}", f);
+				lockCache.remove(new CacheKey(f));
 			} catch (Exception e) {
 				log.error("", e);
 			}
@@ -204,7 +218,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			cumulatedMax = Math.max(cumulatedMax, cumulated);
 
 			// Check last locked remain time(if exist)
-			String lockedPrincipal = (String) lockCache.get(new EnhancedKey(factor, String.class));
+			String lockedPrincipal = (String) lockCache.get(new CacheKey(factor, String.class));
 
 			// Previous locks have not expired
 			if (isNotBlank(lockedPrincipal)) {
@@ -218,18 +232,16 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			if (cumulatedMax > matchLockMaxAttempts) {
 				factorLock = true;
 			}
-			if (log.isDebugEnabled()) {
-				log.debug(
-						"assertAccountLocked()=> factor:{}, cumulated: {}, matchLockMaxAttempts: {}, cumulatedMax: {}, lock: {}, factorLock: {}",
-						factor, cumulated, matchLockMaxAttempts, cumulatedMax, lock, factorLock);
-			}
+			log.debug(
+					"assertAccountLocked()=> factor:{}, cumulated: {}, matchLockMaxAttempts: {}, cumulatedMax: {}, lock: {}, factorLock: {}",
+					factor, cumulated, matchLockMaxAttempts, cumulatedMax, lock, factorLock);
 
 			/*
 			 * If lockout is required at present, Update decay counter time
 			 */
 			if (factorLock) {
-				Long remainTime = lockCache.timeToLive(new EnhancedKey(factor, matchLockDelay), principal);
-				log.warn(String.format(
+				Long remainTime = lockCache.timeToLive(new CacheKey(factor, matchLockDelay), principal);
+				log.warn(format(
 						"Matching failed, limiter factor [%s] attempts have been made to exceed the maximum limit [%s], remain time [%s Sec] [%s]",
 						factor, matchLockMaxAttempts, remainTime, factor));
 			}
@@ -240,7 +252,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 		if (lock) { // Any factor matched
 			log.warn("Client that has been locked. factors: {}", factors);
-			throw new LockedAccountException(bundle.getMessage("AbstractAttemptsMatcher.ipAccessReject"));
+			throw new LockedAccountException(bundle.getMessage("AbstractAttemptsMatcher.accessReject"));
 		}
 
 		return cumulatedMax;
@@ -257,33 +269,6 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	protected abstract void assertRequestVerify(AuthenticationToken token, String principal, List<String> factors);
 
 	/**
-	 * Initializing
-	 */
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		MatcherProperties matcher = config.getMatcher();
-		this.lockCache = cacheManager.getEnhancedCache(CACHE_MATCH_LOCK);
-
-		this.matchCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_MATCH_COUNTER),
-				matcher.getFailFastMatchDelay());
-
-		this.applyCaptchaCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_CAPTCHA_COUNTER),
-				matcher.getFailFastCaptchaDelay());
-
-		this.applySmsCumulator = CumulateHolder.newCumulator(cacheManager.getEnhancedCache(CACHE_FAILFAST_SMS_COUNTER),
-				matcher.getFailFastSmsMaxDelay());
-
-		this.sessionMatchCumulator = CumulateHolder.newSessionCumulator(CACHE_FAILFAST_MATCH_COUNTER,
-				matcher.getFailFastMatchDelay());
-
-		Assert.notNull(lockCache, "lockCache is null, please check configure");
-		Assert.notNull(matchCumulator, "matchCumulator is null, please check configure");
-		Assert.notNull(applyCaptchaCumulator, "applyCaptchaCumulator is null, please check configure");
-		Assert.notNull(applySmsCumulator, "applySmsCumulator is null, please check configure");
-		Assert.notNull(sessionMatchCumulator, "sessionMatchCumulator is null, please check configure");
-	}
-
-	/**
 	 * Destroy verification accumulators all.
 	 *
 	 * @param factors
@@ -296,7 +281,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 
 		// Unlock all accounts that have failed to log in this session.
 		List<String> failPrincipalFactors = getBindValue(KEY_FAIL_PRINCIPAL_FACTORS);
-		if (null != failPrincipalFactors) {
+		if (!isEmpty(failPrincipalFactors)) {
 			matchCumulator.destroy(failPrincipalFactors);
 			applyCaptchaCumulator.destroy(failPrincipalFactors);
 			applySmsCumulator.destroy(failPrincipalFactors);
@@ -304,10 +289,8 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 			// Cleanup lock factors.
 			failPrincipalFactors.forEach(f -> {
 				try {
-					if (log.isInfoEnabled()) {
-						log.info("Remove past.failure principal factor: {}", f);
-					}
-					lockCache.remove(new EnhancedKey(f));
+					log.info("Remove past.failure principal factor: {}", f);
+					lockCache.remove(new CacheKey(f));
 				} catch (Exception e) {
 					log.error("", e);
 				}

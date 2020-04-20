@@ -19,8 +19,9 @@ import com.wl4g.devops.iam.captcha.gif.Captcha;
 import com.wl4g.devops.iam.captcha.gif.GifCaptcha;
 import com.wl4g.devops.iam.captcha.gif.model.GifApplyImgModel;
 import com.wl4g.devops.iam.captcha.gif.model.GifVerifyImgModel;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
-import com.wl4g.devops.tool.common.crypto.cipher.spec.KeyPairSpec;
+import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
@@ -42,20 +43,20 @@ import java.io.IOException;
 public class GifSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
-	public VerifyType verifyType() {
-		return VerifyType.GRAPH_GIF;
+	public VerifyKind kind() {
+		return VerifyKind.GRAPH_GIF;
 	}
 
 	@Override
-	protected Object postApplyGraphProperties(String applyToken, VerifyCodeWrapper codeWrap, KeyPairSpec keySpec)
-			throws IOException {
+	protected Object postApplyGraphProperties(@NotNull SecureAlgKind kind, String applyToken, VerifyCodeWrapper codeWrap,
+			KeyPairSpec keySpec) throws IOException {
 		// Generate image & to base64 string.
 		Captcha captcha = new GifCaptcha(codeWrap.getCode());
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		captcha.out(out);
 
 		// Build model
-		GifApplyImgModel model = new GifApplyImgModel(applyToken, verifyType().getAlias());
+		GifApplyImgModel model = new GifApplyImgModel(applyToken, kind().getAlias());
 		model.setPrimaryImg(convertToBase64(out.toByteArray()));
 		return model;
 	}

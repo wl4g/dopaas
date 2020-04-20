@@ -19,30 +19,35 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
-import org.apache.shiro.web.util.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.shiro.web.servlet.Cookie;
+import org.apache.shiro.web.servlet.SimpleCookie;
 
+import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
-import static com.wl4g.devops.common.web.RespBase.RetCode.OK;
+import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMCLIENT;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.SESSION_STATUS_AUTHC;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingSecurityUtils.SESSION_STATUS_UNAUTHC;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionExpiredTime;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
-import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResponse;
+import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResp;
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -61,18 +66,19 @@ import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.exception.iam.TooManyRequestAuthentcationException;
 import com.wl4g.devops.common.exception.iam.UnauthorizedException;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.client.authc.FastCasAuthenticationToken;
+import com.wl4g.devops.iam.client.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
-import com.wl4g.devops.iam.common.cache.EnhancedCache;
-import com.wl4g.devops.iam.common.cache.EnhancedKey;
-import com.wl4g.devops.iam.common.cache.JedisCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCache;
+import com.wl4g.devops.iam.common.cache.CacheKey;
+import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
-import com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
+import com.wl4g.devops.iam.common.web.model.SessionInfo;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -107,6 +113,7 @@ import static javax.servlet.http.HttpServletResponse.*;
  */
 public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken> extends AuthenticatingFilter
 		implements IamAuthenticationFilter {
+
 	final public static String SAVE_GRANT_TICKET = AbstractAuthenticationFilter.class.getSimpleName() + ".GRANT_TICKET";
 
 	/**
@@ -127,7 +134,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	final public static String KEY_TRY_REDIRECT_AUTHC = "TryRedirectAuthenticating";
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * IAM client configuration properties.
@@ -145,15 +152,14 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	final protected ClientSecurityCoprocessor coprocessor;
 
 	/**
-	 * Using distributedc ache to Ensure Concurrency Control under
-	 * Mutilate-Node.
+	 * Client ticket distributed cache
 	 */
-	final protected EnhancedCache cache;
+	final protected IamCache clientTicketCache;
 
 	/**
 	 * Accumulator used to restrict redirection authentication.
 	 */
-	final protected Cumulator failCumulator;
+	final protected Cumulator failedCumulator;
 
 	/**
 	 * Delegate message source.
@@ -162,7 +168,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	protected SessionDelegateMessageBundle bundle;
 
 	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
-			ClientSecurityCoprocessor coprocessor, JedisCacheManager cacheManager) {
+			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
 		notNull(config, "'config' must not be null");
 		notNull(context, "'context' must not be null");
 		notNull(coprocessor, "'interceptor' must not be null");
@@ -170,16 +176,16 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		this.config = config;
 		this.configurer = context;
 		this.coprocessor = coprocessor;
-		this.cache = cacheManager.getEnhancedCache(CACHE_TICKET_C);
-		this.failCumulator = CumulateHolder.newSessionCumulator(KEY_TRY_REDIRECT_AUTHC, 10_000L);
+		this.clientTicketCache = cacheManager.getIamCache(CACHE_TICKET_C);
+		this.failedCumulator = newSessionCumulator(KEY_TRY_REDIRECT_AUTHC, 10_000L);
 	}
 
 	@Override
 	protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
-		return createAuthenticationToken(WebUtils.toHttp(request), WebUtils.toHttp(response));
+		return doCreateToken(toHttp(request), toHttp(response));
 	}
 
-	protected abstract T createAuthenticationToken(HttpServletRequest request, HttpServletResponse response) throws Exception;
+	protected abstract T doCreateToken(HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 	@Override
 	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
@@ -200,46 +206,57 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * FastCasAuthorizingRealm#doGetAuthenticationInfo
 		 */
 		bind(SAVE_GRANT_TICKET, grantTicket);
-		if (log.isDebugEnabled()) {
-			log.debug("Authentication bind grantTicket[{}], sessionId[{}]", grantTicket, getSessionId(subject));
-		}
+		log.debug("Authentication bind grantTicket[{}], sessionId[{}]", grantTicket, getSessionId(subject));
 
 		/**
 		 * Binding grantTicket => sessionId. Synchronize with
 		 * IamClientSessionManager#getSessionId
 		 */
 		long expiredMs = getSessionExpiredTime();
-		cache.put(new EnhancedKey(grantTicket, expiredMs), getSessionId(subject));
+		clientTicketCache.put(new CacheKey(grantTicket, expiredMs), valueOf(getSessionId(subject)));
 
 		// Determine success URL
 		String successUrl = determineSuccessRedirectUrl(ftoken, subject, request, response);
 
 		// JSON response
-		if (isJSONResponse(toHttp(request))) {
+		if (isJSONResp(toHttp(request))) {
 			try {
 				// Make logged response JSON.
-				RespBase<String> loggedResp = makeLoggedResponse(request, subject, successUrl);
+				RespBase<String> loggedResp = makeLoggedResponse(request, response, subject, successUrl);
 
-				// Callback custom success handling.
-				coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response, loggedResp.forMap());
+				// Call custom success handle.
+				coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), loggedResp.forMap());
 
 				String logged = toJSONString(loggedResp);
-				if (log.isInfoEnabled()) {
-					log.info("Authenticated response to - {}", loggedResp);
-				}
+				log.info("Authenticated resp to - {}", loggedResp);
 				writeJson(toHttp(response), logged);
 			} catch (IOException e) {
 				log.error("Logged response json error", e);
 			}
 		}
-		// Redirection
+		// Redirections(Native page).
 		else {
-			// Callback custom success handling.
-			coprocessor.postAuthenticatingSuccess(ftoken, subject, request, response, null);
-
-			if (log.isInfoEnabled()) {
-				log.info("Authenticated redirect to - {}", successUrl);
+			// Sets child dataCipherKeys to cookie.
+			String childDataCipherKey = getBindValue(KEY_DATA_CIPHER);
+			if (!isBlank(childDataCipherKey)) {
+				Cookie c = new SimpleCookie(config.getCookie());
+				c.setName(config.getParam().getDataCipherKeyName());
+				c.setValue(childDataCipherKey);
+				c.saveTo(toHttp(request), toHttp(response));
 			}
+
+			// Sets child accessToken to cookie.
+			String childAccessToken = generateChildAccessToken();
+			if (!isBlank(childAccessToken)) {
+				Cookie c = new SimpleCookie(config.getCookie());
+				c.setName(config.getParam().getAccessTokenName());
+				c.setValue(childAccessToken);
+				c.saveTo(toHttp(request), toHttp(response));
+			}
+
+			// Call custom success handle.
+			coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), null);
+			log.info("Authenticated redirect to - {}", successUrl);
 			issueRedirect(request, response, successUrl);
 		}
 
@@ -250,12 +267,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
 			ServletResponse response) {
 		Throwable cause = getRootCause(ae);
-		if (cause != null) {
-			if (cause instanceof IamException) {
+		if (!isNull(cause)) {
+			if (cause instanceof IamException)
 				log.error("Failed to caused by: {}", getMessage(cause));
-			} else {
+			else
 				log.error("Failed to authenticate.", cause);
-			}
 		}
 
 		// Failure redirect URL
@@ -274,12 +290,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// page directly (to prevent unlimited redirection).
 		/** See:{@link AbstractBasedIamValidator#doGetRemoteValidation()} */
 		if (isNull(cause) || (cause instanceof InvalidGrantTicketException)) {
-			if (isJSONResponse(toHttp(request))) {
+			if (isJSONResp(toHttp(request))) {
 				try {
-					String failMsg = makeFailedResponse(failRedirectUrl, cause);
-					if (log.isInfoEnabled()) {
-						log.info("Failed to invalid grantTicket response: {}", failMsg);
-					}
+					RespBase<Object> resp = makeFailedResponse(token, failRedirectUrl, cause);
+					String failMsg = toJSONString(resp);
+					log.info("Failed to invalid grantTicket response: {}", failMsg);
 					writeJson(toHttp(response), failMsg);
 				} catch (IOException e) {
 					log.error("Response json error", e);
@@ -297,7 +312,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// error, which may lead to unlimited redirection.
 		else {
 			try {
-				String errmsg = String.format("%s, %s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
+				String errmsg = format("%s, %s", bundle.getMessage("AbstractAuthenticationFilter.authc.failure"),
 						getRootCausesString(cause));
 				/** See:{@link SmartGlobalErrorController#doAnyHandleError()} */
 				toHttp(response).sendError(SC_BAD_GATEWAY, errmsg);
@@ -325,15 +340,17 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			return config.getUnauthorizedUri();
 		} else { // Unauthenticated or other error.
 			/**
+			 * Check to block multiple invalid redirects.
+			 * 
 			 * @see {@link com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm#doAuthenticationInfo(AuthenticationToken)#MARK1}
 			 */
 			if (nonNull(token.getPrincipal())) {
-				List<String> factors = singletonList(String.valueOf(token.getPrincipal()));
+				List<String> factors = singletonList(valueOf(token.getPrincipal()));
 				// When the IamServer redirects the request, but the
 				// grantTicket validate failed, infinite redirect needs to
 				// be prevented.
-				if ((cause instanceof InvalidGrantTicketException) && failCumulator.accumulate(factors, 1) > 5) {
-					throw new TooManyRequestAuthentcationException(String.format("Too many redirect request authenticating"));
+				if ((cause instanceof InvalidGrantTicketException) && failedCumulator.accumulate(factors, 1) > 5) {
+					throw new TooManyRequestAuthentcationException(format("Too many redirect request authenticating"));
 				}
 			}
 
@@ -350,8 +367,25 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				clientRedirectUrl += "?" + clientParamStr;
 			}
 			params.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
+
+			// Custom decorate failure parameters.
+			decorateFailureRedirectParams(token, cause, request, params);
+
+			// Build to query URL.
 			return applyQueryURL(getLoginUrl(), params);
 		}
+	}
+
+	/**
+	 * Decorate authenticate failure redirection parameter.
+	 * 
+	 * @param token
+	 * @param cause
+	 * @param request
+	 * @param params
+	 */
+	protected void decorateFailureRedirectParams(AuthenticationToken token, Throwable cause, HttpServletRequest request,
+			Map<String, String> params) {
 	}
 
 	/**
@@ -419,47 +453,68 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeLoggedResponse()}
 	 * @param request
 	 *            Servlet request
+	 * @param response
 	 * @param redirectUri
 	 *            login success redirect URL
 	 * @return
 	 */
-	private RespBase<String> makeLoggedResponse(ServletRequest request, Subject subject, String redirectUri) {
-		hasText(redirectUri, "'redirectUri' must not be null");
+	protected RespBase<String> makeLoggedResponse(ServletRequest request, ServletResponse response, Subject subject,
+			String redirectUri) {
+		hasTextOf(redirectUri, "redirectUri");
 
-		// Make message
-		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
+		// Make successful message
+		RespBase<String> resp = RespBase.create(sessionStatus());
 		resp.setCode(OK).setMessage("Authentication successful");
 		resp.forMap().put(config.getParam().getRedirectUrl(), redirectUri);
-
-		// e.g. Used by mobile APP.
-		resp.forMap().put(config.getParam().getSid(), String.valueOf(subject.getSession().getId()));
 		resp.forMap().put(config.getParam().getApplication(), config.getServiceName());
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
+		// Iam-client session info.
+		resp.forMap().put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
+
+		// Sets child dataCipherKey. (if necessary)
+		resp.forMap().put(config.getParam().getDataCipherKeyName(), getBindValue(KEY_DATA_CIPHER));
+		// Sets child accessToken. (if necessary)
+		resp.forMap().put(config.getParam().getAccessTokenName(), generateChildAccessToken());
+
 		return resp;
 	}
 
 	/**
 	 * Make login failed response message.
 	 * 
-	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeFailedResponse()}
+	 * @param token
+	 *            e.g, {@link LogoutAuthenticationToken}
 	 * @param loginRedirectUrl
 	 *            Login redirect URL
 	 * @param err
 	 *            Exception object
 	 * @return
+	 * @see {@link com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter#makeFailedResponse()}
 	 */
-	private String makeFailedResponse(String loginRedirectUrl, Throwable err) {
-		String errmsg = err != null ? err.getMessage() : "Authentication failure";
-		// Make message
-		RespBase<String> resp = RespBase.create(SESSION_STATUS_UNAUTHC);
-		resp.setCode(RetCode.UNAUTHC).setMessage(errmsg);
+	protected RespBase<Object> makeFailedResponse(AuthenticationToken token, String loginRedirectUrl, Throwable err) {
+		String errmsg = !isNull(err) ? err.getMessage() : "Authentication failure";
+
+		// Make failed message
+		RespBase<Object> resp = RespBase.create(sessionStatus());
+		resp.setCode(UNAUTHC).setMessage(errmsg);
 		resp.forMap().put(config.getParam().getRedirectUrl(), loginRedirectUrl);
 		resp.forMap().put(config.getParam().getApplication(), config.getServiceName());
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMCLIENT);
-		return toJSONString(resp);
+		return resp;
 	}
 
-	@Override
+	/**
+	 * Generation child accessToken.
+	 * 
+	 * @return
+	 */
+	private String generateChildAccessToken() {
+		// Gets child accessTokenSign key.
+		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN);
+		// Generate child accessToken
+		return isBlank(childAccessTokenSignKey) ? null : generateAccessToken(getSessionId(), childAccessTokenSignKey);
+	}
+
 	public abstract String getName();
 
 }

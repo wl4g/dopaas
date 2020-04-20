@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.common.utils.cumulate;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.*;
 
@@ -29,9 +30,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.apache.shiro.session.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Security limit accumulation counter based on {@link Session} implementation.
@@ -39,9 +40,10 @@ import org.springframework.util.CollectionUtils;
  * @author wangl.sir
  * @version v1.0 2019年4月19日
  * @since
+ * @see {@link DefaultCumulator}
  */
 public class SessionCumulator implements Cumulator {
-	final private Logger log = LoggerFactory.getLogger(getClass());
+	final private SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Save to session key prefix.

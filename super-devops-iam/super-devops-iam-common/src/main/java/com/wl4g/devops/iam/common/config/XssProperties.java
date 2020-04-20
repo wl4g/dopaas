@@ -15,13 +15,18 @@
  */
 package com.wl4g.devops.iam.common.config;
 
-import java.io.Serializable;
-import java.util.Locale;
+import static java.lang.String.format;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.Serializable;
+import static java.util.Locale.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
+
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * XSS configuration properties
@@ -33,9 +38,9 @@ import org.springframework.util.Assert;
 public class XssProperties implements InitializingBean, Serializable {
 	final private static long serialVersionUID = -5701992202744439835L;
 
-	final public static String PREFIX = "spring.web.xss";
+	final public static String KEY_XSS_PREFIX = "spring.cloud.devops.iam.xss";
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Enable internal protection, which merges expressions of internal
@@ -57,13 +62,13 @@ public class XssProperties implements InitializingBean, Serializable {
 	}
 
 	public String getExpression() {
-		Assert.hasText(expression, String
-				.format("XSS interception expression is required, and the '%s' configuration item does not exist?", PREFIX));
+		hasText(expression, format("XSS interception expression is required, and the '%s' configuration item does not exist?",
+				KEY_XSS_PREFIX));
 		return expression;
 	}
 
 	public void setExpression(String expression) {
-		Assert.hasText(expression, "expression is emtpy, please check configure");
+		hasText(expression, "expression is emtpy, please check configure");
 		this.expression = expression;
 	}
 
@@ -93,12 +98,12 @@ public class XssProperties implements InitializingBean, Serializable {
 			throw new Error(String.format("", basedIamProjectPkgIndex));
 		}
 
-		StringBuffer basedIamProjectPkg = new StringBuffer(16);
+		StringBuffer iamBasePkg = new StringBuffer(16);
 		// e.g. com.wl4g.devops.iam
 		for (int i = 0; i < pkgParts.length; i++) {
 			if (i < basedIamProjectPkgIndex) {
-				basedIamProjectPkg.append(pkgParts[i]);
-				basedIamProjectPkg.append(".");
+				iamBasePkg.append(pkgParts[i]);
+				iamBasePkg.append(".");
 			} else {
 				break;
 			}
@@ -106,24 +111,36 @@ public class XssProperties implements InitializingBean, Serializable {
 
 		// Merge internal XSS expression.(Level names cannot be changed after
 		// package)
-		StringBuffer expression = new StringBuffer(128);
-		expression.append("execution(* ");
-		expression.append(basedIamProjectPkg.toString());
-		expression.append("sns.web.*Controller.*(..)) or execution(* ");
-		expression.append(basedIamProjectPkg.toString());
-		expression.append("web.*Controller.*(..)) ");
+		StringBuffer _expression = new StringBuffer(128);
+		// e.g: com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController
+		_expression.append("execution(* ");
+		_expression.append(iamBasePkg.toString());
+		_expression.append("sns.web.*Controller.*(..))");
+		// e.g: com.wl4g.devops.iam.sns.web.DefaultOauth2SnsEndpoint
+		_expression.append(" or execution(* ");
+		_expression.append(iamBasePkg.toString());
+		_expression.append("web.*Endpoint.*(..)) ");
+		// e.g: com.wl4g.devops.iam.web.LoginAuthenticatorController
+		_expression.append(" or execution(* ");
+		_expression.append(iamBasePkg.toString());
+		_expression.append("web.*Controller.*(..)) ");
+		// e.g: com.wl4g.devops.iam.web.LoginAuthenticatorEndpoint
+		_expression.append(" or execution(* ");
+		_expression.append(iamBasePkg.toString());
+		_expression.append("web.*Endpoint.*(..)) ");
 
-		if (getExpression().trim().toUpperCase(Locale.ENGLISH).startsWith("OR")) {
-			expression.append(getExpression());
-		} else {
-			expression.append("or ");
-			expression.append(getExpression());
+		// Merge extra config expression
+		if (!isBlank(expression)) {
+			if (expression.toUpperCase(US).startsWith("OR")) {
+				_expression.append(getExpression());
+			} else {
+				_expression.append("or ");
+				_expression.append(getExpression());
+			}
 		}
-		setExpression(expression.toString());
+		setExpression(_expression.toString());
 
-		if (log.isInfoEnabled()) {
-			log.info("After merged the XSS interception expression as: {}", getExpression());
-		}
+		log.info("After merged the XSS interception expression as: {}", getExpression());
 	}
 
 }

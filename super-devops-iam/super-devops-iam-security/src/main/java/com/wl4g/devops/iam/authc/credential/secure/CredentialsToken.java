@@ -16,8 +16,11 @@
 package com.wl4g.devops.iam.authc.credential.secure;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-import org.springframework.util.Assert;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
+
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * Final credentials token
@@ -41,25 +44,33 @@ public final class CredentialsToken {
 	final private String credentials;
 
 	/**
+	 * Iam asymmetric secure crypt algorithm kind definitions..
+	 */
+	@NotNull
+	final private SecureAlgKind kind;
+
+	/**
 	 * Whether the tag has resolved the encrypted password passed from the front
 	 * end.
 	 */
-	final private boolean resolved;
+	final private boolean isSolved;
 
-	public CredentialsToken(CredentialsToken token, boolean solved) {
-		this(token.getPrincipal(), token.getCredentials(), solved);
+	public CredentialsToken(CredentialsToken token) {
+		this(token.getPrincipal(), token.getCredentials(), token.getKind());
 	}
 
-	public CredentialsToken(String principal, String credentials) {
-		this(principal, credentials, false);
+	public CredentialsToken(String principal, String credentials, SecureAlgKind kind) {
+		this(principal, credentials, kind, false);
 	}
 
-	public CredentialsToken(String principal, String credentials, boolean solved) {
-		Assert.hasText(principal, "Principal must not be empty");
-		Assert.hasText(credentials, "Credentials must not be empty");
+	public CredentialsToken(String principal, String credentials, SecureAlgKind kind, boolean isSolved) {
+		hasTextOf(principal, "principal");
+		hasTextOf(credentials, "credentials");
+		notNullOf(kind, "kind");
 		this.principal = principal;
 		this.credentials = credentials;
-		this.resolved = solved;
+		this.kind = kind;
+		this.isSolved = isSolved;
 	}
 
 	final public String getPrincipal() {
@@ -70,13 +81,18 @@ public final class CredentialsToken {
 		return credentials;
 	}
 
-	final public boolean isResolved() {
-		return resolved;
+	public SecureAlgKind getKind() {
+		return kind;
+	}
+
+	final public boolean isSolved() {
+		return isSolved;
 	}
 
 	@Override
 	public String toString() {
-		return "CredentialsToken [principal=" + principal + ", credentials=" + credentials + ", resolved=" + resolved + "]";
+		return "CredentialsToken [principal=" + getPrincipal() + ", credentials=" + getCredentials() + ", resolved=" + isSolved
+				+ "]";
 	}
 
 }

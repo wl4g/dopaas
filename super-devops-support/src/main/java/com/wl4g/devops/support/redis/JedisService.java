@@ -20,10 +20,9 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 import com.wl4g.devops.tool.common.serialize.SerializeUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.ScanParams;
@@ -34,6 +33,7 @@ import java.util.Set;
 
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.stream.Collectors.toList;
@@ -49,11 +49,15 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @since
  */
 public class JedisService {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	private JedisCluster jedisCluster;
+	final protected SmartLogger log = getLogger(getClass());
 
-	public JedisService(JedisCluster jedisCluster) {
+	/**
+	 * {@link EnhancedJedisCluster}
+	 */
+	final protected EnhancedJedisCluster jedisCluster;
+
+	public JedisService(EnhancedJedisCluster jedisCluster) {
 		Assert.isTrue(jedisCluster != null, "Redis cluster object creation failed.");
 		this.jedisCluster = jedisCluster;
 	}
@@ -67,9 +71,8 @@ public class JedisService {
 	public String get(final String key) {
 		return (String) doExecuteWithRedis(cluster -> {
 			String value = cluster.get(key);
-			value = StringUtils2.isNotBlank(value) && !"nil".equalsIgnoreCase(value) ? value : null;
-			if (log.isDebugEnabled())
-				log.debug("get {} = {}", key, value);
+			value = !isBlank(value) && !"nil".equalsIgnoreCase(value) ? value : null;
+			log.debug("get {} = {}", key, value);
 			return value;
 		});
 	}
@@ -82,9 +85,7 @@ public class JedisService {
 			} else {
 				result = cluster.set(key, value);
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("set {} = {}", key, value);
-			}
+			log.debug("set {} = {}", key, value);
 			return result;
 		});
 
@@ -100,9 +101,7 @@ public class JedisService {
 	public Long del(final String key) {
 		return (Long) doExecuteWithRedis(cluster -> {
 			Long result = cluster.del(key);
-			if (log.isDebugEnabled()) {
-				log.debug("del {}", key);
-			}
+			log.debug("del {}", key);
 			return result;
 		});
 
@@ -111,9 +110,7 @@ public class JedisService {
 	public Long delObject(final String key) {
 		return (Long) doExecuteWithRedis(cluster -> {
 			long result = cluster.del(getBytesKey(key));
-			if (log.isDebugEnabled()) {
-				log.debug("delObject {}", key);
-			}
+			log.debug("delObject {}", key);
 			return result;
 		});
 	}
@@ -130,9 +127,7 @@ public class JedisService {
 	public Boolean existsObject(final String key) {
 		return (Boolean) doExecuteWithRedis(cluster -> {
 			boolean result = cluster.exists(getBytesKey(key));
-			if (log.isDebugEnabled()) {
-				log.debug("existsObject {}", key);
-			}
+			log.debug("existsObject {}", key);
 			return result;
 		});
 	}
@@ -143,9 +138,7 @@ public class JedisService {
 	public <T> T getObjectT(final String key, Class<T> clazz) {
 		return (T) doExecuteWithRedis(cluster -> {
 			T value = ProtostuffUtils.deserialize(cluster.get(getBytesKey(key)), clazz);
-			if (log.isDebugEnabled()) {
-				log.debug("getObjectT {} = {}", key, value);
-			}
+			log.debug("getObjectT {} = {}", key, value);
 			return value;
 		});
 	}
@@ -160,9 +153,7 @@ public class JedisService {
 				System.out.println(serialize.length);
 				result = cluster.set(getBytesKey(key), serialize);
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("setObjectT {} = {}", key, value);
-			}
+			log.debug("setObjectT {} = {}", key, value);
 			return result;
 		});
 	}
@@ -177,9 +168,7 @@ public class JedisService {
 			} else {
 				result = cluster.set(key, toJSONString(value));
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("setObjectAsJson {} = {}", key, value);
-			}
+			log.debug("setObjectAsJson {} = {}", key, value);
 			return result;
 		});
 	}
@@ -192,9 +181,7 @@ public class JedisService {
 				return null;
 			}
 			T value = parseJSON(json, clazz);
-			if (log.isDebugEnabled()) {
-				log.debug("getObjectAsJson {} = {}", key, value);
-			}
+			log.debug("getObjectAsJson {} = {}", key, value);
 			return value;
 		});
 	}
@@ -204,9 +191,7 @@ public class JedisService {
 	public Object getObject(final String key) {
 		return doExecuteWithRedis(cluster -> {
 			Object value = toObject(cluster.get(getBytesKey(key)));
-			if (log.isDebugEnabled()) {
-				log.debug("getObject {} = {}", key, value);
-			}
+			log.debug("getObject {} = {}", key, value);
 			return value;
 		});
 	}
@@ -217,9 +202,7 @@ public class JedisService {
 			if (cacheSeconds != 0) {
 				cluster.expire(key, cacheSeconds);
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("setObject {} = {}", key, value);
-			}
+			log.debug("setObject {} = {}", key, value);
 			return result;
 		});
 	}
@@ -230,9 +213,7 @@ public class JedisService {
 	public List<String> getList(final String key) {
 		return (List<String>) doExecuteWithRedis(cluster -> {
 			List<String> value = cluster.lrange(key, 0, -1);
-			if (log.isDebugEnabled()) {
-				log.debug("getList {} = {}", key, value);
-			}
+			log.debug("getList {} = {}", key, value);
 			return value;
 		});
 	}
@@ -243,9 +224,7 @@ public class JedisService {
 			if (cacheSeconds > 0) {
 				cluster.expire(key, cacheSeconds);
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("setList {} = {}", key, values);
-			}
+			log.debug("setList {} = {}", key, values);
 			return result;
 		});
 	}
@@ -253,8 +232,7 @@ public class JedisService {
 	public Long listAdd(final String key, final String... values) {
 		return (Long) doExecuteWithRedis(cluster -> {
 			Long result = cluster.rpush(key, values);
-			if (log.isDebugEnabled())
-				log.debug("listAdd {} = {}", key, values);
+			log.debug("listAdd {} = {}", key, values);
 			return result;
 		});
 	}
@@ -272,9 +250,7 @@ public class JedisService {
 			if (!isBlank(member)) {
 				result = cluster.lrem(key, 0, member);
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("delListMember {}", key);
-			}
+			log.debug("delListMember {}", key);
 			return result;
 		});
 	}
@@ -298,9 +274,7 @@ public class JedisService {
 			if (cacheSeconds != 0) {
 				cluster.expire(key, cacheSeconds);
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("setObjectList {} = {}", key, values);
-			}
+			log.debug("setObjectList {} = {}", key, values);
 			return result;
 		});
 	}
@@ -316,9 +290,7 @@ public class JedisService {
 				}
 				result = cluster.rpush(key, members);
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("listObjectAdd {} = {}", key, values);
-			}
+			log.debug("listObjectAdd {} = {}", key, values);
 			return result;
 		});
 	}
@@ -328,10 +300,8 @@ public class JedisService {
 	@SuppressWarnings("unchecked")
 	public Set<String> getSet(final String key) {
 		return (Set<String>) doExecuteWithRedis(cluster -> {
-
 			Set<String> value = cluster.smembers(key);
-			if (log.isDebugEnabled())
-				log.debug("getSet {} = {}", key, value);
+			log.debug("getSet {} = {}", key, value);
 			return value;
 		});
 
@@ -344,8 +314,8 @@ public class JedisService {
 				result = cluster.sadd(key, value.toArray(new String[] {}));
 			if (cacheSeconds != 0)
 				cluster.expire(key, cacheSeconds);
-			if (log.isDebugEnabled())
-				log.debug("setSet {} = {}", key, value);
+
+			log.debug("setSet {} = {}", key, value);
 			return result;
 		});
 
@@ -363,9 +333,7 @@ public class JedisService {
 			Long result = 0L;
 			if (value != null && value.length != 0)
 				result = cluster.sadd(key, value);
-			if (log.isDebugEnabled()) {
-				log.debug("setSetAdd {} = {}", key, value);
-			}
+			log.debug("setSetAdd {} = {}", key, value);
 			return result;
 		});
 	}
@@ -382,9 +350,7 @@ public class JedisService {
 			Long result = 0L;
 			if (members != null && members.length != 0)
 				result = cluster.srem(key, members);
-			if (log.isDebugEnabled()) {
-				log.debug("delSetMember {}", key);
-			}
+			log.debug("delSetMember {}", key);
 			return result;
 		});
 	}
@@ -399,9 +365,7 @@ public class JedisService {
 			for (byte[] bs : set) {
 				value.add((T) toObject(bs));
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("getObjectSet {} = {}", key, value);
-			}
+			log.debug("getObjectSet {} = {}", key, value);
 			return value;
 		});
 
@@ -428,12 +392,10 @@ public class JedisService {
 				}
 				result = cluster.sadd(getBytesKey(key), members);
 			}
-			if (cacheSeconds != 0)
+			if (cacheSeconds != 0) {
 				cluster.expire(key, cacheSeconds);
-
-			if (log.isDebugEnabled()) {
-				log.debug("setObjectSet {} = {}", key, value);
 			}
+			log.debug("setObjectSet {} = {}", key, value);
 			return result;
 		});
 	}
@@ -483,9 +445,7 @@ public class JedisService {
 				}
 				result = cluster.srem(getBytesKey(key), members0);
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("delSetMember {}", key);
-			}
+			log.debug("delSetMember {}", key);
 			return result;
 		});
 	}
@@ -502,9 +462,7 @@ public class JedisService {
 	public Map<String, String> getMap(final String key) {
 		return (Map<String, String>) doExecuteWithRedis(cluster -> {
 			Map<String, String> value = cluster.hgetAll(key);
-			if (log.isDebugEnabled()) {
-				log.debug("getMap {} = {}", key, value);
-			}
+			log.debug("getMap {} = {}", key, value);
 			return value;
 		});
 	}
@@ -524,9 +482,7 @@ public class JedisService {
 			if (cacheSeconds != 0) {
 				cluster.expire(key, cacheSeconds);
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("setMap {} = {}", key, value);
-			}
+			log.debug("setMap {} = {}", key, value);
 			return result;
 		});
 	}
@@ -541,9 +497,7 @@ public class JedisService {
 	public String mapPut(final String key, final Map<String, String> value) {
 		return (String) doExecuteWithRedis(cluster -> {
 			String result = cluster.hmset(key, value);
-			if (log.isDebugEnabled()) {
-				log.debug("mapPut {} = {}", key, value);
-			}
+			log.debug("mapPut {} = {}", key, value);
 			return result;
 		});
 	}
@@ -558,9 +512,7 @@ public class JedisService {
 	public Long mapRemove(final String key, final String mapKey) {
 		return (Long) doExecuteWithRedis(cluster -> {
 			Long result = cluster.hdel(key, mapKey);
-			if (log.isDebugEnabled()) {
-				log.debug("mapRemove {}  {}", key, mapKey);
-			}
+			log.debug("mapRemove {}  {}", key, mapKey);
 			return result;
 		});
 	}
@@ -568,9 +520,7 @@ public class JedisService {
 	public Boolean mapExists(final String key, final String mapKey) {
 		return (Boolean) doExecuteWithRedis(cluster -> {
 			Boolean result = cluster.hexists(key, mapKey);
-			if (log.isDebugEnabled()) {
-				log.debug("mapObjectExists {}  {}", key, mapKey);
-			}
+			log.debug("mapObjectExists {}  {}", key, mapKey);
 			return result;
 		});
 
@@ -592,9 +542,7 @@ public class JedisService {
 			for (Map.Entry<byte[], byte[]> e : map.entrySet()) {
 				value.put(StringUtils2.toString(e.getKey()), toObject(e.getValue()));
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("getObjectMap {} = {}", key, value);
-			}
+			log.debug("getObjectMap {} = {}", key, value);
 			return value;
 		});
 	}
@@ -618,9 +566,7 @@ public class JedisService {
 			if (cacheSeconds != 0) {
 				cluster.expire(key, cacheSeconds);
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("setObjectMap {} = {}", key, value);
-			}
+			log.debug("setObjectMap {} = {}", key, value);
 			return result;
 		});
 	}
@@ -640,9 +586,7 @@ public class JedisService {
 				map.put(getBytesKey(e.getKey()), toBytes(e.getValue()));
 			}
 			result = cluster.hmset(getBytesKey(key), map);
-			if (log.isDebugEnabled()) {
-				log.debug("mapObjectPut {} = {}", key, value);
-			}
+			log.debug("mapObjectPut {} = {}", key, value);
 			return result;
 		});
 	}
@@ -651,9 +595,7 @@ public class JedisService {
 	public Long mapObjectRemove(final String key, final String mapKey) {
 		return (Long) doExecuteWithRedis(cluster -> {
 			Long result = cluster.hdel(getBytesKey(key), getBytesKey(mapKey));
-			if (log.isDebugEnabled()) {
-				log.debug("mapObjectRemove {}  {}", key, mapKey);
-			}
+			log.debug("mapObjectRemove {}  {}", key, mapKey);
 			return result;
 		});
 	}
@@ -661,30 +603,10 @@ public class JedisService {
 	public Boolean mapObjectExists(final String key, final String mapKey) {
 		return (Boolean) doExecuteWithRedis(cluster -> {
 			Boolean result = cluster.hexists(getBytesKey(key), getBytesKey(mapKey));
-			if (log.isDebugEnabled()) {
-				log.debug("mapObjectExists {}  {}", key, mapKey);
-			}
+			log.debug("mapObjectExists {}  {}", key, mapKey);
 			return result;
 		});
 
-	}
-
-	// --- Utility ---
-
-	public byte[] getBytesKey(Object object) {
-		if (object instanceof String) {
-			return StringUtils2.getBytes((String) object);
-		} else {
-			return SerializeUtils.serialize(object);
-		}
-	}
-
-	public byte[] toBytes(Object object) {
-		return SerializeUtils.serialize(object);
-	}
-
-	public Object toObject(byte[] bytes) {
-		return SerializeUtils.unserialize(bytes);
 	}
 
 	private Object doExecuteWithRedis(Callback callback) {
@@ -697,6 +619,24 @@ public class JedisService {
 			// Redis cluster mode does not need to display the release of
 			// resources.
 		}
+	}
+
+	// --- Function's ---
+
+	public static byte[] getBytesKey(Object object) {
+		if (object instanceof String) {
+			return StringUtils2.getBytes((String) object);
+		} else {
+			return SerializeUtils.serialize(object);
+		}
+	}
+
+	public static byte[] toBytes(Object object) {
+		return SerializeUtils.serialize(object);
+	}
+
+	public static Object toObject(byte[] bytes) {
+		return SerializeUtils.unserialize(bytes);
 	}
 
 	public interface Callback {

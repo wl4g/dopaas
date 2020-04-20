@@ -5,7 +5,7 @@
 	<artifactId>super-devops-ci</artifactId>
 	<version>master</version>
 	<packaging>pom</packaging>
-	<name>Super DevOps Continuous Integration</name>
+	<name>Super DevOps Continuous Integration(CICD) Services</name>
 	<url>https://ci.super-devops.wl4g.com</url>
 	<description>CI - An open source continuous integration deployment system based on Spring Cloud.</description>
 	<modules>

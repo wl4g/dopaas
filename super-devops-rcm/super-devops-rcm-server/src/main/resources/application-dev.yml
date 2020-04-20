@@ -1,0 +1,69 @@
+# Copyright (c) 2017 ~ 2025, the original author wangl.sir individual Inc,
+# All rights reserved. Contact us <Wanglsir@gmail.com, 983708408@qq.com>
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# #### Environment(Test) configuration. ####
+#
+spring:
+  cloud:
+    devops:
+      iam:
+        cors:
+          rules:
+            /**:
+              allowsOrigins:
+                #- http://${DEVOPS_DOMAIN_TOP:wl4g.debug}
+                #- http://${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
+                #- http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
+                #- http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
+                #- http://localhost:8080
+                #- http://localhost:14040
+                #- http://127.0.0.1:8080
+                #- http://127.0.0.1:14040
+                - '*'
+        acl:
+          secure: false # Turn off protection will trust any same intranet IP.
+          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
+          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
+        client:
+          # 为方便同事调用，当域名以debug，local，dev后缀结尾，跟localhost一样处理，同时修改前端 global_variable.js #55 ， 同时修改数据库app_cluster_config
+          server-uri: http://wl4g.debug:14040/iam-server
+          unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
+          success-uri: http://wl4g.debug:8080/#/oss/buckets
+
+  # Datasource configuration.
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    druid:
+      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/devops_dev?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
+      username: ${DEVOPS_DB_USER:gzsm}
+      password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
+      initial-size: 10
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filters: stat,wall
+      log-slow-sql: true
+
+# Redis configuration.
+redis:
+  passwd: ${REDIS_PASSWD:zzx!@#$%}
+  connect-timeout: 10000
+  max-attempts: 10
+  # Redis's cluster nodes.
+  nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}

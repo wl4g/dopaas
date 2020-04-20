@@ -20,6 +20,7 @@ import java.io.Serializable;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 
@@ -35,8 +36,8 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_S
  */
 public class IamServerSessionManager extends AbstractIamSessionManager<IamProperties> {
 
-	public IamServerSessionManager(IamProperties config) {
-		super(config, CACHE_TICKET_S);
+	public IamServerSessionManager(IamProperties config, IamCacheManager cacheManager) {
+		super(config, cacheManager, CACHE_TICKET_S);
 	}
 
 	@Override

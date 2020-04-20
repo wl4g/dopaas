@@ -24,7 +24,8 @@ import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.InstanceHolder;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.tool.common.crypto.AesUtils;
+import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -153,21 +154,21 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	 * @param release
 	 */
 	public void resolvesCipherSource(ReleaseMessage release) {
-		if (log.isTraceEnabled()) {
-			log.trace("Resolver cipher configuration propertySource ...");
-		}
+		log.debug("Resolver cipher configuration propertySource ...");
 
 		for (ReleasePropertySource ps : release.getPropertySources()) {
 			ps.getSource().forEach((key, value) -> {
 				String cipher = String.valueOf(value);
 				if (cipher.startsWith(CIPHER_PREFIX)) {
 					try {
-						String plain = new AesUtils().decrypt(cipher.substring(CIPHER_PREFIX.length()));
+						// TODO using dynamic cipherKey??
+						byte[] cipherKey = AESCryptor.getEnvCipherKey("DEVOPS_CIPHER_KEY");
+						String cipherText = cipher.substring(CIPHER_PREFIX.length());
+						// TODO fromHex()??
+						String plain = new AESCryptor().decrypt(cipherKey, CrypticSource.fromHex(cipherText)).toString();
 						ps.getSource().put(key, plain);
 
-						if (log.isDebugEnabled()) {
-							log.debug("Decryption property key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
-						}
+						log.debug("Decryption property key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
 					} catch (Exception e) {
 						throw new ScmException("Cipher decryption error.", e);
 					}

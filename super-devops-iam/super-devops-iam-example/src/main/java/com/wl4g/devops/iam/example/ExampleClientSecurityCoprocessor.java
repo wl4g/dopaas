@@ -17,8 +17,8 @@ package com.wl4g.devops.iam.example;
 
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -33,10 +33,9 @@ public class ExampleClientSecurityCoprocessor implements ClientSecurityCoprocess
 	final public static String KEY_EXAMPLE_STORE_IN_SESSION = "exampleKey1";
 
 	@Override
-	public void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response, Map<String, Object> respParams) throws AfterAuthenticatSuccessException {
+	public void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, HttpServletRequest request,
+			HttpServletResponse response, Map<String, Object> respParams) throws AfterAuthenticatSuccessException {
 		// TODO Auto-generated method stub
-
 		subject.getSession().setAttribute(KEY_EXAMPLE_STORE_IN_SESSION, "12345");
 	}
 

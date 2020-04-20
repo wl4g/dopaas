@@ -27,25 +27,30 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getRequestParam;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
-import com.wl4g.devops.iam.common.cache.EnhancedCacheManager;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
-import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
+import com.wl4g.devops.iam.verification.model.GenericVerifyResult;
+import com.wl4g.devops.tool.common.codec.Base58;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Abstract IAM verification handler
@@ -57,7 +62,7 @@ import com.wl4g.devops.iam.verification.model.SimpleVerifyImgModel;
  */
 public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Verified token bit.
@@ -85,7 +90,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 * Enhanced cache manager.
 	 */
 	@Autowired
-	protected EnhancedCacheManager cacheManager;
+	protected IamCacheManager cacheManager;
 
 	/**
 	 * Delegate message source.
@@ -111,7 +116,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
 		// Already created verify-code
 		VerifyCodeWrapper code = getBindValue(getVerifyCodeStoredKey());
-		if (code != null && code.getCode() != null) { // Assertion
+		if (!isNull(code) && !isNull(code.getCode())) { // Assertion
 			return code;
 		}
 
@@ -160,20 +165,23 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 			if (!isEnabled(factors)) {
 				return null; // not enabled
 			}
+			// Gets choosed secure algorithm.
+			SecureAlgKind kind = SecureAlgKind.of(getRequestParam(request, config.getParam().getSecretAlgKindName(), true));
 
-			// Verification
+			// Decoding
+			params = new String(Base58.decode(params), UTF_8);
+			// Gets request verifyCode.
 			Object submitCode = getRequestVerifyCode(params, request);
+			// Stored verifyCode.
 			storedCode = getVerifyCode(true);
-			if (!doMatch(storedCode, submitCode)) {
+			if (!doMatch(kind, storedCode, submitCode)) {
 				log.error("Verification mismatched. {} => {}", submitCode, storedCode);
 				throw new VerificationException(bundle.getMessage("AbstractVerification.verify.mismatch"));
 			}
 
 			// Storage verified token.
 			String verifiedToken = "vefdt" + randomAlphabetic(DEFAULT_VERIFIED_TOKEN_BIT);
-			if (log.isInfoEnabled()) {
-				log.info("Saving to verified token: {}", verifiedToken);
-			}
+			log.info("Saving to verified token: {}", verifiedToken);
 			return bind(getVerifiedTokenStoredKey(), verifiedToken, getVerifiedTokenExpireMs());
 		} finally {
 			if (storedCode != null) {
@@ -229,16 +237,17 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	/**
 	 * Match submitted validation code
 	 *
+	 * @param request
 	 * @param storedCode
 	 * @param submitCode
 	 * @return
 	 */
-	protected boolean doMatch(VerifyCodeWrapper storedCode, Object submitCode) {
+	protected boolean doMatch(@NotNull SecureAlgKind kind, VerifyCodeWrapper storedCode, Object submitCode) {
 		if (Objects.isNull(submitCode)) {
 			return false;
 		}
-		if (submitCode instanceof SimpleVerifyImgModel) {
-			return trimToEmpty(storedCode.getCode()).equalsIgnoreCase(((SimpleVerifyImgModel) submitCode).getVerifyCode());
+		if (submitCode instanceof GenericVerifyResult) {
+			return trimToEmpty(storedCode.getCode()).equalsIgnoreCase(((GenericVerifyResult) submitCode).getVerifyCode());
 		}
 		throw new UnsupportedOperationException(String.format("Unsupported verify-code: %s, Override the doMatch() method",
 				submitCode.getClass().getSimpleName()));
@@ -286,7 +295,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 * @return
 	 */
 	private String getVerifyCodeStoredKey() {
-		return "VERIFY_CODE." + verifyType().name();
+		return "VERIFY_CODE." + kind().name();
 	}
 
 	/**
@@ -295,7 +304,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 * @return
 	 */
 	private String getVerifiedTokenStoredKey() {
-		return "VERIFIED_TOKEN." + verifyType().name();
+		return "VERIFIED_TOKEN." + kind().name();
 	}
 
 }

@@ -15,11 +15,14 @@
  */
 package com.wl4g.devops.iam.common.config;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -27,6 +30,7 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 
@@ -64,22 +68,32 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	/**
 	 * External custom filter chain pattern matching
 	 */
-	protected Map<String, String> filterChain = new LinkedHashMap<>();
+	private Map<String, String> filterChain = new LinkedHashMap<>();
 
 	/**
 	 * Session cache configuration properties.
 	 */
-	protected CacheProperties cache = new CacheProperties();
+	private CacheProperties cache = new CacheProperties();
 
 	/**
 	 * Cookie configuration properties.
 	 */
-	protected CookieProperties cookie = new CookieProperties();
+	private CookieProperties cookie = new CookieProperties();
 
 	/**
 	 * Session configuration properties.
 	 */
-	protected SessionProperties session = new SessionProperties();
+	private SessionProperties session = new SessionProperties();
+
+	/**
+	 * Cipher request parameter properties.
+	 */
+	private CipherProperties cipher = new CipherProperties();
+
+	/**
+	 * Application name. e.g. http://host:port/{serviceName}/shiro-cas
+	 */
+	private String serviceName;
 
 	/**
 	 * Redirect to login URI.</br>
@@ -104,6 +118,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @return
 	 */
 	protected abstract String getUnauthorizedUri();
+
+	public String getServiceName() {
+		return serviceName;
+	}
+
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
 
 	public Map<String, String> getFilterChain() {
 		return filterChain;
@@ -146,6 +168,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	public abstract void setParam(P param);
 
+	public CipherProperties getCipher() {
+		return cipher;
+	}
+
+	public void setCipher(CipherProperties cipher) {
+		this.cipher = cipher;
+	}
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// Apply default properties if necessary.
@@ -158,15 +188,21 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	/**
 	 * Apply default properties if necessary.
 	 */
-	protected abstract void applyDefaultIfNecessary();
+	protected void applyDefaultIfNecessary() {
+		// Sets Service name defaults.
+		if (isBlank(getServiceName())) {
+			setServiceName(environment.getProperty("spring.application.name"));
+		}
+	}
 
 	/**
 	 * Validation.
 	 */
 	protected void validation() {
-		hasText(getLoginUri(), "'loginUri' must be empty.");
-		hasText(getSuccessUri(), "'successUri' must be empty.");
-		hasText(getUnauthorizedUri(), "'unauthorizedUri' must be empty.");
+		hasTextOf(getServiceName(), "serviceName");
+		hasTextOf(getLoginUri(), "loginUri");
+		hasTextOf(getSuccessUri(), "successUri");
+		hasTextOf(getUnauthorizedUri(), "unauthorizedUri");
 	}
 
 	/**
@@ -187,13 +223,15 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public String getPrefix() {
 			if (isBlank(prefix)) {
-				setPrefix(environment.getProperty("spring.application.name") + "_iam_");
+				// By default
+				setPrefix(environment.getProperty("spring.application.name"));
 			}
-			hasText(prefix, "Cache prefix must not be empty.");
+			hasTextOf(prefix, "cachePrefix");
 			return prefix;
 		}
 
 		public void setPrefix(String prefix) {
+			hasTextOf(prefix, "iamCachePrefix");
 			this.prefix = prefix;
 		}
 
@@ -264,6 +302,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 */
 		private boolean enableRequestRemember = true;
 
+		/**
+		 * Whether to enable accesstoken enhanced verification.
+		 */
+		private boolean enableAccessTokenValidity = false;
+
 		public Long getGlobalSessionTimeout() {
 			return globalSessionTimeout;
 		}
@@ -296,18 +339,39 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			this.enableRequestRemember = enableRequestRemember;
 		}
 
+		public boolean isEnableAccessTokenValidity() {
+			return enableAccessTokenValidity;
+		}
+
+		public void setEnableAccessTokenValidity(boolean enableAccessTokenValidity) {
+			this.enableAccessTokenValidity = enableAccessTokenValidity;
+		}
+
 	}
 
 	/**
-	 * IAM parameters configuration properties
-	 *
+	 * IAM parameters configuration properties. </br>
+	 * </br>
+	 * Note: why not use springmvc to automatically map to beans directly, but
+	 * define parameter names here? This design is mainly for security and
+	 * flexibility, and security is very important for the certification center.
+	 * Therefore, not only the certification mechanism is designed to be very
+	 * secure, but also the parameters submitted during certification are
+	 * customized (confused parameter names), In this way, even if the attacker
+	 * grabs the packet, it will increase their cracking workload.
+	 * 
 	 * @author Wangl.sir <983708408@qq.com>
 	 * @version v1.0
 	 * @date 2018年11月29日
 	 * @since
 	 */
-	public abstract static class ParamProperties implements Serializable {
+	public static class ParamProperties implements Serializable {
 		private static final long serialVersionUID = 3258460473777285504L;
+
+		/**
+		 * This is the version number parameter name of the Iam API.
+		 */
+		private String version = "version";
 
 		/**
 		 * This SID session is used if the parameter contains the "SID"
@@ -319,6 +383,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * Save SID to cookie, use this parameter name in browser mode.
 		 */
 		private String sidSaveCookie = "__cookie";
+
+		/**
+		 * Account parameter name at login time of account password.
+		 */
+		private String principalName = "principal";
 
 		/**
 		 * Authentication parameter application name
@@ -389,6 +458,52 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 */
 		private String i18nLang = "lang";
 
+		// --- [Client's secret & signature. ---
+
+		/**
+		 * When the client submits the authentication request, it needs to carry
+		 * the public key (hexadecimal string) generated by itself. In the next
+		 * step, the server will return (e.g, the secretKey of AES/DES3) as the
+		 * message encryption key of the later service sensitive api.
+		 * 
+		 * @see next-step: {@link #dataCipherKeyName}
+		 */
+		private String clientSecretKeyName = "clientSecretKey";
+
+		/**
+		 * When the authentication is successful, the access token is generated.
+		 * It is used to enhance the session based verification logic
+		 * (originally the idea comes from JWT). In fact, it is a signature of
+		 * hmacSHA1("signKey", sessionid + umid). Verification logic: the
+		 * signature value calculated by the server is equal to the signature
+		 * value submitted by the client, that is, the verification passes.
+		 * 
+		 * @see {@link com.wl4g.devops.common.constants.IAMDevOpsConstants#KEY_ACCESSTOKEN_SIGN}
+		 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
+		 * @see prev-step:{@link #dataCipherKeyName}
+		 */
+		private String accessTokenName = "accessToken";
+
+		/**
+		 * When the client authentication is successful, the server will respond
+		 * encrypted to the {@link #dataCipherKeyName} (using the
+		 * {@link #clientSecretKeyName} encryption in the previous step).
+		 * 
+		 * @see prev-step: {@link #clientSecretKeyName}
+		 * @see next-step: {@link #accessTokenName}
+		 */
+		private String dataCipherKeyName = "dataCipherKey";
+
+		// --- Client's secret & signature.] ---
+
+		public String getVersion() {
+			return version;
+		}
+
+		public void setVersion(String version) {
+			this.version = version;
+		}
+
 		public String getSid() {
 			return sid;
 		}
@@ -403,6 +518,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public void setSidSaveCookie(String sidSaveCookie) {
 			this.sidSaveCookie = sidSaveCookie;
+		}
+
+		public String getPrincipalName() {
+			return principalName;
+		}
+
+		public void setPrincipalName(String loginUsername) {
+			this.principalName = loginUsername;
 		}
 
 		public String getLogoutForced() {
@@ -509,6 +632,106 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			this.i18nLang = locale;
 		}
 
+		public String getClientSecretKeyName() {
+			return clientSecretKeyName;
+		}
+
+		public void setClientSecretKeyName(String clientSecretKeyName) {
+			this.clientSecretKeyName = clientSecretKeyName;
+		}
+
+		public String getAccessTokenName() {
+			return accessTokenName;
+		}
+
+		public void setAccessTokenName(String accessTokenName) {
+			this.accessTokenName = accessTokenName;
+		}
+
+		public String getDataCipherKeyName() {
+			return dataCipherKeyName;
+		}
+
+		public void setDataCipherKeyName(String dataCipherKeyName) {
+			this.dataCipherKeyName = dataCipherKeyName;
+		}
+
+	}
+
+	/**
+	 * Cipher request parameters configuration properties.
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年3月28日 v1.0.0
+	 * @see
+	 */
+	public static class CipherProperties implements Serializable {
+
+		final private static long serialVersionUID = -5701992202765239835L;
+
+		/**
+		 * Note: the fixed prefix in the request header where the encryption
+		 * parameter name is defined.
+		 * 
+		 * @see {@link #setCipherParameterHeader(List)}
+		 */
+		final public static String CIPHER_HEADER_PREFIX = "X-Iam-Cipher-";
+
+		/**
+		 * Enable data encryption request or not.
+		 */
+		private boolean enableDataCipher = false;
+
+		/**
+		 * @see {@link #setCipherParameterHeader(List)}
+		 */
+		private List<String> cipherParameterHeader = new ArrayList<String>() {
+			private static final long serialVersionUID = 7117402728828798467L;
+			{
+				// Some commonly used encryption parameter name definitions.
+				add(CIPHER_HEADER_PREFIX + "encryptedMobilePhone");
+				add(CIPHER_HEADER_PREFIX + "encryptedCredentials");
+				add(CIPHER_HEADER_PREFIX + "encryptedBankcardNumber");
+			}
+		};
+
+		/**
+		 * Cipher request headder name case sensitive.
+		 */
+		private boolean isCaseSensitive = false;
+
+		public boolean isEnableDataCipher() {
+			return enableDataCipher;
+		}
+
+		public void setEnableDataCipher(boolean enableDataCipher) {
+			this.enableDataCipher = enableDataCipher;
+		}
+
+		public List<String> getCipherParameterHeader() {
+			return cipherParameterHeader;
+		}
+
+		public CipherProperties setCipherParameterHeader(List<String> cipherParameterHeader) {
+			if (!CollectionUtils.isEmpty(cipherParameterHeader)) {
+				for (String param : cipherParameterHeader) {
+					if (!this.cipherParameterHeader.contains(param)) {
+						this.cipherParameterHeader.add(CIPHER_HEADER_PREFIX + param);
+					}
+				}
+			}
+			return this;
+		}
+
+		public boolean isCaseSensitive() {
+			return isCaseSensitive;
+		}
+
+		public CipherProperties setCaseSensitive(boolean isCaseSensitive) {
+			this.isCaseSensitive = isCaseSensitive;
+			return this;
+		}
+
 	}
 
 	/**
@@ -578,6 +801,43 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			for (Which t : values()) {
 				if (String.valueOf(which).equalsIgnoreCase(t.name())) {
 					return t;
+				}
+			}
+			return null;
+		}
+
+	}
+
+	/**
+	 * {@link IamVersion}
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年3月29日 v1.0.0
+	 * @see
+	 */
+	public static enum IamVersion {
+
+		V2_0_0("v2.0.0");
+
+		private String version;
+
+		private IamVersion(String version) {
+			this.version = version;
+		}
+
+		public String getVersion() {
+			return version;
+		}
+
+		public void setVersion(String version) {
+			this.version = version;
+		}
+
+		public static IamVersion safeOf(String version) {
+			for (IamVersion v : values()) {
+				if (String.valueOf(version).equalsIgnoreCase(v.name())
+						|| String.valueOf(version).equalsIgnoreCase(v.getVersion())) {
+					return v;
 				}
 			}
 			return null;

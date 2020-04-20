@@ -16,7 +16,7 @@
 package com.wl4g.devops.umc.config;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
-import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
+import com.wl4g.devops.umc.alarm.alerting.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.annotation.EnableHttpCollectReceiver;
 import com.wl4g.devops.umc.annotation.EnableKafkaCollectReceiver;
 import com.wl4g.devops.umc.console.ReceiveConsole;

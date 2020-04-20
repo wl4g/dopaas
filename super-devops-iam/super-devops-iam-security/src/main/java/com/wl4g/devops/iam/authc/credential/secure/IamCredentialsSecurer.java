@@ -15,6 +15,11 @@
  */
 package com.wl4g.devops.iam.authc.credential.secure;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
+
 /**
  * IAM credentials securer
  *
@@ -27,10 +32,12 @@ public interface IamCredentialsSecurer extends CredentialsSecurer {
 
 	/**
 	 * Apply asymmetric algorithm secret public key
-	 *
+	 * 
+	 * @param kind
+	 * @param principal
 	 * @return
 	 */
-	default String applySecret() {
+	default String applySecret(@NotNull SecureAlgKind kind, @NotBlank String principal) {
 		throw new UnsupportedOperationException();
 	}
 

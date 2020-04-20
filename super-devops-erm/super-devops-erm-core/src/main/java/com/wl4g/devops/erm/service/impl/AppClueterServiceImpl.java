@@ -27,7 +27,8 @@ import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.erm.service.AppClusterService;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
-import com.wl4g.devops.tool.common.crypto.AesUtils;
+import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ import java.net.UnknownHostException;
 import java.security.InvalidParameterException;
 import java.util.*;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
 
 @Service
@@ -105,9 +107,10 @@ public class AppClueterServiceImpl implements AppClusterService {
 			appInstance.setClusterId(clusterId);
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
 				try {
-					AesUtils aes = new AesUtils(cipherKey);
-					String encrypt = aes.encrypt(appInstance.getSshKey());
-					appInstance.setSshKey(encrypt);
+					AESCryptor aes = new AESCryptor();
+					String hexCipherText = aes.encrypt(cipherKey.getBytes(UTF_8), CrypticSource.fromHex(appInstance.getSshKey()))
+							.toHex();
+					appInstance.setSshKey(hexCipherText);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -116,29 +119,30 @@ public class AppClueterServiceImpl implements AppClusterService {
 		}
 	}
 
-	private void checkRepeat(List<AppInstance> instances){
-		Assert2.notEmptyOf(instances,"instances");
-		for(int i = 0; i< instances.size();i++){
-			for(int j = i+1; j<instances.size()-1;j++){
-				isRepeatBetweenTwo(instances.get(i),instances.get(j));
+	private void checkRepeat(List<AppInstance> instances) {
+		Assert2.notEmptyOf(instances, "instances");
+		for (int i = 0; i < instances.size(); i++) {
+			for (int j = i + 1; j < instances.size() - 1; j++) {
+				isRepeatBetweenTwo(instances.get(i), instances.get(j));
 			}
 		}
 	}
 
-	private void isRepeatBetweenTwo(AppInstance instance1,AppInstance instance2){
-		if(Objects.isNull(instance1) || Objects.isNull(instance2)){
+	private void isRepeatBetweenTwo(AppInstance instance1, AppInstance instance2) {
+		if (Objects.isNull(instance1) || Objects.isNull(instance2)) {
 			return;
 		}
-		if(!StringUtils.equals(instance1.getEndpoint(),instance2.getEndpoint())){
+		if (!StringUtils.equals(instance1.getEndpoint(), instance2.getEndpoint())) {
 			return;
 		}
-		if(!StringUtils.equals(instance1.getEnvType(),instance2.getEnvType())){
+		if (!StringUtils.equals(instance1.getEnvType(), instance2.getEnvType())) {
 			return;
 		}
-		if(instance1.getHostId().intValue() != instance2.getHostId().intValue()){
+		if (instance1.getHostId().intValue() != instance2.getHostId().intValue()) {
 			return;
 		}
-		throw new InvalidParameterException(String.format("Instances is repeat;instance1=%s instance2=%s",instance1.toString(),instance2.toString()));
+		throw new InvalidParameterException(
+				String.format("Instances is repeat;instance1=%s instance2=%s", instance1.toString(), instance2.toString()));
 
 	}
 
@@ -150,9 +154,10 @@ public class AppClueterServiceImpl implements AppClusterService {
 		for (AppInstance appInstance : appCluster.getInstances()) {
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
 				try {
-					AesUtils aes = new AesUtils(cipherKey);
-					String encrypt = aes.encrypt(appInstance.getSshKey());
-					appInstance.setSshKey(encrypt);
+					AESCryptor aes = new AESCryptor();
+					String hexCipherText = aes.encrypt(cipherKey.getBytes(UTF_8), CrypticSource.fromHex(appInstance.getSshKey()))
+							.toHex();
+					appInstance.setSshKey(hexCipherText);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -198,8 +203,10 @@ public class AppClueterServiceImpl implements AppClusterService {
 		for (AppInstance appInstance : appInstances) {
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
 				try {
-					char[] sshkeyPlain = new AesUtils(cipherKey).decrypt(appInstance.getSshKey()).toCharArray();
-					appInstance.setSshKey(String.valueOf(sshkeyPlain));
+					AESCryptor aes = new AESCryptor();
+					String sshkeyPlain = aes.decrypt(cipherKey.getBytes(UTF_8), CrypticSource.fromHex(appInstance.getSshKey()))
+							.toString();
+					appInstance.setSshKey(sshkeyPlain);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -222,11 +229,11 @@ public class AppClueterServiceImpl implements AppClusterService {
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 		String command = "echo " + uuid;
 		String echoStr = null;
-		try{
+		try {
 			echoStr = pm.execWaitForComplete(
 					new RemoteDestroableCommand(command, 10000, sshUser, appHost.getHostname(), sshKey.toCharArray()));
-		}catch (UnknownHostException e){
-			throw new UnknownHostException(appHost.getHostname()+": Name or service not known");
+		} catch (UnknownHostException e) {
+			throw new UnknownHostException(appHost.getHostname() + ": Name or service not known");
 		}
 		if (Objects.isNull(echoStr) || !uuid.equals(echoStr.replaceAll("\n", ""))) {
 			throw new IOException("Test Connect Fail");

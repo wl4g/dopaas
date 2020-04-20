@@ -20,17 +20,21 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipal;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
 import com.wl4g.devops.iam.common.authc.AuthenticatorAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 
 /**
  * IAM client authenticator authorization filter.</br>
@@ -75,9 +79,38 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	}
 
 	@Override
-	protected IamAuthenticationToken postCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
+	protected IamAuthenticationToken doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		return new AuthenticatorAuthenticationToken(remoteHost, redirectInfo);
+		/**
+		 * [Note1]: The client wants to verify the credentials and redirect the
+		 * request. That is, if the current session has a value (has TCT), you
+		 * can get the current principal directly from the
+		 * 
+		 * @see {@link com.wl4g.devops.iam.common.utils.IamSecurityHolder#getPrincipal(boolean)}
+		 */
+		String principal = getPrincipal(false);
+
+		/**
+		 * [Note2]: The request is redirected from the client logout, i.e. the
+		 * session is null(no TCT), To get the principal before logout, you can
+		 * only get it from the client request parameter.
+		 * 
+		 * @see {@link org.apache.shiro.subject.Subject#getSession()}
+		 */
+		principal = !isBlank(principal) ? principal : getCleanParam(request, config.getParam().getPrincipalName());
+		return new AuthenticatorAuthenticationToken(principal, remoteHost, redirectInfo);
+	}
+
+	@Override
+	protected RedirectInfo determineFailureRedirect(RedirectInfo redirect, IamAuthenticationToken token,
+			AuthenticationException ae, ServletRequest request, ServletResponse response) {
+		/**
+		 * Fix Infinite redirection, {@link AuthenticatorAuthenticationFilter}
+		 * may redirect to loginUrl, if failRedirectUrl equals getLoginUrl, it
+		 * will happen infinite redirection.
+		 **/
+		redirect.setRedirectUrl(getLoginUrl());
+		return super.determineFailureRedirect(redirect, token, ae, request, response);
 	}
 
 	@Override

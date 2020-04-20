@@ -28,10 +28,10 @@ import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.slf4j.Logger;
 import org.springframework.core.io.Resource;
 
 import com.wl4g.devops.support.mybatis.logging.LogbackImpl;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Multiple DB connection composite sqlSessionFactory.
@@ -42,7 +42,7 @@ import com.wl4g.devops.support.mybatis.logging.LogbackImpl;
  */
 public class MultipleSqlSessionFactoryBean extends SqlSessionFactoryBean {
 
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	@Override
 	protected SqlSessionFactory buildSqlSessionFactory() throws IOException {

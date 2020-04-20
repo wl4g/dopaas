@@ -26,9 +26,9 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.redis.JedisService;
-import com.wl4g.devops.umc.alarm.DefaultIndicatorsValveAlerter;
-import com.wl4g.devops.umc.alarm.IndicatorsValveAlerter;
-import com.wl4g.devops.umc.alarm.SimulateIndicatorsValveAleter;
+import com.wl4g.devops.umc.alarm.alerting.DefaultIndicatorsValveAlerter;
+import com.wl4g.devops.umc.alarm.alerting.IndicatorsValveAlerter;
+import com.wl4g.devops.umc.alarm.alerting.SimulateIndicatorsValveAleter;
 import com.wl4g.devops.umc.console.AlarmConsole;
 import com.wl4g.devops.umc.handler.CheckImpledAlarmConfigurer;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
@@ -92,7 +92,7 @@ public class UmcAlarmAutoConfiguration {
 	}
 
 	//
-	// Alarm rule inspector.
+	// --- Alarm rule inspector. ---
 	//
 
 	@Bean
@@ -126,7 +126,7 @@ public class UmcAlarmAutoConfiguration {
 	}
 
 	//
-	// Alarm console.
+	// --- Alarm console. ---
 	//
 
 	@Bean

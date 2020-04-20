@@ -28,6 +28,8 @@ import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * IAM security coprocessor
@@ -46,12 +48,12 @@ public interface SecurityCoprocessor {
 	 * @param response
 	 * @return Returning to a non-empty SID will be preferred.
 	 */
-	default String preGetSessionId(ServletRequest request, ServletResponse response) {
+	default String preGetSessionId(HttpServletRequest request, HttpServletResponse response) {
 		return null;
 	}
 
 	/**
-	 * Call pre authentication, For example, the implementation of restricting
+	 * Call pre create token, For example, the implementation of restricting
 	 * client IP white-list to prevent violent cracking of large number of
 	 * submission login requests.
 	 *
@@ -60,7 +62,7 @@ public interface SecurityCoprocessor {
 	 * @param response
 	 * @return
 	 */
-	default boolean preAuthentication(Filter filter, ServletRequest request, ServletResponse response) {
+	default boolean preCreateToken(Filter filter, HttpServletRequest request, HttpServletResponse response) {
 		return true;
 	}
 
@@ -73,8 +75,8 @@ public interface SecurityCoprocessor {
 	 * @param response
 	 * @param respParams
 	 */
-	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response, Map<String, Object> respParams) throws AfterAuthenticatSuccessException {
+	default void postAuthenticatingSuccess(AuthenticationToken token, Subject subject, HttpServletRequest request,
+			HttpServletResponse response, Map<String, Object> respParams) throws AfterAuthenticatSuccessException {
 	}
 
 	/**
@@ -90,13 +92,13 @@ public interface SecurityCoprocessor {
 	}
 
 	/**
-	 * Call before logout
+	 * Pre-logout processing.
 	 *
-	 * @param forced
+	 * @param token
 	 * @param request
 	 * @param response
 	 */
-	default void preLogout(boolean forced, ServletRequest request, ServletResponse response) {
+	default void preLogout(AuthenticationToken token, HttpServletRequest request, HttpServletResponse response) {
 	}
 
 }

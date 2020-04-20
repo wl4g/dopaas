@@ -18,6 +18,8 @@ package com.wl4g.devops.iam.configure;
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.common.exception.iam.BindingConstraintsException;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.configure.SecurityConfigurer;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;
@@ -64,6 +66,21 @@ public interface ServerSecurityConfigurer extends SecurityConfigurer {
 	 * @return account information
 	 */
 	IamPrincipalInfo getIamAccount(Parameter parameter);
+
+	/**
+	 * When the authentication succeeds, but there is no access to the Iam
+	 * client application, this method will be called fallback to gets the
+	 * redirection URL
+	 *
+	 * @param token
+	 *            Authentication token.
+	 * @param defaultRedirect
+	 *            Default redirection information for configuration.
+	 * @return
+	 */
+	default RedirectInfo getFallbackRedirectInfo(IamAuthenticationToken token, RedirectInfo defaultRedirect) {
+		return defaultRedirect;
+	}
 
 	//
 	// A U T H O R I Z I N G _ M E T H O D
