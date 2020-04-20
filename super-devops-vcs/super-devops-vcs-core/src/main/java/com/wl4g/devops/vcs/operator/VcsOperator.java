@@ -19,8 +19,10 @@ import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.framework.operator.Operator;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
+import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 
 import java.util.List;
 
@@ -47,7 +49,18 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	List<String> getRemoteBranchNames(Vcs credentials, int projectId);
+	<T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, int projectId);
+
+	/**
+	 * Create Branch
+	 * @param credentials
+	 * @param projectId
+	 * @param branch
+	 * @param ref
+	 * @param <T>
+	 * @return
+	 */
+	<T extends VcsBranchModel> T createRemoteBranch(Vcs credentials, int projectId, String branch, String ref);
 
 	/**
 	 * Gets VCS remote tag names.
@@ -57,7 +70,18 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	List<String> getRemoteTags(Vcs credentials, int projectId);
+	<T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, int projectId);
+
+	/**
+	 *
+	 * @param credentials
+	 * @param projectId
+	 * @param branch
+	 * @param ref
+	 * @param <T>
+	 * @return
+	 */
+	<T extends VcsTagModel> T createRemoteTag(Vcs credentials, int projectId, String tag, String ref,String message,String releaseDescription);
 
 	/**
 	 * Gets remote project ID by project name.
@@ -98,14 +122,10 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * Search find remote projects by Id.
 	 *
 	 * @param credentials
-	 * @param projectName
-	 *            The item name to be searched can be empty. If it is empty, it
-	 *            means unconditional.
-	 * @param limit
-	 *            Page limit maximum
+	 * @param projectId
 	 * @return
 	 */
-	<T extends VcsProjectModel> T searchRemoteProjects(Vcs credentials, Integer projectId);
+	<T extends VcsProjectModel> T searchRemoteProjectsById(Vcs credentials, Integer projectId);
 
 	/**
 	 * Search find remote groups by name.(unlimited)

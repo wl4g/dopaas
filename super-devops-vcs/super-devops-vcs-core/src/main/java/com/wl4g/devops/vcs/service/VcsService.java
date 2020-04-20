@@ -17,9 +17,7 @@ package com.wl4g.devops.vcs.service;
 
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
-import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
+import com.wl4g.devops.vcs.operator.model.*;
 
 import java.util.List;
 
@@ -29,20 +27,31 @@ import java.util.List;
  */
 public interface VcsService {
 
-	PageModel list(PageModel pm, String name, String provider, Integer authType);
+    PageModel list(PageModel pm, String name, String provider, Integer authType);
 
-	void save(Vcs vcs);
+    void save(Vcs vcs);
 
-	void del(Integer id);
+    void del(Integer id);
 
-	Vcs detail(Integer id);
+    Vcs detail(Integer id);
 
-	List<Vcs> all();
+    List<Vcs> all();
 
-	List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Integer vcsId, String projectName);
+    List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Integer vcsId, String projectName);
 
-	List<VcsGroupModel> getGroups(Integer id, String groupName);
+    List<VcsGroupModel> getGroups(Integer id, String groupName);
 
-	List<VcsProjectModel> getProjects(PageModel pm, Integer vcsId, Integer groupId, String projectName);
+    List<VcsProjectModel> getProjects(PageModel pm, Integer vcsId, Integer groupId, String projectName);
+
+    VcsProjectModel getProjectById(Integer vcsId, Integer projectId);
+
+    List<VcsBranchModel> getBranchs(Integer vcsId, Integer projectId);
+
+    List<VcsTagModel> getTags(Integer vcsId, Integer projectId);
+
+    VcsBranchModel createBranch(Integer vcsId, Integer projectId, String branch, String ref);
+
+    VcsTagModel createTag(Integer vcsId, Integer projectId, String tag, String ref, String message, String releaseDescription);
+
 
 }
