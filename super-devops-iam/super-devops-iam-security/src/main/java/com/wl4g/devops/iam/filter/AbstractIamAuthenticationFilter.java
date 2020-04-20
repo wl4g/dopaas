@@ -616,7 +616,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			String dataCipherKeyHexCiphertext = null;
 			if (config.getCipher().isEnableDataCipher()) {
 				// New generate dataCipherKey.
-				String hexDataCipherKey = bind(KEY_DATA_CIPHER_KEY, generateDataCipherKey());
+				String hexDataCipherKey = bind(KEY_DATA_CIPHER, generateDataCipherKey());
 				// Gets SecureCryptService.
 				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
 				SecureCryptService cryptService = cryptAdapter.forOperator(kind);

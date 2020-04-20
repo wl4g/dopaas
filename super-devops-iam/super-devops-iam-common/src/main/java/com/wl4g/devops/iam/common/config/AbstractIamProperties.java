@@ -478,7 +478,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * signature value calculated by the server is equal to the signature
 		 * value submitted by the client, that is, the verification passes.
 		 * 
-		 * @see {@link com.wl4g.devops.common.constants.IAMDevOpsConstants#KEY_ACCESSTOKEN_SIGN_KEY}
+		 * @see {@link com.wl4g.devops.common.constants.IAMDevOpsConstants#KEY_ACCESSTOKEN_SIGN}
 		 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
 		 * @see prev-step:{@link #dataCipherKeyName}
 		 */
