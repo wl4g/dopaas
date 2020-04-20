@@ -14,7 +14,7 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<maven-source-plugin.version>2.4</maven-source-plugin.version>
+		<iam-jssdk.version>2.0.0</iam-jssdk.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -137,13 +137,51 @@
 					<outputDirectory>${project.build.directory}</outputDirectory>
 				</configuration>
 			</plugin>
-			<!-- Yui compression -->
+			<!-- Minify and combine js/css -->
+			<plugin>
+				<groupId>com.samaxes.maven</groupId>
+				<artifactId>minify-maven-plugin</artifactId>
+				<version>1.7.4</version>
+				<executions>
+					<execution>
+						<id>default-minify</id>
+						<phase>package</phase>
+						<goals>
+							<!-- <goal>minify</goal> -->
+							<goal>none</goal>
+						</goals>
+						<configuration>
+							<charset>UTF-8</charset>
+							<verbose>true</verbose>
+							<webappSourceDir>${basedir}/src/main/resources/jssdk-webapps/</webappSourceDir>
+							<webappTargetDir>${basedir}/target/jssdk-webapps/</webappTargetDir>
+							<closureLanguage>ECMASCRIPT6</closureLanguage>
+							<cssSourceDir>${iam-jssdk.version}/css</cssSourceDir>
+							<cssFinalFile>IAM.all.css</cssFinalFile>
+							<cssSourceIncludes>
+								<cssSourceInclude>iam-jssdk-**.css</cssSourceInclude>
+							</cssSourceIncludes>
+							<jsEngine>CLOSURE</jsEngine>
+							<jsSourceDir>${iam-jssdk.version}/js</jsSourceDir>
+							<jsFinalFile>IAM.all.js</jsFinalFile>
+							<jsSourceIncludes>
+								<jsSourceInclude>iam-jssdk-**.css</jsSourceInclude>
+								<jsSourceInclude>common-util.js</jsSourceInclude>
+								<jsSourceInclude>iam-jssdk-**.js</jsSourceInclude>
+								<jsSourceInclude>IAM.js</jsSourceInclude>
+							</jsSourceIncludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- @Deprecated YUICompression. @see http://alchim31.free.fr/mvnsites/yuicompressor-maven-plugin/compress-mojo.html -->
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>yuicompressor-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>prepare-package</phase>
+						<phase>none</phase>
+						<!-- <phase>prepare-package</phase> -->
 						<goals>
 							<goal>compress</goal>
 						</goals>
@@ -151,30 +189,53 @@
 				</executions>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<jswarn>false</jswarn>
-					<nosuffix>true</nosuffix>
-					<linebreakpos>-1</linebreakpos>
-					<sourceDirectory>src/main/resources/jssdk-webapps/2.0.0/</sourceDirectory>
-					<outputDirectory>target/classes/jssdk-webapps/2.0.0/</outputDirectory>
-					<force>true</force>
+					<jswarn>false</jswarn> <!-- 不显示js可能的错误 -->
+					<nosuffix>true</nosuffix> <!-- 压缩后保存文件后缀 无后缀 -->
+					<linebreakpos>-1</linebreakpos> <!-- 在指定的列号后插入新行 -->
+					<force>false</force> <!-- 若存在已压缩的文件，会先对比源文件是否有改动 有改动便压缩，无改动就不压缩 -->
+					<!-- 压缩之前先执行聚合文件操作 -->
+					<preProcessAggregates>false</preProcessAggregates>
+					<failOnWarning>false</failOnWarning>
+					<sourceDirectory>src/main/resources/jssdk-webapps/${iam-jssdk.version}/</sourceDirectory>
+					<outputDirectory>target/classes/</outputDirectory>
 					<includes>
-						<include>css/iam-jssdk-captcha-jigsaw.css</include>
-						<include>css/iam-jssdk-ui.css</include>
-						<include>css/iam-jssdk-wx.css</include>
-						<!-- <include>css/**.css</include> -->
+						<include>css/iam-jssdk-**.css</include>
 						<include>js/common-util.js</include>
-						<include>js/iam-jssdk-crypto.js</include>
-						<include>js/iam-jssdk-captcha-jigsaw.js</include>
-						<include>js/iam-jssdk-core.js</include>
-						<include>js/iam-jssdk-ui.js</include>
+						<include>js/iam-jssdk-**.js</include>
 						<include>js/IAM.js</include>
 					</includes>
 					<excludes>
-						<exclude>css/font-awesome-all.5.7.2.min.css</exclude>
-						<exclude>js/fingerprint2-2.1.0.min</exclude>
-						<exclude>js/crypto-js-4.0.0.min.js</exclude>
-						<exclude>js/jquery-3.3.1.min.js</exclude>
+						<exclude>css/**.min.css</exclude>
+						<exclude>js/**.min.js</exclude>
 					</excludes>
+					<aggregations>
+						<aggregation>
+							<insertNewLine>true</insertNewLine>
+							<inputDir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/</inputDir>
+							<output>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/IAM.all.min.js</output>
+							<includes>	<!-- 注意顺序 -->
+								<include>js/jquery-3.3.1.min.js</include>
+								<include>js/fingerprint2-2.1.0.min.js</include>
+								<include>js/crypto-js-4.0.0.min.js</include>
+								<include>js/common-util.js</include>
+								<include>js/iam-jssdk-crypto.js</include>
+								<include>js/iam-jssdk-captcha-jigsaw.js</include>
+								<include>js/iam-jssdk-core.js</include>
+								<include>js/iam-jssdk-ui.js</include>
+								<include>js/IAM.js</include>
+							</includes>
+						</aggregation>
+						<aggregation>
+							<insertNewLine>true</insertNewLine>
+							<inputDir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/</inputDir>
+							<output>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/IAM.all.min.js</output>
+							<includes>	<!-- 注意顺序 -->
+								<include>css/iam-jssdk-captcha-jigsaw.css</include>
+								<include>css/iam-jssdk-ui.css</include>
+								<include>css/iam-jssdk-wx.css</include>
+							</includes>
+						</aggregation>
+					</aggregations>
 				</configuration>
 			</plugin>
 		</plugins>
