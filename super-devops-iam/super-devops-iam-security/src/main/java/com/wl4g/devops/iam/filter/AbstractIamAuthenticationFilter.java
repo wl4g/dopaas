@@ -641,25 +641,27 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	protected String[] setSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request, ServletResponse response)
 			throws DecoderException {
 
-		String dataCipherKeyHexCiphertext = null, accessToken = null;
+		String dataCipherKeyHex = null, accessToken = null;
 		if (token instanceof ClientSecretIamAuthenticationToken) {
 			// Sets dataCipherKey
 			if (config.getCipher().isEnableDataCipher()) {
-				// New generate dataCipherKey.
-				String hexDataCipherKey = bind(KEY_DATA_CIPHER, generateDataCipherKey());
 				// Gets SecureCryptService.
 				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
 				SecureCryptService cryptService = cryptAdapter.forOperator(kind);
+
 				// Use clientSecretKey(hexPublicKey) to encrypt the newly
 				// generate symmetric dataCipherKey
 				String clientSecretKey = ((ClientSecretIamAuthenticationToken) token).getClientSecretKey();
 				// Encryption dataCipherKey by clientSecretKey.
 				KeySpec pubKeySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
-				dataCipherKeyHexCiphertext = cryptService.encrypt(pubKeySpec, hexDataCipherKey);
+				// New generate dataCipherKey.
+				String hexDataCipherKey = bind(KEY_DATA_CIPHER, generateDataCipherKey());
+				dataCipherKeyHex = cryptService.encrypt(pubKeySpec, hexDataCipherKey);
+
 				// Set to cookies
 				Cookie c = new SimpleCookie(config.getCookie());
 				c.setName(config.getParam().getDataCipherKeyName());
-				c.setValue(dataCipherKeyHexCiphertext);
+				c.setValue(dataCipherKeyHex);
 				c.saveTo(toHttp(request), toHttp(response));
 			}
 
@@ -676,7 +678,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		}
 
-		return new String[] { dataCipherKeyHexCiphertext, accessToken };
+		return new String[] { dataCipherKeyHex, accessToken };
 	}
 
 	/**

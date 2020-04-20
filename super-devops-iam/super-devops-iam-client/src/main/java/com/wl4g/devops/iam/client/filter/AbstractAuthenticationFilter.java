@@ -114,26 +114,6 @@ import static javax.servlet.http.HttpServletResponse.*;
 public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken> extends AuthenticatingFilter
 		implements IamAuthenticationFilter {
 
-	final public static String SAVE_GRANT_TICKET = AbstractAuthenticationFilter.class.getSimpleName() + ".GRANT_TICKET";
-
-	/**
-	 * What kind of URL request does not need to be remembered (i.e. using the
-	 * default successUrl) when using the function of recording login successful
-	 * callback URLs ? <br/>
-	 * (For example, jump to IAM/login.html after executing logout)
-	 */
-	final public static String[] EXCLOUDE_SAVED_REDIRECT_URLS = { ("/" + LogoutAuthenticationFilter.NAME) };
-
-	/**
-	 * Remember last request URL.
-	 */
-	final public static String KEY_REMEMBER_URL = AbstractAuthenticationFilter.class.getSimpleName() + ".IamRememberUrl";
-
-	/**
-	 * Redirection authentication failure retry upper limit key.
-	 */
-	final public static String KEY_TRY_REDIRECT_AUTHC = "TryRedirectAuthenticating";
-
 	final protected SmartLogger log = getLogger(getClass());
 
 	/**
@@ -537,5 +517,25 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	}
 
 	public abstract String getName();
+
+	final public static String SAVE_GRANT_TICKET = AbstractAuthenticationFilter.class.getSimpleName() + ".GRANT_TICKET";
+
+	/**
+	 * What kind of URL request does not need to be remembered (i.e. using the
+	 * default successUrl) when using the function of recording login successful
+	 * callback URLs ? <br/>
+	 * (For example, jump to IAM/login.html after executing logout)
+	 */
+	final public static String[] EXCLOUDE_SAVED_REDIRECT_URLS = { ("/" + LogoutAuthenticationFilter.NAME) };
+
+	/**
+	 * Remember last request URL.
+	 */
+	final public static String KEY_REMEMBER_URL = AbstractAuthenticationFilter.class.getSimpleName() + ".IamRememberUrl";
+
+	/**
+	 * Redirection authentication failure retry upper limit key.
+	 */
+	final public static String KEY_TRY_REDIRECT_AUTHC = "TryRedirectAuthenticating";
 
 }
