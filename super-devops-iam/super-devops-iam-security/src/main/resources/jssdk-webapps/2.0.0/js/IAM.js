@@ -201,12 +201,14 @@
 				var t = (cache == 'true') ? 1 : new Date().getTime();
 				return d[mode]+"?t="+t;
 			});
+			// Already load?
+			if(window[depends.name]) {
+				console.debug("Skip already load script module '" + name + "'");
+				callback(new window[depends.name]); // [MARK2]
+				return;
+			}
 			// Loading multiple scripts.
 			(function loadScripts(name, urls, path) {
-				if(window[name]) { // Already load?
-					console.debug("Skip already load script module '" + name + "'");
-					return;
-				}
 				urls.forEach(function(src, i) {
 					var script = document.createElement('script');
 					script.type = 'text/javascript';
@@ -265,12 +267,14 @@
 				var t = (cache == 'true') ? 1 : new Date().getTime();
 				return d["css_"+mode]+"?t="+t;
 			});
+			// Already load?
+			if(window[depends.name]) {
+				console.debug("Skip already load css module '" + depends.name + "'");
+				callback();
+				return;
+			}
 			// Loading multiple css
 			(function loadCss(name, urls, path) {
-				if(window[name]) { // Already load?
-					console.debug("Skip already load css module '" + name + "'");
-					return;
-				}
 				urls.forEach(function(src, i) {
 					var link = document.createElement('link');
 					link.rel = 'stylesheet';
