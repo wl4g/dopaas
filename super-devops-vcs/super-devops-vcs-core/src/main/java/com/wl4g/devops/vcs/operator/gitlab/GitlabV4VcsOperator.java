@@ -20,7 +20,6 @@ import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.vcs.operator.AbstractVcsOperator;
-import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
@@ -59,7 +58,7 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
 
         String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/branches";
         // Extract branch names.
-        List<GitlabV4BranchModel> branchs = doRemotePost(credentials, url, null, new TypeReference<List<GitlabV4BranchModel>>() {
+        List<GitlabV4BranchModel> branchs = doRemoteExchange(credentials, url, null, new TypeReference<List<GitlabV4BranchModel>>() {
         });
 
 
@@ -70,12 +69,12 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
     }
 
     @Override
-    public List<VcsTagModel> getRemoteTags(Vcs credentials, int projectId) {
+    public List<GitlabV4TagModel> getRemoteTags(Vcs credentials, int projectId) {
         super.getRemoteTags(credentials, projectId);
 
         String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/tags";
         // Extract tag names.
-        List<VcsTagModel> tags = doRemoteExchange(credentials, url, null, new TypeReference<List<VcsTagModel>>() {
+        List<GitlabV4TagModel> tags = doRemoteExchange(credentials, url, null, new TypeReference<List<GitlabV4TagModel>>() {
         });
         if (log.isInfoEnabled()) {
             log.info("Extract remote tag names: {}", tags);
@@ -174,10 +173,10 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
         String url;
         if (nonNull(groupId)) {
             // Search of remote URL.
-            url = String.format((credentials.getBaseUri() + "/api/v4/groups/%d/projects?simple=true&search=%s&per_page=%s"), groupId, projectName, limit);
+            url = String.format((credentials.getBaseUri() + "/api/v4/groups/%d/projects?simple=true&search=%s&per_page=%s&page=%s"), groupId, projectName, limit,pm.getPageNum());
         } else {
             // Search of remote URL.
-            url = String.format((credentials.getBaseUri() + "/api/v4/projects?simple=true&search=%s&per_page=%s"), projectName, limit);
+            url = String.format((credentials.getBaseUri() + "/api/v4/projects?simple=true&search=%s&per_page=%s&page=%s"), projectName, limit,pm.getPageNum());
         }
 
         HttpHeaders headers = new HttpHeaders();

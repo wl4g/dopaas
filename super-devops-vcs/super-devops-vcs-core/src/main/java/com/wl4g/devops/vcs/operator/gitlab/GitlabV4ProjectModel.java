@@ -295,14 +295,14 @@ public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 	 */
 	public static class Permissions {
 
-		private String project_access;
+		private GroupAccess project_access;
 		private GroupAccess group_access;
 
-		public void setProject_access(String project_access) {
+		public void setProject_access(GroupAccess project_access) {
 			this.project_access = project_access;
 		}
 
-		public String getProject_access() {
+		public GroupAccess getProject_access() {
 			return project_access;
 		}
 
