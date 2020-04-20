@@ -26,8 +26,10 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.*;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -91,7 +93,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		HttpEntity<String> entity = createVcsRequestHttpEntity(credentials);
 		// Do request.
 		ResponseEntity<String> resp = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-		if (null == resp || HttpStatus.OK != resp.getStatusCode()) {
+		if (null == resp || (HttpStatus.OK != resp.getStatusCode() && HttpStatus.CREATED != resp.getStatusCode())) {
 			throw new IllegalStateException(String.format("Failed to request vcs remote, status: %s, body: %s",
 					resp.getStatusCodeValue(), resp.getBody()));
 		}
@@ -162,6 +164,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		factory.setReadTimeout(60_000);
 		factory.setMaxResponseSize(1024 * 1024 * 10);
 		this.restTemplate = new RestTemplate(factory);
+		this.restTemplate.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 	}
 
 	@Override

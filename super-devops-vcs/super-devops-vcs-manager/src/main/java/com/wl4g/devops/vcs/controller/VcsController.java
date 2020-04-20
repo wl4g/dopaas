@@ -127,6 +127,21 @@ public class VcsController extends BaseController {
 		return resp;
 	}
 
+	@RequestMapping(value = "/createBranch")
+	public RespBase<?> createBranch(Integer vcsId, Integer projectId,String branch, String ref) {
+		RespBase<Object> resp = RespBase.create();
+		VcsBranchModel vcsBranchModel = vcsService.createBranch(vcsId, projectId, branch, ref);
+		resp.setData(vcsBranchModel);
+		return resp;
+	}
+
+	@RequestMapping(value = "/createTag")
+	public RespBase<?> createTag(Integer vcsId, Integer projectId,String tag, String ref,String message,String releaseDescription) {
+		RespBase<Object> resp = RespBase.create();
+		VcsTagModel vcsServiceTag = vcsService.createTag(vcsId, projectId, tag, ref, message, releaseDescription);
+		resp.setData(vcsServiceTag);
+		return resp;
+	}
 
 
 
