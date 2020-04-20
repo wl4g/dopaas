@@ -95,7 +95,20 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 
 
 	/**
-	 * Search find remote projects by name.(unlimited)
+	 * Search find remote projects by Id.
+	 *
+	 * @param credentials
+	 * @param projectName
+	 *            The item name to be searched can be empty. If it is empty, it
+	 *            means unconditional.
+	 * @param limit
+	 *            Page limit maximum
+	 * @return
+	 */
+	<T extends VcsProjectModel> T searchRemoteProjects(Vcs credentials, Integer projectId);
+
+	/**
+	 * Search find remote groups by name.(unlimited)
 	 *
 	 * @param credentials
 	 * @param projectName
@@ -106,7 +119,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	}
 
 	/**
-	 * Search find remote projects by name.
+	 * Search find remote groups by name.
 	 *
 	 * @param credentials
 	 * @param projectName
