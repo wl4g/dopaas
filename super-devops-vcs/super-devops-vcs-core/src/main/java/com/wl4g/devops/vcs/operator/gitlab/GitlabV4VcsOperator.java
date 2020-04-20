@@ -18,18 +18,18 @@ package com.wl4g.devops.vcs.operator.gitlab;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.vcs.operator.AbstractVcsOperator;
+import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.*;
 
 /**
@@ -54,37 +54,50 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
     }
 
     @Override
-    public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
-        super.getRemoteBranchNames(credentials, projectId);
+    public List<GitlabV4BranchModel> getRemoteBranchs(Vcs credentials, int projectId) {
+        super.getRemoteBranchs(credentials, projectId);
 
         String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/branches";
         // Extract branch names.
-        List<Map<String, Object>> branchs = doRemoteExchange(credentials, url, null, new TypeReference<List<Map<String, Object>>>() {
+        List<GitlabV4BranchModel> branchs = doRemotePost(credentials, url, null, new TypeReference<List<GitlabV4BranchModel>>() {
         });
-        List<String> branchNames = safeList(branchs).stream().map(m -> m.getOrDefault("name", EMPTY).toString())
-                .filter(s -> !isEmpty(s)).collect(toList());
+
 
         if (log.isInfoEnabled()) {
-            log.info("Extract remote branch names: {}", branchNames);
+            log.info("Extract remote branch names: {}", branchs);
         }
-        return branchNames;
+        return branchs;
     }
 
     @Override
-    public List<String> getRemoteTags(Vcs credentials, int projectId) {
+    public List<VcsTagModel> getRemoteTags(Vcs credentials, int projectId) {
         super.getRemoteTags(credentials, projectId);
 
         String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/tags";
         // Extract tag names.
-        List<Map<String, Object>> tags = doRemoteExchange(credentials, url, null, new TypeReference<List<Map<String, Object>>>() {
+        List<VcsTagModel> tags = doRemoteExchange(credentials, url, null, new TypeReference<List<VcsTagModel>>() {
         });
-        List<String> tagNames = safeList(tags).stream().map(m -> m.getOrDefault("name", EMPTY).toString())
-                .filter(s -> !isEmpty(s)).collect(toList());
-
         if (log.isInfoEnabled()) {
-            log.info("Extract remote tag names: {}", tagNames);
+            log.info("Extract remote tag names: {}", tags);
         }
-        return tagNames;
+        return tags;
+    }
+
+    @Override
+    public GitlabV4BranchModel createRemoteBranch(Vcs credentials, int projectId, String branch, String ref) {
+        super.createRemoteBranch(credentials, projectId, branch, ref);
+        String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/branches?branch=%s&ref=%s";
+
+        return doRemotePost(credentials, String.format(url, branch, ref), null, new TypeReference<GitlabV4BranchModel>() {
+        });
+    }
+
+    @Override
+    public GitlabV4TagModel createRemoteTag(Vcs credentials, int projectId, String tag, String ref, String message, String releaseDescription) {
+        super.createRemoteTag(credentials,projectId,tag,ref,message,releaseDescription);
+        String url = credentials.getBaseUri() + "/api/v4/projects/" + projectId + "/repository/tags?tag_name=%s&ref=%s&message=%s&release_description=%s";
+
+        return doRemotePost(credentials, String.format(url, tag, ref,message,releaseDescription), null, new TypeReference<GitlabV4TagModel>() {});
     }
 
     @Override
@@ -177,5 +190,15 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
         }
         return safeList(projects);
 
+    }
+
+    @Override
+    public GitlabV4ProjectModel searchRemoteProjectsById(Vcs credentials, Integer projectId) {
+        Assert2.notNullOf(projectId, "projectId");
+        String url = String.format((credentials.getBaseUri() + "/api/v4/projects/%d"), projectId);
+        GitlabV4ProjectModel project = doRemoteExchange(credentials, url, null,
+                new TypeReference<GitlabV4ProjectModel>() {
+                });
+        return project;
     }
 }
