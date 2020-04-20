@@ -184,14 +184,14 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		String childDataCipherKey = null;
 		if (config.getCipher().isEnableDataCipher()) {
 			childDataCipherKey = generateDataCipherKey();
-			attributes.put(KEY_DATA_CIPHER_KEY, childDataCipherKey);
+			attributes.put(KEY_DATA_CIPHER, childDataCipherKey);
 		}
 		// Sets re-generate childAccessToken(grant application)
 		String childAccessTokenSignKey = null;
 		if (config.getSession().isEnableAccessTokenValidity()) {
-			String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_KEY);
+			String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN);
 			childAccessTokenSignKey = generateAccessTokenSignKey(model.getSessionId(), accessTokenSignKey);
-			attributes.put(KEY_ACCESSTOKEN_SIGN_KEY, childAccessTokenSignKey);
+			attributes.put(KEY_ACCESSTOKEN_SIGN, childAccessTokenSignKey);
 		}
 
 		// Storage grantCredentials info.

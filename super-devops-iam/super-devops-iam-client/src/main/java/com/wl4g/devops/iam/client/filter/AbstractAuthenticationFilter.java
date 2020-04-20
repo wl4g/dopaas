@@ -27,8 +27,8 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICA
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_KEY;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_KEY;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMCLIENT;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
@@ -237,7 +237,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// Redirections(Native page).
 		else {
 			// Sets child dataCipherKeys to cookie.
-			String childDataCipherKey = getBindValue(KEY_DATA_CIPHER_KEY);
+			String childDataCipherKey = getBindValue(KEY_DATA_CIPHER);
 			if (!isBlank(childDataCipherKey)) {
 				Cookie c = new SimpleCookie(config.getCookie());
 				c.setName(config.getParam().getDataCipherKeyName());
@@ -472,7 +472,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		resp.forMap().put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
 
 		// Sets child dataCipherKey. (if necessary)
-		resp.forMap().put(config.getParam().getDataCipherKeyName(), getBindValue(KEY_DATA_CIPHER_KEY));
+		resp.forMap().put(config.getParam().getDataCipherKeyName(), getBindValue(KEY_DATA_CIPHER));
 		// Sets child accessToken. (if necessary)
 		resp.forMap().put(config.getParam().getAccessTokenName(), generateChildAccessToken());
 
@@ -510,7 +510,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	private String generateChildAccessToken() {
 		// Gets child accessTokenSign key.
-		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_KEY);
+		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN);
 		// Generate child accessToken
 		return isBlank(childAccessTokenSignKey) ? null : generateAccessToken(getSessionId(), childAccessTokenSignKey);
 	}

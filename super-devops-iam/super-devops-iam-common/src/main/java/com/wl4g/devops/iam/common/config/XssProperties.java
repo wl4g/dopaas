@@ -18,7 +18,8 @@ package com.wl4g.devops.iam.common.config;
 import static java.lang.String.format;
 
 import java.io.Serializable;
-import java.util.Locale;
+import static java.util.Locale.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.springframework.beans.factory.InitializingBean;
 
@@ -97,12 +98,12 @@ public class XssProperties implements InitializingBean, Serializable {
 			throw new Error(String.format("", basedIamProjectPkgIndex));
 		}
 
-		StringBuffer basedIamProjectPkg = new StringBuffer(16);
+		StringBuffer iamBasePkg = new StringBuffer(16);
 		// e.g. com.wl4g.devops.iam
 		for (int i = 0; i < pkgParts.length; i++) {
 			if (i < basedIamProjectPkgIndex) {
-				basedIamProjectPkg.append(pkgParts[i]);
-				basedIamProjectPkg.append(".");
+				iamBasePkg.append(pkgParts[i]);
+				iamBasePkg.append(".");
 			} else {
 				break;
 			}
@@ -110,24 +111,36 @@ public class XssProperties implements InitializingBean, Serializable {
 
 		// Merge internal XSS expression.(Level names cannot be changed after
 		// package)
-		StringBuffer expression = new StringBuffer(128);
-		expression.append("execution(* ");
-		expression.append(basedIamProjectPkg.toString());
-		expression.append("sns.web.*Controller.*(..)) or execution(* ");
-		expression.append(basedIamProjectPkg.toString());
-		expression.append("web.*Controller.*(..)) ");
+		StringBuffer _expression = new StringBuffer(128);
+		// e.g: com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController
+		_expression.append("execution(* ");
+		_expression.append(iamBasePkg.toString());
+		_expression.append("sns.web.*Controller.*(..))");
+		// e.g: com.wl4g.devops.iam.sns.web.DefaultOauth2SnsEndpoint
+		_expression.append(" or execution(* ");
+		_expression.append(iamBasePkg.toString());
+		_expression.append("web.*Endpoint.*(..)) ");
+		// e.g: com.wl4g.devops.iam.web.LoginAuthenticatorController
+		_expression.append(" or execution(* ");
+		_expression.append(iamBasePkg.toString());
+		_expression.append("web.*Controller.*(..)) ");
+		// e.g: com.wl4g.devops.iam.web.LoginAuthenticatorEndpoint
+		_expression.append(" or execution(* ");
+		_expression.append(iamBasePkg.toString());
+		_expression.append("web.*Endpoint.*(..)) ");
 
-		if (getExpression().trim().toUpperCase(Locale.ENGLISH).startsWith("OR")) {
-			expression.append(getExpression());
-		} else {
-			expression.append("or ");
-			expression.append(getExpression());
+		// Merge extra config expression
+		if (!isBlank(expression)) {
+			if (expression.toUpperCase(US).startsWith("OR")) {
+				_expression.append(getExpression());
+			} else {
+				_expression.append("or ");
+				_expression.append(getExpression());
+			}
 		}
-		setExpression(expression.toString());
+		setExpression(_expression.toString());
 
-		if (log.isInfoEnabled()) {
-			log.info("After merged the XSS interception expression as: {}", getExpression());
-		}
+		log.info("After merged the XSS interception expression as: {}", getExpression());
 	}
 
 }
