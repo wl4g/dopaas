@@ -247,7 +247,7 @@
 					console.debug("Iam account login... principal: "+ principal+", plainPasswd: ******, captcha: "+captcha);
 					return true;
 				},
-				onSuccess: function (principal, redirectUrl) {
+				onSuccess: function (data) {
 					console.debug("Iam account login successful !");
 					return true; // 返回false会阻止自动调整
 				},

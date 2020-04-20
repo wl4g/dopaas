@@ -42,7 +42,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * This key is generated when the authentication is successful and can be
 	 * used to encrypt and decrypt the transmission data of some sensitive api.
 	 */
-	final public static String KEY_DATA_CIPHER_KEY = "dataCipherKey";
+	final public static String KEY_DATA_CIPHER = "dataCipherKey";
 	/**
 	 * When authentication is successful, a key for the access token is
 	 * generated. It is used to enhance session based validation logic (the
@@ -54,7 +54,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * @see {@link com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties#accessTokenName}
 	 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
 	 */
-	final public static String KEY_ACCESSTOKEN_SIGN_KEY = "accessTokenSignKey";
+	final public static String KEY_ACCESSTOKEN_SIGN = "accessTokenSignKey";
 	/**
 	 * iamServer/iamClient the JSON node key that response the session
 	 * information.

@@ -27,8 +27,8 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICA
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_KEY;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_KEY;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMCLIENT;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
@@ -222,13 +222,14 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		if (isJSONResp(toHttp(request))) {
 			try {
 				// Make logged response JSON.
-				RespBase<String> loggedResp = makeLoggedResponse(request, response, subject, successUrl);
+				RespBase<String> resp = makeLoggedResponse(token, request, response, subject, successUrl);
 
 				// Call custom success handle.
-				coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), loggedResp.forMap());
+				coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), resp.forMap());
 
-				String logged = toJSONString(loggedResp);
-				log.info("Authenticated resp to - {}", loggedResp);
+				String logged = toJSONString(resp);
+				log.info("Authenticated resp to - {}", resp);
+
 				writeJson(toHttp(response), logged);
 			} catch (IOException e) {
 				log.error("Logged response json error", e);
@@ -236,26 +237,12 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		}
 		// Redirections(Native page).
 		else {
-			// Sets child dataCipherKeys to cookie.
-			String childDataCipherKey = getBindValue(KEY_DATA_CIPHER_KEY);
-			if (!isBlank(childDataCipherKey)) {
-				Cookie c = new SimpleCookie(config.getCookie());
-				c.setName(config.getParam().getDataCipherKeyName());
-				c.setValue(childDataCipherKey);
-				c.saveTo(toHttp(request), toHttp(response));
-			}
-
-			// Sets child accessToken to cookie.
-			String childAccessToken = generateChildAccessToken();
-			if (!isBlank(childAccessToken)) {
-				Cookie c = new SimpleCookie(config.getCookie());
-				c.setName(config.getParam().getAccessTokenName());
-				c.setValue(childAccessToken);
-				c.saveTo(toHttp(request), toHttp(response));
-			}
+			// Sets secret tokens to cookies.
+			setSuccessSecretTokens2Cookie(token, request, response);
 
 			// Call custom success handle.
 			coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), null);
+
 			log.info("Authenticated redirect to - {}", successUrl);
 			issueRedirect(request, response, successUrl);
 		}
@@ -458,8 +445,8 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 *            login success redirect URL
 	 * @return
 	 */
-	protected RespBase<String> makeLoggedResponse(ServletRequest request, ServletResponse response, Subject subject,
-			String redirectUri) {
+	protected RespBase<String> makeLoggedResponse(AuthenticationToken token, ServletRequest request, ServletResponse response,
+			Subject subject, String redirectUri) {
 		hasTextOf(redirectUri, "redirectUri");
 
 		// Make successful message
@@ -471,10 +458,13 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// Iam-client session info.
 		resp.forMap().put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
 
+		// Sets secret tokens to cookies.
+		String[] tokens = setSuccessSecretTokens2Cookie(token, request, response);
+
 		// Sets child dataCipherKey. (if necessary)
-		resp.forMap().put(config.getParam().getDataCipherKeyName(), getBindValue(KEY_DATA_CIPHER_KEY));
+		resp.forMap().put(config.getParam().getDataCipherKeyName(), tokens[0]);
 		// Sets child accessToken. (if necessary)
-		resp.forMap().put(config.getParam().getAccessTokenName(), generateChildAccessToken());
+		resp.forMap().put(config.getParam().getAccessTokenName(), tokens[1]);
 
 		return resp;
 	}
@@ -504,13 +494,44 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	}
 
 	/**
+	 * Sets secret and tokens/signature to cookies handling.
+	 * 
+	 * @param token
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	protected String[] setSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request,
+			ServletResponse response) {
+		// Sets child dataCipherKeys to cookie.
+		String childDataCipherKey = getBindValue(KEY_DATA_CIPHER);
+		if (!isBlank(childDataCipherKey)) {
+			Cookie c = new SimpleCookie(config.getCookie());
+			c.setName(config.getParam().getDataCipherKeyName());
+			c.setValue(childDataCipherKey);
+			c.saveTo(toHttp(request), toHttp(response));
+		}
+
+		// Sets child accessToken to cookie.
+		String childAccessToken = generateChildAccessToken();
+		if (!isBlank(childAccessToken)) {
+			Cookie c = new SimpleCookie(config.getCookie());
+			c.setName(config.getParam().getAccessTokenName());
+			c.setValue(childAccessToken);
+			c.saveTo(toHttp(request), toHttp(response));
+		}
+
+		return new String[] { childDataCipherKey, childAccessToken };
+	}
+
+	/**
 	 * Generation child accessToken.
 	 * 
 	 * @return
 	 */
-	private String generateChildAccessToken() {
+	protected final String generateChildAccessToken() {
 		// Gets child accessTokenSign key.
-		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_KEY);
+		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN);
 		// Generate child accessToken
 		return isBlank(childAccessTokenSignKey) ? null : generateAccessToken(getSessionId(), childAccessTokenSignKey);
 	}

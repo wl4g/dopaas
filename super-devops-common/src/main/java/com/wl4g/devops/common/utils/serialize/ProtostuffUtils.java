@@ -165,7 +165,7 @@ public abstract class ProtostuffUtils {
 			}
 			return bean;
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new IllegalStateException(e);
 		}
 	}
 

@@ -257,7 +257,7 @@ public class JedisIamCache implements IamCache {
 		// Hash map sets
 		byte[] mapKey = toKeyBytes(name);
 		String res = jedisCluster.hmset(mapKey, dataMap);
-		if (expireSec != 0) {
+		if (expireSec > 0) {
 			jedisCluster.expire(mapKey, expireSec);
 		}
 		return res;
@@ -276,9 +276,8 @@ public class JedisIamCache implements IamCache {
 	public <T> Map<String, T> getMapAll(Class<T> valueClass) {
 		return safeMap(jedisCluster.hgetAll(toKeyBytes(name))).entrySet().stream()
 				.collect(toMap(e -> new String(e.getKey(), UTF_8), e -> {
-					if (isNull(e.getValue())) {
+					if (isNull(e.getValue()))
 						return null;
-					}
 					return deserialize(e.getValue(), valueClass);
 				}));
 	}
