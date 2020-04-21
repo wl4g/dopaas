@@ -20,7 +20,9 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
+import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
+import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import com.wl4g.devops.vcs.service.VcsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,5 +102,47 @@ public class VcsController extends BaseController {
 		resp.setData(pm);
 		return resp;
 	}
+
+	@RequestMapping(value = "/getProjectById")
+	public RespBase<?> getProjectById(Integer vcsId, Integer projectId) {
+		RespBase<Object> resp = RespBase.create();
+		VcsProjectModel project = vcsService.getProjectById(vcsId, projectId);
+		resp.setData(project);
+		return resp;
+	}
+
+	@RequestMapping(value = "/getBranchs")
+	public RespBase<?> getBranchs(Integer vcsId, Integer projectId) {
+		RespBase<Object> resp = RespBase.create();
+		List<VcsBranchModel> branchs = vcsService.getBranchs(vcsId, projectId);
+		resp.setData(branchs);
+		return resp;
+	}
+
+	@RequestMapping(value = "/getTags")
+	public RespBase<?> tags(Integer vcsId, Integer projectId) {
+		RespBase<Object> resp = RespBase.create();
+		List<VcsTagModel> tags = vcsService.getTags(vcsId, projectId);
+		resp.setData(tags);
+		return resp;
+	}
+
+	@RequestMapping(value = "/createBranch")
+	public RespBase<?> createBranch(Integer vcsId, Integer projectId,String branch, String ref) {
+		RespBase<Object> resp = RespBase.create();
+		VcsBranchModel vcsBranchModel = vcsService.createBranch(vcsId, projectId, branch, ref);
+		resp.setData(vcsBranchModel);
+		return resp;
+	}
+
+	@RequestMapping(value = "/createTag")
+	public RespBase<?> createTag(Integer vcsId, Integer projectId,String tag, String ref,String message,String releaseDescription) {
+		RespBase<Object> resp = RespBase.create();
+		VcsTagModel vcsServiceTag = vcsService.createTag(vcsId, projectId, tag, ref, message, releaseDescription);
+		resp.setData(vcsServiceTag);
+		return resp;
+	}
+
+
 
 }
