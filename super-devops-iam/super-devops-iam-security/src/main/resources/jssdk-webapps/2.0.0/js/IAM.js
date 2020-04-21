@@ -21,7 +21,7 @@
 		},
 		fpWebModule: { // Fingerprint
 			stable: "fingerprint2-2.1.0.min.js",
-			grey: "fingerprint2-2.1.0.js",
+			grey: "fingerprint2-2.1.0.min.js",
 			css_stable: null,
 			css_grey: null,
 			ratio: 200

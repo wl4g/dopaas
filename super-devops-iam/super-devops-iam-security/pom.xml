@@ -14,6 +14,8 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<iam-jssdk.version>2.0.0</iam-jssdk.version>
+		<iam-jssdk-source.dir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}</iam-jssdk-source.dir>
+		<iam-jssdk-target.dir>${iam-jssdk-source.dir}/</iam-jssdk-target.dir>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -157,8 +159,8 @@
 								<es5Strict>WARNING</es5Strict>
 								<nonStandardJsDocs>WARNING</nonStandardJsDocs>
 							</closureWarningLevels>
-							<webappSourceDir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}</webappSourceDir>
-							<webappTargetDir>${basedir}/target/jssdk-webapps/</webappTargetDir>
+							<webappSourceDir>${iam-jssdk-source.dir}</webappSourceDir>
+							<webappTargetDir>${iam-jssdk-target.dir}</webappTargetDir>
 							<cssSourceDir>css</cssSourceDir>
 							<cssFinalFile>IAM.all.css</cssFinalFile>
 							<cssSourceIncludes>
@@ -187,8 +189,8 @@
 								<es5Strict>WARNING</es5Strict>
 								<nonStandardJsDocs>WARNING</nonStandardJsDocs>
 							</closureWarningLevels>
-							<webappSourceDir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}</webappSourceDir>
-							<webappTargetDir>${basedir}/target/jssdk-webapps/</webappTargetDir>
+							<webappSourceDir>${iam-jssdk-source.dir}</webappSourceDir>
+							<webappTargetDir>${iam-jssdk-target.dir}</webappTargetDir>
 							<cssSourceDir>css</cssSourceDir>
 							<cssFinalFile>IAM.all.css</cssFinalFile>
 							<cssSourceIncludes>
