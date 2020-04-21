@@ -106,7 +106,7 @@
 		mergeMap: function(dst, src) {
 		    dst = dst || new Map();
 		    src = src || new Map();
-		    dst.forEach((v, k) => src.set(k, v));
+		    dst.forEach((v, k) => { src.set(k, v); });
 		    return src;
 		},
 		clone: function(obj) { // 或使用JSON.parse(JSON.stringify(oldObj))实现深度拷贝，注意：Object.assign(oldObj,newObj)只能浅层拷贝
@@ -326,12 +326,11 @@
 	            );
 	        },
 	        base64ToHex: function(str) { // convert a base64 string to hex
-	        	if(!str) { return null; }
+	        	if(str == null || !str) { return null; }
 			    var ret = "";
-			    var i;
 			    var k = 0; // b64 state, 0-3
 			    var slop = 0;
-			    for (var i = 0; i < str.length(); ++i) {
+			    for (var i = 0; i < str.length; ++i) {
 			        if (str.charAt(i) == "=") {
 			            break;
 			        }
