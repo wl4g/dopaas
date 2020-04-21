@@ -22,16 +22,17 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.tool.common.lang.Assert2;
+import com.wl4g.devops.vcs.config.VcsProperties;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
-import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
-import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
+import com.wl4g.devops.vcs.operator.model.*;
 import com.wl4g.devops.vcs.service.VcsService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
@@ -44,88 +45,158 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class VcsServcieImpl implements VcsService {
 
-	@Autowired
-	private VcsDao vcsDao;
+    @Autowired
+    private VcsDao vcsDao;
 
-	@Autowired
-	private GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsOperator;
+    @Autowired
+    private GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsOperator;
 
-	@Override
-	public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(vcsDao.list(name, providerKind, authType));
-		return pm;
-	}
+    @Autowired
+    private VcsProperties vcsProperties;
 
-	@Override
-	public void save(Vcs vcs) {
-		if (vcs.getId() == null) {
-			vcs.preInsert();
-			insert(vcs);
-		} else {
-			vcs.preUpdate();
-			update(vcs);
-		}
-	}
+    @Override
+    public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
+        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+        pm.setRecords(vcsDao.list(name, providerKind, authType));
+        return pm;
+    }
 
-	private void insert(Vcs vcs) {
-		vcsDao.insertSelective(vcs);
-	}
+    @Override
+    public void save(Vcs vcs) {
+        if (vcs.getId() == null) {
+            vcs.preInsert();
+            insert(vcs);
+        } else {
+            vcs.preUpdate();
+            update(vcs);
+        }
+    }
 
-	private void update(Vcs vcs) {
-		vcsDao.updateByPrimaryKeySelective(vcs);
-	}
+    private void insert(Vcs vcs) {
+        vcsDao.insertSelective(vcs);
+    }
 
-	@Override
-	public void del(Integer id) {
-		Vcs vcs = new Vcs();
-		vcs.setId(id);
-		vcs.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		vcsDao.updateByPrimaryKeySelective(vcs);
-	}
+    private void update(Vcs vcs) {
+        vcsDao.updateByPrimaryKeySelective(vcs);
+    }
 
-	@Override
-	public Vcs detail(Integer id) {
-		return vcsDao.selectByPrimaryKey(id);
-	}
+    @Override
+    public void del(Integer id) {
+        Vcs vcs = new Vcs();
+        vcs.setId(id);
+        vcs.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        vcsDao.updateByPrimaryKeySelective(vcs);
+    }
 
-	@Override
-	public List<Vcs> all() {
-		return vcsDao.list(null, null, null);
-	}
+    @Override
+    public Vcs detail(Integer id) {
+        return vcsDao.selectByPrimaryKey(id);
+    }
 
-	@Override
-	public List<VcsGroupModel> getGroups(Integer id, String groupName) {
-		Vcs vcs = vcsDao.selectByPrimaryKey(id);
-		Assert2.notNullOf(vcs,"vcs");
-		return vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteGroups(vcs, groupName);
-	}
+    @Override
+    public List<Vcs> all() {
+        return vcsDao.list(null, null, null);
+    }
 
-	public List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Integer vcsId, String projectName) {
-		notNullOf(vcsId, "vcsId");
-		// Gets VCS information.
-		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
+    @Override
+    public List<VcsGroupModel> getGroups(Integer id, String groupName) {
+        Vcs vcs = vcsDao.selectByPrimaryKey(id);
+        Assert2.notNullOf(vcs, "vcs");
+        return vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteGroups(vcs, groupName);
+    }
 
-		// Search remote projects.
-		List<VcsProjectModel> projects = vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, null, projectName,null);
-		return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
-	}
+    public List<CompositeBasicVcsProjectModel> getProjectsToCompositeBasic(Integer vcsId, String projectName) {
+        notNullOf(vcsId, "vcsId");
+        // Gets VCS information.
+        Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
 
-	public List<VcsProjectModel> getProjects(PageModel pm, Integer vcsId, Integer groupId, String projectName) {
-		notNullOf(vcsId, "vcsId");
-		// Gets VCS information.
-		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
-		Assert2.notNullOf(vcs,"vcs");
+        // Search remote projects.
+        List<VcsProjectModel> projects = vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, null, projectName, null);
+        return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
+    }
 
-		// Search remote projects.
-		List<VcsProjectModel> projects = vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, groupId, projectName,pm);
-		return projects;
-	}
+    public List<VcsProjectModel> getProjects(PageModel pm, Integer vcsId, Integer groupId, String projectName) {
+        notNullOf(vcsId, "vcsId");
+        // Gets VCS information.
+        Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
+        Assert2.notNullOf(vcs, "vcs");
 
+        // Search remote projects.
+        return vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, groupId, projectName, pm);
+    }
 
-	public void test(){
-		Vcs vcs = new Vcs();
-		vcsOperator.forOperator("gitlab").getRemoteBranchNames(vcs, 1);
-	}
+    public VcsProjectModel getProjectById(Integer vcsId, Integer projectId) {
+        notNullOf(vcsId, "vcsId");
+        // Gets VCS information.
+        Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
+        Assert2.notNullOf(vcs, "vcs");
+
+        // Search remote projects.
+        return vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjectsById(vcs, projectId);
+    }
+
+    @Override
+    public List<VcsBranchModel> getBranchs(Integer vcsId, Integer projectId) {
+        notNullOf(vcsId, "vcsId");
+        // Gets VCS information.
+        Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
+        Assert2.notNullOf(vcs, "vcs");
+        return vcsOperator.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs, projectId);
+    }
+
+    @Override
+    public List<VcsTagModel> getTags(Integer vcsId, Integer projectId) {
+        notNullOf(vcsId, "vcsId");
+        // Gets VCS information.
+        Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
+        Assert2.notNullOf(vcs, "vcs");
+        return vcsOperator.forOperator(vcs.getProviderKind()).getRemoteTags(vcs, projectId);
+    }
+
+    @Override
+    public VcsBranchModel createBranch(Integer vcsId, Integer projectId, String branch, String ref) {
+        notNullOf(vcsId, "vcsId");
+        // Gets VCS information.
+        Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
+        Assert2.notNullOf(vcs, "vcs");
+        //TODO repeat branch or tag
+        checkRepeatBranchOrTag(vcs, projectId, branch);
+
+        //check format
+        String pattern = vcsProperties.getBranchFormat();
+        Assert2.isTrue(Pattern.matches(pattern, branch), "not match format,format=" + pattern);
+
+        return vcsOperator.forOperator(vcs.getProviderKind()).createRemoteBranch(vcs, projectId, branch, ref);
+    }
+
+    @Override
+    public VcsTagModel createTag(Integer vcsId, Integer projectId, String tag, String ref, String message, String releaseDescription) {
+        notNullOf(vcsId, "vcsId");
+        // Gets VCS information.
+        Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
+        Assert2.notNullOf(vcs, "vcs");
+        //check repeat branch or tag
+        checkRepeatBranchOrTag(vcs, projectId, tag);
+
+        //check format
+        String pattern = vcsProperties.getTagFormat();
+        Assert2.isTrue(Pattern.matches(pattern, tag), "not match format,format=" + pattern);
+
+        return vcsOperator.forOperator(vcs.getProviderKind()).createRemoteTag(vcs, projectId, tag, ref, message, releaseDescription);
+    }
+
+    private void checkRepeatBranchOrTag(Vcs vcs, Integer projectId, String branchOrTag) {
+        Assert2.hasTextOf(branchOrTag, "branchOrTag");
+        List<VcsBranchModel> remoteBranchs = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteBranchs(vcs, projectId);
+        List<VcsTagModel> remoteTags = vcsOperator.forOperator(vcs.getProviderKind()).getRemoteTags(vcs, projectId);
+        //check repeart
+        for (VcsBranchModel vcsBranchModel : remoteBranchs) {
+            Assert2.isTrue(!StringUtils.equals(vcsBranchModel.getName(), branchOrTag), "had the same name of branch:" + branchOrTag);
+        }
+        for (VcsTagModel vcsTagModel : remoteTags) {
+            Assert2.isTrue(!StringUtils.equals(vcsTagModel.getName(), branchOrTag), "had the same name of tag:" + branchOrTag);
+        }
+    }
+
 
 }

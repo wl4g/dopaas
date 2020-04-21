@@ -19,6 +19,8 @@ package com.wl4g.devops.vcs.operator.alicode;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.tool.common.annotation.Reserved;
 import com.wl4g.devops.vcs.operator.AbstractVcsOperator;
+import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
+import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import org.springframework.http.HttpEntity;
 
 import java.util.List;
@@ -39,13 +41,13 @@ public class AlicodeVcsOperator extends AbstractVcsOperator {
 	}
 
 	@Override
-	public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
-		super.getRemoteBranchNames(credentials, projectId);
+	public List<VcsBranchModel> getRemoteBranchs(Vcs credentials, int projectId) {
+		super.getRemoteBranchs(credentials, projectId);
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<String> getRemoteTags(Vcs credentials, int projectId) {
+	public List<VcsTagModel> getRemoteTags(Vcs credentials, int projectId) {
 		super.getRemoteTags(credentials, projectId);
 		throw new UnsupportedOperationException();
 	}

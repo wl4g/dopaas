@@ -18,14 +18,18 @@ package com.wl4g.devops.vcs.operator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
+import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.*;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -77,6 +81,32 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	/**
+	 * Do VCS apiServer post.
+	 *
+	 * @param credentials
+	 * @param url
+	 * @param typeRef
+	 * @return
+	 */
+	protected <T> T doRemotePost(Vcs credentials, String url,HttpHeaders headers, TypeReference<T> typeRef) {
+		// Create httpEntity.
+		HttpEntity<String> entity = createVcsRequestHttpEntity(credentials);
+		// Do request.
+		ResponseEntity<String> resp = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+		if (null == resp || (HttpStatus.OK != resp.getStatusCode() && HttpStatus.CREATED != resp.getStatusCode())) {
+			throw new IllegalStateException(String.format("Failed to request vcs remote, status: %s, body: %s",
+					resp.getStatusCodeValue(), resp.getBody()));
+		}
+		if (log.isInfoEnabled()) {
+			log.info("Vcs remote response <= {}", resp.getBody());
+		}
+		if(Objects.nonNull(headers)){
+			headers.putAll(resp.getHeaders());
+		}
+		return parseJSON(resp.getBody(), typeRef);
+	}
+
+	/**
 	 * Create vcs API http request entity.
 	 * 
 	 * @param credentials
@@ -86,7 +116,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 
 
 	@Override
-	public List<String> getRemoteBranchNames(Vcs credentials, int projectId) {
+	public <T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, int projectId) {
 		notNull(credentials, "Get remote branchs credentials can't is null.");
 		isTrue(projectId > 0, "Get remote branchs must projectId >= 0");
 		if (log.isInfoEnabled()) {
@@ -96,7 +126,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public List<String> getRemoteTags(Vcs credentials, int projectId) {
+	public <T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, int projectId) {
 		notNull(credentials, "Get remote tags credentials can't is null.");
 		isTrue(projectId >= 0, "Get remote tags must projectId >= 0");
 		if (log.isInfoEnabled()) {
@@ -134,6 +164,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		factory.setReadTimeout(60_000);
 		factory.setMaxResponseSize(1024 * 1024 * 10);
 		this.restTemplate = new RestTemplate(factory);
+		this.restTemplate.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 	}
 
 	@Override
@@ -141,4 +172,18 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		return null;
 	}
 
+	@Override
+	public <T extends VcsProjectModel> T searchRemoteProjectsById(Vcs credentials, Integer projectId) {
+		return null;
+	}
+
+	@Override
+	public <T extends VcsBranchModel> T createRemoteBranch(Vcs credentials, int projectId, String branch, String ref) {
+		return null;
+	}
+
+	@Override
+	public <T extends VcsTagModel> T createRemoteTag(Vcs credentials, int projectId, String tag, String ref, String message, String releaseDescription) {
+		return null;
+	}
 }
