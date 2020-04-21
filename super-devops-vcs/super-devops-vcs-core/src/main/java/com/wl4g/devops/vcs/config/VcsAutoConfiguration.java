@@ -23,11 +23,13 @@ import com.wl4g.devops.vcs.operator.coding.CodingVcsOperator;
 import com.wl4g.devops.vcs.operator.gitee.GiteeVcsOperator;
 import com.wl4g.devops.vcs.operator.github.GithubVcsOperator;
 import com.wl4g.devops.vcs.operator.gitlab.GitlabV4VcsOperator;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import java.util.List;
 
-import static com.wl4g.devops.vcs.operator.VcsOperator.*;
+import static com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
 /**
  * Vcs auto configuration.
  *
@@ -37,8 +39,13 @@ import static com.wl4g.devops.vcs.operator.VcsOperator.*;
 @Configuration
 public class VcsAutoConfiguration {
 
-	// --- Basic's ---
+    @Bean
+    @ConfigurationProperties(prefix = "vcs")
+    public VcsProperties ciCdProperties() {
+        return new VcsProperties();
+    }
 
+	// --- Basic's ---
     @Bean
     public VcsOperator gitlabV4VcsOperator() {
         return new GitlabV4VcsOperator();

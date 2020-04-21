@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.vcs.operator.gitlab;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wl4g.devops.tool.common.annotation.Reserved;
 
 import java.util.List;
@@ -55,6 +56,7 @@ public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 	private String merge_method;
 	private String external_authorization_classification_label;
 	private Permissions permissions;
+	private Owner owner;
 
 	public void set_links(Links _links) {
 		this._links = _links;
@@ -256,6 +258,14 @@ public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 		return permissions;
 	}
 
+	public Owner getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Owner owner) {
+		this.owner = owner;
+	}
+
 	/**
 	 * Gitlab API-v4 for group-access.
 	 * 
@@ -387,6 +397,60 @@ public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 
 		public String getMembers() {
 			return members;
+		}
+
+	}
+
+	public static class Owner {
+
+		private int id;
+		private String name;
+		private String username;
+		private String state;
+		@JsonProperty("avatar_url")
+		private String avatarUrl;
+		@JsonProperty("web_url")
+		private String webUrl;
+		public void setId(int id) {
+			this.id = id;
+		}
+		public int getId() {
+			return id;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+		public String getName() {
+			return name;
+		}
+
+		public void setUsername(String username) {
+			this.username = username;
+		}
+		public String getUsername() {
+			return username;
+		}
+
+		public void setState(String state) {
+			this.state = state;
+		}
+		public String getState() {
+			return state;
+		}
+
+		public void setAvatarUrl(String avatarUrl) {
+			this.avatarUrl = avatarUrl;
+		}
+		public String getAvatarUrl() {
+			return avatarUrl;
+		}
+
+		public void setWebUrl(String webUrl) {
+			this.webUrl = webUrl;
+		}
+		public String getWebUrl() {
+			return webUrl;
 		}
 
 	}
