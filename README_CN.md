@@ -1,5 +1,5 @@
 ![DevSecOps](shots/logo.jpg)
-## 一站式的DevSecOps 云平台(saas)，基于SpringCloud开发, 主要功能模块: 持续交付CI/CD、认证中心、监控中心、配置中心、资源管理中心、调度中心、弹性伸缩、shell工具、各种工具组件(如HBase/OSS运维)、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
+## 一站式的(下一代) DevSecOps 云平台(saas)，基于SpringCloud开发, 主要功能模块: 持续交付CI/CD、认证中心、监控中心、配置中心、资源管理中心、调度中心、弹性伸缩、shell工具、各种工具组件(如HBase/OSS运维)、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
 
 [![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
@@ -29,7 +29,7 @@ English version goes [here](README.md)
 - step1：编译
 ```
 cd super-devops
-mvn clean install -DskipTests -T 2C
+mvn -U clean install -DskipTests -T 2C
 ```
 - step2：初始化数据库，首先准备一台CentOS6.5+以及MySQL5.6+实例，新建名为devops(utf8/utf8_bin)的数据库，再使用 [初始sql脚本](db/) 进行初始化它。（注：此脚本与代码版本对应，我们会定期更新，请按命名后缀日期使用最新的即可）
 - step3：配置hosts，添加本地虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
