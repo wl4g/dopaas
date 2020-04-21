@@ -35,7 +35,7 @@ public abstract class BasedMavenPipelineProvider extends RestorableDeployPipelin
 	/**
 	 * Maven default build command.
 	 */
-	final public static String DEFAULT_MVN_CMD = "mvn -f %s/pom.xml clean install -Dmaven.test.skip=true -DskipTests -Dmaven.compile.fork=true -T 2C";
+	final public static String DEFAULT_MVN_CMD = "mvn -f %s/pom.xml -U clean install -Dmaven.test.skip=true -DskipTests -Dmaven.compile.fork=true -T 2C";
 
 	public BasedMavenPipelineProvider(PipelineContext context) {
 		super(context);

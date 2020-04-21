@@ -136,11 +136,10 @@
 					<outputDirectory>${project.build.directory}</outputDirectory>
 				</configuration>
 			</plugin>
-			<!-- Minify and combine js/css -->
-			<!-- <plugin>
+			<!-- Minify plugin @see https://samaxes.github.io/minify-maven-plugin/index.html -->
+			<plugin>
 				<groupId>com.samaxes.maven</groupId>
 				<artifactId>minify-maven-plugin</artifactId>
-				<version>1.7.4</version>
 				<executions>
 					<execution>
 						<id>default-minify</id>
@@ -151,27 +150,60 @@
 						<configuration>
 							<charset>UTF-8</charset>
 							<verbose>true</verbose>
-							<webappSourceDir>${basedir}/src/main/resources/jssdk-webapps/</webappSourceDir>
+							<skipMerge>true</skipMerge>
+							<closureCreateSourceMap>true</closureCreateSourceMap>
+							<!-- @see https://github.com/google/closure-compiler/wiki/Warnings -->
+							<closureWarningLevels>
+								<es5Strict>WARNING</es5Strict>
+								<nonStandardJsDocs>WARNING</nonStandardJsDocs>
+							</closureWarningLevels>
+							<webappSourceDir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}</webappSourceDir>
 							<webappTargetDir>${basedir}/target/jssdk-webapps/</webappTargetDir>
-							<closureLanguage>ECMASCRIPT6</closureLanguage>
-							<cssSourceDir>${iam-jssdk.version}/css</cssSourceDir>
+							<cssSourceDir>css</cssSourceDir>
 							<cssFinalFile>IAM.all.css</cssFinalFile>
 							<cssSourceIncludes>
-								<cssSourceInclude>iam-jssdk-**.css</cssSourceInclude>
+								<cssSourceInclude>**.css</cssSourceInclude>
 							</cssSourceIncludes>
 							<jsEngine>CLOSURE</jsEngine>
-							<jsSourceDir>${iam-jssdk.version}/js</jsSourceDir>
+							<jsSourceDir>js</jsSourceDir>
 							<jsFinalFile>IAM.all.js</jsFinalFile>
 							<jsSourceIncludes>
-								<jsSourceInclude>iam-jssdk-**.css</jsSourceInclude>
-								<jsSourceInclude>common-util.js</jsSourceInclude>
-								<jsSourceInclude>iam-jssdk-**.js</jsSourceInclude>
-								<jsSourceInclude>IAM.js</jsSourceInclude>
+								<jsSourceInclude>**.js</jsSourceInclude>
+							</jsSourceIncludes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>merge-minify</id>
+						<phase>package</phase>
+						<goals>
+							<goal>minify</goal>
+						</goals>
+						<configuration>
+							<charset>UTF-8</charset>
+							<verbose>true</verbose>
+							<skipMerge>false</skipMerge>
+							<closureCreateSourceMap>true</closureCreateSourceMap>
+							<closureWarningLevels>
+								<es5Strict>WARNING</es5Strict>
+								<nonStandardJsDocs>WARNING</nonStandardJsDocs>
+							</closureWarningLevels>
+							<webappSourceDir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}</webappSourceDir>
+							<webappTargetDir>${basedir}/target/jssdk-webapps/</webappTargetDir>
+							<cssSourceDir>css</cssSourceDir>
+							<cssFinalFile>IAM.all.css</cssFinalFile>
+							<cssSourceIncludes>
+								<cssSourceInclude>**.css</cssSourceInclude>
+							</cssSourceIncludes>
+							<jsEngine>CLOSURE</jsEngine>
+							<jsSourceDir>js</jsSourceDir>
+							<jsFinalFile>IAM.all.js</jsFinalFile>
+							<jsSourceIncludes>
+								<jsSourceInclude>**.js</jsSourceInclude>
 							</jsSourceIncludes>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin> -->
+			</plugin>
 		</plugins>
 	</build>
 </project>
