@@ -13,9 +13,9 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<iam-jssdk.version>2.0.0</iam-jssdk.version>
-		<iam-jssdk-source.dir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}</iam-jssdk-source.dir>
-		<iam-jssdk-target.dir>${iam-jssdk-source.dir}/</iam-jssdk-target.dir>
+		<iam-jssdk.version>v2.0.0</iam-jssdk.version>
+		<iam-jssdk-source.dir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/src</iam-jssdk-source.dir>
+		<iam-jssdk-target.dir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/dist</iam-jssdk-target.dir>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -154,7 +154,6 @@
 							<verbose>true</verbose>
 							<skipMerge>true</skipMerge>
 							<closureCreateSourceMap>true</closureCreateSourceMap>
-							<!-- @see https://github.com/google/closure-compiler/wiki/Warnings -->
 							<closureWarningLevels>
 								<es5Strict>WARNING</es5Strict>
 								<nonStandardJsDocs>WARNING</nonStandardJsDocs>
@@ -170,7 +169,15 @@
 							<jsSourceDir>js</jsSourceDir>
 							<jsFinalFile>IAM.all.js</jsFinalFile>
 							<jsSourceIncludes>
-								<jsSourceInclude>**.js</jsSourceInclude>
+								<jsSourceInclude>jquery-3.3.1.js</jsSourceInclude>
+								<jsSourceInclude>fingerprint2-2.1.0.js</jsSourceInclude>
+								<jsSourceInclude>crypto-js-4.0.0.js</jsSourceInclude>
+								<jsSourceInclude>common-util.js</jsSourceInclude>
+								<jsSourceInclude>iam-jssdk-captcha-jigsaw.js</jsSourceInclude>
+								<jsSourceInclude>iam-jssdk-crypto.js</jsSourceInclude>
+								<jsSourceInclude>iam-jssdk-core.js</jsSourceInclude>
+								<jsSourceInclude>iam-jssdk-ui.js</jsSourceInclude>
+								<jsSourceInclude>IAM.js</jsSourceInclude>
 							</jsSourceIncludes>
 						</configuration>
 					</execution>
@@ -185,6 +192,7 @@
 							<verbose>true</verbose>
 							<skipMerge>false</skipMerge>
 							<closureCreateSourceMap>true</closureCreateSourceMap>
+							<!-- @see https://github.com/google/closure-compiler/wiki/Warnings -->
 							<closureWarningLevels>
 								<es5Strict>WARNING</es5Strict>
 								<nonStandardJsDocs>WARNING</nonStandardJsDocs>
@@ -199,6 +207,9 @@
 							<jsEngine>CLOSURE</jsEngine>
 							<jsSourceDir>js</jsSourceDir>
 							<jsFinalFile>IAM.all.js</jsFinalFile>
+							<jsFiles>
+								<jsFile>jquery-3.3.1.js</jsFile>
+							</jsFiles>
 							<jsSourceIncludes>
 								<jsSourceInclude>**.js</jsSourceInclude>
 							</jsSourceIncludes>

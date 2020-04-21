@@ -1,5 +1,5 @@
 /**
- * IAM WebSDK All v2.0.0 | (c) 2017 ~ 2050 wl4g Foundation, Inc.
+ * IAM WebSDK Bootstrap v2.0.0 | (c) 2017 ~ 2050 wl4g Foundation, Inc.
  * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
@@ -7,21 +7,21 @@
 	var g_modules = {
 		jqModule: { // JQuery
 			stable: "jquery-3.3.1.min.js",
-			grey: "jquery-3.3.1.min.js",
+			grey: "jquery-3.3.1.js",
 			css_stable: null,
 			css_grey: null,
 			ratio: 100
 		},
 		cryptoJSModule: { // CryptoJS
 			stable: "crypto-js-4.0.0.min.js",
-			grey: "crypto-js-4.0.0.min.js",
+			grey: "crypto-js-4.0.0.js",
 			css_stable: null,
 			css_grey: null,
 			ratio: 100
 		},
 		fpWebModule: { // Fingerprint
 			stable: "fingerprint2-2.1.0.min.js",
-			grey: "fingerprint2-2.1.0.min.js",
+			grey: "fingerprint2-2.1.0.js",
 			css_stable: null,
 			css_grey: null,
 			ratio: 200
