@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-iam-security</artifactId>
@@ -33,8 +32,8 @@
 			<artifactId>super-devops-iam-common</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> 
-			<version>1.8.7</version> </dependency> -->
+		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> <version>1.8.7</version> 
+			</dependency> -->
 	</dependencies>
 	<build>
 		<resources>
@@ -138,7 +137,7 @@
 				</configuration>
 			</plugin>
 			<!-- Minify and combine js/css -->
-			<plugin>
+			<!-- <plugin>
 				<groupId>com.samaxes.maven</groupId>
 				<artifactId>minify-maven-plugin</artifactId>
 				<version>1.7.4</version>
@@ -147,8 +146,7 @@
 						<id>default-minify</id>
 						<phase>package</phase>
 						<goals>
-							<!-- <goal>minify</goal> -->
-							<goal>none</goal>
+							<goal>minify</goal>
 						</goals>
 						<configuration>
 							<charset>UTF-8</charset>
@@ -173,71 +171,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<!-- @Deprecated YUICompression. @see http://alchim31.free.fr/mvnsites/yuicompressor-maven-plugin/compress-mojo.html -->
-			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>yuicompressor-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>none</phase>
-						<!-- <phase>prepare-package</phase> -->
-						<goals>
-							<goal>compress</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<jswarn>false</jswarn> <!-- 不显示js可能的错误 -->
-					<nosuffix>true</nosuffix> <!-- 压缩后保存文件后缀 无后缀 -->
-					<linebreakpos>-1</linebreakpos> <!-- 在指定的列号后插入新行 -->
-					<force>false</force> <!-- 若存在已压缩的文件，会先对比源文件是否有改动 有改动便压缩，无改动就不压缩 -->
-					<!-- 压缩之前先执行聚合文件操作 -->
-					<preProcessAggregates>false</preProcessAggregates>
-					<failOnWarning>false</failOnWarning>
-					<sourceDirectory>src/main/resources/jssdk-webapps/${iam-jssdk.version}/</sourceDirectory>
-					<outputDirectory>target/classes/</outputDirectory>
-					<includes>
-						<include>css/iam-jssdk-**.css</include>
-						<include>js/common-util.js</include>
-						<include>js/iam-jssdk-**.js</include>
-						<include>js/IAM.js</include>
-					</includes>
-					<excludes>
-						<exclude>css/**.min.css</exclude>
-						<exclude>js/**.min.js</exclude>
-					</excludes>
-					<aggregations>
-						<aggregation>
-							<insertNewLine>true</insertNewLine>
-							<inputDir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/</inputDir>
-							<output>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/IAM.all.min.js</output>
-							<includes>	<!-- 注意顺序 -->
-								<include>js/jquery-3.3.1.min.js</include>
-								<include>js/fingerprint2-2.1.0.min.js</include>
-								<include>js/crypto-js-4.0.0.min.js</include>
-								<include>js/common-util.js</include>
-								<include>js/iam-jssdk-crypto.js</include>
-								<include>js/iam-jssdk-captcha-jigsaw.js</include>
-								<include>js/iam-jssdk-core.js</include>
-								<include>js/iam-jssdk-ui.js</include>
-								<include>js/IAM.js</include>
-							</includes>
-						</aggregation>
-						<aggregation>
-							<insertNewLine>true</insertNewLine>
-							<inputDir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/</inputDir>
-							<output>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/IAM.all.min.js</output>
-							<includes>	<!-- 注意顺序 -->
-								<include>css/iam-jssdk-captcha-jigsaw.css</include>
-								<include>css/iam-jssdk-ui.css</include>
-								<include>css/iam-jssdk-wx.css</include>
-							</includes>
-						</aggregation>
-					</aggregations>
-				</configuration>
-			</plugin>
+			</plugin> -->
 		</plugins>
 	</build>
 </project>
