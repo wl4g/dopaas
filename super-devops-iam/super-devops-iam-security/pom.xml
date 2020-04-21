@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-iam-security</artifactId>
@@ -34,8 +35,8 @@
 			<artifactId>super-devops-iam-common</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> <version>1.8.7</version> 
-			</dependency> -->
+		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> 
+			<version>1.8.7</version> </dependency> -->
 	</dependencies>
 	<build>
 		<resources>
@@ -138,85 +139,95 @@
 					<outputDirectory>${project.build.directory}</outputDirectory>
 				</configuration>
 			</plugin>
-			<!-- Minify plugin @see https://samaxes.github.io/minify-maven-plugin/index.html -->
-			<plugin>
-				<groupId>com.samaxes.maven</groupId>
-				<artifactId>minify-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-minify</id>
-						<phase>package</phase>
-						<goals>
-							<goal>minify</goal>
-						</goals>
-						<configuration>
-							<charset>UTF-8</charset>
-							<verbose>true</verbose>
-							<skipMerge>true</skipMerge>
-							<closureCreateSourceMap>true</closureCreateSourceMap>
-							<closureWarningLevels>
-								<es5Strict>WARNING</es5Strict>
-								<nonStandardJsDocs>WARNING</nonStandardJsDocs>
-							</closureWarningLevels>
-							<webappSourceDir>${iam-jssdk-source.dir}</webappSourceDir>
-							<webappTargetDir>${iam-jssdk-target.dir}</webappTargetDir>
-							<cssSourceDir>css</cssSourceDir>
-							<cssFinalFile>IAM.all.css</cssFinalFile>
-							<cssSourceIncludes>
-								<cssSourceInclude>**.css</cssSourceInclude>
-							</cssSourceIncludes>
-							<jsEngine>CLOSURE</jsEngine>
-							<jsSourceDir>js</jsSourceDir>
-							<jsFinalFile>IAM.all.js</jsFinalFile>
-							<jsSourceIncludes>
-								<jsSourceInclude>jquery-3.3.1.js</jsSourceInclude>
-								<jsSourceInclude>fingerprint2-2.1.0.js</jsSourceInclude>
-								<jsSourceInclude>crypto-js-4.0.0.js</jsSourceInclude>
-								<jsSourceInclude>common-util.js</jsSourceInclude>
-								<jsSourceInclude>iam-jssdk-captcha-jigsaw.js</jsSourceInclude>
-								<jsSourceInclude>iam-jssdk-crypto.js</jsSourceInclude>
-								<jsSourceInclude>iam-jssdk-core.js</jsSourceInclude>
-								<jsSourceInclude>iam-jssdk-ui.js</jsSourceInclude>
-								<jsSourceInclude>IAM.js</jsSourceInclude>
-							</jsSourceIncludes>
-						</configuration>
-					</execution>
-					<execution>
-						<id>merge-minify</id>
-						<phase>package</phase>
-						<goals>
-							<goal>minify</goal>
-						</goals>
-						<configuration>
-							<charset>UTF-8</charset>
-							<verbose>true</verbose>
-							<skipMerge>false</skipMerge>
-							<closureCreateSourceMap>true</closureCreateSourceMap>
-							<!-- @see https://github.com/google/closure-compiler/wiki/Warnings -->
-							<closureWarningLevels>
-								<es5Strict>WARNING</es5Strict>
-								<nonStandardJsDocs>WARNING</nonStandardJsDocs>
-							</closureWarningLevels>
-							<webappSourceDir>${iam-jssdk-source.dir}</webappSourceDir>
-							<webappTargetDir>${iam-jssdk-target.dir}</webappTargetDir>
-							<cssSourceDir>css</cssSourceDir>
-							<cssFinalFile>IAM.all.css</cssFinalFile>
-							<cssSourceIncludes>
-								<cssSourceInclude>**.css</cssSourceInclude>
-							</cssSourceIncludes>
-							<jsEngine>CLOSURE</jsEngine>
-							<jsSourceDir>js</jsSourceDir>
-							<jsFinalFile>IAM.all.js</jsFinalFile>
-							<jsFiles>
-								<jsFile>jquery-3.3.1.js</jsFile>
-							</jsFiles>
-							<jsSourceIncludes>
-								<jsSourceInclude>**.js</jsSourceInclude>
-							</jsSourceIncludes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>minify</id>
+			<build>
+				<plugins>
+					<!-- Minify plugin @see https://samaxes.github.io/minify-maven-plugin/index.html 
+						For example: mvn -U clean install -DskipTests -Pminify -->
+					<plugin>
+						<groupId>com.samaxes.maven</groupId>
+						<artifactId>minify-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>default-minify</id>
+								<phase>package</phase>
+								<goals>
+									<goal>minify</goal>
+								</goals>
+								<configuration>
+									<charset>UTF-8</charset>
+									<verbose>true</verbose>
+									<skipMerge>true</skipMerge>
+									<closureCreateSourceMap>true</closureCreateSourceMap>
+									<closureWarningLevels>
+										<es5Strict>WARNING</es5Strict>
+										<nonStandardJsDocs>WARNING</nonStandardJsDocs>
+									</closureWarningLevels>
+									<webappSourceDir>${iam-jssdk-source.dir}</webappSourceDir>
+									<webappTargetDir>${iam-jssdk-target.dir}</webappTargetDir>
+									<cssSourceDir>css</cssSourceDir>
+									<cssFinalFile>IAM.all.css</cssFinalFile>
+									<cssSourceIncludes>
+										<cssSourceInclude>**.css</cssSourceInclude>
+									</cssSourceIncludes>
+									<jsEngine>CLOSURE</jsEngine>
+									<jsSourceDir>js</jsSourceDir>
+									<jsFinalFile>IAM.all.js</jsFinalFile>
+									<jsSourceIncludes>
+										<jsSourceInclude>jquery-3.3.1.js</jsSourceInclude>
+										<jsSourceInclude>fingerprint2-2.1.0.js</jsSourceInclude>
+										<jsSourceInclude>crypto-js-4.0.0.js</jsSourceInclude>
+										<jsSourceInclude>common-util.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-captcha-jigsaw.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-crypto.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-core.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-ui.js</jsSourceInclude>
+										<jsSourceInclude>IAM.js</jsSourceInclude>
+									</jsSourceIncludes>
+								</configuration>
+							</execution>
+							<execution>
+								<id>merge-minify</id>
+								<phase>package</phase>
+								<goals>
+									<goal>minify</goal>
+								</goals>
+								<configuration>
+									<charset>UTF-8</charset>
+									<verbose>true</verbose>
+									<skipMerge>false</skipMerge>
+									<closureCreateSourceMap>true</closureCreateSourceMap>
+									<!-- @see https://github.com/google/closure-compiler/wiki/Warnings -->
+									<closureWarningLevels>
+										<es5Strict>WARNING</es5Strict>
+										<nonStandardJsDocs>WARNING</nonStandardJsDocs>
+									</closureWarningLevels>
+									<webappSourceDir>${iam-jssdk-source.dir}</webappSourceDir>
+									<webappTargetDir>${iam-jssdk-target.dir}</webappTargetDir>
+									<cssSourceDir>css</cssSourceDir>
+									<cssFinalFile>IAM.all.css</cssFinalFile>
+									<cssSourceIncludes>
+										<cssSourceInclude>**.css</cssSourceInclude>
+									</cssSourceIncludes>
+									<jsEngine>CLOSURE</jsEngine>
+									<jsSourceDir>js</jsSourceDir>
+									<jsFinalFile>IAM.all.js</jsFinalFile>
+									<jsFiles>
+										<jsFile>jquery-3.3.1.js</jsFile>
+									</jsFiles>
+									<jsSourceIncludes>
+										<jsSourceInclude>**.js</jsSourceInclude>
+									</jsSourceIncludes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
