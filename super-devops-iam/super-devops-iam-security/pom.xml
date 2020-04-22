@@ -35,6 +35,11 @@
 			<artifactId>super-devops-iam-common</artifactId>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-components-webjars-plugin</artifactId>
+			<scope>compile</scope>
+		</dependency>
 		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> 
 			<version>1.8.7</version> </dependency> -->
 	</dependencies>

@@ -3,7 +3,7 @@
  * Copyright 2017-2032 <wangsir@gmail.com, 983708408@qq.com>, Inc. x
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
-(function(window, document){
+(function(window, document) {
 	var g_modules = {
 		jqModule: { // JQuery
 			stable: "jquery-3.3.1.min.js",

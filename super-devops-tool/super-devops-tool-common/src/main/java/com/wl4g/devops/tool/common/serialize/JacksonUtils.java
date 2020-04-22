@@ -21,7 +21,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static java.util.Objects.isNull;
+
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * JACKSON utility tools.
@@ -44,9 +48,8 @@ public abstract class JacksonUtils {
 	 * @return
 	 */
 	public static String toJSONString(Object object) {
-		if (object == null) {
+		if (isNull(object))
 			return null;
-		}
 		try {
 			return mapper.writeValueAsString(object);
 		} catch (JsonProcessingException e) {
@@ -68,6 +71,74 @@ public abstract class JacksonUtils {
 		try {
 			return mapper.readValue(content, clazz);
 		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	/**
+	 * Parse object from JSON {@link InputStream}.
+	 * 
+	 * @param src
+	 * @param clazz
+	 * @return
+	 */
+	public static <T> T parseJSON(InputStream src, Class<T> clazz) {
+		if (isNull(src))
+			return null;
+		try {
+			return mapper.readValue(src, clazz);
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	/**
+	 * Parse object from JSON {@link File}.
+	 * 
+	 * @param content
+	 * @param valueTypeRef
+	 * @return
+	 */
+	public static <T> T parseJSON(File src, Class<T> clazz) {
+		if (isNull(src))
+			return null;
+		try {
+			return mapper.readValue(src, clazz);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	/**
+	 * Parse object from JSON {@link File}.
+	 * 
+	 * @param content
+	 * @param valueTypeRef
+	 * @return
+	 */
+	public static <T> T parseJSON(File src, TypeReference<T> valueTypeRef) {
+		if (isNull(src))
+			return null;
+		try {
+			return mapper.readValue(src, valueTypeRef);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	/**
+	 * Parse object from JSON {@link InputStream}.
+	 * 
+	 * @param content
+	 * @param valueTypeRef
+	 * @return
+	 */
+	public static <T> T parseJSON(InputStream src, TypeReference<T> valueTypeRef) {
+		if (isNull(src))
+			return null;
+		try {
+			return mapper.readValue(src, valueTypeRef);
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

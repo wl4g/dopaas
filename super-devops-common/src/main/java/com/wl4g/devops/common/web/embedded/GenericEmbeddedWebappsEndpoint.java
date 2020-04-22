@@ -37,6 +37,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.springframework.http.HttpStatus.*;
 
@@ -102,20 +103,25 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 	 * @throws Exception
 	 */
 	protected void doResponseFile(String filepath, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		notNullOf(filepath, "filepath");
+		if (isBlank(filepath) || filepath.equals("/")) {
+			log.debug("Forbidden access root: {}", filepath);
+			// Forbidden.
+			write(response, FORBIDDEN.value(), TEXT_HTML_VALUE, "Forbidden".getBytes(UTF_8));
+			return;
+		}
 
 		// Call pre-processing
 		if (preResponesPropertiesSet(filepath, request)) {
 			log.debug("Accessing file: {}", filepath);
 
 			// Gets buffer cache
-			byte[] buf = cache.get(filepath);
+			byte[] buf = cache.get(filepath + request.getQueryString());
 			if (isNull(buf)) {
 				try (InputStream in = getResourceAsStream(filepath);) {
 					if (nonNull(in)) {
 						buf = toByteArray(in);
 						// Decorate
-						buf = decorateResource(filepath, buf);
+						buf = decorateResource(filepath, request, buf);
 						// Check cache?
 						if (isCache(filepath, request)) {
 							cache.put(filepath, buf);
@@ -123,7 +129,7 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 					} else {
 						// Call post properties.
 						postResponsePropertiesSet(response);
-						// Response not found.
+						// Not found.
 						write(response, NOT_FOUND.value(), TEXT_HTML_VALUE, "Not Found".getBytes(UTF_8));
 						return;
 					}
@@ -136,7 +142,7 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 			write(response, OK.value(), getContentType(filepath), buf);
 		} else {
 			log.debug("Forbidden access file: {}", filepath);
-			// Response forbidden.
+			// Forbidden.
 			write(response, FORBIDDEN.value(), TEXT_HTML_VALUE, "Forbidden".getBytes(UTF_8));
 		}
 	}
@@ -167,10 +173,11 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 	 * Decorate resources
 	 * 
 	 * @param filepath
+	 * @param request
 	 * @param fileBuf
 	 * @return
 	 */
-	protected byte[] decorateResource(String filepath, byte[] fileBuf) {
+	protected byte[] decorateResource(String filepath, HttpServletRequest request, byte[] fileBuf) {
 		return fileBuf;
 	}
 

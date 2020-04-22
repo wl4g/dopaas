@@ -50,7 +50,7 @@ public class DefaultEmbeddedWebappsAutoConfiguration extends OptionalPrefixContr
 	}
 
 	@Bean(BEAN_DEFAULT_EMBEDDED_WEBAPPS_ENDPOINT)
-	@ConditionalOnBean(GenericEmbeddedWebappsProperties.class)
+	@ConditionalOnBean(name = BEAN_DEFAULT_EMBEDDED_WEBAPPS_PROPERTIES)
 	public GenericEmbeddedWebappsEndpoint defaultEmbeddedWebappsEndpoint(
 			@Qualifier(BEAN_DEFAULT_EMBEDDED_WEBAPPS_PROPERTIES) GenericEmbeddedWebappsProperties config) {
 		return new GenericEmbeddedWebappsEndpoint(config) {
@@ -58,7 +58,7 @@ public class DefaultEmbeddedWebappsAutoConfiguration extends OptionalPrefixContr
 	}
 
 	@Bean
-	@ConditionalOnBean(GenericEmbeddedWebappsProperties.class)
+	@ConditionalOnBean(name = BEAN_DEFAULT_EMBEDDED_WEBAPPS_PROPERTIES)
 	public PrefixHandlerMapping defaultEmbeddedWebappsEndpointPrefixHandlerMapping(
 			@Qualifier(BEAN_DEFAULT_EMBEDDED_WEBAPPS_PROPERTIES) GenericEmbeddedWebappsProperties config,
 			@Qualifier(BEAN_DEFAULT_EMBEDDED_WEBAPPS_ENDPOINT) GenericEmbeddedWebappsEndpoint endpoint) {
