@@ -38,6 +38,10 @@ import com.wl4g.devops.components.webplugin.handler.WebPluginHandler;
  */
 public class WebPluginEndpoint extends GenericEmbeddedWebappsEndpoint {
 
+	final public static String JS_BOOTSTRAP = "bootstrap.js";
+	final public static String JS_BOOTSTRAP_MIN = "bootstrap.min.js";
+	final public static String VAR_PLUGIN_DEPENDENCIES = "\"${{pluginInfo}}\"";
+
 	@Autowired
 	protected WebPluginHandler pluginHandler;
 
@@ -56,9 +60,5 @@ public class WebPluginEndpoint extends GenericEmbeddedWebappsEndpoint {
 		}
 		return fileBuf;
 	}
-
-	final public static String JS_BOOTSTRAP = "bootstrap.js";
-	final public static String JS_BOOTSTRAP_MIN = "bootstrap.min.js";
-	final public static String VAR_PLUGIN_DEPENDENCIES = "\"${{pluginInfo}}\"";
 
 }
