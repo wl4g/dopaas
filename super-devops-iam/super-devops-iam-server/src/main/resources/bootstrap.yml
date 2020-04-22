@@ -21,6 +21,12 @@ spring:
         enabled: true # Default false
         base-uri: /view
         webapp-location: classpath*:/default-webapps
+      components:
+        webjars:
+          plugin:
+            enable: true # Default by true
+            plugins:
+              - /iam-jssdk-plugin.json
       iam: # IAM configuration.
         cors:
           enabled: true # Default: true
@@ -36,7 +42,7 @@ spring:
               #   Fortunately, iam-jssdk solves this problem.The solution is mainly through the interface token, thereby breaking the limit of cookies,
               # and it is also very safe due to the use of a private encryption mechanism. However, the cost for such a perfect solution That is, each
               # front end has a little intrusion transformation, that is: each request needs to manually set the current token. For more information 
-              # about iam-jssdk, please refer to: /default-webapps/sdk/{version}/js/IAM.js
+              # about iam-jssdk, please refer to: /default-webapps/sdk/{version}/src/js/IAM.js
               allowCredentials: true
               allowsOrigins:
                 #- '*'
