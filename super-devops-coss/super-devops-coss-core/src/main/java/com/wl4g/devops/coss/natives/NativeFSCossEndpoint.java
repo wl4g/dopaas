@@ -27,9 +27,9 @@ import com.wl4g.devops.coss.config.NativeFSCossProperties;
  * @version v1.0 2020年3月17日
  * @since
  */
-public class NativeCossEndpoint extends StandardFSCossEndpoint<NativeFSCossProperties> {
+public class NativeFSCossEndpoint extends StandardFSCossEndpoint<NativeFSCossProperties> {
 
-	public NativeCossEndpoint(NativeFSCossProperties config) {
+	public NativeFSCossEndpoint(NativeFSCossProperties config) {
 		super(config, FileSystems.getDefault());
 	}
 

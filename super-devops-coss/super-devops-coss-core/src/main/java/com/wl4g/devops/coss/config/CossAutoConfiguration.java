@@ -19,13 +19,8 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.natives.MetadataIndexManager;
-import com.wl4g.devops.coss.natives.NativeCossEndpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
@@ -37,22 +32,7 @@ import java.util.List;
  * @since
  */
 @Configuration
-public class CoreCossAutoConfiguration {
-	final public static String KEY_PROPERTY_PREFIX = "spring.cloud.devops.coss.native";
-
-	@Bean
-	@Validated
-	@ConditionalOnProperty(name = KEY_PROPERTY_PREFIX + ".enable", matchIfMissing = true)
-	@ConfigurationProperties(prefix = KEY_PROPERTY_PREFIX)
-	public NativeFSCossProperties nativeCossProperties() {
-		return new NativeFSCossProperties();
-	}
-
-	@Bean
-	@ConditionalOnBean(NativeFSCossProperties.class)
-	public NativeCossEndpoint nativeCossEndpoint(NativeFSCossProperties config) {
-		return new NativeCossEndpoint(config);
-	}
+public class CossAutoConfiguration {
 
 	@Bean
 	public GenericOperatorAdapter<CossProvider, CossEndpoint> compositeCossEndpointAdapter(List<CossEndpoint> endpoints) {
