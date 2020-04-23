@@ -23,7 +23,7 @@ spring:
         webapp-location: classpath*:/default-webapps
       support:
         cli:
-          enabled: true
+          enable: true
       iam: # IAM client configuration.
         cors:
           enabled: true # Default: true
