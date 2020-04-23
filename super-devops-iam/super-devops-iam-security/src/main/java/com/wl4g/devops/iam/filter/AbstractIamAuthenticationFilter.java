@@ -40,7 +40,6 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
@@ -509,7 +508,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		// Generate absoulte full redirectUrl.
 		String fullRedirectUrl = successRedirectUrl.toString();
-		if (startsWith(fullRedirectUrl, "/")) { // Relative path?
+		if (isRelativeUri(fullRedirectUrl)) { // Relative path?
 			fullRedirectUrl = getRFCBaseURI(toHttp(request), true) + successRedirectUrl;
 		}
 
