@@ -51,6 +51,12 @@
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
 		</dependency>
+		<!-- docker-java -->
+		<dependency>
+			<groupId>com.github.docker-java</groupId>
+			<artifactId>docker-java</artifactId>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>

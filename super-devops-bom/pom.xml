@@ -107,6 +107,8 @@
 		<aliyun-sdk-oss.version>3.8.1</aliyun-sdk-oss.version>
 		<aws-sdk-s3.version>1.11.734</aws-sdk-s3.version>
 		<glusterfs-javafs.version>1.0.4</glusterfs-javafs.version>
+		<!-- dockder-java -->
+		<docker-java.version>3.1.5</docker-java.version>
 	</properties>
 	<distributionManagement>
 		<snapshotRepository>
@@ -940,6 +942,14 @@
 				<version>${glusterfs-javafs.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!--docker-java-->
+			<dependency>
+				<groupId>com.github.docker-java</groupId>
+				<artifactId>docker-java</artifactId>
+				<version>${docker-java.version}</version>
+				<scope>compile</scope>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 	<build>
