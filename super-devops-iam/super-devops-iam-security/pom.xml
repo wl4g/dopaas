@@ -180,17 +180,17 @@
 									<jsEngine>CLOSURE</jsEngine>
 									<jsSourceDir>js</jsSourceDir>
 									<jsFinalFile>IAM.all.js</jsFinalFile>
-									<jsFiles>
-										<jsFile>jquery-3.3.1.js</jsFile>
-										<jsFile>crypto-js-4.0.0.js</jsFile>
-										<jsFile>common-util-2.0.0.js</jsFile>
-										<jsFile>fingerprint2-2.1.0.js</jsFile>
-										<jsFile>iam-jssdk-fingerprint.js</jsFile>
-										<jsFile>iam-jssdk-crypto.js</jsFile>
-										<jsFile>iam-jssdk-captcha-jigsaw.js</jsFile>
-										<jsFile>iam-jssdk-core.js</jsFile>
-										<jsFile>iam-jssdk-ui.js</jsFile>
-									</jsFiles>
+									<jsSourceIncludes>
+										<jsSourceInclude>jquery-3.3.1.js</jsSourceInclude>
+										<jsSourceInclude>crypto-js-4.0.0.js</jsSourceInclude>
+										<jsSourceInclude>common-util-**.js</jsSourceInclude>
+										<jsSourceInclude>fingerprint2-2.1.0.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-fingerprint.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-crypto.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-captcha-jigsaw.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-core.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-ui.js</jsSourceInclude>
+									</jsSourceIncludes>
 								</configuration>
 							</execution>
 							<execution>
@@ -219,17 +219,17 @@
 									<jsEngine>CLOSURE</jsEngine>
 									<jsSourceDir>js</jsSourceDir>
 									<jsFinalFile>IAM.all.js</jsFinalFile>
-									<jsFiles>
-										<!-- <jsFile>jquery-3.3.1.js</jsFile> -->
-										<jsFile>crypto-js-4.0.0.js</jsFile>
-										<jsFile>common-util-2.0.0.js</jsFile>
-										<jsFile>fingerprint2-2.1.0.js</jsFile>
-										<jsFile>iam-jssdk-fingerprint.js</jsFile>
-										<jsFile>iam-jssdk-crypto.js</jsFile>
-										<jsFile>iam-jssdk-captcha-jigsaw.js</jsFile>
-										<jsFile>iam-jssdk-core.js</jsFile>
-										<jsFile>iam-jssdk-ui.js</jsFile>
-									</jsFiles>
+									<jsSourceIncludes>
+										<!-- <jsSourceInclude>jquery-3.3.1.js</jsSourceInclude> -->
+										<jsSourceInclude>crypto-js-4.0.0.js</jsSourceInclude>
+										<jsSourceInclude>common-util-**.js</jsSourceInclude>
+										<jsSourceInclude>fingerprint2-2.1.0.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-fingerprint.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-crypto.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-captcha-jigsaw.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-core.js</jsSourceInclude>
+										<jsSourceInclude>iam-jssdk-ui.js</jsSourceInclude>
+									</jsSourceIncludes>
 								</configuration>
 							</execution>
 						</executions>
