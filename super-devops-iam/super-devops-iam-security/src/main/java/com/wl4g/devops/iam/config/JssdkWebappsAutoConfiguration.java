@@ -31,8 +31,8 @@ import com.wl4g.devops.iam.web.JssdkWebappsEndpoint;
  */
 public class JssdkWebappsAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
-	final public static String JSSDK_LOCATION = "classpath*:/jssdk-webapps";
-	final public static String URI_JSSDK_BASE = "/sdk";
+	final public static String JSSDK_LOCATION = "classpath*:/iam-jssdk-webapps";
+	final public static String URI_JSSDK_BASE = "/iam-jssdk";
 
 	@Bean
 	public JssdkWebappsEndpoint jssdkWebappsEndpoint() {

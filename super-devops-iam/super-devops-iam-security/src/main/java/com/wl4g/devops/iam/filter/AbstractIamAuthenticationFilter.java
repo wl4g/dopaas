@@ -36,7 +36,6 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static java.lang.String.format;
-import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -222,16 +221,15 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			String grantTicket = authHandler.loggedin(redirect.getFromAppName(), subject).getGrantTicket();
 
 			// Build response parameter.
-			Map params = new HashMap();
-			params.put(config.getParam().getApplication(), redirect.getFromAppName());
+			Map fullParams = new HashMap();
+			fullParams.put(config.getParam().getApplication(), redirect.getFromAppName());
 
 			// Response with JSON?
 			if (isJSONResponse(request)) {
 				try {
 					// Make logged JSON.
-					Map jsonParams = new HashMap(params);
 					RespBase<String> resp = makeLoggedResponse(token, subject, request, response, grantTicket,
-							redirect.getRedirectUrl(), jsonParams);
+							redirect.getRedirectUrl(), fullParams);
 
 					// Call authenticated success.
 					coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), resp.asMap());
@@ -250,17 +248,21 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				 * grantTicket is required.
 				 */
 				if (!isBlank(grantTicket)) {
-					params.put(config.getParam().getGrantTicket(), grantTicket);
+					fullParams.put(config.getParam().getGrantTicket(), grantTicket);
 				}
 
+				// Merge custom parameters
+				Map customParams = toQueryParams(toHttp(request).getQueryString());
+				fullParams.putAll(customParams);
+
 				// Call success handle.
-				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), params);
+				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
 
 				// Sets secret tokens to cookies.
 				setSuccessSecretTokens2Cookie(token, request, response);
 
-				log.info("Redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), params);
-				issueRedirect(request, response, redirect.getRedirectUrl(), params, true);
+				log.info("Redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), fullParams);
+				issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
 			}
 
 		} catch (IamException e) {
@@ -493,13 +495,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected RespBase<String> makeLoggedResponse(AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response, String grantTicket, String callbackUrl, Map params) throws Exception {
+			ServletResponse response, String grantTicket, String callbackUrl, Map fullParams) throws Exception {
 		hasTextOf(callbackUrl, "successCallbackUrl");
 
 		// Redirection URL
 		String successRedirectUrl = callbackUrl;
 		if (isNotBlank(grantTicket)) {
-			successRedirectUrl = applyQueryURL(callbackUrl, singletonMap(config.getParam().getGrantTicket(), grantTicket));
+			// Merge custom parameters
+			Map customParams = toQueryParams(toHttp(request).getQueryString());
+			customParams.put(config.getParam().getGrantTicket(), grantTicket);
+			successRedirectUrl = applyQueryURL(callbackUrl, customParams);
 		}
 
 		// Generate absoulte full redirectUrl.
@@ -510,16 +515,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		// Placing it in http.body makes it easier for Android/iOS
 		// to get token.
-		params.put(config.getParam().getRedirectUrl(), fullRedirectUrl);
-		params.put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
+		fullParams.put(config.getParam().getRedirectUrl(), fullRedirectUrl);
+		fullParams.put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 
 		// Handling secret tokens
-		postHandleSuccessSecretTokens(token, subject, params, request, response);
+		postHandleSuccessSecretTokens(token, subject, fullParams, request, response);
 
 		// Make message
 		RespBase<String> resp = RespBase.create(SESSION_STATUS_AUTHC);
 		resp.setCode(OK).setMessage("Authentication successful");
-		resp.forMap().putAll(params);
+		resp.forMap().putAll(fullParams);
 		return resp;
 	}
 

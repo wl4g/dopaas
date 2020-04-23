@@ -38,7 +38,7 @@ public class WebPluginProperties extends GenericEmbeddedWebappsProperties {
 	/**
 	 * Web plugin modules definitions.
 	 */
-	private List<String> plugins = new ArrayList<String>() {
+	private List<String> plugins = new ArrayList<String>() { 
 		private static final long serialVersionUID = -5568542141702550250L;
 		{
 			add("example-plugin.json");

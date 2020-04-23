@@ -117,7 +117,8 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 		byte[] buf = cache.get(filepath + request.getQueryString());
 		if (isNull(buf)) { // Caching file?
 			try (InputStream in = getResourceAsStream(filepath)) {
-				buf = toByteArray(in);
+				if (!isNull(in))
+					buf = toByteArray(in);
 			}
 		}
 
@@ -128,13 +129,11 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 			// Post processing.
 			postResponsePropertiesSet(response);
 			// Check cache?
-			if (isCache(filepath, request)) {
+			if (isCache(filepath, request))
 				cache.put(filepath, buf);
-			}
 			write(response, OK.value(), getContentType(filepath), buf);
 		} else { // Not found.
 			write(response, NOT_FOUND.value(), TEXT_HTML_VALUE, "Not Found".getBytes(UTF_8));
-			return;
 		}
 
 	}

@@ -53,7 +53,7 @@ public class WebPluginEndpoint extends GenericEmbeddedWebappsEndpoint {
 	protected byte[] decorateResource(String filepath, HttpServletRequest request, byte[] fileBuf) {
 		if (endsWithAny(filepath.toLowerCase(US), JS_BOOTSTRAP, JS_BOOTSTRAP_MIN)) {
 			String pluginName = getRequestParam(request, "p", true);
-			log.info("Loading bootstrap.js ... p: {}", filepath);
+			log.info("Loading '{}', p: '{}'", filepath, pluginName);
 			String content = new String(fileBuf, UTF_8);
 			content = content.replace(VAR_PLUGIN_DEPENDENCIES, toJSONString(pluginHandler.getPlugin(pluginName)));
 			return content.getBytes(UTF_8);
