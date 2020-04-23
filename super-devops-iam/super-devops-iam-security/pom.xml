@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-iam-security</artifactId>
@@ -14,9 +13,8 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<iam-jssdk.version>v2.0.0</iam-jssdk.version>
-		<iam-jssdk-source.dir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/src</iam-jssdk-source.dir>
-		<iam-jssdk-target.dir>${basedir}/src/main/resources/jssdk-webapps/${iam-jssdk.version}/dist</iam-jssdk-target.dir>
+		<iam-jssdk-source.dir>${basedir}/src/main/resources/iam-jssdk-webapps/src</iam-jssdk-source.dir>
+		<iam-jssdk-target.dir>${basedir}/src/main/resources/iam-jssdk-webapps/assets</iam-jssdk-target.dir>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -40,8 +38,8 @@
 			<artifactId>super-devops-components-webjars-plugin</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> 
-			<version>1.8.7</version> </dependency> -->
+		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> <version>1.8.7</version> 
+			</dependency> -->
 	</dependencies>
 	<build>
 		<resources>
@@ -151,8 +149,8 @@
 			<id>minify</id>
 			<build>
 				<plugins>
-					<!-- Minify plugin @see https://samaxes.github.io/minify-maven-plugin/index.html 
-						For example: mvn -U clean install -DskipTests -Pminify -->
+					<!-- Minify plugin @see https://samaxes.github.io/minify-maven-plugin/index.html For example: 
+						mvn -U clean install -DskipTests -Pminify -->
 					<plugin>
 						<groupId>com.samaxes.maven</groupId>
 						<artifactId>minify-maven-plugin</artifactId>
@@ -182,17 +180,17 @@
 									<jsEngine>CLOSURE</jsEngine>
 									<jsSourceDir>js</jsSourceDir>
 									<jsFinalFile>IAM.all.js</jsFinalFile>
-									<jsSourceIncludes>
-										<jsSourceInclude>jquery-3.3.1.js</jsSourceInclude>
-										<jsSourceInclude>fingerprint2-2.1.0.js</jsSourceInclude>
-										<jsSourceInclude>crypto-js-4.0.0.js</jsSourceInclude>
-										<jsSourceInclude>common-util.js</jsSourceInclude>
-										<jsSourceInclude>iam-jssdk-captcha-jigsaw.js</jsSourceInclude>
-										<jsSourceInclude>iam-jssdk-crypto.js</jsSourceInclude>
-										<jsSourceInclude>iam-jssdk-core.js</jsSourceInclude>
-										<jsSourceInclude>iam-jssdk-ui.js</jsSourceInclude>
-										<jsSourceInclude>IAM.js</jsSourceInclude>
-									</jsSourceIncludes>
+									<jsFiles>
+										<jsFile>jquery-3.3.1.js</jsFile>
+										<jsFile>crypto-js-4.0.0.js</jsFile>
+										<jsFile>common-util-2.0.0.js</jsFile>
+										<jsFile>fingerprint2-2.1.0.js</jsFile>
+										<jsFile>iam-jssdk-fingerprint.js</jsFile>
+										<jsFile>iam-jssdk-crypto.js</jsFile>
+										<jsFile>iam-jssdk-captcha-jigsaw.js</jsFile>
+										<jsFile>iam-jssdk-core.js</jsFile>
+										<jsFile>iam-jssdk-ui.js</jsFile>
+									</jsFiles>
 								</configuration>
 							</execution>
 							<execution>
@@ -223,10 +221,15 @@
 									<jsFinalFile>IAM.all.js</jsFinalFile>
 									<jsFiles>
 										<jsFile>jquery-3.3.1.js</jsFile>
+										<jsFile>crypto-js-4.0.0.js</jsFile>
+										<jsFile>common-util-2.0.0.js</jsFile>
+										<jsFile>fingerprint2-2.1.0.js</jsFile>
+										<jsFile>iam-jssdk-fingerprint.js</jsFile>
+										<jsFile>iam-jssdk-crypto.js</jsFile>
+										<jsFile>iam-jssdk-captcha-jigsaw.js</jsFile>
+										<jsFile>iam-jssdk-core.js</jsFile>
+										<jsFile>iam-jssdk-ui.js</jsFile>
 									</jsFiles>
-									<jsSourceIncludes>
-										<jsSourceInclude>**.js</jsSourceInclude>
-									</jsSourceIncludes>
 								</configuration>
 							</execution>
 						</executions>

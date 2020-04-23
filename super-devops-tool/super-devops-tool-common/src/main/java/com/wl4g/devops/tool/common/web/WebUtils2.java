@@ -51,7 +51,6 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.StringUtils2.isDomain;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.*;
 import static java.lang.String.format;
-import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.containsAny;
@@ -206,21 +205,20 @@ public abstract class WebUtils2 {
 	 * @return
 	 */
 	public static Map<String, String> toQueryParams(String urlQuery) {
-		if (isBlank(urlQuery)) {
-			return emptyMap();
-		}
+		Map<String, String> parameters = new LinkedHashMap<>(4);
+		if (isBlank(urlQuery))
+			return parameters;
 		try {
 			String[] paramPairs = urlQuery.split("&");
-			Map<String, String> paramsMap = new LinkedHashMap<>();
 			for (int i = 0; i < paramPairs.length; i++) {
 				String[] parts = trimToEmpty(paramPairs[i]).split("=");
 				if (parts.length >= 2) {
-					paramsMap.put(parts[0], parts[1]);
+					parameters.put(parts[0], parts[1]);
 				}
 			}
-			return paramsMap;
+			return parameters;
 		} catch (Exception e) {
-			throw new IllegalArgumentException(String.format("Illegal parameter format. '%s'", urlQuery), e);
+			throw new IllegalArgumentException(format("Illegal parameter format. '%s'", urlQuery), e);
 		}
 	}
 

@@ -1,0 +1,35 @@
+{
+	"pluginName": "iam",
+	"version": "v2.0.0",
+    "modules": [
+        {
+            "modName": "superopsAllModule",
+            "stable": "plugin/js/superops.all.min.js",
+            "grey": "plugin/js/superops.all.js",
+            "css_stable": "plugin/css/superops.all.min.css",
+            "css_grey": "plugin/css/superops.all.css",
+            "ratio": 100
+        },
+        {
+            "modName": "iamAllModule",
+            "stable": "/iam-jssdk/js/iam.all.min.js",
+            "grey": "/iam-jssdk/js/iam.all.js",
+            "css_stable": null,
+            "css_grey": null,
+            "ratio": 200
+        }
+    ],
+    "dependencies": [
+        {
+            "features": [
+                "IamCore",
+                "IamUI"
+            ],
+            "depends": [
+                "superopsAllModule",
+                "iamAllModule"
+            ],
+            "sync": true
+        }
+    ]
+}

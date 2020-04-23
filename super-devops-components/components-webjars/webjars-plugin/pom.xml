@@ -13,9 +13,10 @@
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<webplugin-sdk.version>v2.0.0</webplugin-sdk.version>
-		<webplugin-sdk-source.dir>${basedir}/src/main/resources/plugin-webapps/${webplugin-sdk.version}/src</webplugin-sdk-source.dir>
-		<webplugin-sdk-target.dir>${basedir}/src/main/resources/plugin-webapps/${webplugin-sdk.version}/dist</webplugin-sdk-target.dir>
+		<webplugin-source.dir>${basedir}/src/main/resources/plugin-webapps/src</webplugin-source.dir>
+		<webplugin-target.dir>${basedir}/src/main/resources/plugin-webapps/assets</webplugin-target.dir>
+		<webplugin-final-css.name>superops.all.css</webplugin-final-css.name>
+		<webplugin-final-js.name>superops.all.js</webplugin-final-js.name>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -86,15 +87,16 @@
 										<es5Strict>WARNING</es5Strict>
 										<nonStandardJsDocs>WARNING</nonStandardJsDocs>
 									</closureWarningLevels>
-									<webappSourceDir>${webplugin-sdk-source.dir}</webappSourceDir>
-									<webappTargetDir>${webplugin-sdk-target.dir}</webappTargetDir>
+									<webappSourceDir>${webplugin-source.dir}</webappSourceDir>
+									<webappTargetDir>${webplugin-target.dir}</webappTargetDir>
+									<cssSourceDir>css</cssSourceDir>
 									<jsEngine>CLOSURE</jsEngine>
 									<jsSourceDir>js</jsSourceDir>
 									<jsFiles>
 										<jsFile>jquery-3.3.1.js</jsFile>
 										<jsFile>fingerprint2-2.1.0.js</jsFile>
 										<jsFile>crypto-js-4.0.0.js</jsFile>
-										<jsFile>common-util.js</jsFile>
+										<jsFile>common-util-2.0.0.js</jsFile>
 										<jsFile>bootstrap.js</jsFile>
 									</jsFiles>
 								</configuration>
@@ -115,16 +117,16 @@
 										<es5Strict>WARNING</es5Strict>
 										<nonStandardJsDocs>WARNING</nonStandardJsDocs>
 									</closureWarningLevels>
-									<webappSourceDir>${webplugin-sdk-source.dir}</webappSourceDir>
-									<webappTargetDir>${webplugin-sdk-target.dir}</webappTargetDir>
+									<webappSourceDir>${webplugin-source.dir}</webappSourceDir>
+									<webappTargetDir>${webplugin-target.dir}</webappTargetDir>
 									<jsEngine>CLOSURE</jsEngine>
 									<jsSourceDir>js</jsSourceDir>
-									<jsFinalFile>nops.all.js</jsFinalFile>
+									<jsFinalFile>${webplugin-final-js.name}</jsFinalFile>
 									<jsFiles>
 										<jsFile>jquery-3.3.1.js</jsFile>
 										<jsFile>fingerprint2-2.1.0.js</jsFile>
 										<jsFile>crypto-js-4.0.0.js</jsFile>
-										<jsFile>common-util.js</jsFile>
+										<jsFile>common-util-2.0.0.js</jsFile>
 										<!-- <jsFile>bootstrap.js</jsFile> -->
 									</jsFiles>
 								</configuration>
