@@ -357,7 +357,7 @@
 				console.debug("Prepare to submit login request. principal=" + principal + ", verifiedToken=" + verifiedToken);
 				return true;
 			},
-			onSuccess: function(data){ // 登录成功回调
+			onSuccess: function(principal, data){ // 登录成功回调
 				console.info("Sign in successfully. " + data.principal + ", " + data.redirectUrl);
 				return true;
 			},
@@ -767,7 +767,7 @@
 						} else { // 登录成功，直接重定向
                             $(document).unbind("keydown");
 							var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", res.data[settings.definition.redirectUrlKey]);
-							if(settings.account.onSuccess(res.data)){
+							if(settings.account.onSuccess(principal, res.data)){
 								Common.Util.getRootWindow(window).location.href = redirectUrl;
 							}
 						}
