@@ -60,7 +60,7 @@ public abstract class CipherRequestWrapper extends HttpServletRequestWrapper {
 
 	@Override
 	public String getParameter(String name) {
-		return doDecrypting(name, super.getParameter(name));
+		return decryptParamCipherIfNecessary(name, super.getParameter(name));
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public abstract class CipherRequestWrapper extends HttpServletRequestWrapper {
 		}
 
 		for (int i = 0; i < paramValues.length; i++) {
-			paramValues[i] = doDecrypting(name, paramValues[i]);
+			paramValues[i] = decryptParamCipherIfNecessary(name, paramValues[i]);
 		}
 
 		return paramValues;
@@ -85,7 +85,7 @@ public abstract class CipherRequestWrapper extends HttpServletRequestWrapper {
 		for (String key : tmpMap.keySet()) {
 			String[] values = tmpMap.get(key);
 			for (int i = 0; i < values.length; i++) {
-				values[i] = doDecrypting(key, values[i]);
+				values[i] = decryptParamCipherIfNecessary(key, values[i]);
 			}
 			paramMapAll.put(key, values);
 		}
@@ -94,7 +94,7 @@ public abstract class CipherRequestWrapper extends HttpServletRequestWrapper {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <O, I> O doDecrypting(String paramName, I paramValue) {
+	protected <O, I> O decryptParamCipherIfNecessary(String paramName, I paramValue) {
 		if (!isNull(paramValue) && paramValue instanceof String && !isBlank((String) paramValue)) {
 			try {
 				for (String defineParam : config.getCipher().getCipherParameterHeader()) {
@@ -108,7 +108,6 @@ public abstract class CipherRequestWrapper extends HttpServletRequestWrapper {
 						format("Unable decrypting cipher parameter failure of: %s ", paramValue), ex);
 			}
 		}
-
 		return (O) paramValue;
 	}
 

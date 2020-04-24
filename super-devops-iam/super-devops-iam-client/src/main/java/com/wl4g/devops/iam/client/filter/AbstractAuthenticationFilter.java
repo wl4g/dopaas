@@ -322,8 +322,8 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			}
 
 			// Redirect parameters.
-			Map<String, String> params = new HashMap<>();
-			params.put(config.getParam().getApplication(), config.getServiceName());
+			Map<String, String> clientUrlParams = new HashMap<>();
+			clientUrlParams.put(config.getParam().getApplication(), config.getServiceName());
 
 			// URL to redirect when IamServer authenticated is successful.
 			String clientRedirectUrl = getRFCBaseURI(request, true) + URI_AUTHENTICATOR;
@@ -333,13 +333,13 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				// which need to be kept in the redirection parameters.
 				clientRedirectUrl += "?" + clientParamStr;
 			}
-			params.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
+			clientUrlParams.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
 
 			// Custom decorate failure parameters.
-			decorateFailureRedirectParams(token, cause, request, params);
+			decorateFailureRedirectParams(token, cause, request, clientUrlParams);
 
 			// Build to query URL.
-			return applyQueryURL(getLoginUrl(), params);
+			return applyQueryURL(getLoginUrl(), clientUrlParams);
 		}
 	}
 
@@ -493,7 +493,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		}
 
 		// Sets child accessToken to cookie.
-		String childAccessToken = generateChildAccessToken();
+		String childAccessToken = generateChildAccessTokenIfNecessary();
 		if (!isBlank(childAccessToken)) {
 			Cookie c = new SimpleCookie(config.getCookie());
 			c.setName(config.getParam().getAccessTokenName());
@@ -509,11 +509,11 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * 
 	 * @return
 	 */
-	protected final String generateChildAccessToken() {
+	protected final String generateChildAccessTokenIfNecessary() {
 		// Gets child accessTokenSign key.
 		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN);
 		// Generate child accessToken
-		return isBlank(childAccessTokenSignKey) ? null : generateAccessToken(getSessionId(), childAccessTokenSignKey);
+		return isBlank(childAccessTokenSignKey) ? null : generateAccessToken(getSession(), childAccessTokenSignKey);
 	}
 
 	public abstract String getName();

@@ -135,7 +135,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		}
 
 		// Using protocol internal ticket session.
-		if (isProtocolInternalRequest(request, response)) {
+		if (isProtocolInternalRequest(request)) {
 			String grantTicket = getCleanParam(request, config.getParam().getGrantTicket());
 			if (checkSessionValidity(grantTicket)) {
 				/**
@@ -422,7 +422,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * @param response
 	 * @return
 	 */
-	private boolean isProtocolInternalRequest(ServletRequest request, ServletResponse response) {
+	public static boolean isProtocolInternalRequest(ServletRequest request) {
 		String requestPath = getPathWithinApplication(toHttp(request));
 		for (String pattern : defaultInternalPathPatterns) {
 			if (defaultAntMatcher.matchStart(pattern, requestPath)) {

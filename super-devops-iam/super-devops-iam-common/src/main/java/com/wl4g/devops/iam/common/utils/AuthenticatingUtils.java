@@ -21,6 +21,8 @@ import java.net.URISyntaxException;
 
 import javax.validation.constraints.NotBlank;
 
+import org.apache.shiro.session.Session;
+
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 
 import static org.apache.commons.codec.digest.HmacUtils.hmacSha256Hex;
@@ -147,11 +149,11 @@ public abstract class AuthenticatingUtils extends IamSecurityHolder {
 	 * @param accessTokenSignKey
 	 * @return
 	 */
-	final public static String generateAccessToken(@NotBlank final Serializable sessionId,
-			@NotBlank final String accessTokenSignKey) {
-		notNullOf(sessionId, "sessionId");
+	final public static String generateAccessToken(@NotBlank final Session session, @NotBlank final String accessTokenSignKey) {
+		notNullOf(session, "session");
 		hasTextOf(accessTokenSignKey, "accessTokenSignKey");
-		return encode(hmacSha256Hex(toBytes(accessTokenSignKey), valueOf(sessionId).getBytes(UTF_8)).getBytes(UTF_8));
+		final String accessTokenPlain = valueOf(session.getId() + "@" + getPrincipal());
+		return encode(hmacSha256Hex(toBytes(accessTokenSignKey), toBytes(accessTokenPlain)).getBytes(UTF_8));
 	}
 
 	/**

@@ -21,12 +21,6 @@ spring:
         enabled: true # Default false
         base-uri: /view
         webapp-location: classpath*:/default-webapps
-      components:
-        webjars:
-          plugin:
-            enable: true # Default by true
-            plugins:
-              - /iam-jssdk-plugin.json
       iam: # IAM configuration.
         cors:
           enabled: true # Default: true
@@ -71,9 +65,9 @@ spring:
           fail-fast-sms-delay: 90000
           sms-expire-ms: 300000
         cipher:
-          enable-data-cipher: true
+          enable-data-cipher: true # Default by true
         session:
-          enable-access-token-validity: true
+          enable-access-token-validity: true # Default by true
           global-session-timeout: 1800_000
           session-validation-interval: 360_000
         cookie:
