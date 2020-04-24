@@ -1,0 +1,110 @@
+{
+	"pluginName": "iam",
+	"version": "v2.0.0",
+    "modules": [
+        {
+            "modName": "jqModule",
+            "stable": "jquery-3.3.1.min.js",
+            "grey": "jquery-3.3.1.js",
+            "css_stable": null,
+            "css_grey": null,
+            "ratio": 100
+        },
+        {
+            "modName": "cryptoJSModule",
+            "stable": "crypto-js-4.0.0.min.js",
+            "grey": "crypto-js-4.0.0.js",
+            "css_stable": null,
+            "css_grey": null,
+            "ratio": 100
+        },
+        {
+            "modName": "fpWebModule",
+            "stable": "fingerprint2-2.1.0.min.js",
+            "grey": "fingerprint2-2.1.0.js",
+            "css_stable": null,
+            "css_grey": null,
+            "ratio": 200
+        },
+        {
+            "modName": "commonModule",
+            "stable": "common-util.min.js",
+            "grey": "common-util.js",
+            "css_stable": "font-awesome-all.5.7.2.min.css",
+            "css_grey": "font-awesome-all.5.7.2.min.css",
+            "ratio": 250
+        },
+        {
+            "modName": "cryptoModule",
+            "stable": "iam-jssdk-crypto.min.js",
+            "grey": "iam-jssdk-crypto.js",
+            "css_stable": null,
+            "css_grey": null,
+            "ratio": 300
+        },
+        {
+            "modName": "captchaJigsawModule",
+            "stable": "iam-jssdk-captcha-jigsaw.min.js",
+            "grey": "iam-jssdk-captcha-jigsaw.js",
+            "css_stable": "iam-jssdk-captcha-jigsaw.min.css",
+            "css_grey": "iam-jssdk-captcha-jigsaw.css",
+            "ratio": 400
+        },
+        {
+            "modName": "coreModule",
+            "stable": "iam-jssdk-core.min.js",
+            "grey": "iam-jssdk-core.js",
+            "css_stable": null,
+            "css_grey": null,
+            "ratio": 500
+        },
+        {
+            "modName": "uiModule",
+            "stable": "iam-jssdk-ui.min.js",
+            "grey": "iam-jssdk-ui.js",
+            "css_stable": "iam-jssdk-ui.min.css",
+            "css_grey": "iam-jssdk-ui.css",
+            "ratio": 1000
+        }
+    ],
+    "dependencies": [
+        {
+            "features": [
+                "iamUi",
+                "IamUI",
+                "IamUi",
+                "iamSdkUi",
+                "IamSdkUI"
+            ],
+            "depends": [
+                "fpWebModule",
+                "jqModule",
+                "cryptoJSModule",
+                "commonModule",
+                "cryptoModule",
+                "coreModule",
+                "captchaJigsawModule",
+                "uiModule"
+            ],
+            "sync": true
+        },
+        {
+            "features": [
+                "iamCore",
+                "IamCore",
+                "iamSdkCore",
+                "IamSdkCore"
+            ],
+            "depends": [
+                "fpWebModule",
+                "jqModule",
+                "cryptoJSModule",
+                "commonModule",
+                "cryptoModule",
+                "coreModule",
+                "captchaJigsawModule"
+            ],
+            "sync": true
+        }
+    ]
+}

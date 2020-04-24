@@ -51,7 +51,6 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.StringUtils2.isDomain;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.*;
 import static java.lang.String.format;
-import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.containsAny;
@@ -78,7 +77,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 public abstract class WebUtils2 {
 
 	/**
-	 * Get HTTP remote IP address <br/>
+	 * Get HTTP remote IP address </br>
 	 * Warning: Be careful if you are implementing security, as all of these
 	 * headers are easy to fake.
 	 * 
@@ -162,7 +161,7 @@ public abstract class WebUtils2 {
 	}
 
 	/**
-	 * Is true <br/>
+	 * Is true </br>
 	 * 
 	 * @param request
 	 * @param value
@@ -174,7 +173,7 @@ public abstract class WebUtils2 {
 	}
 
 	/**
-	 * Is true <br/>
+	 * Is true </br>
 	 * 
 	 * @param value
 	 * @return Return TRUE with true/t/y/yes/on/1/enabled
@@ -184,7 +183,7 @@ public abstract class WebUtils2 {
 	}
 
 	/**
-	 * Is true <br/>
+	 * Is true </br>
 	 * 
 	 * @param value
 	 * @param defaultValue
@@ -206,21 +205,20 @@ public abstract class WebUtils2 {
 	 * @return
 	 */
 	public static Map<String, String> toQueryParams(String urlQuery) {
-		if (isBlank(urlQuery)) {
-			return emptyMap();
-		}
+		Map<String, String> parameters = new LinkedHashMap<>(4);
+		if (isBlank(urlQuery))
+			return parameters;
 		try {
 			String[] paramPairs = urlQuery.split("&");
-			Map<String, String> paramsMap = new LinkedHashMap<>();
 			for (int i = 0; i < paramPairs.length; i++) {
 				String[] parts = trimToEmpty(paramPairs[i]).split("=");
 				if (parts.length >= 2) {
-					paramsMap.put(parts[0], parts[1]);
+					parameters.put(parts[0], parts[1]);
 				}
 			}
-			return paramsMap;
+			return parameters;
 		} catch (Exception e) {
-			throw new IllegalArgumentException(String.format("Illegal parameter format. '%s'", urlQuery), e);
+			throw new IllegalArgumentException(format("Illegal parameter format. '%s'", urlQuery), e);
 		}
 	}
 
@@ -432,15 +430,15 @@ public abstract class WebUtils2 {
 	 * Domain names equals two URIs are equal (including secondary and tertiary
 	 * domain names, etc. Exact matching)
 	 * 
-	 * e.g.<br/>
-	 * isEqualWithDomain("http://my.domin.com/myapp1","http://my.domin.com/myapp2")=true
-	 * <br/>
-	 * isEqualWithDomain("http://my1.domin.com/myapp1","http://my.domin.com/myapp2")=false
-	 * <br/>
-	 * isEqualWithDomain("http://my.domin.com:80/myapp1","http://my.domin.com:8080/myapp2")=true
-	 * <br/>
-	 * isEqualWithDomain("https://my.domin.com:80/myapp1","http://my.domin.com:8080/myapp2")=true
-	 * <br/>
+	 * e.g.</br>
+	 * isEqualWithDomain("http://my.wl4g.com/myapp1","http://my.wl4g.com/myapp2")=true
+	 * </br>
+	 * isEqualWithDomain("http://my1.domin.com/myapp1","http://my.wl4g.com/myapp2")=false
+	 * </br>
+	 * isEqualWithDomain("http://my.wl4g.com:80/myapp1","http://my.wl4g.com:8080/myapp2")=true
+	 * </br>
+	 * isEqualWithDomain("https://my.wl4g.com:80/myapp1","http://my.wl4g.com:8080/myapp2")=true
+	 * </br>
 	 * 
 	 * @param uria
 	 * @param urib
@@ -560,13 +558,13 @@ public abstract class WebUtils2 {
 	}
 
 	/**
-	 * Determine whether the requested URL belongs to the domain. e.g:<br/>
-	 * withInDomain("my.domain.com","http://my.domain.com/myapp") = true <br/>
-	 * withInDomain("my.domain.com","https://my.domain.com/myapp") = true <br/>
+	 * Determine whether the requested URL belongs to the domain. e.g:</br>
+	 * withInDomain("my.domain.com","http://my.domain.com/myapp") = true </br>
+	 * withInDomain("my.domain.com","https://my.domain.com/myapp") = true </br>
 	 * withInDomain("my.domain.com","https://my1.domain.com/myapp") = false
-	 * <br/>
+	 * </br>
 	 * withInDomain("*.domain.com", "https://other1.domain.com/myapp") = true
-	 * <br/>
+	 * </br>
 	 * 
 	 * @param domain
 	 * @param url
@@ -591,16 +589,16 @@ public abstract class WebUtils2 {
 	}
 
 	/**
-	 * Determine whether the requested URL belongs to the base URI. e.g:<br/>
+	 * Determine whether the requested URL belongs to the base URI. e.g:</br>
 	 * withInURL("https://domain/myapp/login","https://domain/myapp/login?t=123")
-	 * == true <br/>
+	 * == true </br>
 	 * withInURL("https://domain/myapp","https://domain/myapp/login?t=123") ==
-	 * true <br/>
+	 * true </br>
 	 * withInURL("https://domain/myapp/login?r=abc","https://domain/myapp/login?t=123")
-	 * == true <br/>
+	 * == true </br>
 	 * withInURL("https://domain/myapp/login?r=abc","http://domain/myapp/login?t=123")
-	 * == false <br/>
-	 * <br/>
+	 * == false </br>
+	 * </br>
 	 * 
 	 * @param baseUrl
 	 * @param url
@@ -762,6 +760,27 @@ public abstract class WebUtils2 {
 			rememberUrl = getFullRequestURL(request, true);
 		}
 		return rememberUrl;
+	}
+
+	/**
+	 * Check whether the URI is relative to the path.
+	 * 
+	 * e.g.</br>
+	 * 
+	 * <pre>
+	 * isRelativeUri("//my.wl4g.com/myapp1") = false </br>
+	 * isRelativeUri("http://my.wl4g.com/myapp1") = false </br>
+	 * isRelativeUri("https://my.wl4g.com:80/myapp1") = false </br>
+	 * isRelativeUri("/myapp1/api/v2/list") = true </br>
+	 * </pre>
+	 * 
+	 * @param uri
+	 * @return
+	 */
+	public static boolean isRelativeUri(String uri) {
+		if (isBlank(uri))
+			return false;
+		return isBlank(URI.create(safeDecodeURL(uri)).getScheme()) && !uri.startsWith("//");
 	}
 
 	/**

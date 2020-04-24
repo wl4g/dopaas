@@ -87,4 +87,5 @@ public abstract class DevOpsException extends RuntimeException {
 	public DevOpsException(Throwable cause) {
 		super(cause);
 	}
+
 }

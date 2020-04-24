@@ -1,0 +1,53 @@
+{
+	"pluginName": "examplePlugin",
+	"version": "v2.0.0",
+    "modules": [
+        {
+            "modName": "moduleA",
+            "stable": "moduleA-0.0.1.min.js",
+            "grey": "moduleA-0.0.1.js",
+            "css_stable": null,
+            "css_grey": null,
+            "ratio": 100
+        },
+        {
+            "modName": "moduleB",
+            "stable": "moduleB-0.0.1.min.js",
+            "grey": "moduleB-0.0.1.js",
+            "css_stable": null,
+            "css_grey": null,
+            "ratio": 200
+        },
+        {
+            "modName": "moduleC",
+            "stable": "moduleC-0.0.1.min.js",
+            "grey": "moduleC-0.0.1.js",
+            "css_stable": "moduleC-0.0.1.min.css",
+            "css_grey": "moduleC-0.0.1.css",
+            "ratio": 300
+        }
+    ],
+    "dependencies": [
+        {
+            "features": [
+                "mA"
+            ],
+            "depends": [
+                "moduleA",
+                "moduleB"
+            ],
+            "sync": true
+        },
+        {
+            "features": [
+                "mB"
+            ],
+            "depends": [
+                "moduleA",
+                "moduleB",
+                "moduleC"
+            ],
+            "sync": true
+        }
+    ]
+}
