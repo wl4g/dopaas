@@ -107,10 +107,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 			appInstance.setClusterId(clusterId);
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
 				try {
-					AESCryptor aes = new AESCryptor();
-					String hexCipherText = aes.encrypt(cipherKey.getBytes(UTF_8), CrypticSource.fromHex(appInstance.getSshKey()))
-							.toHex();
-					appInstance.setSshKey(hexCipherText);
+					appInstance.setSshKey(updateSshKeyToCipherHexString(appInstance.getSshKey()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -154,10 +151,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 		for (AppInstance appInstance : appCluster.getInstances()) {
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
 				try {
-					AESCryptor aes = new AESCryptor();
-					String hexCipherText = aes.encrypt(cipherKey.getBytes(UTF_8), CrypticSource.fromHex(appInstance.getSshKey()))
-							.toHex();
-					appInstance.setSshKey(hexCipherText);
+					appInstance.setSshKey(updateSshKeyToCipherHexString(appInstance.getSshKey()));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -202,14 +196,10 @@ public class AppClueterServiceImpl implements AppClusterService {
 		List<AppInstance> appInstances = appInstanceDao.selectByClusterId(clusterId);
 		for (AppInstance appInstance : appInstances) {
 			if (StringUtils.isNotBlank(appInstance.getSshKey())) {
-				try {
-					AESCryptor aes = new AESCryptor();
-					String sshkeyPlain = aes.decrypt(cipherKey.getBytes(UTF_8), CrypticSource.fromHex(appInstance.getSshKey()))
-							.toString();
-					appInstance.setSshKey(sshkeyPlain);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				AESCryptor aes = new AESCryptor();
+				String sshkeyPlain = aes.decrypt(cipherKey.getBytes(UTF_8), CrypticSource.fromHex(appInstance.getSshKey()))
+						.toString();
+				appInstance.setSshKey(sshkeyPlain);
 			}
 		}
 		appCluster.setInstances(appInstances);
@@ -240,4 +230,8 @@ public class AppClueterServiceImpl implements AppClusterService {
 		}
 	}
 
+	private String updateSshKeyToCipherHexString(String sshKey){
+		AESCryptor aes = new AESCryptor();
+		return aes.encrypt(cipherKey.getBytes(UTF_8), new CrypticSource(sshKey)).toHex();
+	}
 }
