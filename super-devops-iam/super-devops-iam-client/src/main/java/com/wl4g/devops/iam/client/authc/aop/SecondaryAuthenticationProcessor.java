@@ -20,7 +20,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SECOND_V
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
 import static com.wl4g.devops.common.web.RespBase.RetCode.PRECONDITITE_LIMITED;
-import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAVE_GRANT_TICKET;
+import static com.wl4g.devops.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.Authenticated;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;

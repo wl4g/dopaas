@@ -35,7 +35,7 @@ import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
  */
 @IamFilter
 @Beta
-public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<SmsAuthenticationToken> {
+public class SmsAuthenticationFilter extends AbstractServerIamAuthenticationFilter<SmsAuthenticationToken> {
 	final public static String NAME = "sms";
 
 	@Override

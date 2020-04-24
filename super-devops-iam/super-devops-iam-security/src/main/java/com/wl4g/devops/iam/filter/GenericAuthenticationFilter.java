@@ -33,7 +33,7 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.rejectRequestMethod;
 import static java.util.stream.Collectors.toMap;
 
 @IamFilter
-public class GenericAuthenticationFilter extends AbstractIamAuthenticationFilter<GenericAuthenticationToken> {
+public class GenericAuthenticationFilter extends AbstractServerIamAuthenticationFilter<GenericAuthenticationToken> {
 	final public static String NAME = "generic";
 
 	@Override

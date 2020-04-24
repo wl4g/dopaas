@@ -58,7 +58,7 @@ import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
  * @since 1.2
  */
 @IamFilter
-public class ROOTAuthenticationFilter extends AbstractAuthenticationFilter<FastCasAuthenticationToken> {
+public class ROOTAuthenticationFilter extends AbstractClientIamAuthenticationFilter<FastCasAuthenticationToken> {
 	final public static String NAME = "rootFilter";
 
 	public ROOTAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
