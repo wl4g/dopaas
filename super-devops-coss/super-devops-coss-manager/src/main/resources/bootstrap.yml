@@ -49,6 +49,8 @@ spring:
           enable: true
           #user: ${spring.application.name}
           endpointRootDir: /mnt/disk1/coss-bucket
+        access:
+          http-download-base-uri: http://coss.${DEVOPS_DOMAIN_TOP:wl4g.com}/coss-manager/webservice/downloadd
 
 # ### Server configuration. ###
 server:

@@ -50,6 +50,10 @@ public class WebUtils2Tests {
 
 	public static void main(String[] args) {
 		out.println("-------------0000-------------------");
+		out.println(isRelativeUri("//my.wl4g.com/myapp1"));
+		out.println(isRelativeUri("http://my.wl4g.com/myapp1"));
+		out.println(isRelativeUri("https://my.wl4g.com:80/myapp1"));
+		out.println(isRelativeUri("/myapp1/api/v2/list"));
 
 		// URI s =
 		// URI.create("http://portal.wl4g.com/portal/authenticator?fragment=eleIndex/elecReport#/eleIndex/index");
@@ -113,6 +117,12 @@ public class WebUtils2Tests {
 		out.println(applyQueryURL("/api/v2?response_type=json", singletonMap("bb", 22)));
 		out.println(applyQueryURL("api/v2?response_type=json&", singletonMap("bb", 22)));
 		out.println(applyQueryURL("/api/v2", singletonMap("bb", 22)));
+
+		out.println("-------------7777-------------------");
+		out.println(isRelativeUri("//my.wl4g.com/myapp1"));
+		out.println(isRelativeUri("http://my.wl4g.com/myapp1"));
+		out.println(isRelativeUri("https://my.wl4g.com:80/myapp1"));
+		out.println(isRelativeUri("/myapp1/api/v2/list"));
 
 	}
 
