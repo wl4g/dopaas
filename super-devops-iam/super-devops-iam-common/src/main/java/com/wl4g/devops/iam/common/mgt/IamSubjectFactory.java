@@ -26,9 +26,11 @@ import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import org.apache.shiro.authc.AuthenticationToken;
@@ -36,6 +38,7 @@ import org.apache.shiro.authc.RememberMeAuthenticationToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
+import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.subject.WebSubjectContext;
 
@@ -45,7 +48,6 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.tool.common.log.SmartLogger;
-import static com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager.*;
 import static com.wl4g.devops.tool.common.web.CookieUtils.getCookie;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.subject.support.DefaultSubjectContext.*;
@@ -173,7 +175,27 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	 */
 	final private boolean isAssertRequestAccessTokens(SubjectContext context) {
 		return config.getSession().isEnableAccessTokenValidity()
-				&& !isProtocolInternalRequest(toHttp(((WebSubjectContext) context).resolveServletRequest()));
+				&& !isInternalNonAccessTokenRequest(toHttp(((WebSubjectContext) context).resolveServletRequest()));
 	}
+
+	/**
+	 * Check is iam internal non accessToken valid request.
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public boolean isInternalNonAccessTokenRequest(ServletRequest request) {
+		String requestPath = getPathWithinApplication(toHttp(request));
+		for (Entry<String, String> ent : config.getFilterChain().entrySet()) {
+			if (defaultAntMatcher.matchStart(ent.getKey(), requestPath)) {
+				return true;
+			}
+		}
+		// TODO 增加排除、包含配置项，解决如JssdkWebappEndpoint访问问题
+		return false;
+	}
+
+	final private static AntPathMatcher defaultAntMatcher = new AntPathMatcher();
 
 }

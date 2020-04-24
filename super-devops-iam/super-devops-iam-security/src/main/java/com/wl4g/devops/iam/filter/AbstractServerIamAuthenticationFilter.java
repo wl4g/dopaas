@@ -25,7 +25,6 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.extParameterVal
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
@@ -57,15 +56,13 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
-import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
-import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
 
@@ -73,11 +70,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.security.spec.KeySpec;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -89,7 +83,6 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,16 +101,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @date 2018年11月27日
  * @since
  */
-public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticationToken> extends AuthenticatingFilter
-		implements IamAuthenticationFilter {
-
-	final protected SmartLogger log = getLogger(getClass());
-
-	/**
-	 * IAM server configuration properties
-	 */
-	@Autowired
-	protected IamProperties config;
+public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthenticationToken>
+		extends AbstractIamAuthenticationFilter<IamProperties> {
 
 	/**
 	 * IAM authentication handler
@@ -148,12 +133,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	@Autowired
 	protected IamCacheManager cacheManager;
-
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
 
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
@@ -356,7 +335,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * Get redirect information bound from authentication request
 	 * {@link AuthenticatorAuthenticationFilter#rememberRedirectInfo(ServletRequest, ServletResponse)}
 	 * </br>
-	 * {@link AbstractIamAuthenticationFilter#createToken(ServletRequest, ServletResponse)}
+	 * {@link AbstractServerIamAuthenticationFilter#createToken(ServletRequest, ServletResponse)}
 	 *
 	 * @param request
 	 *            Whether to get only the redirection information of the binding
@@ -558,26 +537,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	}
 
 	/**
-	 * Gets legal authentication customization parameters.
-	 * 
-	 * @param request
-	 * @return
-	 */
-	@SuppressWarnings("rawtypes")
-	protected Map getLegalCustomParameters(ServletRequest request) {
-		Map<String, String> customParams = toQueryParams(toHttp(request).getQueryString());
-		// Cleaning not matches custom parameters.
-		Iterator<Entry<String, String>> it = customParams.entrySet().iterator();
-		while (it.hasNext()) {
-			Entry<String, String> param = it.next();
-			if (!config.getParam().getCustomeParams().contains(param.getKey())) {
-				it.remove();
-			}
-		}
-		return customParams;
-	}
-
-	/**
 	 * Determine the URL of the login success redirection, default: successURL,
 	 * can support customization.
 	 *
@@ -708,11 +667,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 
 		return new String[] { dataCipherKeyHex, accessToken };
 	}
-
-	/**
-	 * Gets filter name
-	 */
-	public abstract String getName();
 
 	/**
 	 * Login/Authentication request parameters binding session key

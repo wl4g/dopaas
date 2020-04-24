@@ -23,6 +23,7 @@ import static org.springframework.util.ReflectionUtils.getAllDeclaredMethods;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.tool.common.collection.RegisteredSetList;
 
 /**
  * IAM abstract configuration properties.
@@ -432,8 +434,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * Authentication or authorization processing internal interface custom
 		 * parameters name.
 		 */
-		private Set<String> customeParams = new HashSet<String>() {
-			private static final long serialVersionUID = -3445441944126585399L;
+		private List<String> customeParams = new RegisteredSetList<String>(new ArrayList<>()) {
 			{
 				add("iam-x-type");
 				add("iam-x-token");
@@ -592,11 +593,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			this.redirectUrl = redirectUrl;
 		}
 
-		public Set<String> getCustomeParams() {
+		public List<String> getCustomeParams() {
 			return customeParams;
 		}
 
-		public void setCustomeParams(Set<String> customeParams) {
+		public void setCustomeParams(List<String> customeParams) {
 			if (!isEmpty(customeParams)) {
 				this.customeParams.addAll(customeParams);
 			}

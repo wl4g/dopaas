@@ -18,14 +18,12 @@ package com.wl4g.devops.iam.client.filter;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER;
@@ -38,7 +36,6 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionExpir
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
@@ -74,18 +71,15 @@ import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
-import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
-import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.common.web.model.SessionInfo;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -111,15 +105,8 @@ import static javax.servlet.http.HttpServletResponse.*;
  *
  * @since 1.2
  */
-public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken> extends AuthenticatingFilter
-		implements IamAuthenticationFilter {
-
-	final protected SmartLogger log = getLogger(getClass());
-
-	/**
-	 * IAM client configuration properties.
-	 */
-	final protected IamClientProperties config;
+public abstract class AbstractClientIamAuthenticationFilter<T extends AuthenticationToken>
+		extends AbstractIamAuthenticationFilter<IamClientProperties> {
 
 	/**
 	 * Client security context handler.
@@ -141,13 +128,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	final protected Cumulator failedCumulator;
 
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
-
-	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
+	public AbstractClientIamAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
 			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
 		notNull(config, "'config' must not be null");
 		notNull(context, "'context' must not be null");
@@ -518,7 +499,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 
 	public abstract String getName();
 
-	final public static String SAVE_GRANT_TICKET = AbstractAuthenticationFilter.class.getSimpleName() + ".GRANT_TICKET";
+	final public static String SAVE_GRANT_TICKET = AbstractClientIamAuthenticationFilter.class.getSimpleName() + ".GRANT_TICKET";
 
 	/**
 	 * What kind of URL request does not need to be remembered (i.e. using the
@@ -531,7 +512,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	/**
 	 * Remember last request URL.
 	 */
-	final public static String KEY_REMEMBER_URL = AbstractAuthenticationFilter.class.getSimpleName() + ".IamRememberUrl";
+	final public static String KEY_REMEMBER_URL = AbstractClientIamAuthenticationFilter.class.getSimpleName() + ".IamRememberUrl";
 
 	/**
 	 * Redirection authentication failure retry upper limit key.

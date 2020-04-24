@@ -23,7 +23,7 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectI
 import com.wl4g.devops.iam.authc.QrcodeAuthenticationToken;
 
 @IamFilter
-public class QrcodeAuthenticationFilter extends AbstractIamAuthenticationFilter<QrcodeAuthenticationToken> {
+public class QrcodeAuthenticationFilter extends AbstractServerIamAuthenticationFilter<QrcodeAuthenticationToken> {
 	final public static String NAME = "qrcode";
 
 	@Override
