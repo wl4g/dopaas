@@ -32,7 +32,7 @@ public class ServerParamProperties extends ParamProperties {
 	/**
 	 * Password parameter name at login time of account password.
 	 */
-	private String credentialName = "credential";
+	private String credentialsName = "credential";
 
 	/**
 	 * Client type reference parameter name at login time of account password.
@@ -61,12 +61,12 @@ public class ServerParamProperties extends ParamProperties {
 	 */
 	private String smsActionName = "action";
 
-	public String getCredentialName() {
-		return credentialName;
+	public String getCredentialsName() {
+		return credentialsName;
 	}
 
-	public void setCredentialName(String loginPassword) {
-		this.credentialName = loginPassword;
+	public void setCredentialsName(String loginPassword) {
+		this.credentialsName = loginPassword;
 	}
 
 	public String getClientRefName() {
