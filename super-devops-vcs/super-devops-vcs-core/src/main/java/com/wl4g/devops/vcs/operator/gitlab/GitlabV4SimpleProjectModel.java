@@ -198,7 +198,7 @@ public class GitlabV4SimpleProjectModel implements VcsProjectModel, Serializable
 
 	@Override
 	public CompositeBasicVcsProjectModel toCompositeVcsProject() {
-		return new CompositeBasicVcsProjectModel(getId(), getName(), getHttp_url_to_repo(), getSsh_url_to_repo());
+		return new CompositeBasicVcsProjectModel(getId(), getName(), getHttp_url_to_repo(), getSsh_url_to_repo(),getPath_with_namespace());
 	}
 
 	/**
