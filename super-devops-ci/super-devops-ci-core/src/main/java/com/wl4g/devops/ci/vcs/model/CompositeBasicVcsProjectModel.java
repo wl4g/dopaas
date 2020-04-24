@@ -51,16 +51,19 @@ public class CompositeBasicVcsProjectModel implements Serializable {
 	@NotBlank
 	private String sshUrl;
 
+	private String pathWithNamespace;
+
 	public CompositeBasicVcsProjectModel() {
 		super();
 	}
 
-	public CompositeBasicVcsProjectModel(Integer id, String name, String httpUrl, String sshUrl) {
+	public CompositeBasicVcsProjectModel(Integer id, String name, String httpUrl, String sshUrl,String pathWithNamespace) {
 		super();
 		setId(id);
 		setName(name);
 		setHttpUrl(httpUrl);
 		setSshUrl(sshUrl);
+		setPathWithNamespace(pathWithNamespace);
 	}
 
 	public Integer getId() {
@@ -97,6 +100,14 @@ public class CompositeBasicVcsProjectModel implements Serializable {
 	public void setSshUrl(String sshUrl) {
 		hasText(sshUrl, "sshUrl can't is empty.");
 		this.sshUrl = sshUrl;
+	}
+
+	public String getPathWithNamespace() {
+		return pathWithNamespace;
+	}
+
+	public void setPathWithNamespace(String pathWithNamespace) {
+		this.pathWithNamespace = pathWithNamespace;
 	}
 
 	@Override
