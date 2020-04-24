@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.example.handler;
+package com.wl4g.devops.iam.client.authc.aop;
 
-import org.springframework.stereotype.Component;
+/**
+ * Secondary authentication handler
+ * 
+ * @author Wangl.sir <983708408@qq.com>
+ * @version v1.0 2019年3月9日
+ * @since
+ */
+public interface SecondaryAuthenticator {
 
-import com.wl4g.devops.iam.client.authc.aop.SecondAuthenticateHandler;
-
-@Component
-public class TestSecondAuthenticateHandler implements SecondAuthenticateHandler {
-
-	@Override
-	public String[] doGetAuthorizers(String funcId) {
-		if (funcId.equals("funSensitiveApi")) {
-			return new String[] { "bl001", "bl002", "admin" };
-		}
-		throw new IllegalStateException(String.format("Illegal function id [%s]", funcId));
-	}
+	String[] doGetAuthorizers(String funcId);
 
 }

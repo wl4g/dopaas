@@ -22,6 +22,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONN
 import static com.wl4g.devops.common.web.RespBase.RetCode.PRECONDITITE_LIMITED;
 import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAVE_GRANT_TICKET;
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.Authenticated;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResp;
@@ -36,8 +37,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.ParameterizedTypeReference;
@@ -55,6 +54,7 @@ import com.wl4g.devops.iam.common.authc.SecondAuthenticationException;
 import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 /**
@@ -64,9 +64,8 @@ import com.wl4g.devops.tool.common.serialize.JacksonUtils;
  * @version v1.0 2019年3月9日
  * @since
  */
-public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthenticate> {
-
-	protected Logger log = LoggerFactory.getLogger(getClass());
+public class SecondaryAuthenticationProcessor implements AdviceProcessor<SecondAuthenticate> {
+	protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Error message without secondary authentication.
@@ -76,7 +75,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 	/**
 	 * Error status without secondary Unauthenticated.
 	 */
-	final public static String STATUS_SECOND_UNAUTHC = "SecondUnauthenticated";
+	final public static String STATUS_SECOND_UNAUTHC = "SecondaryUnauthenticated";
 
 	/**
 	 * IAM client properties configuration
@@ -93,7 +92,7 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 	 */
 	final private BeanFactory beanFactory;
 
-	public SecondAuthenticateProcessor(IamClientProperties config, RestTemplate restTemplate, BeanFactory beanFactory) {
+	public SecondaryAuthenticationProcessor(IamClientProperties config, RestTemplate restTemplate, BeanFactory beanFactory) {
 		Assert.notNull(config, "'config' is null, please check configure");
 		Assert.notNull(restTemplate, "'restTemplate' is null, please check configure");
 		Assert.notNull(beanFactory, "'beanFactory' is null, please check configure");
@@ -262,10 +261,10 @@ public class SecondAuthenticateProcessor implements AdviceProcessor<SecondAuthen
 	 */
 	private String getAuthorizersString(SecondAuthenticate annotation) {
 		try {
-			SecondAuthenticateHandler handler = beanFactory.getBean(annotation.handleClass());
+			SecondaryAuthenticator handler = beanFactory.getBean(annotation.handleClass());
 			return StringUtils.arrayToDelimitedString(handler.doGetAuthorizers(annotation.funcId()), ",");
 		} catch (NoSuchBeanDefinitionException e) {
-			throw new NoSuchBeanDefinitionException(SecondAuthenticateHandler.class,
+			throw new NoSuchBeanDefinitionException(SecondaryAuthenticator.class,
 					String.format("No such beans instance, check that the configuration has implemented the %s interface",
 							annotation.handleClass().getSimpleName()));
 		}

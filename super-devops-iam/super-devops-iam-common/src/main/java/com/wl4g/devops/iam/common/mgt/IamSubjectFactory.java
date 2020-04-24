@@ -45,7 +45,9 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager.*;
 import static com.wl4g.devops.tool.common.web.CookieUtils.getCookie;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.subject.support.DefaultSubjectContext.*;
 
 /**
@@ -74,20 +76,18 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		// authentication, in reality, the
 		// login might have been just a CAS rememberMe login. If so, set the
 		// authenticated flag appropriately:
-		if (context.isAuthenticated()) {
-			AuthenticationToken token = context.getAuthenticationToken();
-			if (!isNull(token) && token instanceof RememberMeAuthenticationToken) {
-				RememberMeAuthenticationToken tk = (RememberMeAuthenticationToken) token;
-				// set the authenticated flag of the context to true only if the
-				// CAS subject is not in a remember me mode
-				if (tk.isRememberMe()) {
-					context.setAuthenticated(false);
-				}
+		AuthenticationToken token = context.getAuthenticationToken();
+		if (!isNull(token) && token instanceof RememberMeAuthenticationToken) {
+			RememberMeAuthenticationToken tk = (RememberMeAuthenticationToken) token;
+			// set the authenticated flag of the context to true only if the
+			// CAS subject is not in a remember me mode
+			if (tk.isRememberMe()) {
+				context.setAuthenticated(false);
 			}
 		}
 
 		// Validation of enhanced session additional signature.
-		if (context.isAuthenticated() && config.getSession().isEnableAccessTokenValidity()) {
+		if (isAssertRequestAccessTokens(context)) {
 			try {
 				assertRequestAccessTokenValidity(context);
 			} catch (UnauthenticatedException e) {
@@ -112,8 +112,8 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	 */
 	final protected String getRequestAccessToken(HttpServletRequest request) {
 		String accessToken = getCleanParam(request, config.getParam().getAccessTokenName());
-		accessToken = isNull(accessToken) ? request.getHeader(config.getParam().getAccessTokenName()) : accessToken;
-		accessToken = isNull(accessToken) ? getCookie(request, config.getParam().getAccessTokenName()) : accessToken;
+		accessToken = isBlank(accessToken) ? request.getHeader(config.getParam().getAccessTokenName()) : accessToken;
+		accessToken = isBlank(accessToken) ? getCookie(request, config.getParam().getAccessTokenName()) : accessToken;
 		return accessToken;
 	}
 
@@ -151,7 +151,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		hasTextOf(accessTokenSignKey, "accessTokenSignKey"); // Shouldn't-here
 
 		// Calculating accessToken(signature).
-		final String validAccessToken = generateAccessToken(session.getId(), accessTokenSignKey);
+		final String validAccessToken = generateAccessToken(session, accessTokenSignKey);
 		log.debug(
 				"Asserted accessToken of sessionId: {}, accessTokenSignKey: {}, validAccessToken: {}, accessToken: {}, authcToken: {}",
 				sessionId, accessTokenSignKey, validAccessToken, accessToken, authcToken);
@@ -163,6 +163,17 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		}
 		// }
 
+	}
+
+	/**
+	 * Is assertion request accessTokens validity.
+	 * 
+	 * @param context
+	 * @return
+	 */
+	final private boolean isAssertRequestAccessTokens(SubjectContext context) {
+		return config.getSession().isEnableAccessTokenValidity()
+				&& !isProtocolInternalRequest(toHttp(((WebSubjectContext) context).resolveServletRequest()));
 	}
 
 }

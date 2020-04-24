@@ -33,8 +33,8 @@ import com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator;
 import com.wl4g.devops.iam.client.validation.IamValidator;
 import com.wl4g.devops.iam.client.web.ClientAuthenticatorEndpoint;
 import com.wl4g.devops.iam.client.session.mgt.IamClientSessionManager;
-import com.wl4g.devops.iam.client.authc.aop.SecondAuthenticateAspect;
-import com.wl4g.devops.iam.client.authc.aop.SecondAuthenticateProcessor;
+import com.wl4g.devops.iam.client.authc.aop.SecondaryAuthenticationAspect;
+import com.wl4g.devops.iam.client.authc.aop.SecondaryAuthenticationProcessor;
 import com.wl4g.devops.iam.client.configure.AnynothingClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.AnynothingClientSecurityCoprocessor;
 import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
@@ -235,15 +235,15 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public SecondAuthenticateAspect secondAuthenticateAspect(SecondAuthenticateProcessor processor) {
-		return new SecondAuthenticateAspect(processor);
+	public SecondaryAuthenticationAspect secondAuthenticateAspect(SecondaryAuthenticationProcessor processor) {
+		return new SecondaryAuthenticationAspect(processor);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SecondAuthenticateProcessor secondAuthenticateProcessor(IamClientProperties config, RestTemplate restTemplate,
+	public SecondaryAuthenticationProcessor secondAuthenticateProcessor(IamClientProperties config, RestTemplate restTemplate,
 			BeanFactory beanFactory) {
-		return new SecondAuthenticateProcessor(config, restTemplate, beanFactory);
+		return new SecondaryAuthenticationProcessor(config, restTemplate, beanFactory);
 	}
 
 	// ==============================

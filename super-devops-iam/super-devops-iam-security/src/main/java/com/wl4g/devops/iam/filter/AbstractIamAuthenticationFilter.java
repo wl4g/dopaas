@@ -36,6 +36,7 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static java.lang.String.format;
+import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -72,7 +73,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.security.spec.KeySpec;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
@@ -222,6 +225,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// Build response parameter.
 			Map fullParams = new HashMap();
 			fullParams.put(config.getParam().getApplication(), redirect.getFromAppName());
+			// Merge custom parameters
+			fullParams.putAll(getLegalCustomParameters(request));
 
 			// Response with JSON?
 			if (isJSONResponse(request)) {
@@ -302,14 +307,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		coprocessor.postAuthenticatingFailure(tk, ae, request, response);
 
 		// Obtain bound parameters.
-		Map params = new HashMap();
-		params.put(config.getParam().getApplication(), redirect.getFromAppName());
-		params.put(config.getParam().getRedirectUrl(), redirect.getRedirectUrl());
+		Map fullParams = new HashMap();
+		fullParams.put(config.getParam().getApplication(), redirect.getFromAppName());
+		fullParams.put(config.getParam().getRedirectUrl(), redirect.getRedirectUrl());
+		// Merge custom parameters
+		fullParams.putAll(getLegalCustomParameters(request));
 
 		// Response JSON message.
 		if (isJSONResponse(request)) {
 			try {
-				RespBase<String> resp = makeFailedResponse(redirect.getRedirectUrl(), request, params, errmsg);
+				RespBase<String> resp = makeFailedResponse(redirect.getRedirectUrl(), request, fullParams, errmsg);
 				String failed = toJSONString(resp);
 				log.info("Resp unauth: {}", failed);
 				writeJson(toHttp(response), failed);
@@ -321,7 +328,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		else {
 			try {
 				log.info("Redirect to login: {}", redirect);
-				issueRedirect(request, response, redirect.getRedirectUrl(), params, true);
+				issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
 			} catch (IOException e1) {
 				log.error("Redirect to login failed.", e1);
 			}
@@ -500,10 +507,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Redirection URL
 		String successRedirectUrl = callbackUrl;
 		if (isNotBlank(grantTicket)) {
-			// Merge custom parameters
-			Map customParams = toQueryParams(toHttp(request).getQueryString());
-			customParams.put(config.getParam().getGrantTicket(), grantTicket);
-			successRedirectUrl = applyQueryURL(callbackUrl, customParams);
+			successRedirectUrl = applyQueryURL(callbackUrl, singletonMap(config.getParam().getGrantTicket(), grantTicket));
 		}
 
 		// Generate absoulte full redirectUrl.
@@ -551,6 +555,26 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		resp.forMap().put(config.getParam().getRedirectUrl(), failRedirectUrl);
 		resp.forMap().put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
 		return resp;
+	}
+
+	/**
+	 * Gets legal authentication customization parameters.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	protected Map getLegalCustomParameters(ServletRequest request) {
+		Map<String, String> customParams = toQueryParams(toHttp(request).getQueryString());
+		// Cleaning not matches custom parameters.
+		Iterator<Entry<String, String>> it = customParams.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<String, String> param = it.next();
+			if (!config.getParam().getCustomeParams().contains(param.getKey())) {
+				it.remove();
+			}
+		}
+		return customParams;
 	}
 
 	/**
@@ -673,7 +697,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			if (config.getSession().isEnableAccessTokenValidity()) {
 				// Create accessTokenSignKey.
 				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN, generateAccessTokenSignKey(getSessionId()));
-				accessToken = generateAccessToken(getSessionId(), accessTokenSignKey);
+				accessToken = generateAccessToken(getSession(), accessTokenSignKey);
 				Cookie c = new SimpleCookie(config.getCookie());
 				c.setName(config.getParam().getAccessTokenName());
 				c.setValue(accessToken);
@@ -686,7 +710,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	}
 
 	/**
-	 * Get filter name
+	 * Gets filter name
 	 */
 	public abstract String getName();
 
