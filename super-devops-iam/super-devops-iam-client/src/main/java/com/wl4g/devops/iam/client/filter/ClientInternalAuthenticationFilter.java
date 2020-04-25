@@ -36,7 +36,7 @@ import com.wl4g.devops.common.kit.access.IPAccessControl;
  */
 @IamFilter
 public class ClientInternalAuthenticationFilter extends AbstractWhiteListInternalAuthenticationFilter {
-	final public static String NAME = "client-internal";
+	final public static String NAME = "clientInternalFilter";
 
 	public ClientInternalAuthenticationFilter(IPAccessControl control,
 			AbstractIamProperties<? extends ParamProperties> config) {

@@ -422,7 +422,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	 * @param response
 	 * @return
 	 */
-	private boolean isInternalTicketRequest(ServletRequest request) {
+	public final static boolean isInternalTicketRequest(ServletRequest request) {
 		String requestPath = getPathWithinApplication(toHttp(request));
 		for (String pattern : defaultInternalTicketRequestPathPatterns) {
 			if (defaultAntMatcher.matchStart(pattern, requestPath)) {

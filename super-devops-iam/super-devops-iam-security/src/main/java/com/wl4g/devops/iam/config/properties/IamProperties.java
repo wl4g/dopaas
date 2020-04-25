@@ -207,6 +207,8 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	final private void addDefaultFilterChain() {
 		// Default view access files request rules.
 		getFilterChain().put(DEFAULT_VIEW_BASE_URI + "/**", "anon");
+		// Default Iam-JSSDK controller rules.
+		getFilterChain().put(DEFAULT_JSSDK_BASE_URI + "/**", "anon");
 		// SNS authenticator controller rules.
 		getFilterChain().put(URI_S_SNS_BASE + "/**", "anon");
 		// Login authenticator controller rules.
@@ -215,9 +217,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		getFilterChain().put(URI_S_VERIFY_BASE + "/**", "anon");
 		// RCM(Simple risk control) controller rules.
 		getFilterChain().put(URI_S_RCM_BASE + "/**", "anon");
-		// Default Iam-JSSDK controller rules.
-		getFilterChain().put(DEFAULT_JSSDK_BASE_URI + "/**", "anon");
-		// API v1 controller rules.
+		// API(v1) controller rules.
 		getFilterChain().put(URI_S_API_V1_BASE + "/**", ServerInternalAuthenticationFilter.NAME);
 	}
 

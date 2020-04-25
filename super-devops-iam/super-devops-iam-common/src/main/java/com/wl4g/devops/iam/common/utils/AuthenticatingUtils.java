@@ -146,7 +146,7 @@ public abstract class AuthenticatingUtils extends IamSecurityHolder {
 	/**
 	 * Generate new generate accessToken string.
 	 * 
-	 * @param sessionId
+	 * @param session
 	 * @param accessTokenSignKey
 	 * @return
 	 */
