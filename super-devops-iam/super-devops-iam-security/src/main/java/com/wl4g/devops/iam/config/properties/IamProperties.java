@@ -26,7 +26,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.config.properties.ServerParamProperties;
-import com.wl4g.devops.iam.filter.InternalWhiteListServerAuthenticationFilter;
+import com.wl4g.devops.iam.filter.ServerInternalAuthenticationFilter;
 import com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController;
 
 /**
@@ -42,9 +42,14 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	private static final long serialVersionUID = -5858422822181237865L;
 
 	/**
-	 * Default view loader path
+	 * Default Iam-JSSDK loader path
 	 */
-	final public static String DEFAULT_VIEW_LOADER_PATH = "/default-webapps";
+	final public static String DEFAULT_JSSDK_LOCATION = "classpath*:/iam-jssdk-webapps";
+
+	/**
+	 * Default Iam-JSSDK base URI.
+	 */
+	final public static String DEFAULT_JSSDK_BASE_URI = "/iam-jssdk";
 
 	/**
 	 * Default view login URI.
@@ -176,6 +181,13 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	}
 
 	@Override
+	protected void validation() {
+		super.validation();
+		hasText(getSuccessService(), "Success service must not be empty.");
+		hasText(getSuccessUri(), "SuccessUri must not be empty, e.g. http://localhost:14041");
+	}
+
+	@Override
 	protected void applyDefaultIfNecessary() {
 		super.applyDefaultIfNecessary();
 
@@ -186,13 +198,6 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		if (isBlank(getSuccessService())) {
 			setSuccessEndpoint(environment.getProperty("spring.application.name") + "@" + DEFAULT_VIEW_INDEX_URI);
 		}
-	}
-
-	@Override
-	protected void validation() {
-		hasText(getSuccessService(), "Success service must not be empty.");
-		hasText(getSuccessUri(), "SuccessUri must not be empty, e.g. http://localhost:14041");
-		super.validation();
 	}
 
 	/**
@@ -210,8 +215,10 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 		getFilterChain().put(URI_S_VERIFY_BASE + "/**", "anon");
 		// RCM(Simple risk control) controller rules.
 		getFilterChain().put(URI_S_RCM_BASE + "/**", "anon");
+		// Default Iam-JSSDK controller rules.
+		getFilterChain().put(DEFAULT_JSSDK_BASE_URI + "/**", "anon");
 		// API v1 controller rules.
-		getFilterChain().put(URI_S_API_V1_BASE + "/**", InternalWhiteListServerAuthenticationFilter.NAME);
+		getFilterChain().put(URI_S_API_V1_BASE + "/**", ServerInternalAuthenticationFilter.NAME);
 	}
 
 }

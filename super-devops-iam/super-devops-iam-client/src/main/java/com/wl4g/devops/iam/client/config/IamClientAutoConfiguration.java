@@ -40,7 +40,7 @@ import com.wl4g.devops.iam.client.configure.AnynothingClientSecurityCoprocessor;
 import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter;
-import com.wl4g.devops.iam.client.filter.InternalWhiteListClientAuthenticationFilter;
+import com.wl4g.devops.iam.client.filter.ClientInternalAuthenticationFilter;
 import com.wl4g.devops.iam.client.filter.LogoutAuthenticationFilter;
 import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
@@ -117,9 +117,9 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public InternalWhiteListClientAuthenticationFilter internalWhiteListClientAuthenticationFilter(IPAccessControl control,
+	public ClientInternalAuthenticationFilter internalWhiteListClientAuthenticationFilter(IPAccessControl control,
 			AbstractIamProperties<? extends ParamProperties> config) {
-		return new InternalWhiteListClientAuthenticationFilter(control, config);
+		return new ClientInternalAuthenticationFilter(control, config);
 	}
 
 	@Bean
@@ -150,7 +150,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public FilterRegistrationBean internalClientFilterRegistrationBean(InternalWhiteListClientAuthenticationFilter filter) {
+	public FilterRegistrationBean internalClientFilterRegistrationBean(ClientInternalAuthenticationFilter filter) {
 		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
 		registration.setEnabled(false);
 		return registration;

@@ -39,14 +39,14 @@ public class JssdkWebappsEndpoint extends GenericEmbeddedWebappsEndpoint {
 		// Only debug mode can access source code file.
 		if (isJVMDebugging) {
 			return true;
-		} else if (filepath.contains(PATH_JSSDK_JS_FILE)) {
-			return filepath.contains(PATH_JSSDK_MIN_FILE);
+		} else if (filepath.contains(DEFAULT_JSSDK_FILE_EXT)) {
+			return filepath.contains(DEFAULT_JSSDK_FILE_BIN);
 		} else {
 			return true;
 		}
 	}
 
-	final public static String PATH_JSSDK_MIN_FILE = ".min.";
-	final public static String PATH_JSSDK_JS_FILE = ".js";
+	final public static String DEFAULT_JSSDK_FILE_BIN = ".min.";
+	final public static String DEFAULT_JSSDK_FILE_EXT = ".js";
 
 }
