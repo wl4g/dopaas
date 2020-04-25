@@ -30,6 +30,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static com.google.common.base.Charsets.*;
 import com.wl4g.devops.IamServer;
 import com.wl4g.devops.iam.common.session.IamSession;
+import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.support.redis.ScanCursor;
 
@@ -38,22 +39,25 @@ import redis.clients.jedis.ScanParams;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IamServer.class)
 @FixMethodOrder(MethodSorters.JVM)
-public class SessionJedisServiceTests {
+public class IamSessionDAOTests {
 
 	@Autowired
 	private JedisService jedisService;
+
+	@Autowired
+	private IamSessionDAO sessionDAO;
 
 	@Test
 	public void setSerializeTest() {
 		IamSession s = new IamSession();
 		s.setId("abcd123");
-		String res = jedisService.setObjectT("iam_session_1c315080e64b4731b011a14551a54c92", s, 0);
+		String res = jedisService.setObjectT("iam:session:1c315080e64b4731b011a14551a54c92", s, 0);
 		System.out.println("setSerializeTest	result: " + res);
 	}
 
 	@Test
 	public void getDeserializeTest() {
-		IamSession s = jedisService.getObjectT("iam_session_1c315080e64b4731b011a14551a54c92", IamSession.class);
+		IamSession s = jedisService.getObjectT("iam:session:1c315080e64b4731b011a14551a54c92", IamSession.class);
 		System.out.println("getDeserializeTest	IamSession: " + s);
 	}
 
@@ -67,6 +71,16 @@ public class SessionJedisServiceTests {
 		System.out.println("ScanResult: " + sc);
 		while (sc.hasNext()) {
 			System.out.println("IamSession: " + sc.next());
+		}
+
+	}
+
+	@Test
+	public void getAccessSessionsTests() {
+		ScanCursor<IamSession> ss = sessionDAO.getAccessSessions(200);
+		while (ss.hasNext()) {
+			IamSession s = ss.next();
+			System.out.println(s);
 		}
 
 	}
