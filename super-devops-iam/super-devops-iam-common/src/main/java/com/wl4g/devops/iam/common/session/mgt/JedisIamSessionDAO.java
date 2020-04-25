@@ -23,12 +23,12 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SESSION;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
-import com.google.common.base.Charsets;
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
@@ -64,13 +64,13 @@ public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 
 	@Override
 	public ScanCursor<IamSession> getAccessSessions(final int limit) {
-		return getAccessSessions(new CursorWrapper(), 100);
+		return getAccessSessions(new CursorWrapper(), limit);
 	}
 
 	@Override
 	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, int limit) {
 		isTrue(limit > 0, "accessSessions batchSize must >0");
-		byte[] match = (config.getCache().getPrefix() + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
+		byte[] match = (cacheManager.getIamCache(CACHE_SESSION) + "*").getBytes(UTF_8);
 		ScanParams params = new ScanParams().count(limit).match(match);
 		JedisCluster jedisCluster = ((JedisIamCacheManager) cacheManager).getJedisCluster();
 		return new ScanCursor<IamSession>(jedisCluster, cursor, IamSession.class, params) {

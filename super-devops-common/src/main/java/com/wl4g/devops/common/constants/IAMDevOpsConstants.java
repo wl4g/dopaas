@@ -183,7 +183,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * IAM server authentication session stored cache name.
 	 */
-	final public static String CACHE_SESSION = ":iam:session:";
+	final public static String CACHE_SESSION = ":iam:session:id:";
 	/**
 	 * IAM server authentication authorization information storage cache name.
 	 */
