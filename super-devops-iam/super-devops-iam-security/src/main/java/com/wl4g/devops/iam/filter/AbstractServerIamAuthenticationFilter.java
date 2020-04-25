@@ -36,7 +36,6 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static java.lang.String.format;
 import static java.util.Collections.singletonMap;
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -344,7 +343,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		String fallbackRedirect = getCleanParam(request, config.getParam().getFallbackRedirect());
 		RedirectInfo redirect = RedirectInfo.build(fromAppName, redirectUrl, fallbackRedirect);
 
-		// Fallback redirect
+		// Fallback from last request bind.
 		if (isBlank(redirect.getFromAppName())) {
 			RedirectInfo bind = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
 			if (nonNull(bind)) {
@@ -352,18 +351,17 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 			}
 		}
 
-		// Check and use default redirectUrl
+		// Check & use default redirectUrl.
 		if (!isBlank(redirect.getFromAppName())) {
 			ApplicationInfo appInfo = configurer.getApplicationInfo(redirect.getFromAppName());
-			if (isNull(appInfo)) {
-				throw new IllegalRequestException(format("Invalid redirected application '%s'", redirect.getFromAppName()));
-			}
+			notNull(appInfo, IllegalRequestException.class, "Invalid redirected application '%s'", redirect.getFromAppName());
 			if (isBlank(redirect.getRedirectUrl())) {
 				// Use default redirectUrl
 				redirect.setRedirectUrl(appInfo.getViewExtranetBaseUri());
 			}
 			return redirect;
 		}
+
 		return new RedirectInfo();
 	}
 
