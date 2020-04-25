@@ -35,10 +35,10 @@ import com.wl4g.devops.common.kit.access.IPAccessControl;
  * @since
  */
 @IamFilter
-public class InternalWhiteListClientAuthenticationFilter extends AbstractWhiteListInternalAuthenticationFilter {
+public class ClientInternalAuthenticationFilter extends AbstractWhiteListInternalAuthenticationFilter {
 	final public static String NAME = "client-internal";
 
-	public InternalWhiteListClientAuthenticationFilter(IPAccessControl control,
+	public ClientInternalAuthenticationFilter(IPAccessControl control,
 			AbstractIamProperties<? extends ParamProperties> config) {
 		super(control, config);
 	}

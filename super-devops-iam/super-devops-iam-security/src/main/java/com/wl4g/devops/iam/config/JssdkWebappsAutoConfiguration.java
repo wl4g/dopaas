@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.common.config.DefaultEmbeddedWebappsAutoConfiguration.GenericEmbeddedWebappsProperties;
 import com.wl4g.devops.iam.web.JssdkWebappsEndpoint;
+import static com.wl4g.devops.iam.config.properties.IamProperties.*;
 
 /**
  * Iam web jssdk auto configuration.
@@ -31,19 +32,16 @@ import com.wl4g.devops.iam.web.JssdkWebappsEndpoint;
  */
 public class JssdkWebappsAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
-	final public static String JSSDK_LOCATION = "classpath*:/iam-jssdk-webapps";
-	final public static String URI_JSSDK_BASE = "/iam-jssdk";
-
 	@Bean
 	public JssdkWebappsEndpoint jssdkWebappsEndpoint() {
-		return new JssdkWebappsEndpoint(new GenericEmbeddedWebappsProperties(URI_JSSDK_BASE, JSSDK_LOCATION) {
+		return new JssdkWebappsEndpoint(new GenericEmbeddedWebappsProperties(DEFAULT_JSSDK_BASE_URI, DEFAULT_JSSDK_LOCATION) {
 		});
 	}
 
 	@Bean
 	@ConditionalOnBean(JssdkWebappsEndpoint.class)
 	public PrefixHandlerMapping jssdkWebappsEndpointPrefixHandlerMapping(JssdkWebappsEndpoint jssdk) {
-		return super.newPrefixHandlerMapping(URI_JSSDK_BASE, jssdk);
+		return super.newPrefixHandlerMapping(DEFAULT_JSSDK_BASE_URI, jssdk);
 	}
 
 }

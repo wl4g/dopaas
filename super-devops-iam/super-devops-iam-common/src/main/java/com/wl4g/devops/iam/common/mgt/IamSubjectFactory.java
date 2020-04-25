@@ -49,6 +49,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 import static com.wl4g.devops.tool.common.web.CookieUtils.getCookie;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.subject.support.DefaultSubjectContext.*;
 
@@ -112,11 +113,23 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	 * @param request
 	 * @return
 	 */
-	final protected String getRequestAccessToken(HttpServletRequest request) {
+	protected String getRequestAccessToken(HttpServletRequest request) {
 		String accessToken = getCleanParam(request, config.getParam().getAccessTokenName());
 		accessToken = isBlank(accessToken) ? request.getHeader(config.getParam().getAccessTokenName()) : accessToken;
 		accessToken = isBlank(accessToken) ? getCookie(request, config.getParam().getAccessTokenName()) : accessToken;
 		return accessToken;
+	}
+
+	/**
+	 * Is assertion request accessTokens validity.
+	 * 
+	 * @param context
+	 * @return
+	 */
+	protected boolean isAssertRequestAccessTokens(SubjectContext context) {
+		HttpServletRequest request = toHttp(((WebSubjectContext) context).resolveServletRequest());
+		return config.getSession().isEnableAccessTokenValidity() && !isMediaRequest(request)
+				&& !isInternalNonAccessTokenRequest(request);
 	}
 
 	/**
@@ -126,7 +139,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	 * @throws UnauthenticatedException
 	 * @see {@link AbstractIamAuthenticationFilter#makeLoggedResponse}
 	 */
-	final private void assertRequestAccessTokenValidity(SubjectContext context) throws UnauthenticatedException {
+	private final void assertRequestAccessTokenValidity(SubjectContext context) throws UnauthenticatedException {
 		// Additional signature verification will only be performed on those
 		// who have logged in successful.
 		// e.g: Authentication requests or internal API requests does not
@@ -168,31 +181,19 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	}
 
 	/**
-	 * Is assertion request accessTokens validity.
-	 * 
-	 * @param context
-	 * @return
-	 */
-	final private boolean isAssertRequestAccessTokens(SubjectContext context) {
-		return config.getSession().isEnableAccessTokenValidity()
-				&& !isInternalNonAccessTokenRequest(toHttp(((WebSubjectContext) context).resolveServletRequest()));
-	}
-
-	/**
 	 * Check is iam internal non accessToken valid request.
 	 * 
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	public boolean isInternalNonAccessTokenRequest(ServletRequest request) {
+	private final boolean isInternalNonAccessTokenRequest(ServletRequest request) {
 		String requestPath = getPathWithinApplication(toHttp(request));
 		for (Entry<String, String> ent : config.getFilterChain().entrySet()) {
 			if (defaultAntMatcher.matchStart(ent.getKey(), requestPath)) {
 				return true;
 			}
 		}
-		// TODO 增加排除、包含配置项，解决如JssdkWebappEndpoint访问问题
 		return false;
 	}
 
