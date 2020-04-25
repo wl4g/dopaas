@@ -161,7 +161,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * x.client.realm.FastCasAuthorizingRealm#doGetAuthenticationInfo Grant
 		 * term of validity(end date).
 		 */
-		assertion.setValidUntilDate(new Date(now + getSessionExpiredTime()));
+		assertion.setValidUntilDate(new Date(now + getSessionRemainingTime()));
 
 		// Updating grantCredentials info
 		/**
@@ -436,7 +436,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * @see {@link com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator#validate()}
 		 * @see {@link com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager#getSessionId()}
 		 */
-		long expireTime = getSessionExpiredTime(session); // Expiration time
+		long expireTime = getSessionRemainingTime(session); // Expiration time
 		cacheManager.getIamCache(CACHE_TICKET_S).put(new CacheKey(grant.getGrantTicket(), expireTime), valueOf(session.getId()));
 		log.debug("Sets grantTicket: '{}' of seesionId: '{}', expireTime: '{}'", grant, getSessionId(session), expireTime);
 	}

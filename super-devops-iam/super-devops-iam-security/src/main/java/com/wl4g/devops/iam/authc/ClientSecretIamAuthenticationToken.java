@@ -51,6 +51,11 @@ public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuth
 	final private String clientSecretKey;
 
 	/**
+	 * UMID token.
+	 */
+	final private String umidToken;
+
+	/**
 	 * Client user other attributes properties. (e.g.
 	 * _csrf_token=xxx&lang=zh_CN&umid=xxx&ua=xxx)
 	 * 
@@ -59,21 +64,24 @@ public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuth
 	 */
 	private Map<String, String> userProperties = new HashMap<>();
 
-	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecret) {
-		this(kind, clientSecret, null);
+	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecretKey, String umidToken) {
+		this(kind, clientSecretKey, umidToken, null);
 	}
 
-	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecret, final String remoteHost) {
-		this(kind, clientSecret, remoteHost, null);
+	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecretKey, String umidToken,
+			final String remoteHost) {
+		this(kind, clientSecretKey, umidToken, remoteHost, null);
 	}
 
-	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecret, final String remoteHost,
-			final RedirectInfo redirectInfo) {
+	public ClientSecretIamAuthenticationToken(final SecureAlgKind kind, final String clientSecretKey, String umidToken,
+			final String remoteHost, final RedirectInfo redirectInfo) {
 		super(remoteHost, redirectInfo);
 		notNullOf(kind, "kind");
-		hasTextOf(clientSecret, "clientSecret");
+		hasTextOf(clientSecretKey, "clientSecretKey");
+		hasTextOf(umidToken, "umidToken");
 		this.secureAlgKind = kind;
-		this.clientSecretKey = clientSecret;
+		this.clientSecretKey = clientSecretKey;
+		this.umidToken = umidToken;
 	}
 
 	public SecureAlgKind getSecureAlgKind() {
@@ -82,6 +90,10 @@ public abstract class ClientSecretIamAuthenticationToken extends AbstractIamAuth
 
 	public String getClientSecretKey() {
 		return clientSecretKey;
+	}
+
+	public String getUmidToken() {
+		return umidToken;
 	}
 
 	public Map<String, String> getUserProperties() {

@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.*;
 
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
@@ -422,8 +423,10 @@ public class IamSession implements ValidatingSession, Serializable {
 			removeAttribute(key);
 		} else {
 			if (isRelationAttrKey(key)) {
+				long expirTime = getSessionRemainingTime(this);
+				RelationAttrKey rkey = new RelationAttrKey(((RelationAttrKey) key).getKey(), expirTime);
 				// Put relation attribute.
-				getRelationAttrsCache().mapPut((RelationAttrKey) key, value);
+				getRelationAttrsCache().mapPut(rkey, value);
 			} else {
 				getAttributesLazy().put(key, value);
 			}
@@ -718,12 +721,8 @@ public class IamSession implements ValidatingSession, Serializable {
 			super(key, valueClass);
 		}
 
-		public RelationAttrKey(Serializable key, long expireMs) {
+		RelationAttrKey(Serializable key, long expireMs) {
 			super(key, expireMs);
-		}
-
-		public RelationAttrKey(Serializable key, int expireSec) {
-			super(key, expireSec);
 		}
 
 	}

@@ -52,7 +52,7 @@ public class CacheKey implements Serializable {
 	public CacheKey(Serializable key, Class<?> valueClass) {
 		notNull(key, "'key' must not be null");
 		notNull(valueClass, "'valueClass' must not be null");
-		this.key = key.toString();
+		this.key = getRealTypeKeyString(key);
 		this.valueClass = valueClass;
 	}
 
@@ -62,7 +62,7 @@ public class CacheKey implements Serializable {
 
 	public CacheKey(Serializable key, int expireSec) {
 		notNull(key, "'key' must not be null");
-		this.key = key.toString();
+		this.key = getRealTypeKeyString(key);
 		this.expire = expireSec;
 	}
 
@@ -120,10 +120,43 @@ public class CacheKey implements Serializable {
 				+ "]";
 	}
 
+	/**
+	 * Gets real type key string.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public static String getRealTypeKeyString(Serializable key) {
+		if (key instanceof byte[]) {
+			return new String((byte[]) key);
+		} else if (key instanceof Byte[]) {
+			Byte[] _key = (Byte[]) key;
+			byte[] __key = new byte[_key.length];
+			for (int i = 0; i < _key.length; i++) {
+				__key[i] = _key[i];
+			}
+			return new String(__key);
+		}
+		return key.toString();
+	}
+
+	/**
+	 * To key bytes.
+	 * 
+	 * @param key
+	 * @return
+	 */
 	public static byte[] toKeyBytes(String key) {
 		return toKeyBytes(null, key);
 	}
 
+	/**
+	 * To key bytes.
+	 * 
+	 * @param prefix
+	 * @param key
+	 * @return
+	 */
 	public static byte[] toKeyBytes(String prefix, String key) {
 		notNull(key, "'key' must not be null");
 		return ((prefix == null ? "" : prefix) + key).getBytes(Charsets.UTF_8);

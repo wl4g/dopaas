@@ -94,7 +94,7 @@ public abstract class GenericApiEndpoint extends BaseController implements Initi
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.relationAttrsCache = cacheManager.getIamCache(CACHE_RELATION_ATTRS);
+		this.relationAttrsCache = cacheManager.getIamCache(CACHE_SESSION_REFATTRS);
 	}
 
 	/**
