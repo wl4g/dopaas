@@ -235,8 +235,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				}
 
 				// Merge custom parameters
-				Map customParams = toQueryParams(toHttp(request).getQueryString());
-				fullParams.putAll(customParams);
+				fullParams.putAll(getLegalCustomParameters(request));
 
 				// Call success handle.
 				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);

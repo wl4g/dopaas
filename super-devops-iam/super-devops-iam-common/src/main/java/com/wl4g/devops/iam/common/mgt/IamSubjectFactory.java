@@ -47,7 +47,9 @@ import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager.*;
 import static com.wl4g.devops.tool.common.web.CookieUtils.getCookie;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -65,9 +67,17 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 
 	final protected AbstractIamProperties<? extends ParamProperties> config;
 
-	public IamSubjectFactory(AbstractIamProperties<? extends ParamProperties> config) {
+	/**
+	 * {@link IamShiroFilterFactoryBean#getFilterChainDefinitionMap()}
+	 */
+	final protected IamShiroFilterFactoryBean iamFilterFactory;
+
+	public IamSubjectFactory(AbstractIamProperties<? extends ParamProperties> config,
+			IamShiroFilterFactoryBean iamFilterFactory) {
 		notNullOf(config, "config");
+		notNullOf(iamFilterFactory, "iamFilterFactory");
 		this.config = config;
+		this.iamFilterFactory = iamFilterFactory;
 	}
 
 	@Override
@@ -129,7 +139,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	protected boolean isAssertRequestAccessTokens(SubjectContext context) {
 		HttpServletRequest request = toHttp(((WebSubjectContext) context).resolveServletRequest());
 		return config.getSession().isEnableAccessTokenValidity() && !isMediaRequest(request)
-				&& !isInternalNonAccessTokenRequest(request);
+				&& !isInternalProtocolNonAccessTokenRequest(request);
 	}
 
 	/**
@@ -181,20 +191,36 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	}
 
 	/**
-	 * Check is iam internal non accessToken valid request.
+	 * Check is iam internal non accessToken valid request. </br>
 	 * 
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	private final boolean isInternalNonAccessTokenRequest(ServletRequest request) {
+	private final boolean isInternalProtocolNonAccessTokenRequest(ServletRequest request) {
 		String requestPath = getPathWithinApplication(toHttp(request));
+		/**
+		 * Check is internal protocol default filter chain mappings?
+		 */
 		for (Entry<String, String> ent : config.getFilterChain().entrySet()) {
 			if (defaultAntMatcher.matchStart(ent.getKey(), requestPath)) {
 				return true;
 			}
 		}
-		return false;
+
+		/**
+		 * Check is internal protocol {@link IamFilter} chain mappings?
+		 */
+		for (Entry<String, String> ent : iamFilterFactory.getFilterChainDefinitionMap().entrySet()) {
+			if (defaultAntMatcher.matchStart(ent.getKey(), requestPath)) {
+				return true;
+			}
+		}
+
+		/**
+		 * Check is internal protocol ticket authenticating request?
+		 */
+		return !isInternalTicketRequest(request);
 	}
 
 	final private static AntPathMatcher defaultAntMatcher = new AntPathMatcher();
