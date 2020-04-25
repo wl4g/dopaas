@@ -234,9 +234,6 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 					fullParams.put(config.getParam().getGrantTicket(), grantTicket);
 				}
 
-				// Merge custom parameters
-				fullParams.putAll(getLegalCustomParameters(request));
-
 				// Call success handle.
 				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
 
@@ -629,7 +626,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 
 		String dataCipherKeyHex = null, accessToken = null;
 		if (token instanceof ClientSecretIamAuthenticationToken) {
-			// Sets dataCipherKey
+			// Sets dataCipherKey.
 			if (config.getCipher().isEnableDataCipher()) {
 				// Gets SecureCryptService.
 				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
@@ -651,7 +648,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				c.saveTo(toHttp(request), toHttp(response));
 			}
 
-			// Sets accessToken
+			// Sets accessToken.
 			if (config.getSession().isEnableAccessTokenValidity()) {
 				// Create accessTokenSignKey.
 				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN, generateAccessTokenSignKey(getSessionId()));
@@ -662,6 +659,16 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				c.saveTo(toHttp(request), toHttp(response));
 			}
 
+			/**
+			 * Sets umidToken.
+			 * 
+			 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestAccessTokenValidity}
+			 */
+			String umidToken = ((ClientSecretIamAuthenticationToken) token).getUmidToken();
+			Cookie c = new SimpleCookie(config.getCookie());
+			c.setName(config.getParam().getUmidTokenName());
+			c.setValue(umidToken);
+			c.saveTo(toHttp(request), toHttp(response));
 		}
 
 		return new String[] { dataCipherKeyHex, accessToken };

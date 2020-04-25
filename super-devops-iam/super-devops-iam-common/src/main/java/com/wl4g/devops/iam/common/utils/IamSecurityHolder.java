@@ -163,28 +163,31 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Gets session expire time
+	 * Gets session remaining expire time
 	 *
 	 * @param session
 	 *            Shiro session
 	 * @return Current remaining expired milliseconds of the session
 	 */
-	public static long getSessionExpiredTime() {
-		return getSessionExpiredTime(getSession());
+	public static long getSessionRemainingTime() {
+		return getSessionRemainingTime(getSession());
 	}
 
 	/**
-	 * Gets session expire time
+	 * Gets session remaining expire time
 	 *
 	 * @param session
 	 *            Shiro session
 	 * @return Current remaining expired milliseconds of the session
 	 */
-	public static long getSessionExpiredTime(Session session) {
+	public static long getSessionRemainingTime(Session session) {
 		notNullOf(session, "session");
 		long now = currentTimeMillis();
-		Date lastATime = session.getLastAccessTime();
-		long lastTime = isNull(lastATime) ? 0 : lastATime.getTime();
+		Date startDate = session.getStartTimestamp();
+		Date lastADate = session.getLastAccessTime();
+		Long startTime = isNull(startDate) ? null : startDate.getTime();
+		Long lastTime = isNull(lastADate) ? startTime : lastADate.getTime();
+		notNull(lastTime, "Could't be here, session: '%s' startTime and lastTime is null!", session.getId());
 		return session.getTimeout() - (now - lastTime);
 	}
 

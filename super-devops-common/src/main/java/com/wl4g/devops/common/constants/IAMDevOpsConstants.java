@@ -81,7 +81,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * {@link IamSession} relation attributes cache name.
 	 */
-	final public static String CACHE_RELATION_ATTRS = ":iam:session:attrs:";
+	final public static String CACHE_SESSION_REFATTRS = ":iam:session:refattrs:";
 
 	//
 	// Server configuration.
@@ -102,7 +102,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/** IAM server logout API URI. */
 	final public static String URI_S_LOGOUT = "logout";
 	/** IAM server secondary authentication validate API URI. */
-	final public static String URI_S_SECOND_VALIDATE = "secondValidate";
+	final public static String URI_S_SECOND_VALIDATE = "secondaryValidate";
 	/** IAM server seesions authentication validate API URI. */
 	final public static String URI_S_SESSION_VALIDATE = "sessionValidate";
 

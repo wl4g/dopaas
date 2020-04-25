@@ -32,7 +32,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_RO
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionExpiredTime;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionRemainingTime;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
@@ -173,7 +173,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		 * Binding grantTicket => sessionId. Synchronize with
 		 * IamClientSessionManager#getSessionId
 		 */
-		long expiredMs = getSessionExpiredTime();
+		long expiredMs = getSessionRemainingTime();
 		clientTicketCache.put(new CacheKey(grantTicket, expiredMs), valueOf(getSessionId(subject)));
 
 		// Determine success URL

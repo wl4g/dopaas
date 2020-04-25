@@ -67,15 +67,16 @@ public class GenericAuthenticationToken extends ClientSecretIamAuthenticationTok
 	final private VerifyKind verifyKind;
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, final SecureAlgKind kind, final String clientSecret, final String clientRef,
-			final String verifiedToken, final VerifyKind verifyType) {
-		this(remoteHost, redirectInfo, principal, credentials, kind, clientSecret, clientRef, verifiedToken, verifyType, false);
+			final String credentials, final SecureAlgKind kind, final String clientSecretKey, final String umidToken,
+			final String clientRef, final String verifiedToken, final VerifyKind verifyType) {
+		this(remoteHost, redirectInfo, principal, credentials, kind, clientSecretKey, umidToken, clientRef, verifiedToken,
+				verifyType, false);
 	}
 
 	public GenericAuthenticationToken(final String remoteHost, final RedirectInfo redirectInfo, final String principal,
-			final String credentials, final SecureAlgKind secureAlgKind, final String clientSecret, final String clientRef,
-			final String verifiedToken, final VerifyKind verifyKind, final boolean rememberMe) {
-		super(secureAlgKind, clientSecret, remoteHost, redirectInfo);
+			final String credentials, final SecureAlgKind secureAlgKind, final String clientSecretKey, String umidToken,
+			final String clientRef, final String verifiedToken, final VerifyKind verifyKind, final boolean rememberMe) {
+		super(secureAlgKind, clientSecretKey, umidToken, remoteHost, redirectInfo);
 		hasTextOf(principal, "principal");
 		hasTextOf(credentials, "credentials");
 		hasTextOf(clientRef, "clientRef");

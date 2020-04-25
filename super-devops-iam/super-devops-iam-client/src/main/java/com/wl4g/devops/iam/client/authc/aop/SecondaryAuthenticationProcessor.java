@@ -173,7 +173,7 @@ public class SecondaryAuthenticationProcessor implements AdviceProcessor<SecondA
 	 * @return
 	 */
 	private String buildConnectAuthenticatingUrl(RequestResponse http, SecondAuthenticate annotation) {
-		StringBuffer url = new StringBuffer("http://passport.wl4g.com/devops-iam"); // ???
+		StringBuffer url = new StringBuffer(config.getServerUri()); // ???
 		url.append(URI_S_SNS_BASE).append("/");
 		url.append(URI_S_SNS_CONNECT).append("/");
 		url.append(config.getSecondAuthenticatorProvider()).append("?");
