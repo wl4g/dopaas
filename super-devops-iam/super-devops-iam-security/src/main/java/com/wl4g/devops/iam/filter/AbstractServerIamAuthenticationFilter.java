@@ -44,7 +44,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
-import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
