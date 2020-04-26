@@ -18,14 +18,12 @@ package com.wl4g.devops.iam.client.filter;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER;
@@ -34,11 +32,10 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_RO
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionExpiredTime;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionRemainingTime;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
@@ -74,18 +71,15 @@ import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
-import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
-import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.common.web.model.SessionInfo;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -111,15 +105,8 @@ import static javax.servlet.http.HttpServletResponse.*;
  *
  * @since 1.2
  */
-public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken> extends AuthenticatingFilter
-		implements IamAuthenticationFilter {
-
-	final protected SmartLogger log = getLogger(getClass());
-
-	/**
-	 * IAM client configuration properties.
-	 */
-	final protected IamClientProperties config;
+public abstract class AbstractClientIamAuthenticationFilter<T extends AuthenticationToken>
+		extends AbstractIamAuthenticationFilter<IamClientProperties> {
 
 	/**
 	 * Client security context handler.
@@ -141,13 +128,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 */
 	final protected Cumulator failedCumulator;
 
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
-
-	public AbstractAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
+	public AbstractClientIamAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
 			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
 		notNull(config, "'config' must not be null");
 		notNull(context, "'context' must not be null");
@@ -192,7 +173,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		 * Binding grantTicket => sessionId. Synchronize with
 		 * IamClientSessionManager#getSessionId
 		 */
-		long expiredMs = getSessionExpiredTime();
+		long expiredMs = getSessionRemainingTime();
 		clientTicketCache.put(new CacheKey(grantTicket, expiredMs), valueOf(getSessionId(subject)));
 
 		// Determine success URL
@@ -218,7 +199,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		// Redirections(Native page).
 		else {
 			// Sets secret tokens to cookies.
-			setSuccessSecretTokens2Cookie(token, request, response);
+			putSuccessSecretTokens2Cookie(token, request, response);
 
 			// Call custom success handle.
 			coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), null);
@@ -322,8 +303,8 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 			}
 
 			// Redirect parameters.
-			Map<String, String> params = new HashMap<>();
-			params.put(config.getParam().getApplication(), config.getServiceName());
+			Map<String, String> clientUrlParams = new HashMap<>();
+			clientUrlParams.put(config.getParam().getApplication(), config.getServiceName());
 
 			// URL to redirect when IamServer authenticated is successful.
 			String clientRedirectUrl = getRFCBaseURI(request, true) + URI_AUTHENTICATOR;
@@ -333,13 +314,13 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 				// which need to be kept in the redirection parameters.
 				clientRedirectUrl += "?" + clientParamStr;
 			}
-			params.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
+			clientUrlParams.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
 
 			// Custom decorate failure parameters.
-			decorateFailureRedirectParams(token, cause, request, params);
+			decorateFailureRedirectParams(token, cause, request, clientUrlParams);
 
 			// Build to query URL.
-			return applyQueryURL(getLoginUrl(), params);
+			return applyQueryURL(getLoginUrl(), clientUrlParams);
 		}
 	}
 
@@ -384,7 +365,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	}
 
 	/**
-	 * Get the URL from the redirectUrl from the authentication request(flexible
+	 * Gets the URL from the redirectUrl from the authentication request(flexible
 	 * API).
 	 * 
 	 * @return
@@ -394,7 +375,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	}
 
 	/**
-	 * Get remember last request URL
+	 * Gets remember last request URL
 	 * 
 	 * @param request
 	 * @return
@@ -439,7 +420,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		resp.forMap().put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
 
 		// Sets secret tokens to cookies.
-		String[] tokens = setSuccessSecretTokens2Cookie(token, request, response);
+		String[] tokens = putSuccessSecretTokens2Cookie(token, request, response);
 
 		// Sets child dataCipherKey. (if necessary)
 		resp.forMap().put(config.getParam().getDataCipherKeyName(), tokens[0]);
@@ -474,14 +455,14 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	}
 
 	/**
-	 * Sets secret and tokens/signature to cookies handling.
+	 * Puts secret and tokens/signature to cookies handling.
 	 * 
 	 * @param token
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	protected String[] setSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request,
+	protected String[] putSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request,
 			ServletResponse response) {
 		// Sets child dataCipherKeys to cookie.
 		String childDataCipherKey = getBindValue(KEY_DATA_CIPHER);
@@ -493,7 +474,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 		}
 
 		// Sets child accessToken to cookie.
-		String childAccessToken = generateChildAccessToken();
+		String childAccessToken = generateChildAccessTokenIfNecessary();
 		if (!isBlank(childAccessToken)) {
 			Cookie c = new SimpleCookie(config.getCookie());
 			c.setName(config.getParam().getAccessTokenName());
@@ -509,16 +490,16 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	 * 
 	 * @return
 	 */
-	protected final String generateChildAccessToken() {
+	protected final String generateChildAccessTokenIfNecessary() {
 		// Gets child accessTokenSign key.
 		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN);
 		// Generate child accessToken
-		return isBlank(childAccessTokenSignKey) ? null : generateAccessToken(getSessionId(), childAccessTokenSignKey);
+		return isBlank(childAccessTokenSignKey) ? null : generateAccessToken(getSession(), childAccessTokenSignKey);
 	}
 
 	public abstract String getName();
 
-	final public static String SAVE_GRANT_TICKET = AbstractAuthenticationFilter.class.getSimpleName() + ".GRANT_TICKET";
+	final public static String SAVE_GRANT_TICKET = AbstractClientIamAuthenticationFilter.class.getSimpleName() + ".GRANT_TICKET";
 
 	/**
 	 * What kind of URL request does not need to be remembered (i.e. using the
@@ -531,7 +512,7 @@ public abstract class AbstractAuthenticationFilter<T extends AuthenticationToken
 	/**
 	 * Remember last request URL.
 	 */
-	final public static String KEY_REMEMBER_URL = AbstractAuthenticationFilter.class.getSimpleName() + ".IamRememberUrl";
+	final public static String KEY_REMEMBER_URL = AbstractClientIamAuthenticationFilter.class.getSimpleName() + ".IamRememberUrl";
 
 	/**
 	 * Redirection authentication failure retry upper limit key.

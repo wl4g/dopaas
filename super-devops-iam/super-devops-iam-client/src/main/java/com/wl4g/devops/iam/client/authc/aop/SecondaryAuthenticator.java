@@ -22,7 +22,7 @@ package com.wl4g.devops.iam.client.authc.aop;
  * @version v1.0 2019年3月9日
  * @since
  */
-public interface SecondAuthenticateHandler {
+public interface SecondaryAuthenticator {
 
 	String[] doGetAuthorizers(String funcId);
 

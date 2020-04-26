@@ -70,7 +70,7 @@ import com.wl4g.devops.iam.filter.SinaAuthenticationFilter;
 import com.wl4g.devops.iam.filter.GenericAuthenticationFilter;
 import com.wl4g.devops.iam.filter.GithubAuthenticationFilter;
 import com.wl4g.devops.iam.filter.GoogleAuthenticationFilter;
-import com.wl4g.devops.iam.filter.InternalWhiteListServerAuthenticationFilter;
+import com.wl4g.devops.iam.filter.ServerInternalAuthenticationFilter;
 import com.wl4g.devops.iam.filter.LogoutAuthenticationFilter;
 import com.wl4g.devops.iam.filter.QQAuthenticationFilter;
 import com.wl4g.devops.iam.filter.SmsAuthenticationFilter;
@@ -243,9 +243,9 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public InternalWhiteListServerAuthenticationFilter internalWhiteListServerAuthenticationFilter(IPAccessControl control,
+	public ServerInternalAuthenticationFilter internalWhiteListServerAuthenticationFilter(IPAccessControl control,
 			AbstractIamProperties<? extends ParamProperties> config) {
-		return new InternalWhiteListServerAuthenticationFilter(control, config);
+		return new ServerInternalAuthenticationFilter(control, config);
 	}
 
 	@Bean
@@ -335,7 +335,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public FilterRegistrationBean internalServerFilterRegistrationBean(InternalWhiteListServerAuthenticationFilter filter) {
+	public FilterRegistrationBean internalServerFilterRegistrationBean(ServerInternalAuthenticationFilter filter) {
 		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
 		registration.setEnabled(false);
 		return registration;

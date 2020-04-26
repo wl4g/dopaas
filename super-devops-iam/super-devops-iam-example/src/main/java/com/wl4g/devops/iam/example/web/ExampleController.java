@@ -29,11 +29,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.devops.iam.client.session.mgt.IamClientSessionManager;
-import com.wl4g.devops.iam.example.ExampleClientSecurityCoprocessor;
+import com.wl4g.devops.iam.example.authc.ExampleClientSecurityCoprocessor;
 import com.wl4g.devops.iam.example.service.ExampleService;
 
 @Controller
-@RequestMapping("/public/")
+@RequestMapping("/example/")
 public class ExampleController {
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -89,6 +89,14 @@ public class ExampleController {
 	public String test5(String name) {
 		log.info("Request test5... {}", name);
 		return "ok";
+	}
+
+	@RequestMapping("test6")
+	@ResponseBody
+	public String test6(HttpServletRequest request) {
+		String encryptedMobilePhone = request.getParameter("encryptedMobilePhone");
+		log.info("Request test6... encryptedMobilePhone: {}", encryptedMobilePhone);
+		return encryptedMobilePhone;
 	}
 
 	/*

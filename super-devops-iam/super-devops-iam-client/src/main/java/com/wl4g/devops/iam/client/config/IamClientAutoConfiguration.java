@@ -33,14 +33,14 @@ import com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator;
 import com.wl4g.devops.iam.client.validation.IamValidator;
 import com.wl4g.devops.iam.client.web.ClientAuthenticatorEndpoint;
 import com.wl4g.devops.iam.client.session.mgt.IamClientSessionManager;
-import com.wl4g.devops.iam.client.authc.aop.SecondAuthenticateAspect;
-import com.wl4g.devops.iam.client.authc.aop.SecondAuthenticateProcessor;
+import com.wl4g.devops.iam.client.authc.aop.SecondaryAuthenticationAspect;
+import com.wl4g.devops.iam.client.authc.aop.SecondaryAuthenticationProcessor;
 import com.wl4g.devops.iam.client.configure.AnynothingClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.AnynothingClientSecurityCoprocessor;
 import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.ClientSecurityCoprocessor;
 import com.wl4g.devops.iam.client.filter.AuthenticatorAuthenticationFilter;
-import com.wl4g.devops.iam.client.filter.InternalWhiteListClientAuthenticationFilter;
+import com.wl4g.devops.iam.client.filter.ClientInternalAuthenticationFilter;
 import com.wl4g.devops.iam.client.filter.LogoutAuthenticationFilter;
 import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
@@ -117,9 +117,9 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public InternalWhiteListClientAuthenticationFilter internalWhiteListClientAuthenticationFilter(IPAccessControl control,
+	public ClientInternalAuthenticationFilter internalWhiteListClientAuthenticationFilter(IPAccessControl control,
 			AbstractIamProperties<? extends ParamProperties> config) {
-		return new InternalWhiteListClientAuthenticationFilter(control, config);
+		return new ClientInternalAuthenticationFilter(control, config);
 	}
 
 	@Bean
@@ -150,7 +150,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public FilterRegistrationBean internalClientFilterRegistrationBean(InternalWhiteListClientAuthenticationFilter filter) {
+	public FilterRegistrationBean internalClientFilterRegistrationBean(ClientInternalAuthenticationFilter filter) {
 		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
 		registration.setEnabled(false);
 		return registration;
@@ -235,15 +235,15 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public SecondAuthenticateAspect secondAuthenticateAspect(SecondAuthenticateProcessor processor) {
-		return new SecondAuthenticateAspect(processor);
+	public SecondaryAuthenticationAspect secondAuthenticateAspect(SecondaryAuthenticationProcessor processor) {
+		return new SecondaryAuthenticationAspect(processor);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SecondAuthenticateProcessor secondAuthenticateProcessor(IamClientProperties config, RestTemplate restTemplate,
+	public SecondaryAuthenticationProcessor secondAuthenticateProcessor(IamClientProperties config, RestTemplate restTemplate,
 			BeanFactory beanFactory) {
-		return new SecondAuthenticateProcessor(config, restTemplate, beanFactory);
+		return new SecondaryAuthenticationProcessor(config, restTemplate, beanFactory);
 	}
 
 	// ==============================

@@ -44,7 +44,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.state;
  * @since
  */
 public abstract class Oauth2SnsAuthenticationFilter<T extends Oauth2SnsAuthenticationToken>
-		extends AbstractIamAuthenticationFilter<T> implements InitializingBean {
+		extends AbstractServerIamAuthenticationFilter<T> implements InitializingBean {
 
 	/**
 	 * Oauth2 authentication token constructor.

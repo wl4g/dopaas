@@ -195,16 +195,12 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			throw new TicketValidateException("'principal.attributes' must not be empty");
 		}
 		if (isBlank((String) info.getRoles())) {
-			if (log.isWarnEnabled()) {
-				log.warn("Principal '{}' role is empty", info.getPrincipal());
-			}
+			log.warn("Principal '{}' role is empty", info.getPrincipal());
 			// throw new TicketValidationException(String.format("Principal '%s'
 			// roles must not empty", principal.getName()));
 		}
 		if (isBlank((String) info.getPermissions())) {
-			if (log.isWarnEnabled()) {
-				log.warn("Principal '{}' permits is empty", info.getPrincipal());
-			}
+			log.warn("Principal '{}' permits is empty", info.getPrincipal());
 			// throw new TicketValidationException(String.format("Principal '%s'
 			// permits must not empty", principal.getName()));
 		}

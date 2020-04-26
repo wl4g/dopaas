@@ -68,7 +68,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_LOGOUT;
  * @since
  */
 @IamFilter
-public class LogoutAuthenticationFilter extends AbstractAuthenticationFilter<AuthenticationToken>
+public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationFilter<AuthenticationToken>
 		implements IamAuthenticationFilter {
 	final public static String NAME = "logoutFilter";
 

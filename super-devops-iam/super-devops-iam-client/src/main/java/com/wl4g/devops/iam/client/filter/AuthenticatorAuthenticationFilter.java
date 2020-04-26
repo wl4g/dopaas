@@ -50,13 +50,10 @@ public class AuthenticatorAuthenticationFilter extends ROOTAuthenticationFilter 
 	 * result in 404 errors.<br/>
 	 * Final execution: super#executeLogin()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-		if (log.isInfoEnabled()) {
-			String url = getFullRequestURL(toHttp(request));
-			log.info("Request of: {}", url);
-		}
-
+		log.info("Request of: {}", () -> getFullRequestURL(toHttp(request)));
 		return false;
 	}
 

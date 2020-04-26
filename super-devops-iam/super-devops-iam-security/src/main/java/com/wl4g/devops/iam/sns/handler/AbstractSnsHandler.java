@@ -44,7 +44,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CA
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SNSAUTH;
-import static com.wl4g.devops.iam.filter.AbstractIamAuthenticationFilter.URI_BASE_MAPPING;
+import static com.wl4g.devops.iam.filter.AbstractServerIamAuthenticationFilter.URI_BASE_MAPPING;
 import static com.wl4g.devops.iam.sns.web.AbstractSnsController.PARAM_SNS_PRIVIDER;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;

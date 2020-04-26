@@ -30,6 +30,10 @@ spring: # Base configuration.
             prefix: ${spring.application.name}
           cookie:
             name: IAMSID_${spring.application.name}
+          cipher:
+            enable-data-cipher: true # Default by true
+          session:
+            enable-access-token-validity: true # Default by true
 
 # #### Server configuration. ####
 server:

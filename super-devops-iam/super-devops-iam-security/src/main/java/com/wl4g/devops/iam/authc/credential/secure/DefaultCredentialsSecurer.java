@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.iam.authc.credential.secure;
 
-import static com.wl4g.devops.tool.common.codec.CheckSums.*;
+import static com.wl4g.devops.tool.common.codec.CheckSums.crc32;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.ByteSource.Util;
-import org.springframework.util.Assert;
 
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.configure.SecureConfig;
@@ -56,8 +56,8 @@ public class DefaultCredentialsSecurer extends AbstractCredentialsSecurerSupport
 	 * @return
 	 */
 	private static byte[] crossCombined(byte[] privateSalt, byte[] publicSalt) {
-		Assert.notNull(privateSalt, "'privateSalt' must not be null");
-		Assert.notNull(publicSalt, "'publicSalt' must not be null");
+		notNull(privateSalt, "'privateSalt' must not be null");
+		notNull(publicSalt, "'publicSalt' must not be null");
 		int privateSaltLength = privateSalt != null ? privateSalt.length : 0;
 		int publicSaltLength = publicSalt != null ? publicSalt.length : 0;
 

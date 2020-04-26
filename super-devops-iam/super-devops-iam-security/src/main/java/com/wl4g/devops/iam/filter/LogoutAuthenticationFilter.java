@@ -43,7 +43,7 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
  * @since
  */
 @IamFilter
-public class LogoutAuthenticationFilter extends AbstractIamAuthenticationFilter<LogoutAuthenticationToken>
+public class LogoutAuthenticationFilter extends AbstractServerIamAuthenticationFilter<LogoutAuthenticationToken>
 		implements IamAuthenticationFilter {
 
 	final public static String NAME = "logout";

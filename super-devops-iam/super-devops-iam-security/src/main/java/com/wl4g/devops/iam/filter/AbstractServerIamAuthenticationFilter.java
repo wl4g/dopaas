@@ -22,10 +22,10 @@ import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.correctAuthen
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bindKVParameters;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.extParameterValue;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
@@ -36,7 +36,8 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static java.lang.String.format;
-import static java.util.Objects.isNull;
+import static java.lang.String.valueOf;
+import static java.util.Collections.singletonMap;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -56,15 +57,14 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
-import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
-import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter;
+import com.wl4g.devops.iam.common.web.model.SessionInfo;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.handler.AuthenticationHandler;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
 
@@ -74,7 +74,6 @@ import java.security.spec.KeySpec;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -86,7 +85,6 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,16 +103,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @date 2018年11月27日
  * @since
  */
-public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticationToken> extends AuthenticatingFilter
-		implements IamAuthenticationFilter {
-
-	final protected SmartLogger log = getLogger(getClass());
-
-	/**
-	 * IAM server configuration properties
-	 */
-	@Autowired
-	protected IamProperties config;
+public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthenticationToken>
+		extends AbstractIamAuthenticationFilter<IamProperties> {
 
 	/**
 	 * IAM authentication handler
@@ -145,12 +135,6 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 */
 	@Autowired
 	protected IamCacheManager cacheManager;
-
-	/**
-	 * Delegate message source.
-	 */
-	@Resource(name = BEAN_DELEGATE_MSG_SOURCE)
-	protected SessionDelegateMessageBundle bundle;
 
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
@@ -222,6 +206,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			// Build response parameter.
 			Map fullParams = new HashMap();
 			fullParams.put(config.getParam().getApplication(), redirect.getFromAppName());
+			// Merge custom parameters
+			fullParams.putAll(getLegalCustomParameters(request));
 
 			// Response with JSON?
 			if (isJSONResponse(request)) {
@@ -250,15 +236,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 					fullParams.put(config.getParam().getGrantTicket(), grantTicket);
 				}
 
-				// Merge custom parameters
-				Map customParams = toQueryParams(toHttp(request).getQueryString());
-				fullParams.putAll(customParams);
-
 				// Call success handle.
 				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
 
 				// Sets secret tokens to cookies.
-				setSuccessSecretTokens2Cookie(token, request, response);
+				putSuccessSecretTokens2Cookie(token, request, response);
 
 				log.info("Redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), fullParams);
 				issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
@@ -302,14 +284,16 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		coprocessor.postAuthenticatingFailure(tk, ae, request, response);
 
 		// Obtain bound parameters.
-		Map params = new HashMap();
-		params.put(config.getParam().getApplication(), redirect.getFromAppName());
-		params.put(config.getParam().getRedirectUrl(), redirect.getRedirectUrl());
+		Map fullParams = new HashMap();
+		fullParams.put(config.getParam().getApplication(), redirect.getFromAppName());
+		fullParams.put(config.getParam().getRedirectUrl(), redirect.getRedirectUrl());
+		// Merge custom parameters
+		fullParams.putAll(getLegalCustomParameters(request));
 
 		// Response JSON message.
 		if (isJSONResponse(request)) {
 			try {
-				RespBase<String> resp = makeFailedResponse(redirect.getRedirectUrl(), request, params, errmsg);
+				RespBase<String> resp = makeFailedResponse(redirect.getRedirectUrl(), request, fullParams, errmsg);
 				String failed = toJSONString(resp);
 				log.info("Resp unauth: {}", failed);
 				writeJson(toHttp(response), failed);
@@ -321,7 +305,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		else {
 			try {
 				log.info("Redirect to login: {}", redirect);
-				issueRedirect(request, response, redirect.getRedirectUrl(), params, true);
+				issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
 			} catch (IOException e1) {
 				log.error("Redirect to login failed.", e1);
 			}
@@ -349,7 +333,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * Get redirect information bound from authentication request
 	 * {@link AuthenticatorAuthenticationFilter#rememberRedirectInfo(ServletRequest, ServletResponse)}
 	 * </br>
-	 * {@link AbstractIamAuthenticationFilter#createToken(ServletRequest, ServletResponse)}
+	 * {@link AbstractServerIamAuthenticationFilter#createToken(ServletRequest, ServletResponse)}
 	 *
 	 * @param request
 	 *            Whether to get only the redirection information of the binding
@@ -362,7 +346,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		String fallbackRedirect = getCleanParam(request, config.getParam().getFallbackRedirect());
 		RedirectInfo redirect = RedirectInfo.build(fromAppName, redirectUrl, fallbackRedirect);
 
-		// Fallback redirect
+		// Fallback from last request bind.
 		if (isBlank(redirect.getFromAppName())) {
 			RedirectInfo bind = extParameterValue(KEY_REQ_AUTH_PARAMS, KEY_REQ_AUTH_REDIRECT);
 			if (nonNull(bind)) {
@@ -370,18 +354,17 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 			}
 		}
 
-		// Check and use default redirectUrl
+		// Check & use default redirectUrl.
 		if (!isBlank(redirect.getFromAppName())) {
 			ApplicationInfo appInfo = configurer.getApplicationInfo(redirect.getFromAppName());
-			if (isNull(appInfo)) {
-				throw new IllegalRequestException(format("Invalid redirected application '%s'", redirect.getFromAppName()));
-			}
+			notNull(appInfo, IllegalRequestException.class, "Invalid redirected application '%s'", redirect.getFromAppName());
 			if (isBlank(redirect.getRedirectUrl())) {
 				// Use default redirectUrl
 				redirect.setRedirectUrl(appInfo.getViewExtranetBaseUri());
 			}
 			return redirect;
 		}
+
 		return new RedirectInfo();
 	}
 
@@ -500,10 +483,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// Redirection URL
 		String successRedirectUrl = callbackUrl;
 		if (isNotBlank(grantTicket)) {
-			// Merge custom parameters
-			Map customParams = toQueryParams(toHttp(request).getQueryString());
-			customParams.put(config.getParam().getGrantTicket(), grantTicket);
-			successRedirectUrl = applyQueryURL(callbackUrl, customParams);
+			successRedirectUrl = applyQueryURL(callbackUrl, singletonMap(config.getParam().getGrantTicket(), grantTicket));
 		}
 
 		// Generate absoulte full redirectUrl.
@@ -516,6 +496,11 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 		// to get token.
 		fullParams.put(config.getParam().getRedirectUrl(), fullRedirectUrl);
 		fullParams.put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
+		/**
+		 * Echo iam-server session info. (Optional) </br>
+		 * @see:{@link com.wl4g.devops.iam.web.LoginAuthenticatorEndpoint#handshake()}
+		 */
+		fullParams.put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
 
 		// Handling secret tokens
 		postHandleSuccessSecretTokens(token, subject, fullParams, request, response);
@@ -625,8 +610,8 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	protected void postHandleSuccessSecretTokens(AuthenticationToken token, Subject subject, Map params, ServletRequest request,
 			ServletResponse response) throws Exception {
 
-		// Sets secret tokens to cookies.
-		String[] tokens = setSuccessSecretTokens2Cookie(token, request, response);
+		// Puts secret tokens to cookies.
+		String[] tokens = putSuccessSecretTokens2Cookie(token, request, response);
 
 		// Sets secret tokens to ressponse.
 		params.put(config.getParam().getDataCipherKeyName(), tokens[0]);
@@ -634,7 +619,7 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	}
 
 	/**
-	 * Sets secret and tokens/signature to cookies handling.
+	 * Puts secret and tokens/signature to cookies handling.
 	 * 
 	 * @param token
 	 * @param request
@@ -642,12 +627,12 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 	 * @return
 	 * @throws DecoderException
 	 */
-	protected String[] setSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request, ServletResponse response)
+	protected String[] putSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request, ServletResponse response)
 			throws DecoderException {
 
 		String dataCipherKeyHex = null, accessToken = null;
 		if (token instanceof ClientSecretIamAuthenticationToken) {
-			// Sets dataCipherKey
+			// Sets dataCipherKey.
 			if (config.getCipher().isEnableDataCipher()) {
 				// Gets SecureCryptService.
 				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
@@ -669,26 +654,31 @@ public abstract class AbstractIamAuthenticationFilter<T extends IamAuthenticatio
 				c.saveTo(toHttp(request), toHttp(response));
 			}
 
-			// Sets accessToken
+			// Sets accessToken.
 			if (config.getSession().isEnableAccessTokenValidity()) {
 				// Create accessTokenSignKey.
 				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN, generateAccessTokenSignKey(getSessionId()));
-				accessToken = generateAccessToken(getSessionId(), accessTokenSignKey);
+				accessToken = generateAccessToken(getSession(), accessTokenSignKey);
 				Cookie c = new SimpleCookie(config.getCookie());
 				c.setName(config.getParam().getAccessTokenName());
 				c.setValue(accessToken);
 				c.saveTo(toHttp(request), toHttp(response));
 			}
 
+			/**
+			 * Sets umidToken.
+			 * 
+			 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestAccessTokenValidity}
+			 */
+			String umidToken = ((ClientSecretIamAuthenticationToken) token).getUmidToken();
+			Cookie c = new SimpleCookie(config.getCookie());
+			c.setName(config.getParam().getUmidTokenName());
+			c.setValue(umidToken);
+			c.saveTo(toHttp(request), toHttp(response));
 		}
 
 		return new String[] { dataCipherKeyHex, accessToken };
 	}
-
-	/**
-	 * Get filter name
-	 */
-	public abstract String getName();
 
 	/**
 	 * Login/Authentication request parameters binding session key
