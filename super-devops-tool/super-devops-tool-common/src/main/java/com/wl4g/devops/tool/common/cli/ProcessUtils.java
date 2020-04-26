@@ -189,7 +189,7 @@ public abstract class ProcessUtils {
 		// Processing windows permission is not implemented yet!!!
 		String callTmpScriptCmd = tmpScript.getAbsolutePath();
 		if (!IS_OS_WINDOWS) {
-			callTmpScriptCmd = String.format("chmod 700 %s && %s", tmpScript.getAbsolutePath(), tmpScript.getAbsolutePath());
+			callTmpScriptCmd = format("chmod 700 %s && %s", tmpScript.getAbsolutePath(), tmpScript.getAbsolutePath());
 		}
 		return execSingle(callTmpScriptCmd, null, stdout, stderr, append, redirectToNullIfNecessary);
 	}
@@ -220,7 +220,7 @@ public abstract class ProcessUtils {
 		Process ps = null;
 		String[] cmdarray = buildCrossSingleCommands(singleCmd, stdout, stderr, append, redirectToNullIfNecessary);
 		if (nonNull(pwdDir)) {
-			state(pwdDir.exists(), String.format("No such directory for pwdDir:[%s]", pwdDir));
+			state(pwdDir.exists(), format("No such directory for pwdDir:[%s]", pwdDir));
 			ps = getRuntime().exec(cmdarray, null, pwdDir);
 		} else {
 			ps = getRuntime().exec(cmdarray);
