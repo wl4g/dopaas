@@ -38,6 +38,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -203,8 +204,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public IamUidSessionIdGenerator iamUidSessionIdGenerator() {
-		return new IamUidSessionIdGenerator();
+	public IamUidSessionIdGenerator iamUidSessionIdGenerator(@Value("${spring.application.name:}") String appName) {
+		return new IamUidSessionIdGenerator(appName);
 	}
 
 	@Bean
