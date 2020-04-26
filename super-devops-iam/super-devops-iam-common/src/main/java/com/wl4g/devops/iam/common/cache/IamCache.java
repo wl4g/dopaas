@@ -36,6 +36,13 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	final static byte[] EXPX = "PX".getBytes(UTF_8);
 
 	/**
+	 * Gets cache name.
+	 * 
+	 * @return
+	 */
+	String getCacheName();
+
+	/**
 	 * Decay counter
 	 *
 	 * @param key

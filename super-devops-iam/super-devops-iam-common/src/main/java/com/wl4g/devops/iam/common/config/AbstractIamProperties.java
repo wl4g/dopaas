@@ -15,16 +15,21 @@
  */
 package com.wl4g.devops.iam.common.config;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.invokeMethod;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.Assert.hasText;
+import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.springframework.util.ReflectionUtils.getAllDeclaredMethods;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.InitializingBean;
@@ -33,6 +38,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.tool.common.collection.RegisteredSetList;
 
 /**
  * IAM abstract configuration properties.
@@ -203,6 +209,21 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		hasTextOf(getLoginUri(), "loginUri");
 		hasTextOf(getSuccessUri(), "successUri");
 		hasTextOf(getUnauthorizedUri(), "unauthorizedUri");
+
+		// Check customization parameters name(Mutually exclusive with system
+		// parameters built in Iam).
+		//
+		// Gets other built-in parameters.
+		Set<String> builtParamValues = new HashSet<>(16);
+		for (Method m : getAllDeclaredMethods(getParam().getClass())) {
+			if (String.class.isAssignableFrom(m.getReturnType())) {
+				builtParamValues.add((String) invokeMethod(m, getParam()));
+			}
+		}
+		getParam().getCustomeParams().forEach(p -> {
+			boolean exist = builtParamValues.contains(p);
+			isTrue(!exist, "Iam custom parameter name that conflict with system built-in parameter '%s'", p);
+		});
 	}
 
 	/**
@@ -305,7 +326,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		/**
 		 * Whether to enable accesstoken enhanced verification.
 		 */
-		private boolean enableAccessTokenValidity = false;
+		private boolean enableAccessTokenValidity = true;
 
 		public Long getGlobalSessionTimeout() {
 			return globalSessionTimeout;
@@ -408,6 +429,18 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * Redirected URL parameter name for request authentication callback
 		 */
 		private String redirectUrl = "redirect_url";
+
+		/**
+		 * Authentication or authorization processing internal interface custom
+		 * parameters name.
+		 */
+		private List<String> customeParams = new RegisteredSetList<String>(new ArrayList<>()) {
+			{
+				add("iam-x-type");
+				add("iam-x-token");
+				add("iam-x-id");
+			}
+		};
 
 		/**
 		 * {@link com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo#fallbackRedirect}
@@ -560,6 +593,16 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			this.redirectUrl = redirectUrl;
 		}
 
+		public List<String> getCustomeParams() {
+			return customeParams;
+		}
+
+		public void setCustomeParams(List<String> customeParams) {
+			if (!isEmpty(customeParams)) {
+				this.customeParams.addAll(customeParams);
+			}
+		}
+
 		public String getFallbackRedirect() {
 			return fallbackRedirect;
 		}
@@ -680,12 +723,12 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		/**
 		 * Enable data encryption request or not.
 		 */
-		private boolean enableDataCipher = false;
+		private boolean enableDataCipher = true;
 
 		/**
 		 * @see {@link #setCipherParameterHeader(List)}
 		 */
-		private List<String> cipherParameterHeader = new ArrayList<String>() {
+		private Set<String> cipherParameterHeader = new HashSet<String>() {
 			private static final long serialVersionUID = 7117402728828798467L;
 			{
 				// Some commonly used encryption parameter name definitions.
@@ -708,11 +751,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			this.enableDataCipher = enableDataCipher;
 		}
 
-		public List<String> getCipherParameterHeader() {
+		public Set<String> getCipherParameterHeader() {
 			return cipherParameterHeader;
 		}
 
-		public CipherProperties setCipherParameterHeader(List<String> cipherParameterHeader) {
+		public CipherProperties setCipherParameterHeader(Set<String> cipherParameterHeader) {
 			if (!CollectionUtils.isEmpty(cipherParameterHeader)) {
 				for (String param : cipherParameterHeader) {
 					if (!this.cipherParameterHeader.contains(param)) {

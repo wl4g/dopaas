@@ -28,7 +28,7 @@ import javax.servlet.ServletResponse;
 import org.apache.shiro.session.Session;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
-import static com.wl4g.devops.iam.client.filter.AbstractAuthenticationFilter.SAVE_GRANT_TICKET;
+import static com.wl4g.devops.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
 
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.client.validation.IamValidator;

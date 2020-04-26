@@ -35,7 +35,7 @@ import com.wl4g.devops.iam.authc.SmsAuthenticationToken;
  */
 @IamFilter
 @Beta
-public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<SmsAuthenticationToken> {
+public class SmsAuthenticationFilter extends AbstractServerIamAuthenticationFilter<SmsAuthenticationToken> {
 	final public static String NAME = "sms";
 
 	@Override
@@ -43,7 +43,7 @@ public class SmsAuthenticationFilter extends AbstractIamAuthenticationFilter<Sms
 			HttpServletResponse response) throws Exception {
 		final String action = getCleanParam(request, config.getParam().getSmsActionName());
 		final String principal = getCleanParam(request, config.getParam().getPrincipalName());
-		final String smsCode = getCleanParam(request, config.getParam().getCredentialName());
+		final String smsCode = getCleanParam(request, config.getParam().getCredentialsName());
 		final String algKind = getCleanParam(request, config.getParam().getSecretAlgKindName());
 		final String clientSecret = getCleanParam(request, config.getParam().getClientSecretKeyName());
 		return new SmsAuthenticationToken(SecureAlgKind.of(algKind), clientSecret, remoteHost, action, principal, smsCode);

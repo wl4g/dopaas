@@ -45,7 +45,7 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectI
  */
 @Beta
 @IamFilter
-public class ROOTAuthenticationFilter extends AbstractIamAuthenticationFilter<IamAuthenticationToken> {
+public class ROOTAuthenticationFilter extends AbstractServerIamAuthenticationFilter<IamAuthenticationToken> {
 	final public static String NAME = "rootFilter";
 
 	@SuppressWarnings("unchecked")

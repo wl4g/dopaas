@@ -10,17 +10,17 @@
 </head>
 <body>
 	<div class="panel panel-default">
-		<div class="panel-heading" style="text-align:center;"><h4>Wecome to IAM Example Demo !</h4></div>
+		<div class="panel-heading" style="text-align:center;"><h4>Wecome to IAM Example !</h4></div>
 		<div class="panel-body">
 			<h4>Reference documents(Part I):</h4>
 			<ul class="list-group">
-			    <h5>Secondary authentication protection for sensitive API:</h5>
+			    <h5>API for testing requiring secondary certification:</h5>
 			    <li class="list-group-item">
-			    	<button id="btn_sensitive_api">Click on me to request a sensitive background API</button>
+			    	<button id="btn_sensitive_api">Click on me1</button>
 			    </li>
-			    <h5>API protection requiring access privileges:</h5>
+			    <h5>API for testing requiring some access permissions:</h5>
 			    <li class="list-group-item">
-			    	<button id="btn_permit_api">Click on me to request an API controlled by privileged credentials</button>
+			    	<button id="btn_permit_api">Click on me2</button>
 			    </li>
 			    <li class="list-group-item"></li>
 			    <li class="list-group-item"></li>
@@ -44,7 +44,7 @@
 			$.post(url, function(res){
 				if(res.code == 412){ // 服务端返回未经二次认证
 					// 打开二次认证授权页
-					window.open(url, "_blank", "modal=yes,width=700px,height=450px,resizable=no,left=320px,top=100px");
+					window.open(url, "_blank", "modal=yes,width=600px,height=400px,resizable=no,left=450px,top=150px");
 					window.onmessage = function(e) { // 监听授权回调
 						var secondAuthCode = JSON.parse(e.data).secondAuthCode; // 获取授权码
 						console.log("Got授权码" + secondAuthCode);
@@ -55,6 +55,18 @@
 					}
 				} else {
 					console.log("(无需二次认证)请求成功！" + JSON.stringify(res));
+				}
+			});
+		});
+
+		$("#btn_permit_api").click(function(event){
+			// 例如，正在请求一个需要权限的API
+			var url = "example/test5";
+			$.post(url, function(res){
+				if(res.code == 403){ // 服务端返回没有权限
+					alert("没有权限!! " + JSON.stringify(res));
+				} else {
+					console.log("(拥有权限)请求成功！" + JSON.stringify(res));
 				}
 			});
 		});

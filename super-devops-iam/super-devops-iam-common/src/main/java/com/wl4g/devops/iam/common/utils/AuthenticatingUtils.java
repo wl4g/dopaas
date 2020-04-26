@@ -21,6 +21,8 @@ import java.net.URISyntaxException;
 
 import javax.validation.constraints.NotBlank;
 
+import org.apache.shiro.session.Session;
+
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 
 import static org.apache.commons.codec.digest.HmacUtils.hmacSha256Hex;
@@ -33,6 +35,7 @@ import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
 
 /**
  * IAM authenticating security tools.
@@ -143,15 +146,15 @@ public abstract class AuthenticatingUtils extends IamSecurityHolder {
 	/**
 	 * Generate new generate accessToken string.
 	 * 
-	 * @param sessionId
+	 * @param session
 	 * @param accessTokenSignKey
 	 * @return
 	 */
-	final public static String generateAccessToken(@NotBlank final Serializable sessionId,
-			@NotBlank final String accessTokenSignKey) {
-		notNullOf(sessionId, "sessionId");
+	final public static String generateAccessToken(@NotBlank final Session session, @NotBlank final String accessTokenSignKey) {
+		notNullOf(session, "session");
 		hasTextOf(accessTokenSignKey, "accessTokenSignKey");
-		return encode(hmacSha256Hex(toBytes(accessTokenSignKey), valueOf(sessionId).getBytes(UTF_8)).getBytes(UTF_8));
+		final String accessTokenPlain = valueOf(session.getId() + "@" + currentTimeMillis());
+		return encode(hmacSha256Hex(toBytes(accessTokenSignKey), toBytes(accessTokenPlain)).getBytes(UTF_8));
 	}
 
 	/**

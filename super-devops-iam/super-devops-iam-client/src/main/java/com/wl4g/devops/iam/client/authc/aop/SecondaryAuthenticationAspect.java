@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.common.aop.AdviceProcessor;
  * @since
  */
 @Aspect
-public class SecondAuthenticateAspect {
+public class SecondaryAuthenticationAspect {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -43,7 +43,7 @@ public class SecondAuthenticateAspect {
 	 */
 	final AdviceProcessor<SecondAuthenticate> processor;
 
-	public SecondAuthenticateAspect(AdviceProcessor<SecondAuthenticate> processor) {
+	public SecondaryAuthenticationAspect(AdviceProcessor<SecondAuthenticate> processor) {
 		Assert.notNull(processor, "'adviceProcessor' must not be null");
 		this.processor = processor;
 	}

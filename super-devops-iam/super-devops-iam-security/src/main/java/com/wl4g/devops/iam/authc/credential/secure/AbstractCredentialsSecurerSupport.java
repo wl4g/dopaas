@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.CredentialsException;
 import org.apache.shiro.codec.CodecSupport;
@@ -233,7 +234,6 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 		if (log.isInfoEnabled()) {
 			String publicBase64String = keyPairSpec.getPubHexString();
-
 			String pattern = "Determined keypair is principal: {}, publicKey: {}, privateKey: {}";
 			String privateBase64String = "******";
 			if (log.isDebugEnabled()) {
@@ -243,7 +243,9 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 		}
 
 		// Mysterious decryption them.
-		final String plainCredentials = cryptAdapter.forOperator(token.getKind()).decrypt(keyPairSpec.getKeySpec(), token.getCredentials());
+		final String plainCredentials = cryptAdapter.forOperator(token.getKind()).decrypt(keyPairSpec.getKeySpec(),
+				token.getCredentials());
+		hasText(plainCredentials, AuthenticationException.class, "Invalid credentials");
 		return new CredentialsToken(token.getPrincipal(), plainCredentials, token.getKind(), true);
 	}
 

@@ -36,11 +36,10 @@ import com.wl4g.devops.common.kit.access.IPAccessControl;
  * @since
  */
 @IamFilter
-public class InternalWhiteListServerAuthenticationFilter extends AbstractWhiteListInternalAuthenticationFilter {
-	final public static String NAME = "server-internal";
+public class ServerInternalAuthenticationFilter extends AbstractWhiteListInternalAuthenticationFilter {
+	final public static String NAME = "serverInternalFilter";
 
-	public InternalWhiteListServerAuthenticationFilter(IPAccessControl control,
-			AbstractIamProperties<? extends ParamProperties> config) {
+	public ServerInternalAuthenticationFilter(IPAccessControl control, AbstractIamProperties<? extends ParamProperties> config) {
 		super(control, config);
 	}
 

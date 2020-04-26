@@ -53,18 +53,12 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 	 */
 	final protected IamCacheManager cacheManager;
 
-	/**
-	 * Relations attributes {@link IamCache}
-	 */
-	final protected IamCache relationAttrsCache;
-
 	public RelationAttributesIamSessionDAO(AbstractIamProperties<? extends ParamProperties> config,
 			IamCacheManager cacheManager) {
 		notNullOf(config, "config");
 		notNullOf(cacheManager, "cacheManager");
 		this.config = config;
 		this.cacheManager = cacheManager;
-		this.relationAttrsCache = cacheManager.getIamCache(CACHE_RELATION_ATTRS);
 	}
 
 	@Override
@@ -73,7 +67,7 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 			return super.create(session);
 		} finally {
 			// Sets relation cache.
-			((IamSession) session).setRelationAttrsCache(relationAttrsCache);
+			((IamSession) session).setRelationAttrsCache(getRelationAttrsCache(session.getId()));
 		}
 	}
 
@@ -104,7 +98,7 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 		awareRelationCache(session);
 
 		// Remove all relation attributes.
-		relationAttrsCache.mapRemoveAll();
+		getRelationAttrsCache(session.getId()).mapRemoveAll();
 	}
 
 	@Override
@@ -127,7 +121,7 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 	protected Session awareRelationCache(final Session session) {
 		// Sets relation cache.
 		if (!isNull(session) && (session instanceof IamSession)) {
-			((IamSession) session).setRelationAttrsCache(relationAttrsCache);
+			((IamSession) session).setRelationAttrsCache(getRelationAttrsCache(session.getId()));
 		}
 		return session;
 	}
@@ -153,5 +147,15 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 	 * @return
 	 */
 	protected abstract Session doReadIamSession(final Serializable sessionId);
+
+	/**
+	 * Gets relation attributes cache.
+	 * 
+	 * @param sessionId
+	 * @return
+	 */
+	private IamCache getRelationAttrsCache(final Serializable sessionId) {
+		return cacheManager.getIamCache(CACHE_SESSION_REFATTRS + sessionId);
+	}
 
 }

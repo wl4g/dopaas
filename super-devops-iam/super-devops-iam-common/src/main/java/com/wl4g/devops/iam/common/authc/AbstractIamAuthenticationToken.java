@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.common.authc;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static java.lang.Boolean.parseBoolean;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.Serializable;
@@ -156,11 +156,11 @@ public abstract class AbstractIamAuthenticationToken implements IamAuthenticatio
 		 * @param fallbackRedirect
 		 * @return
 		 */
-		public static RedirectInfo build(String fromAppName, String redirectUrl, String fallbackRedirect) {
+		public final static RedirectInfo build(String fromAppName, String redirectUrl, String fallbackRedirect) {
 			if (isBlank(fallbackRedirect)) {
 				return new RedirectInfo(fromAppName, redirectUrl);
 			} else {
-				return new RedirectInfo(fromAppName, redirectUrl, parseBoolean(fallbackRedirect));
+				return new RedirectInfo(fromAppName, redirectUrl, isTrue(fallbackRedirect, true));
 			}
 		}
 

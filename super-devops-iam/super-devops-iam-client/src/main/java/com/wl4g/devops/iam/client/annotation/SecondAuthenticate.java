@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.wl4g.devops.iam.client.authc.aop.SecondAuthenticateHandler;
+import com.wl4g.devops.iam.client.authc.aop.SecondaryAuthenticator;
 
 /**
  * Safety reinforcement for inspection of secondary certification.
@@ -47,6 +47,6 @@ public @interface SecondAuthenticate {
 	 * 
 	 * @return
 	 */
-	Class<? extends SecondAuthenticateHandler> handleClass();
+	Class<? extends SecondaryAuthenticator> handleClass();
 
 }

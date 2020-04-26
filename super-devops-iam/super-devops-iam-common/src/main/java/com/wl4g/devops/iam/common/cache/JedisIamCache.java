@@ -60,6 +60,11 @@ public class JedisIamCache implements IamCache {
 	}
 
 	@Override
+	public String getCacheName() {
+		return name;
+	}
+
+	@Override
 	public Object get(final CacheKey key) throws CacheException {
 		notNullOf(key, "key");
 		notNullOf(key.getValueClass(), "valueClass");

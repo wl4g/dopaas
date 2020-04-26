@@ -17,7 +17,6 @@ package com.wl4g.devops.iam.common.config;
 
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
-import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.NameableFilter;
@@ -26,6 +25,7 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import static com.wl4g.devops.iam.common.config.XssProperties.*;
 import static com.wl4g.devops.iam.common.config.CorsProperties.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.Assert.notNull;
 
@@ -38,6 +38,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -45,9 +46,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import static org.springframework.util.ReflectionUtils.*;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
@@ -122,7 +124,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public ShiroFilterFactoryBean shiroFilter(AbstractIamProperties<? extends ParamProperties> config,
+	public IamShiroFilterFactoryBean iamFilterFactoryBean(AbstractIamProperties<? extends ParamProperties> config,
 			DefaultWebSecurityManager securityManager, FilterChainManager chainManager) {
 		/*
 		 * Note: The purpose of using Iam Shiro FilterFactory Bean is to use Iam
@@ -131,17 +133,17 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 		 * specification of getChain () method for default enhancements (because
 		 * Shiro does not implement it, this causes serious problems)
 		 */
-		IamShiroFilterFactoryBean shiroFilter = new IamShiroFilterFactoryBean(chainManager);
-		shiroFilter.setSecurityManager(securityManager);
+		IamShiroFilterFactoryBean iamFilter = new IamShiroFilterFactoryBean(chainManager);
+		iamFilter.setSecurityManager(securityManager);
 
 		/*
 		 * IAM server login page.(shiro default by "/login.jsp")
 		 */
-		shiroFilter.setLoginUrl(config.getLoginUri());
+		iamFilter.setLoginUrl(config.getLoginUri());
 		// Default login success callback URL.
-		shiroFilter.setSuccessUrl(config.getSuccessUri());
+		iamFilter.setSuccessUrl(config.getSuccessUri());
 		// IAM server 403 page URL
-		shiroFilter.setUnauthorizedUrl(config.getUnauthorizedUri());
+		iamFilter.setUnauthorizedUrl(config.getUnauthorizedUri());
 
 		// Register define filters.
 		Map<String, Filter> filters = new LinkedHashMap<>();
@@ -150,8 +152,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 		actx.getBeansWithAnnotation(IamFilter.class).values().stream().forEach(filter -> {
 			String filterName = null, uriPertten = null;
 			if (filter instanceof NameableFilter) {
-				filterName = (String) ReflectionUtils.invokeMethod(ReflectionUtils.findMethod(filter.getClass(), "getName"),
-						filter);
+				filterName = (String) invokeMethod(findMethod(filter.getClass(), "getName"), filter);
 			}
 			if (filter instanceof IamAuthenticationFilter) {
 				uriPertten = ((IamAuthenticationFilter) filter).getUriMapping();
@@ -160,32 +161,40 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 			notNull(uriPertten, "'uriPertten' must not be null");
 
 			if (filters.putIfAbsent(filterName, (Filter) filter) != null) {
-				throw new IllegalStateException(String.format("Already filter. [%s]", filterName));
+				throw new IllegalStateException(format("Already filter. [%s]", filterName));
 			}
 			if (filterChain.putIfAbsent(uriPertten, filterName) != null) {
-				throw new IllegalStateException(String.format("Already filter mapping. [%s] = %s", uriPertten, filterName));
+				throw new IllegalStateException(format("Already filter mapping. [%s] = %s", uriPertten, filterName));
 			}
 		});
 		// Filter chain definition register
-		shiroFilter.setFilters(filters);
+		iamFilter.setFilters(filters);
 
 		// Add external filter chain configuration
 		config.getFilterChain().forEach((uriPertten, filterName) -> {
 			if (filterChain.putIfAbsent(uriPertten, filterName) != null) {
-				throw new IllegalStateException(String.format("Already filter mapping. [%s] = %s", uriPertten, filterName));
+				throw new IllegalStateException(format("Already filter mapping. [%s] = %s", uriPertten, filterName));
 			}
 		});
 
 		// Filter chain mappings register
-		shiroFilter.setFilterChainDefinitionMap(filterChain);
+		iamFilter.setFilterChainDefinitionMap(filterChain);
 
-		return shiroFilter;
+		return iamFilter;
 	}
 
+	/**
+	 * Using {@link Lazy} loading to solve cycle injection problem.
+	 * 
+	 * @param config
+	 * @param iamFilterFactory
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnMissingBean
-	public IamSubjectFactory iamSubjectFactory(AbstractIamProperties<? extends ParamProperties> config) {
-		return new IamSubjectFactory(config);
+	public IamSubjectFactory iamSubjectFactory(AbstractIamProperties<? extends ParamProperties> config,
+			@Lazy IamShiroFilterFactoryBean iamFilterFactory) {
+		return new IamSubjectFactory(config, iamFilterFactory);
 	}
 
 	@Bean
@@ -195,8 +204,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public IamUidSessionIdGenerator iamUidSessionIdGenerator() {
-		return new IamUidSessionIdGenerator();
+	public IamUidSessionIdGenerator iamUidSessionIdGenerator(@Value("${spring.application.name:}") String appName) {
+		return new IamUidSessionIdGenerator(appName);
 	}
 
 	@Bean

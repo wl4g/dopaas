@@ -33,7 +33,7 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.rejectRequestMethod;
 import static java.util.stream.Collectors.toMap;
 
 @IamFilter
-public class GenericAuthenticationFilter extends AbstractIamAuthenticationFilter<GenericAuthenticationToken> {
+public class GenericAuthenticationFilter extends AbstractServerIamAuthenticationFilter<GenericAuthenticationToken> {
 	final public static String NAME = "generic";
 
 	@Override
@@ -43,15 +43,16 @@ public class GenericAuthenticationFilter extends AbstractIamAuthenticationFilter
 
 		// Bsse required parameters.
 		final String principal = getCleanParam(request, config.getParam().getPrincipalName());
-		final String cipherPassword = getCleanParam(request, config.getParam().getCredentialName());
+		final String cipherCredentials = getCleanParam(request, config.getParam().getCredentialsName());
 		final String algKind = getCleanParam(request, config.getParam().getSecretAlgKindName());
 		final String clientSecretKey = getCleanParam(request, config.getParam().getClientSecretKeyName());
+		final String umidToken = getCleanParam(request, config.getParam().getUmidTokenName());
 		final String clientRef = getCleanParam(request, config.getParam().getClientRefName());
 		final String verifiedToken = getCleanParam(request, config.getParam().getVerifiedTokenName());
 
 		// Additional optional parameters.
-		GenericAuthenticationToken token = new GenericAuthenticationToken(remoteHost, redirectInfo, principal, cipherPassword,
-				SecureAlgKind.of(algKind), clientSecretKey, clientRef, verifiedToken, of(request));
+		GenericAuthenticationToken token = new GenericAuthenticationToken(remoteHost, redirectInfo, principal, cipherCredentials,
+				SecureAlgKind.of(algKind), clientSecretKey, umidToken, clientRef, verifiedToken, of(request));
 		// Extra custom parameters.
 		Map<String, String> userProperties = safeMap(request.getParameterMap()).entrySet().stream()
 				.collect(toMap(e -> e.getKey(), e -> isEmptyArray(e.getValue()) ? null : e.getValue()[0]));

@@ -134,8 +134,8 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 			return sessionId;
 		}
 
-		// Using protocol internal ticket session.
-		if (isProtocolInternalRequest(request, response)) {
+		// Using internal ticket session.
+		if (isInternalTicketRequest(request)) {
 			String grantTicket = getCleanParam(request, config.getParam().getGrantTicket());
 			if (checkSessionValidity(grantTicket)) {
 				/**
@@ -416,15 +416,15 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	}
 
 	/**
-	 * Check is iam protocol internal request.
+	 * Check is iam internal ticket request.
 	 * 
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	private boolean isProtocolInternalRequest(ServletRequest request, ServletResponse response) {
+	public final static boolean isInternalTicketRequest(ServletRequest request) {
 		String requestPath = getPathWithinApplication(toHttp(request));
-		for (String pattern : defaultInternalPathPatterns) {
+		for (String pattern : defaultInternalTicketRequestPathPatterns) {
 			if (defaultAntMatcher.matchStart(pattern, requestPath)) {
 				return true;
 			}
@@ -433,6 +433,6 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	}
 
 	final private static AntPathMatcher defaultAntMatcher = new AntPathMatcher();
-	final private static String[] defaultInternalPathPatterns = { (URI_C_BASE + "/**"), (URI_S_BASE + "/**") };
+	final private static String[] defaultInternalTicketRequestPathPatterns = { (URI_C_BASE + "/**"), (URI_S_BASE + "/**") };
 
 }

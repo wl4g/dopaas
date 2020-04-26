@@ -26,9 +26,11 @@ import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import org.apache.shiro.authc.AuthenticationToken;
@@ -36,6 +38,7 @@ import org.apache.shiro.authc.RememberMeAuthenticationToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
+import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.subject.WebSubjectContext;
 
@@ -44,8 +47,12 @@ import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager.*;
 import static com.wl4g.devops.tool.common.web.CookieUtils.getCookie;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.subject.support.DefaultSubjectContext.*;
 
 /**
@@ -60,9 +67,17 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 
 	final protected AbstractIamProperties<? extends ParamProperties> config;
 
-	public IamSubjectFactory(AbstractIamProperties<? extends ParamProperties> config) {
+	/**
+	 * {@link IamShiroFilterFactoryBean#getFilterChainDefinitionMap()}
+	 */
+	final protected IamShiroFilterFactoryBean iamFilterFactory;
+
+	public IamSubjectFactory(AbstractIamProperties<? extends ParamProperties> config,
+			IamShiroFilterFactoryBean iamFilterFactory) {
 		notNullOf(config, "config");
+		notNullOf(iamFilterFactory, "iamFilterFactory");
 		this.config = config;
+		this.iamFilterFactory = iamFilterFactory;
 	}
 
 	@Override
@@ -74,20 +89,18 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		// authentication, in reality, the
 		// login might have been just a CAS rememberMe login. If so, set the
 		// authenticated flag appropriately:
-		if (context.isAuthenticated()) {
-			AuthenticationToken token = context.getAuthenticationToken();
-			if (!isNull(token) && token instanceof RememberMeAuthenticationToken) {
-				RememberMeAuthenticationToken tk = (RememberMeAuthenticationToken) token;
-				// set the authenticated flag of the context to true only if the
-				// CAS subject is not in a remember me mode
-				if (tk.isRememberMe()) {
-					context.setAuthenticated(false);
-				}
+		AuthenticationToken token = context.getAuthenticationToken();
+		if (!isNull(token) && token instanceof RememberMeAuthenticationToken) {
+			RememberMeAuthenticationToken tk = (RememberMeAuthenticationToken) token;
+			// set the authenticated flag of the context to true only if the
+			// CAS subject is not in a remember me mode
+			if (tk.isRememberMe()) {
+				context.setAuthenticated(false);
 			}
 		}
 
 		// Validation of enhanced session additional signature.
-		if (context.isAuthenticated() && config.getSession().isEnableAccessTokenValidity()) {
+		if (isAssertRequestAccessTokens(context)) {
 			try {
 				assertRequestAccessTokenValidity(context);
 			} catch (UnauthenticatedException e) {
@@ -110,11 +123,23 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	 * @param request
 	 * @return
 	 */
-	final protected String getRequestAccessToken(HttpServletRequest request) {
+	protected String getRequestAccessToken(HttpServletRequest request) {
 		String accessToken = getCleanParam(request, config.getParam().getAccessTokenName());
-		accessToken = isNull(accessToken) ? request.getHeader(config.getParam().getAccessTokenName()) : accessToken;
-		accessToken = isNull(accessToken) ? getCookie(request, config.getParam().getAccessTokenName()) : accessToken;
+		accessToken = isBlank(accessToken) ? request.getHeader(config.getParam().getAccessTokenName()) : accessToken;
+		accessToken = isBlank(accessToken) ? getCookie(request, config.getParam().getAccessTokenName()) : accessToken;
 		return accessToken;
+	}
+
+	/**
+	 * Is assertion request accessTokens validity.
+	 * 
+	 * @param context
+	 * @return
+	 */
+	protected boolean isAssertRequestAccessTokens(SubjectContext context) {
+		HttpServletRequest request = toHttp(((WebSubjectContext) context).resolveServletRequest());
+		return config.getSession().isEnableAccessTokenValidity() && !isMediaRequest(request)
+				&& !isInternalProtocolNonAccessTokenRequest(request);
 	}
 
 	/**
@@ -124,7 +149,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	 * @throws UnauthenticatedException
 	 * @see {@link AbstractIamAuthenticationFilter#makeLoggedResponse}
 	 */
-	final private void assertRequestAccessTokenValidity(SubjectContext context) throws UnauthenticatedException {
+	private final void assertRequestAccessTokenValidity(SubjectContext context) throws UnauthenticatedException {
 		// Additional signature verification will only be performed on those
 		// who have logged in successful.
 		// e.g: Authentication requests or internal API requests does not
@@ -151,7 +176,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		hasTextOf(accessTokenSignKey, "accessTokenSignKey"); // Shouldn't-here
 
 		// Calculating accessToken(signature).
-		final String validAccessToken = generateAccessToken(session.getId(), accessTokenSignKey);
+		final String validAccessToken = generateAccessToken(session, accessTokenSignKey);
 		log.debug(
 				"Asserted accessToken of sessionId: {}, accessTokenSignKey: {}, validAccessToken: {}, accessToken: {}, authcToken: {}",
 				sessionId, accessTokenSignKey, validAccessToken, accessToken, authcToken);
@@ -164,5 +189,40 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		// }
 
 	}
+
+	/**
+	 * Check is iam internal non accessToken valid request. </br>
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	private final boolean isInternalProtocolNonAccessTokenRequest(ServletRequest request) {
+		String requestPath = getPathWithinApplication(toHttp(request));
+		/**
+		 * Check is internal protocol default filter chain mappings?
+		 */
+		for (Entry<String, String> ent : config.getFilterChain().entrySet()) {
+			if (defaultAntMatcher.matchStart(ent.getKey(), requestPath)) {
+				return true;
+			}
+		}
+
+		/**
+		 * Check is internal protocol {@link IamFilter} chain mappings?
+		 */
+		for (Entry<String, String> ent : iamFilterFactory.getFilterChainDefinitionMap().entrySet()) {
+			if (defaultAntMatcher.matchStart(ent.getKey(), requestPath)) {
+				return true;
+			}
+		}
+
+		/**
+		 * Check is internal protocol ticket authenticating request?
+		 */
+		return !isInternalTicketRequest(request);
+	}
+
+	final private static AntPathMatcher defaultAntMatcher = new AntPathMatcher();
 
 }
