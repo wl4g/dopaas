@@ -199,7 +199,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// Redirections(Native page).
 		else {
 			// Sets secret tokens to cookies.
-			setSuccessSecretTokens2Cookie(token, request, response);
+			putSuccessSecretTokens2Cookie(token, request, response);
 
 			// Call custom success handle.
 			coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), null);
@@ -365,7 +365,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	}
 
 	/**
-	 * Get the URL from the redirectUrl from the authentication request(flexible
+	 * Gets the URL from the redirectUrl from the authentication request(flexible
 	 * API).
 	 * 
 	 * @return
@@ -375,7 +375,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	}
 
 	/**
-	 * Get remember last request URL
+	 * Gets remember last request URL
 	 * 
 	 * @param request
 	 * @return
@@ -420,7 +420,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		resp.forMap().put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
 
 		// Sets secret tokens to cookies.
-		String[] tokens = setSuccessSecretTokens2Cookie(token, request, response);
+		String[] tokens = putSuccessSecretTokens2Cookie(token, request, response);
 
 		// Sets child dataCipherKey. (if necessary)
 		resp.forMap().put(config.getParam().getDataCipherKeyName(), tokens[0]);
@@ -455,14 +455,14 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	}
 
 	/**
-	 * Sets secret and tokens/signature to cookies handling.
+	 * Puts secret and tokens/signature to cookies handling.
 	 * 
 	 * @param token
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	protected String[] setSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request,
+	protected String[] putSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request,
 			ServletResponse response) {
 		// Sets child dataCipherKeys to cookie.
 		String childDataCipherKey = getBindValue(KEY_DATA_CIPHER);

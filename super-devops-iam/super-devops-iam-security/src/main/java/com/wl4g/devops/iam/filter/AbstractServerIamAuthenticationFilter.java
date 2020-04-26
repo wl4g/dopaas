@@ -22,6 +22,7 @@ import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.correctAuthen
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bindKVParameters;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.extParameterValue;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
@@ -35,6 +36,7 @@ import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -56,6 +58,7 @@ import com.wl4g.devops.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter;
+import com.wl4g.devops.iam.common.web.model.SessionInfo;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
@@ -237,7 +240,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
 
 				// Sets secret tokens to cookies.
-				setSuccessSecretTokens2Cookie(token, request, response);
+				putSuccessSecretTokens2Cookie(token, request, response);
 
 				log.info("Redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), fullParams);
 				issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
@@ -493,6 +496,11 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		// to get token.
 		fullParams.put(config.getParam().getRedirectUrl(), fullRedirectUrl);
 		fullParams.put(KEY_SERVICE_ROLE, KEY_SERVICE_ROLE_VALUE_IAMSERVER);
+		/**
+		 * Echo iam-server session info. (Optional) </br>
+		 * @see:{@link com.wl4g.devops.iam.web.LoginAuthenticatorEndpoint#handshake()}
+		 */
+		fullParams.put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
 
 		// Handling secret tokens
 		postHandleSuccessSecretTokens(token, subject, fullParams, request, response);
@@ -602,8 +610,8 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 	protected void postHandleSuccessSecretTokens(AuthenticationToken token, Subject subject, Map params, ServletRequest request,
 			ServletResponse response) throws Exception {
 
-		// Sets secret tokens to cookies.
-		String[] tokens = setSuccessSecretTokens2Cookie(token, request, response);
+		// Puts secret tokens to cookies.
+		String[] tokens = putSuccessSecretTokens2Cookie(token, request, response);
 
 		// Sets secret tokens to ressponse.
 		params.put(config.getParam().getDataCipherKeyName(), tokens[0]);
@@ -611,7 +619,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 	}
 
 	/**
-	 * Sets secret and tokens/signature to cookies handling.
+	 * Puts secret and tokens/signature to cookies handling.
 	 * 
 	 * @param token
 	 * @param request
@@ -619,7 +627,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 	 * @return
 	 * @throws DecoderException
 	 */
-	protected String[] setSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request, ServletResponse response)
+	protected String[] putSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request, ServletResponse response)
 			throws DecoderException {
 
 		String dataCipherKeyHex = null, accessToken = null;
