@@ -17,7 +17,7 @@ package com.wl4g.devops.rcm.access.model;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.devops.shell.annotation.ShellOption;
+import com.wl4g.devops.components.shell.annotation.ShellOption;
 
 /**
  * Generic RCM accessor parameter.

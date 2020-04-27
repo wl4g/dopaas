@@ -19,10 +19,10 @@ import com.wl4g.devops.ci.console.args.TasksArgument;
 import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalArgument;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
 import com.wl4g.devops.ci.service.TaskService;
+import com.wl4g.devops.components.shell.annotation.ShellComponent;
+import com.wl4g.devops.components.shell.annotation.ShellMethod;
+import com.wl4g.devops.components.shell.handler.SimpleShellContext;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.shell.annotation.ShellComponent;
-import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.shell.handler.SimpleShellContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

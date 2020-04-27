@@ -24,6 +24,9 @@ import java.io.InputStream;
 import java.util.Map;
 
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.components.shell.annotation.ShellComponent;
+import com.wl4g.devops.components.shell.annotation.ShellMethod;
+import com.wl4g.devops.components.shell.annotation.ShellOption;
 import com.wl4g.devops.coss.CossEndpoint;
 import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
@@ -40,9 +43,6 @@ import com.wl4g.devops.coss.model.PutObjectResult;
 import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
-import com.wl4g.devops.shell.annotation.ShellComponent;
-import com.wl4g.devops.shell.annotation.ShellMethod;
-import com.wl4g.devops.shell.annotation.ShellOption;
 
 /**
  * Console based coss accessor
