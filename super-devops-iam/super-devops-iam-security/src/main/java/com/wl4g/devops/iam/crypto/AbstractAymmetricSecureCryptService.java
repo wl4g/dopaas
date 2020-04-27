@@ -57,7 +57,7 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 	/**
 	 * KeySpec class.
 	 */
-	final protected Class<K> keySpecClass;
+	final protected Class<K> keyPairSpecClass;
 
 	/**
 	 * AsymmetricCryptor
@@ -89,8 +89,8 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 		this.lock = lockManager.getLock(getClass().getSimpleName(), DEFAULT_LOCK_EXPIRE_MS, MILLISECONDS);
 
 		ResolvableType resolveType = ResolvableType.forClass(getClass());
-		this.keySpecClass = (Class<K>) resolveType.getSuperType().getGeneric(0).resolve();
-		notNull(keySpecClass, "KeySpecClass must not be null.");
+		this.keyPairSpecClass = (Class<K>) resolveType.getSuperType().getGeneric(0).resolve();
+		notNull(keyPairSpecClass, "KeySpecClass must not be null.");
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 
 		// Load keySpec by index.
 		IamCache cryptoCache = cacheManager.getIamCache(CACHE_CRYPTO);
-		KeyPairSpec keySpec = cryptoCache.getMapField(new CacheKey(index, keySpecClass));
+		KeyPairSpec keySpec = cryptoCache.getMapField(new CacheKey(index, keyPairSpecClass));
 		if (isNull(keySpec)) { // Expired?
 			try {
 				if (lock.tryLock(DEFAULT_TRYLOCK_TIMEOUT_MS, MILLISECONDS)) {
@@ -125,7 +125,7 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 				lock.unlock();
 			}
 			// Retry get.
-			keySpec = cryptoCache.getMapField(new CacheKey(index, keySpecClass));
+			keySpec = cryptoCache.getMapField(new CacheKey(index, keyPairSpecClass));
 		}
 
 		notNull(keySpec, "Unable to borrow keySpec resource.");
@@ -150,6 +150,11 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 	@Override
 	public KeySpec generateKeySpec(byte[] privateKey) {
 		return cryptor.generateKeySpec(privateKey);
+	}
+
+	@Override
+	public Class<K> getKeyPairSpecClass() {
+		return keyPairSpecClass;
 	}
 
 	/**

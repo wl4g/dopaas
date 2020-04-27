@@ -42,6 +42,7 @@ import static io.netty.util.internal.ThreadLocalRandom.current;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.configure.SecureConfig;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
@@ -163,8 +164,8 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 
 		// Gets applySecret keyPair index.
 		KeyPairSpec keyPair = cryptAdapter.forOperator(kind).generateKeyBorrow(index);
-		// Storage applied securet.
-		bind(KEY_SECRET_INFO, index, config.getApplyPubkeyExpireMs());
+		// Storage applied secureKey index.
+		bind(new RelationAttrKey(KEY_SECRET_INFO, config.getApplyPubkeyExpireMs()), index);
 
 		log.info("Applied secretKey of sessionId: {}, index: {}, pubKeyHexString: {}, privKeyHexString: {}", getSessionId(),
 				index, keyPair.getPubHexString(), keyPair.getHexString());
@@ -258,7 +259,7 @@ abstract class AbstractCredentialsSecurerSupport extends CodecSupport implements
 	 */
 	private KeyPairSpec determineSecretKeySpecPair(@NotNull SecureAlgKind kind, @NotBlank String principal) {
 		// Gets the best one from the candidate keyPair.
-		Integer index = getBindValue(KEY_SECRET_INFO, true);
+		Integer index = getBindValue(new RelationAttrKey(KEY_SECRET_INFO, Integer.class), true);
 		if (!isNull(index)) {
 			return cryptAdapter.forOperator(kind).generateKeyBorrow(index);
 		}

@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.verification;
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.iam.common.cache.IamCache;
+import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.config.properties.MatcherProperties;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
@@ -116,8 +117,9 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		// sliding X position)
 		KeyPairSpec keySpec = cryptAdapter.forOperator(kind).borrowKeyPair();
 		String applyToken = "capt" + randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
-		bind(applyToken, keySpec, DEFAULT_APPLY_TOKEN_EXPIREMS);
+
 		log.debug("Apply captcha for applyToken: {}, secretKey: {}", applyToken, keySpec);
+		bind(new RelationAttrKey(applyToken, DEFAULT_APPLY_TOKEN_EXPIREMS), keySpec);
 
 		// Custom processing.
 		return postApplyGraphProperties(kind, applyToken, wrap, keySpec);

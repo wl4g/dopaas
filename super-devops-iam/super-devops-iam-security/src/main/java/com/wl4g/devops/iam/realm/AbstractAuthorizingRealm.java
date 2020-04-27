@@ -171,7 +171,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 			 */
 			IamPrincipalInfo principal = info.getAccountInfo();
 			principal.validate();
-			getSession().setAttribute(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), principal);
+			bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), principal);
 
 			return info;
 		} catch (Throwable e) {
