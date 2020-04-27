@@ -116,7 +116,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	@Override
 	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
 		// Already created verify-code
-		VerifyCodeWrapper code = getBindValue(new RelationAttrKey(getVerifyCodeStoredKey(), VerifyCodeWrapper.class));
+		VerifyCodeWrapper code = getBindValue(new RelationAttrKey(getVerifyCodeStoredKey(), VerifyCodeWrapper.class), true);
 		if (!isNull(code) && !isNull(code.getCode())) { // Assertion
 			return code;
 		}
@@ -218,11 +218,11 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 *            is new create.
 	 */
 	protected void reset(String owner, boolean renew) {
-		unbind(getVerifyCodeStoredKey());
+		RelationAttrKey verifyCodeKey = new RelationAttrKey(getVerifyCodeStoredKey(), getVerifyCodeExpireMs());
+		unbind(verifyCodeKey);
 		if (renew) {
 			// Store verify-code in the session
-			bind(new RelationAttrKey(getVerifyCodeStoredKey(), getVerifyCodeExpireMs()),
-					new VerifyCodeWrapper(owner, generateCode()));
+			bind(verifyCodeKey, new VerifyCodeWrapper(owner, generateCode()));
 		}
 	}
 
