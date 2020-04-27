@@ -1,9 +1,14 @@
 package com.wl4g.devops.dao.ci;
 
 import com.wl4g.devops.common.bean.ci.PipeStepBuildingProject;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface PipeStepBuildingProjectDao {
     int deleteByPrimaryKey(Integer id);
+
+    int deleteByBuildingId(Integer buildingId);
 
     int insert(PipeStepBuildingProject record);
 
@@ -14,4 +19,7 @@ public interface PipeStepBuildingProjectDao {
     int updateByPrimaryKeySelective(PipeStepBuildingProject record);
 
     int updateByPrimaryKey(PipeStepBuildingProject record);
+
+    int insertBatch(@Param("pipeStepBuildingProjects") List<PipeStepBuildingProject> pipeStepBuildingProjects);
+
 }

@@ -1,8 +1,9 @@
 package com.wl4g.devops.common.bean.ci;
 
 import com.wl4g.devops.common.bean.BaseBean;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 
-import java.util.Date;
+import java.util.List;
 
 public class Pipeline extends BaseBean {
     private static final long serialVersionUID = 6815608076300843748L;
@@ -18,6 +19,22 @@ public class Pipeline extends BaseBean {
     private String parentAppHome;
 
     private String assetsDir;
+
+    private String clusterName;
+
+    //==================Expand==================
+
+    private List<AppInstance> instances;
+
+    private Integer[] instanceIds;
+
+    private PipeStepBuilding pipeStepBuilding;
+
+    private PipeStepPcm pipeStepPcm;
+
+    private PipeStepNotification pipeStepNotification;
+
+
 
     public String getPipeName() {
         return pipeName;
@@ -67,4 +84,51 @@ public class Pipeline extends BaseBean {
         this.assetsDir = assetsDir == null ? null : assetsDir.trim();
     }
 
+    public String getClusterName() {
+        return clusterName;
+    }
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
+
+    public List<AppInstance> getInstances() {
+        return instances;
+    }
+
+    public void setInstances(List<AppInstance> instances) {
+        this.instances = instances;
+    }
+
+    public Integer[] getInstanceIds() {
+        return instanceIds;
+    }
+
+    public void setInstanceIds(Integer[] instanceIds) {
+        this.instanceIds = instanceIds;
+    }
+
+    public PipeStepBuilding getPipeStepBuilding() {
+        return pipeStepBuilding;
+    }
+
+    public void setPipeStepBuilding(PipeStepBuilding pipeStepBuilding) {
+        this.pipeStepBuilding = pipeStepBuilding;
+    }
+
+    public PipeStepPcm getPipeStepPcm() {
+        return pipeStepPcm;
+    }
+
+    public void setPipeStepPcm(PipeStepPcm pipeStepPcm) {
+        this.pipeStepPcm = pipeStepPcm;
+    }
+
+    public PipeStepNotification getPipeStepNotification() {
+        return pipeStepNotification;
+    }
+
+    public void setPipeStepNotification(PipeStepNotification pipeStepNotification) {
+        this.pipeStepNotification = pipeStepNotification;
+    }
 }

@@ -56,7 +56,7 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
 -->
-        <table tableName="ci_pipe_step_building" domainObjectName="PipeStepBuilding"
+        <!--<table tableName="ci_pipe_step_building" domainObjectName="PipeStepBuilding"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
             <columnOverride column="pre_command" javaType="java.lang.String" jdbcType="VARCHAR" />
             <columnOverride column="post_command" javaType="java.lang.String" jdbcType="VARCHAR" />
@@ -87,8 +87,11 @@
         </table>
         <table tableName="ci_pipeline_history_step" domainObjectName="PipelineHistoryStep"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-        </table>
+        </table>-->
 
+        <table tableName="ci_pipeline_instance" domainObjectName="PipelineInstance"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
 
     </context>
 </generatorConfiguration>

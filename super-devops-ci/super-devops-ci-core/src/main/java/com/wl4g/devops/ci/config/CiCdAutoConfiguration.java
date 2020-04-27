@@ -25,6 +25,8 @@ import com.wl4g.devops.ci.pcm.jira.JiraPcmOperator;
 import com.wl4g.devops.ci.pcm.redmine.RedminePcmOperator;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.pipeline.*;
+import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
+import com.wl4g.devops.ci.pipeline.container.RktNativePipelineProvider;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
 import com.wl4g.devops.ci.pipeline.deploy.Python3PipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.RktNativePipeDeployer;

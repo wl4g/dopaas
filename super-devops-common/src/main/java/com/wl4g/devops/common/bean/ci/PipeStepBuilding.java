@@ -2,6 +2,8 @@ package com.wl4g.devops.common.bean.ci;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
+import java.util.List;
+
 public class PipeStepBuilding extends BaseBean {
     private static final long serialVersionUID = 6815608076300843748L;
 
@@ -10,6 +12,10 @@ public class PipeStepBuilding extends BaseBean {
     private String preCommand;
 
     private String postCommand;
+
+    //==================Expand==================
+
+    private List<PipeStepBuildingProject> pipeStepBuildingProjects;
 
     public Integer getPipeId() {
         return pipeId;
@@ -33,5 +39,13 @@ public class PipeStepBuilding extends BaseBean {
 
     public void setPostCommand(String postCommand) {
         this.postCommand = postCommand == null ? null : postCommand.trim();
+    }
+
+    public List<PipeStepBuildingProject> getPipeStepBuildingProjects() {
+        return pipeStepBuildingProjects;
+    }
+
+    public void setPipeStepBuildingProjects(List<PipeStepBuildingProject> pipeStepBuildingProjects) {
+        this.pipeStepBuildingProjects = pipeStepBuildingProjects;
     }
 }
