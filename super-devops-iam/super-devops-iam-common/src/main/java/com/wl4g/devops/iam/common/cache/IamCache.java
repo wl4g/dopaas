@@ -165,4 +165,12 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 */
 	Map<byte[], byte[]> getMapAll();
 
+	/**
+	 * Sets map block expireSec.
+	 * 
+	 * @param expireSec
+	 * @return
+	 */
+	boolean expireMap(int expireSec);
+
 }

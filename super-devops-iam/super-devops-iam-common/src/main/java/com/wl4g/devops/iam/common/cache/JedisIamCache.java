@@ -303,4 +303,10 @@ public class JedisIamCache implements IamCache {
 		jedisCluster.del(toKeyBytes(name));
 	}
 
+	@Override
+	public boolean expireMap(int expireSec) {
+		Long res = jedisCluster.expire(toKeyBytes(name), expireSec);
+		return !isNull(res) ? res > 0 : false;
+	}
+
 }

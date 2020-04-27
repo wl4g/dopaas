@@ -423,8 +423,8 @@ public class IamSession implements ValidatingSession, Serializable {
 			removeAttribute(key);
 		} else {
 			if (isRelationAttrKey(key)) {
-				long expirTime = getSessionRemainingTime(this);
-				RelationAttrKey rkey = new RelationAttrKey(((RelationAttrKey) key).getKey(), expirTime);
+				long expireMs = getSessionRemainingTime(this);
+				RelationAttrKey rkey = new RelationAttrKey(((RelationAttrKey) key).getKey(), expireMs);
 				// Put relation attribute.
 				getRelationAttrsCache().mapPut(rkey, value);
 			} else {
