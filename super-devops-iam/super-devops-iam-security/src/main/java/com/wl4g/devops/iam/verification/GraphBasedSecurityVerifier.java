@@ -61,21 +61,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifier implements InitializingBean {
 
 	/**
-	 * Apply token parameter name.
-	 */
-	final public static String DEFAULT_APPLY_TOKEN = "applyToken";
-
-	/**
-	 * Apply token expireMs.
-	 */
-	final public static long DEFAULT_APPLY_TOKEN_EXPIREMS = 60_000;
-
-	/**
-	 * Apply UUID bit.
-	 */
-	final public static int DEFAULT_APPLY_TOKEN_BIT = 48;
-
-	/**
 	 * Secure asymmetric cryptic service.
 	 */
 	@Autowired
@@ -116,9 +101,10 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		// Gets crypt algorithm(RSA/DSA/ECC..) secretKey.(Used to encrypt
 		// sliding X position)
 		KeyPairSpec keySpec = cryptAdapter.forOperator(kind).borrowKeyPair();
-		String applyToken = "capt" + randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
+		String applyToken = "aytk" + randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
 
 		log.debug("Apply captcha for applyToken: {}, secretKey: {}", applyToken, keySpec);
+		// TODO  每次滑动失败都会新创建一个applyToken,这样失败次数多了会有很多垃圾applyToken存到redis,想办法每次用完清理掉?
 		bind(new RelationAttrKey(applyToken, DEFAULT_APPLY_TOKEN_EXPIREMS), keySpec);
 
 		// Custom processing.
@@ -238,5 +224,20 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 	private IamCache getCache(String suffix) {
 		return cacheManager.getIamCache(suffix);
 	}
+
+	/**
+	 * Apply token parameter name.
+	 */
+	final public static String DEFAULT_APPLY_TOKEN = "applyToken";
+
+	/**
+	 * Apply token expireMs.
+	 */
+	final public static long DEFAULT_APPLY_TOKEN_EXPIREMS = 60_000;
+
+	/**
+	 * Apply UUID bit.
+	 */
+	final public static int DEFAULT_APPLY_TOKEN_BIT = 48;
 
 }

@@ -96,19 +96,28 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * 
 	 * @return
 	 */
+	public int randomBorrowIndex() {
+		return current().nextInt(config.getJigsaw().getPoolImgSize());
+	}
+
+	/**
+	 * Gets random borrow JIGSAW image code.
+	 * 
+	 * @return
+	 */
 	public TailoredImage borrow() {
 		return borrow(-1);
 	}
 
 	/**
-	 * Get random borrow JIGSAW image code.
+	 * Gets random borrow JIGSAW image code.
 	 * 
 	 * @param index
 	 * @return
 	 */
 	public TailoredImage borrow(int index) {
 		if (index < 0 || index >= config.getJigsaw().getPoolImgSize()) {
-			int _index = current().nextInt(config.getJigsaw().getPoolImgSize());
+			int _index = randomBorrowIndex();
 			log.debug("Borrow jigsaw index '{}' of out bound, used random index '{}'", index, _index);
 			index = _index;
 		}

@@ -94,7 +94,15 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	protected Object generateCode() {
-		return jigsawManager.borrow();
+		// To improve performance, only image indexes are saved here
+		return jigsawManager.randomBorrowIndex(); // #MARK1,@see:MARK2
+	}
+
+	@Override
+	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
+		VerifyCodeWrapper wrap = super.getVerifyCode(assertion);
+		wrap.setCode(jigsawManager.borrow(wrap.getCode())); // #MARK2,@see:MARK1
+		return wrap;
 	}
 
 	@Override
@@ -130,7 +138,7 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 		}
 
 		SecureCryptService cryptService = cryptAdapter.forOperator(kind);
-		// Gets applied verifier KeyPairSpec
+		// Gets applied verifier KeyPairSpec. #MARK21
 		KeyPairSpec keyPairSpec = getBindValue(new RelationAttrKey(model.getApplyToken(), cryptService.getKeyPairSpecClass()),
 				true);
 		// Decryption slider block x-position.
