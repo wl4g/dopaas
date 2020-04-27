@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.config;
 
+import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.invokeMethod;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -443,9 +444,9 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		};
 
 		/**
-		 * {@link com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo#fallbackRedirect}
+		 * {@link com.wl4g.devops.iam.common.authc.IamAuthenticationToken.RedirectInfo#useFallbackRedirect}
 		 */
-		private String fallbackRedirect = "fallback";
+		private String useFallbackRedirect = "fallbackRedirect";
 
 		/**
 		 * Name of 'which' parameter of SNS OAuth authentication API
@@ -603,12 +604,12 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			}
 		}
 
-		public String getFallbackRedirect() {
-			return fallbackRedirect;
+		public String getUseFallbackRedirect() {
+			return useFallbackRedirect;
 		}
 
-		public void setFallbackRedirect(String fallbackRedirect) {
-			this.fallbackRedirect = fallbackRedirect;
+		public void setUseFallbackRedirect(String useFallbackRedirect) {
+			this.useFallbackRedirect = useFallbackRedirect;
 		}
 
 		public String getWhich() {
@@ -718,7 +719,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * 
 		 * @see {@link #setCipherParameterHeader(List)}
 		 */
-		final public static String CIPHER_HEADER_PREFIX = "X-Iam-Cipher-";
+		final public static String CIPHER_HEADER_PREFIX = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Cipher-";
 
 		/**
 		 * Enable data encryption request or not.

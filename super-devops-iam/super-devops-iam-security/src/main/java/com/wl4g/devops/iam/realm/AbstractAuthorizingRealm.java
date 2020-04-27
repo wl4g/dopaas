@@ -241,7 +241,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 
 				// Fallback determine redirect to application.
 				RedirectInfo fallbackRedirect = configurer.getFallbackRedirectInfo(tk,
-						new RedirectInfo(config.getSuccessService(), config.getSuccessUri()));
+						new RedirectInfo(config.getSuccessService(), config.getSuccessUri(), true));
 				notNull(fallbackRedirect, "Fallback redirect info cannot be null");
 
 				/**
