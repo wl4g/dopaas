@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.ci.console.args;
 
-import com.wl4g.devops.shell.annotation.ShellOption;
-
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
 
 import java.io.Serializable;
+
+import com.wl4g.devops.components.shell.annotation.ShellOption;
 
 /**
  * @author vjay

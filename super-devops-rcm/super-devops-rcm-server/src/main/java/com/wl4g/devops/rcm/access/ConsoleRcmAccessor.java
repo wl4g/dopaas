@@ -18,10 +18,10 @@ package com.wl4g.devops.rcm.access;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.components.shell.annotation.ShellComponent;
 import com.wl4g.devops.rcm.RcmProvider;
 import com.wl4g.devops.rcm.RiskAnalysisEngine;
 import com.wl4g.devops.rcm.access.model.GenericRcmParameter;
-import com.wl4g.devops.shell.annotation.ShellComponent;
 
 /**
  * Console based RCM accessor
