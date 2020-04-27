@@ -22,6 +22,7 @@ import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
 import com.wl4g.devops.ci.service.PcmService;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Pcm;
+import com.wl4g.devops.common.bean.ci.PipeStepPcm;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.model.SelectionModel;
@@ -121,6 +122,27 @@ public class PcmServcieImpl implements PcmService {
 			return null;
 		}
 		return pcmOperator.forOperator(pcm.getProviderKind()).getIssues(pcm, userId, projectId, search);
+	}
+
+	@Override
+	public List<SelectionModel> getTrackers(Integer pcmId) {
+		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
+		List<SelectionModel> trackers = pcmOperator.forOperator(pcm.getProviderKind()).getTracker(pcm);
+		return trackers;
+	}
+
+	@Override
+	public List<SelectionModel> getPriorities(Integer pcmId) {
+		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
+		List<SelectionModel> priorities = pcmOperator.forOperator(pcm.getProviderKind()).getPriorities(pcm);
+		return priorities;
+	}
+
+	@Override
+	public void createIssues(Integer pcmId,PipeStepPcm pipeStepPcm) {
+		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
+		pcmOperator.forOperator(pcm.getProviderKind()).createIssues(pcm,pipeStepPcm);
+
 	}
 
 	private Pcm getPcmKind(Integer taskId) {

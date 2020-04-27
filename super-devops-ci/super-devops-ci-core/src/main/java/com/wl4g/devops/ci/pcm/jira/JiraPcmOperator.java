@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.pcm.jira;
 
 import com.wl4g.devops.ci.pcm.AbstractPcmOperator;
 import com.wl4g.devops.common.bean.ci.Pcm;
+import com.wl4g.devops.common.bean.ci.PipeStepPcm;
 import com.wl4g.devops.common.web.model.SelectionModel;
 
 import java.util.List;
@@ -46,7 +47,22 @@ public class JiraPcmOperator extends AbstractPcmOperator {
 	}
 
 	@Override
+	public List<SelectionModel> getTracker(Pcm pcm) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<SelectionModel> getPriorities(Pcm pcm) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public List<SelectionModel> getIssues(Pcm pcm, String userId, String projectId, String searchSubject) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void createIssues(Pcm pcm, PipeStepPcm pipeStepPcm) {
 		throw new UnsupportedOperationException();
 	}
 
