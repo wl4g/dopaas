@@ -254,7 +254,7 @@ public class IamSession implements ValidatingSession, Serializable {
 	 * 
 	 * @return relationAttrsCache
 	 */
-	public IamCache getRelationAttrsCache() {
+	public final IamCache getRelationAttrsCache() {
 		notNullOf(relationAttrsCache, "relationAttrsCache");
 		return this.relationAttrsCache;
 	}
@@ -264,7 +264,7 @@ public class IamSession implements ValidatingSession, Serializable {
 	 * 
 	 * @param relationAttrsCache
 	 */
-	public void setRelationAttrsCache(IamCache relationAttrsCache) {
+	public final void setRelationAttrsCache(IamCache relationAttrsCache) {
 		this.relationAttrsCache = relationAttrsCache;
 	}
 
@@ -390,9 +390,8 @@ public class IamSession implements ValidatingSession, Serializable {
 	@JsonIgnore
 	private Map<Object, Object> getAttributesLazy() {
 		Map<Object, Object> attributes = getAttributes();
-		if (attributes == null) {
-			attributes = new HashMap<Object, Object>();
-			setAttributes(attributes);
+		if (isNull(attributes)) {
+			setAttributes((attributes = new HashMap<>()));
 		}
 		return attributes;
 	}
@@ -409,7 +408,7 @@ public class IamSession implements ValidatingSession, Serializable {
 
 	@JsonIgnore
 	@Override
-	public Object getAttribute(Object key) {
+	public final Object getAttribute(Object key) {
 		if (isRelationAttrKey(key)) {
 			return getRelationAttrsCache().getMapField((RelationAttrKey) key);
 		}
@@ -418,14 +417,14 @@ public class IamSession implements ValidatingSession, Serializable {
 
 	@JsonIgnore
 	@Override
-	public void setAttribute(Object key, Object value) {
+	public final void setAttribute(Object key, Object value) {
 		if (isNull(value)) {
 			removeAttribute(key);
 		} else {
 			if (isRelationAttrKey(key)) {
 				long expireMs = getSessionRemainingTime(this);
 				RelationAttrKey rkey = new RelationAttrKey(((RelationAttrKey) key).getKey(), expireMs);
-				// Put relation attribute.
+				// Puts relation attribute.
 				getRelationAttrsCache().mapPut(rkey, value);
 			} else {
 				getAttributesLazy().put(key, value);
@@ -435,14 +434,14 @@ public class IamSession implements ValidatingSession, Serializable {
 
 	@JsonIgnore
 	@Override
-	public Object removeAttribute(Object key) {
-		Map<Object, Object> attributes = getAttributes();
-		if (isNull(attributes)) {
-			return null;
+	public final Object removeAttribute(Object key) {
+		if (isRelationAttrKey(key)) {
+			// Removing relation attribute.
+			return getRelationAttrsCache().mapRemove(valueOf(key));
 		} else {
-			if (isRelationAttrKey(key)) {
-				// Removing relation attribute.
-				return getRelationAttrsCache().mapRemove(valueOf(key));
+			Map<Object, Object> attributes = getAttributes();
+			if (isNull(attributes)) {
+				return null;
 			} else {
 				return attributes.remove(key);
 			}
@@ -721,7 +720,7 @@ public class IamSession implements ValidatingSession, Serializable {
 			super(key, valueClass);
 		}
 
-		RelationAttrKey(Serializable key, long expireMs) {
+		public RelationAttrKey(Serializable key, long expireMs) {
 			super(key, expireMs);
 		}
 

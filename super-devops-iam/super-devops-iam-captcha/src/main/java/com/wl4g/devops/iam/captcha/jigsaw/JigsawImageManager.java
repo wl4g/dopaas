@@ -37,7 +37,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_VERIFY_JIGSAW_IMG;
-import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
 import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.state;
@@ -215,9 +214,10 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 */
 	private void doPutImage(TailoredImage code, int index) {
 		// Compression primary block image.
-		byte[] data = serialize(code/* .compress() */);
+		// byte[] compressData = code.compress();
+
 		// Storage to cache.
-		imgCache.mapPut(new CacheKey(toBytes(valueOf(index)), config.getJigsaw().getPoolImgExpireSec()), data);
+		imgCache.mapPut(new CacheKey(toBytes(valueOf(index)), config.getJigsaw().getPoolImgExpireSec()), code);
 		log.debug("Puts jigsaw image, index {}, jigsawImage(x:{}, y:{})", index, code.getX(), code.getY());
 	}
 
