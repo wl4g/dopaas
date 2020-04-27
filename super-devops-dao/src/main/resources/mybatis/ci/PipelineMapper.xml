@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.devops.dao.ci.PipelineDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Pipeline">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="pipe_name" jdbcType="VARCHAR" property="pipeName" />
+    <result column="cluster_id" jdbcType="INTEGER" property="clusterId" />
+    <result column="provider_kind" jdbcType="VARCHAR" property="providerKind" />
+    <result column="environment" jdbcType="VARCHAR" property="environment" />
+    <result column="parent_app_home" jdbcType="VARCHAR" property="parentAppHome" />
+    <result column="assets_dir" jdbcType="VARCHAR" property="assetsDir" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, pipe_name, cluster_id, provider_kind, environment, parent_app_home, assets_dir, 
+    remark, create_date, create_by, update_date, update_by, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ci_pipeline
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ci_pipeline
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Pipeline">
+    insert into ci_pipeline (id, pipe_name, cluster_id, 
+      provider_kind, environment, parent_app_home, 
+      assets_dir, remark, create_date, 
+      create_by, update_date, update_by, 
+      del_flag)
+    values (#{id,jdbcType=INTEGER}, #{pipeName,jdbcType=VARCHAR}, #{clusterId,jdbcType=INTEGER}, 
+      #{providerKind,jdbcType=VARCHAR}, #{environment,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR}, 
+      #{assetsDir,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.Pipeline">
+    insert into ci_pipeline
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="pipeName != null">
+        pipe_name,
+      </if>
+      <if test="clusterId != null">
+        cluster_id,
+      </if>
+      <if test="providerKind != null">
+        provider_kind,
+      </if>
+      <if test="environment != null">
+        environment,
+      </if>
+      <if test="parentAppHome != null">
+        parent_app_home,
+      </if>
+      <if test="assetsDir != null">
+        assets_dir,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="delFlag != null">
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="pipeName != null">
+        #{pipeName,jdbcType=VARCHAR},
+      </if>
+      <if test="clusterId != null">
+        #{clusterId,jdbcType=INTEGER},
+      </if>
+      <if test="providerKind != null">
+        #{providerKind,jdbcType=VARCHAR},
+      </if>
+      <if test="environment != null">
+        #{environment,jdbcType=VARCHAR},
+      </if>
+      <if test="parentAppHome != null">
+        #{parentAppHome,jdbcType=VARCHAR},
+      </if>
+      <if test="assetsDir != null">
+        #{assetsDir,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null">
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.Pipeline">
+    update ci_pipeline
+    <set>
+      <if test="pipeName != null">
+        pipe_name = #{pipeName,jdbcType=VARCHAR},
+      </if>
+      <if test="clusterId != null">
+        cluster_id = #{clusterId,jdbcType=INTEGER},
+      </if>
+      <if test="providerKind != null">
+        provider_kind = #{providerKind,jdbcType=VARCHAR},
+      </if>
+      <if test="environment != null">
+        environment = #{environment,jdbcType=VARCHAR},
+      </if>
+      <if test="parentAppHome != null">
+        parent_app_home = #{parentAppHome,jdbcType=VARCHAR},
+      </if>
+      <if test="assetsDir != null">
+        assets_dir = #{assetsDir,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null">
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Pipeline">
+    update ci_pipeline
+    set pipe_name = #{pipeName,jdbcType=VARCHAR},
+      cluster_id = #{clusterId,jdbcType=INTEGER},
+      provider_kind = #{providerKind,jdbcType=VARCHAR},
+      environment = #{environment,jdbcType=VARCHAR},
+      parent_app_home = #{parentAppHome,jdbcType=VARCHAR},
+      assets_dir = #{assetsDir,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
