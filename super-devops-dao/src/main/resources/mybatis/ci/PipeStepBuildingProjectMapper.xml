@@ -22,6 +22,12 @@
     delete from ci_pipe_step_building_project
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
+  <delete id="deleteByBuildingId" parameterType="java.lang.Integer">
+    delete from ci_pipe_step_building_project
+    where building_id = #{buildingId,jdbcType=INTEGER}
+  </delete>
+
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuildingProject">
     insert into ci_pipe_step_building_project (id, building_id, project_id, 
       build_command, ref, enable
@@ -30,6 +36,18 @@
       #{buildCommand,jdbcType=VARCHAR}, #{ref,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}
       )
   </insert>
+
+  <insert id="insertBatch" parameterType="java.util.Map">
+    insert into ci_pipe_step_building_project (id, building_id, project_id,
+    build_command, ref, enable
+    )
+    VALUES
+    <foreach collection="pipeStepBuildingProject" item="pipeStepBuildingProjects" separator=",">
+      (#{pipeStepBuildingProject.id,jdbcType=INTEGER}, #{pipeStepBuildingProject.buildingId,jdbcType=INTEGER}, #{pipeStepBuildingProject.projectId,jdbcType=INTEGER},
+       #{pipeStepBuildingProject.buildCommand,jdbcType=VARCHAR},#{pipeStepBuildingProject.ref,jdbcType=VARCHAR}, #{pipeStepBuildingProject.enable,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuildingProject">
     insert into ci_pipe_step_building_project
     <trim prefix="(" suffix=")" suffixOverrides=",">

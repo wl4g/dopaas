@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
-import com.wl4g.devops.ci.pipeline.DockerNativePipelineProvider;
+import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 

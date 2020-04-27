@@ -1,4 +1,4 @@
-package com.wl4g.devops.ci.pipeline;
+package com.wl4g.devops.ci.pipeline.pcm;
 
 import com.wl4g.devops.ci.service.PcmService;
 import com.wl4g.devops.common.bean.ci.PipeStepPcm;

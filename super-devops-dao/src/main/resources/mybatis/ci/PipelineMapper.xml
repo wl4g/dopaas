@@ -15,11 +15,34 @@
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+
+    <!-- other -->
+    <result column="cluster_name" property="clusterName" jdbcType="VARCHAR" />
+
+    <collection property="instances" javaType="list" ofType="com.wl4g.devops.common.bean.erm.AppInstance">
+      <result column="i.id" property="id" jdbcType="INTEGER" />
+      <result column="i.hostname" property="hostname" jdbcType="VARCHAR" />
+      <result column="i.endpoint" property="endpoint" jdbcType="INTEGER" />
+      <result column="i.remark" property="remark" jdbcType="VARCHAR" />
+    </collection>
+
   </resultMap>
   <sql id="Base_Column_List">
     id, pipe_name, cluster_id, provider_kind, environment, parent_app_home, assets_dir, 
     remark, create_date, create_by, update_date, update_by, del_flag
   </sql>
+
+  <sql id="Base_Column_List_p">
+    p.id, p.pipe_name, p.cluster_id, p.provider_kind, p.environment, p.parent_app_home, p.assets_dir,
+    p.remark, p.create_date, p.create_by, p.update_date, p.update_by, p.del_flag
+  </sql>
+
+  <sql id="InstanceColumn">
+		,i.id as "i.id",
+		h.`hostname` as "i.hostname",
+		i.remark as "i.remark"
+	</sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -185,4 +208,31 @@
       del_flag = #{delFlag,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List_p" />
+    <include refid="InstanceColumn" />
+    ,c.name cluster_name
+    from ci_pipeline p
+    left join app_cluster c on p.cluster_id=c.id
+    left join ci_pipeline_instance pi on pi.pipe_id=p.id
+    left join app_instance i on i.id=pi.instance_id
+    left join app_host h on h.id=i.host_id
+    where p.del_flag!=1
+    <if test="id != null and id != ''" >
+      AND p.id = #{id,jdbcType=INTEGER}
+    </if>
+    <if test="envType != null and envType != ''" >
+      AND p.env_type = #{envType,jdbcType=INTEGER}
+    </if>
+    <if test="taskName != null and taskName != ''" >
+      AND p.task_name LIKE CONCAT('%','${taskName}','%')
+    </if>
+    <if test="providerKind != null and providerKind != ''" >
+      AND p.provider_kind = #{providerKind,jdbcType=VARCHAR}
+    </if>
+    order by p.create_date desc
+  </select>
+
 </mapper>
