@@ -22,6 +22,7 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.NameableFilter;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
+import static com.wl4g.devops.iam.common.config.XsrfProperties.*;
 import static com.wl4g.devops.iam.common.config.XssProperties.*;
 import static com.wl4g.devops.iam.common.config.CorsProperties.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
@@ -75,6 +76,7 @@ import com.wl4g.devops.iam.common.security.cipher.CipherRequestWrapper;
 import com.wl4g.devops.iam.common.security.cipher.CipherRequestWrapperFactory;
 import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter;
 import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter.AdvancedCorsProcessor;
+import com.wl4g.devops.iam.common.security.xsrf.XsrfProtectionSecurityFilter;
 import com.wl4g.devops.iam.common.security.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
@@ -385,6 +387,35 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	//
+	// X S R F _ F I L T E R _ C O N F I G's.
+	//
+
+	@Bean
+	@ConditionalOnProperty(name = KEY_XSRF_PREFIX + ".enabled", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_XSRF_PREFIX)
+	public XsrfProperties xsrfProperties() {
+		return new XsrfProperties();
+	}
+
+	@Bean
+	@ConditionalOnBean(XsrfProperties.class)
+	public XsrfProtectionSecurityFilter xsrfProtectionSecurityFilter(AdvancedCorsProcessor corsProcessor) {
+		return new XsrfProtectionSecurityFilter();
+	}
+
+	@Bean
+	@ConditionalOnBean(XsrfProperties.class)
+	public FilterRegistrationBean xsrfProtectionSecurityFilterBean(XsrfProtectionSecurityFilter filter) {
+		// Register XSRF filter
+		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		filterBean.setOrder(ORDER_XSRF_PRECEDENCE);
+		// Cannot use '/*' or it will not be added to the container chain (only
+		// '/**')
+		filterBean.addUrlPatterns("/*"); // TODO config??
+		return filterBean;
+	}
+
+	//
 	// C I P H E R _ A N D _ F I L T E R _ C O N F I G's.
 	//
 
@@ -449,6 +480,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 		return new IamErrorConfiguring();
 	}
 
+	final public static int ORDER_XSRF_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 9;
 	final public static int ORDER_CORS_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 10;
 	final public static int ORDER_CIPHER_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 11;
 

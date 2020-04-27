@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.exception.iam;
 
-public class AccessRejectedException extends IamException {
+public class AccessRejectedException extends UnauthorizedException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
