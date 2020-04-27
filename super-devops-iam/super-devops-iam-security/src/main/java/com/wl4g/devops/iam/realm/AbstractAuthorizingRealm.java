@@ -48,6 +48,7 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
+import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
@@ -170,7 +171,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 			 */
 			IamPrincipalInfo principal = info.getAccountInfo();
 			principal.validate();
-			bind(KEY_AUTHC_ACCOUNT_INFO, principal);
+			getSession().setAttribute(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), principal);
 
 			return info;
 		} catch (Throwable e) {

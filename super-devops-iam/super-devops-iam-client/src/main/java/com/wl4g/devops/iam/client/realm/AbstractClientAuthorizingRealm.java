@@ -28,7 +28,8 @@ import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSession;
+import static com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 
 /**
  * Abstract authorizing realm.
@@ -61,7 +62,7 @@ public abstract class AbstractClientAuthorizingRealm extends AbstractPermittingA
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		IamAuthenticationInfo info = doAuthenticationInfo(token);
-		bind(KEY_AUTHC_ACCOUNT_INFO, info.getAccountInfo());
+		getSession().setAttribute(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), info.getAccountInfo());
 		return info;
 	}
 
