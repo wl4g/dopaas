@@ -45,6 +45,12 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 public class ClientRemoteAutoConfiguration {
 
 	@Bean
+	@ConfigurationProperties(prefix = "spring.web.remote")
+	public RemoteProperties remoteProperties() {
+		return new RemoteProperties();
+	}
+
+	@Bean
 	@ConditionalOnMissingBean
 	public RestTemplate restTemplate(ClientHttpRequestFactory factory) {
 		return new RestTemplate(factory);
@@ -53,11 +59,11 @@ public class ClientRemoteAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public ClientHttpRequestFactory netty4ClientHttpRequestFactory(
-			RemoteProperties props/* , SslContext sslContext */) {
+			RemoteProperties config/* , SslContext sslContext */) {
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-		factory.setReadTimeout(props.getReadTimeout());
-		factory.setConnectTimeout(props.getConnectTimeout());
-		factory.setMaxResponseSize(props.getMaxResponseSize());
+		factory.setReadTimeout(config.getReadTimeout());
+		factory.setConnectTimeout(config.getConnectTimeout());
+		factory.setMaxResponseSize(config.getMaxResponseSize());
 		// factory.setSslContext(sslContext);
 		return factory;
 	}
@@ -79,11 +85,6 @@ public class ClientRemoteAutoConfiguration {
 		return SslContextBuilder.forServer(new File(ssl.getKeyCertChainFile()), new File(ssl.getKeyFile()))
 				.sslProvider(SslProvider.OPENSSL).ciphers(ciphers).clientAuth(ClientAuth.REQUIRE)
 				.trustManager(InsecureTrustManagerFactory.INSTANCE).build();
-	}
-
-	@Bean
-	public RemoteProperties remoteProperties() {
-		return new RemoteProperties();
 	}
 
 	/**
@@ -189,7 +190,6 @@ public class ClientRemoteAutoConfiguration {
 	 * @date 2018年11月20日
 	 * @since
 	 */
-	@ConfigurationProperties(prefix = "spring.web.remote")
 	public static class RemoteProperties {
 
 		private Integer readTimeout = 60_000;

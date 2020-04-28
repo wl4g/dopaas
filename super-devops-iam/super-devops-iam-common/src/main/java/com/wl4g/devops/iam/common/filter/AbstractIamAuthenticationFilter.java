@@ -95,4 +95,9 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	 */
 	public abstract String getName();
 
+	/**
+	 * Root filter.
+	 */
+	final public static String NAME_ROOT_FILTER = "rootFilter";
+
 }

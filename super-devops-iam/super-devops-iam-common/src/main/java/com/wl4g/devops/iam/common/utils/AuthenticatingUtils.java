@@ -35,7 +35,6 @@ import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.valueOf;
-import static java.lang.System.currentTimeMillis;
 
 /**
  * IAM authenticating security tools.
@@ -153,7 +152,7 @@ public abstract class AuthenticatingUtils extends IamSecurityHolder {
 	final public static String generateAccessToken(@NotBlank final Session session, @NotBlank final String accessTokenSignKey) {
 		notNullOf(session, "session");
 		hasTextOf(accessTokenSignKey, "accessTokenSignKey");
-		final String accessTokenPlain = valueOf(session.getId() + "@" + currentTimeMillis());
+		final String accessTokenPlain = valueOf(session.getId());
 		return encode(hmacSha256Hex(toBytes(accessTokenSignKey), toBytes(accessTokenPlain)).getBytes(UTF_8));
 	}
 

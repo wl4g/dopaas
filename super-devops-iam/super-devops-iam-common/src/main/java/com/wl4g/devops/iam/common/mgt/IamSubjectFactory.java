@@ -49,6 +49,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter.*;
 import static com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager.*;
 import static com.wl4g.devops.tool.common.web.CookieUtils.getCookie;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
@@ -199,20 +200,14 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	 */
 	private final boolean isInternalProtocolNonAccessTokenRequest(ServletRequest request) {
 		String requestPath = getPathWithinApplication(toHttp(request));
-		/**
-		 * Check is internal protocol default filter chain mappings?
-		 */
-		for (Entry<String, String> ent : config.getFilterChain().entrySet()) {
-			if (defaultAntMatcher.matchStart(ent.getKey(), requestPath)) {
-				return true;
-			}
-		}
 
 		/**
 		 * Check is internal protocol {@link IamFilter} chain mappings?
 		 */
 		for (Entry<String, String> ent : iamFilterFactory.getFilterChainDefinitionMap().entrySet()) {
-			if (defaultAntMatcher.matchStart(ent.getKey(), requestPath)) {
+			String pattern = ent.getKey();
+			String filterName = ent.getValue();
+			if (!NAME_ROOT_FILTER.equals(filterName) && defaultAntMatcher.matchStart(pattern, requestPath)) {
 				return true;
 			}
 		}
@@ -220,7 +215,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		/**
 		 * Check is internal protocol ticket authenticating request?
 		 */
-		return !isInternalTicketRequest(request);
+		return isInternalTicketRequest(request);
 	}
 
 	final private static AntPathMatcher defaultAntMatcher = new AntPathMatcher();
