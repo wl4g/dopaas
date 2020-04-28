@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.iam.common.core;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.state;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,11 +29,10 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.shiro.util.Assert;
 import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * IAM request matching filter chain URI pattern resolver
@@ -42,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class IamPathMatchingFilterChainResolver extends PathMatchingFilterChainResolver {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	public IamPathMatchingFilterChainResolver() {
 		super();
@@ -58,14 +60,14 @@ public class IamPathMatchingFilterChainResolver extends PathMatchingFilterChainR
 	 */
 	@Override
 	public FilterChain getChain(ServletRequest request, ServletResponse response, FilterChain originalChain) {
-		FilterChainManager chainManager = this.getFilterChainManager();
-		Assert.state(chainManager.hasChains(), "Shiro filter chain must be implemented");
+		FilterChainManager chainManager = getFilterChainManager();
+		state(chainManager.hasChains(), "Shiro filter chain must be implemented");
 
 		// Current request URI
 		String requestURI = getPathWithinApplication(request);
 
 		// Candidate matching pattern list.
-		List<String> candidateMatchingPatterns = new ArrayList<String>();
+		List<String> candidateMatchingPatterns = new ArrayList<>(4);
 
 		/*
 		 * the 'chain names' in this implementation are actually path patterns
@@ -74,11 +76,8 @@ public class IamPathMatchingFilterChainResolver extends PathMatchingFilterChainR
 		 */
 		for (String registeredPattern : chainManager.getChainNames()) {
 			if (pathMatches(registeredPattern, requestURI)) {
-				if (log.isTraceEnabled()) {
-					log.trace(String.format(
-							"Matched path pattern:[%s] for requestURI:[%s]. Utilizing corresponding filter chain...",
-							registeredPattern, requestURI));
-				}
+				log.trace("Matched path pattern:[{}] for requestURI:[{}]. Utilizing corresponding filter chain...",
+						registeredPattern, requestURI);
 				candidateMatchingPatterns.add(registeredPattern);
 			}
 		}
