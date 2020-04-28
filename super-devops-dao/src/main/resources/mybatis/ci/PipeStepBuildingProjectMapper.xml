@@ -12,12 +12,30 @@
   <sql id="Base_Column_List">
     id, building_id, project_id, build_command, ref, enable
   </sql>
+  <sql id="Base_Column_List_bp">
+    bp.id, bp.building_id, bp.project_id, bp.build_command, bp.ref, bp.enable
+  </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from ci_pipe_step_building_project
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectByBuildingId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ci_pipe_step_building_project
+    where building_id = #{buildingId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByPipeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List_bp" />
+    from ci_pipe_step_building_project bp inner join ci_pipe_step_building b on b.id=bp.building_id
+    where b.pipe_id = #{pipeId,jdbcType=INTEGER}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from ci_pipe_step_building_project
     where id = #{id,jdbcType=INTEGER}

@@ -2,6 +2,8 @@ package com.wl4g.devops.common.bean.ci;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
+import java.util.List;
+
 public class PipeStepBuildingProject extends BaseBean {
     private static final long serialVersionUID = 6815608076300843748L;
 
@@ -14,6 +16,11 @@ public class PipeStepBuildingProject extends BaseBean {
     private String ref;
 
     private Integer enable;
+
+    // ext
+    private String projectName;
+
+    List<String> branchs;
 
     public Integer getBuildingId() {
         return buildingId;
@@ -53,5 +60,21 @@ public class PipeStepBuildingProject extends BaseBean {
 
     public void setEnable(Integer enable) {
         this.enable = enable;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public List<String> getBranchs() {
+        return branchs;
+    }
+
+    public void setBranchs(List<String> branchs) {
+        this.branchs = branchs;
     }
 }

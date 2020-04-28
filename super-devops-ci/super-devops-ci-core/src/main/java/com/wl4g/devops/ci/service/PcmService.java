@@ -44,6 +44,8 @@ public interface PcmService {
 
 	List<SelectionModel> getIssues(Integer taskId, String userId, String projectId, String search);
 
+	List<SelectionModel> getProjectsByPcmId(Integer pcmId);
+
 	List<SelectionModel> getTrackers(Integer pcmId);
 
 	List<SelectionModel> getPriorities(Integer pcmId);

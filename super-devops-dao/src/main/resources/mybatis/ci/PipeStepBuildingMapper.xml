@@ -30,9 +30,9 @@
   <sql id="PipeStepBuildingProjectsColumn">
 		p.id as "p.id",
 		p.building_id as "p.building_id",
-		p.project_id as "p.project_id"
-		p.build_command as "p.build_command"
-		p.ref as "p.ref"
+		p.project_id as "p.project_id",
+		p.build_command as "p.build_command",
+		p.ref as "p.ref",
 		p.enable as "p.enable"
 	</sql>
 

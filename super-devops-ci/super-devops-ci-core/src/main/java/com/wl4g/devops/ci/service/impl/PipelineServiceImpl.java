@@ -1,23 +1,33 @@
 package com.wl4g.devops.ci.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.PipelineService;
+import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.dao.ci.*;
+import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * @author vjay
  * @date 2020-04-27 15:08:00
  */
+@Service
 public class PipelineServiceImpl implements PipelineService {
 
     @Autowired
@@ -36,11 +46,22 @@ public class PipelineServiceImpl implements PipelineService {
     private PipeStepPcmDao pipeStepPcmDao;
 
     @Autowired
-    PipeStepNotificationDao pipeStepNotificationDao;
+    private PipeStepNotificationDao pipeStepNotificationDao;
+
+    @Autowired
+    private ProjectDao projectDao;
+
+    @Autowired
+    private DependencyService dependencyService;
+
+    @Autowired
+    private ProjectService projectService;
 
     @Override
-    public List<Pipeline> list(String pipeName, String providerKind, String environment) {
-        return pipelineDao.list(null, pipeName, providerKind, environment);
+    public PageModel list(PageModel pm, String pipeName, String providerKind, String environment) {
+        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+        pm.setRecords(pipelineDao.list(null, pipeName, providerKind, environment));
+        return pm;
     }
 
     @Override
@@ -88,6 +109,11 @@ public class PipelineServiceImpl implements PipelineService {
         pipeline.setId(id);
         pipeline.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         pipelineDao.updateByPrimaryKeySelective(pipeline);
+    }
+
+    @Override
+    public Pipeline getByClusterId(Integer clusterId) {
+        return pipelineDao.selectByClusterId(clusterId);
     }
 
     @Transactional
@@ -202,5 +228,66 @@ public class PipelineServiceImpl implements PipelineService {
             pipeStepNotification.setPipeId(pipeline.getId());
             pipeStepNotificationDao.insertSelective(pipeStepNotification);
         }
+    }
+
+
+    @Override
+    public PipeStepBuilding getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer tagOrBranch) {
+        Project project = projectDao.getByAppClusterId(clusterId);
+        Assert2.notNullOf(project,"project");
+        PipeStepBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeId);
+        if(Objects.isNull(pipeStepBuilding)){
+            pipeStepBuilding = new PipeStepBuilding();
+            pipeStepBuilding.setPipeId(pipeId);
+        }
+        List<PipeStepBuildingProject> pipeStepBuildingProjectsFromdb = pipeStepBuildingProjectDao.selectByPipeId(pipeId);
+        LinkedHashSet<Dependency> dependencys = dependencyService.getHierarchyDependencys(project.getId(), null);
+        List<PipeStepBuildingProject> pipeStepBuildingProjects = new ArrayList<>();
+        for (Dependency dependency : dependencys) {
+            PipeStepBuildingProject pipeStepBuildingProject = getPipeStepBuildingProject(pipeStepBuildingProjectsFromdb, dependency.getDependentId());
+            if(isNull(pipeStepBuildingProject)){
+                pipeStepBuildingProject = new PipeStepBuildingProject();
+            }
+            Project project1 = projectDao.selectByPrimaryKey(dependency.getDependentId());
+            if (project1 == null) {
+                continue;
+            }
+            pipeStepBuildingProject.setProjectId(dependency.getDependentId());
+            pipeStepBuildingProject.setProjectName(project1.getProjectName());
+            List<String> branchs = projectService.getBranchsByProjectId(pipeStepBuildingProject.getProjectId(), tagOrBranch);
+            pipeStepBuildingProject.setBranchs(branchs);
+            pipeStepBuildingProjects.add(pipeStepBuildingProject);
+        }
+
+        //self
+        PipeStepBuildingProject pipeStepBuildingProject = getPipeStepBuildingProject(pipeStepBuildingProjectsFromdb, project.getId());
+        if(isNull(pipeStepBuildingProject)){
+            pipeStepBuildingProject = new PipeStepBuildingProject();
+        }
+        pipeStepBuildingProject.setProjectId(project.getId());
+        pipeStepBuildingProject.setProjectName(project.getProjectName());
+        List<String> branchs = projectService.getBranchsByProjectId(pipeStepBuildingProject.getProjectId(), tagOrBranch);
+        pipeStepBuildingProject.setBranchs(branchs);
+        pipeStepBuildingProjects.add(pipeStepBuildingProject);
+
+        pipeStepBuilding.setPipeStepBuildingProjects(pipeStepBuildingProjects);
+        return pipeStepBuilding;
+    }
+
+    @Override
+    public List<Pipeline> getForSelect() {
+        return pipelineDao.list(null,null,null,null);
+    }
+
+    private PipeStepBuildingProject getPipeStepBuildingProject(List<PipeStepBuildingProject> pipeStepBuildingProjects,Integer projectId){
+        if(isEmpty(pipeStepBuildingProjects) || isNull(projectId)){
+            return null;
+        }
+        for(PipeStepBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects){
+            if(pipeStepBuildingProject.getProjectId().equals(projectId)){
+                return pipeStepBuildingProject;
+            }
+        }
+        return null;
     }
 }

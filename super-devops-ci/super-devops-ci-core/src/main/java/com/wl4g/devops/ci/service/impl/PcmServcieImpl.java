@@ -125,6 +125,12 @@ public class PcmServcieImpl implements PcmService {
 	}
 
 	@Override
+	public List<SelectionModel> getProjectsByPcmId(Integer pcmId) {
+		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
+		return pcmOperator.forOperator(pcm.getProviderKind()).getProjects(pcm);
+	}
+
+	@Override
 	public List<SelectionModel> getTrackers(Integer pcmId) {
 		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
 		List<SelectionModel> trackers = pcmOperator.forOperator(pcm.getProviderKind()).getTracker(pcm);
