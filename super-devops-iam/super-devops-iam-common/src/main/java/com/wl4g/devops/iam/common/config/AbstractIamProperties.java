@@ -268,7 +268,13 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @since
 	 */
 	public class CookieProperties extends SimpleCookie implements Serializable {
+
 		private static final long serialVersionUID = 918554077474485700L;
+
+		/**
+		 * Authorization info cookie max-age(sec)
+		 */
+		private int authorizationInfoMaxAge = 60;
 
 		@Override
 		public String getName() {
@@ -284,6 +290,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 */
 		public void setName(String name) {
 			super.setName(name.toUpperCase(Locale.US));
+		}
+
+		public int getAuthorizationInfoMaxAge() {
+			return authorizationInfoMaxAge;
+		}
+
+		public void setAuthorizationInfoMaxAge(int authorizationInfoMaxAge) {
+			this.authorizationInfoMaxAge = authorizationInfoMaxAge;
 		}
 
 	}
@@ -530,6 +544,20 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		// --- Client's secret & signature.] ---
 
+		// --- [Authentication info. ---
+
+		/**
+		 * Authentication roles attribute name.
+		 */
+		private String roleAttrName = "roles";
+
+		/**
+		 * Authentication permissions attribute name.
+		 */
+		private String permissionAttrName = "permissions";
+
+		// --- Authentication info.] ---
+
 		public String getVersion() {
 			return version;
 		}
@@ -698,6 +726,22 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public void setDataCipherKeyName(String dataCipherKeyName) {
 			this.dataCipherKeyName = dataCipherKeyName;
+		}
+
+		public String getRoleAttrName() {
+			return roleAttrName;
+		}
+
+		public void setRoleAttrName(String roleAttrName) {
+			this.roleAttrName = roleAttrName;
+		}
+
+		public String getPermissionAttrName() {
+			return permissionAttrName;
+		}
+
+		public void setPermissionAttrName(String permissionAttrName) {
+			this.permissionAttrName = permissionAttrName;
 		}
 
 	}

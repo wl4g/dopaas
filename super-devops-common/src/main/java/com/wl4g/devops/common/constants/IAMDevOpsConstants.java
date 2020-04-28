@@ -55,6 +55,12 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
 	 */
 	final public static String KEY_ACCESSTOKEN_SIGN = "accessTokenSignKey";
+
+	/**
+	 * Iam-server/Iam-client parent sessionId.
+	 */
+	final public static String KEY_PARENT_SESSIONID = "parentSessionIdAttrName";
+
 	/**
 	 * iamServer/iamClient the JSON node key that response the session
 	 * information.

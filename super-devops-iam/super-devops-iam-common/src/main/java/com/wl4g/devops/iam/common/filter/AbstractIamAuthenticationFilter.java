@@ -15,25 +15,33 @@
  */
 package com.wl4g.devops.iam.common.filter;
 
+import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
+import org.apache.shiro.web.servlet.Cookie;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
@@ -88,6 +96,40 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 			}
 		}
 		return customParams;
+	}
+
+	/**
+	 * Puts principal authorization(roles/permissions) to cookies.
+	 * 
+	 * @param token
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	protected Map<String, Object> putAuthorizationInfoToCookie(AuthenticationToken token, ServletRequest request,
+			ServletResponse response) {
+		Map<String, Object> authzInfo = new HashMap<>();
+
+		// Gets current authentication principal info.
+		IamPrincipalInfo principalInfo = getPrincipalInfo();
+
+		// Sets roles.
+		Cookie rck = new SimpleCookie(config.getCookie());
+		rck.setName(config.getParam().getRoleAttrName());
+		rck.setValue(toJSONString(principalInfo.getRoles()));
+		rck.setMaxAge(config.getCookie().getAuthorizationInfoMaxAge());
+		rck.saveTo(toHttp(request), toHttp(response));
+		authzInfo.put(config.getParam().getRoleAttrName(), principalInfo.getRoles());
+
+		// Sets permissions.
+		Cookie pck = new SimpleCookie(config.getCookie());
+		pck.setName(config.getParam().getPermissionAttrName());
+		pck.setValue(toJSONString(principalInfo.getPermissions()));
+		pck.setMaxAge(config.getCookie().getAuthorizationInfoMaxAge());
+		pck.saveTo(toHttp(request), toHttp(response));
+		authzInfo.put(config.getParam().getPermissionAttrName(), principalInfo.getPermissions());
+
+		return authzInfo;
 	}
 
 	/**

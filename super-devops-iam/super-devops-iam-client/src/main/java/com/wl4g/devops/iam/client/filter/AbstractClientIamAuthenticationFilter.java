@@ -200,6 +200,8 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		else {
 			// Sets secret tokens to cookies.
 			putSuccessSecretTokens2Cookie(token, request, response);
+			// Sets authorization info to cookies.
+			putAuthorizationInfoToCookie(token, request, response);
 
 			// Call custom success handle.
 			coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), null);
@@ -365,8 +367,8 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	}
 
 	/**
-	 * Gets the URL from the redirectUrl from the authentication request(flexible
-	 * API).
+	 * Gets the URL from the redirectUrl from the authentication
+	 * request(flexible API).
 	 * 
 	 * @return
 	 */
@@ -426,6 +428,8 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		resp.forMap().put(config.getParam().getDataCipherKeyName(), tokens[0]);
 		// Sets child accessToken. (if necessary)
 		resp.forMap().put(config.getParam().getAccessTokenName(), tokens[1]);
+		// Sets authorization info.
+		resp.forMap().putAll(putAuthorizationInfoToCookie(token, request, response));
 
 		return resp;
 	}
