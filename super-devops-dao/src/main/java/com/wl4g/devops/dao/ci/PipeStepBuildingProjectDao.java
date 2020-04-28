@@ -16,6 +16,10 @@ public interface PipeStepBuildingProjectDao {
 
     PipeStepBuildingProject selectByPrimaryKey(Integer id);
 
+    List<PipeStepBuildingProject> selectByBuildingId(Integer buildingId);
+
+    List<PipeStepBuildingProject> selectByPipeId(Integer pipeId);
+
     int updateByPrimaryKeySelective(PipeStepBuildingProject record);
 
     int updateByPrimaryKey(PipeStepBuildingProject record);

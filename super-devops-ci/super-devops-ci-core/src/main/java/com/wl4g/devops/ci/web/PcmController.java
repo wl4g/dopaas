@@ -58,6 +58,15 @@ public class PcmController {
 		return resp;
 	}
 
+	@RequestMapping(value = "/getProjectsByPcmId")
+	public RespBase<?> getProjectsByPcmId(Integer pcmId) {
+		RespBase<Object> resp = RespBase.create();
+		List<SelectionModel> selectInfos = pcmService.getProjectsByPcmId(pcmId);
+		resp.setData(selectInfos);
+		return resp;
+	}
+
+
 	@RequestMapping(value = "/getIssues")
 	public RespBase<?> getIssues(Integer taskId, String userId, String projectId, String search) {
 		RespBase<Object> resp = RespBase.create();

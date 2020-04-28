@@ -1,6 +1,8 @@
 package com.wl4g.devops.ci.service;
 
+import com.wl4g.devops.common.bean.ci.PipeStepBuilding;
 import com.wl4g.devops.common.bean.ci.Pipeline;
+import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ import java.util.List;
  */
 public interface PipelineService {
 
-    List<Pipeline> list(String pipeName,String providerKind,String environment);
+    PageModel list(PageModel pm, String pipeName, String providerKind, String environment);
 
     void save(Pipeline pipeline);
 
@@ -18,10 +20,11 @@ public interface PipelineService {
 
     void del(Integer id);
 
+    Pipeline getByClusterId(Integer clusterId);
 
+    PipeStepBuilding getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer tagOrBranch);
 
-
-
+    List<Pipeline> getForSelect();
 
 
 }

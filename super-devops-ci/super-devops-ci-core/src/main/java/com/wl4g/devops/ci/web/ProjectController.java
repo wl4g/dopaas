@@ -130,11 +130,11 @@ public class ProjectController extends BaseController {
 
 	@RequestMapping(value = "/getByAppClusterId")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> getByAppClusterId(Integer appClusterId) {
-		log.info("ProjectController.detail prarms::" + "id = {} ", appClusterId);
+	public RespBase<?> getByAppClusterId(Integer clusterId) {
+		log.info("ProjectController.detail prarms::" + "id = {} ", clusterId);
 		RespBase<Object> resp = RespBase.create();
-		Assert.notNull(appClusterId, "appClusterId can not be null");
-		Project project = projectService.getByAppClusterId(appClusterId);
+		Assert.notNull(clusterId, "appClusterId can not be null");
+		Project project = projectService.getByAppClusterId(clusterId);
 		resp.setData(project);
 		return resp;
 	}
@@ -175,9 +175,9 @@ public class ProjectController extends BaseController {
 	 */
 	@RequestMapping(value = "/getBranchs")
 	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> getBranchs(Integer appClusterId, Integer tagOrBranch) {
+	public RespBase<?> getBranchs(Integer clusterId, Integer tagOrBranch) {
 		RespBase<Object> resp = RespBase.create();
-		List<String> branchs = projectService.getBranchs(appClusterId, tagOrBranch);
+		List<String> branchs = projectService.getBranchs(clusterId, tagOrBranch);
 		resp.forMap().put("branchNames", branchs);
 		return resp;
 	}
