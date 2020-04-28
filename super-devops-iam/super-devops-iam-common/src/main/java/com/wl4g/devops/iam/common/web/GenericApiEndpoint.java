@@ -160,9 +160,8 @@ public abstract class GenericApiEndpoint extends BaseController implements Initi
 		if (!isBlank(query.getPrincipal())) {
 			Collection<IamSession> ss = sessionDAO.getAccessSessions(query.getPrincipal());
 			List<IamSessionInfo> sas = ss.stream().map(s -> toIamSessionInfo(s)).collect(toList());
-			resp.setData(new SessionAttributeModel(new CursorIndex(false), sas));
-		} else {
-			// Do scan sessions all.
+			resp.setData(new SessionAttributeModel(new CursorIndex(), sas));
+		} else { // Scan sessions all
 			ScanCursor<IamSession> sc = sessionDAO.getAccessSessions(parse(query.getCursor()), query.getLimit());
 			// Convert to SessionAttribute.
 			List<IamSessionInfo> sas = sc.readValues().stream().map(s -> toIamSessionInfo(s)).collect(toList());

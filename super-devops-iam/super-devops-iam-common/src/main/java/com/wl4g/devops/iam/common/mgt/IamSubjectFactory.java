@@ -111,7 +111,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 				if (log.isDebugEnabled())
 					log.debug("Invalid accesstoken", e);
 				else
-					log.warn("Invalid accesstoken. cause by: {}", e.getMessage());
+					log.warn("Invalid accesstoken. - {}", e.getMessage());
 			}
 		}
 
@@ -185,7 +185,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		// Compare accessToken(signature)
 		if (!accessToken.equals(validAccessToken)) {
 			throw new InvalidAccessTokenAuthenticationException(
-					format("Illegal authentication accessToken: {}, accessTokenSignKey: {}", accessToken, accessTokenSignKey));
+					format("Illegal authentication accessToken: %s, accessTokenSignKey: %s", accessToken, accessTokenSignKey));
 		}
 		// }
 
