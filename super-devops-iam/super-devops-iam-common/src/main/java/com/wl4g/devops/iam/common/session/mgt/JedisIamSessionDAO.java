@@ -70,7 +70,7 @@ public class JedisIamSessionDAO extends RelationAttributesIamSessionDAO {
 	@Override
 	public ScanCursor<IamSession> getAccessSessions(final CursorWrapper cursor, int limit) {
 		isTrue(limit > 0, "accessSessions batchSize must >0");
-		byte[] match = (cacheManager.getIamCache(CACHE_SESSION) + "*").getBytes(UTF_8);
+		byte[] match = (cacheManager.getIamCache(CACHE_SESSION).getCacheName() + "*").getBytes(UTF_8);
 		ScanParams params = new ScanParams().count(limit).match(match);
 		JedisCluster jedisCluster = ((JedisIamCacheManager) cacheManager).getJedisCluster();
 		return new ScanCursor<IamSession>(jedisCluster, cursor, IamSession.class, params) {
