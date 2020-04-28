@@ -1508,6 +1508,35 @@
 		}
 	};
 
+	// Gets default IAM baseUri
+	var getDefaultIamBaseUri = function() {
+		// 获取地址栏默认baseUri
+		var hostname = location.hostname;
+		var pathname = location.pathname;
+		var twoDomain = settings.deploy.defaultTwoDomain;
+		var contextPath = settings.deploy.defaultContextPath;
+		contextPath = contextPath.startsWith("/") ? contextPath : ("/" + contextPath);
+		var port = location.port;
+		var protocol = location.protocol;
+	 	// 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
+	 	// 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:14040/iam-server, 10.0.0.12:14046/ci-server)都部署于同一台机。
+	 	// a，当访问的地址是IP；
+	 	// b，当访问域名的后者是.debug/.local/.dev等。
+        if (hostname == 'localhost' || hostname == '127.0.0.1'
+        	|| Common.Util.isIp(hostname) || hostname.endsWith('.debug')
+        	|| hostname.endsWith('.local') || hostname.endsWith('.dev')) {
+        	return protocol + "//" + hostname + ":14040" + contextPath;
+        }
+        // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，(接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
+        else {
+        	var topDomainName = hostname.split('.').slice(-2).join('.');
+        	if(hostname.indexOf("com.cn") > 0) {
+        		topDomainName = hostname.split('.').slice(-3).join('.');
+        	}
+        	return protocol + "//" + twoDomain + "." + topDomainName + contextPath;
+        }
+	};
+
 	// Configure settings
 	var _initConfigure = function(obj) {
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
@@ -1515,34 +1544,9 @@
 		console.debug("After merge settings: "+ JSON.stringify(settings));
 
 		if (Common.Util.isEmpty(settings.deploy.baseUri)) {
-			// 获取地址栏默认baseUri
-			var hostname = location.hostname;
-			var pathname = location.pathname;
-			var twoDomain = settings.deploy.defaultTwoDomain;
-			var contextPath = settings.deploy.defaultContextPath;
-			contextPath = contextPath.startsWith("/") ? contextPath : ("/" + contextPath);
-			var port = location.port;
-			var protocol = location.protocol;
-		 	// 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
-		 	// 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:14040/iam-server, 10.0.0.12:14046/ci-server)都部署于同一台机。
-		 	// a，当访问的地址是IP；
-		 	// b，当访问域名的后者是.debug/.local/.dev等。
-	        if (hostname == 'localhost' || hostname == '127.0.0.1'
-	        	|| Common.Util.isIp(hostname) || hostname.endsWith('.debug')
-	        	|| hostname.endsWith('.local') || hostname.endsWith('.dev')) {
-	        	settings.deploy.baseUri = protocol + "//" + hostname + ":14040" + contextPath;
-	        }
-	        // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，(接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
-	        else {
-	        	var topDomainName = hostname.split('.').slice(-2).join('.');
-	        	if(hostname.indexOf("com.cn") > 0) {
-	        		topDomainName = hostname.split('.').slice(-3).join('.');
-	        	}
-	            settings.deploy.baseUri = protocol + "//" + twoDomain + "." + topDomainName + contextPath;
-	        }
+	        settings.deploy.baseUri = getDefaultIamBaseUri();
 	        console.debug("Using overlay iamBaseURI: "+ settings.deploy.baseUri);
 	    }
-
 		// Storage iamBaseUri
         window.sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
 	};
@@ -2046,7 +2050,7 @@
 	};
 
 	// Exposing core APIs
-	window.IAMCore = function(){};
+	window.IAMCore = function() {};
 	IAMCore.prototype.init = function(opt) {
 		// 初始化配置
 		_initConfigure(opt);
@@ -2061,11 +2065,21 @@
         	});
         return this;
 	};
-	IAMCore.prototype.getIamBaseUri = function() {
-        return window.sessionStorage.getItem(constant.baseUriStoredKey);
-    };
 	IAMCore.prototype.getUMToken = function() {
 		return runtim.umid.getValue();
+	};
+	IAMCore.prototype.destroy = function() {
+		window.sessionStorage.removeItem(constant.baseUriStoredKey);
+		window.sessionStorage.removeItem(constant.umidTokenStorageKey);
+		constant = null;
+		_defaultCaptchaVerifier = null;
+		runtime = null;
+		settings = null;
+		console.log("Destroyed IAMCore instance.");
+	};
+	IAMCore.getIamBaseUri = function() {
+		var iamBaseUri = window.sessionStorage.getItem(constant.baseUriStoredKey);
+		return iamBaseUri ? iamBaseUri : getDefaultIamBaseUri();
 	};
 
 })(window, document);
@@ -2242,11 +2256,12 @@
  */
 (function(window, document){
 	// Exposing IAM UI
-	window.IAMUi = function(){};
+	window.IAMUi = function() {};
 
 	// Runtime cache
 	var runtime = {
-		iamCore: null,	
+		iamCore: null,
+		renderObj: null,
 	};
 
 	/**
@@ -2259,6 +2274,7 @@
 			throw Error("IAM JSSDK UI (renderObj) is required!");
 		}
 		console.debug("Initializing IAM JSSDK UI...");
+		runtime.renderObj = renderObj;
 
 		// Javascript multi line string supports.
 		// @see https://www.jb51.net/article/49480.htm
@@ -2368,6 +2384,8 @@
 					</div>
 				</div>`;
 		var loginForm = $(loginFormHtmlStr);
+		// If it is an SPM application, the skip login route will repeat when exiting
+		$(renderObj).empty(); // If already created?
 		loginForm.appendTo($(renderObj));
 
 		// 绑定UI Tab事件
@@ -2381,7 +2399,12 @@
 	IAMUi.prototype.getIAMCore = function() {
 		return runtime.iamCore;
 	};
-
+	IAMUi.prototype.destroy = function() {
+		this.getIAMCore().destroy();
+		$(runtime.renderObj).empty();
+		runtime = null;
+		console.log("Destroyed IAMUi instance.");
+	};
 
 	//
 	// --- UI event processing function's. ---
@@ -2443,7 +2466,7 @@
 	 		init: {
 	 			onPostCheck: function(res) {
 	 				// 因SNS授权（如:WeChat）只能刷新页面，因此授权错误消息只能从IAM服务加载
-					var url = runtime.iamCore.getIamBaseUri() +"/login/errread";	
+					var url = IAMCore.getIamBaseUri() +"/login/errread";	
 					$.ajax({
 						url: url,
 						xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.

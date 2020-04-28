@@ -5,11 +5,12 @@
  */
 (function(window, document){
 	// Exposing IAM UI
-	window.IAMUi = function(){};
+	window.IAMUi = function() {};
 
 	// Runtime cache
 	var runtime = {
-		iamCore: null,	
+		iamCore: null,
+		renderObj: null,
 	};
 
 	/**
@@ -22,6 +23,7 @@
 			throw Error("IAM JSSDK UI (renderObj) is required!");
 		}
 		console.debug("Initializing IAM JSSDK UI...");
+		runtime.renderObj = renderObj;
 
 		// Javascript multi line string supports.
 		// @see https://www.jb51.net/article/49480.htm
@@ -131,6 +133,8 @@
 					</div>
 				</div>`;
 		var loginForm = $(loginFormHtmlStr);
+		// If it is an SPM application, the skip login route will repeat when exiting
+		$(renderObj).empty(); // If already created?
 		loginForm.appendTo($(renderObj));
 
 		// 绑定UI Tab事件
@@ -144,7 +148,12 @@
 	IAMUi.prototype.getIAMCore = function() {
 		return runtime.iamCore;
 	};
-
+	IAMUi.prototype.destroy = function() {
+		this.getIAMCore().destroy();
+		$(runtime.renderObj).empty();
+		runtime = null;
+		console.log("Destroyed IAMUi instance.");
+	};
 
 	//
 	// --- UI event processing function's. ---
@@ -206,7 +215,7 @@
 	 		init: {
 	 			onPostCheck: function(res) {
 	 				// 因SNS授权（如:WeChat）只能刷新页面，因此授权错误消息只能从IAM服务加载
-					var url = runtime.iamCore.getIamBaseUri() +"/login/errread";	
+					var url = IAMCore.getIamBaseUri() +"/login/errread";	
 					$.ajax({
 						url: url,
 						xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
