@@ -43,11 +43,6 @@ import java.util.Random;
  */
 public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 
-	final private static Random RANDOM = new Random();
-	final private static int DEFAULT_WIDTH = 60;
-	final private static int DEFAULT_HEIGHT = 28;
-	final private static Font DEFAULT_FONT = defaultFont();
-
 	@Override
 	public VerifyKind kind() {
 		return VerifyKind.GRAPH_SIMPLE;
@@ -153,5 +148,10 @@ public class SimpleJPEGSecurityVerifier extends GraphBasedSecurityVerifier {
 	private static Font defaultFont() {
 		return new Font("Fixedsys", Font.CENTER_BASELINE, 18);
 	}
+
+	final private static Random RANDOM = new Random();
+	final private static int DEFAULT_WIDTH = 60;
+	final private static int DEFAULT_HEIGHT = 28;
+	final private static Font DEFAULT_FONT = defaultFont();
 
 }

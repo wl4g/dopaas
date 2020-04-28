@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.common.cache;
 public class CacheKeyTests {
 
 	public static void main(String[] args) {
-		System.out.println(CacheKey.getRealTypeKeyString(9));
+		System.out.println(CacheKey.getRealTypeKeyToString(9));
 	}
 
 }

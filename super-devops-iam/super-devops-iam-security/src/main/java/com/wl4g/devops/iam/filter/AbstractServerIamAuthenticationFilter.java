@@ -27,14 +27,9 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.devops.tool.common.web.WebUtils2.*;
-import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
-import static com.wl4g.devops.tool.common.web.WebUtils2.getBaseURIForDefault;
-import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
-import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
-import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
-import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Collections.singletonMap;
@@ -342,8 +337,15 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		// Gets request redirect
 		String fromAppName = getCleanParam(request, config.getParam().getApplication());
 		String redirectUrl = getCleanParam(request, config.getParam().getRedirectUrl());
-		String fallbackRedirect = getCleanParam(request, config.getParam().getFallbackRedirect());
-		RedirectInfo redirect = RedirectInfo.build(fromAppName, redirectUrl, fallbackRedirect);
+		String fallback = getCleanParam(request, config.getParam().getUseFallbackRedirect());
+		// Degradation is turned off by default only if "fallbackredirect" is
+		// blank and is not a request from the browser. (e.g:
+		// Andriod/iOS/WechatApplet)
+		boolean defaultFallback = true;
+		if (isBlank(fallback) && !isBrowser(toHttp(request))) {
+			defaultFallback = false;
+		}
+		RedirectInfo redirect = new RedirectInfo(fromAppName, redirectUrl, isTrue(fallback, defaultFallback));
 
 		// Fallback from last request bind.
 		if (isBlank(redirect.getFromAppName())) {

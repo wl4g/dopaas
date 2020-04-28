@@ -21,6 +21,7 @@ import com.wl4g.devops.iam.captcha.jigsaw.ImageTailor.TailoredImage;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawApplyImgResult;
 import com.wl4g.devops.iam.captcha.jigsaw.model.JigsawVerifyImgResult;
+import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
@@ -93,7 +94,15 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 
 	@Override
 	protected Object generateCode() {
-		return jigsawManager.borrow();
+		// To improve performance, only image indexes are saved here
+		return jigsawManager.randomBorrowIndex(); // #MARK1,@see:MARK2
+	}
+
+	@Override
+	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
+		VerifyCodeWrapper wrap = super.getVerifyCode(assertion);
+		wrap.setCode(jigsawManager.borrow(wrap.getCode())); // #MARK2,@see:MARK1
+		return wrap;
 	}
 
 	@Override
@@ -128,13 +137,16 @@ public class JigsawSecurityVerifier extends GraphBasedSecurityVerifier {
 			return false;
 		}
 
-		// DECRYPT slider block x-position.
-		KeyPairSpec keyPairSpec = getBindValue(model.getApplyToken(), true);
-		String plainX = cryptAdapter.forOperator(kind).decrypt(keyPairSpec.getKeySpec(), model.getX());
+		SecureCryptService cryptService = cryptAdapter.forOperator(kind);
+		// Gets applied verifier KeyPairSpec. #MARK21
+		KeyPairSpec keyPairSpec = getBindValue(new RelationAttrKey(model.getApplyToken(), cryptService.getKeyPairSpecClass()),
+				true);
+		// Decryption slider block x-position.
+		String plainX = cryptService.decrypt(keyPairSpec.getKeySpec(), model.getX());
+
 		hasText(plainX, "Invalid x-position, unable to resolve.");
 		// Parsing additional algorithmic salt.
 		isTrue(plainX.length() > 66, format("Failed to analyze jigsaw, illegal additional ciphertext. '%s'", plainX));
-
 		log.debug("Jigsaw analyze decrypt plain x-position: {}, cipher x-position: {}", plainX, model.getX());
 
 		// Reduction analysis.

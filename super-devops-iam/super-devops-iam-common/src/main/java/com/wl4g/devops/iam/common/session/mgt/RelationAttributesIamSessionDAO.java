@@ -22,10 +22,12 @@ import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.session.mgt.eis.AbstractSessionDAO;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.lang.TypeConverts.safeLongToInt;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
-
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+
 import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
@@ -83,9 +85,13 @@ public abstract class RelationAttributesIamSessionDAO extends AbstractSessionDAO
 		// String principalId = pc != null ?
 		// pc.getPrimaryPrincipal().toString() : "";
 
+		awareRelationCache(session);
+
 		// Update session latest expiration time to timeout.
 		doPutIamSession(session);
-		awareRelationCache(session);
+
+		// Update session relation attributes timeout.
+		getRelationAttrsCache(session.getId()).expireMap(safeLongToInt(MILLISECONDS.toSeconds(session.getTimeout())));
 	}
 
 	@Override

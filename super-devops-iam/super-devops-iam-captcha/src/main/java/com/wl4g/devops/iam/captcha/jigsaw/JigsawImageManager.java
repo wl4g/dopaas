@@ -37,7 +37,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_VERIFY_JIGSAW_IMG;
-import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
 import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.state;
@@ -97,19 +96,28 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 * 
 	 * @return
 	 */
+	public int randomBorrowIndex() {
+		return current().nextInt(config.getJigsaw().getPoolImgSize());
+	}
+
+	/**
+	 * Gets random borrow JIGSAW image code.
+	 * 
+	 * @return
+	 */
 	public TailoredImage borrow() {
 		return borrow(-1);
 	}
 
 	/**
-	 * Get random borrow JIGSAW image code.
+	 * Gets random borrow JIGSAW image code.
 	 * 
 	 * @param index
 	 * @return
 	 */
 	public TailoredImage borrow(int index) {
 		if (index < 0 || index >= config.getJigsaw().getPoolImgSize()) {
-			int _index = current().nextInt(config.getJigsaw().getPoolImgSize());
+			int _index = randomBorrowIndex();
 			log.debug("Borrow jigsaw index '{}' of out bound, used random index '{}'", index, _index);
 			index = _index;
 		}
@@ -215,9 +223,10 @@ public class JigsawImageManager implements ApplicationRunner, Serializable {
 	 */
 	private void doPutImage(TailoredImage code, int index) {
 		// Compression primary block image.
-		byte[] data = serialize(code/* .compress() */);
+		// byte[] compressData = code.compress();
+
 		// Storage to cache.
-		imgCache.mapPut(new CacheKey(toBytes(valueOf(index)), config.getJigsaw().getPoolImgExpireSec()), data);
+		imgCache.mapPut(new CacheKey(toBytes(valueOf(index)), config.getJigsaw().getPoolImgExpireSec()), code);
 		log.debug("Puts jigsaw image, index {}, jigsawImage(x:{}, y:{})", index, code.getX(), code.getY());
 	}
 

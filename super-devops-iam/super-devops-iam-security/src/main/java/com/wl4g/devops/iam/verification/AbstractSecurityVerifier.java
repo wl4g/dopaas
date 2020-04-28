@@ -45,6 +45,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
@@ -115,11 +116,10 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	@Override
 	public VerifyCodeWrapper getVerifyCode(boolean assertion) {
 		// Already created verify-code
-		VerifyCodeWrapper code = getBindValue(getVerifyCodeStoredKey());
+		VerifyCodeWrapper code = getBindValue(new RelationAttrKey(getVerifyCodeStoredKey(), VerifyCodeWrapper.class), true);
 		if (!isNull(code) && !isNull(code.getCode())) { // Assertion
 			return code;
 		}
-
 		if (assertion) {
 			log.warn("Assertion verifyCode expired. expireMs: {}", getVerifyCodeExpireMs());
 			throw new VerificationException(bundle.getMessage("AbstractVerification.verify.expired"));
@@ -182,9 +182,9 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 			// Storage verified token.
 			String verifiedToken = "vefdt" + randomAlphabetic(DEFAULT_VERIFIED_TOKEN_BIT);
 			log.info("Saving to verified token: {}", verifiedToken);
-			return bind(getVerifiedTokenStoredKey(), verifiedToken, getVerifiedTokenExpireMs());
+			return bind(new RelationAttrKey(getVerifiedTokenStoredKey(), getVerifiedTokenExpireMs()), verifiedToken);
 		} finally {
-			if (storedCode != null) {
+			if (!isNull(storedCode)) {
 				reset(storedCode.getOwner(), false); // Reset or create
 			}
 		}
@@ -199,7 +199,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 		}
 
 		// Check stored token.
-		String storedVerifiedToken = getBindValue(getVerifiedTokenStoredKey(), true);
+		String storedVerifiedToken = getBindValue(new RelationAttrKey(getVerifiedTokenStoredKey(), String.class), true);
 		if (isBlank(storedVerifiedToken)) {
 			throw new VerificationException(bundle.getMessage("General.parameter.invalid"));
 		}
@@ -218,10 +218,11 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 	 *            is new create.
 	 */
 	protected void reset(String owner, boolean renew) {
-		unbind(getVerifyCodeStoredKey());
+		RelationAttrKey verifyCodeKey = new RelationAttrKey(getVerifyCodeStoredKey(), getVerifyCodeExpireMs());
+		unbind(verifyCodeKey);
 		if (renew) {
 			// Store verify-code in the session
-			bind(getVerifyCodeStoredKey(), new VerifyCodeWrapper(owner, generateCode()), getVerifyCodeExpireMs());
+			bind(verifyCodeKey, new VerifyCodeWrapper(owner, generateCode()));
 		}
 	}
 
