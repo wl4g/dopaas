@@ -230,11 +230,13 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 					fullParams.put(config.getParam().getGrantTicket(), grantTicket);
 				}
 
-				// Call success handle.
-				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
-
 				// Sets secret tokens to cookies.
 				putSuccessSecretTokens2Cookie(token, request, response);
+				// Sets authorization info to cookies.
+				putAuthorizationInfoToCookie(token, request, response);
+
+				// Call custom success handle.
+				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
 
 				log.info("Redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), fullParams);
 				issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
@@ -617,6 +619,8 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		// Sets secret tokens to ressponse.
 		params.put(config.getParam().getDataCipherKeyName(), tokens[0]);
 		params.put(config.getParam().getAccessTokenName(), tokens[1]);
+		// Sets authorization info.
+		params.putAll(putAuthorizationInfoToCookie(token, request, response));
 	}
 
 	/**

@@ -179,6 +179,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		// Grants roles and permissions attributes.
 		Map<String, String> attributes = assertion.getPrincipalInfo().getAttributes();
 		attributes.put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
+		attributes.put(KEY_PARENT_SESSIONID, valueOf(getSessionId()));
 
 		// Sets re-generate childDataCipherKey(grant application)
 		String childDataCipherKey = null;
