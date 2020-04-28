@@ -52,7 +52,7 @@ public class CacheKey implements Serializable {
 	public CacheKey(Serializable key, Class<?> valueClass) {
 		notNull(key, "'key' must not be null");
 		notNull(valueClass, "'valueClass' must not be null");
-		this.key = getRealTypeKeyString(key);
+		this.key = getRealTypeKeyToString(key);
 		this.valueClass = valueClass;
 	}
 
@@ -62,7 +62,7 @@ public class CacheKey implements Serializable {
 
 	public CacheKey(Serializable key, int expireSec) {
 		notNull(key, "'key' must not be null");
-		this.key = getRealTypeKeyString(key);
+		this.key = getRealTypeKeyToString(key);
 		this.expire = expireSec;
 	}
 
@@ -121,12 +121,12 @@ public class CacheKey implements Serializable {
 	}
 
 	/**
-	 * Gets real type key string.
+	 * Gets real type key to string.
 	 * 
 	 * @param key
 	 * @return
 	 */
-	public static String getRealTypeKeyString(Serializable key) {
+	public static String getRealTypeKeyToString(Serializable key) {
 		if (key instanceof byte[]) {
 			return new String((byte[]) key);
 		} else if (key instanceof Byte[]) {

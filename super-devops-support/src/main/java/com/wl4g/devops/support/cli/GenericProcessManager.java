@@ -27,11 +27,10 @@ import com.wl4g.devops.support.cli.process.LocalDestroableProcess;
 import com.wl4g.devops.support.cli.process.RemoteDestroableProcess;
 import com.wl4g.devops.tool.common.cli.ssh2.EthzHolder;
 import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
-
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,11 +61,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @since
  */
 public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements DestroableProcessManager {
-	final public static long DEFAULT_DESTROY_INTERVALMS = 200L;
-	final public static long DEFAULT_DESTROY_TIMEOUTMS = 30 * 1000L;
-	final public static int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
-	final protected Logger log = getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/** Command-line process repository */
 	final protected ProcessRepository repository;
@@ -102,9 +98,15 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 			// Wait for completed.
 			dp.waitFor(cmd.getTimeoutMs(), TimeUnit.MILLISECONDS);
 
-			// [Note]: exitCode may be null
-			Integer exitCode = dp.exitValue();
-			if (isNull(exitCode)) {
+			// Waiting be completed.
+			Integer exitValue = null;
+			try {
+				exitValue = dp.exitValue(); // [Note]: exitCode may be null
+			} catch (IllegalThreadStateException e) {
+				throw new IllegalProcessStateException(exitValue,
+						format("Exec process timeout for: %sMs, %s", cmd.getTimeoutMs(), e.getMessage()));
+			}
+			if (isNull(exitValue)) {
 				// [Fallback]: If the output is not redirected to the local
 				// file, the execution fails if there is an stderr message
 				if (!isLocalStderr(cmd)) {
@@ -113,7 +115,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 						throw new IllegalProcessStateException(errmsg);
 					}
 				}
-			} else if (exitCode != 0) {
+			} else if (exitValue != 0) {
 				String errmsg = EMPTY;
 				try {
 					// stderr redirected? (e.g: mvn install >/mvn.out 2>&1)
@@ -126,7 +128,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 				} catch (Exception e) {
 					errmsg = getRootCausesString(e);
 				}
-				throw new IllegalProcessStateException(exitCode, errmsg);
+				throw new IllegalProcessStateException(exitValue, errmsg);
 			}
 
 			return readFullyToString(dp.getStdout());
@@ -339,5 +341,9 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 	private boolean isLocalStderr(DestroableCommand command) {
 		return (command instanceof LocalDestroableCommand) && ((LocalDestroableCommand) command).hasStderr();
 	}
+
+	final public static long DEFAULT_DESTROY_INTERVALMS = 200L;
+	final public static long DEFAULT_DESTROY_TIMEOUTMS = 30 * 1000L;
+	final public static int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
 }

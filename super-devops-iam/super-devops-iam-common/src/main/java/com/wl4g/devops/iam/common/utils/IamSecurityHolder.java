@@ -35,7 +35,9 @@ import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.subject.Subject;
 
 import com.wl4g.devops.iam.common.session.NoOpSession;
+import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
 
 /**
  * Session bind holder utility.
@@ -46,9 +48,8 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
  * @since
  */
 public abstract class IamSecurityHolder extends SecurityUtils {
-	final private static String KEY_ATTR_TTL_PREFIX = "attribute_ttl_";
 
-	// --- Principal and session's. ---
+	// --- Principal & session's. ---
 
 	/**
 	 * Gets current authenticated principal name.
@@ -92,7 +93,8 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @see {@link com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm#doGetAuthenticationInfo(AuthenticationToken)}
 	 */
 	public static IamPrincipalInfo getPrincipalInfo(boolean assertion) {
-		IamPrincipalInfo info = getBindValue(KEY_AUTHC_ACCOUNT_INFO);
+		IamPrincipalInfo info = (IamPrincipalInfo) getSession()
+				.getAttribute(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO, SimplePrincipalInfo.class));
 		if (assertion) {
 			notNull(info, UnauthenticatedException.class,
 					"Authentication subject empty. unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
@@ -206,10 +208,24 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @return Is there a value in session that matches the target
 	 */
 	public static boolean withIn(String sessionKey, Object target, boolean unbind) {
+		notNullOf(sessionKey, "sessionKey");
+		notNullOf(target, "withInSessionTarget");
 		try {
-			return withIn(sessionKey, target);
+			Object sessionValue = getBindValue(sessionKey);
+			if (isNull(sessionValue)) {
+				return false;
+			}
+			if ((sessionValue instanceof String) && (target instanceof String)) { // String
+				return String.valueOf(sessionValue).equalsIgnoreCase(String.valueOf(target));
+			} else if ((sessionValue instanceof Enum) || (target instanceof Enum)) { // ENUM
+				return (sessionValue == target || sessionValue.toString().equalsIgnoreCase(target.toString()));
+			} else { // Other object
+				return sessionValue == target;
+			}
 		} finally {
-			unbind(sessionKey);
+			if (unbind) {
+				unbind(sessionKey);
+			}
 		}
 	}
 
@@ -224,20 +240,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @return Is there a value in session that matches the target
 	 */
 	public static boolean withIn(String sessionKey, Object target) {
-		notNullOf(sessionKey, "sessionKey");
-		notNullOf(target, "withInSessionTarget");
-
-		Object sessionValue = getBindValue(sessionKey);
-		if (sessionValue != null) {
-			if ((sessionValue instanceof String) && (target instanceof String)) { // String
-				return String.valueOf(sessionValue).equalsIgnoreCase(String.valueOf(target));
-			} else if ((sessionValue instanceof Enum) || (target instanceof Enum)) { // ENUM
-				return (sessionValue == target || sessionValue.toString().equalsIgnoreCase(target.toString()));
-			} else { // Other object
-				return sessionValue == target;
-			}
-		}
-		return false;
+		return withIn(sessionKey, target, false);
 	}
 
 	/**
@@ -249,35 +252,52 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 *            Whether to UN-bundle
 	 * @return
 	 */
-	public static <T> T getBindValue(String sessionKey, @Deprecated boolean unbind) throws InvalidSessionException {
+	@SuppressWarnings("unchecked")
+	public static <T> T getBindValue(Object sessionKey, boolean unbind) throws InvalidSessionException {
+		notNullOf(sessionKey, "sessionKey");
 		try {
-			return getBindValue(sessionKey);
+			return (T) getSession().getAttribute(sessionKey);
 		} finally {
-			unbind(sessionKey);
+			if (unbind) {
+				unbind(sessionKey);
+			}
 		}
 	}
 
 	/**
-	 * Get bind of session value
+	 * Gets bind of session value
 	 *
 	 * @param sessionKey
 	 *            Keys to save and session
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T getBindValue(String sessionKey) throws InvalidSessionException {
-		hasTextOf(sessionKey, "sessionKey");
-		// Gets bind value.
-		T value = (T) getSession().getAttribute(sessionKey);
-		// Gets value TTL.
-		SessionValueTTL ttl = (SessionValueTTL) getSession().getAttribute(getExpireKey(sessionKey));
-		if (!isNull(ttl)) { // Need to check expiration
-			if ((currentTimeMillis() - ttl.getCreateTime()) >= ttl.getExpireMs()) { // Expired?
-				unbind(sessionKey); // Remove
-				return null; // Because it's expired.
-			}
+	public static <T> T getBindValue(Object sessionKey) throws InvalidSessionException {
+		return getBindValue(sessionKey, false);
+	}
+
+	/**
+	 * Bind value to session
+	 *
+	 * @param sessionKey
+	 * @param value
+	 */
+	public static <T> T bind(Object sessionKey, T value) throws InvalidSessionException {
+		notNullOf(sessionKey, "sessionKey");
+		if (!isNull(value)) {
+			getSession().setAttribute(sessionKey, value);
 		}
 		return value;
+	}
+
+	/**
+	 * Unbind sessionKey of session
+	 *
+	 * @param sessionKey
+	 * @return
+	 */
+	public static boolean unbind(Object sessionKey) throws InvalidSessionException {
+		notNullOf(sessionKey, "sessionKey");
+		return !isNull(getSession().removeAttribute(sessionKey));
 	}
 
 	/**
@@ -301,7 +321,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	}
 
 	/**
-	 * Bind value to session
+	 * Bind key-values map to session
 	 *
 	 * @param sessionKey
 	 * @param keyValues
@@ -317,7 +337,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 			if (i % 2 == 0) {
 				Object key = keyValues[i];
 				Object value = keyValues[i + 1];
-				if (key != null && isNotBlank(key.toString()) && value != null && isNotBlank(value.toString())) {
+				if (!isNull(key) && isNotBlank(key.toString()) && !isNull(value) && isNotBlank(value.toString())) {
 					parameters.put(key, value);
 				}
 			}
@@ -325,101 +345,6 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 
 		// Binding
 		bind(sessionKey, parameters);
-	}
-
-	/**
-	 * Bind value to session
-	 *
-	 * @param sessionKey
-	 * @param value
-	 * @param expireMs
-	 * @return
-	 */
-	public static <T> T bind(String sessionKey, T value, long expireMs) throws InvalidSessionException {
-		isTrue(expireMs > 0, "Expire time must be greater than 0");
-		bind(sessionKey, value);
-		if (!isNull(value)) {
-			bind(getExpireKey(sessionKey), new SessionValueTTL(expireMs));
-		}
-		return value;
-	}
-
-	/**
-	 * Bind value to session
-	 *
-	 * @param sessionKey
-	 * @param value
-	 */
-	public static <T> T bind(String sessionKey, T value) throws InvalidSessionException {
-		hasTextOf(sessionKey, "sessionKey");
-		if (!isNull(value)) {
-			getSession().setAttribute(sessionKey, value);
-		}
-		return value;
-	}
-
-	/**
-	 * UN-bind sessionKey of session
-	 *
-	 * @param sessionKey
-	 * @return
-	 */
-	public static boolean unbind(String sessionKey) throws InvalidSessionException {
-		hasTextOf(sessionKey, "sessionKey");
-		getSession().removeAttribute(getExpireKey(sessionKey)); // TTL-attribute?
-		return getSession().removeAttribute(sessionKey) != null;
-	}
-
-	/**
-	 * Get expire key.
-	 *
-	 * @param sessionKey
-	 * @return
-	 */
-	private static String getExpireKey(String sessionKey) {
-		hasTextOf(sessionKey, "sessionKey");
-		return KEY_ATTR_TTL_PREFIX + sessionKey;
-	}
-
-	/**
-	 * Session attribute time to live model.
-	 *
-	 * @author Wangl.sir
-	 * @version v1.0 2019年8月23日
-	 * @since
-	 */
-	public final static class SessionValueTTL implements Serializable {
-		private static final long serialVersionUID = -5108678535942593956L;
-
-		/**
-		 * Create time.
-		 */
-		final private Long createTime;
-
-		/**
-		 * Expire time.
-		 */
-		final private Long expireMs;
-
-		public SessionValueTTL(Long expireMs) {
-			this(System.currentTimeMillis(), expireMs);
-		}
-
-		public SessionValueTTL(Long createTime, Long expireMs) {
-			stateOf(createTime != null, "'createTime' must not be null.");
-			stateOf(expireMs != null, "'expireMs' must not be null.");
-			this.createTime = createTime;
-			this.expireMs = expireMs;
-		}
-
-		public Long getCreateTime() {
-			return createTime;
-		}
-
-		public Long getExpireMs() {
-			return expireMs;
-		}
-
 	}
 
 }

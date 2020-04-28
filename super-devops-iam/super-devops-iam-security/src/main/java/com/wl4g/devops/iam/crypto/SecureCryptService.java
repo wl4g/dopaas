@@ -102,6 +102,13 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 	KeySpec generateKeySpec(byte[] privateKey);
 
 	/**
+	 * Gets {@link KeyPairSpec} class implements.
+	 * 
+	 * @return
+	 */
+	Class<? extends KeyPairSpec> getKeyPairSpecClass();
+
+	/**
 	 * Iam asymmetric secure crypt algorithm kind definitions.
 	 * 
 	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;

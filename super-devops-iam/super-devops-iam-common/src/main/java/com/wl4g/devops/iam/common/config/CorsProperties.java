@@ -33,6 +33,7 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import com.wl4g.devops.tool.common.collection.RegisteredSetList;
 
+import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isSameWildcardOrigin;
 import static java.util.Arrays.asList;
@@ -61,10 +62,15 @@ public class CorsProperties implements Serializable {
 	 */
 	private Map<String, CorsRule> rules = new HashMap<String, CorsRule>() {
 		private static final long serialVersionUID = -8576461225674624807L;
+
+		/**
+		 * Default allowes header.
+		 */
+		private static final String DEFAULT_ALLOW_HEADER = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*";
 		{
 			// Default settings.
-			put("/**", new CorsRule().setAllowCredentials(true).addAllowsMethods("GET", "POST")
-					.addAllowsOrigins("http://localhost:8080"));
+			put("/**", new CorsRule().setAllowCredentials(true).addAllowsHeaders(DEFAULT_ALLOW_HEADER)
+					.addAllowsMethods("GET", "POST").addAllowsOrigins("http://localhost:8080"));
 		}
 	};
 
@@ -90,7 +96,14 @@ public class CorsProperties implements Serializable {
 	 * @version v1.0 2019年3月4日
 	 * @since
 	 */
-	public static class CorsRule {
+	public static class CorsRule implements Serializable {
+		private static final long serialVersionUID = 2691186807570014349L;
+
+		/**
+		 * Default cors allowed header prefix.
+		 */
+		final public static String DEFAULT_CORS_ALLOW_HEADER_PREFIX = "X-Iam";
+
 		private List<String> allowsMethods = new RegisteredSetList<>(new ArrayList<>(8));
 		private List<String> allowsHeaders = new RegisteredSetList<>(new ArrayList<>(8));
 		private List<String> allowsOrigins = new RegisteredSetList<>(new ArrayList<>(8));

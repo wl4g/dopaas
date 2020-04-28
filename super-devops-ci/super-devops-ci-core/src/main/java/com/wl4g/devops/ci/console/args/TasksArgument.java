@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.ci.console.args;
 
-import com.wl4g.devops.shell.annotation.ShellOption;
-
 import java.io.Serializable;
+
+import com.wl4g.devops.components.shell.annotation.ShellOption;
 
 /**
  * @author Wangl.sir <983708408@qq.com>
