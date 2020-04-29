@@ -41,6 +41,7 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.web.cors.CorsConfiguration.ALL;
@@ -358,7 +359,7 @@ public class CorsProperties implements Serializable {
 							// e.g: allowedHeader => "X-Iam-*"
 							if (allowedHeader.contains(ALL)) {
 								String allowedHeaderPrefix = allowedHeader.substring(allowedHeader.indexOf(ALL) + 1);
-								if (requestHeader.startsWith(allowedHeaderPrefix)) {
+								if (startsWithIgnoreCase(requestHeader, allowedHeaderPrefix)) {
 									result.add(requestHeader);
 									break;
 								}

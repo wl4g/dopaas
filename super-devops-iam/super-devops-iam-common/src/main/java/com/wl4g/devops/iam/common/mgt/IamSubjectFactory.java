@@ -18,7 +18,6 @@ package com.wl4g.devops.iam.common.mgt;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
@@ -162,9 +161,11 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		Session session = wsc.getSession();
 		HttpServletRequest request = toHttp(wsc.resolveServletRequest());
 
+		// Gets protocol configure info.
 		String sessionId = valueOf(session.getId());
 		String accessTokenSignKey = (String) session.getAttribute(KEY_ACCESSTOKEN_SIGN);
 		IamAuthenticationToken authcToken = (IamAuthenticationToken) session.getAttribute(KEY_AUTHC_TOKEN);
+
 		// Gets request accessToken.
 		final String accessToken = getRequestAccessToken(request);
 		log.debug("Asserting accessToken, sessionId:{}, accessTokenSignKey: {}, authcToken: {}, accessToken: {}", sessionId,
@@ -174,7 +175,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		// if (authcToken instanceof ClientSecretIamAuthenticationToken) {
 		hasText(accessToken, UnauthenticatedException.class, "accessToken is required");
 		hasText(sessionId, UnauthenticatedException.class, "sessionId is required");
-		hasTextOf(accessTokenSignKey, "accessTokenSignKey"); // Shouldn't-here
+		hasText(accessTokenSignKey, UnauthenticatedException.class, "No accessTokenSignKey"); // Shouldn't-here
 
 		// Calculating accessToken(signature).
 		final String validAccessToken = generateAccessToken(session, accessTokenSignKey);
@@ -207,7 +208,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		for (Entry<String, String> ent : iamFilterFactory.getFilterChainDefinitionMap().entrySet()) {
 			String pattern = ent.getKey();
 			String filterName = ent.getValue();
-			if (!NAME_ROOT_FILTER.equals(filterName) && defaultAntMatcher.matchStart(pattern, requestPath)) {
+			if (!NAME_ROOT_FILTER.equals(filterName) && defaultNonAccessTokenMatcher.matchStart(pattern, requestPath)) {
 				return true;
 			}
 		}
@@ -218,6 +219,9 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		return isInternalTicketRequest(request);
 	}
 
-	final private static AntPathMatcher defaultAntMatcher = new AntPathMatcher();
+	/**
+	 * Non accessToken matcher.
+	 */
+	final private static AntPathMatcher defaultNonAccessTokenMatcher = new AntPathMatcher();
 
 }

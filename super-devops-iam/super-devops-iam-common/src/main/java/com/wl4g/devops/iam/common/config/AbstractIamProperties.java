@@ -274,7 +274,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		/**
 		 * Authorization info cookie max-age(sec)
 		 */
-		private int authorizationInfoMaxAge = 60;
+		private int authorizationInfoMaxAge = 30;
 
 		@Override
 		public String getName() {

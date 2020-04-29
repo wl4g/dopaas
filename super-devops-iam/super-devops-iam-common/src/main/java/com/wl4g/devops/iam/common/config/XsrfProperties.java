@@ -17,17 +17,24 @@ package com.wl4g.devops.iam.common.config;
 
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ReflectionUtils.findMethod;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.Cookie;
 
 import org.springframework.beans.factory.InitializingBean;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * XSRF configuration properties
@@ -39,7 +46,7 @@ import org.springframework.beans.factory.InitializingBean;
 public class XsrfProperties implements InitializingBean, Serializable {
 	final private static long serialVersionUID = -5701992202711439835L;
 
-	final public static String KEY_XSRF_PREFIX = "spring.cloud.devops.iam.xsrf";
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Default xsrf cookie name.
@@ -66,6 +73,11 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	 * default functionality which uses the request context as the path.
 	 */
 	private String cookiePath;
+
+	/**
+	 * Ignore xsrf validation request mappings.
+	 */
+	private List<String> excludeValidXsrfMapping = new ArrayList<>();
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -140,6 +152,29 @@ public class XsrfProperties implements InitializingBean, Serializable {
 		hasTextOf(cookiePath, "cookiePath");
 		this.cookiePath = cookiePath;
 	}
+
+	public List<String> getExcludeValidXsrfMapping() {
+		return excludeValidXsrfMapping;
+	}
+
+	public void setExcludeValidXsrfMapping(List<String> excludeValidXsrfMapping) {
+		if (isEmpty(excludeValidXsrfMapping)) {
+			for (String mapping : excludeValidXsrfMapping) {
+				if (!this.excludeValidXsrfMapping.contains(mapping)) {
+					this.excludeValidXsrfMapping.add(mapping);
+				} else {
+					log.warn("Duplicate exclude valid xsrf mapping of '{}'", mapping);
+				}
+			}
+		}
+	}
+
+	@Override
+	public String toString() {
+		return toJSONString(this);
+	}
+
+	final public static String KEY_XSRF_PREFIX = "spring.cloud.devops.iam.xsrf";
 
 	public static final String DEFAULT_XSRF_COOKIE_NAME = "IAM-XSRF-TOKEN";
 	public static final String DEFAULT_XSRF_PARAM_NAME = "_xsrf";

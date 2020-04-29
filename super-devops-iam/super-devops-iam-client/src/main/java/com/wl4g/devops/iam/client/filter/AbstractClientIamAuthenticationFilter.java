@@ -202,7 +202,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 			// Sets secret tokens to cookies.
 			putSuccessTokensCookieIfNecessary(token, request, response);
 			// Sets authorization info to cookies.
-			putAuthorizationInfoToCookie(token, request, response);
+			putAuthorizationInfoCookieIfNecessary(token, request, response);
 
 			// Call custom success handle.
 			coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), null);
@@ -430,7 +430,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// Sets child accessToken. (if necessary)
 		resp.forMap().put(config.getParam().getAccessTokenName(), tokens[1]);
 		// Sets authorization info.
-		resp.forMap().putAll(putAuthorizationInfoToCookie(token, request, response));
+		resp.forMap().putAll(putAuthorizationInfoCookieIfNecessary(token, request, response));
 
 		return resp;
 	}

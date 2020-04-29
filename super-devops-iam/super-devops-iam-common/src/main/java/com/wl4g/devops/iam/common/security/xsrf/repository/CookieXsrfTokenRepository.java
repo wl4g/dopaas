@@ -20,16 +20,19 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.UUID;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.web.servlet.Cookie;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.web.util.WebUtils;
 
+import com.wl4g.devops.iam.common.config.AbstractIamProperties;
+import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.config.XsrfProperties;
 import static com.wl4g.devops.iam.common.config.XsrfProperties.setHttpOnlyMethod;
+import static org.springframework.util.ReflectionUtils.invokeMethod;
+import static org.springframework.web.util.WebUtils.getCookie;
 
 /**
  * A {@link XsrfTokenRepository} that persists the CSRF token in a cookie named
@@ -45,10 +48,16 @@ import static com.wl4g.devops.iam.common.config.XsrfProperties.setHttpOnlyMethod
 public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 
 	/**
-	 * XsrfProperties
+	 * Xsrf properties config.
 	 */
 	@Autowired
 	protected XsrfProperties xconfig;
+
+	/**
+	 * Iam core properties config.
+	 */
+	@Autowired
+	protected AbstractIamProperties<? extends ParamProperties> coreConfig;
 
 	@Override
 	public XsrfToken generateXToken(HttpServletRequest request) {
@@ -58,7 +67,9 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 	@Override
 	public void saveXToken(XsrfToken xtoken, HttpServletRequest request, HttpServletResponse response) {
 		String xtokenValue = xtoken == null ? "" : xtoken.getToken();
-		Cookie cookie = new Cookie(xconfig.getXsrfCookieName(), xtokenValue);
+		Cookie cookie = new SimpleCookie(coreConfig.getCookie());
+		cookie.setName(xconfig.getXsrfCookieName());
+		cookie.setValue(xtokenValue);
 		cookie.setSecure(request.isSecure());
 		if (!isNull(xconfig.getCookiePath()) && !isBlank(xconfig.getCookiePath())) {
 			cookie.setPath(xconfig.getCookiePath());
@@ -70,16 +81,15 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		} else {
 			cookie.setMaxAge(-1);
 		}
-		if (xconfig.isCookieHttpOnly() && setHttpOnlyMethod != null) {
-			ReflectionUtils.invokeMethod(setHttpOnlyMethod, cookie, Boolean.TRUE);
+		if (xconfig.isCookieHttpOnly() && !isNull(setHttpOnlyMethod)) {
+			invokeMethod(setHttpOnlyMethod, cookie, Boolean.TRUE);
 		}
-
-		response.addCookie(cookie);
+		cookie.saveTo(request, response);
 	}
 
 	@Override
 	public XsrfToken getXToken(HttpServletRequest request) {
-		Cookie cookie = WebUtils.getCookie(request, xconfig.getXsrfCookieName());
+		javax.servlet.http.Cookie cookie = getCookie(request, xconfig.getXsrfCookieName());
 		if (isNull(cookie)) {
 			return null;
 		}
@@ -91,7 +101,7 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 	}
 
 	/**
-	 * Generate xsrfToken
+	 * Generate xsrf token
 	 * 
 	 * @return
 	 */

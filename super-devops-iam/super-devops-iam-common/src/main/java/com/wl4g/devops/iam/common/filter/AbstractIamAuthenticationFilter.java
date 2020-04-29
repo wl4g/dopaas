@@ -25,6 +25,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -106,7 +107,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	 * @param response
 	 * @return
 	 */
-	protected Map<String, Object> putAuthorizationInfoToCookie(AuthenticationToken token, ServletRequest request,
+	protected Map<String, Object> putAuthorizationInfoCookieIfNecessary(AuthenticationToken token, ServletRequest request,
 			ServletResponse response) {
 		Map<String, Object> authzInfo = new HashMap<>();
 
@@ -114,20 +115,24 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 		IamPrincipalInfo principalInfo = getPrincipalInfo();
 
 		// Sets roles.
-		Cookie rck = new SimpleCookie(config.getCookie());
-		rck.setName(config.getParam().getRoleAttrName());
-		rck.setValue(toJSONString(principalInfo.getRoles()));
-		rck.setMaxAge(config.getCookie().getAuthorizationInfoMaxAge());
-		rck.saveTo(toHttp(request), toHttp(response));
 		authzInfo.put(config.getParam().getRoleAttrName(), principalInfo.getRoles());
+		if (isBrowser(toHttp(request))) {
+			Cookie rck = new SimpleCookie(config.getCookie());
+			rck.setName(config.getParam().getRoleAttrName());
+			rck.setValue(toJSONString(principalInfo.getRoles()));
+			rck.setMaxAge(config.getCookie().getAuthorizationInfoMaxAge());
+			rck.saveTo(toHttp(request), toHttp(response));
+		}
 
 		// Sets permissions.
-		Cookie pck = new SimpleCookie(config.getCookie());
-		pck.setName(config.getParam().getPermissionAttrName());
-		pck.setValue(toJSONString(principalInfo.getPermissions()));
-		pck.setMaxAge(config.getCookie().getAuthorizationInfoMaxAge());
-		pck.saveTo(toHttp(request), toHttp(response));
 		authzInfo.put(config.getParam().getPermissionAttrName(), principalInfo.getPermissions());
+		if (isBrowser(toHttp(request))) {
+			Cookie pck = new SimpleCookie(config.getCookie());
+			pck.setName(config.getParam().getPermissionAttrName());
+			pck.setValue(toJSONString(principalInfo.getPermissions()));
+			pck.setMaxAge(config.getCookie().getAuthorizationInfoMaxAge());
+			pck.saveTo(toHttp(request), toHttp(response));
+		}
 
 		return authzInfo;
 	}
