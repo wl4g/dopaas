@@ -37,6 +37,7 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.devops.tool.common.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
@@ -199,7 +200,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// Redirections(Native page).
 		else {
 			// Sets secret tokens to cookies.
-			putSuccessSecretTokens2Cookie(token, request, response);
+			putSuccessTokensCookieIfNecessary(token, request, response);
 			// Sets authorization info to cookies.
 			putAuthorizationInfoToCookie(token, request, response);
 
@@ -422,7 +423,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		resp.forMap().put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
 
 		// Sets secret tokens to cookies.
-		String[] tokens = putSuccessSecretTokens2Cookie(token, request, response);
+		String[] tokens = putSuccessTokensCookieIfNecessary(token, request, response);
 
 		// Sets child dataCipherKey. (if necessary)
 		resp.forMap().put(config.getParam().getDataCipherKeyName(), tokens[0]);
@@ -459,18 +460,18 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	}
 
 	/**
-	 * Puts secret and tokens/signature to cookies handling.
+	 * Puts secret and tokens/signature to cookies handle.
 	 * 
 	 * @param token
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	protected String[] putSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request,
+	protected String[] putSuccessTokensCookieIfNecessary(AuthenticationToken token, ServletRequest request,
 			ServletResponse response) {
 		// Sets child dataCipherKeys to cookie.
 		String childDataCipherKey = getBindValue(KEY_DATA_CIPHER);
-		if (!isBlank(childDataCipherKey)) {
+		if (!isBlank(childDataCipherKey) && isBrowser(toHttp(request))) {
 			Cookie c = new SimpleCookie(config.getCookie());
 			c.setName(config.getParam().getDataCipherKeyName());
 			c.setValue(childDataCipherKey);
@@ -479,7 +480,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 
 		// Sets child accessToken to cookie.
 		String childAccessToken = generateChildAccessTokenIfNecessary();
-		if (!isBlank(childAccessToken)) {
+		if (!isBlank(childAccessToken) && isBrowser(toHttp(request))) {
 			Cookie c = new SimpleCookie(config.getCookie());
 			c.setName(config.getParam().getAccessTokenName());
 			c.setValue(childAccessToken);

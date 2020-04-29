@@ -231,7 +231,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				}
 
 				// Sets secret tokens to cookies.
-				putSuccessSecretTokens2Cookie(token, request, response);
+				putSuccessTokensCookieIfNecessary(token, request, response);
 				// Sets authorization info to cookies.
 				putAuthorizationInfoToCookie(token, request, response);
 
@@ -614,7 +614,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 			ServletResponse response) throws Exception {
 
 		// Puts secret tokens to cookies.
-		String[] tokens = putSuccessSecretTokens2Cookie(token, request, response);
+		String[] tokens = putSuccessTokensCookieIfNecessary(token, request, response);
 
 		// Sets secret tokens to ressponse.
 		params.put(config.getParam().getDataCipherKeyName(), tokens[0]);
@@ -632,13 +632,13 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 	 * @return
 	 * @throws DecoderException
 	 */
-	protected String[] putSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request, ServletResponse response)
-			throws DecoderException {
+	protected String[] putSuccessTokensCookieIfNecessary(AuthenticationToken token, ServletRequest request,
+			ServletResponse response) throws DecoderException {
 
 		String dataCipherKeyHex = null, accessToken = null;
 		if (token instanceof ClientSecretIamAuthenticationToken) {
 			// Sets dataCipherKey.
-			if (config.getCipher().isEnableDataCipher()) {
+			if (config.getCipher().isEnableDataCipher() && isBrowser(toHttp(request))) {
 				// Gets SecureCryptService.
 				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
 				SecureCryptService cryptService = cryptAdapter.forOperator(kind);
@@ -660,7 +660,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 			}
 
 			// Sets accessToken.
-			if (config.getSession().isEnableAccessTokenValidity()) {
+			if (config.getSession().isEnableAccessTokenValidity() && isBrowser(toHttp(request))) {
 				// Create accessTokenSignKey.
 				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN, generateAccessTokenSignKey(getSessionId()));
 				accessToken = generateAccessToken(getSession(), accessTokenSignKey);
