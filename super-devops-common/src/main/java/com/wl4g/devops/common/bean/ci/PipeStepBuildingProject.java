@@ -15,8 +15,6 @@ public class PipeStepBuildingProject extends BaseBean {
 
     private String ref;
 
-    private Integer enable;
-
     // ext
     private String projectName;
 
@@ -52,14 +50,6 @@ public class PipeStepBuildingProject extends BaseBean {
 
     public void setRef(String ref) {
         this.ref = ref == null ? null : ref.trim();
-    }
-
-    public Integer getEnable() {
-        return enable;
-    }
-
-    public void setEnable(Integer enable) {
-        this.enable = enable;
     }
 
     public String getProjectName() {

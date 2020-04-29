@@ -4,7 +4,7 @@ import com.wl4g.devops.CiServer;
 import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.service.PcmService;
 import com.wl4g.devops.common.bean.ci.Pcm;
-import com.wl4g.devops.common.bean.ci.PipeStepPcm;
+import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.model.SelectionModel;
 import com.wl4g.devops.dao.ci.PcmDao;
@@ -80,12 +80,12 @@ public class PcmRedmineTests {
     public void createIssues() {
         Pcm pcm = getPcmKind(pcmId);
 
-        PipeStepPcm pipeStepPcm = new PipeStepPcm();
-        pipeStepPcm.setxProjectId(8);
-        pipeStepPcm.setxSubject("test add issues");
-        pipeStepPcm.setxAssignTo("27");
+        PipeHistoryPcm pipeHistoryPcm = new PipeHistoryPcm();
+        pipeHistoryPcm.setxProjectId(8);
+        pipeHistoryPcm.setxSubject("test add issues");
+        pipeHistoryPcm.setxAssignTo("27");
 
-        pcmOperator.forOperator(pcm.getProviderKind()).createIssues(pcm,pipeStepPcm);
+        pcmOperator.forOperator(pcm.getProviderKind()).createIssues(pcm,pipeHistoryPcm);
 
     }
 

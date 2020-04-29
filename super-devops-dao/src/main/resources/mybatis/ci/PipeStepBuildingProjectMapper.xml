@@ -60,7 +60,7 @@
     build_command, ref, enable
     )
     VALUES
-    <foreach collection="pipeStepBuildingProject" item="pipeStepBuildingProjects" separator=",">
+    <foreach collection="pipeStepBuildingProjects" item="pipeStepBuildingProject" separator=",">
       (#{pipeStepBuildingProject.id,jdbcType=INTEGER}, #{pipeStepBuildingProject.buildingId,jdbcType=INTEGER}, #{pipeStepBuildingProject.projectId,jdbcType=INTEGER},
        #{pipeStepBuildingProject.buildCommand,jdbcType=VARCHAR},#{pipeStepBuildingProject.ref,jdbcType=VARCHAR}, #{pipeStepBuildingProject.enable,jdbcType=INTEGER})
     </foreach>

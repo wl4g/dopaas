@@ -34,6 +34,7 @@ public class Pipeline extends BaseBean {
 
     private PipeStepNotification pipeStepNotification;
 
+    private PipeStepInstanceCommand pipeStepInstanceCommand;
 
 
     public String getPipeName() {
@@ -131,4 +132,14 @@ public class Pipeline extends BaseBean {
     public void setPipeStepNotification(PipeStepNotification pipeStepNotification) {
         this.pipeStepNotification = pipeStepNotification;
     }
+
+    public PipeStepInstanceCommand getPipeStepInstanceCommand() {
+        return pipeStepInstanceCommand;
+    }
+
+    public void setPipeStepInstanceCommand(PipeStepInstanceCommand pipeStepInstanceCommand) {
+        this.pipeStepInstanceCommand = pipeStepInstanceCommand;
+    }
+
+
 }

@@ -19,7 +19,7 @@ import com.wl4g.devops.ci.pcm.AbstractPcmOperator;
 import com.wl4g.devops.ci.pcm.redmine.model.*;
 import com.wl4g.devops.ci.pcm.redmine.model.RedmineIssues.RedmineIssue;
 import com.wl4g.devops.common.bean.ci.Pcm;
-import com.wl4g.devops.common.bean.ci.PipeStepPcm;
+import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 import com.wl4g.devops.common.web.model.SelectionModel;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -96,6 +96,21 @@ public class RedminePcmOperator extends AbstractPcmOperator {
 	}
 
 	@Override
+	public List<SelectionModel> getStatuses(Pcm pcm) {
+		check(pcm);
+		String url = pcm.getBaseUrl() + "/issue_statuses.json";
+		RedmineIssueStatuses trackers = restTemplate.getForObject(url, RedmineIssueStatuses.class);
+		List<SelectionModel> result = new ArrayList<>();
+		for (RedmineIssueStatuses.IssueStatus tracker : trackers.getIssueStatuses()) {
+			SelectionModel selectInfo = new SelectionModel();
+			selectInfo.setValue(String.valueOf(tracker.getId()));
+			selectInfo.setLabel(tracker.getName());
+			result.add(selectInfo);
+		}
+		return result;
+	}
+
+	@Override
 	public List<SelectionModel> getPriorities(Pcm pcm) {
 		check(pcm);
 		String url = pcm.getBaseUrl() + "/enumerations/issue_priorities.json";
@@ -135,7 +150,7 @@ public class RedminePcmOperator extends AbstractPcmOperator {
 	}
 
 	@Override
-	public void createIssues(Pcm pcm, PipeStepPcm pipeStepPcm) {
+	public void createIssues(Pcm pcm, PipeHistoryPcm pipeHistoryPcm) {
 		check(pcm);
 		String url = pcm.getBaseUrl() + "/issues.json?key=" + pcm.getAccessToken();
 
@@ -146,28 +161,28 @@ public class RedminePcmOperator extends AbstractPcmOperator {
 		HashMap<String, Object> map = new HashMap<>();
 
 		//Necessary parameters
-		map.put("project_id", pipeStepPcm.getxProjectId());
-		map.put("subject", pipeStepPcm.getxSubject());
-		map.put("assigned_to_id", pipeStepPcm.getxAssignTo());
+		map.put("project_id", pipeHistoryPcm.getxProjectId());
+		map.put("subject", pipeHistoryPcm.getxSubject());
+		map.put("assigned_to_id", pipeHistoryPcm.getxAssignTo());
 
 		//Not Necessary parameters
-		if(nonNull(pipeStepPcm.getxTracker())){
-			map.put("tracker_id", pipeStepPcm.getxTracker());
+		if(nonNull(pipeHistoryPcm.getxTracker())){
+			map.put("tracker_id", pipeHistoryPcm.getxTracker());
 		}
-		if(nonNull(pipeStepPcm.getxStatus())){
-			map.put("status_id", pipeStepPcm.getxStatus());
+		if(nonNull(pipeHistoryPcm.getxStatus())){
+			map.put("status_id", pipeHistoryPcm.getxStatus());
 		}
-		if(nonNull(pipeStepPcm.getxPriority())){
-			map.put("priority_id", pipeStepPcm.getxPriority());
+		if(nonNull(pipeHistoryPcm.getxPriority())){
+			map.put("priority_id", pipeHistoryPcm.getxPriority());
 		}
-		if(nonNull(pipeStepPcm.getxDescription())){
-			map.put("description", pipeStepPcm.getxDescription());
+		if(nonNull(pipeHistoryPcm.getxDescription())){
+			map.put("description", pipeHistoryPcm.getxDescription());
 		}
-		if(nonNull(pipeStepPcm.getxStartDate())){
-			map.put("start_date", pipeStepPcm.getxStartDate());
+		if(nonNull(pipeHistoryPcm.getxStartDate())){
+			map.put("start_date", pipeHistoryPcm.getxStartDate());
 		}
-		if(nonNull(pipeStepPcm.getxExpectedTime())){
-			map.put("estimated_hours", pipeStepPcm.getxExpectedTime());
+		if(nonNull(pipeHistoryPcm.getxExpectedTime())){
+			map.put("estimated_hours", pipeHistoryPcm.getxExpectedTime());
 		}
 
 		HashMap<String, Object> map2 = new HashMap<>();

@@ -89,8 +89,19 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>-->
 
-        <table tableName="ci_pipeline_instance" domainObjectName="PipelineInstance"
+        <!--<table tableName="ci_pipeline_instance" domainObjectName="PipelineInstance"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>-->
+        <!--<table tableName="ci_pipe_history_pcm" domainObjectName="PipeHistoryPcm"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+            <columnOverride column="x_description" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <columnOverride column="x_custom_fields" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </table>-->
+
+        <table tableName="ci_pipe_step_instance_command" domainObjectName="PipeStepInstanceCommand"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+            <columnOverride column="pre_command" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <columnOverride column="post_command" javaType="java.lang.String" jdbcType="VARCHAR" />
         </table>
 
     </context>
