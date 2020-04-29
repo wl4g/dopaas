@@ -15,15 +15,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from ci_pipeline_history_instance
+    from ci_pipe_history_instance
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from ci_pipeline_history_instance
+    delete from ci_pipe_history_instance
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistoryInstance">
-    insert into ci_pipeline_history_instance (id, pipe_history_id, instance_id, 
+    insert into ci_pipe_history_instance (id, pipe_history_id, instance_id,
       status, create_date, cost_time
       )
     values (#{id,jdbcType=INTEGER}, #{pipeHistoryId,jdbcType=INTEGER}, #{instanceId,jdbcType=INTEGER}, 
@@ -31,7 +31,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistoryInstance">
-    insert into ci_pipeline_history_instance
+    insert into ci_pipe_history_instance
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -74,7 +74,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistoryInstance">
-    update ci_pipeline_history_instance
+    update ci_pipe_history_instance
     <set>
       <if test="pipeHistoryId != null">
         pipe_history_id = #{pipeHistoryId,jdbcType=INTEGER},
@@ -95,7 +95,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistoryInstance">
-    update ci_pipeline_history_instance
+    update ci_pipe_history_instance
     set pipe_history_id = #{pipeHistoryId,jdbcType=INTEGER},
       instance_id = #{instanceId,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},

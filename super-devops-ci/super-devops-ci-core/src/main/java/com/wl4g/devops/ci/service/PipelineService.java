@@ -22,7 +22,7 @@ public interface PipelineService {
 
     Pipeline getByClusterId(Integer clusterId);
 
-    PipeStepBuilding getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer tagOrBranch);
+    PipeStepBuilding getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer refType);
 
     List<Pipeline> getForSelect();
 

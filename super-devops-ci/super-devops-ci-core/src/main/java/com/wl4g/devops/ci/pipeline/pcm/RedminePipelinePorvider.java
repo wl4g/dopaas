@@ -1,7 +1,7 @@
 package com.wl4g.devops.ci.pipeline.pcm;
 
 import com.wl4g.devops.ci.service.PcmService;
-import com.wl4g.devops.common.bean.ci.PipeStepPcm;
+import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -14,8 +14,8 @@ public class RedminePipelinePorvider implements PcmPipelineProvider {
     private PcmService pcmService;
 
     @Override
-    public void createIssues(Integer pcmId, PipeStepPcm pipeStepPcm) {
-        pcmService.createIssues(pcmId, pipeStepPcm);
+    public void createIssues(Integer pcmId, PipeHistoryPcm pipeHistoryPcm) {
+        pcmService.createIssues(pcmId, pipeHistoryPcm);
     }
 
 }

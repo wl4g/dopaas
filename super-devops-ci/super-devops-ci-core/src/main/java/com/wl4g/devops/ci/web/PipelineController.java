@@ -159,10 +159,10 @@ public class PipelineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getPipeStepBuilding")
-	public RespBase<?> getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer tagOrBranch) {
+	public RespBase<?> getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer refType) {
 		Assert2.notNullOf(clusterId, "clusterId");
 		RespBase<Object> resp = RespBase.create();
-		PipeStepBuilding pipeStepBuilding = pipelineService.getPipeStepBuilding(clusterId, pipeId, tagOrBranch);
+		PipeStepBuilding pipeStepBuilding = pipelineService.getPipeStepBuilding(clusterId, pipeId, refType);
 		resp.setData(pipeStepBuilding);
 		return resp;
 	}

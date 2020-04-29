@@ -16,11 +16,10 @@
 package com.wl4g.devops.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.commons.lang3.RandomUtils;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import org.apache.commons.lang3.RandomUtils;
 
 /**
  * DB based bean entity.
@@ -78,7 +77,7 @@ public abstract class BaseBean implements Serializable {
 	 */
 	public void preInsert() {
 		// TODO Use random number just for now
-		setId(RandomUtils.nextInt(1_0000, 10_0000));
+		setId(RandomUtils.nextInt(1_0000, 10000_0000));
 
 		setCreateDate(new Date());
 		setCreateBy(DEFAULT_USER_ID);

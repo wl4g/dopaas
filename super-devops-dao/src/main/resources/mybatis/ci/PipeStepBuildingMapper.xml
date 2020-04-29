@@ -6,6 +6,7 @@
     <result column="pipe_id" jdbcType="INTEGER" property="pipeId" />
     <result column="pre_command" jdbcType="VARCHAR" property="preCommand" />
     <result column="post_command" jdbcType="VARCHAR" property="postCommand" />
+    <result column="ref_type" jdbcType="INTEGER" property="refType" />
 
 
     <collection property="pipeStepBuildingProjects" javaType="list" ofType="com.wl4g.devops.common.bean.ci.PipeStepBuildingProject">
@@ -20,11 +21,11 @@
 
   </resultMap>
   <sql id="Base_Column_List">
-    id, pipe_id, pre_command, post_command
+    id, pipe_id, pre_command, post_command, ref_type
   </sql>
 
   <sql id="Base_Column_List_b">
-    b.id, b.pipe_id, b.pre_command, b.post_command
+    b.id, b.pipe_id, b.pre_command, b.post_command, b.ref_type
   </sql>
 
   <sql id="PipeStepBuildingProjectsColumn">
@@ -62,9 +63,9 @@
 
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuilding">
     insert into ci_pipe_step_building (id, pipe_id, pre_command, 
-      post_command)
+      post_command, ref_type)
     values (#{id,jdbcType=INTEGER}, #{pipeId,jdbcType=INTEGER}, #{preCommand,jdbcType=VARCHAR}, 
-      #{postCommand,jdbcType=VARCHAR})
+      #{postCommand,jdbcType=VARCHAR}, #{refType,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuilding">
     insert into ci_pipe_step_building
@@ -81,6 +82,9 @@
       <if test="postCommand != null">
         post_command,
       </if>
+      <if test="refType != null">
+        ref_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -94,6 +98,9 @@
       </if>
       <if test="postCommand != null">
         #{postCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="refType != null">
+        #{refType,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -109,6 +116,9 @@
       <if test="postCommand != null">
         post_command = #{postCommand,jdbcType=VARCHAR},
       </if>
+      <if test="refType != null">
+        ref_type = #{refType,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -116,7 +126,8 @@
     update ci_pipe_step_building
     set pipe_id = #{pipeId,jdbcType=INTEGER},
       pre_command = #{preCommand,jdbcType=VARCHAR},
-      post_command = #{postCommand,jdbcType=VARCHAR}
+      post_command = #{postCommand,jdbcType=VARCHAR},
+      ref_type = #{refType,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

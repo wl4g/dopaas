@@ -2,8 +2,11 @@ package com.wl4g.devops.common.bean.ci;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
-public class PipeStepPcm extends BaseBean {
+import java.util.Date;
+
+public class PipeHistoryPcm extends BaseBean {
     private static final long serialVersionUID = 6815608076300843748L;
+
 
     private Integer enable;
 
@@ -11,13 +14,23 @@ public class PipeStepPcm extends BaseBean {
 
     private Integer pcmId;
 
-    private String xProjectId;
+    private Integer xProjectId;
 
     private String xTracker;
 
     private String xStatus;
 
+    private String xSubject;
+
+    private String xDescription;
+
     private String xPriority;
+
+    private String xAssignTo;
+
+    private Date xStartDate;
+
+    private Long xExpectedTime;
 
     private String xCustomFields;
 
@@ -45,11 +58,11 @@ public class PipeStepPcm extends BaseBean {
         this.pcmId = pcmId;
     }
 
-    public String getxProjectId() {
+    public Integer getxProjectId() {
         return xProjectId;
     }
 
-    public void setxProjectId(String xProjectId) {
+    public void setxProjectId(Integer xProjectId) {
         this.xProjectId = xProjectId;
     }
 
@@ -69,12 +82,52 @@ public class PipeStepPcm extends BaseBean {
         this.xStatus = xStatus == null ? null : xStatus.trim();
     }
 
+    public String getxSubject() {
+        return xSubject;
+    }
+
+    public void setxSubject(String xSubject) {
+        this.xSubject = xSubject == null ? null : xSubject.trim();
+    }
+
+    public String getxDescription() {
+        return xDescription;
+    }
+
+    public void setxDescription(String xDescription) {
+        this.xDescription = xDescription == null ? null : xDescription.trim();
+    }
+
     public String getxPriority() {
         return xPriority;
     }
 
     public void setxPriority(String xPriority) {
         this.xPriority = xPriority == null ? null : xPriority.trim();
+    }
+
+    public String getxAssignTo() {
+        return xAssignTo;
+    }
+
+    public void setxAssignTo(String xAssignTo) {
+        this.xAssignTo = xAssignTo == null ? null : xAssignTo.trim();
+    }
+
+    public Date getxStartDate() {
+        return xStartDate;
+    }
+
+    public void setxStartDate(Date xStartDate) {
+        this.xStartDate = xStartDate;
+    }
+
+    public Long getxExpectedTime() {
+        return xExpectedTime;
+    }
+
+    public void setxExpectedTime(Long xExpectedTime) {
+        this.xExpectedTime = xExpectedTime;
     }
 
     public String getxCustomFields() {

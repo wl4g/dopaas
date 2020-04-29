@@ -75,6 +75,30 @@ public class PcmController {
 		return resp;
 	}
 
+	@RequestMapping(value = "/getStatuses")
+	public RespBase<?> getStatuses(Integer pcmId) {
+		RespBase<Object> resp = RespBase.create();
+		List<SelectionModel> selectInfos = pcmService.getStatuses(pcmId);
+		resp.setData(selectInfos);
+		return resp;
+	}
+
+	@RequestMapping(value = "/getTrackers")
+	public RespBase<?> getTrackers(Integer pcmId) {
+		RespBase<Object> resp = RespBase.create();
+		List<SelectionModel> selectInfos = pcmService.getTrackers(pcmId);
+		resp.setData(selectInfos);
+		return resp;
+	}
+
+	@RequestMapping(value = "/getPriorities")
+	public RespBase<?> getPriorities(Integer pcmId) {
+		RespBase<Object> resp = RespBase.create();
+		List<SelectionModel> selectInfos = pcmService.getPriorities(pcmId);
+		resp.setData(selectInfos);
+		return resp;
+	}
+
 	@RequestMapping("/list")
 	@RequiresPermissions(value = { "ci", "ci:pcm" }, logical = AND)
 	public RespBase<?> list(PageModel pm, String name, String providerKind, Integer authType) {

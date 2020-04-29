@@ -12,36 +12,36 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from ci_pipeline_instance
+    from ci_pipe_step_instance
     where id = #{id,jdbcType=INTEGER}
   </select>
 
   <select id="selectByPipeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from ci_pipeline_instance
+    from ci_pipe_step_instance
     where pipe_id = #{pipeId,jdbcType=INTEGER}
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from ci_pipeline_instance
+    delete from ci_pipe_step_instance
     where id = #{id,jdbcType=INTEGER}
   </delete>
 
   <delete id="deleteByPipeId" parameterType="java.lang.Integer">
-    delete from ci_pipeline_instance
+    delete from ci_pipe_step_instance
     where pipe_id = #{pipeId,jdbcType=INTEGER}
   </delete>
 
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipelineInstance">
-    insert into ci_pipeline_instance (id, pipe_id, instance_id
+    insert into ci_pipe_step_instance (id, pipe_id, instance_id
       )
     values (#{id,jdbcType=INTEGER}, #{pipeId,jdbcType=INTEGER}, #{instanceId,jdbcType=INTEGER}
       )
   </insert>
 
   <insert id="insertBatch" parameterType="java.util.Map">
-    insert into ci_pipeline_instance (id, pipe_id, instance_id)
+    insert into ci_pipe_step_instance (id, pipe_id, instance_id)
     VALUES
     <foreach collection="pipelineInstances" item="pipelineInstance" separator=",">
       (#{pipelineInstance.id,jdbcType=INTEGER}, #{pipelineInstance.pipeId,jdbcType=INTEGER}, #{pipelineInstance.instanceId,jdbcType=INTEGER})
@@ -50,7 +50,7 @@
 
 
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipelineInstance">
-    insert into ci_pipeline_instance
+    insert into ci_pipe_step_instance
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -75,7 +75,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.PipelineInstance">
-    update ci_pipeline_instance
+    update ci_pipe_step_instance
     <set>
       <if test="pipeId != null">
         pipe_id = #{pipeId,jdbcType=INTEGER},
@@ -87,7 +87,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.PipelineInstance">
-    update ci_pipeline_instance
+    update ci_pipe_step_instance
     set pipe_id = #{pipeId,jdbcType=INTEGER},
       instance_id = #{instanceId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}

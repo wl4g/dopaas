@@ -1,6 +1,6 @@
 package com.wl4g.devops.ci.pipeline.pcm;
 
-import com.wl4g.devops.common.bean.ci.PipeStepPcm;
+import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 
 /**
  * @author vjay
@@ -8,6 +8,6 @@ import com.wl4g.devops.common.bean.ci.PipeStepPcm;
  */
 public interface PcmPipelineProvider  {
 
-    void createIssues(Integer pcmId, PipeStepPcm pipeStepPcm);
+    void createIssues(Integer pcmId,  PipeHistoryPcm pipeHistoryPcm);
 
 }

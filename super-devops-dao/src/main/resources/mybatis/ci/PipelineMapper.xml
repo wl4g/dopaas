@@ -224,7 +224,7 @@
     ,c.name cluster_name
     from ci_pipeline p
     left join app_cluster c on p.cluster_id=c.id
-    left join ci_pipeline_instance pi on pi.pipe_id=p.id
+    left join ci_pipe_step_instance pi on pi.pipe_id=p.id
     left join app_instance i on i.id=pi.instance_id
     left join app_host h on h.id=i.host_id
     where p.del_flag!=1

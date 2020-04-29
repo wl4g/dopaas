@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.pcm;
 
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.bean.ci.Pcm;
-import com.wl4g.devops.common.bean.ci.PipeStepPcm;
+import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 import com.wl4g.devops.common.framework.operator.Operator;
 import com.wl4g.devops.common.web.model.SelectionModel;
 
@@ -66,6 +66,14 @@ public interface PcmOperator extends Operator<PcmKind> {
 	 */
 	List<SelectionModel> getPriorities(Pcm pcm);
 
+
+	/**
+	 * Get Pcm Statuses
+	 * @param pcm
+	 * @return
+	 */
+	List<SelectionModel> getStatuses(Pcm pcm);
+
 	/**
 	 * 
 	 * Get PCM issue list.
@@ -79,7 +87,7 @@ public interface PcmOperator extends Operator<PcmKind> {
 	List<SelectionModel> getIssues(Pcm pcm, String userId, String projectId, String searchSubject);
 
 
-	void createIssues(Pcm pcm, PipeStepPcm pipeStepPcm);
+	void createIssues(Pcm pcm, PipeHistoryPcm pipeStepPcm);
 
 	/**
 	 * Project collaboration management operator kind.
