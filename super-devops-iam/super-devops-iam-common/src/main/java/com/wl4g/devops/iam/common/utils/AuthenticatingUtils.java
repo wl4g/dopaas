@@ -139,7 +139,7 @@ public abstract class AuthenticatingUtils extends IamSecurityHolder {
 	final public static String generateAccessTokenSignKey(@NotBlank final Serializable sessionId, final String parent) {
 		notNullOf(sessionId, "sessionId");
 		byte[] sessionIdArray = toBytes(sessionId.toString() + "@" + parent);
-		return bind(KEY_ACCESSTOKEN_SIGN, sha512().hashBytes(sessionIdArray).toString());
+		return sha512().hashBytes(sessionIdArray).toString();
 	}
 
 	/**

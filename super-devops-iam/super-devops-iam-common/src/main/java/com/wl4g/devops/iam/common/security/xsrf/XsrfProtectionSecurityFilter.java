@@ -18,6 +18,9 @@ package com.wl4g.devops.iam.common.security.xsrf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
+import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import java.io.IOException;
 
@@ -26,16 +29,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.util.AntPathMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.wl4g.devops.iam.common.config.XsrfProperties;
 import com.wl4g.devops.iam.common.security.xsrf.handler.AccessRejectHandler;
 import com.wl4g.devops.iam.common.security.xsrf.handler.InvalidXsrfTokenException;
 import com.wl4g.devops.iam.common.security.xsrf.handler.MissingXsrfTokenException;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository;
 import com.wl4g.devops.tool.common.log.SmartLogger;
-import static com.wl4g.devops.tool.common.web.UrlUtils.*;
 
 /**
  * <p>
@@ -59,6 +63,9 @@ import static com.wl4g.devops.tool.common.web.UrlUtils.*;
 public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 
 	protected SmartLogger log = getLogger(getClass());
+
+	@Autowired
+	private XsrfProperties xconfig;
 
 	@Autowired
 	private XsrfTokenRepository xtokenRepository;
@@ -94,13 +101,23 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		// Non browser request ignore validation XSRF token
+		String requestPath = getPathWithinApplication(toHttp(request));
+		// Ignore Non browser request xsrf validation.
 		if (!isBrowser(request)) {
-			log.debug("Skip XSRF token for: {}", buildFullRequestUrl(request));
+			log.debug("Skip non browser xsrf valid '{}'", requestPath);
 			filterChain.doFilter(request, response);
 			return;
 		}
+		// Ignore exclude URLs xsrf validation.
+		for (String pattern : xconfig.getExcludeValidXsrfMapping()) {
+			if (defaultExcludeXsrfMatcher.matchStart(pattern, requestPath)) {
+				log.debug("Skip exclude url xsrf valid '{}'", requestPath);
+				filterChain.doFilter(request, response);
+				return;
+			}
+		}
 
+		// XSRF validation
 		request.setAttribute(HttpServletResponse.class.getName(), response);
 		XsrfToken xsrfToken = xtokenRepository.getXToken(request);
 		final boolean missingToken = isNull(xsrfToken);
@@ -112,16 +129,17 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 		request.setAttribute(xsrfToken.getParameterName(), xsrfToken);
 
 		if (!xsrfProtectionMatcher.matches(request)) {
+			log.debug("Skip xsrf protection of: {}", requestPath);
 			filterChain.doFilter(request, response);
 			return;
 		}
 
 		String actualToken = request.getHeader(xsrfToken.getHeaderName());
-		if (actualToken == null) {
+		if (isBlank(actualToken)) {
 			actualToken = request.getParameter(xsrfToken.getParameterName());
 		}
 		if (!xsrfToken.getToken().equals(actualToken)) {
-			log.debug("Invalid XSRF token found for: {}", buildFullRequestUrl(request));
+			log.debug("Invalid XSRF token found for: {}", requestPath);
 			if (missingToken) {
 				rejectHandler.handle(request, response, new MissingXsrfTokenException(actualToken));
 			} else {
@@ -138,6 +156,11 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 	 * required or not. The default is to ignore GET, HEAD, TRACE, OPTIONS and
 	 * process all other requests.
 	 */
-	public static final XsrfMatcher DEFAULT_XSRF_MATCHER = new RequiresXsrfMatcher();
+	final public static XsrfMatcher DEFAULT_XSRF_MATCHER = new RequiresXsrfMatcher();
+
+	/**
+	 * Exclude xsrf URLs mapping matcher.
+	 */
+	final private static AntPathMatcher defaultExcludeXsrfMatcher = new AntPathMatcher();
 
 }

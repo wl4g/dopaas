@@ -30,7 +30,10 @@ import redis.clients.jedis.JedisClusterCommand;
 import redis.clients.jedis.JedisClusterConnectionHandler;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisSlotBasedConnectionHandler;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisException;
+import redis.clients.jedis.exceptions.JedisNoReachableClusterNodeException;
+import redis.clients.jedis.exceptions.JedisRedirectionException;
 
 /**
  * {@link EnhancedJedisClusterCommand}
@@ -51,9 +54,19 @@ public abstract class EnhancedJedisClusterCommand<T> extends JedisClusterCommand
 		try {
 			return doExecute(connection);
 		} catch (JedisException e) {
+			/**
+			 * {@link redis.clients.jedis.JedisClusterCommand#runWithRetries}
+			 */
+			if ((e instanceof JedisRedirectionException) || (e instanceof JedisNoReachableClusterNodeException)) {
+				throw e;
+			}
 			// Print details errors.
 			String node = connection.getClient().getHost() + ":" + connection.getClient().getPort();
-			throw new JedisException(format("Couldn't execution jedis command of node: %s", node), e);
+			String errmsg = format("Couldn't execution jedis command of node: %s", node);
+			if (e instanceof JedisConnectionException) {
+				throw new JedisConnectionException(errmsg, e);
+			}
+			throw new JedisException(errmsg, e);
 		}
 	}
 
@@ -87,7 +100,7 @@ public abstract class EnhancedJedisClusterCommand<T> extends JedisClusterCommand
 		public Jedis getConnectionFromSlot(int slot) {
 			try {
 				return super.getConnectionFromSlot(slot);
-			} catch (Exception ex) {
+			} catch (JedisException ex) {
 				// Found current jedis node
 				JedisPool jedisPool = cache.getSlotPool(slot);
 				Optional<String> opt = cache.getNodes().entrySet().stream().filter(e -> e.getValue() == jedisPool)
@@ -112,7 +125,7 @@ public abstract class EnhancedJedisClusterCommand<T> extends JedisClusterCommand
 		public Jedis getConnectionFromNode(HostAndPort node) {
 			try {
 				return super.getConnectionFromNode(node);
-			} catch (Exception e) {
+			} catch (JedisException e) {
 				// Print details errors.
 				throw new JedisException(format("Couldn't get a resource of '%s'", node), e);
 			}
