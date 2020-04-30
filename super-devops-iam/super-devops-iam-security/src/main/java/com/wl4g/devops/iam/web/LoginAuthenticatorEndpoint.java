@@ -217,13 +217,14 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	public RespBase<?> readPermits(HttpServletRequest request) {
 		checkPreHandle(request, true);
 
-		RespBase<String> resp = RespBase.create(sessionStatus());
+		RespBase<IamPrincipalPermitsResult> resp = RespBase.create(sessionStatus());
 
 		// Gets current session authentication permits info.
-		IamPrincipalInfo principalInfo = getPrincipalInfo();
-		IamPrincipalPermitsResult authzInfo = new IamPrincipalPermitsResult();
-		authzInfo.setRoles(principalInfo.getRoles()); // Roles
-		authzInfo.setPermissions(principalInfo.getPermissions()); // Permissions
+		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipalPermitsResult result = new IamPrincipalPermitsResult();
+		result.setRoles(info.getRoles()); // Roles
+		result.setPermissions(info.getPermissions()); // Permissions
+		resp.setData(result);
 		return resp;
 	}
 

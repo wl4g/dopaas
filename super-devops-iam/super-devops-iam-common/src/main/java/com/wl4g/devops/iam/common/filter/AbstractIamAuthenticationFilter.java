@@ -118,6 +118,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 			Cookie c = new SimpleCookie(config.getCookie());
 			c.setName(config.getParam().getAuthzPermitsName());
 			c.setValue(permitUrl);
+			c.setMaxAge(60);
 			c.saveTo(toHttp(request), toHttp(response));
 		}
 
