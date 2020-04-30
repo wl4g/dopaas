@@ -635,10 +635,10 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 	protected String[] putSuccessTokensCookieIfNecessary(AuthenticationToken token, ServletRequest request,
 			ServletResponse response) throws DecoderException {
 
-		String dataCipherKeyHex = null, accessToken = null;
+		String dataCipherKeyHex = null, accessToken = null, umidToken = null;
 		if (token instanceof ClientSecretIamAuthenticationToken) {
-			// Sets dataCipherKey.
-			if (config.getCipher().isEnableDataCipher() && isBrowser(toHttp(request))) {
+			// Sets dataCipherKey(Required)
+			if (config.getCipher().isEnableDataCipher()) {
 				// Gets SecureCryptService.
 				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
 				SecureCryptService cryptService = cryptAdapter.forOperator(kind);
@@ -653,36 +653,47 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				dataCipherKeyHex = cryptService.encrypt(pubKeySpec, hexDataCipherKey);
 
 				// Set to cookies
-				Cookie c = new SimpleCookie(config.getCookie());
-				c.setName(config.getParam().getDataCipherKeyName());
-				c.setValue(dataCipherKeyHex);
-				c.saveTo(toHttp(request), toHttp(response));
-			}
-
-			// Sets accessToken.
-			if (config.getSession().isEnableAccessTokenValidity() && isBrowser(toHttp(request))) {
-				// Create accessTokenSignKey.
-				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN, generateAccessTokenSignKey(getSessionId()));
-				accessToken = generateAccessToken(getSession(), accessTokenSignKey);
-				Cookie c = new SimpleCookie(config.getCookie());
-				c.setName(config.getParam().getAccessTokenName());
-				c.setValue(accessToken);
-				c.saveTo(toHttp(request), toHttp(response));
+				if (isBrowser(toHttp(request))) {
+					Cookie c = new SimpleCookie(config.getCookie());
+					c.setName(config.getParam().getDataCipherKeyName());
+					c.setValue(dataCipherKeyHex);
+					c.saveTo(toHttp(request), toHttp(response));
+				}
 			}
 
 			/**
-			 * Sets umidToken.
+			 * Sets accessToken(Required)
 			 * 
 			 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestAccessTokenValidity}
 			 */
-			String umidToken = ((ClientSecretIamAuthenticationToken) token).getUmidToken();
-			Cookie c = new SimpleCookie(config.getCookie());
-			c.setName(config.getParam().getUmidTokenName());
-			c.setValue(umidToken);
-			c.saveTo(toHttp(request), toHttp(response));
+			if (config.getSession().isEnableAccessTokenValidity()) {
+				// Create accessTokenSignKey.
+				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN, generateAccessTokenSignKey(getSessionId()));
+				accessToken = generateAccessToken(getSession(), accessTokenSignKey);
+				// Set to cookies
+				if (isBrowser(toHttp(request))) {
+					Cookie c = new SimpleCookie(config.getCookie());
+					c.setName(config.getParam().getAccessTokenName());
+					c.setValue(accessToken);
+					c.saveTo(toHttp(request), toHttp(response));
+				}
+			}
+
+			/**
+			 * Sets umidToken.(TODO valid-non-impl)
+			 * 
+			 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestAccessTokenValidity}
+			 */
+			umidToken = ((ClientSecretIamAuthenticationToken) token).getUmidToken();
+			if (isBrowser(toHttp(request))) {
+				Cookie c = new SimpleCookie(config.getCookie());
+				c.setName(config.getParam().getUmidTokenName());
+				c.setValue(umidToken);
+				c.saveTo(toHttp(request), toHttp(response));
+			}
 		}
 
-		return new String[] { dataCipherKeyHex, accessToken };
+		return new String[] { dataCipherKeyHex, accessToken, umidToken };
 	}
 
 	/**
