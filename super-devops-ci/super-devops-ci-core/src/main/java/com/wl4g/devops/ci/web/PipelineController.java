@@ -151,12 +151,27 @@ public class PipelineController extends BaseController {
 	 * @param taskId
 	 */
 	@RequestMapping(value = "/create")
-	public RespBase<?> create(Integer taskId, String trackId, Integer trackType, String remark, String annex) {
+	public RespBase<?> create(Integer taskId, String trackId, String trackType, String remark, String annex) {
 		RespBase<Object> resp = RespBase.create();
 		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
 		pipeliner.runPipeline(new NewParameter(taskId, remark, trackId, trackType, annex),pipelineModel);
 		return resp;
 	}
+
+	/**
+	 * create Task History and run Task
+	 *
+	 * @param taskId
+	 */
+	@RequestMapping(value = "/create")
+	public RespBase<?> create(NewParameter newParameter) {
+		RespBase<Object> resp = RespBase.create();
+		PipelineModel pipelineModel = flowManager.buildPipeline(newParameter.getPipeId());
+		pipeliner.runPipeline(newParameter,pipelineModel);
+		return resp;
+	}
+
+
 
 	@RequestMapping(value = "/getPipeStepBuilding")
 	public RespBase<?> getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer refType) {

@@ -63,7 +63,7 @@ public class FlowManager {
 	 * 
 	 * @param orchestration
 	 */
-	public void runOrchestration(Orchestration orchestration, String remark, String taskTraceId, Integer taskTraceType,
+	public void runOrchestration(Orchestration orchestration, String remark, String taskTraceId, String taskTraceType,
 			String annex) {
 		List<OrchestrationPipeline> orchestrationPipelines = orchestration.getOrchestrationPipelines();
 		List<List<OrchestrationPipeline>> orchestrationPipelinesSort = sortByPriority(orchestrationPipelines);
@@ -152,7 +152,7 @@ public class FlowManager {
 	 * 
 	 * @param lists
 	 */
-	public void handOut(List<List<PipelineModel>> pipelineModelSort, String remark, String taskTraceId, Integer taskTraceType,
+	public void handOut(List<List<PipelineModel>> pipelineModelSort, String remark, String taskTraceId, String taskTraceType,
 			String annex) throws Exception {
 		// Create runner.
 		GenericTaskRunner<?> runner = createGenericTaskRunner(2);
@@ -206,7 +206,7 @@ public class FlowManager {
 	 *
 	 * @param pipelineModel
 	 */
-	public void master2slave(PipelineModel pipelineModel, String remark, String taskTraceId, Integer taskTraceType,
+	public void master2slave(PipelineModel pipelineModel, String remark, String taskTraceId, String taskTraceType,
 			String annex) {
 		log.info(
 				"FlowManager.master2slave prarms::"

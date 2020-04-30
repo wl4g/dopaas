@@ -15,6 +15,8 @@ public class PipeStepPcm extends BaseBean {
 
     private String xTracker;
 
+    private String xAssignTo;
+
     private String xStatus;
 
     private String xPriority;
@@ -83,5 +85,13 @@ public class PipeStepPcm extends BaseBean {
 
     public void setxCustomFields(String xCustomFields) {
         this.xCustomFields = xCustomFields == null ? null : xCustomFields.trim();
+    }
+
+    public String getxAssignTo() {
+        return xAssignTo;
+    }
+
+    public void setxAssignTo(String xAssignTo) {
+        this.xAssignTo = xAssignTo;
     }
 }

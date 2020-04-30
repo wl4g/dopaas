@@ -19,11 +19,14 @@ public class PipelineHistory extends BaseBean {
 
     private Date costTime;
 
-    private Integer trackType;
+    private String trackType;
 
     private String trackId;
 
     private String annex;
+
+
+
 
     public Integer getPipeId() {
         return pipeId;
@@ -73,11 +76,11 @@ public class PipelineHistory extends BaseBean {
         this.costTime = costTime;
     }
 
-    public Integer getTrackType() {
+    public String getTrackType() {
         return trackType;
     }
 
-    public void setTrackType(Integer trackType) {
+    public void setTrackType(String trackType) {
         this.trackType = trackType;
     }
 

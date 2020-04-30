@@ -34,6 +34,8 @@ public class PipeHistoryPcm extends BaseBean {
 
     private String xCustomFields;
 
+    private String xParentIssueId;
+
     public Integer getEnable() {
         return enable;
     }
@@ -136,5 +138,13 @@ public class PipeHistoryPcm extends BaseBean {
 
     public void setxCustomFields(String xCustomFields) {
         this.xCustomFields = xCustomFields == null ? null : xCustomFields.trim();
+    }
+
+    public String getxParentIssueId() {
+        return xParentIssueId;
+    }
+
+    public void setxParentIssueId(String xParentIssueId) {
+        this.xParentIssueId = xParentIssueId;
     }
 }

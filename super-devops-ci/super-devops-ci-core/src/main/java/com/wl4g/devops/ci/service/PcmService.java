@@ -38,11 +38,11 @@ public interface PcmService {
 
 	List<Pcm> all();
 
-	List<SelectionModel> getUsers(Integer taskId);
+	List<SelectionModel> getUsers(Integer pcmId);
 
-	List<SelectionModel> getProjects(Integer taskId);
+	List<SelectionModel> getProjects(Integer pcmId);
 
-	List<SelectionModel> getIssues(Integer taskId, String userId, String projectId, String search);
+	List<SelectionModel> getIssues(Integer pcmId, String userId, String projectId, String search);
 
 	List<SelectionModel> getProjectsByPcmId(Integer pcmId);
 

@@ -9,7 +9,7 @@
     <result column="sha_local" jdbcType="VARCHAR" property="shaLocal" />
     <result column="ref_id" jdbcType="INTEGER" property="refId" />
     <result column="cost_time" jdbcType="TIMESTAMP" property="costTime" />
-    <result column="track_type" jdbcType="INTEGER" property="trackType" />
+    <result column="track_type" jdbcType="VARCHAR" property="trackType" />
     <result column="track_id" jdbcType="VARCHAR" property="trackId" />
     <result column="annex" jdbcType="VARCHAR" property="annex" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -42,7 +42,7 @@
       del_flag)
     values (#{id,jdbcType=INTEGER}, #{pipeId,jdbcType=INTEGER}, #{providerKind,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, #{shaLocal,jdbcType=VARCHAR}, #{refId,jdbcType=INTEGER}, 
-      #{costTime,jdbcType=TIMESTAMP}, #{trackType,jdbcType=INTEGER}, #{trackId,jdbcType=VARCHAR}, 
+      #{costTime,jdbcType=TIMESTAMP}, #{trackType,jdbcType=VARCHAR}, #{trackId,jdbcType=VARCHAR},
       #{annex,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER})
@@ -122,7 +122,7 @@
         #{costTime,jdbcType=TIMESTAMP},
       </if>
       <if test="trackType != null">
-        #{trackType,jdbcType=INTEGER},
+        #{trackType,jdbcType=VARCHAR},
       </if>
       <if test="trackId != null">
         #{trackId,jdbcType=VARCHAR},
@@ -172,7 +172,7 @@
         cost_time = #{costTime,jdbcType=TIMESTAMP},
       </if>
       <if test="trackType != null">
-        track_type = #{trackType,jdbcType=INTEGER},
+        track_type = #{trackType,jdbcType=VARCHAR},
       </if>
       <if test="trackId != null">
         track_id = #{trackId,jdbcType=VARCHAR},
@@ -209,7 +209,7 @@
       sha_local = #{shaLocal,jdbcType=VARCHAR},
       ref_id = #{refId,jdbcType=INTEGER},
       cost_time = #{costTime,jdbcType=TIMESTAMP},
-      track_type = #{trackType,jdbcType=INTEGER},
+      track_type = #{trackType,jdbcType=VARCHAR},
       track_id = #{trackId,jdbcType=VARCHAR},
       annex = #{annex,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},

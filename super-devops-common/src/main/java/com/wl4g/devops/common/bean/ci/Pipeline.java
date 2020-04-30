@@ -36,6 +36,10 @@ public class Pipeline extends BaseBean {
 
     private PipeStepInstanceCommand pipeStepInstanceCommand;
 
+    private Integer pcmEnable;
+
+    private Integer pcmId;
+
 
     public String getPipeName() {
         return pipeName;
@@ -141,5 +145,19 @@ public class Pipeline extends BaseBean {
         this.pipeStepInstanceCommand = pipeStepInstanceCommand;
     }
 
+    public Integer getPcmEnable() {
+        return pcmEnable;
+    }
 
+    public void setPcmEnable(Integer pcmEnable) {
+        this.pcmEnable = pcmEnable;
+    }
+
+    public Integer getPcmId() {
+        return pcmId;
+    }
+
+    public void setPcmId(Integer pcmId) {
+        this.pcmId = pcmId;
+    }
 }

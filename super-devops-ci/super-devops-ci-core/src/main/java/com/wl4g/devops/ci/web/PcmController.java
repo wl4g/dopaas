@@ -43,17 +43,17 @@ public class PcmController {
 	private PcmService pcmService;
 
 	@RequestMapping(value = "/getUsers")
-	public RespBase<?> getUsers(Integer taskId) {
+	public RespBase<?> getUsers(Integer pcmId) {
 		RespBase<Object> resp = RespBase.create();
-		List<SelectionModel> users = pcmService.getUsers(taskId);
+		List<SelectionModel> users = pcmService.getUsers(pcmId);
 		resp.setData(users);
 		return resp;
 	}
 
 	@RequestMapping(value = "/getProjects")
-	public RespBase<?> getProjects(Integer taskId) {
+	public RespBase<?> getProjects(Integer pcmId) {
 		RespBase<Object> resp = RespBase.create();
-		List<SelectionModel> selectInfos = pcmService.getProjects(taskId);
+		List<SelectionModel> selectInfos = pcmService.getProjects(pcmId);
 		resp.setData(selectInfos);
 		return resp;
 	}
@@ -68,9 +68,9 @@ public class PcmController {
 
 
 	@RequestMapping(value = "/getIssues")
-	public RespBase<?> getIssues(Integer taskId, String userId, String projectId, String search) {
+	public RespBase<?> getIssues(Integer pcmId, String userId, String projectId, String search) {
 		RespBase<Object> resp = RespBase.create();
-		List<SelectionModel> selectInfos = pcmService.getIssues(taskId, userId, projectId, search);
+		List<SelectionModel> selectInfos = pcmService.getIssues(pcmId, userId, projectId, search);
 		resp.setData(selectInfos);
 		return resp;
 	}

@@ -97,7 +97,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @throws Exception
 	 */
 	protected void transferToRemoteTmpDir(String remoteHost, String user, String sshkey) throws Exception {
-		String localFile = config.getJobBackupDir(getContext().getTaskHistory().getId()) + "/" + getPrgramInstallFileName() + "."
+		String localFile = config.getJobBackupDir(getContext().getPipelineHistory().getId()) + "/" + getPrgramInstallFileName() + "."
 				+ DEFAULT_FILE_SUFFIX;
 
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
@@ -174,7 +174,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @return
 	 */
 	protected String getProgramInstallDir() {
-		return getContext().getTaskHistory().getParentAppHome();
+		return getContext().getPipeline().getParentAppHome();
 	}
 
 	/**
