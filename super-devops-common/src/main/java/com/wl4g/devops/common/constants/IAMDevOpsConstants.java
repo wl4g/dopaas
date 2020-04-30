@@ -152,9 +152,14 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/** URI for apply for locale. */
 	final public static String URI_S_LOGIN_APPLY_LOCALE = "applylocale";
 	/**
-	 * Get the error information stored in the current session
+	 * Gets the error information stored in the current session
 	 */
 	final public static String URI_S_LOGIN_ERRREAD = "errread";
+	/**
+	 * Gets used for page Jump mode, to read authenticated roles/permissions/...
+	 * info.
+	 */
+	final public static String URI_S_LOGIN_PERMITS = "permits";
 
 	/** Based URI with verifier authenticator controller. */
 	final public static String URI_S_VERIFY_BASE = "/verify";
