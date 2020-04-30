@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import static java.util.Locale.*;
+import static java.util.Objects.isNull;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -117,20 +118,14 @@ public abstract class WebUtils2 {
 	 */
 	public static void write(HttpServletResponse response, int status, String contentType, byte[] body) throws IOException {
 		OutputStream out = null;
-		try {
-			response.setCharacterEncoding("UTF-8");
-			response.setStatus(status);
-			response.setContentType(contentType);
-			if (body != null) {
-				out = response.getOutputStream();
-				out.write(body);
-				out.flush();
-				response.flushBuffer();
-			}
-		} finally {
-			if (out != null) {
-				out.close();
-			}
+		response.setCharacterEncoding("UTF-8");
+		response.setStatus(status);
+		response.setContentType(contentType);
+		if (!isNull(body)) {
+			out = response.getOutputStream();
+			out.write(body);
+			response.flushBuffer();
+			// out.close(); // [Cannot close !!!]
 		}
 	}
 

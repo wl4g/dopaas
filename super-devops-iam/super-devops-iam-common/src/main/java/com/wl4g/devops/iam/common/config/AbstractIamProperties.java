@@ -271,11 +271,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		private static final long serialVersionUID = 918554077474485700L;
 
-		/**
-		 * Authorization info cookie max-age(sec)
-		 */
-		private int authorizationInfoMaxAge = 30;
-
 		@Override
 		public String getName() {
 			if (isBlank(super.getName())) {
@@ -290,14 +285,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 */
 		public void setName(String name) {
 			super.setName(name.toUpperCase(Locale.US));
-		}
-
-		public int getAuthorizationInfoMaxAge() {
-			return authorizationInfoMaxAge;
-		}
-
-		public void setAuthorizationInfoMaxAge(int authorizationInfoMaxAge) {
-			this.authorizationInfoMaxAge = authorizationInfoMaxAge;
 		}
 
 	}
@@ -547,14 +534,9 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		// --- [Authentication info. ---
 
 		/**
-		 * Authentication roles attribute name.
+		 * Authorizes permits information attribute name.
 		 */
-		private String roleAttrName = "roles";
-
-		/**
-		 * Authentication permissions attribute name.
-		 */
-		private String permissionAttrName = "permissions";
+		private String authzPermitsName = "authzPermits";
 
 		// --- Authentication info.] ---
 
@@ -728,20 +710,12 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			this.dataCipherKeyName = dataCipherKeyName;
 		}
 
-		public String getRoleAttrName() {
-			return roleAttrName;
+		public String getAuthzPermitsName() {
+			return authzPermitsName;
 		}
 
-		public void setRoleAttrName(String roleAttrName) {
-			this.roleAttrName = roleAttrName;
-		}
-
-		public String getPermissionAttrName() {
-			return permissionAttrName;
-		}
-
-		public void setPermissionAttrName(String permissionAttrName) {
-			this.permissionAttrName = permissionAttrName;
+		public void setAuthzPermitsName(String authzPermitsName) {
+			this.authzPermitsName = authzPermitsName;
 		}
 
 	}

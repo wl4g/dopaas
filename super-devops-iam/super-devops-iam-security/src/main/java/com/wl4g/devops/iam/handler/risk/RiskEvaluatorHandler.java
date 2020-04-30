@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -58,11 +59,11 @@ public interface RiskEvaluatorHandler {
 	/**
 	 * Check and assess whether there are risks.
 	 * 
-	 * @param umidToken
+	 * @param request
 	 * @return
 	 * @throws SuspiciousRiskException;
 	 */
-	void checkEvaluation(@NotBlank String umidToken) throws SuspiciousRiskException;
+	void checkEvaluation(@NotBlank HttpServletRequest request) throws SuspiciousRiskException;
 
 	/**
 	 * User properties items definitions.

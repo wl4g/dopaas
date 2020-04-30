@@ -19,6 +19,7 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.handler.risk.RiskEvaluatorHandler;
@@ -28,6 +29,7 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
 import com.wl4g.devops.iam.web.model.CaptchaCheckResult;
 import com.wl4g.devops.iam.web.model.GenericCheckResult;
 import com.wl4g.devops.iam.web.model.HandshakeResult;
+import com.wl4g.devops.iam.web.model.IamPrincipalPermitsResult;
 import com.wl4g.devops.iam.web.model.SmsCheckResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,7 @@ import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.checkSession;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
 import static com.wl4g.devops.iam.web.model.CaptchaCheckResult.KEY_CAPTCHA_CHECK;
 import static com.wl4g.devops.iam.web.model.GenericCheckResult.KEY_GENERIC_CHECK;
@@ -183,7 +186,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	}
 
 	/**
-	 * Read the error message from currently session.
+	 * Used for page Jump mode, to read operation exception messages.
 	 *
 	 * @param request
 	 * @return
@@ -199,6 +202,28 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 		errmsg = isBlank(errmsg) ? "" : errmsg;
 		resp.forMap().put(KEY_ERR_SESSION_SAVED, errmsg);
 
+		return resp;
+	}
+
+	/**
+	 * Used for page Jump mode, to read authenticated roles/permissions/...
+	 * info.
+	 *
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = URI_S_LOGIN_PERMITS, method = { GET })
+	@ResponseBody
+	public RespBase<?> readPermits(HttpServletRequest request) {
+		checkPreHandle(request, true);
+
+		RespBase<String> resp = RespBase.create(sessionStatus());
+
+		// Gets current session authentication permits info.
+		IamPrincipalInfo principalInfo = getPrincipalInfo();
+		IamPrincipalPermitsResult authzInfo = new IamPrincipalPermitsResult();
+		authzInfo.setRoles(principalInfo.getRoles()); // Roles
+		authzInfo.setPermissions(principalInfo.getPermissions()); // Permissions
 		return resp;
 	}
 
@@ -239,8 +264,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 		}
 
 		// Check umidToken validatity.
-		String umidToken = getCleanParam(request, config.getParam().getUmidTokenName());
-		riskRecognizerHandler.checkEvaluation(umidToken);
+		riskRecognizerHandler.checkEvaluation(request);
 	}
 
 }
