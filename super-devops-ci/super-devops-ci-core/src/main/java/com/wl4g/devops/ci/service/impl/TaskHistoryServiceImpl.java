@@ -93,7 +93,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
 			String sha, Integer refId, String buildCommand, String preCommand, String postCommand, String tarType,String branchType,
-			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, Integer trackType, String remark,
+			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, String trackType, String remark,
 			String envType, String annex,String parentAppHome,String assetsPath) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
@@ -113,7 +113,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setContactGroupId(contactGroupId);
 		// 1107 add
 		taskHistory.setTrackId(trackId);
-		taskHistory.setTrackType(trackType);
+		//taskHistory.setTrackType(trackType);
 		taskHistory.setRemark(remark);
 		taskHistory.setEnvType(envType);
 		taskHistory.setAnnex(annex);

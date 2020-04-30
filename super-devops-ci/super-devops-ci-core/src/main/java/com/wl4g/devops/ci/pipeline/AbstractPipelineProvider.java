@@ -243,7 +243,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		// Creating transfer instances jobs.
 		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
 			return (Runnable) () -> {
-				File jobDeployerLog = config.getJobDeployerLog(context.getTaskHistory().getId(), i.getId());
+				File jobDeployerLog = config.getJobDeployerLog(context.getPipelineHistory().getId(), i.getId());
 				try {
 					writeBLineFile(jobDeployerLog, LOG_FILE_START);
 
@@ -285,9 +285,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected String writeBuildLog(String format, Object... args) {
 		String content = String.format(format, args);
-		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"), getContext().getTaskHistory().getId(),
+		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"), getContext().getPipelineHistory().getId(),
 				content);
-		writeALineFile(config.getJobLog(context.getTaskHistory().getId()), message);
+		writeALineFile(config.getJobLog(context.getPipelineHistory().getId()), message);
 		return content;
 	}
 
@@ -360,16 +360,16 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			commands = replace(commands, PH_PROJECT_DIR, projectDir);
 
 			// Replace for backupDir.
-			File tmpScriptFile = config.getJobTmpCommandFile(getContext().getTaskHistory().getId(),
+			File tmpScriptFile = config.getJobTmpCommandFile(getContext().getPipelineHistory().getId(),
 					getContext().getProject().getId());
 			commands = replace(commands, PH_TMP_SCRIPT_FILE, tmpScriptFile.getAbsolutePath());
 
 			// Replace for backupDir.
-			File backupDir = config.getJobBackupDir(getContext().getTaskHistory().getId());
+			File backupDir = config.getJobBackupDir(getContext().getPipelineHistory().getId());
 			commands = replace(commands, PH_BACKUP_DIR, backupDir.getAbsolutePath());
 
 			// Replace for logPath.
-			File logFile = config.getJobLog(getContext().getTaskHistory().getId());
+			File logFile = config.getJobLog(getContext().getPipelineHistory().getId());
 			commands = replace(commands, PH_LOG_FILE, logFile.getAbsolutePath());
 
 			// Replace for remoteTmpDir.

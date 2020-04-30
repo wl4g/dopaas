@@ -24,6 +24,8 @@ import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
+import com.wl4g.devops.ci.service.PipelineHistoryService;
+import com.wl4g.devops.ci.service.PipelineService;
 import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.erm.AppCluster;
@@ -56,9 +58,7 @@ import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
-import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.Assert.*;
@@ -105,21 +105,38 @@ public class DefaultPipelineManager implements PipelineManager {
 	protected TaskHistoryDetailDao taskHistoryDetailDao;
 	@Autowired
 	protected FlowManager flowManager;
+	@Autowired
+	private PipelineDao pipelineDao;
+	@Autowired
+	private PipelineService pipelineService;
+	@Autowired
+	private PipelineHistoryService pipelineHistoryService;
+	@Autowired
+	private PipelineHistoryInstanceDao pipelineHistoryInstanceDao;
+	@Autowired
+	private PipeStepInstanceCommandDao pipeStepInstanceCommandDao;
+	@Autowired
+	private PipeStepNotificationDao pipeStepNotificationDao;
+	@Autowired
+	private PipeStepBuildingDao pipeStepBuildingDao;
+
 
 	@Override
 	public void runPipeline(NewParameter param, PipelineModel pipelineModel) {
 		log.info("Running pipeline job for: {}", param);
 
 		// Obtain task details.
-		List<String> instanceIds = safeList(taskDetailDao.selectByTaskId(param.getTaskId())).stream()
+		List<String> instanceIds = safeList(taskDetailDao.selectByTaskId(param.getPipeId())).stream()
 				.map(detail -> String.valueOf(detail.getInstanceId())).collect(toList());
 		notEmpty(instanceIds, "InstanceIds is empty, please check configure.");
 
 		// Obtain task.
-		Task task = taskDao.selectByPrimaryKey(param.getTaskId());
-		notNull(task, String.format("Not found task of %s", param.getTaskId()));
-		notNull(task.getAppClusterId(), "Task clusterId must not be null.");
-		AppCluster appCluster = appClusterDao.selectByPrimaryKey(task.getAppClusterId());
+		//Task task = taskDao.selectByPrimaryKey(param.getPipeId());
+		Pipeline pipeline = pipelineDao.selectByPrimaryKey(param.getPipeId());
+
+		notNull(pipeline, String.format("Not found task of %s", param.getPipeId()));
+		notNull(pipeline.getClusterId(), "Task clusterId must not be null.");
+		AppCluster appCluster = appClusterDao.selectByPrimaryKey(pipeline.getClusterId());
 		notNull(appCluster, "not found this app");
 
 		List<AppInstance> instances = new ArrayList<>();
@@ -131,16 +148,18 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Obtain task project.
 		Project project = projectDao.getByAppClusterId(appCluster.getId());
 		// Obtain task build commands.
-		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(param.getTaskId());
+		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(param.getPipeId());
 
 		// Obtain task history.
-		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
+		/*TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_MANUAL, TASK_STATUS_CREATE,
 				task.getBranchName(), null, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
-				task.getProviderKind(), task.getBranchType(), task.getContactGroupId(), taskBuildCmds, param.getTaskTraceId(), param.getTaskTraceType(),
-				param.getRemark(), task.getEnvType(), param.getAnnex(), task.getParentAppHome(), task.getAssetsPath());
+				task.getProviderKind(), task.getBranchType(), task.getContactGroupId(), taskBuildCmds, param.getTraceId(), param.getTraceType(),
+				param.getRemark(), task.getEnvType(), param.getAnnex(), task.getParentAppHome(), task.getAssetsPath());*/
+
+		PipelineHistory pipelineHistory = pipelineHistoryService.createPipelineHistory(param);
 
 		// Execution pipeline job.
-		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy, pipelineModel));
+		doExecutePipeline(pipelineHistory.getId(), getPipelineProvider(pipelineHistory, pipelineModel));
 	}
 
 	@Override
@@ -148,13 +167,13 @@ public class DefaultPipelineManager implements PipelineManager {
 		log.info("Rollback pipeline job for: {}", param);
 
 		// Task
-		TaskHistory bakTaskHisy = taskHistoryService.getById(param.getTaskId());
-		notNull(bakTaskHisy, String.format("Not found pipeline task history for taskId:%s", param.getTaskId()));
+		TaskHistory bakTaskHisy = taskHistoryService.getById(param.getPipeId());
+		notNull(bakTaskHisy, String.format("Not found pipeline task history for taskId:%s", param.getPipeId()));
 
 		isTrue(bakTaskHisy.getStatus() == 2, "If taskHis is not success, Unnecessary to rollback");
 
 		// Details
-		List<TaskHistoryInstance> taskHistoryInstances = taskHistoryService.getDetailByTaskId(param.getTaskId());
+		List<TaskHistoryInstance> taskHistoryInstances = taskHistoryService.getDetailByTaskId(param.getPipeId());
 		notEmpty(taskHistoryInstances, "taskHistoryInstances find empty list");
 
 		// Project.
@@ -169,16 +188,18 @@ public class DefaultPipelineManager implements PipelineManager {
 		}
 
 		// Roll-back.
-		List<TaskBuildCommand> commands = taskBuildCmdDao.selectByTaskId(param.getTaskId());
-		TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
-				TASK_STATUS_CREATE, bakTaskHisy.getBranchName(), bakTaskHisy.getShaGit(), param.getTaskId(),
+		List<TaskBuildCommand> commands = taskBuildCmdDao.selectByTaskId(param.getPipeId());
+		/*TaskHistory rollbackTaskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_ROLLBACK,
+				TASK_STATUS_CREATE, bakTaskHisy.getBranchName(), bakTaskHisy.getShaGit(), param.getPipeId(),
 				bakTaskHisy.getBuildCommand(), bakTaskHisy.getPreCommand(), bakTaskHisy.getPostCommand(),
 				bakTaskHisy.getProviderKind(), bakTaskHisy.getBranchType(),bakTaskHisy.getContactGroupId(), commands, bakTaskHisy.getTrackId(),
 				bakTaskHisy.getTrackType(), bakTaskHisy.getRemark(), bakTaskHisy.getEnvType(), bakTaskHisy.getAnnex(),
-				bakTaskHisy.getParentAppHome(), bakTaskHisy.getAssetsPath());
+				bakTaskHisy.getParentAppHome(), bakTaskHisy.getAssetsPath());*/
+
+		PipelineHistory pipelineHistory = pipelineHistoryService.createPipelineHistory(param);
 
 		// Do roll-back pipeline job.
-		doRollbackPipeline(rollbackTaskHisy.getId(), getPipelineProvider(rollbackTaskHisy, pipelineModel));
+		doRollbackPipeline(pipelineHistory.getId(), getPipelineProvider(pipelineHistory, pipelineModel));
 	}
 
 	@Override
@@ -210,14 +231,17 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Create task history(NEW).
 		String sha = null;
 		List<TaskBuildCommand> taskBuildCmds = taskBuildCmdDao.selectByTaskId(task.getId());
-		TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
+		/*TaskHistory taskHisy = taskHistoryService.createTaskHistory(project, instances, TASK_TYPE_TRIGGER, TASK_STATUS_CREATE,
 				param.getBranchName(), sha, null, task.getBuildCommand(), task.getPreCommand(), task.getPostCommand(),
 				task.getProviderKind(), task.getBranchType(), task.getContactGroupId(), taskBuildCmds, null, null, null, task.getEnvType(), null,
-				task.getParentAppHome(), task.getAssetsPath());
+				task.getParentAppHome(), task.getAssetsPath());*/
 
 		PipelineModel pipelineModel = flowManager.buildPipeline(task.getId());
+
+		PipelineHistory pipelineHistory = pipelineHistoryService.createPipelineHistory(param);
+
 		// Execution pipeline job.
-		doExecutePipeline(taskHisy.getId(), getPipelineProvider(taskHisy, pipelineModel));
+		doExecutePipeline(pipelineHistory.getId(), getPipelineProvider(pipelineHistory, pipelineModel));
 	}
 
 	@Override
@@ -264,7 +288,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		// Setup Flow status to running.
 		PipelineModel pipelineModel = provider.getContext().getPipelineModel();
 		pipelineModel.setService(provider.getContext().getAppCluster().getName());
-		pipelineModel.setProvider(provider.getContext().getTaskHistory().getProviderKind());
+		pipelineModel.setProvider(provider.getContext().getPipeline().getProviderKind());
 		pipelineModel.setStatus(RUNNING.toString());
 		flowManager.pipelineStateChange(pipelineModel);
 
@@ -375,7 +399,7 @@ public class DefaultPipelineManager implements PipelineManager {
 		}
 
 		// Successful execute job notification.
-		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), taskId,"Success");
+		notificationResult(provider.getContext().getPipeStepNotification().getContactGroupIds(), taskId,"Success");
 	}
 
 	/**
@@ -387,7 +411,7 @@ public class DefaultPipelineManager implements PipelineManager {
 	 */
 	protected void postPipelineRunFailure(Integer taskId, PipelineProvider provider, Throwable e) {
 		// Failure execute job notification.
-		notificationResult(provider.getContext().getTaskHistory().getContactGroupId(), taskId,"Fail");
+		notificationResult(provider.getContext().getPipeStepNotification().getContactGroupIds(), taskId,"Fail");
 	}
 
 	/**
@@ -396,9 +420,15 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param contactGroupId
 	 * @param message
 	 */
-	protected void notificationResult(Integer contactGroupId, Integer taskId, String result) {
+	protected void notificationResult(String contactGroupIds, Integer taskId, String result) {
 		try{
-			List<Contact> contacts = contactDao.getContactByGroupIds(asList(contactGroupId));
+			String[] split = contactGroupIds.split(",");
+			List<Integer> ints = new ArrayList<>();
+			for(int i=0;i<split.length;i++){
+				ints.add(Integer.parseInt(split[i]));
+			}
+
+			List<Contact> contacts = contactDao.getContactByGroupIds(ints);
 			for (Contact contact : contacts) {
 
 				// new
@@ -432,37 +462,39 @@ public class DefaultPipelineManager implements PipelineManager {
 	 * @param taskHisy
 	 * @return
 	 */
-	protected PipelineProvider getPipelineProvider(TaskHistory taskHisy, PipelineModel pipelineModel) {
-		notNull(taskHisy, "TaskHistory can not be null");
+	protected PipelineProvider getPipelineProvider(PipelineHistory pipelineHistory, PipelineModel pipelineModel) {
+		notNull(pipelineHistory, "TaskHistory can not be null");
 
-		Project project = projectDao.selectByPrimaryKey(taskHisy.getProjectId());
-		notNull(project, "Project can not be null");
+		Pipeline pipeline = pipelineDao.selectByPrimaryKey(pipelineHistory.getPipeId());
 
-		AppCluster appCluster = appClusterDao.selectByPrimaryKey(project.getAppClusterId());
+		AppCluster appCluster = appClusterDao.selectByPrimaryKey(pipeline.getClusterId());
 		notNull(appCluster, "AppCluster can not be null");
+
+		Project project = projectDao.getByAppClusterId(pipeline.getClusterId());
+		notNull(project, "Project can not be null");
 		project.setGroupName(appCluster.getName());
 
-		List<TaskHistoryInstance> taskHisyDetails = taskHistoryService.getDetailByTaskId(taskHisy.getId());
-		notNull(taskHisyDetails, "taskHistoryDetails can not be null");
-
-		TaskHistory refTaskHisy = null;
-		if (nonNull(taskHisy.getRefId())) {
-			refTaskHisy = taskHistoryService.getById(taskHisy.getRefId());
-		}
+		List<PipelineHistoryInstance> pipelineHistoryInstances = pipelineHistoryInstanceDao.selectByPipeHistoryId(pipelineHistory.getId());
 
 		// Obtain instances.
-		List<AppInstance> instances = safeList(taskHisyDetails).stream()
+		List<AppInstance> instances = safeList(pipelineHistoryInstances).stream()
 				.map(detail -> appInstanceDao.selectByPrimaryKey(detail.getInstanceId())).collect(toList());
 
 		// New pipeline context.
 		String projectSourceDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 
+		PipeStepInstanceCommand pipeStepInstanceCommand = pipeStepInstanceCommandDao.selectByPipeId(pipeline.getId());
+
+		PipeStepNotification pipeStepNotification = pipeStepNotificationDao.selectByPipeId(pipeline.getId());
+
+		PipeStepBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeline.getId());
+
 		// TODO add pipeline status track
-		PipelineContext context = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, taskHisy,
-				refTaskHisy, taskHisyDetails, pipelineModel);
+		PipelineContext context = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, pipelineHistory,
+				pipelineHistoryInstances, pipelineModel,pipeStepInstanceCommand,pipeline,pipeStepNotification,pipeStepBuilding);
 
 		// Get prototype provider.
-		return beanFactory.getPrototypeBean(context.getTaskHistory().getProviderKind(), context);
+		return beanFactory.getPrototypeBean(pipeline.getProviderKind(), context);
 	}
 
 	/**

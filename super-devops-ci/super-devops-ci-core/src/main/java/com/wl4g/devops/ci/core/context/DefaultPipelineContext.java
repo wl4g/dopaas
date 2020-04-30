@@ -16,9 +16,7 @@
 package com.wl4g.devops.ci.core.context;
 
 import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 
@@ -42,27 +40,34 @@ public class DefaultPipelineContext implements PipelineContext {
 	final private String projectSourceDir;
 	final private AppCluster appCluster;
 	final private List<AppInstance> instances;
-	final private TaskHistory taskHistory;
-	final private TaskHistory refTaskHistory;
-	final private List<TaskHistoryInstance> taskHistoryInstances;
+	final private Pipeline pipeline;
+	final private PipelineHistory pipelineHistory;
+	final private List<PipelineHistoryInstance> pipelineHistoryInstances;
 	final private PipelineModel pipelineModel;
+	final private PipeStepInstanceCommand pipeStepInstanceCommand;
+	final private PipeStepNotification pipeStepNotification;
+	final private PipeStepBuilding pipeStepBuilding;
 
 
 	public DefaultPipelineContext(Project project, String projectSourceDir, AppCluster appCluster, List<AppInstance> instances,
-								  TaskHistory taskHistory, TaskHistory refTaskHistory, List<TaskHistoryInstance> taskHistoryInstances, PipelineModel pipelineModel) {
+								  PipelineHistory pipelineHistory, List<PipelineHistoryInstance> pipelineHistoryInstances, PipelineModel pipelineModel,
+								  PipeStepInstanceCommand pipeStepInstanceCommand,Pipeline pipeline,PipeStepNotification pipeStepNotification,PipeStepBuilding pipeStepBuilding) {
 		notNull(project, "project must not be null");
 		hasText(projectSourceDir, "projectSourceDir must not be empty");
 		notNull(appCluster, "AppCluster must not be empty");
-		notNull(taskHistory, "taskHistory must not be null");
+		notNull(pipelineHistory, "taskHistory must not be null");
 		// notNull(refTaskHistory, "refTaskHistory must not be null");
 		this.project = project;
 		this.projectSourceDir = projectSourceDir;
 		this.appCluster = appCluster;
-		this.taskHistory = taskHistory;
-		this.refTaskHistory = refTaskHistory;
+		this.pipelineHistory = pipelineHistory;
 		this.instances = !isEmpty(instances) ? instances : emptyList();
-		this.taskHistoryInstances = !isEmpty(taskHistoryInstances) ? taskHistoryInstances : emptyList();
+		this.pipelineHistoryInstances = !isEmpty(pipelineHistoryInstances) ? pipelineHistoryInstances : emptyList();
 		this.pipelineModel = pipelineModel;
+		this.pipeStepInstanceCommand = pipeStepInstanceCommand;
+		this.pipeline = pipeline;
+		this.pipeStepNotification = pipeStepNotification;
+		this.pipeStepBuilding = pipeStepBuilding;
 	}
 
 	@Override
@@ -85,23 +90,36 @@ public class DefaultPipelineContext implements PipelineContext {
 		return instances;
 	}
 
-	@Override
-	public TaskHistory getTaskHistory() {
-		return taskHistory;
+	public PipelineHistory getPipelineHistory() {
+		return pipelineHistory;
 	}
 
-	@Override
-	public TaskHistory getRefTaskHistory() {
-		return refTaskHistory;
-	}
-
-	@Override
-	public List<TaskHistoryInstance> getTaskHistoryInstances() {
-		return taskHistoryInstances;
+	public List<PipelineHistoryInstance> getPipelineHistoryInstances() {
+		return pipelineHistoryInstances;
 	}
 
 	@Override
 	public PipelineModel getPipelineModel() {
 		return pipelineModel;
+	}
+
+	@Override
+	public PipeStepInstanceCommand getPipeStepInstanceCommand() {
+		return pipeStepInstanceCommand;
+	}
+
+	@Override
+	public Pipeline getPipeline() {
+		return pipeline;
+	}
+
+	@Override
+	public PipeStepNotification getPipeStepNotification() {
+		return pipeStepNotification;
+	}
+
+	@Override
+	public PipeStepBuilding getPipeStepBuilding() {
+		return pipeStepBuilding;
 	}
 }

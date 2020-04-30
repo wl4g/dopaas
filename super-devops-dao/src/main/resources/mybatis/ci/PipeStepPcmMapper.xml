@@ -8,12 +8,13 @@
     <result column="pcm_id" jdbcType="INTEGER" property="pcmId" />
     <result column="x_project_id" jdbcType="VARCHAR" property="xProjectId" />
     <result column="x_tracker" jdbcType="VARCHAR" property="xTracker" />
+    <result column="x_assign_to" jdbcType="VARCHAR" property="xAssignTo" />
     <result column="x_status" jdbcType="VARCHAR" property="xStatus" />
     <result column="x_priority" jdbcType="VARCHAR" property="xPriority" />
     <result column="x_custom_fields" jdbcType="VARCHAR" property="xCustomFields" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, enable, pipe_id, pcm_id, x_project_id, x_tracker, x_status,
+    id, enable, pipe_id, pcm_id, x_project_id, x_tracker,x_assign_to, x_status,
     x_priority, x_custom_fields
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -42,12 +43,12 @@
 
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipeStepPcm">
     insert into ci_pipe_step_pcm (id, enable, pipe_id, 
-      pcm_id, x_project_id, x_tracker, 
+      pcm_id, x_project_id, x_tracker, x_assign_to,
       x_status,
       x_priority,
       x_custom_fields)
     values (#{id,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, #{pipeId,jdbcType=INTEGER}, 
-      #{pcmId,jdbcType=INTEGER}, #{xProjectId,jdbcType=VARCHAR}, #{xTracker,jdbcType=VARCHAR},
+      #{pcmId,jdbcType=INTEGER}, #{xProjectId,jdbcType=VARCHAR}, #{xTracker,jdbcType=VARCHAR},#{xAssignTo,jdbcType=VARCHAR},
       #{xStatus,jdbcType=VARCHAR},
       #{xPriority,jdbcType=VARCHAR},
       #{xCustomFields,jdbcType=VARCHAR})
@@ -72,6 +73,9 @@
       </if>
       <if test="xTracker != null">
         x_tracker,
+      </if>
+      <if test="xAssignTo != null">
+        x_assign_to,
       </if>
       <if test="xStatus != null">
         x_status,
@@ -102,6 +106,9 @@
       <if test="xTracker != null">
         #{xTracker,jdbcType=VARCHAR},
       </if>
+      <if test="xAssignTo != null">
+        #{xAssignTo,jdbcType=VARCHAR},
+      </if>
       <if test="xStatus != null">
         #{xStatus,jdbcType=VARCHAR},
       </if>
@@ -131,6 +138,9 @@
       <if test="xTracker != null">
         x_tracker = #{xTracker,jdbcType=VARCHAR},
       </if>
+      <if test="xAssignTo != null">
+        x_assign_to = #{xAssignTo,jdbcType=VARCHAR},
+      </if>
       <if test="xStatus != null">
         x_status = #{xStatus,jdbcType=VARCHAR},
       </if>
@@ -150,6 +160,7 @@
       pcm_id = #{pcmId,jdbcType=INTEGER},
       x_project_id = #{xProjectId,jdbcType=VARCHAR},
       x_tracker = #{xTracker,jdbcType=VARCHAR},
+      x_assign_to = #{xAssignTo,jdbcType=VARCHAR},
       x_status = #{xStatus,jdbcType=VARCHAR},
       x_priority = #{xPriority,jdbcType=VARCHAR},
       x_custom_fields = #{xCustomFields,jdbcType=VARCHAR}

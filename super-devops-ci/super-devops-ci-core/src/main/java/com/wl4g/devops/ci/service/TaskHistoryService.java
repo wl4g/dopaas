@@ -41,7 +41,7 @@ public interface TaskHistoryService {
 
 	TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
 			String sha, Integer parentId, String buildCommand, String preCommand, String postCommand, String tarType, String branchType,
-			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, Integer trackType, String remark,
+			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, String trackType, String remark,
 			String envType, String annex,String parentAppHome,String assetsPath);
 
 	void updateStatus(int taskId, int status);

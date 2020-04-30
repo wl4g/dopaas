@@ -56,7 +56,7 @@ public class TaskHistory extends BaseBean implements Serializable {
 
 	private String trackId;
 
-	private Integer trackType;
+	private String trackType;
 
 	private Long costTime;
 
@@ -199,11 +199,11 @@ public class TaskHistory extends BaseBean implements Serializable {
 		this.trackId = trackId;
 	}
 
-	public Integer getTrackType() {
+	public String getTrackType() {
 		return trackType;
 	}
 
-	public void setTrackType(Integer trackType) {
+	public void setTrackType(String trackType) {
 		this.trackType = trackType;
 	}
 

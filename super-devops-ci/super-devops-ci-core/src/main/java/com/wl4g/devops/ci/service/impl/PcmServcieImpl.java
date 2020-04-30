@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.pcm.PcmOperator;
 import com.wl4g.devops.ci.pcm.PcmOperator.PcmKind;
@@ -23,16 +22,13 @@ import com.wl4g.devops.ci.service.PcmService;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Pcm;
 import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
-import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.model.SelectionModel;
 import com.wl4g.devops.dao.ci.PcmDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.tool.common.lang.Assert2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Objects;
@@ -98,8 +94,8 @@ public class PcmServcieImpl implements PcmService {
 	}
 
 	@Override
-	public List<SelectionModel> getUsers(Integer taskId) {
-		Pcm pcm = getPcmKind(taskId);
+	public List<SelectionModel> getUsers(Integer pcmId) {
+		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
 		if (Objects.isNull(pcm)) {
 			return null;
 		}
@@ -107,8 +103,8 @@ public class PcmServcieImpl implements PcmService {
 	}
 
 	@Override
-	public List<SelectionModel> getProjects(Integer taskId) {
-		Pcm pcm = getPcmKind(taskId);
+	public List<SelectionModel> getProjects(Integer pcmId) {
+		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
 		if (Objects.isNull(pcm)) {
 			return null;
 		}
@@ -116,8 +112,8 @@ public class PcmServcieImpl implements PcmService {
 	}
 
 	@Override
-	public List<SelectionModel> getIssues(Integer taskId, String userId, String projectId, String search) {
-		Pcm pcm = getPcmKind(taskId);
+	public List<SelectionModel> getIssues(Integer pcmId, String userId, String projectId, String search) {
+		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
 		if (Objects.isNull(pcm)) {
 			return null;
 		}
@@ -155,24 +151,5 @@ public class PcmServcieImpl implements PcmService {
 
 	}
 
-	private Pcm getPcmKind(Integer taskId) {
-		//Assert.notNull(taskId, "taskId is null");
-		if(Objects.isNull(taskId)){// for flow
-			Page<Pcm> list = pcmDao.list(null, null, null);
-			Assert2.notEmptyOf(list, "list");
-			return list.get(0);
-		}
-		Task task = taskDao.selectByPrimaryKey(taskId);
-		Assert.notNull(task, "task is null");
-		if (Objects.isNull(task.getPcmId())) {
-			return null;
-		}
-		Pcm pcm = pcmDao.selectByPrimaryKey(task.getPcmId());
-		if (Objects.isNull(pcm)) {
-			return null;
-		}
-		Assert.hasText(pcm.getProviderKind(), "provide kind is null");
-		return pcm;
-	}
 
 }

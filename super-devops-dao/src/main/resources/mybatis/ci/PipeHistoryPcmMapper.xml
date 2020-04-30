@@ -8,6 +8,7 @@
     <result column="pcm_id" jdbcType="INTEGER" property="pcmId" />
     <result column="x_project_id" jdbcType="INTEGER" property="xProjectId" />
     <result column="x_tracker" jdbcType="VARCHAR" property="xTracker" />
+    <result column="x_parent_issue_id" jdbcType="VARCHAR" property="xParentIssueId" />
     <result column="x_status" jdbcType="VARCHAR" property="xStatus" />
     <result column="x_subject" jdbcType="VARCHAR" property="xSubject" />
     <result column="x_description" jdbcType="VARCHAR" property="xDescription" />
@@ -18,7 +19,7 @@
     <result column="x_custom_fields" jdbcType="VARCHAR" property="xCustomFields" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, enable, pipe_id, pcm_id, x_project_id, x_tracker, x_status, x_subject, x_description, 
+    id, enable, pipe_id, pcm_id, x_project_id, x_tracker, x_parent_issue_id, x_status, x_subject, x_description,
     x_priority, x_assign_to, x_start_date, x_expected_time, x_custom_fields
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -33,12 +34,12 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipeHistoryPcm">
     insert into ci_pipe_history_pcm (id, enable, pipe_id, 
-      pcm_id, x_project_id, x_tracker, 
+      pcm_id, x_project_id, x_tracker, x_parent_issue_id,
       x_status, x_subject, x_description, 
       x_priority, x_assign_to, x_start_date, 
       x_expected_time, x_custom_fields)
     values (#{id,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, #{pipeId,jdbcType=INTEGER}, 
-      #{pcmId,jdbcType=INTEGER}, #{xProjectId,jdbcType=INTEGER}, #{xTracker,jdbcType=VARCHAR}, 
+      #{pcmId,jdbcType=INTEGER}, #{xProjectId,jdbcType=INTEGER}, #{xTracker,jdbcType=VARCHAR}, #{xParentIssueId,jdbcType=VARCHAR},
       #{xStatus,jdbcType=VARCHAR}, #{xSubject,jdbcType=VARCHAR}, #{xDescription,jdbcType=VARCHAR}, 
       #{xPriority,jdbcType=VARCHAR}, #{xAssignTo,jdbcType=VARCHAR}, #{xStartDate,jdbcType=TIMESTAMP}, 
       #{xExpectedTime,jdbcType=BIGINT}, #{xCustomFields,jdbcType=VARCHAR})
@@ -63,6 +64,9 @@
       </if>
       <if test="xTracker != null">
         x_tracker,
+      </if>
+      <if test="xParentIssueId != null">
+        x_parent_issue_id,
       </if>
       <if test="xStatus != null">
         x_status,
@@ -108,6 +112,9 @@
       <if test="xTracker != null">
         #{xTracker,jdbcType=VARCHAR},
       </if>
+      <if test="xParentIssueId != null">
+        #{xParentIssueId,jdbcType=VARCHAR},
+      </if>
       <if test="xStatus != null">
         #{xStatus,jdbcType=VARCHAR},
       </if>
@@ -152,6 +159,9 @@
       <if test="xTracker != null">
         x_tracker = #{xTracker,jdbcType=VARCHAR},
       </if>
+      <if test="xParentIssueId != null">
+        x_parent_issue_id = #{xParentIssueId,jdbcType=VARCHAR},
+      </if>
       <if test="xStatus != null">
         x_status = #{xStatus,jdbcType=VARCHAR},
       </if>
@@ -186,6 +196,7 @@
       pcm_id = #{pcmId,jdbcType=INTEGER},
       x_project_id = #{xProjectId,jdbcType=INTEGER},
       x_tracker = #{xTracker,jdbcType=VARCHAR},
+      x_parent_issue_id = #{xParentIssueId,jdbcType=VARCHAR},
       x_status = #{xStatus,jdbcType=VARCHAR},
       x_subject = #{xSubject,jdbcType=VARCHAR},
       x_description = #{xDescription,jdbcType=VARCHAR},

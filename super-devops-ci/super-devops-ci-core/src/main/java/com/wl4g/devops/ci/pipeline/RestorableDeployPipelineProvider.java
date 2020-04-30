@@ -47,7 +47,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 		setSourceFingerprint(getVcsOperator(getContext().getProject()).getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// Assets file fingerprint.
-		String assetsFilename = config.getAssetsFullFilename(getContext().getTaskHistory().getAssetsPath(),
+		String assetsFilename = config.getAssetsFullFilename(getContext().getPipeline().getAssetsDir(),
 				getContext().getAppCluster().getName());
 		File assetsFile = new File(getContext().getProjectSourceDir() + assetsFilename);
 		if (assetsFile.exists()) {
@@ -67,7 +67,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	@Override
 	public void rollback() throws Exception {
 		// Obtain backup assets file.
-		String path = config.getJobBackupDir(getContext().getTaskHistory().getRefId()).getAbsolutePath() + "/"
+		String path = config.getJobBackupDir(getContext().getPipelineHistory().getRefId()).getAbsolutePath() + "/"
 				+ config.getTarFileNameWithTar(getContext().getAppCluster().getName());
 		File backAssetsFile = new File(path);
 		// Check backup assets file.
@@ -91,8 +91,8 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	 * @throws Exception
 	 */
 	protected void handleDiskBackupAssets() throws Exception {
-		Integer taskHisId = getContext().getTaskHistory().getId();
-		String assetsFilename = config.getAssetsFullFilename(getContext().getTaskHistory().getAssetsPath(),
+		Integer taskHisId = getContext().getPipelineHistory().getId();
+		String assetsFilename = config.getAssetsFullFilename(getContext().getPipeline().getAssetsDir(),
 				getContext().getAppCluster().getName());
 		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
 		String targetPath = getContext().getProjectSourceDir() + assetsFilename;
@@ -118,8 +118,8 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	 * @throws Exception
 	 */
 	protected void rollbackBackupAssets() throws Exception {
-		Integer taskHisRefId = getContext().getRefTaskHistory().getId();
-		Integer taskHisId = getContext().getTaskHistory().getId();
+		Integer taskHisRefId = getContext().getPipelineHistory().getRefId();
+		Integer taskHisId = getContext().getPipelineHistory().getId();
 		String tarFileName = config.getTarFileNameWithTar(getContext().getAppCluster().getName());
 		String backupPath = config.getJobBackupDir(taskHisRefId).getAbsolutePath() + "/" + tarFileName;
 		String newBackupPath = config.getJobBackupDir(taskHisId).getAbsolutePath() + "/" + tarFileName;

@@ -18,6 +18,12 @@
     from ci_pipe_history_instance
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByPipeHistoryId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ci_pipe_history_instance
+    where pipe_history_id = #{pipeHistoryId,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from ci_pipe_history_instance
     where id = #{id,jdbcType=INTEGER}

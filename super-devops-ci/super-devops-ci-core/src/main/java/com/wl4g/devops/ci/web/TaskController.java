@@ -163,7 +163,7 @@ public class TaskController extends BaseController {
 	 */
 	@RequestMapping(value = "/create")
 	@RequiresPermissions(value = { "ci", "ci:task" }, logical = AND)
-	public RespBase<?> create(Integer taskId, String trackId, Integer trackType, String remark, String annex) {
+	public RespBase<?> create(Integer taskId, String trackId, String trackType, String remark, String annex) {
 		RespBase<Object> resp = RespBase.create();
 		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
 		pipeliner.runPipeline(new NewParameter(taskId, remark, trackId, trackType, annex),pipelineModel);

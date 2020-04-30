@@ -19,7 +19,7 @@ import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.TaskHistoryService;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
+import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.exception.ci.PipelineDeployingException;
@@ -30,7 +30,6 @@ import com.wl4g.devops.tool.common.crypto.CrypticSource;
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.io.FileIOUtils;
 import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,7 +40,7 @@ import java.util.Optional;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeALineFile;
-import static com.wl4g.devops.tool.common.lang.DateUtils2.*;
+import static com.wl4g.devops.tool.common.lang.DateUtils2.getDate;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.*;
@@ -101,23 +100,23 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 				projectName);
 
 		try {
-			TaskHistory taskHisy = provider.getContext().getTaskHistory();
+			PipelineHistory pipelineHistory = provider.getContext().getPipelineHistory();
 			// Update status to running.
 			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_RUNNING);
 			log.info("[PRE] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
 					TASK_STATUS_RUNNING, taskDetailId, instance.getId(), projectId, projectName);
 
 			// PRE commands.
-			if (!isBlank(taskHisy.getPreCommand())) {
-				doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPreCommand(), instance.getSshKey());
+			if (!isBlank(provider.getContext().getPipeStepInstanceCommand().getPreCommand())) {
+				doRemoteCommand(instance.getHostname(), instance.getSshUser(), provider.getContext().getPipeStepInstanceCommand().getPreCommand(), instance.getSshKey());
 			}
 
 			// Deploying distribute to remote.
 			doRemoteDeploying(instance.getHostname(), instance.getSshUser(), instance.getSshKey());
 
 			// Post remote commands.(e.g: restart)
-			if (!isBlank(taskHisy.getPostCommand())) {
-				doRemoteCommand(instance.getHostname(), instance.getSshUser(), taskHisy.getPostCommand(), instance.getSshKey());
+			if (!isBlank(provider.getContext().getPipeStepInstanceCommand().getPostCommand())) {
+				doRemoteCommand(instance.getHostname(), instance.getSshUser(), provider.getContext().getPipeStepInstanceCommand().getPostCommand(), instance.getSshKey());
 			}
 
 			// Update status to success.
@@ -209,7 +208,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		char[] sshkeyPlain = new AESCryptor().decrypt(cipherKey, CrypticSource.fromHex(sshkey)).toString().toCharArray();
 		log.info("Transfer plain sshkey: {} => {}", cipherKey, "******");
 
-		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getPipelineHistory().getId(), instance.getId());
 		FileIOUtils.writeALineFile(jobDeployerLog, String.format("Transfer plain sshkey: %s => %s", cipherKey, "******"));
 		return sshkeyPlain;
 	}
@@ -223,9 +222,9 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	protected String writeDeployLog(String format, Object... args) {
 		String content = String.format(format, args);
 		String message = String.format("%s - pipe(%s), c(%s), i(%s) : %s", getDate("yy/MM/dd HH:mm:ss"),
-				getContext().getTaskHistory().getId(), instance.getClusterId(), instance.getId(), content);
+				getContext().getPipelineHistory().getId(), instance.getClusterId(), instance.getId(), content);
 
-		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getTaskHistory().getId(), instance.getId());
+		File jobDeployerLog = config.getJobDeployerLog(provider.getContext().getPipelineHistory().getId(), instance.getId());
 		writeALineFile(jobDeployerLog, message);
 		return content;
 	}
