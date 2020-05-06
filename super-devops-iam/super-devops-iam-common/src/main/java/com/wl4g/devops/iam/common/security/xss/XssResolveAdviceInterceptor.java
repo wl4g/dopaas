@@ -39,6 +39,7 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isCompatibleType;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
 
@@ -192,12 +193,55 @@ public class XssResolveAdviceInterceptor implements MethodInterceptor {
 	 * @param md
 	 */
 	private void setXssProtectionHeadersIfNecessary(Object controller, Method md) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 		HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-		if (isNull(response))
+		if (isNull(request) || isNull(response))
 			return;
 
-		// X-XSS-Protection:
-		response.addHeader("X-XSS-Protection", "1; mode=block");
+		/**
+		 * X-XSS-Protection:
+		 * 
+		 * As the name suggests, this response header is used to guard against
+		 * XSS. It first appeared in IE8. Now the mainstream browsers support
+		 * it, and XSS protection is turned on by default. You can turn it off
+		 * with this header. It has several configurations:
+		 * 
+		 * X-XSS-Protection:0 - Disable XSS protection.</br>
+		 * X-XSS-Protection:1 - Enable XSS protection.</br>
+		 * X-XSS-Protection:1;Mode=block - Enable XSS protection and stop
+		 * rendering the page when XSS attack is detected (e.g, in IE8, when the
+		 * attack is detected, the whole page will be replaced by one).
+		 */
+		response.setHeader("X-XSS-Protection", "1; mode=block");
+
+		/**
+		 * X-Content-Type-Options:
+		 * 
+		 * There are various types of resources on the Internet, and browsers
+		 * usually distinguish their types according to the content type field
+		 * of the response header. For example: "text/html" represents HTML
+		 * document, "image/png" is PNG picture, "text/css" is CSS style
+		 * document. However, some resources have wrong or undefined content
+		 * types. At this time, some browsers will enable mime sniffing to guess
+		 * the type of the resource, parse the content and execute.
+		 * 
+		 * For example, even if we specify the content type of an HTML document
+		 * as "text/plain", the document will still be parsed as HTML in IE8,
+		 * with this feature of the browser, an attacker can even parse a
+		 * request that should have been parsed as a picture into JavaScript.
+		 * The following response header can disable the browser's type guessing
+		 * behavior.
+		 */
+		response.setHeader("X-Content-Type-Options:", "nosniff");
+
+		// Strict-Transport-Security:
+		if (equalsIgnoreCase(request.getScheme(), "HTTPS")) {
+			if (!response.containsHeader("Strict-Transport-Security")) {
+				response.addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+				response.addHeader("Strict-Transport-Security", "max-age=0");
+			}
+		}
+
 	}
 
 }
