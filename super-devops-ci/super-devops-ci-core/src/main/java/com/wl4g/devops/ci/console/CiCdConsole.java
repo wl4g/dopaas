@@ -15,19 +15,14 @@
  */
 package com.wl4g.devops.ci.console;
 
-import com.wl4g.devops.ci.console.args.TasksArgument;
 import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalArgument;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
-import com.wl4g.devops.ci.service.TaskService;
 import com.wl4g.devops.components.shell.annotation.ShellComponent;
 import com.wl4g.devops.components.shell.annotation.ShellMethod;
 import com.wl4g.devops.components.shell.handler.SimpleShellContext;
-import com.wl4g.devops.page.PageModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
-import static com.wl4g.devops.tool.common.lang.TableFormatters.*;
 import static java.lang.String.format;
 
 /**
@@ -46,9 +41,6 @@ public class CiCdConsole {
 	@Autowired
 	private GlobalTimeoutJobCleanupCoordinator coordinator;
 
-	/** {@link TaskService}. */
-	@Autowired
-	private TaskService taskService;
 
 	/**
 	 * Reset timeout cleanup expression.
@@ -72,27 +64,6 @@ public class CiCdConsole {
 		}
 	}
 
-	/**
-	 * Get task pipeline list.
-	 * 
-	 * @param arg
-	 * @return
-	 */
-	@ShellMethod(keys = "pipelineList", group = GROUP, help = "Pipeline tasks list.")
-	public void pipelineList(TasksArgument arg, SimpleShellContext context) {
-		try {
-			// Find tasks.
-			PageModel pm = new PageModel(arg.getPageNum(), arg.getPageSize());
-			taskService.list(pm, arg.getId(), arg.getTaskName(), arg.getGroupName(), arg.getBranchName(), arg.getTarType(),
-					arg.getStartDate(), arg.getEndDate(), null);
 
-			// Print write to console.
-			context.printf(build(pm.getRecords()).setH('=').setV('!').getTableString());
-		} catch (Exception e) {
-			context.printf(format("Failed to find taskList. cause by: %s", getStackTraceAsString(e)));
-		} finally {
-			context.completed();
-		}
-	}
 
 }

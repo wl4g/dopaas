@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Project;
@@ -25,10 +26,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+*/
 /**
  * @author vjay
  * @date 2019-05-17 11:43:00
- */
+ *//*
+
 @Component
 public interface TaskHistoryService {
 
@@ -56,4 +59,4 @@ public interface TaskHistoryService {
 
 	void updateCostTime(int taskId, long costTime);
 
-}
+}*/

@@ -20,7 +20,6 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.DependencyService;
-import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -36,7 +35,6 @@ import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.crypto.CrypticSource;
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,11 +82,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected DestroableProcessManager pm;
 	@Autowired
 	protected GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsAdapter;
-
 	@Autowired
 	protected DependencyService dependencyService;
-	@Autowired
-	protected TaskHistoryService taskHistoryService;
 	@Autowired
 	protected TaskHistoryBuildCommandDao taskHistoryBuildCommandDao;
 	@Autowired

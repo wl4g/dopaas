@@ -46,28 +46,28 @@ public class NewParameter extends GenericParameter {
 		super();
 	}
 
-	public NewParameter(Integer pipeId, String remark, String pcmTraceId, String pcmTraceType,
+	public NewParameter(Integer pipeId, String remark, String trackId, String trackType,
 			String annex) {
 		super(pipeId, remark);
-		setTraceId(pcmTraceId);
-		setTraceType(pcmTraceType);
+		setTrackId(trackId);
+		setTrackType(trackType);
 		setAnnex(annex);
 	}
 
-	public String getTraceId() {
+	public String getTrackId() {
 		return trackId;
 	}
 
-	public void setTraceId(String trackId) {
+	public void setTrackId(String trackId) {
 		//when pcm not config, this params can be null
 		this.trackId = trackId;
 	}
 
-	public String getTraceType() {
+	public String getTrackType() {
 		return trackType;
 	}
 
-	public void setTraceType(String trackType) {
+	public void setTrackType(String trackType) {
 		//when pcm not config, this params can be null
 		this.trackType = trackType;
 	}

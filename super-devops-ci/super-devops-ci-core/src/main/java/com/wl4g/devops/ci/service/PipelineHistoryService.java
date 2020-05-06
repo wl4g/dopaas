@@ -37,4 +37,6 @@ public interface PipelineHistoryService {
 
     PipelineHistory detail(Integer pipeHisId);
 
+    PipelineHistory getById(Integer pipeHisId);
+
 }
