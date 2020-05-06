@@ -47,7 +47,7 @@ final class RequiresXsrfMatcher implements XsrfMatcher {
 	 * @return
 	 */
 	public boolean matches(HttpServletRequest request) {
-		return !this.allowedMethods.contains(valueOf(request.getMethod()));
+		return !allowedMethods.contains(valueOf(request.getMethod()));
 	}
 
 }

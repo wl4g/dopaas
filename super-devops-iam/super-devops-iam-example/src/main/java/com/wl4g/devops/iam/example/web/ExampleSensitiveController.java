@@ -24,7 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.wl4g.devops.iam.client.annotation.SecondAuthenticate;
+import com.wl4g.devops.iam.client.annotation.SecondaryAuthenticate;
 import com.wl4g.devops.iam.example.authc.ExampleSecondaryAuthenticator;
 
 /**
@@ -43,7 +43,7 @@ public class ExampleSensitiveController {
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
 	@RequestMapping("sensitiveApi1")
-	@SecondAuthenticate(funcId = "funSensitiveApi", handleClass = ExampleSecondaryAuthenticator.class)
+	@SecondaryAuthenticate(funcId = "funSensitiveApi", handleClass = ExampleSecondaryAuthenticator.class)
 	@ResponseBody
 	public String sensitiveApi(String name, HttpServletRequest request, HttpServletResponse response) {
 		log.info("Request sensitiveApi... {}", name);

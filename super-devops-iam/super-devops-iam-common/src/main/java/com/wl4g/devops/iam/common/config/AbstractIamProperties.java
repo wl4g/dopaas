@@ -193,12 +193,21 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	}
 
 	/**
-	 * Apply default properties if necessary.
+	 * Gets spring application name.
+	 * 
+	 * @return
+	 */
+	public String getSpringApplicationName() {
+		return environment.getProperty("spring.application.name");
+	}
+
+	/**
+	 * Apply default config property.
 	 */
 	protected void applyDefaultIfNecessary() {
 		// Sets Service name defaults.
 		if (isBlank(getServiceName())) {
-			setServiceName(environment.getProperty("spring.application.name"));
+			setServiceName(getSpringApplicationName());
 		}
 	}
 

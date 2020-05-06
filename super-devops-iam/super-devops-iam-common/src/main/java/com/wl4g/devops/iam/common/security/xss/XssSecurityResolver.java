@@ -53,7 +53,7 @@ public interface XssSecurityResolver {
 	 * @return
 	 */
 	default HttpServletRequestWrapper newXssHttpRequestWrapper(HttpServletRequest request) {
-		return new DefaultXssRequestWrapper(request);
+		return new DefaultXssHttpRequestWrapper(request);
 	}
 
 }

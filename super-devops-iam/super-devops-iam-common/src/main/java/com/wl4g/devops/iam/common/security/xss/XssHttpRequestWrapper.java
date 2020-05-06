@@ -25,11 +25,11 @@ import javax.servlet.http.HttpServletRequestWrapper;
  * @version v1.0 2019年4月26日
  * @since
  */
-public abstract class XssRequestWrapper extends HttpServletRequestWrapper {
+public abstract class XssHttpRequestWrapper extends HttpServletRequestWrapper {
 
 	private HttpServletRequest orig;
 
-	public XssRequestWrapper(HttpServletRequest request) {
+	public XssHttpRequestWrapper(HttpServletRequest request) {
 		super(request);
 		this.orig = request;
 	}
@@ -41,8 +41,8 @@ public abstract class XssRequestWrapper extends HttpServletRequestWrapper {
 	}
 
 	public static HttpServletRequest getOrigRequest(HttpServletRequest request) {
-		if (request instanceof XssRequestWrapper) {
-			return ((XssRequestWrapper) request).getOrigRequest();
+		if (request instanceof XssHttpRequestWrapper) {
+			return ((XssHttpRequestWrapper) request).getOrigRequest();
 		}
 		return request;
 	}

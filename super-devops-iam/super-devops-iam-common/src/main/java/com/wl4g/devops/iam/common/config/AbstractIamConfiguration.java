@@ -39,7 +39,6 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -56,7 +55,6 @@ import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
-import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
 import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
@@ -77,6 +75,7 @@ import com.wl4g.devops.iam.common.security.cipher.CipherRequestWrapperFactory;
 import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter;
 import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter.AdvancedCorsProcessor;
 import com.wl4g.devops.iam.common.security.xsrf.XsrfProtectionSecurityFilter;
+import com.wl4g.devops.iam.common.security.xss.XssResolveAdviceInterceptor;
 import com.wl4g.devops.iam.common.security.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
@@ -206,8 +205,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public IamUidSessionIdGenerator iamUidSessionIdGenerator(@Value("${spring.application.name:}") String appName) {
-		return new IamUidSessionIdGenerator(appName);
+	public IamUidSessionIdGenerator iamUidSessionIdGenerator(AbstractIamProperties<? extends ParamProperties> config) {
+		return new IamUidSessionIdGenerator(config);
 	}
 
 	@Bean
@@ -310,14 +309,14 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 
 	@Bean
 	@ConditionalOnBean({ XssSecurityResolver.class })
-	public XssSecurityResolveInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
-		return new XssSecurityResolveInterceptor(config, resolver);
+	public XssResolveAdviceInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
+		return new XssResolveAdviceInterceptor(config, resolver);
 	}
 
 	@Bean
-	@ConditionalOnBean(XssSecurityResolveInterceptor.class)
+	@ConditionalOnBean(XssResolveAdviceInterceptor.class)
 	public AspectJExpressionPointcutAdvisor xssSecurityResolverAspectJExpressionPointcutAdvisor(XssProperties config,
-			XssSecurityResolveInterceptor advice) {
+			XssResolveAdviceInterceptor advice) {
 		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
 		advisor.setExpression(config.getExpression());
 		advisor.setAdvice(advice);

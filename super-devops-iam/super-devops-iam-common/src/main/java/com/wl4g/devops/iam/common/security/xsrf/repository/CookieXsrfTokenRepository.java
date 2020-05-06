@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.security.xsrf.repository;
 
+import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.config.XsrfProperties;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static com.wl4g.devops.iam.common.config.XsrfProperties.setHttpOnlyMethod;
 import static org.springframework.util.ReflectionUtils.invokeMethod;
 import static org.springframework.web.util.WebUtils.getCookie;
@@ -101,12 +103,13 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 	}
 
 	/**
-	 * Generate xsrf token
+	 * Generate XSRF token
 	 * 
 	 * @return
 	 */
 	private String generateXsrfToken() {
-		return UUID.randomUUID().toString();
+		String tokenSuffix = generateDefaultTokenSuffix(coreConfig.getSpringApplicationName());
+		return format("xf%s%s", UUID.randomUUID().toString().replaceAll("-", ""), tokenSuffix);
 	}
 
 	private String getRequestContext(HttpServletRequest request) {
