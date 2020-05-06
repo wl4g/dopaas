@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.common.session.mgt.support;
 
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
@@ -25,7 +26,6 @@ import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static java.lang.String.format;
 import static java.util.UUID.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.springframework.util.Assert.notNull;
 
 import java.io.Serializable;
 
@@ -40,12 +40,8 @@ public class IamUidSessionIdGenerator implements SessionIdGenerator {
 	/**
 	 * Application name.
 	 */
-	final protected AbstractIamProperties<? extends ParamProperties> config;
-
-	public IamUidSessionIdGenerator(AbstractIamProperties<? extends ParamProperties> config) {
-		notNull(config, "config");
-		this.config = config;
-	}
+	@Autowired
+	protected AbstractIamProperties<? extends ParamProperties> config;
 
 	/**
 	 * Ignores the method argument and simply returns
@@ -57,6 +53,7 @@ public class IamUidSessionIdGenerator implements SessionIdGenerator {
 	 * @return the String value of the JDK's next {@link UUID#randomUUID()
 	 *         randomUUID()}.
 	 */
+	@Override
 	public Serializable generateId(Session session) {
 		String idSuffix = generateDefaultTokenSuffix(config.getSpringApplicationName());
 		return format("sid%s%s", randomUUID().toString().replaceAll("-", EMPTY), idSuffix);

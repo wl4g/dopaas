@@ -15,12 +15,24 @@
  */
 package com.wl4g.devops.iam.common.session.mgt.support;
 
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.wl4g.devops.IamServer;
 import com.wl4g.devops.iam.common.session.NoOpSession;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = IamServer.class)
+@FixMethodOrder(MethodSorters.JVM)
 public class IamUidSessionIdGeneratorTests {
 
-	public static void main(String[] args) {
-		IamUidSessionIdGenerator g = new IamUidSessionIdGenerator("sso");
+	@Test
+	public void test1() {
+		IamUidSessionIdGenerator g = new IamUidSessionIdGenerator();
 		System.out.println(g.generateId(new NoOpSession()));
 	}
 
