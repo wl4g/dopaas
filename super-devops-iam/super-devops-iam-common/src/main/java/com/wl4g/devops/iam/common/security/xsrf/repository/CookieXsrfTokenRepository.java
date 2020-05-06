@@ -68,7 +68,7 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 
 	@Override
 	public void saveXToken(XsrfToken xtoken, HttpServletRequest request, HttpServletResponse response) {
-		String xtokenValue = xtoken == null ? "" : xtoken.getToken();
+		String xtokenValue = xtoken == null ? "" : xtoken.getXsrfToken();
 		Cookie cookie = new SimpleCookie(coreConfig.getCookie());
 		cookie.setName(xconfig.getXsrfCookieName());
 		cookie.setValue(xtokenValue);

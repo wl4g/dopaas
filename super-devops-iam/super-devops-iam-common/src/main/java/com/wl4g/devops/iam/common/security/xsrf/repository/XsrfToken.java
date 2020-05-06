@@ -35,7 +35,7 @@ public interface XsrfToken extends Serializable {
 	 * @return the HTTP header that the CSRF is populated on the response and
 	 *         can be placed on requests instead of the parameter
 	 */
-	String getHeaderName();
+	String getXsrfHeaderName();
 
 	/**
 	 * Gets the HTTP parameter name that should contain the token. Cannot be
@@ -43,13 +43,13 @@ public interface XsrfToken extends Serializable {
 	 * 
 	 * @return the HTTP parameter name that should contain the token.
 	 */
-	String getParameterName();
+	String getXsrfParamName();
 
 	/**
 	 * Gets the token value. Cannot be null.
 	 * 
 	 * @return the token value
 	 */
-	String getToken();
+	String getXsrfToken();
 
 }

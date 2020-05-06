@@ -28,6 +28,8 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
+import static java.util.Collections.emptyMap;
+import static java.util.Objects.isNull;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import java.util.HashMap;
@@ -39,11 +41,15 @@ import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
+import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.convertBean;
 
 /**
  * Abstract iam authentication filter.
@@ -80,6 +86,12 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	protected SessionDelegateMessageBundle bundle;
 
 	/**
+	 * XSRF token repository. (If necessary)
+	 */
+	@Autowired(required = false)
+	protected XsrfTokenRepository xTokenRepository;
+
+	/**
 	 * Gets legal authentication customization parameters.
 	 * 
 	 * @param request
@@ -100,16 +112,17 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	}
 
 	/**
-	 * Puts principal authorization(roles/permissions) to cookies.
+	 * Puts principal authorized info(roles/permissions) to cookies.(if
+	 * necessary)
 	 * 
 	 * @param token
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	protected Map<String, Object> putAuthorizationInfoCookieIfNecessary(AuthenticationToken token, ServletRequest request,
+	protected Map<String, String> putAuthorizationInfoCookieIfNecessary(AuthenticationToken token, ServletRequest request,
 			ServletResponse response) {
-		Map<String, Object> authzInfo = new HashMap<>();
+		Map<String, String> authzInfo = new HashMap<>();
 
 		// Sets authorizes permits info.
 		String permitUrl = getRFCBaseURI(toHttp(request), true) + URI_S_LOGIN_BASE + "/" + URI_S_LOGIN_PERMITS;
@@ -123,6 +136,31 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 		}
 
 		return authzInfo;
+	}
+
+	/**
+	 * Puts principal xsrf token to cookies.(if necessary)
+	 * 
+	 * @param token
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	protected Map<String, String> putXsrfTokenCookieIfNecessary(AuthenticationToken token, ServletRequest request,
+			ServletResponse response) {
+		Map<String, String> xsrfInfo = emptyMap();
+
+		if (!isNull(xTokenRepository) && isBrowser(toHttp(request))) {
+			// Generate XSRF token.
+			XsrfToken xtoken = xTokenRepository.generateXToken(toHttp(request));
+			// save XSRF token.
+			xTokenRepository.saveXToken(xtoken, toHttp(request), toHttp(response));
+			// Convert xsrf token.
+			xsrfInfo = convertBean(xtoken, new TypeReference<HashMap<String, String>>() {
+			});
+		}
+
+		return xsrfInfo;
 	}
 
 	/**

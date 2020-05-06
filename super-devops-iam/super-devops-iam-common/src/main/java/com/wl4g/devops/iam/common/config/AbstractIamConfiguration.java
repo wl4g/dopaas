@@ -22,7 +22,7 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.NameableFilter;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
-import static com.wl4g.devops.iam.common.config.XsrfProperties.*;
+import static com.wl4g.devops.iam.common.config.XssProperties.KEY_XSS_PREFIX;
 import static com.wl4g.devops.iam.common.config.CorsProperties.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static java.lang.String.format;
@@ -36,6 +36,7 @@ import java.util.Map;
 import javax.servlet.Filter;
 import javax.validation.constraints.NotBlank;
 
+import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -72,7 +73,8 @@ import com.wl4g.devops.iam.common.security.cipher.CipherRequestWrapper;
 import com.wl4g.devops.iam.common.security.cipher.CipherRequestWrapperFactory;
 import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter;
 import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter.AdvancedCorsProcessor;
-import com.wl4g.devops.iam.common.security.xsrf.XsrfProtectionSecurityFilter;
+import com.wl4g.devops.iam.common.security.xss.XssResolveAdviceInterceptor;
+import com.wl4g.devops.iam.common.security.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.devops.iam.common.session.mgt.support.IamUidSessionIdGenerator;
@@ -286,6 +288,40 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	// ==============================
 
 	//
+	// X S S _ I N T E R C E P T O R _ C O N F I G's.
+	//
+
+	@Bean
+	@ConditionalOnProperty(name = KEY_XSS_PREFIX + ".enabled", matchIfMissing = true)
+	@ConfigurationProperties(prefix = KEY_XSS_PREFIX)
+	public XssProperties xssProperties() {
+		return new XssProperties();
+	}
+
+	@Bean
+	@ConditionalOnBean(XssProperties.class)
+	public XssSecurityResolver xssSecurityResolver() {
+		return new XssSecurityResolver() {
+		};
+	}
+
+	@Bean
+	@ConditionalOnBean({ XssSecurityResolver.class })
+	public XssResolveAdviceInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
+		return new XssResolveAdviceInterceptor(config, resolver);
+	}
+
+	@Bean
+	@ConditionalOnBean(XssResolveAdviceInterceptor.class)
+	public AspectJExpressionPointcutAdvisor xssSecurityResolverAspectJExpressionPointcutAdvisor(XssProperties config,
+			XssResolveAdviceInterceptor advice) {
+		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
+		advisor.setExpression(config.getExpression());
+		advisor.setAdvice(advice);
+		return advisor;
+	}
+
+	//
 	// C O R S _ F I L T E R _ C O N F I G's.
 	//
 
@@ -344,35 +380,6 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 		// Cannot use '/*' or it will not be added to the container chain (only
 		// '/**')
 		filterBean.addUrlPatterns("/*");
-		return filterBean;
-	}
-
-	//
-	// X S R F _ F I L T E R _ C O N F I G's.
-	//
-
-	@Bean
-	@ConditionalOnProperty(name = KEY_XSRF_PREFIX + ".enabled", matchIfMissing = false)
-	@ConfigurationProperties(prefix = KEY_XSRF_PREFIX)
-	public XsrfProperties xsrfProperties() {
-		return new XsrfProperties();
-	}
-
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public XsrfProtectionSecurityFilter xsrfProtectionSecurityFilter(AdvancedCorsProcessor corsProcessor) {
-		return new XsrfProtectionSecurityFilter();
-	}
-
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public FilterRegistrationBean xsrfProtectionSecurityFilterBean(XsrfProtectionSecurityFilter filter) {
-		// Register XSRF filter
-		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
-		filterBean.setOrder(ORDER_XSRF_PRECEDENCE);
-		// Cannot use '/*' or it will not be added to the container chain (only
-		// '/**')
-		filterBean.addUrlPatterns("/*"); // TODO config??
 		return filterBean;
 	}
 
