@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.client.authc.aop;
+package com.wl4g.devops.iam.client.authc.secondary;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SECOND_VALIDATE;
@@ -27,6 +27,7 @@ import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
 import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResp;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 
 import java.util.HashMap;
@@ -48,14 +49,12 @@ import org.springframework.web.client.RestTemplate;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.iam.client.annotation.SecondAuthenticate;
-import com.wl4g.devops.iam.common.aop.AdviceProcessor;
+import com.wl4g.devops.iam.client.annotation.SecondaryAuthenticate;
 import com.wl4g.devops.iam.common.authc.SecondAuthenticationException;
 import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
 import com.wl4g.devops.tool.common.log.SmartLogger;
-import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 /**
  * Secondary authentication processor.
@@ -64,18 +63,8 @@ import com.wl4g.devops.tool.common.serialize.JacksonUtils;
  * @version v1.0 2019年3月9日
  * @since
  */
-public class SecondaryAuthenticationProcessor implements AdviceProcessor<SecondAuthenticate> {
+public class SimpleSecondaryAuthenticationHandler implements SecondaryAuthenticationHandler<SecondaryAuthenticate> {
 	protected SmartLogger log = getLogger(getClass());
-
-	/**
-	 * Error message without secondary authentication.
-	 */
-	final public static String MSG_SECOND_UNAUTHC = "Without secondary authentication, redirect the specified external URL for authentication";
-
-	/**
-	 * Error status without secondary Unauthenticated.
-	 */
-	final public static String STATUS_SECOND_UNAUTHC = "SecondaryUnauthenticated";
 
 	/**
 	 * IAM client properties configuration
@@ -92,7 +81,7 @@ public class SecondaryAuthenticationProcessor implements AdviceProcessor<SecondA
 	 */
 	final private BeanFactory beanFactory;
 
-	public SecondaryAuthenticationProcessor(IamClientProperties config, RestTemplate restTemplate, BeanFactory beanFactory) {
+	public SimpleSecondaryAuthenticationHandler(IamClientProperties config, RestTemplate restTemplate, BeanFactory beanFactory) {
 		Assert.notNull(config, "'config' is null, please check configure");
 		Assert.notNull(restTemplate, "'restTemplate' is null, please check configure");
 		Assert.notNull(beanFactory, "'beanFactory' is null, please check configure");
@@ -102,7 +91,7 @@ public class SecondaryAuthenticationProcessor implements AdviceProcessor<SecondA
 	}
 
 	@Override
-	public Object doIntercept(ProceedingJoinPoint jp, SecondAuthenticate annotation) throws Throwable {
+	public Object doIntercept(ProceedingJoinPoint jp, SecondaryAuthenticate annotation) throws Throwable {
 		// Get required request response
 		RequestResponse http = getRequestResponse(jp);
 
@@ -161,7 +150,7 @@ public class SecondaryAuthenticationProcessor implements AdviceProcessor<SecondA
 		Assert.state((request != null && response != null),
 				String.format(
 						"The controller method marked @%s must have the HttpServletRequest and HttpServletResponse parameter",
-						SecondAuthenticate.class.getSimpleName()));
+						SecondaryAuthenticate.class.getSimpleName()));
 		return new RequestResponse(request, response);
 	}
 
@@ -172,7 +161,7 @@ public class SecondaryAuthenticationProcessor implements AdviceProcessor<SecondA
 	 * @param annotation
 	 * @return
 	 */
-	private String buildConnectAuthenticatingUrl(RequestResponse http, SecondAuthenticate annotation) {
+	private String buildConnectAuthenticatingUrl(RequestResponse http, SecondaryAuthenticate annotation) {
 		StringBuffer url = new StringBuffer(config.getServerUri()); // ???
 		url.append(URI_S_SNS_BASE).append("/");
 		url.append(URI_S_SNS_CONNECT).append("/");
@@ -229,7 +218,7 @@ public class SecondaryAuthenticationProcessor implements AdviceProcessor<SecondA
 	 * 
 	 * @param authCode
 	 */
-	private void doRemoteValidate(String authCode, SecondAuthenticate annotation) {
+	private void doRemoteValidate(String authCode, SecondaryAuthenticate annotation) {
 		if (StringUtils.isEmpty(authCode)) {
 			throw new SecondAuthenticationException("Empty second authentication code");
 		}
@@ -245,11 +234,11 @@ public class SecondaryAuthenticationProcessor implements AdviceProcessor<SecondA
 		if (RespBase.isSuccess(resp)) {
 			SecondAuthcAssertModel assertion = resp.getData();
 			if (!(assertion != null && assertion.getStatus() != null && assertion.getStatus() == Authenticated
-					&& String.valueOf(assertion.getFunctionId()).equals(annotation.funcId()))) {
+					&& valueOf(assertion.getFunctionId()).equals(annotation.funcId()))) {
 				throw new SecondAuthenticationException(assertion.getErrdesc());
 			}
 		} else {
-			throw new IamException(format("System internal error. %s", JacksonUtils.toJSONString(resp)));
+			throw new IamException(format("Secondary authc error. %s", toJSONString(resp)));
 		}
 	}
 
@@ -259,7 +248,7 @@ public class SecondaryAuthenticationProcessor implements AdviceProcessor<SecondA
 	 * @param annotation
 	 * @return
 	 */
-	private String getAuthorizersString(SecondAuthenticate annotation) {
+	private String getAuthorizersString(SecondaryAuthenticate annotation) {
 		try {
 			SecondaryAuthenticator handler = beanFactory.getBean(annotation.handleClass());
 			return StringUtils.arrayToDelimitedString(handler.doGetAuthorizers(annotation.funcId()), ",");
@@ -297,5 +286,15 @@ public class SecondaryAuthenticationProcessor implements AdviceProcessor<SecondA
 		}
 
 	}
+
+	/**
+	 * Error message without secondary authentication.
+	 */
+	final public static String MSG_SECOND_UNAUTHC = "Without secondary authentication, redirect the specified external URL for authentication";
+
+	/**
+	 * Error status without secondary Unauthenticated.
+	 */
+	final public static String STATUS_SECOND_UNAUTHC = "SecondaryUnauthenticated";
 
 }

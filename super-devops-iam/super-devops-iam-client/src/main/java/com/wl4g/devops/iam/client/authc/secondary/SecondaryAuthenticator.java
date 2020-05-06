@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.client.authc.aop;
+package com.wl4g.devops.iam.client.authc.secondary;
 
 /**
  * Secondary authentication handler
@@ -24,6 +24,12 @@ package com.wl4g.devops.iam.client.authc.aop;
  */
 public interface SecondaryAuthenticator {
 
+	/**
+	 * Gets security authorizers(principals) string.
+	 * 
+	 * @param funcId
+	 * @return
+	 */
 	String[] doGetAuthorizers(String funcId);
 
 }

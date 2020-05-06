@@ -165,4 +165,25 @@ public abstract class AuthenticatingUtils extends IamSecurityHolder {
 		return new AESCryptor().generateKey(128).toHex();
 	}
 
+	/**
+	 * Generate token suffix according to default rules.
+	 * 
+	 * @param appName
+	 * @return
+	 */
+	final public static String generateDefaultTokenSuffix(String appName) {
+		hasTextOf(appName, "appName");
+		String appPrefix = (appName.length() > DEFAULT_SUFFIX_LEN) ? appName.substring(0, DEFAULT_SUFFIX_LEN) : appName;
+		StringBuffer tokenSuffix = new StringBuffer(appPrefix.substring(0, 1));
+		for (char ch : appPrefix.substring(1).toCharArray()) {
+			tokenSuffix.append((int) ch);
+		}
+		return tokenSuffix.toString();
+	}
+
+	/**
+	 * Default generation id-suffix from application length.
+	 */
+	final public static int DEFAULT_SUFFIX_LEN = 3;
+
 }

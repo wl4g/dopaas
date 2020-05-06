@@ -18,6 +18,10 @@ package com.wl4g.devops.iam.common.session.mgt.support;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
 
+import com.wl4g.devops.iam.common.config.AbstractIamProperties;
+import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
+
 import static java.lang.String.format;
 import static java.util.UUID.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -34,18 +38,13 @@ import java.io.Serializable;
 public class IamUidSessionIdGenerator implements SessionIdGenerator {
 
 	/**
-	 * Default generation id-suffix from application length.
-	 */
-	final private static int DEFAULT_SUFFIX_LEN = 3;
-
-	/**
 	 * Application name.
 	 */
-	final private String appName;
+	final protected AbstractIamProperties<? extends ParamProperties> config;
 
-	public IamUidSessionIdGenerator(String appName) {
-		notNull(appName, "appName");
-		this.appName = appName;
+	public IamUidSessionIdGenerator(AbstractIamProperties<? extends ParamProperties> config) {
+		notNull(config, "config");
+		this.config = config;
 	}
 
 	/**
@@ -59,11 +58,7 @@ public class IamUidSessionIdGenerator implements SessionIdGenerator {
 	 *         randomUUID()}.
 	 */
 	public Serializable generateId(Session session) {
-		String appPrefix = (appName.length() > DEFAULT_SUFFIX_LEN) ? appName.substring(0, DEFAULT_SUFFIX_LEN) : appName;
-		StringBuffer idSuffix = new StringBuffer(appPrefix.substring(0, 1));
-		for (char ch : appPrefix.substring(1).toCharArray()) {
-			idSuffix.append((int) ch);
-		}
+		String idSuffix = generateDefaultTokenSuffix(config.getSpringApplicationName());
 		return format("sid%s%s", randomUUID().toString().replaceAll("-", EMPTY), idSuffix);
 	}
 

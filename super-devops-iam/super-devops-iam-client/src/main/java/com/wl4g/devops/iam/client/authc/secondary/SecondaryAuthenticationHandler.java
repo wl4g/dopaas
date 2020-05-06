@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.aop;
+package com.wl4g.devops.iam.client.authc.secondary;
 
 import java.lang.annotation.Annotation;
 
@@ -27,7 +27,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
  * @version v1.0 2019年3月9日
  * @since
  */
-public interface AdviceProcessor<A extends Annotation> {
+public interface SecondaryAuthenticationHandler<A extends Annotation> {
 
 	/**
 	 * Perform AOP section notification interception

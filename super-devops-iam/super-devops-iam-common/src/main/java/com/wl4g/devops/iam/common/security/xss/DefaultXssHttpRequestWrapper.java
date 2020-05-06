@@ -39,9 +39,9 @@ import com.wl4g.devops.iam.common.security.xss.html.XSSFilter;
  * @version v1.0 2019年4月26日
  * @since
  */
-public class DefaultXssRequestWrapper extends XssRequestWrapper {
+public class DefaultXssHttpRequestWrapper extends XssHttpRequestWrapper {
 
-	public DefaultXssRequestWrapper(HttpServletRequest request) {
+	public DefaultXssHttpRequestWrapper(HttpServletRequest request) {
 		super(request);
 	}
 
