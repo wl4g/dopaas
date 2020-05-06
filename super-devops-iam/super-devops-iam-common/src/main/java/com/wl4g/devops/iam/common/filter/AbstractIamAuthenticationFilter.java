@@ -112,30 +112,51 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	}
 
 	/**
-	 * Puts principal authorized info(roles/permissions) to cookies.(if
-	 * necessary)
+	 * Puts principal authorization info(roles/permissions) and common security
+	 * headers to cookies.(if necessary)
 	 * 
 	 * @param token
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	protected Map<String, String> putAuthorizationInfoCookieIfNecessary(AuthenticationToken token, ServletRequest request,
+	protected Map<String, String> putAuthzInfoCookiesAndSecurityIfNecessary(AuthenticationToken token, ServletRequest request,
 			ServletResponse response) {
 		Map<String, String> authzInfo = new HashMap<>();
 
-		// Sets authorizes permits info.
+		// Gets permits URl.
 		String permitUrl = getRFCBaseURI(toHttp(request), true) + URI_S_LOGIN_BASE + "/" + URI_S_LOGIN_PERMITS;
 		authzInfo.put(config.getParam().getAuthzPermitsName(), permitUrl);
 		if (isBrowser(toHttp(request))) {
+			// Sets authorizes permits info.
 			Cookie c = new SimpleCookie(config.getCookie());
 			c.setName(config.getParam().getAuthzPermitsName());
 			c.setValue(permitUrl);
 			c.setMaxAge(60);
 			c.saveTo(toHttp(request), toHttp(response));
+
+			// Sets common security headers.
+			setSecurityHeadersIfNecessary(token, request, response);
 		}
 
 		return authzInfo;
+	}
+
+	/**
+	 * Puts principal common security headers to cookies.(if necessary)
+	 * 
+	 * @param token
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	protected void setSecurityHeadersIfNecessary(AuthenticationToken token, ServletRequest request, ServletResponse response) {
+		// Sets P3P header.
+		if (isBrowser(toHttp(request))) {
+			toHttp(response).setHeader("P3P",
+					"CP='CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR'");
+		}
+
 	}
 
 	/**

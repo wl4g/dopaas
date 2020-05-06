@@ -202,7 +202,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 			// Sets secret tokens to cookies.
 			putSuccessTokensCookieIfNecessary(token, request, response);
 			// Sets authorization info to cookies.
-			putAuthorizationInfoCookieIfNecessary(token, request, response);
+			putAuthzInfoCookiesAndSecurityIfNecessary(token, request, response);
 			// Sets xsrf token.
 			putXsrfTokenCookieIfNecessary(token, request, response);
 
@@ -432,7 +432,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// Sets child accessToken. (if necessary)
 		resp.forMap().put(config.getParam().getAccessTokenName(), tokens[1]);
 		// Sets authorization info.
-		resp.forMap().putAll(putAuthorizationInfoCookieIfNecessary(token, request, response));
+		resp.forMap().putAll(putAuthzInfoCookiesAndSecurityIfNecessary(token, request, response));
 		// Sets xsrf token.
 		resp.forMap().putAll(putXsrfTokenCookieIfNecessary(token, request, response));
 
