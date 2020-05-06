@@ -206,7 +206,7 @@
 			var img = Common.Util.checkEmpty("captcha.img", settings.captcha.img);
 			imgInput.val(""); // 清空验证码input
 			// 绑定刷新验证码
-			$(img).click(function(){ resetCaptcha(); });
+			$(img).click(function(){ resetCaptcha(true); });
 			// 请求申请Captcha
 			doIamRequest("get", getApplyCaptchaUrl(), new Map(), function(res) {
 				// Apply captcha completed.
@@ -222,7 +222,7 @@
 					$(img).attr("title", res.message); // 如:刷新过快
 					$(img).unbind("click");
 					setTimeout(function(){
-						$(img).click(function(){ resetCaptcha(); });
+						$(img).click(function(){ resetCaptcha(true); });
 					}, 15000); // 至少15sec才能点击刷新
 				}
 			}, function(req, status, errmsg){
@@ -273,8 +273,8 @@
  			onPostUmidToken: function(res){
  				console.debug("onPostUmidToken... "+ res);
  			},
- 			onPreCheck: function(principal, checkUrl){
- 				console.debug("onPostCheck... principal:"+ principal +", checkUrl:"+ checkUrl);
+ 			onPreCheck: function(principal){
+ 				console.debug("onPreCheck... principal:"+ principal);
  				return true; // continue after?
  			},
  			onPostCheck: function(res){
@@ -477,6 +477,9 @@
 	// Gets apply captcha URL.
 	var getApplyCaptchaUrl = function() {
 		var paramMap = new Map();
+		// principal参数（申请验证码接口会检查是否启用,因为factors有包括rip/principal等,所有只要principal输入框有值就传,如：同一网段内多次登录root失败，此时该网段另一客户端登录root时也应该要启用验证码）
+		var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput));
+		paramMap.set(Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey), principal);
 		// umidToken参数
 		paramMap.set(Common.Util.checkEmpty("definition.umidTokenKey",settings.definition.umidTokenKey), runtime.umid.getValue());
 		paramMap.set(Common.Util.checkEmpty("definition.verifyTypeKey",settings.definition.verifyTypeKey), Common.Util.checkEmpty("captcha.use",settings.captcha.use));
@@ -490,6 +493,9 @@
 	// Gets verify & analyze captcha URL.
 	var getVerifyAnalysisUrl = function() {
 		var paramMap = new Map();
+		// principal参数（申请验证码接口会检查是否启用,因为factors有包括rip/principal等,所有只要principal输入框有值就传,如：同一网段内多次登录root失败，此时该网段另一客户端登录root时也应该要启用验证码）
+		var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput));
+		paramMap.set(Common.Util.checkEmpty("definition.principalKey",settings.definition.principalKey), principal);
 		// umidToken参数
 		paramMap.set(Common.Util.checkEmpty("definition.umidTokenKey",settings.definition.umidTokenKey),runtime.umid.getValue());
 		paramMap.set(Common.Util.checkEmpty("definition.verifyTypeKey",settings.definition.verifyTypeKey),Common.Util.checkEmpty("captcha.use", settings.captcha.use));
@@ -503,13 +509,17 @@
 	};
 
 	// Reset graph captcha.
-	var resetCaptcha = function() {
-		_InitSafeCheck(function(checkCaptcha, checkGeneric, checkSms){
-			if(checkCaptcha.enabled && !runtime.flags.isCurrentlyApplying){ // 启用验证码且不是申请中(防止并发)?
-				// 获取当前配置CaptchaVerifier实例、显示
-				Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaRender();
-			}
-		});
+	var resetCaptcha = function(refresh) {
+		if (refresh) {
+			_InitSafeCheck(function(checkCaptcha, checkGeneric, checkSms){
+				if(checkCaptcha.enabled && !runtime.flags.isCurrentlyApplying){ // 启用验证码且不是申请中(防止并发)?
+					// 获取当前配置的 CaptchaVerifier实例并显示
+					Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaRender();
+				}
+			});
+		} else { // 获取当前配置的CaptchaVerifier实例并显示
+			Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaRender();
+		}
 	};
 
 	// 渲染SNS授权二维码或页面, 使用setTimeout以解决 如,微信long请求导致父窗体长时间处于加载中问题
@@ -644,9 +654,7 @@
 
 		$(function(){
 			// 初始刷新验证码
-			resetCaptcha();
-
-			// 初始化&绑定验证码事件
+			resetCaptcha(true);			// 初始化&绑定验证码事件
 			if(settings.captcha.use == "VerifyWithSimpleGraph" || settings.captcha.use == "VerifyWithGifGraph") {
 				var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 				// Set captcha input maxLength.
@@ -671,7 +679,7 @@
 								runtime.flags.isVerifying = false; // Reset verify status.
 								var codeOkValue = _check("definition.codeOkValue",settings.definition.codeOkValue);
 								if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
-									resetCaptcha();
+									resetCaptcha(true);
 									settings.captcha.onError(res.message); // Call after captcha error.
 								} else { // Verify success.
 									runtime.verifiedModel = res.data.verifiedModel;
@@ -679,7 +687,7 @@
 								}
 							}, function(errmsg){
 								runtime.flags.isVerifying = false; // Reset verify status.
-								resetCaptcha();
+								resetCaptcha(true);
 								settings.captcha.onError(errmsg); // Call after captcha error.
 							}, true);
 						}
@@ -725,10 +733,11 @@
 					var credentials = encodeURIComponent(IAMCrypto.RSA.encryptToHexString(secretKey, plainPasswd));
 					// 已校验的验证码Token(如果有)
 					var verifiedToken = "";
-					if(runtime.safeCheck.checkCaptcha.enabled){
+					if(runtime.safeCheck.checkCaptcha.enabled) {
 						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
 						if(Common.Util.isEmpty(verifiedToken)){ // Required
 							settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete man-machine verify");
+							resetCaptcha(false);
 							return;
 						}
 					}
@@ -766,7 +775,7 @@
 						runtime.verifiedModel.verifiedToken = ""; // Clear
 						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 						if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
-							resetCaptcha(); // 刷新验证码
+							resetCaptcha(true); // 刷新验证码
 							settings.account.onError(res.message); // 登录失败回调
 						} else { // 登录成功，直接重定向
                             $(document).unbind("keydown");
