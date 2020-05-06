@@ -250,8 +250,8 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 		if (isNotBlank(lang)) {
 			locale = new Locale(lang);
 		}
-		bind(KEY_LANG_ATTRIBUTE_NAME, locale);
-		resp.forMap().put(KEY_LANG_ATTRIBUTE_NAME, locale);
+		bind(KEY_LANG_NAME, locale);
+		resp.forMap().put(KEY_LANG_NAME, locale);
 		return resp;
 	}
 

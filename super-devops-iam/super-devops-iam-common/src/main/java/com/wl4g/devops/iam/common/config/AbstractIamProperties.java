@@ -52,21 +52,6 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	private static final long serialVersionUID = -5858422822181237865L;
 
 	/**
-	 * Default view access base URI
-	 */
-	final public static String DEFAULT_VIEW_BASE_URI = "/view";
-
-	/**
-	 * Default view index URI.
-	 */
-	final public static String DEFAULT_VIEW_INDEX_URI = DEFAULT_VIEW_BASE_URI + "/index.html";
-
-	/**
-	 * Default view 403 URI.
-	 */
-	final public static String DEFAULT_VIEW_403_URI = DEFAULT_VIEW_BASE_URI + "/403.html";
-
-	/**
 	 * Spring boot environment.
 	 */
 	@Autowired
@@ -522,7 +507,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * signature value calculated by the server is equal to the signature
 		 * value submitted by the client, that is, the verification passes.
 		 * 
-		 * @see {@link com.wl4g.devops.common.constants.IAMDevOpsConstants#KEY_ACCESSTOKEN_SIGN}
+		 * @see {@link com.wl4g.devops.common.constants.IAMDevOpsConstants#KEY_ACCESSTOKEN_SIGN_NAME}
 		 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
 		 * @see prev-step:{@link #dataCipherKeyName}
 		 */
@@ -915,5 +900,20 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		}
 
 	}
+
+	/**
+	 * Default view access base URI
+	 */
+	final public static String DEFAULT_VIEW_BASE_URI = "/view";
+
+	/**
+	 * Default view index URI.
+	 */
+	final public static String DEFAULT_VIEW_INDEX_URI = DEFAULT_VIEW_BASE_URI + "/index.html";
+
+	/**
+	 * Default view 403 URI.
+	 */
+	final public static String DEFAULT_VIEW_403_URI = DEFAULT_VIEW_BASE_URI + "/403.html";
 
 }
