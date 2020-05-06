@@ -45,6 +45,7 @@ import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.web.cors.CorsConfiguration.ALL;
+import static org.springframework.http.HttpMethod.*;
 
 /**
  * CORS configuration properties
@@ -65,13 +66,20 @@ public class CorsProperties implements Serializable {
 		private static final long serialVersionUID = -8576461225674624807L;
 
 		/**
-		 * Default allowes header.
+		 * Default allowes headers.
 		 */
-		private static final String DEFAULT_ALLOW_HEADER = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*";
+		private final String[] defaultAllowedHeaders = { DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*", "Cookie", "X-Requested-With",
+				"Content-Type", "Content-Length", "User-Agent", "Referer", "Origin", "Accept", "Accept-Language",
+				"Accept-Encoding" };
+
+		/**
+		 * Default allowes methods.
+		 */
+		private final String[] defaultAllowedMethods = { GET.name(), POST.name(), OPTIONS.name() };
 		{
 			// Default settings.
-			put("/**", new CorsRule().setAllowCredentials(true).addAllowsHeaders(DEFAULT_ALLOW_HEADER)
-					.addAllowsMethods("GET", "POST").addAllowsOrigins("http://localhost:8080"));
+			put("/**", new CorsRule().setAllowCredentials(true).addAllowsHeaders(defaultAllowedHeaders)
+					.addAllowsMethods(defaultAllowedMethods).addAllowsOrigins("http://localhost:8080"));
 		}
 	};
 
