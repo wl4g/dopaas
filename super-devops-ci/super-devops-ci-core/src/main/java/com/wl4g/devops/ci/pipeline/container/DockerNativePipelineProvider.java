@@ -45,7 +45,7 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
 		// config.getJobLog(getContext().getTaskHistory().getId());
 
 		// TODO timeoutMs?
-		DestroableCommand cmd = new RemoteDestroableCommand(String.valueOf(getContext().getTaskHistory().getId()), command,
+		DestroableCommand cmd = new RemoteDestroableCommand(String.valueOf(getContext().getPipelineHistory().getId()), command,
 				180_000L, user, remoteHost, sshkey.toCharArray());
 		pm.execWaitForComplete(cmd);
 	}
@@ -75,7 +75,7 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
 
 	@Override
 	protected Runnable newPipeDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
+		Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
 		return beanFactory.getBean(DockerNativePipeDeployer.class, args);
 	}
 

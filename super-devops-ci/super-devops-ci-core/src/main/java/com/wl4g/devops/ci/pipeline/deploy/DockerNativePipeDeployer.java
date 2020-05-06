@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
+import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 
@@ -31,8 +32,8 @@ import java.util.List;
 public class DockerNativePipeDeployer extends GenericHostPipeDeployer<DockerNativePipelineProvider> {
 
 	public DockerNativePipeDeployer(DockerNativePipelineProvider provider, AppInstance instance,
-			List<TaskHistoryInstance> taskHistoryInstances) {
-		super(provider, instance, taskHistoryInstances);
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
+		super(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Override

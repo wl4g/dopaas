@@ -17,8 +17,8 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.ViewNativePipeDeployer;
+import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
@@ -48,21 +48,21 @@ public class ViewNativePipelineProvider extends RestorableDeployPipelineProvider
 
 	@Override
 	protected Runnable newPipeDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
+		Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
 		return beanFactory.getBean(ViewNativePipeDeployer.class, args);
 	}
 
 	@Override
 	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
 		Project project = getContext().getProject();
-		TaskHistory taskHistory = getContext().getTaskHistory();
-		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
+		PipelineHistory pipelineHistory = getContext().getPipelineHistory();
+		File tmpCmdFile = config.getJobTmpCommandFile(pipelineHistory.getId(), project.getId());
 
 		// Execution command.
 		String defaultViewNativeBuildCmd = format(DEFAULT_CMD, projectDir);
 		log.info(writeBuildLog("Building with native default command: %s", defaultViewNativeBuildCmd));
 		// TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), defaultViewNativeBuildCmd, tmpCmdFile,
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), defaultViewNativeBuildCmd, tmpCmdFile,
 				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
@@ -85,10 +85,10 @@ public class ViewNativePipelineProvider extends RestorableDeployPipelineProvider
 	protected void postModuleBuiltCommand() throws Exception {
 		Project project = getContext().getProject();
 		String prgramInstallFileName = config.getPrgramInstallFileName(getContext().getAppCluster().getName());
-		TaskHistory taskHistory = getContext().getTaskHistory();
+		PipelineHistory pipelineHistory = getContext().getPipelineHistory();
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
+		File tmpCmdFile = config.getJobTmpCommandFile(pipelineHistory.getId(), project.getId());
+		File jobLogFile = config.getJobLog(pipelineHistory.getId());
 
 		String tarCommand = format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/dist/%s.tar *", projectDir,
 				prgramInstallFileName, prgramInstallFileName, prgramInstallFileName, projectDir, prgramInstallFileName);
@@ -96,7 +96,7 @@ public class ViewNativePipelineProvider extends RestorableDeployPipelineProvider
 
 		// Execution command.
 		// TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), tarCommand, tmpCmdFile, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
