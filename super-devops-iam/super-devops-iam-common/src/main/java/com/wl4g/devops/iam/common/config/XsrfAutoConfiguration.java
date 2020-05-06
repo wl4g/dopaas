@@ -15,17 +15,17 @@
  */
 package com.wl4g.devops.iam.common.config;
 
-import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
-import static com.wl4g.devops.iam.common.config.XssProperties.KEY_XSS_PREFIX;
+import static com.wl4g.devops.iam.common.config.XsrfProperties.KEY_XSRF_PREFIX;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
-import com.wl4g.devops.iam.common.security.xss.XssResolveAdviceInterceptor;
-import com.wl4g.devops.iam.common.security.xss.XssSecurityResolver;
+import com.wl4g.devops.iam.common.security.xsrf.XsrfProtectionSecurityFilter;
+import com.wl4g.devops.iam.common.security.xsrf.repository.CookieXsrfTokenRepository;
 
 /**
  * XSRF protection auto configuration.
@@ -37,37 +37,38 @@ import com.wl4g.devops.iam.common.security.xss.XssSecurityResolver;
 public class XsrfAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	//
-	// X S S _ I N T E R C E P T O R _ C O N F I G's.
+	// X S R F _ F I L T E R _ C O N F I G's.
 	//
 
 	@Bean
-	@ConditionalOnProperty(name = KEY_XSS_PREFIX + ".enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = KEY_XSS_PREFIX)
-	public XssProperties xssProperties() {
-		return new XssProperties();
+	@ConditionalOnProperty(name = KEY_XSRF_PREFIX + ".enabled", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_XSRF_PREFIX)
+	public XsrfProperties xsrfProperties() {
+		return new XsrfProperties();
 	}
 
 	@Bean
-	@ConditionalOnBean(XssProperties.class)
-	public XssSecurityResolver xssSecurityResolver() {
-		return new XssSecurityResolver() {
-		};
+	@ConditionalOnBean(XsrfProperties.class)
+	public CookieXsrfTokenRepository cookieXsrfTokenRepository() {
+		return new CookieXsrfTokenRepository();
 	}
 
 	@Bean
-	@ConditionalOnBean({ XssSecurityResolver.class })
-	public XssResolveAdviceInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
-		return new XssResolveAdviceInterceptor(config, resolver);
+	@ConditionalOnBean(XsrfProperties.class)
+	public XsrfProtectionSecurityFilter xsrfProtectionSecurityFilter() {
+		return new XsrfProtectionSecurityFilter();
 	}
 
 	@Bean
-	@ConditionalOnBean(XssResolveAdviceInterceptor.class)
-	public AspectJExpressionPointcutAdvisor xssSecurityResolverAspectJExpressionPointcutAdvisor(XssProperties config,
-			XssResolveAdviceInterceptor advice) {
-		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
-		advisor.setExpression(config.getExpression());
-		advisor.setAdvice(advice);
-		return advisor;
+	@ConditionalOnBean(XsrfProperties.class)
+	public FilterRegistrationBean xsrfProtectionSecurityFilterBean(XsrfProtectionSecurityFilter filter) {
+		// Register XSRF filter
+		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		filterBean.setOrder(AbstractIamConfiguration.ORDER_XSRF_PRECEDENCE);
+		// Cannot use '/*' or it will not be added to the container chain (only
+		// '/**')
+		filterBean.addUrlPatterns("/*"); // TODO config?
+		return filterBean;
 	}
 
 }

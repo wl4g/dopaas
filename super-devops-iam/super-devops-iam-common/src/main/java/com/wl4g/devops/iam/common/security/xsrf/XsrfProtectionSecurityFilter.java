@@ -136,9 +136,9 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		String actualToken = request.getHeader(xsrfToken.getHeaderName());
-		actualToken = isBlank(actualToken) ? getCleanParam(request, xsrfToken.getParameterName()) : actualToken;
-		if (!xsrfToken.getToken().equals(actualToken)) {
+		String actualToken = request.getHeader(xsrfToken.getXsrfHeaderName());
+		actualToken = isBlank(actualToken) ? getCleanParam(request, xsrfToken.getXsrfParamName()) : actualToken;
+		if (!xsrfToken.getXsrfToken().equals(actualToken)) {
 			log.debug("Invalid XSRF token found for: {}", requestPath);
 			if (missingToken) {
 				rejectHandler.handle(request, response, new MissingXsrfTokenException(actualToken));

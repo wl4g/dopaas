@@ -32,7 +32,7 @@ public class InvalidXsrfTokenException extends XsrfException {
 
 	public InvalidXsrfTokenException(XsrfToken expectedAccessToken, String actualAccessToken) {
 		super("Invalid XSRF Token '" + actualAccessToken + "' was found on the request parameter '"
-				+ expectedAccessToken.getParameterName() + "' or header '" + expectedAccessToken.getHeaderName() + "'.");
+				+ expectedAccessToken.getXsrfParamName() + "' or header '" + expectedAccessToken.getXsrfHeaderName() + "'.");
 	}
 
 }

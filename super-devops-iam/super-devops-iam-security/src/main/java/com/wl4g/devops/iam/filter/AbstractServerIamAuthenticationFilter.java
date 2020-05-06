@@ -234,6 +234,8 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				putSuccessTokensCookieIfNecessary(token, request, response);
 				// Sets authorization info to cookies.
 				putAuthorizationInfoCookieIfNecessary(token, request, response);
+				// Sets xsrf token.
+				putXsrfTokenCookieIfNecessary(token, request, response);
 
 				// Call custom success handle.
 				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
@@ -621,6 +623,8 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		params.put(config.getParam().getAccessTokenName(), tokens[1]);
 		// Sets authorization info.
 		params.putAll(putAuthorizationInfoCookieIfNecessary(token, request, response));
+		// Sets xsrf token.
+		params.putAll(putXsrfTokenCookieIfNecessary(token, request, response));
 	}
 
 	/**
