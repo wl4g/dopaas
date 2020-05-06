@@ -85,11 +85,14 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	protected IamCredentialsSecurer securer;
 
 	/**
-	 * Risk control recognizer handler.
+	 * Risk control evaluator handler.
 	 */
 	@Autowired
-	protected RiskEvaluatorHandler riskRecognizerHandler;
+	protected RiskEvaluatorHandler riskEvaluatorHandler;
 
+	/**
+	 * Secure cryption service.
+	 */
 	@Autowired
 	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
 
@@ -265,7 +268,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 		}
 
 		// Check umidToken validatity.
-		riskRecognizerHandler.checkEvaluation(request);
+		riskEvaluatorHandler.checkEvaluation(request);
 	}
 
 }
