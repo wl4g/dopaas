@@ -205,8 +205,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public IamUidSessionIdGenerator iamUidSessionIdGenerator(AbstractIamProperties<? extends ParamProperties> config) {
-		return new IamUidSessionIdGenerator(config);
+	public IamUidSessionIdGenerator iamUidSessionIdGenerator() {
+		return new IamUidSessionIdGenerator();
 	}
 
 	@Bean

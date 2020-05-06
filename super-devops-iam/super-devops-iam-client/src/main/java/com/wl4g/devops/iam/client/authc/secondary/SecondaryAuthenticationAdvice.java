@@ -48,7 +48,7 @@ public class SecondaryAuthenticationAdvice {
 		this.handler = processor;
 	}
 
-	@Pointcut("@annotation(com.wl4g.devops.iam.client.annotation.SecondAuthenticate)")
+	@Pointcut("@annotation(com.wl4g.devops.iam.client.annotation.SecondaryAuthenticate)")
 	private void pointcut() {
 	}
 
