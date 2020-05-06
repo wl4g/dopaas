@@ -67,4 +67,16 @@ public class PipeStepBuildingProject extends BaseBean {
     public void setBranchs(List<String> branchs) {
         this.branchs = branchs;
     }
+
+    @Override
+    public String toString() {
+        return "PipeStepBuildingProject{" +
+                "buildingId=" + buildingId +
+                ", projectId=" + projectId +
+                ", buildCommand='" + buildCommand + '\'' +
+                ", ref='" + ref + '\'' +
+                ", projectName='" + projectName + '\'' +
+                ", branchs=" + branchs +
+                '}';
+    }
 }

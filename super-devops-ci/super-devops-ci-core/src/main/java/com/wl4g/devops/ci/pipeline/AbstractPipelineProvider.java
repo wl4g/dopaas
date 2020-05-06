@@ -27,6 +27,7 @@ import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.dao.ci.PipeStepBuildingProjectDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
@@ -92,6 +93,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected TaskSignDao taskSignDao;
 	@Autowired
 	protected FlowManager flowManager;
+	@Autowired
+	protected PipeStepBuildingProjectDao pipeStepBuildingProjectDao;
 
 	/**
 	 * Pull project source from VCS files fingerprint.
