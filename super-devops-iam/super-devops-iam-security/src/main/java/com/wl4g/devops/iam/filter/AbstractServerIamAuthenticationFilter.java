@@ -233,7 +233,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				// Sets secret tokens to cookies.
 				putSuccessTokensCookieIfNecessary(token, request, response);
 				// Sets authorization info to cookies.
-				putAuthorizationInfoCookieIfNecessary(token, request, response);
+				putAuthzInfoCookiesAndSecurityIfNecessary(token, request, response);
 				// Sets xsrf token.
 				putXsrfTokenCookieIfNecessary(token, request, response);
 
@@ -622,7 +622,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		params.put(config.getParam().getDataCipherKeyName(), tokens[0]);
 		params.put(config.getParam().getAccessTokenName(), tokens[1]);
 		// Sets authorization info.
-		params.putAll(putAuthorizationInfoCookieIfNecessary(token, request, response));
+		params.putAll(putAuthzInfoCookiesAndSecurityIfNecessary(token, request, response));
 		// Sets xsrf token.
 		params.putAll(putXsrfTokenCookieIfNecessary(token, request, response));
 	}

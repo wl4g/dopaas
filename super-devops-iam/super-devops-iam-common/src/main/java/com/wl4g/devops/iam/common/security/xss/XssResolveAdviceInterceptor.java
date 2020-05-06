@@ -232,7 +232,7 @@ public class XssResolveAdviceInterceptor implements MethodInterceptor {
 		 * The following response header can disable the browser's type guessing
 		 * behavior.
 		 */
-		response.setHeader("X-Content-Type-Options:", "nosniff");
+		response.setHeader("X-Content-Type-Options", "nosniff");
 
 		// Strict-Transport-Security:
 		if (equalsIgnoreCase(request.getScheme(), "HTTPS")) {
@@ -241,6 +241,12 @@ public class XssResolveAdviceInterceptor implements MethodInterceptor {
 				response.addHeader("Strict-Transport-Security", "max-age=0");
 			}
 		}
+
+		// Timing-Allow-Origin:
+		response.setHeader("Timing-Allow-Origin", "*");
+
+		// X-Download-Options:
+		response.setHeader("X-Download-Options", "noopen");
 
 	}
 
