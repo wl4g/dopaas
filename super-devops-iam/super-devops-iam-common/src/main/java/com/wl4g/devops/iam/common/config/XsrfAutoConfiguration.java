@@ -21,14 +21,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_XSRF_BASE;
 import static com.wl4g.devops.iam.common.config.XssProperties.KEY_XSS_PREFIX;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
-import com.wl4g.devops.iam.common.annotation.XsrfController;
 import com.wl4g.devops.iam.common.security.xss.XssResolveAdviceInterceptor;
 import com.wl4g.devops.iam.common.security.xss.XssSecurityResolver;
-import com.wl4g.devops.iam.common.web.XsrfProtectionEndpoint;
 
 /**
  * XSRF protection auto configuration.
@@ -71,16 +68,6 @@ public class XsrfAutoConfiguration extends OptionalPrefixControllerAutoConfigura
 		advisor.setExpression(config.getExpression());
 		advisor.setAdvice(advice);
 		return advisor;
-	}
-
-	@Bean
-	public PrefixHandlerMapping xsrfProtectionEndpointPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_XSRF_BASE, XsrfController.class);
-	}
-
-	@Bean
-	public XsrfProtectionEndpoint xsrfProtectionEndpoint() {
-		return new XsrfProtectionEndpoint();
 	}
 
 }

@@ -89,16 +89,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String CACHE_SESSION_REFATTRS = ":iam:session:refattrs:";
 
-	/**
-	 * XSRF endpoint base URI.
-	 */
-	final public static String URI_XSRF_BASE = "/xsrf";
-
-	/**
-	 * XSRF token apply URI.
-	 */
-	final public static String URI_XSRF_APPLY_TOKEN = "token";
-
 	//
 	// Server configuration.
 	//
