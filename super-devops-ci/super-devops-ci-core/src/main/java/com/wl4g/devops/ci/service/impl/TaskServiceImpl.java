@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
@@ -38,6 +39,7 @@ import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
 import static java.util.Objects.isNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+*/
 /**
  * Task CRUD service
  * 
@@ -45,7 +47,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @author vjay
  * @version v1.0 2019年10月17日
  * @since
- */
+ *//*
+
 @Service
 public class TaskServiceImpl implements TaskService {
 
@@ -245,4 +248,4 @@ public class TaskServiceImpl implements TaskService {
 		return taskDao.list(null, null, null, null, null, null, null, null);
 	}
 
-}
+}*/

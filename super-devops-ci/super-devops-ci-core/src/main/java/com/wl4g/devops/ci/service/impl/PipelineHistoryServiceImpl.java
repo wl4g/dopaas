@@ -46,8 +46,8 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
     public PipelineHistory createPipelineHistory(NewParameter newParameter) {
         Assert2.notNullOf(newParameter,"newParameter");
         Integer pipeId = newParameter.getPipeId();
-        String traceId = newParameter.getTraceId();
-        String traceType = newParameter.getTraceType();
+        String traceId = newParameter.getTrackId();
+        String traceType = newParameter.getTrackType();
         String remark = newParameter.getRemark();
         String annex = newParameter.getAnnex();
 
@@ -168,6 +168,11 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
         List<PipelineHistoryInstance> pipelineHistoryInstances = pipelineHistoryInstanceDao.selectByPipeHistoryId(pipeId);
         pipelineHistory.setPipelineHistoryInstances(pipelineHistoryInstances);
         return pipelineHistory;
+    }
+
+    @Override
+    public PipelineHistory getById(Integer pipeHisId) {
+        return pipelineHistoryDao.selectByPrimaryKey(pipeHisId);
     }
 
 

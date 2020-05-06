@@ -133,7 +133,7 @@ public class PipelineServiceImpl implements PipelineService {
         pipelineDao.insertSelective(pipeline);
         // Insert PipeInstance
         Integer[] instanceIds = pipeline.getInstanceIds();
-        if (nonNull(instanceIds)) {
+        if (nonNull(instanceIds) && instanceIds.length>0) {
             List<PipelineInstance> pipelineInstances = new ArrayList<>();
             for (Integer i : instanceIds) {
                 PipelineInstance pipelineInstance = new PipelineInstance();
@@ -189,7 +189,8 @@ public class PipelineServiceImpl implements PipelineService {
 
     }
 
-    private void update(Pipeline pipeline) {
+    @Transactional
+    public void update(Pipeline pipeline) {
         pipeline.preUpdate();
         Assert2.notNullOf(pipeline, "pipeline");
         // Update Pipeline

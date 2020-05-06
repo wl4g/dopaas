@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
@@ -41,10 +42,12 @@ import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOPING;
 
+*/
 /**
  * @author vjay
  * @date 2019-05-17 11:44:00
- */
+ *//*
+
 @Service
 public class TaskHistoryServiceImpl implements TaskHistoryService {
 
@@ -202,4 +205,4 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistoryDetailDao.updateByPrimaryKeySelective(taskHistoryInstance);
 	}
 
-}
+}*/
