@@ -22,12 +22,10 @@ import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
-import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -79,17 +77,18 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 				getContext().getAppCluster().getName(), jobLog.getAbsolutePath()));
 
 		// Resolve project dependencies.
-		LinkedHashSet<Dependency> dependencies = dependencyService.getHierarchyDependencys(project.getId(), null);
+		List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeStepBuildingProjectDao.selectByPipeId(getContext().getPipeline().getId());
+		//LinkedHashSet<Dependency> dependencies = dependencyService.getHierarchyDependencys(project.getId(), null);
 		log.info(writeBuildLog("Analyzed pipeline for hierarchy of appcluster: %s, dependencies: %s",
-				getContext().getAppCluster().getName(), dependencies));
+				getContext().getAppCluster().getName(), pipeStepBuildingProjects));
 
 		// Custom dependency commands.
-		List<TaskBuildCommand> commands = taskHistoryBuildCommandDao.selectByTaskHisId(pipelineHistory.getId());
+		//List<TaskBuildCommand> commands = taskHistoryBuildCommandDao.selectByTaskHisId(pipelineHistory.getId());
 
 		// Pipeline State Change
 		List<String> modules = new ArrayList<>();
-		for (Dependency depd : dependencies) {
-			modules.add(depd.getDependentId().toString());
+		for (PipeStepBuildingProject depd : pipeStepBuildingProjects) {
+			modules.add(depd.getProjectId().toString());
 		}
 		modules.add(project.getId().toString());
 		PipelineModel pipelineModel = getContext().getPipelineModel();
@@ -100,19 +99,19 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		log.info(writeBuildLog("Analyzed pipelineModel=%s", JacksonUtils.toJSONString(pipelineModel)));
 
 		// Build of dependencies sub-modules.
-		for (Dependency depd : dependencies) {
+		for (PipeStepBuildingProject buildingProject : pipeStepBuildingProjects) {
 
 			// Is dependency Already build
-			if (flowManager.isDependencyBuilded(depd.getDependentId().toString())) {
+			if (flowManager.isDependencyBuilded(buildingProject.getProjectId().toString())) {
 				continue;
 			}
 
-			pipelineModel.setCurrent(depd.getDependentId().toString());
+			pipelineModel.setCurrent(buildingProject.getProjectId().toString());
 			flowManager.pipelineStateChange(pipelineModel);
-			TaskBuildCommand taskBuildCommand = extractDependencyBuildCommand(commands, depd.getDependentId());
+			//TaskBuildCommand taskBuildCommand = extractDependencyBuildCommand(commands, buildingProject.getProjectId());
 
-			Assert2.notNullOf(taskBuildCommand, "taskBuildCommand");
-			doMutexBuildModuleInDependencies(depd.getDependentId(), taskBuildCommand.getBranch(), taskBuildCommand.getCommand());
+			//Assert2.notNullOf(taskBuildCommand, "taskBuildCommand");
+			doMutexBuildModuleInDependencies(buildingProject.getProjectId(), buildingProject.getRef(), buildingProject.getBuildCommand());
 
 		}
 
