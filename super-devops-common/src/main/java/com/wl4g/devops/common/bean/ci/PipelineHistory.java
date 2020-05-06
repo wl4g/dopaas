@@ -2,7 +2,7 @@ package com.wl4g.devops.common.bean.ci;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
-import java.util.Date;
+import java.util.List;
 
 public class PipelineHistory extends BaseBean {
     private static final long serialVersionUID = 6815608076300843748L;
@@ -17,7 +17,7 @@ public class PipelineHistory extends BaseBean {
 
     private Integer refId;
 
-    private Date costTime;
+    private Long costTime;
 
     private String trackType;
 
@@ -25,8 +25,14 @@ public class PipelineHistory extends BaseBean {
 
     private String annex;
 
+    //other
+    private String pipeName;
 
+    private String clusterName;
 
+    private String createByName;
+
+    private List<PipelineHistoryInstance> pipelineHistoryInstances;
 
     public Integer getPipeId() {
         return pipeId;
@@ -68,11 +74,11 @@ public class PipelineHistory extends BaseBean {
         this.refId = refId;
     }
 
-    public Date getCostTime() {
+    public Long getCostTime() {
         return costTime;
     }
 
-    public void setCostTime(Date costTime) {
+    public void setCostTime(Long costTime) {
         this.costTime = costTime;
     }
 
@@ -100,4 +106,35 @@ public class PipelineHistory extends BaseBean {
         this.annex = annex == null ? null : annex.trim();
     }
 
+    public String getPipeName() {
+        return pipeName;
+    }
+
+    public void setPipeName(String pipeName) {
+        this.pipeName = pipeName;
+    }
+
+    public String getClusterName() {
+        return clusterName;
+    }
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
+
+    public String getCreateByName() {
+        return createByName;
+    }
+
+    public void setCreateByName(String createByName) {
+        this.createByName = createByName;
+    }
+
+    public List<PipelineHistoryInstance> getPipelineHistoryInstances() {
+        return pipelineHistoryInstances;
+    }
+
+    public void setPipelineHistoryInstances(List<PipelineHistoryInstance> pipelineHistoryInstances) {
+        this.pipelineHistoryInstances = pipelineHistoryInstances;
+    }
 }

@@ -29,8 +29,8 @@ public class RollbackParameter extends GenericParameter {
 		super();
 	}
 
-	public RollbackParameter(Integer taskId, String remark) {
-		super(taskId, remark);
+	public RollbackParameter(Integer pipeId, String remark) {
+		super(pipeId, remark);
 	}
 
 }

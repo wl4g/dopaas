@@ -1,29 +1,45 @@
 package com.wl4g.devops.ci.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.core.param.HookParameter;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.common.bean.ci.Pipeline;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
+import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.dao.ci.PipelineDao;
 import com.wl4g.devops.dao.ci.PipelineHistoryDao;
+import com.wl4g.devops.dao.ci.PipelineHistoryInstanceDao;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_CREATE;
+import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOPING;
 
 /**
  * @author vjay
  * @date 2020-04-27 17:25:00
  */
+@Service
 public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 
     @Autowired
     private PipelineDao pipelineDao;
     @Autowired
     private PipelineHistoryDao pipelineHistoryDao;
+    @Autowired
+    private PipelineHistoryInstanceDao pipelineHistoryInstanceDao;
+    @Autowired
+    protected DestroableProcessManager pm;
+
 
 
     @Override
@@ -92,6 +108,76 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 
         return pipelineHistory;
 
+    }
+
+    @Override
+    public void updateStatus(int pipeId, int status) {
+        PipelineHistory pipelineHistory = new PipelineHistory();
+        pipelineHistory.preUpdate();
+        pipelineHistory.setId(pipeId);
+        pipelineHistory.setStatus(status);
+        pipelineHistoryDao.updateByPrimaryKeySelective(pipelineHistory);
+    }
+
+    @Override
+    public void updateStatusAndResultAndSha(int pipeId, int status, String sha) {
+        PipelineHistory pipelineHistory = new PipelineHistory();
+        pipelineHistory.preUpdate();
+        pipelineHistory.setId(pipeId);
+        pipelineHistory.setStatus(status);
+        pipelineHistory.setShaLocal(sha);
+        pipelineHistoryDao.updateByPrimaryKeySelective(pipelineHistory);
+    }
+
+    @Override
+    public void stopByPipeHisId(Integer pipeHisId) {
+        PipelineHistory pipelineHistory = new PipelineHistory();
+        pipelineHistory.preUpdate();
+        pipelineHistory.setId(pipeHisId);
+        pipelineHistory.setStatus(TASK_STATUS_STOPING);
+        pipelineHistoryDao.updateByPrimaryKeySelective(pipelineHistory);
+
+        // TODO timeoutMs?
+        pm.destroyForComplete(new DestroySignal(String.valueOf(pipeHisId), 5000L));
+    }
+
+    @Override
+    public void updateCostTime(int taskId, long costTime) {
+        PipelineHistory pipelineHistory = new PipelineHistory();
+        pipelineHistory.preUpdate();
+        pipelineHistory.setId(taskId);
+        pipelineHistory.setCostTime(costTime);
+        pipelineHistoryDao.updateByPrimaryKeySelective(pipelineHistory);
+    }
+
+    @Override
+    public PageModel list(PageModel pm,  String pipeName, String clusterName, String environment, String startDate, String endDate, String providerKind) {
+        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+        pm.setRecords(pipelineHistoryDao.list(pipeName, clusterName, environment, startDate, endDate, providerKind));
+        return pm;
+    }
+
+    @Override
+    public List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Integer pipeId) {
+        return pipelineHistoryInstanceDao.selectByPipeHistoryId(pipeId);
+    }
+
+    @Override
+    public PipelineHistory detail(Integer pipeId) {
+        PipelineHistory pipelineHistory = pipelineHistoryDao.selectByPrimaryKey(pipeId);
+        List<PipelineHistoryInstance> pipelineHistoryInstances = pipelineHistoryInstanceDao.selectByPipeHistoryId(pipeId);
+        pipelineHistory.setPipelineHistoryInstances(pipelineHistoryInstances);
+        return pipelineHistory;
+    }
+
+
+    @Override
+    public void updatePipeHisInstanceStatus(int pipeInstanceId, int status) {
+        PipelineHistoryInstance pipelineHistoryInstance = new PipelineHistoryInstance();
+        pipelineHistoryInstance.preUpdate();
+        pipelineHistoryInstance.setId(pipeInstanceId);
+        pipelineHistoryInstance.setStatus(status);
+        pipelineHistoryInstanceDao.updateByPrimaryKeySelective(pipelineHistoryInstance);
     }
 
 

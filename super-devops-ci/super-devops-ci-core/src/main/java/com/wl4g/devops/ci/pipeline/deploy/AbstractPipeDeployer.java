@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.pipeline.deploy;
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
-import com.wl4g.devops.ci.service.TaskHistoryService;
+import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
@@ -64,9 +64,8 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	@Autowired
 	protected DestroableProcessManager pm;
 
-	/** Task history service. */
 	@Autowired
-	protected TaskHistoryService taskHistoryService;
+	protected PipelineHistoryService pipelineHistoryService;
 
 	/** Pipeline provider. */
 	final protected P provider;
@@ -75,7 +74,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	final protected AppInstance instance;
 
 	/** Pipeline taskDetailId. */
-	final protected Integer taskDetailId;
+	final protected Integer pipeHisInstanceId;
 
 	public AbstractPipeDeployer(P provider, AppInstance instance, List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		notNull(provider, "Pipeline provider must not be null.");
@@ -85,15 +84,15 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		this.instance = instance;
 
 		// Task details.
-		Optional<PipelineHistoryInstance> taskHisyDetail = pipelineHistoryInstances.stream()
+		Optional<PipelineHistoryInstance> pipelineHistoryInstance = pipelineHistoryInstances.stream()
 				.filter(detail -> detail.getInstanceId().intValue() == instance.getId().intValue()).findFirst();
-		isTrue(taskHisyDetail.isPresent(), "Not found taskDetailId by details.");
-		this.taskDetailId = taskHisyDetail.get().getId();
+		isTrue(pipelineHistoryInstance.isPresent(), "Not found taskDetailId by details.");
+		this.pipeHisInstanceId = pipelineHistoryInstance.get().getId();
 	}
 
 	@Override
 	public void run() {
-		notNull(taskDetailId, "Transfer job for taskDetailId inmust not be null");
+		notNull(pipeHisInstanceId, "Transfer job for taskDetailId inmust not be null");
 		Integer projectId = getContext().getProject().getId();
 		String projectName = getContext().getProject().getProjectName();
 		log.info("Starting transfer job for instanceId:{}, projectId:{}, projectName:{} ...", instance.getId(), projectId,
@@ -102,9 +101,9 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 		try {
 			PipelineHistory pipelineHistory = provider.getContext().getPipelineHistory();
 			// Update status to running.
-			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_RUNNING);
+			pipelineHistoryService.updatePipeHisInstanceStatus(pipeHisInstanceId, TASK_STATUS_RUNNING);
 			log.info("[PRE] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{} ...",
-					TASK_STATUS_RUNNING, taskDetailId, instance.getId(), projectId, projectName);
+					TASK_STATUS_RUNNING, pipeHisInstanceId, instance.getId(), projectId, projectName);
 
 			// PRE commands.
 			if (!isBlank(provider.getContext().getPipeStepInstanceCommand().getPreCommand())) {
@@ -120,19 +119,19 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 			}
 
 			// Update status to success.
-			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_SUCCESS);
+			pipelineHistoryService.updatePipeHisInstanceStatus(pipeHisInstanceId, TASK_STATUS_SUCCESS);
 
 			log.info("[SUCCESS] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
-					TASK_STATUS_SUCCESS, taskDetailId, instance.getId(), projectId, projectName);
+					TASK_STATUS_SUCCESS, pipeHisInstanceId, instance.getId(), projectId, projectName);
 
 		} catch (Exception e) {
 			log.info("[FAILED] Updated transfer status to {} for taskDetailId:{}, instance:{}, projectId:{}, projectName:{}",
-					TASK_STATUS_FAIL, taskDetailId, instance.getId(), projectId, projectName);
+					TASK_STATUS_FAIL, pipeHisInstanceId, instance.getId(), projectId, projectName);
 
-			taskHistoryService.updateDetailStatus(taskDetailId, TASK_STATUS_FAIL);
+			pipelineHistoryService.updatePipeHisInstanceStatus(pipeHisInstanceId, TASK_STATUS_FAIL);
 			throw new PipelineDeployingException(
 					String.format("Failed to deploying for taskDetailId: %s, instance: %s, projectName: %s, \nCaused by:\n%s",
-							taskDetailId, instance.getId(), projectName, getStackTraceAsString(e)));
+							pipeHisInstanceId, instance.getId(), projectName, getStackTraceAsString(e)));
 		}
 
 		log.info("Completed of transfer job for instanceId:{}, projectId:{}, projectName:{}", instance.getId(), projectId,

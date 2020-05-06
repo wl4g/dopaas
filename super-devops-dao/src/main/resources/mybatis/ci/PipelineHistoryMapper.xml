@@ -18,10 +18,19 @@
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
+
+    <!--other-->
+    <result column="pipe_name" property="pipeName" jdbcType="VARCHAR" />
+    <result column="cluster_name" property="clusterName" jdbcType="VARCHAR" />
+    <result column="create_by_name" property="createByName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List">
     id, pipe_id, provider_kind, status, sha_local, ref_id, cost_time, track_type, track_id, 
     annex, remark, create_date, create_by, update_date, update_by, del_flag
+  </sql>
+  <sql id="Base_Column_List_h">
+    h.id, h.pipe_id, h.provider_kind, h.status, h.sha_local, h.ref_id, h.cost_time, h.track_type, h.track_id,
+    h.annex, h.remark, h.create_date, h.create_by, h.update_date, h.update_by, h.del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -220,4 +229,32 @@
       del_flag = #{delFlag,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List_h" />,p.pipe_name,c.name cluster_name,u.user_name create_by_name
+    from ci_pipe_history h
+    left join ci_pipeline p on p.id=h.pipe_id
+    left join app_cluster c on p.cluster_id=c.id
+    left join sys_user u on u.id = h.create_by
+    where h.del_flag!=1
+    <if test="pipeName != null and pipeName != ''" >
+      AND p.pipe_name LIKE CONCAT('%','${pipeName}','%')
+    </if>
+    <if test="environment != null and environment != ''" >
+      AND t.environment = #{environment,jdbcType=VARCHAR}
+    </if>
+    <if test="providerKind != null and providerKind != ''" >
+      AND h.provider_kind = #{providerKind,jdbcType=VARCHAR}
+    </if>
+    <if test="clusterName != null and clusterName != ''" >
+      AND c.name LIKE CONCAT('%','${clusterName}','%')
+    </if>
+    <if test="startDate!=null and startDate!='' and endDate!='' and endDate !=null">
+      AND DATE_FORMAT(h.create_date,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+      AND DATE_FORMAT(h.create_date,'%Y-%m-%d %H:%i') &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+    </if>
+    order by t.create_date desc
+  </select>
+
 </mapper>
