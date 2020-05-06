@@ -178,21 +178,21 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 		// Grants roles and permissions attributes.
 		Map<String, String> attributes = assertion.getPrincipalInfo().getAttributes();
-		attributes.put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
-		attributes.put(KEY_PARENT_SESSIONID, valueOf(getSessionId()));
+		attributes.put(KEY_LANG_NAME, getBindValue(KEY_LANG_NAME));
+		attributes.put(KEY_PARENT_SESSIONID_NAME, valueOf(getSessionId()));
 
 		// Sets re-generate childDataCipherKey(grant application)
 		String childDataCipherKey = null;
 		if (config.getCipher().isEnableDataCipher()) {
 			childDataCipherKey = generateDataCipherKey();
-			attributes.put(KEY_DATA_CIPHER, childDataCipherKey);
+			attributes.put(KEY_DATA_CIPHER_NAME, childDataCipherKey);
 		}
 		// Sets re-generate childAccessToken(grant application)
 		String childAccessTokenSignKey = null;
 		if (config.getSession().isEnableAccessTokenValidity()) {
-			String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN);
+			String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_NAME);
 			childAccessTokenSignKey = generateAccessTokenSignKey(model.getSessionId(), accessTokenSignKey);
-			attributes.put(KEY_ACCESSTOKEN_SIGN, childAccessTokenSignKey);
+			attributes.put(KEY_ACCESSTOKEN_SIGN_NAME, childAccessTokenSignKey);
 		}
 
 		// Storage grantCredentials info.

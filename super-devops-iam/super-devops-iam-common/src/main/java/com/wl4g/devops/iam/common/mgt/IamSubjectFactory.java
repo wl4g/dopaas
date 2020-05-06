@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.common.mgt;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
@@ -163,7 +163,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 
 		// Gets protocol configure info.
 		String sessionId = valueOf(session.getId());
-		String accessTokenSignKey = (String) session.getAttribute(KEY_ACCESSTOKEN_SIGN);
+		String accessTokenSignKey = (String) session.getAttribute(KEY_ACCESSTOKEN_SIGN_NAME);
 		IamAuthenticationToken authcToken = (IamAuthenticationToken) session.getAttribute(KEY_AUTHC_TOKEN);
 
 		// Gets request accessToken.

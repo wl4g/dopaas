@@ -25,8 +25,8 @@ import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMCLIENT;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
@@ -470,7 +470,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	protected String[] putSuccessTokensCookieIfNecessary(AuthenticationToken token, ServletRequest request,
 			ServletResponse response) {
 		// Sets child dataCipherKeys to cookie.
-		String childDataCipherKey = getBindValue(KEY_DATA_CIPHER);
+		String childDataCipherKey = getBindValue(KEY_DATA_CIPHER_NAME);
 		if (!isBlank(childDataCipherKey) && isBrowser(toHttp(request))) {
 			Cookie c = new SimpleCookie(config.getCookie());
 			c.setName(config.getParam().getDataCipherKeyName());
@@ -497,7 +497,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	 */
 	protected final String generateChildAccessTokenIfNecessary() {
 		// Gets child accessTokenSign key.
-		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN);
+		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_NAME);
 		// Generate child accessToken
 		return isBlank(childAccessTokenSignKey) ? null : generateAccessToken(getSession(), childAccessTokenSignKey);
 	}

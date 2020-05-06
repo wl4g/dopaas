@@ -23,7 +23,6 @@ import org.apache.shiro.web.servlet.NameableFilter;
 import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static com.wl4g.devops.iam.common.config.XsrfProperties.*;
-import static com.wl4g.devops.iam.common.config.XssProperties.*;
 import static com.wl4g.devops.iam.common.config.CorsProperties.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static java.lang.String.format;
@@ -37,7 +36,6 @@ import java.util.Map;
 import javax.servlet.Filter;
 import javax.validation.constraints.NotBlank;
 
-import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -75,8 +73,6 @@ import com.wl4g.devops.iam.common.security.cipher.CipherRequestWrapperFactory;
 import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter;
 import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter.AdvancedCorsProcessor;
 import com.wl4g.devops.iam.common.security.xsrf.XsrfProtectionSecurityFilter;
-import com.wl4g.devops.iam.common.security.xss.XssResolveAdviceInterceptor;
-import com.wl4g.devops.iam.common.security.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.devops.iam.common.session.mgt.support.IamUidSessionIdGenerator;
@@ -288,40 +284,6 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	// ==============================
 	// IAM security attacks protect's
 	// ==============================
-
-	//
-	// X S S _ I N T E R C E P T O R _ C O N F I G's.
-	//
-
-	@Bean
-	@ConditionalOnProperty(name = KEY_XSS_PREFIX + ".enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = KEY_XSS_PREFIX)
-	public XssProperties xssProperties() {
-		return new XssProperties();
-	}
-
-	@Bean
-	@ConditionalOnBean(XssProperties.class)
-	public XssSecurityResolver xssSecurityResolver() {
-		return new XssSecurityResolver() {
-		};
-	}
-
-	@Bean
-	@ConditionalOnBean({ XssSecurityResolver.class })
-	public XssResolveAdviceInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
-		return new XssResolveAdviceInterceptor(config, resolver);
-	}
-
-	@Bean
-	@ConditionalOnBean(XssResolveAdviceInterceptor.class)
-	public AspectJExpressionPointcutAdvisor xssSecurityResolverAspectJExpressionPointcutAdvisor(XssProperties config,
-			XssResolveAdviceInterceptor advice) {
-		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
-		advisor.setExpression(config.getExpression());
-		advisor.setAdvice(advice);
-		return advisor;
-	}
 
 	//
 	// C O R S _ F I L T E R _ C O N F I G's.

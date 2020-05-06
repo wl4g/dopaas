@@ -26,11 +26,20 @@ import org.springframework.util.Assert;
 public final class DefaultXsrfToken implements XsrfToken {
 	private static final long serialVersionUID = 9081452892797891148L;
 
-	private final String token;
+	/**
+	 * XSRF token value.
+	 */
+	final private String token;
 
-	private final String parameterName;
+	/**
+	 * XSRF parameter name/
+	 */
+	final private String parameterName;
 
-	private final String headerName;
+	/**
+	 * XSRF header name.
+	 */
+	final private String headerName;
 
 	/**
 	 * Creates a new instance

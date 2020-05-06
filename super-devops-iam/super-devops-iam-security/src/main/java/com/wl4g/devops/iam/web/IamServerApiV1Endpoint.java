@@ -105,8 +105,8 @@ public class IamServerApiV1Endpoint extends GenericApiEndpoint {
 	 * @return
 	 */
 	@Override
-	protected IamSessionInfo toIamSessionInfo(IamSession session) {
-		IamSessionInfo sa = super.toIamSessionInfo(session);
+	protected IamSessionInfo convertIamSessionInfo(IamSession session) {
+		IamSessionInfo sa = super.convertIamSessionInfo(session);
 
 		// Authentication grant applications.
 		GrantCredentialsInfo info = (GrantCredentialsInfo) getGrantCredentials(session);

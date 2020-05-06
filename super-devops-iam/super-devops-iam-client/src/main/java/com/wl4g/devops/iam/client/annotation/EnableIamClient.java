@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
 import com.wl4g.devops.iam.client.config.IamClientAutoConfiguration;
+import com.wl4g.devops.iam.common.config.XsrfAutoConfiguration;
 
 /**
  * Controls whether IAM clients are enabled
@@ -36,7 +37,7 @@ import com.wl4g.devops.iam.client.config.IamClientAutoConfiguration;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
-@Import({ IamClientAutoConfiguration.class })
+@Import({ IamClientAutoConfiguration.class, XsrfAutoConfiguration.class })
 public @interface EnableIamClient {
 
 }

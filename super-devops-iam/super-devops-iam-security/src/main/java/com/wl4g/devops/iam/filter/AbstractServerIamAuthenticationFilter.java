@@ -649,7 +649,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				// Encryption dataCipherKey by clientSecretKey.
 				KeySpec pubKeySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
 				// New generate dataCipherKey.
-				String hexDataCipherKey = bind(KEY_DATA_CIPHER, generateDataCipherKey());
+				String hexDataCipherKey = bind(KEY_DATA_CIPHER_NAME, generateDataCipherKey());
 				dataCipherKeyHex = cryptService.encrypt(pubKeySpec, hexDataCipherKey);
 
 				// Set to cookies
@@ -668,7 +668,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 			 */
 			if (config.getSession().isEnableAccessTokenValidity()) {
 				// Create accessTokenSignKey.
-				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN, generateAccessTokenSignKey(getSessionId()));
+				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN_NAME, generateAccessTokenSignKey(getSessionId()));
 				accessToken = generateAccessToken(getSession(), accessTokenSignKey);
 				// Set to cookies
 				if (isBrowser(toHttp(request))) {
