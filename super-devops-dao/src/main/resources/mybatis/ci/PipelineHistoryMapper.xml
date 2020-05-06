@@ -242,7 +242,7 @@
       AND p.pipe_name LIKE CONCAT('%','${pipeName}','%')
     </if>
     <if test="environment != null and environment != ''" >
-      AND t.environment = #{environment,jdbcType=VARCHAR}
+      AND h.environment = #{environment,jdbcType=VARCHAR}
     </if>
     <if test="providerKind != null and providerKind != ''" >
       AND h.provider_kind = #{providerKind,jdbcType=VARCHAR}
@@ -254,7 +254,7 @@
       AND DATE_FORMAT(h.create_date,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
       AND DATE_FORMAT(h.create_date,'%Y-%m-%d %H:%i') &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
     </if>
-    order by t.create_date desc
+    order by h.create_date desc
   </select>
 
 </mapper>
