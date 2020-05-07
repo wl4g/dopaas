@@ -57,8 +57,6 @@ import static org.springframework.http.HttpMethod.*;
 public class CorsProperties implements Serializable {
 	final private static long serialVersionUID = -5701992202765239835L;
 
-	final public static String KEY_CORS_PREFIX = "spring.cloud.devops.iam.cors";
-
 	/**
 	 * {@link CorsRule}
 	 */
@@ -87,10 +85,12 @@ public class CorsProperties implements Serializable {
 		return rules;
 	}
 
-	public void setRules(Map<String, CorsRule> rules) {
-		if (!isEmpty(rules)) {
-			rules.putAll(rules);
-		}
+	public CorsProperties setRules(Map<String, CorsRule> rules) {
+		// if (!isEmpty(rules)) {
+		// rules.putAll(rules);
+		// }
+		this.rules = rules;
+		return this;
 	}
 
 	@Override
@@ -392,5 +392,7 @@ public class CorsProperties implements Serializable {
 		}
 
 	}
+
+	final public static String KEY_CORS_PREFIX = "spring.cloud.devops.iam.cors";
 
 }

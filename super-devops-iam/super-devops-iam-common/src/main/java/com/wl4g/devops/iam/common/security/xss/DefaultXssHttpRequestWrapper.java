@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -154,7 +155,7 @@ public class DefaultXssHttpRequestWrapper extends XssHttpRequestWrapper {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <O, I> O _xssEncode(I value) {
-		if (value != null && value instanceof CharSequence && isNotBlank((String) value)) {
+		if (!isNull(value) && (value instanceof CharSequence) && !isBlank((String) value)) {
 			// value = StringEscapeUtils.unescapeJava((String) value);
 			// value = StringEscapeUtils.unescapeEcmaScript((String) value);
 			// value = StringEscapeUtils.unescapeHtml4((String) value);

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.security.xss;
+package com.wl4g.devops.iam.common.security.xss.resolve;
 
 import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.springframework.web.util.HtmlUtils;
+import com.wl4g.devops.iam.common.security.xss.DefaultXssHttpRequestWrapper;
 
 /**
  * XSS security resolver.
@@ -42,9 +42,7 @@ public interface XssSecurityResolver {
 	 *            The parameter value of the current method of parsing XSS
 	 * @return
 	 */
-	default String doResolve(final Object controller, final Method method, final int index, final String value) {
-		return HtmlUtils.htmlEscape(value, "UTF-8");
-	}
+	String doResolve(final Object controller, final Method method, final int index, final String value);
 
 	/**
 	 * Newly created XSS secure HttpServletRequestWrapper object
@@ -52,7 +50,7 @@ public interface XssSecurityResolver {
 	 * @param request
 	 * @return
 	 */
-	default HttpServletRequestWrapper newXssHttpRequestWrapper(HttpServletRequest request) {
+	default HttpServletRequestWrapper newXssRequestWrapper(HttpServletRequest request) {
 		return new DefaultXssHttpRequestWrapper(request);
 	}
 

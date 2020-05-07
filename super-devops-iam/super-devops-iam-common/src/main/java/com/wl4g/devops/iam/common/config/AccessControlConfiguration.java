@@ -31,7 +31,7 @@ import com.wl4g.devops.common.kit.access.IPAccessControl.IPAccessProperties;
  * @since
  */
 @Configuration
-public class IPAccessConfiguration {
+public class AccessControlConfiguration {
 	final static String IP_ACCESS_PREFIX = "spring.cloud.devops.iam.acl";
 
 	@Bean

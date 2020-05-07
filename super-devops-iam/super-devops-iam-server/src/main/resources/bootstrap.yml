@@ -45,6 +45,11 @@ spring:
           expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..)) or
                       execution(* com.wl4g.devops.iam.sns.*.*Controller.*(..)) or
                       execution(* com.wl4g.devops.iam.*.*Controller.*(..))
+          escapeTranslators:
+            - escapeEcmascript
+            - escapeJava
+            - escapeHtml3
+            - escapeHtml4
 #        service-name: ${spring.application.name}
 #        login-uri: /view/login.html
 #        unauthorized-uri: /view/403.html

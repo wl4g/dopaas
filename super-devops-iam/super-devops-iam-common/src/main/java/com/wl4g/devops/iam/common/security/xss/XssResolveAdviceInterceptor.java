@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.common.security.xss;
 
 import com.wl4g.devops.iam.common.annotation.UnsafeXss;
 import com.wl4g.devops.iam.common.config.XssProperties;
+import com.wl4g.devops.iam.common.security.xss.resolve.XssSecurityResolver;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import org.aopalliance.intercept.MethodInterceptor;
@@ -178,9 +179,9 @@ public class XssResolveAdviceInterceptor implements MethodInterceptor {
 			/*
 			 * Wrapping request with resolved XSS security.
 			 */
-			wrap.setRequest(resolver.newXssHttpRequestWrapper((HttpServletRequest) wrap.getRequest()));
+			wrap.setRequest(resolver.newXssRequestWrapper((HttpServletRequest) wrap.getRequest()));
 		} else if (argument instanceof HttpServletRequest) {
-			argument = resolver.newXssHttpRequestWrapper((HttpServletRequest) argument);
+			argument = resolver.newXssRequestWrapper((HttpServletRequest) argument);
 		}
 
 		return argument;
