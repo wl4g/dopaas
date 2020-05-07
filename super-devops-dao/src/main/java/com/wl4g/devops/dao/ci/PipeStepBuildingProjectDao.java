@@ -10,6 +10,8 @@ public interface PipeStepBuildingProjectDao {
 
     int deleteByBuildingId(Integer buildingId);
 
+    int deleteByPipeId(Integer pipeId);
+
     int insert(PipeStepBuildingProject record);
 
     int insertSelective(PipeStepBuildingProject record);

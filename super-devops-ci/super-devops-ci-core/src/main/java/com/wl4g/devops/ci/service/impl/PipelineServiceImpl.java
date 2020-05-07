@@ -121,7 +121,7 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    public Pipeline getByClusterId(Integer clusterId) {
+    public List<Pipeline> getByClusterId(Integer clusterId) {
         return pipelineDao.selectByClusterId(clusterId);
     }
 
@@ -211,6 +211,7 @@ public class PipelineServiceImpl implements PipelineService {
             pipelineInstanceDao.insertBatch(pipelineInstances);
         }
         //Update PipeStepBuilding
+        pipeStepBuildingProjectDao.deleteByPipeId(pipeline.getId());
         pipeStepBuildingDao.deleteByPipeId(pipeline.getId());
         PipeStepBuilding pipeStepBuilding = pipeline.getPipeStepBuilding();
         if (nonNull(pipeStepBuilding)) {
@@ -218,7 +219,6 @@ public class PipelineServiceImpl implements PipelineService {
             pipeStepBuilding.setPipeId(pipeline.getId());
             pipeStepBuildingDao.insertSelective(pipeStepBuilding);
             //Update PipeStepBuildingProject
-            pipeStepBuildingProjectDao.deleteByBuildingId(pipeline.getPipeStepBuilding().getId());
             List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding().getPipeStepBuildingProjects();
             if (!CollectionUtils.isEmpty(pipeStepBuildingProjects)) {
                 for (PipeStepBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects) {

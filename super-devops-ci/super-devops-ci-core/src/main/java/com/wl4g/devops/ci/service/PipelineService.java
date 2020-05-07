@@ -20,7 +20,7 @@ public interface PipelineService {
 
     void del(Integer id);
 
-    Pipeline getByClusterId(Integer clusterId);
+    List<Pipeline> getByClusterId(Integer clusterId);
 
     PipeStepBuilding getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer refType);
 

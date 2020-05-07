@@ -8,9 +8,14 @@
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="cost_time" jdbcType="BIGINT" property="costTime" />
+    <!--ohter-->
+    <result column="instance_name" jdbcType="VARCHAR" property="instanceName" />
   </resultMap>
   <sql id="Base_Column_List">
     id, pipe_history_id, instance_id, status, create_date, cost_time
+  </sql>
+  <sql id="Base_Column_List_hi">
+    hi.id, hi.pipe_history_id, hi.instance_id, hi.status, hi.create_date, hi.cost_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -20,8 +25,9 @@
   </select>
   <select id="selectByPipeHistoryId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
-    from ci_pipe_history_instance
+    <include refid="Base_Column_List_hi" />,i.remark instance_name
+    from ci_pipe_history_instance hi
+    left join app_instance i on i.id=hi.instance_id
     where pipe_history_id = #{pipeHistoryId,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

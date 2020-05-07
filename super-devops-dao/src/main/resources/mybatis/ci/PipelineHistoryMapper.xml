@@ -33,10 +33,12 @@
     h.annex, h.remark, h.create_date, h.create_by, h.update_date, h.update_by, h.del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from ci_pipe_history
-    where id = #{id,jdbcType=INTEGER}
+    select
+    <include refid="Base_Column_List_h" />,p.pipe_name,c.name cluster_name
+    from ci_pipe_history h
+    left join ci_pipeline p on p.id=h.pipe_id
+    left join app_cluster c on p.cluster_id=c.id
+    where h.id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from ci_pipe_history
