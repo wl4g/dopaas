@@ -22,8 +22,8 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
 import static com.wl4g.devops.iam.common.config.XsrfProperties.KEY_XSRF_PREFIX;
+import static com.wl4g.devops.iam.common.config.AbstractIamConfiguration.ORDER_XSRF_PRECEDENCE;
 
-import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.iam.common.security.xsrf.XsrfProtectionSecurityFilter;
 import com.wl4g.devops.iam.common.security.xsrf.repository.CookieXsrfTokenRepository;
 
@@ -34,7 +34,7 @@ import com.wl4g.devops.iam.common.security.xsrf.repository.CookieXsrfTokenReposi
  * @version v1.0 2020年05月06日
  * @since
  */
-public class XsrfAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public class XsrfAutoConfiguration {
 
 	//
 	// X S R F _ F I L T E R _ C O N F I G's.
@@ -64,7 +64,7 @@ public class XsrfAutoConfiguration extends OptionalPrefixControllerAutoConfigura
 	public FilterRegistrationBean xsrfProtectionSecurityFilterBean(XsrfProtectionSecurityFilter filter) {
 		// Register XSRF filter
 		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
-		filterBean.setOrder(AbstractIamConfiguration.ORDER_XSRF_PRECEDENCE);
+		filterBean.setOrder(ORDER_XSRF_PRECEDENCE);
 		// Cannot use '/*' or it will not be added to the container chain (only
 		// '/**')
 		filterBean.addUrlPatterns("/*"); // TODO config?
