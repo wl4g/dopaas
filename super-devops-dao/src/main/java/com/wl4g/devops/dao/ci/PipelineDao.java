@@ -14,7 +14,7 @@ public interface PipelineDao {
 
     Pipeline selectByPrimaryKey(Integer id);
 
-    Pipeline selectByClusterId(Integer clusterId);
+    List<Pipeline> selectByClusterId(Integer clusterId);
 
     int updateByPrimaryKeySelective(Pipeline record);
 

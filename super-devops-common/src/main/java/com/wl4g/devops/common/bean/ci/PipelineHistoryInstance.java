@@ -17,6 +17,9 @@ public class PipelineHistoryInstance extends BaseBean {
 
     private Long costTime;
 
+    //other
+    private String instanceName;
+
     public Integer getPipeHistoryId() {
         return pipeHistoryId;
     }
@@ -55,5 +58,13 @@ public class PipelineHistoryInstance extends BaseBean {
 
     public void setCostTime(Long costTime) {
         this.costTime = costTime;
+    }
+
+    public String getInstanceName() {
+        return instanceName;
+    }
+
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
     }
 }

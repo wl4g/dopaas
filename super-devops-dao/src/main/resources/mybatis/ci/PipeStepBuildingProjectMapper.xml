@@ -46,6 +46,10 @@
     where building_id = #{buildingId,jdbcType=INTEGER}
   </delete>
 
+  <delete id="deleteByPipeId" parameterType="java.lang.Integer">
+    delete t1 from ci_pipe_step_building_project t1,ci_pipe_step_building t2 where t1.building_id=t2.id and t2.pipe_id=#{pipeId,jdbcType=INTEGER};
+  </delete>
+
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuildingProject">
     insert into ci_pipe_step_building_project (id, building_id, project_id, 
       build_command, ref, enable
