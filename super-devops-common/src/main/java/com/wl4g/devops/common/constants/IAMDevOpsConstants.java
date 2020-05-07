@@ -89,6 +89,11 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String CACHE_SESSION_REFATTRS = ":iam:session:refattrs:";
 
+	/**
+	 * Iam replay attacks signature cache name.
+	 */
+	final public static String CACHE_REPLAY_SIGN = ":iam:security:replaysign:";
+
 	//
 	// Server configuration.
 	//

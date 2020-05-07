@@ -19,9 +19,12 @@ import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.iam.common.cache.CacheKey.*;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.Long.parseLong;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.Collection;
@@ -222,9 +225,11 @@ public class JedisIamCache implements IamCache {
 		}
 
 		if (key.hasExpire()) {
-			return jedisCluster.set(key.getKey(name), data, NXXX, EXPX, key.getExpireMs()) != null;
+			String res = jedisCluster.set(key.getKey(name), data, NX, PX, key.getExpireMs());
+			return !isBlank(res) && isNumeric(res) && parseLong(res) > 0;
 		}
-		return !isNull(jedisCluster.setnx(key.getKey(name), data));
+		Long res = jedisCluster.setnx(key.getKey(name), data);
+		return !isNull(res) && res > 0;
 	}
 
 	// --- Enhanced API. ---

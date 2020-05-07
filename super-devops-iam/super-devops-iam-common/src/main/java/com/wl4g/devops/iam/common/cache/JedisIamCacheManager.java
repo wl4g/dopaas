@@ -77,7 +77,7 @@ public class JedisIamCacheManager implements IamCacheManager {
 		return cache;
 	}
 
-	private String getCacheName(String name) {
+	private final String getCacheName(String name) {
 		return prefix + name;
 	}
 

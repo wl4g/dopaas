@@ -37,9 +37,16 @@ import org.apache.shiro.util.AntPathMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.wl4g.devops.iam.common.cache.CacheKey;
+import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.config.ReplayProperties;
+import com.wl4g.devops.iam.common.security.replay.exception.InvalidReplayTimestampException;
+import com.wl4g.devops.iam.common.security.replay.exception.InvalidReplayTokenException;
+import com.wl4g.devops.iam.common.security.replay.exception.LockedReplayTokenException;
+import com.wl4g.devops.iam.common.security.replay.exception.ReplayTokenException;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 import static org.apache.commons.codec.binary.Hex.*;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_REPLAY_SIGN;
 import static com.wl4g.devops.tool.common.crypto.digest.DigestUtils2.*;
 import static com.wl4g.devops.tool.common.web.CookieUtils.*;
 
@@ -55,7 +62,7 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 	protected SmartLogger log = getLogger(getClass());
 
 	@Autowired
-	private ReplayProperties rconfig;
+	protected ReplayProperties rconfig;
 
 	/**
 	 * Specifies a {@link ReplayMatcher} that is used to determine if XSRF
@@ -72,7 +79,13 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 	 *            should be applied.
 	 */
 	@Autowired
-	private ReplayMatcher replayProtectMatcher;
+	protected ReplayMatcher replayProtectMatcher;
+
+	/**
+	 * Iam cache manager.
+	 */
+	@Autowired
+	protected IamCacheManager cacheManager;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -98,11 +111,7 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 		ReplayToken replayToken = getRequestReplayToken(request, response);
 
 		// Assertion replay token.
-		try {
-			assertReplayTokenValidity(replayToken, request, response);
-		} catch (InvalidReplayTokenException e) {
-			throw new InvalidReplayTokenException(format("Invalid replay token found for: {}", requestPath), e);
-		}
+		assertReplayTokenValidity(replayToken, request, requestPath);
 
 		filterChain.doFilter(request, response);
 	}
@@ -112,21 +121,32 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 	 * 
 	 * @param replayToken
 	 * @param request
-	 * @param response
-	 * @return
+	 * @param requestPath
+	 * @throws ReplayTokenException
 	 */
-	protected void assertReplayTokenValidity(ReplayToken replayToken, HttpServletRequest request, HttpServletResponse response) {
-		// Check replay timestamp
+	protected void assertReplayTokenValidity(ReplayToken replayToken, HttpServletRequest request, String requestPath)
+			throws ReplayTokenException {
+		// Check replay timestamp offset.
 		long now = currentTimeMillis();
-		if (abs(now - replayToken.getTimestamp()) >= rconfig.getTermTime()) {
-			throw new InvalidReplayTokenException(""); // TODO
+		if (abs(now - replayToken.getTimestamp()) >= rconfig.getTermTimeMs()) {
+			throw new InvalidReplayTimestampException(
+					format("Invalid timestamp: %s, now: %s, uri: %s", replayToken.getTimestamp(), now, requestPath));
 		}
 
-		// Validation token signature.
+		// Put replay token.
+		CacheKey key = new CacheKey(replayToken.getSignature(), rconfig.getTermTimeMs());
+		final boolean islegalRequest = cacheManager.getIamCache(CACHE_REPLAY_SIGN).putIfAbsent(key, requestPath);
+		if (!islegalRequest) { // Replay request locked?
+			throw new LockedReplayTokenException(
+					format("Locked replay token signature: %s, uri: %s", replayToken.getSignature(), requestPath));
+		}
+
+		// Validation signature.
 		String plainSign = replayToken.getNonce() + replayToken.getTimestamp();
 		String cipherSign = encodeHexString(getDigest(rconfig.getSignatureAlg()).digest(plainSign.getBytes(UTF_8)));
 		if (!equalsIgnoreCase(cipherSign, replayToken.getSignature())) {
-			throw new InvalidReplayTokenException(""); // TODO
+			throw new InvalidReplayTokenException(
+					format("Invalid replay token signature: %s, uri: %s", replayToken.getSignature(), requestPath));
 		}
 
 	}

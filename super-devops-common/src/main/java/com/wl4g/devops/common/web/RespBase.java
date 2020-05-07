@@ -600,6 +600,8 @@ public class RespBase<D> implements Serializable {
 		/**
 		 * Business locked constraints </br>
 		 * {@link HttpStatus.LOCKED}
+		 * 
+		 * @see <a href="https://httpstatusdogs.com/423-locked">423-Locked</a>
 		 */
 		final public static RetCode LOCKD_ERR = new RetCode(LOCKED.value(), "Resources locked") {
 		};

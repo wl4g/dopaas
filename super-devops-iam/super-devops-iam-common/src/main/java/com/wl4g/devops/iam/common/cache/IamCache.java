@@ -32,8 +32,8 @@ import org.apache.shiro.cache.CacheException;
  */
 public interface IamCache extends Cache<CacheKey, Object> {
 
-	final static byte[] NXXX = "NX".getBytes(UTF_8);
-	final static byte[] EXPX = "PX".getBytes(UTF_8);
+	final static byte[] NX = "NX".getBytes(UTF_8);
+	final static byte[] PX = "PX".getBytes(UTF_8);
 
 	/**
 	 * Gets cache name.
