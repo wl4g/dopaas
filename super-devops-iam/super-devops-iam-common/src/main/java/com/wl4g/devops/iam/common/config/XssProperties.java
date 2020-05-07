@@ -18,9 +18,13 @@ package com.wl4g.devops.iam.common.config;
 import static java.lang.String.format;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import static java.util.Locale.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-
+import static org.apache.commons.lang3.StringEscapeUtils.*;
+import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.wl4g.devops.tool.common.log.SmartLogger;
@@ -38,28 +42,17 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 public class XssProperties implements InitializingBean, Serializable {
 	final private static long serialVersionUID = -5701992202744439835L;
 
-	final public static String KEY_XSS_PREFIX = "spring.cloud.devops.iam.xss";
-
 	final protected SmartLogger log = getLogger(getClass());
-
-	/**
-	 * Enable internal protection, which merges expressions of internal
-	 * endpoint's.
-	 */
-	private boolean internalProtect = true;
 
 	/**
 	 * XSS attack solves AOP section expression
 	 */
 	private String expression;
 
-	public boolean isInternalProtect() {
-		return internalProtect;
-	}
-
-	public void setInternalProtect(boolean enableInternalProtect) {
-		this.internalProtect = enableInternalProtect;
-	}
+	/**
+	 * Escape translators alias.
+	 */
+	private List<CharTranslator> escapeTranslators = new ArrayList<>();
 
 	public String getExpression() {
 		hasText(expression, format("XSS interception expression is required, and the '%s' configuration item does not exist?",
@@ -67,24 +60,30 @@ public class XssProperties implements InitializingBean, Serializable {
 		return expression;
 	}
 
-	public void setExpression(String expression) {
+	public XssProperties setExpression(String expression) {
 		hasText(expression, "expression is emtpy, please check configure");
 		this.expression = expression;
+		return this;
+	}
+
+	public List<CharTranslator> getEscapeTranslators() {
+		return escapeTranslators;
+	}
+
+	public XssProperties setEscapeTranslators(List<CharTranslator> escapeTranslators) {
+		this.escapeTranslators = escapeTranslators;
+		return this;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		mergeIamInternalEndpointXssExpr();
+		mergeIamInternalEndpointXss();
 	}
 
 	/**
 	 * Merge IAM XSS security internal configuration.
 	 */
-	private void mergeIamInternalEndpointXssExpr() {
-		if (!isInternalProtect()) {
-			return;
-		}
-
+	private void mergeIamInternalEndpointXss() {
 		/*
 		 * [Expect]: In order to solve slight package structure changes.(The
 		 * first four levels of package start can be modified at will)
@@ -141,6 +140,46 @@ public class XssProperties implements InitializingBean, Serializable {
 		setExpression(_expression.toString());
 
 		log.info("After merged the XSS interception expression as: {}", getExpression());
+	}
+
+	final public static String KEY_XSS_PREFIX = "spring.cloud.devops.iam.xss";
+
+	/**
+	 * Chars sequence translators definitions.
+	 *
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2020年5月7日
+	 * @since
+	 */
+	public static enum CharTranslator {
+
+		escapeJava(ESCAPE_JAVA),
+
+		escapeEcmascript(ESCAPE_ECMASCRIPT),
+
+		escapeJson(ESCAPE_JSON),
+
+		escapeXml10(ESCAPE_XML10),
+
+		escapeXml11(ESCAPE_XML11),
+
+		escapeHtml3(ESCAPE_HTML3),
+
+		escapeHtml4(ESCAPE_HTML4),
+
+		escapeCsv(ESCAPE_CSV);
+
+		private final CharSequenceTranslator translator;
+
+		private CharTranslator(CharSequenceTranslator translator) {
+			notNullOf(translator, "translator");
+			this.translator = translator;
+		}
+
+		public CharSequenceTranslator getTranslator() {
+			return translator;
+		}
+
 	}
 
 }

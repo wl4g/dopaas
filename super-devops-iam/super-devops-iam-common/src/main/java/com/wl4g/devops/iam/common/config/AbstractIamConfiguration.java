@@ -74,7 +74,8 @@ import com.wl4g.devops.iam.common.security.cipher.CipherRequestWrapperFactory;
 import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter;
 import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter.AdvancedCorsProcessor;
 import com.wl4g.devops.iam.common.security.xss.XssResolveAdviceInterceptor;
-import com.wl4g.devops.iam.common.security.xss.XssSecurityResolver;
+import com.wl4g.devops.iam.common.security.xss.resolve.DefaultXssSecurityResolver;
+import com.wl4g.devops.iam.common.security.xss.resolve.XssSecurityResolver;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.devops.iam.common.session.mgt.support.IamUidSessionIdGenerator;
@@ -300,9 +301,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 
 	@Bean
 	@ConditionalOnBean(XssProperties.class)
-	public XssSecurityResolver xssSecurityResolver() {
-		return new XssSecurityResolver() {
-		};
+	public DefaultXssSecurityResolver defaultXssSecurityResolver() {
+		return new DefaultXssSecurityResolver();
 	}
 
 	@Bean
