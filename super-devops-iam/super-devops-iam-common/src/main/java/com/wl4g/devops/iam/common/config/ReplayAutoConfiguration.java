@@ -21,57 +21,50 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
-import static com.wl4g.devops.iam.common.config.XsrfProperties.KEY_XSRF_PREFIX;
-import static com.wl4g.devops.iam.common.config.AbstractIamConfiguration.ORDER_XSRF_PRECEDENCE;
+import com.wl4g.devops.iam.common.security.replay.ReplayProtectionSecurityFilter;
+import com.wl4g.devops.iam.common.security.replay.RequiresReplayMatcher;
 
-import com.wl4g.devops.iam.common.security.xsrf.RequiresXsrfMatcher;
-import com.wl4g.devops.iam.common.security.xsrf.XsrfProtectionSecurityFilter;
-import com.wl4g.devops.iam.common.security.xsrf.repository.CookieXsrfTokenRepository;
+import static com.wl4g.devops.iam.common.config.AbstractIamConfiguration.ORDER_REPAY_PRECEDENCE;
+import static com.wl4g.devops.iam.common.config.ReplayProperties.KEY_REPLAY_PREFIX;
 
 /**
- * XSRF protection auto configuration.
+ * Replay attacks protection auto configuration.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2020年05月06日
  * @since
  */
-public class XsrfAutoConfiguration {
+public class ReplayAutoConfiguration {
 
 	//
-	// X S R F _ F I L T E R _ C O N F I G's.
+	// R E P L A Y _ P R O T E C T I O N _ C O N F I G's.
 	//
 
 	@Bean
-	@ConditionalOnProperty(name = KEY_XSRF_PREFIX + ".enabled", matchIfMissing = false)
-	@ConfigurationProperties(prefix = KEY_XSRF_PREFIX)
-	public XsrfProperties xsrfProperties() {
-		return new XsrfProperties();
+	@ConditionalOnProperty(name = KEY_REPLAY_PREFIX + ".enabled", matchIfMissing = false)
+	@ConfigurationProperties(prefix = KEY_REPLAY_PREFIX)
+	public ReplayProperties replayProperties() {
+		return new ReplayProperties();
 	}
 
 	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public CookieXsrfTokenRepository cookieXsrfTokenRepository() {
-		return new CookieXsrfTokenRepository();
+	@ConditionalOnBean(ReplayProperties.class)
+	public RequiresReplayMatcher requiresReplayMatcher() {
+		return new RequiresReplayMatcher();
 	}
 
 	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public XsrfProtectionSecurityFilter xsrfProtectionSecurityFilter() {
-		return new XsrfProtectionSecurityFilter();
+	@ConditionalOnBean(ReplayProperties.class)
+	public ReplayProtectionSecurityFilter replayProtectionSecurityFilter() {
+		return new ReplayProtectionSecurityFilter();
 	}
 
 	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public RequiresXsrfMatcher requiresXsrfMatcher() {
-		return new RequiresXsrfMatcher();
-	}
-
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public FilterRegistrationBean xsrfProtectionSecurityFilterBean(XsrfProtectionSecurityFilter filter) {
+	@ConditionalOnBean(ReplayProperties.class)
+	public FilterRegistrationBean replayProtectionSecurityFilterBean(ReplayProtectionSecurityFilter filter) {
 		// Register XSRF filter
 		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
-		filterBean.setOrder(ORDER_XSRF_PRECEDENCE);
+		filterBean.setOrder(ORDER_REPAY_PRECEDENCE);
 		// Cannot use '/*' or it will not be added to the container chain (only
 		// '/**')
 		filterBean.addUrlPatterns("/*"); // TODO config?

@@ -18,10 +18,10 @@ package com.wl4g.devops.iam.common.security.xsrf.repository;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasLength;
 
 /**
- * A CSRF token that is used to protect against CSRF attacks.
+ * A default XSRF token that is used to protect against CSRF attacks.
  *
- * @author Rob Winch
- * @since 3.2
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年5月7日
  */
 public final class DefaultXsrfToken implements XsrfToken {
 	private static final long serialVersionUID = 9081452892797891148L;

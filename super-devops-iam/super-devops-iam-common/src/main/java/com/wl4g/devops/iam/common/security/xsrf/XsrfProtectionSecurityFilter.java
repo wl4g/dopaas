@@ -86,7 +86,7 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 	 *            should be applied.
 	 */
 	@Autowired
-	private XsrfMatcher xsrfProtectionMatcher = DEFAULT_XSRF_MATCHER;
+	private XsrfMatcher xsrfProtectMatcher;
 
 	/**
 	 * Specifies a access denied handler that should be used when XSRF
@@ -110,6 +110,12 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 			return;
 		}
+		// Ignore non replay request methods.
+		if (!xsrfProtectMatcher.matches(request)) {
+			log.debug("Skip xsrf protection of: {}", requestPath);
+			filterChain.doFilter(request, response);
+			return;
+		}
 		// Ignore exclude URLs XSRF validation.
 		for (String pattern : xconfig.getExcludeValidXsrfMapping()) {
 			if (defaultExcludeXsrfMatcher.matchStart(pattern, requestPath)) {
@@ -130,12 +136,6 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 		// request.setAttribute(XsrfToken.class.getName(), xsrfToken);
 		// request.setAttribute(xsrfToken.getParameterName(), xsrfToken);
 
-		if (!xsrfProtectionMatcher.matches(request)) {
-			log.debug("Skip xsrf protection of: {}", requestPath);
-			filterChain.doFilter(request, response);
-			return;
-		}
-
 		String actualToken = request.getHeader(xsrfToken.getXsrfHeaderName());
 		actualToken = isBlank(actualToken) ? getCleanParam(request, xsrfToken.getXsrfParamName()) : actualToken;
 		if (!xsrfToken.getXsrfToken().equals(actualToken)) {
@@ -150,13 +150,6 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 
 		filterChain.doFilter(request, response);
 	}
-
-	/**
-	 * The default {@link RequestMatcher} that indicates if XSRF protection is
-	 * required or not. The default is to ignore GET, HEAD, TRACE, OPTIONS and
-	 * process all other requests.
-	 */
-	final public static XsrfMatcher DEFAULT_XSRF_MATCHER = new RequiresXsrfMatcher();
 
 	/**
 	 * Exclude xsrf URLs mapping matcher.

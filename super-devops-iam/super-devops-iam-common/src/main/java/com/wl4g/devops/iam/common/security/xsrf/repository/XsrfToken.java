@@ -18,13 +18,10 @@ package com.wl4g.devops.iam.common.security.xsrf.repository;
 import java.io.Serializable;
 
 /**
- * Provides the information about an expected CSRF token.
+ * XSRF attacks protection token.
  *
- * @see DefaultCsrfToken
- *
- * @author Rob Winch
- * @since 3.2
- *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年5月7日
  */
 public interface XsrfToken extends Serializable {
 

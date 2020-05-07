@@ -142,8 +142,6 @@ public class XssProperties implements InitializingBean, Serializable {
 		log.info("After merged the XSS interception expression as: {}", getExpression());
 	}
 
-	final public static String KEY_XSS_PREFIX = "spring.cloud.devops.iam.xss";
-
 	/**
 	 * Chars sequence translators definitions.
 	 *
@@ -182,4 +180,5 @@ public class XssProperties implements InitializingBean, Serializable {
 
 	}
 
+	final public static String KEY_XSS_PREFIX = "spring.cloud.devops.iam.xss";
 }
