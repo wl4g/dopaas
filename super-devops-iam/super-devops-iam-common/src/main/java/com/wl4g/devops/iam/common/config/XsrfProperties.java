@@ -34,6 +34,7 @@ import javax.servlet.http.Cookie;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import com.wl4g.devops.tool.common.collection.Collections2;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
@@ -81,6 +82,10 @@ public class XsrfProperties implements InitializingBean, Serializable {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		if (!isEmpty(excludeValidXsrfMapping)) {
+			// Remove duplicate.
+			Collections2.disDupCollection(excludeValidXsrfMapping);
+		}
 	}
 
 	public String getXsrfCookieName() {
@@ -148,25 +153,22 @@ public class XsrfProperties implements InitializingBean, Serializable {
 		return cookiePath;
 	}
 
-	public void setCookiePath(String cookiePath) {
+	public XsrfProperties setCookiePath(String cookiePath) {
 		hasTextOf(cookiePath, "cookiePath");
 		this.cookiePath = cookiePath;
+		return this;
 	}
 
 	public List<String> getExcludeValidXsrfMapping() {
 		return excludeValidXsrfMapping;
 	}
 
-	public void setExcludeValidXsrfMapping(List<String> excludeValidXsrfMapping) {
-		if (isEmpty(excludeValidXsrfMapping)) {
-			for (String mapping : excludeValidXsrfMapping) {
-				if (!this.excludeValidXsrfMapping.contains(mapping)) {
-					this.excludeValidXsrfMapping.add(mapping);
-				} else {
-					log.warn("Duplicate exclude valid xsrf mapping of '{}'", mapping);
-				}
-			}
-		}
+	public XsrfProperties setExcludeValidXsrfMapping(List<String> excludeValidXsrfMapping) {
+		// if (!isEmpty(excludeValidXsrfMapping)) {
+		// this.excludeValidXsrfMapping.addAll(excludeValidXsrfMapping);
+		// }
+		this.excludeValidXsrfMapping.addAll(excludeValidXsrfMapping);
+		return this;
 	}
 
 	@Override

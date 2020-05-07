@@ -28,7 +28,7 @@ public class MissingXsrfTokenException extends XsrfException {
 	private static final long serialVersionUID = 5710085585010069884L;
 
 	public MissingXsrfTokenException(String actualToken) {
-		super("Could not verify the provided CSRF token because your session was not found.");
+		super("Could not verify the provided XSRF token because your session was not found.");
 	}
 
 }

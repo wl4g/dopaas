@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.tool.common.crypto.digest;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static org.apache.commons.codec.digest.DigestUtils.getDigest;
+
 import java.security.MessageDigest;
 
 import org.apache.commons.codec.binary.Hex;
@@ -22,7 +25,8 @@ import org.apache.commons.codec.binary.Hex;
 public class DigestUtils2Tests {
 
 	public static void main(String[] args) throws Exception {
-		sha1Test1();
+		// sha1Test1();
+		md5Test2();
 	}
 
 	public static void sha1Test1() throws Exception {
@@ -37,6 +41,11 @@ public class DigestUtils2Tests {
 			result = digest.digest(result);
 		}
 		System.out.println(Hex.encodeHexString(result));
+	}
+
+	public static void md5Test2() throws Exception {
+		byte[] res = getDigest("MD5").digest("abcd".getBytes(UTF_8));
+		System.out.println(Hex.encodeHexString(res));
 	}
 
 }
