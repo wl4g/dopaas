@@ -213,7 +213,7 @@ public class XssResolveAdviceInterceptor implements MethodInterceptor {
 		 * rendering the page when XSS attack is detected (e.g, in IE8, when the
 		 * attack is detected, the whole page will be replaced by one).
 		 */
-		response.setHeader("X-XSS-Protection", "1; mode=block");
+		response.setHeader("X-Xss-Protection", "1; mode=block");
 
 		/**
 		 * X-Content-Type-Options:
