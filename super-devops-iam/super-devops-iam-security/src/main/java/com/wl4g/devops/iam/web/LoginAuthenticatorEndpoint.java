@@ -44,7 +44,6 @@ import java.util.Objects;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.IamVersion.*;
 import static com.wl4g.devops.tool.common.codec.Base58.*;
 import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
-import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.checkSession;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
@@ -110,8 +109,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 		// Reponed handshake result.
 		HandshakeResult handshake = new HandshakeResult(V2_0_0.getVersion());
 		// Current supports crypt algorithms.
-		handshake.setAlgorithms(
-				cryptAdapter.getRunningKinds().stream().map(k -> encode(k.getAlgorithm().getBytes(UTF_8))).collect(toList()));
+		handshake.setAlgorithms(cryptAdapter.getRunningKinds().stream().map(k -> encode(k.getAlgorithm())).collect(toList()));
 		// Assgin sessionKeyId
 		handshake.getSession().setSessionKey(config.getParam().getSid());
 		handshake.getSession().setSessionValue(getSession(true).getId());
@@ -220,8 +218,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	public RespBase<?> readPermits(HttpServletRequest request) {
 		checkPreHandle(request, true);
 
-		RespBase<IamPrincipalPermitsResult> resp = RespBase.create(sessionStatus());
-
+		RespBase<Object> resp = RespBase.create(sessionStatus());
 		// Gets current session authentication permits info.
 		IamPrincipalInfo info = getPrincipalInfo();
 		IamPrincipalPermitsResult result = new IamPrincipalPermitsResult();
@@ -260,8 +257,8 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	 * 
 	 * @param request
 	 */
-	private void checkPreHandle(HttpServletRequest request, boolean checkSessionKey) {
-		if (checkSessionKey) {
+	private void checkPreHandle(HttpServletRequest request, boolean checkSession) {
+		if (checkSession) {
 			// Check sessionKeyId
 			// @see:com.wl4g.devops.iam.web.LoginAuthenticatorController#handhake()
 			checkSession();
