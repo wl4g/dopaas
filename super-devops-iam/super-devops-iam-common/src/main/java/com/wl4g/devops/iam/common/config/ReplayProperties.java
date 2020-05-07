@@ -65,7 +65,7 @@ public class ReplayProperties implements InitializingBean {
 	/**
 	 * Signature timestamp term time.
 	 */
-	private long termTime = 15 * 60 * 1000L;
+	private long termTimeMs = 15 * 60 * 1000L;
 
 	/**
 	 * Ignore replay attacks validation request mappings.
@@ -140,12 +140,12 @@ public class ReplayProperties implements InitializingBean {
 		return this;
 	}
 
-	public long getTermTime() {
-		return termTime;
+	public long getTermTimeMs() {
+		return termTimeMs;
 	}
 
-	public ReplayProperties setTermTime(long termTime) {
-		this.termTime = termTime;
+	public ReplayProperties setTermTimeMs(long termTimeMs) {
+		this.termTimeMs = termTimeMs;
 		return this;
 	}
 

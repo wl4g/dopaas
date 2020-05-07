@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.security.replay;
+package com.wl4g.devops.iam.common.security.replay.exception;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
 
 /**
@@ -28,7 +27,7 @@ import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
  * @version v1.0 2020年4月27日
  * @since
  */
-public class InvalidReplayTokenException extends IamException {
+public class InvalidReplayTokenException extends ReplayTokenException {
 	private static final long serialVersionUID = -6917353257503001262L;
 
 	/**
