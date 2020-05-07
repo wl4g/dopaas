@@ -396,7 +396,8 @@ public class DefaultPipelineManager implements PipelineManager {
         }
 
         // Successful execute job notification.
-        notificationResult(provider.getContext().getPipeStepNotification().getContactGroupIds(), taskId, "Success");
+
+        notificationResult(provider.getContext().getPipeStepNotification().getContactGroupIds(), taskId, "Success",provider);
     }
 
     /**
@@ -408,7 +409,7 @@ public class DefaultPipelineManager implements PipelineManager {
      */
     protected void postPipelineRunFailure(Integer taskId, PipelineProvider provider, Throwable e) {
         // Failure execute job notification.
-        notificationResult(provider.getContext().getPipeStepNotification().getContactGroupIds(), taskId, "Fail");
+        notificationResult(provider.getContext().getPipeStepNotification().getContactGroupIds(), taskId, "Fail",provider);
     }
 
     /**
@@ -417,7 +418,7 @@ public class DefaultPipelineManager implements PipelineManager {
      * @param contactGroupId
      * @param message
      */
-    protected void notificationResult(String contactGroupIds, Integer taskId, String result) {
+    protected void notificationResult(String contactGroupIds, Integer taskId, String result, PipelineProvider provider) {
         try {
             String[] split = contactGroupIds.split(",");
             List<Integer> ints = new ArrayList<>();
@@ -442,6 +443,9 @@ public class DefaultPipelineManager implements PipelineManager {
                     // Common parameters.
                     msg.addParameter("isSuccess", result);
                     msg.addParameter("pipelineId", taskId);
+                    msg.addParameter("projectName", provider.getContext().getProject().getProjectName());
+                    msg.addParameter("createDate", provider.getContext().getPipelineHistory().getCreateDate());
+                    msg.addParameter("costTime", currentTimeMillis()-provider.getContext().getPipelineHistory().getCreateDate().getTime());
 
                     notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
                 }
