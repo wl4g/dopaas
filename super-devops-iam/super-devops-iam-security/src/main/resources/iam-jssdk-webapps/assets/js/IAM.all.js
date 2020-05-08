@@ -2079,9 +2079,9 @@
 		return runtim.umid.getValue();
 	};
 	// Export safeCheck
-	IAMCore.prototype.safeCheck = function(callback) {
+	IAMCore.prototype.safeCheck = function(principal, callback) {
 		_InitHandshakeIfNecessary().then(handshakeValue => {
-			_InitSafeCheck(callback);
+			_InitSafeCheck(principal, callback);
 		});
 		return this;
 	};
@@ -2115,6 +2115,7 @@
 		_InitHandshakeIfNecessary().then(handshakeValue => _InitCaptchaVerifier());
 		return this;
 	};
+	// Export IAMCore destroy
 	IAMCore.prototype.destroy = function() {
 		sessionStorage.removeItem(constant.baseUriStoredKey);
 		sessionStorage.removeItem(constant.umidTokenStorageKey);
@@ -2124,6 +2125,7 @@
 		settings = null;
 		console.log("Destroyed IAMCore instance.");
 	};
+	// Export tools getIamBaseURI
 	IAMCore.getIamBaseUri = function() {
 		var iamBaseUri = sessionStorage.getItem(constant.baseUriStoredKey);
 		if (!iamBaseUri) {
