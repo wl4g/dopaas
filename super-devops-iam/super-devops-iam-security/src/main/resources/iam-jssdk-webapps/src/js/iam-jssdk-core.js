@@ -446,6 +446,7 @@
 	        settings.deploy.baseUri = getDefaultIamBaseUri();
 	        console.debug("Using overlay iamBaseURI: "+ settings.deploy.baseUri);
 	    }
+
 		// Storage iamBaseUri
         window.sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
 	};

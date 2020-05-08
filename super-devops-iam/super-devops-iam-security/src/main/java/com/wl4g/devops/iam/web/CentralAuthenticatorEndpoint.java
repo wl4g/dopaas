@@ -68,7 +68,7 @@ public class CentralAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint 
 	@PostMapping(URI_S_VALIDATE)
 	@ResponseBody
 	public RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> validate(@NotNull @RequestBody TicketValidateModel param) {
-		log.info("Ticket validating current sessionId: {} <= {}", getSessionId(), toJSONString(param));
+		log.info("Ticket validating sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
 		RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> resp = new RespBase<>();
 		// Ticket assertion.
