@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.config;
 
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static java.util.stream.Collectors.toList;
 
@@ -50,6 +49,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.AnynothingSecurityCoprocessor;
@@ -178,7 +178,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 
 	@Bean
 	public IamServerSessionManager iamServerSessionManager(IamSessionFactory sessionFactory, JedisIamSessionDAO sessionDao,
-			IamCacheManager cacheManager, SimpleCookie cookie, IamProperties config) {
+			IamCacheManager cacheManager, IamCookie cookie, IamProperties config) {
 		IamServerSessionManager sessionManager = new IamServerSessionManager(config, cacheManager);
 		sessionManager.setSessionFactory(sessionFactory);
 		sessionManager.setSessionDAO(sessionDao);

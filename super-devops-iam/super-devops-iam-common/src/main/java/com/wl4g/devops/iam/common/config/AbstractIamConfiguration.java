@@ -20,7 +20,6 @@ import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSource
 import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.NameableFilter;
-import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static java.lang.String.format;
@@ -68,6 +67,7 @@ import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.devops.iam.common.session.mgt.support.IamUidSessionIdGenerator;
 import com.wl4g.devops.iam.common.web.IamErrorConfiguring;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -210,8 +210,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public SimpleCookie simpleCookie(AbstractIamProperties<? extends ParamProperties> config) {
-		return new SimpleCookie(config.getCookie());
+	public IamCookie iamCookie(AbstractIamProperties<? extends ParamProperties> config) {
+		return new IamCookie(config.getCookie());
 	}
 
 	/**

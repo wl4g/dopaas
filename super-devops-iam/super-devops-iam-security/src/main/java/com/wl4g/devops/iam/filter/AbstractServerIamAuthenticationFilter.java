@@ -53,6 +53,7 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectI
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter;
 import com.wl4g.devops.iam.common.web.model.SessionInfo;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
@@ -80,7 +81,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.Cookie;
-import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -658,7 +658,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 
 				// Set to cookies
 				if (isBrowser(toHttp(request))) {
-					Cookie c = new SimpleCookie(config.getCookie());
+					Cookie c = new IamCookie(config.getCookie());
 					c.setName(config.getParam().getDataCipherKeyName());
 					c.setValue(dataCipherKeyHex);
 					c.saveTo(toHttp(request), toHttp(response));
@@ -676,7 +676,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				accessToken = generateAccessToken(getSession(), accessTokenSignKey);
 				// Set to cookies
 				if (isBrowser(toHttp(request))) {
-					Cookie c = new SimpleCookie(config.getCookie());
+					Cookie c = new IamCookie(config.getCookie());
 					c.setName(config.getParam().getAccessTokenName());
 					c.setValue(accessToken);
 					c.saveTo(toHttp(request), toHttp(response));
@@ -690,7 +690,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 			 */
 			umidToken = ((ClientSecretIamAuthenticationToken) token).getUmidToken();
 			if (isBrowser(toHttp(request))) {
-				Cookie c = new SimpleCookie(config.getCookie());
+				Cookie c = new IamCookie(config.getCookie());
 				c.setName(config.getParam().getUmidTokenName());
 				c.setValue(umidToken);
 				c.saveTo(toHttp(request), toHttp(response));
