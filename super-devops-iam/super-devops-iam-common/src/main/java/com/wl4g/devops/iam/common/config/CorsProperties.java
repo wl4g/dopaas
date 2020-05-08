@@ -36,6 +36,7 @@ import com.wl4g.devops.tool.common.collection.RegisteredSetList;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isSameWildcardOrigin;
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.contains;
@@ -345,17 +346,49 @@ public class CorsProperties implements Serializable {
 		 */
 		@Override
 		public List<String> checkHeaders(List<String> requestHeaders) {
-			if (requestHeaders == null) {
+			return checkLegalHeaders(requestHeaders, getAllowedHeaders());
+		}
+
+		@Override
+		public void addAllowedMethod(String method) {
+			if (!isBlank(method)) {
+				// Add for invalid method check.
+				isTrue(Objects.nonNull(HttpMethod.resolve(method.toUpperCase(US))), "Invalid allowed http method: '%s'", method);
+				super.addAllowedMethod(method.toUpperCase(US));
+			}
+		}
+
+		/**
+		 * Assertion allowed legal headers.
+		 * 
+		 * @param requestHeaders
+		 */
+		public void assertLegalHeaders(List<String> requestHeaders) {
+			List<String> legalHeaders = checkHeaders(requestHeaders);
+			if (isEmpty(legalHeaders)) {
+				throw new IllegalArgumentException(format("Xsrf header name must start with a %s prefix", getAllowedHeaders()));
+			}
+		}
+
+		/**
+		 * Check & gets legal headers name.
+		 * 
+		 * @param requestHeaders
+		 * @param allowedHeaders
+		 * @return
+		 */
+		public final static List<String> checkLegalHeaders(List<String> requestHeaders, List<String> allowedHeaders) {
+			if (isNull(requestHeaders)) {
 				return null;
 			}
 			if (requestHeaders.isEmpty()) {
 				return Collections.emptyList();
 			}
-			if (ObjectUtils.isEmpty(getAllowedHeaders())) {
+			if (ObjectUtils.isEmpty(allowedHeaders)) {
 				return null;
 			}
 
-			boolean allowAnyHeader = getAllowedHeaders().contains(ALL);
+			boolean allowAnyHeader = allowedHeaders.contains(ALL);
 			List<String> result = new ArrayList<String>(requestHeaders.size());
 			for (String requestHeader : requestHeaders) {
 				if (StringUtils.hasText(requestHeader)) {
@@ -363,7 +396,7 @@ public class CorsProperties implements Serializable {
 					if (allowAnyHeader) {
 						result.add(requestHeader);
 					} else {
-						for (String allowedHeader : getAllowedHeaders()) {
+						for (String allowedHeader : allowedHeaders) {
 							// e.g: allowedHeader => "X-Iam-*"
 							if (allowedHeader.contains(ALL)) {
 								String allowedHeaderPrefix = allowedHeader.substring(allowedHeader.indexOf(ALL) + 1);
@@ -380,15 +413,6 @@ public class CorsProperties implements Serializable {
 				}
 			}
 			return (result.isEmpty() ? null : result);
-		}
-
-		@Override
-		public void addAllowedMethod(String method) {
-			if (!isBlank(method)) {
-				// Add for invalid method check.
-				isTrue(Objects.nonNull(HttpMethod.resolve(method.toUpperCase(US))), "Invalid allowed http method: '%s'", method);
-				super.addAllowedMethod(method.toUpperCase(US));
-			}
 		}
 
 	}
