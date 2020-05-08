@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.common.security.xsrf.repository;
 
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.UUID;
@@ -25,12 +26,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.web.servlet.Cookie;
-import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.config.XsrfProperties;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
+
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
 import static com.wl4g.devops.iam.common.config.XsrfProperties.setHttpOnlyMethod;
 import static org.springframework.util.ReflectionUtils.invokeMethod;
@@ -68,8 +70,16 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 
 	@Override
 	public void saveXToken(XsrfToken xtoken, HttpServletRequest request, HttpServletResponse response) {
-		String xtokenValue = xtoken == null ? "" : xtoken.getXsrfToken();
-		Cookie cookie = new SimpleCookie(coreConfig.getCookie());
+		String xtokenValue = isNull(xtoken) ? EMPTY : xtoken.getXsrfToken();
+
+		// Delete older xsrf token from cookie.
+		Cookie oldCookie = IamCookie.build(getCookie(request, xconfig.getXsrfCookieName()));
+		if (!isNull(oldCookie)) {
+			oldCookie.removeFrom(request, response);
+		}
+
+		// New xsrf token to cookie.
+		Cookie cookie = new IamCookie(coreConfig.getCookie());
 		cookie.setName(xconfig.getXsrfCookieName());
 		cookie.setValue(xtokenValue);
 		cookie.setSecure(request.isSecure());
@@ -112,6 +122,12 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		return format("xf%s%s", UUID.randomUUID().toString().replaceAll("-", ""), tokenSuffix);
 	}
 
+	/**
+	 * Gets request context.
+	 * 
+	 * @param request
+	 * @return
+	 */
 	private String getRequestContext(HttpServletRequest request) {
 		String contextPath = request.getContextPath();
 		return contextPath.length() > 0 ? contextPath : "/";

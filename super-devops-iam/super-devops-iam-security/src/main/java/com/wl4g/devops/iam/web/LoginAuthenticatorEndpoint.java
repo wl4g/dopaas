@@ -19,6 +19,7 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
+import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
@@ -37,11 +38,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.IamVersion.*;
+import static com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
 import static com.wl4g.devops.tool.common.codec.Base58.*;
 import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
@@ -96,16 +100,25 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
 
 	/**
+	 * XSRF token repository. (If necessary)
+	 */
+	@Autowired(required = false)
+	protected XsrfTokenRepository xTokenRepository;
+
+	/**
 	 * Apply session, applicable to mobile token session.
 	 *
 	 * @param request
 	 */
 	@RequestMapping(value = URI_S_LOGIN_HANDSHAKE, method = { POST })
 	@ResponseBody
-	public RespBase<?> handshake(HttpServletRequest request) {
-		checkPreHandle(request, false);
+	public RespBase<?> handshake(HttpServletRequest request, HttpServletResponse response) {
+		checkSessionHandle(request, false);
 
 		RespBase<Object> resp = RespBase.create(sessionStatus());
+		// Generate & save xsrf token.
+		saveWebXsrfTokenIfNecessary(xTokenRepository, request, response);
+
 		// Reponed handshake result.
 		HandshakeResult handshake = new HandshakeResult(V2_0_0.getVersion());
 		// Current supports crypt algorithms.
@@ -125,7 +138,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { POST })
 	@ResponseBody
 	public RespBase<?> check(HttpServletRequest request) {
-		checkPreHandle(request, true);
+		checkSessionHandle(request, true);
 
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		//
@@ -195,7 +208,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	@RequestMapping(value = URI_S_LOGIN_ERRREAD, method = { GET })
 	@ResponseBody
 	public RespBase<?> readError(HttpServletRequest request) {
-		checkPreHandle(request, true);
+		checkSessionHandle(request, true);
 
 		RespBase<String> resp = RespBase.create(sessionStatus());
 		// Read error message from session
@@ -216,7 +229,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	@RequestMapping(value = URI_S_LOGIN_PERMITS, method = { GET })
 	@ResponseBody
 	public RespBase<?> readPermits(HttpServletRequest request) {
-		checkPreHandle(request, true);
+		checkSessionHandle(request, true);
 
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		// Gets current session authentication permits info.
@@ -238,7 +251,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { POST })
 	@ResponseBody
 	public RespBase<?> applyLocale(HttpServletRequest request) {
-		checkPreHandle(request, true);
+		checkSessionHandle(request, true);
 
 		RespBase<Locale> resp = RespBase.create(sessionStatus());
 		String lang = getCleanParam(request, config.getParam().getI18nLang());
@@ -253,11 +266,11 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	}
 
 	/**
-	 * Check pre-handling.
+	 * Check session pre-handle.
 	 * 
 	 * @param request
 	 */
-	private void checkPreHandle(HttpServletRequest request, boolean checkSession) {
+	private void checkSessionHandle(HttpServletRequest request, boolean checkSession) {
 		if (checkSession) {
 			// Check sessionKeyId
 			// @see:com.wl4g.devops.iam.web.LoginAuthenticatorController#handhake()

@@ -32,13 +32,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 import com.wl4g.devops.tool.common.collection.RegisteredSetList;
 
 /**
@@ -261,7 +261,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @date 2018年11月29日
 	 * @since
 	 */
-	public class CookieProperties extends SimpleCookie implements Serializable {
+	public class CookieProperties extends IamCookie implements Serializable {
 
 		private static final long serialVersionUID = 918554077474485700L;
 

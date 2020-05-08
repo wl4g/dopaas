@@ -18,7 +18,6 @@ package com.wl4g.devops.iam.common.filter;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.servlet.Cookie;
-import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
@@ -29,7 +28,6 @@ import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static java.util.Collections.emptyMap;
-import static java.util.Objects.isNull;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import java.util.HashMap;
@@ -48,7 +46,9 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.convertBean;
 
 /**
@@ -129,7 +129,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 		authzInfo.put(config.getParam().getAuthzPermitsName(), permitUrl);
 		if (isBrowser(toHttp(request))) {
 			// Sets authorizes permits info.
-			Cookie c = new SimpleCookie(config.getCookie());
+			Cookie c = new IamCookie(config.getCookie());
 			c.setName(config.getParam().getAuthzPermitsName());
 			c.setValue(permitUrl);
 			c.setMaxAge(60);
@@ -171,15 +171,11 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 			ServletResponse response) {
 		Map<String, String> xsrfInfo = emptyMap();
 
-		if (!isNull(xTokenRepository) && isBrowser(toHttp(request))) {
-			// Generate XSRF token.
-			XsrfToken xtoken = xTokenRepository.generateXToken(toHttp(request));
-			// save XSRF token.
-			xTokenRepository.saveXToken(xtoken, toHttp(request), toHttp(response));
-			// Convert xsrf token.
-			xsrfInfo = convertBean(xtoken, new TypeReference<HashMap<String, String>>() {
-			});
-		}
+		// Generate & save xsrf token.
+		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xTokenRepository, toHttp(request), toHttp(response));
+		// Deserialize xsrf token.
+		xsrfInfo = convertBean(xtoken, new TypeReference<HashMap<String, String>>() {
+		});
 
 		return xsrfInfo;
 	}

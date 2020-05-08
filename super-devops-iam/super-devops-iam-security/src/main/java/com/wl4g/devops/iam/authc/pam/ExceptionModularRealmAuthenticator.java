@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.authc.pam;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+
 import java.util.Collection;
 
 import org.apache.shiro.authc.AuthenticationException;
@@ -23,8 +25,8 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.pam.AuthenticationStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.realm.Realm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Enhanced modular authentication processor that throws out exception handling
@@ -36,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ExceptionModularRealmAuthenticator extends ModularRealmAuthenticator {
 
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	@Override
 	protected AuthenticationInfo doMultiRealmAuthentication(Collection<Realm> realms, AuthenticationToken token) {

@@ -19,7 +19,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.Cookie;
-import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
@@ -75,6 +74,7 @@ import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.common.web.model.SessionInfo;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -476,7 +476,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// Sets child dataCipherKeys to cookie.
 		String childDataCipherKey = getBindValue(KEY_DATA_CIPHER_NAME);
 		if (!isBlank(childDataCipherKey) && isBrowser(toHttp(request))) {
-			Cookie c = new SimpleCookie(config.getCookie());
+			Cookie c = new IamCookie(config.getCookie());
 			c.setName(config.getParam().getDataCipherKeyName());
 			c.setValue(childDataCipherKey);
 			c.saveTo(toHttp(request), toHttp(response));
@@ -485,7 +485,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// Sets child accessToken to cookie.
 		String childAccessToken = generateChildAccessTokenIfNecessary();
 		if (!isBlank(childAccessToken) && isBrowser(toHttp(request))) {
-			Cookie c = new SimpleCookie(config.getCookie());
+			Cookie c = new IamCookie(config.getCookie());
 			c.setName(config.getParam().getAccessTokenName());
 			c.setValue(childAccessToken);
 			c.saveTo(toHttp(request), toHttp(response));

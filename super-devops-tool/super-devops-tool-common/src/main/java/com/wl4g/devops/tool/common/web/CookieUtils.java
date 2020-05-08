@@ -95,7 +95,7 @@ public class CookieUtils {
 		try {
 			cookie.setValue(URLEncoder.encode(value, "utf-8"));
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			throw new IllegalStateException(e);
 		}
 		response.addCookie(cookie);
 	}
