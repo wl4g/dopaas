@@ -28,6 +28,7 @@ import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static java.util.Collections.emptyMap;
+import static java.util.Objects.isNull;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import java.util.HashMap;
@@ -169,15 +170,13 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	 */
 	protected Map<String, String> putXsrfTokenCookieIfNecessary(AuthenticationToken token, ServletRequest request,
 			ServletResponse response) {
-		Map<String, String> xsrfInfo = emptyMap();
-
 		// Generate & save xsrf token.
 		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xTokenRepository, toHttp(request), toHttp(response));
-		// Deserialize xsrf token.
-		xsrfInfo = convertBean(xtoken, new TypeReference<HashMap<String, String>>() {
-		});
 
-		return xsrfInfo;
+		// Deserialize xsrf token.
+		Map<String, String> xsrfInfo = convertBean(xtoken, TYPE_REF_STRING_HASHMAP);
+
+		return isNull(xsrfInfo) ? emptyMap() : xsrfInfo;
 	}
 
 	/**
@@ -189,5 +188,11 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	 * Root filter.
 	 */
 	final public static String NAME_ROOT_FILTER = "rootFilter";
+
+	/**
+	 * {@link TypeReference}
+	 */
+	final public static TypeReference<HashMap<String, String>> TYPE_REF_STRING_HASHMAP = new TypeReference<HashMap<String, String>>() {
+	};
 
 }

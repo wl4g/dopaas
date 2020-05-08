@@ -1178,9 +1178,10 @@
 								// Completed
 								reslove(res.data.umidToken);
 								runtime.umid._value = res.data.umidToken;
-								runtime.umid._currentlyInGettingValuePromise = null;
 							}
-						}, function(errmsg){
+							runtime.umid._currentlyInGettingValuePromise = null;
+						}, function(errmsg) {
+							runtime.umid._currentlyInGettingValuePromise = null;
 							console.warn("Failed to gets umidToken, " + errmsg);
 							Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 异常回调
 							reject(errmsg);
@@ -1222,7 +1223,9 @@
 							runtime.handshake._value = $.extend(true, runtime.handshake._value, res.data);
 							reslove(runtime.handshake._value);
 						}
-					}, function(errmsg){
+						runtime.handshake._currentlyInGettingValuePromise = null;
+					}, function(errmsg) {
+						runtime.handshake._currentlyInGettingValuePromise = null;
 						console.log("Failed to handshake, " + errmsg);
 						Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 异常回调
 					}, false);
@@ -1547,8 +1550,9 @@
 	        settings.deploy.baseUri = getDefaultIamBaseUri();
 	        console.debug("Using overlay iamBaseURI: "+ settings.deploy.baseUri);
 	    }
+
 		// Storage iamBaseUri
-        window.sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
+        sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
 	};
 
 	// Gets URL to request a connection to a sns provider
@@ -1612,7 +1616,8 @@
 	// Reset graph captcha.
 	var resetCaptcha = function(refresh) {
 		if (refresh) {
-			_InitSafeCheck(function(checkCaptcha, checkGeneric, checkSms){
+			var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput, false));
+			_InitSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
 				if(checkCaptcha.enabled && !runtime.flags.isCurrentlyApplying){ // 启用验证码且不是申请中(防止并发)?
 					// 获取当前配置的 CaptchaVerifier实例并显示
 					Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaRender();
@@ -1715,10 +1720,9 @@
 		}
 	};
 
-	// 请求安全检查
-	var _InitSafeCheck = function(callback){
+	// Init safety check(PRE).
+	var _InitSafeCheck = function(principal, callback){
 		$(function(){
-			var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput, false));
 			// 初始化前回调
 			if(!Common.Util.checkEmpty("init.onPreCheck", settings.init.onPreCheck)(principal)){
 				console.warn("Skip the init safeCheck, because onPreCheck() return false");
@@ -1745,7 +1749,7 @@
 		});
 	};
 
-	// Init captcha verifier implement.
+	// Init Captcha verifier implement.
 	var _InitCaptchaVerifier = function() {
 		// Check authenticator enable?
 		if (!settings.captcha.enable) {
@@ -1755,7 +1759,7 @@
 
 		$(function(){
 			// 初始刷新验证码
-			resetCaptcha(true);			// 初始化&绑定验证码事件
+			resetCaptcha(true);	// 初始化&绑定验证码事件
 			if(settings.captcha.use == "VerifyWithSimpleGraph" || settings.captcha.use == "VerifyWithGifGraph") {
 				var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 				// Set captcha input maxLength.
@@ -1826,7 +1830,7 @@
 					return;
 				}
 
-				_InitSafeCheck(function(checkCaptcha, checkGeneric, checkSms){
+				_InitSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
 					// 生成client公钥(用于获取认证成功后加密接口的密钥)
 					runtime.clientSecretKey = IAMCrypto.RSA.generateKey();
 					// 获取Server公钥(用于提交账号密码)
@@ -2058,28 +2062,62 @@
 		});
 	};
 
-	// Exposing core APIs
-	window.IAMCore = function() {};
-	IAMCore.prototype.init = function(opt) {
-		// 初始化配置
-		_initConfigure(opt);
-		// 初始化获取设备umidToken
-        runtime.umid.getValuePromise()
-        	.then(umidToken => runtime.handshake.getValuePromise(umidToken))
-        	.then(handshakeValue => { // 为确保执行顺序（1，获取umidToken；2，请求handshake；3，初始绑定各种认证器）
-    			_InitAccountAuthenticator();
-        		_InitSMSAuthenticator();
-        		_InitSNSAuthenticator();
-        		_InitCaptchaVerifier();
-        	});
-        return this;
+	// Init Handshake authentication(PRE) implements.
+	var _InitHandshakeIfNecessary = function() {
+		// Init gets umidToken and handshake.
+		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken));
 	};
+
+	// Exposing IAMCore APIs
+	window.IAMCore = function(opt) {
+		_initConfigure(opt); // 初始化配置
+		// 为确保执行顺序（1，获取umidToken；2，请求handshake；3，初始绑定各种认证器）
+		_InitHandshakeIfNecessary().then(handshakeValue => {});
+	};
+	// Export umToken
 	IAMCore.prototype.getUMToken = function() {
 		return runtim.umid.getValue();
 	};
+	// Export safeCheck
+	IAMCore.prototype.safeCheck = function(callback) {
+		_InitHandshakeIfNecessary().then(handshakeValue => {
+			_InitSafeCheck(callback);
+		});
+		return this;
+	};
+	// Export any authenticators
+	IAMCore.prototype.anyAuthenticators = function() {
+		_InitHandshakeIfNecessary().then(handshakeValue => {
+			_InitAccountAuthenticator();
+			_InitSMSAuthenticator();
+			_InitSNSAuthenticator();
+			_InitCaptchaVerifier();
+		});
+		return this;
+	};
+	// Export account authenticators
+	IAMCore.prototype.accountAuthenticator = function() {
+		_InitHandshakeIfNecessary().then(handshakeValue => _InitAccountAuthenticator());
+		return this;
+	};
+	// Export sms authenticators
+	IAMCore.prototype.smsAuthenticator = function() {
+		_InitHandshakeIfNecessary().then(handshakeValue => _InitSMSAuthenticator());
+		return this;
+	};
+	// Export sns authenticators
+	IAMCore.prototype.snsAuthenticator = function() {
+		_InitHandshakeIfNecessary().then(handshakeValue => _InitSNSAuthenticator());
+		return this;
+	};
+	// Export captcha verifier
+	IAMCore.prototype.captchaVerifier = function() {
+		_InitHandshakeIfNecessary().then(handshakeValue => _InitCaptchaVerifier());
+		return this;
+	};
 	IAMCore.prototype.destroy = function() {
-		window.sessionStorage.removeItem(constant.baseUriStoredKey);
-		window.sessionStorage.removeItem(constant.umidTokenStorageKey);
+		sessionStorage.removeItem(constant.baseUriStoredKey);
+		sessionStorage.removeItem(constant.umidTokenStorageKey);
 		constant = null;
 		_defaultCaptchaVerifier = null;
 		runtime = null;
@@ -2087,8 +2125,11 @@
 		console.log("Destroyed IAMCore instance.");
 	};
 	IAMCore.getIamBaseUri = function() {
-		var iamBaseUri = window.sessionStorage.getItem(constant.baseUriStoredKey);
-		return iamBaseUri ? iamBaseUri : getDefaultIamBaseUri();
+		var iamBaseUri = sessionStorage.getItem(constant.baseUriStoredKey);
+		if (!iamBaseUri) {
+			sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri =getDefaultIamBaseUri()));
+		}
+		return iamBaseUri;
 	};
 
 })(window, document);
@@ -2590,11 +2631,11 @@
 			}
 		};
 
-		runtime.iamCore = new IAMCore();
 		// Overerly default settings.
 		iamCoreConfig = $.extend(true, defaultSettings, iamCoreConfig);
 		console.debug("Intializing iamCore of config properties: " + JSON.stringify(iamCoreConfig));
-		runtime.iamCore.init(iamCoreConfig);
+		runtime.iamCore = new IAMCore(iamCoreConfig);
+		runtime.iamCore.anyAuthenticators();
 	}
 
 	// 监听panelType为pagePanel类型的SNS授权回调
