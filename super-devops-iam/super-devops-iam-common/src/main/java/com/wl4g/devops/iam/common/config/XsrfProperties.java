@@ -19,9 +19,8 @@ import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
-import static java.lang.String.format;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ReflectionUtils.findMethod;
 
@@ -33,7 +32,9 @@ import java.util.List;
 import javax.servlet.http.Cookie;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wl4g.devops.iam.common.config.CorsProperties.AdvancedCorsConfiguration;
 import com.wl4g.devops.tool.common.collection.Collections2;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
@@ -80,12 +81,22 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	 */
 	private List<String> excludeValidXsrfMapping = new ArrayList<>();
 
+	/**
+	 * Temporary cors configuration.
+	 */
+	@Autowired
+	private transient AdvancedCorsConfiguration corsConfig;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (!isEmpty(excludeValidXsrfMapping)) {
 			// Remove duplicate.
 			Collections2.disDupCollection(excludeValidXsrfMapping);
 		}
+
+		// Check header name with cors allowed.
+		corsConfig.assertLegalHeaders(singletonList(getXsrfHeaderName()));
+
 	}
 
 	public String getXsrfCookieName() {
@@ -111,11 +122,7 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	}
 
 	public XsrfProperties setXsrfHeaderName(String xsrfHeaderName) {
-		hasTextOf(xsrfHeaderName, "xsrfHeaderName");
-		if (!startsWithIgnoreCase(xsrfHeaderName, DEFAULT_CORS_ALLOW_HEADER_PREFIX)) {
-			throw new IllegalArgumentException(
-					format("Xsrf header name must start with a %s prefix", DEFAULT_CORS_ALLOW_HEADER_PREFIX));
-		}
+		// hasTextOf(xsrfHeaderName, "xsrfHeaderName");
 		this.xsrfHeaderName = xsrfHeaderName;
 		return this;
 	}

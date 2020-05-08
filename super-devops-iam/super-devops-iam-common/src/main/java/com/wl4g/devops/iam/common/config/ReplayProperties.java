@@ -23,13 +23,16 @@ import java.util.List;
 
 import org.apache.shiro.config.ConfigurationException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wl4g.devops.iam.common.config.CorsProperties.AdvancedCorsConfiguration;
 import com.wl4g.devops.tool.common.collection.Collections2;
 import com.wl4g.devops.tool.common.crypto.digest.DigestUtils2;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Collections.singletonList;
 
 /**
  * Replay attacks configuration properties
@@ -65,12 +68,18 @@ public class ReplayProperties implements InitializingBean {
 	/**
 	 * Signature timestamp term time.
 	 */
-	private long termTimeMs = 15 * 60 * 1000L;
+	private long termTimeMs = DEFAULT_REPLAY_TOKEN_TERM_TIME;
 
 	/**
 	 * Ignore replay attacks validation request mappings.
 	 */
 	private List<String> excludeValidReplayMapping = new ArrayList<>();
+
+	/**
+	 * Temporary cors configuration.
+	 */
+	@Autowired
+	private transient AdvancedCorsConfiguration corsConfig;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -79,16 +88,24 @@ public class ReplayProperties implements InitializingBean {
 			Collections2.disDupCollection(excludeValidReplayMapping);
 		}
 
+		// Check algorithm.
 		try {
-			// Check algorithm.
 			DigestUtils2.getDigest(getSignatureAlg());
 		} catch (Exception e) {
-			if (e instanceof NoSuchAlgorithmException) {
+			if (e instanceof NoSuchAlgorithmException)
 				throw new ConfigurationException("Replay attacks protect config error.", e);
-			} else {
+			else
 				throw e;
-			}
 		}
+
+		// Check termTimeMs.
+		if (getTermTimeMs() < DEFAULT_REPLAY_TOKEN_TERM_TIME) {
+			log.warn("Term time: {} of replay attack token signature is too short, It is recommended to set is > {}ms",
+					getTermTimeMs(), DEFAULT_REPLAY_TOKEN_TERM_TIME);
+		}
+
+		// Check header name with cors allowed.
+		corsConfig.assertLegalHeaders(singletonList(getReplayTokenHeaderName()));
 
 	}
 
@@ -149,6 +166,7 @@ public class ReplayProperties implements InitializingBean {
 		return this;
 	}
 
+	public static final long DEFAULT_REPLAY_TOKEN_TERM_TIME = 15 * 60 * 1000L;
 	public static final String DEFAULT_REPLAY_TOKEN_COOKIE_NAME = "IAM-REPLAY-TOKEN";
 	public static final String DEFAULT_REPLAY_TOKEN_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Replay-Token";
 	public static final String DEFAULT_REPLAY_TOKEN_PARAM_NAME = "_replayToken";
