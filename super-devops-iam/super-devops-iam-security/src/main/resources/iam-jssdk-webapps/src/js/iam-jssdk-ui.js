@@ -330,11 +330,11 @@
 			}
 		};
 
-		runtime.iamCore = new IAMCore();
 		// Overerly default settings.
 		iamCoreConfig = $.extend(true, defaultSettings, iamCoreConfig);
 		console.debug("Intializing iamCore of config properties: " + JSON.stringify(iamCoreConfig));
-		runtime.iamCore.init(iamCoreConfig);
+		runtime.iamCore = new IAMCore(iamCoreConfig);
+		runtime.iamCore.anyAuthenticators();
 	}
 
 	// 监听panelType为pagePanel类型的SNS授权回调
