@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.common.security.xsrf.repository;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.UUID;
@@ -34,8 +35,6 @@ import com.wl4g.devops.iam.common.config.XsrfProperties;
 import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
-import static com.wl4g.devops.iam.common.config.XsrfProperties.setHttpOnlyMethod;
-import static org.springframework.util.ReflectionUtils.invokeMethod;
 import static org.springframework.web.util.WebUtils.getCookie;
 
 /**
@@ -93,9 +92,10 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		} else {
 			cookie.setMaxAge(-1);
 		}
-		if (xconfig.isCookieHttpOnly() && !isNull(setHttpOnlyMethod)) {
-			invokeMethod(setHttpOnlyMethod, cookie, Boolean.TRUE);
-		}
+		// For the implementation of xsrf token, for the front-end and back-end
+		// separation architecture, generally JS obtains and appends the cookie
+		// to the headers. At this time, httponly = true cannot be set
+		cookie.setHttpOnly(xconfig.isCookieHttpOnly());
 		cookie.saveTo(request, response);
 	}
 
@@ -106,7 +106,7 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 			return null;
 		}
 		String xtoken = cookie.getValue();
-		if (isBlank(xtoken)) {
+		if (equalsAnyIgnoreCase(xtoken, "null", "undefined", "")) {
 			return null;
 		}
 		return new DefaultXsrfToken(xconfig.getXsrfHeaderName(), xconfig.getXsrfParamName(), xtoken);

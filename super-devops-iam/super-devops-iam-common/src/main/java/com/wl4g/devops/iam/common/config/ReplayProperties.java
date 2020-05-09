@@ -25,7 +25,6 @@ import org.apache.shiro.config.ConfigurationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.iam.common.config.CorsProperties.AdvancedCorsConfiguration;
 import com.wl4g.devops.tool.common.collection.Collections2;
 import com.wl4g.devops.tool.common.crypto.digest.DigestUtils2;
 import com.wl4g.devops.tool.common.log.SmartLogger;
@@ -73,19 +72,23 @@ public class ReplayProperties implements InitializingBean {
 	/**
 	 * Ignore replay attacks validation request mappings.
 	 */
-	private List<String> excludeValidReplayMapping = new ArrayList<>();
+	private List<String> excludeValidUriPatterns = new ArrayList<>();
+
+	//
+	// --- Temporary fields. ---
+	//
 
 	/**
 	 * Temporary cors configuration.
 	 */
 	@Autowired
-	private transient AdvancedCorsConfiguration corsConfig;
+	private transient CorsProperties corsConfig;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// Remove duplicate.
-		if (!isEmpty(excludeValidReplayMapping)) {
-			Collections2.disDupCollection(excludeValidReplayMapping);
+		if (!isEmpty(excludeValidUriPatterns)) {
+			Collections2.disDupCollection(excludeValidUriPatterns);
 		}
 
 		// Check algorithm.
@@ -105,7 +108,7 @@ public class ReplayProperties implements InitializingBean {
 		}
 
 		// Check header name with cors allowed.
-		corsConfig.assertLegalHeaders(singletonList(getReplayTokenHeaderName()));
+		corsConfig.assertCorsLegalHeaders(singletonList(getReplayTokenHeaderName()));
 
 	}
 
@@ -136,15 +139,15 @@ public class ReplayProperties implements InitializingBean {
 		return this;
 	}
 
-	public List<String> getExcludeValidReplayMapping() {
-		return excludeValidReplayMapping;
+	public List<String> getExcludeValidUriPatterns() {
+		return excludeValidUriPatterns;
 	}
 
-	public ReplayProperties setExcludeValidReplayMapping(List<String> excludeValidReplayMapping) {
-		// if (!isEmpty(excludeValidReplayMapping)) {
-		// this.excludeValidReplayMapping.addAll(excludeValidReplayMapping);
+	public ReplayProperties setExcludeValidUriPatterns(List<String> excludeValidUriPatterns) {
+		// if (!isEmpty(excludeValidUriPatterns)) {
+		// this.excludeValidUriPatterns.addAll(excludeValidUriPatterns);
 		// }
-		this.excludeValidReplayMapping = excludeValidReplayMapping;
+		this.excludeValidUriPatterns = excludeValidUriPatterns;
 		return this;
 	}
 

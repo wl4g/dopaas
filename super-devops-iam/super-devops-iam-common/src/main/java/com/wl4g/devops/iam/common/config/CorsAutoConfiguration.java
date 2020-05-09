@@ -59,7 +59,7 @@ public class CorsAutoConfiguration {
 	public CorsSecurityFilter corsSecurityFilter(CorsProperties config, AdvancedCorsProcessor corsProcessor) {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		// Merger transformation configuration
-		config.getRules().forEach((key, rule) -> source.registerCorsConfiguration(key, rule.toSpringCorsConfiguration()));
+		config.getRules().forEach((key, rule) -> source.registerCorsConfiguration(key, rule.resolveIamCorsConfiguration()));
 		CorsSecurityFilter filter = new CorsSecurityFilter(source);
 		filter.setCorsProcessor(corsProcessor);
 		return filter;

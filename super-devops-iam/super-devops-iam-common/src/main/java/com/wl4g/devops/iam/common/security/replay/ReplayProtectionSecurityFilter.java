@@ -98,8 +98,9 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 			return;
 		}
+
 		// Ignore exclude URLs XSRF validation.
-		for (String pattern : rconfig.getExcludeValidReplayMapping()) {
+		for (String pattern : rconfig.getExcludeValidUriPatterns()) {
 			if (defaultExcludeReplayMatcher.matchStart(pattern, requestPath)) {
 				log.debug("Skip exclude url replay valid '{}'", requestPath);
 				filterChain.doFilter(request, response);

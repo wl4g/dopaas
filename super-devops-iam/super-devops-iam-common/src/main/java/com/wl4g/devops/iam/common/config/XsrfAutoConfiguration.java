@@ -26,6 +26,7 @@ import static com.wl4g.devops.iam.common.config.AbstractIamConfiguration.ORDER_X
 
 import com.wl4g.devops.iam.common.security.xsrf.RequiresXsrfMatcher;
 import com.wl4g.devops.iam.common.security.xsrf.XsrfProtectionSecurityFilter;
+import com.wl4g.devops.iam.common.security.xsrf.handler.DefaultAccessRejectHandler;
 import com.wl4g.devops.iam.common.security.xsrf.repository.CookieXsrfTokenRepository;
 
 /**
@@ -52,6 +53,12 @@ public class XsrfAutoConfiguration {
 	@ConditionalOnBean(XsrfProperties.class)
 	public CookieXsrfTokenRepository cookieXsrfTokenRepository() {
 		return new CookieXsrfTokenRepository();
+	}
+
+	@Bean
+	@ConditionalOnBean(XsrfProperties.class)
+	public DefaultAccessRejectHandler defaultAccessRejectHandler() {
+		return new DefaultAccessRejectHandler();
 	}
 
 	@Bean

@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.common.security.xsrf;
 
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
@@ -104,20 +103,15 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		String requestPath = getPathWithinApplication(toHttp(request));
 
-		// Ignore Non browser request XSRF validation.
-		if (!isBrowser(request)) {
-			log.debug("Skip non browser xsrf valid '{}'", requestPath);
-			filterChain.doFilter(request, response);
-			return;
-		}
 		// Ignore non replay request methods.
 		if (!xsrfProtectMatcher.matches(request)) {
 			log.debug("Skip xsrf protection of: {}", requestPath);
 			filterChain.doFilter(request, response);
 			return;
 		}
+
 		// Ignore exclude URLs XSRF validation.
-		for (String pattern : xconfig.getExcludeValidXsrfMapping()) {
+		for (String pattern : xconfig.getExcludeValidUriPatterns()) {
 			if (defaultExcludeXsrfMatcher.matchStart(pattern, requestPath)) {
 				log.debug("Skip exclude url xsrf valid '{}'", requestPath);
 				filterChain.doFilter(request, response);
@@ -125,8 +119,8 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 			}
 		}
 
-		// request.setAttribute(HttpServletResponse.class.getName(), response);
 		// XSRF validation
+		// request.setAttribute(HttpServletResponse.class.getName(), response);
 		XsrfToken xsrfToken = xtokenRepository.getXToken(request);
 		final boolean missingToken = isNull(xsrfToken);
 		if (missingToken) {

@@ -20,12 +20,9 @@ import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Collections.singletonList;
-import static java.util.Objects.isNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static org.springframework.util.ReflectionUtils.findMethod;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +31,6 @@ import javax.servlet.http.Cookie;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.iam.common.config.CorsProperties.AdvancedCorsConfiguration;
 import com.wl4g.devops.tool.common.collection.Collections2;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
@@ -66,9 +62,15 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	private String xsrfHeaderName = DEFAULT_XSRF_HEADER_NAME;
 
 	/**
-	 * Enable cookie http only
+	 * Enable cookie http only.</br>
+	 * 
+	 * <p>
+	 * For the implementation of xsrf token, for the front-end and back-end
+	 * separation architecture, generally JS obtains and appends the cookie to
+	 * the headers. At this time, httponly = true cannot be set
+	 * </p>
 	 */
-	private boolean cookieHttpOnly = !isNull(setHttpOnlyMethod);
+	private boolean cookieHttpOnly = false;
 
 	/**
 	 * The path that the Cookie will be created with. This will override the
@@ -79,23 +81,23 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	/**
 	 * Ignore xsrf validation request mappings.
 	 */
-	private List<String> excludeValidXsrfMapping = new ArrayList<>();
+	private List<String> excludeValidUriPatterns = new ArrayList<>();
 
 	/**
 	 * Temporary cors configuration.
 	 */
 	@Autowired
-	private transient AdvancedCorsConfiguration corsConfig;
+	private transient CorsProperties corsConfig;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if (!isEmpty(excludeValidXsrfMapping)) {
+		if (!isEmpty(excludeValidUriPatterns)) {
 			// Remove duplicate.
-			Collections2.disDupCollection(excludeValidXsrfMapping);
+			Collections2.disDupCollection(excludeValidUriPatterns);
 		}
 
 		// Check header name with cors allowed.
-		corsConfig.assertLegalHeaders(singletonList(getXsrfHeaderName()));
+		corsConfig.assertCorsLegalHeaders(singletonList(getXsrfHeaderName()));
 
 	}
 
@@ -148,10 +150,6 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	 *             underlying version of Servlet is less than 3.0
 	 */
 	public XsrfProperties setCookieHttpOnly(boolean cookieHttpOnly) {
-		if (cookieHttpOnly && setHttpOnlyMethod == null) {
-			throw new IllegalArgumentException(
-					"Cookie will not be marked as HttpOnly because you are using a version of Servlet less than 3.0. NOTE: The Cookie#setHttpOnly(boolean) was introduced in Servlet 3.0.");
-		}
 		this.cookieHttpOnly = cookieHttpOnly;
 		return this;
 	}
@@ -166,15 +164,15 @@ public class XsrfProperties implements InitializingBean, Serializable {
 		return this;
 	}
 
-	public List<String> getExcludeValidXsrfMapping() {
-		return excludeValidXsrfMapping;
+	public List<String> getExcludeValidUriPatterns() {
+		return excludeValidUriPatterns;
 	}
 
-	public XsrfProperties setExcludeValidXsrfMapping(List<String> excludeValidXsrfMapping) {
+	public XsrfProperties setExcludeValidUriPatterns(List<String> excludeValidUriPatterns) {
 		// if (!isEmpty(excludeValidXsrfMapping)) {
-		// this.excludeValidXsrfMapping.addAll(excludeValidXsrfMapping);
+		// this.excludeValidUriPatterns.addAll(excludeValidUriPatterns);
 		// }
-		this.excludeValidXsrfMapping.addAll(excludeValidXsrfMapping);
+		this.excludeValidUriPatterns.addAll(excludeValidUriPatterns);
 		return this;
 	}
 
@@ -188,6 +186,5 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	public static final String DEFAULT_XSRF_COOKIE_NAME = "IAM-XSRF-TOKEN";
 	public static final String DEFAULT_XSRF_PARAM_NAME = "_xsrf";
 	public static final String DEFAULT_XSRF_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Xsrf-Token";
-	public static final Method setHttpOnlyMethod = findMethod(Cookie.class, "setHttpOnly", boolean.class);;
 
 }
