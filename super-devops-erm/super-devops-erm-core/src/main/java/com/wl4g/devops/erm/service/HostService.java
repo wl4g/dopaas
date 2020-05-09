@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.devops.common.bean.erm.AppHost;
+import com.wl4g.devops.common.bean.erm.Host;
 import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
@@ -26,13 +26,13 @@ import java.util.List;
  */
 public interface HostService {
 
-	List<AppHost> list(String name, String hostname, Integer idcId);
+	List<Host> list(String name, String hostname, Integer idcId);
 
 	PageModel page(PageModel pm,String name, String hostname, Integer idcId);
 
-	void save(AppHost host);
+	void save(Host host);
 
-	AppHost detail(Integer id);
+	Host detail(Integer id);
 
 	void del(Integer id);
 }

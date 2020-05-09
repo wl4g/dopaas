@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.AppHostDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.AppHost" >
+<mapper namespace="com.wl4g.devops.dao.erm.HostDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.Host" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="hostname" property="hostname" jdbcType="VARCHAR" />
@@ -27,7 +27,7 @@
     delete from app_host
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppHost" >
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.Host" >
     insert into app_host (id, name, hostname, 
       idc_id, status, create_date, 
       create_by, update_date, update_by, 
@@ -37,7 +37,7 @@
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.AppHost" useGeneratedKeys="true" keyProperty="id">
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.Host" useGeneratedKeys="true" keyProperty="id">
     insert into app_host
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -104,7 +104,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.AppHost" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.Host" >
     update app_host
     <set >
       <if test="name != null" >
@@ -137,7 +137,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppHost" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.Host" >
     update app_host
     set name = #{name,jdbcType=VARCHAR},
       hostname = #{hostname,jdbcType=VARCHAR},

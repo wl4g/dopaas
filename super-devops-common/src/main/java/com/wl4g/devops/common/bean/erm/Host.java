@@ -19,7 +19,7 @@ import com.wl4g.devops.common.bean.BaseBean;
 
 import java.io.Serializable;
 
-public class AppHost extends BaseBean implements Serializable {
+public class Host extends BaseBean {
 
 	private static final long serialVersionUID = -7546448616357790576L;
 

@@ -26,11 +26,19 @@ import com.wl4g.devops.common.bean.BaseBean;
 public class AppInstance extends BaseBean {
 	private static final long serialVersionUID = 4324569366421220002L;
 
+	private String name;
+
 	private Integer clusterId;
 
 	private Integer versionId;
 
+	//20200509 add
+	private Integer serverType;
 	private Integer hostId;
+	private Integer k8sId;
+	private Integer dockerId;
+
+	private Integer sshId;
 
 	private String envType;
 
@@ -40,11 +48,7 @@ public class AppInstance extends BaseBean {
 
 	private String remark;
 
-	private String sshUser;
-
-	private String sshKey;
-
-	private String sshKeyPub;
+	private Ssh ssh;
 
 	//
 	// --- Temporary fields. ---
@@ -112,28 +116,52 @@ public class AppInstance extends BaseBean {
 		this.remark = remark;
 	}
 
-	public String getSshUser() {
-		return sshUser;
+	public Integer getServerType() {
+		return serverType;
 	}
 
-	public void setSshUser(String sshUser) {
-		this.sshUser = sshUser;
+	public void setServerType(Integer serverType) {
+		this.serverType = serverType;
 	}
 
-	public String getSshKey() {
-		return sshKey;
+	public Integer getK8sId() {
+		return k8sId;
 	}
 
-	public void setSshKey(String sshKey) {
-		this.sshKey = sshKey;
+	public void setK8sId(Integer k8sId) {
+		this.k8sId = k8sId;
 	}
 
-	public String getSshKeyPub() {
-		return sshKeyPub;
+	public Integer getDockerId() {
+		return dockerId;
 	}
 
-	public void setSshKeyPub(String sshKeyPub) {
-		this.sshKeyPub = sshKeyPub;
+	public void setDockerId(Integer dockerId) {
+		this.dockerId = dockerId;
+	}
+
+	public Integer getSshId() {
+		return sshId;
+	}
+
+	public void setSshId(Integer sshId) {
+		this.sshId = sshId;
+	}
+
+	public Ssh getSsh() {
+		return ssh;
+	}
+
+	public void setSsh(Ssh ssh) {
+		this.ssh = ssh;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getHostname() {
@@ -147,17 +175,19 @@ public class AppInstance extends BaseBean {
 	@Override
 	public String toString() {
 		return "AppInstance{" +
-				"clusterId=" + clusterId +
+				"name='" + name + '\'' +
+				", clusterId=" + clusterId +
 				", versionId=" + versionId +
+				", serverType=" + serverType +
 				", hostId=" + hostId +
+				", k8sId=" + k8sId +
+				", dockerId=" + dockerId +
+				", sshId=" + sshId +
 				", envType='" + envType + '\'' +
 				", enable=" + enable +
 				", endpoint='" + endpoint + '\'' +
 				", remark='" + remark + '\'' +
-				", sshUser='" + sshUser + '\'' +
-				", sshKey='" + sshKey + '\'' +
-				", sshKeyPub='" + sshKeyPub + '\'' +
-				", hostname='" + hostname + '\'' +
+				", ssh=" + ssh +
 				'}';
 	}
 }

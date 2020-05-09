@@ -1,9 +1,10 @@
 package com.wl4g.devops.common.bean.erm;
 
-import java.util.Date;
+import com.wl4g.devops.common.bean.BaseBean;
 
-public class HostNetcard {
-    private Integer id;
+public class HostNetcard extends BaseBean {
+
+    private static final long serialVersionUID = 4324569366421220002L;
 
     private Integer hostId;
 
@@ -29,23 +30,6 @@ public class HostNetcard {
 
     private String getway;
 
-    private Date createDate;
-
-    private String createBy;
-
-    private Date updateDate;
-
-    private Date updateBy;
-
-    private Integer delFlag;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getHostId() {
         return hostId;
@@ -143,43 +127,4 @@ public class HostNetcard {
         this.getway = getway == null ? null : getway.trim();
     }
 
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy == null ? null : createBy.trim();
-    }
-
-    public Date getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public Date getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Date updateBy) {
-        this.updateBy = updateBy;
-    }
-
-    public Integer getDelFlag() {
-        return delFlag;
-    }
-
-    public void setDelFlag(Integer delFlag) {
-        this.delFlag = delFlag;
-    }
 }
