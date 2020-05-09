@@ -242,6 +242,7 @@ public class FlowManager {
 	 * @param pipelineId
 	 * @return
 	 */
+	//TODO 这里需要添加redis锁（）jedisService.setMap()
 	public PipelineModel buildPipeline(Integer pipelineId) {
 		// check pipeline is running
 		Assert2.isTrue(!isPipelineRunning(pipelineId), "this pipeline is running, Please try later");
@@ -268,7 +269,7 @@ public class FlowManager {
 	/**
 	 * when pipeline state change , call this method
 	 */
-	public synchronized void pipelineStateChange(PipelineModel pipelineModel) {
+	public void pipelineStateChange(PipelineModel pipelineModel) {
 		RunModel runModel = getRunModel(pipelineModel.getRunId());
 		Pipeline pipeline = getPipeline(runModel.getPipelines(), pipelineModel.getPipeId());
 		BeanUtils.copyProperties(pipelineModel, pipeline);
@@ -413,6 +414,7 @@ public class FlowManager {
 		if (CollectionUtils.isEmpty(modules)) {
 			return;
 		}
+		//TODO FAILED --> throw
 		if (StringUtils.equalsAnyIgnoreCase(pipeline.getStatus(), RUNNING_DEPLOY.toString(), FAILED.toString(),
 				SUCCESS.toString())) {
 			alreadBuild.addAll(modules);
