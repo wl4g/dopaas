@@ -17,9 +17,11 @@ package com.wl4g.devops.iam.common.security.replay;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrueOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static com.wl4g.devops.tool.common.codec.Base58.*;
 
 /**
@@ -104,6 +106,8 @@ public final class DefaultReplayToken implements ReplayToken {
 	 * @return
 	 */
 	public static DefaultReplayToken build(String signature) {
+		hasTextOf(signature, "replayTokenSignature");
+		isTrueOf(!equalsAnyIgnoreCase(signature, "null", "undefined", ""), "replayTokenSignature");
 		String decodeSignature = new String(decode(signature), UTF_8);
 		DefaultReplayToken token = parseJSON(decodeSignature, DefaultReplayToken.class);
 		return token.setSignature(signature);

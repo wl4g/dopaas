@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.security.replay;
 
+import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
 import static java.util.Arrays.asList;
 
 import java.util.HashSet;
@@ -53,7 +54,7 @@ public final class RequiresReplayMatcher implements ReplayMatcher {
 	 * @return
 	 */
 	public boolean matches(HttpServletRequest request) {
-		return !allowedMethods.contains(valueOf(request.getMethod()));
+		return !(allowedMethods.contains(valueOf(request.getMethod())) || isMediaRequest(request));
 	}
 
 }

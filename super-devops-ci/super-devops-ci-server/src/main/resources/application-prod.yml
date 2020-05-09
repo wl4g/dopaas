@@ -63,12 +63,12 @@ spring:
             protocol: smtp
           sms:
             aliyun:
-              accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
-              accessKeySecret: {ALIYUN_SECRET}
+              accessKeyId: ${ALIYUN_KEY}
+              accessKeySecret: ${ALIYUN_SECRET}
           vms:
             aliyun:
               accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
-              accessKeySecret: {ALIYUN_SECRET}
+              accessKeySecret: ${ALIYUN_SECRET}
               calledShowNumber: 055162153866
 
   # Datasource configuration.

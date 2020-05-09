@@ -103,7 +103,7 @@ public abstract class Assert2 {
 	 * @param argName
 	 */
 	public static void stateOf(boolean expression, String argName) {
-		state(expression, argName + " condition must be true");
+		state(expression, argName + " condition miss");
 	}
 
 	/**
@@ -160,7 +160,7 @@ public abstract class Assert2 {
 	 * @param argName
 	 */
 	public static void isTrueOf(boolean expression, String argName) {
-		isTrue(expression, argName + " condition must be true");
+		isTrue(expression, argName + " condition miss");
 	}
 
 	/**

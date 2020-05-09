@@ -40,12 +40,18 @@ spring:
               allowCredentials: true
               allowsOrigins:
                 #- '*'
+        xsrf:
+          enabled: true # Default: false
+#          exclude-valid-uri-patterns: 
+        replay:
+          enabled: true # Default: false
+#          exclude-valid-uri-patterns: 
         xss:
           enabled: true # Default: true
           expression: execution(* com.wl4g.devops.iam.common.*.*Controller.*(..)) or
                       execution(* com.wl4g.devops.iam.sns.*.*Controller.*(..)) or
                       execution(* com.wl4g.devops.iam.*.*Controller.*(..))
-          escapeTranslators:
+          escape-translators:
             - escapeEcmascript
             - escapeJava
             - escapeHtml3

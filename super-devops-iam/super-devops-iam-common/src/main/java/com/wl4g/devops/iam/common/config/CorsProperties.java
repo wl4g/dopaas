@@ -33,6 +33,7 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import com.wl4g.devops.tool.common.collection.RegisteredSetList;
 
+import static com.wl4g.devops.iam.common.config.CorsProperties.IamCorsConfiguration.*;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isSameWildcardOrigin;
@@ -100,6 +101,22 @@ public class CorsProperties implements Serializable {
 	}
 
 	/**
+	 * Assertion allowed legal headers.
+	 * 
+	 * @param requestHeaders
+	 * @param allowedHeaders
+	 */
+	public void assertCorsLegalHeaders(List<String> requestHeaders) {
+		for (CorsRule rule : getRules().values()) {
+			List<String> allowedHeaders = rule.resolveIamCorsConfiguration().getAllowedHeaders();
+			List<String> legalHeaders = checkLegalHeaders(requestHeaders, allowedHeaders);
+			if (isEmpty(legalHeaders)) {
+				throw new IllegalArgumentException(format("Xsrf header name must start with a %s prefix", allowedHeaders));
+			}
+		}
+	}
+
+	/**
 	 * CORS rule configuration
 	 *
 	 * @author wangl.sir
@@ -120,6 +137,12 @@ public class CorsProperties implements Serializable {
 		private List<String> exposedHeaders = new RegisteredSetList<>(new ArrayList<>(8));
 		private boolean allowCredentials = true;
 		private Long maxAge = 1800L;
+
+		//
+		// --- Temporary fields. ---
+		//
+
+		private transient IamCorsConfiguration cors;
 
 		public CorsRule() {
 			super();
@@ -220,25 +243,26 @@ public class CorsProperties implements Serializable {
 		}
 
 		/**
-		 * To Spring CORS configuration
+		 * Resolve & gets spring CORS configuration
 		 *
 		 * @return
 		 */
-		public CorsConfiguration toSpringCorsConfiguration() {
-			// Merge values elements.
-			mergeWithWildcard(getAllowsOrigins());
-			mergeWithWildcard(getAllowsHeaders());
-			mergeWithWildcard(getAllowsMethods());
-			mergeWithWildcard(getExposedHeaders());
-
+		public IamCorsConfiguration resolveIamCorsConfiguration() {
 			// Convert to spring CORS configuration.
-			CorsConfiguration cors = new AdvancedCorsConfiguration();
-			cors.setAllowCredentials(isAllowCredentials());
-			cors.setMaxAge(getMaxAge());
-			getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
-			getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
-			getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
-			getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
+			if (isNull(cors)) {
+				// Merge values elements.
+				mergeWithWildcard(getAllowsOrigins());
+				mergeWithWildcard(getAllowsHeaders());
+				mergeWithWildcard(getAllowsMethods());
+				mergeWithWildcard(getExposedHeaders());
+				cors = new IamCorsConfiguration();
+				cors.setAllowCredentials(isAllowCredentials());
+				cors.setMaxAge(getMaxAge());
+				getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
+				getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
+				getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
+				getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
+			}
 			return cors;
 		}
 
@@ -280,13 +304,13 @@ public class CorsProperties implements Serializable {
 	}
 
 	/**
-	 * Custom advanced logic CORS configuration processing.
+	 * Iam enhanced logic CORS configuration processing.
 	 *
 	 * @author Wangl.sir
 	 * @version v1.0 2019年8月21日
 	 * @since
 	 */
-	public static class AdvancedCorsConfiguration extends CorsConfiguration {
+	public static class IamCorsConfiguration extends CorsConfiguration {
 
 		/**
 		 * <b>Note:</b> "allowsOrigin" may have a "*" wildcard character.</br>
@@ -359,25 +383,13 @@ public class CorsProperties implements Serializable {
 		}
 
 		/**
-		 * Assertion allowed legal headers.
-		 * 
-		 * @param requestHeaders
-		 */
-		public void assertLegalHeaders(List<String> requestHeaders) {
-			List<String> legalHeaders = checkHeaders(requestHeaders);
-			if (isEmpty(legalHeaders)) {
-				throw new IllegalArgumentException(format("Xsrf header name must start with a %s prefix", getAllowedHeaders()));
-			}
-		}
-
-		/**
 		 * Check & gets legal headers name.
 		 * 
 		 * @param requestHeaders
 		 * @param allowedHeaders
 		 * @return
 		 */
-		public final static List<String> checkLegalHeaders(List<String> requestHeaders, List<String> allowedHeaders) {
+		public static List<String> checkLegalHeaders(List<String> requestHeaders, List<String> allowedHeaders) {
 			if (isNull(requestHeaders)) {
 				return null;
 			}
