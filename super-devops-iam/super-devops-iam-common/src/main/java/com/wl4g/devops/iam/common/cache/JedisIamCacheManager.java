@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.common.cache;
 
-import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisFormatUtils.keyFormat;
+import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisProtocolUtil.keyFormat;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 import java.util.Map;

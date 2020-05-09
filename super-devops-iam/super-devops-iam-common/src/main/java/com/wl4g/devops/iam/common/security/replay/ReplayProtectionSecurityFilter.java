@@ -160,10 +160,10 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 	 * @return
 	 */
 	protected ReplayToken getRequestReplayToken(HttpServletRequest request, HttpServletResponse response) {
-		String tokenSignature = request.getHeader(rconfig.getReplayTokenHeaderName());
-		tokenSignature = isBlank(tokenSignature) ? getCleanParam(request, rconfig.getReplayTokenParamName()) : tokenSignature;
-		tokenSignature = isBlank(tokenSignature) ? getCookie(request, rconfig.getReplayTokenCookieName()) : tokenSignature;
-		return DefaultReplayToken.build(tokenSignature);
+		String replayTokenCode = request.getHeader(rconfig.getReplayTokenHeaderName());
+		replayTokenCode = isBlank(replayTokenCode) ? getCleanParam(request, rconfig.getReplayTokenParamName()) : replayTokenCode;
+		replayTokenCode = isBlank(replayTokenCode) ? getCookie(request, rconfig.getReplayTokenCookieName()) : replayTokenCode;
+		return DefaultReplayToken.build(replayTokenCode);
 	}
 
 	/**

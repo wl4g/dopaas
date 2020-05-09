@@ -17,6 +17,7 @@ package com.wl4g.devops.support.redis;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.Long.parseLong;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
@@ -25,6 +26,7 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isAlpha;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
@@ -1882,7 +1884,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 
 	@Override
 	public Object eval(final String script, final List<String> keys, final List<String> args) {
-		RedisFormatUtils.checkArgumentsSpecification(keys);
+		RedisProtocolUtil.checkArgumentsSpecification(keys);
 		return new EnhancedJedisClusterCommand<Object>(connectionHandler, maxAttempts) {
 			@Override
 			public Object doExecute(Jedis connection) {
@@ -1903,7 +1905,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 
 	@Override
 	public Object evalsha(final String sha1, final List<String> keys, final List<String> args) {
-		RedisFormatUtils.checkArgumentsSpecification(keys);
+		RedisProtocolUtil.checkArgumentsSpecification(keys);
 		return new EnhancedJedisClusterCommand<Object>(connectionHandler, maxAttempts) {
 			@Override
 			public Object doExecute(Jedis connection) {
@@ -3468,7 +3470,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 
 	@Override
 	public Object eval(final byte[] script, final List<byte[]> keys, final List<byte[]> args) {
-		RedisFormatUtils.checkArgumentsSpecification(keys);
+		RedisProtocolUtil.checkArgumentsSpecification(keys);
 		return new EnhancedJedisClusterCommand<Object>(connectionHandler, maxAttempts) {
 			@Override
 			public Object doExecute(Jedis connection) {
@@ -4135,7 +4137,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 	 * @throws ArgumentsSpecificationException
 	 */
 	protected void checkArgumentsSpecification(final byte[]... keys) throws ArgumentsSpecificationException {
-		RedisFormatUtils.checkArgumentsSpecification(asList(keys));
+		RedisProtocolUtil.checkArgumentsSpecification(asList(keys));
 	}
 
 	/**
@@ -4145,7 +4147,7 @@ public class EnhancedJedisCluster extends JedisCluster {
 	 * @throws ArgumentsSpecificationException
 	 */
 	protected void checkArgumentsSpecification(final String... keys) throws ArgumentsSpecificationException {
-		RedisFormatUtils.checkArgumentsSpecification(asList(keys));
+		RedisProtocolUtil.checkArgumentsSpecification(asList(keys));
 	}
 
 	/**
@@ -4165,15 +4167,35 @@ public class EnhancedJedisCluster extends JedisCluster {
 	final private static Method PARAMS_MATCH;
 
 	/**
-	 * Redis key specifications format utils.
+	 * Redis key specifications utils(formatter etc).
 	 * 
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020年4月10日
 	 * @since
 	 */
-	public static abstract class RedisFormatUtils {
+	public static abstract class RedisProtocolUtil {
 
-		final private static SmartLogger log = getLogger(RedisFormatUtils.class);
+		final private static SmartLogger log = getLogger(RedisProtocolUtil.class);
+
+		/**
+		 * Check is result is successful.
+		 * 
+		 * @param res
+		 * @return
+		 */
+		public static boolean isSuccess(String res) {
+			return equalsIgnoreCase(res, "OK") || (!isBlank(res) && isNumeric(res) && parseLong(res) > 0);
+		}
+
+		/**
+		 * Check is result is successful.
+		 * 
+		 * @param res
+		 * @return
+		 */
+		public static boolean isSuccess(Long res) {
+			return !isNull(res) && res > 0;
+		}
 
 		/**
 		 * Check input argument names specification.
