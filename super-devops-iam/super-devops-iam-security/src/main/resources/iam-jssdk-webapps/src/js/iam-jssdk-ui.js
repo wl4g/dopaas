@@ -20,9 +20,9 @@
 	 **/
 	IAMUi.prototype.initUI = function(renderObj, iamCoreConfig) {
 		if(!renderObj || renderObj == undefined){
-			throw Error("IAM JSSDK UI (renderObj) is required!");
+			throw Error("IAMUi (renderObj) is required!");
 		}
-		console.debug("Initializing IAM JSSDK UI...");
+		console.debug("IAMUi JSSDK initializing ...");
 		runtime.renderObj = renderObj;
 
 		// Javascript multi line string supports.
@@ -332,9 +332,9 @@
 
 		// Overerly default settings.
 		iamCoreConfig = $.extend(true, defaultSettings, iamCoreConfig);
-		console.debug("Intializing iamCore of config properties: " + JSON.stringify(iamCoreConfig));
+		console.debug("IAMCore JSSDK intializing ... config properties: " + JSON.stringify(iamCoreConfig));
 		runtime.iamCore = new IAMCore(iamCoreConfig);
-		runtime.iamCore.anyAuthenticators();
+		runtime.iamCore.anyAuthenticators().build();
 	}
 
 	// 监听panelType为pagePanel类型的SNS授权回调
