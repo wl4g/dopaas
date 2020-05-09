@@ -18,10 +18,10 @@ package com.wl4g.devops.erm.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.erm.AppCluster;
-import com.wl4g.devops.common.bean.erm.AppHost;
+import com.wl4g.devops.common.bean.erm.Host;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.dao.erm.AppClusterDao;
-import com.wl4g.devops.dao.erm.AppHostDao;
+import com.wl4g.devops.dao.erm.HostDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.erm.service.AppClusterService;
 import com.wl4g.devops.page.PageModel;
@@ -55,7 +55,7 @@ public class AppClueterServiceImpl implements AppClusterService {
     private AppInstanceDao appInstanceDao;
 
     @Autowired
-    private AppHostDao appHostDao;
+    private HostDao appHostDao;
 
     @Autowired
     private DestroableProcessManager pm;
@@ -104,9 +104,9 @@ public class AppClueterServiceImpl implements AppClusterService {
         for (AppInstance appInstance : instances) {
             appInstance.preInsert();
             appInstance.setClusterId(clusterId);
-            if (StringUtils.isNotBlank(appInstance.getSshKey())) {
+            if (StringUtils.isNotBlank(appInstance.getSsh().getSshKey())) {
                 try {
-                    appInstance.setSshKey(encryptSshkeyToHex(cipherKey, appInstance.getSshKey()));
+                    appInstance.getSsh().setSshKey(encryptSshkeyToHex(cipherKey, appInstance.getSsh().getSshKey()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -148,9 +148,9 @@ public class AppClueterServiceImpl implements AppClusterService {
         List<AppInstance> appInstances = appInstanceDao.selectByClusterId(appCluster.getId());
         List<AppInstance> noDelInstances = new ArrayList<>();
         for (AppInstance appInstance : appCluster.getInstances()) {
-            if (StringUtils.isNotBlank(appInstance.getSshKey())) {
+            if (StringUtils.isNotBlank(appInstance.getSsh().getSshKey())) {
                 try {
-                    appInstance.setSshKey(encryptSshkeyToHex(cipherKey, appInstance.getSshKey()));
+                    appInstance.getSsh().setSshKey(encryptSshkeyToHex(cipherKey, appInstance.getSsh().getSshKey()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -194,8 +194,8 @@ public class AppClueterServiceImpl implements AppClusterService {
         AppCluster appCluster = appClusterDao.selectByPrimaryKey(clusterId);
         List<AppInstance> appInstances = appInstanceDao.selectByClusterId(clusterId);
         for (AppInstance appInstance : appInstances) {
-            if (StringUtils.isNotBlank(appInstance.getSshKey())) {
-                appInstance.setSshKey(decryptSshkeyFromHex(cipherKey, appInstance.getSshKey()));
+            if (StringUtils.isNotBlank(appInstance.getSsh().getSshKey())) {
+                appInstance.getSsh().setSshKey(decryptSshkeyFromHex(cipherKey, appInstance.getSsh().getSshKey()));
             }
         }
         appCluster.setInstances(appInstances);
@@ -211,7 +211,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 
     @Override
     public void testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException {
-        AppHost appHost = appHostDao.selectByPrimaryKey(hostId);
+        Host appHost = appHostDao.selectByPrimaryKey(hostId);
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         String command = "echo " + uuid;
         String echoStr = null;

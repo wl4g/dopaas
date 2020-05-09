@@ -2,7 +2,7 @@ package com.wl4g.devops.dao.erm;
 
 import com.wl4g.devops.common.bean.erm.HostTunnelPptp;
 
-public interface HostTunnelPptpMapper {
+public interface HostTunnelPptpDao {
     int deleteByPrimaryKey(Integer id);
 
     int insert(HostTunnelPptp record);

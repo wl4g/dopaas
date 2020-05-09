@@ -15,24 +15,24 @@
  */
 package com.wl4g.devops.dao.erm;
 
-import com.wl4g.devops.common.bean.erm.AppHost;
+import com.wl4g.devops.common.bean.erm.Host;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface AppHostDao {
+public interface HostDao {
 	int deleteByPrimaryKey(Integer id);
 
-	int insert(AppHost record);
+	int insert(Host record);
 
-	int insertSelective(AppHost record);
+	int insertSelective(Host record);
 
-	AppHost selectByPrimaryKey(Integer id);
+	Host selectByPrimaryKey(Integer id);
 
-	int updateByPrimaryKeySelective(AppHost record);
+	int updateByPrimaryKeySelective(Host record);
 
-	int updateByPrimaryKey(AppHost record);
+	int updateByPrimaryKey(Host record);
 
-	List<AppHost> list(@Param("name") String name, @Param("hostname") String hostname, @Param("idcId") Integer idcId);
+	List<Host> list(@Param("name") String name, @Param("hostname") String hostname, @Param("idcId") Integer idcId);
 
 }

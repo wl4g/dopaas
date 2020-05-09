@@ -17,8 +17,8 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.AppHost;
-import com.wl4g.devops.dao.erm.AppHostDao;
+import com.wl4g.devops.common.bean.erm.Host;
+import com.wl4g.devops.dao.erm.HostDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.erm.service.HostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +37,11 @@ import static java.util.Objects.isNull;
 public class HostServiceImpl implements HostService {
 
     @Autowired
-    private AppHostDao appHostDao;
+    private HostDao appHostDao;
 
     @Override
-    public List<AppHost> list(String name, String hostname, Integer idcId) {
-        List<AppHost> list = appHostDao.list(name, hostname, idcId);
+    public List<Host> list(String name, String hostname, Integer idcId) {
+        List<Host> list = appHostDao.list(name, hostname, idcId);
         return list;
     }
 
@@ -52,7 +52,7 @@ public class HostServiceImpl implements HostService {
         return pm;
     }
 
-    public void save(AppHost host){
+    public void save(Host host){
         if(isNull(host.getId())){
             host.preInsert();
             insert(host);
@@ -62,23 +62,23 @@ public class HostServiceImpl implements HostService {
         }
     }
 
-    private void insert(AppHost host){
+    private void insert(Host host){
         appHostDao.insertSelective(host);
     }
 
-    private void update(AppHost host){
+    private void update(Host host){
         appHostDao.updateByPrimaryKeySelective(host);
     }
 
 
-    public AppHost detail(Integer id){
+    public Host detail(Integer id){
         Assert.notNull(id,"id is null");
         return appHostDao.selectByPrimaryKey(id);
     }
 
     public void del(Integer id){
         Assert.notNull(id,"id is null");
-        AppHost host = new AppHost();
+        Host host = new Host();
         host.setId(id);
         host.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         appHostDao.updateByPrimaryKeySelective(host);

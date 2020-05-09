@@ -104,13 +104,27 @@
             <columnOverride column="post_command" javaType="java.lang.String" jdbcType="VARCHAR" />
         </table>-->
 
-        <table tableName="erm_host_netcard" domainObjectName="HostNetcard"
+
+        <!--<table tableName="erm_idc" domainObjectName="Idc"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
-        <table tableName="erm_host_tunnel_openvpn" domainObjectName="HostTunnelOpenvpn"
+        <table tableName="erm_k8s_cluster" domainObjectName="K8sCluster"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
-        <table tableName="erm_host_tunnel_pptp" domainObjectName="HostTunnelPptp"
+        <table tableName="erm_k8s_instance" domainObjectName="K8sInstance"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="erm_docker_cluster" domainObjectName="DockerCluster"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="erm_docker_instance" domainObjectName="DockerInstance"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>-->
+
+        <table tableName="erm_ssh" domainObjectName="Ssh"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="erm_host_ssh" domainObjectName="HostSsh"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
 
