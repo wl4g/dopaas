@@ -2,6 +2,8 @@ package com.wl4g.devops.dao.erm;
 
 import com.wl4g.devops.common.bean.erm.HostTunnelPptp;
 
+import java.util.List;
+
 public interface HostTunnelPptpDao {
     int deleteByPrimaryKey(Integer id);
 
@@ -10,6 +12,8 @@ public interface HostTunnelPptpDao {
     int insertSelective(HostTunnelPptp record);
 
     HostTunnelPptp selectByPrimaryKey(Integer id);
+
+    List<HostTunnelPptp> selectAll();
 
     int updateByPrimaryKeySelective(HostTunnelPptp record);
 

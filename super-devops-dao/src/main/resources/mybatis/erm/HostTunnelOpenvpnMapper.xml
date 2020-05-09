@@ -23,6 +23,13 @@
     from erm_host_tunnel_openvpn
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from erm_host_tunnel_openvpn
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from erm_host_tunnel_openvpn
     where id = #{id,jdbcType=INTEGER}

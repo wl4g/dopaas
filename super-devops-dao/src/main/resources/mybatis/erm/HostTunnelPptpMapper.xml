@@ -23,6 +23,11 @@
     from erm_host_tunnel_pptp
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from erm_host_tunnel_pptp
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from erm_host_tunnel_pptp
     where id = #{id,jdbcType=INTEGER}
