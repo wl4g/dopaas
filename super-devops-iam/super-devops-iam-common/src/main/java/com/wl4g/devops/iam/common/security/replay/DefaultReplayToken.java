@@ -22,6 +22,9 @@ import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import static com.wl4g.devops.tool.common.codec.Base58.*;
 
 /**
@@ -39,6 +42,7 @@ public final class DefaultReplayToken implements ReplayToken {
 	 * 
 	 * @return
 	 */
+	@JsonProperty("t")
 	private Long timestamp;
 
 	/**
@@ -46,6 +50,7 @@ public final class DefaultReplayToken implements ReplayToken {
 	 * 
 	 * @return
 	 */
+	@JsonProperty("n")
 	private String nonce;
 
 	/**
@@ -53,6 +58,7 @@ public final class DefaultReplayToken implements ReplayToken {
 	 * 
 	 * @return
 	 */
+	@JsonProperty("s")
 	private String signature;
 
 	public DefaultReplayToken() {
@@ -102,15 +108,14 @@ public final class DefaultReplayToken implements ReplayToken {
 	/**
 	 * Build replay token by request signature.
 	 * 
-	 * @param signature
+	 * @param replayToken
 	 * @return
 	 */
-	public static DefaultReplayToken build(String signature) {
-		hasTextOf(signature, "replayTokenSignature");
-		isTrueOf(!equalsAnyIgnoreCase(signature, "null", "undefined", ""), "replayTokenSignature");
-		String decodeSignature = new String(decode(signature), UTF_8);
-		DefaultReplayToken token = parseJSON(decodeSignature, DefaultReplayToken.class);
-		return token.setSignature(signature);
+	public static DefaultReplayToken build(String replayToken) {
+		hasTextOf(replayToken, "replayToken");
+		isTrueOf(!equalsAnyIgnoreCase(replayToken, "null", "undefined", ""), "replayToken");
+		String decodeSignature = new String(decode(replayToken), UTF_8);
+		return parseJSON(decodeSignature, DefaultReplayToken.class);
 	}
 
 }

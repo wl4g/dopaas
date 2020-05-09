@@ -268,7 +268,6 @@
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
 			xsrfTokenCookieKey: "IAM-XSRF-TOKEN", // xsrfToken保存的cookie名
 			xsrfTokenHeaderKey: "X-Iam-Xsrf-Token", // xsrfToken保存的header名
-			replayTokenCookieKey: "IAM-REPLAY-TOKEN", // 重放攻击replayToken保存的cookie名
 			replayTokenHeaderKey: "X-Iam-Replay-Token", // 重放攻击replayToken保存的header名
 		},
 		// 部署配置
@@ -957,13 +956,11 @@
 		var xsrfTokenHeaderKey = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
 		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieKey);
 		// Replay token
-		var replayTokenCookieKey = Common.Util.checkEmpty("definition.replayTokenCookieKey", settings.definition.replayTokenCookieKey);
 		var replayTokenHeaderKey = Common.Util.checkEmpty("definition.replayTokenHeaderKey", settings.definition.replayTokenHeaderKey);
-		var replayToken = Common.Util.getCookie(replayTokenCookieKey);
 		// Headers.
 		var headers = new Map();
 		headers.set(xsrfTokenHeaderKey, xsrfToken);
-		headers.set(replayTokenHeaderKey, replayToken);
+		headers.set(replayTokenHeaderKey, IAMCore.generateReplayToken());
 		$.ajax({
 			url: _url,
 			type: method,
@@ -1048,13 +1045,32 @@
 		settings = null;
 		console.log("Destroyed IAMCore instance.");
 	};
-	// Export tools getIamBaseURI
+	// Export function getIamBaseURI
 	IAMCore.getIamBaseUri = function() {
 		var iamBaseUri = sessionStorage.getItem(constant.baseUriStoredKey);
 		if (!iamBaseUri) {
 			sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri =getDefaultIamBaseUri()));
 		}
 		return iamBaseUri;
+	};
+	// Export function generateReplayToken
+	IAMCore.generateReplayToken = function() {
+		var timestamp = new Date().getTime();
+		var nonce = "";
+		for (var i=0; i<2; i++) {
+			nonce += Math.random().toString(36).substr(2);
+		}
+		// Signature replay token
+		var signature = CryptoJS.MD5(nonce + timestamp).toString(CryptoJS.enc.Hex);
+		var replayTokenPlain = JSON.stringify({
+			"n": nonce, // nonce
+			"t": timestamp, // timestamp
+			"s": signature // signature
+		});
+		// Encode replay token
+		var replayToken = Common.Util.Codec.encodeBase58(replayTokenPlain);
+		console.debug("Generated replay token(plain): "+ replayTokenPlain + " - " + replayToken);
+		return replayToken;
 	};
 
 })(window, document);

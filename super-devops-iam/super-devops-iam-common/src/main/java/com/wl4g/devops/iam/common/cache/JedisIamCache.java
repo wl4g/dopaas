@@ -19,12 +19,9 @@ import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.iam.common.cache.CacheKey.*;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static java.lang.Long.parseLong;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNumeric;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.Collection;
@@ -35,9 +32,10 @@ import org.apache.shiro.cache.CacheException;
 
 import com.google.common.base.Charsets;
 
+import com.wl4g.devops.tool.common.log.SmartLogger;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.*;
-import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisProtocolUtil.isSuccess;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -226,10 +224,10 @@ public class JedisIamCache implements IamCache {
 
 		if (key.hasExpire()) {
 			String res = jedisCluster.set(key.getKey(name), data, NX, PX, key.getExpireMs());
-			return !isBlank(res) && isNumeric(res) && parseLong(res) > 0;
+			return isSuccess(res);
 		}
 		Long res = jedisCluster.setnx(key.getKey(name), data);
-		return !isNull(res) && res > 0;
+		return isSuccess(res);
 	}
 
 	// --- Enhanced API. ---

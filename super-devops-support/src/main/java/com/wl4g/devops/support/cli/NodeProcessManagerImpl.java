@@ -38,7 +38,7 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.redis.JedisService;
 
 import static com.wl4g.devops.support.cli.destroy.DestroySignalMessage.DestroyState.*;
-import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisFormatUtils.*;
+import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisProtocolUtil.*;
 
 /**
  * Implementation of distributed destroable command process based on jedis
