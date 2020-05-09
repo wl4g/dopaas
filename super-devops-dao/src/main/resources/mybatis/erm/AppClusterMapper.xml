@@ -21,15 +21,15 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from app_cluster
+    from erm_app_cluster
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from app_cluster
+    delete from erm_app_cluster
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" >
-    insert into app_cluster (id, dept_id, name, 
+    insert into erm_app_cluster (id, dept_id, name,
       type, enable, remark, 
       create_by, create_date, update_by, 
       update_date, del_flag)
@@ -39,7 +39,7 @@
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" useGeneratedKeys="true" keyProperty="id">
-    insert into app_cluster
+    insert into erm_app_cluster
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -112,7 +112,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" >
-    update app_cluster
+    update erm_app_cluster
     <set >
       <if test="deptId != null" >
         dept_id = #{deptId,jdbcType=INTEGER},
@@ -148,7 +148,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" >
-    update app_cluster
+    update erm_app_cluster
     set dept_id = #{deptId,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
@@ -166,7 +166,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from app_cluster
+    from erm_app_cluster
     where del_flag!=1
     <if test="clusterName != null and clusterName != ''" >
       AND name LIKE CONCAT('%','${clusterName}','%')
