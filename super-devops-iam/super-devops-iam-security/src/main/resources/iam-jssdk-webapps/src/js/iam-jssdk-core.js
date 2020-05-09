@@ -268,7 +268,9 @@
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
 			xsrfTokenCookieKey: "IAM-XSRF-TOKEN", // xsrfToken保存的cookie名
 			xsrfTokenHeaderKey: "X-Iam-Xsrf-Token", // xsrfToken保存的header名
+			xsrfTokenParamKey: "_xsrf", // xsrfToken保存的Param名
 			replayTokenHeaderKey: "X-Iam-Replay-Token", // 重放攻击replayToken保存的header名
+			replayTokenParamKey: "_replayToken", // 重放攻击replayToken保存的Param名
 		},
 		// 部署配置
 		deploy: {
@@ -494,6 +496,13 @@
 		paramMap.set(Common.Util.checkEmpty("definition.verifyTypeKey",settings.definition.verifyTypeKey), Common.Util.checkEmpty("captcha.use",settings.captcha.use));
 		paramMap.set(Common.Util.checkEmpty("definition.responseType",settings.definition.responseType), Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue));
 		paramMap.set(Common.Util.checkEmpty("definition.secureAlgKey",settings.definition.secureAlgKey), runtime.handshake.handleChooseSecureAlg());
+		// XSRF token
+		var xsrfToken = IAMCore.getXsrfToken();
+		paramMap.set(xsrfToken.paramName, xsrfToken.value);
+		// Replay token
+		var replayToken = IAMCore.generateReplayToken();
+		paramMap.set(replayToken.paramName, replayToken.value);
+		// Session info
 		runtime.handshake.handleSessionTo(paramMap);
 		paramMap.set("r", Math.random());
 		return Common.Util.checkEmpty("checkCaptcha.applyUri",runtime.safeCheck.checkCaptcha.applyUri)+"?"+Common.Util.toUrl({}, paramMap);
@@ -512,6 +521,13 @@
 		paramMap.set(Common.Util.checkEmpty("definition.responseType", settings.definition.responseType),Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue));
 		paramMap.set(Common.Util.checkEmpty("definition.secureAlgKey",settings.definition.secureAlgKey), runtime.handshake.handleChooseSecureAlg());
 		paramMap.set("r", Math.random());
+		// XSRF token
+		var xsrfToken = IAMCore.getXsrfToken();
+		paramMap.set(xsrfToken.paramName, xsrfToken.value);
+		// Replay token
+		var replayToken = IAMCore.generateReplayToken();
+		paramMap.set(replayToken.paramName, replayToken.value);
+		// Session info
 		runtime.handshake.handleSessionTo(paramMap);
 		return Common.Util.checkEmpty("deploy.baseUri",settings.deploy.baseUri)
 				+ Common.Util.checkEmpty("definition.verifyAnalyzeUri", settings.definition.verifyAnalyzeUri)+"?"+Common.Util.toUrl({},paramMap);
@@ -951,16 +967,14 @@
 		} else {
 			_url += Common.Util.checkEmpty("definition", settings.definition[urlAndKey]);
 		}
-		// XSRF token
-		var xsrfTokenCookieKey = Common.Util.checkEmpty("definition.xsrfTokenCookieKey", settings.definition.xsrfTokenCookieKey);
-		var xsrfTokenHeaderKey = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
-		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieKey);
-		// Replay token
-		var replayTokenHeaderKey = Common.Util.checkEmpty("definition.replayTokenHeaderKey", settings.definition.replayTokenHeaderKey);
 		// Headers.
 		var headers = new Map();
-		headers.set(xsrfTokenHeaderKey, xsrfToken);
-		headers.set(replayTokenHeaderKey, IAMCore.generateReplayToken());
+		// XSRF token
+		var xsrfToken = IAMCore.getXsrfToken();
+		headers.set(xsrfToken.headerName, xsrfToken.value);
+		// Replay token
+		var replayToken = IAMCore.generateReplayToken();
+		headers.set(replayToken.headerName, replayToken.value);
 		$.ajax({
 			url: _url,
 			type: method,
@@ -1053,6 +1067,18 @@
 		}
 		return iamBaseUri;
 	};
+	// Export function getXsrfToken
+	IAMCore.getXsrfToken = function() {
+		var xsrfTokenCookieName = Common.Util.checkEmpty("definition.xsrfTokenCookieKey", settings.definition.xsrfTokenCookieKey);
+		var xsrfTokenHeaderName = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
+		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
+		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName);
+		return {
+			headerName: xsrfTokenHeaderName,
+			paramName: xsrfTokenParamName,
+			value: xsrfToken
+		};
+	};
 	// Export function generateReplayToken
 	IAMCore.generateReplayToken = function() {
 		var timestamp = new Date().getTime();
@@ -1068,9 +1094,15 @@
 			"s": signature // signature
 		});
 		// Encode replay token
+		var replayTokenHeaderName = Common.Util.checkEmpty("definition.replayTokenHeaderKey", settings.definition.replayTokenHeaderKey);
+		var replayTokenParamName = Common.Util.checkEmpty("definition.replayTokenParamKey", settings.definition.replayTokenParamKey);
 		var replayToken = Common.Util.Codec.encodeBase58(replayTokenPlain);
 		console.debug("Generated replay token(plain): "+ replayTokenPlain + " - " + replayToken);
-		return replayToken;
+		return {
+			headerName: replayTokenHeaderName,
+			paramName: replayTokenParamName,
+			value: replayToken
+		};
 	};
 
 })(window, document);
