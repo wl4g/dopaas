@@ -2085,35 +2085,41 @@
 		});
 		return this;
 	};
-	// Export any authenticators
+	// Export enable anyAuthenticators
 	IAMCore.prototype.anyAuthenticators = function() {
+		return this.accountAuthenticator()
+				.smsAuthenticator()
+				.snsAuthenticator()
+				.captchaVerifier();
+	};
+	// Export enable accountAuthenticators
+	IAMCore.prototype.accountAuthenticator = function() {
+		settings.account.enable = true;
+		return this;
+	};
+	// Export enable smsAuthenticators
+	IAMCore.prototype.smsAuthenticator = function() {
+		settings.sms.enable = true;
+		return this;
+	};
+	// Export enable snsAuthenticators
+	IAMCore.prototype.snsAuthenticator = function() {
+		settings.sns.enable = true;
+		return this;
+	};
+	// Export enable captchaVerifier
+	IAMCore.prototype.captchaVerifier = function() {
+		settings.captcha.enable = true;
+		return this;
+	};
+	// Export build 
+	IAMCore.prototype.build = function() {
 		_InitHandshakeIfNecessary().then(handshakeValue => {
 			_InitAccountAuthenticator();
 			_InitSMSAuthenticator();
 			_InitSNSAuthenticator();
 			_InitCaptchaVerifier();
 		});
-		return this;
-	};
-	// Export account authenticators
-	IAMCore.prototype.accountAuthenticator = function() {
-		_InitHandshakeIfNecessary().then(handshakeValue => _InitAccountAuthenticator());
-		return this;
-	};
-	// Export sms authenticators
-	IAMCore.prototype.smsAuthenticator = function() {
-		_InitHandshakeIfNecessary().then(handshakeValue => _InitSMSAuthenticator());
-		return this;
-	};
-	// Export sns authenticators
-	IAMCore.prototype.snsAuthenticator = function() {
-		_InitHandshakeIfNecessary().then(handshakeValue => _InitSNSAuthenticator());
-		return this;
-	};
-	// Export captcha verifier
-	IAMCore.prototype.captchaVerifier = function() {
-		_InitHandshakeIfNecessary().then(handshakeValue => _InitCaptchaVerifier());
-		return this;
 	};
 	// Export IAMCore destroy
 	IAMCore.prototype.destroy = function() {
@@ -2323,9 +2329,9 @@
 	 **/
 	IAMUi.prototype.initUI = function(renderObj, iamCoreConfig) {
 		if(!renderObj || renderObj == undefined){
-			throw Error("IAM JSSDK UI (renderObj) is required!");
+			throw Error("IAMUi (renderObj) is required!");
 		}
-		console.debug("Initializing IAM JSSDK UI...");
+		console.debug("IAMUi JSSDK initializing ...");
 		runtime.renderObj = renderObj;
 
 		// Javascript multi line string supports.
@@ -2635,9 +2641,9 @@
 
 		// Overerly default settings.
 		iamCoreConfig = $.extend(true, defaultSettings, iamCoreConfig);
-		console.debug("Intializing iamCore of config properties: " + JSON.stringify(iamCoreConfig));
+		console.debug("IAMCore JSSDK intializing ... config properties: " + JSON.stringify(iamCoreConfig));
 		runtime.iamCore = new IAMCore(iamCoreConfig);
-		runtime.iamCore.anyAuthenticators();
+		runtime.iamCore.anyAuthenticators().build();
 	}
 
 	// 监听panelType为pagePanel类型的SNS授权回调
