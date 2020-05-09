@@ -45,11 +45,6 @@ public class ReplayProperties implements InitializingBean {
 	final protected SmartLogger log = getLogger(getClass());
 
 	/**
-	 * Default replay attacks cookie name.
-	 */
-	private String replayTokenCookieName = DEFAULT_REPLAY_TOKEN_COOKIE_NAME;
-
-	/**
 	 * Default replay attacks header name.
 	 */
 	private String replayTokenHeaderName = DEFAULT_REPLAY_TOKEN_HEADER_NAME;
@@ -112,15 +107,6 @@ public class ReplayProperties implements InitializingBean {
 
 	}
 
-	public String getReplayTokenCookieName() {
-		return replayTokenCookieName;
-	}
-
-	public ReplayProperties setReplayTokenCookieName(String replayTokenCookieName) {
-		this.replayTokenCookieName = replayTokenCookieName;
-		return this;
-	}
-
 	public String getReplayTokenHeaderName() {
 		return replayTokenHeaderName;
 	}
@@ -170,7 +156,6 @@ public class ReplayProperties implements InitializingBean {
 	}
 
 	public static final long DEFAULT_REPLAY_TOKEN_TERM_TIME = 15 * 60 * 1000L;
-	public static final String DEFAULT_REPLAY_TOKEN_COOKIE_NAME = "IAM-REPLAY-TOKEN";
 	public static final String DEFAULT_REPLAY_TOKEN_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Replay-Token";
 	public static final String DEFAULT_REPLAY_TOKEN_PARAM_NAME = "_replayToken";
 	final public static String KEY_REPLAY_PREFIX = "spring.cloud.devops.iam.replay";

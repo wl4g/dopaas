@@ -48,7 +48,6 @@ import com.wl4g.devops.tool.common.log.SmartLogger;
 import static org.apache.commons.codec.binary.Hex.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_REPLAY_SIGN;
 import static com.wl4g.devops.tool.common.crypto.digest.DigestUtils2.*;
-import static com.wl4g.devops.tool.common.web.CookieUtils.*;
 
 /**
  * Replay attacks request protection security filter.
@@ -162,7 +161,6 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 	protected ReplayToken getRequestReplayToken(HttpServletRequest request, HttpServletResponse response) {
 		String replayTokenCode = request.getHeader(rconfig.getReplayTokenHeaderName());
 		replayTokenCode = isBlank(replayTokenCode) ? getCleanParam(request, rconfig.getReplayTokenParamName()) : replayTokenCode;
-		replayTokenCode = isBlank(replayTokenCode) ? getCookie(request, rconfig.getReplayTokenCookieName()) : replayTokenCode;
 		return DefaultReplayToken.build(replayTokenCode);
 	}
 
