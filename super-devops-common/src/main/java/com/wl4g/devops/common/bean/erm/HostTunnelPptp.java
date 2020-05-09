@@ -1,27 +1,14 @@
 package com.wl4g.devops.common.bean.erm;
 
-import com.wl4g.devops.common.bean.BaseBean;
-
-public class HostTunnelPptp extends BaseBean {
+public class HostTunnelPptp extends HostTunnel {
 
     private static final long serialVersionUID = 4324569366421220002L;
-
-    private String name;
 
     private String addr;
 
     private String username;
 
     private String password;
-
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
-    }
 
     public String getAddr() {
         return addr;
