@@ -17,7 +17,6 @@ package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
-import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.util.List;
@@ -40,22 +39,22 @@ public class DockerNativePipeDeployer extends GenericHostPipeDeployer<DockerNati
 	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
 		String groupName = getContext().getProject().getGroupName();
 		// Pull
-		provider.imagePull(instance.getHostname(), instance.getSshUser(), "wl4g/" + groupName
+		provider.imagePull(instance.getHostname(), instance.getSsh().getUsername(), "wl4g/" + groupName
 				+ ":master"/*
 							 * TODO 要改成动态的
 							 * provider.getTaskHistory().getPreCommand()
-							 */, instance.getSshKey());
+							 */, instance.getSsh().getSshKey());
 		// Restart
-		provider.stopContainer(instance.getHostname(), instance.getSshUser(), groupName, instance.getSshKey());
+		provider.stopContainer(instance.getHostname(), instance.getSsh().getUsername(), groupName, instance.getSsh().getSshKey());
 
 		// Remove Container
-		provider.destroyContainer(instance.getHostname(), instance.getSshUser(), groupName, instance.getSshKey());
+		provider.destroyContainer(instance.getHostname(), instance.getSsh().getUsername(), groupName, instance.getSsh().getSshKey());
 		// Run
-		provider.startContainer(instance.getHostname(), instance.getSshUser(), "docker run wl4g/" + groupName
+		provider.startContainer(instance.getHostname(), instance.getSsh().getUsername(), "docker run wl4g/" + groupName
 				+ ":master"/*
 							 * TODO 要改成动态的
 							 * provider.getTaskHistory().getPostCommand()
-							 */, instance.getSshKey());
+							 */, instance.getSsh().getSshKey());
 	}
 
 }

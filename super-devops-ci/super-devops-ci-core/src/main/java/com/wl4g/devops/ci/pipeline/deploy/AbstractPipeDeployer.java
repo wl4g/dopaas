@@ -117,15 +117,15 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
             // PRE commands.
             if (provider.getContext().getPipeStepInstanceCommand().getEnable() == 1 && !isBlank(provider.getContext().getPipeStepInstanceCommand().getPreCommand())) {
-                doRemoteCommand(instance.getHostname(), instance.getSshUser(), provider.getContext().getPipeStepInstanceCommand().getPreCommand(), instance.getSshKey());
+                doRemoteCommand(instance.getHostname(), instance.getSsh().getUsername(), provider.getContext().getPipeStepInstanceCommand().getPreCommand(), instance.getSsh().getSshKey());
             }
 
             // Deploying distribute to remote.
-            doRemoteDeploying(instance.getHostname(), instance.getSshUser(), instance.getSshKey());
+            doRemoteDeploying(instance.getHostname(), instance.getSsh().getUsername(), instance.getSsh().getSshKey());
 
             // Post remote commands.(e.g: restart)
             if (provider.getContext().getPipeStepInstanceCommand().getEnable() == 1 && !isBlank(provider.getContext().getPipeStepInstanceCommand().getPostCommand())) {
-                doRemoteCommand(instance.getHostname(), instance.getSshUser(), provider.getContext().getPipeStepInstanceCommand().getPostCommand(), instance.getSshKey());
+                doRemoteCommand(instance.getHostname(), instance.getSsh().getUsername(), provider.getContext().getPipeStepInstanceCommand().getPostCommand(), instance.getSsh().getSshKey());
             }
 
             // Update status to success.
