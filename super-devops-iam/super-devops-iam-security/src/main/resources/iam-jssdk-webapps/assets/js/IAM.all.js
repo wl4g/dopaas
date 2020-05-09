@@ -79,13 +79,14 @@
 		},
 		getCookie: function(cookieName){
 			var cookiesArr = document.cookie.split(";");
-			for(var i=0; i < cookiesArr.length; i++){
+			for(var i = 0; i < cookiesArr.length; i++){
 				var cookie = cookiesArr[i].split("=");
 				var value = cookie[1];
 				if(cookie[0].trim() == cookieName.trim()){
 					return value;
 				}
 			}
+			return null;
 		},
 		// 获取最顶层window对象(对于嵌套iframe刷新页面跳转非常有用)
 		getRootWindow: function(currentWindow) {
@@ -679,15 +680,14 @@
         isIp : function(ip) {
             return Common.Util.isIpv4(ip) || Common.Util.isIpv6(ip);
         }
-	};
-
+	},
 	// 对Date的扩展，将 Date 转化为指定格式的String 
 	// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
 	// 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字) 
 	// 例子： 
 	// (new Date()).format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423 
 	// (new Date()).format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18 
-	Date.prototype.format = function(fmt) { 
+	Date.prototype.format = function(fmt) {
 	  var o = { 
 	    "M+" : this.getMonth()+1,                 //月份 
 	    "d+" : this.getDate(),                    //日 
@@ -706,6 +706,22 @@
 		  }
 	  }
 	  return fmt; 
+	},
+	// Map to json object.
+	JSON.fromMap = function(map) {
+		let json = Object.create(null);
+		for (let[k,v] of map) {
+			json[k] = v;
+		}
+		return json;
+	},
+	// JSON to map object.
+	JSON.toMap = function(json) {
+		let map = new Map();
+		for (let k of Object.keys(json)) {
+			map.set(k, json[k]);
+		}
+		return map;
 	}
 })(window, document);
 /** @see https://cdnjs.com/libraries/crypto-js */
@@ -1340,6 +1356,7 @@
 	var settings = {
 		// 字典参数定义
 		definition: {
+			codeOkValue: "200", // 接口返回成功码判定标准
 			responseType: "response_type", // 控制返回数据格式的参数名
 			responseTypeValue: "json", // 使用返回数据格式
 			whichKey: "which", // 请求连接到SNS的参数名
@@ -1366,14 +1383,18 @@
 			smsApplyUri: "/verify/applysmsverify", // 申请SMS验证码URI后缀
 			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
-			codeOkValue: "200" // 接口返回成功码判定标准
+			xsrfTokenCookieKey: "IAM-XSRF-TOKEN", // xsrfToken保存的cookie名
+			xsrfTokenHeaderKey: "X-Iam-Xsrf-Token", // xsrfToken保存的header名
+			replayTokenHeaderKey: "X-Iam-Replay-Token", // 重放攻击replayToken保存的header名
 		},
-		deploy: { // 部署配置
+		// 部署配置
+		deploy: {
 			baseUri: null, // IAM后端服务baseURI
 			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
 			defaultContextPath: "/iam-server", // 默认IAM Server的context-path
 		},
- 		init: { // 初始相关配置(Event)
+		// 初始相关配置(Event)
+ 		init: {
  			onPostUmidToken: function(res){
  				console.debug("onPostUmidToken... "+ res);
  			},
@@ -1388,7 +1409,7 @@
  				console.error("Failed to initialize... "+ errmsg);
  			}
  		},
-		// 图像验证码配置
+		// 验证码配置
 		captcha: {
 			enable: false,
 			use: "VerifyWithGifGraph", // Default use gif
@@ -2047,10 +2068,20 @@
 		} else {
 			_url += Common.Util.checkEmpty("definition", settings.definition[urlAndKey]);
 		}
+		// XSRF token
+		var xsrfTokenCookieKey = Common.Util.checkEmpty("definition.xsrfTokenCookieKey", settings.definition.xsrfTokenCookieKey);
+		var xsrfTokenHeaderKey = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
+		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieKey);
+		// Replay token
+		var replayTokenHeaderKey = Common.Util.checkEmpty("definition.replayTokenHeaderKey", settings.definition.replayTokenHeaderKey);
+		// Headers.
+		var headers = new Map();
+		headers.set(xsrfTokenHeaderKey, xsrfToken);
+		headers.set(replayTokenHeaderKey, IAMCore.generateReplayToken());
 		$.ajax({
 			url: _url,
 			type: method,
-			//headers: { ContentType: "" },
+			headers: JSON.fromMap(headers),
 			data: Common.Util.toUrl(settings.definition, paramMap),
 			xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 			success: function(res, textStatus, jqxhr){
@@ -2131,13 +2162,32 @@
 		settings = null;
 		console.log("Destroyed IAMCore instance.");
 	};
-	// Export tools getIamBaseURI
+	// Export function getIamBaseURI
 	IAMCore.getIamBaseUri = function() {
 		var iamBaseUri = sessionStorage.getItem(constant.baseUriStoredKey);
 		if (!iamBaseUri) {
 			sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri =getDefaultIamBaseUri()));
 		}
 		return iamBaseUri;
+	};
+	// Export function generateReplayToken
+	IAMCore.generateReplayToken = function() {
+		var timestamp = new Date().getTime();
+		var nonce = "";
+		for (var i=0; i<2; i++) {
+			nonce += Math.random().toString(36).substr(2);
+		}
+		// Signature replay token
+		var signature = CryptoJS.MD5(nonce + timestamp).toString(CryptoJS.enc.Hex);
+		var replayTokenPlain = JSON.stringify({
+			"n": nonce, // nonce
+			"t": timestamp, // timestamp
+			"s": signature // signature
+		});
+		// Encode replay token
+		var replayToken = Common.Util.Codec.encodeBase58(replayTokenPlain);
+		console.debug("Generated replay token(plain): "+ replayTokenPlain + " - " + replayToken);
+		return replayToken;
 	};
 
 })(window, document);
