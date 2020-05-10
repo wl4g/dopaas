@@ -16,17 +16,19 @@
 package com.wl4g.devops.iam.common.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import static com.wl4g.devops.iam.common.config.XsrfProperties.KEY_XSRF_PREFIX;
+import static com.wl4g.devops.iam.common.config.AbstractIamConfiguration.ORDER_XSRF_PRECEDENCE;
 
 import com.wl4g.devops.iam.common.security.xsrf.RequiresXsrfMatcher;
-import com.wl4g.devops.iam.common.security.xsrf.XsrfProtectionSecurityInterceptor;
-import com.wl4g.devops.iam.common.security.xsrf.handler.DefaultAccessRejectHandler;
+import com.wl4g.devops.iam.common.security.xsrf.XsrfProtectionSecurityFilter;
+import com.wl4g.devops.iam.common.security.xsrf.handler.XsrfRejectHandler;
+import com.wl4g.devops.iam.common.security.xsrf.handler.DefaultXsrfRejectHandler;
 import com.wl4g.devops.iam.common.security.xsrf.repository.CookieXsrfTokenRepository;
 
 /**
@@ -36,7 +38,7 @@ import com.wl4g.devops.iam.common.security.xsrf.repository.CookieXsrfTokenReposi
  * @version v1.0 2020年05月06日
  * @since
  */
-public class XsrfAutoConfiguration extends WebMvcConfigurerAdapter {
+public class XsrfAutoConfiguration {
 
 	//
 	// X S R F _ F I L T E R _ C O N F I G's.
@@ -57,8 +59,15 @@ public class XsrfAutoConfiguration extends WebMvcConfigurerAdapter {
 
 	@Bean
 	@ConditionalOnBean(XsrfProperties.class)
-	public DefaultAccessRejectHandler defaultAccessRejectHandler() {
-		return new DefaultAccessRejectHandler();
+	@ConditionalOnMissingBean(XsrfRejectHandler.class)
+	public DefaultXsrfRejectHandler defaultXsrfRejectHandler() {
+		return new DefaultXsrfRejectHandler();
+	}
+
+	@Bean
+	@ConditionalOnBean(XsrfProperties.class)
+	public XsrfProtectionSecurityFilter xsrfProtectionSecurityFilter() {
+		return new XsrfProtectionSecurityFilter();
 	}
 
 	@Bean
@@ -69,13 +78,14 @@ public class XsrfAutoConfiguration extends WebMvcConfigurerAdapter {
 
 	@Bean
 	@ConditionalOnBean(XsrfProperties.class)
-	public XsrfProtectionSecurityInterceptor xsrfProtectionSecurityInterceptor() {
-		return new XsrfProtectionSecurityInterceptor();
-	}
-
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(xsrfProtectionSecurityInterceptor()).addPathPatterns("/**");
+	public FilterRegistrationBean xsrfProtectionSecurityFilterBean(XsrfProtectionSecurityFilter filter) {
+		// Register XSRF filter
+		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		filterBean.setOrder(ORDER_XSRF_PRECEDENCE);
+		// Cannot use '/*' or it will not be added to the container chain (only
+		// '/**')
+		filterBean.addUrlPatterns("/*"); // TODO config?
+		return filterBean;
 	}
 
 }

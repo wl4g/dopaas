@@ -77,8 +77,16 @@
 		isString : function (obj) {
 		    return Object.prototype.toString.call(obj) === '[object String]';
 		},
-		getCookie: function(cookieName){
-			var cookiesArr = document.cookie.split(";");
+		sortWithAscii : function(str) { // 按ASCII排序
+			return Array.prototype.sort.call(Array.from(str), function(a, b) {
+			    return a.charCodeAt(0) - b.charCodeAt(0); // (a,b)=>(a.charCodeAt(0) - b.charCodeAt(0))
+			}).join('');
+		},
+		getCookie: function(cookieName, cookies) {
+			if (!cookies) {
+				cookies = document.cookie;
+			}
+			var cookiesArr = cookies.split(";");
 			for(var i = 0; i < cookiesArr.length; i++){
 				var cookie = cookiesArr[i].split("=");
 				var value = cookie[1];

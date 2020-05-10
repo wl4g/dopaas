@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.security.xsrf.handler;
+package com.wl4g.devops.iam.common.security.replay.handler;
 
 import java.io.IOException;
 
@@ -21,16 +21,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wl4g.devops.common.exception.iam.AccessRejectedException;
-
 /**
- * {@link AccessRejectHandler}
+ * {@link ReplayRejectHandler}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月27日
  * @since
  */
-public interface AccessRejectHandler {
+public interface ReplayRejectHandler {
 
 	/**
 	 * Handles an access denied failure.
@@ -47,7 +45,7 @@ public interface AccessRejectHandler {
 	 * @throws ServletException
 	 *             in the event of a ServletException
 	 */
-	void handle(HttpServletRequest request, HttpServletResponse response, AccessRejectedException rejectException)
+	void handle(HttpServletRequest request, HttpServletResponse response, ReplayException re)
 			throws IOException, ServletException;
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.security.replay.exception;
+package com.wl4g.devops.iam.common.security.replay.handler;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,7 +27,7 @@ import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
  * @version v1.0 2020年4月27日
  * @since
  */
-public class InvalidReplayTokenException extends ReplayTokenException {
+public class InvalidReplayTimestampException extends InvalidReplayTokenException {
 	private static final long serialVersionUID = -6917353257503001262L;
 
 	/**
@@ -35,7 +35,7 @@ public class InvalidReplayTokenException extends ReplayTokenException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public InvalidReplayTokenException() {
+	public InvalidReplayTimestampException() {
 		super();
 	}
 
@@ -48,7 +48,7 @@ public class InvalidReplayTokenException extends ReplayTokenException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public InvalidReplayTokenException(String message) {
+	public InvalidReplayTimestampException(String message) {
 		super(message);
 	}
 
@@ -69,7 +69,7 @@ public class InvalidReplayTokenException extends ReplayTokenException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public InvalidReplayTokenException(String message, Throwable cause) {
+	public InvalidReplayTimestampException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -87,7 +87,7 @@ public class InvalidReplayTokenException extends ReplayTokenException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public InvalidReplayTokenException(Throwable cause) {
+	public InvalidReplayTimestampException(Throwable cause) {
 		super(cause);
 	}
 

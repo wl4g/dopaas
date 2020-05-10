@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.security.replay.exception;
+package com.wl4g.devops.iam.common.security.replay.handler;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.common.exception.restful.RESTfulException;
+import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
 
 /**
@@ -27,7 +30,7 @@ import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
  * @version v1.0 2020年4月27日
  * @since
  */
-public class InvalidReplayTimestampException extends InvalidReplayTokenException {
+public class ReplayException extends IamException implements RESTfulException {
 	private static final long serialVersionUID = -6917353257503001262L;
 
 	/**
@@ -35,7 +38,7 @@ public class InvalidReplayTimestampException extends InvalidReplayTokenException
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public InvalidReplayTimestampException() {
+	public ReplayException() {
 		super();
 	}
 
@@ -48,7 +51,7 @@ public class InvalidReplayTimestampException extends InvalidReplayTokenException
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public InvalidReplayTimestampException(String message) {
+	public ReplayException(String message) {
 		super(message);
 	}
 
@@ -69,7 +72,7 @@ public class InvalidReplayTimestampException extends InvalidReplayTokenException
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public InvalidReplayTimestampException(String message, Throwable cause) {
+	public ReplayException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -87,8 +90,13 @@ public class InvalidReplayTimestampException extends InvalidReplayTokenException
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public InvalidReplayTimestampException(Throwable cause) {
+	public ReplayException(Throwable cause) {
 		super(cause);
+	}
+
+	@Override
+	public RetCode getCode() {
+		return RetCode.LOCKD_ERR;
 	}
 
 }

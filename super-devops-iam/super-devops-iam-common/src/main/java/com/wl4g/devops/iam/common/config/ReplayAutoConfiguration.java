@@ -16,15 +16,18 @@
 package com.wl4g.devops.iam.common.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import com.wl4g.devops.iam.common.security.replay.ReplayProtectionSecurityInterceptor;
+import com.wl4g.devops.iam.common.security.replay.ReplayProtectionSecurityFilter;
 import com.wl4g.devops.iam.common.security.replay.RequiresReplayMatcher;
+import com.wl4g.devops.iam.common.security.replay.handler.DefaultReplayRejectHandler;
+import com.wl4g.devops.iam.common.security.replay.handler.ReplayRejectHandler;
 
+import static com.wl4g.devops.iam.common.config.AbstractIamConfiguration.ORDER_REPAY_PRECEDENCE;
 import static com.wl4g.devops.iam.common.config.ReplayProperties.KEY_REPLAY_PREFIX;
 
 /**
@@ -34,7 +37,7 @@ import static com.wl4g.devops.iam.common.config.ReplayProperties.KEY_REPLAY_PREF
  * @version v1.0 2020年05月06日
  * @since
  */
-public class ReplayAutoConfiguration extends WebMvcConfigurerAdapter {
+public class ReplayAutoConfiguration {
 
 	//
 	// R E P L A Y _ P R O T E C T I O N _ C O N F I G's.
@@ -55,13 +58,27 @@ public class ReplayAutoConfiguration extends WebMvcConfigurerAdapter {
 
 	@Bean
 	@ConditionalOnBean(ReplayProperties.class)
-	public ReplayProtectionSecurityInterceptor replayProtectionSecurityInterceptor() {
-		return new ReplayProtectionSecurityInterceptor();
+	@ConditionalOnMissingBean(ReplayRejectHandler.class)
+	public DefaultReplayRejectHandler defaultReplayRejectHandler() {
+		return new DefaultReplayRejectHandler();
 	}
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(replayProtectionSecurityInterceptor()).addPathPatterns("/**");
+	@Bean
+	@ConditionalOnBean(ReplayProperties.class)
+	public ReplayProtectionSecurityFilter replayProtectionSecurityFilter() {
+		return new ReplayProtectionSecurityFilter();
+	}
+
+	@Bean
+	@ConditionalOnBean(ReplayProperties.class)
+	public FilterRegistrationBean replayProtectionSecurityFilterBean(ReplayProtectionSecurityFilter filter) {
+		// Register XSRF filter
+		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		filterBean.setOrder(ORDER_REPAY_PRECEDENCE);
+		// Cannot use '/*' or it will not be added to the container chain (only
+		// '/**')
+		filterBean.addUrlPatterns("/*"); // TODO config?
+		return filterBean;
 	}
 
 }

@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.security.replay.exception;
+package com.wl4g.devops.iam.common.security.replay.handler;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.wl4g.devops.common.exception.iam.IamException;
-import com.wl4g.devops.common.exception.restful.RESTfulException;
-import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
 
 /**
@@ -30,7 +27,7 @@ import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
  * @version v1.0 2020年4月27日
  * @since
  */
-public class ReplayTokenException extends IamException implements RESTfulException {
+public class LockedReplayTokenException extends ReplayException {
 	private static final long serialVersionUID = -6917353257503001262L;
 
 	/**
@@ -38,7 +35,7 @@ public class ReplayTokenException extends IamException implements RESTfulExcepti
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public ReplayTokenException() {
+	public LockedReplayTokenException() {
 		super();
 	}
 
@@ -51,7 +48,7 @@ public class ReplayTokenException extends IamException implements RESTfulExcepti
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public ReplayTokenException(String message) {
+	public LockedReplayTokenException(String message) {
 		super(message);
 	}
 
@@ -72,7 +69,7 @@ public class ReplayTokenException extends IamException implements RESTfulExcepti
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public ReplayTokenException(String message, Throwable cause) {
+	public LockedReplayTokenException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -90,13 +87,8 @@ public class ReplayTokenException extends IamException implements RESTfulExcepti
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public ReplayTokenException(Throwable cause) {
+	public LockedReplayTokenException(Throwable cause) {
 		super(cause);
-	}
-
-	@Override
-	public RetCode getCode() {
-		return RetCode.LOCKD_ERR;
 	}
 
 }
