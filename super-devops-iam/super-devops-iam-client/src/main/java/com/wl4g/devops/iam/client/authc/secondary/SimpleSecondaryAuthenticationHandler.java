@@ -50,7 +50,7 @@ import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.client.annotation.SecondaryAuthenticate;
-import com.wl4g.devops.iam.common.authc.SecondAuthenticationException;
+import com.wl4g.devops.iam.common.authc.SecondaryAuthenticationException;
 import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
@@ -220,7 +220,7 @@ public class SimpleSecondaryAuthenticationHandler implements SecondaryAuthentica
 	 */
 	private void doRemoteValidate(String authCode, SecondaryAuthenticate annotation) {
 		if (StringUtils.isEmpty(authCode)) {
-			throw new SecondAuthenticationException("Empty second authentication code");
+			throw new SecondaryAuthenticationException("Empty second authentication code");
 		}
 
 		// Validation URL
@@ -235,7 +235,7 @@ public class SimpleSecondaryAuthenticationHandler implements SecondaryAuthentica
 			SecondAuthcAssertModel assertion = resp.getData();
 			if (!(assertion != null && assertion.getStatus() != null && assertion.getStatus() == Authenticated
 					&& valueOf(assertion.getFunctionId()).equals(annotation.funcId()))) {
-				throw new SecondAuthenticationException(assertion.getErrdesc());
+				throw new SecondaryAuthenticationException(assertion.getErrdesc());
 			}
 		} else {
 			throw new IamException(format("Secondary authc error. %s", toJSONString(resp)));

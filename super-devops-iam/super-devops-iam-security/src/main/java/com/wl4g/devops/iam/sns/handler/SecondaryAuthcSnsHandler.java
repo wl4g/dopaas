@@ -34,7 +34,7 @@ import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Stat
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.InvalidAuthorizer;
 
 import com.google.common.base.Splitter;
-import com.wl4g.devops.iam.common.authc.SecondAuthenticationException;
+import com.wl4g.devops.iam.common.authc.SecondaryAuthenticationException;
 import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
@@ -58,14 +58,14 @@ import com.wl4g.devops.tool.common.web.WebUtils2;
  * @version v1.0 2019年2月24日
  * @since
  */
-public class SecondAuthcSnsHandler extends AbstractSnsHandler {
+public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 
 	/**
 	 * Secondary authentication cache name
 	 */
 	final public static String SECOND_AUTHC_CACHE = "second_auth_";
 
-	public SecondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
+	public SecondaryAuthcSnsHandler(IamProperties config, SnsProperties snsConfig, OAuth2ApiBindingFactory connectFactory,
 			ServerSecurityConfigurer context) {
 		super(config, snsConfig, connectFactory, context);
 	}
@@ -140,7 +140,7 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 			assertionSecondAuthentication(provider, openId, account, authorizers, connectParams);
 			model.setPrincipal(account.getPrincipal());
 			model.setValidFromDate(new Date());
-		} catch (SecondAuthenticationException e) {
+		} catch (SecondaryAuthenticationException e) {
 			log.error("Secondary authentication fail", e);
 			model.setStatus(e.getStatus());
 			model.setErrdesc(e.getMessage());
@@ -185,13 +185,13 @@ public class SecondAuthcSnsHandler extends AbstractSnsHandler {
 			Map<String, String> connectParams) {
 		// Check authorizer effectiveness
 		if (isNull(account) || isBlank(account.getPrincipal())) {
-			throw new SecondAuthenticationException(InvalidAuthorizer, format("Invalid authorizer, openId info[%s]", openId));
+			throw new SecondaryAuthenticationException(InvalidAuthorizer, format("Invalid authorizer, openId info[%s]", openId));
 		}
 		// Check authorizer matches
 		else {
 			List<String> authorizerList = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(authorizers);
 			if (!authorizerList.contains(account.getPrincipal())) {
-				throw new SecondAuthenticationException(IllegalAuthorizer, String.format(
+				throw new SecondaryAuthenticationException(IllegalAuthorizer, String.format(
 						"Illegal authorizer, Please use [%s] account authorization bound by user [%s]", provider, authorizers));
 			}
 		}
