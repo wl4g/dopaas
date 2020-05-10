@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.security.xsrf.handler;
+package com.wl4g.devops.iam.common.security.replay.handler;
 
 import java.io.IOException;
 
@@ -21,21 +21,24 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.wl4g.devops.common.exception.iam.AccessRejectedException;
+import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.tool.common.web.WebUtils2;
 
 /**
- * {@link DefaultAccessRejectHandler}
+ * {@link DefaultReplayRejectHandler}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月27日
  * @since
  */
-public class DefaultAccessRejectHandler implements AccessRejectHandler {
+public class DefaultReplayRejectHandler implements ReplayRejectHandler {
 
 	@Override
-	public void handle(HttpServletRequest request, HttpServletResponse response, AccessRejectedException rejectException)
+	public void handle(HttpServletRequest request, HttpServletResponse response, ReplayException re)
 			throws IOException, ServletException {
-
+		RespBase<String> resp = RespBase.create();
+		resp.handleError(re);
+		WebUtils2.writeJson(response, resp.asJson());
 	}
 
 }

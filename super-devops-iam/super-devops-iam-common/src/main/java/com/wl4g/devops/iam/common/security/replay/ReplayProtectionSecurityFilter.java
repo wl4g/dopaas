@@ -20,40 +20,48 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.config.ReplayProperties;
-import com.wl4g.devops.iam.common.security.replay.exception.InvalidReplayTimestampException;
-import com.wl4g.devops.iam.common.security.replay.exception.InvalidReplayTokenException;
-import com.wl4g.devops.iam.common.security.replay.exception.LockedReplayTokenException;
-import com.wl4g.devops.iam.common.security.replay.exception.ReplayTokenException;
+import com.wl4g.devops.iam.common.security.replay.handler.InvalidReplayTimestampException;
+import com.wl4g.devops.iam.common.security.replay.handler.InvalidReplayTokenException;
+import com.wl4g.devops.iam.common.security.replay.handler.LockedReplayTokenException;
+import com.wl4g.devops.iam.common.security.replay.handler.MissingReplayTokenException;
+import com.wl4g.devops.iam.common.security.replay.handler.ReplayException;
+import com.wl4g.devops.iam.common.security.replay.handler.ReplayRejectHandler;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.tool.common.codec.CheckSums.crc16String;
 import static org.apache.commons.codec.binary.Hex.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_REPLAY_SIGN;
 import static com.wl4g.devops.tool.common.crypto.digest.DigestUtils2.*;
 
 /**
- * Replay attacks request protection security interceptor.
+ * Replay attacks request protection security filter.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年5月7日
  * @since
  */
-public final class ReplayProtectionSecurityInterceptor implements HandlerInterceptor {
+public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 
 	protected SmartLogger log = getLogger(getClass());
 
@@ -78,46 +86,51 @@ public final class ReplayProtectionSecurityInterceptor implements HandlerInterce
 	protected ReplayMatcher replayProtectMatcher;
 
 	/**
+	 * Replay reject handler
+	 */
+	@Autowired
+	protected ReplayRejectHandler rejectHandler;
+
+	/**
 	 * Iam cache manager.
 	 */
 	@Autowired
 	protected IamCacheManager cacheManager;
 
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
 		String requestPath = getPathWithinApplication(toHttp(request));
 
 		// Ignore non replay request methods.
 		if (!replayProtectMatcher.matches(request)) {
 			log.debug("Skip replay protection of: {}", requestPath);
-			return true;
+			filterChain.doFilter(request, response);
+			return;
 		}
 
 		// Ignore exclude URLs XSRF validation.
 		for (String pattern : rconfig.getExcludeValidUriPatterns()) {
 			if (defaultExcludeReplayMatcher.matchStart(pattern, requestPath)) {
 				log.debug("Skip exclude url replay valid '{}'", requestPath);
-				return true;
+				filterChain.doFilter(request, response);
+				return;
 			}
 		}
 
 		// Replay token validation
 		ReplayToken replayToken = getRequestReplayToken(request, response);
 
-		// Assertion replay token.
-		assertReplayTokenValidity(replayToken, request, requestPath);
+		try {
+			// Assertion replay token.
+			assertReplayTokenValidity(replayToken, request, requestPath);
+		} catch (ReplayException re) {
+			log.debug("Reject invalid repley token", re);
+			rejectHandler.handle(request, response, re);
+			return;
+		}
 
-		return true;
-	}
-
-	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
-			throws Exception {
-	}
-
-	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
-			throws Exception {
+		filterChain.doFilter(request, response);
 	}
 
 	/**
@@ -126,15 +139,19 @@ public final class ReplayProtectionSecurityInterceptor implements HandlerInterce
 	 * @param replayToken
 	 * @param request
 	 * @param requestPath
-	 * @throws ReplayTokenException
+	 * @throws ReplayException
 	 */
 	protected void assertReplayTokenValidity(ReplayToken replayToken, HttpServletRequest request, String requestPath)
-			throws ReplayTokenException {
+			throws ReplayException {
+		if (isNull(replayToken)) {
+			throw new MissingReplayTokenException(format("Missing replay token, Request: %s", requestPath));
+		}
+
 		// Check replay timestamp offset.
 		long now = currentTimeMillis();
 		if (abs(now - replayToken.getTimestamp()) >= rconfig.getTermTimeMs()) {
 			throw new InvalidReplayTimestampException(
-					format("Invalid timestamp: %s, now: %s, uri: %s", replayToken.getTimestamp(), now, requestPath));
+					format("Invalid timestamp: %s, now: %s, Request: %s", replayToken.getTimestamp(), now, requestPath));
 		}
 
 		// Put replay token.
@@ -142,15 +159,26 @@ public final class ReplayProtectionSecurityInterceptor implements HandlerInterce
 		final boolean islegalRequest = cacheManager.getIamCache(CACHE_REPLAY_SIGN).putIfAbsent(key, requestPath);
 		if (!islegalRequest) { // Replay request locked?
 			throw new LockedReplayTokenException(
-					format("Locked replay token signature: %s, uri: %s", replayToken.getSignature(), requestPath));
+					format("Locked replay token signature: %s, Request: %s", replayToken.getSignature(), requestPath));
 		}
 
 		// Validation signature.
-		String plainSign = replayToken.getNonce() + replayToken.getTimestamp();
-		String cipherSign = encodeHexString(getDigest(rconfig.getSignatureAlg()).digest(plainSign.getBytes(UTF_8)));
+		char[] plainSignChars = (replayToken.getNonce() + replayToken.getTimestamp()).toCharArray();
+		// Ascii sort
+		Arrays.sort(plainSignChars);
+		String sortedPlainSign = new String(plainSignChars);
+		// Gets crc16
+		long replayTokenPlainCrc16 = crc16String(sortedPlainSign);
+		// Gets iters
+		int iters = (int) (replayTokenPlainCrc16 % plainSignChars.length / Math.PI) + 1;
+		// Gets signature
+		String cipherSign = sortedPlainSign;
+		for (int i = 0; i < iters; i++) {
+			cipherSign = encodeHexString(getDigest(rconfig.getSignatureAlg()).digest(cipherSign.getBytes(UTF_8)));
+		}
 		if (!equalsIgnoreCase(cipherSign, replayToken.getSignature())) {
 			throw new InvalidReplayTokenException(
-					format("Invalid replay token signature: %s, uri: %s", replayToken.getSignature(), requestPath));
+					format("Invalid replay token signature: %s, Request: %s", replayToken.getSignature(), requestPath));
 		}
 
 	}
@@ -165,7 +193,7 @@ public final class ReplayProtectionSecurityInterceptor implements HandlerInterce
 	protected ReplayToken getRequestReplayToken(HttpServletRequest request, HttpServletResponse response) {
 		String replayTokenCode = request.getHeader(rconfig.getReplayTokenHeaderName());
 		replayTokenCode = isBlank(replayTokenCode) ? getCleanParam(request, rconfig.getReplayTokenParamName()) : replayTokenCode;
-		return DefaultReplayToken.build(replayTokenCode);
+		return !isBlank(replayTokenCode) ? DefaultReplayToken.build(replayTokenCode) : null;
 	}
 
 	/**

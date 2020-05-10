@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ * Copyright 2002-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.security.replay.exception;
-
-import javax.servlet.http.HttpServletRequest;
+package com.wl4g.devops.iam.common.security.replay.handler;
 
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
 
 /**
- * Thrown when an expected {@link XsrfToken} exists, but it does not match the
- * value present on the {@link HttpServletRequest}
+ * Thrown when no expected {@link XsrfToken} is found but is required.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月27日
  * @since
  */
-public class LockedReplayTokenException extends ReplayTokenException {
-	private static final long serialVersionUID = -6917353257503001262L;
+public class MissingReplayTokenException extends ReplayException {
+	private static final long serialVersionUID = 5710085585010069884L;
 
 	/**
 	 * Constructs a new runtime exception with {@code null} as its detail
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public LockedReplayTokenException() {
+	public MissingReplayTokenException() {
 		super();
 	}
 
@@ -48,7 +45,7 @@ public class LockedReplayTokenException extends ReplayTokenException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public LockedReplayTokenException(String message) {
+	public MissingReplayTokenException(String message) {
 		super(message);
 	}
 
@@ -69,7 +66,7 @@ public class LockedReplayTokenException extends ReplayTokenException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public LockedReplayTokenException(String message, Throwable cause) {
+	public MissingReplayTokenException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -87,7 +84,7 @@ public class LockedReplayTokenException extends ReplayTokenException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public LockedReplayTokenException(Throwable cause) {
+	public MissingReplayTokenException(Throwable cause) {
 		super(cause);
 	}
 
