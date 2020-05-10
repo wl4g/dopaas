@@ -77,8 +77,16 @@
 		isString : function (obj) {
 		    return Object.prototype.toString.call(obj) === '[object String]';
 		},
-		getCookie: function(cookieName){
-			var cookiesArr = document.cookie.split(";");
+		sortWithAscii : function(str) { // 按ASCII排序
+			return Array.prototype.sort.call(Array.from(str), function(a, b) {
+			    return a.charCodeAt(0) - b.charCodeAt(0); // (a,b)=>(a.charCodeAt(0) - b.charCodeAt(0))
+			}).join('');
+		},
+		getCookie: function(cookieName, cookies) {
+			if (!cookies) {
+				cookies = document.cookie;
+			}
+			var cookiesArr = cookies.split(";");
 			for(var i = 0; i < cookiesArr.length; i++){
 				var cookie = cookiesArr[i].split("=");
 				var value = cookie[1];
@@ -2185,11 +2193,12 @@
 		return iamBaseUri;
 	};
 	// Export function getXsrfToken
-	IAMCore.getXsrfToken = function() {
+	IAMCore.getXsrfToken = function(cookies) {
 		var xsrfTokenCookieName = Common.Util.checkEmpty("definition.xsrfTokenCookieKey", settings.definition.xsrfTokenCookieKey);
 		var xsrfTokenHeaderName = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
 		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
-		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName);
+		// Gets xsrf from cookie.
+		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName, cookies);
 		return {
 			headerName: xsrfTokenHeaderName,
 			paramName: xsrfTokenParamName,
@@ -2203,8 +2212,17 @@
 		for (var i=0; i<2; i++) {
 			nonce += Math.random().toString(36).substr(2);
 		}
-		// Signature replay token
-		var signature = CryptoJS.MD5(nonce + timestamp).toString(CryptoJS.enc.Hex);
+		// Signature replay token.
+		var replayTokenPlain = Common.Util.sortWithAscii(nonce + timestamp); // Ascii sort
+		// Gets crc16
+		var replayTokenPlainCrc16 = Common.Util.Crc16CheckSum.crc16Modbus(replayTokenPlain);
+		// Gets iters
+		var iters = parseInt(replayTokenPlainCrc16 % replayTokenPlain.length / Math.PI) + 1;
+		// Gets signature
+		var signature = replayTokenPlain;
+		for (var i=0; i<iters; i++) {
+			signature = CryptoJS.MD5(signature).toString(CryptoJS.enc.Hex);
+		}
 		var replayTokenPlain = JSON.stringify({
 			"n": nonce, // nonce
 			"t": timestamp, // timestamp
