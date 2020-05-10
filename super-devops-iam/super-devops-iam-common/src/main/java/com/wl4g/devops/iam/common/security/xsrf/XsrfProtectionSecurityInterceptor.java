@@ -22,16 +22,13 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.wl4g.devops.iam.common.config.XsrfProperties;
 import com.wl4g.devops.iam.common.security.xsrf.handler.AccessRejectHandler;
@@ -46,10 +43,10 @@ import com.wl4g.devops.tool.common.log.SmartLogger;
  * Applies
  * <a href="https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(XSRF)"
  * >XSRF</a> protection using a synchronizer token pattern. Developers are
- * required to ensure that {@link XsrfProtectionSecurityFilter} is invoked for
- * any request that allows state to change. Typically this just means that they
- * should ensure their web application follows proper REST semantics (i.e. do
- * not change state with the HTTP methods GET, HEAD, TRACE, OPTIONS).
+ * required to ensure that {@link XsrfProtectionSecurityInterceptor} is invoked
+ * for any request that allows state to change. Typically this just means that
+ * they should ensure their web application follows proper REST semantics (i.e.
+ * do not change state with the HTTP methods GET, HEAD, TRACE, OPTIONS).
  * </p>
  *
  * <p>
@@ -60,7 +57,7 @@ import com.wl4g.devops.tool.common.log.SmartLogger;
  * @version v1.0 2020年4月27日
  * @since
  */
-public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
+public final class XsrfProtectionSecurityInterceptor implements HandlerInterceptor {
 
 	protected SmartLogger log = getLogger(getClass());
 
@@ -99,23 +96,20 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 	private AccessRejectHandler rejectHandler;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		String requestPath = getPathWithinApplication(toHttp(request));
 
 		// Ignore non replay request methods.
 		if (!xsrfProtectMatcher.matches(request)) {
 			log.debug("Skip xsrf protection of: {}", requestPath);
-			filterChain.doFilter(request, response);
-			return;
+			return true;
 		}
 
 		// Ignore exclude URLs XSRF validation.
 		for (String pattern : xconfig.getExcludeValidUriPatterns()) {
 			if (defaultExcludeXsrfMatcher.matchStart(pattern, requestPath)) {
 				log.debug("Skip exclude url xsrf valid '{}'", requestPath);
-				filterChain.doFilter(request, response);
-				return;
+				return true;
 			}
 		}
 
@@ -139,10 +133,20 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 			} else {
 				rejectHandler.handle(request, response, new InvalidXsrfTokenException(xsrfToken, actualToken));
 			}
-			return;
+			return false;
 		}
 
-		filterChain.doFilter(request, response);
+		return true;
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
+			throws Exception {
+	}
+
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception {
 	}
 
 	/**

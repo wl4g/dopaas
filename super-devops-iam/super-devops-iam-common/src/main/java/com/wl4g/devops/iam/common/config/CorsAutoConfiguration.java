@@ -26,7 +26,7 @@ import static com.wl4g.devops.iam.common.config.CorsProperties.KEY_CORS_PREFIX;
 import static com.wl4g.devops.iam.common.config.AbstractIamConfiguration.ORDER_CORS_PRECEDENCE;
 
 import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter;
-import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter.AdvancedCorsProcessor;
+import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter.IamCorsProcessor;
 
 /**
  * Cors protection auto configuration.
@@ -50,13 +50,13 @@ public class CorsAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean(CorsProperties.class)
-	public AdvancedCorsProcessor advancedCorsProcessor() {
-		return new AdvancedCorsProcessor();
+	public IamCorsProcessor advancedCorsProcessor() {
+		return new IamCorsProcessor();
 	}
 
 	@Bean
 	@ConditionalOnBean(CorsProperties.class)
-	public CorsSecurityFilter corsSecurityFilter(CorsProperties config, AdvancedCorsProcessor corsProcessor) {
+	public CorsSecurityFilter corsSecurityFilter(CorsProperties config, IamCorsProcessor corsProcessor) {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		// Merger transformation configuration
 		config.getRules().forEach((key, rule) -> source.registerCorsConfiguration(key, rule.resolveIamCorsConfiguration()));

@@ -26,16 +26,13 @@ import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
@@ -50,13 +47,13 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_REPLAY_S
 import static com.wl4g.devops.tool.common.crypto.digest.DigestUtils2.*;
 
 /**
- * Replay attacks request protection security filter.
+ * Replay attacks request protection security interceptor.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年5月7日
  * @since
  */
-public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
+public final class ReplayProtectionSecurityInterceptor implements HandlerInterceptor {
 
 	protected SmartLogger log = getLogger(getClass());
 
@@ -87,23 +84,20 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 	protected IamCacheManager cacheManager;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		String requestPath = getPathWithinApplication(toHttp(request));
 
 		// Ignore non replay request methods.
 		if (!replayProtectMatcher.matches(request)) {
 			log.debug("Skip replay protection of: {}", requestPath);
-			filterChain.doFilter(request, response);
-			return;
+			return true;
 		}
 
 		// Ignore exclude URLs XSRF validation.
 		for (String pattern : rconfig.getExcludeValidUriPatterns()) {
 			if (defaultExcludeReplayMatcher.matchStart(pattern, requestPath)) {
 				log.debug("Skip exclude url replay valid '{}'", requestPath);
-				filterChain.doFilter(request, response);
-				return;
+				return true;
 			}
 		}
 
@@ -113,7 +107,17 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 		// Assertion replay token.
 		assertReplayTokenValidity(replayToken, request, requestPath);
 
-		filterChain.doFilter(request, response);
+		return true;
+	}
+
+	@Override
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
+			throws Exception {
+	}
+
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception {
 	}
 
 	/**

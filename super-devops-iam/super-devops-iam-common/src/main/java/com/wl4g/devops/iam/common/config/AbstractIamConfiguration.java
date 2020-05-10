@@ -346,8 +346,6 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	//
 
 	final public static int ORDER_CORS_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 9;
-	final public static int ORDER_XSRF_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 10;
 	final public static int ORDER_CIPHER_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 11;
-	final public static int ORDER_REPAY_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 12;
 
 }
