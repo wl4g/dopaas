@@ -18,17 +18,21 @@ package com.wl4g.devops.erm.service;
 import com.wl4g.devops.common.bean.erm.HostNetcard;
 import com.wl4g.devops.page.PageModel;
 
+import java.util.Map;
+
 /**
  * @author vjay
  * @date 2019-11-14 14:10:00
  */
 public interface HostNetcardService {
 
-	PageModel page(PageModel pm, Integer hostId);
+	PageModel page(PageModel pm, Integer hostId, String name);
 
 	void save(HostNetcard hostNetcard);
 
 	HostNetcard detail(Integer id);
 
 	void del(Integer id);
+
+	Map<String, Object> getHostTunnel();
 }

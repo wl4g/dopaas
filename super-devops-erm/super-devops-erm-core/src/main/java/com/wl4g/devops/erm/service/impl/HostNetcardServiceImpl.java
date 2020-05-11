@@ -18,7 +18,6 @@ package com.wl4g.devops.erm.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.erm.HostNetcard;
-import com.wl4g.devops.common.bean.erm.HostTunnel;
 import com.wl4g.devops.common.bean.erm.HostTunnelOpenvpn;
 import com.wl4g.devops.common.bean.erm.HostTunnelPptp;
 import com.wl4g.devops.dao.erm.HostNetcardDao;
@@ -30,8 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 import static java.util.Objects.isNull;
 
@@ -52,9 +52,9 @@ public class HostNetcardServiceImpl implements HostNetcardService {
     private HostTunnelPptpDao hostTunnelPptpDao;
 
     @Override
-    public PageModel page(PageModel pm,Integer hostId) {
+    public PageModel page(PageModel pm,Integer hostId,String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(null);
+        pm.setRecords(appHostNetCardDao.list(hostId,name));
         return pm;
     }
 
@@ -76,12 +76,13 @@ public class HostNetcardServiceImpl implements HostNetcardService {
         appHostNetCardDao.updateByPrimaryKeySelective(hostNetcard);
     }
 
-
+    @Override
     public HostNetcard detail(Integer id){
         Assert.notNull(id,"id is null");
         return appHostNetCardDao.selectByPrimaryKey(id);
     }
 
+    @Override
     public void del(Integer id){
         Assert.notNull(id,"id is null");
         HostNetcard hostNetcard = new HostNetcard();
@@ -90,14 +91,14 @@ public class HostNetcardServiceImpl implements HostNetcardService {
         appHostNetCardDao.updateByPrimaryKeySelective(hostNetcard);
     }
 
-
-    private <T extends HostTunnel> List<HostTunnel> getHostTunnelByType(Integer vpnTunnelType){
-        if(Objects.nonNull(vpnTunnelType)&& vpnTunnelType.equals(2)){
-            List<HostTunnelOpenvpn> hostTunnelOpenvpns = hostTunnelOpenvpnDao.selectAll();
-        }else if(Objects.nonNull(vpnTunnelType)&& vpnTunnelType.equals(3)){
+    @Override
+    public Map<String, Object> getHostTunnel(){
+        Map<String, Object> resutl = new HashMap<>();
+        List<HostTunnelOpenvpn> hostTunnelOpenvpns = hostTunnelOpenvpnDao.selectAll();
             List<HostTunnelPptp> hostTunnelPptps = hostTunnelPptpDao.selectAll();
-        }
-        return null;
+        resutl.put("openvpn",hostTunnelOpenvpns);
+        resutl.put("pptp",hostTunnelPptps);
+        return resutl;
     }
 
 
