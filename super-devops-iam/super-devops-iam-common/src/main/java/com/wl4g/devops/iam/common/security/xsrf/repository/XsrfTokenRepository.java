@@ -49,14 +49,14 @@ public interface XsrfTokenRepository {
 	 * {@link HttpServletResponse}. If the {@link XsrfToken} is null, it is the
 	 * same as deleting it.
 	 *
-	 * @param token
+	 * @param xtoken
 	 *            the {@link XsrfToken} to save or null to delete
 	 * @param request
 	 *            the {@link HttpServletRequest} to use
 	 * @param response
 	 *            the {@link HttpServletResponse} to use
 	 */
-	void saveXToken(XsrfToken token, HttpServletRequest request, HttpServletResponse response);
+	void saveXToken(XsrfToken xtoken, HttpServletRequest request, HttpServletResponse response);
 
 	/**
 	 * Loads the expected {@link XsrfToken} from the {@link HttpServletRequest}

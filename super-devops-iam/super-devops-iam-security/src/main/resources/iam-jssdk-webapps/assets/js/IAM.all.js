@@ -1391,6 +1391,7 @@
 			smsApplyUri: "/verify/applysmsverify", // 申请SMS验证码URI后缀
 			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
+			applyXsrfTokenUrlKey: "/xsrf/token", // 申请xsrfToken接口地址
 			xsrfTokenCookieKey: "IAM-XSRF-TOKEN", // xsrfToken保存的cookie名
 			xsrfTokenHeaderKey: "X-Iam-Xsrf-Token", // xsrfToken保存的header名
 			xsrfTokenParamKey: "_xsrf", // xsrfToken保存的Param名
@@ -2199,6 +2200,23 @@
 		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
 		// Gets xsrf from cookie.
 		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName, cookies);
+		// First visit? init xsrf token
+		if (!xsrfToken) {
+			//console.debug("Initializing xsrf token...");
+			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
+			$.ajax({
+				url: applyXsrfTokenUrl,
+				type: 'HEAD',
+				async: false,
+				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+				success: function(res, textStatus, jqxhr){
+					xsrfToken = Common.Util.getCookie(xsrfTokenCookieName);
+				},
+				error: function(req, status, errmsg){
+					console.debug("Failed to init xsrf token. " + errmsg);
+				}
+			});
+		}
 		return {
 			headerName: xsrfTokenHeaderName,
 			paramName: xsrfTokenParamName,

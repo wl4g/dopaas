@@ -155,7 +155,8 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 		}
 
 		// Put replay token.
-		CacheKey key = new CacheKey(replayToken.getSignature(), rconfig.getTermTimeMs());
+		long expireMs = rconfig.getTermTimeMs() + DEFAULT_REPLAY_CACHE_TERM_OFFSET_MS;
+		CacheKey key = new CacheKey(replayToken.getSignature(), expireMs);
 		final boolean islegalRequest = cacheManager.getIamCache(CACHE_REPLAY_SIGN).putIfAbsent(key, requestPath);
 		if (!islegalRequest) { // Replay request locked?
 			throw new LockedReplayTokenException(
@@ -200,5 +201,10 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 	 * Exclude replay attacks validation URLs mapping matcher.
 	 */
 	final private static AntPathMatcher defaultExcludeUriReplayMatcher = new AntPathMatcher();
+
+	/**
+	 * Default replay token to cache termTime safety offset.
+	 */
+	final private static long DEFAULT_REPLAY_CACHE_TERM_OFFSET_MS = 1 * 60 * 1000L;
 
 }
