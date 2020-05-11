@@ -20,15 +20,15 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from app_host
+    from erm_host
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from app_host
+    delete from erm_host
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.Host" >
-    insert into app_host (id, name, hostname, 
+    insert into erm_host (id, name, hostname,
       idc_id, status, create_date, 
       create_by, update_date, update_by, 
       del_flag)
@@ -38,7 +38,7 @@
       #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.Host" useGeneratedKeys="true" keyProperty="id">
-    insert into app_host
+    insert into erm_host
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -105,7 +105,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.Host" >
-    update app_host
+    update erm_host
     <set >
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -138,7 +138,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.Host" >
-    update app_host
+    update erm_host
     set name = #{name,jdbcType=VARCHAR},
       hostname = #{hostname,jdbcType=VARCHAR},
       idc_id = #{idcId,jdbcType=INTEGER},
@@ -154,7 +154,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List"/>
-    from app_host
+    from erm_host
     where del_flag!=1
     <if test="name != null and name != ''" >
       AND `name` LIKE CONCAT('%','${name}','%')

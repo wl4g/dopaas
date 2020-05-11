@@ -12,9 +12,9 @@
     <result column="adress" jdbcType="VARCHAR" property="adress" />
     <result column="time_zone" jdbcType="VARCHAR" property="timeZone" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
-    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_by" jdbcType="INTEGER" property="createBy" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
-    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_by" jdbcType="INTEGER" property="updateBy" />
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -40,8 +40,8 @@
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{areaCode,jdbcType=VARCHAR}, 
       #{provider,jdbcType=VARCHAR}, #{locX,jdbcType=VARCHAR}, #{locY,jdbcType=VARCHAR}, 
       #{enable,jdbcType=INTEGER}, #{adress,jdbcType=VARCHAR}, #{timeZone,jdbcType=VARCHAR}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER})
+      #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP},
+      #{updateBy,jdbcType=INTEGER}, #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.Idc">
     insert into erm_idc
@@ -121,13 +121,13 @@
         #{createDate,jdbcType=TIMESTAMP},
       </if>
       <if test="createBy != null">
-        #{createBy,jdbcType=VARCHAR},
+        #{createBy,jdbcType=INTEGER},
       </if>
       <if test="updateDate != null">
         #{updateDate,jdbcType=TIMESTAMP},
       </if>
       <if test="updateBy != null">
-        #{updateBy,jdbcType=VARCHAR},
+        #{updateBy,jdbcType=INTEGER},
       </if>
       <if test="delFlag != null">
         #{delFlag,jdbcType=INTEGER},
@@ -165,13 +165,13 @@
         create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
       <if test="createBy != null">
-        create_by = #{createBy,jdbcType=VARCHAR},
+        create_by = #{createBy,jdbcType=INTEGER},
       </if>
       <if test="updateDate != null">
         update_date = #{updateDate,jdbcType=TIMESTAMP},
       </if>
       <if test="updateBy != null">
-        update_by = #{updateBy,jdbcType=VARCHAR},
+        update_by = #{updateBy,jdbcType=INTEGER},
       </if>
       <if test="delFlag != null">
         del_flag = #{delFlag,jdbcType=INTEGER},
@@ -190,10 +190,21 @@
       adress = #{adress,jdbcType=VARCHAR},
       time_zone = #{timeZone,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
-      create_by = #{createBy,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=INTEGER},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
-      update_by = #{updateBy,jdbcType=VARCHAR},
+      update_by = #{updateBy,jdbcType=INTEGER},
       del_flag = #{delFlag,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List"/>
+    from erm_idc
+    where del_flag!=1
+    <if test="name != null and name != ''" >
+      AND `name` LIKE CONCAT('%','${name}','%')
+    </if>
+  </select>
+
 </mapper>
