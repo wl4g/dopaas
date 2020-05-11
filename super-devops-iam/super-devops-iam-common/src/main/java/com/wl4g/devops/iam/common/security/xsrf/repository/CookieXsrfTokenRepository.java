@@ -72,8 +72,10 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		String xtokenValue = isNull(xtoken) ? EMPTY : xtoken.getXsrfToken();
 
 		// Delete older xsrf token from cookie.
+		int version = 0;
 		Cookie oldCookie = IamCookie.build(getCookie(request, xconfig.getXsrfCookieName()));
 		if (!isNull(oldCookie)) {
+			version = oldCookie.getVersion();
 			oldCookie.removeFrom(request, response);
 		}
 
@@ -81,6 +83,7 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		Cookie cookie = new IamCookie(coreConfig.getCookie());
 		cookie.setName(xconfig.getXsrfCookieName());
 		cookie.setValue(xtokenValue);
+		cookie.setVersion(++version);
 		cookie.setSecure(request.isSecure());
 		if (!isNull(xconfig.getCookiePath()) && !isBlank(xconfig.getCookiePath())) {
 			cookie.setPath(xconfig.getCookiePath());
@@ -94,8 +97,12 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		}
 		// For the implementation of xsrf token, for the front-end and back-end
 		// separation architecture, generally JS obtains and appends the cookie
-		// to the headers. At this time, httponly = true cannot be set
+		// to the headers. At this time, httponly=true cannot be set
 		cookie.setHttpOnly(xconfig.isCookieHttpOnly());
+		// When the root path of web application access is path='/' and the
+		// front and back ends are separately deployed, the browser
+		// document.cookie can only get cookie of path='/'
+		cookie.setPath("/");
 		cookie.saveTo(request, response);
 	}
 
