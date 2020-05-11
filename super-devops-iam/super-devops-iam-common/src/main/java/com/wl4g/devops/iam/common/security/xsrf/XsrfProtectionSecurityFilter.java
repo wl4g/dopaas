@@ -110,10 +110,10 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		// Ignore exclude URLs XSRF validation.
+		// Ignore exclude URIs XSRF validation.
 		for (String pattern : xconfig.getExcludeValidUriPatterns()) {
-			if (defaultExcludeXsrfMatcher.matchStart(pattern, requestPath)) {
-				log.debug("Skip exclude url xsrf valid '{}'", requestPath);
+			if (defaultExcludeUriXsrfMatcher.matchStart(pattern, requestPath)) {
+				log.debug("Skip exclude uri xsrf valid '{}'", requestPath);
 				filterChain.doFilter(request, response);
 				return;
 			}
@@ -148,6 +148,6 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 	/**
 	 * Exclude xsrf URLs mapping matcher.
 	 */
-	final private static AntPathMatcher defaultExcludeXsrfMatcher = new AntPathMatcher();
+	final private static AntPathMatcher defaultExcludeUriXsrfMatcher = new AntPathMatcher();
 
 }

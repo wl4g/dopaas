@@ -34,10 +34,10 @@ import com.wl4g.devops.tool.common.web.WebUtils2;
 public class DefaultXsrfRejectHandler implements XsrfRejectHandler {
 
 	@Override
-	public void handle(HttpServletRequest request, HttpServletResponse response, XsrfException re)
+	public void handle(HttpServletRequest request, HttpServletResponse response, XsrfException xe)
 			throws IOException, ServletException {
 		RespBase<String> resp = RespBase.create();
-		resp.handleError(re);
+		resp.handleError(xe);
 		WebUtils2.writeJson(response, resp.asJson());
 	}
 

@@ -212,9 +212,9 @@ public class RespBase<D> implements Serializable {
 		if (isNull(data))
 			return this;
 		if (checkDataAvailable()) // Data already payLoad ?
-			throw new IllegalStateException(format(
-					"RespBase.data already payLoad, In order to set it successful the data node must be the initial value or empty. - %s",
-					getData()));
+			throw new IllegalStateException(
+					format("RespBase.data already payLoad, In order to set it successful the data node must be the initial value or empty. - %s",
+							getData()));
 
 		this.data = data;
 		return this;
@@ -797,7 +797,7 @@ public class RespBase<D> implements Serializable {
 			if (isBlank(errmsg)) {
 				return errmsg;
 			}
-			return format("[%s-%s]: %s", errorPrompt, retCode.getErrcode(), errmsg);
+			return format("[%s-%s] %s", errorPrompt, retCode.getErrcode(), errmsg);
 		}
 
 		/**

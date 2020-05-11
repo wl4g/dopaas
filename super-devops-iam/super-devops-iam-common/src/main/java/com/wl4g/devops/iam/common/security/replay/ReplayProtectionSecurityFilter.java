@@ -104,14 +104,14 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 
 		// Ignore non replay request methods.
 		if (!replayProtectMatcher.matches(request)) {
-			log.debug("Skip replay protection of: {}", requestPath);
+			log.debug("Skip replay protect of: {}", requestPath);
 			filterChain.doFilter(request, response);
 			return;
 		}
 
-		// Ignore exclude URLs XSRF validation.
+		// Ignore exclude URIs XSRF validation.
 		for (String pattern : rconfig.getExcludeValidUriPatterns()) {
-			if (defaultExcludeReplayMatcher.matchStart(pattern, requestPath)) {
+			if (defaultExcludeUriReplayMatcher.matchStart(pattern, requestPath)) {
 				log.debug("Skip exclude url replay valid '{}'", requestPath);
 				filterChain.doFilter(request, response);
 				return;
@@ -150,8 +150,8 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 		// Check replay timestamp offset.
 		long now = currentTimeMillis();
 		if (abs(now - replayToken.getTimestamp()) >= rconfig.getTermTimeMs()) {
-			throw new InvalidReplayTimestampException(
-					format("Invalid timestamp: %s, now: %s, Request: %s", replayToken.getTimestamp(), now, requestPath));
+			throw new InvalidReplayTimestampException(format("Invalid replay token timestamp: %s, now: %s, Request: %s",
+					replayToken.getTimestamp(), now, requestPath));
 		}
 
 		// Put replay token.
@@ -199,6 +199,6 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 	/**
 	 * Exclude replay attacks validation URLs mapping matcher.
 	 */
-	final private static AntPathMatcher defaultExcludeReplayMatcher = new AntPathMatcher();
+	final private static AntPathMatcher defaultExcludeUriReplayMatcher = new AntPathMatcher();
 
 }

@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.iam.common.security.xsrf.handler;
 
-import com.wl4g.devops.common.exception.iam.AccessRejectedException;
+import com.wl4g.devops.common.exception.iam.IamException;
+import com.wl4g.devops.common.exception.restful.RESTfulException;
+import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
 
 /**
@@ -26,12 +28,74 @@ import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
  * @version v1.0 2020年4月27日
  * @since
  */
-public class XsrfException extends AccessRejectedException {
+public class XsrfException extends IamException implements RESTfulException {
 
 	private static final long serialVersionUID = -8416392707509840091L;
 
+	/**
+	 * Constructs a new runtime exception with {@code null} as its detail
+	 * message. The cause is not initialized, and may subsequently be
+	 * initialized by a call to {@link #initCause}.
+	 */
+	public XsrfException() {
+		super();
+	}
+
+	/**
+	 * Constructs a new runtime exception with the specified detail message. The
+	 * cause is not initialized, and may subsequently be initialized by a call
+	 * to {@link #initCause}.
+	 *
+	 * @param message
+	 *            the detail message. The detail message is saved for later
+	 *            retrieval by the {@link #getMessage()} method.
+	 */
 	public XsrfException(String message) {
 		super(message);
+	}
+
+	/**
+	 * Constructs a new runtime exception with the specified detail message and
+	 * cause.
+	 * <p>
+	 * Note that the detail message associated with {@code cause} is <i>not</i>
+	 * automatically incorporated in this runtime exception's detail message.
+	 *
+	 * @param message
+	 *            the detail message (which is saved for later retrieval by the
+	 *            {@link #getMessage()} method).
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the
+	 *            {@link #getCause()} method). (A <tt>null</tt> value is
+	 *            permitted, and indicates that the cause is nonexistent or
+	 *            unknown.)
+	 * @since 1.4
+	 */
+	public XsrfException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	/**
+	 * Constructs a new runtime exception with the specified cause and a detail
+	 * message of <tt>(cause==null ? null : cause.toString())</tt> (which
+	 * typically contains the class and detail message of <tt>cause</tt>). This
+	 * constructor is useful for runtime exceptions that are little more than
+	 * wrappers for other throwables.
+	 *
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the
+	 *            {@link #getCause()} method). (A <tt>null</tt> value is
+	 *            permitted, and indicates that the cause is nonexistent or
+	 *            unknown.)
+	 * @since 1.4
+	 */
+	public XsrfException(Throwable cause) {
+		super(cause);
+	}
+
+	@Override
+	public RetCode getCode() {
+		return RetCode.UNAUTHZ;
 	}
 
 }
