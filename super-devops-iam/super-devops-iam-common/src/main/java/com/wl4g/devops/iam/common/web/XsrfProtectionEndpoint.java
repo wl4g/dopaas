@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +60,7 @@ public class XsrfProtectionEndpoint extends BaseController {
 	@Autowired
 	protected XsrfTokenRepository xtokenRepository;
 
-	@RequestMapping(method = { HEAD/* , GET */ }, path = URI_XSRF_APPLY_TOKEN)
+	@RequestMapping(method = { HEAD, GET }, path = URI_XSRF_APPLY_TOKEN)
 	public /* RespBase<?> */void applyXsrfToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		log.info("Apply xsrf token <= {}", request.getRequestURI());
 

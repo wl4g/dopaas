@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.iam.common.config;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_XSRF_BASE;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.invokeMethod;
@@ -230,7 +229,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 */
 	private final void addCommonDefaultFilterChain() {
 		// Default xsrf request rules.
-		getFilterChain().put(URI_XSRF_BASE + "/**", "anon");
+		getFilterChain().put(XsrfProperties.DEFAULT_XSRF_BASE_PATTERN, "anon");
 	}
 
 	/**
