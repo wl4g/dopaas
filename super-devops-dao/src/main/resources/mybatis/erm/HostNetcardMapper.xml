@@ -245,4 +245,19 @@
       del_flag = #{delFlag,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List"/>
+    from erm_host_netcard
+    where del_flag!=1
+    <if test="name != null and name != ''" >
+      AND `name` LIKE CONCAT('%','${name}','%')
+    </if>
+    <if test="hostId != null" >
+      AND host_id = #{hostId,jdbcType=INTEGER}
+    </if>
+
+  </select>
+
 </mapper>
