@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.bean.erm.log;
 
-public class Host {
+public class LogHost {
 	private String name;
 
 	public String getName() {

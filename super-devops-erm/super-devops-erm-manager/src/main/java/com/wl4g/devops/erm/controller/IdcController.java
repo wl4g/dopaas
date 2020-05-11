@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2019-06-24 14:23:00
  */
 @RestController
-@RequestMapping("/netcard")
+@RequestMapping("/idc")
 public class IdcController extends BaseController {
 
 	@Autowired
