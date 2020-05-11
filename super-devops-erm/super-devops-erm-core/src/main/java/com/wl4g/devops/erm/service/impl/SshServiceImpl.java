@@ -40,7 +40,7 @@ public class SshServiceImpl implements SshService {
     @Override
     public PageModel page(PageModel pm,String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(null);
+        pm.setRecords(sshDao.list(name));
         return pm;
     }
 

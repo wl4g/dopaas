@@ -1,6 +1,10 @@
 package com.wl4g.devops.dao.erm;
 
+import com.wl4g.devops.common.bean.erm.Host;
 import com.wl4g.devops.common.bean.erm.Idc;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface IdcDao {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +18,6 @@ public interface IdcDao {
     int updateByPrimaryKeySelective(Idc record);
 
     int updateByPrimaryKey(Idc record);
+
+    List<Idc> list(@Param("name") String name);
 }

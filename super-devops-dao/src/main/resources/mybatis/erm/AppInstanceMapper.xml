@@ -57,7 +57,7 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List_i" />,<include refid="Ssh_Column_List" />
-    from app_instance i
+    from erm_app_instance i
     left join erm_ssh s on s.id = i.ssh_id
     where i.id = #{id,jdbcType=INTEGER}
   </select>
@@ -65,14 +65,14 @@
   <select id="selectByClusterId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
-    from app_instance
+    from erm_app_instance
     where cluster_id = #{clusterId,jdbcType=INTEGER} and del_flag!=1
   </select>
 
   <select id="selectByClusterIdAndEnvType" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List_i" />,<include refid="Ssh_Column_List" />
-    from app_instance i
+    from erm_app_instance i
     left join erm_ssh s on s.id = i.ssh_id
     where i.cluster_id = #{clusterId,jdbcType=INTEGER}
     and i.env_type = #{envType,jdbcType=VARCHAR}
@@ -82,16 +82,16 @@
   <select id="countByClusterId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select
     count(1)
-    from app_instance
+    from erm_app_instance
     where cluster_id = #{id,jdbcType=INTEGER} and del_flag!=1
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from app_instance
+    delete from erm_app_instance
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
-    insert into app_instance (id, name, cluster_id, version_id, server_type,
+    insert into erm_app_instance (id, name, cluster_id, version_id, server_type,
       host_id, k8s_id, docker_id, env_type, enable,
       endpoint, remark, ssh_user,
       create_by, create_date, update_by,
@@ -105,7 +105,7 @@
       #{sshKeyPub,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
-    insert into app_instance
+    insert into erm_app_instance
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -232,7 +232,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
-    update app_instance
+    update erm_app_instance
     <set >
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -295,7 +295,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
-    update app_instance
+    update erm_app_instance
     set name = #{name,jdbcType=VARCHAR},
       cluster_id = #{clusterId,jdbcType=INTEGER},
       version_id = #{versionId,jdbcType=INTEGER},

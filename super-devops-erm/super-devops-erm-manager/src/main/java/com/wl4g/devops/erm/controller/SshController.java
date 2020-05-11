@@ -21,6 +21,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.erm.service.SshService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,7 +46,7 @@ public class SshController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(Ssh ssh) {
+	public RespBase<?> save(@RequestBody Ssh ssh) {
 		RespBase<Object> resp = RespBase.create();
 		sshService.save(ssh);
 		return resp;
