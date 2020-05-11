@@ -22,6 +22,7 @@ import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.erm.service.HostService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,7 +59,7 @@ public class AppHostController extends BaseController {
 
 	@RequestMapping(value = "/save")
 	@RequiresPermissions(value = { "erm:host" })
-	public RespBase<?> save(Host host) {
+	public RespBase<?> save(@RequestBody Host host) {
 		RespBase<Object> resp = RespBase.create();
 		hostService.save(host);
 		return resp;

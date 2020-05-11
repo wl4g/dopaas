@@ -18,12 +18,16 @@ package com.wl4g.devops.erm.service;
 import com.wl4g.devops.common.bean.erm.Idc;
 import com.wl4g.devops.page.PageModel;
 
+import java.util.List;
+
 /**
  * @author vjay
  */
 public interface IdcService {
 
 	PageModel page(PageModel pm, String name);
+
+	List<Idc> getForSelect();
 
 	void save(Idc host);
 

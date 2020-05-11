@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.List;
+
 import static java.util.Objects.isNull;
 
 /**
@@ -42,6 +44,11 @@ public class SshServiceImpl implements SshService {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
         pm.setRecords(sshDao.list(name));
         return pm;
+    }
+
+    @Override
+    public List<Ssh> getForSelect() {
+        return sshDao.list(null);
     }
 
     public void save(Ssh ssh){

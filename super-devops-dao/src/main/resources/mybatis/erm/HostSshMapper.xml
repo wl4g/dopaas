@@ -15,16 +15,32 @@
     from erm_host_ssh
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByHostId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select ssh_id
+    from erm_host_ssh
+    where host_id = #{hostId,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from erm_host_ssh
     where id = #{id,jdbcType=INTEGER}
   </delete>
+  <delete id="deleteByHostId" parameterType="java.lang.Integer">
+    delete from erm_host_ssh
+    where host_id = #{hostId,jdbcType=INTEGER}
+  </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.HostSsh">
-    insert into erm_host_ssh (id, host_id, ssh_id
-      )
-    values (#{id,jdbcType=INTEGER}, #{hostId,jdbcType=INTEGER}, #{sshId,jdbcType=INTEGER}
-      )
+    insert into erm_host_ssh (id, host_id, ssh_id)
+    values (#{id,jdbcType=INTEGER}, #{hostId,jdbcType=INTEGER}, #{sshId,jdbcType=INTEGER})
   </insert>
+
+  <insert id="insertBatch" parameterType="java.util.Map">
+    insert into erm_host_ssh (id, host_id, ssh_id)
+    VALUES
+    <foreach collection="hostSshes" item="hostSsh" separator=",">
+      (#{hostSsh.id,jdbcType=INTEGER}, #{hostSsh.hostId,jdbcType=INTEGER}, #{hostSsh.sshId,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.HostSsh">
     insert into erm_host_ssh
     <trim prefix="(" suffix=")" suffixOverrides=",">
