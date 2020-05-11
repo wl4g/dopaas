@@ -17,7 +17,7 @@ package com.wl4g.devops.common.bean.erm;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
-import java.io.Serializable;
+import java.util.List;
 
 public class Host extends BaseBean {
 
@@ -30,6 +30,8 @@ public class Host extends BaseBean {
 	private Integer idcId;
 
 	private Integer status;
+
+	private List<Integer> sshIds;
 
 	public String getName() {
 		return name;
@@ -63,4 +65,11 @@ public class Host extends BaseBean {
 		this.status = status;
 	}
 
+	public List<Integer> getSshIds() {
+		return sshIds;
+	}
+
+	public void setSshIds(List<Integer> sshIds) {
+		this.sshIds = sshIds;
+	}
 }

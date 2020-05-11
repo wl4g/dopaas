@@ -66,4 +66,11 @@ public class SshController extends BaseController {
 		return resp;
 	}
 
+	@RequestMapping(value = "/getForSelect")
+	public RespBase<?> getForSelect() {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(sshService.getForSelect());
+		return resp;
+	}
+
 }

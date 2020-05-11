@@ -66,4 +66,10 @@ public class IdcController extends BaseController {
 		return resp;
 	}
 
+	@RequestMapping(value = "/getForSelect")
+	public RespBase<?> getForSelect() {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(idcService.getForSelect());
+		return resp;
+	}
 }

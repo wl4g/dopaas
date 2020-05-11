@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.List;
+
 import static java.util.Objects.isNull;
 
 /**
@@ -42,6 +44,11 @@ public class IdcServiceImpl implements IdcService {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
         pm.setRecords(idcDao.list(name));
         return pm;
+    }
+
+    @Override
+    public List<Idc> getForSelect() {
+        return idcDao.list(null);
     }
 
     public void save(Idc idc){
