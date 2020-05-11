@@ -75,7 +75,7 @@ public class CorsProperties implements Serializable {
 		/**
 		 * Default allowes methods.
 		 */
-		private final String[] defaultAllowedMethods = { GET.name(), POST.name(), OPTIONS.name() };
+		private final String[] defaultAllowedMethods = { GET.name(), POST.name(), OPTIONS.name(), HEAD.name() };
 		{
 			// Default settings.
 			put("/**", new CorsRule().setAllowCredentials(true).addAllowsHeaders(defaultAllowedHeaders)
@@ -153,9 +153,10 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsMethods(List<String> allowsMethods) {
-			if (!isEmpty(allowsMethods)) {
-				this.allowsMethods.addAll(allowsMethods);
-			}
+			// if (!isEmpty(allowsMethods)) {
+			// this.allowsMethods.addAll(allowsMethods);
+			// }
+			this.allowsMethods = allowsMethods;
 			return this;
 		}
 
@@ -171,9 +172,10 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsHeaders(List<String> allowsHeaders) {
-			if (!isEmpty(allowsHeaders)) {
-				this.allowsHeaders.addAll(allowsHeaders);
-			}
+			// if (!isEmpty(allowsHeaders)) {
+			// this.allowsHeaders.addAll(allowsHeaders);
+			// }
+			this.allowsHeaders = allowsHeaders;
 			return this;
 		}
 
@@ -191,9 +193,10 @@ public class CorsProperties implements Serializable {
 		public CorsRule setAllowsOrigins(List<String> allowsOrigins) {
 			// "allowsOrigin" may have a "*" wildcard character.
 			// e.g. http://*.mydomain.com
-			if (!isEmpty(allowsOrigins)) {
-				this.allowsOrigins.addAll(allowsOrigins);
-			}
+			// if (!isEmpty(allowsOrigins)) {
+			// this.allowsOrigins.addAll(allowsOrigins);
+			// }
+			this.allowsOrigins = allowsOrigins;
 			return this;
 		}
 
@@ -211,9 +214,10 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setExposedHeaders(List<String> exposedHeaders) {
-			if (!isEmpty(exposedHeaders)) {
-				this.exposedHeaders.addAll(exposedHeaders);
-			}
+			// if (!isEmpty(exposedHeaders)) {
+			// this.exposedHeaders.addAll(exposedHeaders);
+			// }
+			this.exposedHeaders = exposedHeaders;
 			return this;
 		}
 
@@ -255,6 +259,7 @@ public class CorsProperties implements Serializable {
 				mergeWithWildcard(getAllowsHeaders());
 				mergeWithWildcard(getAllowsMethods());
 				mergeWithWildcard(getExposedHeaders());
+				// Convert to cors configuration.
 				cors = new IamCorsConfiguration();
 				cors.setAllowCredentials(isAllowCredentials());
 				cors.setMaxAge(getMaxAge());
@@ -273,8 +278,9 @@ public class CorsProperties implements Serializable {
 		 * @return
 		 */
 		private void mergeWithWildcard(Collection<String> sources) {
-			if (isEmpty(sources))
+			if (isEmpty(sources)){
 				return;
+			}
 
 			// Clear other specific item configurations if '*' is present
 			Iterator<String> it1 = sources.iterator();

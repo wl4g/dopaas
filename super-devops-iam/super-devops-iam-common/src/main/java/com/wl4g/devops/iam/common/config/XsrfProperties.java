@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.config;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_XSRF_BASE;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
@@ -96,9 +97,21 @@ public class XsrfProperties implements InitializingBean, Serializable {
 			Collections2.disDupCollection(excludeValidUriPatterns);
 		}
 
+		// @Deprecated, Please use external cors custom configuration.
+		//
+		// // Add build-in xsrf endpoint cors rules.
+		// CorsRule xsrfCors = new CorsRule();
+		// /**
+		// * @see {@link
+		// com.wl4g.devops.iam.common.web.XsrfProtectionEndpoint#applyXsrfToken(HttpServletRequest,
+		// HttpServletResponse)}
+		// */
+		// xsrfCors.addAllowsMethods(HEAD.name());
+		// xsrfCors.addAllowsOrigins(allowsOrigins);
+		// corsConfig.getRules().put(DEFAULT_XSRF_BASE_PATTERN, xsrfCors);
+
 		// Check header name with cors allowed.
 		corsConfig.assertCorsLegalHeaders(singletonList(getXsrfHeaderName()));
-
 	}
 
 	public String getXsrfCookieName() {
@@ -186,5 +199,6 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	public static final String DEFAULT_XSRF_COOKIE_NAME = "IAM-XSRF-TOKEN";
 	public static final String DEFAULT_XSRF_PARAM_NAME = "_xsrf";
 	public static final String DEFAULT_XSRF_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Xsrf-Token";
+	public static final String DEFAULT_XSRF_BASE_PATTERN = URI_XSRF_BASE + "/**";
 
 }

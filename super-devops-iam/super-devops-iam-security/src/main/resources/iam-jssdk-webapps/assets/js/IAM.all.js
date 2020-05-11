@@ -2206,7 +2206,8 @@
 			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
 			$.ajax({
 				url: applyXsrfTokenUrl,
-				type: 'HEAD',
+				//type: 'HEAD',
+				type: 'GET',
 				async: false,
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 				success: function(res, textStatus, jqxhr){
