@@ -161,7 +161,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	}
 
 	/**
-	 * Puts principal xsrf token to cookies.(if necessary)
+	 * Refresh puts principal xsrf token to cookies.(if necessary) </br>
 	 * 
 	 * @param token
 	 * @param request
@@ -172,10 +172,8 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 			ServletResponse response) {
 		// Generate & save xsrf token.
 		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xTokenRepository, toHttp(request), toHttp(response));
-
 		// Deserialize xsrf token.
 		Map<String, String> xsrfInfo = convertBean(xtoken, TYPE_REF_STRING_HASHMAP);
-
 		return isNull(xsrfInfo) ? emptyMap() : xsrfInfo;
 	}
 
