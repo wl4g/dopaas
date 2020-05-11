@@ -32,15 +32,15 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from app_cluster_config
+    from erm_cluster_config
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from app_cluster_config
+    delete from erm_cluster_config
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.ClusterConfig" >
-    insert into app_cluster_config (id, cluster_id, display_name, 
+    insert into erm_cluster_config (id, cluster_id, display_name,
       type, env_type, view_extranet_base_uri, 
       extranet_base_uri, intranet_base_uri, remark, 
       create_by, create_date, update_by, 
@@ -52,7 +52,7 @@
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.ClusterConfig" useGeneratedKeys="true" keyProperty="id">
-    insert into app_cluster_config
+    insert into erm_cluster_config
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -143,7 +143,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.ClusterConfig" >
-    update app_cluster_config
+    update erm_cluster_config
     <set >
       <if test="clusterId != null" >
         cluster_id = #{clusterId,jdbcType=INTEGER},
@@ -188,7 +188,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.ClusterConfig" >
-    update app_cluster_config
+    update erm_cluster_config
     set cluster_id = #{clusterId,jdbcType=INTEGER},
       display_name = #{displayName,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
@@ -209,8 +209,8 @@
     SELECT
     <include refid="Base_Column_List_a" />,c.name
     FROM
-    app_cluster_config a
-    inner join app_cluster c on a.cluster_id = c.id
+    erm_cluster_config a
+    inner join erm_cluster c on a.cluster_id = c.id
     where c.name = #{appName,jdbcType=VARCHAR}
 
     <if test="envType != null and envType != ''">
@@ -227,8 +227,8 @@
     SELECT
     <include refid="Base_Column_List_a" />,c.name
     FROM
-    app_cluster_config a
-    inner join app_cluster c on a.cluster_id = c.id
+    erm_cluster_config a
+    inner join erm_cluster c on a.cluster_id = c.id
     where a.type = 1
   </select>
 
@@ -238,8 +238,8 @@
     SELECT
     <include refid="Base_Column_List_a" />,c.name
     FROM
-    app_cluster_config a
-    inner join app_cluster c on a.cluster_id = c.id
+    erm_cluster_config a
+    inner join erm_cluster c on a.cluster_id = c.id
     <where>
       <if test="appNames != null and appNames.length > 0">
         c.name in
