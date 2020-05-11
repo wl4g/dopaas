@@ -31,8 +31,7 @@ public class InvalidXsrfTokenException extends XsrfException {
 	private static final long serialVersionUID = -6917353257503001262L;
 
 	public InvalidXsrfTokenException(XsrfToken expectedAccessToken, String actualAccessToken) {
-		super("Invalid XSRF Token '" + actualAccessToken + "' was found on the request parameter '"
-				+ expectedAccessToken.getXsrfParamName() + "' or header '" + expectedAccessToken.getXsrfHeaderName() + "'.");
+		super("Invalid XSRF Token '" + actualAccessToken + "' was found");
 	}
 
 }

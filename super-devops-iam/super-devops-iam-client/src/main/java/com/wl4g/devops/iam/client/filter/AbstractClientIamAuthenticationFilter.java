@@ -203,7 +203,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 			putSuccessTokensCookieIfNecessary(token, request, response);
 			// Sets authorization info to cookies.
 			putAuthzInfoCookiesAndSecurityIfNecessary(token, request, response);
-			// Sets xsrf token.
+			// Sets refresh xsrf token.
 			putXsrfTokenCookieIfNecessary(token, request, response);
 
 			// Call custom success handle.
@@ -433,8 +433,10 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		resp.forMap().put(config.getParam().getAccessTokenName(), tokens[1]);
 		// Sets authorization info.
 		resp.forMap().putAll(putAuthzInfoCookiesAndSecurityIfNecessary(token, request, response));
-		// Sets xsrf token.
-		resp.forMap().putAll(putXsrfTokenCookieIfNecessary(token, request, response));
+		// Sets refresh xsrf token.
+		// resp.forMap().putAll(putXsrfTokenCookieIfNecessary(token, request,
+		// response));
+		putXsrfTokenCookieIfNecessary(token, request, response);
 
 		return resp;
 	}
