@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.common.config;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_XSRF_BASE;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
@@ -82,7 +84,13 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	/**
 	 * Ignore xsrf validation request mappings.
 	 */
-	private List<String> excludeValidUriPatterns = new ArrayList<>();
+	private List<String> excludeValidUriPatterns = new ArrayList<String>() {
+		private static final long serialVersionUID = 2330951352919056661L;
+		{
+			add(URI_S_BASE + "/**");
+			add(URI_C_BASE + "/**");
+		}
+	};
 
 	/**
 	 * Temporary cors configuration.

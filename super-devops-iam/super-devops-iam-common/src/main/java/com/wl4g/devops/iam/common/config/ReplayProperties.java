@@ -29,6 +29,8 @@ import com.wl4g.devops.tool.common.collection.Collections2;
 import com.wl4g.devops.tool.common.crypto.digest.DigestUtils2;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Collections.singletonList;
@@ -67,7 +69,13 @@ public class ReplayProperties implements InitializingBean {
 	/**
 	 * Ignore replay attacks validation request mappings.
 	 */
-	private List<String> excludeValidUriPatterns = new ArrayList<>();
+	private List<String> excludeValidUriPatterns = new ArrayList<String>() {
+		private static final long serialVersionUID = 2330951352919056661L;
+		{
+			add(URI_S_BASE + "/**");
+			add(URI_C_BASE + "/**");
+		}
+	};
 
 	//
 	// --- Temporary fields. ---
