@@ -15,16 +15,39 @@
     from erm_docker_instance
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectHostIdByDockerId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select
+    host_id
+    from erm_docker_instance
+    where docker_id = #{dockerId,jdbcType=INTEGER}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from erm_docker_instance
+    where docker_id = #{dockerId,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByDockerId" parameterType="java.lang.Integer">
     delete from erm_docker_instance
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DockerInstance">
     insert into erm_docker_instance (id, docker_id, host_id
       )
     values (#{id,jdbcType=INTEGER}, #{dockerId,jdbcType=INTEGER}, #{hostId,jdbcType=INTEGER}
       )
   </insert>
+
+  <insert id="insertBatch" parameterType="java.util.Map">
+    insert into erm_docker_instance (id, docker_id, host_id)
+    VALUES
+    <foreach collection="dockerInstances" item="dockerInstance" separator=",">
+      (#{dockerInstance.id,jdbcType=INTEGER}, #{dockerInstance.dockerId,jdbcType=INTEGER}, #{dockerInstance.hostId,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DockerInstance">
     insert into erm_docker_instance
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -68,4 +91,6 @@
       host_id = #{hostId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
 </mapper>

@@ -15,23 +15,30 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.devops.common.bean.erm.Ssh;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
 
 /**
- * @author vjay
+ * 应用组管理Service接口
+ *
+ * @author sut
+ * @date 2018年9月20日
  */
-public interface SshService {
+public interface AppInstanceService {
 
-	PageModel page(PageModel pm, String name);
+    void save(AppInstance appInstance);
 
-	List<Ssh> getForSelect();
+    PageModel list(PageModel pm, Integer clusterId, String envType, Integer serverType);
 
-	void save(Ssh ssh);
 
-	Ssh detail(Integer id);
+    void del(Integer clusterId);
 
-	void del(Integer id);
+    AppInstance detail(Integer clusterId);
+
+    List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType);
+
+    void testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException;
+
 }

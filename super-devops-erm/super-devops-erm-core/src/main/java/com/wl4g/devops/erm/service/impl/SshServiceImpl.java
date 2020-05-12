@@ -21,12 +21,16 @@ import com.wl4g.devops.common.bean.erm.Ssh;
 import com.wl4g.devops.dao.erm.SshDao;
 import com.wl4g.devops.erm.service.SshService;
 import com.wl4g.devops.page.PageModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
 
+import static com.wl4g.devops.erm.util.SshkeyUtils.decryptSshkeyFromHex;
+import static com.wl4g.devops.erm.util.SshkeyUtils.encryptSshkeyToHex;
 import static java.util.Objects.isNull;
 
 /**
@@ -38,6 +42,9 @@ public class SshServiceImpl implements SshService {
 
     @Autowired
     private SshDao sshDao;
+
+    @Value("${cipher-key}")
+    protected String cipherKey;
 
     @Override
     public PageModel page(PageModel pm,String name) {
@@ -62,17 +69,25 @@ public class SshServiceImpl implements SshService {
     }
 
     private void insert(Ssh ssh){
+        if(StringUtils.isNotBlank(ssh.getSshKey())){
+            ssh.setSshKey(encryptSshkeyToHex(cipherKey, ssh.getSshKey()));
+        }
         sshDao.insertSelective(ssh);
     }
 
     private void update(Ssh ssh){
+        if(StringUtils.isNotBlank(ssh.getSshKey())){
+            ssh.setSshKey(encryptSshkeyToHex(cipherKey, ssh.getSshKey()));
+        }
         sshDao.updateByPrimaryKeySelective(ssh);
     }
 
 
     public Ssh detail(Integer id){
         Assert.notNull(id,"id is null");
-        return sshDao.selectByPrimaryKey(id);
+        Ssh ssh = sshDao.selectByPrimaryKey(id);
+        ssh.setSshKey(decryptSshkeyFromHex(cipherKey, ssh.getSshKey()));
+        return ssh;
     }
 
     public void del(Integer id){

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.devops.common.bean.erm.Ssh;
+import com.wl4g.devops.common.bean.erm.DockerCluster;
 import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
@@ -23,15 +23,15 @@ import java.util.List;
 /**
  * @author vjay
  */
-public interface SshService {
+public interface DockerClusterService {
 
 	PageModel page(PageModel pm, String name);
 
-	List<Ssh> getForSelect();
+	List<DockerCluster> getForSelect();
 
-	void save(Ssh ssh);
+	void save(DockerCluster dockerCluster);
 
-	Ssh detail(Integer id);
+	DockerCluster detail(Integer id);
 
 	void del(Integer id);
 }

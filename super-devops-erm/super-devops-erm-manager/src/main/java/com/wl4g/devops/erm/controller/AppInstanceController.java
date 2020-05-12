@@ -15,22 +15,17 @@
  */
 package com.wl4g.devops.erm.controller;
 
-import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.erm.service.AppInstanceService;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.erm.service.AppClusterService;
 import com.wl4g.devops.tool.common.cli.ssh2.JschHolder;
 import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 应用组管理
@@ -41,65 +36,45 @@ import java.util.Map;
  * @since
  */
 @RestController
-@RequestMapping("/cluster")
-public class AppClusterController extends BaseController {
+@RequestMapping("/instance")
+public class AppInstanceController extends BaseController {
 
 	@Autowired
-	private AppClusterService appClusterService;
+	private AppInstanceService appInstanceService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String clusterName) {
+	public RespBase<?> list(PageModel pm, Integer clusterId,String envType,Integer serverType) {
 		RespBase<Object> resp = RespBase.create();
-		Map<String, Object> result = appClusterService.list(pm, clusterName);
-		resp.setData(result);
+		resp.setData(appInstanceService.list(pm, clusterId,envType,serverType));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = { "erm:cluster" })
-	public RespBase<?> save(@RequestBody AppCluster appCluster) {
+	public RespBase<?> save(@RequestBody AppInstance appInstance) {
 		RespBase<Object> resp = RespBase.create();
-		appClusterService.save(appCluster);
+		appInstanceService.save(appInstance);
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = { "erm:cluster" })
 	public RespBase<?> del(Integer clusterId) {
 		RespBase<Object> resp = RespBase.create();
-		appClusterService.del(clusterId);
+		appInstanceService.del(clusterId);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = { "erm:cluster" })
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		AppCluster detail = appClusterService.detail(id);
+		AppInstance detail = appInstanceService.detail(id);
 		resp.setData(detail);
-		return resp;
-	}
-
-	@RequestMapping(value = "/clusters")
-	public RespBase<?> clusters() {
-		RespBase<Object> resp = RespBase.create();
-		List<AppCluster> clusters = appClusterService.clusters();
-		resp.forMap().put("clusters", clusters);
-		return resp;
-	}
-
-	@RequestMapping(value = "/instances")
-	public RespBase<?> instances(Integer clusterId, String envType) {
-		RespBase<Object> resp = RespBase.create();
-		List<AppInstance> instances = appClusterService.getInstancesByClusterIdAndEnvType(clusterId, envType);
-		resp.forMap().put("instances", instances);
 		return resp;
 	}
 
 	@RequestMapping(value = "/connectTest")
 	public RespBase<?> testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException {
 		RespBase<Object> resp = RespBase.create();
-		appClusterService.testSSHConnect(hostId, sshUser, sshKey);
+		appInstanceService.testSSHConnect(hostId, sshUser, sshKey);
 		return resp;
 	}
 

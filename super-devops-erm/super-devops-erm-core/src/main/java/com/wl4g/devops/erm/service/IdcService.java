@@ -29,7 +29,7 @@ public interface IdcService {
 
 	List<Idc> getForSelect();
 
-	void save(Idc host);
+	void save(Idc idc);
 
 	Idc detail(Integer id);
 
