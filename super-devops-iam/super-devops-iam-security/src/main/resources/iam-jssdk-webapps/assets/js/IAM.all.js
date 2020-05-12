@@ -2095,12 +2095,14 @@
 		}
 		// Headers.
 		var headers = new Map();
-		// XSRF token
-		var xsrfToken = IAMCore.getXsrfToken();
-		headers.set(xsrfToken.headerName, xsrfToken.value);
-		// Replay token
-		var replayToken = IAMCore.generateReplayToken();
-		headers.set(replayToken.headerName, replayToken.value);
+		if (method.toUpperCase() == 'POST' || method.toUpperCase() == 'DELETE') {
+			// XSRF token
+			var xsrfToken = IAMCore.getXsrfToken();
+			headers.set(xsrfToken.headerName, xsrfToken.value);
+			// Replay token
+			var replayToken = IAMCore.generateReplayToken();
+			headers.set(replayToken.headerName, replayToken.value);
+		}
 		$.ajax({
 			url: _url,
 			type: method,
