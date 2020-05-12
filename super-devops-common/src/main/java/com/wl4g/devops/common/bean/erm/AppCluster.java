@@ -16,6 +16,7 @@
 package com.wl4g.devops.common.bean.erm;
 
 import com.wl4g.devops.common.bean.BaseBean;
+import com.wl4g.devops.common.bean.erm.model.InstanceDtoModel;
 
 import java.util.List;
 
@@ -41,6 +42,8 @@ public class AppCluster extends BaseBean {
 
 	private int instanceCount;
 	private List<AppInstance> instances;
+
+	private List<InstanceDtoModel> instanceDtoModels;
 
 	public Integer getDeptId() {
 		return deptId;
@@ -100,5 +103,13 @@ public class AppCluster extends BaseBean {
 
 	public void setInstanceCount(int instanceCount) {
 		this.instanceCount = instanceCount;
+	}
+
+	public List<InstanceDtoModel> getInstanceDtoModels() {
+		return instanceDtoModels;
+	}
+
+	public void setInstanceDtoModels(List<InstanceDtoModel> instanceDtoModels) {
+		this.instanceDtoModels = instanceDtoModels;
 	}
 }

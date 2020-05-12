@@ -15,16 +15,39 @@
     from erm_k8s_instance
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectHostIdByK8sId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select
+    host_id
+    from erm_k8s_instance
+    where k8s_id = #{k8sId,jdbcType=INTEGER}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from erm_k8s_instance
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
+  <delete id="deleteByK8sId" parameterType="java.lang.Integer">
+    delete from erm_k8s_instance
+    where k8s_id = #{k8sId,jdbcType=INTEGER}
+  </delete>
+
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.K8sInstance">
     insert into erm_k8s_instance (id, k8s_id, host_id
       )
     values (#{id,jdbcType=INTEGER}, #{k8sId,jdbcType=INTEGER}, #{hostId,jdbcType=INTEGER}
       )
   </insert>
+
+  <insert id="insertBatch" parameterType="java.util.Map">
+    insert into erm_k8s_instance (id, k8s_id, host_id)
+    VALUES
+    <foreach collection="k8sInstances" item="k8sInstance" separator=",">
+      (#{k8sInstance.id,jdbcType=INTEGER}, #{k8sInstance.k8sId,jdbcType=INTEGER}, #{k8sInstance.hostId,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.K8sInstance">
     insert into erm_k8s_instance
     <trim prefix="(" suffix=")" suffixOverrides=",">

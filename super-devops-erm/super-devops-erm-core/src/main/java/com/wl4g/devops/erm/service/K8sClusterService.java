@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.devops.common.bean.erm.Ssh;
+import com.wl4g.devops.common.bean.erm.K8sCluster;
 import com.wl4g.devops.page.PageModel;
 
 import java.util.List;
@@ -23,15 +23,15 @@ import java.util.List;
 /**
  * @author vjay
  */
-public interface SshService {
+public interface K8sClusterService {
 
 	PageModel page(PageModel pm, String name);
 
-	List<Ssh> getForSelect();
+	List<K8sCluster> getForSelect();
 
-	void save(Ssh ssh);
+	void save(K8sCluster k8sCluster);
 
-	Ssh detail(Integer id);
+	K8sCluster detail(Integer id);
 
 	void del(Integer id);
 }

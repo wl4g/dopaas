@@ -1,6 +1,10 @@
 package com.wl4g.devops.dao.erm;
 
 import com.wl4g.devops.common.bean.erm.DockerCluster;
+import com.wl4g.devops.common.bean.erm.Idc;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface DockerClusterDao {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +18,6 @@ public interface DockerClusterDao {
     int updateByPrimaryKeySelective(DockerCluster record);
 
     int updateByPrimaryKey(DockerCluster record);
+
+    List<DockerCluster> list(@Param("name") String name);
 }
