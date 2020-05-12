@@ -97,7 +97,7 @@
 										<jsFile>fingerprint2-2.1.0.js</jsFile>
 										<jsFile>crypto-js-4.0.0.js</jsFile>
 										<jsFile>common-util-2.0.0.js</jsFile>
-										<jsFile>sysboot-2.0.0.js</jsFile>
+										<jsFile>sysmodule-2.0.0.js</jsFile>
 									</jsFiles>
 								</configuration>
 							</execution>
@@ -127,7 +127,7 @@
 										<jsFile>fingerprint2-2.1.0.js</jsFile>
 										<jsFile>crypto-js-4.0.0.js</jsFile>
 										<jsFile>common-util-2.0.0.js</jsFile>
-										<!-- <jsFile>sysboot-2.0.0.js</jsFile> -->
+										<!-- <jsFile>sysmodule-2.0.0.js</jsFile> -->
 									</jsFiles>
 								</configuration>
 							</execution>
