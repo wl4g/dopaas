@@ -15,8 +15,8 @@
 		<java.version>1.8</java.version>
 		<webplugin-source.dir>${basedir}/src/main/resources/plugin-webapps/src</webplugin-source.dir>
 		<webplugin-target.dir>${basedir}/src/main/resources/plugin-webapps/assets</webplugin-target.dir>
-		<webplugin-final-css.name>superops.all.css</webplugin-final-css.name>
-		<webplugin-final-js.name>superops.all.js</webplugin-final-js.name>
+		<webplugin-final-css.name>base.all.css</webplugin-final-css.name>
+		<webplugin-final-js.name>base.all.js</webplugin-final-js.name>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -97,7 +97,7 @@
 										<jsFile>fingerprint2-2.1.0.js</jsFile>
 										<jsFile>crypto-js-4.0.0.js</jsFile>
 										<jsFile>common-util-2.0.0.js</jsFile>
-										<jsFile>bootstrap.js</jsFile>
+										<jsFile>sysboot-2.0.0.js</jsFile>
 									</jsFiles>
 								</configuration>
 							</execution>
@@ -127,7 +127,7 @@
 										<jsFile>fingerprint2-2.1.0.js</jsFile>
 										<jsFile>crypto-js-4.0.0.js</jsFile>
 										<jsFile>common-util-2.0.0.js</jsFile>
-										<!-- <jsFile>bootstrap.js</jsFile> -->
+										<!-- <jsFile>sysboot-2.0.0.js</jsFile> -->
 									</jsFiles>
 								</configuration>
 							</execution>
