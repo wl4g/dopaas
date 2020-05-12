@@ -21,7 +21,6 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.net.URI;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -105,11 +104,11 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		// to the headers. At this time, httponly=true cannot be set
 		cookie.setHttpOnly(xconfig.isCookieHttpOnly());
 
-		String domainUri = request.getHeader("Origin");
-		domainUri = request.getHeader("Referer");
-		if (!isBlank(domainUri)) {
-			cookie.setDomain(URI.create(domainUri).getHost());
-		}
+		// String domainUri = request.getHeader("Origin");
+		// domainUri = request.getHeader("Referer");
+		// if (!isBlank(domainUri)) {
+		// cookie.setDomain(URI.create(domainUri).getHost());
+		// }
 
 		cookie.saveTo(request, response);
 	}
