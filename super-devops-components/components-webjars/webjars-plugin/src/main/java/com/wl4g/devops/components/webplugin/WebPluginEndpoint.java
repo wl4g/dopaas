@@ -38,8 +38,8 @@ import com.wl4g.devops.components.webplugin.handler.WebPluginHandler;
  */
 public class WebPluginEndpoint extends GenericEmbeddedWebappsEndpoint {
 
-	final public static String JS_BOOTSTRAP = "bootstrap-2.0.0.js";
-	final public static String JS_BOOTSTRAP_MIN = "bootstrap-2.0.0.min.js";
+	final public static String JS_BOOTSTRAP = "sysmodule-2.0.0.js";
+	final public static String JS_BOOTSTRAP_MIN = "sysmodule-2.0.0.min.js";
 	final public static String VAR_PLUGIN_MODULES = "\"${{plugin_modules}}\"";
 
 	@Autowired

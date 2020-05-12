@@ -4,8 +4,80 @@
  * Licensed under Apache2.0 (@see https://github.com/wl4g/super-cloudops/blob/master/LICENSE)
  */
 var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
-(function(window, document, defaultModules) {
-	var _g_modules = defaultModules;
+(function(window, document, initDefaultModules) {
+	var _g_modules = initDefaultModules;
+
+	// 对Date的扩展，将 Date 转化为指定格式的String 
+	// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
+	// 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字) 
+	// 例子： 
+	// (new Date()).format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423 
+	// (new Date()).format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18 
+	(function() {
+		Date.prototype.format = function(fmt) { 
+			var o = {
+			  "M+" : this.getMonth()+1,                 //月份 
+			  "d+" : this.getDate(),                    //日 
+			  "h+" : this.getHours(),                   //小时 
+			  "m+" : this.getMinutes(),                 //分 
+			  "s+" : this.getSeconds(),                 //秒 
+			  "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+			  "S"  : this.getMilliseconds()             //毫秒 
+			}; 
+			if(/(y+)/.test(fmt)) {
+			  fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+			}
+			for(var k in o) {
+			  if(new RegExp("("+ k +")").test(fmt)) {
+				  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length))); 
+			  }
+			}
+			return fmt;
+		}
+	})();
+
+	// Ip util.
+	var _isIp = function(ip) {
+    	var patternV4 = /^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$/;
+    	var patternV6 = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+        var isIpv4 = patternV4.test(ip);
+        var isIpv6 = patternV6.test(ip);
+        return isIpv4 || isIpv6;
+    };
+
+    // Gets default site baseUri
+    var _getDefaultSiteBaseUri = function(opt) {
+		var defaultOpt = {
+			fileUriPort: 8080,
+			fileUriDomainSubLevel: "iam",
+		};
+		opt = Object.assign(defaultOpt, opt);
+
+		// 获取地址栏默认baseUri
+		var hostname = location.hostname;
+		var port = opt.fileUriPort ? opt.fileUriPort : location.port;
+		var protocol = location.protocol;
+	 	// 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
+	 	// 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:14040/iam-server, 10.0.0.12:14046/ci-server)都部署于同一台机。
+	 	// a，当访问的地址是IP；
+	 	// b，当访问域名的后者是.debug/.local/.dev等。
+        if (_isIp(hostname)
+        	|| hostname == 'localhost'
+        	|| hostname == '127.0.0.1'
+        	|| hostname.endsWith('.debug')
+        	|| hostname.endsWith('.local')
+        	|| hostname.endsWith('.dev')) {
+        	return protocol + "//" + hostname + ":" + port;
+        }
+        // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，(接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
+        else {
+        	var topDomainName = hostname.split('.').slice(-2).join('.');
+        	if(hostname.indexOf("com.cn") > 0) {
+        		topDomainName = hostname.split('.').slice(-3).join('.');
+        	}
+        	return protocol + "//" + opt.fileUriDomainSubLevel + "." + topDomainName;
+        }
+	};
 
 	// Gets g_module
 	function getGModule(name) {
@@ -18,7 +90,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 	}
 
 	// Parsing module dependencies 
-	function getDependModules(feature){
+	function getDependModules(feature) {
 		var modules = new Array();
 		for(var d=0; d<_g_modules.dependencies.length; d++){
 			var matched = false;
@@ -57,8 +129,51 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 		}
 
 		return (setModules.length==0) ? null : {"modules":setModules};
-	}
+	};
 
+	/**
+	 * Resolve relative path to absolute.
+	 * For example:
+	 * document.location.pathname = http://localhost:14070/webjars-example/plugin/example/index.html
+	 * resovleRelativePathIfNecessary('../../js/aaa.js') => "/webjars-example/js/aaa.js/"
+	 */
+	function resovleRelativePathIfNecessary(path) {
+		var curRelativeSpec = "./";
+		var relativeSpec = "../";
+		var currentPath = document.location.pathname;
+		if (!path) {
+			path = curRelativeSpec;
+		}
+        // Check relative spec.
+        if (path.indexOf(curRelativeSpec + curRelativeSpec) >= 0) {
+            throw Error("Illegal path '" + path + "'");
+        }
+		if (path.startsWith(curRelativeSpec)) {
+			return currentPath.substring(0, currentPath.lastIndexOf("/")) + path.substring(path.indexOf(curRelativeSpec) + curRelativeSpec.length);
+		}
+		if (path.startsWith(relativeSpec)) {
+			var parts = path.split(relativeSpec);
+            var pathSuffix = "";
+			// Gets relative path parent level count.
+			var relativeParentLevelCount = 0;
+			for (var index in parts) {
+				if (parts[index] == '') {
+					relativeParentLevelCount += 1;
+				} else {
+                    pathSuffix += parts[index] + "/";
+                }
+			}
+			// Gets absolute path.
+			var currentPathParts = currentPath.split("/");
+			var absolutePath = "";
+			for (var i=0; i < (currentPathParts.length-relativeParentLevelCount-1); i++) {
+				absolutePath += currentPathParts[i] + "/";
+			}
+			return absolutePath + pathSuffix;
+		}
+		return path;
+	};
+	
 	/**
 	 * Gets current script attributes settings,
 	 * load(css and js) specification module JSSDK API.
@@ -69,13 +184,13 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 	 **/
 	var _modules_settings = (function() {
 		var _settings = {
-			path: "./",
+			path: "",
 			cache: "false",
 			mode: "stable",
 			refreshLevel: "yyMMddhh"
 		}
 		// Gets default path(<script src=http://cdn.wl4g.com/sdk/2.0.0/dist/js/IAM.js  => defaultPath=http://cdn.wl4g.com/sdk/2.0.0/dist).
-		var defaultPath = "./";
+		var defaultPath = "";
 		// 获取的当前script引用
 		var scripts = document.getElementsByTagName("script");
 		var curScript = scripts[scripts.length - 1]; // 最后一个script元素，即引用了本文件的script元素
@@ -95,8 +210,12 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 					defaultPath = defaultPath.substring(0, defaultPath.length-1);
 				}
 			}
-			// Merge
-			_settings.path = curScript.getAttribute("path") || _settings.path;
+			// Merge configs
+			var fileUriPort = curScript.getAttribute("fileUriPort");
+			var fileUriDomainSubLevel = curScript.getAttribute("fileUriDomainSubLevel");
+			var baseUri = _getDefaultSiteBaseUri({ fileUriPort: fileUriPort, fileUriDomainSubLevel: fileUriDomainSubLevel });
+			var _path = curScript.getAttribute("path") || _settings.path;
+			_settings.path = baseUri + resovleRelativePathIfNecessary(_path); // Resolve relative path(if necessary)
 			_settings.cache = curScript.getAttribute("cache") || _settings.cache;
 			_settings.mode = curScript.getAttribute("mode") || _settings.mode;
 		} else {
@@ -114,42 +233,13 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 		return _settings;
 	})();
 
-	// 对Date的扩展，将 Date 转化为指定格式的String 
-	// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
-	// 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字) 
-	// 例子： 
-	// (new Date()).format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423 
-	// (new Date()).format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18 
-	(function() {
-		Date.prototype.format = function(fmt) { 
-			var o = {
-			  "M+" : this.getMonth()+1,                 //月份 
-			  "d+" : this.getDate(),                    //日 
-			  "h+" : this.getHours(),                   //小时 
-			  "m+" : this.getMinutes(),                 //分 
-			  "s+" : this.getSeconds(),                 //秒 
-			  "q+" : Math.floor((this.getMonth()+3)/3), //季度 
-			  "S"  : this.getMilliseconds()             //毫秒 
-			}; 
-			if(/(y+)/.test(fmt)) {
-			  fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
-			}
-			for(var k in o) {
-			  if(new RegExp("("+ k +")").test(fmt)) {
-				  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length))); 
-			  }
-			}
-			return fmt;
-		}
-	})();
-
 	// Export moduleJS.
 	window.ModuleJS = function(modules) {
 		if (modules && (_g_modules || _g_modules == VAR_PLUGIN_MODULES)) {
 			var oldModules = _g_modules;
 			try {
 				oldModules = JSON.stringify(_g_modules);
-			} catch(e){
+			} catch(e) {
 			}
 			console.debug("Overlay default modules: "+ oldModules);
 			_g_modules = modules;
@@ -174,7 +264,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 		if(Object.prototype.toString.call(feature) == '[object Function]' || !feature || callback == null || !callback) {
 			throw Error("useJs parameters (feature, callback) is required!");
 		}
-		// Gets settings.
+		// Gets configs.
 		var path = _modules_settings.path + "/js/";
 		var cache = _modules_settings.cache;
 		var mode = _modules_settings.mode;
@@ -285,5 +375,9 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 			});
 		})(csses, path);
 	};
+	// IP Util.
+	ModuleJS.isIp = _isIp;
+	// Gets default service baseUri
+	ModuleJS.getDefaultSiteBaseUri = _getDefaultSiteBaseUri;
 
 })(window, document, VAR_PLUGIN_MODULES);
