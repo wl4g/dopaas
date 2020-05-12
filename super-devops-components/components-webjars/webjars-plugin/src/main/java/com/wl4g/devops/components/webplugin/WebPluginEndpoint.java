@@ -38,9 +38,9 @@ import com.wl4g.devops.components.webplugin.handler.WebPluginHandler;
  */
 public class WebPluginEndpoint extends GenericEmbeddedWebappsEndpoint {
 
-	final public static String JS_BOOTSTRAP = "bootstrap.js";
-	final public static String JS_BOOTSTRAP_MIN = "bootstrap.min.js";
-	final public static String VAR_PLUGIN_DEPENDENCIES = "\"${{pluginInfo}}\"";
+	final public static String JS_BOOTSTRAP = "bootstrap-2.0.0.js";
+	final public static String JS_BOOTSTRAP_MIN = "bootstrap-2.0.0.min.js";
+	final public static String VAR_PLUGIN_MODULES = "\"${{plugin_modules}}\"";
 
 	@Autowired
 	protected WebPluginHandler pluginHandler;
@@ -49,13 +49,16 @@ public class WebPluginEndpoint extends GenericEmbeddedWebappsEndpoint {
 		super(config);
 	}
 
+	/**
+	 * For Example Url: http://localhost:14070/webjars-example/plugin/example/index.html
+	 */
 	@Override
 	protected byte[] decorateResource(String filepath, HttpServletRequest request, byte[] fileBuf) {
 		if (endsWithAny(filepath.toLowerCase(US), JS_BOOTSTRAP, JS_BOOTSTRAP_MIN)) {
 			String pluginName = getRequestParam(request, "p", true);
 			log.info("Loading '{}', p: '{}'", filepath, pluginName);
 			String content = new String(fileBuf, UTF_8);
-			content = content.replace(VAR_PLUGIN_DEPENDENCIES, toJSONString(pluginHandler.getPlugin(pluginName)));
+			content = content.replace(VAR_PLUGIN_MODULES, toJSONString(pluginHandler.getPlugin(pluginName)));
 			return content.getBytes(UTF_8);
 		}
 		return fileBuf;
