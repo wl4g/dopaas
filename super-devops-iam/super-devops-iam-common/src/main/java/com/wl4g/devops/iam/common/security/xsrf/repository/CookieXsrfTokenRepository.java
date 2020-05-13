@@ -187,9 +187,9 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 	 * @return
 	 */
 	private String getXsrfRequestUri(HttpServletRequest request) {
-		// String domainUri = request.getServerName();
 		String domainUri = request.getHeader("Origin");
-		// domainUri=isBlank(domainUri)?request.getHeader("Referer"):domainUri;
+		domainUri = isBlank(domainUri) ? request.getHeader("Referer") : domainUri;
+		domainUri = isBlank(domainUri) ? request.getServerName() : domainUri;
 		return domainUri;
 	}
 
