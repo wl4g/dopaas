@@ -19,8 +19,10 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import static java.util.Locale.*;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.*;
 import static org.springframework.util.Assert.notNull;
+import static org.springframework.web.util.WebUtils.getCookie;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.springframework.http.MediaType.*;
 
@@ -205,11 +209,15 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 		if (log.isDebugEnabled()) {
 			return true;
 		}
-		String parameter = request.getParameter(PARAM_STACK_TRACE);
-		if (parameter == null) {
+		String _stacktrace = request.getParameter(PARAM_STACK_TRACE);
+		if (isBlank(_stacktrace)) {
+			Cookie _stacktraceC = getCookie(request, PARAM_STACK_TRACE);
+			_stacktrace = !isNull(_stacktraceC) ? _stacktraceC.getValue() : _stacktrace;
+		}
+		if (isBlank(_stacktrace)) {
 			return false;
 		}
-		return isTrue(parameter.toLowerCase(ENGLISH), false);
+		return isTrue(_stacktrace.toLowerCase(US), false);
 	}
 
 	/**

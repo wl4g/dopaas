@@ -32,17 +32,17 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * Of the fast-CAS attribute for remember me authentication (CAS 3.4.10+)
 	 */
-	final public static String KEY_REMEMBERME_NAME = "longTermAuthenticationRequestTokenUsed";
+	final public static String KEY_REMEMBERME_NAME = "remembermeAttrName";
 	/**
 	 * Authentication principal language attribute name.
 	 */
-	final public static String KEY_LANG_ATTRIBUTE_NAME = "principalLangAttributeName";
+	final public static String KEY_LANG_NAME = "langAttrName";
 
 	/**
 	 * This key is generated when the authentication is successful and can be
 	 * used to encrypt and decrypt the transmission data of some sensitive api.
 	 */
-	final public static String KEY_DATA_CIPHER = "dataCipherKey";
+	final public static String KEY_DATA_CIPHER_NAME = "dataCipherKey";
 	/**
 	 * When authentication is successful, a key for the access token is
 	 * generated. It is used to enhance session based validation logic (the
@@ -54,7 +54,13 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * @see {@link com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties#accessTokenName}
 	 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
 	 */
-	final public static String KEY_ACCESSTOKEN_SIGN = "accessTokenSignKey";
+	final public static String KEY_ACCESSTOKEN_SIGN_NAME = "accessTokenSignAttrKey";
+
+	/**
+	 * Iam-server/Iam-client parent sessionId.
+	 */
+	final public static String KEY_PARENT_SESSIONID_NAME = "parentSessionIdAttrKey";
+
 	/**
 	 * iamServer/iamClient the JSON node key that response the session
 	 * information.
@@ -62,9 +68,9 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String KEY_SESSIONINFO_NAME = "session";
 
 	/** authentication token save session key-name */
-	final public static String KEY_AUTHC_TOKEN = "authcTokenAttributeKey";
+	final public static String KEY_AUTHC_TOKEN = "authcTokenAttrKey";
 	/** authentication accountInfo save session key-name */
-	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttributeKey";
+	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttrKey";
 
 	/**
 	 * IAM system service role parameter name.</br>
@@ -82,6 +88,21 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * {@link IamSession} relation attributes cache name.
 	 */
 	final public static String CACHE_SESSION_REFATTRS = ":iam:session:refattrs:";
+
+	/**
+	 * IAM replay attacks signature cache name.
+	 */
+	final public static String CACHE_REPLAY_SIGN = ":iam:security:replaysign:";
+
+	/**
+	 * IAM XSRF endpoint base URI.
+	 */
+	final public static String URI_XSRF_BASE = "/xsrf";
+
+	/**
+	 * IAM XSRF token apply URI.
+	 */
+	final public static String URI_XSRF_APPLY_TOKEN = "xtoken";
 
 	//
 	// Server configuration.
@@ -137,7 +158,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Pre-processing handshake, e.g, apply sessionKeyId, All clients are
 	 * unified, including PC/WEB/iOS/Andriod/WechatMp/WechatApplet
 	 */
-	final public static String URI_S_LOGIN_HANDSHAKE = "/handshake";
+	final public static String URI_S_LOGIN_HANDSHAKE = "handshake";
 	/**
 	 * Initialization before login checks whether authentication code is
 	 * enabled, etc.
@@ -146,9 +167,14 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/** URI for apply for locale. */
 	final public static String URI_S_LOGIN_APPLY_LOCALE = "applylocale";
 	/**
-	 * Get the error information stored in the current session
+	 * Gets the error information stored in the current session
 	 */
 	final public static String URI_S_LOGIN_ERRREAD = "errread";
+	/**
+	 * Gets used for page Jump mode, to read authenticated roles/permissions/...
+	 * info.
+	 */
+	final public static String URI_S_LOGIN_PERMITS = "permits";
 
 	/** Based URI with verifier authenticator controller. */
 	final public static String URI_S_VERIFY_BASE = "/verify";

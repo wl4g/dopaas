@@ -19,6 +19,8 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.annotation.LoginAuthController;
 import com.wl4g.devops.iam.authc.credential.secure.IamCredentialsSecurer;
+import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.handler.risk.RiskEvaluatorHandler;
@@ -28,6 +30,7 @@ import com.wl4g.devops.iam.verification.SecurityVerifier.VerifyKind;
 import com.wl4g.devops.iam.web.model.CaptchaCheckResult;
 import com.wl4g.devops.iam.web.model.GenericCheckResult;
 import com.wl4g.devops.iam.web.model.HandshakeResult;
+import com.wl4g.devops.iam.web.model.IamPrincipalPermitsResult;
 import com.wl4g.devops.iam.web.model.SmsCheckResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +38,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.IamVersion.*;
+import static com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
 import static com.wl4g.devops.tool.common.codec.Base58.*;
 import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
-import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.checkSession;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
 import static com.wl4g.devops.iam.web.model.CaptchaCheckResult.KEY_CAPTCHA_CHECK;
 import static com.wl4g.devops.iam.web.model.GenericCheckResult.KEY_GENERIC_CHECK;
@@ -82,13 +88,22 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	protected IamCredentialsSecurer securer;
 
 	/**
-	 * Risk control recognizer handler.
+	 * Risk control evaluator handler.
 	 */
 	@Autowired
-	protected RiskEvaluatorHandler riskRecognizerHandler;
+	protected RiskEvaluatorHandler riskEvaluatorHandler;
 
+	/**
+	 * Secure cryption service.
+	 */
 	@Autowired
 	protected GenericOperatorAdapter<SecureAlgKind, SecureCryptService> cryptAdapter;
+
+	/**
+	 * XSRF token repository. (If necessary)
+	 */
+	@Autowired(required = false)
+	protected XsrfTokenRepository xTokenRepository;
 
 	/**
 	 * Apply session, applicable to mobile token session.
@@ -97,15 +112,17 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	 */
 	@RequestMapping(value = URI_S_LOGIN_HANDSHAKE, method = { POST })
 	@ResponseBody
-	public RespBase<?> handshake(HttpServletRequest request) {
-		checkPreHandle(request, false);
+	public RespBase<?> handshake(HttpServletRequest request, HttpServletResponse response) {
+		checkSessionHandle(request, false);
 
 		RespBase<Object> resp = RespBase.create(sessionStatus());
+		// Generate refresh xsrf token.
+		saveWebXsrfTokenIfNecessary(xTokenRepository, request, response, false);
+
 		// Reponed handshake result.
 		HandshakeResult handshake = new HandshakeResult(V2_0_0.getVersion());
 		// Current supports crypt algorithms.
-		handshake.setAlgorithms(
-				cryptAdapter.getRunningKinds().stream().map(k -> encode(k.getAlgorithm().getBytes(UTF_8))).collect(toList()));
+		handshake.setAlgorithms(cryptAdapter.getRunningKinds().stream().map(k -> encode(k.getAlgorithm())).collect(toList()));
 		// Assgin sessionKeyId
 		handshake.getSession().setSessionKey(config.getParam().getSid());
 		handshake.getSession().setSessionValue(getSession(true).getId());
@@ -121,7 +138,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	@RequestMapping(value = URI_S_LOGIN_CHECK, method = { POST })
 	@ResponseBody
 	public RespBase<?> check(HttpServletRequest request) {
-		checkPreHandle(request, true);
+		checkSessionHandle(request, true);
 
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		//
@@ -183,7 +200,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	}
 
 	/**
-	 * Read the error message from currently session.
+	 * Used for page Jump mode, to read operation exception messages.
 	 *
 	 * @param request
 	 * @return
@@ -191,7 +208,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	@RequestMapping(value = URI_S_LOGIN_ERRREAD, method = { GET })
 	@ResponseBody
 	public RespBase<?> readError(HttpServletRequest request) {
-		checkPreHandle(request, true);
+		checkSessionHandle(request, true);
 
 		RespBase<String> resp = RespBase.create(sessionStatus());
 		// Read error message from session
@@ -199,6 +216,28 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 		errmsg = isBlank(errmsg) ? "" : errmsg;
 		resp.forMap().put(KEY_ERR_SESSION_SAVED, errmsg);
 
+		return resp;
+	}
+
+	/**
+	 * Used for page Jump mode, to read authenticated roles/permissions/...
+	 * info.
+	 *
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = URI_S_LOGIN_PERMITS, method = { GET })
+	@ResponseBody
+	public RespBase<?> readPermits(HttpServletRequest request) {
+		checkSessionHandle(request, true);
+
+		RespBase<Object> resp = RespBase.create(sessionStatus());
+		// Gets current session authentication permits info.
+		IamPrincipalInfo info = getPrincipalInfo();
+		IamPrincipalPermitsResult result = new IamPrincipalPermitsResult();
+		result.setRoles(info.getRoles()); // Roles
+		result.setPermissions(info.getPermissions()); // Permissions
+		resp.setData(result);
 		return resp;
 	}
 
@@ -212,7 +251,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	@RequestMapping(value = URI_S_LOGIN_APPLY_LOCALE, method = { POST })
 	@ResponseBody
 	public RespBase<?> applyLocale(HttpServletRequest request) {
-		checkPreHandle(request, true);
+		checkSessionHandle(request, true);
 
 		RespBase<Locale> resp = RespBase.create(sessionStatus());
 		String lang = getCleanParam(request, config.getParam().getI18nLang());
@@ -221,26 +260,25 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 		if (isNotBlank(lang)) {
 			locale = new Locale(lang);
 		}
-		bind(KEY_LANG_ATTRIBUTE_NAME, locale);
-		resp.forMap().put(KEY_LANG_ATTRIBUTE_NAME, locale);
+		bind(KEY_LANG_NAME, locale);
+		resp.forMap().put(KEY_LANG_NAME, locale);
 		return resp;
 	}
 
 	/**
-	 * Check pre-handling.
+	 * Check session pre-handle.
 	 * 
 	 * @param request
 	 */
-	private void checkPreHandle(HttpServletRequest request, boolean checkSessionKey) {
-		if (checkSessionKey) {
+	private void checkSessionHandle(HttpServletRequest request, boolean checkSession) {
+		if (checkSession) {
 			// Check sessionKeyId
 			// @see:com.wl4g.devops.iam.web.LoginAuthenticatorController#handhake()
 			checkSession();
 		}
 
 		// Check umidToken validatity.
-		String umidToken = getCleanParam(request, config.getParam().getUmidTokenName());
-		riskRecognizerHandler.checkEvaluation(umidToken);
+		riskEvaluatorHandler.checkEvaluation(request);
 	}
 
 }

@@ -53,6 +53,7 @@ import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectI
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter;
 import com.wl4g.devops.iam.common.web.model.SessionInfo;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
@@ -80,7 +81,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.Cookie;
-import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -230,11 +230,15 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 					fullParams.put(config.getParam().getGrantTicket(), grantTicket);
 				}
 
-				// Call success handle.
-				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
-
 				// Sets secret tokens to cookies.
-				putSuccessSecretTokens2Cookie(token, request, response);
+				putSuccessTokensCookieIfNecessary(token, request, response);
+				// Sets authorization info to cookies.
+				putAuthzInfoCookiesAndSecurityIfNecessary(token, request, response);
+				// Sets refresh xsrf token.
+				putXsrfTokenCookieIfNecessary(token, request, response);
+
+				// Call custom success handle.
+				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
 
 				log.info("Redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), fullParams);
 				issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
@@ -612,11 +616,18 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 			ServletResponse response) throws Exception {
 
 		// Puts secret tokens to cookies.
-		String[] tokens = putSuccessSecretTokens2Cookie(token, request, response);
+		String[] tokens = putSuccessTokensCookieIfNecessary(token, request, response);
 
 		// Sets secret tokens to ressponse.
 		params.put(config.getParam().getDataCipherKeyName(), tokens[0]);
 		params.put(config.getParam().getAccessTokenName(), tokens[1]);
+		// Sets authorization info.
+		params.putAll(putAuthzInfoCookiesAndSecurityIfNecessary(token, request, response));
+
+		// Sets refresh xsrf token.
+		// params.putAll(putXsrfTokenCookieIfNecessary(token, request,
+		// response));
+		putXsrfTokenCookieIfNecessary(token, request, response);
 	}
 
 	/**
@@ -628,12 +639,12 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 	 * @return
 	 * @throws DecoderException
 	 */
-	protected String[] putSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request, ServletResponse response)
-			throws DecoderException {
+	protected String[] putSuccessTokensCookieIfNecessary(AuthenticationToken token, ServletRequest request,
+			ServletResponse response) throws DecoderException {
 
-		String dataCipherKeyHex = null, accessToken = null;
+		String dataCipherKeyHex = null, accessToken = null, umidToken = null;
 		if (token instanceof ClientSecretIamAuthenticationToken) {
-			// Sets dataCipherKey.
+			// Sets dataCipherKey(Required)
 			if (config.getCipher().isEnableDataCipher()) {
 				// Gets SecureCryptService.
 				SecureAlgKind kind = ((ClientSecretIamAuthenticationToken) token).getSecureAlgKind();
@@ -645,40 +656,51 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				// Encryption dataCipherKey by clientSecretKey.
 				KeySpec pubKeySpec = cryptService.generatePubKeySpec(decodeHex(clientSecretKey.toCharArray()));
 				// New generate dataCipherKey.
-				String hexDataCipherKey = bind(KEY_DATA_CIPHER, generateDataCipherKey());
+				String hexDataCipherKey = bind(KEY_DATA_CIPHER_NAME, generateDataCipherKey());
 				dataCipherKeyHex = cryptService.encrypt(pubKeySpec, hexDataCipherKey);
 
 				// Set to cookies
-				Cookie c = new SimpleCookie(config.getCookie());
-				c.setName(config.getParam().getDataCipherKeyName());
-				c.setValue(dataCipherKeyHex);
-				c.saveTo(toHttp(request), toHttp(response));
-			}
-
-			// Sets accessToken.
-			if (config.getSession().isEnableAccessTokenValidity()) {
-				// Create accessTokenSignKey.
-				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN, generateAccessTokenSignKey(getSessionId()));
-				accessToken = generateAccessToken(getSession(), accessTokenSignKey);
-				Cookie c = new SimpleCookie(config.getCookie());
-				c.setName(config.getParam().getAccessTokenName());
-				c.setValue(accessToken);
-				c.saveTo(toHttp(request), toHttp(response));
+				if (isBrowser(toHttp(request))) {
+					Cookie c = new IamCookie(config.getCookie());
+					c.setName(config.getParam().getDataCipherKeyName());
+					c.setValue(dataCipherKeyHex);
+					c.saveTo(toHttp(request), toHttp(response));
+				}
 			}
 
 			/**
-			 * Sets umidToken.
+			 * Sets accessToken(Required)
 			 * 
 			 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestAccessTokenValidity}
 			 */
-			String umidToken = ((ClientSecretIamAuthenticationToken) token).getUmidToken();
-			Cookie c = new SimpleCookie(config.getCookie());
-			c.setName(config.getParam().getUmidTokenName());
-			c.setValue(umidToken);
-			c.saveTo(toHttp(request), toHttp(response));
+			if (config.getSession().isEnableAccessTokenValidity()) {
+				// Create accessTokenSignKey.
+				String accessTokenSignKey = bind(KEY_ACCESSTOKEN_SIGN_NAME, generateAccessTokenSignKey(getSessionId()));
+				accessToken = generateAccessToken(getSession(), accessTokenSignKey);
+				// Set to cookies
+				if (isBrowser(toHttp(request))) {
+					Cookie c = new IamCookie(config.getCookie());
+					c.setName(config.getParam().getAccessTokenName());
+					c.setValue(accessToken);
+					c.saveTo(toHttp(request), toHttp(response));
+				}
+			}
+
+			/**
+			 * Sets umidToken.(TODO valid-non-impl)
+			 * 
+			 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestAccessTokenValidity}
+			 */
+			umidToken = ((ClientSecretIamAuthenticationToken) token).getUmidToken();
+			if (isBrowser(toHttp(request))) {
+				Cookie c = new IamCookie(config.getCookie());
+				c.setName(config.getParam().getUmidTokenName());
+				c.setValue(umidToken);
+				c.saveTo(toHttp(request), toHttp(response));
+			}
 		}
 
-		return new String[] { dataCipherKeyHex, accessToken };
+		return new String[] { dataCipherKeyHex, accessToken, umidToken };
 	}
 
 	/**

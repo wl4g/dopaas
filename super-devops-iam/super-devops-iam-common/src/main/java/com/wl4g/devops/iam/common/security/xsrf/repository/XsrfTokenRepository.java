@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.iam.common.security.xsrf.repository;
 
+import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
+import static java.util.Objects.isNull;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -46,14 +49,14 @@ public interface XsrfTokenRepository {
 	 * {@link HttpServletResponse}. If the {@link XsrfToken} is null, it is the
 	 * same as deleting it.
 	 *
-	 * @param token
+	 * @param xtoken
 	 *            the {@link XsrfToken} to save or null to delete
 	 * @param request
 	 *            the {@link HttpServletRequest} to use
 	 * @param response
 	 *            the {@link HttpServletResponse} to use
 	 */
-	void saveXToken(XsrfToken token, HttpServletRequest request, HttpServletResponse response);
+	void saveXToken(XsrfToken xtoken, HttpServletRequest request, HttpServletResponse response);
 
 	/**
 	 * Loads the expected {@link XsrfToken} from the {@link HttpServletRequest}
@@ -63,5 +66,40 @@ public interface XsrfTokenRepository {
 	 * @return the {@link XsrfToken} or null if none exists
 	 */
 	XsrfToken getXToken(HttpServletRequest request);
+
+	/**
+	 * {@link XsrfUtil}
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年5月8日 v1.0.0
+	 * @see
+	 */
+	public static abstract class XsrfUtil {
+
+		/**
+		 * Generate and sets {@link XsrfToken} of web. (if necessary)
+		 * 
+		 * @param repository
+		 * @param request
+		 * @param response
+		 * @param forceRenew
+		 * @return
+		 */
+		public static XsrfToken saveWebXsrfTokenIfNecessary(XsrfTokenRepository repository, HttpServletRequest request,
+				HttpServletResponse response, boolean forceRenew) {
+			XsrfToken xtoken = null;
+			if (!isNull(repository) && isBrowser(request)) {
+				xtoken = repository.getXToken(request);
+				if (isNull(xtoken) || forceRenew) {
+					// Generate XSRF token.
+					xtoken = repository.generateXToken(request);
+					// Save XSRF token.
+					repository.saveXToken(xtoken, request, response);
+				}
+			}
+			return xtoken;
+		}
+
+	}
 
 }

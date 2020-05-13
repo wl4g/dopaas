@@ -20,11 +20,7 @@ import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSource
 import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.NameableFilter;
-import org.apache.shiro.web.servlet.SimpleCookie;
 
-import static com.wl4g.devops.iam.common.config.XsrfProperties.*;
-import static com.wl4g.devops.iam.common.config.XssProperties.*;
-import static com.wl4g.devops.iam.common.config.CorsProperties.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
@@ -37,26 +33,19 @@ import java.util.Map;
 import javax.servlet.Filter;
 import javax.validation.constraints.NotBlank;
 
-import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import static org.springframework.util.ReflectionUtils.*;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.annotation.IamFilter;
-import com.wl4g.devops.iam.common.aop.XssSecurityResolveInterceptor;
 import com.wl4g.devops.iam.common.authz.EnhancedModularRealmAuthorizer;
 import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
@@ -74,14 +63,11 @@ import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.devops.iam.common.security.cipher.CipherRequestSecurityFilter;
 import com.wl4g.devops.iam.common.security.cipher.CipherRequestWrapper;
 import com.wl4g.devops.iam.common.security.cipher.CipherRequestWrapperFactory;
-import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter;
-import com.wl4g.devops.iam.common.security.cors.CorsSecurityFilter.AdvancedCorsProcessor;
-import com.wl4g.devops.iam.common.security.xsrf.XsrfProtectionSecurityFilter;
-import com.wl4g.devops.iam.common.security.xss.XssSecurityResolver;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.devops.iam.common.session.mgt.support.IamUidSessionIdGenerator;
 import com.wl4g.devops.iam.common.web.IamErrorConfiguring;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -206,8 +192,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public IamUidSessionIdGenerator iamUidSessionIdGenerator(@Value("${spring.application.name:}") String appName) {
-		return new IamUidSessionIdGenerator(appName);
+	public IamUidSessionIdGenerator iamUidSessionIdGenerator() {
+		return new IamUidSessionIdGenerator();
 	}
 
 	@Bean
@@ -224,8 +210,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public SimpleCookie simpleCookie(AbstractIamProperties<? extends ParamProperties> config) {
-		return new SimpleCookie(config.getCookie());
+	public IamCookie iamCookie(AbstractIamProperties<? extends ParamProperties> config) {
+		return new IamCookie(config.getCookie());
 	}
 
 	/**
@@ -287,133 +273,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	// ==============================
-	// IAM security attacks protect's
+	// IAM security protection's
 	// ==============================
-
-	//
-	// X S S _ I N T E R C E P T O R _ C O N F I G's.
-	//
-
-	@Bean
-	@ConditionalOnProperty(name = KEY_XSS_PREFIX + ".enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = KEY_XSS_PREFIX)
-	public XssProperties xssProperties() {
-		return new XssProperties();
-	}
-
-	@Bean
-	@ConditionalOnBean(XssProperties.class)
-	public XssSecurityResolver xssSecurityResolver() {
-		return new XssSecurityResolver() {
-		};
-	}
-
-	@Bean
-	@ConditionalOnBean({ XssSecurityResolver.class })
-	public XssSecurityResolveInterceptor xssSecurityResolveInterceptor(XssProperties config, XssSecurityResolver resolver) {
-		return new XssSecurityResolveInterceptor(config, resolver);
-	}
-
-	@Bean
-	@ConditionalOnBean(XssSecurityResolveInterceptor.class)
-	public AspectJExpressionPointcutAdvisor xssSecurityResolverAspectJExpressionPointcutAdvisor(XssProperties config,
-			XssSecurityResolveInterceptor advice) {
-		AspectJExpressionPointcutAdvisor advisor = new AspectJExpressionPointcutAdvisor();
-		advisor.setExpression(config.getExpression());
-		advisor.setAdvice(advice);
-		return advisor;
-	}
-
-	//
-	// C O R S _ F I L T E R _ C O N F I G's.
-	//
-
-	@Bean
-	@ConditionalOnProperty(name = KEY_CORS_PREFIX + ".enabled", matchIfMissing = true)
-	@ConfigurationProperties(prefix = KEY_CORS_PREFIX)
-	public CorsProperties corsProperties() {
-		return new CorsProperties();
-	}
-
-	@Bean
-	@ConditionalOnBean(CorsProperties.class)
-	public AdvancedCorsProcessor advancedCorsProcessor() {
-		return new AdvancedCorsProcessor();
-	}
-
-	@Bean
-	@ConditionalOnBean(CorsProperties.class)
-	public CorsSecurityFilter corsSecurityFilter(CorsProperties config, AdvancedCorsProcessor corsProcessor) {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		// Merger transformation configuration
-		config.getRules().forEach((key, rule) -> source.registerCorsConfiguration(key, rule.toSpringCorsConfiguration()));
-		CorsSecurityFilter filter = new CorsSecurityFilter(source);
-		filter.setCorsProcessor(corsProcessor);
-		return filter;
-	}
-
-	/**
-	 * The requirement for using the instruction is that the creation of
-	 * {@link CorsProperties} object beans must precede this</br>
-	 * e.g.
-	 *
-	 * <pre>
-	 * &#64;Bean
-	 * public CorsProperties corsProperties() {
-	 * 	...
-	 * }
-	 * </pre>
-	 *
-	 * <b style="color:red;font-size:40px">&nbsp;↑</b>
-	 *
-	 * <pre>
-	 * &#64;Bean
-	 * &#64;ConditionalOnBean(CorsProperties.class)
-	 * public FilterRegistrationBean corsResolveSecurityFilterBean(CorsProperties config) {
-	 * 	...
-	 * }
-	 * </pre>
-	 */
-	@Bean
-	@ConditionalOnBean(CorsProperties.class)
-	public FilterRegistrationBean corsResolveSecurityFilterBean(CorsSecurityFilter filter) {
-		// Register CORS filter
-		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
-		filterBean.setOrder(ORDER_CORS_PRECEDENCE);
-		// Cannot use '/*' or it will not be added to the container chain (only
-		// '/**')
-		filterBean.addUrlPatterns("/*");
-		return filterBean;
-	}
-
-	//
-	// X S R F _ F I L T E R _ C O N F I G's.
-	//
-
-	@Bean
-	@ConditionalOnProperty(name = KEY_XSRF_PREFIX + ".enabled", matchIfMissing = false)
-	@ConfigurationProperties(prefix = KEY_XSRF_PREFIX)
-	public XsrfProperties xsrfProperties() {
-		return new XsrfProperties();
-	}
-
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public XsrfProtectionSecurityFilter xsrfProtectionSecurityFilter(AdvancedCorsProcessor corsProcessor) {
-		return new XsrfProtectionSecurityFilter();
-	}
-
-	@Bean
-	@ConditionalOnBean(XsrfProperties.class)
-	public FilterRegistrationBean xsrfProtectionSecurityFilterBean(XsrfProtectionSecurityFilter filter) {
-		// Register XSRF filter
-		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
-		filterBean.setOrder(ORDER_XSRF_PRECEDENCE);
-		// Cannot use '/*' or it will not be added to the container chain (only
-		// '/**')
-		filterBean.addUrlPatterns("/*"); // TODO config??
-		return filterBean;
-	}
 
 	//
 	// C I P H E R _ A N D _ F I L T E R _ C O N F I G's.
@@ -480,8 +341,13 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 		return new IamErrorConfiguring();
 	}
 
-	final public static int ORDER_XSRF_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 9;
-	final public static int ORDER_CORS_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 10;
+	//
+	// Build-in security protection filter order-precedence definitions.
+	//
+
+	final public static int ORDER_CORS_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 9;
+	final public static int ORDER_XSRF_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 10;
 	final public static int ORDER_CIPHER_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 11;
+	final public static int ORDER_REPAY_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 12;
 
 }

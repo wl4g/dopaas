@@ -32,13 +32,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 import com.wl4g.devops.tool.common.collection.RegisteredSetList;
 
 /**
@@ -50,21 +50,6 @@ import com.wl4g.devops.tool.common.collection.RegisteredSetList;
  */
 public abstract class AbstractIamProperties<P extends ParamProperties> implements InitializingBean, Serializable {
 	private static final long serialVersionUID = -5858422822181237865L;
-
-	/**
-	 * Default view access base URI
-	 */
-	final public static String DEFAULT_VIEW_BASE_URI = "/view";
-
-	/**
-	 * Default view index URI.
-	 */
-	final public static String DEFAULT_VIEW_INDEX_URI = DEFAULT_VIEW_BASE_URI + "/index.html";
-
-	/**
-	 * Default view 403 URI.
-	 */
-	final public static String DEFAULT_VIEW_403_URI = DEFAULT_VIEW_BASE_URI + "/403.html";
 
 	/**
 	 * Spring boot environment.
@@ -193,13 +178,25 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	}
 
 	/**
-	 * Apply default properties if necessary.
+	 * Gets spring application name.
+	 * 
+	 * @return
+	 */
+	public String getSpringApplicationName() {
+		return environment.getProperty("spring.application.name");
+	}
+
+	/**
+	 * Apply default config property.
 	 */
 	protected void applyDefaultIfNecessary() {
 		// Sets Service name defaults.
 		if (isBlank(getServiceName())) {
-			setServiceName(environment.getProperty("spring.application.name"));
+			setServiceName(getSpringApplicationName());
 		}
+
+		// Add common default filter chain.
+		addCommonDefaultFilterChain();
 	}
 
 	/**
@@ -225,6 +222,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			boolean exist = builtParamValues.contains(p);
 			isTrue(!exist, "Iam custom parameter name that conflict with system built-in parameter '%s'", p);
 		});
+	}
+
+	/**
+	 * Add common default filter chain.
+	 */
+	private final void addCommonDefaultFilterChain() {
+		// Default xsrf request rules.
+		getFilterChain().put(XsrfProperties.DEFAULT_XSRF_BASE_PATTERN, "anon");
 	}
 
 	/**
@@ -267,7 +272,8 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @date 2018年11月29日
 	 * @since
 	 */
-	public class CookieProperties extends SimpleCookie implements Serializable {
+	public class CookieProperties extends IamCookie implements Serializable {
+
 		private static final long serialVersionUID = 918554077474485700L;
 
 		@Override
@@ -512,7 +518,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * signature value calculated by the server is equal to the signature
 		 * value submitted by the client, that is, the verification passes.
 		 * 
-		 * @see {@link com.wl4g.devops.common.constants.IAMDevOpsConstants#KEY_ACCESSTOKEN_SIGN}
+		 * @see {@link com.wl4g.devops.common.constants.IAMDevOpsConstants#KEY_ACCESSTOKEN_SIGN_NAME}
 		 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
 		 * @see prev-step:{@link #dataCipherKeyName}
 		 */
@@ -529,6 +535,15 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		private String dataCipherKeyName = "dataCipherKey";
 
 		// --- Client's secret & signature.] ---
+
+		// --- [Authentication info. ---
+
+		/**
+		 * Authorizes permits information attribute name.
+		 */
+		private String authzPermitsName = "authzPermits";
+
+		// --- Authentication info.] ---
 
 		public String getVersion() {
 			return version;
@@ -698,6 +713,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		public void setDataCipherKeyName(String dataCipherKeyName) {
 			this.dataCipherKeyName = dataCipherKeyName;
+		}
+
+		public String getAuthzPermitsName() {
+			return authzPermitsName;
+		}
+
+		public void setAuthzPermitsName(String authzPermitsName) {
+			this.authzPermitsName = authzPermitsName;
 		}
 
 	}
@@ -888,5 +911,20 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		}
 
 	}
+
+	/**
+	 * Default view access base URI
+	 */
+	final public static String DEFAULT_VIEW_BASE_URI = "/view";
+
+	/**
+	 * Default view index URI.
+	 */
+	final public static String DEFAULT_VIEW_INDEX_URI = DEFAULT_VIEW_BASE_URI + "/index.html";
+
+	/**
+	 * Default view 403 URI.
+	 */
+	final public static String DEFAULT_VIEW_403_URI = DEFAULT_VIEW_BASE_URI + "/403.html";
 
 }

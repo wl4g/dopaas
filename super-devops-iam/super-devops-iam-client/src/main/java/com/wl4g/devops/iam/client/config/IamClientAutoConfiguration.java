@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.client.config;
 
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.apache.shiro.web.servlet.SimpleCookie;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,8 +32,8 @@ import com.wl4g.devops.iam.client.validation.FastCasTicketIamValidator;
 import com.wl4g.devops.iam.client.validation.IamValidator;
 import com.wl4g.devops.iam.client.web.ClientAuthenticatorEndpoint;
 import com.wl4g.devops.iam.client.session.mgt.IamClientSessionManager;
-import com.wl4g.devops.iam.client.authc.aop.SecondaryAuthenticationAspect;
-import com.wl4g.devops.iam.client.authc.aop.SecondaryAuthenticationProcessor;
+import com.wl4g.devops.iam.client.authc.secondary.SecondaryAuthenticationAdvice;
+import com.wl4g.devops.iam.client.authc.secondary.SimpleSecondaryAuthenticationHandler;
 import com.wl4g.devops.iam.client.configure.AnynothingClientSecurityConfigurer;
 import com.wl4g.devops.iam.client.configure.AnynothingClientSecurityCoprocessor;
 import com.wl4g.devops.iam.client.configure.ClientSecurityConfigurer;
@@ -51,6 +50,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionFactory;
 import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 
@@ -85,7 +85,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean
 	public IamClientSessionManager iamClientSessionManager(IamSessionFactory sessionFactory, JedisIamSessionDAO sessionDAO,
-			IamCacheManager cacheManager, SimpleCookie cookie, IamClientProperties config,
+			IamCacheManager cacheManager, IamCookie cookie, IamClientProperties config,
 			@Qualifier(BEAN_SESSION_VALIDATOR) IamValidator validator) {
 		IamClientSessionManager sessionManager = new IamClientSessionManager(config, cacheManager, validator);
 		sessionManager.setSessionFactory(sessionFactory);
@@ -235,15 +235,15 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public SecondaryAuthenticationAspect secondAuthenticateAspect(SecondaryAuthenticationProcessor processor) {
-		return new SecondaryAuthenticationAspect(processor);
+	public SecondaryAuthenticationAdvice secondAuthenticateAspect(SimpleSecondaryAuthenticationHandler processor) {
+		return new SecondaryAuthenticationAdvice(processor);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public SecondaryAuthenticationProcessor secondAuthenticateProcessor(IamClientProperties config, RestTemplate restTemplate,
+	public SimpleSecondaryAuthenticationHandler secondAuthenticateProcessor(IamClientProperties config, RestTemplate restTemplate,
 			BeanFactory beanFactory) {
-		return new SecondaryAuthenticationProcessor(config, restTemplate, beanFactory);
+		return new SimpleSecondaryAuthenticationHandler(config, restTemplate, beanFactory);
 	}
 
 	// ==============================

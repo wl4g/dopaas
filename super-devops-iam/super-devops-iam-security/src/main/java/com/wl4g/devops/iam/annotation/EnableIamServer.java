@@ -28,6 +28,10 @@ import com.wl4g.devops.iam.config.JssdkWebappsAutoConfiguration;
 import com.wl4g.devops.iam.config.LoginAutoConfiguration;
 import com.wl4g.devops.iam.config.SimpleRcmAutoConfiguration;
 import com.wl4g.devops.iam.config.IamAutoConfiguration;
+import com.wl4g.devops.iam.common.config.CorsAutoConfiguration;
+import com.wl4g.devops.iam.common.config.ReplayAutoConfiguration;
+import com.wl4g.devops.iam.common.config.XsrfAutoConfiguration;
+import com.wl4g.devops.iam.common.config.XssAutoConfiguration;
 import com.wl4g.devops.iam.config.BasedConfigAutoConfiguration;
 import com.wl4g.devops.iam.config.SnsAutoConfiguration;
 import com.wl4g.devops.iam.config.VerifyAutoConfiguration;
@@ -45,7 +49,8 @@ import com.wl4g.devops.iam.config.VerifyAutoConfiguration;
 @Documented
 @Import({ BasedConfigAutoConfiguration.class, IamAutoConfiguration.class, LoginAutoConfiguration.class,
 		VerifyAutoConfiguration.class, SimpleRcmAutoConfiguration.class, SnsAutoConfiguration.class,
-		IamServerApiV1AutoConfiguration.class, JssdkWebappsAutoConfiguration.class })
+		IamServerApiV1AutoConfiguration.class, JssdkWebappsAutoConfiguration.class, CorsAutoConfiguration.class,
+		XsrfAutoConfiguration.class, XssAutoConfiguration.class, ReplayAutoConfiguration.class })
 public @interface EnableIamServer {
 
 }

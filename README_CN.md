@@ -1,5 +1,5 @@
 ![SuperDevops](shots/logo.jpg)
-## 一站式的 DevSecOps云平台(saas)，基于SpringCloud开发, 主要功能模块: 持续交付CI/CD、认证中心、监控中心、配置中心、资源管理中心、调度中心、弹性伸缩、shell工具、各种工具组件(如HBase/OSS运维)、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
+## 一站式的 DevSecOps云平台(saas)，基于SpringCloud开发, 主要功能模块: 持续交付CI/CD(支持pptpVPN/openVPN/SSH等)、认证中心、监控中心、配置中心、资源管理中心、调度中心、弹性伸缩、shell工具、各种工具组件(如HBase/OSS运维)、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
 
 [![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)

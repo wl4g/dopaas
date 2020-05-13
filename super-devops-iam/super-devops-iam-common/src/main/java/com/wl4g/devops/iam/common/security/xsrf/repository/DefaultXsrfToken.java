@@ -15,67 +15,64 @@
  */
 package com.wl4g.devops.iam.common.security.xsrf.repository;
 
-import org.springframework.util.Assert;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasLength;
 
 /**
- * A CSRF token that is used to protect against CSRF attacks.
+ * A default XSRF token that is used to protect against CSRF attacks.
  *
- * @author Rob Winch
- * @since 3.2
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年5月7日
  */
 public final class DefaultXsrfToken implements XsrfToken {
 	private static final long serialVersionUID = 9081452892797891148L;
 
-	private final String token;
+	/**
+	 * XSRF token value.
+	 */
+	final private String xsrfToken;
 
-	private final String parameterName;
+	/**
+	 * XSRF parameter name/
+	 */
+	final private String xsrfParamName;
 
-	private final String headerName;
+	/**
+	 * XSRF header name.
+	 */
+	final private String xsrfHeaderName;
 
 	/**
 	 * Creates a new instance
 	 * 
-	 * @param headerName
+	 * @param xsrfHeaderName
 	 *            the HTTP header name to use
-	 * @param parameterName
+	 * @param xsrfParamName
 	 *            the HTTP parameter name to use
 	 * @param token
 	 *            the value of the token (i.e. expected value of the HTTP
 	 *            parameter of parametername).
 	 */
-	public DefaultXsrfToken(String headerName, String parameterName, String token) {
-		Assert.hasLength(headerName, "headerName cannot be null or empty");
-		Assert.hasLength(parameterName, "parameterName cannot be null or empty");
-		Assert.hasLength(token, "token cannot be null or empty");
-		this.headerName = headerName;
-		this.parameterName = parameterName;
-		this.token = token;
+	public DefaultXsrfToken(String xsrfHeaderName, String xsrfParamName, String xsrfToken) {
+		hasLength(xsrfHeaderName, "xsrfHeaderName cannot be null or empty");
+		hasLength(xsrfParamName, "xsrfParamName cannot be null or empty");
+		hasLength(xsrfToken, "xsrfToken cannot be null or empty");
+		this.xsrfHeaderName = xsrfHeaderName;
+		this.xsrfParamName = xsrfParamName;
+		this.xsrfToken = xsrfToken;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.springframework.security.web.csrf.CsrfToken#getHeaderName()
-	 */
-	public String getHeaderName() {
-		return this.headerName;
+	@Override
+	public String getXsrfHeaderName() {
+		return this.xsrfHeaderName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.springframework.security.web.csrf.CsrfToken#getParameterName()
-	 */
-	public String getParameterName() {
-		return this.parameterName;
+	@Override
+	public String getXsrfParamName() {
+		return this.xsrfParamName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.springframework.security.web.csrf.CsrfToken#getToken()
-	 */
-	public String getToken() {
-		return this.token;
+	@Override
+	public String getXsrfToken() {
+		return this.xsrfToken;
 	}
 }

@@ -37,9 +37,10 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSession;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PARENT_SESSIONID_NAME;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -117,9 +118,10 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 
 			IamPrincipalInfo info = validated.getPrincipalInfo();
 			// Storage authenticated attributes.
-			bind(KEY_LANG_ATTRIBUTE_NAME, info.getAttributes().get(KEY_LANG_ATTRIBUTE_NAME));
-			bind(KEY_DATA_CIPHER, info.getAttributes().get(KEY_DATA_CIPHER));
-			bind(KEY_ACCESSTOKEN_SIGN, info.getAttributes().get(KEY_ACCESSTOKEN_SIGN));
+			bind(KEY_LANG_NAME, info.getAttributes().get(KEY_LANG_NAME));
+			bind(KEY_PARENT_SESSIONID_NAME, info.getAttributes().get(KEY_PARENT_SESSIONID_NAME));
+			bind(KEY_DATA_CIPHER_NAME, info.getAttributes().get(KEY_DATA_CIPHER_NAME));
+			bind(KEY_ACCESSTOKEN_SIGN_NAME, info.getAttributes().get(KEY_ACCESSTOKEN_SIGN_NAME));
 
 			// Update settings grant ticket
 			String newGrantTicket = valueOf(info.getStoredCredentials());

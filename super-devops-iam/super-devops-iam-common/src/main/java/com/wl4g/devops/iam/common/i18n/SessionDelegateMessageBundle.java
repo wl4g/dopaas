@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.common.i18n;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_ATTRIBUTE_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_NAME;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 
 import java.util.Locale;
@@ -46,7 +46,7 @@ public class SessionDelegateMessageBundle extends AbstractDelegateMessageBundle 
 
 	@Override
 	protected Locale getSessionLocale() {
-		Locale locale = (Locale) getBindValue(KEY_LANG_ATTRIBUTE_NAME);
+		Locale locale = (Locale) getBindValue(KEY_LANG_NAME);
 		return Objects.isNull(locale) ? Locale.SIMPLIFIED_CHINESE : locale;
 	}
 

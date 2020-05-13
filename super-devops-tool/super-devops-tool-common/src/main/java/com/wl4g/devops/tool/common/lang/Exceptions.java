@@ -15,10 +15,7 @@
  */
 package com.wl4g.devops.tool.common.lang;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 import java.io.PrintWriter;
@@ -142,13 +139,16 @@ public abstract class Exceptions extends ExceptionUtils {
 		}
 		String causes = getRootCauseMessage(th);
 		String errmsg = isEmpty(causes) ? getMessage(th) : causes;
-		if (extract && contains(errmsg, ":")) {
-			String[] arr = errmsg.split(":");
-			if (arr.length > 1) {
-				errmsg = join(arr, EMPTY, 1, arr.length);
+		if (extract) {
+			int index = errmsg.indexOf(DEFAULT_CAUSE_EX_SEPARATE_SUFFIX);
+			if (index > 0) {
+				errmsg = errmsg.substring(index + DEFAULT_CAUSE_EX_SEPARATE_SUFFIX_LENGTH);
 			}
 		}
 		return trim(errmsg);
 	}
+
+	final public static String DEFAULT_CAUSE_EX_SEPARATE_SUFFIX = "Exception: ";
+	final public static int DEFAULT_CAUSE_EX_SEPARATE_SUFFIX_LENGTH = DEFAULT_CAUSE_EX_SEPARATE_SUFFIX.length();
 
 }

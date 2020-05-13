@@ -37,7 +37,7 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisFormatUtils.*;
+import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisProtocolUtil.*;
 
 /**
  * Global timeout job handler finalizer.

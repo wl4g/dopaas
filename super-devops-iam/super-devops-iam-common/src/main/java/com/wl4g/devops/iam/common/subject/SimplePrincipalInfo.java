@@ -33,7 +33,8 @@ import javax.validation.constraints.NotBlank;
  * @since
  */
 public class SimplePrincipalInfo implements IamPrincipalInfo {
-	private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = -2148910955172545592L;
 
 	/** Authenticate principal ID. */
 	@NotBlank

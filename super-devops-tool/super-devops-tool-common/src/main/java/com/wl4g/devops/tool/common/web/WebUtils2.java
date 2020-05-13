@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import static java.util.Locale.*;
+import static java.util.Objects.isNull;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -117,20 +118,14 @@ public abstract class WebUtils2 {
 	 */
 	public static void write(HttpServletResponse response, int status, String contentType, byte[] body) throws IOException {
 		OutputStream out = null;
-		try {
-			response.setCharacterEncoding("UTF-8");
-			response.setStatus(status);
-			response.setContentType(contentType);
-			if (body != null) {
-				out = response.getOutputStream();
-				out.write(body);
-				out.flush();
-				response.flushBuffer();
-			}
-		} finally {
-			if (out != null) {
-				out.close();
-			}
+		response.setCharacterEncoding("UTF-8");
+		response.setStatus(status);
+		response.setContentType(contentType);
+		if (!isNull(body)) {
+			out = response.getOutputStream();
+			out.write(body);
+			response.flushBuffer();
+			// out.close(); // [Cannot close !!!]
 		}
 	}
 
@@ -424,6 +419,44 @@ public abstract class WebUtils2 {
 			throw new IllegalArgumentException(e);
 		}
 		return url;
+	}
+
+	/**
+	 * Extract top level domain string. </br>
+	 * 
+	 * <pre>
+	 *extTopDomainString("//my.wl4g.com/myapp1")                =>  wl4g.com
+	 *extTopDomainString("/myapp1/api/v2/list")                 =>  
+	 *extTopDomainString("http://my.wl4g.com.cn/myapp1")        =>  wl4g.com.cn
+	 *extTopDomainString("https://my2.my1.wl4g.com:80/myapp1")  =>  wl4g.com
+	 * </pre>
+	 * 
+	 * @param uri
+	 * @return
+	 */
+	public static String extTopDomainString(String uri) {
+		if (isBlank(uri)) {
+			return uri;
+		}
+		String domain = URI.create(uri).getHost();
+		if (isBlank(domain)) {
+			return EMPTY;
+		}
+		String[] parts = split(domain, ".");
+		int endIndex = 2;
+		if (domain.endsWith("com.cn")) {
+			endIndex = 3;
+		}
+		StringBuffer topDomain = new StringBuffer();
+		for (int i = 0; i < parts.length; i++) {
+			if (i >= (parts.length - endIndex)) {
+				topDomain.append(parts[i]);
+				if (i < (parts.length - 1)) {
+					topDomain.append(".");
+				}
+			}
+		}
+		return topDomain.toString();
 	}
 
 	/**

@@ -201,8 +201,8 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	}
 
 	/**
-	 * Add default filter chain settings.<br/>
-	 * {@link DefaultOauth2SnsController#connect}<br/>
+	 * Add default filter chain settings. </br>
+	 * For example: {@link DefaultOauth2SnsController#connect} </br>
 	 */
 	final private void addDefaultFilterChain() {
 		// Default view access files request rules.
