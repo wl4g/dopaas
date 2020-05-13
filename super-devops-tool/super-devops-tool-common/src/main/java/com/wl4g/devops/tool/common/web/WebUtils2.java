@@ -422,6 +422,44 @@ public abstract class WebUtils2 {
 	}
 
 	/**
+	 * Extract top level domain string. </br>
+	 * 
+	 * <pre>
+	 *extTopDomainString("//my.wl4g.com/myapp1")                =>  wl4g.com
+	 *extTopDomainString("/myapp1/api/v2/list")                 =>  
+	 *extTopDomainString("http://my.wl4g.com.cn/myapp1")        =>  wl4g.com.cn
+	 *extTopDomainString("https://my2.my1.wl4g.com:80/myapp1")  =>  wl4g.com
+	 * </pre>
+	 * 
+	 * @param uri
+	 * @return
+	 */
+	public static String extTopDomainString(String uri) {
+		if (isBlank(uri)) {
+			return uri;
+		}
+		String domain = URI.create(uri).getHost();
+		if (isBlank(domain)) {
+			return EMPTY;
+		}
+		String[] parts = split(domain, ".");
+		int endIndex = 2;
+		if (domain.endsWith("com.cn")) {
+			endIndex = 3;
+		}
+		StringBuffer topDomain = new StringBuffer();
+		for (int i = 0; i < parts.length; i++) {
+			if (i >= (parts.length - endIndex)) {
+				topDomain.append(parts[i]);
+				if (i < (parts.length - 1)) {
+					topDomain.append(".");
+				}
+			}
+		}
+		return topDomain.toString();
+	}
+
+	/**
 	 * Domain names equals two URIs are equal (including secondary and tertiary
 	 * domain names, etc. Exact matching)
 	 * 

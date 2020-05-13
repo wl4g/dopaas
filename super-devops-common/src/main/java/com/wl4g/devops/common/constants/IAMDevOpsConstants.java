@@ -102,7 +102,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	/**
 	 * IAM XSRF token apply URI.
 	 */
-	final public static String URI_XSRF_APPLY_TOKEN = "token";
+	final public static String URI_XSRF_APPLY_TOKEN = "xtoken";
 
 	//
 	// Server configuration.

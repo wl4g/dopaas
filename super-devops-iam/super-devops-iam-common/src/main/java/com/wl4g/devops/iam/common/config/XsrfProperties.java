@@ -52,7 +52,7 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	/**
 	 * Default xsrf cookie name.
 	 */
-	private String xsrfCookieName = DEFAULT_XSRF_COOKIE_NAME;
+	private String xsrfCookieName = null;
 
 	/**
 	 * Default xsrf parameter name.
@@ -204,6 +204,10 @@ public class XsrfProperties implements InitializingBean, Serializable {
 
 	final public static String KEY_XSRF_PREFIX = "spring.cloud.devops.iam.xsrf";
 
+	/**
+	 * Use to: IAM-{serviceName}-XSRF-TOKEN
+	 */
+	@Deprecated
 	public static final String DEFAULT_XSRF_COOKIE_NAME = "IAM-XSRF-TOKEN";
 	public static final String DEFAULT_XSRF_PARAM_NAME = "_xsrf";
 	public static final String DEFAULT_XSRF_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Xsrf-Token";
