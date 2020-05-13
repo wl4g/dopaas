@@ -80,16 +80,22 @@ public interface XsrfTokenRepository {
 		 * Generate and sets {@link XsrfToken} of web. (if necessary)
 		 * 
 		 * @param repository
+		 * @param request
+		 * @param response
+		 * @param forceRenew
 		 * @return
 		 */
 		public static XsrfToken saveWebXsrfTokenIfNecessary(XsrfTokenRepository repository, HttpServletRequest request,
-				HttpServletResponse response) {
+				HttpServletResponse response, boolean forceRenew) {
 			XsrfToken xtoken = null;
 			if (!isNull(repository) && isBrowser(request)) {
-				// Generate XSRF token.
-				xtoken = repository.generateXToken(request);
-				// save XSRF token.
-				repository.saveXToken(xtoken, request, response);
+				xtoken = repository.getXToken(request);
+				if (isNull(xtoken) || forceRenew) {
+					// Generate XSRF token.
+					xtoken = repository.generateXToken(request);
+					// Save XSRF token.
+					repository.saveXToken(xtoken, request, response);
+				}
 			}
 			return xtoken;
 		}

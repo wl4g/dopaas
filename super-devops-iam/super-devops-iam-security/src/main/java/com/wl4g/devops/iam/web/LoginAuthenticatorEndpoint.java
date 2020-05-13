@@ -117,7 +117,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 		// Generate refresh xsrf token.
-		saveWebXsrfTokenIfNecessary(xTokenRepository, request, response);
+		saveWebXsrfTokenIfNecessary(xTokenRepository, request, response, false);
 
 		// Reponed handshake result.
 		HandshakeResult handshake = new HandshakeResult(V2_0_0.getVersion());
