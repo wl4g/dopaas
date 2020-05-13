@@ -171,7 +171,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	protected Map<String, String> putXsrfTokenCookieIfNecessary(AuthenticationToken token, ServletRequest request,
 			ServletResponse response) {
 		// Generate & save xsrf token.
-		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xTokenRepository, toHttp(request), toHttp(response));
+		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xTokenRepository, toHttp(request), toHttp(response), true);
 		// Deserialize xsrf token.
 		Map<String, String> xsrfInfo = convertBean(xtoken, TYPE_REF_STRING_HASHMAP);
 		return isNull(xsrfInfo) ? emptyMap() : xsrfInfo;

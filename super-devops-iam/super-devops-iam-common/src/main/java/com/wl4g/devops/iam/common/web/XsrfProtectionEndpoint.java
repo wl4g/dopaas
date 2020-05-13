@@ -66,7 +66,7 @@ public class XsrfProtectionEndpoint extends BaseController {
 
 		// RespBase<Object> resp = new RespBase<>();
 		// Generate & save xsrf token.
-		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xtokenRepository, request, response);
+		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xtokenRepository, request, response, true);
 		// resp.setData(xtoken);
 
 		log.info("Apply xsrf token => {}", xtoken);
