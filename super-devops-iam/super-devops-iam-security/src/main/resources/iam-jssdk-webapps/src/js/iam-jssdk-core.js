@@ -442,7 +442,7 @@
         	|| hostname.endsWith('.debug')
         	|| hostname.endsWith('.local')
         	|| hostname.endsWith('.dev')) {
-        	return protocol + "//" + hostname + ":" + port;
+        	return protocol + "//" + hostname + ":" + servPort + contextPath;
         }
         // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，
 		// (接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
