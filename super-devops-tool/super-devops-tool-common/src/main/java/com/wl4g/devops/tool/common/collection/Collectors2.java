@@ -56,4 +56,5 @@ public abstract class Collectors2 {
 			return s;
 		}, Characteristics.IDENTITY_FINISH);
 	}
+
 }

@@ -16,13 +16,16 @@
 package com.wl4g.devops.iam.common.security.xsrf.repository;
 
 import static java.lang.String.format;
+import static java.util.Locale.US;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.split;
 
+import java.net.URI;
 import java.util.UUID;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,6 +38,7 @@ import com.wl4g.devops.iam.common.config.XsrfProperties;
 import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
+import static com.wl4g.devops.tool.common.web.WebUtils2.extTopDomainString;
 import static org.springframework.web.util.WebUtils.getCookie;
 
 /**
@@ -73,7 +77,7 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 
 		// Delete older xsrf token from cookie.
 		int version = -1;
-		Cookie oldCookie = IamCookie.build(getCookie(request, xconfig.getXsrfCookieName()));
+		Cookie oldCookie = IamCookie.build(getCookie(request, getXsrfTokenCookieName(request)));
 		if (!isNull(oldCookie)) {
 			version = oldCookie.getVersion();
 			oldCookie.removeFrom(request, response);
@@ -81,7 +85,7 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 
 		// New xsrf token to cookie.
 		Cookie cookie = new IamCookie(coreConfig.getCookie());
-		cookie.setName(xconfig.getXsrfCookieName());
+		cookie.setName(getXsrfTokenCookieName(request));
 		cookie.setValue(xtokenValue);
 		cookie.setVersion(++version);
 		cookie.setSecure(request.isSecure());
@@ -104,11 +108,9 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		// to the headers. At this time, httponly=true cannot be set
 		cookie.setHttpOnly(xconfig.isCookieHttpOnly());
 
-		// String domainUri = request.getHeader("Origin");
-		// domainUri = request.getHeader("Referer");
-		// if (!isBlank(domainUri)) {
-		// cookie.setDomain(URI.create(domainUri).getHost());
-		// }
+		// Note: due to the cross domain limitation of set cookie, it can only
+		// be set to the current domain or parent domain
+		cookie.setDomain(getXsrfTokenCookieDomain(request));
 
 		cookie.saveTo(request, response);
 	}
@@ -120,7 +122,7 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 			return null;
 		}
 		String xtoken = cookie.getValue();
-		if (equalsAnyIgnoreCase(xtoken, "null", "undefined", "")) {
+		if (equalsAnyIgnoreCase(xtoken, "null", "undefined", EMPTY)) {
 			return null;
 		}
 		return new DefaultXsrfToken(xconfig.getXsrfHeaderName(), xconfig.getXsrfParamName(), xtoken);
@@ -146,6 +148,49 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 	private String getRequestContext(HttpServletRequest request) {
 		String contextPath = request.getContextPath();
 		return contextPath.length() > 0 ? contextPath : "/";
+	}
+
+	/**
+	 * Gets xsrf token with cookie name.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	private String getXsrfTokenCookieName(HttpServletRequest request) {
+		String xsrfCookieName = xconfig.getXsrfCookieName();
+		if (!isBlank(xsrfCookieName)) {
+			return xsrfCookieName;
+		}
+
+		// @see: iam-jssdk-core.js#[MARK55]
+		String host = URI.create(getXsrfRequestUri(request)).getHost();
+		String defaultServiceName = join(split(host, '.'), ".", 0, 1).toUpperCase(US);
+		xsrfCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";
+
+		return xsrfCookieName;
+	}
+
+	/**
+	 * Gets xrf token cookit domain.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	private String getXsrfTokenCookieDomain(HttpServletRequest request) {
+		return "." + extTopDomainString(getXsrfRequestUri(request));
+	}
+
+	/**
+	 * Gets xsrf request uri.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	private String getXsrfRequestUri(HttpServletRequest request) {
+		// String domainUri = request.getServerName();
+		String domainUri = request.getHeader("Origin");
+		// domainUri=isBlank(domainUri)?request.getHeader("Referer"):domainUri;
+		return domainUri;
 	}
 
 }

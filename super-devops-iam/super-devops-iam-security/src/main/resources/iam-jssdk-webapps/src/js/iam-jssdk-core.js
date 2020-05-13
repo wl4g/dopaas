@@ -266,8 +266,10 @@
 			smsApplyUri: "/verify/applysmsverify", // 申请SMS验证码URI后缀
 			smsSubmitUri: "/auth/sms", // SMS登录提交的URL后缀
 			snsConnectUri: "/sns/connect/", // 请求连接到社交平台的URL后缀
-			applyXsrfTokenUrlKey: "/xsrf/token", // 申请xsrfToken接口地址
-			xsrfTokenCookieKey: "IAM-XSRF-TOKEN", // xsrfToken保存的cookie名
+			applyXsrfTokenUrlKey: "/xsrf/xtoken", // 申请xsrfToken接口地址
+			// Due to the cross domain limitation of set cookie, it can only be set as the top-level domain name,
+			// so the cookie name of xsrf for each sub service (sub domain name) is different.
+			//xsrfTokenCookieKey: "IAM-XSRF-TOKEN", // xsrfToken保存的cookie名(@Deprecated), used: IAM-{service}-XSRF-TOKEN  @see: #MARK55
 			xsrfTokenHeaderKey: "X-Iam-Xsrf-Token", // xsrfToken保存的header名
 			xsrfTokenParamKey: "_xsrf", // xsrfToken保存的Param名
 			replayTokenHeaderKey: "X-Iam-Replay-Token", // 重放攻击replayToken保存的header名
@@ -1001,9 +1003,8 @@
 
 	// Exposing IAMCore APIs
 	window.IAMCore = function(opt) {
-		_initConfigure(opt); // 初始化配置
-		// 为确保执行顺序（1，获取umidToken；2，请求handshake；3，初始绑定各种认证器）
-		_InitHandshakeIfNecessary().then(handshakeValue => {});
+		// 初始化配置
+		_initConfigure(opt);
 	};
 	// Export umToken
 	IAMCore.prototype.getUMToken = function() {
@@ -1045,6 +1046,7 @@
 	};
 	// Export build 
 	IAMCore.prototype.build = function() {
+		// 为确保执行顺序（1，获取umidToken；2，请求handshake；3，初始绑定各种认证器）
 		_InitHandshakeIfNecessary().then(handshakeValue => {
 			_InitAccountAuthenticator();
 			_InitSMSAuthenticator();
@@ -1062,21 +1064,16 @@
 		settings = null;
 		console.log("Destroyed IAMCore instance.");
 	};
-	// Export function getIamBaseURI
-	IAMCore.getIamBaseUri = function() {
-		var iamBaseUri = sessionStorage.getItem(constant.baseUriStoredKey);
-		if (!iamBaseUri) {
-			sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri =getDefaultIamBaseUri()));
-		}
-		return iamBaseUri;
-	};
-	// Export function getXsrfToken
-	IAMCore.getXsrfToken = function(cookies) {
-		var xsrfTokenCookieName = Common.Util.checkEmpty("definition.xsrfTokenCookieKey", settings.definition.xsrfTokenCookieKey);
+	// Export getXsrfToken
+	IAMCore.prototype.getXsrfToken = function(_xsrfTokenCookieName) {
 		var xsrfTokenHeaderName = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
 		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
+		// [MARK55]
+		var defaultServiceName = location.hostname.split('.').slice(0, 1).join(".").toUpperCase();
+		var xsrfTokenCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";
+		xsrfTokenCookieName = _xsrfTokenCookieName ? _xsrfTokenCookieName : xsrfTokenCookieName;
 		// Gets xsrf from cookie.
-		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName, cookies);
+		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName, null);
 		// First visit? init xsrf token
 		if (!xsrfToken) {
 			//console.debug("Initializing xsrf token...");
@@ -1101,8 +1098,8 @@
 			value: xsrfToken
 		};
 	};
-	// Export function generateReplayToken
-	IAMCore.generateReplayToken = function() {
+	// Export generateReplayToken
+	IAMCore.prototype.generateReplayToken = function() {
 		var timestamp = new Date().getTime();
 		var nonce = "";
 		for (var i=0; i<2; i++) {
@@ -1134,6 +1131,14 @@
 			paramName: replayTokenParamName,
 			value: replayToken
 		};
+	};
+	// Export function getIamBaseURI
+	IAMCore.getIamBaseUri = function() {
+		var iamBaseUri = sessionStorage.getItem(constant.baseUriStoredKey);
+		if (!iamBaseUri) {
+			sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri =getDefaultIamBaseUri()));
+		}
+		return iamBaseUri;
 	};
 
 })(window, document);
