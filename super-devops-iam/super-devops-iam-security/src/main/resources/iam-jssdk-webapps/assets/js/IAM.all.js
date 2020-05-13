@@ -1405,6 +1405,7 @@
 		deploy: {
 			baseUri: null, // IAM后端服务baseURI
 			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+			defaultServerPort: 14040, // 默认IAM Server的port
 			defaultContextPath: "/iam-server", // 默认IAM Server的context-path
 		},
 		// 初始相关配置(Event)
@@ -1549,23 +1550,27 @@
 	// Gets default IAM baseUri
 	var getDefaultIamBaseUri = function() {
 		// 获取地址栏默认baseUri
+		var protocol = location.protocol;
 		var hostname = location.hostname;
-		var pathname = location.pathname;
+		var servPort = settings.deploy.defaultServerPort;
 		var twoDomain = settings.deploy.defaultTwoDomain;
 		var contextPath = settings.deploy.defaultContextPath;
 		contextPath = contextPath.startsWith("/") ? contextPath : ("/" + contextPath);
-		var port = location.port;
-		var protocol = location.protocol;
-	 	// 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
+
+		// 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
 	 	// 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:14040/iam-server, 10.0.0.12:14046/ci-server)都部署于同一台机。
 	 	// a，当访问的地址是IP；
 	 	// b，当访问域名的后者是.debug/.local/.dev等。
-        if (hostname == 'localhost' || hostname == '127.0.0.1'
-        	|| Common.Util.isIp(hostname) || hostname.endsWith('.debug')
-        	|| hostname.endsWith('.local') || hostname.endsWith('.dev')) {
-        	return protocol + "//" + hostname + ":14040" + contextPath;
+		if (Common.Util.isIp(hostname)
+        	|| hostname == 'localhost'
+        	|| hostname == '127.0.0.1'
+        	|| hostname.endsWith('.debug')
+        	|| hostname.endsWith('.local')
+        	|| hostname.endsWith('.dev')) {
+        	return protocol + "//" + hostname + ":" + port;
         }
-        // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，(接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
+        // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，
+		// (接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
         else {
         	var topDomainName = hostname.split('.').slice(-2).join('.');
         	if(hostname.indexOf("com.cn") > 0) {
