@@ -1139,6 +1139,7 @@
 
 	// 运行时状态值/全局变量/临时缓存
 	var runtime = {
+		that: null,
 		umid: {
 			_value: null, // umidToken
 			getValue: function() {
@@ -1625,10 +1626,10 @@
 		paramMap.set(Common.Util.checkEmpty("definition.responseType",settings.definition.responseType), Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue));
 		paramMap.set(Common.Util.checkEmpty("definition.secureAlgKey",settings.definition.secureAlgKey), runtime.handshake.handleChooseSecureAlg());
 		// XSRF token
-		var xsrfToken = IAMCore.getXsrfToken();
+		var xsrfToken = runtime.that.getXsrfToken();
 		paramMap.set(xsrfToken.paramName, xsrfToken.value);
 		// Replay token
-		var replayToken = IAMCore.generateReplayToken();
+		var replayToken = runtime.that.generateReplayToken();
 		paramMap.set(replayToken.paramName, replayToken.value);
 		// Session info
 		runtime.handshake.handleSessionTo(paramMap);
@@ -1650,10 +1651,10 @@
 		paramMap.set(Common.Util.checkEmpty("definition.secureAlgKey",settings.definition.secureAlgKey), runtime.handshake.handleChooseSecureAlg());
 		paramMap.set("r", Math.random());
 		// XSRF token
-		var xsrfToken = IAMCore.getXsrfToken();
+		var xsrfToken = runtime.that.getXsrfToken();
 		paramMap.set(xsrfToken.paramName, xsrfToken.value);
 		// Replay token
-		var replayToken = IAMCore.generateReplayToken();
+		var replayToken = runtime.that.generateReplayToken();
 		paramMap.set(replayToken.paramName, replayToken.value);
 		// Session info
 		runtime.handshake.handleSessionTo(paramMap);
@@ -2099,10 +2100,10 @@
 		var headers = new Map();
 		if (method.toUpperCase() == 'POST' || method.toUpperCase() == 'DELETE') {
 			// XSRF token
-			var xsrfToken = IAMCore.getXsrfToken();
+			var xsrfToken = runtime.that.getXsrfToken();
 			headers.set(xsrfToken.headerName, xsrfToken.value);
 			// Replay token
-			var replayToken = IAMCore.generateReplayToken();
+			var replayToken = runtime.that.generateReplayToken();
 			headers.set(replayToken.headerName, replayToken.value);
 		}
 		$.ajax({
@@ -2128,6 +2129,7 @@
 
 	// Exposing IAMCore APIs
 	window.IAMCore = function(opt) {
+		runtime.that = this;
 		// 初始化配置
 		_initConfigure(opt);
 	};

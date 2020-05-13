@@ -117,7 +117,7 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 
 	@Override
 	public XsrfToken getXToken(HttpServletRequest request) {
-		javax.servlet.http.Cookie cookie = getCookie(request, xconfig.getXsrfCookieName());
+		javax.servlet.http.Cookie cookie = getCookie(request, getXsrfTokenCookieName(request));
 		if (isNull(cookie)) {
 			return null;
 		}
@@ -177,7 +177,7 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 	 * @return
 	 */
 	private String getXsrfTokenCookieDomain(HttpServletRequest request) {
-		return "." + extTopDomainString(getXsrfRequestUri(request));
+		return extTopDomainString(getXsrfRequestUri(request));
 	}
 
 	/**
