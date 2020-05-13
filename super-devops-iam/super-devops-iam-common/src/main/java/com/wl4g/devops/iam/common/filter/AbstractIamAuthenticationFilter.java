@@ -15,26 +15,42 @@
  */
 package com.wl4g.devops.iam.common.filter;
 
+import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
+import org.apache.shiro.web.servlet.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_BASE;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGIN_PERMITS;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
+import static java.util.Collections.emptyMap;
+import static java.util.Objects.isNull;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
+import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
+import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.convertBean;
 
 /**
  * Abstract iam authentication filter.
@@ -71,6 +87,12 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	protected SessionDelegateMessageBundle bundle;
 
 	/**
+	 * XSRF token repository. (If necessary)
+	 */
+	@Autowired(required = false)
+	protected XsrfTokenRepository xTokenRepository;
+
+	/**
 	 * Gets legal authentication customization parameters.
 	 * 
 	 * @param request
@@ -91,8 +113,84 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	}
 
 	/**
+	 * Puts principal authorization info(roles/permissions) and common security
+	 * headers to cookies.(if necessary)
+	 * 
+	 * @param token
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	protected Map<String, String> putAuthzInfoCookiesAndSecurityIfNecessary(AuthenticationToken token, ServletRequest request,
+			ServletResponse response) {
+		Map<String, String> authzInfo = new HashMap<>();
+
+		// Gets permits URl.
+		String permitUrl = getRFCBaseURI(toHttp(request), true) + URI_S_LOGIN_BASE + "/" + URI_S_LOGIN_PERMITS;
+		authzInfo.put(config.getParam().getAuthzPermitsName(), permitUrl);
+		if (isBrowser(toHttp(request))) {
+			// Sets authorizes permits info.
+			Cookie c = new IamCookie(config.getCookie());
+			c.setName(config.getParam().getAuthzPermitsName());
+			c.setValue(permitUrl);
+			c.setMaxAge(60);
+			c.saveTo(toHttp(request), toHttp(response));
+
+			// Sets common security headers.
+			setSecurityHeadersIfNecessary(token, request, response);
+		}
+
+		return authzInfo;
+	}
+
+	/**
+	 * Puts principal common security headers to cookies.(if necessary)
+	 * 
+	 * @param token
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	protected void setSecurityHeadersIfNecessary(AuthenticationToken token, ServletRequest request, ServletResponse response) {
+		// Sets P3P header.
+		if (isBrowser(toHttp(request))) {
+			toHttp(response).setHeader("P3P",
+					"CP='CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR'");
+		}
+
+	}
+
+	/**
+	 * Refresh puts principal xsrf token to cookies.(if necessary) </br>
+	 * 
+	 * @param token
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	protected Map<String, String> putXsrfTokenCookieIfNecessary(AuthenticationToken token, ServletRequest request,
+			ServletResponse response) {
+		// Generate & save xsrf token.
+		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xTokenRepository, toHttp(request), toHttp(response), true);
+		// Deserialize xsrf token.
+		Map<String, String> xsrfInfo = convertBean(xtoken, TYPE_REF_STRING_HASHMAP);
+		return isNull(xsrfInfo) ? emptyMap() : xsrfInfo;
+	}
+
+	/**
 	 * Gets authentication filter name.
 	 */
 	public abstract String getName();
+
+	/**
+	 * Root filter.
+	 */
+	final public static String NAME_ROOT_FILTER = "rootFilter";
+
+	/**
+	 * {@link TypeReference}
+	 */
+	final public static TypeReference<HashMap<String, String>> TYPE_REF_STRING_HASHMAP = new TypeReference<HashMap<String, String>>() {
+	};
 
 }

@@ -16,8 +16,11 @@
 package com.wl4g.devops.iam.common.security.xsrf;
 
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
+import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
+import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import java.io.IOException;
 
@@ -26,16 +29,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.shiro.util.AntPathMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.wl4g.devops.iam.common.security.xsrf.handler.AccessRejectHandler;
+import com.wl4g.devops.iam.common.config.XsrfProperties;
+import com.wl4g.devops.iam.common.security.xsrf.handler.XsrfRejectHandler;
 import com.wl4g.devops.iam.common.security.xsrf.handler.InvalidXsrfTokenException;
 import com.wl4g.devops.iam.common.security.xsrf.handler.MissingXsrfTokenException;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository;
 import com.wl4g.devops.tool.common.log.SmartLogger;
-import static com.wl4g.devops.tool.common.web.UrlUtils.*;
 
 /**
  * <p>
@@ -61,6 +65,9 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 	protected SmartLogger log = getLogger(getClass());
 
 	@Autowired
+	private XsrfProperties xconfig;
+
+	@Autowired
 	private XsrfTokenRepository xtokenRepository;
 
 	/**
@@ -78,7 +85,7 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 	 *            should be applied.
 	 */
 	@Autowired
-	private XsrfMatcher xsrfProtectionMatcher = DEFAULT_XSRF_MATCHER;
+	private XsrfMatcher xsrfProtectMatcher;
 
 	/**
 	 * Specifies a access denied handler that should be used when XSRF
@@ -89,39 +96,44 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 	 * </p>
 	 */
 	@Autowired
-	private AccessRejectHandler rejectHandler;
+	private XsrfRejectHandler rejectHandler;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		// Non browser request ignore validation XSRF token
-		if (!isBrowser(request)) {
-			log.debug("Skip XSRF token for: {}", buildFullRequestUrl(request));
+		String requestPath = getPathWithinApplication(toHttp(request));
+
+		// Ignore non replay request methods.
+		if (!xsrfProtectMatcher.matches(request)) {
+			log.debug("Skip xsrf protection of: {}", requestPath);
 			filterChain.doFilter(request, response);
 			return;
 		}
 
-		request.setAttribute(HttpServletResponse.class.getName(), response);
+		// Ignore exclude URIs XSRF validation.
+		for (String pattern : xconfig.getExcludeValidUriPatterns()) {
+			if (defaultExcludeUriXsrfMatcher.matchStart(pattern, requestPath)) {
+				log.debug("Skip exclude uri xsrf valid '{}'", requestPath);
+				filterChain.doFilter(request, response);
+				return;
+			}
+		}
+
+		// XSRF validation
+		// request.setAttribute(HttpServletResponse.class.getName(), response);
 		XsrfToken xsrfToken = xtokenRepository.getXToken(request);
 		final boolean missingToken = isNull(xsrfToken);
 		if (missingToken) {
 			xsrfToken = xtokenRepository.generateXToken(request);
 			xtokenRepository.saveXToken(xsrfToken, request, response);
 		}
-		request.setAttribute(XsrfToken.class.getName(), xsrfToken);
-		request.setAttribute(xsrfToken.getParameterName(), xsrfToken);
+		// request.setAttribute(XsrfToken.class.getName(), xsrfToken);
+		// request.setAttribute(xsrfToken.getParameterName(), xsrfToken);
 
-		if (!xsrfProtectionMatcher.matches(request)) {
-			filterChain.doFilter(request, response);
-			return;
-		}
-
-		String actualToken = request.getHeader(xsrfToken.getHeaderName());
-		if (actualToken == null) {
-			actualToken = request.getParameter(xsrfToken.getParameterName());
-		}
-		if (!xsrfToken.getToken().equals(actualToken)) {
-			log.debug("Invalid XSRF token found for: {}", buildFullRequestUrl(request));
+		String actualToken = request.getHeader(xsrfToken.getXsrfHeaderName());
+		actualToken = isBlank(actualToken) ? getCleanParam(request, xsrfToken.getXsrfParamName()) : actualToken;
+		if (!xsrfToken.getXsrfToken().equals(actualToken)) {
+			log.debug("Reject invalid XSRF token found uri: {}", requestPath);
 			if (missingToken) {
 				rejectHandler.handle(request, response, new MissingXsrfTokenException(actualToken));
 			} else {
@@ -134,10 +146,8 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 	}
 
 	/**
-	 * The default {@link RequestMatcher} that indicates if XSRF protection is
-	 * required or not. The default is to ignore GET, HEAD, TRACE, OPTIONS and
-	 * process all other requests.
+	 * Exclude xsrf URLs mapping matcher.
 	 */
-	public static final XsrfMatcher DEFAULT_XSRF_MATCHER = new RequiresXsrfMatcher();
+	final private static AntPathMatcher defaultExcludeUriXsrfMatcher = new AntPathMatcher();
 
 }

@@ -15,6 +15,10 @@
  */
 package com.wl4g.devops.tool.common.codec;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -32,9 +36,22 @@ public abstract class Base58 {
 	 * @param input
 	 * @return
 	 */
+	public static String encode(String input) {
+		if (isBlank(input)) {
+			return EMPTY;
+		}
+		return encode(input.getBytes(UTF_8));
+	}
+
+	/**
+	 * Encodes the given bytes in base58. No checksum is appended.
+	 * 
+	 * @param input
+	 * @return
+	 */
 	public static String encode(byte[] input) {
 		if (input.length == 0) {
-			return "";
+			return EMPTY;
 		}
 		input = copyOfRange(input, 0, input.length);
 		// Count leading zeroes.
@@ -80,9 +97,10 @@ public abstract class Base58 {
 	 * @throws IllegalArgumentException
 	 */
 	public static byte[] decode(String input) throws IllegalArgumentException {
-		if (input.length() == 0) {
+		if (isBlank(input)) {
 			return new byte[0];
 		}
+
 		byte[] input58 = new byte[input.length()];
 		// Transform the String to a base58 byte sequence
 		for (int i = 0; i < input.length(); ++i) {

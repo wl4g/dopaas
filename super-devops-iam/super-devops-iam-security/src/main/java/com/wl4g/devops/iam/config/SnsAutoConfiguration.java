@@ -38,7 +38,7 @@ import com.wl4g.devops.iam.sns.handler.BindingSnsHandler;
 import com.wl4g.devops.iam.sns.handler.ClientAuthcSnsHandler;
 import com.wl4g.devops.iam.sns.handler.DelegateSnsHandler;
 import com.wl4g.devops.iam.sns.handler.LoginSnsHandler;
-import com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler;
+import com.wl4g.devops.iam.sns.handler.SecondaryAuthcSnsHandler;
 import com.wl4g.devops.iam.sns.handler.SnsHandler;
 import com.wl4g.devops.iam.sns.handler.UnBindingSnsHandler;
 import com.wl4g.devops.iam.sns.qq.QQOauth2Template;
@@ -120,9 +120,9 @@ public class SnsAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
-	public SecondAuthcSnsHandler secondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
+	public SecondaryAuthcSnsHandler secondAuthcSnsHandler(IamProperties config, SnsProperties snsConfig,
 			OAuth2ApiBindingFactory connectFactory, ServerSecurityConfigurer context, ServerSecurityCoprocessor coprocessor) {
-		return new SecondAuthcSnsHandler(config, snsConfig, connectFactory, context);
+		return new SecondaryAuthcSnsHandler(config, snsConfig, connectFactory, context);
 	}
 
 	//

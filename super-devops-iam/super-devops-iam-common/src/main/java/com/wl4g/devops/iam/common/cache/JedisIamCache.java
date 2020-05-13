@@ -32,9 +32,10 @@ import org.apache.shiro.cache.CacheException;
 
 import com.google.common.base.Charsets;
 
+import com.wl4g.devops.tool.common.log.SmartLogger;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.*;
-import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisProtocolUtil.isSuccess;
 
 import redis.clients.jedis.JedisCluster;
 
@@ -222,9 +223,11 @@ public class JedisIamCache implements IamCache {
 		}
 
 		if (key.hasExpire()) {
-			return jedisCluster.set(key.getKey(name), data, NXXX, EXPX, key.getExpireMs()) != null;
+			String res = jedisCluster.set(key.getKey(name), data, NX, PX, key.getExpireMs());
+			return isSuccess(res);
 		}
-		return !isNull(jedisCluster.setnx(key.getKey(name), data));
+		Long res = jedisCluster.setnx(key.getKey(name), data);
+		return isSuccess(res);
 	}
 
 	// --- Enhanced API. ---

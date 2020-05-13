@@ -19,14 +19,13 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.Cookie;
-import org.apache.shiro.web.servlet.SimpleCookie;
 
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_TICKET_C;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMCLIENT;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
@@ -37,6 +36,7 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.devops.tool.common.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
@@ -74,6 +74,7 @@ import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.common.web.model.SessionInfo;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -199,7 +200,11 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// Redirections(Native page).
 		else {
 			// Sets secret tokens to cookies.
-			putSuccessSecretTokens2Cookie(token, request, response);
+			putSuccessTokensCookieIfNecessary(token, request, response);
+			// Sets authorization info to cookies.
+			putAuthzInfoCookiesAndSecurityIfNecessary(token, request, response);
+			// Sets refresh xsrf token.
+			putXsrfTokenCookieIfNecessary(token, request, response);
 
 			// Call custom success handle.
 			coprocessor.postAuthenticatingSuccess(ftoken, subject, toHttp(request), toHttp(response), null);
@@ -365,8 +370,8 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	}
 
 	/**
-	 * Gets the URL from the redirectUrl from the authentication request(flexible
-	 * API).
+	 * Gets the URL from the redirectUrl from the authentication
+	 * request(flexible API).
 	 * 
 	 * @return
 	 */
@@ -420,12 +425,18 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		resp.forMap().put(KEY_SESSIONINFO_NAME, new SessionInfo(config.getParam().getSid(), valueOf(getSessionId(subject))));
 
 		// Sets secret tokens to cookies.
-		String[] tokens = putSuccessSecretTokens2Cookie(token, request, response);
+		String[] tokens = putSuccessTokensCookieIfNecessary(token, request, response);
 
 		// Sets child dataCipherKey. (if necessary)
 		resp.forMap().put(config.getParam().getDataCipherKeyName(), tokens[0]);
 		// Sets child accessToken. (if necessary)
 		resp.forMap().put(config.getParam().getAccessTokenName(), tokens[1]);
+		// Sets authorization info.
+		resp.forMap().putAll(putAuthzInfoCookiesAndSecurityIfNecessary(token, request, response));
+		// Sets refresh xsrf token.
+		// resp.forMap().putAll(putXsrfTokenCookieIfNecessary(token, request,
+		// response));
+		putXsrfTokenCookieIfNecessary(token, request, response);
 
 		return resp;
 	}
@@ -455,19 +466,19 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	}
 
 	/**
-	 * Puts secret and tokens/signature to cookies handling.
+	 * Puts secret and tokens/signature to cookies handle.
 	 * 
 	 * @param token
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	protected String[] putSuccessSecretTokens2Cookie(AuthenticationToken token, ServletRequest request,
+	protected String[] putSuccessTokensCookieIfNecessary(AuthenticationToken token, ServletRequest request,
 			ServletResponse response) {
 		// Sets child dataCipherKeys to cookie.
-		String childDataCipherKey = getBindValue(KEY_DATA_CIPHER);
-		if (!isBlank(childDataCipherKey)) {
-			Cookie c = new SimpleCookie(config.getCookie());
+		String childDataCipherKey = getBindValue(KEY_DATA_CIPHER_NAME);
+		if (!isBlank(childDataCipherKey) && isBrowser(toHttp(request))) {
+			Cookie c = new IamCookie(config.getCookie());
 			c.setName(config.getParam().getDataCipherKeyName());
 			c.setValue(childDataCipherKey);
 			c.saveTo(toHttp(request), toHttp(response));
@@ -475,8 +486,8 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 
 		// Sets child accessToken to cookie.
 		String childAccessToken = generateChildAccessTokenIfNecessary();
-		if (!isBlank(childAccessToken)) {
-			Cookie c = new SimpleCookie(config.getCookie());
+		if (!isBlank(childAccessToken) && isBrowser(toHttp(request))) {
+			Cookie c = new IamCookie(config.getCookie());
 			c.setName(config.getParam().getAccessTokenName());
 			c.setValue(childAccessToken);
 			c.saveTo(toHttp(request), toHttp(response));
@@ -492,7 +503,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	 */
 	protected final String generateChildAccessTokenIfNecessary() {
 		// Gets child accessTokenSign key.
-		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN);
+		String childAccessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_NAME);
 		// Generate child accessToken
 		return isBlank(childAccessTokenSignKey) ? null : generateAccessToken(getSession(), childAccessTokenSignKey);
 	}

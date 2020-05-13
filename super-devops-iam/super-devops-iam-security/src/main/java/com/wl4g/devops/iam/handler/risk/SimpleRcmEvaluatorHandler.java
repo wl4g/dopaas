@@ -17,15 +17,19 @@ package com.wl4g.devops.iam.handler.risk;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.tool.common.web.CookieUtils.getCookie;
 import static java.util.Collections.sort;
 import static java.util.Locale.US;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -124,8 +128,11 @@ public class SimpleRcmEvaluatorHandler implements RiskEvaluatorHandler, Initiali
 	}
 
 	@Override
-	public void checkEvaluation(@NotBlank String umidToken) throws SuspiciousRiskException {
-		// TODO Auto-generated method stub
+	public void checkEvaluation(@NotBlank HttpServletRequest request) throws SuspiciousRiskException {
+		String umidToken = getCleanParam(request, config.getParam().getUmidTokenName());
+		umidToken = isBlank(umidToken) ? request.getHeader(config.getParam().getUmidTokenName()) : umidToken;
+		umidToken = isBlank(umidToken) ? getCookie(request, config.getParam().getUmidTokenName()) : umidToken;
+		// TODO
 
 	}
 

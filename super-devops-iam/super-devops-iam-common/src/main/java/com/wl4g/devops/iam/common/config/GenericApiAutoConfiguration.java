@@ -23,13 +23,13 @@ import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
 
 /**
- * Abstract generic API auto configuration.
+ * Generic API auto configuration.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年1月8日
  * @since
  */
-public class GenericApiAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public abstract class GenericApiAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	@Bean
 	public PrefixHandlerMapping genericApiV1ControllerPrefixHandlerMapping() {

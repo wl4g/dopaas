@@ -33,17 +33,21 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import com.wl4g.devops.tool.common.collection.RegisteredSetList;
 
+import static com.wl4g.devops.iam.common.config.CorsProperties.IamCorsConfiguration.*;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isSameWildcardOrigin;
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.web.cors.CorsConfiguration.ALL;
+import static org.springframework.http.HttpMethod.*;
 
 /**
  * CORS configuration properties
@@ -55,8 +59,6 @@ import static org.springframework.web.cors.CorsConfiguration.ALL;
 public class CorsProperties implements Serializable {
 	final private static long serialVersionUID = -5701992202765239835L;
 
-	final public static String KEY_CORS_PREFIX = "spring.cloud.devops.iam.cors";
-
 	/**
 	 * {@link CorsRule}
 	 */
@@ -64,13 +66,20 @@ public class CorsProperties implements Serializable {
 		private static final long serialVersionUID = -8576461225674624807L;
 
 		/**
-		 * Default allowes header.
+		 * Default allowes headers.
 		 */
-		private static final String DEFAULT_ALLOW_HEADER = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*";
+		private final String[] defaultAllowedHeaders = { DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*", "Cookie", "X-Requested-With",
+				"Content-Type", "Content-Length", "User-Agent", "Referer", "Origin", "Accept", "Accept-Language",
+				"Accept-Encoding" };
+
+		/**
+		 * Default allowes methods.
+		 */
+		private final String[] defaultAllowedMethods = { GET.name(), POST.name(), OPTIONS.name(), HEAD.name() };
 		{
 			// Default settings.
-			put("/**", new CorsRule().setAllowCredentials(true).addAllowsHeaders(DEFAULT_ALLOW_HEADER)
-					.addAllowsMethods("GET", "POST").addAllowsOrigins("http://localhost:8080"));
+			put("/**", new CorsRule().setAllowCredentials(true).addAllowsHeaders(defaultAllowedHeaders)
+					.addAllowsMethods(defaultAllowedMethods).addAllowsOrigins("http://localhost:8080"));
 		}
 	};
 
@@ -78,15 +87,33 @@ public class CorsProperties implements Serializable {
 		return rules;
 	}
 
-	public void setRules(Map<String, CorsRule> rules) {
-		if (!isEmpty(rules)) {
-			rules.putAll(rules);
-		}
+	public CorsProperties setRules(Map<String, CorsRule> rules) {
+		// if (!isEmpty(rules)) {
+		// rules.putAll(rules);
+		// }
+		this.rules = rules;
+		return this;
 	}
 
 	@Override
 	public String toString() {
 		return "CorsProperties [rules=" + rules + "]";
+	}
+
+	/**
+	 * Assertion allowed legal headers.
+	 * 
+	 * @param requestHeaders
+	 * @param allowedHeaders
+	 */
+	public void assertCorsLegalHeaders(List<String> requestHeaders) {
+		for (CorsRule rule : getRules().values()) {
+			List<String> allowedHeaders = rule.resolveIamCorsConfiguration().getAllowedHeaders();
+			List<String> legalHeaders = checkLegalHeaders(requestHeaders, allowedHeaders);
+			if (isEmpty(legalHeaders)) {
+				throw new IllegalArgumentException(format("Xsrf header name must start with a %s prefix", allowedHeaders));
+			}
+		}
 	}
 
 	/**
@@ -111,6 +138,12 @@ public class CorsProperties implements Serializable {
 		private boolean allowCredentials = true;
 		private Long maxAge = 1800L;
 
+		//
+		// --- Temporary fields. ---
+		//
+
+		private transient IamCorsConfiguration cors;
+
 		public CorsRule() {
 			super();
 		}
@@ -120,9 +153,10 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsMethods(List<String> allowsMethods) {
-			if (!isEmpty(allowsMethods)) {
-				this.allowsMethods.addAll(allowsMethods);
-			}
+			// if (!isEmpty(allowsMethods)) {
+			// this.allowsMethods.addAll(allowsMethods);
+			// }
+			this.allowsMethods = allowsMethods;
 			return this;
 		}
 
@@ -138,9 +172,10 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setAllowsHeaders(List<String> allowsHeaders) {
-			if (!isEmpty(allowsHeaders)) {
-				this.allowsHeaders.addAll(allowsHeaders);
-			}
+			// if (!isEmpty(allowsHeaders)) {
+			// this.allowsHeaders.addAll(allowsHeaders);
+			// }
+			this.allowsHeaders = allowsHeaders;
 			return this;
 		}
 
@@ -158,9 +193,10 @@ public class CorsProperties implements Serializable {
 		public CorsRule setAllowsOrigins(List<String> allowsOrigins) {
 			// "allowsOrigin" may have a "*" wildcard character.
 			// e.g. http://*.mydomain.com
-			if (!isEmpty(allowsOrigins)) {
-				this.allowsOrigins.addAll(allowsOrigins);
-			}
+			// if (!isEmpty(allowsOrigins)) {
+			// this.allowsOrigins.addAll(allowsOrigins);
+			// }
+			this.allowsOrigins = allowsOrigins;
 			return this;
 		}
 
@@ -178,9 +214,10 @@ public class CorsProperties implements Serializable {
 		}
 
 		public CorsRule setExposedHeaders(List<String> exposedHeaders) {
-			if (!isEmpty(exposedHeaders)) {
-				this.exposedHeaders.addAll(exposedHeaders);
-			}
+			// if (!isEmpty(exposedHeaders)) {
+			// this.exposedHeaders.addAll(exposedHeaders);
+			// }
+			this.exposedHeaders = exposedHeaders;
 			return this;
 		}
 
@@ -210,25 +247,27 @@ public class CorsProperties implements Serializable {
 		}
 
 		/**
-		 * To Spring CORS configuration
+		 * Resolve & gets spring CORS configuration
 		 *
 		 * @return
 		 */
-		public CorsConfiguration toSpringCorsConfiguration() {
-			// Merge values elements.
-			mergeWithWildcard(getAllowsOrigins());
-			mergeWithWildcard(getAllowsHeaders());
-			mergeWithWildcard(getAllowsMethods());
-			mergeWithWildcard(getExposedHeaders());
-
+		public IamCorsConfiguration resolveIamCorsConfiguration() {
 			// Convert to spring CORS configuration.
-			CorsConfiguration cors = new AdvancedCorsConfiguration();
-			cors.setAllowCredentials(isAllowCredentials());
-			cors.setMaxAge(getMaxAge());
-			getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
-			getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
-			getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
-			getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
+			if (isNull(cors)) {
+				// Merge values elements.
+				mergeWithWildcard(getAllowsOrigins());
+				mergeWithWildcard(getAllowsHeaders());
+				mergeWithWildcard(getAllowsMethods());
+				mergeWithWildcard(getExposedHeaders());
+				// Convert to cors configuration.
+				cors = new IamCorsConfiguration();
+				cors.setAllowCredentials(isAllowCredentials());
+				cors.setMaxAge(getMaxAge());
+				getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
+				getAllowsHeaders().forEach(header -> cors.addAllowedHeader(header));
+				getAllowsMethods().forEach(method -> cors.addAllowedMethod(method));
+				getExposedHeaders().forEach(exposed -> cors.addExposedHeader(exposed));
+			}
 			return cors;
 		}
 
@@ -239,8 +278,9 @@ public class CorsProperties implements Serializable {
 		 * @return
 		 */
 		private void mergeWithWildcard(Collection<String> sources) {
-			if (isEmpty(sources))
+			if (isEmpty(sources)){
 				return;
+			}
 
 			// Clear other specific item configurations if '*' is present
 			Iterator<String> it1 = sources.iterator();
@@ -270,13 +310,13 @@ public class CorsProperties implements Serializable {
 	}
 
 	/**
-	 * Custom advanced logic CORS configuration processing.
+	 * Iam enhanced logic CORS configuration processing.
 	 *
 	 * @author Wangl.sir
 	 * @version v1.0 2019年8月21日
 	 * @since
 	 */
-	public static class AdvancedCorsConfiguration extends CorsConfiguration {
+	public static class IamCorsConfiguration extends CorsConfiguration {
 
 		/**
 		 * <b>Note:</b> "allowsOrigin" may have a "*" wildcard character.</br>
@@ -336,17 +376,37 @@ public class CorsProperties implements Serializable {
 		 */
 		@Override
 		public List<String> checkHeaders(List<String> requestHeaders) {
-			if (requestHeaders == null) {
+			return checkLegalHeaders(requestHeaders, getAllowedHeaders());
+		}
+
+		@Override
+		public void addAllowedMethod(String method) {
+			if (!isBlank(method)) {
+				// Add for invalid method check.
+				isTrue(Objects.nonNull(HttpMethod.resolve(method.toUpperCase(US))), "Invalid allowed http method: '%s'", method);
+				super.addAllowedMethod(method.toUpperCase(US));
+			}
+		}
+
+		/**
+		 * Check & gets legal headers name.
+		 * 
+		 * @param requestHeaders
+		 * @param allowedHeaders
+		 * @return
+		 */
+		public static List<String> checkLegalHeaders(List<String> requestHeaders, List<String> allowedHeaders) {
+			if (isNull(requestHeaders)) {
 				return null;
 			}
 			if (requestHeaders.isEmpty()) {
 				return Collections.emptyList();
 			}
-			if (ObjectUtils.isEmpty(getAllowedHeaders())) {
+			if (ObjectUtils.isEmpty(allowedHeaders)) {
 				return null;
 			}
 
-			boolean allowAnyHeader = getAllowedHeaders().contains(ALL);
+			boolean allowAnyHeader = allowedHeaders.contains(ALL);
 			List<String> result = new ArrayList<String>(requestHeaders.size());
 			for (String requestHeader : requestHeaders) {
 				if (StringUtils.hasText(requestHeader)) {
@@ -354,11 +414,11 @@ public class CorsProperties implements Serializable {
 					if (allowAnyHeader) {
 						result.add(requestHeader);
 					} else {
-						for (String allowedHeader : getAllowedHeaders()) {
+						for (String allowedHeader : allowedHeaders) {
 							// e.g: allowedHeader => "X-Iam-*"
 							if (allowedHeader.contains(ALL)) {
 								String allowedHeaderPrefix = allowedHeader.substring(allowedHeader.indexOf(ALL) + 1);
-								if (requestHeader.startsWith(allowedHeaderPrefix)) {
+								if (startsWithIgnoreCase(requestHeader, allowedHeaderPrefix)) {
 									result.add(requestHeader);
 									break;
 								}
@@ -373,15 +433,8 @@ public class CorsProperties implements Serializable {
 			return (result.isEmpty() ? null : result);
 		}
 
-		@Override
-		public void addAllowedMethod(String method) {
-			if (!isBlank(method)) {
-				// Add for invalid method check.
-				isTrue(Objects.nonNull(HttpMethod.resolve(method.toUpperCase(US))), "Invalid allowed http method: '%s'", method);
-				super.addAllowedMethod(method.toUpperCase(US));
-			}
-		}
-
 	}
+
+	final public static String KEY_CORS_PREFIX = "spring.cloud.devops.iam.cors";
 
 }

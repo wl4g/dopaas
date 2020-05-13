@@ -27,7 +27,6 @@ import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +43,7 @@ import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.newCumula
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.newSessionCumulator;
 import static com.wl4g.devops.tool.common.codec.Encodes.encodeBase64;
 import static com.wl4g.devops.tool.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.lang.Assert2.state;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getRequestParam;
 import static java.lang.String.format;
@@ -104,7 +104,8 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		String applyToken = "aytk" + randomAlphabetic(DEFAULT_APPLY_TOKEN_BIT);
 
 		log.debug("Apply captcha for applyToken: {}, secretKey: {}", applyToken, keySpec);
-		// TODO  每次滑动失败都会新创建一个applyToken,这样失败次数多了会有很多垃圾applyToken存到redis,想办法每次用完清理掉?
+		// TODO
+		// 每次滑动失败都会新创建一个applyToken,这样失败次数多了会有很多垃圾applyToken存到redis,想办法每次用完清理掉?
 		bind(new RelationAttrKey(applyToken, DEFAULT_APPLY_TOKEN_EXPIREMS), keySpec);
 
 		// Custom processing.
@@ -119,7 +120,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		// Cumulative number of matches based on cache, If the number of
 		// failures exceeds the upper limit, verification is enabled
 		Long matchCount = matchCumulator.getCumulatives(factors);
-		String msg1 = format("Logon match count: %s, factors: %s", matchCount, factors);
+		String msg1 = format("Unmatch cache count: %s, factors: %s", matchCount, factors);
 		log.debug(msg1);
 
 		// Login matching failures exceed the upper limit.
@@ -130,7 +131,7 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 
 		// Cumulative number of matches based on session.
 		long sessionMatchCount = sessionMatchCumulator.getCumulatives(factors);
-		String msg2 = format("Logon session match count: %s, factors: %s", matchCount, factors);
+		String msg2 = format("Unmatch session count: %s, factors: %s", sessionMatchCount, factors);
 		log.debug(msg2);
 
 		// Graphic verify-code apply over the upper limit.
@@ -209,10 +210,10 @@ public abstract class GraphBasedSecurityVerifier extends AbstractSecurityVerifie
 		this.sessionApplyCaptchaCumulator = newSessionCumulator(CACHE_FAILFAST_CAPTCHA_COUNTER,
 				matcher.getFailFastCaptchaDelay());
 
-		Assert.notNull(matchCumulator, "matchCumulator is null, please check configure");
-		Assert.notNull(sessionMatchCumulator, "sessionMatchCumulator is null, please check configure");
-		Assert.notNull(applyCaptchaCumulator, "applyCumulator is null, please check configure");
-		Assert.notNull(sessionApplyCaptchaCumulator, "sessionApplyCumulator is null, please check configure");
+		notNull(matchCumulator, "matchCumulator is null, please check configure");
+		notNull(sessionMatchCumulator, "sessionMatchCumulator is null, please check configure");
+		notNull(applyCaptchaCumulator, "applyCumulator is null, please check configure");
+		notNull(sessionApplyCaptchaCumulator, "sessionApplyCumulator is null, please check configure");
 	}
 
 	/**

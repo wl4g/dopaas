@@ -110,8 +110,10 @@ public class VerifyAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 	public RespBase<?> verifyAnalysis(String verifyData, HttpServletRequest request) throws Exception {
 		RespBase<Object> resp = RespBase.create(sessionStatus());
 
+		// LoginId number or mobileNum(Optional)
+		String principal = getCleanParam(request, config.getParam().getPrincipalName());
 		// Limit factors
-		List<String> factors = getV1Factors(getHttpRemoteAddr(request), null);
+		List<String> factors = getV1Factors(getHttpRemoteAddr(request), principal);
 		// Verifying
 		String verifiedToken = verifier.forOperator(request).verify(verifyData, request, factors);
 		resp.forMap().put(KEY_VWEIFIED_RESULT, new VerifiedTokenResult(true, verifiedToken));

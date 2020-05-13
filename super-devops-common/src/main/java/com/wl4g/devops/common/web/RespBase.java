@@ -18,6 +18,7 @@ package com.wl4g.devops.common.web;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.annotations.Beta;
 import com.wl4g.devops.common.exception.restful.InvalidParamsRestfulException;
+import com.wl4g.devops.common.exception.restful.RESTfulException;
 import com.wl4g.devops.common.exception.restful.BizRuleRestrictRestfulException;
 import com.wl4g.devops.common.exception.restful.ServiceUnavailableRestfulException;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,6 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import static com.wl4g.devops.common.web.RespBase.RetCode.newCode;
@@ -42,6 +42,7 @@ import static java.lang.reflect.Modifier.isFinal;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Locale.US;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -211,9 +212,9 @@ public class RespBase<D> implements Serializable {
 		if (isNull(data))
 			return this;
 		if (checkDataAvailable()) // Data already payLoad ?
-			throw new IllegalStateException(format(
-					"RespBase.data already payLoad, In order to set it successful the data node must be the initial value or empty. - %s",
-					getData()));
+			throw new IllegalStateException(
+					format("RespBase.data already payLoad, In order to set it successful the data node must be the initial value or empty. - %s",
+							getData()));
 
 		this.data = data;
 		return this;
@@ -240,9 +241,7 @@ public class RespBase<D> implements Serializable {
 	 */
 	@JsonIgnore
 	public RespBase<D> handleError(Throwable th) {
-		setCode(getRestfulCode(th, RetCode.SYS_ERR));
-		setMessage(this.message = getRootCausesString(th));
-		return this;
+		return setCode(getRestfulCode(th, RetCode.SYS_ERR)).setMessage(getRootCausesString(th));
 	}
 
 	/**
@@ -366,14 +365,8 @@ public class RespBase<D> implements Serializable {
 	 * @see {@link ServiceUnavailableRestfulException}
 	 */
 	public final static RetCode getRestfulCode(Throwable th, RetCode defaultCode) {
-		if (nonNull(th)) {
-			if (th instanceof BizRuleRestrictRestfulException) {
-				return ((BizRuleRestrictRestfulException) th).getCode();
-			} else if (th instanceof InvalidParamsRestfulException) {
-				return ((InvalidParamsRestfulException) th).getCode();
-			} else if (th instanceof ServiceUnavailableRestfulException) {
-				return ((ServiceUnavailableRestfulException) th).getCode();
-			}
+		if (nonNull(th) && (th instanceof RESTfulException)) {
+			return ((RESTfulException) th).getCode();
 		}
 		return defaultCode;
 	}
@@ -600,6 +593,8 @@ public class RespBase<D> implements Serializable {
 		/**
 		 * Business locked constraints </br>
 		 * {@link HttpStatus.LOCKED}
+		 * 
+		 * @see <a href="https://httpstatusdogs.com/423-locked">423-Locked</a>
 		 */
 		final public static RetCode LOCKD_ERR = new RetCode(LOCKED.value(), "Resources locked") {
 		};
@@ -784,15 +779,12 @@ public class RespBase<D> implements Serializable {
 	 */
 	final public static class ErrorPromptMessageBuilder {
 
-		/** Errors code and message separator. */
-		final private static String CODE_PROMPT_SEPAR = ": ";
-
 		/**
 		 * Errors prefix definition.
 		 * 
 		 * @see {@link com.wl4g.devops.common.web.RespBase#globalErrPrefix()}
 		 */
-		private static String errorPromptString = getProperty("spring.cloud.devops.global.respbase.error-prompt", "API");
+		private static String errorPrompt = getProperty("spring.cloud.devops.global.respbase.error-prompt", "API");
 
 		/**
 		 * Building error message with prefix.
@@ -805,12 +797,7 @@ public class RespBase<D> implements Serializable {
 			if (isBlank(errmsg)) {
 				return errmsg;
 			}
-			String prefixString = format("%s-%s%s", errorPromptString, retCode.getErrcode(), CODE_PROMPT_SEPAR);
-			int index = errmsg.indexOf(CODE_PROMPT_SEPAR);
-			if (index >= 0) {
-				return (prefixString + errmsg.substring(index + CODE_PROMPT_SEPAR.length()));
-			}
-			return (prefixString + errmsg);
+			return format("[%s-%s] %s", errorPrompt, retCode.getErrcode(), errmsg);
 		}
 
 		/**
@@ -818,10 +805,10 @@ public class RespBase<D> implements Serializable {
 		 * 
 		 * @param errorPrompt
 		 */
-		final public synchronized static void setPrompt(String errorPrompt) {
+		final public static void setPrompt(String errorPrompt) {
 			// hasText(errorPrompt, "Global error prompt can't be empty.");
 			if (!isBlank(errorPrompt)) {
-				errorPromptString = errorPrompt.replaceAll("-", "").toUpperCase(Locale.US);
+				ErrorPromptMessageBuilder.errorPrompt = errorPrompt.replaceAll("-", "").toUpperCase(US);
 			}
 		}
 

@@ -59,13 +59,13 @@ public final class CorsSecurityFilter extends CorsFilter {
 	}
 
 	/**
-	 * Advanced matches CORS processor.
+	 * Iam matches CORS processor.
 	 *
 	 * @author Wangl.sir
 	 * @version v1.0 2019年8月21日
 	 * @since
 	 */
-	public static class AdvancedCorsProcessor extends DefaultCorsProcessor {
+	public static class IamCorsProcessor extends DefaultCorsProcessor {
 
 		final protected SmartLogger log = getLogger(getClass());
 

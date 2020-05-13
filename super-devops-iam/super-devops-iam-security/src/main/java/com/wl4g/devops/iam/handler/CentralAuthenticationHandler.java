@@ -58,7 +58,7 @@ import java.util.Set;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.ExpiredAuthorized;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
-import static com.wl4g.devops.iam.sns.handler.SecondAuthcSnsHandler.SECOND_AUTHC_CACHE;
+import static com.wl4g.devops.iam.sns.handler.SecondaryAuthcSnsHandler.SECOND_AUTHC_CACHE;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
@@ -178,20 +178,21 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 
 		// Grants roles and permissions attributes.
 		Map<String, String> attributes = assertion.getPrincipalInfo().getAttributes();
-		attributes.put(KEY_LANG_ATTRIBUTE_NAME, getBindValue(KEY_LANG_ATTRIBUTE_NAME));
+		attributes.put(KEY_LANG_NAME, getBindValue(KEY_LANG_NAME));
+		attributes.put(KEY_PARENT_SESSIONID_NAME, valueOf(getSessionId()));
 
 		// Sets re-generate childDataCipherKey(grant application)
 		String childDataCipherKey = null;
 		if (config.getCipher().isEnableDataCipher()) {
 			childDataCipherKey = generateDataCipherKey();
-			attributes.put(KEY_DATA_CIPHER, childDataCipherKey);
+			attributes.put(KEY_DATA_CIPHER_NAME, childDataCipherKey);
 		}
 		// Sets re-generate childAccessToken(grant application)
 		String childAccessTokenSignKey = null;
 		if (config.getSession().isEnableAccessTokenValidity()) {
-			String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN);
+			String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_NAME);
 			childAccessTokenSignKey = generateAccessTokenSignKey(model.getSessionId(), accessTokenSignKey);
-			attributes.put(KEY_ACCESSTOKEN_SIGN, childAccessTokenSignKey);
+			attributes.put(KEY_ACCESSTOKEN_SIGN_NAME, childAccessTokenSignKey);
 		}
 
 		// Storage grantCredentials info.

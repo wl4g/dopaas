@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.session;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SESSION;
 
 import java.io.IOException;
@@ -27,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.google.common.base.Charsets;
 import com.wl4g.devops.IamServer;
 import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
 import com.wl4g.devops.iam.common.session.IamSession;
@@ -46,13 +46,13 @@ public class ScanCursorTests {
 
 	@Test
 	public void test1() {
-		byte[] data = cluster.get("iam_session_1c315080e64b4731b011a14551a54c92".getBytes(Charsets.UTF_8));
+		byte[] data = cluster.get("iam_server:iam:session:id:1c315080e64b4731b011a14551a54c92".getBytes(UTF_8));
 		System.out.println("IamSession: " + ProtostuffUtils.deserialize(data, IamSession.class));
 	}
 
 	@Test
 	public void test2() throws IOException {
-		byte[] match = ("iam_" + CACHE_SESSION + "*").getBytes(Charsets.UTF_8);
+		byte[] match = ("iam_server" + CACHE_SESSION + "*").getBytes(UTF_8);
 		ScanParams params = new ScanParams().count(200).match(match);
 
 		ScanCursor<IamSession> sc = new ScanCursor<IamSession>(cluster, null, params) {

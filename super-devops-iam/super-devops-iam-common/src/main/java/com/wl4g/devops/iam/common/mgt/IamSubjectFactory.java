@@ -15,10 +15,9 @@
  */
 package com.wl4g.devops.iam.common.mgt;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
@@ -49,6 +48,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
 import com.wl4g.devops.tool.common.log.SmartLogger;
+import static com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter.*;
 import static com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager.*;
 import static com.wl4g.devops.tool.common.web.CookieUtils.getCookie;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
@@ -110,7 +110,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 				if (log.isDebugEnabled())
 					log.debug("Invalid accesstoken", e);
 				else
-					log.warn("Invalid accesstoken. cause by: {}", e.getMessage());
+					log.warn("Invalid accesstoken. - {}", e.getMessage());
 			}
 		}
 
@@ -161,9 +161,11 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		Session session = wsc.getSession();
 		HttpServletRequest request = toHttp(wsc.resolveServletRequest());
 
+		// Gets protocol configure info.
 		String sessionId = valueOf(session.getId());
-		String accessTokenSignKey = (String) session.getAttribute(KEY_ACCESSTOKEN_SIGN);
+		String accessTokenSignKey = (String) session.getAttribute(KEY_ACCESSTOKEN_SIGN_NAME);
 		IamAuthenticationToken authcToken = (IamAuthenticationToken) session.getAttribute(KEY_AUTHC_TOKEN);
+
 		// Gets request accessToken.
 		final String accessToken = getRequestAccessToken(request);
 		log.debug("Asserting accessToken, sessionId:{}, accessTokenSignKey: {}, authcToken: {}, accessToken: {}", sessionId,
@@ -173,7 +175,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		// if (authcToken instanceof ClientSecretIamAuthenticationToken) {
 		hasText(accessToken, UnauthenticatedException.class, "accessToken is required");
 		hasText(sessionId, UnauthenticatedException.class, "sessionId is required");
-		hasTextOf(accessTokenSignKey, "accessTokenSignKey"); // Shouldn't-here
+		hasText(accessTokenSignKey, UnauthenticatedException.class, "No accessTokenSignKey"); // Shouldn't-here
 
 		// Calculating accessToken(signature).
 		final String validAccessToken = generateAccessToken(session, accessTokenSignKey);
@@ -184,7 +186,7 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		// Compare accessToken(signature)
 		if (!accessToken.equals(validAccessToken)) {
 			throw new InvalidAccessTokenAuthenticationException(
-					format("Illegal authentication accessToken: {}, accessTokenSignKey: {}", accessToken, accessTokenSignKey));
+					format("Illegal authentication accessToken: %s, accessTokenSignKey: %s", accessToken, accessTokenSignKey));
 		}
 		// }
 
@@ -199,20 +201,14 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 	 */
 	private final boolean isInternalProtocolNonAccessTokenRequest(ServletRequest request) {
 		String requestPath = getPathWithinApplication(toHttp(request));
-		/**
-		 * Check is internal protocol default filter chain mappings?
-		 */
-		for (Entry<String, String> ent : config.getFilterChain().entrySet()) {
-			if (defaultAntMatcher.matchStart(ent.getKey(), requestPath)) {
-				return true;
-			}
-		}
 
 		/**
 		 * Check is internal protocol {@link IamFilter} chain mappings?
 		 */
 		for (Entry<String, String> ent : iamFilterFactory.getFilterChainDefinitionMap().entrySet()) {
-			if (defaultAntMatcher.matchStart(ent.getKey(), requestPath)) {
+			String pattern = ent.getKey();
+			String filterName = ent.getValue();
+			if (!NAME_ROOT_FILTER.equals(filterName) && defaultNonAccessTokenMatcher.matchStart(pattern, requestPath)) {
 				return true;
 			}
 		}
@@ -220,9 +216,12 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		/**
 		 * Check is internal protocol ticket authenticating request?
 		 */
-		return !isInternalTicketRequest(request);
+		return isInternalTicketRequest(request);
 	}
 
-	final private static AntPathMatcher defaultAntMatcher = new AntPathMatcher();
+	/**
+	 * Non accessToken matcher.
+	 */
+	final private static AntPathMatcher defaultNonAccessTokenMatcher = new AntPathMatcher();
 
 }

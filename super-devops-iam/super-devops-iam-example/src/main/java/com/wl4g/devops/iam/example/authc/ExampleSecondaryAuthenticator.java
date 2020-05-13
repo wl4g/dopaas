@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.example.authc;
 
 import org.springframework.stereotype.Component;
 
-import com.wl4g.devops.iam.client.authc.aop.SecondaryAuthenticator;
+import com.wl4g.devops.iam.client.authc.secondary.SecondaryAuthenticator;
 
 @Component
 public class ExampleSecondaryAuthenticator implements SecondaryAuthenticator {

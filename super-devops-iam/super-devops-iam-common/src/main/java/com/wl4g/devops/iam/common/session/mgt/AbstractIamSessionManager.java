@@ -51,7 +51,6 @@ import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.web.servlet.Cookie;
-import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +63,7 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.session.GrantCredentialsInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
+import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 import com.wl4g.devops.tool.common.lang.StringUtils2;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
@@ -390,7 +390,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		boolean isSaveCookie = isTrue(request, config.getParam().getSidSaveCookie());
 		if (isSaveCookie || isBrowser(toHttp(request))) {
 			// Sets session cookie.
-			Cookie sid = new SimpleCookie(getSessionIdCookie());
+			Cookie sid = new IamCookie(getSessionIdCookie());
 			// sid.setValue(valueOf(sessionId)+"; SameSite=None; Secure=false");
 			sid.setValue(valueOf(sessionId));
 			sid.saveTo(toHttp(request), toHttp(response));

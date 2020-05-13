@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.common.security.xsrf;
 
+import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
 import static java.util.Arrays.asList;
 
 import java.util.HashSet;
@@ -33,7 +35,7 @@ import static org.springframework.http.HttpMethod.*;
  * @version v1.0 2020年4月27日
  * @since
  */
-final class RequiresXsrfMatcher implements XsrfMatcher {
+public final class RequiresXsrfMatcher implements XsrfMatcher {
 
 	/**
 	 * Allowed http methods.
@@ -47,7 +49,8 @@ final class RequiresXsrfMatcher implements XsrfMatcher {
 	 * @return
 	 */
 	public boolean matches(HttpServletRequest request) {
-		return !this.allowedMethods.contains(valueOf(request.getMethod()));
+		// Ignore Non browser request XSRF validation.
+		return !(allowedMethods.contains(valueOf(request.getMethod())) || isMediaRequest(request) || !isBrowser(request));
 	}
 
 }

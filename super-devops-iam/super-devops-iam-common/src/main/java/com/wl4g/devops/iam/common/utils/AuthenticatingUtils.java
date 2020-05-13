@@ -35,7 +35,6 @@ import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.valueOf;
-import static java.lang.System.currentTimeMillis;
 
 /**
  * IAM authenticating security tools.
@@ -140,7 +139,7 @@ public abstract class AuthenticatingUtils extends IamSecurityHolder {
 	final public static String generateAccessTokenSignKey(@NotBlank final Serializable sessionId, final String parent) {
 		notNullOf(sessionId, "sessionId");
 		byte[] sessionIdArray = toBytes(sessionId.toString() + "@" + parent);
-		return bind(KEY_ACCESSTOKEN_SIGN, sha512().hashBytes(sessionIdArray).toString());
+		return sha512().hashBytes(sessionIdArray).toString();
 	}
 
 	/**
@@ -153,7 +152,7 @@ public abstract class AuthenticatingUtils extends IamSecurityHolder {
 	final public static String generateAccessToken(@NotBlank final Session session, @NotBlank final String accessTokenSignKey) {
 		notNullOf(session, "session");
 		hasTextOf(accessTokenSignKey, "accessTokenSignKey");
-		final String accessTokenPlain = valueOf(session.getId() + "@" + currentTimeMillis());
+		final String accessTokenPlain = valueOf(session.getId());
 		return encode(hmacSha256Hex(toBytes(accessTokenSignKey), toBytes(accessTokenPlain)).getBytes(UTF_8));
 	}
 
@@ -165,5 +164,26 @@ public abstract class AuthenticatingUtils extends IamSecurityHolder {
 	final public static String generateDataCipherKey() {
 		return new AESCryptor().generateKey(128).toHex();
 	}
+
+	/**
+	 * Generate token suffix according to default rules.
+	 * 
+	 * @param appName
+	 * @return
+	 */
+	final public static String generateDefaultTokenSuffix(String appName) {
+		hasTextOf(appName, "appName");
+		String appPrefix = (appName.length() > DEFAULT_SUFFIX_LEN) ? appName.substring(0, DEFAULT_SUFFIX_LEN) : appName;
+		StringBuffer tokenSuffix = new StringBuffer(appPrefix.substring(0, 1));
+		for (char ch : appPrefix.substring(1).toCharArray()) {
+			tokenSuffix.append((int) ch);
+		}
+		return tokenSuffix.toString();
+	}
+
+	/**
+	 * Default generation id-suffix from application length.
+	 */
+	final public static int DEFAULT_SUFFIX_LEN = 3;
 
 }

@@ -60,9 +60,7 @@ public class ScmClientEndpoint extends BaseController {
 	// @PostMapping(value = URI_C_REFRESH)
 	// @ResponseBody
 	public RespBase<?> refresh(@RequestParam("releaseMeta") ReleaseMeta meta) {
-		if (log.isInfoEnabled()) {
-			log.info("Refresh client config meta for ... {}", meta);
-		}
+		log.info("Refresh client config meta for ... {}", meta);
 
 		RespBase<?> resp = new RespBase<>();
 		try {

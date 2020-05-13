@@ -48,13 +48,13 @@ public abstract class RiskControlSecurityUtils extends AuthenticatingUtils {
 		return new ArrayList<String>(2) {
 			private static final long serialVersionUID = -5976569540781454836L;
 			{
-				String uidFactor = getUIDFactor(uid);
-				if (isNotBlank(uidFactor)) {
-					add(uidFactor);
-				}
 				String hostFactor = getIpFactor(remoteHost);
 				if (isNotBlank(hostFactor)) {
 					add(hostFactor);
+				}
+				String uidFactor = getUIDFactor(uid);
+				if (isNotBlank(uidFactor)) {
+					add(uidFactor);
 				}
 			}
 		};

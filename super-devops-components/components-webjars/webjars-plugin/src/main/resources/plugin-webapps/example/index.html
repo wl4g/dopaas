@@ -8,17 +8,18 @@
 	<meta HTTP-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT">
 	<meta HTTP-equiv="expires" content="0">
 	<title>WebPlugin for Example</title>
-	<script type="text/javascript" src="../assets/js/bootstrap.min.js?p=examplePlugin" path="./" cache="false" mode="grey" refreshLevel="yyMMddhh"></script>
-	<!-- <script type="text/javascript" src="../src/js/bootstrap.js?p=examplePlugin" path="./" cache="false" mode="grey" refreshLevel="yyMMddhh"></script> -->
+	<script type="text/javascript" src="../assets/js/sysmodule-2.0.0.min.js?p=examplePlugin" fileUriPort="14070" path="./" cache="false" mode="grey" refreshLevel="yyMMddhh"></script>
+<!-- 	<script type="text/javascript" src="../src/js/sysmodule-2.0.0.js?p=examplePlugin" fileUriPort="14070" path="./" cache="false" mode="grey" refreshLevel="yyMMddhh"></script> -->
 	<script type="text/javascript">
-		SuperOpsJS.use("mB", function() {
-			console.log("******* IAM JSSDK loaded completed! *******");
-			document.write("******* IAM JSSDK loaded completed! *******</br>");
+		new ModuleJS().use("mB", function() {
+			console.log("******* JSSDK loaded completed! *******");
+			document.write("******* JSSDK loaded completed! *******</br>");
 			window.moduleB.print();
 		});
 	</script>
 </head>
 <body>
+	<!-- For Example Url: http://localhost:14070/webjars-example/plugin/example/index.html -->
 	<div id="container" style="width:380px;margin:auto"></div>
 </body>
 </html>
