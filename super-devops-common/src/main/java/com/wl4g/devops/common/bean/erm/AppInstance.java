@@ -56,6 +56,8 @@ public class AppInstance extends BaseBean {
 
 	private String hostname;
 
+	private String clusterName;
+
 	public Integer getClusterId() {
 		return clusterId;
 	}
@@ -170,6 +172,15 @@ public class AppInstance extends BaseBean {
 
 	public void setHostname(String hostname) {
 		this.hostname = hostname;
+	}
+
+
+	public String getClusterName() {
+		return clusterName;
+	}
+
+	public void setClusterName(String clusterName) {
+		this.clusterName = clusterName;
 	}
 
 	@Override
