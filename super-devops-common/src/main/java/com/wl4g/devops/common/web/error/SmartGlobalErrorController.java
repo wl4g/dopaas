@@ -212,7 +212,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 		String _stacktrace = request.getParameter(PARAM_STACK_TRACE);
 		if (isBlank(_stacktrace)) {
 			Cookie _stacktraceC = getCookie(request, PARAM_STACK_TRACE);
-			_stacktrace = isNull(_stacktraceC) ? _stacktraceC.getValue() : _stacktrace;
+			_stacktrace = !isNull(_stacktraceC) ? _stacktraceC.getValue() : _stacktrace;
 		}
 		if (isBlank(_stacktrace)) {
 			return false;
