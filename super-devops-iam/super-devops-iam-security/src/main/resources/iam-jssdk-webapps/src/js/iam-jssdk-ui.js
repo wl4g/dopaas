@@ -343,7 +343,11 @@
 	$(function() {
 		window.onmessage = function (e) {
 			if(e && e.data && !Common.Util.isEmpty(e.data)) {
-				window.location.href = JSON.parse(e.data).refresh_url;
+				try {
+					window.location.href = JSON.parse(e.data).refresh_url;
+				} catch(e) {
+					console.debug("Could't parse event message, error: "+ e);
+				}
 			}
 		}
 	});
