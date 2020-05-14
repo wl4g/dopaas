@@ -4,6 +4,8 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
+	'use strict';
+
 	// Exposing the API to the outside.
 	if(!window.Common){ window.Common = {}; }
 	if(!window.Common.Constants){ window.Common.Constants = {}; }
@@ -1144,6 +1146,7 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
+	'use strict';
 
 	// Base constants definition.
     var constant = {
@@ -2218,7 +2221,7 @@
 		var defaultServiceName = host;
 		var index = host.indexOf(topDomain);
 		if (index > 0) {
-			defaultServName = host.substring(0, index - 1);
+			defaultServiceName = host.substring(0, index - 1);
 		}
 		defaultServiceName = defaultServiceName.replace(".", "_").toUpperCase();
 		var xsrfTokenCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";
@@ -2307,6 +2310,8 @@
  * See http://pajhome.org.uk/crypt/md5 for details.
  */
 (function(window, document){
+	'use strict';
+
 	// 暴露API给外部
 	window.IAMCrypto = {
 		/**
@@ -2466,6 +2471,8 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document){
+	'use strict';
+
 	// Exposing IAM UI
 	window.IAMUi = function() {};
 

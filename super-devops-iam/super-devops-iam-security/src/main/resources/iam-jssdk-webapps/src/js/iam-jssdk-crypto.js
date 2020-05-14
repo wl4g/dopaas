@@ -11,6 +11,8 @@
  * See http://pajhome.org.uk/crypt/md5 for details.
  */
 (function(window, document){
+	'use strict';
+
 	// 暴露API给外部
 	window.IAMCrypto = {
 		/**

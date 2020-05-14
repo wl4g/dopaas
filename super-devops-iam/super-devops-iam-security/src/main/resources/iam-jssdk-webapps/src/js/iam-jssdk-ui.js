@@ -4,6 +4,8 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document){
+	'use strict';
+
 	// Exposing IAM UI
 	window.IAMUi = function() {};
 
