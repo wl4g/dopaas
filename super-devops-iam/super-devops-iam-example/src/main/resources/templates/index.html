@@ -2,54 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Wecolme to IAM Example</title>
+    <title>Wecolme to IAM Client Example</title>
     <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
  	<style>#qrcode_show{position:relative;width:250px;height:270px;background:red;margin:-25% auto;box-shadow:#886868 1px 1px 18px;background:#6f82a5;display:none}</style>
 </head>
 <body>
-	<div class="panel panel-default">
-		<div class="panel-heading" style="text-align:center;"><h4>Wecome to IAM Example !</h4></div>
-		<div class="panel-body">
-			<h4>Reference documents(Part I):</h4>
-			<ul class="list-group">
-			    <h5>API for testing requiring secondary certification:</h5>
-			    <li class="list-group-item">
-			    	<button id="btn_sensitive_api">Click on me1</button>
-			    </li>
-			    <h5>API for testing requiring some access permissions:</h5>
-			    <li class="list-group-item">
-			    	<button id="btn_permit_api">Click on me2</button>
-			    </li>
-			    <li class="list-group-item"></li>
-			    <li class="list-group-item"></li>
-			    <li class="list-group-item"></li>
-			    <li class="list-group-item"></li>
-			    <li class="list-group-item"></li>
-			    <li class="list-group-item"></li>
-			    <li class="list-group-item"></li>
-			</ul>
-		</div>
-		<div id="qrcode_show"></div>
+<div class="panel panel-default">
+	<div class="panel-heading" style="text-align:center;"><h4>Wecome to IAM Example !</h4></div>
+	<div class="panel-body">
+		<h4>Reference documents(Part I):</h4>
+		<ul class="list-group">
+		    <h5>API for testing requiring secondary certification:</h5>
+		    <li class="list-group-item">
+		    	<button id="btn_sensitive_api">Click on me1</button>
+		    </li>
+		    <h5>API for testing requiring some access permissions:</h5>
+		    <li class="list-group-item">
+		    	<button id="btn_permit_api">Click on me2</button>
+		    </li>
+		    <li class="list-group-item"></li>
+		    <li class="list-group-item"></li>
+		    <li class="list-group-item"></li>
+		    <li class="list-group-item"></li>
+		    <li class="list-group-item"></li>
+		    <li class="list-group-item"></li>
+		    <li class="list-group-item"></li>
+		</ul>
 	</div>
+	<div id="qrcode_show"></div>
+</div>
 <script type="text/javascript">
 	//
-	// JQuery版实现样例：
+	// JQuery版Demo样例：
 	//
 	$(function(){
 		$("#btn_sensitive_api").click(function(event){
 			// 例如，正在请求一个敏感的API
 			var url = "sensitive/sensitiveApi1";
-			$.post(url, function(res){
+			$.post(url, function(res) {
 				if(res.code == 412){ // 服务端返回未经二次认证
 					// 打开二次认证授权页
 					window.open(url, "_blank", "modal=yes,width=600px,height=400px,resizable=no,left=450px,top=150px");
 					window.onmessage = function(e) { // 监听授权回调
-						var secondAuthCode = JSON.parse(e.data).secondAuthCode; // 获取授权码
-						console.log("Got授权码" + secondAuthCode);
+						var secondaryAuthCode = JSON.parse(e.data).secondaryAuthCode; // 获取授权码
+						console.log("Got授权码" + secondaryAuthCode);
 						// 再次请求敏感API
-						$.post(url + "?secondAuthCode="+secondAuthCode, function(res2){
+						$.post(url + "?secondaryAuthCode=" + secondaryAuthCode, function(res2){
 							console.log("重新请求敏感API结果：" + JSON.stringify(res2))
 						});
 					}
@@ -60,7 +60,7 @@
 		});
 
 		$("#btn_permit_api").click(function(event){
-			// 例如，正在请求一个需要权限的API
+			// 如，正在请求一个需要权限的API
 			var url = "example/test5";
 			$.post(url, function(res){
 				if(res.code == 403){ // 服务端返回没有权限

@@ -447,10 +447,7 @@
         // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，
 		// (接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
         else {
-        	var topDomainName = hostname.split('.').slice(-2).join('.');
-        	if(hostname.indexOf("com.cn") > 0) {
-        		topDomainName = hostname.split('.').slice(-3).join('.');
-        	}
+        	var topDomainName = Common.Util.extTopDomainString(hostname);
         	return protocol + "//" + twoDomain + "." + topDomainName + contextPath;
         }
 	};
@@ -1076,7 +1073,15 @@
 		var xsrfTokenHeaderName = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
 		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
 		// [MARK55]
-		var defaultServiceName = location.hostname.split('.').slice(0, 1).join(".").toUpperCase();
+		var host = location.hostname;
+		var defaultServiceName = host;
+		var topDomain = Common.Util.extTopDomainString(xsrfUri);
+		var defaultServName = host;
+		var index = host.indexOf(topDomain);
+		if (index > 0) {
+			defaultServName = host.substring(0, index - 1);
+		}
+		defaultServiceName = defaultServiceName.replace(".", "_").toUpperCase();
 		var xsrfTokenCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";
 		xsrfTokenCookieName = _xsrfTokenCookieName ? _xsrfTokenCookieName : xsrfTokenCookieName;
 		// Gets xsrf from cookie.

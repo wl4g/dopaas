@@ -82,6 +82,21 @@
 			    return a.charCodeAt(0) - b.charCodeAt(0); // (a,b)=>(a.charCodeAt(0) - b.charCodeAt(0))
 			}).join('');
 		},
+		extTopDomainString: function(hostOrUri) {
+			var domain = hostOrUri; // Is host?
+			if (hostOrUri.indexOf('/') > 0) { // Is URI?
+				domain = new URL(hostOrUri).host;
+			}
+			// Check domain available?
+			if (Common.Util.isEmpty(domain)) {
+				return "";
+			}
+			var topDomainName = domain.split('.').slice(-2).join('.');
+        	if(domain.indexOf("com.cn") > 0) {
+        		topDomainName = domain.split('.').slice(-3).join('.');
+        	}
+        	return topDomainName;
+		},
 		getCookie: function(cookieName, cookies) {
 			if (!cookies) {
 				cookies = document.cookie;

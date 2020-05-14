@@ -485,7 +485,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * Number name of resource owner 'secondAuthCode' for SNS OAuth
 		 * secondary authentication API
 		 */
-		private String secondAuthCode = "secondAuthCode";
+		private String secondaryAuthCode = "secondaryAuthCode";
 
 		/**
 		 * Number name of resource owner 'funcId' for SNS OAuth secondary
@@ -667,12 +667,12 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			this.authorizers = authorizers;
 		}
 
-		public String getSecondAuthCode() {
-			return secondAuthCode;
+		public String getSecondaryAuthCode() {
+			return secondaryAuthCode;
 		}
 
-		public void setSecondAuthCode(String secondAuthCode) {
-			this.secondAuthCode = secondAuthCode;
+		public void setSecondaryAuthCode(String secondAuthCode) {
+			this.secondaryAuthCode = secondAuthCode;
 		}
 
 		public String getFuncId() {

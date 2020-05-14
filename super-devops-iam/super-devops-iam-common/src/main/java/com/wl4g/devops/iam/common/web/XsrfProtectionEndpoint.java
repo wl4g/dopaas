@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.common.web;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.iam.common.annotation.XsrfController;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
+import com.wl4g.devops.iam.common.config.CorsProperties;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfToken;
 import com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository;
@@ -28,7 +29,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static java.lang.String.format;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,17 +62,37 @@ public class XsrfProtectionEndpoint extends BaseController {
 	@Autowired
 	protected XsrfTokenRepository xtokenRepository;
 
-	@RequestMapping(method = { HEAD, GET }, path = URI_XSRF_APPLY_TOKEN)
-	public /* RespBase<?> */void applyXsrfToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	/**
+	 * Cors configuration properties
+	 */
+	@Autowired
+	protected CorsProperties corsConfig;
+
+	@RequestMapping(method = { HEAD/* , GET */ }, path = URI_XSRF_APPLY_TOKEN)
+	public void applyXsrfToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		log.info("Apply xsrf token <= {}", request.getRequestURI());
 
-		// RespBase<Object> resp = new RespBase<>();
+		try {
+			String requestOrigin = request.getHeader("Origin");
+			hasTextOf(requestOrigin, "xsrfTokenRequestOrigin");
+			// Assertion cors origin
+			corsConfig.assertCorsOrigin(requestOrigin);
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) {
+				log.debug(format("Closing xsrf token response. uri: %s", request.getRequestURI()), e);
+			} else {
+				log.error(format("Closing xsrf token response. uri: %s, cause: %s", request.getRequestURI(), e.getMessage()));
+			}
+			try {
+				response.getOutputStream().close();
+			} catch (Exception e2) {
+			}
+		}
+
 		// Generate & save xsrf token.
 		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xtokenRepository, request, response, true);
-		// resp.setData(xtoken);
 
 		log.info("Apply xsrf token => {}", xtoken);
-		// return resp;
 	}
 
 }

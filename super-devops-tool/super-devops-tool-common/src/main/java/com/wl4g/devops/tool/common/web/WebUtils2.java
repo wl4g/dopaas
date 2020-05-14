@@ -425,26 +425,32 @@ public abstract class WebUtils2 {
 	 * Extract top level domain string. </br>
 	 * 
 	 * <pre>
+	 *extTopDomainString("my.wl4g.com")                         =>  wl4g.com
 	 *extTopDomainString("//my.wl4g.com/myapp1")                =>  wl4g.com
-	 *extTopDomainString("/myapp1/api/v2/list")                 =>  
+	 *extTopDomainString("/myapp1/api/v2/list")                 =>  ""
 	 *extTopDomainString("http://my.wl4g.com.cn/myapp1")        =>  wl4g.com.cn
 	 *extTopDomainString("https://my2.my1.wl4g.com:80/myapp1")  =>  wl4g.com
 	 * </pre>
 	 * 
-	 * @param uri
+	 * @param hostOrUri
 	 * @return
 	 */
-	public static String extTopDomainString(String uri) {
-		if (isBlank(uri)) {
-			return uri;
+	public static String extTopDomainString(String hostOrUri) {
+		if (isBlank(hostOrUri)) {
+			return hostOrUri;
 		}
-		String domain = URI.create(uri).getHost();
+		hostOrUri = safeDecodeURL(hostOrUri);
+		String domain = hostOrUri; // Is host?
+		if (containsAny(hostOrUri, '/')) { // Is URI?
+			domain = URI.create(hostOrUri).getHost();
+		}
+		// Check domain available?
 		if (isBlank(domain)) {
 			return EMPTY;
 		}
 		String[] parts = split(domain, ".");
 		int endIndex = 2;
-		if (domain.endsWith("com.cn")) {
+		if (domain.endsWith("com.cn")) { // Special parse
 			endIndex = 3;
 		}
 		StringBuffer topDomain = new StringBuffer();

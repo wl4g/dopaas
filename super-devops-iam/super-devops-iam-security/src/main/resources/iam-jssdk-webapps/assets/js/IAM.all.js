@@ -82,6 +82,21 @@
 			    return a.charCodeAt(0) - b.charCodeAt(0); // (a,b)=>(a.charCodeAt(0) - b.charCodeAt(0))
 			}).join('');
 		},
+		extTopDomainString: function(hostOrUri) {
+			var domain = hostOrUri; // Is host?
+			if (hostOrUri.indexOf('/') > 0) { // Is URI?
+				domain = new URL(hostOrUri).host;
+			}
+			// Check domain available?
+			if (Common.Util.isEmpty(domain)) {
+				return "";
+			}
+			var topDomainName = domain.split('.').slice(-2).join('.');
+        	if(domain.indexOf("com.cn") > 0) {
+        		topDomainName = domain.split('.').slice(-3).join('.');
+        	}
+        	return topDomainName;
+		},
 		getCookie: function(cookieName, cookies) {
 			if (!cookies) {
 				cookies = document.cookie;
@@ -1572,10 +1587,7 @@
         // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，
 		// (接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
         else {
-        	var topDomainName = hostname.split('.').slice(-2).join('.');
-        	if(hostname.indexOf("com.cn") > 0) {
-        		topDomainName = hostname.split('.').slice(-3).join('.');
-        	}
+        	var topDomainName = Common.Util.extTopDomainString(hostname);
         	return protocol + "//" + twoDomain + "." + topDomainName + contextPath;
         }
 	};
@@ -2201,7 +2213,15 @@
 		var xsrfTokenHeaderName = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
 		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
 		// [MARK55]
-		var defaultServiceName = location.hostname.split('.').slice(0, 1).join(".").toUpperCase();
+		var host = location.hostname;
+		var defaultServiceName = host;
+		var topDomain = Common.Util.extTopDomainString(xsrfUri);
+		var defaultServName = host;
+		var index = host.indexOf(topDomain);
+		if (index > 0) {
+			defaultServName = host.substring(0, index - 1);
+		}
+		defaultServiceName = defaultServiceName.replace(".", "_").toUpperCase();
 		var xsrfTokenCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";
 		xsrfTokenCookieName = _xsrfTokenCookieName ? _xsrfTokenCookieName : xsrfTokenCookieName;
 		// Gets xsrf from cookie.
@@ -2506,7 +2526,7 @@
 								<div class="login-form-item" id="iam_jssdk_captcha_panel">
 									<!-- 拖动验证-->
 								</div>
-								<input class="btn" id="iam_jssdk_account_submit_btn" type="button" value="登录">
+								<input class="iam-btn" id="iam_jssdk_account_submit_btn" type="button" value="登录">
 							</form>
 						</div>
 						<!-- 手机登录-->
@@ -2549,14 +2569,14 @@
 								<i class="icon-codeNumber">
 								</i>
 								<input id="iam_jssdk_sms_code" class="inp" type="text" placeholder="请输入短信动态码" maxlength=6>
-								<button class="btn-code" type="button" id="iam_jssdk_sms_getcode_btn">
+								<button class="iam-btn-code" type="button" id="iam_jssdk_sms_getcode_btn">
 									获取
 								</button>
 								<p class="err-info pass-err">
 									请输入短信验证码
 								</p>
 							</div>
-							<input class="btn" id="iam_jssdk_sms_submit_btn" type="button" value="登录">
+							<input class="iam-btn" id="iam_jssdk_sms_submit_btn" type="button" value="登录">
 						</div>
 						<!-- 微信登录-->
 						<div class="login-form-panel" id="iam_jssdk_login_scan_panel">
