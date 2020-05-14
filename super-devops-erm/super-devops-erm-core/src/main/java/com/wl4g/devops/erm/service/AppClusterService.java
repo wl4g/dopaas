@@ -42,6 +42,6 @@ public interface AppClusterService {
 
 	List<AppInstance> getInstancesByClusterIdAndEnvType(Integer clusterId, String envType);
 
-	void testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException;
+
 
 }

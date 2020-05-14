@@ -17,17 +17,25 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
+import com.wl4g.devops.common.bean.erm.Host;
 import com.wl4g.devops.common.bean.erm.Ssh;
+import com.wl4g.devops.dao.erm.HostDao;
 import com.wl4g.devops.dao.erm.SshDao;
 import com.wl4g.devops.erm.service.SshService;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 import static com.wl4g.devops.erm.util.SshkeyUtils.decryptSshkeyFromHex;
 import static com.wl4g.devops.erm.util.SshkeyUtils.encryptSshkeyToHex;
@@ -45,6 +53,12 @@ public class SshServiceImpl implements SshService {
 
     @Value("${cipher-key}")
     protected String cipherKey;
+
+    @Autowired
+    private HostDao appHostDao;
+
+    @Autowired
+    private DestroableProcessManager pm;
 
     @Override
     public PageModel page(PageModel pm,String name) {
@@ -96,6 +110,23 @@ public class SshServiceImpl implements SshService {
         ssh.setId(id);
         ssh.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         sshDao.updateByPrimaryKeySelective(ssh);
+    }
+
+    @Override
+    public void testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception {
+        Host appHost = appHostDao.selectByPrimaryKey(hostId);
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        String command = "echo " + uuid;
+        String echoStr;
+        try {
+            echoStr = pm.execWaitForComplete(
+                    new RemoteDestroableCommand(command, 10000, sshUser, appHost.getHostname(), decryptSshkeyFromHex(cipherKey, sshKey).toCharArray()));
+        } catch (UnknownHostException e) {
+            throw new UnknownHostException(appHost.getHostname() + ": Name or service not known");
+        }
+        if (Objects.isNull(echoStr) || !uuid.equals(echoStr.replaceAll("\n", ""))) {
+            throw new IOException("Test Connect Fail");
+        }
     }
 
 

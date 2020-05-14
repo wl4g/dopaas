@@ -19,15 +19,11 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.erm.Host;
 import com.wl4g.devops.common.bean.erm.model.InstanceDtoModel;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
-import com.wl4g.devops.dao.erm.HostDao;
 import com.wl4g.devops.erm.service.AppClusterService;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.support.cli.DestroableProcessManager;
-import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.security.InvalidParameterException;
 import java.util.*;
 
@@ -52,11 +46,7 @@ public class AppClueterServiceImpl implements AppClusterService {
     @Autowired
     private AppInstanceDao appInstanceDao;
 
-    @Autowired
-    private HostDao appHostDao;
 
-    @Autowired
-    private DestroableProcessManager pm;
 
     @Override
     public Map<String, Object> list(PageModel pm, String clusterName) {
@@ -193,20 +183,5 @@ public class AppClueterServiceImpl implements AppClusterService {
         return appInstanceDao.selectByClusterIdAndEnvType(clusterId, envType);
     }
 
-    @Override
-    public void testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception {
-        Host appHost = appHostDao.selectByPrimaryKey(hostId);
-        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        String command = "echo " + uuid;
-        String echoStr;
-        try {
-            echoStr = pm.execWaitForComplete(
-                    new RemoteDestroableCommand(command, 10000, sshUser, appHost.getHostname(), sshKey.toCharArray()));
-        } catch (UnknownHostException e) {
-            throw new UnknownHostException(appHost.getHostname() + ": Name or service not known");
-        }
-        if (Objects.isNull(echoStr) || !uuid.equals(echoStr.replaceAll("\n", ""))) {
-            throw new IOException("Test Connect Fail");
-        }
-    }
+
 }
