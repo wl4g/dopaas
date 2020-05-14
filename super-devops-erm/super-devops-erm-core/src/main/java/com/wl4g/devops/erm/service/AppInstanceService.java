@@ -30,8 +30,7 @@ public interface AppInstanceService {
 
     void save(AppInstance appInstance);
 
-    PageModel list(PageModel pm, Integer clusterId, String envType, Integer serverType);
-
+    PageModel list(PageModel pm, String name, Integer clusterId, String envType, Integer serverType);
 
     void del(Integer clusterId);
 

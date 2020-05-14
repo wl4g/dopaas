@@ -114,10 +114,13 @@
     from erm_app_instance i
     left join erm_app_cluster c on i.cluster_id=c.id
     where i.del_flag != 1
+    <if test="name != null and name != ''" >
+      AND i.name LIKE CONCAT('%','${name}','%')
+    </if>
     <if test="clusterId != null" >
       and i.cluster_id = #{clusterId,jdbcType=INTEGER}
     </if>
-    <if test="envType != null" >
+    <if test="envType != null and envType != ''" >
       and i.env_type = #{envType,jdbcType=VARCHAR}
     </if>
     <if test="serverType != null" >
