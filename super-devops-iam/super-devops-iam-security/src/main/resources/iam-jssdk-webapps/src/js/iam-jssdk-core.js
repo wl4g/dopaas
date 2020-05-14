@@ -1074,9 +1074,8 @@
 		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
 		// [MARK55]
 		var host = location.hostname;
+		var topDomain = Common.Util.extTopDomainString(host);
 		var defaultServiceName = host;
-		var topDomain = Common.Util.extTopDomainString(xsrfUri);
-		var defaultServName = host;
 		var index = host.indexOf(topDomain);
 		if (index > 0) {
 			defaultServName = host.substring(0, index - 1);
@@ -1092,8 +1091,8 @@
 			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
 			$.ajax({
 				url: applyXsrfTokenUrl,
-				//type: 'HEAD',
-				type: 'GET',
+				type: 'HEAD',
+				//type: 'GET',
 				async: false,
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 				success: function(res, textStatus, jqxhr){
