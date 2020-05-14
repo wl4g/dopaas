@@ -92,6 +92,7 @@
 		<nexus-staging-maven-plugin.version>1.6.3</nexus-staging-maven-plugin.version>
 		<yuicompressor-maven-plugin.version>1.5.1</yuicompressor-maven-plugin.version>
 		<minify-maven-plugin.version>1.7.6</minify-maven-plugin.version>
+		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<!-- Spring's. -->
 		<spring-boot.version>1.5.13.RELEASE</spring-boot.version>
 		<spring-boot-admin.version>1.5.7</spring-boot-admin.version>
@@ -199,7 +200,6 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 	</distributionManagement>
-
 	<dependencyManagement>
 		<dependencies>
 			<!-- Components module's -->
@@ -1030,9 +1030,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 	<build>
-
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -1102,8 +1100,6 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -1129,7 +1125,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -1143,7 +1138,6 @@
 					</archive>
 				</configuration>
 			</plugin>
-
 			<!-- Usage: mvn versions:set -DnewVersion=latest clean install -DskipTests -->
 			<!-- See: http://www.mojohaus.org/versions-maven-plugin/set-mojo.html -->
 			<plugin>
@@ -1197,7 +1191,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
+						<version>${maven-gpg-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
