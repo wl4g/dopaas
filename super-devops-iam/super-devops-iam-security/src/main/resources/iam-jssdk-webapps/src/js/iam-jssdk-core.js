@@ -1085,6 +1085,7 @@
 		xsrfTokenCookieName = _xsrfTokenCookieName ? _xsrfTokenCookieName : xsrfTokenCookieName;
 		// Gets xsrf from cookie.
 		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName, null);
+		console.debug("Load xsrfToken: " + xsrfToken + " by cookieName: " + xsrfTokenCookieName);
 		// First visit? init xsrf token
 		if (!xsrfToken) {
 			//console.debug("Initializing xsrf token...");
