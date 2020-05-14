@@ -33,13 +33,14 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import com.wl4g.devops.tool.common.collection.RegisteredSetList;
 
-import static com.wl4g.devops.iam.common.config.CorsProperties.IamCorsConfiguration.*;
+import static com.wl4g.devops.iam.common.config.CorsProperties.IamCorsValidator.*;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isSameWildcardOrigin;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -75,11 +76,11 @@ public class CorsProperties implements Serializable {
 		/**
 		 * Default allowes methods.
 		 */
-		private final String[] defaultAllowedMethods = { GET.name(), POST.name(), OPTIONS.name(), HEAD.name() };
+		private final String[] defaultAllowedMethods = { GET.name(), HEAD.name(), POST.name(), OPTIONS.name() };
 		{
 			// Default settings.
-			put("/**", new CorsRule().setAllowCredentials(true).addAllowsHeaders(defaultAllowedHeaders)
-					.addAllowsMethods(defaultAllowedMethods).addAllowsOrigins("http://localhost:8080"));
+			put("/**", new CorsRule().addAllowsOrigins("http://localhost:8080").setAllowCredentials(true)
+					.addAllowsHeaders(defaultAllowedHeaders).addAllowsMethods(defaultAllowedMethods));
 		}
 	};
 
@@ -100,18 +101,55 @@ public class CorsProperties implements Serializable {
 		return "CorsProperties [rules=" + rules + "]";
 	}
 
+	//
+	// --- Function's. ---
+	//
+
 	/**
-	 * Assertion allowed legal headers.
+	 * Assertion cors allowed headers.
 	 * 
 	 * @param requestHeaders
-	 * @param allowedHeaders
 	 */
-	public void assertCorsLegalHeaders(List<String> requestHeaders) {
+	public void assertCorsHeaders(List<String> requestHeaders) {
 		for (CorsRule rule : getRules().values()) {
 			List<String> allowedHeaders = rule.resolveIamCorsConfiguration().getAllowedHeaders();
-			List<String> legalHeaders = checkLegalHeaders(requestHeaders, allowedHeaders);
+			List<String> legalHeaders = checkCorsHeaders(requestHeaders, allowedHeaders);
 			if (isEmpty(legalHeaders)) {
-				throw new IllegalArgumentException(format("Xsrf header name must start with a %s prefix", allowedHeaders));
+				throw new IllegalArgumentException(
+						format("Invalid cors requestHeaders: %s, allowedHeaders: %s", requestHeaders, allowedHeaders));
+			}
+		}
+	}
+
+	/**
+	 * Assertion cors allowed methods.
+	 * 
+	 * @param requestMethods
+	 */
+	public void assertCorsMethods(HttpMethod requestMethod) {
+		for (CorsRule rule : getRules().values()) {
+			List<String> allowedMethods = rule.resolveIamCorsConfiguration().getAllowedMethods();
+			List<HttpMethod> _allowedMethods = allowedMethods.stream().map(m -> resolve(m)).collect(toList());
+			List<HttpMethod> legalMethods = checkCorsMethod(requestMethod, _allowedMethods);
+			if (isEmpty(legalMethods)) {
+				throw new IllegalArgumentException(
+						format("Invalid cors requestMethod: %s, allowedMethods: %s", requestMethod, allowedMethods));
+			}
+		}
+	}
+
+	/**
+	 * Assertion cors allowed origins.
+	 * 
+	 * @param requestOrigns
+	 */
+	public void assertCorsOrigin(String requestOrigin) {
+		for (CorsRule rule : getRules().values()) {
+			List<String> allowedOrigins = rule.resolveIamCorsConfiguration().getAllowedOrigins();
+			String legalOrigin = checkCorsOrigin(requestOrigin, allowedOrigins, rule.isAllowCredentials());
+			if (isBlank(legalOrigin)) {
+				throw new IllegalArgumentException(
+						format("Invalid cors requestOrigin: %s, allowedOrigins: %s", requestOrigin, allowedOrigins));
 			}
 		}
 	}
@@ -142,7 +180,7 @@ public class CorsProperties implements Serializable {
 		// --- Temporary fields. ---
 		//
 
-		private transient IamCorsConfiguration cors;
+		private transient IamCorsValidator cors;
 
 		public CorsRule() {
 			super();
@@ -251,7 +289,7 @@ public class CorsProperties implements Serializable {
 		 *
 		 * @return
 		 */
-		public IamCorsConfiguration resolveIamCorsConfiguration() {
+		public IamCorsValidator resolveIamCorsConfiguration() {
 			// Convert to spring CORS configuration.
 			if (isNull(cors)) {
 				// Merge values elements.
@@ -260,7 +298,7 @@ public class CorsProperties implements Serializable {
 				mergeWithWildcard(getAllowsMethods());
 				mergeWithWildcard(getExposedHeaders());
 				// Convert to cors configuration.
-				cors = new IamCorsConfiguration();
+				cors = new IamCorsValidator();
 				cors.setAllowCredentials(isAllowCredentials());
 				cors.setMaxAge(getMaxAge());
 				getAllowsOrigins().forEach(origin -> cors.addAllowedOrigin(origin));
@@ -278,7 +316,7 @@ public class CorsProperties implements Serializable {
 		 * @return
 		 */
 		private void mergeWithWildcard(Collection<String> sources) {
-			if (isEmpty(sources)){
+			if (isEmpty(sources)) {
 				return;
 			}
 
@@ -310,13 +348,13 @@ public class CorsProperties implements Serializable {
 	}
 
 	/**
-	 * Iam enhanced logic CORS configuration processing.
+	 * Iam enhanced logic CORS configuration validator.
 	 *
 	 * @author Wangl.sir
 	 * @version v1.0 2019年8月21日
 	 * @since
 	 */
-	public static class IamCorsConfiguration extends CorsConfiguration {
+	public static class IamCorsValidator extends CorsConfiguration {
 
 		/**
 		 * <b>Note:</b> "allowsOrigin" may have a "*" wildcard character.</br>
@@ -331,36 +369,7 @@ public class CorsProperties implements Serializable {
 		 */
 		@Override
 		public String checkOrigin(String requestOrigin) {
-			if (isBlank(requestOrigin))
-				return null;
-			if (isEmpty(getAllowedOrigins()))
-				return null;
-
-			if (getAllowedOrigins().contains(ALL)) {
-				/**
-				 * Note: Chrome will prompt: </br>
-				 * The value of the 'Access-Control-Allow-Origin' header in the
-				 * response must not be the wildcard '*' when the request's
-				 * credentials mode is 'include'. The credentials mode of
-				 * requests initiated by the XMLHttpRequest is controlled by the
-				 * withCredentials attribute.
-				 */
-				if (!getAllowCredentials()) {
-					return ALL;
-				} else {
-					return requestOrigin;
-				}
-			}
-			for (String allowedOrigin : getAllowedOrigins()) {
-				if (equalsIgnoreCase(requestOrigin, allowedOrigin)) {
-					return requestOrigin;
-				}
-				// e.g: allowedOrigin => "http://*.aa.mydomain.com"
-				if (isSameWildcardOrigin(allowedOrigin, requestOrigin, true)) {
-					return requestOrigin;
-				}
-			}
-			return null;
+			return checkCorsOrigin(requestOrigin, getAllowedOrigins(), getAllowCredentials());
 		}
 
 		/**
@@ -376,16 +385,66 @@ public class CorsProperties implements Serializable {
 		 */
 		@Override
 		public List<String> checkHeaders(List<String> requestHeaders) {
-			return checkLegalHeaders(requestHeaders, getAllowedHeaders());
+			return checkCorsHeaders(requestHeaders, getAllowedHeaders());
 		}
 
 		@Override
 		public void addAllowedMethod(String method) {
 			if (!isBlank(method)) {
-				// Add for invalid method check.
+				// Check add method invalid.
 				isTrue(Objects.nonNull(HttpMethod.resolve(method.toUpperCase(US))), "Invalid allowed http method: '%s'", method);
 				super.addAllowedMethod(method.toUpperCase(US));
 			}
+		}
+
+		/**
+		 * <b>Note:</b> "allowsOrigin" may have a "*" wildcard character.</br>
+		 * </br>
+		 * 
+		 * For example supports:
+		 * 
+		 * <pre>
+		 *	http://*.domain.com      ->  http://aa.domain.com
+		 *	http://*.aa.domain.com:* ->  http://bb.aa.domain.com:8443
+		 * </pre>
+		 * 
+		 * @param requestOrigin
+		 * @return
+		 * @see {@link org.springframework.web.cors.CorsConfiguration#checkOrigin()}
+		 */
+		public static String checkCorsOrigin(String requestOrigin, List<String> allowedOrigins, boolean allowCredentials) {
+			if (isBlank(requestOrigin)) {
+				return null;
+			}
+			if (isEmpty(allowedOrigins)) {
+				return null;
+			}
+
+			if (allowedOrigins.contains(ALL)) {
+				/**
+				 * Note: Chrome will prompt: </br>
+				 * The value of the 'Access-Control-Allow-Origin' header in the
+				 * response must not be the wildcard '*' when the request's
+				 * credentials mode is 'include'. The credentials mode of
+				 * requests initiated by the XMLHttpRequest is controlled by the
+				 * withCredentials attribute.
+				 */
+				if (!allowCredentials) {
+					return ALL;
+				} else {
+					return requestOrigin;
+				}
+			}
+			for (String allowedOrigin : allowedOrigins) {
+				if (equalsIgnoreCase(requestOrigin, allowedOrigin)) {
+					return requestOrigin;
+				}
+				// e.g: allowedOrigin => "http://*.aa.mydomain.com"
+				if (isSameWildcardOrigin(allowedOrigin, requestOrigin, true)) {
+					return requestOrigin;
+				}
+			}
+			return null;
 		}
 
 		/**
@@ -395,7 +454,7 @@ public class CorsProperties implements Serializable {
 		 * @param allowedHeaders
 		 * @return
 		 */
-		public static List<String> checkLegalHeaders(List<String> requestHeaders, List<String> allowedHeaders) {
+		public static List<String> checkCorsHeaders(List<String> requestHeaders, List<String> allowedHeaders) {
 			if (isNull(requestHeaders)) {
 				return null;
 			}
@@ -431,6 +490,26 @@ public class CorsProperties implements Serializable {
 				}
 			}
 			return (result.isEmpty() ? null : result);
+		}
+
+		/**
+		 * Check the HTTP request method (or the method from the
+		 * Access-Control-Request-Method header on a pre-flight request) against
+		 * the configured allowed methods.
+		 * 
+		 * @param requestMethod
+		 * @param allowedMethods
+		 * @return
+		 * @see {@link org.springframework.web.cors.CorsConfiguration#checkHttpMethod()}
+		 */
+		public static List<HttpMethod> checkCorsMethod(HttpMethod requestMethod, List<HttpMethod> allowedMethods) {
+			if (isNull(requestMethod)) {
+				return null;
+			}
+			if (isNull(allowedMethods)) {
+				return Collections.singletonList(requestMethod);
+			}
+			return (allowedMethods.contains(requestMethod) ? allowedMethods : null);
 		}
 
 	}

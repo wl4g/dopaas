@@ -20,6 +20,23 @@ spring: # Base configuration.
   cloud: # Spring cloud configuration.
     devops:
       iam: # IAM client configuration.
+        cors:
+          enabled: true # Default: true
+          # Default rules: allowsOrigins=http://localhost:8080; allowsHeaders=X-Iam-*; allowsMethods=GET,HEAD,POST,OPTIONS
+          rules:
+            /**:
+              allowsMethods: GET,HEAD,POST,OPTIONS
+              allowsHeaders:
+                - X-Iam-*
+              allowCredentials: true
+              allowsOrigins:
+                #- '*'
+        xsrf:
+          enabled: true
+          #exclude-valid-uri-patterns: 
+        replay:
+          enabled: true
+          #exclude-valid-uri-patterns: 
         client: # IAM client configuration.
           service-name: ${spring.application.name}
           filter-chain:
@@ -29,7 +46,7 @@ spring: # Base configuration.
           cache:
             prefix: ${spring.application.name}
           cookie:
-            name: IAMSID_${spring.application.name}
+            name: _${spring.application.name}
           cipher:
             enable-data-cipher: true # Default by true
           session:
