@@ -4,6 +4,7 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
+	'use strict';
 
 	// Base constants definition.
     var constant = {
@@ -1078,7 +1079,7 @@
 		var defaultServiceName = host;
 		var index = host.indexOf(topDomain);
 		if (index > 0) {
-			defaultServName = host.substring(0, index - 1);
+			defaultServiceName = host.substring(0, index - 1);
 		}
 		defaultServiceName = defaultServiceName.replace(".", "_").toUpperCase();
 		var xsrfTokenCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";

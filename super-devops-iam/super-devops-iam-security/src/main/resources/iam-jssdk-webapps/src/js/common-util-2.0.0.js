@@ -4,6 +4,8 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
+	'use strict';
+
 	// Exposing the API to the outside.
 	if(!window.Common){ window.Common = {}; }
 	if(!window.Common.Constants){ window.Common.Constants = {}; }
