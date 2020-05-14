@@ -8,6 +8,11 @@
 	<name>Super DevOps Distributed Job Management Services</name>
 	<url>https://job.super-devops.wl4g.com</url>
 	<description>Djob(Distributed Job) is a scheduling platform based on springcloud. By default, it is an enhanced scheduling platform based on elasticjob. It is fully compatible with native elasticjob.</description>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>super-devops</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
 		<module>super-devops-djob-manager</module>
 		<module>super-devops-djob-core</module>
@@ -32,17 +37,6 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-bom</artifactId>
-				<version>master</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>

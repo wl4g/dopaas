@@ -9,6 +9,11 @@
 	<name>Super DevOps Conponents</name>
 	<url>https://conponents.super-devops.wl4g.com</url>
 	<description>Integration of a super Devops general components modules.</description>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>super-devops</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
 		<!-- <module>components-tools</module> -->
 		<!-- <module>components-core</module> -->
@@ -35,17 +40,6 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-bom</artifactId>
-				<version>master</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>
