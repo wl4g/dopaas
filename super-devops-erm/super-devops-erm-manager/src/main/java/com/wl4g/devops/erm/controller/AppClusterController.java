@@ -19,10 +19,8 @@ import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.erm.service.AppClusterService;
-import com.wl4g.devops.tool.common.cli.ssh2.JschHolder;
-import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
+import com.wl4g.devops.page.PageModel;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -96,19 +94,8 @@ public class AppClusterController extends BaseController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/connectTest")
-	public RespBase<?> testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException {
-		RespBase<Object> resp = RespBase.create();
-		appClusterService.testSSHConnect(hostId, sshUser, sshKey);
-		return resp;
-	}
 
-	@RequestMapping(value = "/generateSshKeyPair")
-	public RespBase<?> generateSshKeyPair() throws Exception {
-		RespBase<Object> resp = RespBase.create();
-		Ssh2Holders.Ssh2KeyPair ssh2KeyPair = Ssh2Holders.getInstance(JschHolder.class).generateKeypair(Ssh2Holders.AlgorithmType.RSA, "generateBySystem");
-		resp.setData(ssh2KeyPair);
-		return resp;
-	}
+
+
 
 }
