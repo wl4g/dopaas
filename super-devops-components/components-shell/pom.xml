@@ -6,11 +6,6 @@
 	<name>Super DevOps Components Shell</name>
 	<description>Shell is an open source command-line tool based on spring cloud service, which is similar to the way spark-shell works.</description>
 	<url>https://shell.super-devops.wl4g.com</url>
-	<parent>
-		<groupId>com.wl4g</groupId>
-		<artifactId>super-devops-components</artifactId>
-		<version>master</version>
-	</parent>
 	<modules>
 		<module>shell-common</module>
 		<module>shell-core</module>
@@ -36,6 +31,17 @@
 			</snapshots>
 		</repository>
 	</repositories>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-bom</artifactId>
+				<version>master</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>
