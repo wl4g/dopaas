@@ -6,6 +6,11 @@
 	<name>Super DevOps Software Config Management Services</name>
 	<url>https://scm.super-devops.wl4g.com</url>
 	<description>SCM - An Open Source Distributed Independent Configuration Center based on Spring Cloud.</description>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>super-devops</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
 		<module>super-devops-scm-common</module>
 		<module>super-devops-scm-config</module>

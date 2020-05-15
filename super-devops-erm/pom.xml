@@ -4,6 +4,11 @@
 	<artifactId>super-devops-erm</artifactId>
 	<packaging>pom</packaging>
 	<name>Super DevOps Environment Resources Management</name>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>super-devops</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
 		<module>super-devops-erm-manager</module>
 		<module>super-devops-erm-core</module>

@@ -6,6 +6,11 @@
 	<name>Super DevOps Continuous Integration(CICD) Services</name>
 	<url>https://ci.super-devops.wl4g.com</url>
 	<description>CI - An open source continuous integration deployment system based on Spring Cloud.</description>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>super-devops</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
 		<module>super-devops-ci-analyzer</module>
 		<module>super-devops-ci-core</module>

@@ -6,6 +6,11 @@
 	<name>Super DevOps Composite Object Storage Services</name>
 	<url>https://coss.super-devops.wl4g.com</url>
 	<description>COSS - A open source composite object storage system based on spring cloud.</description>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>super-devops</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
 		<module>super-devops-coss-client</module>
 		<module>super-devops-coss-common</module>

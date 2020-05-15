@@ -6,6 +6,11 @@
 	<name>Super DevOps Tool Suite</name>
 	<url>https://tool.super-devops.wl4g.com</url>
 	<description>A suite of peripheral tools related to the life cycle of micro services.</description>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>super-devops</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
 		<module>super-devops-tool-common</module>
 		<module>super-devops-tool-devel</module>

@@ -6,6 +6,11 @@
 	<version>master</version>
 	<packaging>pom</packaging>
 	<name>Super DevOps ESM</name>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>super-devops</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
 		<module>super-devops-esm-core</module>
 		<module>super-devops-esm-example</module>
