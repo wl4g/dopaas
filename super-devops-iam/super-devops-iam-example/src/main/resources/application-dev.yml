@@ -11,18 +11,26 @@
 # #### Environment(Test) configuration. ####
 #
 spring:
-  web:
-    cors:
-      enabled: true # Default: true
-      rules:
-        /**:
-          allowCredentials: true
-          allowsOrigins: '*'
-          allowsHeaders: '*'
-          allowsMethods: GET,POST
   cloud:
     devops:
-      iam:
+      iam: # IAM configuration.
+        cors:
+          rules:
+            /**:
+              allowsOrigins:
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.dev}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.dev:${server.port}}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.local}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.local:${server.port}}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.debug}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
+                - http://localhost
+                - http://localhost:14040
+                - http://127.0.0.1
+                - http://127.0.0.1:14040
+                #- '*'
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: 127.0.0.1

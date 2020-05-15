@@ -50,7 +50,7 @@ public class CorsAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean(CorsProperties.class)
-	public IamCorsProcessor advancedCorsProcessor() {
+	public IamCorsProcessor iamCorsProcessor() {
 		return new IamCorsProcessor();
 	}
 

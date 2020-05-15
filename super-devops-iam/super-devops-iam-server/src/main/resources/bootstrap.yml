@@ -24,9 +24,10 @@ spring:
       iam: # IAM configuration.
         cors:
           enabled: true # Default: true
+          # Default rules: allowsOrigins=http://localhost:8080; allowsHeaders=X-Iam-*; allowsMethods=GET,HEAD,POST,OPTIONS
           rules:
             /**:
-              allowsMethods: GET,POST
+              allowsMethods: GET,HEAD,POST,OPTIONS
               allowsHeaders:
                 - X-Iam-*
               # Note: Some latest browsers, such as chrome 80.x+, only support sharing with the sub domain of the top-level domain name CORS.

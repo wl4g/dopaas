@@ -111,7 +111,7 @@ public class ReplayProperties implements InitializingBean {
 		}
 
 		// Check header name with cors allowed.
-		corsConfig.assertCorsLegalHeaders(singletonList(getReplayTokenHeaderName()));
+		corsConfig.assertCorsHeaders(singletonList(getReplayTokenHeaderName()));
 
 	}
 

@@ -10,7 +10,6 @@
 		<groupId>com.wl4g</groupId>
 		<artifactId>super-devops-scm</artifactId>
 		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -20,17 +19,6 @@
 		<mysql.version>5.1.21</mysql.version>
 		<pagehelper.version>4.1.6</pagehelper.version>
 	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-bom</artifactId>
-				<version>master</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>

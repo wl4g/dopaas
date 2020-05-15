@@ -96,7 +96,7 @@ public class SimpleSecondaryAuthenticationHandler implements SecondaryAuthentica
 		RequestResponse http = getRequestResponse(jp);
 
 		// Get second authenticate code
-		String authCode = http.getRequest().getParameter(config.getParam().getSecondAuthCode());
+		String authCode = http.getRequest().getParameter(config.getParam().getSecondaryAuthCode());
 
 		// Validation
 		String errdesc = null;
@@ -198,7 +198,7 @@ public class SimpleSecondaryAuthenticationHandler implements SecondaryAuthentica
 
 		// Parameter 'secondAuthCode'
 		Map<String, Object> param = new HashMap<>();
-		param.put(config.getParam().getSecondAuthCode(), authCode);
+		param.put(config.getParam().getSecondaryAuthCode(), authCode);
 
 		// Parameter 'grantTicket', (Prevent login failure)
 		String grantTicket = (String) SecurityUtils.getSubject().getSession().getAttribute(SAVE_GRANT_TICKET);

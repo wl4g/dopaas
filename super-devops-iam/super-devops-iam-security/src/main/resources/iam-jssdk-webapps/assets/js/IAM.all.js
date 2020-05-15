@@ -4,6 +4,8 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
+	'use strict';
+
 	// Exposing the API to the outside.
 	if(!window.Common){ window.Common = {}; }
 	if(!window.Common.Constants){ window.Common.Constants = {}; }
@@ -81,6 +83,21 @@
 			return Array.prototype.sort.call(Array.from(str), function(a, b) {
 			    return a.charCodeAt(0) - b.charCodeAt(0); // (a,b)=>(a.charCodeAt(0) - b.charCodeAt(0))
 			}).join('');
+		},
+		extTopDomainString: function(hostOrUri) {
+			var domain = hostOrUri; // Is host?
+			if (hostOrUri.indexOf('/') > 0) { // Is URI?
+				domain = new URL(hostOrUri).host;
+			}
+			// Check domain available?
+			if (Common.Util.isEmpty(domain)) {
+				return "";
+			}
+			var topDomainName = domain.split('.').slice(-2).join('.');
+        	if(domain.indexOf("com.cn") > 0) {
+        		topDomainName = domain.split('.').slice(-3).join('.');
+        	}
+        	return topDomainName;
 		},
 		getCookie: function(cookieName, cookies) {
 			if (!cookies) {
@@ -1129,6 +1146,7 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document) {
+	'use strict';
 
 	// Base constants definition.
     var constant = {
@@ -1405,6 +1423,7 @@
 		deploy: {
 			baseUri: null, // IAM后端服务baseURI
 			defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
+			defaultServerPort: 14040, // 默认IAM Server的port
 			defaultContextPath: "/iam-server", // 默认IAM Server的context-path
 		},
 		// 初始相关配置(Event)
@@ -1549,28 +1568,29 @@
 	// Gets default IAM baseUri
 	var getDefaultIamBaseUri = function() {
 		// 获取地址栏默认baseUri
+		var protocol = location.protocol;
 		var hostname = location.hostname;
-		var pathname = location.pathname;
+		var servPort = settings.deploy.defaultServerPort;
 		var twoDomain = settings.deploy.defaultTwoDomain;
 		var contextPath = settings.deploy.defaultContextPath;
 		contextPath = contextPath.startsWith("/") ? contextPath : ("/" + contextPath);
-		var port = location.port;
-		var protocol = location.protocol;
-	 	// 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
+
+		// 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
 	 	// 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:14040/iam-server, 10.0.0.12:14046/ci-server)都部署于同一台机。
 	 	// a，当访问的地址是IP；
 	 	// b，当访问域名的后者是.debug/.local/.dev等。
-        if (hostname == 'localhost' || hostname == '127.0.0.1'
-        	|| Common.Util.isIp(hostname) || hostname.endsWith('.debug')
-        	|| hostname.endsWith('.local') || hostname.endsWith('.dev')) {
-        	return protocol + "//" + hostname + ":14040" + contextPath;
+		if (Common.Util.isIp(hostname)
+        	|| hostname == 'localhost'
+        	|| hostname == '127.0.0.1'
+        	|| hostname.endsWith('.debug')
+        	|| hostname.endsWith('.local')
+        	|| hostname.endsWith('.dev')) {
+        	return protocol + "//" + hostname + ":" + servPort + contextPath;
         }
-        // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，(接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
+        // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，
+		// (接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
         else {
-        	var topDomainName = hostname.split('.').slice(-2).join('.');
-        	if(hostname.indexOf("com.cn") > 0) {
-        		topDomainName = hostname.split('.').slice(-3).join('.');
-        	}
+        	var topDomainName = Common.Util.extTopDomainString(hostname);
         	return protocol + "//" + twoDomain + "." + topDomainName + contextPath;
         }
 	};
@@ -2196,19 +2216,27 @@
 		var xsrfTokenHeaderName = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
 		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
 		// [MARK55]
-		var defaultServiceName = location.hostname.split('.').slice(0, 1).join(".").toUpperCase();
+		var host = location.hostname;
+		var topDomain = Common.Util.extTopDomainString(host);
+		var defaultServiceName = host;
+		var index = host.indexOf(topDomain);
+		if (index > 0) {
+			defaultServiceName = host.substring(0, index - 1);
+		}
+		defaultServiceName = defaultServiceName.replace(".", "_").toUpperCase();
 		var xsrfTokenCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";
 		xsrfTokenCookieName = _xsrfTokenCookieName ? _xsrfTokenCookieName : xsrfTokenCookieName;
 		// Gets xsrf from cookie.
 		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName, null);
+		console.debug("Load xsrfToken: " + xsrfToken + " by cookieName: " + xsrfTokenCookieName);
 		// First visit? init xsrf token
 		if (!xsrfToken) {
 			//console.debug("Initializing xsrf token...");
 			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
 			$.ajax({
 				url: applyXsrfTokenUrl,
-				//type: 'HEAD',
-				type: 'GET',
+				type: 'HEAD',
+				//type: 'GET',
 				async: false,
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
 				success: function(res, textStatus, jqxhr){
@@ -2282,6 +2310,8 @@
  * See http://pajhome.org.uk/crypt/md5 for details.
  */
 (function(window, document){
+	'use strict';
+
 	// 暴露API给外部
 	window.IAMCrypto = {
 		/**
@@ -2441,6 +2471,8 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document){
+	'use strict';
+
 	// Exposing IAM UI
 	window.IAMUi = function() {};
 
@@ -2501,7 +2533,7 @@
 								<div class="login-form-item" id="iam_jssdk_captcha_panel">
 									<!-- 拖动验证-->
 								</div>
-								<input class="btn" id="iam_jssdk_account_submit_btn" type="button" value="登录">
+								<input class="iam-btn" id="iam_jssdk_account_submit_btn" type="button" value="登录">
 							</form>
 						</div>
 						<!-- 手机登录-->
@@ -2544,14 +2576,14 @@
 								<i class="icon-codeNumber">
 								</i>
 								<input id="iam_jssdk_sms_code" class="inp" type="text" placeholder="请输入短信动态码" maxlength=6>
-								<button class="btn-code" type="button" id="iam_jssdk_sms_getcode_btn">
+								<button class="iam-btn-code" type="button" id="iam_jssdk_sms_getcode_btn">
 									获取
 								</button>
 								<p class="err-info pass-err">
 									请输入短信验证码
 								</p>
 							</div>
-							<input class="btn" id="iam_jssdk_sms_submit_btn" type="button" value="登录">
+							<input class="iam-btn" id="iam_jssdk_sms_submit_btn" type="button" value="登录">
 						</div>
 						<!-- 微信登录-->
 						<div class="login-form-panel" id="iam_jssdk_login_scan_panel">
@@ -2778,7 +2810,11 @@
 	$(function() {
 		window.onmessage = function (e) {
 			if(e && e.data && !Common.Util.isEmpty(e.data)) {
-				window.location.href = JSON.parse(e.data).refresh_url;
+				try {
+					window.location.href = JSON.parse(e.data).refresh_url;
+				} catch(e) {
+					console.debug("Could't parse event message, error: "+ e);
+				}
 			}
 		}
 	});

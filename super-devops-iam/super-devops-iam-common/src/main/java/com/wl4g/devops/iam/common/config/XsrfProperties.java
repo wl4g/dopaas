@@ -119,7 +119,7 @@ public class XsrfProperties implements InitializingBean, Serializable {
 		// corsConfig.getRules().put(DEFAULT_XSRF_BASE_PATTERN, xsrfCors);
 
 		// Check header name with cors allowed.
-		corsConfig.assertCorsLegalHeaders(singletonList(getXsrfHeaderName()));
+		corsConfig.assertCorsHeaders(singletonList(getXsrfHeaderName()));
 	}
 
 	public String getXsrfCookieName() {

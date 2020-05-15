@@ -9,7 +9,6 @@
 		<groupId>com.wl4g</groupId>
 		<artifactId>super-devops-im</artifactId>
 		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
@@ -68,6 +67,7 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<finalName>${project.artifactId}-${project.version}-bin</finalName>

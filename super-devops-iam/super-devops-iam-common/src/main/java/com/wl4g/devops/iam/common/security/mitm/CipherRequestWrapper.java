@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.security.cipher;
+package com.wl4g.devops.iam.common.security.mitm;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

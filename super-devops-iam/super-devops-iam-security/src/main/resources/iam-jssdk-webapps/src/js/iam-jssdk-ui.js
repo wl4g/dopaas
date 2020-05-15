@@ -4,6 +4,8 @@
  * Licensed under Apache2.0 (https://github.com/wl4g/super-devops/blob/master/LICENSE)
  */
 (function(window, document){
+	'use strict';
+
 	// Exposing IAM UI
 	window.IAMUi = function() {};
 
@@ -64,7 +66,7 @@
 								<div class="login-form-item" id="iam_jssdk_captcha_panel">
 									<!-- 拖动验证-->
 								</div>
-								<input class="btn" id="iam_jssdk_account_submit_btn" type="button" value="登录">
+								<input class="iam-btn" id="iam_jssdk_account_submit_btn" type="button" value="登录">
 							</form>
 						</div>
 						<!-- 手机登录-->
@@ -107,14 +109,14 @@
 								<i class="icon-codeNumber">
 								</i>
 								<input id="iam_jssdk_sms_code" class="inp" type="text" placeholder="请输入短信动态码" maxlength=6>
-								<button class="btn-code" type="button" id="iam_jssdk_sms_getcode_btn">
+								<button class="iam-btn-code" type="button" id="iam_jssdk_sms_getcode_btn">
 									获取
 								</button>
 								<p class="err-info pass-err">
 									请输入短信验证码
 								</p>
 							</div>
-							<input class="btn" id="iam_jssdk_sms_submit_btn" type="button" value="登录">
+							<input class="iam-btn" id="iam_jssdk_sms_submit_btn" type="button" value="登录">
 						</div>
 						<!-- 微信登录-->
 						<div class="login-form-panel" id="iam_jssdk_login_scan_panel">
@@ -341,7 +343,11 @@
 	$(function() {
 		window.onmessage = function (e) {
 			if(e && e.data && !Common.Util.isEmpty(e.data)) {
-				window.location.href = JSON.parse(e.data).refresh_url;
+				try {
+					window.location.href = JSON.parse(e.data).refresh_url;
+				} catch(e) {
+					console.debug("Could't parse event message, error: "+ e);
+				}
 			}
 		}
 	});

@@ -153,7 +153,7 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 		String secondAuthCode = generateSecondAuthcCode(sourceApp);
 		CacheKey ekey = new CacheKey(secondAuthCode, snsConfig.getOauth2ConnectExpireMs());
 		cacheManager.getIamCache(SECOND_AUTHC_CACHE).put(ekey, model);
-		log.info("Saved secondary authentication. {}[{}], result[{}]", config.getParam().getSecondAuthCode(), secondAuthCode,
+		log.info("Saved secondary authentication. {}[{}], result[{}]", config.getParam().getSecondaryAuthCode(), secondAuthCode,
 				model);
 
 		return secondAuthCode;
@@ -171,7 +171,7 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 		StringBuffer url = new StringBuffer(WebUtils2.getRFCBaseURI(request, true));
 		url.append(URI_S_SNS_BASE).append("/");
 		url.append(URI_S_AFTER_CALLBACK_AGENT).append("?");
-		url.append(config.getParam().getSecondAuthCode()).append("=");
+		url.append(config.getParam().getSecondaryAuthCode()).append("=");
 		url.append(secondAuthCode);
 		return url.toString();
 	}
