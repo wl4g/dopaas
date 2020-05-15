@@ -6,6 +6,11 @@
 	<name>Super DevOps Risk Control Management Services</name>
 	<url>https://rcm.super-devops.wl4g.com</url>
 	<description>RCM(Risk Control Management Services) - A wind control system of light weight dynamic and static rule engine based on spring cloud.</description>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>super-devops</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
 		<module>super-devops-rcm-client</module>
 		<module>super-devops-rcm-common</module>

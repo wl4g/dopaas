@@ -7,6 +7,11 @@
 	<name>Super DevOps Conponents Webjars</name>
 	<url>https://conponents.super-devops.wl4g.com</url>
 	<description>A Super Devops module of components webjars.</description>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>super-devops-components</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
 		<module>webjars-plugin</module>
 		<module>webjars-webide</module>

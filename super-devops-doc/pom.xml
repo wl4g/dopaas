@@ -4,6 +4,11 @@
 	<artifactId>super-devops-doc</artifactId>
 	<packaging>pom</packaging>
 	<name>Super DevOps Document Management Services</name>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>super-devops</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
 		<module>super-devops-doc-core</module>
 		<module>super-devops-doc-manager</module>
