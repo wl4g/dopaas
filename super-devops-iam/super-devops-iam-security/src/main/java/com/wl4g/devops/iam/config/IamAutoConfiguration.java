@@ -177,6 +177,7 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	@Bean
+	@ConditionalOnMissingBean(IamServerSessionManager.class)
 	public IamServerSessionManager iamServerSessionManager(IamSessionFactory sessionFactory, JedisIamSessionDAO sessionDao,
 			IamCacheManager cacheManager, IamCookie cookie, IamProperties config) {
 		IamServerSessionManager sessionManager = new IamServerSessionManager(config, cacheManager);
