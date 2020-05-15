@@ -396,7 +396,7 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		sid.setValue(valueOf(sessionId));
 		// In order to support CDN global acceleration, the session ID must be
 		// set to the parent domain name (or top-level domain name).
-		String topDomain = extTopDomainString(getSessionRequestUri(request));
+		String topDomain = extTopDomainString(request.getServerName());
 		if (!isBlank(topDomain)) {
 			sid.setDomain(topDomain);
 		}
@@ -442,19 +442,6 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		request.setAttribute(REFERENCED_SESSION_ID, sessionId);
 		request.setAttribute(REFERENCED_SESSION_ID_SOURCE, URL_SESSION_ID_SOURCE);
 		request.setAttribute(REFERENCED_SESSION_ID_IS_VALID, TRUE);
-	}
-
-	/**
-	 * Gets xsrf request uri.
-	 * 
-	 * @param request
-	 * @return
-	 */
-	private String getSessionRequestUri(HttpServletRequest request) {
-		String domainUri = request.getHeader("Origin");
-		domainUri = isBlank(domainUri) ? request.getHeader("Referer") : domainUri;
-		domainUri = isBlank(domainUri) ? request.getServerName() : domainUri;
-		return domainUri;
 	}
 
 	/**
