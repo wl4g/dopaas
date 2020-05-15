@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static com.wl4g.devops.ci.bean.GraphTask.Project;
+
 /**
  * @author vjay
  * @date 2020-05-15 10:37:00
@@ -18,7 +20,7 @@ public class GraphTaskManager {
 
 
 
-    public void add(){
+    public void add(Project project){
 
     }
 
