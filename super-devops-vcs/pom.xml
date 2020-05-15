@@ -4,11 +4,6 @@
 	<artifactId>super-devops-vcs</artifactId>
 	<packaging>pom</packaging>
 	<name>Super DevOps VCS (Version Control Management)</name>
-	<parent>
-		<groupId>com.wl4g</groupId>
-		<artifactId>super-devops</artifactId>
-		<version>master</version>
-	</parent>
 	<modules>
 		<module>super-devops-vcs-core</module>
 		<module>super-devops-vcs-manager</module>
@@ -32,6 +27,17 @@
 			</snapshots>
 		</repository>
 	</repositories>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-bom</artifactId>
+				<version>master</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>
