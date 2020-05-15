@@ -16,7 +16,7 @@ spring:
       enabled: true # Default: true
       rules:
         /**:
-          allowsMethods: GET,POST
+          allowsMethods: GET,HEAD,OPTIONS,POST
           allowsHeaders:
             - X-Iam-Authentication-Token
           allowCredentials: true
