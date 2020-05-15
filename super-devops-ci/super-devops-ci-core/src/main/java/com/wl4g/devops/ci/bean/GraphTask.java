@@ -10,11 +10,10 @@ import java.util.List;
 public class GraphTask implements Serializable {
     private static final long serialVersionUID = 8940373806493080114L;
 
-    private String runId;//RUN-{flowId|pipeId}-{timestamp}
+    //private String runId;//RUN-{flowId|pipeId}-{timestamp}
+    private String graphTaskId;
 
     private Long createTime;//timestamp
-
-    private Integer graphTaskId;
 
     private List<Project> projects;
 
@@ -26,7 +25,13 @@ public class GraphTask implements Serializable {
 
         private String ref;//branch|tag
 
+        private Long startTime;
+
+        private Long endTime;
+
         private List<Project> children;
+
+        //TODO ...
 
     }
 
