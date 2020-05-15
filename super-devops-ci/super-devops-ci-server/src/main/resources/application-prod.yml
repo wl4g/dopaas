@@ -67,7 +67,7 @@ spring:
               accessKeySecret: ${ALIYUN_SECRET}
           vms:
             aliyun:
-              accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
+              accessKeyId: ${ALIYUN_KEY}
               accessKeySecret: ${ALIYUN_SECRET}
               calledShowNumber: 055162153866
 
