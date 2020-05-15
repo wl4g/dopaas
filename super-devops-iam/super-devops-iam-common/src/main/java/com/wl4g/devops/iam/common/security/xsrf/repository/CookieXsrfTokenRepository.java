@@ -84,9 +84,9 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		// New xsrf token to cookie.
 		Cookie cookie = new IamCookie(coreConfig.getCookie());
 		cookie.setName(getXsrfTokenCookieName(request));
+		cookie.setSecure(request.isSecure());
 		cookie.setValue(xtokenValue);
 		cookie.setVersion(++version);
-		cookie.setSecure(request.isSecure());
 		if (!isBlank(xconfig.getCookiePath())) {
 			cookie.setPath(xconfig.getCookiePath());
 		} else {

@@ -84,6 +84,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean
+	@ConditionalOnMissingBean(IamClientSessionManager.class)
 	public IamClientSessionManager iamClientSessionManager(IamSessionFactory sessionFactory, JedisIamSessionDAO sessionDAO,
 			IamCacheManager cacheManager, IamCookie cookie, IamClientProperties config,
 			@Qualifier(BEAN_SESSION_VALIDATOR) IamValidator validator) {
