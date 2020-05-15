@@ -21,8 +21,6 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.join;
-import static org.apache.commons.lang3.StringUtils.split;
 
 import java.net.URI;
 import java.util.UUID;
@@ -109,7 +107,7 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		cookie.setHttpOnly(xconfig.isCookieHttpOnly());
 
 		// Note: due to the cross domain limitation of set cookie, it can only
-		// be set to the current domain or parent domain
+		// be set to the current domain or parent domain.
 		cookie.setDomain(getXsrfTokenCookieDomain(request));
 
 		cookie.saveTo(request, response);
@@ -163,15 +161,25 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		}
 
 		// @see: iam-jssdk-core.js#[MARK55]
-		String host = URI.create(getXsrfRequestUri(request)).getHost();
-		String defaultServiceName = join(split(host, '.'), ".", 0, 1).toUpperCase(US);
-		xsrfCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";
-
+		String xsrfUri = getXsrfRequestUri(request);
+		String host = URI.create(xsrfUri).getHost();
+		String topDomain = extTopDomainString(xsrfUri);
+		String defaultServName = host;
+		int index = host.indexOf(topDomain);
+		if (index > 0) {
+			defaultServName = host.substring(0, index - 1);
+		}
+		defaultServName = defaultServName.replace(".", "_").toUpperCase(US);
+		xsrfCookieName = "IAM-" + defaultServName + "-XSRF-TOKEN";
 		return xsrfCookieName;
 	}
 
 	/**
-	 * Gets xrf token cookit domain.
+	 * Gets xrf token cookit domain. </br>
+	 * <p>
+	 * Note: due to the cross domain limitation of set cookie, it can only be
+	 * set to the current domain or parent domain.
+	 * </p>
 	 * 
 	 * @param request
 	 * @return
@@ -187,9 +195,9 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 	 * @return
 	 */
 	private String getXsrfRequestUri(HttpServletRequest request) {
-		// String domainUri = request.getServerName();
 		String domainUri = request.getHeader("Origin");
-		// domainUri=isBlank(domainUri)?request.getHeader("Referer"):domainUri;
+		domainUri = isBlank(domainUri) ? request.getHeader("Referer") : domainUri;
+		domainUri = isBlank(domainUri) ? request.getServerName() : domainUri;
 		return domainUri;
 	}
 

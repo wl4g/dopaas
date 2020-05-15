@@ -126,7 +126,7 @@ public class CentralAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint 
 		RespBase<SecondAuthcAssertModel> resp = new RespBase<>();
 		try {
 			// Required parameters
-			String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondAuthCode());
+			String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondaryAuthCode());
 			String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
 			// Secondary authentication assertion.
 			resp.setData(authHandler.secondaryValidate(secondAuthCode, fromAppName));
