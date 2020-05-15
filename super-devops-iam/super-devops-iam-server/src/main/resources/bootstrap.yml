@@ -53,10 +53,10 @@ spring:
                       execution(* com.wl4g.devops.iam.sns.*.*Controller.*(..)) or
                       execution(* com.wl4g.devops.iam.*.*Controller.*(..))
           escape-translators:
-            - escapeEcmascript
-            - escapeJava
-            - escapeHtml3
-            - escapeHtml4
+            #- escapeEcmascript
+            #- escapeJava
+            #- escapeHtml3
+            #- escapeHtml4
 #        service-name: ${spring.application.name}
 #        login-uri: /view/login.html
 #        unauthorized-uri: /view/403.html
@@ -83,7 +83,7 @@ spring:
           global-session-timeout: 1800_000
           session-validation-interval: 360_000
         cookie:
-          name: IAMSID_TGC
+          name: _TGC
         #acl:
           #secure: false # Turn off protection will trust any same intranet IP.
           #allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}

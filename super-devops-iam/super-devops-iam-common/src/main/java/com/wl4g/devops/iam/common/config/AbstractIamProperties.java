@@ -18,6 +18,7 @@ package com.wl4g.devops.iam.common.config;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.invokeMethod;
+import static java.util.Locale.US;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.util.ReflectionUtils.getAllDeclaredMethods;
@@ -28,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -279,7 +279,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		@Override
 		public String getName() {
 			if (isBlank(super.getName())) {
-				setName("IAMSID_" + environment.getProperty("spring.application.name"));
+				setName("_" + getSpringApplicationName());
 			}
 			hasText(super.getName(), "Cookie name must not be empty.");
 			return super.getName();
@@ -289,7 +289,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * Specification capitalizes cookie names
 		 */
 		public void setName(String name) {
-			super.setName(name.toUpperCase(Locale.US));
+			super.setName(name.toUpperCase(US));
 		}
 
 	}
