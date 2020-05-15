@@ -17,7 +17,6 @@ package com.wl4g.devops.iam.common.session.mgt;
 
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_IS_NEW;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID;
@@ -32,7 +31,6 @@ import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
-import static com.wl4g.devops.tool.common.web.WebUtils2.extTopDomainString;
 import static java.lang.Boolean.TRUE;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
@@ -394,12 +392,6 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 		Cookie sid = new IamCookie(getSessionIdCookie());
 		// sid.setValue(valueOf(sessionId)+"; SameSite=None; Secure");
 		sid.setValue(valueOf(sessionId));
-		// In order to support CDN global acceleration, the session ID must be
-		// set to the parent domain name (or top-level domain name).
-		String topDomain = extTopDomainString(request.getServerName());
-		if (!isBlank(topDomain)) {
-			sid.setDomain(topDomain);
-		}
 		sid.saveTo(request, response);
 	}
 
