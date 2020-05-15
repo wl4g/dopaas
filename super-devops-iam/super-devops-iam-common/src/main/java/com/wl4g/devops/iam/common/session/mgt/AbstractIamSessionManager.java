@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.common.session.mgt;
 
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_IS_NEW;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID;
 import static org.apache.shiro.web.servlet.ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID;
@@ -31,6 +32,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.tool.common.web.WebUtils2.extTopDomainString;
 import static java.lang.Boolean.TRUE;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
@@ -375,25 +377,52 @@ public abstract class AbstractIamSessionManager<C extends AbstractIamProperties<
 	}
 
 	/**
-	 * Storage session tokens to cookie.
-	 *
+	 * Do save sessionId to cookie. </br>
+	 * 
+	 * <p style='color:red'>
+	 * Note: Chrome80+ Cookie default by SameSite=Lax </br>
+	 * </br>
+	 * You can customize the extension to fit different browser restrictions.
+	 * </p>
+	 * 
 	 * @param request
 	 * @param response
 	 * @param sessionId
 	 */
+	protected void doStorageSessionIdToCookie(HttpServletRequest request, HttpServletResponse response, Serializable sessionId) {
+		// Sets session cookie.
+		Cookie sid = new IamCookie(getSessionIdCookie());
+		// sid.setValue(valueOf(sessionId)+"; SameSite=None; Secure");
+		sid.setValue(valueOf(sessionId));
+		// In order to support CDN global acceleration, the session ID must be
+		// set to the parent domain name (or top-level domain name).
+		String topDomain = extTopDomainString(request.getServerName());
+		if (!isBlank(topDomain)) {
+			sid.setDomain(topDomain);
+		}
+		sid.saveTo(request, response);
+	}
+
+	/**
+	 * Storage session tokens to cookie. </br>
+	 * 
+	 * @param request
+	 * @param response
+	 * @param sessionId
+	 * @see <a href=
+	 *      'https://www.zhihu.com/question/373011996?utm_source=qq'>Chrome80+
+	 *      SameSite Features</a>.
+	 */
 	private void saveSessionIdCookieIfNecessary(ServletRequest request, ServletResponse response, Serializable sessionId) {
-		if (isNull(sessionId))
+		if (isNull(sessionId)) {
 			return;
+		}
 
 		// When a browser request or display specifies that cookies need to
 		// saved.
 		boolean isSaveCookie = isTrue(request, config.getParam().getSidSaveCookie());
 		if (isSaveCookie || isBrowser(toHttp(request))) {
-			// Sets session cookie.
-			Cookie sid = new IamCookie(getSessionIdCookie());
-			// sid.setValue(valueOf(sessionId)+"; SameSite=None; Secure=false");
-			sid.setValue(valueOf(sessionId));
-			sid.saveTo(toHttp(request), toHttp(response));
+			doStorageSessionIdToCookie(toHttp(request), toHttp(response), sessionId);
 			log.trace("Sets sessionId to cookies of: {}", sessionId);
 		} else {
 			// Addition customize security headers.
