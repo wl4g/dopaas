@@ -17,9 +17,12 @@ package com.wl4g.devops.tool.common.cli;
 
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Arrays.asList;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -30,6 +33,7 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 
 import com.wl4g.devops.tool.common.lang.Assert2;
+import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
 
 /**
  * Command utility.
@@ -60,10 +64,10 @@ public class CommandUtils {
 	public final static class Builder {
 		final protected Logger log = getLogger(getClass());
 
-		private Options options;
+		private RemovableOptions options;
 
 		public Builder() {
-			this.options = new Options();
+			this.options = new RemovableOptions();
 		}
 
 		/**
@@ -84,6 +88,22 @@ public class CommandUtils {
 		}
 
 		/**
+		 * Remove option to options.
+		 * 
+		 * @param opt
+		 * @param longOpt
+		 * @param required
+		 * @param description
+		 * @return
+		 */
+		public Builder removeOption(String opt, String longOpt, boolean required, String description) {
+			Assert2.notNull(options, "Options did not initialize creation");
+			Option option = new Option(opt, longOpt, true, description);
+			options.removeOption(option);
+			return this;
+		}
+
+		/**
 		 * Build parsing required options.
 		 * 
 		 * @param args
@@ -98,13 +118,60 @@ public class CommandUtils {
 					// Print input argument list.
 					List<String> printArgs = asList(line.getOptions()).stream()
 							.map(o -> o.getOpt() + "|" + o.getLongOpt() + "=" + o.getValue()).collect(toList());
-					log.info("Parsed arguments: {}", printArgs);
+					log.info("Parsed commond line args: {}", printArgs);
 				}
 			} catch (Exception e) {
-				new HelpFormatter().printHelp("\n", options);
+				new HelpFormatter().printHelp(120, "\n", "", options, "");
 				throw new ParseException(e.getMessage());
 			}
 			return line;
+		}
+
+	}
+
+	/**
+	 * {@link RemovableOptions}
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年5月17日 v1.0.0
+	 * @see
+	 */
+	public static class RemovableOptions extends Options {
+		private static final long serialVersionUID = -3292319664089354481L;
+
+		/**
+		 * Remove an option instance
+		 *
+		 * @param opt
+		 *            the option that is to be added
+		 * @return the resulting Options instance
+		 */
+		@SuppressWarnings("unlikely-arg-type")
+		public Options removeOption(Option opt) {
+			if (!isNull(opt)) {
+				getShortOpts().remove(opt);
+				getLongOpts().remove(opt);
+				getRequiredOpts().remove(opt);
+			}
+			return this;
+		}
+
+		@SuppressWarnings("unchecked")
+		final private Map<String, Option> getShortOpts() {
+			Field field = findField(Options.class, "shortOpts");
+			return (Map<String, Option>) getField(field, this);
+		}
+
+		@SuppressWarnings("unchecked")
+		final private Map<String, Option> getLongOpts() {
+			Field field = findField(Options.class, "longOpts");
+			return (Map<String, Option>) getField(field, this);
+		}
+
+		@SuppressWarnings("unchecked")
+		final private Map<String, Option> getRequiredOpts() {
+			Field field = findField(Options.class, "requiredOpts");
+			return (Map<String, Option>) getField(field, this);
 		}
 
 	}

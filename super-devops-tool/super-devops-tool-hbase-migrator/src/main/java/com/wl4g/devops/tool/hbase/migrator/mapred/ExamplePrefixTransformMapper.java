@@ -15,15 +15,12 @@
  */
 package com.wl4g.devops.tool.hbase.migrator.mapred;
 
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import static java.util.Collections.unmodifiableList;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +31,7 @@ import java.util.List;
  * @version v1.0 2019年9月6日
  * @since
  */
-public class ExamplePrefixTransformMapper extends AbstractTransformHfileMapper {
+public class ExamplePrefixTransformMapper extends AbstractTransformMapper {
 
 	final static List<String> ROW_PREFIX = unmodifiableList(new ArrayList<String>() {
 		private static final long serialVersionUID = 8767166856581107226L;
@@ -118,12 +115,6 @@ public class ExamplePrefixTransformMapper extends AbstractTransformHfileMapper {
 	@Override
 	protected Put newPut(String row) {
 		return new Put(Bytes.toBytes("3" + row.substring(1, row.length())));
-	}
-
-	@Override
-	protected void addPut(Put put, byte[] family, byte[] qualifier, byte[] value, long timestamp, byte type) throws IOException {
-		Cell newCell = CellUtil.createCell(put.getRow(), family, qualifier, timestamp, type, value);
-		put.add(newCell);
 	}
 
 }
