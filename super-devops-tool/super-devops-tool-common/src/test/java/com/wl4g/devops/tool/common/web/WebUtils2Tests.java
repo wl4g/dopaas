@@ -125,6 +125,13 @@ public class WebUtils2Tests {
 		out.println(isRelativeUri("/myapp1/api/v2/list"));
 
 		out.println("-------------8888-------------------");
+		out.println(extDomainString("my.wl4g.com"));
+		out.println(extDomainString("//my.wl4g.com/myapp1"));
+		out.println(extDomainString("/myapp1/api/v2/list"));
+		out.println(extDomainString("http://my.wl4g.com.cn/myapp1"));
+		out.println(extDomainString("https://my2.my1.wl4g.com:80/myapp1"));
+
+		out.println("-------------9999-------------------");
 		out.println(extTopDomainString("my.wl4g.com"));
 		out.println(extTopDomainString("//my.wl4g.com/myapp1"));
 		out.println(extTopDomainString("/myapp1/api/v2/list"));

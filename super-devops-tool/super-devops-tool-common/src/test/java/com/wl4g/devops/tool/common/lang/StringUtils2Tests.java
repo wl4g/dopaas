@@ -33,7 +33,7 @@ public class StringUtils2Tests {
 
 		Object o = 1.0d;
 		System.out.println(String.valueOf(o.toString()));
-		System.out.println("=============");
+		System.out.println("======1111=======");
 		System.out.println(eqIgnCase("1.0", o));
 		System.out.println(equalsIgnoreCase("1.0", o.toString()));
 
@@ -44,7 +44,7 @@ public class StringUtils2Tests {
 		String msg = "H {\"aaa\":\"bbb\"}";
 		System.out.println(unpackingMessage(msg));
 
-		System.out.println("============");
+		System.out.println("======2222======");
 		System.out.println(isURL("https://mp.domain.com/mp/index"));
 		System.out.println(isDomain("www.next.mp.domain.com"));
 		System.out.println(isDomain("*.mp.domain.com"));
