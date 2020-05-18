@@ -82,13 +82,6 @@
 					<include>*.*</include>
 				</includes>
 			</resource>
-			<resource>
-				<directory>src/test/java</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>*.*</include>
-				</includes>
-			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -122,6 +115,15 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
 							<dependencyReducedPomLocation>${basedir}/target/dependency-reduced-pom.xml</dependencyReducedPomLocation>
 							<!-- <transformers> -->
 							<!-- <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"> -->
