@@ -15,24 +15,32 @@
  */
 package com.wl4g.devops.tool.hbase.migrator;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
-import static java.util.Collections.unmodifiableMap;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isNumeric;
-
 import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import static com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils.*;
+
+import java.net.URI;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
+import org.apache.hadoop.hbase.mapreduce.HFileOutputFormat2;
+import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import com.wl4g.devops.tool.hbase.migrator.mapred.HfileToRmdbMapper;
+import com.wl4g.devops.tool.hbase.migrator.rmdb.RmdbMigrateManager;
 import com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils;
 
 /**
@@ -46,8 +54,8 @@ public class HfileToRmdbExporter {
 	final static Log log = LogFactory.getLog(HfileToRmdbExporter.class);
 
 	final public static String DEFAULT_MAPPER_CLASS = HfileToRmdbMapper.class.getName();
-	public static RmdbSqlBuilder currentRmdbSqlBuilder;
-	public static String currentRmdbTable;
+
+	public static RmdbMigrateManager currentRmdbManager;
 
 	/**
 	 * e.g. </br>
@@ -58,6 +66,9 @@ public class HfileToRmdbExporter {
 	 * -z emr-header-1:2181 \
 	 * -t safeclound.tb_elec_power \
 	 * -d mysql \
+	 * -j jdbc:mysql://localhost:3306/my_tsdb?useUnicode=true&characterEncoding=utf-8&useSSL=false \
+	 * -u root \
+	 * -p 123456 \
 	 * -s 11111112,ELE_R_P,134,01,20180919110850989 \
 	 * -e 11111112,ELE_R_P,134,01,20180921124050540
 	 * </pre>
@@ -68,138 +79,76 @@ public class HfileToRmdbExporter {
 	public static void main(String[] args) throws Exception {
 		HbaseMigrateUtils.showBanner();
 
-		Builder builder = HfileBulkExporter.getRequiresCmdLineBuilder();
+		Builder builder = new Builder();
+		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_MR_TMPDIR);
+		builder.option("z", "zkaddr", true, "Zookeeper address.");
+		builder.option("t", "tabname", true, "Hbase table name.");
+		builder.option("o", "outputDir", false,
+				"Hfile export output hdfs directory. default:" + DEFAULT_HFILE_OUTPUT_DIR + "/{tableName}");
+		builder.option("b", "batchSize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
+		builder.option("s", "startRow", false, "Scan start rowkey.");
+		builder.option("e", "endRow", false, "Scan end rowkey.");
+		builder.option("S", "startTime", false, "Scan start timestamp.");
+		builder.option("E", "endTime", false, "Scan end timestamp.");
+		builder.option("U", "user", false, "User name used for scan check (default: hbase)");
 		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default: " + DEFAULT_MAPPER_CLASS);
 		builder.option("d", "database", true, "Hbase to rmdb database provider. e.g: mysql|oracle");
+		builder.option("j", "url", true, "Hbase to rmdb database jdbc url");
+		builder.option("u", "username", true, "Hbase to rmdb database jdbc username");
+		builder.option("p", "password", true, "Hbase to rmdb database jdbc password");
 		CommandLine line = builder.build(args);
 
 		// Gets rmdb provider instance.
-		String rmdbAlias = line.getOptionValue("database");
-		currentRmdbSqlBuilder = RmdbSqlBuilder.getInstance(rmdbAlias);
-		currentRmdbTable = line.getOptionValue("tabname");
-		notNull(currentRmdbSqlBuilder, "Invalid rmdb database provider alias: %s", rmdbAlias);
+		currentRmdbManager = RmdbMigrateManager.getInstance(line);
 
 		// DO exporting
-		HfileBulkExporter.doExporting(line);
+		doRmdbExporting(line);
 	}
 
 	/**
-	 * {@link RmdbSqlBuilder}
+	 * Do hfile bulk exporting
 	 * 
-	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version 2020年5月17日 v1.0.0
-	 * @see
+	 * @param builder
+	 * @throws Exception
 	 */
-	public static abstract class RmdbSqlBuilder {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void doRmdbExporting(CommandLine line) throws Exception {
+		// Configuration.
+		String tabname = line.getOptionValue("tabname");
+		String user = line.getOptionValue("user");
+		Configuration conf = new Configuration();
+		conf.set("hbase.zookeeper.quorum", line.getOptionValue("zkaddr"));
+		conf.set("hbase.fs.tmp.dir", line.getOptionValue("T", DEFAULT_HBASE_MR_TMPDIR));
+		conf.set(TableInputFormat.INPUT_TABLE, tabname);
+		conf.set(TableInputFormat.SCAN_BATCHSIZE, line.getOptionValue("batchSize", DEFAULT_SCAN_BATCH_SIZE));
 
-		final private static Map<String[], RmdbSqlBuilder> providers = unmodifiableMap(new HashMap<String[], RmdbSqlBuilder>() {
-			private static final long serialVersionUID = 410424241261771123L;
-			{
-				put(new String[] { "mysql", "mysql57" }, new Mysql57SqlBuilder());
-				put(new String[] { "oracle", "oracle11g" }, new Oracle11gSqlBuilder());
-			}
-		});
-
-		/**
-		 * Gets {@link RmdbSqlBuilder} instance.
-		 * 
-		 * @param alias
-		 * @return
-		 */
-		public static RmdbSqlBuilder getInstance(String alias) {
-			RmdbSqlBuilder instance = null;
-			Iterator<Entry<String[], RmdbSqlBuilder>> it = providers.entrySet().iterator();
-			ok: while (it.hasNext()) {
-				Map.Entry<String[], RmdbSqlBuilder> entry = it.next();
-				for (String _alias : entry.getKey()) {
-					if (equalsIgnoreCase(_alias, alias)) {
-						instance = entry.getValue();
-						break ok;
-					}
-				}
-			}
-			return instance;
+		// Check directory.
+		String outputDir = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR) + "/" + tabname;
+		FileSystem fs = FileSystem.get(new URI(outputDir), new Configuration(), user);
+		if (fs.exists(new Path(outputDir))) {
+			fs.delete(new Path(outputDir), true);
 		}
 
-		public abstract String buildInsertSql(LinkedHashMap<String, String> fields);
+		// Set scan condition.(if necessary)
+		HfileBulkExporter.setScanIfNecessary(conf, line);
 
-	}
+		// Job.
+		Connection conn = ConnectionFactory.createConnection(conf);
+		TableName tab = TableName.valueOf(tabname);
+		Job job = Job.getInstance(conf);
+		job.setJobName(HfileBulkExporter.class.getSimpleName() + "@" + tab.getNameAsString());
+		job.setJarByClass(HfileBulkExporter.class);
+		job.setMapperClass((Class<Mapper>) ClassUtils.getClass(line.getOptionValue("mapperClass", DEFAULT_MAPPER_CLASS)));
+		job.setInputFormatClass(TableInputFormat.class);
+		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
+		job.setMapOutputValueClass(Put.class);
 
-	/**
-	 * Oracle11g sql builder
-	 * 
-	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version 2020年5月17日 v1.0.0
-	 * @see
-	 */
-	public static class Oracle11gSqlBuilder extends RmdbSqlBuilder {
-
-		@Override
-		public String buildInsertSql(LinkedHashMap<String, String> fields) {
-			return null;
-		}
-
-	}
-
-	/**
-	 * Mysql sql builder
-	 * 
-	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @version 2020年5月17日 v1.0.0
-	 * @see
-	 */
-	public static class Mysql57SqlBuilder extends RmdbSqlBuilder {
-
-		/**
-		 * <pre>
-		 * INSERT INTO `safecloud_tsdb`.`tb_ammeter` (
-		 * `ROW`,
-		 * `activePower`,
-		 * `reactivePower`,
-		 * `cid`,
-		 * `bid`
-		 * ) VALUES (
-		 * '11111112,ELE_P,111,03,20191219000242674',
-		 *  '3650.4238',
-		 *  '792.91797',
-		 *  NULL,
-		 *  NULL);
-		 * </pre>
-		 */
-		@Override
-		public String buildInsertSql(LinkedHashMap<String, String> fields) {
-			StringBuffer sql = new StringBuffer("INSERT INTO ");
-			sql.append("`");
-			sql.append(currentRmdbTable);
-			sql.append("`(");
-			Iterator<String> itk = fields.keySet().iterator();
-			while (itk.hasNext()) {
-				String field = itk.next();
-				sql.append("`");
-				sql.append(field);
-				sql.append("`");
-				if (itk.hasNext()) {
-					sql.append(",");
-				}
-			}
-			sql.append(") VALUES (");
-			Iterator<String> itv = fields.values().iterator();
-			while (itv.hasNext()) {
-				String value = itv.next();
-				boolean isNumber = isNumeric(value);
-				if (!isNumber) {
-					sql.append("'");
-				}
-				sql.append(value);
-				if (!isNumber) {
-					sql.append("'");
-				}
-				if (itv.hasNext()) {
-					sql.append(",");
-				}
-			}
-			sql.append(");");
-			return sql.toString();
+		HFileOutputFormat2.configureIncrementalLoad(job, conn.getTable(tab), conn.getRegionLocator(tab));
+		FileOutputFormat.setOutputPath(job, new Path(outputDir));
+		if (job.waitForCompletion(true)) {
+			long total = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_TOTAL).getValue();
+			long processed = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_PROCESSED).getValue();
+			log.info(String.format("Exported to successfully! with processed:(%d)/total:(%d)", processed, total));
 		}
 
 	}
