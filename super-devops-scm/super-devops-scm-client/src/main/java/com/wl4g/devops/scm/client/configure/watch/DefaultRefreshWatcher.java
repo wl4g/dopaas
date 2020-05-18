@@ -135,7 +135,6 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
                 sleepRandom(config.getLongPollDelay(), config.getLongPollMaxDelay());
             } finally {
                 watchLock.unlock();
-
             }
         }
 
