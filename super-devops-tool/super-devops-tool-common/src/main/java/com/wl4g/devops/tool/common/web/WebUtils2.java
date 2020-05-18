@@ -425,6 +425,37 @@ public abstract class WebUtils2 {
 	 * Extract top level domain string. </br>
 	 * 
 	 * <pre>
+	 *extDomainString("my.wl4g.com")                         =>  my.wl4g.com
+	 *extDomainString("//my.wl4g.com/myapp1")                =>  my.wl4g.com
+	 *extDomainString("/myapp1/api/v2/list")                 =>  ""
+	 *extDomainString("http://my.wl4g.com.cn/myapp1")        =>  my.wl4g.com.cn
+	 *extDomainString("https://my2.my1.wl4g.com:80/myapp1")  =>  my2.my1.wl4g.com
+	 * </pre>
+	 * 
+	 * @param hostOrUri
+	 * @return
+	 */
+	public static String extDomainString(String hostOrUri) {
+		if (isBlank(hostOrUri)) {
+			return hostOrUri;
+		}
+		hostOrUri = safeDecodeURL(hostOrUri);
+		String domain = hostOrUri; // Is host?
+		if (containsAny(hostOrUri, '/')) { // Is URI?
+			domain = URI.create(hostOrUri).getHost();
+		}
+		// Check domain available?
+		// isTrueOf(isDomain(domain), format("hostOrUri: %s", hostOrUri));
+		if (!isDomain(domain) || isBlank(domain)) {
+			return EMPTY;
+		}
+		return domain;
+	}
+
+	/**
+	 * Extract top level domain string. </br>
+	 * 
+	 * <pre>
 	 *extTopDomainString("my.wl4g.com")                         =>  wl4g.com
 	 *extTopDomainString("//my.wl4g.com/myapp1")                =>  wl4g.com
 	 *extTopDomainString("/myapp1/api/v2/list")                 =>  ""
@@ -436,16 +467,8 @@ public abstract class WebUtils2 {
 	 * @return
 	 */
 	public static String extTopDomainString(String hostOrUri) {
-		if (isBlank(hostOrUri)) {
-			return hostOrUri;
-		}
-		hostOrUri = safeDecodeURL(hostOrUri);
-		String domain = hostOrUri; // Is host?
-		if (containsAny(hostOrUri, '/')) { // Is URI?
-			domain = URI.create(hostOrUri).getHost();
-		}
-		// Check domain available?
-		if (isBlank(domain)) {
+		String domain = extDomainString(hostOrUri);
+		if (isBlank(domain)) { // Available?
 			return EMPTY;
 		}
 		String[] parts = split(domain, ".");

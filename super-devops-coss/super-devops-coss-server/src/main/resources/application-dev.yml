@@ -38,8 +38,8 @@ spring:
           success-uri: http://wl4g.debug:8080/#/oss/buckets
       coss:
         aliyunoss:
-          accessKeyId: LTAI4Fk9pjU7ezN2yVeiffYm
-          accessKeySecret: ${aliyun.secret}
+          accessKeyId: ${ALIYUN_KEY}
+          accessKeySecret: ${ALIYUN_SECRET}
         hdfs:
           endpoint-hdfs-root-uri: hdfs://owner-node3:8020/coss-bucket
         native:

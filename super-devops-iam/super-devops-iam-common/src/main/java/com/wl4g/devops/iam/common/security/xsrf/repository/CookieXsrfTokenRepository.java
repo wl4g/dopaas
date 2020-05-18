@@ -22,7 +22,6 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.net.URI;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +35,7 @@ import com.wl4g.devops.iam.common.config.XsrfProperties;
 import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 
 import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
+import static com.wl4g.devops.tool.common.web.WebUtils2.extDomainString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.extTopDomainString;
 import static org.springframework.web.util.WebUtils.getCookie;
 
@@ -162,12 +162,12 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 
 		// @see: iam-jssdk-core.js#[MARK55]
 		String xsrfUri = getXsrfRequestUri(request);
-		String host = URI.create(xsrfUri).getHost();
+		String domain = extDomainString(xsrfUri);
 		String topDomain = extTopDomainString(xsrfUri);
-		String defaultServName = host;
-		int index = host.indexOf(topDomain);
+		String defaultServName = domain;
+		int index = domain.indexOf(topDomain);
 		if (index > 0) {
-			defaultServName = host.substring(0, index - 1);
+			defaultServName = domain.substring(0, index - 1);
 		}
 		defaultServName = defaultServName.replace(".", "_").toUpperCase(US);
 		xsrfCookieName = "IAM-" + defaultServName + "-XSRF-TOKEN";
