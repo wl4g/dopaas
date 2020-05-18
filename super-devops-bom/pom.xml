@@ -43,6 +43,7 @@
 		<commons-lang3.version>3.5</commons-lang3.version>
 		<commons-math3.version>3.6.1</commons-math3.version>
 		<commons-beanutils.version>1.9.3</commons-beanutils.version>
+		<commons-dbutils.version>1.7</commons-dbutils.version>
 		<commons-pool2.version>2.6.0</commons-pool2.version>
 		<commons-codec.version>1.10</commons-codec.version>
 		<commons-cli.version>1.4</commons-cli.version>
@@ -582,6 +583,11 @@
 				<artifactId>commons-beanutils</artifactId>
 				<version>${commons-beanutils.version}</version>
 				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>commons-dbutils</groupId>
+				<artifactId>commons-dbutils</artifactId>
+				<version>${commons-dbutils.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>

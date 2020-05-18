@@ -21,7 +21,7 @@ import static java.lang.String.format;
 
 import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
 import com.wl4g.devops.tool.common.lang.Assert2;
-import com.wl4g.devops.tool.hbase.migrator.mapred.NothingTransformMapper;
+import com.wl4g.devops.tool.hbase.migrator.mapred.NoOpTransformMapper;
 import com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils;
 
 import org.apache.commons.cli.CommandLine;
@@ -63,11 +63,7 @@ import java.sql.Timestamp;
 public class HfileBulkExporter {
 	final static Log log = LogFactory.getLog(HfileBulkExporter.class);
 
-	final public static String DEFAULT_HBASE_MR_TMPDIR = "/tmp-devops/tmpdir";
-	final public static String DEFAULT_HFILE_OUTPUT_DIR = "/tmp-devops/outputdir";
-	final public static String DEFAULT_SCAN_BATCH_SIZE = "1000";
-	final public static String DEFAULT_USER = "hbase";
-	final public static String DEFAULT_MAPPER_CLASS = NothingTransformMapper.class.getName();
+	final public static String DEFAULT_MAPPER_CLASS = NoOpTransformMapper.class.getName();
 
 	/**
 	 * e.g. </br>
@@ -87,30 +83,20 @@ public class HfileBulkExporter {
 	public static void main(String[] args) throws Exception {
 		HbaseMigrateUtils.showBanner();
 
-		Builder builder = HfileBulkExporter.getRequiresCmdLineBuilder();
-		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default: " + DEFAULT_MAPPER_CLASS);
-		doExporting(builder.build(args));
-	}
-
-	/**
-	 * Gets base command line builder
-	 * 
-	 * @return
-	 */
-	public static Builder getRequiresCmdLineBuilder() {
 		Builder builder = new Builder();
 		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_MR_TMPDIR);
 		builder.option("z", "zkaddr", true, "Zookeeper address.");
 		builder.option("t", "tabname", true, "Hbase table name.");
-		builder.option("o", "output", false,
+		builder.option("o", "outputDir", false,
 				"Hfile export output hdfs directory. default:" + DEFAULT_HFILE_OUTPUT_DIR + "/{tableName}");
 		builder.option("b", "batchSize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
 		builder.option("s", "startRow", false, "Scan start rowkey.");
 		builder.option("e", "endRow", false, "Scan end rowkey.");
 		builder.option("S", "startTime", false, "Scan start timestamp.");
 		builder.option("E", "endTime", false, "Scan end timestamp.");
-		builder.option("u", "user", false, "User name used for scan check (default: hbase)");
-		return builder;
+		builder.option("U", "user", false, "User name used for scan check (default: hbase)");
+		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default: " + DEFAULT_MAPPER_CLASS);
+		doExporting(builder.build(args));
 	}
 
 	/**
@@ -144,7 +130,7 @@ public class HfileBulkExporter {
 		Job job = Job.getInstance(conf);
 		job.setJobName(HfileBulkExporter.class.getSimpleName() + "@" + tab.getNameAsString());
 		job.setJarByClass(HfileBulkExporter.class);
-		job.setMapperClass((Class<Mapper>) ClassUtils.getClass(line.getOptionValue("M", DEFAULT_MAPPER_CLASS)));
+		job.setMapperClass((Class<Mapper>) ClassUtils.getClass(line.getOptionValue("mapperClass", DEFAULT_MAPPER_CLASS)));
 		job.setInputFormatClass(TableInputFormat.class);
 		job.setMapOutputKeyClass(ImmutableBytesWritable.class);
 		job.setMapOutputValueClass(Put.class);
@@ -153,8 +139,8 @@ public class HfileBulkExporter {
 		FileOutputFormat.setOutputPath(job, new Path(outputDir));
 		if (job.waitForCompletion(true)) {
 			long total = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_TOTAL).getValue();
-			long filtered = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_FILTERED).getValue();
-			log.info(String.format("Exported to successfully! with processed:(%d)/total:(%d)", filtered, total));
+			long processed = job.getCounters().findCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_PROCESSED).getValue();
+			log.info(String.format("Exported to successfully! with processed:(%d)/total:(%d)", processed, total));
 		}
 
 	}
@@ -166,7 +152,7 @@ public class HfileBulkExporter {
 	 * @param line
 	 * @throws IOException
 	 */
-	private static void setScanIfNecessary(Configuration conf, CommandLine line) throws IOException {
+	public static void setScanIfNecessary(Configuration conf, CommandLine line) throws IOException {
 		String startRow = line.getOptionValue("startRow");
 		String endRow = line.getOptionValue("endRow");
 		String startTime = line.getOptionValue("startTime");
