@@ -73,6 +73,7 @@
 		<fastjson.version>1.2.56</fastjson.version>
 		<jackson.version>2.9.8</jackson.version>
 		<protobuf.version>3.8.0</protobuf.version>
+		<!-- <protobuf.version>2.5.0</protobuf.version> hbase-1.2.5 dependency -->
 		<protostuff.version>1.6.0</protostuff.version>
 		<!-- Network socket's. -->
 		<netty.version>4.1.42.Final</netty.version>
