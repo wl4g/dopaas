@@ -61,14 +61,14 @@ public class HfileToRmdbExporter {
 	 * e.g. </br>
 	 * 
 	 * <pre>
-	 * yarn jar super-devops-tool-hbase-migrator-master.jar \
+	 * java -cp super-devops-tool-hbase-migrator-master.jar \
 	 * com.wl4g.devops.tool.hbase.migrator.HfileToRmdbExporter \
 	 * -z emr-header-1:2181 \
 	 * -t safeclound.tb_elec_power \
 	 * -d mysql \
-	 * -j jdbc:mysql://localhost:3306/my_tsdb?useUnicode=true&characterEncoding=utf-8&useSSL=false \
+	 * -j 'jdbc:mysql://localhost:3306/my_tsdb?useUnicode=true&characterEncoding=utf-8&useSSL=false' \
 	 * -u root \
-	 * -p 123456 \
+	 * -p '123456' \
 	 * -s 11111112,ELE_R_P,134,01,20180919110850989 \
 	 * -e 11111112,ELE_R_P,134,01,20180921124050540
 	 * </pre>

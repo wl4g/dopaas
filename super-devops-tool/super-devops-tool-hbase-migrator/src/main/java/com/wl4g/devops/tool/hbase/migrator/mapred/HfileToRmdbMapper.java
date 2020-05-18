@@ -64,7 +64,7 @@ public class HfileToRmdbMapper extends AbstractTransformMapper {
 			HfileToRmdbExporter.currentRmdbManager.getRmdbHolder().saveRowdata(insertSql);
 			context.getCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_PROCESSED).increment(1);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 
 	}
