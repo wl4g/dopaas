@@ -23,17 +23,23 @@ spring:
           enabled: true # Default: true
           rules:
             /**:
-              allowsMethods: GET,POST
+              allowsMethods: GET,HEAD,OPTIONS,POST
               allowsHeaders:
                 - X-Iam-*
               allowCredentials: true
               allowsOrigins:
                 #- '*'
+        xsrf:
+          enabled: true
+        replay:
+          enabled: true
         client: # IAM client configuration.
-          service-name: ${spring.application.name}
-          use-remember-redirect: false
           filter-chain:
-            /endpoint/**: anon # Public rule release
+            /public/**: anon # Public rule release
+          cipher:
+            enable-data-cipher: true # Default by true
+          session:
+            enable-access-token-validity: true # Default by true
       scm: # SCM server configuration.
         #core-pool-size: 10
         #max-pool-size: 25

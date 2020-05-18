@@ -1,5 +1,5 @@
 ![SuperDevops](shots/logo.jpg)
-## 一站式的 DevSecOps云平台(saas)，基于SpringCloud开发, 主要功能模块: 持续交付CI/CD(支持pptpVPN/openVPN/SSH等)、认证中心、监控中心、配置中心、资源管理中心、调度中心、弹性伸缩、shell工具、各种工具组件(如HBase/OSS运维)、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
+## 一站式的 DevSecOps云平台(saas)，基于SpringCloud开发, 主要功能模块: 持续交付CI/CD(支持分布式编译,pptpVPN/openVPN/SSH隧道部署等)、认证中心、监控中心、配置中心、资源管理中心、调度中心、弹性伸缩、shell工具、各种工具组件(如HBase/OSS运维)、文档管理、及时通讯、轻量级风控、私有对象存储、版本控制等
 
 [![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
@@ -89,8 +89,8 @@ sudo systemctl restart docker
 ### 如何交流、反馈、参与贡献？
 - 点击加群 [![QQ1](https://img.shields.io/badge/QQ1-855349515-green.svg)](https://shang.qq.com/wpa/qunwpa?idkey=0343b06591d19188d86dc078912adfc5c40f023c8ec5a0d1eda5bdfc35ab40d0)
 - ![q855349515](shots/q855349515.jpg)
-- GitHub：https://github.com/wl4g/super-devops
-- 开源中国：https://gitee.com/wl4g/super-devops
+- GitHub：https://github.com/wl4g/super-cloudops
+- 开源中国：https://gitee.com/wl4g/super-cloudops
 - 一个人的个人能力再强，也无法战胜一个团队，希望兄弟姐妹的支持，能够贡献出自己的部分代码，参与进来共同完善它(^_^)。
 
 [如何共享代码](https://www.cnblogs.com/wenber/p/3630921.html)

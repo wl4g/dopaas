@@ -22,17 +22,23 @@ spring:
           enabled: true # Default: true
           rules:
             /**:
-              allowsMethods: GET,POST
+              allowsMethods: GET,HEAD,OPTIONS,POST
               allowsHeaders:
                 - X-Iam-*
               allowCredentials: true
               allowsOrigins:
                 #- '*'
+        xsrf:
+          enabled: true
+        replay:
+          enabled: true
         client: # IAM client configuration.
-          service-name: ${spring.application.name}
-          use-remember-redirect: false
           filter-chain:
             /public/**: anon # Public rule release
+          cipher:
+            enable-data-cipher: true # Default by true
+          session:
+            enable-access-token-validity: true # Default by true
 
 # ### Server configuration. ###
 server:
