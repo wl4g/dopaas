@@ -50,6 +50,9 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	/** Authenticate principal role codes. */
 	private String roles = EMPTY;
 
+	/** Authenticate principal organization. */
+	private PrincipalOrganization organization;
+
 	/** Authenticate principal permission. */
 	private String permissions = EMPTY;
 
@@ -130,6 +133,17 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	@Override
+	public final PrincipalOrganization getOrganization() {
+		return organization;
+	}
+
+	public SimplePrincipalInfo setOrganization(PrincipalOrganization organization) {
+		// notNullOf(organization, "organization");
+		this.organization = organization;
+		return this;
+	}
+
+	@Override
 	public final String getPermissions() {
 		return permissions;
 	}
@@ -172,6 +186,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		hasText(getPrincipalId(), "Authenticate principalId can't empty");
 		hasText(getPrincipal(), "Authenticate principal name can't empty");
 		// hasText(getRoles(), "Authenticate roles can't empty");
+		// notNull(getOrganization(), "Authenticate organization can't empty");
 		// hasText(getPermissions(), "Authenticate permissions can't empty");
 	}
 

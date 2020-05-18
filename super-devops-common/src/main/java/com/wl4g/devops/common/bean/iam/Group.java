@@ -37,7 +37,10 @@ public class Group extends BaseBean implements Serializable {
 
 	private Integer status;
 
-	// other
+	//
+	// --- Temporary fields. ---
+	//
+
 	private List<Group> children;
 
 	private List<Integer> menuIds;

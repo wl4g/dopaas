@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.subject;
 
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Collections.emptyMap;
 
 import java.io.Serializable;
@@ -49,15 +50,25 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	 * Principal role codes. </br>
 	 * <p>
 	 * EG: sc_sys_mgt,sc_general_mgt,sc_general_operator,sc_user_jack
+	 * </p>
 	 *
 	 * @return principal role codes.
 	 */
 	String getRoles();
 
 	/**
+	 * Principal organization. </br>
+	 * <p>
+	 *
+	 * @return principal organizations identifiers.
+	 */
+	PrincipalOrganization getOrganization();
+
+	/**
 	 * Principal permissions. </br>
 	 * <p>
 	 * e.g.: sys:user:view,sys:user:edit,goods:order:view,goods:order:edit
+	 * </p>
 	 *
 	 * @return principal permission identifiers.
 	 */
@@ -245,6 +256,78 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 		@Override
 		public String getUnionId() {
 			return unionId;
+		}
+
+	}
+
+	/**
+	 * Principal organization tree info.
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年5月18日 v1.0.0
+	 * @see
+	 */
+	public static class PrincipalOrganization implements Serializable {
+		private static final long serialVersionUID = -8256334665161483288L;
+
+		/** Principal organization id. */
+		private String id;
+
+		/** Principal organization name. */
+		private String name;
+
+		/** Principal organization type. */
+		private String type;
+
+		/** Principal organization parentId. */
+		private String parentId;
+
+		/** Principal organization status. */
+		private String status;
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
+
+		public String getParentId() {
+			return parentId;
+		}
+
+		public void setParentId(String parentId) {
+			this.parentId = parentId;
+		}
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " => " + toJSONString(this);
 		}
 
 	}
