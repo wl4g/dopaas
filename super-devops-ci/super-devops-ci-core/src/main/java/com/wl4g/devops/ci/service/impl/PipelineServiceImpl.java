@@ -158,7 +158,10 @@ public class PipelineServiceImpl implements PipelineService {
                 pipelineInstance.setInstanceId(i);
                 pipelineInstances.add(pipelineInstance);
             }
-            pipelineInstanceDao.insertBatch(pipelineInstances);
+            if(!CollectionUtils.isEmpty(pipelineInstances)){
+                pipelineInstanceDao.insertBatch(pipelineInstances);
+            }
+
         }
         //Insert PipeStepBuilding
         PipeStepBuilding pipeStepBuilding = pipeline.getPipeStepBuilding();
@@ -218,6 +221,7 @@ public class PipelineServiceImpl implements PipelineService {
         if (nonNull(pipeStepDeploy)) {
             pipeStepDeployDao.updateByPrimaryKeySelective(pipeStepDeploy);
         } else {
+            pipeStepDeploy = new PipeStepDeploy();
             pipeStepDeploy.preInsert();
             pipeStepDeploy.setPipeId(pipeline.getId());
             pipeStepDeployDao.insertSelective(pipeStepDeploy);
@@ -235,7 +239,9 @@ public class PipelineServiceImpl implements PipelineService {
                 pipelineInstance.setInstanceId(i);
                 pipelineInstances.add(pipelineInstance);
             }
-            pipelineInstanceDao.insertBatch(pipelineInstances);
+            if(!CollectionUtils.isEmpty(pipelineInstances)){
+                pipelineInstanceDao.insertBatch(pipelineInstances);
+            }
         }
         //Update PipeStepBuilding
         pipeStepBuildingProjectDao.deleteByPipeId(pipeline.getId());

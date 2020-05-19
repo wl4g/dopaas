@@ -7,7 +7,7 @@ public class PipeStepDeploy  extends BaseBean {
 
     private Integer pipeId;
 
-    private Integer deployType;
+    private Integer deployType = 1;
 
     private String deployDockerfileContent;
 
