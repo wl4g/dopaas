@@ -33,9 +33,9 @@
   </delete>
 
   <delete id="deleteByPipeId" parameterType="java.lang.Integer">
-    delete from ci_pipe_step_deploy_instance i
-    inner join ci_pipe_step_deploy d on d.id=i.deploy_id
-    where d.pipe_id = #{pipeId,jdbcType=INTEGER}
+    DELETE i from ci_pipe_step_deploy_instance i
+    LEFT JOIN ci_pipe_step_deploy d ON d.id=i.deploy_id
+    WHERE  d.pipe_id = #{pipeId,jdbcType=INTEGER}
   </delete>
 
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipelineInstance">
@@ -46,7 +46,7 @@
   </insert>
 
   <insert id="insertBatch" parameterType="java.util.Map">
-    insert into ci_pipe_step_deploy_instance (id, deployId, instance_id)
+    insert into ci_pipe_step_deploy_instance (id, deploy_id, instance_id)
     VALUES
     <foreach collection="pipelineInstances" item="pipelineInstance" separator=",">
       (#{pipelineInstance.id,jdbcType=INTEGER}, #{pipelineInstance.deployId,jdbcType=INTEGER}, #{pipelineInstance.instanceId,jdbcType=INTEGER})
