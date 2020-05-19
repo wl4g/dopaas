@@ -19,7 +19,7 @@ public class GraphTask implements Serializable {
 
     private Set<Project> projects;
 
-    public static class Project{
+    public static class Project {
 
         private Integer projectId;
 
@@ -108,10 +108,10 @@ public class GraphTask implements Serializable {
             return Objects.hash(projectId);
         }
 
-        public boolean isRefDifferent(Project newProject){
+        public boolean isRefDifferent(Project newProject) {
             //检查是否有project一样,但分支|tag不一样的
-            for(Project project : projectSet){
-                if(project.getProjectId().equals(newProject.getProjectId()) && !StringUtils.equals(project.getRef(),newProject.getRef())){
+            for (Project project : projectSet) {
+                if (project.getProjectId().equals(newProject.getProjectId()) && !StringUtils.equals(project.getRef(), newProject.getRef())) {
                     return true;
                 }
             }
@@ -119,10 +119,10 @@ public class GraphTask implements Serializable {
         }
     }
 
-    public boolean isRefDifferent(Project newProject){
+    public boolean isRefDifferent(Project newProject) {
         boolean allDifferent = true;
-        for(Project project : projects){
-            if(!project.isRefDifferent(newProject)){
+        for (Project project : projects) {
+            if (!project.isRefDifferent(newProject)) {
                 allDifferent = false;
                 break;
             }
@@ -130,10 +130,10 @@ public class GraphTask implements Serializable {
         return allDifferent;
     }
 
-    public void addProject(Project newProject){
+    public void addProject(Project newProject) {
 
-        for(Project project : projects){
-            if(project.equals(newProject)){
+        for (Project project : projects) {
+            if (project.equals(newProject)) {
 
                 //TODO
                 return;
@@ -143,20 +143,19 @@ public class GraphTask implements Serializable {
 
     }
 
-    public Project mergeTree(Project newProject){
+    public Project mergeTree(Project newProject) {
         //Step1 找新树top在旧树的哪个节点，找到直接返回旧节点，找不到则创建当前节点，并把children也逐个去匹配旧树
         Project match = match(newProject);
-        if(Objects.isNull(match)){
+        if (Objects.isNull(match)) {
             projects.add(newProject);
             List<Project> needRemove = new ArrayList<>();
             List<Project> needAdd = new ArrayList<>();
-            for(Project child : newProject.getChildrenTree()){
+            for (Project child : newProject.getChildrenTree()) {
                 Project matchChild = match(child);
-                if(Objects.nonNull(matchChild)){
+                if (Objects.nonNull(matchChild)) {
                     needRemove.add(child);
                     needAdd.add(matchChild);
-                }else{
-
+                } else {
 
 
                 }
@@ -164,7 +163,7 @@ public class GraphTask implements Serializable {
             newProject.getChildrenTree().removeAll(needRemove);
             newProject.getChildrenTree().addAll(needAdd);
             return match;
-        }else{
+        } else {
             return newProject;
         }
     }
@@ -172,12 +171,13 @@ public class GraphTask implements Serializable {
 
     /**
      * 找新树top在旧树的哪个节点
+     *
      * @param newProject
      * @return
      */
-    public Project match(Project newProject){
-        for(Project project : projects){
-            if(project.equals(newProject)){
+    public Project match(Project newProject) {
+        for (Project project : projects) {
+            if (project.equals(newProject)) {
                 return project;
             }
         }
@@ -185,12 +185,7 @@ public class GraphTask implements Serializable {
     }
 
 
-
-
-
-
-    public static void main(String[] args){
-
+    public static void main(String[] args) {
 
 
         Set<Project> projects = new HashSet<>();
@@ -206,7 +201,6 @@ public class GraphTask implements Serializable {
         projects.add(project2);
         System.out.println(projects);
     }
-
 
 
 }

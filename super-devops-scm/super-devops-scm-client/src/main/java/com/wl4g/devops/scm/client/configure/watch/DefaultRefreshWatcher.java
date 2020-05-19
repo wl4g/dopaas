@@ -115,7 +115,6 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
         while (isActive()) { // Loop long-polling watching
             try {
                 if (watchLock.tryLock()) {
-                    checkRefreshProtectInterval();//20200518 add
                     createWatchLongPolling();
 
                     // [MARK1] Re-refresh configuration.
@@ -145,7 +144,6 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
             log.warn("");
             sleep(config.getRefreshProtectIntervalMs());
         }
-        lastUpdateTime = new Date().getTime();
     }
 
     /**
@@ -155,6 +153,7 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
      */
     private void createWatchLongPolling() throws Exception {
         log.debug("Synchronizing refresh config ... ");
+        checkRefreshProtectInterval();
 
         String url = getWatchingUrl(false);
         ResponseEntity<ReleaseMeta> resp = longPollingTemplate.getForEntity(url, ReleaseMeta.class);
@@ -167,6 +166,7 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
                     setReleaseMeta(resp.getBody());
                     // Records changed property names.
                     addChanged(refresher.refresh());
+                    lastUpdateTime = new Date().getTime();
                     break;
                 case CHECKPOINT:
                     // Report refresh changed
