@@ -19,11 +19,13 @@ import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.mapreduce.Counter;
 
-import com.wl4g.devops.tool.hbase.migrator.HfileToRmdbExporter;
+import com.wl4g.devops.tool.hbase.migrator.SimpleHfileToRmdbExporter;
 import com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils;
 
 import static com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils.*;
+import static java.lang.String.format;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -36,11 +38,12 @@ import java.util.LinkedHashMap;
  * @version v1.0 2019年9月6日
  * @since
  */
-public class HfileToRmdbMapper extends AbstractTransformMapper {
+public class SimpleHfileToRmdbMapper extends AbstractTransformMapper {
 
 	@Override
 	public void map(ImmutableBytesWritable key, Result result, Context context) throws IOException, InterruptedException {
-		context.getCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_TOTAL).increment(1);
+		Counter c = context.getCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_TOTAL);
+		c.increment(1);
 
 		LinkedHashMap<String, String> rowdata = new LinkedHashMap<>();
 		rowdata.put("row", Bytes.toString(key.get()));
@@ -59,11 +62,11 @@ public class HfileToRmdbMapper extends AbstractTransformMapper {
 
 		// Insert sql.
 		try {
-			String insertSql = HfileToRmdbExporter.currentRmdbManager.buildInsertSql(rowdata);
-			if (HfileToRmdbExporter.verbose) {
-				log.info("Inserting: " + insertSql);
+			String insertSql = SimpleHfileToRmdbExporter.currentRmdbManager.buildInsertSql(rowdata);
+			if (SimpleHfileToRmdbExporter.verbose) {
+				log.info(format("Inserting [%s]: %s", c.getValue(), insertSql));
 			}
-			HfileToRmdbExporter.currentRmdbManager.getRmdbRepository().saveRowdata(insertSql);
+			SimpleHfileToRmdbExporter.currentRmdbManager.getRmdbRepository().saveRowdata(insertSql);
 			context.getCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_PROCESSED).increment(1);
 		} catch (Exception e) {
 			log.error(e);
