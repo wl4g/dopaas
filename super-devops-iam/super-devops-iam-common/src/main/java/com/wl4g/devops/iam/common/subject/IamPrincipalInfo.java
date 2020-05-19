@@ -18,11 +18,14 @@ package com.wl4g.devops.iam.common.subject;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Collections.emptyMap;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * IAM principal account information.
@@ -272,27 +275,28 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 		private static final long serialVersionUID = -8256334665161483288L;
 
 		/**
-		 * Primary Organization(default top level organization)
+		 * Principal organization identification. Organization structure, unique
+		 * ID, Uneditable.
 		 */
-		private Organization primaryOrganization;
+		private List<OrganizationInfo> organizations = new ArrayList<>(4);
 
-		/** Principal organization identification. Organization structure, unique ID, non editable */
-		private List<Organization> organizations;
+		public PrincipalOrganization() {
+			super();
+		}
 
-		public List<Organization> getOrganizations() {
+		public PrincipalOrganization(List<OrganizationInfo> organizations) {
+			setOrganizations(organizations);
+		}
+
+		public List<OrganizationInfo> getOrganizations() {
 			return organizations;
 		}
 
-		public void setOrganizations(List<Organization> organizations) {
-			this.organizations = organizations;
-		}
-
-		public Organization getPrimaryOrganization() {
-			return primaryOrganization;
-		}
-
-		public void setPrimaryOrganization(Organization primaryOrganization) {
-			this.primaryOrganization = primaryOrganization;
+		public PrincipalOrganization setOrganizations(List<OrganizationInfo> organizations) {
+			if (!isEmpty(organizations)) {
+				this.organizations.addAll(organizations);
+			}
+			return this;
 		}
 
 		@Override
@@ -300,41 +304,53 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 			return getClass().getSimpleName() + " => " + toJSONString(this);
 		}
 
+	}
+
+	/**
+	 * Organization info.
+	 *
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年5月18日 v1.0.0
+	 * @see
+	 */
+	public static class OrganizationInfo implements Serializable {
+		private static final long serialVersionUID = -8256333665161483288L;
 
 		/**
-		 * Organization info.
-		 *
-		 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-		 * @version 2020年5月18日 v1.0.0
-		 * @see
+		 * Organization Unique identification
 		 */
-		public static class Organization{
+		private String organizationCode;
 
-			/**
-			 * Organization Unique identification
-			 */
-			private String organizationCode;
+		/**
+		 * Parent organization code
+		 */
+		private String parent;
 
-			/**
-			 * Parent Organization Code
-			 */
-			private String parent;
+		public OrganizationInfo() {
+			super();
+		}
 
-			public String getParent() {
-				return parent;
-			}
+		public OrganizationInfo(String organizationCode, String parent) {
+			setOrganizationCode(organizationCode);
+			setParent(parent);
+		}
 
-			public void setParent(String parent) {
-				this.parent = parent;
-			}
+		public String getOrganizationCode() {
+			return organizationCode;
+		}
 
-			public String getOrganizationCode() {
-				return organizationCode;
-			}
+		public void setOrganizationCode(String organizationCode) {
+			hasTextOf(organizationCode, "organizationCode");
+			this.organizationCode = organizationCode;
+		}
 
-			public void setOrganizationCode(String organizationCode) {
-				this.organizationCode = organizationCode;
-			}
+		public String getParent() {
+			return parent;
+		}
+
+		public void setParent(String parent) {
+			// hasTextOf(parent, "parent");
+			this.parent = parent;
 		}
 
 	}
