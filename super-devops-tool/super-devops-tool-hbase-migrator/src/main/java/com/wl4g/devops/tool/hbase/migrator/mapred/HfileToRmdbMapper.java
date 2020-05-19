@@ -60,8 +60,10 @@ public class HfileToRmdbMapper extends AbstractTransformMapper {
 		// Insert sql.
 		try {
 			String insertSql = HfileToRmdbExporter.currentRmdbManager.buildInsertSql(rowdata);
-			log.debug("InsertSql: " + insertSql);
-			HfileToRmdbExporter.currentRmdbManager.getRmdbHolder().saveRowdata(insertSql);
+			if (HfileToRmdbExporter.verbose) {
+				log.info("Inserting: " + insertSql);
+			}
+			HfileToRmdbExporter.currentRmdbManager.getRmdbRepository().saveRowdata(insertSql);
 			context.getCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_PROCESSED).increment(1);
 		} catch (Exception e) {
 			log.error(e);

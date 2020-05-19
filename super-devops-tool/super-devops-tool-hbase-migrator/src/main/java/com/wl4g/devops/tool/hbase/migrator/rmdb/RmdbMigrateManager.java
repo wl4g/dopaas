@@ -2,7 +2,7 @@ package com.wl4g.devops.tool.hbase.migrator.rmdb;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static java.util.Collections.unmodifiableMap;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.contains;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.cli.CommandLine;
 
+import com.wl4g.devops.tool.hbase.migrator.HfileToRmdbExporter;
 import com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils;
 
 /**
@@ -30,8 +31,9 @@ public abstract class RmdbMigrateManager {
 			new HashMap<String[], Class<? extends RmdbMigrateManager>>() {
 				private static final long serialVersionUID = 410424241261771123L;
 				{
-					put(new String[] { "mysql", "mysql57" }, Mysql57MigrateManager.class);
-					put(new String[] { "oracle", "oracle11g" }, Oracle11gMigrateManager.class);
+					put(new String[] { "jdbc:mysql" }, Mysql57MigrateManager.class);
+					put(new String[] { "jdbc:oracle" }, Oracle11gMigrateManager.class);
+					put(new String[] { "jdbc:postgresql" }, PostgresqlMigrateManager.class);
 				}
 			});
 
@@ -43,11 +45,11 @@ public abstract class RmdbMigrateManager {
 	/**
 	 * Rmdb holder
 	 */
-	final private RmdbHolder rmdbHolder;
+	final private RmdbRepository rmdbRepository;
 
 	public RmdbMigrateManager(CommandLine line) {
 		this.tableName = HbaseMigrateUtils.getShortTableName(line.getOptionValue("tabname"));
-		this.rmdbHolder = createRmdbHolder(line);
+		this.rmdbRepository = createRmdbHolder(line);
 	}
 
 	/**
@@ -57,20 +59,20 @@ public abstract class RmdbMigrateManager {
 	 * @return
 	 */
 	public static RmdbMigrateManager getInstance(CommandLine line) throws Exception {
-		String alias = line.getOptionValue("database");
+		String jdbcUrl = line.getOptionValue("jdbcUrl");
 
 		Class<? extends RmdbMigrateManager> cls = null;
 		Iterator<Entry<String[], Class<? extends RmdbMigrateManager>>> it = registers.entrySet().iterator();
 		ok: while (it.hasNext()) {
 			Entry<String[], Class<? extends RmdbMigrateManager>> entry = it.next();
 			for (String _alias : entry.getKey()) {
-				if (equalsIgnoreCase(_alias, alias)) {
+				if (contains(jdbcUrl, _alias)) {
 					cls = entry.getValue();
 					break ok;
 				}
 			}
 		}
-		notNull(cls, "Invalid rmdb database provider alias: %s", alias);
+		notNull(cls, "Invalid rmdb database provider alias: %s", jdbcUrl);
 		return cls.getConstructor(CommandLine.class).newInstance(line);
 	}
 
@@ -80,20 +82,21 @@ public abstract class RmdbMigrateManager {
 	 * @param line
 	 * @return
 	 */
-	private RmdbHolder createRmdbHolder(CommandLine line) {
+	private RmdbRepository createRmdbHolder(CommandLine line) {
 		String driver = getDriverClass();
-		String url = line.getOptionValue("url");
+		String url = line.getOptionValue("jdbcUrl");
 		String username = line.getOptionValue("username");
 		String password = line.getOptionValue("password");
-		return new RmdbHolder(driver, url, username, password);
+		String maxConnections = line.getOptionValue("maxConnections", HfileToRmdbExporter.DEFAULT_RMDB_MAXCONNECTIONS + "");
+		return new RmdbRepository(driver, url, username, password, Integer.parseInt(maxConnections));
 	}
 
 	public String getTableName() {
 		return tableName;
 	}
 
-	public RmdbHolder getRmdbHolder() {
-		return rmdbHolder;
+	public RmdbRepository getRmdbRepository() {
+		return rmdbRepository;
 	}
 
 	public abstract String getDriverClass();
