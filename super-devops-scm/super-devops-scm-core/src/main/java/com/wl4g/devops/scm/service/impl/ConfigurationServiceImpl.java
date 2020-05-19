@@ -25,6 +25,7 @@ import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
+import com.wl4g.devops.common.exception.scm.TooManyRefreshException;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
@@ -221,7 +222,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		for(String node : nodeIdList){
 			Long aLong = refreshProtectIntervalMap.get(node);
 			if(Objects.nonNull(aLong) && new Date().getTime()-aLong <=scmServerProperties.getRefreshProtectIntervalMs()){
-				throw new IllegalStateException("Refresh too Fast");
+				throw new TooManyRefreshException("Too many refresh");
 			}
 		}
 	}

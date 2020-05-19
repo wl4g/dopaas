@@ -33,7 +33,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -46,169 +45,184 @@ import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
 import static com.wl4g.devops.tool.common.lang.ThreadUtils2.sleep;
 import static com.wl4g.devops.tool.common.lang.ThreadUtils2.sleepRandom;
 import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.springframework.http.HttpMethod.POST;
 
 /**
  * Timing refresh watcher
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月1日
  * @since
  */
 public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 
-	/**
-	 * This is to solve the time difference between releasing the watching
-	 * interface from the server and receiving the response from the client.
-	 */
-	final public static float LONG_POLL_COST_RATIO = 1.15f;
+    /**
+     * This is to solve the time difference between releasing the watching
+     * interface from the server and receiving the response from the client.
+     */
+    final public static float LONG_POLL_COST_RATIO = 1.15f;
 
-	/** Watching connect lock. */
-	final private Lock watchLock = new ReentrantLock();
+    /**
+     * Watching connect lock.
+     */
+    final private Lock watchLock = new ReentrantLock();
 
-	/** Watching last connected state. */
-	final private AtomicBoolean lastWatchState = new AtomicBoolean(false);
+    /**
+     * Watching last connected state.
+     */
+    final private AtomicBoolean lastWatchState = new AtomicBoolean(false);
 
-	private long lastUpdateTime = 0;
+    /**
+     * Last Update Time
+     */
+    private long lastUpdateTime = 0;
 
-	/** Retry failure exceed threshold fast-fail */
-	@Value(EXP_FASTFAIL)
-	private boolean thresholdFastfail;
+    /**
+     * Retry failure exceed threshold fast-fail
+     */
+    @Value(EXP_FASTFAIL)
+    private boolean thresholdFastfail;
 
-	/** Long polling rest template */
-	private RestTemplate longPollingTemplate;
+    /**
+     * Long polling rest template
+     */
+    private RestTemplate longPollingTemplate;
 
-	public DefaultRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
-		super(config, refresher, locator);
-	}
+    public DefaultRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher, ScmPropertySourceLocator locator) {
+        super(config, refresher, locator);
+    }
 
-	@Override
-	protected void preStartupProperties() {
-		this.longPollingTemplate = locator.createRestTemplate((long) (config.getLongPollTimeout() * LONG_POLL_COST_RATIO));
-	}
+    @Override
+    protected void preStartupProperties() {
+        this.longPollingTemplate = locator.createRestTemplate((long) (config.getLongPollTimeout() * LONG_POLL_COST_RATIO));
+    }
 
-	/**
-	 * [MARK1] Scenes to refresh:
-	 * <p>
-	 * 1. The client did not connect successfully when it started, but after
-	 * multiple reconnection failures, it finally connected successfully.
-	 * </p>
-	 * <p>
-	 * 2. When the client is started, the connection is successful, and there is
-	 * an interruption in the middle of the operation. When the connection
-	 * status changes from failure to success, it will refresh.
-	 * </p>
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void run() {
-		while (isActive()) { // Loop long-polling watching
-			try {
-				if (watchLock.tryLock()) {
-					createWatchLongPolling();
+    /**
+     * [MARK1] Scenes to refresh:
+     * <p>
+     * 1. The client did not connect successfully when it started, but after
+     * multiple reconnection failures, it finally connected successfully.
+     * </p>
+     * <p>
+     * 2. When the client is started, the connection is successful, and there is
+     * an interruption in the middle of the operation. When the connection
+     * status changes from failure to success, it will refresh.
+     * </p>
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void run() {
+        while (isActive()) { // Loop long-polling watching
+            try {
+                if (watchLock.tryLock()) {
+                    createWatchLongPolling();
 
-					// [MARK1] Re-refresh configuration.
-					if (!lastWatchState
-							.get() /* && isNull(getReleaseMeta(false)) */) {
-						// Records changed keys.
-						addChanged(refresher.refresh());
-					}
-					lastWatchState.set(true);
-				} else {
-					log.warn("Skip the watch request in long polling!");
-				}
-			} catch (Throwable th) {
-				lastWatchState.set(false);
-				log.error("Unable to watch poll", () -> getRootCauseMessage(th));
-				log.debug("Unable to watch poll", th);
-				sleepRandom(config.getLongPollDelay(), config.getLongPollMaxDelay());
-			} finally {
-				watchLock.unlock();
-			}
-		}
+                    // [MARK1] Re-refresh configuration.
+                    if (!lastWatchState
+                            .get() /* && isNull(getReleaseMeta(false)) */) {
+                        // Records changed keys.
+                        addChanged(refresher.refresh());
+                    }
+                    lastWatchState.set(true);
+                } else {
+                    log.warn("Skip the watch request in long polling!");
+                }
+            } catch (Throwable th) {
+                lastWatchState.set(false);
+                log.error("Unable to watch poll", () -> getRootCauseMessage(th));
+                log.debug("Unable to watch poll", th);
+                sleepRandom(config.getLongPollDelay(), config.getLongPollMaxDelay());
+            } finally {
+                watchLock.unlock();
+            }
+        }
 
-	}
+    }
 
-	private void checkRefreshProtectInterval() {
-		if(new Date().getTime()-lastUpdateTime<=config.getRefreshProtectIntervalMs()){
-			log.warn("");
-			sleep(config.getRefreshProtectIntervalMs());
-		}
-	}
+    private void checkRefreshProtectInterval() {
+        long now = currentTimeMillis();
+        long intervalMs = now - lastUpdateTime;
+        if (intervalMs < config.getRefreshProtectIntervalMs()) {
+            log.warn("Refresh too fast? Watch long polling waiting... , lastUpdateTime: {}, now: {}, intervalMs: {}",
+                    lastUpdateTime, now, intervalMs);
+            sleep(config.getRefreshProtectIntervalMs());
+        }
+    }
 
-	/**
-	 * Create long-polling watching request.
-	 * 
-	 * @throws Exception
-	 */
-	private void createWatchLongPolling() throws Exception {
-		log.debug("Synchronizing refresh config ... ");
-		checkRefreshProtectInterval();
+    /**
+     * Create long-polling watching request.
+     *
+     * @throws Exception
+     */
+    private void createWatchLongPolling() throws Exception {
+        log.debug("Synchronizing refresh config ... ");
+        checkRefreshProtectInterval();
 
-		String url = getWatchingUrl(false);
-		ResponseEntity<ReleaseMeta> resp = longPollingTemplate.getForEntity(url, ReleaseMeta.class);
-		log.debug("Watch result <= {}", resp);
+        String url = getWatchingUrl(false);
+        ResponseEntity<ReleaseMeta> resp = longPollingTemplate.getForEntity(url, ReleaseMeta.class);
+        log.debug("Watch result <= {}", resp);
 
-		if (!isNull(resp)) {
-			switch (resp.getStatusCode()) {
-			case OK:
-				// Release changed info.
-				setReleaseMeta(resp.getBody());
-				// Records changed property names.
-				addChanged(refresher.refresh());
-				lastUpdateTime = new Date().getTime();
-				break;
-			case CHECKPOINT:
-				// Report refresh changed
-				backendReport();
-				break;
-			case NOT_MODIFIED: // Next long-polling
-				break;
-			default:
-				throw new IllegalStateException(format("Unsupporteds scm protocal status: '%s'", resp.getStatusCodeValue()));
-			}
-		}
+        if (!isNull(resp)) {
+            switch (resp.getStatusCode()) {
+                case OK:
+                    // Release changed info.
+                    setReleaseMeta(resp.getBody());
+                    // Records changed property names.
+                    addChanged(refresher.refresh());
+                    lastUpdateTime = currentTimeMillis();
+                    break;
+                case CHECKPOINT:
+                    // Report refresh changed
+                    backendReport();
+                    break;
+                case NOT_MODIFIED: // Next long-polling
+                    break;
+                default:
+                    throw new IllegalStateException(format("Unsupporteds scm protocal status: '%s'", resp.getStatusCodeValue()));
+            }
+        }
 
-	}
+    }
 
-	/**
-	 * Back-end report changed records
-	 */
-	@Retryable(value = Throwable.class, maxAttemptsExpression = EXP_MAXATTEMPTS, backoff = @Backoff(delayExpression = EXP_DELAY, maxDelayExpression = EXP_MAXDELAY, multiplierExpression = EXP_MULTIP))
-	private void backendReport() {
-		String url = config.getBaseUri() + URI_S_BASE + "/" + URI_S_REPORT_POST;
+    /**
+     * Back-end report changed records
+     */
+    @Retryable(value = Throwable.class, maxAttemptsExpression = EXP_MAXATTEMPTS, backoff = @Backoff(delayExpression = EXP_DELAY, maxDelayExpression = EXP_MAXDELAY, multiplierExpression = EXP_MULTIP))
+    private void backendReport() {
+        String url = config.getBaseUri() + URI_S_BASE + "/" + URI_S_REPORT_POST;
 
-		Collection<ChangedRecord> records = getChangedQueues();
-		// Requests
-		RespBase<?> resp = locator.getRestTemplate()
-				.exchange(url, POST, new HttpEntity<>(new ReportInfo(records)), new ParameterizedTypeReference<RespBase<?>>() {
-				}).getBody();
+        Collection<ChangedRecord> records = getChangedQueues();
+        // Requests
+        RespBase<?> resp = locator.getRestTemplate()
+                .exchange(url, POST, new HttpEntity<>(new ReportInfo(records)), new ParameterizedTypeReference<RespBase<?>>() {
+                }).getBody();
 
-		// Successful reset
-		if (isSuccess(resp)) {
-			pollChangedAll();
-		} else {
-			throw new ReportRetriesCountOutException(String.format("Backend report failure! records for %s", records.size()));
-		}
-	}
+        // Successful reset
+        if (isSuccess(resp)) {
+            pollChangedAll();
+        } else {
+            throw new ReportRetriesCountOutException(String.format("Backend report failure! records for %s", records.size()));
+        }
+    }
 
-	/**
-	 * Report retries exceed count exception.
-	 * 
-	 * @param e
-	 */
-	@Recover
-	public void recoverReportRetriesCountOutException(ReportRetriesCountOutException e) {
-		if (thresholdFastfail) {
-			if (log.isWarnEnabled()) {
-				log.warn("Refresh report retries exceed threshold, discarded refresh changed record!");
-			}
-			pollChangedAll();
-		} else if (log.isWarnEnabled()) {
-			log.warn("Refresh report retries exceed threshold!");
-		}
-	}
+    /**
+     * Report retries exceed count exception.
+     *
+     * @param e
+     */
+    @Recover
+    public void recoverReportRetriesCountOutException(ReportRetriesCountOutException e) {
+        if (thresholdFastfail) {
+            if (log.isWarnEnabled()) {
+                log.warn("Refresh report retries exceed threshold, discarded refresh changed record!");
+            }
+            pollChangedAll();
+        } else if (log.isWarnEnabled()) {
+            log.warn("Refresh report retries exceed threshold!");
+        }
+    }
 
 }
