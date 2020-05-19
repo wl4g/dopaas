@@ -226,10 +226,11 @@
     <include refid="InstanceColumn" />
     ,c.name cluster_name,sp.enable pcm_enable,sp.pcm_id
     from ci_pipeline p
-    left join app_cluster c on p.cluster_id=c.id
-    left join ci_pipe_step_instance pi on pi.pipe_id=p.id
-    left join app_instance i on i.id=pi.instance_id
-    left join app_host h on h.id=i.host_id
+    left join erm_app_cluster c on p.cluster_id=c.id
+    left join ci_pipe_step_deploy d on d.pipe_id=p.id
+    left join ci_pipe_step_deploy_instance pi on pi.deploy_id=d.id
+    left join erm_app_instance i on i.id=pi.instance_id
+    left join erm_host h on h.id=i.host_id
     left join ci_pipe_step_pcm sp on sp.pipe_id=p.id
     where p.del_flag!=1
     <if test="id != null and id != ''" >

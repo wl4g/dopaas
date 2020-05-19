@@ -27,7 +27,7 @@
     select
     <include refid="Base_Column_List_hi" />,i.remark instance_name
     from ci_pipe_history_instance hi
-    left join app_instance i on i.id=hi.instance_id
+    left join erm_app_instance i on i.id=hi.instance_id
     where pipe_history_id = #{pipeHistoryId,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
