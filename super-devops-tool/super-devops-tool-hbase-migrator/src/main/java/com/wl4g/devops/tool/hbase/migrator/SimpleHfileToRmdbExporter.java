@@ -39,21 +39,29 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import com.wl4g.devops.tool.hbase.migrator.mapred.HfileToRmdbMapper;
+import com.wl4g.devops.tool.hbase.migrator.mapred.SimpleHfileToRmdbMapper;
 import com.wl4g.devops.tool.hbase.migrator.rmdb.RmdbMigrateManager;
 import com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils;
 
 /**
- * HASE hfile to mysql exporter.
+ * Simple HBase hfile to mysql exporter. </br>
+ * 
+ * <p>
+ * Note: It is a very good migration tool in the development environment, but it
+ * is not recommended for the production environment. Generally, the demand data
+ * flow of the production environment migration is RMDB(MySQL/Oracle/...) =>
+ * HBase/HDFS/Hive. In this scenario, it is recommended to use professional
+ * migration tools, such as sqoop or streamsets.
+ * </p>
  * 
  * @author Wangl.sir
  * @version v1.0 2019年9月6日
  * @since
  */
-public class HfileToRmdbExporter {
-	final static Log log = LogFactory.getLog(HfileToRmdbExporter.class);
+public class SimpleHfileToRmdbExporter {
+	final static Log log = LogFactory.getLog(SimpleHfileToRmdbExporter.class);
 
-	final public static String DEFAULT_MAPPER_CLASS = HfileToRmdbMapper.class.getName();
+	final public static String DEFAULT_MAPPER_CLASS = SimpleHfileToRmdbMapper.class.getName();
 	final public static int DEFAULT_RMDB_MAXCONNECTIONS = 100;
 
 	public static RmdbMigrateManager currentRmdbManager;
@@ -64,7 +72,7 @@ public class HfileToRmdbExporter {
 	 * 
 	 * <pre>
 	 * java -cp super-devops-tool-hbase-migrator-master.jar \
-	 * com.wl4g.devops.tool.hbase.migrator.HfileToRmdbExporter \
+	 * com.wl4g.devops.tool.hbase.migrator.SimpleHfileToRmdbExporter \
 	 * -z emr-header-1:2181 \
 	 * -t safeclound.tb_elec_power \
 	 * -j 'jdbc:mysql://localhost:3306/my_tsdb?useUnicode=true&characterEncoding=utf-8&useSSL=false' \

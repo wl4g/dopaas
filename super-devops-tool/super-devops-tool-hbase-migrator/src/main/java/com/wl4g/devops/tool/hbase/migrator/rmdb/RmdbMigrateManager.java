@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.cli.CommandLine;
 
-import com.wl4g.devops.tool.hbase.migrator.HfileToRmdbExporter;
+import com.wl4g.devops.tool.hbase.migrator.SimpleHfileToRmdbExporter;
 import com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils;
 
 /**
@@ -87,7 +87,7 @@ public abstract class RmdbMigrateManager {
 		String url = line.getOptionValue("jdbcUrl");
 		String username = line.getOptionValue("username");
 		String password = line.getOptionValue("password");
-		String maxConnections = line.getOptionValue("maxConnections", HfileToRmdbExporter.DEFAULT_RMDB_MAXCONNECTIONS + "");
+		String maxConnections = line.getOptionValue("maxConnections", SimpleHfileToRmdbExporter.DEFAULT_RMDB_MAXCONNECTIONS + "");
 		return new RmdbRepository(driver, url, username, password, Integer.parseInt(maxConnections));
 	}
 
