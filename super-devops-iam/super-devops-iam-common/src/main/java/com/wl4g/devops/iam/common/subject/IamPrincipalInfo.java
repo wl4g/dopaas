@@ -15,13 +15,14 @@
  */
 package com.wl4g.devops.iam.common.subject;
 
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
-import static java.util.Collections.emptyMap;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
-import org.springframework.util.Assert;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static java.util.Collections.emptyMap;
 
 /**
  * IAM principal account information.
@@ -270,65 +271,23 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	public static class PrincipalOrganization implements Serializable {
 		private static final long serialVersionUID = -8256334665161483288L;
 
-		/** Principal organization id. */
-		private String id;
+		/** Principal organization identification. Organization structure, unique ID, non editable */
+		private List<String> identifications;
 
-		/** Principal organization name. */
-		private String name;
-
-		/** Principal organization type. */
-		private String type;
-
-		/** Principal organization parentId. */
-		private String parentId;
-
-		/** Principal organization status. */
-		private String status;
-
-		public String getId() {
-			return id;
+		public List<String> getIdentifications() {
+			return identifications;
 		}
 
-		public void setId(String id) {
-			this.id = id;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public void setType(String type) {
-			this.type = type;
-		}
-
-		public String getParentId() {
-			return parentId;
-		}
-
-		public void setParentId(String parentId) {
-			this.parentId = parentId;
-		}
-
-		public String getStatus() {
-			return status;
-		}
-
-		public void setStatus(String status) {
-			this.status = status;
+		public void setIdentifications(List<String> identifications) {
+			this.identifications = identifications;
 		}
 
 		@Override
 		public String toString() {
 			return getClass().getSimpleName() + " => " + toJSONString(this);
 		}
+
+
 
 	}
 
