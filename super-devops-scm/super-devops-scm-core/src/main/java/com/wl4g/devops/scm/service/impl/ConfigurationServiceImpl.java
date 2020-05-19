@@ -221,14 +221,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	private void checkRefreshProtectInterval(List<String> nodeIdList){
 		for(String node : nodeIdList){
 			Long aLong = refreshProtectIntervalMap.get(node);
-			if(Objects.nonNull(aLong) && new Date().getTime()-aLong <=scmServerProperties.getRefreshProtectIntervalMs()){
+			if(Objects.nonNull(aLong) && System.currentTimeMillis()-aLong <=scmServerProperties.getRefreshProtectIntervalMs()){
 				throw new TooManyRefreshException("Too many refresh");
 			}
 		}
 	}
 
 	private void updateRefreshTime(List<String> nodeIdList){
-		long now = new Date().getTime();
+		long now = System.currentTimeMillis();
 		for(String node : nodeIdList){
 			refreshProtectIntervalMap.put(node,now);
 		}
