@@ -54,8 +54,10 @@ public class HfileToRmdbExporter {
 	final static Log log = LogFactory.getLog(HfileToRmdbExporter.class);
 
 	final public static String DEFAULT_MAPPER_CLASS = HfileToRmdbMapper.class.getName();
+	final public static int DEFAULT_RMDB_MAXCONNECTIONS = 100;
 
 	public static RmdbMigrateManager currentRmdbManager;
+	public static boolean verbose;
 
 	/**
 	 * e.g. </br>
@@ -65,10 +67,10 @@ public class HfileToRmdbExporter {
 	 * com.wl4g.devops.tool.hbase.migrator.HfileToRmdbExporter \
 	 * -z emr-header-1:2181 \
 	 * -t safeclound.tb_elec_power \
-	 * -d mysql \
 	 * -j 'jdbc:mysql://localhost:3306/my_tsdb?useUnicode=true&characterEncoding=utf-8&useSSL=false' \
 	 * -u root \
 	 * -p '123456' \
+	 * -c 100 \
 	 * -s 11111112,ELE_R_P,134,01,20180919110850989 \
 	 * -e 11111112,ELE_R_P,134,01,20180921124050540
 	 * </pre>
@@ -80,6 +82,8 @@ public class HfileToRmdbExporter {
 		HbaseMigrateUtils.showBanner();
 
 		Builder builder = new Builder();
+		builder.option("V", "verbose", false,
+				"Set to true to show messages about what the migrator(MR) is doing. default: false");
 		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_MR_TMPDIR);
 		builder.option("z", "zkaddr", true, "Zookeeper address.");
 		builder.option("t", "tabname", true, "Hbase table name.");
@@ -92,14 +96,17 @@ public class HfileToRmdbExporter {
 		builder.option("E", "endTime", false, "Scan end timestamp.");
 		builder.option("U", "user", false, "User name used for scan check (default: hbase)");
 		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default: " + DEFAULT_MAPPER_CLASS);
-		builder.option("d", "database", true, "Hbase to rmdb database provider. e.g: mysql|oracle");
-		builder.option("j", "url", true, "Hbase to rmdb database jdbc url");
+		builder.option("j", "jdbcUrl", true, "Hbase to rmdb database jdbc url");
 		builder.option("u", "username", true, "Hbase to rmdb database jdbc username");
 		builder.option("p", "password", true, "Hbase to rmdb database jdbc password");
+		builder.option("c", "maxConnections", false,
+				"Hbase to rmdb database jdbc maxConnections. default: " + DEFAULT_RMDB_MAXCONNECTIONS);
 		CommandLine line = builder.build(args);
 
 		// Gets rmdb provider instance.
 		currentRmdbManager = RmdbMigrateManager.getInstance(line);
+		// Verbose
+		verbose = Boolean.parseBoolean(line.getOptionValue("verbose"));
 
 		// DO exporting
 		doRmdbExporting(line);

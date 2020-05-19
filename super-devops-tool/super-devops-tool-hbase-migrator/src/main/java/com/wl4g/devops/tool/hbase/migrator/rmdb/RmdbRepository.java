@@ -15,41 +15,32 @@
  */
 package com.wl4g.devops.tool.hbase.migrator.rmdb;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-
 import java.sql.Connection;
-import java.sql.DriverManager;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.wl4g.devops.tool.hbase.migrator.utils.HikariDataSourceFactory;
+
 /**
- * {@link RmdbHolder}
+ * {@link RmdbRepository}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年5月18日
  * @since
  */
-public class RmdbHolder {
-
+public class RmdbRepository {
 	final protected Log log = LogFactory.getLog(getClass());
 
-	final private String driver;
-	final private String url;
-	final private String username;
-	final private String password;
+	/**
+	 * Datasource factory.
+	 */
+	final private HikariDataSourceFactory dbFactory;
 
-	public RmdbHolder(String driver, String url, String username, String password) {
-		hasTextOf(driver, "driver");
-		hasTextOf(url, "url");
-		hasTextOf(username, "username");
-		hasTextOf(password, "password");
-		this.driver = driver;
-		this.url = url;
-		this.username = username;
-		this.password = password;
+	public RmdbRepository(String driver, String url, String username, String password, int maxConnections) {
+		this.dbFactory = new HikariDataSourceFactory(driver, url, username, password, maxConnections);
 	}
 
 	/**
@@ -61,9 +52,8 @@ public class RmdbHolder {
 	public void saveRowdata(String insertSql) throws Exception {
 		Connection conn = null;
 		try {
-			DbUtils.loadDriver(driver);
 			QueryRunner runner = new QueryRunner();
-			conn = DriverManager.getConnection(url, username, password);
+			conn = dbFactory.getConnection();
 			int num = runner.update(conn, insertSql);
 			if (num <= 0) {
 				log.warn("Failed save rowdata for sql: " + insertSql);
