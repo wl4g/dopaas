@@ -106,7 +106,7 @@
     select
     d.*,i.remark
     from ci_task_history_instance d
-    left join app_instance i on d.instance_id=i.id
+    left join erm_app_instance i on d.instance_id=i.id
     where task_id = #{id,jdbcType=INTEGER}
   </select>
 </mapper>

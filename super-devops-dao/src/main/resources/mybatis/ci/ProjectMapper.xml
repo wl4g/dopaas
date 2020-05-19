@@ -241,7 +241,7 @@
     <include refid="vcs_alias" />
     ,g.name as group_name
     from ci_project p
-    left join app_cluster g on p.app_cluster_id=g.id
+    left join erm_app_cluster g on p.app_cluster_id=g.id
     left join ci_vcs v on v.id=p.vcs_id
     where p.del_flag!=1
     <if test="groupName != null and groupName != ''" >

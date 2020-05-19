@@ -37,7 +37,7 @@
     <include refid="Base_Column_List_h" />,p.pipe_name,c.name cluster_name
     from ci_pipe_history h
     left join ci_pipeline p on p.id=h.pipe_id
-    left join app_cluster c on p.cluster_id=c.id
+    left join erm_app_cluster c on p.cluster_id=c.id
     where h.id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -237,7 +237,7 @@
     <include refid="Base_Column_List_h" />,p.pipe_name,c.name cluster_name,u.user_name create_by_name
     from ci_pipe_history h
     left join ci_pipeline p on p.id=h.pipe_id
-    left join app_cluster c on p.cluster_id=c.id
+    left join erm_app_cluster c on p.cluster_id=c.id
     left join sys_user u on u.id = h.create_by
     where h.del_flag!=1
     <if test="pipeName != null and pipeName != ''" >

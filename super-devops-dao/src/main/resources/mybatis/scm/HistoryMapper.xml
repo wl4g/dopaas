@@ -250,7 +250,7 @@
 		SELECT d.id as "instanceId",h.`hostname` host,d.id as nodeId ,d.`endpoint` as port,g.`name`,g.id as appClusterId,d.env_type as envType,b.type,b.id as "historyId",b.version_id as "id",b.create_date as "createDate",b.remark as "remark"
 		FROM scm_release_history b
 		JOIN scm_release_detail c ON b.id = c.release_id
-		JOIN app_instance d ON d.id = c.instance_id and d.del_flag = #{DEL_FLAG_NORMAL}
+		JOIN erm_app_instance d ON d.id = c.instance_id and d.del_flag = #{DEL_FLAG_NORMAL}
 		left join app_host h on h.id = d.host_id
 		JOIN app_cluster g ON d.cluster_id = g.id  and g.del_flag = #{DEL_FLAG_NORMAL}
 		<where>
