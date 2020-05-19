@@ -63,12 +63,9 @@ public class ConfigurationController extends BaseController {
 			log.info("ConfigSet request ... {}", vod);
 		}
 		RespBase<?> resp = new RespBase<>();
-		try {
-			this.configService.configure(vod);
-		} catch (Exception e) {
-			resp.setCode(RetCode.SYS_ERR);
-			log.error("添加版本失败", e);
-		}
+
+		this.configService.configure(vod);
+
 		if (log.isInfoEnabled()) {
 			log.info("ConfigSet response. {}", resp);
 		}
