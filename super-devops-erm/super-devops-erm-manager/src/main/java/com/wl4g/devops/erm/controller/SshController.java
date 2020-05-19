@@ -76,9 +76,9 @@ public class SshController extends BaseController {
 	}
 
 	@RequestMapping(value = "/connectTest")
-	public RespBase<?> testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException {
+	public RespBase<?> testSSHConnect(Integer hostId, String sshUser, String sshKey, Integer sshId) throws Exception, InterruptedException {
 		RespBase<Object> resp = RespBase.create();
-		sshService.testSSHConnect(hostId, sshUser, sshKey);
+		sshService.testSSHConnect(hostId, sshUser, sshKey,sshId);
 		return resp;
 	}
 

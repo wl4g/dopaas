@@ -113,8 +113,13 @@ public class SshServiceImpl implements SshService {
     }
 
     @Override
-    public void testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception {
+    public void testSSHConnect(Integer hostId, String sshUser, String sshKey, Integer sshId) throws Exception {
         Host appHost = appHostDao.selectByPrimaryKey(hostId);
+        if(Objects.nonNull(sshId)){
+            Ssh ssh = sshDao.selectByPrimaryKey(sshId);
+            sshUser = ssh.getUsername();
+            sshKey = ssh.getSshKey();
+        }
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         String command = "echo " + uuid;
         String echoStr;

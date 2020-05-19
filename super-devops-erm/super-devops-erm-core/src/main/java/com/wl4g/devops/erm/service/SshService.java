@@ -35,5 +35,5 @@ public interface SshService {
 
 	void del(Integer id);
 
-	void testSSHConnect(Integer hostId, String sshUser, String sshKey) throws Exception, InterruptedException;
+	void testSSHConnect(Integer hostId, String sshUser, String sshKey, Integer sshId) throws Exception, InterruptedException;
 }
