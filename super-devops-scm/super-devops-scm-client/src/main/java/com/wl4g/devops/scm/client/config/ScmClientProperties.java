@@ -70,6 +70,8 @@ public class ScmClientProperties extends AbstractScmProperties {
 	/** Maximum waiting time for long polling failure. */
 	private long longPollMaxDelay = 15 * 1000L;
 
+	private long refreshProtectIntervalMs = 10_000L;
+
 	/**
 	 * Refresh name-space(configuration filename)</br>
 	 * SCM server publishing must be consistent with this configuration or the
@@ -143,4 +145,11 @@ public class ScmClientProperties extends AbstractScmProperties {
 		this.headers = headers;
 	}
 
+	public long getRefreshProtectIntervalMs() {
+		return refreshProtectIntervalMs;
+	}
+
+	public void setRefreshProtectIntervalMs(long refreshProtectIntervalMs) {
+		this.refreshProtectIntervalMs = refreshProtectIntervalMs;
+	}
 }

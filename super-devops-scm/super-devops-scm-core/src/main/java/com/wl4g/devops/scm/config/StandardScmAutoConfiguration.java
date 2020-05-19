@@ -29,4 +29,9 @@ public class StandardScmAutoConfiguration {
 		return new StandardConfigContextHandler();
 	}
 
+	@Bean
+	public ScmServerProperties scmServerProperties() {
+		return new ScmServerProperties();
+	}
+
 }

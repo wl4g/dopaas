@@ -48,6 +48,7 @@ spring:
         #long-polling-timeout: 30000
         #connect-timeout: 5000
         #max-response-size: 65535
+        #refresh-protect-interval-ms: 10_000
 
 # ### Server configuration. ###
 server:
