@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
+import static com.wl4g.devops.ci.bean.RunModel.Pipeline.ModulesPorject;
 import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.RUNNING_BUILD;
 import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.RUNNING_DEPLOY;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_DEPENDENCY_BUILD;
@@ -86,14 +87,19 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		//List<TaskBuildCommand> commands = taskHistoryBuildCommandDao.selectByTaskHisId(pipelineHistory.getId());
 
 		// Pipeline State Change
-		List<String> modules = new ArrayList<>();
+		//List<String> modules = new ArrayList<>();
+		List<ModulesPorject> modulesPorjects = new ArrayList<>();
 		for (PipeStepBuildingProject depd : pipeStepBuildingProjects) {
-			modules.add(depd.getProjectId().toString());
+			//modules.add(depd.getProjectId().toString());
+			ModulesPorject modulesPorject = new ModulesPorject();
+			modulesPorject.setProjectId(depd.getProjectId());
+			modulesPorject.setRef(depd.getRef());
+			//modulesPorject.setStatus();
+			modulesPorjects.add(modulesPorject);
 		}
-		modules.add(project.getId().toString());
 		PipelineModel pipelineModel = getContext().getPipelineModel();
 		pipelineModel.setStatus(RUNNING_BUILD.toString());
-		pipelineModel.setModules(modules);
+		pipelineModel.setModulesPorjects(modulesPorjects);
 		flowManager.pipelineStateChange(pipelineModel);
 
 		log.info(writeBuildLog("Analyzed pipelineModel=%s", JacksonUtils.toJSONString(pipelineModel)));
@@ -102,11 +108,11 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		for (PipeStepBuildingProject buildingProject : pipeStepBuildingProjects) {
 
 			// Is dependency Already build
-			if (flowManager.isDependencyBuilded(buildingProject.getProjectId().toString())) {
+			if (flowManager.isDependencyBuilded(buildingProject.getProjectId())) {
 				continue;
 			}
 
-			pipelineModel.setCurrent(buildingProject.getProjectId().toString());
+			pipelineModel.setCurrent(buildingProject.getProjectId());
 			flowManager.pipelineStateChange(pipelineModel);
 			//TaskBuildCommand taskBuildCommand = extractDependencyBuildCommand(commands, buildingProject.getProjectId());
 
