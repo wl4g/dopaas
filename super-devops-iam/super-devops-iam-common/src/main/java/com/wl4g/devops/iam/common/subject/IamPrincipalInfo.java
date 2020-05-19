@@ -271,15 +271,28 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	public static class PrincipalOrganization implements Serializable {
 		private static final long serialVersionUID = -8256334665161483288L;
 
-		/** Principal organization identification. Organization structure, unique ID, non editable */
-		private List<String> identifications;
+		/**
+		 * Primary Organization(default top level organization)
+		 */
+		private Organization primaryOrganization;
 
-		public List<String> getIdentifications() {
-			return identifications;
+		/** Principal organization identification. Organization structure, unique ID, non editable */
+		private List<Organization> organizations;
+
+		public List<Organization> getOrganizations() {
+			return organizations;
 		}
 
-		public void setIdentifications(List<String> identifications) {
-			this.identifications = identifications;
+		public void setOrganizations(List<Organization> organizations) {
+			this.organizations = organizations;
+		}
+
+		public Organization getPrimaryOrganization() {
+			return primaryOrganization;
+		}
+
+		public void setPrimaryOrganization(Organization primaryOrganization) {
+			this.primaryOrganization = primaryOrganization;
 		}
 
 		@Override
@@ -288,6 +301,41 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 		}
 
 
+		/**
+		 * Organization info.
+		 *
+		 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+		 * @version 2020年5月18日 v1.0.0
+		 * @see
+		 */
+		public static class Organization{
+
+			/**
+			 * Organization Unique identification
+			 */
+			private String organizationCode;
+
+			/**
+			 * Parent Organization Code
+			 */
+			private String parent;
+
+			public String getParent() {
+				return parent;
+			}
+
+			public void setParent(String parent) {
+				this.parent = parent;
+			}
+
+			public String getOrganizationCode() {
+				return organizationCode;
+			}
+
+			public void setOrganizationCode(String organizationCode) {
+				this.organizationCode = organizationCode;
+			}
+		}
 
 	}
 
