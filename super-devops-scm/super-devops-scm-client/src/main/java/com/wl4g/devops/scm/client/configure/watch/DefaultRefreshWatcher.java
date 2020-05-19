@@ -23,10 +23,6 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
-import static com.wl4g.devops.tool.common.lang.ThreadUtils2.*;
-import static java.lang.String.format;
-import static java.util.Objects.isNull;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -37,6 +33,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -46,6 +43,10 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_REPORT_P
 import static com.wl4g.devops.common.web.RespBase.isSuccess;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
+import static com.wl4g.devops.tool.common.lang.ThreadUtils2.sleep;
+import static com.wl4g.devops.tool.common.lang.ThreadUtils2.sleepRandom;
+import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.springframework.http.HttpMethod.POST;
 
@@ -69,6 +70,8 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 
 	/** Watching last connected state. */
 	final private AtomicBoolean lastWatchState = new AtomicBoolean(false);
+
+	private long lastUpdateTime = 0;
 
 	/** Retry failure exceed threshold fast-fail */
 	@Value(EXP_FASTFAIL)
@@ -128,6 +131,13 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 
 	}
 
+	private void checkRefreshProtectInterval() {
+		if(new Date().getTime()-lastUpdateTime<=config.getRefreshProtectIntervalMs()){
+			log.warn("");
+			sleep(config.getRefreshProtectIntervalMs());
+		}
+	}
+
 	/**
 	 * Create long-polling watching request.
 	 * 
@@ -135,6 +145,7 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 	 */
 	private void createWatchLongPolling() throws Exception {
 		log.debug("Synchronizing refresh config ... ");
+		checkRefreshProtectInterval();
 
 		String url = getWatchingUrl(false);
 		ResponseEntity<ReleaseMeta> resp = longPollingTemplate.getForEntity(url, ReleaseMeta.class);
@@ -147,6 +158,7 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 				setReleaseMeta(resp.getBody());
 				// Records changed property names.
 				addChanged(refresher.refresh());
+				lastUpdateTime = new Date().getTime();
 				break;
 			case CHECKPOINT:
 				// Report refresh changed
