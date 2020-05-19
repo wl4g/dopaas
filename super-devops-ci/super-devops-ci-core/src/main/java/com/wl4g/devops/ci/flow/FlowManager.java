@@ -378,9 +378,9 @@ public class FlowManager {
 	 * @param projectName
 	 * @return
 	 */
-	public boolean isDependencyBuilded(String projectId) {
+	public boolean isDependencyBuilded(Integer projectId) {
 		List<RunModel> runModels = getRunModels();
-		Set<String> alreadBuild = new HashSet<>();
+		Set<Integer> alreadBuild = new HashSet<>();
 		for (RunModel runModel : runModels) {
 			List<Pipeline> pipelines = runModel.getPipelines();
 			for (Pipeline pipeline : pipelines) {
@@ -406,11 +406,16 @@ public class FlowManager {
 		return false;
 	}
 
-	private void getAlreadyBuildModules(Pipeline pipeline, Set<String> alreadBuild) {
+	private void getAlreadyBuildModules(Pipeline pipeline, Set<Integer> alreadBuild) {
 		if (!StringUtils.equals(pipeline.getNode(), node)) {
 			return;
 		}
-		List<String> modules = pipeline.getModules();
+		List<Integer> modules = new ArrayList<>();
+
+		pipeline.getModulesPorjects().forEach((modulesPorject) -> {
+			modules.add(modulesPorject.getProjectId());
+		});
+
 		if (CollectionUtils.isEmpty(modules)) {
 			return;
 		}
@@ -420,12 +425,12 @@ public class FlowManager {
 			alreadBuild.addAll(modules);
 			return;
 		}
-		String current = pipeline.getCurrent();
-		if (StringUtils.isBlank(current)) {// if null ,it mean : not begin build
+		Integer current = pipeline.getCurrent();
+		if (isNull(current)) {// if null ,it mean : not begin build
 			return;
 		}
-		for (String module : modules) {
-			if (StringUtils.equals(module, current)) {
+		for (Integer module : modules) {
+			if (current.equals(module)) {
 				break;
 			} else {
 				alreadBuild.add(module);

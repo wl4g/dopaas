@@ -60,7 +60,7 @@ public class RunModel implements Serializable {
 
         private Long createTime;//timestamp
 
-        private String current;//e.g mp
+        private Integer current;//e.g mp
 
         private String status;//WAITING|RUNNING|FAILED|SUCCESS
 
@@ -70,7 +70,9 @@ public class RunModel implements Serializable {
 
         private String node;
 
-        List<String> modules;
+        //List<String> modules;
+
+        List<ModulesPorject> modulesPorjects;
 
         public Integer getPipeId() {
             return pipeId;
@@ -104,11 +106,11 @@ public class RunModel implements Serializable {
             this.createTime = createTime;
         }
 
-        public String getCurrent() {
+        public Integer getCurrent() {
             return current;
         }
 
-        public void setCurrent(String current) {
+        public void setCurrent(Integer current) {
             this.current = current;
         }
 
@@ -136,12 +138,20 @@ public class RunModel implements Serializable {
             this.attempting = attempting;
         }
 
-        public List<String> getModules() {
+        /*public List<String> getModules() {
             return modules;
         }
 
         public void setModules(List<String> modules) {
             this.modules = modules;
+        }*/
+
+        public List<ModulesPorject> getModulesPorjects() {
+            return modulesPorjects;
+        }
+
+        public void setModulesPorjects(List<ModulesPorject> modulesPorjects) {
+            this.modulesPorjects = modulesPorjects;
         }
 
         public String getNode() {
@@ -150,6 +160,39 @@ public class RunModel implements Serializable {
 
         public void setNode(String node) {
             this.node = node;
+        }
+
+        public static class ModulesPorject{
+
+            private Integer projectId;
+
+            private String ref;// Branch | Tag
+
+            private String status;//WAITING|BUILDING|FAILED|SUCCESS
+
+            public Integer getProjectId() {
+                return projectId;
+            }
+
+            public void setProjectId(Integer projectId) {
+                this.projectId = projectId;
+            }
+
+            public String getRef() {
+                return ref;
+            }
+
+            public void setRef(String ref) {
+                this.ref = ref;
+            }
+
+            public String getStatus() {
+                return status;
+            }
+
+            public void setStatus(String status) {
+                this.status = status;
+            }
         }
     }
 
