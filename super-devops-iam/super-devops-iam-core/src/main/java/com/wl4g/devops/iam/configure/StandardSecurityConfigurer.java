@@ -15,18 +15,19 @@
  */
 package com.wl4g.devops.iam.configure;
 
-import com.wl4g.devops.common.bean.iam.*;
 import com.wl4g.devops.common.bean.erm.ClusterConfig;
+import com.wl4g.devops.common.bean.iam.*;
+import com.wl4g.devops.dao.erm.ClusterConfigDao;
+import com.wl4g.devops.dao.iam.GroupDao;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.UserDao;
-import com.wl4g.devops.dao.erm.ClusterConfigDao;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SimpleParameter;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SnsParameter;
-
+import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -44,12 +45,14 @@ import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsAny;
 import static org.springframework.util.CollectionUtils.isEmpty;
+import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
 
 /**
  * Standard IAM Security context handler
- * 
+ *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
  * @date 2018年12月29日
@@ -71,6 +74,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	private transient RoleDao roleDao;
 	@Autowired
 	private transient MenuDao menuDao;
+	@Autowired
+	private transient GroupDao groupDao;
 
 	@Value("${spring.profiles.active}")
 	private String active;
@@ -177,8 +182,13 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			user = userDao.selectByUserName(simpleParameter.getPrincipal());
 		}
 		if (nonNull(user)) {
+			// Sets user organizations.
+			List<Group> groups = groupDao.selectByUserId(user.getId());
+			List<OrganizationInfo> oInfo = groups.stream().map(o -> new OrganizationInfo(o.getIdentification(), null))
+					.collect(toList());
 			return new SimplePrincipalInfo(String.valueOf(user.getId()), user.getUserName(), user.getPassword(),
-					getRoles(user.getUserName()), getPermissions(user.getUserName()));
+					getRoles(user.getUserName()), getPermissions(user.getUserName()))
+							.setOrganization(new PrincipalOrganization(oInfo));
 		}
 		return null;
 	}
@@ -205,7 +215,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	/**
 	 * Get current authenticate principal role codes.
-	 * 
+	 *
 	 * @param principal
 	 * @return
 	 */
@@ -232,7 +242,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 
 	/**
 	 * Get current authenticate principal permissions.
-	 * 
+	 *
 	 * @param principal
 	 * @return
 	 */

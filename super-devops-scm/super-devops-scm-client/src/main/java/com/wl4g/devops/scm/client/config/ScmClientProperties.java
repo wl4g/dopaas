@@ -70,8 +70,7 @@ public class ScmClientProperties extends AbstractScmProperties {
 	/** Maximum waiting time for long polling failure. */
 	private long longPollMaxDelay = 15 * 1000L;
 
-	/** Refresh Protect Interval */
-	private long refreshProtectIntervalMs = 10_000;
+	private long refreshProtectIntervalMs = 10_000L;
 
 	/**
 	 * Refresh name-space(configuration filename)</br>
