@@ -13,4 +13,17 @@ public class IamOrganizationUtils {
         IamPrincipalInfo principalInfo = IamSecurityHolder.getPrincipalInfo();
     }
 
+    public void list2Tree(){
+
+    }
+
+
+
+    public static class Organization{
+
+
+
+
+    }
+
 }
