@@ -31,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**
@@ -48,14 +49,14 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public List<Host> list(String name, String hostname, Integer idcId) {
-        List<Host> list = appHostDao.list(name, hostname, idcId);
+        List<Host> list = appHostDao.list(getCurrentOrganizationCodes(), name, hostname, idcId);
         return list;
     }
 
     @Override
     public PageModel page(PageModel pm,String name, String hostname, Integer idcId) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(appHostDao.list(name, hostname, idcId));
+        pm.setRecords(appHostDao.list(getCurrentOrganizationCodes(), name, hostname, idcId));
         return pm;
     }
 

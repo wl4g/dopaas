@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.AppInstance" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
     <result column="cluster_id" property="clusterId" jdbcType="INTEGER" />
     <result column="version_id" property="versionId" jdbcType="INTEGER" />
     <result column="server_type" property="serverType" jdbcType="INTEGER" />
@@ -44,6 +45,7 @@
   <resultMap id="BaseResultMapWithOUtSsh" type="com.wl4g.devops.common.bean.erm.AppInstance" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
     <result column="cluster_id" property="clusterId" jdbcType="INTEGER" />
     <result column="version_id" property="versionId" jdbcType="INTEGER" />
     <result column="server_type" property="serverType" jdbcType="INTEGER" />
@@ -66,12 +68,12 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, name, cluster_id, version_id, server_type, host_id, k8s_id, docker_id, env_type, enable, ssh_id, endpoint, remark,
+    id, name, organization_code, cluster_id, version_id, server_type, host_id, k8s_id, docker_id, env_type, enable, ssh_id, endpoint, remark,
     create_by, create_date, update_by, update_date, del_flag
   </sql>
 
   <sql id="Base_Column_List_i" >
-    i.id, i.name, i.cluster_id, i.version_id, i.server_type, i.host_id, i.k8s_id, i.docker_id, i.env_type, i.enable, i.ssh_id, i.endpoint, i.remark,
+    i.id, i.name, i.organization_code, i.cluster_id, i.version_id, i.server_type, i.host_id, i.k8s_id, i.docker_id, i.env_type, i.enable, i.ssh_id, i.endpoint, i.remark,
     i.create_by, i.create_date, i.update_by, i.update_date, i.del_flag
   </sql>
 
@@ -126,6 +128,12 @@
     <if test="serverType != null" >
       and i.server_type = #{serverType,jdbcType=INTEGER}
     </if>
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and i.organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>
   </select>
 
   <select id="countByClusterId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
@@ -140,12 +148,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
-    insert into erm_app_instance (id, name, cluster_id, version_id, server_type,
+    insert into erm_app_instance (id, name,organization_code, cluster_id, version_id, server_type,
       host_id, k8s_id, docker_id, env_type, enable, ssh_id,
       endpoint, remark,
       create_by, create_date, update_by,
       update_date, del_flag)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{clusterId,jdbcType=INTEGER}, #{versionId,jdbcType=INTEGER},#{serverType,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},#{organizationCode,jdbcType=VARCHAR}, #{clusterId,jdbcType=INTEGER}, #{versionId,jdbcType=INTEGER},#{serverType,jdbcType=INTEGER},
       #{hostId,jdbcType=INTEGER},#{k8sId,jdbcType=INTEGER},#{dockerId,jdbcType=INTEGER}, #{envType,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{sshId,jdbcType=INTEGER},
       #{endpoint,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
       #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER},
@@ -159,6 +167,9 @@
       </if>
       <if test="name != null" >
         name,
+      </if>
+      <if test="organizationCode != null" >
+        organization_code,
       </if>
       <if test="clusterId != null" >
         cluster_id,
@@ -216,6 +227,9 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null" >
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="clusterId != null" >
         #{clusterId,jdbcType=INTEGER},
       </if>
@@ -272,6 +286,9 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null" >
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="clusterId != null" >
         cluster_id = #{clusterId,jdbcType=INTEGER},
       </if>
@@ -326,6 +343,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
     update erm_app_instance
     set name = #{name,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
       cluster_id = #{clusterId,jdbcType=INTEGER},
       version_id = #{versionId,jdbcType=INTEGER},
       server_type = #{serverType,jdbcType=INTEGER},

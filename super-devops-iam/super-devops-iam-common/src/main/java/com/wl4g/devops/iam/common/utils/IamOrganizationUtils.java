@@ -33,6 +33,29 @@ public class IamOrganizationUtils {
     }
 
     /**
+     * Get Organization Codes By current Code
+     * @param code
+     * @return
+     */
+    public static List<String> getOrganizationCodesByCode(String code) {
+        List<OrganizationInfo> organizationsByCode = getOrganizationsByCode(code);
+        List<String> codes = new ArrayList<>();
+        for(OrganizationInfo organizationInfo : organizationsByCode){
+            codes.add(organizationInfo.getOrganizationCode());
+        }
+        return codes;
+    }
+
+    /**
+     * Get Organization Codes By current Code
+     * @param code
+     * @return
+     */
+    public static List<String> getCurrentOrganizationCodes() {
+        return getOrganizationCodesByCode((getCurrentOrganizationInfo()));
+    }
+
+    /**
      * Get Organization Tree for show
      * @return
      */
@@ -49,8 +72,7 @@ public class IamOrganizationUtils {
     }
 
     public static String getCurrentOrganizationInfo(){
-        Object bindValue = IamSecurityHolder.getBindValue(CURRENT_ORGANIZATION_CODE);
-        return null;
+        return IamSecurityHolder.getBindValue(CURRENT_ORGANIZATION_CODE);
     }
 
     public static void changeCurrentOrganizationInfo(String currentOrganizationCode){

@@ -39,6 +39,7 @@ import java.util.UUID;
 
 import static com.wl4g.devops.erm.util.SshkeyUtils.decryptSshkeyFromHex;
 import static com.wl4g.devops.erm.util.SshkeyUtils.encryptSshkeyToHex;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**
@@ -63,13 +64,13 @@ public class SshServiceImpl implements SshService {
     @Override
     public PageModel page(PageModel pm,String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(sshDao.list(name));
+        pm.setRecords(sshDao.list(getCurrentOrganizationCodes(), name));
         return pm;
     }
 
     @Override
     public List<Ssh> getForSelect() {
-        return sshDao.list(null);
+        return sshDao.list(getCurrentOrganizationCodes(),null);
     }
 
     public void save(Ssh ssh){

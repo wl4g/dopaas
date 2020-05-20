@@ -55,6 +55,13 @@ public class User extends BaseBean implements Serializable {
 
 	private String awsId;
 
+	public User() {
+	}
+
+	public User(String userName) {
+		this.userName = userName;
+	}
+
 	// other
 	private List<Integer> roleIds;
 

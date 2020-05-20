@@ -71,7 +71,7 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public List<Group> getGroupsTree() {
 		IamPrincipalInfo info = getPrincipalInfo();
-		Set<Group> groupsSet = getGroupsSet(info);
+		Set<Group> groupsSet = getGroupsSet(new User(info.getPrincipal()));
 		ArrayList<Group> groups = new ArrayList<>(groupsSet);
 		return set2Tree(groups);
 	}
@@ -121,14 +121,14 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public Set<Group> getGroupsSet(IamPrincipalInfo info) {
+	public Set<Group> getGroupsSet(User user) {
 		//IamPrincipalInfo info = getPrincipalInfo();
 
 		List<Group> groups = null;
-		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
+		if (DEFAULT_USER_ROOT.equals(user.getUserName())) {
 			groups = groupDao.selectByRoot();
 		} else {
-			groups = groupDao.selectByUserId(parseIntOrNull(info.getPrincipalId()));
+			groups = groupDao.selectByUserId(parseIntOrNull(user.getUserName()));
 		}
 
 		Set<Group> set = new HashSet<>();

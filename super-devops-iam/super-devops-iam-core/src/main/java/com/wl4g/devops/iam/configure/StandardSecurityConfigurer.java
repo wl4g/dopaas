@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
 import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static java.util.Collections.emptyList;
@@ -51,7 +51,6 @@ import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsAny;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
 
 /**
  * Standard IAM Security context handler
@@ -188,8 +187,9 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		}
 		if (nonNull(user)) {
 			// Sets user organizations.
-			IamPrincipalInfo info = getPrincipalInfo();
-			Set<Group> groupsSet = groupService.getGroupsSet(info);
+			//IamPrincipalInfo info = getPrincipalInfo();
+
+			Set<Group> groupsSet = groupService.getGroupsSet(user);
 
 			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(), o.getParentCode()))
 					.collect(toList());

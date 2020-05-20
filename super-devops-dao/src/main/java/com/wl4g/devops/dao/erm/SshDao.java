@@ -1,6 +1,5 @@
 package com.wl4g.devops.dao.erm;
 
-import com.wl4g.devops.common.bean.erm.Idc;
 import com.wl4g.devops.common.bean.erm.Ssh;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,5 +18,5 @@ public interface SshDao {
 
     int updateByPrimaryKey(Ssh record);
 
-    List<Ssh> list(@Param("name") String name);
+    List<Ssh> list(@Param("organizationCodes")List<String> organizationCodes, @Param("name") String name);
 }
