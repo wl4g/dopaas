@@ -15,12 +15,17 @@
  */
 package com.wl4g.devops.iam.common.subject;
 
-import static java.util.Collections.emptyMap;
+import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import org.springframework.util.Assert;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static java.util.Collections.emptyMap;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * IAM principal account information.
@@ -49,15 +54,25 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	 * Principal role codes. </br>
 	 * <p>
 	 * EG: sc_sys_mgt,sc_general_mgt,sc_general_operator,sc_user_jack
+	 * </p>
 	 *
 	 * @return principal role codes.
 	 */
 	String getRoles();
 
 	/**
+	 * Principal organization. </br>
+	 * <p>
+	 *
+	 * @return principal organizations identifiers.
+	 */
+	PrincipalOrganization getOrganization();
+
+	/**
 	 * Principal permissions. </br>
 	 * <p>
 	 * e.g.: sys:user:view,sys:user:edit,goods:order:view,goods:order:edit
+	 * </p>
 	 *
 	 * @return principal permission identifiers.
 	 */
@@ -245,6 +260,97 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 		@Override
 		public String getUnionId() {
 			return unionId;
+		}
+
+	}
+
+	/**
+	 * Principal organization tree info.
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年5月18日 v1.0.0
+	 * @see
+	 */
+	public static class PrincipalOrganization implements Serializable {
+		private static final long serialVersionUID = -8256334665161483288L;
+
+		/**
+		 * Principal organization identification. Organization structure, unique
+		 * ID, Uneditable.
+		 */
+		private List<OrganizationInfo> organizations = new ArrayList<>(4);
+
+		public PrincipalOrganization() {
+			super();
+		}
+
+		public PrincipalOrganization(List<OrganizationInfo> organizations) {
+			setOrganizations(organizations);
+		}
+
+		public List<OrganizationInfo> getOrganizations() {
+			return organizations;
+		}
+
+		public PrincipalOrganization setOrganizations(List<OrganizationInfo> organizations) {
+			if (!isEmpty(organizations)) {
+				this.organizations.addAll(organizations);
+			}
+			return this;
+		}
+
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " => " + toJSONString(this);
+		}
+
+	}
+
+	/**
+	 * Organization info.
+	 *
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年5月18日 v1.0.0
+	 * @see
+	 */
+	public static class OrganizationInfo implements Serializable {
+		private static final long serialVersionUID = -8256333665161483288L;
+
+		/**
+		 * Organization Unique identification
+		 */
+		private String organizationCode;
+
+		/**
+		 * Parent organization code
+		 */
+		private String parent;
+
+		public OrganizationInfo() {
+			super();
+		}
+
+		public OrganizationInfo(String organizationCode, String parent) {
+			setOrganizationCode(organizationCode);
+			setParent(parent);
+		}
+
+		public String getOrganizationCode() {
+			return organizationCode;
+		}
+
+		public void setOrganizationCode(String organizationCode) {
+			hasTextOf(organizationCode, "organizationCode");
+			this.organizationCode = organizationCode;
+		}
+
+		public String getParent() {
+			return parent;
+		}
+
+		public void setParent(String parent) {
+			// hasTextOf(parent, "parent");
+			this.parent = parent;
 		}
 
 	}

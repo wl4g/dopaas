@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.tool.hbase.migrator.mapred;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.client.Put;
@@ -39,6 +41,8 @@ import java.util.Optional;
  */
 public abstract class AbstractTransformMapper extends TableMapper<ImmutableBytesWritable, Put> {
 
+	final protected Log log = LogFactory.getLog(getClass());
+
 	@Override
 	public void map(ImmutableBytesWritable row, Result value, Context context) throws IOException, InterruptedException {
 		context.getCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_TOTAL).increment(1);
@@ -46,7 +50,7 @@ public abstract class AbstractTransformMapper extends TableMapper<ImmutableBytes
 		// Loading raw table data to perform processing.
 		Optional<Put> opt = transform(row, value);
 		if (opt.isPresent()) {
-			context.getCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_FILTERED).increment(1);
+			context.getCounter(DEFUALT_COUNTER_GROUP, DEFUALT_COUNTER_PROCESSED).increment(1);
 			context.write(row, opt.get());
 		}
 	}

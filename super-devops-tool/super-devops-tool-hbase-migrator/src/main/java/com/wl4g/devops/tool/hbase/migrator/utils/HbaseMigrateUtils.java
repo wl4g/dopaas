@@ -17,6 +17,9 @@ package com.wl4g.devops.tool.hbase.migrator.utils;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static java.lang.System.out;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 import java.io.IOException;
 
@@ -34,7 +37,11 @@ public class HbaseMigrateUtils {
 
 	final public static String DEFUALT_COUNTER_GROUP = HbaseMigrateUtils.class.getSimpleName() + "@CounterGroup";
 	final public static String DEFUALT_COUNTER_TOTAL = "Total@Counter";
-	final public static String DEFUALT_COUNTER_FILTERED = "Filtered@Counter";
+	final public static String DEFUALT_COUNTER_PROCESSED = "Processed@Counter";
+	final public static String DEFAULT_HBASE_MR_TMPDIR = "/tmp-devops/tmpdir";
+	final public static String DEFAULT_HFILE_OUTPUT_DIR = "/tmp-devops/outputdir";
+	final public static String DEFAULT_SCAN_BATCH_SIZE = "1000";
+	final public static String DEFAULT_USER = "hbase";
 
 	/**
 	 * Extract byte array without changing the original array.
@@ -58,6 +65,42 @@ public class HbaseMigrateUtils {
 	public static void showBanner() throws IOException {
 		out.println(
 				Resources.toString(new ClassPathResourcePatternResolver().getResource("classpath:banner.txt").getURL(), UTF_8));
+	}
+
+	/**
+	 * Gets short tableName
+	 * 
+	 * @param tableName
+	 * @return
+	 */
+	public static String getShortTableName(String tableName) {
+		if (isBlank(tableName)) {
+			return EMPTY;
+		}
+
+		int index = tableName.indexOf(".");
+		if (index > 0) {
+			String shortTableName = tableName.substring(index + 1);
+			return shortTableName;
+		}
+
+		return tableName;
+	}
+
+	/**
+	 * Is ignore hbase qualifier fields. </br>
+	 * 
+	 * <p>
+	 * Exclude HBase internal built-in fields, for example: '_0'
+	 * </p>
+	 * 
+	 * @return
+	 */
+	public static boolean isIgnoreHbaseQualifier(String qualifier) {
+		if (qualifier.startsWith("_") && qualifier.length() == 2) {
+			return isNumeric(qualifier.substring(1));
+		}
+		return false;
 	}
 
 }

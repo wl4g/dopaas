@@ -15,14 +15,11 @@
  */
 package com.wl4g.devops.tool.hbase.migrator;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.state;
-import static com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils.*;
-import static java.lang.String.format;
-
 import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
-import com.wl4g.devops.tool.common.lang.Assert2;
-import com.wl4g.devops.tool.hbase.migrator.mapred.NoOpTransformMapper;
-import com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils;
+
+import static com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils.*;
+
+import java.net.URI;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.lang3.ClassUtils;
@@ -35,47 +32,55 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.HFileOutputFormat2;
 import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
-import org.apache.hadoop.hbase.protobuf.ProtobufUtil;
-import org.apache.hadoop.hbase.protobuf.generated.ClientProtos;
-import org.apache.hadoop.hbase.util.Base64;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.io.IOException;
-import java.net.URI;
-import java.sql.Timestamp;
+import com.wl4g.devops.tool.hbase.migrator.mapred.SimpleHfileToRmdbMapper;
+import com.wl4g.devops.tool.hbase.migrator.rmdb.RmdbMigrateManager;
+import com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils;
 
 /**
- * HASE hfile bulk exporter.
+ * Simple HBase hfile to mysql exporter. </br>
+ * 
+ * <p>
+ * Note: It is a very good migration tool in the development environment, but it
+ * is not recommended for the production environment. Generally, the demand data
+ * flow of the production environment migration is RMDB(MySQL/Oracle/...) =>
+ * HBase/HDFS/Hive. In this scenario, it is recommended to use professional
+ * migration tools, such as sqoop or streamsets.
+ * </p>
  * 
  * @author Wangl.sir
  * @version v1.0 2019年9月6日
  * @since
  */
-public class HfileBulkExporter {
-	final static Log log = LogFactory.getLog(HfileBulkExporter.class);
+public class SimpleHfileToRmdbExporter {
+	final static Log log = LogFactory.getLog(SimpleHfileToRmdbExporter.class);
 
-	final public static String DEFAULT_MAPPER_CLASS = NoOpTransformMapper.class.getName();
+	final public static String DEFAULT_MAPPER_CLASS = SimpleHfileToRmdbMapper.class.getName();
+	final public static int DEFAULT_RMDB_MAXCONNECTIONS = 100;
+
+	public static RmdbMigrateManager currentRmdbManager;
+	public static boolean verbose;
 
 	/**
 	 * e.g. </br>
 	 * 
 	 * <pre>
-	 *  yarn jar super-devops-tool-hbase-migrator-master.jar \
-	 *  com.wl4g.devops.tool.hbase.migrator.HfileBulkExporter \
-	 *  -s 11111112,ELE_R_P,134,01,20180919110850989 \
-	 *  -e 11111112,ELE_R_P,134,01,20180921124050540 \
-	 *  -z emr-header-1:2181 \
-	 *  -t safeclound.tb_elec_power \
-	 *  -o /tmp-devops/safeclound.tb_elec_power
+	 * java -cp super-devops-tool-hbase-migrator-master.jar \
+	 * com.wl4g.devops.tool.hbase.migrator.SimpleHfileToRmdbExporter \
+	 * -z emr-header-1:2181 \
+	 * -t safeclound.tb_elec_power \
+	 * -j 'jdbc:mysql://localhost:3306/my_tsdb?useUnicode=true&characterEncoding=utf-8&useSSL=false' \
+	 * -u root \
+	 * -p '123456' \
+	 * -c 100 \
+	 * -s 11111112,ELE_R_P,134,01,20180919110850989 \
+	 * -e 11111112,ELE_R_P,134,01,20180921124050540
 	 * </pre>
 	 * 
 	 * @param args
@@ -85,6 +90,8 @@ public class HfileBulkExporter {
 		HbaseMigrateUtils.showBanner();
 
 		Builder builder = new Builder();
+		builder.option("V", "verbose", false,
+				"Set to true to show messages about what the migrator(MR) is doing. default: false");
 		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_MR_TMPDIR);
 		builder.option("z", "zkaddr", true, "Zookeeper address.");
 		builder.option("t", "tabname", true, "Hbase table name.");
@@ -97,7 +104,20 @@ public class HfileBulkExporter {
 		builder.option("E", "endTime", false, "Scan end timestamp.");
 		builder.option("U", "user", false, "User name used for scan check (default: hbase)");
 		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default: " + DEFAULT_MAPPER_CLASS);
-		doExporting(builder.build(args));
+		builder.option("j", "jdbcUrl", true, "Hbase to rmdb database jdbc url");
+		builder.option("u", "username", true, "Hbase to rmdb database jdbc username");
+		builder.option("p", "password", true, "Hbase to rmdb database jdbc password");
+		builder.option("c", "maxConnections", false,
+				"Hbase to rmdb database jdbc maxConnections. default: " + DEFAULT_RMDB_MAXCONNECTIONS);
+		CommandLine line = builder.build(args);
+
+		// Gets rmdb provider instance.
+		currentRmdbManager = RmdbMigrateManager.getInstance(line);
+		// Verbose
+		verbose = Boolean.parseBoolean(line.getOptionValue("verbose"));
+
+		// DO exporting
+		doRmdbExporting(line);
 	}
 
 	/**
@@ -107,7 +127,7 @@ public class HfileBulkExporter {
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void doExporting(CommandLine line) throws Exception {
+	public static void doRmdbExporting(CommandLine line) throws Exception {
 		// Configuration.
 		String tabname = line.getOptionValue("tabname");
 		String user = line.getOptionValue("user");
@@ -120,10 +140,12 @@ public class HfileBulkExporter {
 		// Check directory.
 		String outputDir = line.getOptionValue("output", DEFAULT_HFILE_OUTPUT_DIR) + "/" + tabname;
 		FileSystem fs = FileSystem.get(new URI(outputDir), new Configuration(), user);
-		state(!fs.exists(new Path(outputDir)), format("HDFS temporary directory already has data, path: '%s'", outputDir));
+		if (fs.exists(new Path(outputDir))) {
+			fs.delete(new Path(outputDir), true);
+		}
 
 		// Set scan condition.(if necessary)
-		setScanIfNecessary(conf, line);
+		HfileBulkExporter.setScanIfNecessary(conf, line);
 
 		// Job.
 		Connection conn = ConnectionFactory.createConnection(conf);
@@ -144,57 +166,6 @@ public class HfileBulkExporter {
 			log.info(String.format("Exported to successfully! with processed:(%d)/total:(%d)", processed, total));
 		}
 
-	}
-
-	/**
-	 * Setup scan condition if necessary.
-	 * 
-	 * @param conf
-	 * @param line
-	 * @throws IOException
-	 */
-	public static void setScanIfNecessary(Configuration conf, CommandLine line) throws IOException {
-		String startRow = line.getOptionValue("startRow");
-		String endRow = line.getOptionValue("endRow");
-		String startTime = line.getOptionValue("startTime");
-		String endTime = line.getOptionValue("endTime");
-
-		boolean enabledScan = false;
-		Scan scan = new Scan();
-		// Row
-		if (isNotBlank(startRow)) {
-			conf.set(TableInputFormat.SCAN_ROW_START, startRow);
-			scan.setStartRow(Bytes.toBytes(startRow));
-			enabledScan = true;
-		}
-		if (isNotBlank(endRow)) {
-			Assert2.hasText(startRow, "Argument for startRow and endRow are used simultaneously");
-			conf.set(TableInputFormat.SCAN_ROW_STOP, endRow);
-			scan.setStopRow(Bytes.toBytes(endRow));
-			enabledScan = true;
-		}
-
-		// Row TimeStamp
-		if (isNotBlank(startTime) && isNotBlank(endTime)) {
-			conf.set(TableInputFormat.SCAN_TIMERANGE_START, startTime);
-			conf.set(TableInputFormat.SCAN_TIMERANGE_END, endTime);
-			try {
-				Timestamp stime = new Timestamp(Long.parseLong(startTime));
-				Timestamp etime = new Timestamp(Long.parseLong(endTime));
-				scan.setTimeRange(stime.getTime(), etime.getTime());
-				enabledScan = true;
-			} catch (Exception e) {
-				throw new IllegalArgumentException(String.format("Illegal startTime(%s) and endTime(%s)", startTime, endTime), e);
-			}
-		}
-
-		if (enabledScan) {
-			ClientProtos.Scan proto = ProtobufUtil.toScan(scan);
-			log.info("All other SCAN configuration are ignored if\n"
-					+ "		 * this is specified.See TableMapReduceUtil.convertScanToString(Scan)\n"
-					+ "		 * for more details.");
-			conf.set(TableInputFormat.SCAN, Base64.encodeBytes(proto.toByteArray()));
-		}
 	}
 
 }
