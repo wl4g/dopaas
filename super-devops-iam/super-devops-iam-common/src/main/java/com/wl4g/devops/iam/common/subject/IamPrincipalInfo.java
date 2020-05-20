@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Collections.emptyMap;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -340,7 +339,7 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 		}
 
 		public void setOrganizationCode(String organizationCode) {
-			hasTextOf(organizationCode, "organizationCode");
+			// hasTextOf(organizationCode, "organizationCode");
 			this.organizationCode = organizationCode;
 		}
 
