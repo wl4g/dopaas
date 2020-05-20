@@ -17,10 +17,7 @@ package com.wl4g.devops.iam.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.iam.Group;
-import com.wl4g.devops.common.bean.iam.GroupRole;
-import com.wl4g.devops.common.bean.iam.Role;
-import com.wl4g.devops.common.bean.iam.RoleMenu;
+import com.wl4g.devops.common.bean.iam.*;
 import com.wl4g.devops.dao.iam.GroupDao;
 import com.wl4g.devops.dao.iam.GroupRoleDao;
 import com.wl4g.devops.dao.iam.RoleDao;
@@ -78,7 +75,7 @@ public class RoleServiceImpl implements RoleService {
 			return roleDao.selectWithRoot(null, null);
 		} else {
 			// Groups of userId.
-			Set<Group> groups = groupService.getGroupsSet(info);
+			Set<Group> groups = groupService.getGroupsSet(new User(info.getPrincipal()));
 			List<Integer> groupIds = new ArrayList<>();
 			for (Group group : groups) {
 				groupIds.add(group.getId());
@@ -93,7 +90,7 @@ public class RoleServiceImpl implements RoleService {
 	public PageModel list(PageModel pm, String roleCode, String displayName) {
 		IamPrincipalInfo info = getPrincipalInfo();
 
-		Set<Group> groupSet = groupService.getGroupsSet(info);
+		Set<Group> groupSet = groupService.getGroupsSet(new User(info.getPrincipal()));
 		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 			List<Role> roles = roleDao.selectWithRoot(roleCode, displayName);

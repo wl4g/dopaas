@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.service;
 
 import com.wl4g.devops.common.bean.iam.Group;
-import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.common.bean.iam.User;
 
 import java.util.List;
 import java.util.Set;
@@ -35,7 +35,7 @@ public interface GroupService {
 
 	Group detail(Integer id);
 
-	Set<Group> getGroupsSet(IamPrincipalInfo info);
+	Set<Group> getGroupsSet(User user);
 
 	Group getParent(List<Group> groups, Integer parentId);
 

@@ -31,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**
@@ -49,13 +50,13 @@ public class DockerClusterServiceImpl implements DockerClusterService {
     @Override
     public PageModel page(PageModel pm,String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(dockerClusterDao.list(name));
+        pm.setRecords(dockerClusterDao.list(getCurrentOrganizationCodes(), name));
         return pm;
     }
 
     @Override
     public List<DockerCluster> getForSelect() {
-        return dockerClusterDao.list(null);
+        return dockerClusterDao.list(getCurrentOrganizationCodes(),null);
     }
 
     public void save(DockerCluster dockerCluster){

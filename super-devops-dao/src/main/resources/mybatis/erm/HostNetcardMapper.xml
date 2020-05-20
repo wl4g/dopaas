@@ -5,6 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="host_id" jdbcType="INTEGER" property="hostId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="vpn_tunnel_type" jdbcType="INTEGER" property="vpnTunnelType" />
     <result column="openvpn_tunnel_id" jdbcType="INTEGER" property="openvpnTunnelId" />
@@ -22,7 +23,7 @@
     <result column="del_flag" jdbcType="INTEGER" property="delFlag" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, host_id, name, status, vpn_tunnel_type, openvpn_tunnel_id, pptp_tunnel_id, ipv4, 
+    id, host_id, name, organization_code, status, vpn_tunnel_type, openvpn_tunnel_id, pptp_tunnel_id, ipv4,
     ipv6, hwaddr, netmask, broadcast, getway, create_date, create_by, update_date, update_by, 
     del_flag
   </sql>
@@ -37,14 +38,14 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.HostNetcard">
-    insert into erm_host_netcard (id, host_id, name, 
+    insert into erm_host_netcard (id, host_id, name, organization_code,
       status, vpn_tunnel_type, openvpn_tunnel_id, 
       pptp_tunnel_id, ipv4, ipv6, 
       hwaddr, netmask, broadcast, 
       getway, create_date, create_by, 
       update_date, update_by, del_flag
       )
-    values (#{id,jdbcType=INTEGER}, #{hostId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{hostId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR},
       #{status,jdbcType=VARCHAR}, #{vpnTunnelType,jdbcType=INTEGER}, #{openvpnTunnelId,jdbcType=INTEGER}, 
       #{pptpTunnelId,jdbcType=INTEGER}, #{ipv4,jdbcType=VARCHAR}, #{ipv6,jdbcType=VARCHAR}, 
       #{hwaddr,jdbcType=VARCHAR}, #{netmask,jdbcType=VARCHAR}, #{broadcast,jdbcType=VARCHAR}, 
@@ -63,6 +64,9 @@
       </if>
       <if test="name != null">
         name,
+      </if>
+      <if test="organizationCode != null">
+        organization_code,
       </if>
       <if test="status != null">
         status,
@@ -120,6 +124,9 @@
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
         #{status,jdbcType=VARCHAR},
       </if>
@@ -176,6 +183,9 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
         status = #{status,jdbcType=VARCHAR},
       </if>
@@ -228,6 +238,7 @@
     update erm_host_netcard
     set host_id = #{hostId,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
       status = #{status,jdbcType=VARCHAR},
       vpn_tunnel_type = #{vpnTunnelType,jdbcType=INTEGER},
       openvpn_tunnel_id = #{openvpnTunnelId,jdbcType=INTEGER},
@@ -257,7 +268,12 @@
     <if test="hostId != null" >
       AND host_id = #{hostId,jdbcType=INTEGER}
     </if>
-
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>
   </select>
 
 </mapper>

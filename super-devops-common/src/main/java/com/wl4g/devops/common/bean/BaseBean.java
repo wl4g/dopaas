@@ -73,6 +73,11 @@ public abstract class BaseBean implements Serializable {
 	private String remark; // 备注
 
 	/**
+	 * For data permission, associated Organization (tree) code query
+	 */
+	private String organizationCode;
+
+	/**
 	 * Execute method before inserting, need to call manually
 	 */
 	public void preInsert() {
@@ -84,6 +89,15 @@ public abstract class BaseBean implements Serializable {
 		setUpdateDate(getCreateDate());
 		setUpdateBy(DEFAULT_USER_ID);
 		setDelFlag(DEL_FLAG_NORMAL);
+	}
+
+	/**
+	 * Execute method before inserting, need to call manually
+	 * @param organizationCode
+	 */
+	public void preInsert(String organizationCode) {
+		this.organizationCode = organizationCode;
+		preInsert();
 	}
 
 	/**
@@ -158,4 +172,11 @@ public abstract class BaseBean implements Serializable {
 		this.remark = remark;
 	}
 
+	public String getOrganizationCode() {
+		return organizationCode;
+	}
+
+	public void setOrganizationCode(String organizationCode) {
+		this.organizationCode = organizationCode;
+	}
 }
