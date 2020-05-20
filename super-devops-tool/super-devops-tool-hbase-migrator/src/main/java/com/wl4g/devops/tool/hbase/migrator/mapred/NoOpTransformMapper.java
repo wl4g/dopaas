@@ -22,6 +22,6 @@ package com.wl4g.devops.tool.hbase.migrator.mapred;
  * @version v1.0 2019年9月6日
  * @since
  */
-public class NothingTransformMapper extends AbstractTransformMapper {
+public class NoOpTransformMapper extends AbstractTransformMapper {
 
 }

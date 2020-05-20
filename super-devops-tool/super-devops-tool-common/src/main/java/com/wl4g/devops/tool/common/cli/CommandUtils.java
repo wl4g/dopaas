@@ -146,8 +146,7 @@ public class CommandUtils {
 		 *            the option that is to be added
 		 * @return the resulting Options instance
 		 */
-		@SuppressWarnings("unlikely-arg-type")
-		public Options removeOption(Option opt) {
+		public RemovableOptions removeOption(Option opt) {
 			if (!isNull(opt)) {
 				getShortOpts().remove(opt);
 				getLongOpts().remove(opt);
