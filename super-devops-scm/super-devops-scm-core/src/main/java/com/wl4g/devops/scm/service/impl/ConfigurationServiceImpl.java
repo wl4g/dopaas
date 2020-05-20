@@ -25,10 +25,12 @@ import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
+import com.wl4g.devops.common.exception.scm.TooManyRefreshException;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
+import com.wl4g.devops.scm.config.ScmServerProperties;
 import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.scm.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * DevOps configuration core service implement.
@@ -63,6 +62,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	private AppInstanceDao appInstanceDao;
 	@Autowired
 	private ConfigContextHandler contextHandler;
+	@Autowired
+	private ScmServerProperties scmServerProperties;
+
+	private static final Map<String,Long> refreshProtectIntervalMap = new HashMap<>();
 
 	@Override
 	public void configure(VersionOfDetail vd) {
@@ -71,6 +74,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		if (nodeIdList == null || nodeIdList.isEmpty()) {// 如果实例id列表为空则不进行操作
 			return;
 		}
+		checkRefreshProtectInterval(nodeIdList);
+		updateRefreshTime(nodeIdList);
 		String sign = signVersionContent(vd);
 		List<AppInstance> nodeList = new ArrayList<>();
 		for (String nodeId : nodeIdList) {
@@ -211,6 +216,23 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			return Hashing.md5().newHasher(32).putString(plain, Charsets.UTF_8).hash().toString();
 		}
 		return null;
+	}
+
+	private void checkRefreshProtectInterval(List<String> nodeIdList){
+		for(String node : nodeIdList){
+			Long aLong = refreshProtectIntervalMap.get(node);
+			if(Objects.nonNull(aLong) && System.currentTimeMillis()-aLong <=scmServerProperties.getRefreshProtectIntervalMs()){
+				throw new TooManyRefreshException("Too many refresh");
+			}
+		}
+	}
+
+	private void updateRefreshTime(List<String> nodeIdList){
+		long now = System.currentTimeMillis();
+		for(String node : nodeIdList){
+			refreshProtectIntervalMap.put(node,now);
+		}
+
 	}
 
 }

@@ -45,11 +45,11 @@ public class HfileBulkImporter {
 	 * e.g.</br>
 	 * 
 	 * <pre>
-	 * yarn jar super-devops-tool-hbase-migrator-master.jar \
-	 * com.wl4g.devops.tool.hbase.migrate.HfileBulkImporter \
-	 * -z emr-header-1:2181 \
-	 * -t safeclound.tb_elec_power \
-	 * -p /tmp-devops/hfileoutputdir/safeclound.tb_elec_power
+	 *  yarn jar super-devops-tool-hbase-migrator-master.jar \
+	 *  com.wl4g.devops.tool.hbase.migrator.HfileBulkImporter \
+	 *  -z emr-header-1:2181 \
+	 *  -t safeclound.tb_elec_power \
+	 *  -p /tmp-devops/safeclound.tb_elec_power
 	 * </pre>
 	 * 
 	 * @param args

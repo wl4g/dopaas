@@ -46,6 +46,7 @@ import static com.wl4g.devops.scm.client.configure.RefreshConfigHolder.*;
 import static com.wl4g.devops.tool.common.lang.ThreadUtils2.sleep;
 import static com.wl4g.devops.tool.common.lang.ThreadUtils2.sleepRandom;
 import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.springframework.http.HttpMethod.POST;
@@ -58,8 +59,6 @@ import static org.springframework.http.HttpMethod.POST;
  * @since
  */
 public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
-
-    private long lastUpdateTime = 0;
 
     /**
      * This is to solve the time difference between releasing the watching
@@ -76,6 +75,11 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
      * Watching last connected state.
      */
     final private AtomicBoolean lastWatchState = new AtomicBoolean(false);
+
+    /**
+     * Last Update Time
+     */
+    private long lastUpdateTime = 0;
 
     /**
      * Retry failure exceed threshold fast-fail
@@ -140,8 +144,11 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
     }
 
     private void checkRefreshProtectInterval() {
-        if(new Date().getTime()-lastUpdateTime<=config.getRefreshProtectIntervalMs()){
-            log.warn("");
+        long now = currentTimeMillis();
+        long intervalMs = now - lastUpdateTime;
+        if (intervalMs < config.getRefreshProtectIntervalMs()) {
+            log.warn("Refresh too fast? Watch long polling waiting... , lastUpdateTime: {}, now: {}, intervalMs: {}",
+                    lastUpdateTime, now, intervalMs);
             sleep(config.getRefreshProtectIntervalMs());
         }
     }
@@ -166,7 +173,7 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
                     setReleaseMeta(resp.getBody());
                     // Records changed property names.
                     addChanged(refresher.refresh());
-                    lastUpdateTime = new Date().getTime();
+                    lastUpdateTime = currentTimeMillis();
                     break;
                 case CHECKPOINT:
                     // Report refresh changed
