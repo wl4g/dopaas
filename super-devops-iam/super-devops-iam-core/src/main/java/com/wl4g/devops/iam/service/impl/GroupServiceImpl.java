@@ -70,7 +70,8 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public List<Group> getGroupsTree() {
-		Set<Group> groupsSet = getGroupsSet();
+		IamPrincipalInfo info = getPrincipalInfo();
+		Set<Group> groupsSet = getGroupsSet(info);
 		ArrayList<Group> groups = new ArrayList<>(groupsSet);
 		return set2Tree(groups);
 	}
@@ -120,8 +121,8 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public Set<Group> getGroupsSet() {
-		IamPrincipalInfo info = getPrincipalInfo();
+	public Set<Group> getGroupsSet(IamPrincipalInfo info) {
+		//IamPrincipalInfo info = getPrincipalInfo();
 
 		List<Group> groups = null;
 		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
