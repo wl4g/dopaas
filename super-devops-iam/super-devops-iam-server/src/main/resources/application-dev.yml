@@ -59,7 +59,7 @@ spring:
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
             redirect-url: http://passport.wl4g.com${server.contextPath}/sns/qq/callback
   # Spring datasource configuration.
-  datasource:            
+  datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
