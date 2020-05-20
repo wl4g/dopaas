@@ -28,6 +28,7 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SimpleParameter;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SnsParameter;
 import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
+import com.wl4g.devops.iam.service.GroupService;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -39,8 +40,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static java.util.Collections.emptyList;
@@ -76,6 +79,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	private transient MenuDao menuDao;
 	@Autowired
 	private transient GroupDao groupDao;
+	@Autowired
+	private GroupService groupService;
 
 	@Value("${spring.profiles.active}")
 	private String active;
@@ -183,8 +188,10 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		}
 		if (nonNull(user)) {
 			// Sets user organizations.
-			List<Group> groups = groupDao.selectByUserId(user.getId());
-			List<OrganizationInfo> oInfo = groups.stream().map(o -> new OrganizationInfo(o.getIdentification(), null))
+			IamPrincipalInfo info = getPrincipalInfo();
+			Set<Group> groupsSet = groupService.getGroupsSet(info);
+
+			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(), o.getParentCode()))
 					.collect(toList());
 			return new SimplePrincipalInfo(String.valueOf(user.getId()), user.getUserName(), user.getPassword(),
 					getRoles(user.getUserName()), getPermissions(user.getUserName()))

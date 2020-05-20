@@ -78,7 +78,7 @@ public class RoleServiceImpl implements RoleService {
 			return roleDao.selectWithRoot(null, null);
 		} else {
 			// Groups of userId.
-			Set<Group> groups = groupService.getGroupsSet();
+			Set<Group> groups = groupService.getGroupsSet(info);
 			List<Integer> groupIds = new ArrayList<>();
 			for (Group group : groups) {
 				groupIds.add(group.getId());
@@ -93,7 +93,7 @@ public class RoleServiceImpl implements RoleService {
 	public PageModel list(PageModel pm, String roleCode, String displayName) {
 		IamPrincipalInfo info = getPrincipalInfo();
 
-		Set<Group> groupSet = groupService.getGroupsSet();
+		Set<Group> groupSet = groupService.getGroupsSet(info);
 		if (DEFAULT_USER_ROOT.equals(info.getPrincipal())) {
 			pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 			List<Role> roles = roleDao.selectWithRoot(roleCode, displayName);
