@@ -2411,7 +2411,7 @@
 
 	// Check authentication and redirection
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
-		runtime.umid.getValuePromise(true).then(res => {
+		runtime.handshake.getValuePromise().then(res => {
 			if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
 				IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
 				window.location = redirectUrl;
