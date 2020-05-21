@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
+import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.*;
 
 import static java.lang.String.format;
 import static java.util.UUID.*;

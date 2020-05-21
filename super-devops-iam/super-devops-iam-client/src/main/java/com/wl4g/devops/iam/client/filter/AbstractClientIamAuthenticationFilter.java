@@ -28,7 +28,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKE
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SERVICE_ROLE_VALUE_IAMCLIENT;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.*;
+import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionRemainingTime;

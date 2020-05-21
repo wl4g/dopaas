@@ -27,6 +27,8 @@ import java.util.Set;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.CACHE_PUB_GROUPS;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.KEY_PUB_PREFIX;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -55,8 +57,13 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 			for (Object group : groups) {
 				String key = getGroupKey((String) group);
 				PublishConfigWrapper wrap = jedisService.getObjectT(key, PublishConfigWrapper.class);
-				if (wrap != null) {
+				if (nonNull(wrap)) {
 					list.add(wrap);
+					// Release configured.
+					Long res = jedisService.del(key);
+					if (isNull(res) || res <= 0) {
+						log.warn("Failed to release published configuration, key: {}", key);
+					}
 				}
 			}
 		}
@@ -66,8 +73,8 @@ public class DefaultRedisConfigSourcePublisher extends AbstractConfigSourcePubli
 	}
 
 	@Override
-	protected void publishConfig(PublishConfigWrapper wrap) {
-		log.debug("Put published config for - {}", wrap);
+	protected void doPublishConfig(PublishConfigWrapper wrap) {
+		log.debug("Put publishing config for - {}", wrap);
 
 		// Storage group name
 		jedisService.setSetObjectAdd(CACHE_PUB_GROUPS, wrap.getCluster());
