@@ -16,7 +16,6 @@
 package com.wl4g.devops.scm.endpoint;
 
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
-import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
 import com.wl4g.devops.common.web.BaseController;
@@ -26,11 +25,6 @@ import com.wl4g.devops.scm.context.ConfigContextHandler;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import static java.util.Arrays.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -48,10 +42,10 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 @ResponseBody
 public class ScmServerEndpoint extends BaseController {
 
-	final private ConfigContextHandler contextHandler;
-
-	@Autowired
-	private Environment environment;
+	/**
+	 * Scm config handler.
+	 */
+	final protected ConfigContextHandler contextHandler;
 
 	public ScmServerEndpoint(ConfigContextHandler handler) {
 		super();
@@ -68,77 +62,28 @@ public class ScmServerEndpoint extends BaseController {
 	 */
 	@RequestMapping(value = URI_S_WATCH_GET, method = GET)
 	public DeferredResult<?> watch(@Validated GetRelease watch) {
-		if (log.isInfoEnabled()) {
-			log.info("Watching <= {}", watch);
-		}
-
+		log.info("Long polling watching... <= {}", watch);
 		return contextHandler.watch(watch);
 	}
 
 	@GetMapping(value = URI_S_SOURCE_GET)
 	public RespBase<ReleaseMessage> fetchSource(@Validated GetRelease get) {
-		if (log.isInfoEnabled()) {
-			log.info("Fetch config source <= {}", get);
-		}
+		log.info("Fetching config source... <= {}", get);
 
 		RespBase<ReleaseMessage> resp = new RespBase<>();
-		// Fetch configuration source
+		// Fetching configuration source
 		resp.setData(contextHandler.getSource(get));
 
-		if (log.isInfoEnabled()) {
-			log.info("Fetch config source => {}", resp);
-		}
+		log.info("Fetched config source => {}", resp);
 		return resp;
 	}
 
 	@PostMapping(value = URI_S_REPORT_POST)
 	public RespBase<?> report(@Validated @RequestBody ReportInfo report) {
-		if (log.isInfoEnabled()) {
-			log.info("Report <= {}", report);
-		}
-
+		log.info("Reporting... <= {}", report);
 		RespBase<?> resp = new RespBase<>();
 		contextHandler.report(report);
-
-		if (log.isInfoEnabled()) {
-			log.info("Report => {}", resp);
-		}
-		return resp;
-	}
-
-	/**
-	 * <h6>For releaseTests</h6></br>
-	 * <b>Header:</b></br>
-	 * <a href="#">http://localhost:14044/scm/scm-server/releaseTests</a></br>
-	 * <b>Body:</b>
-	 * 
-	 * <pre>
-	 *	{
-	 *		"namespace": "application-test.yml",
-	 *		"group": "scm-example",
-	 *		"instances": [{
-	 *			"host": "localhost",
-	 *			"port": 8848
-	 *		}],
-	 *		"meta": {
-	 *			"releaseId": "1",
-	 *			"version": "1.0.1"
-	 *		}
-	 *	}
-	 * </pre>
-	 * 
-	 * @param pre
-	 * @return
-	 */
-	@PostMapping("releaseTests")
-	public RespBase<?> releaseTests(@Validated @RequestBody PreRelease pre) {
-		if (log.isInfoEnabled()) {
-			log.info("Pre release tests <= {}", pre);
-		}
-		Assert.state(binarySearch(environment.getActiveProfiles(), "prod") < 0, "Non-secure APIs have been rejected!");
-
-		RespBase<?> resp = new RespBase<>();
-		contextHandler.release(pre);
+		log.info("Reported => {}", resp);
 		return resp;
 	}
 
