@@ -43,7 +43,7 @@ import static java.lang.String.valueOf;
  * @version v1.0 2019年5月21日
  * @since
  */
-public abstract class AuthenticatingUtils extends IamSecurityHolder {
+public abstract class IamAuthenticatingUtils extends IamSecurityHolder {
 
 	/**
 	 * Default authentication status.

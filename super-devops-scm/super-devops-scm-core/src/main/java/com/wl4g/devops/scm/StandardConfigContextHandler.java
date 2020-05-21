@@ -36,6 +36,7 @@ import org.springframework.util.Assert;
 
 import java.util.Map;
 
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.contains;
 
 /**
@@ -63,7 +64,7 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 
 	@Override
 	public void release(PreRelease pre) {
-		this.publisher.publish(pre);
+		publisher.publish(pre);
 	}
 
 	@Override
@@ -76,12 +77,11 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 		get.validation(false, false);
 		ReleaseMessage release = new ReleaseMessage(get.getCluster(), get.getNamespaces(), get.getMeta(), get.getInstance());
 
-		ConfigSourceBean config = this.configService.findSource(get);
+		ConfigSourceBean config = configService.findSource(get);
 		if (config != null) {
-			// Set release meta information.
+			// Sets release meta information.
 			release.setMeta(config.getReleaseMeta());
-
-			if (config.getContents() != null) {
+			if (nonNull(config.getContents())) {
 				config.getContents().forEach(vc -> release.getPropertySources().add(convertReleasePropertySource(vc)));
 			}
 		}
@@ -92,7 +92,7 @@ public class StandardConfigContextHandler implements ConfigContextHandler {
 	@Override
 	public void report(ReportInfo report) {
 		report.validation(true, true);
-		this.configService.updateReleaseDetail(report);
+		configService.updateReleaseDetail(report);
 	}
 
 	/**
