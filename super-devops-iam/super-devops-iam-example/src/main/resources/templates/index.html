@@ -33,40 +33,65 @@
 	</div>
 	<div id="qrcode_show"></div>
 </div>
+<script type="text/javascript" src="http://localhost:14040/iam-server/iam-jssdk/assets/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="http://localhost:14040/iam-server/iam-jssdk/assets/js/IAM.all.min.js"></script>
 <script type="text/javascript">
+	// Gets the required request header (e.g: xsrftoken/replaytoken)
+	function getRequiresHeaders(method) {
+		var headers = {};
+	    if (method.toUpperCase() == 'POST' || method.toUpperCase() == 'DELETE') {
+	        var iamCore = new IAMCore();
+	        var replayToken = iamCore.generateReplayToken();
+	        headers[replayToken.headerName] = replayToken.value;
+	        var xsrfToken = iamCore.getXsrfToken();
+	        headers[xsrfToken.headerName] = xsrfToken.value;
+	    }
+	    return headers;
+	}
+
 	//
 	// JQuery版Demo样例：
 	//
 	$(function(){
-		$("#btn_sensitive_api").click(function(event){
+		$("#btn_sensitive_api").click(function(event) {
 			// 例如，正在请求一个敏感的API
 			var url = "sensitive/sensitiveApi1";
-			$.post(url, function(res) {
-				if(res.code == 412){ // 服务端返回未经二次认证
-					// 打开二次认证授权页
-					window.open(url, "_blank", "modal=yes,width=600px,height=400px,resizable=no,left=450px,top=150px");
-					window.onmessage = function(e) { // 监听授权回调
-						var secondaryAuthCode = JSON.parse(e.data).secondaryAuthCode; // 获取授权码
-						console.log("Got授权码" + secondaryAuthCode);
-						// 再次请求敏感API
-						$.post(url + "?secondaryAuthCode=" + secondaryAuthCode, function(res2){
-							console.log("重新请求敏感API结果：" + JSON.stringify(res2))
-						});
+			$.ajax({
+				url: url,
+				type: 'post',
+				headers: getRequiresHeaders('post'),
+				success: function(res) {
+					if(res.code == 412){ // 服务端返回未经二次认证
+						// 打开二次认证授权页
+						window.open(url, "_blank", "modal=yes,width=600px,height=400px,resizable=no,left=450px,top=150px");
+						window.onmessage = function(e) { // 监听授权回调
+							var secondaryAuthCode = JSON.parse(e.data).secondaryAuthCode; // 获取授权码
+							console.log("Got授权码" + secondaryAuthCode);
+							// 再次请求敏感API
+							$.post(url + "?secondaryAuthCode=" + secondaryAuthCode, function(res2){
+								console.log("重新请求敏感API结果：" + JSON.stringify(res2))
+							});
+						}
+					} else {
+						console.log("(无需二次认证)请求成功！" + JSON.stringify(res));
 					}
-				} else {
-					console.log("(无需二次认证)请求成功！" + JSON.stringify(res));
 				}
 			});
 		});
 
-		$("#btn_permit_api").click(function(event){
+		$("#btn_permit_api").click(function(event) {
 			// 如，正在请求一个需要权限的API
 			var url = "example/test5";
-			$.post(url, function(res){
-				if(res.code == 403){ // 服务端返回没有权限
-					alert("没有权限!! " + JSON.stringify(res));
-				} else {
-					console.log("(拥有权限)请求成功！" + JSON.stringify(res));
+			$.ajax({
+				url: url,
+				type: 'post',
+				headers: getRequiresHeaders('post'),
+				success: function(res){
+					if(res.code == 403){ // 服务端返回没有权限
+						alert("没有权限!! " + JSON.stringify(res));
+					} else {
+						console.log("(拥有权限)请求成功！" + JSON.stringify(res));
+					}
 				}
 			});
 		});
