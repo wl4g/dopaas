@@ -1136,12 +1136,6 @@
 		});
 	};
 
-	// Init Handshake authentication(PRE) implements.
-	var _initHandshakeIfNecessary = function() {
-		// Init gets umidToken and handshake.
-		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken));
-	};
-
 	// Multi modular authenticating handler
 	var _multiModularAuthenticatingHandler = {
 		mutexControllerManager: new Map(),
@@ -1270,24 +1264,32 @@
 
 	// Check authentication and redirection
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
-		_initHandshakeIfNecessary().then(res => {
-			if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
-				var count = parseInt(sessionStorage.getItem(constant.authenticatedRedirectCountStorageKey) || 0);
-				if (count > 3) { throw Error("Too many failure redirects: " + count); }
-				sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, ++count);
-				IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
-				window.location = redirectUrl;
-			} else {
-				sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, 0);
-			}
+		return new Promise((resolve, reject) => {
+			_initHandshakeIfNecessary().then(res => {
+				if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
+					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, 0);
+					var count = parseInt(sessionStorage.getItem(constant.authenticatedRedirectCountStorageKey) || 0);
+					if (count > 10) { throw Error("Too many failure redirects: " + count); }
+					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, ++count);
+					IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
+					window.location = redirectUrl;
+				}
+				resolve();
+			});
 		});
+	};
+
+	// Init Handshake authentication(PRE) implements.
+	var _initHandshakeIfNecessary = function() {
+		// Init gets umidToken and handshake.
+		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken));
 	};
 
 	// --- Exposing IAMCore APIs. ---
 
 	window.IAMCore = function(opt) {
 		runtime.__that = this;
-		// 初始化配置
+		// Initializing.
 		_initConfigure(opt);
 	};
 	// Export umToken
@@ -1355,7 +1357,7 @@
 	// Export generateReplayToken
 	IAMCore.prototype.generateReplayToken = _generateReplayToken;
 
-	// Export check authentication and redirection to home.
+	// Export check authentication and redirection
 	IAMCore.prototype.checkAuthenticationAndRedirect = _checkAuthenticationAndRedirect;
 
 	// Export function Iam console

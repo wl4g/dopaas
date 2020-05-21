@@ -335,7 +335,7 @@
 
 		// Overerly default settings.
 		iamCoreConfig = $.extend(true, defaultSettings, iamCoreConfig);
-		console.debug("IAMCore JSSDK intializing ... config properties: " + JSON.stringify(iamCoreConfig));
+		IAMCore.Console.debug("IAMCore JSSDK intializing ... config properties: " + JSON.stringify(iamCoreConfig));
 		runtime.iamCore = new IAMCore(iamCoreConfig);
 		runtime.iamCore.anyAuthenticators().build();
 	}
