@@ -1264,6 +1264,7 @@
 
 	// Check authentication and redirection
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
+		document.write("<style>body{display:none;}</style>"); // Hidden
 		return new Promise((resolve, reject) => {
 			_initHandshakeIfNecessary().then(res => {
 				if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
@@ -1275,6 +1276,7 @@
 					window.location = redirectUrl;
 				}
 				resolve();
+				$("body").show(); // Show
 			});
 		});
 	};
