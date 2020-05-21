@@ -124,7 +124,7 @@
 						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
 						if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 							runtime.handshake._value = $.extend(true, runtime.handshake._value, res.data);
-							reslove(runtime.handshake._value);
+							reslove(res);
 						}
 						runtime.handshake._currentlyInGettingValuePromise = null;
 					}, function(errmsg) {
@@ -654,8 +654,8 @@
 	var _resetCaptcha = function(refresh) {
 		if (refresh) {
 			var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput, false));
-			_initSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
-				if(checkCaptcha.enabled && !runtime.flags.isCurrentlyApplying){ // 启用验证码且不是申请中(防止并发)?
+			_initSafeCheck(principal, function(res){
+				if(runtime.safeCheck.checkCaptcha.enabled && !runtime.flags.isCurrentlyApplying){ // 启用验证码且不是申请中(防止并发)?
 					// 获取当前配置的 CaptchaVerifier实例并显示
 					Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaRender();
 				}
@@ -759,7 +759,11 @@
 
 	// Init safety check(PRE).
 	var _initSafeCheck = function(principal, callback){
-		$(function(){
+		$(function() {
+			if (!callback) {
+				callback = principal; // Real callback function
+				principal = '';
+			}
 			// 初始化前回调
 			if(!Common.Util.checkEmpty("init.onPreCheck", settings.init.onPreCheck)(principal)){
 				console.warn("Skip the init safeCheck, because onPreCheck() return false");
@@ -777,7 +781,7 @@
 				var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
 				if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 					runtime.safeCheck = $.extend(true, runtime.safeCheck, res.data); // [MARK3]
-					callback(res.data.checkCaptcha, res.data.checkGeneric, res.data.checkSms);
+					callback(res);
 				}
 			}, function(errmsg){
 				console.log("Failed to safe check, " + errmsg);
@@ -867,11 +871,11 @@
 					return;
 				}
 
-				_initSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
+				_initSafeCheck(principal, function(res){
 					// 生成client公钥(用于获取认证成功后加密接口的密钥)
 					runtime.clientSecretKey = IAMCrypto.RSA.generateKey();
 					// 获取Server公钥(用于提交账号密码)
-					var secretKey = Common.Util.checkEmpty("Secret is empty", checkGeneric.secretKey);
+					var secretKey = Common.Util.checkEmpty("Secret is required", runtime.safeCheck.checkGeneric.secretKey);
 					var credentials = encodeURIComponent(IAMCrypto.RSA.encryptToHexString(secretKey, plainPasswd));
 					// 已校验的验证码Token(如果有)
 					var verifiedToken = "";
@@ -1263,6 +1267,16 @@
         },
 	};
 
+	// Check authentication and redirection
+	var _checkAuthenticationAndRedirect = function(redirectUrl) {
+		runtime.umid.getValuePromise(true).then(res => {
+			if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
+				IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
+				window.location = redirectUrl;
+			}
+		});
+	};
+
 	// --- Exposing IAMCore APIs. ---
 
 	window.IAMCore = function(opt) {
@@ -1276,7 +1290,7 @@
 	};
 	// Export safeCheck
 	IAMCore.prototype.safeCheck = function(principal, callback) {
-		_initHandshakeIfNecessary().then(handshakeValue => {
+		_initHandshakeIfNecessary().then(res => {
 			_initSafeCheck(principal, callback);
 		});
 		return this;
@@ -1293,25 +1307,25 @@
 		settings.account.enable = true;
 		return this;
 	};
-	// Export enable smsAuthenticators
+	// Export enable smsAuthenticators.
 	IAMCore.prototype.smsAuthenticator = function() {
 		settings.sms.enable = true;
 		return this;
 	};
-	// Export enable snsAuthenticators
+	// Export enable snsAuthenticators.
 	IAMCore.prototype.snsAuthenticator = function() {
 		settings.sns.enable = true;
 		return this;
 	};
-	// Export enable captchaVerifier
+	// Export enable captchaVerifier.
 	IAMCore.prototype.captchaVerifier = function() {
 		settings.captcha.enable = true;
 		return this;
 	};
-	// Export build 
+	// Export build.
 	IAMCore.prototype.build = function() {
 		// 为确保执行顺序（1，获取umidToken；2，请求handshake；3，初始绑定各种认证器）
-		_initHandshakeIfNecessary().then(handshakeValue => {
+		_initHandshakeIfNecessary().then(res => {
 			_initAccountAuthenticator();
 			_initSMSAuthenticator();
 			_initSNSAuthenticator();
@@ -1376,6 +1390,9 @@
 
 	// Export function multi modular authenticating handler.
 	IAMCore.multiModularMutexAuthenticatingHandler = _multiModularAuthenticatingHandler.doHandle;
+
+	// Export function check authentication and redirection to home.
+	IAMCore.checkAuthenticationAndRedirect = _checkAuthenticationAndRedirect;
 
 	// Export function getIamBaseURI
 	IAMCore.getIamBaseUri = function() {
