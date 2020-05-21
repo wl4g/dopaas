@@ -191,8 +191,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(), o.getParentCode()))
 					.collect(toList());
 			return new SimplePrincipalInfo(String.valueOf(user.getId()), user.getUserName(), user.getPassword(),
-					getRoles(user.getUserName()), getPermissions(user.getUserName()))
-							.setOrganization(new PrincipalOrganization(oInfo));
+					getRoles(user.getUserName()), getPermissions(user.getUserName()), new PrincipalOrganization(oInfo));
 		}
 		return null;
 	}

@@ -19,6 +19,7 @@ import static com.wl4g.devops.iam.common.session.NoOpSession.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static java.lang.System.currentTimeMillis;
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -93,13 +94,20 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @see {@link com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm#doGetAuthenticationInfo(AuthenticationToken)}
 	 */
 	public static IamPrincipalInfo getPrincipalInfo(boolean assertion) {
-		IamPrincipalInfo info = (IamPrincipalInfo) getSession()
+		SimplePrincipalInfo info = (SimplePrincipalInfo) getSession()
 				.getAttribute(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO, SimplePrincipalInfo.class));
 		if (assertion) {
 			notNull(info, UnauthenticatedException.class,
 					"Authentication subject empty. unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
 		}
-		return info;
+		/**
+		 * It is not recommended that external methods bind business attributes
+		 * here. We recommend that external methods bind business attributes
+		 * directly to the session, i.e: {@link #bind(Object, T)}
+		 * 
+		 * @see {@link com.wl4g.devops.iam.common.subject.SimplePrincipalInfo#setAttributes(Map)}#MARK1
+		 */
+		return info.setAttributes(unmodifiableMap(info.getAttributes())); // [MARK2]
 	}
 
 	/**

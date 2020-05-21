@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.devops.iam.client.session.mgt.IamClientSessionManager;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.utils.IamSecurityHolder;
 import com.wl4g.devops.iam.example.authc.ExampleClientSecurityCoprocessor;
 import com.wl4g.devops.iam.example.service.ExampleService;
 
@@ -97,6 +99,17 @@ public class ExampleController {
 		String encryptedMobilePhone = request.getParameter("encryptedMobilePhone");
 		log.info("Request test6... encryptedMobilePhone: {}", encryptedMobilePhone);
 		return encryptedMobilePhone;
+	}
+
+	@RequestMapping("test7")
+	@ResponseBody
+	public String test7(HttpServletRequest request) {
+		IamPrincipalInfo info = IamSecurityHolder.getPrincipalInfo();
+		log.info("Request test7... currentPrincipalInfo: {}", info);
+		log.info("Request test7... currentPrincipalInfo.roles: {}", info.getRoles());
+		log.info("Request test7... currentPrincipalInfo.permissions: {}", info.getPermissions());
+		log.info("Request test7... currentPrincipalInfo.organization: {}", info.getOrganization());
+		return "ok";
 	}
 
 	/*

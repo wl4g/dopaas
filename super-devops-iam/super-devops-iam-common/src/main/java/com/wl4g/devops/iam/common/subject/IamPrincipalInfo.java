@@ -339,7 +339,7 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 		}
 
 		public void setOrganizationCode(String organizationCode) {
-			//hasTextOf(organizationCode, "organizationCode");
+			// hasTextOf(organizationCode, "organizationCode");
 			this.organizationCode = organizationCode;
 		}
 
