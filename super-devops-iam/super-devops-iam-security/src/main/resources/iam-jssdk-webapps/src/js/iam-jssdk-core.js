@@ -107,7 +107,7 @@
 						"runtime.handshake.getValuePromise())", runtime.handshake._value);
 			},
 			_currentlyInGettingValuePromise: null, // 仅handshake.getValuePromise使用
-			getValuePromise: function(umidToken) {
+			getValuePromise: function(umidToken, async) {
 				// 若当前正在获取handshake._value直接返回该promise对象（解决并发调用）
 				if (runtime.handshake._currentlyInGettingValuePromise) {
 					return runtime.handshake._currentlyInGettingValuePromise;
@@ -120,7 +120,7 @@
 				return (runtime.handshake._currentlyInGettingValuePromise = new Promise((reslove, reject) => {
 					var handshakeParam = new Map();
 					handshakeParam.set("{umidTokenKey}", Common.Util.checkEmpty("umidToken", umidToken));
-					_doIamRequest("post", true, "{handshakeUri}", handshakeParam, function(res) {
+					_doIamRequest("post", (async||true), "{handshakeUri}", handshakeParam, function(res) {
 						Common.Util.checkEmpty("init.onPostHandshake", settings.init.onPostHandshake)(res); // handshake完成回调
 						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
 						if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
@@ -568,12 +568,12 @@
 	var _initConfigure = function(obj) {
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = $.extend(true, settings, obj);
-		IAMCore.Console.debug("Merged Iam core settings: "+ JSON.stringify(settings));
+		IAMCore.Console.debug("Merged iam core settings: "+ JSON.stringify(settings));
 
-		if (Common.Util.isEmpty(settings.deploy.baseUri)) {
-	        settings.deploy.baseUri = _getDefaultIamBaseUri();
-	        IAMCore.Console.info("Used overlay iamBaseURI: " + settings.deploy.baseUri);
-	    }
+		//if (Common.Util.isEmpty(settings.deploy.baseUri)) {
+        settings.deploy.baseUri = _getDefaultIamBaseUri();
+        IAMCore.Console.info("Use overlay iam baseUri: " + settings.deploy.baseUri);
+	    //}
 
 		// Storage iamBaseUri
         sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
@@ -1264,27 +1264,22 @@
 
 	// Check authentication and redirection
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
-		document.write("<style>body{display:none;}</style>"); // Hidden
-		return new Promise((resolve, reject) => {
-			_initHandshakeIfNecessary().then(res => {
-				if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
-					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, 0);
-					var count = parseInt(sessionStorage.getItem(constant.authenticatedRedirectCountStorageKey) || 0);
-					if (count > 10) { throw Error("Too many failure redirects: " + count); }
-					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, ++count);
-					IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
-					window.location = redirectUrl;
-				}
-				resolve();
-				$("body").show(); // Show
-			});
+		_initHandshakeIfNecessary(false).then(res => {
+			if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
+				sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, 0);
+				var count = parseInt(sessionStorage.getItem(constant.authenticatedRedirectCountStorageKey) || 0);
+				if (count > 10) { throw Error("Too many failure redirects: " + count); }
+				sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, ++count);
+				IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
+				window.location = redirectUrl;
+			}
 		});
 	};
 
 	// Init Handshake authentication(PRE) implements.
-	var _initHandshakeIfNecessary = function() {
+	var _initHandshakeIfNecessary = function(async) {
 		// Init gets umidToken and handshake.
-		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken));
+		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken, async));
 	};
 
 	// --- Exposing IAMCore APIs. ---
