@@ -2406,15 +2406,20 @@
 
 	// Check authentication and redirection
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
-		_initHandshakeIfNecessary(false).then(res => {
-			if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
-				sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, 0);
-				var count = parseInt(sessionStorage.getItem(constant.authenticatedRedirectCountStorageKey) || 0);
-				if (count > 10) { throw Error("Too many failure redirects: " + count); }
-				sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, ++count);
-				IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
-				window.location = redirectUrl;
-			}
+		document.write("<style>body{display:none;}</style>"); // Hidden
+		return new Promise(resolve => {
+			_initHandshakeIfNecessary(false).then(res => {
+				if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
+					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, 0);
+					var count = parseInt(sessionStorage.getItem(constant.authenticatedRedirectCountStorageKey) || 0);
+					if (count > 10) { throw Error("Too many failure redirects: " + count); }
+					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, ++count);
+					IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
+					window.location = redirectUrl;
+				}
+				resolve(res);
+				$("body").show(); // Show
+			});
 		});
 	};
 
