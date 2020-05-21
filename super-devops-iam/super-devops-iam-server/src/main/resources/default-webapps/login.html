@@ -27,7 +27,7 @@
 	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-ui.js"></script>
 	<script type="text/javascript">
 		// Auto redirection to index. (Optional)
-		IAMCore.checkAuthenticationAndRedirect("/iam-server/view/index.html");
+		new IAMCore().checkAuthenticationAndRedirect("/iam-server/view/index.html");
 
 		$(function() {
 			console.log("IAM JSSDK UI creation... ");

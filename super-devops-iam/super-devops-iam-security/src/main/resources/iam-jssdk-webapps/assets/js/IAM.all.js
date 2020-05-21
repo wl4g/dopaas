@@ -1153,6 +1153,7 @@
 		iamVerboseStoredKey : '__IAM_VERBOSE',
         baseUriStoredKey : '__IAM_BASEURI',
         umidTokenStorageKey : '__IAM_UMIDTOKEN',
+        authenticatedRedirectCountStorageKey : '__IAM_AUTHC_REDIRECT_COUNT',
         useSecureAlgorithmName: 'RSA', // 提交认证相关请求时，选择的非对称加密算法（ 默认：RSA）
     };
 
@@ -2411,10 +2412,15 @@
 
 	// Check authentication and redirection
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
-		runtime.handshake.getValuePromise().then(res => {
+		_initHandshakeIfNecessary().then(res => {
 			if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
+				var count = parseInt(sessionStorage.getItem(constant.authenticatedRedirectCountStorageKey) || 0);
+				if (count > 3) { throw Error("Too many failure redirects: " + count); }
+				sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, ++count);
 				IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
 				window.location = redirectUrl;
+			} else {
+				sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, 0);
 			}
 		});
 	};
@@ -2491,6 +2497,9 @@
 	// Export generateReplayToken
 	IAMCore.prototype.generateReplayToken = _generateReplayToken;
 
+	// Export check authentication and redirection to home.
+	IAMCore.prototype.checkAuthenticationAndRedirect = _checkAuthenticationAndRedirect;
+
 	// Export function Iam console
 	IAMCore.Console = {
 		// Check verbose enabled. (output run details.)
@@ -2532,9 +2541,6 @@
 
 	// Export function multi modular authenticating handler.
 	IAMCore.multiModularMutexAuthenticatingHandler = _multiModularAuthenticatingHandler.doHandle;
-
-	// Export function check authentication and redirection to home.
-	IAMCore.checkAuthenticationAndRedirect = _checkAuthenticationAndRedirect;
 
 	// Export function getIamBaseURI
 	IAMCore.getIamBaseUri = function() {
