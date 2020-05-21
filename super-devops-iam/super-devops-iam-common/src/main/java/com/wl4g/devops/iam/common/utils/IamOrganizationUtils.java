@@ -2,13 +2,16 @@ package com.wl4g.devops.iam.common.utils;
 
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
 import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * @author vjay
@@ -16,7 +19,7 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInf
  */
 public class IamOrganizationUtils {
 
-    final public static String CURRENT_ORGANIZATION_CODE = "CURRENT_ORGANIZATION_CODE";
+    final public static String CURRENT_ORGANIZATION_CODE = "CURRENT_ORGANIZATION_CODE_";
 
     /**
      * Get Organization Codes By current Code
@@ -38,7 +41,13 @@ public class IamOrganizationUtils {
      * @return
      */
     public static List<String> getOrganizationCodesByCode(String code) {
-        List<OrganizationInfo> organizationsByCode = getOrganizationsByCode(code);
+        List<OrganizationInfo> organizationsByCode;
+        if(isBlank(code)){
+            organizationsByCode = getOrganizationFromSession();
+        }else{
+            organizationsByCode = getOrganizationsByCode(code);
+        }
+
         List<String> codes = new ArrayList<>();
         for(OrganizationInfo organizationInfo : organizationsByCode){
             codes.add(organizationInfo.getOrganizationCode());
@@ -72,18 +81,37 @@ public class IamOrganizationUtils {
     }
 
     public static String getCurrentOrganizationInfo(){
-        return IamSecurityHolder.getBindValue(CURRENT_ORGANIZATION_CODE);
+        //TODO 后续要使用注册中心的方式来实现跨模块的数据同步问题
+        //return IamSecurityHolder.getBindValue(CURRENT_ORGANIZATION_CODE);
+
+        //TODO just for now
+        List<OrganizationInfo> top = getTop(getOrganizationFromSession());
+        if(!CollectionUtils.isEmpty(top)){
+            return top.get(0).getOrganizationCode();
+        }
+        return null;
     }
 
     public static void changeCurrentOrganizationInfo(String currentOrganizationCode){
-        IamSecurityHolder.bind(CURRENT_ORGANIZATION_CODE,currentOrganizationCode);
-
+        //TODO 后续要使用注册中心的方式来实现跨模块的数据同步问题
+        //IamSecurityHolder.bind(CURRENT_ORGANIZATION_CODE,currentOrganizationCode);
     }
 
-    private static List<OrganizationInfo> getOrganizationFromSession() {
+    public static void setDefaultCurrentOrganization(){
+        List<OrganizationInfo> top = getTop(getOrganizationFromSession());
+        String currentOrganizationInfo = getCurrentOrganizationInfo();
+        if(!CollectionUtils.isEmpty(top) && isBlank(currentOrganizationInfo)){
+            changeCurrentOrganizationInfo(top.get(0).getOrganizationCode());
+        }
+    }
+
+    public static List<OrganizationInfo> getOrganizationFromSession() {
         IamPrincipalInfo principalInfo = getPrincipalInfo();
         PrincipalOrganization organization = principalInfo.getOrganization();
-        return organization.getOrganizations();
+        if(Objects.nonNull(organization)){
+            return organization.getOrganizations();
+        }
+        return null;
     }
 
     private static OrganizationInfo getOrganizationByCode(List<OrganizationInfo> organizations, String code) {
@@ -122,14 +150,14 @@ public class IamOrganizationUtils {
     private static List<OrganizationInfo> getTop(List<OrganizationInfo> organizationInfos){
         List<OrganizationInfo> top = new ArrayList<>();
         for(OrganizationInfo organizationInfo : organizationInfos){
-            boolean hasChildren = false;
-            for(OrganizationInfo organizationInfoChild : organizationInfos){
-                if(StringUtils.equals(organizationInfoChild.getParent(),organizationInfo.getOrganizationCode())){
-                    hasChildren = true;
+            boolean hasParent = false;
+            for(OrganizationInfo organizationInfoParent : organizationInfos){
+                if(StringUtils.equals(organizationInfoParent.getOrganizationCode(),organizationInfo.getParent())){
+                    hasParent = true;
                     break;
                 }
             }
-            if(!hasChildren){
+            if(!hasParent){
                 top.add(organizationInfo);
             }
         }

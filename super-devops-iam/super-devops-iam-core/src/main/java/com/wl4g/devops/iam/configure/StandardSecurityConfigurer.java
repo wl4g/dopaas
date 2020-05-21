@@ -187,10 +187,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		}
 		if (nonNull(user)) {
 			// Sets user organizations.
-			//IamPrincipalInfo info = getPrincipalInfo();
-
 			Set<Group> groupsSet = groupService.getGroupsSet(user);
-
 			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(), o.getParentCode()))
 					.collect(toList());
 			return new SimplePrincipalInfo(String.valueOf(user.getId()), user.getUserName(), user.getPassword(),
