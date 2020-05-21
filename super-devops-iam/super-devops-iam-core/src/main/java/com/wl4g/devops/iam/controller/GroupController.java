@@ -17,6 +17,7 @@ package com.wl4g.devops.iam.controller;
 
 import com.wl4g.devops.common.bean.iam.Group;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.iam.common.utils.IamOrganizationUtils;
 import com.wl4g.devops.iam.service.GroupService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,5 +74,35 @@ public class GroupController {
 		resp.forMap().put("data", group);
 		return resp;
 	}
+
+	@RequestMapping(value = "/setDefaultCurrentOrganization")
+	public RespBase<?> setDefaultCurrentOrganization() {
+		RespBase<Object> resp = RespBase.create();
+		IamOrganizationUtils.setDefaultCurrentOrganization();
+		return resp;
+	}
+
+	@RequestMapping(value = "/changeCurrentOrganizationInfo")
+	public RespBase<?> changeCurrentOrganizationInfo(String code) {
+		RespBase<Object> resp = RespBase.create();
+		IamOrganizationUtils.changeCurrentOrganizationInfo(code);
+		return resp;
+	}
+
+	@RequestMapping(value = "/getOrganizationTree")
+	public RespBase<?> getOrganizationTree() {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(IamOrganizationUtils.getOrganizationTree());
+		return resp;
+	}
+
+	@RequestMapping(value = "/getOrganizationFromSession")
+	public RespBase<?> getOrganizationFromSession() {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(IamOrganizationUtils.getOrganizationFromSession());
+		return resp;
+	}
+
+
 
 }
