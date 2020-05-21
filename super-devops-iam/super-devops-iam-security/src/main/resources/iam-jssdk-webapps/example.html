@@ -28,19 +28,21 @@
 <!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-core.js"></script> -->
 <!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-ui.js"></script> -->
 	<script type="text/javascript">
+		var homeUrl = "/iam-server/view/index.html";
+		var options = {
+			deploy: {
+				// If it is null, it will be automatically parsed from location by default.				
+				//baseUri: "http://localhost:14040/iam-server/",
+				//defaultTwoDomain: "iam",
+				//defaultContextPath: "/iam-server"
+			}
+		};
 		// Auto redirection to index. (Optional)
-		IAMCore.checkAuthenticationAndRedirect(new IAMCore(), "/iam-server/view/index.html");
-
-		$(function() {
-			console.log("IAM JSSDK UI creation... ");
-			//var iamServerUri = "http://localhost:14040/iam-server/"; 
-			var iamServerUri = null; 
-		 	new IAMUi().initUI(document.getElementById("container"), {
-				deploy: {
-					// If it is null, it will be automatically parsed from location by default.
-					baseUri: iamServerUri,
-				}
-	 		});
+		new IAMCore(options).checkAuthenticationAndRedirect(homeUrl).then(() => {
+			$(function() {
+				console.log("IAM JSSDK UI creation... ");
+			 	new IAMUi().initUI(document.getElementById("container"), options);
+			});
 		});
 	</script>
 </head>
