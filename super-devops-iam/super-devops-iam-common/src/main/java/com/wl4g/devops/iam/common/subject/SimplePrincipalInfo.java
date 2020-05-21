@@ -65,25 +65,22 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 
 	public SimplePrincipalInfo(@NotBlank IamPrincipalInfo info) {
 		this(info.getPrincipalId(), info.getPrincipal(), info.getStoredCredentials(), info.getRoles(), info.getPermissions(),
-				info.getAttributes());
-	}
-
-	public SimplePrincipalInfo(@NotBlank String principalId, @NotBlank String principal) {
-		this(principalId, principal, null, null, null);
+				info.getOrganization(), info.getAttributes());
 	}
 
 	public SimplePrincipalInfo(@NotBlank String principalId, String principal, String storedCredentials, String roles,
-			String permissions) {
-		this(principalId, principal, storedCredentials, roles, permissions, null);
+			String permissions, PrincipalOrganization organization) {
+		this(principalId, principal, storedCredentials, roles, permissions, organization, null);
 	}
 
 	public SimplePrincipalInfo(@NotBlank String principalId, String principal, String storedCredentials, String roles,
-			String permissions, Map<String, String> attributes) {
+			String permissions, PrincipalOrganization organization, Map<String, String> attributes) {
 		setPrincipalId(principalId);
 		setPrincipal(principal);
 		setStoredCredentials(storedCredentials);
 		setRoles(roles);
 		setPermissions(permissions);
+		setOrganization(organization);
 		setAttributes(attributes);
 	}
 
@@ -155,7 +152,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	/**
-	 * Principal account attributes.
+	 * Gets principal account attributes.
 	 * 
 	 * @return
 	 */
@@ -165,9 +162,19 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		return attributes;
 	}
 
+	/**
+	 * Sets principal account attributes.
+	 * 
+	 * @param attributes
+	 * @return
+	 */
 	public final SimplePrincipalInfo setAttributes(Map<String, String> attributes) {
 		if (!isEmpty(attributes)) {
-			this.attributes = attributes;
+			// [MARK1]
+			/**
+			 * @see {@link com.wl4g.devops.iam.common.utils.IamSecurityHolder#getPrincipalInfo(boolean)}#MARK2
+			 */
+			this.attributes.putAll(attributes);
 		}
 		return this;
 	}
