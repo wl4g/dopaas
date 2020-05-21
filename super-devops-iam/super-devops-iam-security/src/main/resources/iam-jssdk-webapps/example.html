@@ -28,6 +28,9 @@
 <!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-core.js"></script> -->
 <!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-ui.js"></script> -->
 	<script type="text/javascript">
+		// Auto redirection to index. (Optional)
+		IAMCore.checkAuthenticationAndRedirect(new IAMCore(), "/iam-server/view/index.html");
+
 		$(function() {
 			console.log("IAM JSSDK UI creation... ");
 			//var iamServerUri = "http://localhost:14040/iam-server/"; 
