@@ -38,11 +38,10 @@
 			}
 		};
 		// Auto redirection to index. (Optional)
-		new IAMCore(options).checkAuthenticationAndRedirect(homeUrl).then(() => {
-			$(function() {
-				console.log("IAM JSSDK UI creation... ");
-			 	new IAMUi().initUI(document.getElementById("container"), options);
-			});
+		new IAMCore(options).checkAuthenticationAndRedirect(homeUrl);
+		$(function() {
+			console.log("IAM JSSDK UI creation... ");
+		 	new IAMUi().initUI(document.getElementById("content-right"), options);
 		});
 	</script>
 </head>
