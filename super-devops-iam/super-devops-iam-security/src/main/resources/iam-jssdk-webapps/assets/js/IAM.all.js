@@ -1158,7 +1158,7 @@
 
 	// 运行时状态值/全局变量/临时缓存
 	var runtime = {
-		that: null,
+		__that: null,
 		umid: {
 			_value: null, // umidToken
 			getValue: function() {
@@ -1212,7 +1212,7 @@
 						console.debug("Generated apply umidToken data: "+ umdata);
 						umidParam.set("umdata", umdata);
 						_doIamRequest("post", true, "{applyUmTokenUri}", umidParam, function(res){
-							Common.Util.checkEmpty("init.onPostUmidToken", settings.init.onPostUmidToken)(res); //获得token回调
+							Common.Util.checkEmpty("init.onPostUmidToken", settings.init.onPostUmidToken)(res); // 获得umtoken完成回调
 							var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 							if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 								console.debug("Got umidToken: " + res.data.umidToken);
@@ -1262,6 +1262,7 @@
 					var handshakeParam = new Map();
 					handshakeParam.set("{umidTokenKey}", Common.Util.checkEmpty("umidToken", umidToken));
 					_doIamRequest("post", true, "{handshakeUri}", handshakeParam, function(res) {
+						Common.Util.checkEmpty("init.onPostHandshake", settings.init.onPostHandshake)(res); // handshake完成回调
 						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
 						if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 							runtime.handshake._value = $.extend(true, runtime.handshake._value, res.data);
@@ -1328,149 +1329,6 @@
 		},
 	};
 
-	// Multi modular authenticating handler
-	var _multiModularAuthenticatingHandler = {
-		mutexControllerManager: new Map(),
-		// Do multi modular authenticating and biz request.
-		doMultiModularRequest:function (method, url, async, params, successFn, errorFn, completeFn) {
-			var url = '@' + url; // Use absolute url
-			_doIamRequest(method, async, url, params || {}, successFn, errorFn, completeFn, false);
-		},
-		// Is unauthenticated.
-		isUnauthenticated: function (res) {
-			if (res.code == settings.definition.code401Value 
-				|| (res.code + '') == settings.definition.code401Value) {
-				return true;
-			}
-			return false;
-		},
-		// 检查返回未登录(code=401)时是否跳转登录页，(仅当TGC过期(真正过期)是才跳转登录页，iam-client过期无需跳转登陆页)
-		checkTGCExpiredAndRedirectToLogin: function (res) {
-			const handler = _multiModularAuthenticatingHandler;
-		    console.debug("TGC validating... res: " + JSON.stringify(res));
-		    if (handler.isUnauthenticated(res)) {
-		        // IamWithCasAppClient/IamWithCasAppServer
-		        if (res.data.serviceRole == 'IamWithCasAppServer') { // TGC过期?
-		            console.debug("TGC expired, redirectTo: " + res.data[settings.definition.redirectUrlKey]);
-		            // e.g: window.location.href = '/#/login';
-		            return true;
-		        }
-		    }
-		    return false;
-		},
-		// 添加通用参数
-		wrapAddParameters: function (url) {
-		    if (url.indexOf("?") > 0) {
-		        url += "&response_type=json";
-		    } else {
-		        url += "?response_type=json";
-		    }
-		    return url;
-		},
-		// 获取URL同源的并发认证控制器
-		getMutexController: function (url) {
-			const handler = _multiModularAuthenticatingHandler;
-		    const _url = new URL(url);
-		    const urlSame = _url.protocol + "://" + _url.host;
-		    var controller = handler.mutexControllerManager.get(urlSame);
-		    if (!controller) {
-		    	handler.mutexControllerManager.set(urlSame, (controller = {
-		            urlSame: urlSame,
-		            currentlyState: false,
-		            requestQueue: [], // FIFO
-		            authenticated: false,
-		        }));
-		    }
-		    return controller;
-		},
-		// 拦截处理多模块并发认证请求（401重定向）
-		doHandle: function (res, method, url, successFn, errorFn, params) {
-			const handler = _multiModularAuthenticatingHandler;
-			// Check parameters requires.
-			Common.Util.checkEmpty('multiModularAuthenticatingRequest.res', res);
-			Common.Util.checkEmpty('multiModularAuthenticatingRequest.method', method);
-			Common.Util.checkEmpty('multiModularAuthenticatingRequest.url', url);
-			// Check authentication status.
-			if (!handler.isUnauthenticated(res)) {
-				IAMCore.Console.debug("Ignore non-unauthenticated res. url: " + url + ", res: " + res);
-				return;
-			}
-			// 获取url(源)对应的并发认证控制器
-            const controller = handler.getMutexController(url);
-            if (!controller.currentlyState) {
-                controller.currentlyState = true; // Mark authenticating
-                new Promise(function (resolve, reject) {
-                	IAMCore.Console.info("Biz unauth response: " + JSON.stringify(res));
-                    if (controller.authenticated) {
-                        resolve();
-                        return;
-                    }
-                    if (handler.checkTGCExpiredAndRedirectToLogin(res)) {
-                        return;
-                    }
-                    if (!res.data || !res.data.redirect_url) {
-                        errorFn(res);
-                        return;
-                    }
-                    // Request IAM server authenticator.
-                    handler.doMultiModularRequest(method, handler.wrapAddParameters(res.data.redirect_url), true, null, resolve, errorFn, null);
-                }).then(function (res1) {
-                	IAMCore.Console.info("Iam-server response: " + JSON.stringify(res1));
-                    if (controller.authenticated) {
-                        return;
-                    }
-                    if (handler.checkTGCExpiredAndRedirectToLogin(res1)) {
-                        return;
-                    }
-                    if (!res1.data || !res1.data.redirect_url) {
-                    	if (errorFn) {
-                    		errorFn(res1);
-                    	}
-                        return;
-                    }
-                    return new Promise((resolve, reject) => {
-                        // Request IAM client authenticator.
-                        handler.doMultiModularRequest('get', handler.wrapAddParameters(res1.data.redirect_url), true, null, resolve, errorFn, null);
-                    });
-                }).then(function (res2) {
-                	IAMCore.Console.info("Iam-client response: " + JSON.stringify(res2));
-                    controller.currentlyState = false;  // Mark authenticated completed
-
-                    handler.doMultiModularRequest(method, url, true, params, function (res3) {
-                    	IAMCore.Console.info("Redirect origin biz response: " + JSON.stringify(res3));
-                        if (!handler.isUnauthenticated(res3)) {
-                            if (successFn) {
-                            	successFn(res3);
-							}
-                            controller.authenticated = true;
-                        } else { // need authRequest???
-                            controller.authenticated = false;
-                        }
-                    }, function (errmsg) {
-                        if (errorFn) {
-                            errorFn(errmsg);
-                        } else {
-                        	console.error(errmsg);
-                        }
-                    }, function () {
-                        // Next biz requests
-                        if (controller.requestQueue.length > 0) {
-                            const authRequest = controller.requestQueue[0]; // Poll first
-                            controller.requestQueue.splice(0, 1); // Remove
-                            IAMCore.Console.info('Poll authenticating queue first: ' + authRequest + ', requestQueue: ' + controller.requestQueue);
-                            handler.doHandle(authRequest.res, authRequest.method, authRequest.url,
-                                authRequest.successFn, authRequest.errorFn, authRequest.params)
-                        }
-                    });
-                });
-            } else { // Offer queue
-                const authRequest = { res: res, method: method, url: url, successFn: successFn, errorFn: errorFn, params: params };
-                controller.requestQueue.push(authRequest);
-                IAMCore.Console.info('Offered authenticating authRequest: ' + authRequest + ', requestQueue: ' + controller.requestQueue);
-            }
-        },
-	}
-
 	// DefaultCaptcha配置实现(JPEG/Gif验证码)
 	var _defaultCaptchaVerifier = {
 		captchaLen: 5,
@@ -1497,9 +1355,9 @@
 			var img = Common.Util.checkEmpty("captcha.img", settings.captcha.img);
 			imgInput.val(""); // 清空验证码input
 			// 绑定刷新验证码
-			$(img).click(function(){ resetCaptcha(true); });
+			$(img).click(function(){ _resetCaptcha(true); });
 			// 请求申请Captcha
-			_doIamRequest("get", true, getApplyCaptchaUrl(), new Map(), function(res) {
+			_doIamRequest("get", true, _getApplyCaptchaUrl(), new Map(), function(res) {
 				// Apply captcha completed.
 				runtime.flags.isCurrentlyApplying = false;
 				runtime.applyModel = res.data.applyModel; // [MARK4]
@@ -1513,7 +1371,7 @@
 					$(img).attr("title", res.message); // 如:刷新过快
 					$(img).unbind("click");
 					setTimeout(function(){
-						$(img).click(function(){ resetCaptcha(true); });
+						$(img).click(function(){ _resetCaptcha(true); });
 					}, 15000); // 至少15sec才能点击刷新
 				}
 			}, function(req, status, errmsg){
@@ -1529,6 +1387,7 @@
 		definition: {
 			codeOkValue: "200", // 接口返回成功码判定标准
 			code401Value: "401", // 接口返回未认证状态码判定标准
+			statusUnauthenticatedValue: "Unauthenticated", // 接口返回未认证状态判定标准
 			responseType: "response_type", // 控制返回数据格式的参数名
 			responseTypeValue: "json", // 使用返回数据格式
 			whichKey: "which", // 请求连接到SNS的参数名
@@ -1575,6 +1434,9 @@
  		init: {
  			onPostUmidToken: function(res){
  				console.debug("onPostUmidToken... "+ res);
+ 			},
+ 			onPostHandshake: function(res){
+ 				console.debug("onPostHandshake... "+ res);
  			},
  			onPreCheck: function(principal){
  				console.debug("onPreCheck... principal:"+ principal);
@@ -1623,8 +1485,8 @@
                         $(jigsawPanel).JigsawIamCaptcha({
                         	// 提交验证码的参数名
                         	verifyDataKey: Common.Util.checkEmpty("definition.verifyDataKey", settings.definition.verifyDataKey),
-                            getApplyCaptchaUrl: getApplyCaptchaUrl,
-							getVerifyAnalysisUrl: getVerifyAnalysisUrl,
+                            _getApplyCaptchaUrl: _getApplyCaptchaUrl,
+							_getVerifyAnalysisUrl: _getVerifyAnalysisUrl,
                             repeatIcon: 'fa fa-redo',
                             onSuccess: function (verifiedToken) {
 								console.debug("Jigsaw captcha verify successful. verifiedToken is '"+ verifiedToken + "'");
@@ -1710,8 +1572,111 @@
 		}
 	};
 
+	// --- [Start Helper function's. ---
+
+	// Check is response is Unauthenticated?
+	var _isRespUnauthenticated = function (res) {
+		if (res) {
+			var isCode401 = res.code && (res.code == settings.definition.code401Value || (res.code + '') == settings.definition.code401Value);
+			var isStatusUnauthenticated = res.status && (res.status == settings.definition.statusUnauthenticatedValue);
+			return isCode401 || isStatusUnauthenticated;
+		}
+		return false;
+	};
+
+	// Check is response is successful?
+	var _isRespSuccess = function (res) {
+		if (res.code == settings.definition.code401Value 
+				|| (res.code + '') == settings.definition.code401Value) {
+			return true;
+		}
+		return false;
+	};
+
+	// Gets Xsrf token.
+	var _getXsrfToken = function(_xsrfTokenCookieName) {
+		var xsrfTokenHeaderName = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
+		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
+		// [MARK55]
+		var host = location.hostname;
+		var topDomain = Common.Util.extTopDomainString(host);
+		var defaultServiceName = host;
+		var index = host.indexOf(topDomain);
+		if (index > 0) {
+			defaultServiceName = host.substring(0, index - 1);
+		}
+		defaultServiceName = defaultServiceName.replace(".", "_").toUpperCase();
+		var xsrfTokenCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";
+		xsrfTokenCookieName = _xsrfTokenCookieName ? _xsrfTokenCookieName : xsrfTokenCookieName;
+
+		// Gets xsrf from cookie.
+		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName, null);
+		IAMCore.Console.debug("Load xsrfToken: " + xsrfToken + " by cookieName: " + xsrfTokenCookieName);
+
+		// First visit? init xsrf token
+		if (!xsrfToken) {
+			//console.debug("Initializing xsrf token...");
+			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
+			$.ajax({
+				url: applyXsrfTokenUrl,
+				type: 'HEAD',
+				//type: 'GET',
+				async: false,
+				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+				success: function(res, textStatus, jqxhr){
+					xsrfToken = Common.Util.getCookie(xsrfTokenCookieName);
+				},
+				error: function(req, status, errmsg){
+					console.debug("Failed to init xsrf token. " + errmsg);
+				}
+			});
+		}
+		return {
+			headerName: xsrfTokenHeaderName,
+			paramName: xsrfTokenParamName,
+			value: xsrfToken
+		};
+	};
+
+	// Gets Replay token.
+	var _generateReplayToken = function() {
+		var timestamp = new Date().getTime();
+		var nonce = "";
+		for (var i=0; i<2; i++) {
+			nonce += Math.random().toString(36).substr(2);
+		}
+		// Signature replay token.
+		var replayTokenPlain = Common.Util.sortWithAscii(nonce + timestamp); // Ascii sort
+		// Gets crc16
+		var replayTokenPlainCrc16 = Common.Util.Crc16CheckSum.crc16Modbus(replayTokenPlain);
+		// Gets iters
+		var iters = parseInt(replayTokenPlainCrc16 % replayTokenPlain.length / Math.PI) + 1;
+		// Gets signature
+		var signature = replayTokenPlain;
+		for (var i=0; i<iters; i++) {
+			signature = CryptoJS.MD5(signature).toString(CryptoJS.enc.Hex);
+		}
+		var replayTokenPlain = JSON.stringify({
+			"n": nonce, // nonce
+			"t": timestamp, // timestamp
+			"s": signature // signature
+		});
+		// Encode replay token
+		var replayTokenHeaderName = Common.Util.checkEmpty("definition.replayTokenHeaderKey", settings.definition.replayTokenHeaderKey);
+		var replayTokenParamName = Common.Util.checkEmpty("definition.replayTokenParamKey", settings.definition.replayTokenParamKey);
+		var replayToken = Common.Util.Codec.encodeBase58(replayTokenPlain);
+		IAMCore.Console.debug("Generated replay token(plain): "+ replayTokenPlain + " - " + replayToken);
+		return {
+			headerName: replayTokenHeaderName,
+			paramName: replayTokenParamName,
+			value: replayToken
+		};
+	};
+
+	// --- Helper function's. End] ---
+
 	// Gets default IAM baseUri
-	var getDefaultIamBaseUri = function() {
+	var _getDefaultIamBaseUri = function() {
 		// 获取地址栏默认baseUri
 		var protocol = location.protocol;
 		var hostname = location.hostname;
@@ -1747,7 +1712,7 @@
 		IAMCore.Console.debug("Merged Iam core settings: "+ JSON.stringify(settings));
 
 		if (Common.Util.isEmpty(settings.deploy.baseUri)) {
-	        settings.deploy.baseUri = getDefaultIamBaseUri();
+	        settings.deploy.baseUri = _getDefaultIamBaseUri();
 	        IAMCore.Console.info("Used overlay iamBaseURI: " + settings.deploy.baseUri);
 	    }
 
@@ -1756,7 +1721,7 @@
 	};
 
 	// Gets URL to request a connection to a sns provider
-	var getSnsConnectUrl = function(provider, panelType){
+	var _getSnsConnectUrl = function(provider, panelType){
 		var required = Common.Util.checkEmpty("sns.required", settings.sns.required);
 		var which = Common.Util.checkEmpty("required.getWhich", required.getWhich(provider, panelType));
 		var url = settings.deploy.baseUri + Common.Util.checkEmpty("definition.snsConnectUri", settings.definition.snsConnectUri) 
@@ -1780,7 +1745,7 @@
 	};
 
 	// Gets apply captcha URL.
-	var getApplyCaptchaUrl = function() {
+	var _getApplyCaptchaUrl = function() {
 		var paramMap = new Map();
 		// principal参数（申请验证码接口会检查是否启用,因为factors有包括rip/principal等,所有只要principal输入框有值就传,如：同一网段内多次登录root失败，此时该网段另一客户端登录root时也应该要启用验证码）
 		var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput));
@@ -1803,7 +1768,7 @@
 	};
 
 	// Gets verify & analyze captcha URL.
-	var getVerifyAnalysisUrl = function() {
+	var _getVerifyAnalysisUrl = function() {
 		var paramMap = new Map();
 		// principal参数（申请验证码接口会检查是否启用,因为factors有包括rip/principal等,所有只要principal输入框有值就传,如：同一网段内多次登录root失败，此时该网段另一客户端登录root时也应该要启用验证码）
 		var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput));
@@ -1828,10 +1793,10 @@
 	};
 
 	// Reset graph captcha.
-	var resetCaptcha = function(refresh) {
+	var _resetCaptcha = function(refresh) {
 		if (refresh) {
 			var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput, false));
-			_InitSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
+			_initSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
 				if(checkCaptcha.enabled && !runtime.flags.isCurrentlyApplying){ // 启用验证码且不是申请中(防止并发)?
 					// 获取当前配置的 CaptchaVerifier实例并显示
 					Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaRender();
@@ -1843,7 +1808,7 @@
 	};
 
 	// 渲染SNS授权二维码或页面, 使用setTimeout以解决 如,微信long请求导致父窗体长时间处于加载中问题
-	var snsViewReader = function(connectUrl, panelType) {
+	var _snsViewReader = function(connectUrl, panelType) {
 		// 渲染授权二维码面板配置
 		if("qrcodePanel" == panelType){
 			// 获取已创建的iframe对象
@@ -1900,8 +1865,8 @@
 		}
 	};
 
-	// Init SNS authorize authentication login implement.
-	var _InitSNSAuthenticator = function() {
+	// Init SNS authorizing authentication login implement.
+	var _initSNSAuthenticator = function() {
 		// Check authenticator enable?
 		if (!settings.sns.enable) {
 			console.debug("SNS authenticator not enable!");
@@ -1922,20 +1887,20 @@
 				var provider = curProviderEle.getAttribute("provider");
 				var panelType = curProviderEle.getAttribute("panelType");
 				// 请求社交网络认证的URL（与which、action相关）
-				var connectUrl = getSnsConnectUrl(provider, panelType);
+				var connectUrl = _getSnsConnectUrl(provider, panelType);
 				// 执行点击SNS按钮事件
 				if(!settings.sns.onBefore(provider, panelType, connectUrl)){
 					console.warn("onBefore has blocked execution");
 					return this;
 				}
 				// 渲染SNS登录二维码或页面
-				snsViewReader(connectUrl, panelType);
+				_snsViewReader(connectUrl, panelType);
 			}
 		}
 	};
 
 	// Init safety check(PRE).
-	var _InitSafeCheck = function(principal, callback){
+	var _initSafeCheck = function(principal, callback){
 		$(function(){
 			// 初始化前回调
 			if(!Common.Util.checkEmpty("init.onPreCheck", settings.init.onPreCheck)(principal)){
@@ -1964,7 +1929,7 @@
 	};
 
 	// Init Captcha verifier implement.
-	var _InitCaptchaVerifier = function() {
+	var _initCaptchaVerifier = function() {
 		// Check authenticator enable?
 		if (!settings.captcha.enable) {
 			console.debug("Captcha verifier not enable!");
@@ -1973,7 +1938,7 @@
 
 		$(function(){
 			// 初始刷新验证码
-			resetCaptcha(true);	// 初始化&绑定验证码事件
+			_resetCaptcha(true);	// 初始化&绑定验证码事件
 			if(settings.captcha.use == "VerifyWithSimpleGraph" || settings.captcha.use == "VerifyWithGifGraph") {
 				var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 				// Set captcha input maxLength.
@@ -1994,11 +1959,11 @@
 							captchaParam.put("{verifyTypeKey}", _check("applyModel.verifyType", runtime.applyModel.verifyType));
 							captchaParam.set("{umidTokenKey}", runtime.umid.getValue());
 							// 提交验证码
-							_doIamRequest("post", true, getVerifyAnalysisUrl(), captchaParam, function(res){
+							_doIamRequest("post", true, _getVerifyAnalysisUrl(), captchaParam, function(res){
 								runtime.flags.isVerifying = false; // Reset verify status.
 								var codeOkValue = _check("definition.codeOkValue",settings.definition.codeOkValue);
 								if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
-									resetCaptcha(true);
+									_resetCaptcha(true);
 									settings.captcha.onError(res.message); // Call after captcha error.
 								} else { // Verify success.
 									runtime.verifiedModel = res.data.verifiedModel;
@@ -2006,7 +1971,7 @@
 								}
 							}, function(errmsg){
 								runtime.flags.isVerifying = false; // Reset verify status.
-								resetCaptcha(true);
+								_resetCaptcha(true);
 								settings.captcha.onError(errmsg); // Call after captcha error.
 							}, null, true);
 						}
@@ -2018,7 +1983,7 @@
 	};
 
 	// Init Account login implements.
-	var _InitAccountAuthenticator = function() {
+	var _initAccountAuthenticator = function() {
 		// Check authenticator enable?
 		if (!settings.account.enable) {
 			console.debug("Account authenticator not enable!");
@@ -2044,7 +2009,7 @@
 					return;
 				}
 
-				_InitSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
+				_initSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
 					// 生成client公钥(用于获取认证成功后加密接口的密钥)
 					runtime.clientSecretKey = IAMCrypto.RSA.generateKey();
 					// 获取Server公钥(用于提交账号密码)
@@ -2056,7 +2021,7 @@
 						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
 						if(Common.Util.isEmpty(verifiedToken)){ // Required
 							settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete man-machine verify");
-							resetCaptcha(false);
+							_resetCaptcha(false);
 							return;
 						}
 					}
@@ -2078,7 +2043,7 @@
 					//loginParam.set("{principalKey}", Common.Util.Codec.toHex(principal));
 					loginParam.set("{credentialKey}", credentials);
 					loginParam.set("{clientSecretKey}", runtime.clientSecretKey.publicKeyHex);
-					loginParam.set("{clientRefKey}", getClientRef());
+					loginParam.set("{clientRefKey}", _getClientRef());
 					loginParam.set("{verifiedTokenKey}", verifiedToken);
 					loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
 					loginParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
@@ -2092,9 +2057,9 @@
 						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
 
 						runtime.verifiedModel.verifiedToken = ""; // Clear
-						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
 						if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
-							resetCaptcha(true); // 刷新验证码
+							_resetCaptcha(true); // 刷新验证码
 							settings.account.onError(res.message); // 登录失败回调
 						} else { // 登录成功，直接重定向
                             $(document).unbind("keydown");
@@ -2115,7 +2080,7 @@
 	};
 
 	// Init SMS authentication implements.
-	var _InitSMSAuthenticator = function(){
+	var _initSMSAuthenticator = function(){
 		// Check authenticator enable?
 		if (!settings.sms.enable) {
 			console.debug("SMS authenticator not enable!");
@@ -2228,7 +2193,7 @@
 	};
 
 	// Client device OS type.
-	var getClientRef = function(){
+	var _getClientRef = function(){
 		var clientRef = null;
 		var osTypes = Common.Util.PlatformType;
 		for(var osname in osTypes){
@@ -2309,102 +2274,141 @@
 	};
 
 	// Init Handshake authentication(PRE) implements.
-	var _InitHandshakeIfNecessary = function() {
+	var _initHandshakeIfNecessary = function() {
 		// Init gets umidToken and handshake.
 		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken));
 	};
 
-	// --- Helper function's. ---
+	// Multi modular authenticating handler
+	var _multiModularAuthenticatingHandler = {
+		mutexControllerManager: new Map(),
+		// Do multi modular authenticating and biz request.
+		doMultiModularRequest:function (method, url, async, params, successFn, errorFn, completeFn) {
+			var url = '@' + url; // Use absolute url
+			_doIamRequest(method, async, url, params || {}, successFn, errorFn, completeFn, false);
+		},
+		// 检查返回未登录(code=401)时是否跳转登录页，(仅当TGC过期(真正过期)是才跳转登录页，iam-client过期无需跳转登陆页)
+		checkTGCExpiredAndRedirectToLogin: function (res) {
+			const handler = _multiModularAuthenticatingHandler;
+		    console.debug("TGC validating... res: " + JSON.stringify(res));
+		    if (_isRespUnauthenticated(res)) {
+		        // IamWithCasAppClient/IamWithCasAppServer
+		        if (res.data.serviceRole == 'IamWithCasAppServer') { // TGC过期?
+		            console.debug("TGC expired, redirectTo: " + res.data[settings.definition.redirectUrlKey]);
+		            // e.g: window.location.href = '/#/login';
+		            return true;
+		        }
+		    }
+		    return false;
+		},
+		// 获取URL同源的并发认证控制器
+		getMutexController: function (url) {
+			const handler = _multiModularAuthenticatingHandler;
+		    const _url = new URL(url);
+		    const urlSame = _url.protocol + "://" + _url.host;
+		    var controller = handler.mutexControllerManager.get(urlSame);
+		    if (!controller) {
+		    	handler.mutexControllerManager.set(urlSame, (controller = {
+		            urlSame: urlSame,
+		            currentlyState: false,
+		            requestQueue: [], // FIFO
+		            authenticated: false,
+		        }));
+		    }
+		    return controller;
+		},
+		// 拦截处理多模块并发认证请求（401重定向）
+		doHandle: function (res, method, url, successFn, errorFn, params) {
+			const handler = _multiModularAuthenticatingHandler;
+			// Check parameters requires.
+			Common.Util.checkEmpty('multiModularAuthenticatingRequest.res', res);
+			Common.Util.checkEmpty('multiModularAuthenticatingRequest.method', method);
+			Common.Util.checkEmpty('multiModularAuthenticatingRequest.url', url);
+			// Check authentication status.
+			if (!_isRespUnauthenticated(res)) {
+				IAMCore.Console.debug("Ignore non-unauthenticated res. url: " + url + ", res: " + res);
+				return;
+			}
+			// 获取url(源)对应的并发认证控制器
+            const controller = handler.getMutexController(url);
+            if (!controller.currentlyState) {
+                controller.currentlyState = true; // Mark authenticating
+                new Promise(function (resolve, reject) {
+                	IAMCore.Console.info("Biz unauth response: " + JSON.stringify(res));
+                    if (controller.authenticated) {
+                        resolve();
+                        return;
+                    }
+                    if (handler.checkTGCExpiredAndRedirectToLogin(res)) {
+                        return;
+                    }
+                    if (!res.data || !res.data.redirect_url) {
+                        errorFn(res);
+                        return;
+                    }
+                    // Request IAM server authenticator.
+                    handler.doMultiModularRequest(method, res.data.redirect_url, true, null, resolve, errorFn, null);
+                }).then(function (res1) {
+                	IAMCore.Console.info("Iam-server response: " + JSON.stringify(res1));
+                    if (controller.authenticated) {
+                        return;
+                    }
+                    if (handler.checkTGCExpiredAndRedirectToLogin(res1)) {
+                        return;
+                    }
+                    if (!res1.data || !res1.data.redirect_url) {
+                    	if (errorFn) {
+                    		errorFn(res1);
+                    	}
+                        return;
+                    }
+                    return new Promise((resolve, reject) => {
+                        // Request IAM client authenticator.
+                        handler.doMultiModularRequest('get', res1.data.redirect_url, true, null, resolve, errorFn, null);
+                    });
+                }).then(function (res2) {
+                	IAMCore.Console.info("Iam-client response: " + JSON.stringify(res2));
+                    controller.currentlyState = false;  // Mark authenticated completed
 
-	// Gets Xsrf token.
-	var _getXsrfToken = function(_xsrfTokenCookieName) {
-		var xsrfTokenHeaderName = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
-		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
-		// [MARK55]
-		var host = location.hostname;
-		var topDomain = Common.Util.extTopDomainString(host);
-		var defaultServiceName = host;
-		var index = host.indexOf(topDomain);
-		if (index > 0) {
-			defaultServiceName = host.substring(0, index - 1);
-		}
-		defaultServiceName = defaultServiceName.replace(".", "_").toUpperCase();
-		var xsrfTokenCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";
-		xsrfTokenCookieName = _xsrfTokenCookieName ? _xsrfTokenCookieName : xsrfTokenCookieName;
-
-		// Gets xsrf from cookie.
-		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName, null);
-		IAMCore.Console.debug("Load xsrfToken: " + xsrfToken + " by cookieName: " + xsrfTokenCookieName);
-
-		// First visit? init xsrf token
-		if (!xsrfToken) {
-			//console.debug("Initializing xsrf token...");
-			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
-			$.ajax({
-				url: applyXsrfTokenUrl,
-				type: 'HEAD',
-				//type: 'GET',
-				async: false,
-				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
-				success: function(res, textStatus, jqxhr){
-					xsrfToken = Common.Util.getCookie(xsrfTokenCookieName);
-				},
-				error: function(req, status, errmsg){
-					console.debug("Failed to init xsrf token. " + errmsg);
-				}
-			});
-		}
-		return {
-			headerName: xsrfTokenHeaderName,
-			paramName: xsrfTokenParamName,
-			value: xsrfToken
-		};
-	};
-
-	// Gets Replay token.
-	var _generateReplayToken = function() {
-		var timestamp = new Date().getTime();
-		var nonce = "";
-		for (var i=0; i<2; i++) {
-			nonce += Math.random().toString(36).substr(2);
-		}
-		// Signature replay token.
-		var replayTokenPlain = Common.Util.sortWithAscii(nonce + timestamp); // Ascii sort
-		// Gets crc16
-		var replayTokenPlainCrc16 = Common.Util.Crc16CheckSum.crc16Modbus(replayTokenPlain);
-		// Gets iters
-		var iters = parseInt(replayTokenPlainCrc16 % replayTokenPlain.length / Math.PI) + 1;
-		// Gets signature
-		var signature = replayTokenPlain;
-		for (var i=0; i<iters; i++) {
-			signature = CryptoJS.MD5(signature).toString(CryptoJS.enc.Hex);
-		}
-		var replayTokenPlain = JSON.stringify({
-			"n": nonce, // nonce
-			"t": timestamp, // timestamp
-			"s": signature // signature
-		});
-		// Encode replay token
-		var replayTokenHeaderName = Common.Util.checkEmpty("definition.replayTokenHeaderKey", settings.definition.replayTokenHeaderKey);
-		var replayTokenParamName = Common.Util.checkEmpty("definition.replayTokenParamKey", settings.definition.replayTokenParamKey);
-		var replayToken = Common.Util.Codec.encodeBase58(replayTokenPlain);
-		IAMCore.Console.debug("Generated replay token(plain): "+ replayTokenPlain + " - " + replayToken);
-		return {
-			headerName: replayTokenHeaderName,
-			paramName: replayTokenParamName,
-			value: replayToken
-		};
-	};
-
-	// Multi modular authenticating coordination interceptor.
-	var modularAuthenticatingInterceptor = function(res) {
-		
+                    handler.doMultiModularRequest(method, url, true, params, function (res3) {
+                    	IAMCore.Console.info("Redirect origin biz response: " + JSON.stringify(res3));
+                        if (!_isRespUnauthenticated(res3)) {
+                            if (successFn) {
+                            	successFn(res3);
+							}
+                            controller.authenticated = true;
+                        } else { // need authRequest???
+                            controller.authenticated = false;
+                        }
+                    }, function (errmsg) {
+                        if (errorFn) {
+                            errorFn(errmsg);
+                        } else {
+                        	console.error(errmsg);
+                        }
+                    }, function () {
+                        // Next biz requests
+                        if (controller.requestQueue.length > 0) {
+                            const authRequest = controller.requestQueue[0]; // Poll first
+                            controller.requestQueue.splice(0, 1); // Remove
+                            IAMCore.Console.info('Poll authenticating queue first: ' + authRequest + ', requestQueue: ' + controller.requestQueue);
+                            handler.doHandle(authRequest.res, authRequest.method, authRequest.url,
+                                authRequest.successFn, authRequest.errorFn, authRequest.params)
+                        }
+                    });
+                });
+            } else { // Offer queue
+                const authRequest = { res: res, method: method, url: url, successFn: successFn, errorFn: errorFn, params: params };
+                controller.requestQueue.push(authRequest);
+                IAMCore.Console.info('Offered authenticating authRequest: ' + authRequest + ', requestQueue: ' + controller.requestQueue);
+            }
+        },
 	};
 
 	// --- Exposing IAMCore APIs. ---
 
 	window.IAMCore = function(opt) {
-		runtime.that = this;
+		runtime.__that = this;
 		// 初始化配置
 		_initConfigure(opt);
 	};
@@ -2414,8 +2418,8 @@
 	};
 	// Export safeCheck
 	IAMCore.prototype.safeCheck = function(principal, callback) {
-		_InitHandshakeIfNecessary().then(handshakeValue => {
-			_InitSafeCheck(principal, callback);
+		_initHandshakeIfNecessary().then(handshakeValue => {
+			_initSafeCheck(principal, callback);
 		});
 		return this;
 	};
@@ -2449,17 +2453,18 @@
 	// Export build 
 	IAMCore.prototype.build = function() {
 		// 为确保执行顺序（1，获取umidToken；2，请求handshake；3，初始绑定各种认证器）
-		_InitHandshakeIfNecessary().then(handshakeValue => {
-			_InitAccountAuthenticator();
-			_InitSMSAuthenticator();
-			_InitSNSAuthenticator();
-			_InitCaptchaVerifier();
+		_initHandshakeIfNecessary().then(handshakeValue => {
+			_initAccountAuthenticator();
+			_initSMSAuthenticator();
+			_initSNSAuthenticator();
+			_initCaptchaVerifier();
 		});
 	};
 	// Export IAMCore destroy
 	IAMCore.prototype.destroy = function() {
-		sessionStorage.removeItem(constant.baseUriStoredKey);
-		sessionStorage.removeItem(constant.umidTokenStorageKey);
+		for (var key in constant) {
+			sessionStorage.removeItem(constant[key]);
+		}
 		constant = null;
 		_defaultCaptchaVerifier = null;
 		runtime = null;
@@ -2505,6 +2510,12 @@
 		},
 	};
 
+	// Export function check resp unauthenticated
+	IAMCore.checkRespUnauthenticated = _isRespUnauthenticated;
+
+	// Export function check resp success.
+	IAMCore.checkRespSuccess = _isRespSuccess;
+
 	// Export function multi modular authenticating handler.
 	IAMCore.multiModularMutexAuthenticatingHandler = _multiModularAuthenticatingHandler.doHandle;
 
@@ -2512,7 +2523,7 @@
 	IAMCore.getIamBaseUri = function() {
 		var iamBaseUri = sessionStorage.getItem(constant.baseUriStoredKey);
 		if (!iamBaseUri) {
-			sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri =getDefaultIamBaseUri()));
+			sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri = _getDefaultIamBaseUri()));
 		}
 		return iamBaseUri;
 	};
