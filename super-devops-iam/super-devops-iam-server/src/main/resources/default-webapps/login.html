@@ -39,7 +39,7 @@
 		new IAMCore(options).checkAuthenticationAndRedirect(homeUrl).then(() => {
 			$(function() {
 				console.log("IAM JSSDK UI creation... ");
-				new IAMUi().initUI(document.getElementById("container"), options);
+				new IAMUi().initUI(document.getElementById("iam_container"), options);
 			});
 		});
 	</script>
@@ -78,7 +78,7 @@
 				<img src="./static/images/roll/guangzhu.png" alt="图片" style="z-index:-4;position:relative;">
 			</div>
 		</div>
-		<div id="content-right">
+		<div id="iam_container">
 		</div>
 	</div>
 	<div id="foot" style="line-height:24px; position:relative;z-index:1000;">

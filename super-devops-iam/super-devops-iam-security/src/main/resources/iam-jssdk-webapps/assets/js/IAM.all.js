@@ -1167,7 +1167,7 @@
 						"runtime.umid.getValuePromise())", runtime.umid._value);
 			},
 			_currentlyInGettingValuePromise: null, // 仅umid.getValuePromise使用
-			getValuePromise: function() {
+			getValuePromise: function () {
 				// 若当前正在获取umidToken直接返回该promise对象（解决并发调用）
 				if (runtime.umid._currentlyInGettingValuePromise) {
 					return runtime.umid._currentlyInGettingValuePromise;
@@ -1249,20 +1249,22 @@
 						"runtime.handshake.getValuePromise())", runtime.handshake._value);
 			},
 			_currentlyInGettingValuePromise: null, // 仅handshake.getValuePromise使用
-			getValuePromise: function(umidToken, async) {
-				// 若当前正在获取handshake._value直接返回该promise对象（解决并发调用）
-				if (runtime.handshake._currentlyInGettingValuePromise) {
-					return runtime.handshake._currentlyInGettingValuePromise;
-				}
-				// 若已有值
-				if(!Common.Util.isEmpty(runtime.handshake._value)) {
-					return new Promise((reslove, reject) => reslove(runtime.handshake._value));
+			getValuePromise: function (umidToken, refresh) {
+				if (!refresh) {
+					// 若当前正在获取handshake._value直接返回该promise对象（解决并发调用）
+					if (runtime.handshake._currentlyInGettingValuePromise) {
+						return runtime.handshake._currentlyInGettingValuePromise;
+					}
+					// 若已有值
+					if(!Common.Util.isEmpty(runtime.handshake._value)) {
+						return new Promise((reslove, reject) => reslove(runtime.handshake._value));
+					}
 				}
 				// 新请求获取handshake._value等(页面加载时调用一次即可)
 				return (runtime.handshake._currentlyInGettingValuePromise = new Promise((reslove, reject) => {
 					var handshakeParam = new Map();
 					handshakeParam.set("{umidTokenKey}", Common.Util.checkEmpty("umidToken", umidToken));
-					_doIamRequest("post", (async||true), "{handshakeUri}", handshakeParam, function(res) {
+					_doIamRequest("post", true, "{handshakeUri}", handshakeParam, function(res) {
 						Common.Util.checkEmpty("init.onPostHandshake", settings.init.onPostHandshake)(res); // handshake完成回调
 						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
 						if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
@@ -1574,6 +1576,42 @@
 	};
 
 	// --- [Start Helper function's. ---
+
+	// IAM console.
+	var _iamConsole = {
+		// Check verbose enabled. (output run details.)
+		_isVerbose: function () {
+			var verbose = sessionStorage.getItem(constant.iamVerboseStoredKey);
+			if (verbose) {
+				verbose = verbose.toUpperCase();
+				return verbose == 'TRUE' || verbose == '1' || verbose == 'Y' || verbose == 'YES';
+			}
+			return false;
+		},
+		debug: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.debug(msg);
+			}
+		},
+		info: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.info(msg);
+			}
+		},
+		warn: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.warn(msg);
+			}
+		},
+		error: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.error(msg);
+			}
+		},
+		log: function (msg) {
+			_iamConsole.info(msg);
+		},
+	};
 
 	// Check is response is Unauthenticated?
 	var _isRespUnauthenticated = function (res) {
@@ -2255,7 +2293,7 @@
 		$.ajax({
 			url: _url,
 			type: method,
-			async: async,
+			async: (async || true),
 			headers: JSON.fromMap(headers),
 			//dataType: "json",
 			data: dataParams,
@@ -2406,9 +2444,12 @@
 
 	// Check authentication and redirection
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
-		document.write("<style>body{display:none;}</style>"); // Hidden
+		// Prevent flashing when redirecting to the home page.
+		IAMCore.Console.info("Hidden login document(*) ... ");
+		document.write("<style id='iam_check_authc_redirect_style'>*{display:none;}</style>"); // Hide
+
 		return new Promise(resolve => {
-			_initHandshakeIfNecessary(false).then(res => {
+			_initHandshakeIfNecessary(true).then(res => {
 				if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
 					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, 0);
 					var count = parseInt(sessionStorage.getItem(constant.authenticatedRedirectCountStorageKey) || 0);
@@ -2416,17 +2457,19 @@
 					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, ++count);
 					IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
 					window.location = redirectUrl;
+				} else {
+					resolve(res);
+					IAMCore.Console.info("Show login body... ");
+					$("#iam_check_authc_redirect_style").remove(); // Show
 				}
-				resolve(res);
-				$("body").show(); // Show
 			});
 		});
 	};
 
 	// Init Handshake authentication(PRE) implements.
-	var _initHandshakeIfNecessary = function(async) {
+	var _initHandshakeIfNecessary = function(refresh) {
 		// Init gets umidToken and handshake.
-		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken, async));
+		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken, refresh));
 	};
 
 	// --- Exposing IAMCore APIs. ---
@@ -2476,8 +2519,14 @@
 	};
 	// Export build.
 	IAMCore.prototype.build = function() {
-		// 为确保执行顺序（1，获取umidToken；2，请求handshake；3，初始绑定各种认证器）
-		_initHandshakeIfNecessary().then(res => {
+		IAMCore.Console.info("IAMCore init and building ...");
+		// 1: Ensure execution sequence（1.1: get umidToken; 1.2: get handshake; 1.3: init any authenticators）
+		// 2: Forced refresh is to solve the problem that you can't log in again after exiting SPM application. 
+		// The reason is that SPM project is a single page application, and the action of logging out is only to 
+		// execute push('/#/login'), but not to refresh the page At this time, the old session information (due to cache) 
+		// is used, and the correct operation should refresh the handshake interface to get the new session information 
+		// as long as the login page is rendered. Of course, external calls can also be made iamUi.destroy() to solve this problem.
+		_initHandshakeIfNecessary(true).then(res => {
 			_initAccountAuthenticator();
 			_initSMSAuthenticator();
 			_initSNSAuthenticator();
@@ -2495,6 +2544,7 @@
 		settings = null;
 		console.log("Destroyed IAMCore instance.");
 	};
+
 	// Export getXsrfToken
 	IAMCore.prototype.getXsrfToken = _getXsrfToken;
 
@@ -2505,37 +2555,7 @@
 	IAMCore.prototype.checkAuthenticationAndRedirect = _checkAuthenticationAndRedirect;
 
 	// Export function Iam console
-	IAMCore.Console = {
-		// Check verbose enabled. (output run details.)
-		_isVerbose: function () {
-			var verbose = sessionStorage.getItem(constant.iamVerboseStoredKey);
-			if (verbose) {
-				verbose = verbose.toUpperCase();
-				return verbose == 'TRUE' || verbose == '1' || verbose == 'Y' || verbose == 'YES';
-			}
-			return false;
-		},
-		debug: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.debug(msg);
-			}
-		},
-		info: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.info(msg);
-			}
-		},
-		warn: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.warn(msg);
-			}
-		},
-		error: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.error(msg);
-			}
-		},
-	};
+	IAMCore.Console = _iamConsole;
 
 	// Export function check resp unauthenticated
 	IAMCore.checkRespUnauthenticated = _isRespUnauthenticated;
@@ -2877,10 +2897,13 @@
 		return runtime.iamCore;
 	};
 	IAMUi.prototype.destroy = function() {
-		this.getIAMCore().destroy();
 		$(runtime.renderObj).empty();
 		runtime = null;
-		console.log("Destroyed IAMUi instance.");
+		IAMCore.Console.info("Destroyed IAMUi instance.");
+		// Detroy iam core.
+		if (runtime.iamCore) {
+			runtime.iamCore.destroy();
+		}
 	};
 
 	//
@@ -3073,7 +3096,7 @@
 				try {
 					window.location.href = JSON.parse(e.data).refresh_url;
 				} catch(e) {
-					console.debug("Could't parse event message, error: "+ e);
+					IAMCore.Console.error("Could't parse event message, data: "+ e.data);
 				}
 			}
 		}

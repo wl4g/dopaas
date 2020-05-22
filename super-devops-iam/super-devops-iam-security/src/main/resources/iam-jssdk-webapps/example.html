@@ -41,12 +41,12 @@
 		new IAMCore(options).checkAuthenticationAndRedirect(homeUrl).then(() => {
 			$(function() {
 				console.log("IAM JSSDK UI creation... ");
-				new IAMUi().initUI(document.getElementById("container"), options);
+				new IAMUi().initUI(document.getElementById("iam_container"), options);
 			});
 		});
 	</script>
 </head>
 <body>
-	<div id="container" style="width:380px;margin:auto"></div>
+	<div id="iam_container" style="width:380px;margin:auto"></div>
 </body>
 </html>
