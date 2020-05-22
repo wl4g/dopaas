@@ -54,7 +54,7 @@ public class FastCasTicketIamValidator
 
 	@Override
 	public TicketValidatedAssertModel<SimplePrincipalInfo> validate(TicketValidateModel req) throws TicketValidateException {
-		final RespBase<TicketValidatedAssertModel<SimplePrincipalInfo>> resp = doGetRemoteValidate(URI_S_VALIDATE, req);
+		final RespBase<TicketValidatedAssertModel<SimplePrincipalInfo>> resp = doIamRemoteValidate(URI_S_VALIDATE, req);
 		if (!RespBase.isSuccess(resp)) {
 			// Only if the error is not authenticated, can it be redirected to
 			// the IAM server login page, otherwise the client will display the

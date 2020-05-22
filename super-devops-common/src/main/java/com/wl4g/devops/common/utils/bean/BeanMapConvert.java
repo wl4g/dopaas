@@ -23,6 +23,7 @@ import java.beans.PropertyDescriptor;
 import java.util.*;
 
 import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
@@ -102,22 +103,22 @@ public final class BeanMapConvert {
 	/**
 	 * Map to URI parameters
 	 *
-	 * @param param
+	 * @param params
 	 * @return
 	 */
-	public static String toUriParmaters(Map<String, Object> param) {
-		if (param == null) {
+	public static String toUriParmaters(Map<String, Object> params) {
+		if (isNull(params)) {
 			return EMPTY;
 		}
 
-		// To URI parameters string
+		// To query URI of parameters.
 		StringBuffer uri = new StringBuffer();
-		for (Iterator<?> it = param.keySet().iterator(); it.hasNext();) {
+		for (Iterator<?> it = params.keySet().iterator(); it.hasNext();) {
 			Object key = it.next();
 			uri.append(key);
 			uri.append("=");
 			// Prevents any occurrence of a value string null
-			Object value = param.get(key);
+			Object value = params.get(key);
 			if (value != null) {
 				uri.append(value); // "null"
 			}
@@ -125,6 +126,7 @@ public final class BeanMapConvert {
 				uri.append("&");
 			}
 		}
+
 		return uri.toString();
 	}
 
