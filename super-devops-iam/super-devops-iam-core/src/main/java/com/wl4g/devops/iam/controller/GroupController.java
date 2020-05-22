@@ -75,33 +75,14 @@ public class GroupController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/setDefaultCurrentOrganization")
-	public RespBase<?> setDefaultCurrentOrganization() {
-		RespBase<Object> resp = RespBase.create();
-		IamOrganizationUtils.setDefaultCurrentOrganization();
-		return resp;
-	}
-
-	@RequestMapping(value = "/changeCurrentOrganizationInfo")
-	public RespBase<?> changeCurrentOrganizationInfo(String code) {
-		RespBase<Object> resp = RespBase.create();
-		IamOrganizationUtils.changeCurrentOrganizationInfo(code);
-		return resp;
-	}
-
-	@RequestMapping(value = "/getOrganizationTree")
+	@RequestMapping(value = "/getOrganizations")
 	public RespBase<?> getOrganizationTree() {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(IamOrganizationUtils.getOrganizationTree());
+		resp.forMap().put("tree",IamOrganizationUtils.getOrganizationTree());
+		resp.forMap().put("list",IamOrganizationUtils.getOrganizationFromSession());
 		return resp;
 	}
 
-	@RequestMapping(value = "/getOrganizationFromSession")
-	public RespBase<?> getOrganizationFromSession() {
-		RespBase<Object> resp = RespBase.create();
-		resp.setData(IamOrganizationUtils.getOrganizationFromSession());
-		return resp;
-	}
 
 
 
