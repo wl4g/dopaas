@@ -44,7 +44,6 @@ import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,6 +61,7 @@ import static com.wl4g.devops.iam.sns.handler.SecondaryAuthcSnsHandler.SECOND_AU
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
+import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
@@ -69,6 +69,7 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -241,11 +242,12 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		coprocessor.preLogout(new LogoutAuthenticationToken(getPrincipal(false), getHttpRemoteAddr(request)), toHttp(request),
 				toHttp(response));
 
-		// Represents all loggout Tags
-		boolean logoutAll = true;
-		// Get bind session grant information
+		// Represents all logout mark.
+		boolean logoutAllMark = true;
+
+		// Gets session bind grantInfo
 		GrantCredentialsInfo info = getGrantCredentials(subject.getSession());
-		log.debug("Got grantInfo: [{}] with sessionId: [{}]", info, subject.getSession().getId());
+		log.debug("Got grantInfo: {} with sessionId: {}", info, getSessionId(subject));
 
 		if (!isNull(info) && info.hasEmpty()) {
 			// Query applications by bind session names
@@ -256,12 +258,12 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			List<ApplicationInfo> apps = configurer.findApplicationInfo(appNames.toArray(new String[] {}));
 			if (!isEmpty(apps)) {
 				// logout all
-				logoutAll = handleLogoutSessionAll(subject, info, apps);
+				logoutAllMark = handleLogoutSessionsAll(subject, info, apps);
 			} else
 				log.debug("Not found logout appInfo. appNames: {}", appNames);
 		}
 
-		if (forced || logoutAll) {
+		if (forced || logoutAllMark) {
 			// Logout all sessions.
 			try {
 				/**
@@ -363,38 +365,39 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 	 * @param apps
 	 * @return
 	 */
-	private boolean handleLogoutSessionAll(Subject subject, GrantCredentialsInfo info, List<ApplicationInfo> apps) {
-		boolean logoutAll = true; // Represents all logged-out Tags
+	private boolean handleLogoutSessionsAll(Subject subject, GrantCredentialsInfo info, List<ApplicationInfo> apps) {
+		boolean logoutAllMark = true; // Represents all logout mark.
 
 		/*
 		 * Notification all logged-in applications to logout
 		 */
 		for (ApplicationInfo app : apps) {
-			hasText(app.getIntranetBaseUri(), "Application[%s] 'internalBaseUri' must not be empty", app.getAppName());
-			// GrantTicket by application name
+			hasText(app.getIntranetBaseUri(), "Application[%s] 'internalBaseUri' is required", app.getAppName());
+
+			// Gets grantTicket by appName
 			String grantTicket = info.getGrantApps().get(app.getAppName()).getGrantTicket();
-			// Logout URL
+			// Build logout URL
 			String url = new StringBuffer(app.getIntranetBaseUri()).append(URI_C_BASE).append("/").append(URI_C_LOGOUT)
 					.append("?").append(config.getParam().getGrantTicket()).append("=").append(grantTicket).toString();
 
-			// Post remote client logout
+			// Post to remote client logout
 			try {
 				RespBase<LogoutModel> resp = restTemplate
-						.exchange(url, HttpMethod.POST, null, new ParameterizedTypeReference<RespBase<LogoutModel>>() {
+						.exchange(url, POST, null, new ParameterizedTypeReference<RespBase<LogoutModel>>() {
 						}).getBody();
 				if (RespBase.isSuccess(resp))
-					log.info("Logout finished for principal:{}, application:{} url:{}", subject.getPrincipal(), app.getAppName(),
+					log.info("Finished logout of principal: {}, appName: {}, url:{}", subject.getPrincipal(), app.getAppName(),
 							url);
 				else
 					throw new IamException(resp != null ? resp.getMessage() : "No response");
 			} catch (Exception e) {
-				logoutAll = false;
-				log.error(String.format("Remote client logout failure. principal[%s] application[%s] url[%s]",
-						subject.getPrincipal(), app.getAppName(), url), e);
+				logoutAllMark = false;
+				log.error(format("Remote client logout failure. principal: %s, appName: %s, url: %s", subject.getPrincipal(),
+						app.getAppName(), url), e);
 			}
 		}
 
-		return logoutAll;
+		return logoutAllMark;
 	}
 
 	/**

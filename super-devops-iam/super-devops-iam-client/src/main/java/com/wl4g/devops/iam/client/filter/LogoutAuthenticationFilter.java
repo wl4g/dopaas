@@ -20,12 +20,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.session.SessionException;
-import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Assert;
-import org.apache.shiro.util.StringUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
@@ -45,12 +42,14 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipal;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.tool.common.web.WebUtils2.applyQueryURL;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
@@ -154,10 +153,8 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 	 * @return
 	 */
 	private LogoutModel doRequestRemoteLogout(boolean forced) {
-		Subject subject = SecurityUtils.getSubject();
-
-		// Get grantTicket
-		String grantTicket = (String) subject.getSession().getAttribute(SAVE_GRANT_TICKET);
+		// Gets grantTicket
+		String grantTicket = getBindValue(SAVE_GRANT_TICKET);
 
 		// Post server logout URL by grantTicket
 		String url = buildRemoteLogoutUrl(grantTicket, forced);
@@ -191,7 +188,7 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private String buildRemoteLogoutUrl(String grantTicket, boolean forced) {
-		if (!StringUtils.hasText(grantTicket)) {
+		if (isBlank(grantTicket)) {
 			throw new GrantTicketNullException(
 					"Logout failed, because grant Ticket could not be empty, it may have logged out, do not need to repeat logout");
 		}

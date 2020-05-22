@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.authc.model.LogoutModel;
 import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
@@ -34,7 +32,6 @@ import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
 import com.wl4g.devops.iam.common.authc.model.TicketValidatedAssertModel;
 import com.wl4g.devops.iam.common.authc.model.TicketValidateModel;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.devops.tool.common.lang.Exceptions;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_VALIDATE;
@@ -68,13 +65,13 @@ public class CentralAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint 
 	@PostMapping(URI_S_VALIDATE)
 	@ResponseBody
 	public RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> validate(@NotNull @RequestBody TicketValidateModel param) {
-		log.info("Ticket validating sessionId: {} <= {}", getSessionId(), toJSONString(param));
+		log.info("Ticket validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
 		RespBase<TicketValidatedAssertModel<IamPrincipalInfo>> resp = new RespBase<>();
 		// Ticket assertion.
 		resp.setData(authHandler.validate(param));
 
-		log.info("Ticket validated => {}", resp);
+		log.info("Ticket validated. => {}", resp);
 		return resp;
 	}
 
@@ -88,27 +85,18 @@ public class CentralAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint 
 	@PostMapping(URI_S_LOGOUT)
 	@ResponseBody
 	public RespBase<LogoutModel> logout(HttpServletRequest request, HttpServletResponse response) {
-		log.info("Sessions logout <= {}", getFullRequestURL(request));
+		log.info("Logout <= {}", getFullRequestURL(request));
 
 		RespBase<LogoutModel> resp = new RespBase<>();
-		try {
-			// Source application logout processing
-			String appName = getCleanParam(request, config.getParam().getApplication());
-			// hasTextOf(fromAppName, config.getParam().getApplication());
+		// Logout source application
+		String appName = getCleanParam(request, config.getParam().getApplication());
+		// hasTextOf(fromAppName, config.getParam().getApplication());
 
-			// Using coercion ignores remote exit failures
-			boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
-			resp.setData(authHandler.logout(forced, appName, request, response));
-		} catch (Exception e) {
-			if (e instanceof IamException) {
-				log.error("Failed to logout. caused by:{}", Exceptions.getRootCauseMessage(e));
-			} else {
-				log.error("Failed to logout.", e);
-			}
-			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(Exceptions.getRootCauseMessage(e));
-		}
-		log.info("Sessions logout => ", resp);
+		// Using coercion ignores remote exit failures
+		boolean forced = isTrue(request, config.getParam().getLogoutForced(), true);
+		resp.setData(authHandler.logout(forced, appName, request, response));
+
+		log.info("Logout => {}", resp);
 		return resp;
 	}
 
@@ -121,22 +109,16 @@ public class CentralAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint 
 	@PostMapping(URI_S_SECOND_VALIDATE)
 	@ResponseBody
 	public RespBase<SecondAuthcAssertModel> secondaryValidate(HttpServletRequest request) {
-		log.info("Second authentication validate <= {}", getFullRequestURL(request));
+		log.info("Secondary validating, sessionId: {} <= {}", getSessionId(), getFullRequestURL(request));
 
 		RespBase<SecondAuthcAssertModel> resp = new RespBase<>();
-		try {
-			// Required parameters
-			String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondaryAuthCode());
-			String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
-			// Secondary authentication assertion.
-			resp.setData(authHandler.secondaryValidate(secondAuthCode, fromAppName));
-		} catch (Exception e) {
-			log.error("Failed to second authentication validate.", e);
-			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(e.getMessage());
-		}
+		// Requires parameters
+		String secondAuthCode = WebUtils.getCleanParam(request, config.getParam().getSecondaryAuthCode());
+		String fromAppName = WebUtils.getCleanParam(request, config.getParam().getApplication());
+		// Secondary authentication assertion.
+		resp.setData(authHandler.secondaryValidate(secondAuthCode, fromAppName));
 
-		log.info("Second authentication validate => {}", resp);
+		log.info("Secondary validated. => {}", resp);
 		return resp;
 	}
 
@@ -149,19 +131,14 @@ public class CentralAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint 
 	@PostMapping(URI_S_SESSION_VALIDATE)
 	@ResponseBody
 	public RespBase<SessionValidityAssertModel> sessionValidate(@NotNull @RequestBody SessionValidityAssertModel param) {
-		log.info("Sessions expire validate <= {}", toJSONString(param));
+		log.info("Sessions expires validating, sessionId: {} <= {}", getSessionId(), toJSONString(param));
 
 		RespBase<SessionValidityAssertModel> resp = new RespBase<>();
-		try {
-			// Session expire validate assertion.
-			resp.setData(authHandler.sessionValidate(param));
-		} catch (Exception e) {
-			log.error("Failed to session expire validate.", e);
-			resp.setCode(RetCode.SYS_ERR);
-			resp.setMessage(e.getMessage());
-		}
 
-		log.info("Sessions expire validate => {}", resp);
+		// Session expires validate assertion.
+		resp.setData(authHandler.sessionValidate(param));
+
+		log.info("Sessions expires validated. => {}", resp);
 		return resp;
 	}
 
