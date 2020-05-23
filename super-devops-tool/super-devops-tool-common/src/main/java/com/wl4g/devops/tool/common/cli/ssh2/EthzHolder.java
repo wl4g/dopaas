@@ -39,7 +39,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class EthzHolder extends Ssh2Holders<Session, SCPClient> {
+public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 
 	// --- Transfer files. ---
 
@@ -159,20 +159,10 @@ public class EthzHolder extends Ssh2Holders<Session, SCPClient> {
 
 	// --- Execution commands. ---
 
-	/**
-	 * Execution commands with SSH2.
-	 * 
-	 * @param host
-	 * @param user
-	 * @param pemPrivateKey
-	 * @param command
-	 * @param timeoutMs
-	 * @return
-	 * @throws IOException
-	 */
-	public SshExecResponse execWithSsh2(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
+	@Override
+	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
 			throws Exception {
-		return execWaitForCompleteWithSsh2(host, user, pemPrivateKey, command, session -> {
+		return execWaitForComplete(host, user, pemPrivateKey, command, session -> {
 			String message = null, errmsg = null;
 			if (nonNull(session.getStdout())) {
 				message = readFullyToString(session.getStdout());
@@ -184,43 +174,19 @@ public class EthzHolder extends Ssh2Holders<Session, SCPClient> {
 		}, timeoutMs);
 	}
 
-	/**
-	 * Execution commands wait for complete with SSH2
-	 * 
-	 * @param host
-	 * @param user
-	 * @param pemPrivateKey
-	 * @param command
-	 * @param processor
-	 * @param timeoutMs
-	 * @return
-	 * @throws IOException
-	 */
 	@Override
-	public <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
+	public <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<Session, T> processor, long timeoutMs) throws Exception {
-		return doExecCommandWithSsh2(host, user, pemPrivateKey, command, session -> {
+		return doExecCommand(host, user, pemPrivateKey, command, session -> {
 			// Wait for completed by condition.
 			session.waitForCondition((CLOSED), timeoutMs);
 			return processor.process(session);
-		}, timeoutMs);
+		});
 	}
 
-	/**
-	 * Execution commands with SSH2
-	 * 
-	 * @param host
-	 * @param user
-	 * @param pemPrivateKey
-	 * @param command
-	 * @param processor
-	 * @param timeoutMs
-	 * @return
-	 * @throws IOException
-	 */
 	@Override
-	protected final <T> T doExecCommandWithSsh2(String host, String user, char[] pemPrivateKey, String command,
-			ProcessFunction<Session, T> processor, long timeoutMs) throws Exception {
+	public final <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String command,
+			ProcessFunction<Session, T> processor) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
 		notNull(processor, "SSH2 command processor can't null.");
