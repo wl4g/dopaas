@@ -43,7 +43,7 @@ import static java.util.Objects.nonNull;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class SshjHolder extends Ssh2Holders<Session.Command, SCPFileTransfer> {
+public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 
 	// --- Transfer files. ---
 
@@ -96,8 +96,8 @@ public class SshjHolder extends Ssh2Holders<Session.Command, SCPFileTransfer> {
 		try {
 			// Transfer send file.
 			doScpTransfer(host, user, pemPrivateKey, scp -> {
-				//scp.upload(new FileSystemFile(localFile), remoteDir);
-				scp.newSCPUploadClient().copy(new FileSystemFile(localFile),remoteDir,ScpCommandLine.EscapeMode.NoEscape);
+				// scp.upload(new FileSystemFile(localFile), remoteDir);
+				scp.newSCPUploadClient().copy(new FileSystemFile(localFile), remoteDir, ScpCommandLine.EscapeMode.NoEscape);
 			});
 
 			log.debug("SCP put transfered: '{}' to '{}@{}:{}'", localFile.getAbsolutePath(), user, host, remoteDir);
@@ -159,20 +159,9 @@ public class SshjHolder extends Ssh2Holders<Session.Command, SCPFileTransfer> {
 
 	// --- Execution commands. ---
 
-	/**
-	 * Execution commands with SSH2.
-	 * 
-	 * @param host
-	 * @param user
-	 * @param pemPrivateKey
-	 * @param command
-	 * @param timeoutMs
-	 * @return
-	 * @throws IOException
-	 */
-	public SshExecResponse execWithSsh2(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
+	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
 			throws Exception {
-		return execWaitForCompleteWithSsh2(host, user, pemPrivateKey, command, cmd -> {
+		return execWaitForComplete(host, user, pemPrivateKey, command, cmd -> {
 			String message = null, errmsg = null;
 			if (nonNull(cmd.getInputStream())) {
 				message = readFullyToString(cmd.getInputStream());
@@ -185,43 +174,19 @@ public class SshjHolder extends Ssh2Holders<Session.Command, SCPFileTransfer> {
 		}, timeoutMs);
 	}
 
-	/**
-	 * Execution commands wait for complete with SSH2
-	 * 
-	 * @param host
-	 * @param user
-	 * @param pemPrivateKey
-	 * @param command
-	 * @param processor
-	 * @param timeoutMs
-	 * @return
-	 * @throws IOException
-	 */
 	@Override
-	public <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
+	public <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception {
-		return doExecCommandWithSsh2(host, user, pemPrivateKey, command, cmd -> {
+		return doExecCommand(host, user, pemPrivateKey, command, cmd -> {
 			// Wait for completed by condition.
 			cmd.join(timeoutMs, TimeUnit.MILLISECONDS);
 			return processor.process(cmd);
-		}, timeoutMs);
+		});
 	}
 
-	/**
-	 * Execution commands with SSH2
-	 * 
-	 * @param host
-	 * @param user
-	 * @param pemPrivateKey
-	 * @param command
-	 * @param processor
-	 * @param timeoutMs
-	 * @return
-	 * @throws IOException
-	 */
 	@Override
-	protected <T> T doExecCommandWithSsh2(String host, String user, char[] pemPrivateKey, String command,
-			ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception {
+	public <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String command,
+			ProcessFunction<Session.Command, T> processor) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
 		notNull(processor, "SSH2 command processor can't null.");

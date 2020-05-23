@@ -29,7 +29,7 @@ import java.io.*;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class JschHolder extends Ssh2Holders<Void, Void> {
+public class JschHolder extends SSH2Holders<Void, Void> {
 
 	// --- Transfer files. ---
 
@@ -53,14 +53,20 @@ public class JschHolder extends Ssh2Holders<Void, Void> {
 	// --- Execution commands. ---
 
 	@Override
-	public <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
+	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
+			throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<Void, T> processor, long timeoutMs) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected <T> T doExecCommandWithSsh2(String host, String user, char[] pemPrivateKey, String command,
-			ProcessFunction<Void, T> processor, long timeoutMs) throws Exception {
+	public <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String command, ProcessFunction<Void, T> processor)
+			throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
