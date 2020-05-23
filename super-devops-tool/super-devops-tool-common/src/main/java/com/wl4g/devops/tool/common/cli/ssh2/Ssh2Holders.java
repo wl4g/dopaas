@@ -18,7 +18,7 @@ package com.wl4g.devops.tool.common.cli.ssh2;
 import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
 import com.wl4g.devops.tool.common.function.CallbackFunction;
 import com.wl4g.devops.tool.common.function.ProcessFunction;
-import org.slf4j.Logger;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import java.io.CharArrayWriter;
 import java.io.File;
@@ -41,7 +41,8 @@ import static org.apache.commons.lang3.SystemUtils.USER_HOME;
  * @see
  */
 public abstract class Ssh2Holders<S, F> {
-	final protected Logger log = getLogger(getClass());
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Get default {@link Ssh2Holders} instance by provider class.
@@ -63,6 +64,7 @@ public abstract class Ssh2Holders<S, F> {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public final static <T extends Ssh2Holders> T getInstance(Class<T> providerClass) {
+		isTrue(providerRegistry.containsKey(providerClass), "No such ssh2 provider of : %s", providerClass);
 		return (T) providerRegistry.get(providerClass);
 	}
 

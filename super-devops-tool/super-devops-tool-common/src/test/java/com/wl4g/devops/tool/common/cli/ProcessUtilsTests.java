@@ -15,10 +15,14 @@
  */
 package com.wl4g.devops.tool.common.cli;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.buildCrossSingleCommands;
 import static com.wl4g.devops.tool.common.cli.ProcessUtils.execMulti;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 
 import java.io.File;
+
+import org.apache.commons.io.FileUtils;
 
 import com.wl4g.devops.tool.common.cli.ProcessUtils;
 
@@ -27,7 +31,8 @@ public class ProcessUtilsTests {
 	public static void main(String[] args) throws Exception {
 		// buildCrossSingleCommandsTest1();
 		// execMultiTest2();
-		execProgressTest3();
+		// execProgressTest3();
+		execInteractiveCommandTest4();
 	}
 
 	public static void buildCrossSingleCommandsTest1() throws Exception {
@@ -35,9 +40,11 @@ public class ProcessUtilsTests {
 		Runtime.getRuntime().exec(cmdarray).waitFor();
 	}
 
-	public static void execMultiTest2() throws Exception {
-		execMulti("echo \"start...\"\njps \necho \"end\"", new File("d:\\"), new File("c:\\out"), new File("c:\\err"), true,
-				false);
+	public static void execMultiWithWindowsTest2() throws Exception {
+		if (IS_OS_WINDOWS) {
+			execMulti("echo \"start...\"\njps \necho \"end\"", new File("d:\\"), new File("c:\\out"), new File("c:\\err"), true,
+					false);
+		}
 	}
 
 	public static void execProgressTest3() throws Exception {
@@ -45,6 +52,15 @@ public class ProcessUtilsTests {
 		for (int i = 0; i < whole; i++) {
 			ProcessUtils.printProgress("正在分析...", i, whole, '#');
 		}
+	}
+
+	public static void execInteractiveCommandTest4() throws Exception {
+		// Generate sample data.
+		File file = new File("/tmp/test_vim_file.txt");
+		FileUtils.write(file, "abcdefghijklmnopqrstuvwxyz", UTF_8);
+		// Testing
+		String res = ProcessUtils.execSimpleString(new String[] { "vim", file.getAbsolutePath() }, 1_000);
+		System.out.println(res);
 	}
 
 }

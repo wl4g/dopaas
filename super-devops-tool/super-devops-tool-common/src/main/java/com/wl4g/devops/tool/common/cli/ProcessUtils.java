@@ -40,9 +40,8 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.*;
 
-import org.slf4j.Logger;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import static com.wl4g.devops.tool.common.io.FileIOUtils.ensureFile;
 import static com.wl4g.devops.tool.common.io.FileIOUtils.writeFile;
@@ -58,7 +57,7 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
  * @since
  */
 public abstract class ProcessUtils {
-	final protected static Logger log = getLogger(ProcessUtils.class);
+	final protected static SmartLogger log = getLogger(ProcessUtils.class);
 
 	/**
 	 * Progress animations chars.
@@ -239,10 +238,23 @@ public abstract class ProcessUtils {
 	public final static String execSimpleString(final String[] cmdarray, long timeoutMs) throws Exception {
 		Process ps = getRuntime().exec(cmdarray);
 		ps.waitFor(timeoutMs, TimeUnit.MILLISECONDS);
-		String errmsg = readFullyToString(ps.getErrorStream());
+
+		// Reading stderr & check.
+		Integer exitValue = null;
+		String errmsg = null;
+		try {
+			exitValue = ps.exitValue();
+		} catch (Exception e) {
+			errmsg = format("Exec process timeout for: %sMs, %s", timeoutMs, e.getMessage());
+		}
+		if (nonNull(exitValue) && exitValue != 0) {
+			errmsg = readFullyToString(ps.getErrorStream());
+		}
 		if (!isBlank(errmsg)) {
 			throw new IllegalStateException(errmsg);
 		}
+
+		// Reading stdout
 		return readFullyToString(ps.getInputStream());
 	}
 
