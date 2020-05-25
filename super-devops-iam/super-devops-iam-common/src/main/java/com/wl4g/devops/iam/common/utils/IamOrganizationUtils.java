@@ -2,6 +2,7 @@ package com.wl4g.devops.iam.common.utils;
 
 import com.wl4g.devops.common.utils.web.WebUtils3;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.tool.common.codec.Base58;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -9,9 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
 import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -47,6 +50,7 @@ public class IamOrganizationUtils {
      */
     public static List<String> getCurrentOrganizationCodes() {
         String code = WebUtils3.getRequestParameter(CURRENT_ORGANIZATION_CODE);
+        code = new String(Base58.decode(code), UTF_8);
         if (StringUtils.isBlank(code) || StringUtils.equals("all", code)) {
             List<OrganizationInfo> organizationFromSession = getOrganizationFromSession();
             List<String> list = new ArrayList<>();
@@ -85,6 +89,7 @@ public class IamOrganizationUtils {
         List<OrganizationInfo> children = new ArrayList<>();
         getChilds(organizations, code, children);
         OrganizationInfo organization = getOrganizationByCode(organizations, code);
+        notNull(organization,"Not found organization code: %s" , code);
         children.add(organization);
         return children;
     }
