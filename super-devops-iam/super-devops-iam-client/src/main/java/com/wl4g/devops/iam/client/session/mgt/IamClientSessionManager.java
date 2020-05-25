@@ -71,9 +71,7 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 
 	@Override
 	public void validateSessions() {
-		if (log.isInfoEnabled()) {
-			log.info("Validating all active sessions...");
-		}
+		log.info("Validating all active sessions...");
 
 		try {
 			ScanCursor<IamSession> cursor = sessionDAO.getAccessSessions(DEFAULT_BATCH_SIZE);
@@ -91,19 +89,17 @@ public class IamClientSessionManager extends AbstractIamSessionManager<IamClient
 					localSessions.put(grantTicket, session);
 				}
 
-				// Validation sessions.
+				// Validation expires sessions.
 				SessionValidityAssertModel assertion = validator.validate(request);
 				for (String deadTicket : assertion.getTickets()) {
 					Session session = localSessions.get(deadTicket);
 					try {
 						if (nonNull(session)) {
 							sessionDAO.delete(session);
-							if (log.isInfoEnabled()) {
-								log.info("Cleaup expired session on: {}", session.getId());
-							}
+							log.info("Cleauping expired sessionId: {}", session.getId());
 						}
 					} catch (Exception e) {
-						log.warn("Cleaup expired session failed. sessionId: {}, grantTicket: {}", session.getId(), deadTicket);
+						log.warn("Failed to cleaup expired sessions. sessionId: {}, deadTicket: {}", session.getId(), deadTicket);
 					}
 				}
 			}

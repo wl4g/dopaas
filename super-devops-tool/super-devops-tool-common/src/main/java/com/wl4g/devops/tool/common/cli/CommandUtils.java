@@ -148,9 +148,9 @@ public class CommandUtils {
 		 */
 		public RemovableOptions removeOption(Option opt) {
 			if (!isNull(opt)) {
-				getShortOpts().remove(opt);
-				getLongOpts().remove(opt);
-				getRequiredOpts().remove(opt);
+				getShortOpts().remove(opt.getOpt());
+				getLongOpts().remove(opt.getLongOpt());
+				getRequiredOpts().remove(opt.getOpt());
 			}
 			return this;
 		}

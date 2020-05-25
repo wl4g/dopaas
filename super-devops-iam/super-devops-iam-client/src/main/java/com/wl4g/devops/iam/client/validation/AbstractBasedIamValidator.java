@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.iam.client.validation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
@@ -32,11 +30,13 @@ import java.util.Map;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.common.authc.model.BaseAssertModel;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Abstract validator implementation for tickets that must be validated against
@@ -48,7 +48,8 @@ import com.wl4g.devops.iam.common.authc.model.BaseAssertModel;
  * @since
  */
 public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> implements IamValidator<R, A> {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * IAM client properties
@@ -83,7 +84,7 @@ public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> im
 	 *            the ticket parameters.
 	 * @return the response from the CAS server.
 	 */
-	protected RespBase<A> doGetRemoteValidate(String endpoint, R req) {
+	protected RespBase<A> doIamRemoteValidate(String endpoint, R req) {
 		hasTextOf(endpoint, "validateEndpoint");
 		notNullOf(req, "validateParameters");
 
@@ -103,11 +104,9 @@ public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> im
 
 		// Append parameters to URL
 		url.append(BeanMapConvert.toUriParmaters(params));
-		if (log.isInfoEnabled()) {
-			log.info("Ticket validating to: {}", url);
-		}
+		log.info("Validating to URL: {}", url);
 
-		// Add header
+		// Add headers
 		HttpEntity<R> entity = new HttpEntity<>(req, new LinkedMultiValueMap<String, String>(1) {
 			private static final long serialVersionUID = -630070874678386724L;
 			{
@@ -119,9 +118,9 @@ public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> im
 		RespBase<A> resp = null;
 		try {
 			resp = restTemplate.exchange(url.toString(), POST, entity, getTypeReference()).getBody();
-			log.info("Validate retrieved: {}", resp);
+			log.info("Validated retrieved: {}", resp);
 		} catch (Throwable ex) {
-			throw new RestClientException(String.format("Failed to validate ticket via URL: %s", url), ex);
+			throw new RestClientException(String.format("Failed to validate via URL: %s", url), ex);
 		}
 		return resp;
 	}
@@ -135,7 +134,9 @@ public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> im
 	 * @param queryParams
 	 *            Validation request parameters
 	 */
-	protected abstract void postQueryParameterSet(R req, Map<String, Object> queryParams);
+	protected void postQueryParameterSet(R req, Map<String, Object> queryParams) {
+
+	}
 
 	/**
 	 * Get parameterizedTypeReference

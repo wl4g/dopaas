@@ -112,7 +112,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void save(User user) {
 		if (StringUtils.isNotBlank(user.getPassword())) {
-			// TODO Dynamic choosed algorithm!!
+			// TODO Dynamic choose algorithm!!!
+			// Default use RSA
 			String signature = credentialsSecurer
 					.signature(new CredentialsToken(user.getUserName(), user.getPassword(), SecureAlgKind.RSA));
 			user.setPassword(signature);

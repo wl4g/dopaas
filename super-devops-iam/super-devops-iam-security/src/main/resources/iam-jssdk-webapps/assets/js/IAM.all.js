@@ -1153,6 +1153,7 @@
 		iamVerboseStoredKey : '__IAM_VERBOSE',
         baseUriStoredKey : '__IAM_BASEURI',
         umidTokenStorageKey : '__IAM_UMIDTOKEN',
+        authenticatedRedirectCountStorageKey : '__IAM_AUTHC_REDIRECT_COUNT',
         useSecureAlgorithmName: 'RSA', // 提交认证相关请求时，选择的非对称加密算法（ 默认：RSA）
     };
 
@@ -1166,7 +1167,7 @@
 						"runtime.umid.getValuePromise())", runtime.umid._value);
 			},
 			_currentlyInGettingValuePromise: null, // 仅umid.getValuePromise使用
-			getValuePromise: function() {
+			getValuePromise: function () {
 				// 若当前正在获取umidToken直接返回该promise对象（解决并发调用）
 				if (runtime.umid._currentlyInGettingValuePromise) {
 					return runtime.umid._currentlyInGettingValuePromise;
@@ -1248,14 +1249,16 @@
 						"runtime.handshake.getValuePromise())", runtime.handshake._value);
 			},
 			_currentlyInGettingValuePromise: null, // 仅handshake.getValuePromise使用
-			getValuePromise: function(umidToken) {
-				// 若当前正在获取handshake._value直接返回该promise对象（解决并发调用）
-				if (runtime.handshake._currentlyInGettingValuePromise) {
-					return runtime.handshake._currentlyInGettingValuePromise;
-				}
-				// 若已有值
-				if(!Common.Util.isEmpty(runtime.handshake._value)) {
-					return new Promise((reslove, reject) => reslove(runtime.handshake._value));
+			getValuePromise: function (umidToken, refresh) {
+				if (!refresh) {
+					// 若当前正在获取handshake._value直接返回该promise对象（解决并发调用）
+					if (runtime.handshake._currentlyInGettingValuePromise) {
+						return runtime.handshake._currentlyInGettingValuePromise;
+					}
+					// 若已有值
+					if(!Common.Util.isEmpty(runtime.handshake._value)) {
+						return new Promise((reslove, reject) => reslove(runtime.handshake._value));
+					}
 				}
 				// 新请求获取handshake._value等(页面加载时调用一次即可)
 				return (runtime.handshake._currentlyInGettingValuePromise = new Promise((reslove, reject) => {
@@ -1266,7 +1269,7 @@
 						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
 						if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 							runtime.handshake._value = $.extend(true, runtime.handshake._value, res.data);
-							reslove(runtime.handshake._value);
+							reslove(res);
 						}
 						runtime.handshake._currentlyInGettingValuePromise = null;
 					}, function(errmsg) {
@@ -1574,6 +1577,42 @@
 
 	// --- [Start Helper function's. ---
 
+	// IAM console.
+	var _iamConsole = {
+		// Check verbose enabled. (output run details.)
+		_isVerbose: function () {
+			var verbose = sessionStorage.getItem(constant.iamVerboseStoredKey);
+			if (verbose) {
+				verbose = verbose.toUpperCase();
+				return verbose == 'TRUE' || verbose == '1' || verbose == 'Y' || verbose == 'YES';
+			}
+			return false;
+		},
+		debug: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.debug(msg);
+			}
+		},
+		info: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.info(msg);
+			}
+		},
+		warn: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.warn(msg);
+			}
+		},
+		error: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.error(msg);
+			}
+		},
+		log: function (msg) {
+			_iamConsole.info(msg);
+		},
+	};
+
 	// Check is response is Unauthenticated?
 	var _isRespUnauthenticated = function (res) {
 		if (res) {
@@ -1709,12 +1748,12 @@
 	var _initConfigure = function(obj) {
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = $.extend(true, settings, obj);
-		IAMCore.Console.debug("Merged Iam core settings: "+ JSON.stringify(settings));
+		IAMCore.Console.debug("Merged iam core settings: "+ JSON.stringify(settings));
 
-		if (Common.Util.isEmpty(settings.deploy.baseUri)) {
-	        settings.deploy.baseUri = _getDefaultIamBaseUri();
-	        IAMCore.Console.info("Used overlay iamBaseURI: " + settings.deploy.baseUri);
-	    }
+		//if (Common.Util.isEmpty(settings.deploy.baseUri)) {
+        settings.deploy.baseUri = _getDefaultIamBaseUri();
+        IAMCore.Console.info("Use overlay iam baseUri: " + settings.deploy.baseUri);
+	    //}
 
 		// Storage iamBaseUri
         sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
@@ -1796,8 +1835,8 @@
 	var _resetCaptcha = function(refresh) {
 		if (refresh) {
 			var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput, false));
-			_initSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
-				if(checkCaptcha.enabled && !runtime.flags.isCurrentlyApplying){ // 启用验证码且不是申请中(防止并发)?
+			_initSafeCheck(principal, function(res){
+				if(runtime.safeCheck.checkCaptcha.enabled && !runtime.flags.isCurrentlyApplying){ // 启用验证码且不是申请中(防止并发)?
 					// 获取当前配置的 CaptchaVerifier实例并显示
 					Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaRender();
 				}
@@ -1901,7 +1940,11 @@
 
 	// Init safety check(PRE).
 	var _initSafeCheck = function(principal, callback){
-		$(function(){
+		$(function() {
+			if (!callback) {
+				callback = principal; // Real callback function
+				principal = '';
+			}
 			// 初始化前回调
 			if(!Common.Util.checkEmpty("init.onPreCheck", settings.init.onPreCheck)(principal)){
 				console.warn("Skip the init safeCheck, because onPreCheck() return false");
@@ -1919,7 +1962,7 @@
 				var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
 				if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 					runtime.safeCheck = $.extend(true, runtime.safeCheck, res.data); // [MARK3]
-					callback(res.data.checkCaptcha, res.data.checkGeneric, res.data.checkSms);
+					callback(res);
 				}
 			}, function(errmsg){
 				console.log("Failed to safe check, " + errmsg);
@@ -2009,11 +2052,11 @@
 					return;
 				}
 
-				_initSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
+				_initSafeCheck(principal, function(res){
 					// 生成client公钥(用于获取认证成功后加密接口的密钥)
 					runtime.clientSecretKey = IAMCrypto.RSA.generateKey();
 					// 获取Server公钥(用于提交账号密码)
-					var secretKey = Common.Util.checkEmpty("Secret is empty", checkGeneric.secretKey);
+					var secretKey = Common.Util.checkEmpty("Secret is required", runtime.safeCheck.checkGeneric.secretKey);
 					var credentials = encodeURIComponent(IAMCrypto.RSA.encryptToHexString(secretKey, plainPasswd));
 					// 已校验的验证码Token(如果有)
 					var verifiedToken = "";
@@ -2250,7 +2293,7 @@
 		$.ajax({
 			url: _url,
 			type: method,
-			async: async,
+			async: (async || true),
 			headers: JSON.fromMap(headers),
 			//dataType: "json",
 			data: dataParams,
@@ -2271,12 +2314,6 @@
 	            }
 	        }
 		});
-	};
-
-	// Init Handshake authentication(PRE) implements.
-	var _initHandshakeIfNecessary = function() {
-		// Init gets umidToken and handshake.
-		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken));
 	};
 
 	// Multi modular authenticating handler
@@ -2405,11 +2442,41 @@
         },
 	};
 
+	// Check authentication and redirection
+	var _checkAuthenticationAndRedirect = function(redirectUrl) {
+		// Prevent flashing when redirecting to the home page.
+		IAMCore.Console.info("Hidden login document(*) ... ");
+		document.write("<style id='iam_check_authc_redirect_style'>*{display:none;}</style>"); // Hide
+
+		return new Promise(resolve => {
+			_initHandshakeIfNecessary(true).then(res => {
+				if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
+					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, 0);
+					var count = parseInt(sessionStorage.getItem(constant.authenticatedRedirectCountStorageKey) || 0);
+					if (count > 10) { throw Error("Too many failure redirects: " + count); }
+					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, ++count);
+					IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
+					window.location = redirectUrl;
+				} else {
+					resolve(res);
+					IAMCore.Console.info("Show login body... ");
+					$("#iam_check_authc_redirect_style").remove(); // Show
+				}
+			});
+		});
+	};
+
+	// Init Handshake authentication(PRE) implements.
+	var _initHandshakeIfNecessary = function(refresh) {
+		// Init gets umidToken and handshake.
+		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken, refresh));
+	};
+
 	// --- Exposing IAMCore APIs. ---
 
 	window.IAMCore = function(opt) {
 		runtime.__that = this;
-		// 初始化配置
+		// Initializing.
 		_initConfigure(opt);
 	};
 	// Export umToken
@@ -2418,7 +2485,7 @@
 	};
 	// Export safeCheck
 	IAMCore.prototype.safeCheck = function(principal, callback) {
-		_initHandshakeIfNecessary().then(handshakeValue => {
+		_initHandshakeIfNecessary().then(res => {
 			_initSafeCheck(principal, callback);
 		});
 		return this;
@@ -2435,25 +2502,31 @@
 		settings.account.enable = true;
 		return this;
 	};
-	// Export enable smsAuthenticators
+	// Export enable smsAuthenticators.
 	IAMCore.prototype.smsAuthenticator = function() {
 		settings.sms.enable = true;
 		return this;
 	};
-	// Export enable snsAuthenticators
+	// Export enable snsAuthenticators.
 	IAMCore.prototype.snsAuthenticator = function() {
 		settings.sns.enable = true;
 		return this;
 	};
-	// Export enable captchaVerifier
+	// Export enable captchaVerifier.
 	IAMCore.prototype.captchaVerifier = function() {
 		settings.captcha.enable = true;
 		return this;
 	};
-	// Export build 
+	// Export build.
 	IAMCore.prototype.build = function() {
-		// 为确保执行顺序（1，获取umidToken；2，请求handshake；3，初始绑定各种认证器）
-		_initHandshakeIfNecessary().then(handshakeValue => {
+		IAMCore.Console.info("IAMCore init and building ...");
+		// 1: Ensure execution sequence（1.1: get umidToken; 1.2: get handshake; 1.3: init any authenticators）
+		// 2: Forced refresh is to solve the problem that you can't log in again after exiting SPM application. 
+		// The reason is that SPM project is a single page application, and the action of logging out is only to 
+		// execute push('/#/login'), but not to refresh the page At this time, the old session information (due to cache) 
+		// is used, and the correct operation should refresh the handshake interface to get the new session information 
+		// as long as the login page is rendered. Of course, external calls can also be made iamUi.destroy() to solve this problem.
+		_initHandshakeIfNecessary(true).then(res => {
 			_initAccountAuthenticator();
 			_initSMSAuthenticator();
 			_initSNSAuthenticator();
@@ -2471,44 +2544,18 @@
 		settings = null;
 		console.log("Destroyed IAMCore instance.");
 	};
+
 	// Export getXsrfToken
 	IAMCore.prototype.getXsrfToken = _getXsrfToken;
 
 	// Export generateReplayToken
 	IAMCore.prototype.generateReplayToken = _generateReplayToken;
 
+	// Export check authentication and redirection
+	IAMCore.prototype.checkAuthenticationAndRedirect = _checkAuthenticationAndRedirect;
+
 	// Export function Iam console
-	IAMCore.Console = {
-		// Check verbose enabled. (output run details.)
-		_isVerbose: function () {
-			var verbose = sessionStorage.getItem(constant.iamVerboseStoredKey);
-			if (verbose) {
-				verbose = verbose.toUpperCase();
-				return verbose == 'TRUE' || verbose == '1' || verbose == 'Y' || verbose == 'YES';
-			}
-			return false;
-		},
-		debug: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.debug(msg);
-			}
-		},
-		info: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.info(msg);
-			}
-		},
-		warn: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.warn(msg);
-			}
-		},
-		error: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.error(msg);
-			}
-		},
-	};
+	IAMCore.Console = _iamConsole;
 
 	// Export function check resp unauthenticated
 	IAMCore.checkRespUnauthenticated = _isRespUnauthenticated;
@@ -2521,10 +2568,8 @@
 
 	// Export function getIamBaseURI
 	IAMCore.getIamBaseUri = function() {
-		var iamBaseUri = sessionStorage.getItem(constant.baseUriStoredKey);
-		if (!iamBaseUri) {
-			sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri = _getDefaultIamBaseUri()));
-		}
+		// Overlay
+		sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri = _getDefaultIamBaseUri()));
 		return iamBaseUri;
 	};
 
@@ -2850,10 +2895,13 @@
 		return runtime.iamCore;
 	};
 	IAMUi.prototype.destroy = function() {
-		this.getIAMCore().destroy();
 		$(runtime.renderObj).empty();
 		runtime = null;
-		console.log("Destroyed IAMUi instance.");
+		IAMCore.Console.info("Destroyed IAMUi instance.");
+		// Detroy iam core.
+		if (runtime.iamCore) {
+			runtime.iamCore.destroy();
+		}
 	};
 
 	//
@@ -3034,7 +3082,7 @@
 
 		// Overerly default settings.
 		iamCoreConfig = $.extend(true, defaultSettings, iamCoreConfig);
-		console.debug("IAMCore JSSDK intializing ... config properties: " + JSON.stringify(iamCoreConfig));
+		IAMCore.Console.debug("IAMCore JSSDK intializing ... config properties: " + JSON.stringify(iamCoreConfig));
 		runtime.iamCore = new IAMCore(iamCoreConfig);
 		runtime.iamCore.anyAuthenticators().build();
 	}
@@ -3046,7 +3094,7 @@
 				try {
 					window.location.href = JSON.parse(e.data).refresh_url;
 				} catch(e) {
-					console.debug("Could't parse event message, error: "+ e);
+					IAMCore.Console.error("Could't parse event message, data: "+ e.data);
 				}
 			}
 		}

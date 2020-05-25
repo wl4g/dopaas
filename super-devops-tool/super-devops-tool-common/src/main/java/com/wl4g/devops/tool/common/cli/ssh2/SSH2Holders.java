@@ -18,7 +18,7 @@ package com.wl4g.devops.tool.common.cli.ssh2;
 import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableMap;
 import com.wl4g.devops.tool.common.function.CallbackFunction;
 import com.wl4g.devops.tool.common.function.ProcessFunction;
-import org.slf4j.Logger;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import java.io.CharArrayWriter;
 import java.io.File;
@@ -30,39 +30,42 @@ import java.util.Map;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 
 /**
- * {@link Ssh2Holders}, generic SSH2 client wrapper tool. </br>
+ * {@link SSH2Holders}, generic SSH2 client wrapper tool. </br>
  * Including the implementation of ethz/ssj/ssd.
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年1月9日 v1.0.0
  * @see
  */
-public abstract class Ssh2Holders<S, F> {
-	final protected Logger log = getLogger(getClass());
+public abstract class SSH2Holders<S, F> {
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
-	 * Get default {@link Ssh2Holders} instance by provider class.
+	 * Get default {@link SSH2Holders} instance by provider class.
 	 * 
 	 * @param <T>
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public final static <T extends Ssh2Holders> T getDefault() {
-		return (T) providerRegistry.get(SshjHolder.class);
+	public final static <T extends SSH2Holders> T getDefault() {
+		return (T) getInstance(SshjHolder.class);
 	}
 
 	/**
-	 * Get {@link Ssh2Holders} instance by provider class.
+	 * Get {@link SSH2Holders} instance by provider class.
 	 * 
 	 * @param <T>
 	 * @param providerClass
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public final static <T extends Ssh2Holders> T getInstance(Class<T> providerClass) {
+	public final static <T extends SSH2Holders> T getInstance(Class<T> providerClass) {
+		isTrue(providerRegistry.containsKey(providerClass), "No such ssh2 provider of : %s", providerClass);
 		return (T) providerRegistry.get(providerClass);
 	}
 
@@ -110,6 +113,20 @@ public abstract class Ssh2Holders<S, F> {
 	// --- Execution commands. ---
 
 	/**
+	 * Execution commands with SSH2.
+	 * 
+	 * @param host
+	 * @param user
+	 * @param pemPrivateKey
+	 * @param command
+	 * @param timeoutMs
+	 * @return
+	 * @throws IOException
+	 */
+	public abstract SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
+			throws Exception;
+
+	/**
 	 * Execution commands wait for complete with SSH2
 	 * 
 	 * @param host
@@ -121,7 +138,7 @@ public abstract class Ssh2Holders<S, F> {
 	 * @return
 	 * @throws IOException
 	 */
-	public abstract <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
+	public abstract <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<S, T> processor, long timeoutMs) throws Exception;
 
 	/**
@@ -132,12 +149,11 @@ public abstract class Ssh2Holders<S, F> {
 	 * @param pemPrivateKey
 	 * @param command
 	 * @param processor
-	 * @param timeoutMs
 	 * @return
 	 * @throws IOException
 	 */
-	protected abstract <T> T doExecCommandWithSsh2(String host, String user, char[] pemPrivateKey, String command,
-			ProcessFunction<S, T> processor, long timeoutMs) throws Exception;
+	public abstract <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String command,
+			ProcessFunction<S, T> processor) throws Exception;
 
 	/**
 	 * Get local current user ssh authentication private key of default.
@@ -177,13 +193,13 @@ public abstract class Ssh2Holders<S, F> {
 	public abstract Ssh2KeyPair generateKeypair(AlgorithmType type, String comment) throws Exception;
 
 	/**
-	 * {@link Ssh2Holders} provider registry.
+	 * {@link SSH2Holders} provider registry.
 	 */
 	@SuppressWarnings("rawtypes")
-	private final static Map<Class<? extends Ssh2Holders>, Ssh2Holders> providerRegistry = new RegisteredUnmodifiableMap<Class<? extends Ssh2Holders>, Ssh2Holders>(
+	private final static Map<Class<? extends SSH2Holders>, SSH2Holders> providerRegistry = new RegisteredUnmodifiableMap<Class<? extends SSH2Holders>, SSH2Holders>(
 			new HashMap<>()) {
 		{
-			putAll(new HashMap<Class<? extends Ssh2Holders>, Ssh2Holders>() {
+			putAll(new HashMap<Class<? extends SSH2Holders>, SSH2Holders>() {
 				private static final long serialVersionUID = 6854310693801773032L;
 				{
 					put(EthzHolder.class, new EthzHolder());
@@ -289,5 +305,26 @@ public abstract class Ssh2Holders<S, F> {
 	public static enum AlgorithmType {
 		RSA, DSA, ECDSA
 	}
+
+	/**
+	 * Default environments path for different Linux distributions.</br>
+	 * e.g:
+	 * <p>
+	 * CentOS: /etc/bashrc </br>
+	 * Ubuntu: /etc/bash.bashrc
+	 * </p>
+	 */
+	@Deprecated
+	final public static String DEFAULT_LINUX_ENV_CMD = join(new String[] {
+			// e.g: CentOS|Ubuntu
+			"source /etc/profile",
+			// e.g: CentOS
+			"source /etc/bashrc",
+			// e.g: Ubuntu
+			"source /etc/bash.bashrc",
+			// e.g: CentOS|Ubuntu
+			"source ~/.profile",
+			// e.g: CentOS|Ubuntu
+			"source ~/.bashrc" }, " ");
 
 }

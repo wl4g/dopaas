@@ -151,10 +151,13 @@
 		return runtime.iamCore;
 	};
 	IAMUi.prototype.destroy = function() {
-		this.getIAMCore().destroy();
 		$(runtime.renderObj).empty();
 		runtime = null;
-		console.log("Destroyed IAMUi instance.");
+		IAMCore.Console.info("Destroyed IAMUi instance.");
+		// Detroy iam core.
+		if (runtime.iamCore) {
+			runtime.iamCore.destroy();
+		}
 	};
 
 	//
@@ -335,7 +338,7 @@
 
 		// Overerly default settings.
 		iamCoreConfig = $.extend(true, defaultSettings, iamCoreConfig);
-		console.debug("IAMCore JSSDK intializing ... config properties: " + JSON.stringify(iamCoreConfig));
+		IAMCore.Console.debug("IAMCore JSSDK intializing ... config properties: " + JSON.stringify(iamCoreConfig));
 		runtime.iamCore = new IAMCore(iamCoreConfig);
 		runtime.iamCore.anyAuthenticators().build();
 	}
@@ -347,7 +350,7 @@
 				try {
 					window.location.href = JSON.parse(e.data).refresh_url;
 				} catch(e) {
-					console.debug("Could't parse event message, error: "+ e);
+					IAMCore.Console.error("Could't parse event message, data: "+ e.data);
 				}
 			}
 		}
