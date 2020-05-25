@@ -1426,8 +1426,9 @@
 
 	// Export function getIamBaseURI
 	IAMCore.getIamBaseUri = function() {
+		var iamBaseUri = _getDefaultIamBaseUri(); 
 		// Overlay
-		sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri = _getDefaultIamBaseUri()));
+		sessionStorage.setItem(constant.baseUriStoredKey, iamBaseUri);
 		return iamBaseUri;
 	};
 

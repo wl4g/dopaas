@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.configure;
+package com.wl4g.devops.scm.client.configure.locator;
 
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
@@ -22,8 +22,8 @@ import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySourc
 import com.wl4g.devops.common.exception.scm.ScmException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.scm.client.config.InstanceHolder;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.client.utils.InstanceHolder;
 import com.wl4g.devops.tool.common.crypto.CrypticSource;
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.log.SmartLogger;

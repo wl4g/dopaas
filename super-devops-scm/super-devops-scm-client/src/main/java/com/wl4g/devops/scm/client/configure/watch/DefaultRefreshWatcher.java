@@ -21,7 +21,7 @@ import com.wl4g.devops.common.bean.scm.model.ReportInfo.ChangedRecord;
 import com.wl4g.devops.common.exception.scm.ReportRetriesCountOutException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.configure.ScmPropertySourceLocator;
+import com.wl4g.devops.scm.client.configure.locator.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;

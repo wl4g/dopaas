@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.config;
+package com.wl4g.devops.scm.client.utils;
 
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -32,6 +32,7 @@ import org.springframework.util.Assert;
 
 import com.google.common.net.HostAndPort;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
 
 /**
  * Instance information.

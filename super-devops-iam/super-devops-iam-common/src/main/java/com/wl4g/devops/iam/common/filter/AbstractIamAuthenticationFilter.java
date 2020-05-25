@@ -105,7 +105,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 		Iterator<Entry<String, String>> it = customParams.entrySet().iterator();
 		while (it.hasNext()) {
 			Entry<String, String> param = it.next();
-			if (!config.getParam().getCustomeParams().contains(param.getKey())) {
+			if (!config.getParam().getCustomParams().contains(param.getKey())) {
 				it.remove();
 			}
 		}

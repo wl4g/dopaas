@@ -17,7 +17,10 @@ package com.wl4g.devops.iam.common.config;
 
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.invokeMethod;
+import static java.lang.String.valueOf;
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Locale.US;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -40,6 +43,7 @@ import org.springframework.util.CollectionUtils;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 import com.wl4g.devops.tool.common.collection.RegisteredSetList;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * IAM abstract configuration properties.
@@ -49,7 +53,9 @@ import com.wl4g.devops.tool.common.collection.RegisteredSetList;
  * @since
  */
 public abstract class AbstractIamProperties<P extends ParamProperties> implements InitializingBean, Serializable {
-	private static final long serialVersionUID = -5858422822181237865L;
+	final private static long serialVersionUID = -5858422822181237865L;
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Spring boot environment.
@@ -60,7 +66,13 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	/**
 	 * External custom filter chain pattern matching
 	 */
-	private Map<String, String> filterChain = new LinkedHashMap<>();
+	private Map<String, String> filterChain = new OnlyFilterChainMap() {
+		private static final long serialVersionUID = 5760821155893902560L;
+		{
+			// Adds default xsrf request rules.
+			putIfAbsent(XsrfProperties.DEFAULT_XSRF_BASE_PATTERN, "anon");
+		}
+	};
 
 	/**
 	 * Session cache configuration properties.
@@ -170,11 +182,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// Apply default properties if necessary.
+		// Apply default properties. (if necessary)
 		applyDefaultIfNecessary();
 
-		// Validate attributes.
+		// Validation.
 		validation();
+
+		// Unmodifiable filter chains.(for safety)
+		setFilterChain(unmodifiableMap(getFilterChain()));
 	}
 
 	/**
@@ -195,8 +210,8 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			setServiceName(getSpringApplicationName());
 		}
 
-		// Add common default filter chain.
-		addCommonDefaultFilterChain();
+		// Adds generic build-in default filter-chains.
+		applyBuildinDefaultFilterChains(getFilterChain());
 	}
 
 	/**
@@ -210,26 +225,29 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		// Check customization parameters name(Mutually exclusive with system
 		// parameters built in Iam).
-		//
+
 		// Gets other built-in parameters.
-		Set<String> builtParamValues = new HashSet<>(16);
+		Set<String> builtinParamValues = new HashSet<String>(16);
 		for (Method m : getAllDeclaredMethods(getParam().getClass())) {
 			if (String.class.isAssignableFrom(m.getReturnType())) {
-				builtParamValues.add((String) invokeMethod(m, getParam()));
+				builtinParamValues.add(valueOf(invokeMethod(m, getParam())).toUpperCase(US));
 			}
 		}
-		getParam().getCustomeParams().forEach(p -> {
-			boolean exist = builtParamValues.contains(p);
-			isTrue(!exist, "Iam custom parameter name that conflict with system built-in parameter '%s'", p);
+		getParam().getCustomParams().forEach(p -> {
+			boolean exist = builtinParamValues.contains(valueOf(p).toUpperCase(US));
+			isTrue(!exist, "Iam custom parameter name: '%s' that conflict with iam built-in parameters", p);
 		});
+
 	}
 
 	/**
-	 * Add common default filter chain.
+	 * Apply build-in defaults filter-chain.
+	 * 
+	 * @param pattern
+	 *            url pattern.
 	 */
-	private final void addCommonDefaultFilterChain() {
-		// Default xsrf request rules.
-		getFilterChain().put(XsrfProperties.DEFAULT_XSRF_BASE_PATTERN, "anon");
+	protected void applyBuildinDefaultFilterChains(Map<String, String> chains) {
+
 	}
 
 	/**
@@ -441,7 +459,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		 * Authentication or authorization processing internal interface custom
 		 * parameters name.
 		 */
-		private List<String> customeParams = new RegisteredSetList<String>(new ArrayList<>()) {
+		private List<String> customParams = new RegisteredSetList<String>(new ArrayList<>()) {
 			{
 				add("iam-x-type");
 				add("iam-x-token");
@@ -609,13 +627,13 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 			this.redirectUrl = redirectUrl;
 		}
 
-		public List<String> getCustomeParams() {
-			return customeParams;
+		public List<String> getCustomParams() {
+			return customParams;
 		}
 
-		public void setCustomeParams(List<String> customeParams) {
+		public void setCustomParams(List<String> customeParams) {
 			if (!isEmpty(customeParams)) {
-				this.customeParams.addAll(customeParams);
+				this.customParams.addAll(customeParams);
 			}
 		}
 
@@ -908,6 +926,37 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 				}
 			}
 			return null;
+		}
+
+	}
+
+	/**
+	 * {@link OnlyFilterChainMap}
+	 *
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2020年5月25日
+	 * @since
+	 */
+	public static class OnlyFilterChainMap extends LinkedHashMap<String, String> {
+
+		private static final long serialVersionUID = 8580940081413814344L;
+
+		@Override
+		public String put(String pattern, String chain) {
+			String res = super.putIfAbsent(pattern, chain);
+			// Overwrite not allowed
+			isTrue(isBlank(res), "Already pattern filter chain: %s => %s", pattern, chain);
+			return res;
+		}
+
+		@Override
+		public void putAll(Map<? extends String, ? extends String> m) {
+			forEach((k, v) -> put(k, v)); // Overwrite not allowed
+		}
+
+		@Override
+		public boolean remove(Object pattern, Object chain) {
+			throw new UnsupportedOperationException("Unsupported remove default filter-chains.");
 		}
 
 	}
