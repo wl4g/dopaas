@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public class IamOrganizationUtils {
 
-    final private static String CURRENT_ORGANIZATION_CODE = "currentOrganizationCode";
+    final private static String CURRENT_ORGANIZATION_CODE = "organization_code";
 
 
     /**
