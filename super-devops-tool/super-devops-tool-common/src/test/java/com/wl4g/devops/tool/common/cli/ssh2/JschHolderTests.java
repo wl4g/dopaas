@@ -15,9 +15,17 @@
  */
 package com.wl4g.devops.tool.common.cli.ssh2;
 
-import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders.AlgorithmType;
-import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders.Ssh2KeyPair;
+import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders.AlgorithmType;
+import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders.Ssh2KeyPair;
 
+/**
+ * {@link JschHolderTests}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @author vjay
+ * @version 2020年5月23日 v1.0.0
+ * @see
+ */
 public class JschHolderTests {
 
 	public static void main(String[] args) throws Exception {

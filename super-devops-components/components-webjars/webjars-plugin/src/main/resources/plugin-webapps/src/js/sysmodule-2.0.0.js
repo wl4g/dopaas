@@ -213,9 +213,13 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 			// Merge configs
 			var fileUriPort = curScript.getAttribute("fileUriPort");
 			var fileUriDomainSubLevel = curScript.getAttribute("fileUriDomainSubLevel");
-			var baseUri = _getDefaultSiteBaseUri({ fileUriPort: fileUriPort, fileUriDomainSubLevel: fileUriDomainSubLevel });
 			var _path = curScript.getAttribute("path") || _settings.path;
-			_settings.path = baseUri + resovleRelativePathIfNecessary(_path); // Resolve relative path(if necessary)
+			if (_path.toUpperCase().startsWith("HTTP://") ||_path.toUpperCase().startsWith("HTTPS://")) {
+				_settings.path = _path;
+			} else {
+				var baseUri = _getDefaultSiteBaseUri({ fileUriPort: fileUriPort, fileUriDomainSubLevel: fileUriDomainSubLevel });
+				_settings.path = baseUri + resovleRelativePathIfNecessary(_path); // Resolve relative path(if necessary)
+			}
 			_settings.cache = curScript.getAttribute("cache") || _settings.cache;
 			_settings.mode = curScript.getAttribute("mode") || _settings.mode;
 		} else {

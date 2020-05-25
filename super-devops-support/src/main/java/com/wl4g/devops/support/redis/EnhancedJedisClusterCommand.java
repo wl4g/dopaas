@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.support.redis;
 
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -22,6 +23,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import redis.clients.jedis.HostAndPort;
 import static redis.clients.jedis.HostAndPort.*;
@@ -44,6 +47,8 @@ import redis.clients.jedis.exceptions.JedisRedirectionException;
  * @see
  */
 public abstract class EnhancedJedisClusterCommand<T> extends JedisClusterCommand<T> {
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	public EnhancedJedisClusterCommand(JedisClusterConnectionHandler connectionHandler, int maxAttempts) {
 		super(connectionHandler, maxAttempts);
@@ -87,6 +92,8 @@ public abstract class EnhancedJedisClusterCommand<T> extends JedisClusterCommand
 	 */
 	public static class EnhancedJedisClusterConntionHandler extends JedisSlotBasedConnectionHandler {
 
+		final protected SmartLogger log = getLogger(getClass());
+
 		@SuppressWarnings("rawtypes")
 		public EnhancedJedisClusterConntionHandler(Set<HostAndPort> nodes, GenericObjectPoolConfig poolConfig,
 				int connectionTimeout, int soTimeout, String password) {
@@ -105,19 +112,20 @@ public abstract class EnhancedJedisClusterCommand<T> extends JedisClusterCommand
 				JedisPool jedisPool = cache.getSlotPool(slot);
 				Optional<String> opt = cache.getNodes().entrySet().stream().filter(e -> e.getValue() == jedisPool)
 						.map(e -> e.getKey()).findFirst();
+				log.trace("Failed to getsConnectionFromSlot. slot: {}, redis.node.host: {}", slot, opt);
+
 				// Print details errors.
-				String tip = format("slot<%s>", slot);
+				String errmsg = format("slot: %s", slot);
 				if (opt.isPresent()) {
-					tip = opt.get();
-					// Friendly tip: Whether redis cluster config is not
-					// standard
-					if (isBlank(parseString(tip).getHost())) {
-						tip = format(
-								"'%s', Please check the redis cluster configuration. e.g: listen(0.0.0.0:6379)? (it is recommended to explicitly listen to the host address!)",
-								tip);
+					errmsg = opt.get();
+					// Tip: Redis(server) cluster configered warning.
+					if (isBlank(parseString(errmsg).getHost())) {
+						errmsg = format(
+								"'%s', Please check the configuration of the redis-cluster(server). Is it bound (0.0.0.0:<port>)? You should let the redis server process listen for a specific host address!",
+								errmsg);
 					}
 				}
-				throw new JedisException(format("Couldn't get a resource, %s", tip), ex);
+				throw new JedisException(format("Can't get a resource for %s", errmsg), ex);
 			}
 		}
 

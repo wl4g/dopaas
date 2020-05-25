@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.pipeline.deploy;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
+import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +103,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
 		writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, localFile));
 
-		Ssh2Holders.getDefault().scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey),
+		SSH2Holders.getDefault().scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey),
 				new File(localFile), remoteTmpDir);
 	}
 
