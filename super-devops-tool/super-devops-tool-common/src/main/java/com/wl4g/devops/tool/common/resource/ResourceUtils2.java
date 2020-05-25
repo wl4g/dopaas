@@ -15,6 +15,11 @@
  */
 package com.wl4g.devops.tool.common.resource;
 
+import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.io.Resources.getResource;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 /**
  * Retention of upstream license agreement statement:</br>
  * Thank you very much spring framework, We fully comply with and support the open license
@@ -38,6 +43,7 @@ package com.wl4g.devops.tool.common.resource;
  */
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -46,6 +52,7 @@ import java.net.URLConnection;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.io.Resources;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.lang.ClassUtils2;
 
@@ -446,6 +453,34 @@ public abstract class ResourceUtils2 {
 	 */
 	public static void useCachesIfNecessary(URLConnection con) {
 		con.setUseCaches(con.getClass().getSimpleName().startsWith("JNLP"));
+	}
+
+	// --- Exstenssion tools. ---
+
+	/**
+	 * Gets resource string with class path
+	 * 
+	 * @param loadByClass
+	 * @param name
+	 * @return
+	 */
+	public static String getResourceString(Class<?> loadByClass, String name) {
+		if (isBlank(name)) {
+			return null;
+		}
+		URL url = null;
+		if (nonNull(loadByClass)) { // Find by class
+			String basePath = loadByClass.getName();
+			basePath = basePath.substring(0, basePath.lastIndexOf(".")).replace(".", "/");
+			url = getResource(basePath + "/" + name);
+		} else { // Fallback
+			url = getResource(name);
+		}
+		try {
+			return nonNull(url) ? Resources.toString(url, UTF_8) : null;
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 }
