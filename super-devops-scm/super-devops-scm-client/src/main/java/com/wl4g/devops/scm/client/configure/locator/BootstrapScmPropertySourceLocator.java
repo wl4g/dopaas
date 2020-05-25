@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.configure;
+package com.wl4g.devops.scm.client.configure.locator;
 
 import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
-import com.wl4g.devops.scm.client.config.InstanceHolder;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.client.utils.InstanceHolder;
+
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -38,9 +39,9 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.*;
  * @since
  */
 @Order(0)
-public class DefaultBootstrapPropertySourceLocator extends ScmPropertySourceLocator {
+public class BootstrapScmPropertySourceLocator extends ScmPropertySourceLocator {
 
-	public DefaultBootstrapPropertySourceLocator(ScmClientProperties config, InstanceHolder info) {
+	public BootstrapScmPropertySourceLocator(ScmClientProperties config, InstanceHolder info) {
 		super(config, info);
 	}
 

@@ -115,6 +115,16 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	final public static String BEAN_OAUTH2_MATCHER = "oauth2BoundMatcher";
 
 	// ==============================
+	// Configuration properties.
+	// ==============================
+
+	@Bean
+	@ConditionalOnMissingBean(IamProperties.class)
+	public IamProperties iamProperties() {
+		return new IamProperties();
+	}
+
+	// ==============================
 	// Cryptic graphic's
 	// ==============================
 
@@ -511,15 +521,6 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	@ConditionalOnMissingBean
 	public GithubAuthorizingRealm githubAuthorizingRealm(@Qualifier(BEAN_OAUTH2_MATCHER) Oauth2AuthorizingBoundMatcher matcher) {
 		return new GithubAuthorizingRealm(matcher);
-	}
-
-	// ==============================
-	// Configuration properties.
-	// ==============================
-
-	@Bean
-	public IamProperties iamProperties() {
-		return new IamProperties();
 	}
 
 	// ==============================
