@@ -29,11 +29,11 @@ import org.apache.sshd.common.util.security.SecurityUtils;
 import java.io.*;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Objects;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static java.util.Collections.singleton;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -44,7 +44,7 @@ import static java.util.Objects.nonNull;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class SshdHolder extends Ssh2Holders<ChannelExec, ScpClient> {
+public class SshdHolder extends SSH2Holders<ChannelExec, ScpClient> {
 
 	// --- Transfer files. ---
 
@@ -162,69 +162,34 @@ public class SshdHolder extends Ssh2Holders<ChannelExec, ScpClient> {
 
 	// --- Execution commands. ---
 
-	/**
-	 * Execution commands with SSH2.
-	 * 
-	 * @param host
-	 * @param user
-	 * @param pemPrivateKey
-	 * @param command
-	 * @param timeoutMs
-	 * @return
-	 * @throws IOException
-	 */
-	public SshExecResponse execWithSsh2(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
+	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
 			throws Exception {
-		return execWaitForCompleteWithSsh2(host, user, pemPrivateKey, command, channelExec -> {
-			String message = null, errmsg = null;
-			if (nonNull(channelExec.getOut())) {
-				// message = readFullyToString();
-				message = channelExec.getOut().toString();
+		return execWaitForComplete(host, user, pemPrivateKey, command, session -> {
+			String msg = null, errmsg = null;
+			if (nonNull(session.getOut())) {
+				// msg = readFullyToString(session.getOut());
+				msg = session.getOut().toString();
 			}
-			if (nonNull(channelExec.getErr())) {
-				errmsg = channelExec.getErr().toString();
+			if (nonNull(session.getErr())) {
+				errmsg = session.getErr().toString();
 			}
-			return new SshExecResponse(channelExec.getExitSignal(), channelExec.getExitStatus(), message, errmsg);
+			return new SshExecResponse(session.getExitSignal(), session.getExitStatus(), msg, errmsg);
 		}, timeoutMs);
 	}
 
-	/**
-	 * Execution commands wait for complete with SSH2
-	 * 
-	 * @param host
-	 * @param user
-	 * @param pemPrivateKey
-	 * @param command
-	 * @param processor
-	 * @param timeoutMs
-	 * @return
-	 * @throws IOException
-	 */
 	@Override
-	public <T> T execWaitForCompleteWithSsh2(String host, String user, char[] pemPrivateKey, String command,
+	public <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String command,
 			ProcessFunction<ChannelExec, T> processor, long timeoutMs) throws Exception {
-		return doExecCommandWithSsh2(host, user, pemPrivateKey, command, channelExec -> {
+		return doExecCommand(host, user, pemPrivateKey, command, channelExec -> {
 			// Wait for completed by condition.
-			channelExec.waitFor(Collections.singleton(ClientChannelEvent.CLOSED), timeoutMs);
+			channelExec.waitFor(singleton(ClientChannelEvent.CLOSED), timeoutMs);
 			return processor.process(channelExec);
-		}, timeoutMs);
+		});
 	}
 
-	/**
-	 * Execution commands with SSH2
-	 * 
-	 * @param host
-	 * @param user
-	 * @param pemPrivateKey
-	 * @param command
-	 * @param processor
-	 * @param timeoutMs
-	 * @return
-	 * @throws IOException
-	 */
 	@Override
-	protected <T> T doExecCommandWithSsh2(String host, String user, char[] pemPrivateKey, String command,
-			ProcessFunction<ChannelExec, T> processor, long timeoutMs) throws Exception {
+	public <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String command,
+			ProcessFunction<ChannelExec, T> processor) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
 		notNull(processor, "SSH2 command processor can't null.");
@@ -236,7 +201,7 @@ public class SshdHolder extends Ssh2Holders<ChannelExec, ScpClient> {
 		notNull(pemPrivateKey, "Transfer pemPrivateKey can't null.");
 
 		ClientSession session = null;
-		ChannelExec channelExec = null;
+		ChannelExec chSession = null;
 		SshClient client = null;
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ByteArrayOutputStream err = new ByteArrayOutputStream();
@@ -244,19 +209,26 @@ public class SshdHolder extends Ssh2Holders<ChannelExec, ScpClient> {
 			client = SshClient.setUpDefaultClient();
 			client.start();
 			session = authWithPrivateKey(client, host, null, user, pemPrivateKey);
-			String proCommond = "source /etc/profile\nsource /etc/bashrc\n";
-			channelExec = session.createExecChannel(proCommond + command);
-			channelExec.setErr(err);
-			channelExec.setOut(out);
-			channelExec.open();
-			return processor.process(channelExec);
+			// channelExec = session.createExecChannel(DEFAULT_LINUX_ENV_CMD +
+			// command);
+			chSession = session.createExecChannel(command);
+			chSession.setErr(err);
+			chSession.setOut(out);
+			chSession.open();
+			return processor.process(chSession);
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			out.close();
+			if (nonNull(out)) {
+				try {
+					out.close();
+				} catch (Exception e) {
+					log.error("", e);
+				}
+			}
 			try {
-				if (nonNull(channelExec)) {
-					channelExec.close();
+				if (nonNull(chSession)) {
+					chSession.close();
 				}
 			} catch (Exception e) {
 				log.error("", e);
