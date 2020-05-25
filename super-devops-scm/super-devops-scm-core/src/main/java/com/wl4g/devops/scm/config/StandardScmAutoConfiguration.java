@@ -25,6 +25,11 @@ import com.wl4g.devops.scm.context.ConfigContextHandler;
 public class StandardScmAutoConfiguration {
 
 	@Bean
+	public IamWithScmProperties iamWithScmProperties() {
+		return new IamWithScmProperties();
+	}
+
+	@Bean
 	public ConfigContextHandler configContextHandler() {
 		return new StandardConfigContextHandler();
 	}
