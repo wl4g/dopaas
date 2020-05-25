@@ -15,10 +15,12 @@
  */
 package com.wl4g.devops.scm.client.config;
 
+import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.scm.client.configure.locator.BootstrapScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.locator.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.utils.InstanceHolder;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
@@ -35,6 +37,12 @@ import org.springframework.core.env.Environment;
  *        {@link de.codecentric.boot.admin.config.AdminServerWebConfiguration}}
  */
 public class ScmBootstrapAutoConfiguration {
+
+	@Bean
+	@ConditionalOnClass(IamClientProperties.class)
+	public IamClientProperties iamWithScmClientProperties() {
+		return new IamWithScmClientProperties();
+	}
 
 	//
 	// SCM foundation's

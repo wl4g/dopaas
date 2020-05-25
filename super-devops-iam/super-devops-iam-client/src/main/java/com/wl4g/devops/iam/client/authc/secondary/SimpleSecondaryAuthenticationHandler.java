@@ -165,7 +165,7 @@ public class SimpleSecondaryAuthenticationHandler implements SecondaryAuthentica
 		StringBuffer url = new StringBuffer(config.getServerUri()); // ???
 		url.append(URI_S_SNS_BASE).append("/");
 		url.append(URI_S_SNS_CONNECT).append("/");
-		url.append(config.getSecondAuthenticatorProvider()).append("?");
+		url.append(config.getSecondaryAuthenticatorProvider()).append("?");
 
 		// Parameter 'which'
 		Map<String, Object> param = new HashMap<>();

@@ -233,7 +233,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public SecondaryAuthenticationAdvice secondAuthenticateAspect(SimpleSecondaryAuthenticationHandler processor) {
+	public SecondaryAuthenticationAdvice secondaryAuthenticationAdvice(SimpleSecondaryAuthenticationHandler processor) {
 		return new SecondaryAuthenticationAdvice(processor);
 	}
 
