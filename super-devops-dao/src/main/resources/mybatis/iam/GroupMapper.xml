@@ -11,6 +11,7 @@
     <result column="parent_id" property="parentId" jdbcType="INTEGER" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="area_id" property="areaId" jdbcType="INTEGER" />
     <result column="create_by" property="createBy" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="INTEGER" />
@@ -18,11 +19,11 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, display_name, organization_code, type, parent_id, enable, status, create_by,
+    id, name, display_name, organization_code, type, parent_id, enable, status, area_id, create_by,
     create_date, update_by, update_date, del_flag
   </sql>
   <sql id="Base_Column_List_g" >
-    g.id, g.name, g.organization_code, g.display_name, g.type, g.parent_id, g.enable, g.status, g.create_by,
+    g.id, g.name, g.organization_code, g.display_name, g.type, g.parent_id, g.enable, g.status, g.area_id, g.create_by,
     g.create_date, g.update_by, g.update_date, g.del_flag
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -73,12 +74,12 @@
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.iam.Group" >
     insert into sys_group (id, name,organization_code,  display_name,
       type, parent_id,
-      enable, status, create_by, 
+      enable, status, area_id, create_by,
       create_date, update_by, update_date, 
       del_flag)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR}, #{displayName,jdbcType=VARCHAR},
       #{type,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER},
-      #{enable,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{createBy,jdbcType=INTEGER}, 
+      #{enable,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{areaId,jdbcType=INTEGER}, #{createBy,jdbcType=INTEGER},
       #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{delFlag,jdbcType=INTEGER})
   </insert>
@@ -108,6 +109,9 @@
       </if>
       <if test="status != null" >
         status,
+      </if>
+      <if test="areaId != null" >
+        area_id,
       </if>
       <if test="createBy != null" >
         create_by,
@@ -150,6 +154,9 @@
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
       </if>
+      <if test="areaId != null" >
+        #{areaId,jdbcType=INTEGER},
+      </if>
       <if test="createBy != null" >
         #{createBy,jdbcType=INTEGER},
       </if>
@@ -191,6 +198,9 @@
       <if test="status != null" >
         status = #{status,jdbcType=INTEGER},
       </if>
+      <if test="areaId != null" >
+        area_id = #{areaId,jdbcType=INTEGER},
+      </if>
       <if test="createBy != null" >
         create_by = #{createBy,jdbcType=INTEGER},
       </if>
@@ -218,6 +228,7 @@
       parent_id = #{parentId,jdbcType=INTEGER},
       enable = #{enable,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
+      area_id = #{areaId,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=INTEGER},
