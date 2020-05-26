@@ -41,6 +41,8 @@ public class Group extends BaseBean implements Serializable {
 
 	private String parentCode;
 
+	private Integer areaId;
+
 	//
 	// --- Temporary fields. ---
 	//
@@ -149,6 +151,14 @@ public class Group extends BaseBean implements Serializable {
 
 	public void setParentCode(String parentCode) {
 		this.parentCode = parentCode;
+	}
+
+	public Integer getAreaId() {
+		return areaId;
+	}
+
+	public void setAreaId(Integer areaId) {
+		this.areaId = areaId;
 	}
 
 	@Override

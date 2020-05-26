@@ -168,7 +168,7 @@ public class IamOrganizationUtils {
         private List<OrganizationInfoTree> children = new ArrayList<>();
 
         public OrganizationInfoTree(OrganizationInfo organizationInfo) {
-            super(organizationInfo.getOrganizationCode(), organizationInfo.getParent(), organizationInfo.getType(),organizationInfo.getName());
+            super(organizationInfo.getOrganizationCode(), organizationInfo.getParent(), organizationInfo.getType(),organizationInfo.getName(),organizationInfo.getAreaId());
         }
 
         public List<OrganizationInfoTree> getChildren() {
