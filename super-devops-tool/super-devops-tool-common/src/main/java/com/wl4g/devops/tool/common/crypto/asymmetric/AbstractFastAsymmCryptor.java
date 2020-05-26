@@ -33,7 +33,7 @@ import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.Cipher;
 import static javax.crypto.Cipher.*;
 
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
@@ -130,7 +130,7 @@ abstract class AbstractFastAsymmCryptor implements AsymmetricCryptor {
 	}
 
 	@Override
-	public CrypticSource encrypt(KeySpec keySpec, final CrypticSource plainSource) {
+	public CodecSource encrypt(KeySpec keySpec, final CodecSource plainSource) {
 		notNullOf(keySpec, "keySpec");
 		if (isNull(plainSource))
 			return null;
@@ -141,7 +141,7 @@ abstract class AbstractFastAsymmCryptor implements AsymmetricCryptor {
 			PublicKey pubKey = keyFactory.generatePublic(keySpec);
 			eCipher.init(ENCRYPT_MODE, pubKey);
 			byte[] cipherArray = eCipher.doFinal(plainSource.getBytes());
-			return new CrypticSource(cipherArray);
+			return new CodecSource(cipherArray);
 		} catch (Exception e) {
 			throw new IllegalStateException(format("Failed to encryption plaintext of [%s]", plainSource), e);
 		}
@@ -149,7 +149,7 @@ abstract class AbstractFastAsymmCryptor implements AsymmetricCryptor {
 	}
 
 	@Override
-	public CrypticSource decrypt(KeySpec keySpec, final CrypticSource cipherSource) {
+	public CodecSource decrypt(KeySpec keySpec, final CodecSource cipherSource) {
 		notNullOf(keySpec, "keySpec");
 		if (isNull(cipherSource))
 			return null;
@@ -160,7 +160,7 @@ abstract class AbstractFastAsymmCryptor implements AsymmetricCryptor {
 			PrivateKey key = keyFactory.generatePrivate(keySpec);
 			dCipher.init(DECRYPT_MODE, key);
 			byte[] plainArray = dCipher.doFinal(cipherSource.getBytes());
-			return new CrypticSource(plainArray);
+			return new CodecSource(plainArray);
 		} catch (Exception e) {
 			throw new IllegalStateException(format("Failed to decryption hex ciphertext of [%s]", cipherSource), e);
 		}

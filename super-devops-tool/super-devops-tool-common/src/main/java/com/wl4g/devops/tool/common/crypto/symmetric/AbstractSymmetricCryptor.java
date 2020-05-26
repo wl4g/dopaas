@@ -35,7 +35,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import static com.wl4g.devops.tool.common.jvm.JvmRuntimeKit.*;
 
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
@@ -50,24 +50,24 @@ abstract class AbstractSymmetricCryptor implements SymmetricCryptor {
 	final protected SmartLogger log = getLogger(getClass());
 
 	@Override
-	public CrypticSource generateKey() {
+	public CodecSource generateKey() {
 		return generateKey(getKeyBit());
 	}
 
 	@Override
-	public CrypticSource generateKey(int keysize) {
+	public CodecSource generateKey(int keysize) {
 		try {
 			KeyGenerator keyGenerator = KeyGenerator.getInstance(getAlgorithmPrimary());
 			keyGenerator.init(keysize);
 			SecretKey secretKey = keyGenerator.generateKey();
-			return new CrypticSource(secretKey.getEncoded());
+			return new CodecSource(secretKey.getEncoded());
 		} catch (GeneralSecurityException e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	@Override
-	public CrypticSource encrypt(byte[] cipherKey, CrypticSource plainSource) {
+	public CodecSource encrypt(byte[] cipherKey, CodecSource plainSource) {
 		try {
 			SecretKeySpec skeySpec = new SecretKeySpec(cipherKey, getAlgorithmPrimary());
 			// 创建密码器, PKCS5Padding比PKCS7Padding效率高，PKCS7Padding可支持IOS加解密
@@ -76,14 +76,14 @@ abstract class AbstractSymmetricCryptor implements SymmetricCryptor {
 			// SecureRandom(..)对象，随机数。(AES不可采用这种方法)（3）采用IVParameterSpec
 			ecipher.init(Cipher.ENCRYPT_MODE, skeySpec);
 
-			return new CrypticSource(ecipher.doFinal(plainSource.getBytes()));
+			return new CodecSource(ecipher.doFinal(plainSource.getBytes()));
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	@Override
-	public CrypticSource decrypt(byte[] cipherKey, CrypticSource cipherSource) {
+	public CodecSource decrypt(byte[] cipherKey, CodecSource cipherSource) {
 		try {
 			SecretKeySpec skeySpec = new SecretKeySpec(cipherKey, getAlgorithmPrimary());
 			// 创建密码器, PKCS5Padding比PKCS7Padding效率高，PKCS7Padding可支持IOS加解密
@@ -92,7 +92,7 @@ abstract class AbstractSymmetricCryptor implements SymmetricCryptor {
 			// SecureRandom(..)对象，随机数。(AES不可采用这种方法)（3）采用IVParameterSpec
 			dcipher.init(Cipher.DECRYPT_MODE, skeySpec);
 
-			return new CrypticSource(dcipher.doFinal(cipherSource.getBytes()));
+			return new CodecSource(dcipher.doFinal(cipherSource.getBytes()));
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}

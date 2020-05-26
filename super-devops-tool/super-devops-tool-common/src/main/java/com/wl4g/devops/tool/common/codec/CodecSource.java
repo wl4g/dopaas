@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.wl4g.devops.tool.common.crypto;
+package com.wl4g.devops.tool.common.codec;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
@@ -30,16 +30,14 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 
-import com.wl4g.devops.tool.common.codec.Base58;
-
 /**
- * Cryptical hash input or output data source.
+ * Codec cryptical hash IO data source.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年4月8日
  * @since
  */
-public class CrypticSource implements Serializable {
+public class CodecSource implements Serializable {
 	private static final long serialVersionUID = 9127527471762896518L;
 
 	/**
@@ -62,7 +60,7 @@ public class CrypticSource implements Serializable {
 	 */
 	private transient String cachedBase58;
 
-	public CrypticSource(final byte[] plainArray) {
+	public CodecSource(final byte[] plainArray) {
 		notNullOf(plainArray, "plainArray");
 		this.bytes = plainArray;
 	}
@@ -76,7 +74,7 @@ public class CrypticSource implements Serializable {
 	 *            array.
 	 * @since 1.1
 	 */
-	public CrypticSource(final char[] plainChars) {
+	public CodecSource(final char[] plainChars) {
 		notNullOf(plainChars, "plainChars");
 		this.bytes = new String(plainChars).getBytes(UTF_8);
 	}
@@ -90,13 +88,13 @@ public class CrypticSource implements Serializable {
 	 *            encoding).
 	 * @since 1.1
 	 */
-	public CrypticSource(final String plaintext) {
+	public CodecSource(final String plaintext) {
 		hasTextOf(plaintext, "plaintext");
 		this.bytes = plaintext.getBytes(UTF_8);
 	}
 
 	public byte[] getBytes() {
-		return this.bytes;
+		return bytes;
 	}
 
 	public boolean isEmpty() {
@@ -104,27 +102,27 @@ public class CrypticSource implements Serializable {
 	}
 
 	public synchronized String toHex() {
-		if (this.cachedHex == null) {
-			this.cachedHex = Hex.encodeHexString(getBytes());
+		if (isNull(cachedHex)) {
+			cachedHex = Hex.encodeHexString(getBytes());
 		}
-		return this.cachedHex;
+		return cachedHex;
 	}
 
 	public synchronized String toBase64() {
-		if (this.cachedBase64 == null) {
-			this.cachedBase64 = Base64.encodeBase64String(getBytes());
+		if (isNull(cachedBase64)) {
+			cachedBase64 = Base64.encodeBase64String(getBytes());
 		}
-		return this.cachedBase64;
+		return cachedBase64;
 	}
 
 	public synchronized String toBase58() {
-		if (this.cachedBase58 == null) {
-			this.cachedBase58 = Base58.encode(getBytes());
+		if (isNull(cachedBase58)) {
+			cachedBase58 = Base58.encode(getBytes());
 		}
-		return this.cachedBase58;
+		return cachedBase58;
 	}
 
-	public boolean equals(final CrypticSource o) {
+	public boolean equals(final CodecSource o) {
 		if (o == this) {
 			return true;
 		}
@@ -132,10 +130,10 @@ public class CrypticSource implements Serializable {
 	}
 
 	public int hashCode() {
-		if (this.bytes == null || this.bytes.length == 0) {
+		if (isNull(bytes) || bytes.length == 0) {
 			return 0;
 		}
-		return Arrays.hashCode(this.bytes);
+		return Arrays.hashCode(bytes);
 	}
 
 	public String toString() {
@@ -143,70 +141,70 @@ public class CrypticSource implements Serializable {
 	}
 
 	/**
-	 * Create {@link CrypticSource} with hex chars.
+	 * Create {@link CodecSource} with hex chars.
 	 * 
 	 * @param hexString
 	 * @return
 	 */
-	public static CrypticSource fromHex(final String hexString) {
+	public static CodecSource fromHex(final String hexString) {
 		try {
-			return new CrypticSource(Hex.decodeHex(hexString.toCharArray()));
+			return new CodecSource(Hex.decodeHex(hexString.toCharArray()));
 		} catch (DecoderException e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	/**
-	 * Create {@link CrypticSource} with hex bytes.
+	 * Create {@link CodecSource} with hex bytes.
 	 * 
 	 * @return
 	 */
-	public static CrypticSource fromHex(final byte[] hexArray) {
+	public static CodecSource fromHex(final byte[] hexArray) {
 		try {
-			return new CrypticSource(Hex.decodeHex(new String(hexArray, UTF_8).toCharArray()));
+			return new CodecSource(Hex.decodeHex(new String(hexArray, UTF_8).toCharArray()));
 		} catch (DecoderException e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	/**
-	 * Create {@link CrypticSource} with base64 string.
+	 * Create {@link CodecSource} with base64 string.
 	 * 
 	 * @param base64
 	 * @return
 	 */
-	public static CrypticSource fromBase64(final String base64) {
-		return new CrypticSource(Base64.decodeBase64(base64));
+	public static CodecSource fromBase64(final String base64) {
+		return new CodecSource(Base64.decodeBase64(base64));
 	}
 
 	/**
-	 * Create {@link CrypticSource} with base64 byte array.
+	 * Create {@link CodecSource} with base64 byte array.
 	 * 
 	 * @param base64Array
 	 * @return
 	 */
-	public static CrypticSource fromBase64(final byte[] base64Array) {
-		return new CrypticSource(Base64.decodeBase64(base64Array));
+	public static CodecSource fromBase64(final byte[] base64Array) {
+		return new CodecSource(Base64.decodeBase64(base64Array));
 	}
 
 	/**
-	 * Create {@link CrypticSource} with base58 string.
+	 * Create {@link CodecSource} with base58 string.
 	 * 
 	 * @param base58
 	 * @return
 	 */
-	public static CrypticSource fromBase58(final String base58) {
-		return new CrypticSource(Base58.decode(base58));
+	public static CodecSource fromBase58(final String base58) {
+		return new CodecSource(Base58.decode(base58));
 	}
 
 	/**
-	 * Create {@link CrypticSource} with base58 byte array.
+	 * Create {@link CodecSource} with base58 byte array.
 	 * 
 	 * @param base58Array
 	 * @return
 	 */
-	public static CrypticSource fromBase58(final byte[] base58Array) {
-		return new CrypticSource(Base58.decode(new String(base58Array, UTF_8)));
+	public static CodecSource fromBase58(final byte[] base58Array) {
+		return new CodecSource(Base58.decode(new String(base58Array, UTF_8)));
 	}
 
 }

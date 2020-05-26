@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.crypto;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_CRYPTO;
+import static com.wl4g.devops.tool.common.codec.CodecSource.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
@@ -32,13 +33,12 @@ import java.util.concurrent.locks.Lock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 
-import static com.wl4g.devops.tool.common.crypto.CrypticSource.*;
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.asymmetric.AsymmetricCryptor;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.tool.common.log.SmartLogger;
@@ -95,7 +95,7 @@ public abstract class AbstractAymmetricSecureCryptService<K extends KeyPairSpec>
 
 	@Override
 	public String encrypt(KeySpec keySpec, String plaintext) {
-		return cryptor.encrypt(keySpec, new CrypticSource(plaintext)).toHex();
+		return cryptor.encrypt(keySpec, new CodecSource(plaintext)).toHex();
 	}
 
 	@Override

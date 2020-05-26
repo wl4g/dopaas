@@ -17,7 +17,7 @@ package com.wl4g.devops.tool.common.crypto.asymmetric;
 
 import java.security.spec.KeySpec;
 
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 /**
@@ -70,7 +70,7 @@ public interface AsymmetricCryptor {
 	 * @param plainSource
 	 * @return
 	 */
-	CrypticSource encrypt(final KeySpec keySpec, final CrypticSource plainSource);
+	CodecSource encrypt(final KeySpec keySpec, final CodecSource plainSource);
 
 	/**
 	 * Decryption the hex ciphertext based on the constructed key pair
@@ -79,7 +79,7 @@ public interface AsymmetricCryptor {
 	 * @param cipherSource
 	 * @return
 	 */
-	CrypticSource decrypt(final KeySpec keySpec, final CrypticSource cipherSource);
+	CodecSource decrypt(final KeySpec keySpec, final CodecSource cipherSource);
 
 	/**
 	 * Gets algorithm name

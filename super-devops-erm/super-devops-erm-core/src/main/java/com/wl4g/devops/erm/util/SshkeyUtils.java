@@ -1,6 +1,6 @@
 package com.wl4g.devops.erm.util;
 
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 
 import static com.google.common.base.Charsets.UTF_8;
@@ -11,16 +11,14 @@ import static com.google.common.base.Charsets.UTF_8;
  */
 public class SshkeyUtils {
 
+	public static String encryptSshkeyToHex(String cipherKey, String sshKey) {
+		AESCryptor aes = new AESCryptor();
+		return aes.encrypt(cipherKey.getBytes(UTF_8), new CodecSource(sshKey)).toHex();
+	}
 
-    public static String encryptSshkeyToHex(String cipherKey,String sshKey){
-        AESCryptor aes = new AESCryptor();
-        return aes.encrypt(cipherKey.getBytes(UTF_8), new CrypticSource(sshKey)).toHex();
-    }
-
-    public static String decryptSshkeyFromHex(String cipherKey,String hexSshKey){
-        AESCryptor aes = new AESCryptor();
-        return aes.decrypt(cipherKey.getBytes(UTF_8), CrypticSource.fromHex(hexSshKey)).toString();
-    }
-
+	public static String decryptSshkeyFromHex(String cipherKey, String hexSshKey) {
+		AESCryptor aes = new AESCryptor();
+		return aes.decrypt(cipherKey.getBytes(UTF_8), CodecSource.fromHex(hexSshKey)).toString();
+	}
 
 }

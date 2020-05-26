@@ -15,16 +15,16 @@
  */
 package com.wl4g.devops.tool.common.crypto.symmetric;
 
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 
 public class DES3CryptorTests {
 
 	public static void main(String[] args) throws Exception {
 		SymmetricCryptor des = new DES3Cryptor();
-		CrypticSource key = des.generateKey(168);
+		CodecSource key = des.generateKey(168);
 		System.out.println("key => " + key.toBase64());
 		String plainText = "12345";
-		CrypticSource cipherText = des.encrypt(key.getBytes(), new CrypticSource(plainText));
+		CodecSource cipherText = des.encrypt(key.getBytes(), new CodecSource(plainText));
 		System.out.println("cipherText: " + cipherText.toBase64());
 		System.out.println("plainText: " + des.decrypt(key.getBytes(), cipherText));
 	}

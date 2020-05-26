@@ -20,7 +20,7 @@ import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.support.mybatis.session.MultipleSqlSessionFactoryBean;
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 
 import org.apache.ibatis.plugin.Interceptor;
@@ -89,7 +89,7 @@ public class DataSourceAutoConfiguration {
 			try {
 				// TODO using dynamic cipherKey??
 				byte[] cipherKey = AESCryptor.getEnvCipherKey("DEVOPS_CIPHER_KEY");
-				plain = new AESCryptor().decrypt(cipherKey, CrypticSource.fromHex(prop.getPassword())).toString();
+				plain = new AESCryptor().decrypt(cipherKey, CodecSource.fromHex(prop.getPassword())).toString();
 			} catch (Throwable th) {
 				throw new IllegalStateException(format("Unable to decryption database password for '%s'", prop.getPassword()),
 						th);

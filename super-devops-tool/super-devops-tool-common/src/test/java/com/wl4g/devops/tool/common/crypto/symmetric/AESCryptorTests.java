@@ -15,16 +15,16 @@
  */
 package com.wl4g.devops.tool.common.crypto.symmetric;
 
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 
 public class AESCryptorTests {
 
 	public static void main(String[] args) throws Exception {
 		SymmetricCryptor aes = new AESCryptor();
-		CrypticSource key = aes.generateKey(128);
+		CodecSource key = aes.generateKey(128);
 		System.out.println("key => " + key.toBase64());
 		String plainText = "12345";
-		CrypticSource cipherText = aes.encrypt(key.getBytes(), new CrypticSource(plainText));
+		CodecSource cipherText = aes.encrypt(key.getBytes(), new CodecSource(plainText));
 		System.out.println("cipherText: " + cipherText.toBase64());
 		System.out.println("plainText: " + aes.decrypt(key.getBytes(), cipherText));
 	}

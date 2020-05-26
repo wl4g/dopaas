@@ -19,7 +19,7 @@ import static com.google.common.base.Charsets.UTF_8;
 
 import java.security.spec.KeySpec;
 
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.asymmetric.RSACryptor;
 
 public class AbstractCredentialsSecurerSupportTests {
@@ -32,10 +32,10 @@ public class AbstractCredentialsSecurerSupportTests {
 	}
 
 	public static void resolveCredentialsTests() {
-		byte[] credentials = CrypticSource.fromHex(credentialsHex).getBytes();
+		byte[] credentials = CodecSource.fromHex(credentialsHex).getBytes();
 		RSACryptor rsa = new RSACryptor();
 		KeySpec _privateKey = rsa.generateKeySpec(privateKey);
-		CrypticSource src = rsa.decrypt(_privateKey, CrypticSource.fromHex(credentials));
+		CodecSource src = rsa.decrypt(_privateKey, CodecSource.fromHex(credentials));
 		System.out.println(src.toString());
 	}
 

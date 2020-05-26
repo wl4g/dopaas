@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.tool.common.crypto.asymmetric;
 
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.asymmetric.RSACryptor;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
@@ -29,15 +29,15 @@ public class RSACryptorTests {
 		KeyPairSpec keyPair = cryptor.generateKeyPair();
 		System.out.println("Generated keyPair:\t" + keyPair);
 
-		CrypticSource plainSource0 = new CrypticSource("abcdefghijkrmnopqrstuvwxyz");
+		CodecSource plainSource0 = new CodecSource("abcdefghijkrmnopqrstuvwxyz");
 		System.out.println("Plain text:\t" + plainSource0.toString());
 
 		// Encryption
-		CrypticSource cipherSource = cryptor.encrypt(keyPair.getPubKeySpec(), plainSource0);
+		CodecSource cipherSource = cryptor.encrypt(keyPair.getPubKeySpec(), plainSource0);
 		System.out.println("Encrypted result:\t" + cipherSource.toBase64());
 
 		// Decryption
-		CrypticSource plainSource = cryptor.decrypt(keyPair.getKeySpec(), cipherSource);
+		CodecSource plainSource = cryptor.decrypt(keyPair.getKeySpec(), cipherSource);
 		System.out.println("Decrypted result:\t" + plainSource.toString());
 
 	}
