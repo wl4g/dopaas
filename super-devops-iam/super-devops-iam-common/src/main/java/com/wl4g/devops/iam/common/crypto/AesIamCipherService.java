@@ -15,8 +15,9 @@
  */
 package com.wl4g.devops.iam.common.crypto;
 
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
-import static com.wl4g.devops.tool.common.crypto.CrypticSource.*;
+import static com.wl4g.devops.tool.common.codec.CodecSource.*;
+
+import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 
 /**
@@ -35,7 +36,7 @@ public class AesIamCipherService extends AbstractSymmetricCipherService {
 
 	@Override
 	public String encrypt(byte[] key, String plaintext) {
-		return new AESCryptor().encrypt(key, new CrypticSource(plaintext)).toHex();
+		return new AESCryptor().encrypt(key, new CodecSource(plaintext)).toHex();
 	}
 
 	@Override

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.tool.common.crypto.symmetric;
 
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 
 /**
  * Symmetric cirptor.
@@ -33,7 +33,7 @@ public interface SymmetricCryptor {
 	 * @param plainSource
 	 * @return
 	 */
-	CrypticSource encrypt(byte[] cipherKey, CrypticSource plainSource);
+	CodecSource encrypt(byte[] cipherKey, CodecSource plainSource);
 
 	/**
 	 * Decryption symmetric cipher source.
@@ -42,7 +42,7 @@ public interface SymmetricCryptor {
 	 * @param cipherSource
 	 * @return
 	 */
-	CrypticSource decrypt(byte[] cipherKey, CrypticSource cipherSource);
+	CodecSource decrypt(byte[] cipherKey, CodecSource cipherSource);
 
 	/**
 	 * Generate symmetric algorithm key, return byte array, default length is
@@ -50,7 +50,7 @@ public interface SymmetricCryptor {
 	 * 
 	 * @return
 	 */
-	CrypticSource generateKey();
+	CodecSource generateKey();
 
 	/**
 	 * Generate symmetric algorithm key, return byte array, elg, keybit is 128
@@ -59,7 +59,7 @@ public interface SymmetricCryptor {
 	 * @param keybit
 	 * @return
 	 */
-	CrypticSource generateKey(int keybit);
+	CodecSource generateKey(int keybit);
 
 	/**
 	 * Gets algorithm name

@@ -24,7 +24,7 @@ import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.utils.InstanceHolder;
-import com.wl4g.devops.tool.common.crypto.CrypticSource;
+import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
@@ -165,7 +165,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 						byte[] cipherKey = AESCryptor.getEnvCipherKey("DEVOPS_CIPHER_KEY");
 						String cipherText = cipher.substring(CIPHER_PREFIX.length());
 						// TODO fromHex()??
-						String plain = new AESCryptor().decrypt(cipherKey, CrypticSource.fromHex(cipherText)).toString();
+						String plain = new AESCryptor().decrypt(cipherKey, CodecSource.fromHex(cipherText)).toString();
 						ps.getSource().put(key, plain);
 
 						log.debug("Decryption property key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
