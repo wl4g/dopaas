@@ -16,7 +16,6 @@
 package com.wl4g.devops.scm.client.config;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
-import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.client.configure.locator.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
@@ -24,7 +23,6 @@ import com.wl4g.devops.scm.client.configure.refresh.ScmLoggingRebinder;
 import com.wl4g.devops.scm.client.configure.watch.DefaultRefreshWatcher;
 import com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
@@ -47,16 +45,10 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_C_BASE;
  * @since {@link de.codecentric.boot.admin.web.PrefixHandlerMapping}
  *        {@link de.codecentric.boot.admin.config.AdminServerWebConfiguration}}
  */
-public class ScmRefreshAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
-
-	@Bean
-	@ConditionalOnClass(IamClientProperties.class)
-	public IamClientProperties iamWithScmClientProperties() {
-		return new IamWithScmClientProperties();
-	}
+public class ScmClientAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
 	//
-	// Refresher's
+	// --- Refresher's. ---
 	//
 
 	/**
@@ -67,7 +59,7 @@ public class ScmRefreshAutoConfiguration extends OptionalPrefixControllerAutoCon
 	 * @return
 	 */
 	@Bean
-	public ContextRefresher contextRefresher(ConfigurableApplicationContext context, RefreshScope scope) {
+	public ContextRefresher scmContextRefresher(ConfigurableApplicationContext context, RefreshScope scope) {
 		return new ScmContextRefresher(context, scope);
 	}
 
@@ -79,18 +71,18 @@ public class ScmRefreshAutoConfiguration extends OptionalPrefixControllerAutoCon
 	 * @return
 	 */
 	@Bean
-	public LoggingRebinder loggingRebinder() {
+	public LoggingRebinder scmLoggingRebinder() {
 		return new ScmLoggingRebinder();
 	}
 
-	@Bean("timingRefreshWatcher")
-	public DefaultRefreshWatcher timingRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher,
+	@Bean
+	public DefaultRefreshWatcher defaultRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher,
 			ScmPropertySourceLocator locator) {
 		return new DefaultRefreshWatcher(config, refresher, locator);
 	}
 
 	//
-	// Endpoint's
+	// --- Endpoint's. ---
 	//
 
 	@Bean
