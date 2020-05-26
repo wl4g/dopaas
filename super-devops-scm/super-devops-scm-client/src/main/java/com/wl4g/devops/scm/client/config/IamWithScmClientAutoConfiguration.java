@@ -19,22 +19,44 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_C_BASE;
 
 import java.util.Map;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 
 /**
- * {@link IamWithScmClientProperties}
+ * {@link IamWithScmClientAutoConfiguration}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年5月25日
+ * @version v1.0 2020年5月26日
  * @since
  */
-public class IamWithScmClientProperties extends IamClientProperties {
+@ConditionalOnClass(IamClientProperties.class)
+public class IamWithScmClientAutoConfiguration {
 
-	private static final long serialVersionUID = -2654363585569068709L;
+	@Bean
+	@Primary
+	public IamClientProperties iamWithScmClientProperties() {
+		return new IamWithScmClientProperties();
+	}
 
-	@Override
-	protected void applyBuildinDefaultFilterChains(Map<String, String> chains) {
-		chains.put(URI_C_BASE + "/**", "anon");
+	/**
+	 * {@link IamWithScmClientProperties}
+	 *
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2020年5月25日
+	 * @since
+	 */
+	public static class IamWithScmClientProperties extends IamClientProperties {
+
+		private static final long serialVersionUID = -2654363585569068709L;
+
+		@Override
+		protected void applyBuildinDefaultFilterChains(Map<String, String> chains) {
+			chains.put(URI_C_BASE + "/**", "anon");
+		}
+
 	}
 
 }

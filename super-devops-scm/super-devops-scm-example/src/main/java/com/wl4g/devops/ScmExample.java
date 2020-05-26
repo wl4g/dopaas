@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops;
 
-import com.wl4g.devops.iam.client.annotation.EnableIamClient;
+//import com.wl4g.devops.iam.client.annotation.EnableIamClient;
 import com.wl4g.devops.scm.client.annotation.EnableScmClient;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @MapperScan("com.wl4g.devops.dao.*")
 @EnableTransactionManagement
-@SuppressWarnings("unused")
 public class ScmExample {
 
 	public static void main(String[] args) {

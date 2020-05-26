@@ -17,7 +17,7 @@ package com.wl4g.devops.scm.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import static com.wl4g.devops.scm.config.ScmServerProperties.PREFIX;
+import static com.wl4g.devops.scm.config.ScmStandardProperties.PREFIX;
 
 /**
  * SCM client properties.
@@ -27,7 +27,7 @@ import static com.wl4g.devops.scm.config.ScmServerProperties.PREFIX;
  * @since
  */
 @ConfigurationProperties(PREFIX)
-public class ScmServerProperties extends AbstractScmProperties {
+public class ScmStandardProperties extends AbstractScmProperties {
 	private static final long serialVersionUID = -2133451846066162424L;
 
 	/**
