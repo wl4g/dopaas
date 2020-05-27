@@ -4,6 +4,7 @@ import com.wl4g.devops.common.utils.web.WebUtils3;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.tool.common.codec.Base58;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -140,6 +141,9 @@ public class IamOrganizationUtils {
         for (OrganizationInfo organizationInfo : organizations) {
             if (StringUtils.equals(organizationInfoTree.getOrganizationCode(), organizationInfo.getParent())) {
                 OrganizationInfoTree childTree = new OrganizationInfoTree(organizationInfo);
+                if(CollectionUtils.isEmpty(organizationInfoTree.getChildren())){
+                    organizationInfoTree.setChildren(new ArrayList<>());
+                }
                 organizationInfoTree.getChildren().add(childTree);
                 getChildTree(organizations, childTree);
             }
@@ -165,7 +169,7 @@ public class IamOrganizationUtils {
 
     public static class OrganizationInfoTree extends OrganizationInfo {
 
-        private List<OrganizationInfoTree> children = new ArrayList<>();
+        private List<OrganizationInfoTree> children;
 
         public OrganizationInfoTree(OrganizationInfo organizationInfo) {
             super(organizationInfo.getOrganizationCode(), organizationInfo.getParent(), organizationInfo.getType(),organizationInfo.getName(),organizationInfo.getAreaId());
