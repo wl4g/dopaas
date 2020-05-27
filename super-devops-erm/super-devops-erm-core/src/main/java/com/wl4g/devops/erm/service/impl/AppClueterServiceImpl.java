@@ -35,6 +35,7 @@ import java.security.InvalidParameterException;
 import java.util.*;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 
 @Service
 @Transactional
@@ -51,9 +52,8 @@ public class AppClueterServiceImpl implements AppClusterService {
     @Override
     public Map<String, Object> list(PageModel pm, String clusterName) {
         Map<String, Object> data = new HashMap<>();
-
         Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-        List<AppCluster> list = appClusterDao.list(clusterName);
+        List<AppCluster> list = appClusterDao.list(getCurrentOrganizationCodes(),clusterName);
         for (AppCluster appCluster : list) {
             int count = appInstanceDao.countByClusterId(appCluster.getId());
             appCluster.setInstanceCount(count);
@@ -67,7 +67,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 
     @Override
     public List<AppCluster> clusters() {
-        return appClusterDao.list(null);
+        return appClusterDao.list(getCurrentOrganizationCodes(),null);
     }
 
     @Override

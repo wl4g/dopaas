@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**
@@ -54,7 +55,7 @@ public class HostNetcardServiceImpl implements HostNetcardService {
     @Override
     public PageModel page(PageModel pm,Integer hostId,String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(appHostNetCardDao.list(hostId,name));
+        pm.setRecords(appHostNetCardDao.list(getCurrentOrganizationCodes(), hostId,name));
         return pm;
     }
 
@@ -94,8 +95,8 @@ public class HostNetcardServiceImpl implements HostNetcardService {
     @Override
     public Map<String, Object> getHostTunnel(){
         Map<String, Object> resutl = new HashMap<>();
-        List<HostTunnelOpenvpn> hostTunnelOpenvpns = hostTunnelOpenvpnDao.selectAll();
-            List<HostTunnelPptp> hostTunnelPptps = hostTunnelPptpDao.selectAll();
+        List<HostTunnelOpenvpn> hostTunnelOpenvpns = hostTunnelOpenvpnDao.selectAll(getCurrentOrganizationCodes());
+            List<HostTunnelPptp> hostTunnelPptps = hostTunnelPptpDao.selectAll(getCurrentOrganizationCodes());
         resutl.put("openvpn",hostTunnelOpenvpns);
         resutl.put("pptp",hostTunnelPptps);
         return resutl;

@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.Host" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
     <result column="hostname" property="hostname" jdbcType="VARCHAR" />
     <result column="idc_id" property="idcId" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="INTEGER" />
@@ -14,7 +15,7 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, hostname, idc_id, status, create_date, create_by, update_date, update_by, 
+    id, name, organization_code, hostname, idc_id, status, create_date, create_by, update_date, update_by,
     del_flag
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -28,11 +29,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.Host" >
-    insert into erm_host (id, name, hostname,
+    insert into erm_host (id, name, organization_code, hostname,
       idc_id, status, create_date, 
       create_by, update_date, update_by, 
       del_flag)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{hostname,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR}, #{hostname,jdbcType=VARCHAR},
       #{idcId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER})
@@ -45,6 +46,9 @@
       </if>
       <if test="name != null" >
         name,
+      </if>
+      <if test="organizationCode != null" >
+        organization_code,
       </if>
       <if test="hostname != null" >
         hostname,
@@ -78,6 +82,9 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null" >
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="hostname != null" >
         #{hostname,jdbcType=VARCHAR},
       </if>
@@ -110,6 +117,9 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null" >
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="hostname != null" >
         hostname = #{hostname,jdbcType=VARCHAR},
       </if>
@@ -140,6 +150,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.Host" >
     update erm_host
     set name = #{name,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
       hostname = #{hostname,jdbcType=VARCHAR},
       idc_id = #{idcId,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
@@ -165,7 +176,12 @@
     <if test="idcId != null and idcId != ''" >
       AND idc_id = #{idcId,jdbcType=INTEGER}
     </if>
-
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>
   </select>
 
 </mapper>

@@ -31,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**
@@ -49,13 +50,13 @@ public class K8sClusterServiceImpl implements K8sClusterService {
     @Override
     public PageModel page(PageModel pm,String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(k8sClusterDao.list(name));
+        pm.setRecords(k8sClusterDao.list(getCurrentOrganizationCodes(), name));
         return pm;
     }
 
     @Override
     public List<K8sCluster> getForSelect() {
-        return k8sClusterDao.list(null);
+        return k8sClusterDao.list(getCurrentOrganizationCodes(),null);
     }
 
     public void save(K8sCluster k8sCluster){

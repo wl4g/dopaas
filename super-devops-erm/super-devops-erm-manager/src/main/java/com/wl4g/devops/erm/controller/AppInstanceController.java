@@ -21,7 +21,7 @@ import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.erm.service.AppInstanceService;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.tool.common.cli.ssh2.JschHolder;
-import com.wl4g.devops.tool.common.cli.ssh2.Ssh2Holders;
+import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,7 +81,7 @@ public class AppInstanceController extends BaseController {
 	@RequestMapping(value = "/generateSshKeyPair")
 	public RespBase<?> generateSshKeyPair() throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		Ssh2Holders.Ssh2KeyPair ssh2KeyPair = Ssh2Holders.getInstance(JschHolder.class).generateKeypair(Ssh2Holders.AlgorithmType.RSA, "generateBySystem");
+		SSH2Holders.Ssh2KeyPair ssh2KeyPair = SSH2Holders.getInstance(JschHolder.class).generateKeypair(SSH2Holders.AlgorithmType.RSA, "generateBySystem");
 		resp.setData(ssh2KeyPair);
 		return resp;
 	}

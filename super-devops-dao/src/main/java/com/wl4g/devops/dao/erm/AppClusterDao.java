@@ -34,5 +34,5 @@ public interface AppClusterDao {
 
     int updateByPrimaryKey(AppCluster record);
 
-    List<AppCluster> list(@Param("clusterName") String clusterName);
+    List<AppCluster> list(@Param("organizationCodes")List<String> organizationCodes, @Param("clusterName") String clusterName);
 }

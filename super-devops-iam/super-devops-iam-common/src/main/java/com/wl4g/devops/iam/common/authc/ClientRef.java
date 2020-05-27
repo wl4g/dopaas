@@ -40,6 +40,11 @@ public enum ClientRef {
 	IPad("IPad"),
 
 	/**
+	 * Client WeChat internal browser.
+	 */
+	MicroMessenger("MicroMessenger"),
+
+	/**
 	 * Client WeChat official platform.
 	 */
 	WeChatMp("wechatMp"),

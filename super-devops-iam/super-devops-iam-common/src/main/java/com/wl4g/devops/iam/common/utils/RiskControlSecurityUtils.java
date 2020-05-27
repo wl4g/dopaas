@@ -31,7 +31,7 @@ import java.util.List;
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年3月19日 v1.0.0
  */
-public abstract class RiskControlSecurityUtils extends AuthenticatingUtils {
+public abstract class RiskControlSecurityUtils extends IamAuthenticatingUtils {
 
 	//
 	// TODO Using risk service??

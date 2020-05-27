@@ -19,5 +19,5 @@ public interface DockerClusterDao {
 
     int updateByPrimaryKey(DockerCluster record);
 
-    List<DockerCluster> list(@Param("name") String name);
+    List<DockerCluster> list(@Param("organizationCodes")List<String> organizationCodes, @Param("name") String name);
 }

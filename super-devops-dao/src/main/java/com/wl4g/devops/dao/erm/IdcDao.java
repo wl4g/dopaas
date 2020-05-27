@@ -1,6 +1,5 @@
 package com.wl4g.devops.dao.erm;
 
-import com.wl4g.devops.common.bean.erm.Host;
 import com.wl4g.devops.common.bean.erm.Idc;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,5 +18,5 @@ public interface IdcDao {
 
     int updateByPrimaryKey(Idc record);
 
-    List<Idc> list(@Param("name") String name);
+    List<Idc> list(@Param("organizationCodes")List<String> organizationCodes, @Param("name") String name);
 }

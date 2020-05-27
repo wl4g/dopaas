@@ -206,6 +206,11 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			// throw new TicketValidationException(String.format("Principal '%s'
 			// permits must not empty", principal.getName()));
 		}
+		if (isNull(info.getOrganization())) {
+			log.warn("Principal '{}' organization is empty", info.getPrincipal());
+			// throw new TicketValidationException(String.format("Principal '%s'
+			// organization must not empty", principal.getName()));
+		}
 	}
 
 }
