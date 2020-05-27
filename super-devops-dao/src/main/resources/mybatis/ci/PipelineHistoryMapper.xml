@@ -259,4 +259,12 @@
     order by h.create_date desc
   </select>
 
+  <update id="updateStatus" parameterType="java.lang.Long" >
+    <![CDATA[
+    update ci_pipe_history set status=4
+    where status in(0,1)
+    and TIMESTAMPDIFF(second ,create_date,now())>#{time,jdbcType=BIGINT};
+    ]]>
+  </update>
+
 </mapper>
