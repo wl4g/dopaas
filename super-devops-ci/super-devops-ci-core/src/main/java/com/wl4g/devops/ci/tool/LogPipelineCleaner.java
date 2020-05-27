@@ -84,8 +84,8 @@ public class LogPipelineCleaner extends GenericOperatorTool {
 	private void cleanCiTaskHistory() {
 		Date currentTimeBySecound = beforeTimeSec(beforeSec);
 		try {
-			logPipelineCleanerDao.cleanCiTaskHistorySublist(currentTimeBySecound);
-			logPipelineCleanerDao.cleanCiTaskHistory(currentTimeBySecound);
+			//logPipelineCleanerDao.cleanCiTaskHistorySublist(currentTimeBySecound);
+			//logPipelineCleanerDao.cleanCiTaskHistory(currentTimeBySecound);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

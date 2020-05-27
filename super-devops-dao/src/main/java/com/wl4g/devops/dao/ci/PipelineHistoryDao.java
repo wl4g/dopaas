@@ -23,4 +23,5 @@ public interface PipelineHistoryDao {
                            @Param("environment") String environment, @Param("startDate") String startDate,
                            @Param("endDate") String endDate, @Param("providerKind") String providerKind);
 
+    int updateStatus(Long time);
 }

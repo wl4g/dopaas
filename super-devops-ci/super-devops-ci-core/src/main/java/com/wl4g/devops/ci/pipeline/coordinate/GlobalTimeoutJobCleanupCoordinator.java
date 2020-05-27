@@ -16,12 +16,12 @@
 package com.wl4g.devops.ci.pipeline.coordinate;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.dao.ci.PipelineHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.support.task.GenericTaskRunner;
 import com.wl4g.devops.support.task.RunnerProperties;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -32,12 +32,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.KEY_FINALIZER_INTERVALMS;
+import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisProtocolUtil.keyFormat;
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisProtocolUtil.*;
 
 /**
  * Global timeout job handler finalizer.
@@ -61,9 +61,10 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 	protected JedisLockManager lockManager;
 	@Autowired
 	protected JedisService jedisService;
-
 	@Autowired
 	protected TaskHistoryDao taskHistoryDao;
+	@Autowired
+	protected PipelineHistoryDao pipelineHistoryDao;
 
 	protected ScheduledFuture<?> future;
 
@@ -96,7 +97,8 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 			// acquire lock are on ready in place.
 			if (lock.tryLock()) {
 				long begin = System.currentTimeMillis();
-				int count = taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
+				//int count = taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
+				int count = pipelineHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
 				if (count > 0) {
 					log.info("Updated pipeline timeout jobs, with jobTimeoutSec:{}, count:{}, cost: {}ms",
 							config.getBuild().getJobTimeoutSec(), count, (currentTimeMillis() - begin));
