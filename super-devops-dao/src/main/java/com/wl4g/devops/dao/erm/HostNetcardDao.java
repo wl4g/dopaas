@@ -19,5 +19,5 @@ public interface HostNetcardDao {
 
     int updateByPrimaryKey(HostNetcard record);
 
-    List<Host> list(@Param("hostId") Integer hostId, @Param("name") String name);
+    List<Host> list(@Param("organizationCodes")List<String> organizationCodes, @Param("hostId") Integer hostId, @Param("name") String name);
 }

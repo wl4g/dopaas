@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 
 @Service
 @Transactional
@@ -53,7 +54,7 @@ public class AppInstanceServiceImpl implements AppInstanceService {
     @Override
     public PageModel list(PageModel pm, String name, Integer instanceId, String envType, Integer serverType) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(appInstanceDao.list(name, instanceId,envType,serverType));
+        pm.setRecords(appInstanceDao.list(getCurrentOrganizationCodes(), name, instanceId,envType,serverType));
         return pm;
     }
 

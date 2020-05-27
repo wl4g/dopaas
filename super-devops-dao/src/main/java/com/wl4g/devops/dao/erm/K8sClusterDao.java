@@ -19,5 +19,5 @@ public interface K8sClusterDao {
 
     int updateByPrimaryKey(K8sCluster record);
 
-    List<K8sCluster> list(@Param("name") String name);
+    List<K8sCluster> list(@Param("organizationCodes")List<String> organizationCodes, @Param("name") String name);
 }

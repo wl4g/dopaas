@@ -1150,14 +1150,16 @@
 
 	// Base constants definition.
     var constant = {
+		iamVerboseStoredKey : '__IAM_VERBOSE',
         baseUriStoredKey : '__IAM_BASEURI',
         umidTokenStorageKey : '__IAM_UMIDTOKEN',
+        authenticatedRedirectCountStorageKey : '__IAM_AUTHC_REDIRECT_COUNT',
         useSecureAlgorithmName: 'RSA', // 提交认证相关请求时，选择的非对称加密算法（ 默认：RSA）
     };
 
 	// 运行时状态值/全局变量/临时缓存
 	var runtime = {
-		that: null,
+		__that: null,
 		umid: {
 			_value: null, // umidToken
 			getValue: function() {
@@ -1165,7 +1167,7 @@
 						"runtime.umid.getValuePromise())", runtime.umid._value);
 			},
 			_currentlyInGettingValuePromise: null, // 仅umid.getValuePromise使用
-			getValuePromise: function() {
+			getValuePromise: function () {
 				// 若当前正在获取umidToken直接返回该promise对象（解决并发调用）
 				if (runtime.umid._currentlyInGettingValuePromise) {
 					return runtime.umid._currentlyInGettingValuePromise;
@@ -1210,8 +1212,8 @@
 						umdata = n + "!" + umdata;
 						console.debug("Generated apply umidToken data: "+ umdata);
 						umidParam.set("umdata", umdata);
-						doIamRequest("post", "{applyUmTokenUri}", umidParam, function(res){
-							Common.Util.checkEmpty("init.onPostUmidToken", settings.init.onPostUmidToken)(res); //获得token回调
+						_doIamRequest("post", true, "{applyUmTokenUri}", umidParam, function(res){
+							Common.Util.checkEmpty("init.onPostUmidToken", settings.init.onPostUmidToken)(res); // 获得umtoken完成回调
 							var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 							if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 								console.debug("Got umidToken: " + res.data.umidToken);
@@ -1228,7 +1230,7 @@
 							console.warn("Failed to gets umidToken, " + errmsg);
 							Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 异常回调
 							reject(errmsg);
-						}, false);
+						}, null, false);
 					});
 				}));
 			},
@@ -1247,31 +1249,34 @@
 						"runtime.handshake.getValuePromise())", runtime.handshake._value);
 			},
 			_currentlyInGettingValuePromise: null, // 仅handshake.getValuePromise使用
-			getValuePromise: function(umidToken) {
-				// 若当前正在获取handshake._value直接返回该promise对象（解决并发调用）
-				if (runtime.handshake._currentlyInGettingValuePromise) {
-					return runtime.handshake._currentlyInGettingValuePromise;
-				}
-				// 若已有值
-				if(!Common.Util.isEmpty(runtime.handshake._value)) {
-					return new Promise((reslove, reject) => reslove(runtime.handshake._value));
+			getValuePromise: function (umidToken, refresh) {
+				if (!refresh) {
+					// 若当前正在获取handshake._value直接返回该promise对象（解决并发调用）
+					if (runtime.handshake._currentlyInGettingValuePromise) {
+						return runtime.handshake._currentlyInGettingValuePromise;
+					}
+					// 若已有值
+					if(!Common.Util.isEmpty(runtime.handshake._value)) {
+						return new Promise((reslove, reject) => reslove(runtime.handshake._value));
+					}
 				}
 				// 新请求获取handshake._value等(页面加载时调用一次即可)
 				return (runtime.handshake._currentlyInGettingValuePromise = new Promise((reslove, reject) => {
 					var handshakeParam = new Map();
 					handshakeParam.set("{umidTokenKey}", Common.Util.checkEmpty("umidToken", umidToken));
-					doIamRequest("post", "{handshakeUri}", handshakeParam, function(res) {
+					_doIamRequest("post", true, "{handshakeUri}", handshakeParam, function(res) {
+						Common.Util.checkEmpty("init.onPostHandshake", settings.init.onPostHandshake)(res); // handshake完成回调
 						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
 						if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 							runtime.handshake._value = $.extend(true, runtime.handshake._value, res.data);
-							reslove(runtime.handshake._value);
+							reslove(res);
 						}
 						runtime.handshake._currentlyInGettingValuePromise = null;
 					}, function(errmsg) {
 						runtime.handshake._currentlyInGettingValuePromise = null;
 						console.log("Failed to handshake, " + errmsg);
 						Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 异常回调
-					}, false);
+					}, null, false);
 				}));
 			},
 			handleSessionTo: function(param) {
@@ -1287,7 +1292,7 @@
 			// 提交认证等相关请求时，选择非对称加密算法
 			handleChooseSecureAlg: function() {
 				var _algs = runtime.handshake.getValue().algs;
-				for (index in _algs) {
+				for (var index in _algs) {
 					var alg = Common.Util.Codec.decodeBase58(_algs[index]);
 					if (alg.startsWith(constant.useSecureAlgorithmName)) {
 						return _algs[index]; // 提交也使用编码的字符串
@@ -1324,7 +1329,7 @@
 		flags: { // Runtime status flag(Prevention concurrent).
 			isCurrentlyApplying: false,
 			isVerifying: false,
-		}
+		},
 	};
 
 	// DefaultCaptcha配置实现(JPEG/Gif验证码)
@@ -1353,9 +1358,9 @@
 			var img = Common.Util.checkEmpty("captcha.img", settings.captcha.img);
 			imgInput.val(""); // 清空验证码input
 			// 绑定刷新验证码
-			$(img).click(function(){ resetCaptcha(true); });
+			$(img).click(function(){ _resetCaptcha(true); });
 			// 请求申请Captcha
-			doIamRequest("get", getApplyCaptchaUrl(), new Map(), function(res) {
+			_doIamRequest("get", true, _getApplyCaptchaUrl(), new Map(), function(res) {
 				// Apply captcha completed.
 				runtime.flags.isCurrentlyApplying = false;
 				runtime.applyModel = res.data.applyModel; // [MARK4]
@@ -1369,13 +1374,13 @@
 					$(img).attr("title", res.message); // 如:刷新过快
 					$(img).unbind("click");
 					setTimeout(function(){
-						$(img).click(function(){ resetCaptcha(true); });
+						$(img).click(function(){ _resetCaptcha(true); });
 					}, 15000); // 至少15sec才能点击刷新
 				}
 			}, function(req, status, errmsg){
 				console.debug("Failed to apply captcha, " + errmsg);
 				Common.Util.checkEmpty("captcha.onError", settings.captcha.onError)(errmsg);
-			}, true);
+			}, null, true);
 		}
 	};
 
@@ -1384,6 +1389,8 @@
 		// 字典参数定义
 		definition: {
 			codeOkValue: "200", // 接口返回成功码判定标准
+			code401Value: "401", // 接口返回未认证状态码判定标准
+			statusUnauthenticatedValue: "Unauthenticated", // 接口返回未认证状态判定标准
 			responseType: "response_type", // 控制返回数据格式的参数名
 			responseTypeValue: "json", // 使用返回数据格式
 			whichKey: "which", // 请求连接到SNS的参数名
@@ -1430,6 +1437,9 @@
  		init: {
  			onPostUmidToken: function(res){
  				console.debug("onPostUmidToken... "+ res);
+ 			},
+ 			onPostHandshake: function(res){
+ 				console.debug("onPostHandshake... "+ res);
  			},
  			onPreCheck: function(principal){
  				console.debug("onPreCheck... principal:"+ principal);
@@ -1478,8 +1488,8 @@
                         $(jigsawPanel).JigsawIamCaptcha({
                         	// 提交验证码的参数名
                         	verifyDataKey: Common.Util.checkEmpty("definition.verifyDataKey", settings.definition.verifyDataKey),
-                            getApplyCaptchaUrl: getApplyCaptchaUrl,
-							getVerifyAnalysisUrl: getVerifyAnalysisUrl,
+                            _getApplyCaptchaUrl: _getApplyCaptchaUrl,
+							_getVerifyAnalysisUrl: _getVerifyAnalysisUrl,
                             repeatIcon: 'fa fa-redo',
                             onSuccess: function (verifiedToken) {
 								console.debug("Jigsaw captcha verify successful. verifiedToken is '"+ verifiedToken + "'");
@@ -1565,8 +1575,147 @@
 		}
 	};
 
+	// --- [Start Helper function's. ---
+
+	// IAM console.
+	var _iamConsole = {
+		// Check verbose enabled. (output run details.)
+		_isVerbose: function () {
+			var verbose = sessionStorage.getItem(constant.iamVerboseStoredKey);
+			if (verbose) {
+				verbose = verbose.toUpperCase();
+				return verbose == 'TRUE' || verbose == '1' || verbose == 'Y' || verbose == 'YES';
+			}
+			return false;
+		},
+		debug: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.debug(msg);
+			}
+		},
+		info: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.info(msg);
+			}
+		},
+		warn: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.warn(msg);
+			}
+		},
+		error: function (msg) {
+			if (IAMCore.Console._isVerbose()) {
+				console.error(msg);
+			}
+		},
+		log: function (msg) {
+			_iamConsole.info(msg);
+		},
+	};
+
+	// Check is response is Unauthenticated?
+	var _isRespUnauthenticated = function (res) {
+		if (res) {
+			var isCode401 = res.code && (res.code == settings.definition.code401Value || (res.code + '') == settings.definition.code401Value);
+			var isStatusUnauthenticated = res.status && (res.status == settings.definition.statusUnauthenticatedValue);
+			return isCode401 || isStatusUnauthenticated;
+		}
+		return false;
+	};
+
+	// Check is response is successful?
+	var _isRespSuccess = function (res) {
+		if (res.code == settings.definition.code401Value 
+				|| (res.code + '') == settings.definition.code401Value) {
+			return true;
+		}
+		return false;
+	};
+
+	// Gets Xsrf token.
+	var _getXsrfToken = function(_xsrfTokenCookieName) {
+		var xsrfTokenHeaderName = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
+		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
+		// [MARK55]
+		var host = location.hostname;
+		var topDomain = Common.Util.extTopDomainString(host);
+		var defaultServiceName = host;
+		var index = host.indexOf(topDomain);
+		if (index > 0) {
+			defaultServiceName = host.substring(0, index - 1);
+		}
+		defaultServiceName = defaultServiceName.replace(".", "_").toUpperCase();
+		var xsrfTokenCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";
+		xsrfTokenCookieName = _xsrfTokenCookieName ? _xsrfTokenCookieName : xsrfTokenCookieName;
+
+		// Gets xsrf from cookie.
+		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName, null);
+		IAMCore.Console.debug("Load xsrfToken: " + xsrfToken + " by cookieName: " + xsrfTokenCookieName);
+
+		// First visit? init xsrf token
+		if (!xsrfToken) {
+			//console.debug("Initializing xsrf token...");
+			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
+			$.ajax({
+				url: applyXsrfTokenUrl,
+				type: 'HEAD',
+				//type: 'GET',
+				async: false,
+				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+				success: function(res, textStatus, jqxhr){
+					xsrfToken = Common.Util.getCookie(xsrfTokenCookieName);
+				},
+				error: function(req, status, errmsg){
+					console.debug("Failed to init xsrf token. " + errmsg);
+				}
+			});
+		}
+		return {
+			headerName: xsrfTokenHeaderName,
+			paramName: xsrfTokenParamName,
+			value: xsrfToken
+		};
+	};
+
+	// Gets Replay token.
+	var _generateReplayToken = function() {
+		var timestamp = new Date().getTime();
+		var nonce = "";
+		for (var i=0; i<2; i++) {
+			nonce += Math.random().toString(36).substr(2);
+		}
+		// Signature replay token.
+		var replayTokenPlain = Common.Util.sortWithAscii(nonce + timestamp); // Ascii sort
+		// Gets crc16
+		var replayTokenPlainCrc16 = Common.Util.Crc16CheckSum.crc16Modbus(replayTokenPlain);
+		// Gets iters
+		var iters = parseInt(replayTokenPlainCrc16 % replayTokenPlain.length / Math.PI) + 1;
+		// Gets signature
+		var signature = replayTokenPlain;
+		for (var i=0; i<iters; i++) {
+			signature = CryptoJS.MD5(signature).toString(CryptoJS.enc.Hex);
+		}
+		var replayTokenPlain = JSON.stringify({
+			"n": nonce, // nonce
+			"t": timestamp, // timestamp
+			"s": signature // signature
+		});
+		// Encode replay token
+		var replayTokenHeaderName = Common.Util.checkEmpty("definition.replayTokenHeaderKey", settings.definition.replayTokenHeaderKey);
+		var replayTokenParamName = Common.Util.checkEmpty("definition.replayTokenParamKey", settings.definition.replayTokenParamKey);
+		var replayToken = Common.Util.Codec.encodeBase58(replayTokenPlain);
+		IAMCore.Console.debug("Generated replay token(plain): "+ replayTokenPlain + " - " + replayToken);
+		return {
+			headerName: replayTokenHeaderName,
+			paramName: replayTokenParamName,
+			value: replayToken
+		};
+	};
+
+	// --- Helper function's. End] ---
+
 	// Gets default IAM baseUri
-	var getDefaultIamBaseUri = function() {
+	var _getDefaultIamBaseUri = function() {
 		// 获取地址栏默认baseUri
 		var protocol = location.protocol;
 		var hostname = location.hostname;
@@ -1599,19 +1748,19 @@
 	var _initConfigure = function(obj) {
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = $.extend(true, settings, obj);
-		console.debug("After merge settings: "+ JSON.stringify(settings));
+		IAMCore.Console.debug("Merged iam core settings: "+ JSON.stringify(settings));
 
-		if (Common.Util.isEmpty(settings.deploy.baseUri)) {
-	        settings.deploy.baseUri = getDefaultIamBaseUri();
-	        console.debug("Using overlay iamBaseURI: "+ settings.deploy.baseUri);
-	    }
+		//if (Common.Util.isEmpty(settings.deploy.baseUri)) {
+        settings.deploy.baseUri = _getDefaultIamBaseUri();
+        IAMCore.Console.info("Use overlay iam baseUri: " + settings.deploy.baseUri);
+	    //}
 
 		// Storage iamBaseUri
         sessionStorage.setItem(constant.baseUriStoredKey, settings.deploy.baseUri);
 	};
 
 	// Gets URL to request a connection to a sns provider
-	var getSnsConnectUrl = function(provider, panelType){
+	var _getSnsConnectUrl = function(provider, panelType){
 		var required = Common.Util.checkEmpty("sns.required", settings.sns.required);
 		var which = Common.Util.checkEmpty("required.getWhich", required.getWhich(provider, panelType));
 		var url = settings.deploy.baseUri + Common.Util.checkEmpty("definition.snsConnectUri", settings.definition.snsConnectUri) 
@@ -1635,7 +1784,7 @@
 	};
 
 	// Gets apply captcha URL.
-	var getApplyCaptchaUrl = function() {
+	var _getApplyCaptchaUrl = function() {
 		var paramMap = new Map();
 		// principal参数（申请验证码接口会检查是否启用,因为factors有包括rip/principal等,所有只要principal输入框有值就传,如：同一网段内多次登录root失败，此时该网段另一客户端登录root时也应该要启用验证码）
 		var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput));
@@ -1646,10 +1795,10 @@
 		paramMap.set(Common.Util.checkEmpty("definition.responseType",settings.definition.responseType), Common.Util.checkEmpty("definition.responseTypeValue",settings.definition.responseTypeValue));
 		paramMap.set(Common.Util.checkEmpty("definition.secureAlgKey",settings.definition.secureAlgKey), runtime.handshake.handleChooseSecureAlg());
 		// XSRF token
-		var xsrfToken = runtime.that.getXsrfToken();
+		var xsrfToken = _getXsrfToken();
 		paramMap.set(xsrfToken.paramName, xsrfToken.value);
 		// Replay token
-		var replayToken = runtime.that.generateReplayToken();
+		var replayToken = _generateReplayToken();
 		paramMap.set(replayToken.paramName, replayToken.value);
 		// Session info
 		runtime.handshake.handleSessionTo(paramMap);
@@ -1658,7 +1807,7 @@
 	};
 
 	// Gets verify & analyze captcha URL.
-	var getVerifyAnalysisUrl = function() {
+	var _getVerifyAnalysisUrl = function() {
 		var paramMap = new Map();
 		// principal参数（申请验证码接口会检查是否启用,因为factors有包括rip/principal等,所有只要principal输入框有值就传,如：同一网段内多次登录root失败，此时该网段另一客户端登录root时也应该要启用验证码）
 		var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput));
@@ -1671,10 +1820,10 @@
 		paramMap.set(Common.Util.checkEmpty("definition.secureAlgKey",settings.definition.secureAlgKey), runtime.handshake.handleChooseSecureAlg());
 		paramMap.set("r", Math.random());
 		// XSRF token
-		var xsrfToken = runtime.that.getXsrfToken();
+		var xsrfToken = _getXsrfToken();
 		paramMap.set(xsrfToken.paramName, xsrfToken.value);
 		// Replay token
-		var replayToken = runtime.that.generateReplayToken();
+		var replayToken = _generateReplayToken();
 		paramMap.set(replayToken.paramName, replayToken.value);
 		// Session info
 		runtime.handshake.handleSessionTo(paramMap);
@@ -1683,11 +1832,11 @@
 	};
 
 	// Reset graph captcha.
-	var resetCaptcha = function(refresh) {
+	var _resetCaptcha = function(refresh) {
 		if (refresh) {
 			var principal = encodeURIComponent(Common.Util.getEleValue("account.principalInput", settings.account.principalInput, false));
-			_InitSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
-				if(checkCaptcha.enabled && !runtime.flags.isCurrentlyApplying){ // 启用验证码且不是申请中(防止并发)?
+			_initSafeCheck(principal, function(res){
+				if(runtime.safeCheck.checkCaptcha.enabled && !runtime.flags.isCurrentlyApplying){ // 启用验证码且不是申请中(防止并发)?
 					// 获取当前配置的 CaptchaVerifier实例并显示
 					Common.Util.checkEmpty("captcha.getVerifier", settings.captcha.getVerifier)().captchaRender();
 				}
@@ -1698,7 +1847,7 @@
 	};
 
 	// 渲染SNS授权二维码或页面, 使用setTimeout以解决 如,微信long请求导致父窗体长时间处于加载中问题
-	var snsViewReader = function(connectUrl, panelType) {
+	var _snsViewReader = function(connectUrl, panelType) {
 		// 渲染授权二维码面板配置
 		if("qrcodePanel" == panelType){
 			// 获取已创建的iframe对象
@@ -1755,8 +1904,8 @@
 		}
 	};
 
-	// Init SNS authorize authentication login implement.
-	var _InitSNSAuthenticator = function() {
+	// Init SNS authorizing authentication login implement.
+	var _initSNSAuthenticator = function() {
 		// Check authenticator enable?
 		if (!settings.sns.enable) {
 			console.debug("SNS authenticator not enable!");
@@ -1777,21 +1926,25 @@
 				var provider = curProviderEle.getAttribute("provider");
 				var panelType = curProviderEle.getAttribute("panelType");
 				// 请求社交网络认证的URL（与which、action相关）
-				var connectUrl = getSnsConnectUrl(provider, panelType);
+				var connectUrl = _getSnsConnectUrl(provider, panelType);
 				// 执行点击SNS按钮事件
 				if(!settings.sns.onBefore(provider, panelType, connectUrl)){
 					console.warn("onBefore has blocked execution");
 					return this;
 				}
 				// 渲染SNS登录二维码或页面
-				snsViewReader(connectUrl, panelType);
+				_snsViewReader(connectUrl, panelType);
 			}
 		}
 	};
 
 	// Init safety check(PRE).
-	var _InitSafeCheck = function(principal, callback){
-		$(function(){
+	var _initSafeCheck = function(principal, callback){
+		$(function() {
+			if (!callback) {
+				callback = principal; // Real callback function
+				principal = '';
+			}
 			// 初始化前回调
 			if(!Common.Util.checkEmpty("init.onPreCheck", settings.init.onPreCheck)(principal)){
 				console.warn("Skip the init safeCheck, because onPreCheck() return false");
@@ -1803,23 +1956,23 @@
 			checkParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
 			checkParam.set("{umidTokenKey}", runtime.umid.getValue());
 			checkParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
-			doIamRequest("post", "{checkUri}", checkParam, function(res){
+			_doIamRequest("post", true, "{checkUri}", checkParam, function(res){
 				// 初始化完成回调
 				Common.Util.checkEmpty("init.onPostCheck", settings.init.onPostCheck)(res);
 				var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
 				if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
 					runtime.safeCheck = $.extend(true, runtime.safeCheck, res.data); // [MARK3]
-					callback(res.data.checkCaptcha, res.data.checkGeneric, res.data.checkSms);
+					callback(res);
 				}
 			}, function(errmsg){
 				console.log("Failed to safe check, " + errmsg);
 				Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 登录异常回调
-			}, true);
+			}, null, true);
 		});
 	};
 
 	// Init Captcha verifier implement.
-	var _InitCaptchaVerifier = function() {
+	var _initCaptchaVerifier = function() {
 		// Check authenticator enable?
 		if (!settings.captcha.enable) {
 			console.debug("Captcha verifier not enable!");
@@ -1828,7 +1981,7 @@
 
 		$(function(){
 			// 初始刷新验证码
-			resetCaptcha(true);	// 初始化&绑定验证码事件
+			_resetCaptcha(true);	// 初始化&绑定验证码事件
 			if(settings.captcha.use == "VerifyWithSimpleGraph" || settings.captcha.use == "VerifyWithGifGraph") {
 				var imgInput = $(Common.Util.checkEmpty("captcha.input", settings.captcha.input));
 				// Set captcha input maxLength.
@@ -1849,11 +2002,11 @@
 							captchaParam.put("{verifyTypeKey}", _check("applyModel.verifyType", runtime.applyModel.verifyType));
 							captchaParam.set("{umidTokenKey}", runtime.umid.getValue());
 							// 提交验证码
-							doIamRequest("post", getVerifyAnalysisUrl(), captchaParam, function(res){
+							_doIamRequest("post", true, _getVerifyAnalysisUrl(), captchaParam, function(res){
 								runtime.flags.isVerifying = false; // Reset verify status.
 								var codeOkValue = _check("definition.codeOkValue",settings.definition.codeOkValue);
 								if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
-									resetCaptcha(true);
+									_resetCaptcha(true);
 									settings.captcha.onError(res.message); // Call after captcha error.
 								} else { // Verify success.
 									runtime.verifiedModel = res.data.verifiedModel;
@@ -1861,9 +2014,9 @@
 								}
 							}, function(errmsg){
 								runtime.flags.isVerifying = false; // Reset verify status.
-								resetCaptcha(true);
+								_resetCaptcha(true);
 								settings.captcha.onError(errmsg); // Call after captcha error.
-							}, true);
+							}, null, true);
 						}
 
 					}
@@ -1873,7 +2026,7 @@
 	};
 
 	// Init Account login implements.
-	var _InitAccountAuthenticator = function() {
+	var _initAccountAuthenticator = function() {
 		// Check authenticator enable?
 		if (!settings.account.enable) {
 			console.debug("Account authenticator not enable!");
@@ -1899,11 +2052,11 @@
 					return;
 				}
 
-				_InitSafeCheck(principal, function(checkCaptcha, checkGeneric, checkSms){
+				_initSafeCheck(principal, function(res){
 					// 生成client公钥(用于获取认证成功后加密接口的密钥)
 					runtime.clientSecretKey = IAMCrypto.RSA.generateKey();
 					// 获取Server公钥(用于提交账号密码)
-					var secretKey = Common.Util.checkEmpty("Secret is empty", checkGeneric.secretKey);
+					var secretKey = Common.Util.checkEmpty("Secret is required", runtime.safeCheck.checkGeneric.secretKey);
 					var credentials = encodeURIComponent(IAMCrypto.RSA.encryptToHexString(secretKey, plainPasswd));
 					// 已校验的验证码Token(如果有)
 					var verifiedToken = "";
@@ -1911,7 +2064,7 @@
 						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
 						if(Common.Util.isEmpty(verifiedToken)){ // Required
 							settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete man-machine verify");
-							resetCaptcha(false);
+							_resetCaptcha(false);
 							return;
 						}
 					}
@@ -1933,7 +2086,7 @@
 					//loginParam.set("{principalKey}", Common.Util.Codec.toHex(principal));
 					loginParam.set("{credentialKey}", credentials);
 					loginParam.set("{clientSecretKey}", runtime.clientSecretKey.publicKeyHex);
-					loginParam.set("{clientRefKey}", getClientRef());
+					loginParam.set("{clientRefKey}", _getClientRef());
 					loginParam.set("{verifiedTokenKey}", verifiedToken);
 					loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
 					loginParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
@@ -1942,14 +2095,14 @@
 					// 添加自定义参数
 					Common.Util.mergeMap(settings.account.customParamMap, loginParam);
 					// 请求提交登录
-					doIamRequest("post", "{accountSubmitUri}", loginParam, function(res){
+					_doIamRequest("post", true, "{accountSubmitUri}", loginParam, function(res) {
 						// 解锁登录按钮
 						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
 
 						runtime.verifiedModel.verifiedToken = ""; // Clear
-						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
+						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
 						if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
-							resetCaptcha(true); // 刷新验证码
+							_resetCaptcha(true); // 刷新验证码
 							settings.account.onError(res.message); // 登录失败回调
 						} else { // 登录成功，直接重定向
                             $(document).unbind("keydown");
@@ -1963,14 +2116,14 @@
 						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
 						runtime.verifiedModel.verifiedToken = ""; // Clear
 						settings.account.onError(errmsg); // 登录异常回调
-					}, true);
+					}, null, true);
 				});
 			});
 		});
 	};
 
 	// Init SMS authentication implements.
-	var _InitSMSAuthenticator = function(){
+	var _initSMSAuthenticator = function(){
 		// Check authenticator enable?
 		if (!settings.sms.enable) {
 			console.debug("SMS authenticator not enable!");
@@ -2001,7 +2154,7 @@
 				var getSmsParam = new Map();
 				getSmsParam.set("{principalKey}", encodeURIComponent(mobileNum));
 				getSmsParam.set("{verifiedTokenKey}", captcha);
-				doIamRequest("post", "{smsApplyUri}", getSmsParam, function(res){
+				_doIamRequest("post", true, "{smsApplyUri}", getSmsParam, function(res) {
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					// 登录失败
 					if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){
@@ -2025,7 +2178,7 @@
 					}
 				}, function(errmsg){
 					settings.sms.onError(errmsg); // 申请失败回调
-				}, true);
+				}, null, true);
 			});
 			// 绑定SMS登录提交按钮点击事件
 			$(Common.Util.checkEmpty("sms.submitBtn", settings.sms.submitBtn)).click(function(){
@@ -2042,7 +2195,7 @@
 				smsLoginParam.set("{principalKey}", encodeURIComponent(mobileNum));
 				smsLoginParam.set("{credentialKey}", smsCode);
 				smsLoginParam.set("{smsActionKey}", Common.Util.checkEmpty("definition.smsActionValueLogin", settings.definition.smsActionValueLogin));
-				doIamRequest("post", "{smsSubmitUri}", smsLoginParam, function(res){
+				_doIamRequest("post", true, "{smsSubmitUri}", smsLoginParam, function(res){
 					var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 					if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){
 						settings.sms.onError(res.message); // SMS登录失败回调
@@ -2052,7 +2205,7 @@
 					}
 				}, function(errmsg){
 					settings.sms.onError(errmsg); // SMS登录失败回调
-				}, true);
+				}, null, true);
 			});
 
 			// 上次申请过SMS验证码?刷新页面之后倒计时继续
@@ -2083,7 +2236,7 @@
 	};
 
 	// Client device OS type.
-	var getClientRef = function(){
+	var _getClientRef = function(){
 		var clientRef = null;
 		var osTypes = Common.Util.PlatformType;
 		for(var osname in osTypes){
@@ -2101,56 +2254,229 @@
 	};
 
 	// 提交基于IAM特征的请求(如，设置跨域允许cookie,表单,post等)
-	var doIamRequest = function(method, urlAndKey, paramMap, success, error, sessionIfNecessary) {
-		// 默认公共参数
-		paramMap.set("{responseType}", Common.Util.checkEmpty("definition.responseTypeValue", settings.definition.responseTypeValue));
-		// 手动提交session(若有必要)
+	var _doIamRequest = function(method, async, urlOrKey, params, successFn, errorFn, completeFn, sessionIfNecessary) {
+		// Add default generic params.
+		if (Common.Util.isMap(params)) {
+			params.set("{responseType}", Common.Util.checkEmpty("definition.responseTypeValue", settings.definition.responseTypeValue));
+		} else if (Common.Util.isObject(params)) {
+			params['responseType'] = Common.Util.checkEmpty("definition.responseTypeValue", settings.definition.responseTypeValue);
+		}
+		// Add sessions. (If necessary)
 		if (sessionIfNecessary) {
-			runtime.handshake.handleSessionTo(paramMap);
+			runtime.handshake.handleSessionTo(params);
 		}
-		// 拼接生成请求URL
-		var _url = Common.Util.checkEmpty("deploy.baseUri", settings.deploy.baseUri);
-		if(urlAndKey.startsWith("{") && urlAndKey.endsWith("}")) { // Build API URI
-			var realKey = urlAndKey.substr(1, urlAndKey.length - 2);
-			_url += Common.Util.checkEmpty("definition", settings.definition[realKey]);
-		} else {
-			_url += Common.Util.checkEmpty("definition", settings.definition[urlAndKey]);
+		// Convert request url
+		var _url = null;
+		if (urlOrKey.startsWith("@")) { // Absolute url?
+			_url = urlOrKey.substring(urlOrKey.indexOf('@') + 1);
+		} else { // Iam build-in api url
+			_url = Common.Util.checkEmpty("deploy.baseUri", settings.deploy.baseUri);
+			if(urlOrKey.startsWith("{") && urlOrKey.endsWith("}")) { // definition url of placeholder key
+				var realKey = urlOrKey.substr(1, urlOrKey.length - 2);
+				_url += Common.Util.checkEmpty("definition", settings.definition[realKey]);
+			} else { // definition url key
+				_url += Common.Util.checkEmpty("definition", settings.definition[urlOrKey]);
+			}
 		}
-		// Headers.
+		// Add headers of Iam security tokens(xsrf/replay).
 		var headers = new Map();
 		if (method.toUpperCase() == 'POST' || method.toUpperCase() == 'DELETE') {
 			// XSRF token
-			var xsrfToken = runtime.that.getXsrfToken();
+			var xsrfToken = _getXsrfToken();
 			headers.set(xsrfToken.headerName, xsrfToken.value);
 			// Replay token
-			var replayToken = runtime.that.generateReplayToken();
+			var replayToken = _generateReplayToken();
 			headers.set(replayToken.headerName, replayToken.value);
 		}
+		// Convert data params
+		var dataParams = Common.Util.isMap(params) ? Common.Util.toUrl(settings.definition, params) : params;
 		$.ajax({
 			url: _url,
 			type: method,
+			async: (async || true),
 			headers: JSON.fromMap(headers),
-			data: Common.Util.toUrl(settings.definition, paramMap),
+			//dataType: "json",
+			data: dataParams,
 			xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
-			success: function(res, textStatus, jqxhr){
-				success(res);
+			success: function(res, textStatus, jqxhr) {
+				if (successFn) {
+					successFn(res);
+				}
 			},
-			error: function(req, status, errmsg){
-				error(errmsg);
+			error: function(req, status, errmsg) {
+				if (errorFn) {
+					errorFn(errmsg);
+				}
+			},
+			complete: function (xhr) {
+	            if (completeFn) {
+	            	completeFn(xhr);
+	            }
+	        }
+		});
+	};
+
+	// Multi modular authenticating handler
+	var _multiModularAuthenticatingHandler = {
+		mutexControllerManager: new Map(),
+		// Do multi modular authenticating and biz request.
+		doMultiModularRequest:function (method, url, async, params, successFn, errorFn, completeFn) {
+			var url = '@' + url; // Use absolute url
+			_doIamRequest(method, async, url, params || {}, successFn, errorFn, completeFn, false);
+		},
+		// 检查返回未登录(code=401)时是否跳转登录页，(仅当TGC过期(真正过期)是才跳转登录页，iam-client过期无需跳转登陆页)
+		checkTGCExpiredAndRedirectToLogin: function (res) {
+			const handler = _multiModularAuthenticatingHandler;
+		    console.debug("TGC validating... res: " + JSON.stringify(res));
+		    if (_isRespUnauthenticated(res)) {
+		        // IamWithCasAppClient/IamWithCasAppServer
+		        if (res.data.serviceRole == 'IamWithCasAppServer') { // TGC过期?
+		            console.debug("TGC expired, redirectTo: " + res.data[settings.definition.redirectUrlKey]);
+		            // e.g: window.location.href = '/#/login';
+		            return true;
+		        }
+		    }
+		    return false;
+		},
+		// 获取URL同源的并发认证控制器
+		getMutexController: function (url) {
+			const handler = _multiModularAuthenticatingHandler;
+		    const _url = new URL(url);
+		    const urlSame = _url.protocol + "://" + _url.host;
+		    var controller = handler.mutexControllerManager.get(urlSame);
+		    if (!controller) {
+		    	handler.mutexControllerManager.set(urlSame, (controller = {
+		            urlSame: urlSame,
+		            currentlyState: false,
+		            requestQueue: [], // FIFO
+		            authenticated: false,
+		        }));
+		    }
+		    return controller;
+		},
+		// 拦截处理多模块并发认证请求（401重定向）
+		doHandle: function (res, method, url, successFn, errorFn, params) {
+			const handler = _multiModularAuthenticatingHandler;
+			// Check parameters requires.
+			Common.Util.checkEmpty('multiModularAuthenticatingRequest.res', res);
+			Common.Util.checkEmpty('multiModularAuthenticatingRequest.method', method);
+			Common.Util.checkEmpty('multiModularAuthenticatingRequest.url', url);
+			// Check authentication status.
+			if (!_isRespUnauthenticated(res)) {
+				IAMCore.Console.debug("Ignore non-unauthenticated res. url: " + url + ", res: " + res);
+				return;
 			}
+			// 获取url(源)对应的并发认证控制器
+            const controller = handler.getMutexController(url);
+            if (!controller.currentlyState) {
+                controller.currentlyState = true; // Mark authenticating
+                new Promise(function (resolve, reject) {
+                	IAMCore.Console.info("Biz unauth response: " + JSON.stringify(res));
+                    if (controller.authenticated) {
+                        resolve();
+                        return;
+                    }
+                    if (handler.checkTGCExpiredAndRedirectToLogin(res)) {
+                        return;
+                    }
+                    if (!res.data || !res.data.redirect_url) {
+                        errorFn(res);
+                        return;
+                    }
+                    // Request IAM server authenticator.
+                    handler.doMultiModularRequest(method, res.data.redirect_url, true, null, resolve, errorFn, null);
+                }).then(function (res1) {
+                	IAMCore.Console.info("Iam-server response: " + JSON.stringify(res1));
+                    if (controller.authenticated) {
+                        return;
+                    }
+                    if (handler.checkTGCExpiredAndRedirectToLogin(res1)) {
+                        return;
+                    }
+                    if (!res1.data || !res1.data.redirect_url) {
+                    	if (errorFn) {
+                    		errorFn(res1);
+                    	}
+                        return;
+                    }
+                    return new Promise((resolve, reject) => {
+                        // Request IAM client authenticator.
+                        handler.doMultiModularRequest('get', res1.data.redirect_url, true, null, resolve, errorFn, null);
+                    });
+                }).then(function (res2) {
+                	IAMCore.Console.info("Iam-client response: " + JSON.stringify(res2));
+                    controller.currentlyState = false;  // Mark authenticated completed
+
+                    handler.doMultiModularRequest(method, url, true, params, function (res3) {
+                    	IAMCore.Console.info("Redirect origin biz response: " + JSON.stringify(res3));
+                        if (!_isRespUnauthenticated(res3)) {
+                            if (successFn) {
+                            	successFn(res3);
+							}
+                            controller.authenticated = true;
+                        } else { // need authRequest???
+                            controller.authenticated = false;
+                        }
+                    }, function (errmsg) {
+                        if (errorFn) {
+                            errorFn(errmsg);
+                        } else {
+                        	console.error(errmsg);
+                        }
+                    }, function () {
+                        // Next biz requests
+                        if (controller.requestQueue.length > 0) {
+                            const authRequest = controller.requestQueue[0]; // Poll first
+                            controller.requestQueue.splice(0, 1); // Remove
+                            IAMCore.Console.info('Poll authenticating queue first: ' + authRequest + ', requestQueue: ' + controller.requestQueue);
+                            handler.doHandle(authRequest.res, authRequest.method, authRequest.url,
+                                authRequest.successFn, authRequest.errorFn, authRequest.params)
+                        }
+                    });
+                });
+            } else { // Offer queue
+                const authRequest = { res: res, method: method, url: url, successFn: successFn, errorFn: errorFn, params: params };
+                controller.requestQueue.push(authRequest);
+                IAMCore.Console.info('Offered authenticating authRequest: ' + authRequest + ', requestQueue: ' + controller.requestQueue);
+            }
+        },
+	};
+
+	// Check authentication and redirection
+	var _checkAuthenticationAndRedirect = function(redirectUrl) {
+		// Prevent flashing when redirecting to the home page.
+		IAMCore.Console.info("Hidden login document(*) ... ");
+		document.write("<style id='iam_check_authc_redirect_style'>*{display:none;}</style>"); // Hide
+
+		return new Promise(resolve => {
+			_initHandshakeIfNecessary(true).then(res => {
+				if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
+					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, 0);
+					var count = parseInt(sessionStorage.getItem(constant.authenticatedRedirectCountStorageKey) || 0);
+					if (count > 10) { throw Error("Too many failure redirects: " + count); }
+					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, ++count);
+					IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
+					window.location = redirectUrl;
+				} else {
+					resolve(res);
+					IAMCore.Console.info("Show login body... ");
+					$("#iam_check_authc_redirect_style").remove(); // Show
+				}
+			});
 		});
 	};
 
 	// Init Handshake authentication(PRE) implements.
-	var _InitHandshakeIfNecessary = function() {
+	var _initHandshakeIfNecessary = function(refresh) {
 		// Init gets umidToken and handshake.
-		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken));
+		return runtime.umid.getValuePromise().then(umidToken => runtime.handshake.getValuePromise(umidToken, refresh));
 	};
 
-	// Exposing IAMCore APIs
+	// --- Exposing IAMCore APIs. ---
+
 	window.IAMCore = function(opt) {
-		runtime.that = this;
-		// 初始化配置
+		runtime.__that = this;
+		// Initializing.
 		_initConfigure(opt);
 	};
 	// Export umToken
@@ -2159,8 +2485,8 @@
 	};
 	// Export safeCheck
 	IAMCore.prototype.safeCheck = function(principal, callback) {
-		_InitHandshakeIfNecessary().then(handshakeValue => {
-			_InitSafeCheck(principal, callback);
+		_initHandshakeIfNecessary().then(res => {
+			_initSafeCheck(principal, callback);
 		});
 		return this;
 	};
@@ -2176,123 +2502,74 @@
 		settings.account.enable = true;
 		return this;
 	};
-	// Export enable smsAuthenticators
+	// Export enable smsAuthenticators.
 	IAMCore.prototype.smsAuthenticator = function() {
 		settings.sms.enable = true;
 		return this;
 	};
-	// Export enable snsAuthenticators
+	// Export enable snsAuthenticators.
 	IAMCore.prototype.snsAuthenticator = function() {
 		settings.sns.enable = true;
 		return this;
 	};
-	// Export enable captchaVerifier
+	// Export enable captchaVerifier.
 	IAMCore.prototype.captchaVerifier = function() {
 		settings.captcha.enable = true;
 		return this;
 	};
-	// Export build 
+	// Export build.
 	IAMCore.prototype.build = function() {
-		// 为确保执行顺序（1，获取umidToken；2，请求handshake；3，初始绑定各种认证器）
-		_InitHandshakeIfNecessary().then(handshakeValue => {
-			_InitAccountAuthenticator();
-			_InitSMSAuthenticator();
-			_InitSNSAuthenticator();
-			_InitCaptchaVerifier();
+		IAMCore.Console.info("IAMCore init and building ...");
+		// 1: Ensure execution sequence（1.1: get umidToken; 1.2: get handshake; 1.3: init any authenticators）
+		// 2: Forced refresh is to solve the problem that you can't log in again after exiting SPM application. 
+		// The reason is that SPM project is a single page application, and the action of logging out is only to 
+		// execute push('/#/login'), but not to refresh the page At this time, the old session information (due to cache) 
+		// is used, and the correct operation should refresh the handshake interface to get the new session information 
+		// as long as the login page is rendered. Of course, external calls can also be made iamUi.destroy() to solve this problem.
+		_initHandshakeIfNecessary(true).then(res => {
+			_initAccountAuthenticator();
+			_initSMSAuthenticator();
+			_initSNSAuthenticator();
+			_initCaptchaVerifier();
 		});
 	};
 	// Export IAMCore destroy
 	IAMCore.prototype.destroy = function() {
-		sessionStorage.removeItem(constant.baseUriStoredKey);
-		sessionStorage.removeItem(constant.umidTokenStorageKey);
+		for (var key in constant) {
+			sessionStorage.removeItem(constant[key]);
+		}
 		constant = null;
 		_defaultCaptchaVerifier = null;
 		runtime = null;
 		settings = null;
 		console.log("Destroyed IAMCore instance.");
 	};
+
 	// Export getXsrfToken
-	IAMCore.prototype.getXsrfToken = function(_xsrfTokenCookieName) {
-		var xsrfTokenHeaderName = Common.Util.checkEmpty("definition.xsrfTokenHeaderKey", settings.definition.xsrfTokenHeaderKey);
-		var xsrfTokenParamName = Common.Util.checkEmpty("definition.xsrfTokenParamKey", settings.definition.xsrfTokenParamKey);
-		// [MARK55]
-		var host = location.hostname;
-		var topDomain = Common.Util.extTopDomainString(host);
-		var defaultServiceName = host;
-		var index = host.indexOf(topDomain);
-		if (index > 0) {
-			defaultServiceName = host.substring(0, index - 1);
-		}
-		defaultServiceName = defaultServiceName.replace(".", "_").toUpperCase();
-		var xsrfTokenCookieName = "IAM-" + defaultServiceName + "-XSRF-TOKEN";
-		xsrfTokenCookieName = _xsrfTokenCookieName ? _xsrfTokenCookieName : xsrfTokenCookieName;
-		// Gets xsrf from cookie.
-		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName, null);
-		console.debug("Load xsrfToken: " + xsrfToken + " by cookieName: " + xsrfTokenCookieName);
-		// First visit? init xsrf token
-		if (!xsrfToken) {
-			//console.debug("Initializing xsrf token...");
-			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
-			$.ajax({
-				url: applyXsrfTokenUrl,
-				type: 'HEAD',
-				//type: 'GET',
-				async: false,
-				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
-				success: function(res, textStatus, jqxhr){
-					xsrfToken = Common.Util.getCookie(xsrfTokenCookieName);
-				},
-				error: function(req, status, errmsg){
-					console.debug("Failed to init xsrf token. " + errmsg);
-				}
-			});
-		}
-		return {
-			headerName: xsrfTokenHeaderName,
-			paramName: xsrfTokenParamName,
-			value: xsrfToken
-		};
-	};
+	IAMCore.prototype.getXsrfToken = _getXsrfToken;
+
 	// Export generateReplayToken
-	IAMCore.prototype.generateReplayToken = function() {
-		var timestamp = new Date().getTime();
-		var nonce = "";
-		for (var i=0; i<2; i++) {
-			nonce += Math.random().toString(36).substr(2);
-		}
-		// Signature replay token.
-		var replayTokenPlain = Common.Util.sortWithAscii(nonce + timestamp); // Ascii sort
-		// Gets crc16
-		var replayTokenPlainCrc16 = Common.Util.Crc16CheckSum.crc16Modbus(replayTokenPlain);
-		// Gets iters
-		var iters = parseInt(replayTokenPlainCrc16 % replayTokenPlain.length / Math.PI) + 1;
-		// Gets signature
-		var signature = replayTokenPlain;
-		for (var i=0; i<iters; i++) {
-			signature = CryptoJS.MD5(signature).toString(CryptoJS.enc.Hex);
-		}
-		var replayTokenPlain = JSON.stringify({
-			"n": nonce, // nonce
-			"t": timestamp, // timestamp
-			"s": signature // signature
-		});
-		// Encode replay token
-		var replayTokenHeaderName = Common.Util.checkEmpty("definition.replayTokenHeaderKey", settings.definition.replayTokenHeaderKey);
-		var replayTokenParamName = Common.Util.checkEmpty("definition.replayTokenParamKey", settings.definition.replayTokenParamKey);
-		var replayToken = Common.Util.Codec.encodeBase58(replayTokenPlain);
-		console.debug("Generated replay token(plain): "+ replayTokenPlain + " - " + replayToken);
-		return {
-			headerName: replayTokenHeaderName,
-			paramName: replayTokenParamName,
-			value: replayToken
-		};
-	};
+	IAMCore.prototype.generateReplayToken = _generateReplayToken;
+
+	// Export check authentication and redirection
+	IAMCore.prototype.checkAuthenticationAndRedirect = _checkAuthenticationAndRedirect;
+
+	// Export function Iam console
+	IAMCore.Console = _iamConsole;
+
+	// Export function check resp unauthenticated
+	IAMCore.checkRespUnauthenticated = _isRespUnauthenticated;
+
+	// Export function check resp success.
+	IAMCore.checkRespSuccess = _isRespSuccess;
+
+	// Export function multi modular authenticating handler.
+	IAMCore.multiModularMutexAuthenticatingHandler = _multiModularAuthenticatingHandler.doHandle;
+
 	// Export function getIamBaseURI
 	IAMCore.getIamBaseUri = function() {
-		var iamBaseUri = sessionStorage.getItem(constant.baseUriStoredKey);
-		if (!iamBaseUri) {
-			sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri =getDefaultIamBaseUri()));
-		}
+		// Overlay
+		sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri = _getDefaultIamBaseUri()));
 		return iamBaseUri;
 	};
 
@@ -2618,10 +2895,13 @@
 		return runtime.iamCore;
 	};
 	IAMUi.prototype.destroy = function() {
-		this.getIAMCore().destroy();
 		$(runtime.renderObj).empty();
 		runtime = null;
-		console.log("Destroyed IAMUi instance.");
+		IAMCore.Console.info("Destroyed IAMUi instance.");
+		// Detroy iam core.
+		if (runtime.iamCore) {
+			runtime.iamCore.destroy();
+		}
 	};
 
 	//
@@ -2802,7 +3082,7 @@
 
 		// Overerly default settings.
 		iamCoreConfig = $.extend(true, defaultSettings, iamCoreConfig);
-		console.debug("IAMCore JSSDK intializing ... config properties: " + JSON.stringify(iamCoreConfig));
+		IAMCore.Console.debug("IAMCore JSSDK intializing ... config properties: " + JSON.stringify(iamCoreConfig));
 		runtime.iamCore = new IAMCore(iamCoreConfig);
 		runtime.iamCore.anyAuthenticators().build();
 	}
@@ -2814,7 +3094,7 @@
 				try {
 					window.location.href = JSON.parse(e.data).refresh_url;
 				} catch(e) {
-					console.debug("Could't parse event message, error: "+ e);
+					IAMCore.Console.error("Could't parse event message, data: "+ e.data);
 				}
 			}
 		}

@@ -59,11 +59,11 @@ spring:
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
             redirect-url: http://passport.wl4g.com${server.contextPath}/sns/qq/callback
   # Spring datasource configuration.
-  datasource:            
+  datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/devops_dev_ci?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
+      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&serverTimezone=UTC&characterEncoding=utf-8
       username: ${DEVOPS_DB_USER:gzsm}
       password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10

@@ -26,8 +26,7 @@ import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.common.authc.model.SessionValidityAssertModel;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SESSION_VALIDATE;
-
-import java.util.Map;
+import static java.lang.String.format;
 
 /**
  * Expire session validator
@@ -45,18 +44,13 @@ public class ExpiredSessionIamValidator
 	}
 
 	@Override
-	protected void postQueryParameterSet(SessionValidityAssertModel req, Map<String, Object> queryParams) {
-
-	}
-
-	@Override
 	public SessionValidityAssertModel validate(SessionValidityAssertModel request) throws SessionValidateException {
-		final RespBase<SessionValidityAssertModel> resp = doGetRemoteValidate(URI_S_SESSION_VALIDATE, request);
+		final RespBase<SessionValidityAssertModel> resp = doIamRemoteValidate(URI_S_SESSION_VALIDATE, request);
 		if (!RespBase.isSuccess(resp)) {
 			if (RespBase.eq(resp, RetCode.UNAUTHC)) {
-				throw new InvalidGrantTicketException(String.format("Remote validate error, %s", resp.getMessage()));
+				throw new InvalidGrantTicketException(format("Remote validate error, %s", resp.getMessage()));
 			}
-			throw new SessionValidateException(String.format("Remote validate error, %s", resp.getMessage()));
+			throw new SessionValidateException(format("Remote sessions expires validate error, %s", resp.getMessage()));
 		}
 		return resp.getData();
 	}

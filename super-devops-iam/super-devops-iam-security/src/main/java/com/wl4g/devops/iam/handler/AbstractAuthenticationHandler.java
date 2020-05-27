@@ -16,12 +16,11 @@
 package com.wl4g.devops.iam.handler;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 
 import javax.annotation.Resource;
 
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
@@ -32,6 +31,7 @@ import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Abstract IAM authentication handler.
@@ -42,7 +42,7 @@ import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
  * @since
  */
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler, InitializingBean {
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * IAM server configuration properties

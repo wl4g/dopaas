@@ -9,35 +9,38 @@
 	<link rel="stylesheet" href="./static/css/lanren.css"/>
 <!-- @Authors: <Wanglsir@gmail.com, 983708408@qq.com> -->
 <!-- [Use for production] -->
-	<link rel="stylesheet" href="../iam-jssdk/assets/css/IAM.all.min.css"/>
-	<script type="text/javascript" src="../iam-jssdk/assets/js/jquery-3.3.1.min.js" path="../"></script>
-	<script type="text/javascript" src="../iam-jssdk/assets/js/IAM.all.min.js" path="../"></script>
+<!-- 	<link rel="stylesheet" href="../iam-jssdk/assets/css/IAM.all.min.css"/> -->
+<!-- 	<script type="text/javascript" src="../iam-jssdk/assets/js/jquery-3.3.1.min.js" path="../"></script> -->
+<!-- 	<script type="text/javascript" src="../iam-jssdk/assets/js/IAM.all.min.js" path="../"></script> -->
 <!-- [Use for debugging] -->
-<!-- 	<link rel="stylesheet" href="../iam-jssdk/src/css/iam-jssdk-wx.css"/> -->
-<!-- 	<link rel="stylesheet" href="../iam-jssdk/src/css/iam-jssdk-captcha-jigsaw.css"/> -->
-<!-- 	<link rel="stylesheet" href="../iam-jssdk/src/css/iam-jssdk-ui.css"/> -->
-<!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/jquery-3.3.1.js"></script> -->
-<!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/fingerprint2-2.1.0.js"></script> -->
-<!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/crypto-js-4.0.0.js"></script> -->
-<!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/common-util-2.0.0.js"></script> -->
-<!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-crypto.js"></script> -->
-<!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-fingerprint.js"></script> -->
-<!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-captcha-jigsaw.js"></script> -->
-<!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-core.js"></script> -->
-<!-- 	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-ui.js"></script> -->
+	<link rel="stylesheet" href="../iam-jssdk/src/css/iam-jssdk-wx.css"/>
+	<link rel="stylesheet" href="../iam-jssdk/src/css/iam-jssdk-captcha-jigsaw.css"/>
+	<link rel="stylesheet" href="../iam-jssdk/src/css/iam-jssdk-ui.css"/>
+	<script type="text/javascript" src="../iam-jssdk/src/js/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="../iam-jssdk/src/js/fingerprint2-2.1.0.js"></script>
+	<script type="text/javascript" src="../iam-jssdk/src/js/crypto-js-4.0.0.js"></script>
+	<script type="text/javascript" src="../iam-jssdk/src/js/common-util-2.0.0.js"></script>
+	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-crypto.js"></script>
+	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-fingerprint.js"></script>
+	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-captcha-jigsaw.js"></script>
+	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-core.js"></script>
+	<script type="text/javascript" src="../iam-jssdk/src/js/iam-jssdk-ui.js"></script>
 	<script type="text/javascript">
-		$(function() {
-			console.log("IAM JSSDK UI creation... ");
-		 	new IAMUi().initUI(document.getElementById("content-right"), {
-				deploy: {
-					// e.g. http://127.0.0.1:14040/iam-server
-					// e.g. http://localhost:14040/iam-server
-					// e.g. http://iam.wl4g.debug/iam-server
-                    //baseUri: "http://localhost:14040/iam-server",
-		   			//defaultTwoDomain: "iam", // IAM后端服务部署二级域名，当iamBaseUri为空时，会自动与location.hostnamee拼接一个IAM后端地址.
-		   			//defaultContextPath: "/iam-server"
-				}
-	 		});
+		var homeUrl = "/iam-server/view/index.html";
+		var options = {
+			deploy: {
+				// If it is null, it will be automatically parsed from location by default.				
+				//baseUri: "http://localhost:14040/iam-server/",
+				//defaultTwoDomain: "iam",
+				//defaultContextPath: "/iam-server"
+			}
+		};
+		// Auto redirection to index. (Optional)
+		new IAMCore(options).checkAuthenticationAndRedirect(homeUrl).then(() => {
+			$(function() {
+				console.log("IAM JSSDK UI creation... ");
+				new IAMUi().initUI(document.getElementById("iam_container"), options);
+			});
 		});
 	</script>
 </head>
@@ -75,7 +78,7 @@
 				<img src="./static/images/roll/guangzhu.png" alt="图片" style="z-index:-4;position:relative;">
 			</div>
 		</div>
-		<div id="content-right">
+		<div id="iam_container">
 		</div>
 	</div>
 	<div id="foot" style="line-height:24px; position:relative;z-index:1000;">

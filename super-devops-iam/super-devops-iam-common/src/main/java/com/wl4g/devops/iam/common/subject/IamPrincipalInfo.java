@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Collections.emptyMap;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -326,13 +325,28 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 		 */
 		private String parent;
 
+		/**
+		 * Type
+		 */
+		private Integer type;
+
+		/**
+		 * Name
+		 */
+		private String name;
+
+		private Integer areaId;
+
 		public OrganizationInfo() {
 			super();
 		}
 
-		public OrganizationInfo(String organizationCode, String parent) {
-			setOrganizationCode(organizationCode);
-			setParent(parent);
+		public OrganizationInfo(String organizationCode, String parent, Integer type, String name, Integer areaId) {
+			this.organizationCode = organizationCode;
+			this.parent = parent;
+			this.type = type;
+			this.name = name;
+			this.areaId = areaId;
 		}
 
 		public String getOrganizationCode() {
@@ -340,7 +354,7 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 		}
 
 		public void setOrganizationCode(String organizationCode) {
-			hasTextOf(organizationCode, "organizationCode");
+			// hasTextOf(organizationCode, "organizationCode");
 			this.organizationCode = organizationCode;
 		}
 
@@ -353,6 +367,29 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 			this.parent = parent;
 		}
 
+		public Integer getType() {
+			return type;
+		}
+
+		public void setType(Integer type) {
+			this.type = type;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public Integer getAreaId() {
+			return areaId;
+		}
+
+		public void setAreaId(Integer areaId) {
+			this.areaId = areaId;
+		}
 	}
 
 }

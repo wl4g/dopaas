@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
 			list = userDao.list(null, userName, displayName);
 		} else {
 
-			Set<Group> groups = groupService.getGroupsSet();
+			Set<Group> groups = groupService.getGroupsSet(new User(info.getPrincipal()));
 			List<Integer> groupIds = new ArrayList<>();
 			for (Group group : groups) {
 				groupIds.add(group.getId());
@@ -112,7 +112,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void save(User user) {
 		if (StringUtils.isNotBlank(user.getPassword())) {
-			// TODO Dynamic choosed algorithm!!
+			// TODO Dynamic choose algorithm!!!
+			// Default use RSA
 			String signature = credentialsSecurer
 					.signature(new CredentialsToken(user.getUserName(), user.getPassword(), SecureAlgKind.RSA));
 			user.setPassword(signature);

@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.web;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.iam.common.utils.AuthenticatingUtils.sessionStatus;
+import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.sessionStatus;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
 import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static org.apache.commons.lang3.StringUtils.isBlank;
