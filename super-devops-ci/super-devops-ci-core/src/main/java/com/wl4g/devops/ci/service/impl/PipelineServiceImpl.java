@@ -72,6 +72,7 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
+    @Transactional(rollbackFor=Exception.class)
     public void save(Pipeline pipeline) {
         if (nonNull(pipeline.getId())) {
             update(pipeline);
@@ -131,7 +132,7 @@ public class PipelineServiceImpl implements PipelineService {
         return pipelineDao.selectByClusterId(clusterId);
     }
 
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void insert(Pipeline pipeline) {
         Assert2.notNullOf(pipeline, "pipeline");
         // Insert Pipeline
@@ -208,7 +209,7 @@ public class PipelineServiceImpl implements PipelineService {
 
     }
 
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void update(Pipeline pipeline) {
         pipeline.preUpdate();
         Assert2.notNullOf(pipeline, "pipeline");

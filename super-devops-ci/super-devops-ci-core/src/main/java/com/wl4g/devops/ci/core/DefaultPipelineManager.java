@@ -81,7 +81,6 @@ public class DefaultPipelineManager implements PipelineManager {
     protected PipelineJobExecutor jobExecutor;
     @Autowired
     protected GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
-
     @Autowired
     protected AppInstanceDao appInstanceDao;
     @Autowired
@@ -90,16 +89,12 @@ public class DefaultPipelineManager implements PipelineManager {
     protected TriggerDao triggerDao;
     @Autowired
     protected ProjectDao projectDao;
-    //@Autowired
-    //protected TaskDao taskDao;
     @Autowired
     protected TaskDetailDao taskDetailDao;
     @Autowired
     protected ContactDao contactDao;
     @Autowired
     protected TaskBuildCommandDao taskBuildCmdDao;
-    @Autowired
-    protected TaskHistoryDetailDao taskHistoryDetailDao;
     @Autowired
     protected FlowManager flowManager;
     @Autowired
@@ -371,11 +366,11 @@ public class DefaultPipelineManager implements PipelineManager {
      * @param provider
      */
     protected void postPipelineRunSuccess(Integer taskId, PipelineProvider provider) {
-        List<TaskHistoryInstance> taskHistoryInstances = taskHistoryDetailDao.getDetailByTaskId(taskId);
+        List<PipelineHistoryInstance> pipelineHistoryInstances = pipelineHistoryInstanceDao.selectByPipeHistoryId(taskId);
         boolean allSuccess = true;
         boolean allFail = true;
-        for (TaskHistoryInstance taskHistoryInstance : taskHistoryInstances) {
-            if (taskHistoryInstance.getStatus() != TASK_STATUS_SUCCESS) {
+        for (PipelineHistoryInstance pipelineHistoryInstance : pipelineHistoryInstances) {
+            if (pipelineHistoryInstance.getStatus() != TASK_STATUS_SUCCESS) {
                 allSuccess = false;
             } else {
                 allFail = false;
