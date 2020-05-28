@@ -28,7 +28,15 @@ import com.wl4g.devops.tool.common.crypto.asymmetric.spec.RSAKeyPairSpec;
  * @version v1.0 2019年1月20日
  * @since
  */
-public class RSACryptor extends AbstractFastAsymmCryptor {
+public class RSACryptor extends AbstractAsymmetricCryptor {
+
+	public RSACryptor() {
+		super(1024);
+	}
+
+	public RSACryptor(int keysize) {
+		super(keysize);
+	}
 
 	@Override
 	public String getAlgorithmPrimary() {
@@ -38,11 +46,6 @@ public class RSACryptor extends AbstractFastAsymmCryptor {
 	@Override
 	public String getPadAlgorithm() {
 		return "RSA/ECB/PKCS1Padding";
-	}
-
-	@Override
-	public int getKeyBit() {
-		return 1024;
 	}
 
 	@Override

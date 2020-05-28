@@ -17,9 +17,8 @@ package com.wl4g.devops.common.bean.scm.model;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.tool.common.serialize.JacksonUtils;
-
 import javax.validation.constraints.NotNull;
+
 import java.util.List;
 
 public class GetRelease extends GenericInfo {
@@ -45,11 +44,6 @@ public class GetRelease extends GenericInfo {
 		if (instance != null) {
 			this.instance = instance;
 		}
-	}
-
-	@Override
-	public String toString() {
-		return JacksonUtils.toJSONString(this);
 	}
 
 	@Override

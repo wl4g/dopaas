@@ -28,7 +28,15 @@ import com.wl4g.devops.tool.common.crypto.asymmetric.spec.DSAKeyPairSpec;
  * @version 2019年11月9日 v1.0.0
  * @see
  */
-public class DSACryptor extends AbstractFastAsymmCryptor {
+public class DSACryptor extends AbstractAsymmetricCryptor {
+
+	public DSACryptor() {
+		super(1024);
+	}
+
+	public DSACryptor(int keysize) {
+		super(keysize);
+	}
 
 	@Override
 	public String getAlgorithmPrimary() {
@@ -38,11 +46,6 @@ public class DSACryptor extends AbstractFastAsymmCryptor {
 	@Override
 	public String getPadAlgorithm() {
 		return "DSA/ECB/PKCS1Padding";
-	}
-
-	@Override
-	public int getKeyBit() {
-		return 1024;
 	}
 
 	@Override

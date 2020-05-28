@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.tool.common.codec.CodecSource;
-import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
+import com.wl4g.devops.tool.common.crypto.symmetric.AES128CBCPKCS5;
 
 /**
  * Default AES cipher parameters {@link HttpServletRequestWrapper} implements.
@@ -49,7 +49,7 @@ public class AesCipherRequestWrapper extends CipherRequestWrapper {
 		hasTextOf(dataCipherKey, "dataCipherKey");
 
 		// Decryption data ciphertext.
-		CodecSource res = new AESCryptor().decrypt(dataCipherKey.getBytes(UTF_8), new CodecSource(value));
+		CodecSource res = new AES128CBCPKCS5().decrypt(dataCipherKey.getBytes(UTF_8), new CodecSource(value));
 		log.debug("Decryption data cipherValue: {}, plainValue: {}", () -> value, () -> res.toString());
 
 		return res.toString();

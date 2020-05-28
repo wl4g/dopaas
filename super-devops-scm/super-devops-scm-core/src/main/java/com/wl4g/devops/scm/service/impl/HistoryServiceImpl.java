@@ -29,7 +29,7 @@ import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.iam.DictDao;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.scm.context.ConfigContextHandler;
+import com.wl4g.devops.scm.handler.CentralConfigureHandler;
 import com.wl4g.devops.scm.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +52,7 @@ public class HistoryServiceImpl implements HistoryService {
 	@Autowired
 	private AppClusterDao appClusterDao;
 	@Autowired
-	private ConfigContextHandler configServerService;
+	private CentralConfigureHandler configServerService;
 	@Autowired
 	private DictDao dictDao;
 	@Autowired

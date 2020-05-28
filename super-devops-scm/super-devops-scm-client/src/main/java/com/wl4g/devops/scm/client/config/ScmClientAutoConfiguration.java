@@ -17,11 +17,11 @@ package com.wl4g.devops.scm.client.config;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.client.configure.locator.ScmPropertySourceLocator;
-import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
-import com.wl4g.devops.scm.client.configure.refresh.ScmLoggingRebinder;
-import com.wl4g.devops.scm.client.configure.watch.DefaultRefreshWatcher;
 import com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint;
+import com.wl4g.devops.scm.client.handler.locator.ScmPropertySourceLocator;
+import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
+import com.wl4g.devops.scm.client.handler.refresh.ScmLoggingRebinder;
+import com.wl4g.devops.scm.client.handler.watch.DefaultRefreshWatcher;
 
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.refresh.ContextRefresher;

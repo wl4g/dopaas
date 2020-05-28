@@ -21,7 +21,7 @@ import com.alibaba.druid.support.http.WebStatFilter;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.support.mybatis.session.MultipleSqlSessionFactoryBean;
 import com.wl4g.devops.tool.common.codec.CodecSource;
-import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
+import com.wl4g.devops.tool.common.crypto.symmetric.AES128ECBPKCS5;
 
 import org.apache.ibatis.plugin.Interceptor;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -88,8 +88,8 @@ public class DataSourceAutoConfiguration {
 		if (valueOf(env.getProperty("spring.profiles.active")).equalsIgnoreCase("prod")) {
 			try {
 				// TODO using dynamic cipherKey??
-				byte[] cipherKey = AESCryptor.getEnvCipherKey("DEVOPS_CIPHER_KEY");
-				plain = new AESCryptor().decrypt(cipherKey, CodecSource.fromHex(prop.getPassword())).toString();
+				byte[] cipherKey = AES128ECBPKCS5.getEnvCipherKey("DEVOPS_CIPHER_KEY");
+				plain = new AES128ECBPKCS5().decrypt(cipherKey, CodecSource.fromHex(prop.getPassword())).toString();
 			} catch (Throwable th) {
 				throw new IllegalStateException(format("Unable to decryption database password for '%s'", prop.getPassword()),
 						th);

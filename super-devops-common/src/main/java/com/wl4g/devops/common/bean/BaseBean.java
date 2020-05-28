@@ -17,6 +17,8 @@ package com.wl4g.devops.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -157,6 +159,11 @@ public abstract class BaseBean implements Serializable {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " => " + toJSONString(this);
 	}
 
 }

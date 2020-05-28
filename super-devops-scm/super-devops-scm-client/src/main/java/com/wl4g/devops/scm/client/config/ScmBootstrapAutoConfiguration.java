@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import com.wl4g.devops.scm.client.configure.locator.BootstrapScmPropertySourceLocator;
-import com.wl4g.devops.scm.client.configure.locator.ScmPropertySourceLocator;
+import com.wl4g.devops.scm.client.handler.locator.BootstrapScmPropertySourceLocator;
+import com.wl4g.devops.scm.client.handler.locator.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.utils.InstanceHolder;
 
 import org.springframework.context.annotation.Bean;

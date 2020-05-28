@@ -100,6 +100,6 @@ public interface AsymmetricCryptor {
 	 *
 	 * @return
 	 */
-	int getKeyBit();
+	int getKeysize();
 
 }
