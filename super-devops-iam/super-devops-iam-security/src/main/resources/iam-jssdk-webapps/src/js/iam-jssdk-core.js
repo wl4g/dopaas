@@ -492,7 +492,7 @@
 			_iamConsole._doLog("ERROR", arguments);
 		},
 		log: function () {
-			_iamConsole.info(arguments);
+			_iamConsole._doLog("INFO", arguments);
 		},
 	};
 
@@ -1230,10 +1230,23 @@
 		    var controller = handler.mutexControllerManager.get(urlSame);
 		    if (!controller) {
 		    	handler.mutexControllerManager.set(urlSame, (controller = {
+		    		_cache_auth_state: {
+		    			state: false, time: 0,
+		    		},
 		            urlSame: urlSame,
-		            currentlyState: false,
+		            currentlyInAuthenticatingState: false,
 		            requestQueue: [], // FIFO
-		            authenticated: false,
+		            authenticated: function (state) {
+		            	var _cas = controller._cache_auth_state;
+		            	if (state) { // Setting
+		            		_cas.state = state;
+		            		_cas.time = new Date().getTime();
+						} else { // Getting
+							// 1, 使用authenticated状态判断是为了解决同一模块接口并发请求的问题,
+							// 2, 给authenticated增加有效期, 是为了防止后台session过期而authenticated还是为true, 导致误认为还是已认证状态
+							return _cas.state && Math.abs(new Date().getTime() - _cas.time) < 10000;
+						}
+		            },
 		        }));
 		    }
 		    return controller;
@@ -1253,11 +1266,11 @@
 			}
 			// 获取url(源)对应的并发认证控制器
             const controller = handler.getMutexController(url);
-            if (!controller.currentlyState) {
-                controller.currentlyState = true; // Mark authenticating
+            if (!controller.currentlyInAuthenticatingState) {
+                controller.currentlyInAuthenticatingState = true; // Mark authenticating
                 new Promise(function (resolve, reject) {
                 	_iamConsole.info("Biz unauth response: ", res);
-                    if (controller.authenticated) {
+                    if (controller.authenticated()) {
                         resolve();
                         return;
                     }
@@ -1272,7 +1285,7 @@
                     handler.doMultiModularRequest(method, res.data.redirect_url, true, null, resolve, errorFn, null);
                 }).then(function (res1) {
                 	_iamConsole.info("Iam-server response: ", res1);
-                    if (controller.authenticated) {
+                    if (controller.authenticated()) {
                         return;
                     }
                     if (handler.checkTGCExpiredAndRedirectToLogin(res1, redirectFn)) {
@@ -1285,12 +1298,12 @@
                         return;
                     }
                     return new Promise((resolve, reject) => {
-                        // Request IAM client authenticator.
+                    	// Request IAM client authenticator.
                         handler.doMultiModularRequest('get', res1.data.redirect_url, true, null, resolve, errorFn, null);
                     });
                 }).then(function (res2) {
                 	_iamConsole.info("Iam-client response: ", res2);
-                    controller.currentlyState = false;  // Mark authenticated completed
+                    controller.currentlyInAuthenticatingState = false;  // Mark authentication completed
 
                     handler.doMultiModularRequest(method, url, true, params, function (res3) {
                     	_iamConsole.info("Redirect origin biz response: ", res3);
@@ -1298,9 +1311,9 @@
                             if (successFn) {
                             	successFn(res3);
 							}
-                            controller.authenticated = true;
-                        } else { // need authRequest???
-                            controller.authenticated = false;
+                            controller.authenticated(true);
+                        } else { // Need authRequest???
+                            controller.authenticated(false);
                         }
                     }, function (errmsg) {
                         if (errorFn) {
@@ -1315,7 +1328,7 @@
                             controller.requestQueue.splice(0, 1); // Remove
                             _iamConsole.info('Poll authenticating queue first: ', authRequest, ', requestQueue: ', controller.requestQueue);
                             handler.doHandle(authRequest.res, authRequest.method, authRequest.url,
-                                authRequest.successFn, authRequest.errorFn, authRequest.params, redirectFn)
+                                authRequest.successFn, authRequest.errorFn, authRequest.params, redirectFn);
                         }
                     });
                 });
@@ -1326,7 +1339,6 @@
             }
         },
 	};
-
 	// Check authentication and redirection
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
 		// Prevent flashing when redirecting to the home page.
