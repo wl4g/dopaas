@@ -19,6 +19,7 @@ import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.flow.FlowManager;
+import com.wl4g.devops.ci.pipeline.deploy.CossPipeDeployer;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
@@ -306,6 +307,19 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @return
 	 */
 	protected abstract Runnable newPipeDeployer(AppInstance instance);
+
+	//TODO
+	protected Runnable newPipeDeployerByType(AppInstance instance){
+
+		if(instance.getDeployType()==4){
+			Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
+			return beanFactory.getBean(CossPipeDeployer.class, args);
+		}
+
+
+		return newPipeDeployer(instance);
+
+	};
 
 	/**
 	 * Placeholder variables resolver.

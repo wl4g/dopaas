@@ -43,9 +43,9 @@ public class AppInstanceController extends BaseController {
 	private AppInstanceService appInstanceService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm,String name, Integer clusterId,String envType,Integer serverType) {
+	public RespBase<?> list(PageModel pm,String name, Integer clusterId,String envType,Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(appInstanceService.list(pm, name ,clusterId,envType,serverType));
+		resp.setData(appInstanceService.list(pm, name ,clusterId,envType,deployType));
 		return resp;
 	}
 

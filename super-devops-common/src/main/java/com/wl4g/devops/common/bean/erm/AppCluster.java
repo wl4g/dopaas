@@ -16,100 +16,81 @@
 package com.wl4g.devops.common.bean.erm;
 
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.model.InstanceDtoModel;
 
 import java.util.List;
 
 /**
  * 对应表：app_cluster
- * 
+ *
  * @date 2018年9月19日
  */
 public class AppCluster extends BaseBean {
-	private static final long serialVersionUID = -3298424126317938674L;
+    private static final long serialVersionUID = -3298424126317938674L;
 
-	private Integer deptId;
+    private String name;
 
-	private String name;
+    private Integer type;
 
-	private Integer type;
+    private Integer enable;
 
-	private Integer enable;
+    private String remark;
 
-	private String remark;
+    // --- Temporary. ---
 
-	// --- Temporary. ---
+    private int instanceCount;
 
-	private int instanceCount;
-	private List<AppInstance> instances;
+    private List<AppInstance> instances;
 
-	private List<InstanceDtoModel> instanceDtoModels;
+    public String getName() {
+        return name;
+    }
 
-	public Integer getDeptId() {
-		return deptId;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDeptId(Integer deptId) {
-		this.deptId = deptId;
-	}
+    public Integer getType() {
+        return type;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setType(Integer type) {
+        this.type = type;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Override
+    public Integer getEnable() {
+        return enable;
+    }
 
-	public Integer getType() {
-		return type;
-	}
+    @Override
+    public void setEnable(Integer enable) {
+        this.enable = enable;
+    }
 
-	public void setType(Integer type) {
-		this.type = type;
-	}
+    @Override
+    public String getRemark() {
+        return remark;
+    }
 
-	@Override
-	public Integer getEnable() {
-		return enable;
-	}
+    @Override
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
-	@Override
-	public void setEnable(Integer enable) {
-		this.enable = enable;
-	}
+    public List<AppInstance> getInstances() {
+        return instances;
+    }
 
-	@Override
-	public String getRemark() {
-		return remark;
-	}
+    public void setInstances(List<AppInstance> instances) {
+        this.instances = instances;
+    }
 
-	@Override
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+    public int getInstanceCount() {
+        return instanceCount;
+    }
 
-	public List<AppInstance> getInstances() {
-		return instances;
-	}
+    public void setInstanceCount(int instanceCount) {
+        this.instanceCount = instanceCount;
+    }
 
-	public void setInstances(List<AppInstance> instances) {
-		this.instances = instances;
-	}
-
-	public int getInstanceCount() {
-		return instanceCount;
-	}
-
-	public void setInstanceCount(int instanceCount) {
-		this.instanceCount = instanceCount;
-	}
-
-	public List<InstanceDtoModel> getInstanceDtoModels() {
-		return instanceDtoModels;
-	}
-
-	public void setInstanceDtoModels(List<InstanceDtoModel> instanceDtoModels) {
-		this.instanceDtoModels = instanceDtoModels;
-	}
 }

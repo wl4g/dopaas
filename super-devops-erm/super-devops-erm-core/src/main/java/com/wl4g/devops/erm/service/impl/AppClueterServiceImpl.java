@@ -19,7 +19,6 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.erm.model.InstanceDtoModel;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.erm.service.AppClusterService;
@@ -32,7 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.security.InvalidParameterException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
@@ -59,7 +61,6 @@ public class AppClueterServiceImpl implements AppClusterService {
             appCluster.setInstanceCount(count);
         }
         pm.setTotal(page.getTotal());
-
         data.put("page", pm);
         data.put("list", list);
         return data;
@@ -81,9 +82,8 @@ public class AppClueterServiceImpl implements AppClusterService {
 
     private void insert(AppCluster appCluster) {
         appCluster.preInsert();
-        appCluster.setDeptId(1);
         appClusterDao.insertSelective(appCluster);
-        Integer clusterId = appCluster.getId();
+        /*Integer clusterId = appCluster.getId();
 
         List<InstanceDtoModel> instanceDtoModels = appCluster.getInstanceDtoModels();
         List<AppInstance> appInstances = InstanceDtoModel.dtoModelToInstances(instanceDtoModels);
@@ -92,7 +92,7 @@ public class AppClueterServiceImpl implements AppClusterService {
             appInstance.preInsert();
             appInstance.setClusterId(clusterId);
             appInstanceDao.insertSelective(appInstance);
-        }
+        }*/
     }
 
     private void checkRepeat(List<AppInstance> instances) {
@@ -126,7 +126,7 @@ public class AppClueterServiceImpl implements AppClusterService {
         appCluster.preUpdate();
         appClusterDao.updateByPrimaryKeySelective(appCluster);
 
-        List<InstanceDtoModel> instanceDtoModels = appCluster.getInstanceDtoModels();
+        /*List<InstanceDtoModel> instanceDtoModels = appCluster.getInstanceDtoModels();
         List<AppInstance> appInstances = InstanceDtoModel.dtoModelToInstances(instanceDtoModels);
 
         List<AppInstance> appInstancesFromDb = appInstanceDao.selectByClusterId(appCluster.getId());
@@ -155,7 +155,7 @@ public class AppClueterServiceImpl implements AppClusterService {
         for (AppInstance appInstance : appInstancesFromDb) {
             appInstance.setDelFlag(DEL_FLAG_DELETE);
             appInstanceDao.updateByPrimaryKeySelective(appInstance);
-        }
+        }*/
     }
 
     public void del(Integer clusterId) {
@@ -169,10 +169,10 @@ public class AppClueterServiceImpl implements AppClusterService {
     public AppCluster detail(Integer clusterId) {
         Assert.notNull(clusterId, "clusterId is null");
         AppCluster appCluster = appClusterDao.selectByPrimaryKey(clusterId);
-        List<AppInstance> appInstances = appInstanceDao.selectByClusterId(clusterId);
-        List<InstanceDtoModel> instanceDtoModels = InstanceDtoModel.instanesToDtoModels(appInstances);
+        //List<AppInstance> appInstances = appInstanceDao.selectByClusterId(clusterId);
+        //List<InstanceDtoModel> instanceDtoModels = InstanceDtoModel.instanesToDtoModels(appInstances);
         //appCluster.setInstances(appInstances);
-        appCluster.setInstanceDtoModels(instanceDtoModels);
+        //appCluster.setInstanceDtoModels(instanceDtoModels);
         return appCluster;
     }
 
