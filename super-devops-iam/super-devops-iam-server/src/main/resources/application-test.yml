@@ -43,7 +43,7 @@ spring:
             app-id: yourappid
             app-secret: yoursecret
             redirect-url: http://passport.wl4g.com${server.contextPath}/sns/wechat/callback
-            href: https://static.wl4g.com:2443/iam/static/wx.css
+            href: https://${DEVOPS_DOMAIN_TOP:wl4g.com}/${server.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
           qq:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4

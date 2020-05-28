@@ -24,7 +24,7 @@ import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySourc
 import com.wl4g.devops.common.bean.scm.model.ReportInfo;
 import com.wl4g.devops.common.utils.PropertySources;
 import com.wl4g.devops.common.utils.PropertySources.Type;
-import com.wl4g.devops.scm.context.ConfigContextHandler;
+import com.wl4g.devops.scm.handler.CentralConfigureHandler;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
 import com.wl4g.devops.scm.publish.WatchDeferredResult;
 import com.wl4g.devops.scm.service.ConfigurationService;
@@ -47,7 +47,7 @@ import static org.apache.commons.lang3.StringUtils.contains;
  * @date 2018年11月1日
  * @since
  */
-public class StandardConfigContextHandler implements ConfigContextHandler {
+public class StandardConfigContextHandler implements CentralConfigureHandler {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 

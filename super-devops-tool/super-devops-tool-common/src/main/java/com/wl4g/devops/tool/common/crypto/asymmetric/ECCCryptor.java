@@ -29,7 +29,15 @@ import com.wl4g.devops.tool.common.crypto.asymmetric.spec.ECCKeyPairSpec;
  * @version 2019年11月9日 v1.0.0
  * @see
  */
-public class ECCCryptor extends AbstractFastAsymmCryptor {
+public class ECCCryptor extends AbstractAsymmetricCryptor {
+
+	public ECCCryptor() {
+		super(1024);
+	}
+
+	public ECCCryptor(int keysize) {
+		super(keysize);
+	}
 
 	@Override
 	public String getAlgorithmPrimary() {
@@ -39,11 +47,6 @@ public class ECCCryptor extends AbstractFastAsymmCryptor {
 	@Override
 	public String getPadAlgorithm() {
 		return "ECC/ECB/PKCS1Padding";
-	}
-
-	@Override
-	public int getKeyBit() {
-		return 1024;
 	}
 
 	@Override

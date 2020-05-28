@@ -35,7 +35,7 @@ import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.codec.CodecSource;
-import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
+import com.wl4g.devops.tool.common.crypto.symmetric.AES128ECBPKCS5;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
@@ -230,7 +230,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	public char[] getUsableCipherSshKey(String sshkey) throws Exception {
 		// Obtain text-plain privateKey(RSA)
 		byte[] cipherKey = config.getDeploy().getCipherKey().getBytes(UTF_8);
-		char[] sshkeyPlain = new AESCryptor().decrypt(cipherKey, CodecSource.fromHex(sshkey)).toString().toCharArray();
+		char[] sshkeyPlain = new AES128ECBPKCS5().decrypt(cipherKey, CodecSource.fromHex(sshkey)).toString().toCharArray();
 
 		log.info(writeBuildLog("Decryption plain sshkey: %s => %s", cipherKey, "******"));
 		return sshkeyPlain;

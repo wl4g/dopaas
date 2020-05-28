@@ -31,7 +31,7 @@ import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
 import com.wl4g.devops.scm.config.ScmStandardProperties;
-import com.wl4g.devops.scm.context.ConfigContextHandler;
+import com.wl4g.devops.scm.handler.CentralConfigureHandler;
 import com.wl4g.devops.scm.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,7 +61,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	private AppInstanceDao appInstanceDao;
 	@Autowired
-	private ConfigContextHandler contextHandler;
+	private CentralConfigureHandler contextHandler;
 	@Autowired
 	private ScmStandardProperties scmServerProperties;
 

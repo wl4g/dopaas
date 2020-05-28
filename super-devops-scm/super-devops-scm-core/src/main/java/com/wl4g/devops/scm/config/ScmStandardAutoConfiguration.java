@@ -19,13 +19,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.devops.scm.StandardConfigContextHandler;
-import com.wl4g.devops.scm.context.ConfigContextHandler;
+import com.wl4g.devops.scm.handler.CentralConfigureHandler;
 
 @Configuration
 public class ScmStandardAutoConfiguration {
 
 	@Bean
-	public ConfigContextHandler configContextHandler() {
+	public CentralConfigureHandler configContextHandler() {
 		return new StandardConfigContextHandler();
 	}
 
