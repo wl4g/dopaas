@@ -21,6 +21,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
+
+import static java.util.Objects.isNull;
 
 /**
  * DB based bean entity.
@@ -90,6 +93,7 @@ public abstract class BaseBean implements Serializable {
 		setUpdateDate(getCreateDate());
 		setUpdateBy(DEFAULT_USER_ID);
 		setDelFlag(DEL_FLAG_NORMAL);
+		setEnable(ENABLED);
 	}
 
 	/**
@@ -164,7 +168,9 @@ public abstract class BaseBean implements Serializable {
 	}
 
 	public void setEnable(Integer enable) {
-		this.enable = enable;
+		if(isNull(this.enable)){
+			this.enable = enable;
+		}
 	}
 
 	public String getRemark() {
