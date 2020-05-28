@@ -1208,14 +1208,15 @@
 			_doIamRequest(method, async, url, params || {}, successFn, errorFn, completeFn, false);
 		},
 		// 检查返回未登录(code=401)时是否跳转登录页，(仅当TGC过期(真正过期)是才跳转登录页，iam-client过期无需跳转登陆页)
-		checkTGCExpiredAndRedirectToLogin: function (res) {
+		checkTGCExpiredAndRedirectToLogin: function (res, redirectFn) {
 			const handler = _multiModularAuthenticatingHandler;
-			_iamConsole.debug("TGC validating... res: " + JSON.stringify(res));
+			_iamConsole.debug("TGC validating... res: ", res);
 		    if (_isRespUnauthenticated(res)) {
 		        // IamWithCasAppClient/IamWithCasAppServer
 		        if (res.data && res.data.serviceRole == 'IamWithCasAppServer') { // TGC过期?
-		        	_iamConsole.info("TGC expired, redirectTo: " + res.data[settings.definition.redirectUrlKey]);
+		        	_iamConsole.info("TGC expired, redirectTo: ", res.data[settings.definition.redirectUrlKey]);
 		            // e.g: window.location.href = '/#/login';
+		        	redirectFn(res);
 		            return true;
 		        }
 		    }
@@ -1238,12 +1239,13 @@
 		    return controller;
 		},
 		// 拦截处理多模块并发认证请求（401重定向）
-		doHandle: function (res, method, url, successFn, errorFn, params) {
+		doHandle: function (res, method, url, successFn, errorFn, params, redirectFn) {
 			const handler = _multiModularAuthenticatingHandler;
 			// Check parameters requires.
 			Common.Util.checkEmpty('multiModularAuthenticatingRequest.res', res);
 			Common.Util.checkEmpty('multiModularAuthenticatingRequest.method', method);
 			Common.Util.checkEmpty('multiModularAuthenticatingRequest.url', url);
+			Common.Util.checkEmpty('multiModularAuthenticatingRequest.redirectFn', redirectFn);
 			// Check authentication status.
 			if (!_isRespUnauthenticated(res)) {
 				_iamConsole.debug("Ignore authenticated of url: ", url, ", res: ", res);
@@ -1259,7 +1261,7 @@
                         resolve();
                         return;
                     }
-                    if (handler.checkTGCExpiredAndRedirectToLogin(res)) {
+                    if (handler.checkTGCExpiredAndRedirectToLogin(res, redirectFn)) {
                         return;
                     }
                     if (!res.data || !res.data.redirect_url) {
@@ -1273,7 +1275,7 @@
                     if (controller.authenticated) {
                         return;
                     }
-                    if (handler.checkTGCExpiredAndRedirectToLogin(res1)) {
+                    if (handler.checkTGCExpiredAndRedirectToLogin(res1, redirectFn)) {
                         return;
                     }
                     if (!res1.data || !res1.data.redirect_url) {
@@ -1313,7 +1315,7 @@
                             controller.requestQueue.splice(0, 1); // Remove
                             _iamConsole.info('Poll authenticating queue first: ', authRequest, ', requestQueue: ', controller.requestQueue);
                             handler.doHandle(authRequest.res, authRequest.method, authRequest.url,
-                                authRequest.successFn, authRequest.errorFn, authRequest.params)
+                                authRequest.successFn, authRequest.errorFn, authRequest.params, redirectFn)
                         }
                     });
                 });
