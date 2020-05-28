@@ -32,11 +32,15 @@ public class AppInstance extends BaseBean {
 
 	private Integer versionId;
 
-	//20200509 add
-	private Integer serverType;
+	private Integer deployType;
+
 	private Integer hostId;
+
 	private Integer k8sId;
+
 	private Integer dockerId;
+
+	private Integer cossId;
 
 	private Integer sshId;
 
@@ -118,12 +122,12 @@ public class AppInstance extends BaseBean {
 		this.remark = remark;
 	}
 
-	public Integer getServerType() {
-		return serverType;
+	public Integer getDeployType() {
+		return deployType;
 	}
 
-	public void setServerType(Integer serverType) {
-		this.serverType = serverType;
+	public void setDeployType(Integer deployType) {
+		this.deployType = deployType;
 	}
 
 	public Integer getK8sId() {
@@ -183,13 +187,21 @@ public class AppInstance extends BaseBean {
 		this.clusterName = clusterName;
 	}
 
+	public Integer getCossId() {
+		return cossId;
+	}
+
+	public void setCossId(Integer cossId) {
+		this.cossId = cossId;
+	}
+
 	@Override
 	public String toString() {
 		return "AppInstance{" +
 				"name='" + name + '\'' +
 				", clusterId=" + clusterId +
 				", versionId=" + versionId +
-				", serverType=" + serverType +
+				", deployType=" + deployType +
 				", hostId=" + hostId +
 				", k8sId=" + k8sId +
 				", dockerId=" + dockerId +

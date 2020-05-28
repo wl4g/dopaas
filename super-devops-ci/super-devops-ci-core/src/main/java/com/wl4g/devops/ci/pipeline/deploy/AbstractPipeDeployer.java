@@ -24,6 +24,7 @@ import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.exception.ci.PipelineDeployingException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
+import com.wl4g.devops.dao.erm.CossClusterDao;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.tool.common.crypto.CrypticSource;
@@ -70,6 +71,9 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
     @Autowired
     protected PipelineHistoryService pipelineHistoryService;
+
+    @Autowired
+    protected CossClusterDao cossClusterDao;
 
     /**
      * Pipeline provider.

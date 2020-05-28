@@ -41,7 +41,7 @@ public interface AppInstanceDao {
     List<AppInstance> selectByClusterIdAndEnvType(@Param("clusterId") Integer clusterId,@Param("envType") String envType);
 
     List<AppInstance> list(@Param("organizationCodes")List<String> organizationCodes,@Param("name") String name, @Param("clusterId") Integer clusterId,
-                           @Param("envType") String envType,@Param("serverType") Integer serverType);
+                           @Param("envType") String envType,@Param("deployType") Integer deployType);
 
 
 

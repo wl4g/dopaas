@@ -3,7 +3,6 @@
 <mapper namespace="com.wl4g.devops.dao.erm.AppClusterDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.AppCluster" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="dept_id" property="deptId" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
@@ -16,7 +15,7 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, dept_id, name, organization_code, type, enable, remark, create_by, create_date, update_by, update_date,
+    id, name, organization_code, type, enable, remark, create_by, create_date, update_by, update_date,
     del_flag
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -30,11 +29,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" >
-    insert into erm_app_cluster (id, dept_id, name, organization_code,
+    insert into erm_app_cluster (id, name, organization_code,
       type, enable, remark, 
       create_by, create_date, update_by, 
       update_date, del_flag)
-    values (#{id,jdbcType=INTEGER}, #{deptId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR},
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR},
       #{type,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
       #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
@@ -44,9 +43,6 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
-      </if>
-      <if test="deptId != null" >
-        dept_id,
       </if>
       <if test="name != null" >
         name,
@@ -83,9 +79,6 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="deptId != null" >
-        #{deptId,jdbcType=INTEGER},
-      </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
@@ -121,9 +114,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" >
     update erm_app_cluster
     <set >
-      <if test="deptId != null" >
-        dept_id = #{deptId,jdbcType=INTEGER},
-      </if>
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
@@ -159,8 +149,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" >
     update erm_app_cluster
-    set dept_id = #{deptId,jdbcType=INTEGER},
-      name = #{name,jdbcType=VARCHAR},
+    set name = #{name,jdbcType=VARCHAR},
       organization_code = #{organizationCode,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
       enable = #{enable,jdbcType=INTEGER},
