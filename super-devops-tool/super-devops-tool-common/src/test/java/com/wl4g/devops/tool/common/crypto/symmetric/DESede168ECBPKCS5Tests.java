@@ -19,6 +19,22 @@ import static java.lang.System.out;
 
 import com.wl4g.devops.tool.common.codec.CodecSource;
 
+/**
+ * {@link DESede168ECBPKCS5Tests}
+ * <p>
+ * Verified1:
+ * <a href="https://www.keylala.cn/aes">https://www.keylala.cn/aes</a>
+ * </p>
+ * <p>
+ * Verified2:
+ * <a href="http://tool.chacuo.net/cryptaes">http://tool.chacuo.net/cryptaes
+ * (128bits)</a>
+ * </p>
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年5月29日
+ * @since
+ */
 public class DESede168ECBPKCS5Tests {
 
 	public static void main(String[] args) throws Exception {
@@ -27,7 +43,7 @@ public class DESede168ECBPKCS5Tests {
 		out.println("new generateKey => (" + genKey.toBase64() + ")" + genKey.getBytes().length + "bytes");
 
 		String plainText = "abcdefghijklmnopqrstuvwxyz";
-		CodecSource key = new CodecSource("1234567890abcd"); // 14/21bytes
+		CodecSource key = new CodecSource("1234abcd1234abcd1234abcd"); // 24bytes
 		CodecSource cipherText = des3.encrypt(key.getBytes(), new CodecSource(plainText));
 		out.println("plainText => " + plainText);
 		out.println("key => " + key);

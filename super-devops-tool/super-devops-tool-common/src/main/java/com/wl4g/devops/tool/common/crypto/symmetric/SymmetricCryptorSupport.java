@@ -79,12 +79,12 @@ abstract class SymmetricCryptorSupport {
 	}
 
 	/**
-	 * Generate symmetric algorithm key with max keybits.
+	 * Generate symmetric algorithm key keybits.
 	 * 
 	 * @return
 	 */
 	public CodecSource generateKey() {
-		return generateKey(config.getMaxKeybits());
+		return generateKey(config.getKeybits());
 	}
 
 	/**
@@ -322,6 +322,9 @@ abstract class SymmetricCryptorSupport {
 				int originLen = key.length;
 				key = tmp;
 				log.warn("Super long secret key length: {}, actual length after discard: {}", originLen, key.length);
+			} else if (key.length < config.getMinBlocksize()) {
+				throw new IllegalArgumentException(
+						format("Worng key length of %s, must >= %s", key.length, config.getMinBlocksize()));
 			}
 		} else {
 			isTrue((key.length >= config.getMinBlocksize() && key.length <= config.getMaxBlocksize()),
@@ -394,6 +397,9 @@ abstract class SymmetricCryptorSupport {
 		/** Symmetric algorithm Iv is requires. */
 		final protected boolean isRequireIv;
 
+		/** Symmetric algorithm key bits. */
+		final protected int keybits;
+
 		/** Symmetric algorithm minimum block size. */
 		final protected int minBlocksize;
 
@@ -403,12 +409,12 @@ abstract class SymmetricCryptorSupport {
 		/** Symmetric algorithm iv size */
 		final protected Integer ivsize;
 
-		public AlgorithmSpec(String algName, String algTransformationName, boolean isRequireIv, int minBlocksize,
+		public AlgorithmSpec(String algName, String algTransformationName, boolean isRequireIv, int keybits, int minBlocksize,
 				int maxBlocksize) {
-			this(algName, algTransformationName, isRequireIv, minBlocksize, maxBlocksize, null);
+			this(algName, algTransformationName, isRequireIv, keybits, minBlocksize, maxBlocksize, null);
 		}
 
-		public AlgorithmSpec(String algName, String algTransformationName, boolean isRequireIv, int minBlocksize,
+		public AlgorithmSpec(String algName, String algTransformationName, boolean isRequireIv, int keybits, int minBlocksize,
 				int maxBlocksize, Integer ivsize) {
 			hasTextOf(algName, "SymmetricAlgorithmName");
 			hasTextOf(algTransformationName, "SymmetricAlgTransformationName");
@@ -423,6 +429,7 @@ abstract class SymmetricCryptorSupport {
 			this.algName = algName;
 			this.algTransformationName = algTransformationName;
 			this.isRequireIv = isRequireIv;
+			this.keybits = keybits;
 			this.minBlocksize = minBlocksize;
 			this.maxBlocksize = maxBlocksize;
 			this.ivsize = ivsize;
@@ -445,23 +452,12 @@ abstract class SymmetricCryptorSupport {
 		}
 
 		/**
-		 * Gets symmetric algorithm minimum key size(bits) of
-		 * {@link #minBlocksize}
+		 * Gets symmetric algorithm minimum key size(bits)
 		 * 
 		 * @return
 		 */
-		public int getMinKeybits() {
-			return getMinBlocksize() * 8;
-		}
-
-		/**
-		 * Gets symmetric algorithm minimum key size(bits) of
-		 * {@link #maxBlocksize}
-		 * 
-		 * @return
-		 */
-		public int getMaxKeybits() {
-			return getMaxBlocksize() * 8;
+		public int getKeybits() {
+			return keybits;
 		}
 
 		public Integer getIvsize() {

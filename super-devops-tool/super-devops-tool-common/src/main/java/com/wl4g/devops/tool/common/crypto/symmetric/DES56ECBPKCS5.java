@@ -20,16 +20,16 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
 /**
- * {@link DES64ECBPKCS5}
+ * {@link DES56ECBPKCS5}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年5月27日
  * @since
  */
-public class DES64ECBPKCS5 extends SymmetricCryptorSupport {
+public class DES56ECBPKCS5 extends SymmetricCryptorSupport {
 
-	public DES64ECBPKCS5() {
-		super(new AlgorithmSpec("DES", "DES", false, 16, 16));
+	public DES56ECBPKCS5() {
+		super(new AlgorithmSpec("DES", "DES", false, 56, 16, 16));
 	}
 
 	@Override

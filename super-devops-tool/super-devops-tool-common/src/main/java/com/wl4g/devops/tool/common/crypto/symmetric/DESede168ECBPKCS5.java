@@ -25,7 +25,7 @@ package com.wl4g.devops.tool.common.crypto.symmetric;
 public class DESede168ECBPKCS5 extends SymmetricCryptorSupport {
 
 	public DESede168ECBPKCS5() {
-		super(new AlgorithmSpec("DESede", "DESede/ECB/PKCS5Padding", false, 14, 21)); // 112bits/168bits
+		super(new AlgorithmSpec("DESede", "DESede/ECB/PKCS5Padding", false, 168, 24, 24)); // 112bits/168bits
 	}
 
 }

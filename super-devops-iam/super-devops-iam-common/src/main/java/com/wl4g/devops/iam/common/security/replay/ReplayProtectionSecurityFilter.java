@@ -150,11 +150,11 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 		// Check replay timestamp offset.
 		long now = currentTimeMillis();
 		if (abs(now - replayToken.getTimestamp()) >= rconfig.getTermTimeMs()) {
-			throw new InvalidReplayTimestampException(format("Invalid replay token timestamp: %s, now: %s, Request: %s",
-					replayToken.getTimestamp(), now, requestPath));
+			throw new InvalidReplayTimestampException(
+					format("Invalid replay token t: %s, now: %s, Request: %s", replayToken.getTimestamp(), now, requestPath));
 		}
 
-		// Put replay token.
+		// Puts replay token.
 		long expireMs = rconfig.getTermTimeMs() + DEFAULT_REPLAY_CACHE_TERM_OFFSET_MS;
 		CacheKey key = new CacheKey(replayToken.getSignature(), expireMs);
 		final boolean islegalRequest = cacheManager.getIamCache(CACHE_REPLAY_SIGN).putIfAbsent(key, requestPath);
