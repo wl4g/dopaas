@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Project">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="project_name" jdbcType="VARCHAR" property="projectName" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="vcs_id" jdbcType="INTEGER" property="vcsId" />
     <result column="http_url" jdbcType="VARCHAR" property="httpUrl" />
     <result column="ssh_url" jdbcType="VARCHAR" property="sshUrl" />
@@ -41,11 +42,11 @@
 
   </resultMap>
   <sql id="Base_Column_List">
-    id, project_name,vcs_id, http_url,ssh_url, app_cluster_id, lock_status,is_boot,
+    id, project_name, organization_code, vcs_id, http_url,ssh_url, app_cluster_id, lock_status,is_boot,
     remark, del_flag, create_date, create_by, update_date, update_by
   </sql>
   <sql id="Base_Column_List_p">
-    p.id, p.project_name,p.vcs_id, p.http_url,p.ssh_url, p.app_cluster_id, p.lock_status,p.is_boot,
+    p.id, p.project_name, p.organization_code, p.vcs_id, p.http_url,p.ssh_url, p.app_cluster_id, p.lock_status,p.is_boot,
     p.remark, p.del_flag, p.create_date, p.create_by, p.update_date, p.update_by
   </sql>
 
@@ -68,12 +69,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Project">
-    insert into ci_project (id, project_name,vcs_id,http_url,ssh_url
+    insert into ci_project (id, project_name, organization_code, vcs_id,http_url,ssh_url
       app_cluster_id,
       lock_status, is_boot, remark, del_flag,
       create_date, create_by, update_date,
       update_by)
-    values (#{id,jdbcType=INTEGER}, #{vcs_id,jdbcType=INTEGER},#{projectName,jdbcType=VARCHAR},#{httpUrl,jdbcType=VARCHAR},#{sshUrl,jdbcType=VARCHAR},
+    values (#{id,jdbcType=INTEGER}, #{vcs_id,jdbcType=INTEGER},#{projectName,jdbcType=VARCHAR},#{organizationCode,jdbcType=VARCHAR},#{httpUrl,jdbcType=VARCHAR},#{sshUrl,jdbcType=VARCHAR},
       #{appClusterId,jdbcType=INTEGER},
       #{lockStatus,jdbcType=INTEGER},#{isBoot,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER},
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
@@ -90,6 +91,9 @@
       </if>
       <if test="projectName != null">
         project_name,
+      </if>
+      <if test="organizationCode != null">
+        organization_code,
       </if>
       <if test="httpUrl != null">
         http_url,
@@ -135,6 +139,9 @@
       <if test="projectName != null">
         #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="httpUrl != null">
         #{httpUrl,jdbcType=VARCHAR},
       </if>
@@ -179,6 +186,9 @@
       <if test="projectName != null">
         project_name = #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="httpUrl != null">
         http_url = #{httpUrl,jdbcType=VARCHAR},
       </if>
@@ -220,6 +230,7 @@
     set
       vcs_id = #{vcsId,jdbcType=INTEGER},
       project_name = #{projectName,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
       http_url = #{httpUrl,jdbcType=VARCHAR},
       ssh_url = #{sshUrl,jdbcType=VARCHAR},
       app_cluster_id = #{appClusterId,jdbcType=INTEGER},

@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Trigger" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
     <result column="cluster_id" property="appClusterId" jdbcType="INTEGER" />
     <result column="task_id" property="taskId" jdbcType="INTEGER" />
     <result column="type" property="type" jdbcType="INTEGER" />
@@ -18,7 +19,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, cluster_id, task_id, type, cron, sha, remark, enable, del_flag, create_date,
+    id, name, organization_code, cluster_id, task_id, type, cron, sha, remark, enable, del_flag, create_date,
     create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -32,12 +33,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Trigger" >
-    insert into ci_trigger (id, name, cluster_id,
+    insert into ci_trigger (id, name, organization_code, cluster_id,
       task_id, type, cron, 
       sha, remark, enable, 
       del_flag, create_date, create_by, 
       update_date, update_by)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{appClusterId,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR}, #{appClusterId,jdbcType=INTEGER},
       #{taskId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{cron,jdbcType=VARCHAR}, 
       #{sha,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, 
       #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
@@ -51,6 +52,9 @@
       </if>
       <if test="name != null" >
         name,
+      </if>
+      <if test="organizationCode != null" >
+        organization_code,
       </if>
       <if test="appClusterId != null" >
         cluster_id,
@@ -96,6 +100,9 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null" >
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="appClusterId != null" >
         #{appClusterId,jdbcType=INTEGER},
       </if>
@@ -140,6 +147,9 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null" >
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="appClusterId != null" >
         cluster_id = #{appClusterId,jdbcType=INTEGER},
       </if>
@@ -182,6 +192,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Trigger" >
     update ci_trigger
     set name = #{name,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
       cluster_id = #{appClusterId,jdbcType=INTEGER},
       task_id = #{taskId,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER},
