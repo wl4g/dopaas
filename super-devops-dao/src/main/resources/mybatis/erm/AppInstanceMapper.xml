@@ -11,7 +11,7 @@
     <result column="host_id" property="hostId" jdbcType="INTEGER" />
     <result column="k8s_id" property="k8sId" jdbcType="INTEGER" />
     <result column="docker_id" property="dockerId" jdbcType="INTEGER" />
-    <result column="coss_id" property="cossId" jdbcType="INTEGER" />
+    <result column="coss_ref_bucket" property="cossRefBucket" jdbcType="VARCHAR" />
     <result column="env_type" property="envType" jdbcType="VARCHAR" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
     <result column="ssh_id" property="sshId" jdbcType="INTEGER" />
@@ -53,7 +53,7 @@
     <result column="host_id" property="hostId" jdbcType="INTEGER" />
     <result column="k8s_id" property="k8sId" jdbcType="INTEGER" />
     <result column="docker_id" property="dockerId" jdbcType="INTEGER" />
-    <result column="coss_id" property="cossId" jdbcType="INTEGER" />
+    <result column="coss_ref_bucket" property="cossRefBucket" jdbcType="VARCHAR" />
     <result column="env_type" property="envType" jdbcType="VARCHAR" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
     <result column="ssh_id" property="sshId" jdbcType="INTEGER" />
@@ -70,12 +70,12 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, name, organization_code, cluster_id, version_id, deploy_type, host_id, k8s_id, docker_id, coss_id, env_type, enable, ssh_id, endpoint, remark,
+    id, name, organization_code, cluster_id, version_id, deploy_type, host_id, k8s_id, docker_id, coss_ref_bucket, env_type, enable, ssh_id, endpoint, remark,
     create_by, create_date, update_by, update_date, del_flag
   </sql>
 
   <sql id="Base_Column_List_i" >
-    i.id, i.name, i.organization_code, i.cluster_id, i.version_id, i.deploy_type, i.host_id, i.k8s_id, i.docker_id, i.coss_id, i.env_type, i.enable, i.ssh_id, i.endpoint, i.remark,
+    i.id, i.name, i.organization_code, i.cluster_id, i.version_id, i.deploy_type, i.host_id, i.k8s_id, i.docker_id, i.coss_ref_bucket, i.env_type, i.enable, i.ssh_id, i.endpoint, i.remark,
     i.create_by, i.create_date, i.update_by, i.update_date, i.del_flag
   </sql>
 
@@ -151,12 +151,12 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
     insert into erm_app_instance (id, name,organization_code, cluster_id, version_id, deploy_type,
-      host_id, k8s_id, docker_id, coss_id, env_type, enable, ssh_id,
+      host_id, k8s_id, docker_id, coss_ref_bucket, env_type, enable, ssh_id,
       endpoint, remark,
       create_by, create_date, update_by,
       update_date, del_flag)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},#{organizationCode,jdbcType=VARCHAR}, #{clusterId,jdbcType=INTEGER}, #{versionId,jdbcType=INTEGER},#{serverType,jdbcType=INTEGER},
-      #{hostId,jdbcType=INTEGER},#{k8sId,jdbcType=INTEGER},#{dockerId,jdbcType=INTEGER}, #{cossId,jdbcType=INTEGER}, #{envType,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{sshId,jdbcType=INTEGER},
+      #{hostId,jdbcType=INTEGER},#{k8sId,jdbcType=INTEGER},#{dockerId,jdbcType=INTEGER}, #{cossRefBucket,jdbcType=VARCHAR}, #{envType,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{sshId,jdbcType=INTEGER},
       #{endpoint,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
       #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER},
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
@@ -191,8 +191,8 @@
       <if test="dockerId != null" >
         docker_id,
       </if>
-      <if test="cossId != null" >
-        coss_id,
+      <if test="cossRefBucket != null" >
+        coss_ref_bucket,
       </if>
       <if test="envType != null" >
         env_type,
@@ -253,8 +253,8 @@
       <if test="dockerId != null" >
         #{dockerId,jdbcType=INTEGER},
       </if>
-      <if test="cossId != null" >
-        #{cossId,jdbcType=INTEGER},
+      <if test="cossRefBucket != null" >
+        #{cossRefBucket,jdbcType=VARCHAR},
       </if>
       <if test="envType != null" >
         #{envType,jdbcType=VARCHAR},
@@ -315,8 +315,8 @@
       <if test="dockerId != null" >
         docker_id = #{dockerId,jdbcType=INTEGER},
       </if>
-      <if test="cossId != null" >
-        coss_id = #{cossId,jdbcType=INTEGER},
+      <if test="cossRefBucket != null" >
+        coss_ref_bucket = #{cossRefBucket,jdbcType=VARCHAR},
       </if>
       <if test="envType != null" >
         env_type = #{envType,jdbcType=VARCHAR},
@@ -361,7 +361,7 @@
       host_id = #{hostId,jdbcType=INTEGER},
       k8s_id = #{k8sId,jdbcType=INTEGER},
       docker_id = #{dockerId,jdbcType=INTEGER},
-      coss_id = #{cossId,jdbcType=INTEGER},
+      coss_ref_bucket = #{cossRefBucket,jdbcType=VARCHAR},
       env_type = #{envType,jdbcType=VARCHAR},
       enable = #{enable,jdbcType=INTEGER},
       ssh_id = #{sshId,jdbcType=INTEGER},

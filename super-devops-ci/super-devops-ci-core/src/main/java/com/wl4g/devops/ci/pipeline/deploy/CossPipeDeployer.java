@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.pipeline.deploy;
 import com.wl4g.devops.ci.pipeline.ViewNativePipelineProvider;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.erm.CossCluster;
+import com.wl4g.devops.common.bean.erm.ClusterConfig;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
@@ -53,11 +53,22 @@ public class CossPipeDeployer extends GenericHostPipeDeployer<ViewNativePipeline
         //String url = "http://localhost:8080/Lock/nbdc/remoteUpdate";
         //String filePath = "/Users/vjay/Downloads/logo.png";
         String localFile = config.getJobBackupDir(getContext().getPipelineHistory().getId()) + "/" + getPrgramInstallFileName() + "." + DEFAULT_FILE_SUFFIX;
-        CossCluster cossCluster = cossClusterDao.selectByPrimaryKey(instance.getCossId());
-        transFile(cossCluster.getMasterAddr(),new File(localFile));
+        //CossCluster cossCluster = cossClusterDao.selectByPrimaryKey(instance.getCossId());
+
+        ClusterConfig clusterConfig = clusterConfigDao.getByAppName("coss-manager", profile, null);
+        String uploadServerUrl = clusterConfig.getExtranetBaseUri()+ "/webservice/putObject";
+
+        String cossRefBucket = instance.getCossRefBucket();
+        Assert2.hasTextOf(cossRefBucket,"cossRefBucket");
+        String[] split = cossRefBucket.split(":");
+        Assert2.notEmptyOf(split,"cossRefBucket");
+        Assert2.isTrue(split.length==2,"cossRefBucket unmatch format, cossRefBucket=%s",cossRefBucket);
+        String cossProvider = split[0];
+        String bucketName = split[1];
+        transFile(uploadServerUrl,new File(localFile),cossProvider, bucketName);
     }
 
-    public static void transFile(String uploadUrl, File file) {
+    public static void transFile(String uploadUrl, File file, String cossProvider, String bucketName) {
         Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
         //factory.setConnectTimeout(10_000);
         //factory.setReadTimeout(60_000);
@@ -66,11 +77,10 @@ public class CossPipeDeployer extends GenericHostPipeDeployer<ViewNativePipeline
         FileSystemResource resource = new FileSystemResource(file);
         MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
         param.add("file", resource);
-        //TODO need add few coss params
-        param.add("cossProvider", "nativefs");
-        param.add("bucketName", "bucket1");
+        // need add few coss params
+        param.add("cossProvider", cossProvider);
+        param.add("bucketName", bucketName);
         param.add("acl", "default");
-        param.add("key", "");
         RespBase respBase = restTemplate.postForObject(uploadUrl, param, RespBase.class);
         Assert2.isTrue(Objects.nonNull(respBase) && respBase.getCode() == 200, "TransFile Fail, cause: %s", JacksonUtils.toJSONString(respBase));
     }

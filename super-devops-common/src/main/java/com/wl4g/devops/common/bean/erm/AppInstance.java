@@ -40,7 +40,7 @@ public class AppInstance extends BaseBean {
 
 	private Integer dockerId;
 
-	private Integer cossId;
+	private String cossRefBucket;
 
 	private Integer sshId;
 
@@ -187,12 +187,12 @@ public class AppInstance extends BaseBean {
 		this.clusterName = clusterName;
 	}
 
-	public Integer getCossId() {
-		return cossId;
+	public String getCossRefBucket() {
+		return cossRefBucket;
 	}
 
-	public void setCossId(Integer cossId) {
-		this.cossId = cossId;
+	public void setCossRefBucket(String cossRefBucket) {
+		this.cossRefBucket = cossRefBucket;
 	}
 
 	@Override
