@@ -28,7 +28,7 @@ import org.springframework.core.env.Environment;
 import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.asymmetric.AsymmetricCryptor;
 import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.devops.tool.common.crypto.symmetric.AES128CBCPKCS5;
+import com.wl4g.devops.tool.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
@@ -51,7 +51,7 @@ public abstract class ConfigSecurityManagerSupport implements InitializingBean {
 	/**
 	 * Symmetric asymmeCryptor
 	 */
-	final protected AES128CBCPKCS5 symmeCryptor;
+	final protected AES128ECBPKCS5 symmeCryptor;
 
 	@Autowired
 	protected Environment env;
@@ -61,7 +61,7 @@ public abstract class ConfigSecurityManagerSupport implements InitializingBean {
 	 */
 	protected String appName;
 
-	protected ConfigSecurityManagerSupport(AsymmetricCryptor asymmeCryptor, AES128CBCPKCS5 symmeCryptor) {
+	protected ConfigSecurityManagerSupport(AsymmetricCryptor asymmeCryptor, AES128ECBPKCS5 symmeCryptor) {
 		notNullOf(asymmeCryptor, "asymmeCryptor");
 		notNullOf(symmeCryptor, "symmeCryptor");
 		this.asymmeCryptor = asymmeCryptor;

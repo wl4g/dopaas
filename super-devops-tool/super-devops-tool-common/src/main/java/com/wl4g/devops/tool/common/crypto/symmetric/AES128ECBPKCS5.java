@@ -25,7 +25,7 @@ package com.wl4g.devops.tool.common.crypto.symmetric;
 public class AES128ECBPKCS5 extends SymmetricCryptorSupport {
 
 	public AES128ECBPKCS5() {
-		super(new AlgorithmSpec("AES", "AES/ECB/PKCS5Padding", false, 128, 16, 16, 16));
+		super(new AlgorithmSpec("AES", "AES/ECB/PKCS5Padding", true, 128, 16, 16, 16));
 	}
 
 }
