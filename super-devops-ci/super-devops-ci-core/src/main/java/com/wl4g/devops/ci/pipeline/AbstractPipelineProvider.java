@@ -247,7 +247,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 					writeBLineFile(jobDeployerLog, LOG_FILE_START);
 
 					// Do deploying.
-					newPipeDeployer(i).run();
+					newPipeDeployerByType(i).run();
 
 					// Print successful.
 					writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
@@ -315,7 +315,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
 			return beanFactory.getBean(CossPipeDeployer.class, args);
 		}
-
 
 		return newPipeDeployer(instance);
 

@@ -220,7 +220,7 @@
     <if test="type != null and type != ''">
       and a.type = #{type,jdbcType=INTEGER}
     </if>
-
+    limit 1
   </select>
 
   <select id="getIamServer"  resultMap="BaseResultMap">

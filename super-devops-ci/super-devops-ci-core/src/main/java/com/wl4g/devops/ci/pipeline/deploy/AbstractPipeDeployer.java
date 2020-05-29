@@ -24,7 +24,7 @@ import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.exception.ci.PipelineDeployingException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
-import com.wl4g.devops.dao.erm.CossClusterDao;
+import com.wl4g.devops.dao.erm.ClusterConfigDao;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.tool.common.crypto.CrypticSource;
@@ -33,6 +33,7 @@ import com.wl4g.devops.tool.common.io.FileIOUtils;
 import com.wl4g.devops.tool.common.log.SmartLoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.util.List;
@@ -73,7 +74,10 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
     protected PipelineHistoryService pipelineHistoryService;
 
     @Autowired
-    protected CossClusterDao cossClusterDao;
+    protected ClusterConfigDao clusterConfigDao;
+
+    @Value("${spring.profiles.active}")
+    protected String profile;
 
     /**
      * Pipeline provider.

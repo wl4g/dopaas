@@ -258,6 +258,13 @@ public class CiCdAutoConfiguration {
 		return new RktNativePipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public CossPipeDeployer cossPipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,
+														 List<PipelineHistoryInstance> pipelineHistoryInstances) {
+		return new CossPipeDeployer(provider, instance, pipelineHistoryInstances);
+	}
+
 	// --- Timing scheduling's. ---
 
 	@Bean

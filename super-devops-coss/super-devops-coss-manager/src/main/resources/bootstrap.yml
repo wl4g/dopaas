@@ -59,6 +59,10 @@ spring:
           endpointRootDir: /mnt/disk1/coss-bucket
         access:
           http-download-base-uri: http://coss.${DEVOPS_DOMAIN_TOP:wl4g.com}/coss-manager/webservice/downloadd
+  http: #TODO just for now
+    multipart:
+      max-request-size: 1024MB
+      max-file-size: 1024MB
 
 # ### Server configuration. ###
 server:

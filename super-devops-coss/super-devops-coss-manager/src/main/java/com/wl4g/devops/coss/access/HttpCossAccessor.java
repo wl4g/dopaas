@@ -23,6 +23,7 @@ import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
 import com.wl4g.devops.coss.access.model.ObjectMetadataModel;
 import com.wl4g.devops.coss.access.model.ObjectValueModel;
+import com.wl4g.devops.coss.access.model.ProviderBucketModel;
 import com.wl4g.devops.coss.config.CossAccessProperties;
 import com.wl4g.devops.coss.config.StandardFSCossProperties;
 import com.wl4g.devops.coss.exception.CossException;
@@ -30,6 +31,8 @@ import com.wl4g.devops.coss.model.ACL;
 import com.wl4g.devops.coss.model.ObjectMetadata;
 import com.wl4g.devops.coss.model.ObjectValue;
 import com.wl4g.devops.coss.model.PutObjectResult;
+import com.wl4g.devops.coss.model.bucket.Bucket;
+import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.metadata.BucketStatusMetaData;
 import com.wl4g.devops.coss.natives.MetadataIndexManager;
 import org.springframework.beans.BeanUtils;
@@ -100,6 +103,28 @@ public class HttpCossAccessor extends BaseController {
 		return resp;
 	}
 
+	@RequestMapping("listBucketsWithProvider")
+	public RespBase<Object> listBucketsWithProvider(String organizationCode) {
+		RespBase<Object> resp = RespBase.create();
+		List<ProviderBucketModel> result = new ArrayList();
+		CossProvider[] values = CossProvider.values();
+		for(CossProvider value : values){
+			GenericCossParameter param = new GenericCossParameter();
+			param.setCossProvider(value.toString());
+			try{//TODO just for now
+				BucketList<Bucket> bucketBucketList = getCossEndpoint(param).listBuckets("", null, null);
+				for(Bucket bucket : bucketBucketList.getBucketList()){
+					ProviderBucketModel providerBucketModel = new ProviderBucketModel(value.toString(),bucket.getName());
+					result.add(providerBucketModel);
+				}
+			}catch (Exception e){
+
+			}
+		}
+		resp.setData(result);
+		return resp;
+	}
+
 	@RequestMapping("deleteBucket")
 	public RespBase<Object> deleteBucket(GenericCossParameter param, String bucketName) {
 		RespBase<Object> resp = RespBase.create();
@@ -161,12 +186,17 @@ public class HttpCossAccessor extends BaseController {
 	}
 
 	@RequestMapping("putObject")
-	public PutObjectResult putObject(GenericCossParameter param, String bucketName, String acl, String key, MultipartFile file) {
+	public RespBase<Object> putObject(GenericCossParameter param, String bucketName, String acl, String key, MultipartFile file) {
+		RespBase<Object> resp = RespBase.create();
 		try {
 			ObjectMetadata metadata = new ObjectMetadata();
 			metadata.setAcl(ACL.parse(acl));
+			if (Objects.isNull(key)) {
+				key = "";
+			}
 			key = key + File.separator + file.getOriginalFilename();
-			return putObject(param, bucketName, key, file.getInputStream(), metadata);
+			resp.setData(putObject(param, bucketName, key, file.getInputStream(), metadata));
+			return resp;
 		} catch (IOException e) {
 			throw new CossException(e);
 		}
