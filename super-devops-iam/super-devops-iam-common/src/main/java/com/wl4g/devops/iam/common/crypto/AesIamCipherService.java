@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.common.crypto;
 import static com.wl4g.devops.tool.common.codec.CodecSource.*;
 
 import com.wl4g.devops.tool.common.codec.CodecSource;
-import com.wl4g.devops.tool.common.crypto.symmetric.AES128CBCPKCS5;
+import com.wl4g.devops.tool.common.crypto.symmetric.AES128ECBPKCS5;
 
 /**
  * {@link AesIamCipherService}
@@ -36,12 +36,12 @@ public class AesIamCipherService extends AbstractSymmetricCipherService {
 
 	@Override
 	public String encrypt(byte[] key, String plaintext) {
-		return new AES128CBCPKCS5().encrypt(key, new CodecSource(plaintext)).toHex();
+		return new AES128ECBPKCS5().encrypt(key, new CodecSource(plaintext)).toHex();
 	}
 
 	@Override
 	public String decrypt(byte[] key, String hexCiphertext) {
-		return new AES128CBCPKCS5().decrypt(key, fromHex(hexCiphertext)).toString();
+		return new AES128ECBPKCS5().decrypt(key, fromHex(hexCiphertext)).toString();
 	}
 
 }

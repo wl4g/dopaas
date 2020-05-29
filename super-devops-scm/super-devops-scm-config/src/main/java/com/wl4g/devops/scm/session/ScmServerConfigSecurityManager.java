@@ -27,7 +27,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import com.wl4g.devops.scm.session.HandshakeResult;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.tool.common.crypto.asymmetric.AsymmetricCryptor;
-import com.wl4g.devops.tool.common.crypto.symmetric.AES128CBCPKCS5;
+import com.wl4g.devops.tool.common.crypto.symmetric.AES128ECBPKCS5;
 
 /**
  * {@link ScmServerConfigSecurityManager}
@@ -41,7 +41,7 @@ public class ScmServerConfigSecurityManager extends ConfigSecurityManagerSupport
 	@Autowired
 	protected JedisService jedisService;
 
-	public ScmServerConfigSecurityManager(AsymmetricCryptor asymmeCryptor, AES128CBCPKCS5 symmeCryptor) {
+	public ScmServerConfigSecurityManager(AsymmetricCryptor asymmeCryptor, AES128ECBPKCS5 symmeCryptor) {
 		super(asymmeCryptor, symmeCryptor);
 	}
 

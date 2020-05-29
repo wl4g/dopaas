@@ -31,7 +31,7 @@ import com.wl4g.devops.scm.publish.DefaultRedisConfigSourcePublisher;
 import com.wl4g.devops.scm.session.ScmServerConfigSecurityManager;
 import com.wl4g.devops.support.redis.JedisService;
 import com.wl4g.devops.tool.common.crypto.asymmetric.RSACryptor;
-import com.wl4g.devops.tool.common.crypto.symmetric.AES128CBCPKCS5;
+import com.wl4g.devops.tool.common.crypto.symmetric.AES128ECBPKCS5;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
@@ -78,7 +78,7 @@ public class ScmAutoConfiguration extends OptionalPrefixControllerAutoConfigurat
 
 	@Bean
 	public ScmServerConfigSecurityManager scmServerConfigSecurityManager() {
-		return new ScmServerConfigSecurityManager(new RSACryptor(), new AES128CBCPKCS5());
+		return new ScmServerConfigSecurityManager(new RSACryptor(), new AES128ECBPKCS5());
 	}
 
 	//
