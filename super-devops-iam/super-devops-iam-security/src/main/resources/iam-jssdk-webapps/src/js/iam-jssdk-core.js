@@ -1344,7 +1344,7 @@
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
 		// Prevent flashing when redirecting to the home page.
 		_iamConsole.info("Hidden login document(*) ... ");
-		document.write("<style id='iam_check_authc_redirect_style'>*{display:none;}</style>"); // Hide
+		$("<style id='iam_check_authc_redirect_style'>*{display:none;}</style>").appendTo($("head")); // Hide
 
 		return new Promise(resolve => {
 			_initHandshakeIfNecessary(true).then(res => {
