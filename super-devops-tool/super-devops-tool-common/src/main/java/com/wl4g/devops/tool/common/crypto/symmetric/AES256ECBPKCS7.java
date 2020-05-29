@@ -35,8 +35,8 @@ public class AES256ECBPKCS7 extends SymmetricCryptorSupport {
 		Security.addProvider(new BouncyCastleProvider());
 	}
 
-	public AES256ECBPKCS7() { 
-		super(new AlgorithmSpec("AES", "AES/ECB/PKCS7Padding", false,  32, 32));
+	public AES256ECBPKCS7() {
+		super(new AlgorithmSpec("AES", "AES/ECB/PKCS7Padding", false, 256, 32, 32));
 	}
 
 }

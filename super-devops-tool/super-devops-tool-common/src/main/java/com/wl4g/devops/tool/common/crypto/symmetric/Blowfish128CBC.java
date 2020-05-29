@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.tool.common.crypto.symmetric;
 
+import com.google.common.annotations.Beta;
+
 /**
  * {@link Blowfish128CBC}
  *
@@ -22,11 +24,12 @@ package com.wl4g.devops.tool.common.crypto.symmetric;
  * @version v1.0 2020年5月27日
  * @since
  */
+@Beta
 public class Blowfish128CBC extends SymmetricCryptorSupport {
 
 	public Blowfish128CBC() {
 		// blocksize 4-56bytes
-		super(new AlgorithmSpec("Blowfish", "Blowfish/CBC/NoPadding", true, 16, 16, 8));
+		super(new AlgorithmSpec("Blowfish", "Blowfish/CBC/PKCS5Padding", true, 128, 16, 16, 8));
 	}
 
 }

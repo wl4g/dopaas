@@ -27,7 +27,8 @@ import com.wl4g.devops.tool.common.codec.CodecSource;
  * </p>
  * <p>
  * Verified2:
- * <a href="http://tool.chacuo.net/cryptaes">http://tool.chacuo.net/cryptaes</a>
+ * <a href="http://tool.chacuo.net/cryptaes">http://tool.chacuo.net/cryptaes
+ * (128bits)</a>
  * </p>
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
@@ -50,7 +51,6 @@ public class AES256CBCPKCS7Tests {
 		out.println("iv => " + iv);
 		out.println("encrypt => " + cipherText.toBase64());
 		out.println("decrypt => " + aes.decrypt(key.getBytes(), iv.getBytes(), cipherText).toString());
-
 	}
 
 }

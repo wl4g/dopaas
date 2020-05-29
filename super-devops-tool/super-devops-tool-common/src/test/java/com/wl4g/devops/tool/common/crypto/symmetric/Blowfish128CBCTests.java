@@ -28,7 +28,7 @@ public class Blowfish128CBCTests {
 
 		// must multiple of 8 bytes
 		String plainText = "abcdefghijklmnopqrstuvwxyz123456";
-		CodecSource key = new CodecSource("12345678123456781234567812345678"); // 16bytes
+		CodecSource key = new CodecSource("1234567812345678"); // 16bytes
 		CodecSource iv = new CodecSource("12345678"); // must 8bytes
 		CodecSource cipherText = aes.encrypt(key.getBytes(), iv.getBytes(), new CodecSource(plainText));
 		out.println("plainText => " + plainText);

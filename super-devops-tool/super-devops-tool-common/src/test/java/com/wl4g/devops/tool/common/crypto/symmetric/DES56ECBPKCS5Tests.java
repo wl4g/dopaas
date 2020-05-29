@@ -19,25 +19,35 @@ import static java.lang.System.out;
 
 import com.wl4g.devops.tool.common.codec.CodecSource;
 
-public class Blowfish256CBCTests {
+/**
+ * {@link DES56ECBPKCS5Tests}
+ * <p>
+ * Verified1:
+ * <a href="https://www.keylala.cn/des">https://www.keylala.cn/des</a>
+ * </p>
+ * <p>
+ * Verified2:
+ * <a href="http://tool.chacuo.net/cryptdes">http://tool.chacuo.net/cryptdes</a>
+ * </p>
+ * 
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年5月28日
+ * @since
+ */
+public class DES56ECBPKCS5Tests {
 
 	public static void main(String[] args) throws Exception {
-		Blowfish256CBC aes = new Blowfish256CBC();
-		CodecSource genKey = aes.generateKey();
+		DES56ECBPKCS5 des3 = new DES56ECBPKCS5();
+		CodecSource genKey = des3.generateKey();
 		out.println("new generateKey => (" + genKey.toBase64() + ")" + genKey.getBytes().length + "bytes");
 
-		// must multiple of 8 bytes
-		String plainText = "abcdefghijklmnopqrstuvwxyz123456";
-		// must 32bytes
-		CodecSource key = new CodecSource("12345678123456781234567812345678");
-		CodecSource iv = new CodecSource("12345678"); // must 8bytes
-		CodecSource cipherText = aes.encrypt(key.getBytes(), iv.getBytes(), new CodecSource(plainText));
+		String plainText = "abcdefghijklmnopqrstuvwxyz";
+		CodecSource key = new CodecSource("abcd1234abcd1234"); // 8bytes
+		CodecSource cipherText = des3.encrypt(key.getBytes(), new CodecSource(plainText));
 		out.println("plainText => " + plainText);
 		out.println("key => " + key);
-		out.println("iv => " + iv);
 		out.println("encrypt => " + cipherText.toBase64());
-		out.println("decrypt => " + aes.decrypt(key.getBytes(), iv.getBytes(), cipherText).toString());
-
+		out.println("decrypt => " + des3.decrypt(key.getBytes(), cipherText).toString());
 	}
 
 }

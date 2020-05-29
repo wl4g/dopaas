@@ -1339,6 +1339,7 @@
             }
         },
 	};
+
 	// Check authentication and redirection
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
 		// Prevent flashing when redirecting to the home page.
