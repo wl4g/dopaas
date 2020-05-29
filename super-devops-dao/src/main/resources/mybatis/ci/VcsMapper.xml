@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Vcs" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
     <result column="provider_kind" property="providerKind" jdbcType="VARCHAR" />
     <result column="auth_type" property="authType" jdbcType="INTEGER" />
     <result column="base_uri" property="baseUri" jdbcType="VARCHAR" />
@@ -21,7 +22,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id,name,provider_kind, auth_type, base_uri, ssh_key_pub, ssh_key, access_token, username, password,
+    id, name, organization_code, provider_kind, auth_type, base_uri, ssh_key_pub, ssh_key, access_token, username, password,
     remark, enable, del_flag, create_date, create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -52,13 +53,13 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Vcs" >
-    insert into ci_vcs (id,name, provider_kind, auth_type,
+    insert into ci_vcs (id,name,organization_code, provider_kind, auth_type,
       base_uri, ssh_key_pub, ssh_key, 
       access_token, username, password,
       remark, enable, del_flag, 
       create_date, create_by, update_date, 
       update_by)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},#{providerKind,jdbcType=VARCHAR}, #{authType,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},#{organizationCode,jdbcType=VARCHAR},#{providerKind,jdbcType=VARCHAR}, #{authType,jdbcType=INTEGER},
       #{baseUri,jdbcType=VARCHAR}, #{sshKeyPub,jdbcType=VARCHAR}, #{sshKey,jdbcType=VARCHAR}, 
       #{accessToken,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
       #{remark,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{delFlag,jdbcType=INTEGER},
@@ -73,6 +74,9 @@
       </if>
       <if test="name != null" >
         name,
+      </if>
+      <if test="organizationCode != null" >
+        organization_code,
       </if>
       <if test="providerKind != null" >
         provider_kind,
@@ -127,6 +131,9 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null" >
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="providerKind != null" >
         #{providerKind,jdbcType=VARCHAR},
       </if>
@@ -180,6 +187,9 @@
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null" >
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="providerKind != null" >
         provider_kind = #{providerKind,jdbcType=VARCHAR},
       </if>
@@ -231,6 +241,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Vcs" >
     update ci_vcs
     set name = #{name,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
       provider_kind = #{providerKind,jdbcType=VARCHAR},
       auth_type = #{authType,jdbcType=INTEGER},
       base_uri = #{baseUri,jdbcType=VARCHAR},

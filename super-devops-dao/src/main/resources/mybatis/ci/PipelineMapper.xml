@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Pipeline">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="pipe_name" jdbcType="VARCHAR" property="pipeName" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="cluster_id" jdbcType="INTEGER" property="clusterId" />
     <result column="provider_kind" jdbcType="VARCHAR" property="providerKind" />
     <result column="environment" jdbcType="VARCHAR" property="environment" />
@@ -31,12 +32,12 @@
 
   </resultMap>
   <sql id="Base_Column_List">
-    id, pipe_name, cluster_id, provider_kind, environment, parent_app_home, assets_dir, 
+    id, pipe_name, organization_code, cluster_id, provider_kind, environment, parent_app_home, assets_dir,
     remark, create_date, create_by, update_date, update_by, del_flag
   </sql>
 
   <sql id="Base_Column_List_p">
-    p.id, p.pipe_name, p.cluster_id, p.provider_kind, p.environment, p.parent_app_home, p.assets_dir,
+    p.id, p.pipe_name,p.organization_code, p.cluster_id, p.provider_kind, p.environment, p.parent_app_home, p.assets_dir,
     p.remark, p.create_date, p.create_by, p.update_date, p.update_by, p.del_flag
   </sql>
 
@@ -65,12 +66,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Pipeline">
-    insert into ci_pipeline (id, pipe_name, cluster_id, 
+    insert into ci_pipeline (id, pipe_name, organization_code, cluster_id,
       provider_kind, environment, parent_app_home, 
       assets_dir, remark, create_date, 
       create_by, update_date, update_by, 
       del_flag)
-    values (#{id,jdbcType=INTEGER}, #{pipeName,jdbcType=VARCHAR}, #{clusterId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{pipeName,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR}, #{clusterId,jdbcType=INTEGER},
       #{providerKind,jdbcType=VARCHAR}, #{environment,jdbcType=VARCHAR}, #{parentAppHome,jdbcType=VARCHAR}, 
       #{assetsDir,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, 
@@ -84,6 +85,9 @@
       </if>
       <if test="pipeName != null">
         pipe_name,
+      </if>
+      <if test="organizationCode != null">
+        organization_code,
       </if>
       <if test="clusterId != null">
         cluster_id,
@@ -126,6 +130,9 @@
       <if test="pipeName != null">
         #{pipeName,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="clusterId != null">
         #{clusterId,jdbcType=INTEGER},
       </if>
@@ -167,6 +174,9 @@
       <if test="pipeName != null">
         pipe_name = #{pipeName,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="clusterId != null">
         cluster_id = #{clusterId,jdbcType=INTEGER},
       </if>
@@ -206,6 +216,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Pipeline">
     update ci_pipeline
     set pipe_name = #{pipeName,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
       cluster_id = #{clusterId,jdbcType=INTEGER},
       provider_kind = #{providerKind,jdbcType=VARCHAR},
       environment = #{environment,jdbcType=VARCHAR},
