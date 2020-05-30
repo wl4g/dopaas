@@ -22,7 +22,7 @@ package com.wl4g.devops.tool.common.crypto.symmetric;
  * @version v1.0 2020年5月27日
  * @since
  */
-public class AES128ECBPKCS5 extends SymmetricCryptorSupport {
+public class AES128ECBPKCS5 extends JdkCryptorSupport {
 
 	public AES128ECBPKCS5() {
 		super(new AlgorithmSpec("AES", "AES/ECB/PKCS5Padding", false, 128, 16, 16, 16));

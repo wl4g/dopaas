@@ -47,16 +47,7 @@ import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
- * Abstract symmetric algorithm implementation.
- * <p>
- * <a href= "http://blog.csdn.net/qq_26188423/article/details/60579773">Solution
- * to the inconsistency of AES encryption algorithm in Windows / Linux</a>
- * </p>
- * 
- * <p>
- * <a href="http://tool.chacuo.net/cryptaes">online crypto1</a> </br>
- * <a href="https://www.keylala.cn/aes">online crypto2</a>
- * </p>
+ * Abstract symmetric algorithm bouncycastle wrapper implementation.
  * 
  * @author wangl.sir
  * @version v1.0 2019年1月21日
@@ -297,7 +288,7 @@ abstract class SymmetricCryptorSupport {
 	 * @param iv
 	 * @return
 	 */
-	private byte[][] cleanAlgorithmParameters(byte[] key, byte[] iv) {
+	protected byte[][] cleanAlgorithmParameters(byte[] key, byte[] iv) {
 		notNullOf(key, "algorithmSecretKey");
 
 		byte[] tmp = null;
