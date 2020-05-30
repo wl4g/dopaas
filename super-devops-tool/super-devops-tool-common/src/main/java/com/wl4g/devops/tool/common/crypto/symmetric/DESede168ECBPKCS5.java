@@ -22,7 +22,7 @@ package com.wl4g.devops.tool.common.crypto.symmetric;
  * @version v1.0 2020年5月27日
  * @since
  */
-public class DESede168ECBPKCS5 extends SymmetricCryptorSupport {
+public class DESede168ECBPKCS5 extends JdkCryptorSupport {
 
 	public DESede168ECBPKCS5() {
 		super(new AlgorithmSpec("DESede", "DESede/ECB/PKCS5Padding", false, 168, 24, 24)); // 112bits/168bits

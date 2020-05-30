@@ -16,18 +16,16 @@
 package com.wl4g.devops.tool.common.crypto.symmetric;
 
 /**
- * {@link AES192ECBPKCS5}
- *
- * Note: Unlimited Oracle JCE support required.
- *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年5月27日
+ * Abstract symmetric algorithm bouncycastle wrapper implementation.
+ * 
+ * @author wangl.sir
+ * @version v1.0 2019年1月21日
  * @since
  */
-public class AES192ECBPKCS5 extends JdkCryptorSupport {
+abstract class BouncycastleCryptorSupport extends SymmetricCryptorSupport {
 
-	public AES192ECBPKCS5() {
-		super(new AlgorithmSpec("AES", "AES/ECB/PKCS5Padding", false, 192, 24, 24));
+	protected BouncycastleCryptorSupport(AlgorithmSpec config) {
+		super(config);
 	}
 
 }

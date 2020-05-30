@@ -28,7 +28,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  * @version v1.0 2020年5月27日
  * @since
  */
-public class AES256ECBPKCS7 extends SymmetricCryptorSupport {
+public class AES256ECBPKCS7 extends JdkCryptorSupport {
 
 	static {
 		// Let java support pkcs7padding

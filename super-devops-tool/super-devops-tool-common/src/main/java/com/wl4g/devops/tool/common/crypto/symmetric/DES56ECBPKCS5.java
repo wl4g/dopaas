@@ -26,7 +26,7 @@ import javax.crypto.spec.DESKeySpec;
  * @version v1.0 2020年5月27日
  * @since
  */
-public class DES56ECBPKCS5 extends SymmetricCryptorSupport {
+public class DES56ECBPKCS5 extends JdkCryptorSupport {
 
 	public DES56ECBPKCS5() {
 		super(new AlgorithmSpec("DES", "DES", false, 56, 16, 16));

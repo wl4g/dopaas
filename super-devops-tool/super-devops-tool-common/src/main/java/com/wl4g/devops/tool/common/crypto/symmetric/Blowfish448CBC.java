@@ -25,7 +25,7 @@ import com.google.common.annotations.Beta;
  * @since
  */
 @Beta
-public class Blowfish448CBC extends SymmetricCryptorSupport {
+public class Blowfish448CBC extends JdkCryptorSupport {
 
 	public Blowfish448CBC() {
 		// blocksize 4-56bytes
