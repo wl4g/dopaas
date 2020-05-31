@@ -2,19 +2,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>super-devops-ci-analyzer</artifactId>
+	<artifactId>super-devops-components-tools-opencv</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps CI Codes Analyzer Server</name>
-	<url>https://ci.super-devops.wl4g.com</url>
+	<name>Super DevOps Components Tools Suite OpenCV</name>
+	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>super-devops-ci</artifactId>
+		<artifactId>super-devops-components-tools</artifactId>
 		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<java.version>1.8</java.version>
-		<final.name>ci-analyzer</final.name>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -30,36 +28,34 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-ci-core</artifactId>
+			<artifactId>super-devops-components-tools-common</artifactId>
+		</dependency>
+		<!-- System type, BOM management version number cannot be used! -->
+		<dependency>
+			<groupId>org.opencv</groupId>
+			<artifactId>opencv</artifactId>
+			<version>4.1.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/opencv-411.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-iam-client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-components-tools-devel</artifactId>
-			<scope>provided</scope> <!-- For development & testing only -->
-		</dependency>
-		<dependency>
-			<groupId>com.github.spotbugs</groupId>
-			<artifactId>spotbugs</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>${final.name}</finalName>
 		<resources>
 			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-				<excludes>
-					<exclude>script/**</exclude>
-				</excludes>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.dll</include>
+					<include>**/*.so</include>
+					<include>**/*.dylib</include>
+					<include>**/*.lib</include>
+					<include>**/*.properties</include>
+				</includes>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 		<plugins>
@@ -86,24 +82,21 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<finalName>${final.name}-${project.version}-bin</finalName>
-					<!-- not append assembly id in release file name -->
-					<appendAssemblyId>false</appendAssemblyId>
-					<descriptors>
-						<descriptor>src/main/assemble/package.xml</descriptor>
-					</descriptors>
-				</configuration>
+				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
+						<id>unpack</id>
+						<phase>prepare-package</phase>
 						<goals>
-							<goal>single</goal>
+							<!-- <goal>copy-dependencies</goal> -->
+							<goal>unpack-dependencies</goal>
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<includeScope>system</includeScope>
+					<outputDirectory>${project.build.directory}/classes</outputDirectory>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -110,7 +110,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			String host = URI.create(redirectUrl).getHost();
 			if (!(equalsAny(host, PERMISSIVE_HOSTS) || isEqualWithDomain(redirectUrl, app.getExtranetBaseUri())
 					|| isEqualWithDomain(redirectUrl, app.getIntranetBaseUri()))) {
-				throw new IllegalCallbackDomainException(String.format("Illegal redirectUrl [%s]", redirectUrl));
+				throw new IllegalCallbackDomainException(format("Illegal redirectUrl [%s]", redirectUrl));
 			}
 		}
 	}

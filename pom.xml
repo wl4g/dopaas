@@ -62,7 +62,6 @@
 		<module>super-devops-dao</module>
 		<module>super-devops-scm</module>
 		<module>super-devops-ci</module>
-		<module>super-devops-tool</module>
 		<module>super-devops-iam</module>
 		<module>super-devops-umc</module>
 		<!--<module>super-devops-djob</module> -->

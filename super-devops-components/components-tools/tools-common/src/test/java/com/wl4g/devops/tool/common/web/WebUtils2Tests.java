@@ -138,6 +138,14 @@ public class WebUtils2Tests {
 		out.println(extTopDomainString("http://my.wl4g.com.cn/myapp1"));
 		out.println(extTopDomainString("https://my2.my1.wl4g.com:80/myapp1"));
 
+		out.println("-------------aaaa-------------------");
+		out.println(isEqualWithDomain("http://my.wl4g.com/myapp1", "http://my.wl4g.com/myapp2"));
+		out.println(isEqualWithDomain("http://my1.domin.com/myapp1", "http://my.wl4g.com/myapp2"));
+		out.println(isEqualWithDomain("http://my.wl4g.com:80/myapp1", "http://my.wl4g.com:8080/myapp2"));
+		out.println(isEqualWithDomain("https://my.wl4g.com:80/myapp1", "http://my.wl4g.com:8080/myapp2"));
+		out.println(isEqualWithDomain("http://localhost", "http://localhost:8080/myapp2"));
+		out.println(isEqualWithDomain("http://127.0.0.1", "http://127.0.0.1:8080/myapp2"));
+
 	}
 
 	public static class TestHttpServletRequest implements HttpServletRequest {
