@@ -493,21 +493,22 @@ public abstract class WebUtils2 {
 	 * domain names, etc. Exact matching)
 	 * 
 	 * e.g.</br>
+	 * 
+	 * <pre>
 	 * isEqualWithDomain("http://my.wl4g.com/myapp1","http://my.wl4g.com/myapp2")=true
-	 * </br>
 	 * isEqualWithDomain("http://my1.domin.com/myapp1","http://my.wl4g.com/myapp2")=false
-	 * </br>
 	 * isEqualWithDomain("http://my.wl4g.com:80/myapp1","http://my.wl4g.com:8080/myapp2")=true
-	 * </br>
 	 * isEqualWithDomain("https://my.wl4g.com:80/myapp1","http://my.wl4g.com:8080/myapp2")=true
-	 * </br>
+	 * isEqualWithDomain("http://localhost","http://localhost:8080/myapp2")=true
+	 * isEqualWithDomain("http://127.0.0.1","http://127.0.0.1:8080/myapp2")=true
+	 * </pre>
 	 * 
 	 * @param uria
 	 * @param urib
 	 * @return
 	 */
 	public static boolean isEqualWithDomain(String uria, String urib) {
-		if (uria == null || urib == null) {
+		if (isNull(uria) || isNull(urib)) {
 			return false;
 		}
 		return URI.create(safeDecodeURL(uria)).getHost().equals(URI.create(safeDecodeURL(urib)).getHost());

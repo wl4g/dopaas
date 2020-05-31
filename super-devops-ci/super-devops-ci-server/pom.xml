@@ -35,7 +35,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-tool-devel</artifactId>
+			<artifactId>super-devops-components-tools-devel</artifactId>
 			<scope>provided</scope> <!-- For development & testing only -->
 		</dependency>
 		<dependency>

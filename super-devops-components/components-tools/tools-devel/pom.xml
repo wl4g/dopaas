@@ -2,13 +2,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>super-devops-tool-opencv</artifactId>
+	<artifactId>super-devops-components-tools-devel</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps Tool Suite OpenCV</name>
+	<name>Super DevOps Components Tools Suite Devel</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>super-devops-tool</artifactId>
+		<artifactId>super-devops-components-tools</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -29,36 +29,14 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-tool-common</artifactId>
-		</dependency>
-		<!-- System type, BOM management version number cannot be used! -->
-		<dependency>
-			<groupId>org.opencv</groupId>
-			<artifactId>opencv</artifactId>
-			<version>4.1.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/opencv-411.jar</systemPath>
+			<artifactId>super-devops-components-tools-common</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
+			<groupId>org.mybatis.generator</groupId>
+			<artifactId>mybatis-generator-core</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.dll</include>
-					<include>**/*.so</include>
-					<include>**/*.dylib</include>
-					<include>**/*.lib</include>
-					<include>**/*.properties</include>
-				</includes>
-				<filtering>false</filtering>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -82,21 +60,12 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>unpack</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<!-- <goal>copy-dependencies</goal> -->
-							<goal>unpack-dependencies</goal>
-						</goals>
-					</execution>
-				</executions>
+				<groupId>org.mybatis.generator</groupId>
+				<artifactId>mybatis-generator-maven-plugin</artifactId>
 				<configuration>
-					<includeScope>system</includeScope>
-					<outputDirectory>${project.build.directory}/classes</outputDirectory>
+					<configurationFile>${basedir}/generatorConfig.xml</configurationFile>
+					<overwrite>true</overwrite>
+					<verbose>true</verbose>
 				</configuration>
 			</plugin>
 		</plugins>
