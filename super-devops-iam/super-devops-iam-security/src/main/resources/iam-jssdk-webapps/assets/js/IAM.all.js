@@ -1740,7 +1740,7 @@
 	// --- Helper function's. End] ---
 
 	// Gets default IAM baseUri
-	var _getDefaultIamBaseUri = function() {
+	var _getIamBaseUri = function() {
 		// 获取地址栏默认baseUri
 		var protocol = location.protocol;
 		var hostname = location.hostname;
@@ -1776,7 +1776,7 @@
 		_iamConsole.debug("Merged iam core settings: ", settings);
 
 		//if (Common.Util.isEmpty(settings.deploy.baseUri)) {
-        settings.deploy.baseUri = _getDefaultIamBaseUri();
+        settings.deploy.baseUri = _getIamBaseUri();
         _iamConsole.info("Use overlay iam baseUri: ", settings.deploy.baseUri);
 	    //}
 
@@ -2367,8 +2367,13 @@
 		// 获取URL同源的并发认证控制器
 		getMutexController: function (url) {
 			const handler = _multiModularAuthenticatingHandler;
-		    const _url = new URL(url);
-		    const urlSame = _url.protocol + "://" + _url.host;
+			var urlSame = null;
+			if (url.toUpperCase().startsWith("HTTP://")) { // Absloute url
+				const _url = new URL(url);
+				urlSame = _url.protocol + "://" + _url.host;
+			} else { // Relative url
+				urlSame = location.origin + "//" + url;
+			}
 		    var controller = handler.mutexControllerManager.get(urlSame);
 		    if (!controller) {
 		    	handler.mutexControllerManager.set(urlSame, (controller = {
@@ -2617,7 +2622,7 @@
 
 	// Export function getIamBaseURI
 	IAMCore.getIamBaseUri = function() {
-		var iamBaseUri = _getDefaultIamBaseUri(); 
+		var iamBaseUri = _getIamBaseUri(); 
 		// Overlay
 		sessionStorage.setItem(constant.baseUriStoredKey, iamBaseUri);
 		return iamBaseUri;

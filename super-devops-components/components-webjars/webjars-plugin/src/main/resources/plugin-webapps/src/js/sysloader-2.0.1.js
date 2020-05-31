@@ -45,42 +45,51 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
         return isIpv4 || isIpv6;
     };
 
-    // Gets default site baseUri
-    var _getDefaultSiteBaseUri = function(opt) {
+    // Gets site baseURI with default,
+    var _getServerBaseURI = function(opt) {
 		var defaultOpt = {
-			fileUriPort: 8080,
-			fileUriDomainSubLevel: "iam",
+			// 当前(页面)地址
+			host: location.hostname,
+			// 用于检查是否本地开发环境
+			checkDevEnvHostPatterns: ["localhost", "127.0.0.1", "0:0:0:0:0:0:0:1", "*.debug", "*.local", "*.dev"],
+			// 当确定是本地开发环境时, 指定的地址(方便调试用)
+			devServerHost: null, // 默认: {opt.host.protocol}//{opt.host.name}:{opt.host.port}
+			// 目标接口服务端口
+			serverPort: 8080,
+			// 目标接口服务的二级(子级)域名前缀(e.g: iam.wl4g.com/iam.console.wl4g.com)
+			serverHostForSubLevelDomain: "iam", // iam.console
 		};
+
+		// Overlay config options
 		opt = Object.assign(defaultOpt, opt);
 
-		// 获取地址栏默认baseUri
-		var hostname = location.hostname;
-		var port = opt.fileUriPort ? opt.fileUriPort : location.port;
+		// Build apiServer base URI
+		var hostname = opt.host;
+		var port = opt.serverPort ? opt.serverPort : location.port;
 		var protocol = location.protocol;
-	 	// 为了可以自动配置IAM后端接口基础地址，下列按照不同的部署情况自动获取iamBaseURi。
-	 	// 1. 以下情况会认为是非完全分布式部署，随地址栏走，即认为所有服务(接口地址如：10.0.0.12:14040/iam-server, 10.0.0.12:14046/ci-server)都部署于同一台机。
-	 	// a，当访问的地址是IP；
-	 	// b，当访问域名的后者是.debug/.local/.dev等。
-        if (_isIp(hostname)
-        	|| hostname == 'localhost'
-        	|| hostname == '127.0.0.1'
-        	|| hostname.endsWith('.debug')
-        	|| hostname.endsWith('.local')
-        	|| hostname.endsWith('.dev')) {
+	 	// 1. 以下情况会认为是本地开发环境部署:
+	 	// a. 当访问的地址是IP;
+	 	// b. 当访问域名的后缀是.debug/.local/.dev等。
+		var matchedDevEnv = opt.checkDevEnvHostPatterns.find(e => (hostname == e || hostname.endsWith(e.substring(e.lastIndexOf("*") + 1)))); // 检查是否本地环境
+        if (_isIp(hostname) || matchedDevEnv) {
+        	if (opt.devServerHost) { // 若指定了本地环境接口服务地址, 则优先使用
+        		return opt.devServerHost;
+			}
+        	// 默认根据当前页面地址生成
         	return protocol + "//" + hostname + ":" + port;
         }
-        // 2. 使用域名部署时认为是完全分布式部署，自动生成二级域名，(接口地址如：iam-server.wl4g.com/iam-server, ci-server.wl4g.com/ci-server)每个应用通过二级子域名访问
+        // 2. 使用域名访问时走服务器部署结构:(根据顶级域名自动生成二级域名, 以作为目标接口服务的baseURI)
         else {
         	var topDomainName = hostname.split('.').slice(-2).join('.');
         	if(hostname.indexOf("com.cn") > 0) {
         		topDomainName = hostname.split('.').slice(-3).join('.');
         	}
-        	return protocol + "//" + opt.fileUriDomainSubLevel + "." + topDomainName;
+        	return protocol + "//" + opt.serverHostForSubLevelDomain + "." + topDomainName;
         }
 	};
 
 	// Gets g_module
-	function getGModule(name) {
+	var getGModule = function(name) {
 		for(m in _g_modules.modules) {
 			var module = _g_modules.modules[m];
 			if(name == module.modName){
@@ -90,7 +99,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 	}
 
 	// Parsing module dependencies 
-	function getDependModules(feature) {
+	var getDependModules = function(feature) {
 		var modules = new Array();
 		for(var d=0; d<_g_modules.dependencies.length; d++){
 			var matched = false;
@@ -137,7 +146,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 	 * document.location.pathname = http://localhost:14070/webjars-example/plugin/example/index.html
 	 * resovleRelativePathIfNecessary('../../js/aaa.js') => "/webjars-example/js/aaa.js/"
 	 */
-	function resovleRelativePathIfNecessary(path) {
+	var resovleRelativePathIfNecessary = function(path) {
 		var curRelativeSpec = "./";
 		var relativeSpec = "../";
 		var currentPath = document.location.pathname;
@@ -217,7 +226,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 			if (_path.toUpperCase().startsWith("HTTP://") ||_path.toUpperCase().startsWith("HTTPS://")) {
 				_settings.path = _path;
 			} else {
-				var baseUri = _getDefaultSiteBaseUri({ fileUriPort: fileUriPort, fileUriDomainSubLevel: fileUriDomainSubLevel });
+				var baseUri = _getServerBaseURI({ serverPort: fileUriPort, serverHostForSubLevelDomain: fileUriDomainSubLevel });
 				_settings.path = baseUri + resovleRelativePathIfNecessary(_path); // Resolve relative path(if necessary)
 			}
 			_settings.cache = curScript.getAttribute("cache") || _settings.cache;
@@ -227,7 +236,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 		}
 
 		// Print settings
-		console.debug("Using IAM JSSDK settings: "+ JSON.stringify(_settings));
+		console.debug("Using IAM JSSDK settings: ", _settings);
 		if(_settings.cache){
 			console.debug("IAM JSSDK cache is enabled!");
 		}
@@ -237,34 +246,8 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 		return _settings;
 	})();
 
-	// Export moduleJS.
-	window.ModuleJS = function(modules) {
-		if (modules && (_g_modules || _g_modules == VAR_PLUGIN_MODULES)) {
-			var oldModules = _g_modules;
-			try {
-				oldModules = JSON.stringify(_g_modules);
-			} catch(e) {
-			}
-			console.debug("Overlay default modules: "+ oldModules);
-			_g_modules = modules;
-		}
-		// Check global modules
-		if (!_g_modules) {
-			throw Error("Must configure modules dependencies!");
-		}
-		console.debug("Plugin modules : " + JSON.stringify(_g_modules));
-	};
-	/**
-	 * Use load(css and js) specification module JSSDK API.
-	 * 
-	 * @param name Module feature(alias).
-	 * @param callback Loaded callback function.
-	 **/
-	ModuleJS.prototype.use = function(feature, callback) {
-		this.useCss(feature, function(){});
-		this.useJs(feature, callback);
-	};
-	ModuleJS.prototype.useJs = function(feature, callback) {
+	// Use js
+	var _useJs = function(feature, callback) {
 		if(Object.prototype.toString.call(feature) == '[object Function]' || !feature || callback == null || !callback) {
 			throw Error("useJs parameters (feature, callback) is required!");
 		}
@@ -333,8 +316,10 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 		//	callback("loaded");
 		//});
 		//}
-	},
-	ModuleJS.prototype.useCss = function(feature, callback) {
+	};
+
+	// Use css
+	var _useCss = function(feature, callback) {
 		if(Object.prototype.toString.call(feature) == '[object Function]' || !feature || callback == null || !callback) {
 			throw Error("useCss parameters (feature, callback) is required!");
 		}
@@ -379,9 +364,37 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 			});
 		})(csses, path);
 	};
-	// IP Util.
-	ModuleJS.isIp = _isIp;
-	// Gets default service baseUri
-	ModuleJS.getDefaultSiteBaseUri = _getDefaultSiteBaseUri;
+
+	// Export LoaderJS.
+	window.LoaderJS = function(modules) {
+		if (modules && (_g_modules || _g_modules == VAR_PLUGIN_MODULES)) {
+			var oldModules = _g_modules;
+			try {
+				oldModules = JSON.stringify(_g_modules);
+			} catch(e) {
+			}
+			console.debug("Overlay default modules: "+ oldModules);
+			_g_modules = modules;
+		}
+		// Check global modules
+		if (!_g_modules) {
+			throw Error("Must configure modules dependencies!");
+		}
+		console.debug("Plugin modules : " + JSON.stringify(_g_modules));
+	};
+	/**
+	 * Use load(css and js) specification module JSSDK API.
+	 * 
+	 * @param name Module feature(alias).
+	 * @param callback Loaded callback function.
+	 **/
+	LoaderJS.prototype.use = function(feature, callback) {
+		this.useCss(feature, function(){});
+		this.useJs(feature, callback);
+	};
+	LoaderJS.prototype.useJs = _useJs,
+	LoaderJS.prototype.useCss = _useCss;
+	LoaderJS.isIp = _isIp;
+	LoaderJS.getServerBaseURI = _getServerBaseURI;
 
 })(window, document, VAR_PLUGIN_MODULES);
