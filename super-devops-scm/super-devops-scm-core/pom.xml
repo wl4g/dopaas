@@ -29,7 +29,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-support</artifactId>
+			<artifactId>super-devops-scm-config</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
@@ -37,7 +37,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-scm-config</artifactId>
+			<artifactId>super-devops-support</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

@@ -26,34 +26,37 @@ package com.wl4g.devops.common.constants;
 public abstract class SCMDevOpsConstants extends DevOpsConstants {
 
 	//
-	// Common and Based.
+	// --- Common. ---
 	//
 
 	/** Server pre-release source response data key. */
 	final public static String KEY_PRE_RELEASE = "pre-release-source";
 	/** Client environment source response data key. */
 	final public static String KEY_USED_SOURCES = "used-source";
-
 	//
-	// Server.
+	// --- Server. ---
 	//
 
 	/** Service web root URI. */
-	final public static String URI_S_BASE = "/endpoint";
+	final public static String URI_S_BASE = "/scm-server";
+	/** Initialization handshake URI. */
+	final public static String URI_S_HANDSHAKE = "handshake";
+	/** Long-polling watching URI. */
+	final public static String URI_S_WATCH_GET = "watch";
 	/** Get property source URI. */
 	final public static String URI_S_SOURCE_GET = "source";
 	/** Report configuration result URI. */
 	final public static String URI_S_REPORT_POST = "report";
-	/** Long-polling watching URI. */
-	final public static String URI_S_WATCH_GET = "watch";
 
-	/** SCM published group. */
-	final public static String CACHE_PUB_GROUPS = "scm_pub_groups";
-	/** SCM published CONFIG prefix. */
-	final public static String KEY_PUB_PREFIX = "scm_pub_config_";
+	/** SCM session cache. */
+	final public static String CACHE_SESSIONS = "scm:session:";
+	/** SCM publisher group. */
+	final public static String CACHE_PUB_GROUPS = "scm:publish:groups:";
+	/** SCM publisher config prefix. */
+	final public static String KEY_PUB_PREFIX = "scm:publish:config:";
 
 	//
-	// Client.
+	// --- Client. ---
 	//
 
 	/** Service web root URI. */

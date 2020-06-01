@@ -62,10 +62,16 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
  * @since
  */
 public class IamClientAutoConfiguration extends AbstractIamConfiguration {
-	final private static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
-	final private static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
-	final private static String BEAN_TICKET_VALIDATOR = "fastCasTicketValidator";
-	final private static String BEAN_SESSION_VALIDATOR = "expireSessionValidator";
+
+	// ==============================
+	// Configuration properties.
+	// ==============================
+
+	@Bean
+	@ConditionalOnMissingBean(IamClientProperties.class)
+	public IamClientProperties iamClientProperties() {
+		return new IamClientProperties();
+	}
 
 	// ==============================
 	// SHIRO manager and filter's
@@ -193,15 +199,6 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	}
 
 	// ==============================
-	// Configuration properties.
-	// ==============================
-
-	@Bean
-	public IamClientProperties iamClientProperties() {
-		return new IamClientProperties();
-	}
-
-	// ==============================
 	// IAM context interceptor's
 	// ==============================
 
@@ -236,7 +233,7 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public SecondaryAuthenticationAdvice secondAuthenticateAspect(SimpleSecondaryAuthenticationHandler processor) {
+	public SecondaryAuthenticationAdvice secondaryAuthenticationAdvice(SimpleSecondaryAuthenticationHandler processor) {
 		return new SecondaryAuthenticationAdvice(processor);
 	}
 
@@ -260,5 +257,10 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	public PrefixHandlerMapping iamClientAuthenticatorControllerPrefixHandlerMapping() {
 		return super.newIamControllerPrefixHandlerMapping(URI_C_BASE);
 	}
+
+	final private static String BEAN_ROOT_FILTER = "rootAuthenticationFilter";
+	final private static String BEAN_AUTH_FILTER = "authenticatorAuthenticationFilter";
+	final private static String BEAN_TICKET_VALIDATOR = "fastCasTicketValidator";
+	final private static String BEAN_SESSION_VALIDATOR = "expireSessionValidator";
 
 }

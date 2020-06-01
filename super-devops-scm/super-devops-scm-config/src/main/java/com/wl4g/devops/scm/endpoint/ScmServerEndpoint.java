@@ -21,10 +21,14 @@ import com.wl4g.devops.common.bean.scm.model.ReportInfo;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.context.ConfigContextHandler;
+import com.wl4g.devops.scm.handler.CentralConfigureHandler;
+import com.wl4g.devops.scm.session.HandshakeRequest;
+import com.wl4g.devops.scm.session.ScmServerConfigSecurityManager;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -45,11 +49,27 @@ public class ScmServerEndpoint extends BaseController {
 	/**
 	 * Scm config handler.
 	 */
-	final protected ConfigContextHandler contextHandler;
+	@Autowired
+	protected CentralConfigureHandler contextHandler;
 
-	public ScmServerEndpoint(ConfigContextHandler handler) {
-		super();
-		this.contextHandler = handler;
+	@Autowired
+	protected ScmServerConfigSecurityManager securityManager;
+
+	/**
+	 * Init handshaking and register connection.
+	 * 
+	 * @param reg
+	 * @return
+	 */
+	@RequestMapping(value = URI_S_HANDSHAKE, method = POST)
+	public RespBase<?> handshake(@Validated HandshakeRequest reg) {
+		log.info("Scm handshaking ... <= {}", reg);
+
+		RespBase<Object> resp = new RespBase<>();
+		resp.setData(securityManager.registerSession(reg.getClientSecretKey()));
+
+		log.info("Scm handshake => {}", resp);
+		return resp;
 	}
 
 	/**

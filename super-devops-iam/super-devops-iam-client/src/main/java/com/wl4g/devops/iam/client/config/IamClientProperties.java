@@ -67,7 +67,7 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	/**
 	 * Secondary authenticator provider name.
 	 */
-	private String secondAuthenticatorProvider = "wechat";
+	private String secondaryAuthenticatorProvider = "wechat";
 
 	/**
 	 * IAM client parameters configuration.
@@ -130,12 +130,12 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 		this.useRememberRedirect = useRememberRedirect;
 	}
 
-	public String getSecondAuthenticatorProvider() {
-		return secondAuthenticatorProvider;
+	public String getSecondaryAuthenticatorProvider() {
+		return secondaryAuthenticatorProvider;
 	}
 
-	public void setSecondAuthenticatorProvider(String secondAuthcProvider) {
-		this.secondAuthenticatorProvider = secondAuthcProvider;
+	public void setSecondaryAuthenticatorProvider(String secondaryAuthenticatorProvider) {
+		this.secondaryAuthenticatorProvider = secondaryAuthenticatorProvider;
 	}
 
 	@Override

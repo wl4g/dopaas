@@ -71,11 +71,10 @@ public class ClientRemoteAutoConfiguration {
 	/**
 	 * Clearly specify OpenSSL, because jdk8 may have performance problems, See:
 	 * https://www.cnblogs.com/wade-luffy/p/6019743.html#_label1
-	 * {@link io.netty.handler.ssl.ReferenceCountedOpenSslContext
-	 * ReferenceCountedOpenSslContext}
 	 * 
 	 * @return
 	 * @throws SSLException
+	 * @see {@link io.netty.handler.ssl.ReferenceCountedOpenSslContext}
 	 */
 	// @Bean
 	// @ConditionalOnMissingBean

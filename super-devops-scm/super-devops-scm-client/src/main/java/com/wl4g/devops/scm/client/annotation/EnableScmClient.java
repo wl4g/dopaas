@@ -22,7 +22,8 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import com.wl4g.devops.scm.client.config.ScmRefreshAutoConfiguration;
+import com.wl4g.devops.scm.client.config.IamWithScmClientAutoConfiguration;
+import com.wl4g.devops.scm.client.config.ScmClientAutoConfiguration;
 
 /**
  * SCM annotation to enable configuration.
@@ -31,7 +32,7 @@ import com.wl4g.devops.scm.client.config.ScmRefreshAutoConfiguration;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
-@Import({ ScmRefreshAutoConfiguration.class })
+@Import({ IamWithScmClientAutoConfiguration.class, ScmClientAutoConfiguration.class })
 public @interface EnableScmClient {
 
 }

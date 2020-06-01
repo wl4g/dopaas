@@ -158,25 +158,25 @@
 			<!-- Components tools dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-tool-common</artifactId>
+				<artifactId>super-devops-components-tools-common</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-tool-hbase-migrator</artifactId>
+				<artifactId>super-devops-components-tools-hbase-migrator</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-tool-devel</artifactId>
+				<artifactId>super-devops-components-tools-devel</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-tool-opencv</artifactId>
+				<artifactId>super-devops-components-tools-opencv</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
