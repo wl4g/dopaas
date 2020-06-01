@@ -35,7 +35,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:safecloud-defaulti.mysql.rds.aliyuncs.com:3306}/${DEVOPS_DB_NAME:devops}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      url: jdbc:mysql://${DEVOPS_DB_URL:safecloud-defaulti.mysql.rds.aliyuncs.com:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: ${DEVOPS_DB_USER:devops}
       password: ${DEVOPS_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
       initial-size: 10
@@ -52,6 +52,8 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
+  es:
+    hosts: 127.0.0.1
 
 # Redis configuration.
 redis:
@@ -63,7 +65,6 @@ redis:
 
 cipher-key: 03DE18C2FC4E605F
 
-doc:
-  basePath: /mnt/disk1/upload
-  share-base-url: http://share.anjiancloud.com/share-manager
-  doc-base-url: http://share.anjiancloud.com/doc-manager
+fs:
+  base-path: /mnt/disk1/upload
+  base-url: http://share.anjiancloud.com/share-manager

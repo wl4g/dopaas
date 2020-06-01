@@ -30,47 +30,45 @@
 		// Javascript multi line string supports.
 		// @see https://www.jb51.net/article/49480.htm
 		var loginFormHtmlStr = `
-				<div class="login-form">
-					<div class="login-form-header">
-						<span class="login-link active" id="login_link_account" data-panel="login_account_panel">
+				<div class="iamjssdk-login-form">
+					<div class="iamjssdk-login-form-header">
+						<span class="iamjssdk-login-link active" id="iamjssdk_login_link_account" data-panel="iamjssdk_login_account_panel">
 							账号登录
 						</span>
-						<!--<span class="login-line">
+						<!--<span class="iamjssdk-login-line">
 						</span>
-						<span class="login-link" id="login_link_phone" data-panel="login_phone_panel">
+						<span class="iamjssdk-login-link" id="iamjssdk_login_link_phone" data-panel="iamjssdk_login_phone_panel">
 							手机登录
 						</span>-->
-						<span class="login-line">
+						<span class="iamjssdk-login-line">
 						</span>
-						<span class="login-link" id="iam_jssdk_login_link_scan" data-panel="iam_jssdk_login_scan_panel">
+						<span class="iamjssdk-login-link" id="iamjssdk_login_link_scan" data-panel="iamjssdk_login_scan_panel">
 							扫码登录
 						</span>
 					</div>
-					<div class="login-form-tip" id="err_tip"></div>
-					<div class="login-form-body">
-						<!-- 密码登录-->
-						<div class="login-form-panel active" id="login_account_panel">
+					<div class="iamjssdk-login-form-tip" id="err_tip"></div>
+					<div class="iamjssdk-login-form-body">
+						<!-- Account login-->
+						<div class="iamjssdk-login-form-panel active" id="iamjssdk_login_account_panel">
 							<form>
-								<div class="login-form-item">
-									<i class="icon-user">
-									</i>
-									<input class="inp" id="iam_jssdk_account_username" name="username" placeholder="请输入账号"
+								<div class="iamjssdk-login-form-item">
+									<i class="icon-user"></i>
+									<input class="inp" id="iamjssdk_account_username" name="username" placeholder="请输入账号"
 									maxlength="20">
 								</div>
-								<div class="login-form-item">
-									<i class="icon-pass">
-									</i>
-									<input class="inp" id="iam_jssdk_account_password" name="iam_jssdk_account_password" type="password" placeholder="请输入密码"
+								<div class="iamjssdk-login-form-item">
+									<i class="icon-pass"></i>
+									<input class="inp" id="iamjssdk_account_password" name="iamjssdk_account_password" type="password" placeholder="请输入密码"
 									maxlength="35" autocapitalize="off" autocomplete="off">
 								</div>
-								<div class="login-form-item" id="iam_jssdk_captcha_panel">
-									<!-- 拖动验证-->
+								<div class="iamjssdk-login-form-item" id="iamjssdk_captcha_panel">
+									<!-- Behavior verification operation area-->
 								</div>
-								<input class="iam-btn" id="iam_jssdk_account_submit_btn" type="button" value="登录">
+								<input class="iamjssdk-btn" id="iamjssdk_account_submit_btn" type="button" value="登录">
 							</form>
 						</div>
-						<!-- 手机登录-->
-						<div class="login-form-panel" id="login_phone_panel">
+						<!-- Mobile login-->
+						<div class="iamjssdk-login-form-panel" id="iamjssdk_login_phone_panel">
 							<select class="select-area">
 								<option value="+086">
 									中国大陆+086
@@ -97,31 +95,31 @@
 									泰国+066
 								</option>
 							</select>
-							<div class="login-form-item">
+							<div class="iamjssdk-login-form-item">
 								<i class="icon-phone">
 								</i>
-								<input id="iam_jssdk_sms_user_phone" class="inp" name="phone" placeholder="请输入手机号" maxlength="11">
+								<input id="iamjssdk_sms_user_phone" class="inp" name="phone" placeholder="请输入手机号" maxlength="11">
 								<p class="err-info phone-err">
 									请输入正确的手机号
 								</p>
 							</div>
-							<div class="login-form-item login-form-item-number">
+							<div class="iamjssdk-login-form-item iamjssdk-login-form-item-number">
 								<i class="icon-codeNumber">
 								</i>
-								<input id="iam_jssdk_sms_code" class="inp" type="text" placeholder="请输入短信动态码" maxlength=6>
-								<button class="iam-btn-code" type="button" id="iam_jssdk_sms_getcode_btn">
+								<input id="iamjssdk_sms_code" class="inp" type="text" placeholder="请输入短信动态码" maxlength=6>
+								<button class="iamjssdk-btn-code" type="button" id="iamjssdk_sms_getcode_btn">
 									获取
 								</button>
 								<p class="err-info pass-err">
 									请输入短信验证码
 								</p>
 							</div>
-							<input class="iam-btn" id="iam_jssdk_sms_submit_btn" type="button" value="登录">
+							<input class="iamjssdk-btn" id="iamjssdk_sms_submit_btn" type="button" value="登录">
 						</div>
-						<!-- 微信登录-->
-						<div class="login-form-panel" id="iam_jssdk_login_scan_panel">
-							<div class="box-qrcode">
-								<div id="iam_jssdk_sns_qrcodePanel" style="height:255px;">
+						<!-- WeChat login-->
+						<div class="iamjssdk-login-form-panel" id="iamjssdk_login_scan_panel">
+							<div class="iamjssdk-box-qrcode">
+								<div id="iamjssdk_sns_qrcodePanel" style="height:255px;">
 								</div>
 							</div>
 							<div class="qrcode-text">
@@ -179,9 +177,9 @@
 	
 	// 绑定UI Tab事件
 	function initUITab() {
-		$(".login-link").click(function(){
+		$(".iamjssdk-login-link").click(function(){
 		    var that = this;
-		    $(".login-link").each(function(ele, obj){
+		    $(".iamjssdk-login-link").each(function(ele, obj){
 		        var panel = $(that).attr("data-panel");
 		        var _panel = $(obj).attr("data-panel");
 		        if (panel != _panel){
@@ -242,9 +240,9 @@
 			captcha: {
 				enable: true,
 				use: "VerifyWithJigsawGraph", // default by 'VerifyWithGifGraph'
-				panel: document.getElementById("iam_jssdk_captcha_panel"), // Jigsaw验证码时必须
-				img: document.getElementById("iam_jssdk_captcha_img"), // 验证码显示 img对象（仅jpeg/gif时需要）
-				input: document.getElementById("iam_jssdk_captcha_input"), // 验证码input对象（仅jpeg/gif时需要）
+				panel: document.getElementById("iamjssdk_captcha_panel"), // Jigsaw验证码时必须
+				img: document.getElementById("iamjssdk_captcha_img"), // 验证码显示 img对象（仅jpeg/gif时需要）
+				input: document.getElementById("iamjssdk_captcha_input"), // 验证码input对象（仅jpeg/gif时需要）
 				onSuccess: function(verifiedToken) {
 					console.debug("Captcha verify successful. verifiedToken is "+ verifiedToken);
 				},
@@ -255,9 +253,9 @@
 			// 登录认证配置
 			account: {
 				enable: true,
-				submitBtn: document.getElementById("iam_jssdk_account_submit_btn"), // 登录提交触发对象
-				principalInput: document.getElementById("iam_jssdk_account_username"), // 必填，获取填写的登录用户名
-				credentialInput: document.getElementById("iam_jssdk_account_password"), // 获取登录账号密码，账号登录时必填
+				submitBtn: document.getElementById("iamjssdk_account_submit_btn"), // 登录提交触发对象
+				principalInput: document.getElementById("iamjssdk_account_username"), // 必填，获取填写的登录用户名
+				credentialInput: document.getElementById("iamjssdk_account_password"), // 获取登录账号密码，账号登录时必填
 				onBeforeSubmit: function (principal, plainPasswd, captcha) { // 提交之前
 					console.debug("Iam account login... principal: "+ principal+", plainPasswd: ******, captcha: "+captcha);
 					return true;
@@ -273,11 +271,11 @@
 			},
 			sms: { // SMS认证配置
 				enable: true,
-				submitBtn: document.getElementById("iam_jssdk_sms_submit_btn"), // 登录提交触发对象
-				sendSmsBtn: document.getElementById("iam_jssdk_sms_getcode_btn"), // 发送SMS验证码对象
+				submitBtn: document.getElementById("iamjssdk_sms_submit_btn"), // 登录提交触发对象
+				sendSmsBtn: document.getElementById("iamjssdk_sms_getcode_btn"), // 发送SMS验证码对象
 				mobileArea: $(".select-area"), // 手机号区域select对象
-				mobile: document.getElementById("iam_jssdk_sms_user_phone"), // 手机号input对象
-				smsCode: document.getElementById("iam_jssdk_sms_code"), // SMS验证码input对象
+				mobile: document.getElementById("iamjssdk_sms_user_phone"), // 手机号input对象
+				smsCode: document.getElementById("iamjssdk_sms_code"), // SMS验证码input对象
 				onBeforeSubmit: function (mobileNum, smsCode) {
 					console.debug("Iam sms login ... mobileNum: "+ mobileNum);
 					return true;
@@ -303,7 +301,7 @@
 				},
 				// 定义内嵌授权页面配置
 				qrcodePanel: {
-					src: document.getElementById("iam_jssdk_sns_qrcodePanel"),
+					src: document.getElementById("iamjssdk_sns_qrcodePanel"),
 					width: "250",
 					height: "260"
 				},
@@ -322,13 +320,13 @@
 					// },
 					"wechat": { // 服务商名(需与后台对应, 可选：qq/wechat/sina/github/google/dingtalk/twitter/facebook等)
 						panelType: "qrcodePanel", // 使用内嵌的方式渲染扫码授权页面
-						src: document.getElementById("iam_jssdk_login_link_scan") // 绑定Wechat授权点击事件源
+						src: document.getElementById("iamjssdk_login_link_scan") // 绑定Wechat授权点击事件源
 					}
 				},
 				// 点击SNS服务商授权请求之前回调事件
 				onBefore: function (provider, panelType) {
 					if (provider == 'wechat') { // 只有微信等扫码登录时，才切换tab
-						changeTab('iam_jssdk_login_scan_panel', 'iam_jssdk_login_scan_pass');
+						changeTab('iamjssdk_login_scan_panel', 'iamjssdk_login_scan_pass');
 					}
 					// 执行后续逻辑，返回false会阻止继续
 					return true;

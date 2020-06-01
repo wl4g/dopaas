@@ -11,18 +11,17 @@
 # #### Environment(Prod) configuration. ####
 #
 spring:
-  web:
-    cors:
-      rules:
-        /**:
-          allowsOrigins:
-            - https://${DEVOPS_DOMAIN_TOP:wl4g.com}
-            - http://${DEVOPS_DOMAIN_TOP:wl4g.com}
-            - https://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
-            - http://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
   cloud:
     devops:
       iam:
+        cors:
+          rules:
+            /**:
+              allowsOrigins:
+                - https://${DEVOPS_DOMAIN_TOP:wl4g.com}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.com}
+                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
@@ -30,7 +29,8 @@ spring:
         client:
           server-uri: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: https://devops.${DEVOPS_DOMAIN_TOP:wl4g.com}/#/srm/console
+          success-uri: https://devops.${DEVOPS_DOMAIN_TOP:wl4g.com}/#/oss/buckets
+  # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
