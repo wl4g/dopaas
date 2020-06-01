@@ -11,39 +11,15 @@
 # #### Environment(Prod) configuration. ####
 #
 spring:
-  cloud:
-    devops:
-      iam:
-        cors:
-          rules:
-            /**:
-              allowsOrigins:
-                - https://${DEVOPS_DOMAIN_TOP:wl4g.com}
-                - http://${DEVOPS_DOMAIN_TOP:wl4g.com}
-                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
-                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.com}
-        acl:
-          secure: false # Turn off protection will trust any same intranet IP.
-          allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
-          denyIpRange: ${DEVOPS_IAM_ACL_DENY}
-        client:
-          server-uri: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}/iam-server
-          unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: https://devops.${DEVOPS_DOMAIN_TOP:wl4g.com}/#/oss/buckets
-      coss:
-        aliyunoss:
-          accessKeyId: ${ALIYUN_KEY}
-          accessKeySecret: ${ALIYUN_SECRET}
-        hdfs:
-          endpoint-hdfs-root-uri: hdfs://owner-node3:8020/coss-bucket
-        native:
-        access:
-  # Datasource configuration.
+  boot: # Spring boot admin.
+    admin:
+      notify.composite:
+        href-url: http://127.0.0.1:${server.port}/${spring.application.name}
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:safecloud-defaulti.mysql.rds.aliyuncs.com:3306}/${DEVOPS_DB_NAME:devops}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      url: jdbc:mysql://${DEVOPS_DB_URL:safecloud-defaulti.mysql.rds.aliyuncs.com:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: ${DEVOPS_DB_USER:devops}
       password: ${DEVOPS_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
       initial-size: 10
@@ -60,6 +36,37 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
+  cloud:
+    devops:
+      umc:
+        store:
+          derby:
+          opentsdb:
+            host: http://10.0.0.161
+            port: 4242
+        receiver:
+          http:
+            enabled: true
+          kafka:
+            enabled: false
+            concurrency: 3
+            queue-depth: 2
+            properties:
+              bootstrap.servers: ${KAFKA_NODES:owner-node1:9092,owner-node2:9092,owner-node3:9092,owner-node4:9092}
+        watch:
+          zk-servers: owner-node2:2181,owner-node3:2181,owner-node4:2181
+          fetch-cache-sec: 1800
+  mail:
+    host: smtp.exmail.qq.com
+    port: 465
+    username: syslog@7782.co
+    password: Sm#1234
+    protocol: smtp
+
+# Spring-security config.
+security.user:
+  name: sba_user
+  password: AnGsFmkH2w5lJP9j
 
 # Redis configuration.
 redis:

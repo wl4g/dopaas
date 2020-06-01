@@ -18,23 +18,32 @@ spring:
           rules:
             /**:
               allowsOrigins:
-                - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
-                - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
-                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
-                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
+                - https://${DEVOPS_DOMAIN_TOP:wl4g.uat}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.uat}
+                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.uat}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.uat}
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
           denyIpRange: ${DEVOPS_IAM_ACL_DENY}
         client:
-          server-uri: http://iam.${DEVOPS_DOMAIN_TOP:wl4g.test}/iam-server
+          server-uri: http://iam.${DEVOPS_DOMAIN_TOP:wl4g.uat}/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/scm
+          success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.uat}/#/oss/buckets
+      coss:
+        aliyunoss:
+          accessKeyId: ${ALIYUN_KEY}
+          accessKeySecret: ${ALIYUN_SECRET}
+        hdfs:
+          endpoint-hdfs-root-uri: hdfs://owner-node3:8020/coss-bucket
+        native:
+        access:
+  # Datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node1:3306}/${DEVOPS_DB_NAME:devops}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      url: jdbc:mysql://${DEVOPS_DB_URL:owner-node5:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: ${DEVOPS_DB_USER:gzsm}
       password: ${DEVOPS_DB_PASSWD:gzsm@%#jh?}
       initial-size: 10
@@ -58,6 +67,4 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
-
-cipher-key: 03DE18C2FC4E605F
+  nodes: ${REDIS_NODES:owner-node5:6379,owner-node5:6380,owner-node5:6381,owner-node3:7379,owner-node3:7380,owner-node3:7381}

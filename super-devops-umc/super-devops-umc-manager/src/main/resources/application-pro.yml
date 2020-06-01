@@ -29,13 +29,30 @@ spring:
         client:
           server-uri: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: https://devops.${DEVOPS_DOMAIN_TOP:wl4g.com}/#/oss/buckets
-  # Datasource configuration.
+          success-uri: https://devops.${DEVOPS_DOMAIN_TOP:wl4g.com}/#/umc/config
+      support:
+        notification:
+          mail:
+            host: smtp.163.com
+            port: 465
+            username: babaa1f4@163.com
+            password: XBurnerAir00
+            protocol: smtp
+          sms:
+            aliyun:
+              accessKeyId: ${ALIYUN_KEY}
+              accessKeySecret: ${ALIYUN_SECRET}
+          vms:
+            aliyun:
+              accessKeyId: ${ALIYUN_KEY}
+              accessKeySecret: ${ALIYUN_SECRET}
+              calledShowNumber: 055162153866
+
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
     druid:
-      url: jdbc:mysql://${DEVOPS_DB_URL:safecloud-defaulti.mysql.rds.aliyuncs.com:3306}/${DEVOPS_DB_NAME:devops}}?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      url: jdbc:mysql://${DEVOPS_DB_URL:safecloud-defaulti.mysql.rds.aliyuncs.com:3306}/${DEVOPS_DB_NAME:devops}?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: ${DEVOPS_DB_USER:devops}
       password: ${DEVOPS_DB_PASSWD:DFDDD7F502E694F3E40D750FEEAE423D}
       initial-size: 10
@@ -53,6 +70,11 @@ spring:
       filters: stat,wall
       log-slow-sql: true
 
+# Spring-security config.
+security.user:
+  name: sba_user
+  password: hnGsFm6k0klJP9j
+
 # Redis configuration.
 redis:
   passwd: zzx!@#$%
@@ -60,3 +82,8 @@ redis:
   max-attempts: 10
   # Redis's cluster nodes.
   nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
+
+# OpenTSDB configuration.
+opentsdb:
+  url: http://10.0.0.57
+  port: 4242
