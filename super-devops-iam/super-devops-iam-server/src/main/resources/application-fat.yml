@@ -18,14 +18,14 @@ spring:
           rules:
             /**:
               allowsOrigins:
-                - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
-                - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
-                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
-                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
+                - https://${DEVOPS_DOMAIN_TOP:wl4g.fat}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.fat}
+                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.fat}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.fat}
         #login-uri: /view/login.html
-        login-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/login
+        login-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.fat}/#/login
         unauthorized-uri: /view/403.html
-        success-endpoint: umc-manager@http://umc.${DEVOPS_DOMAIN_TOP:wl4g.test}/umc-manager
+        success-endpoint: umc-manager@http://umc.${DEVOPS_DOMAIN_TOP:wl4g.fat}/umc-manager
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
