@@ -22,6 +22,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;
 
+import java.util.Map;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
@@ -39,22 +41,8 @@ import com.wl4g.devops.iam.sns.web.DefaultOauth2SnsController;
  */
 @ConfigurationProperties(prefix = "spring.cloud.devops.iam")
 public class IamProperties extends AbstractIamProperties<ServerParamProperties> {
+
 	private static final long serialVersionUID = -5858422822181237865L;
-
-	/**
-	 * Default Iam-JSSDK loader path
-	 */
-	final public static String DEFAULT_JSSDK_LOCATION = "classpath*:/iam-jssdk-webapps";
-
-	/**
-	 * Default Iam-JSSDK base URI.
-	 */
-	final public static String DEFAULT_JSSDK_BASE_URI = "/iam-jssdk";
-
-	/**
-	 * Default view login URI.
-	 */
-	final public static String DEFAULT_VIEW_LOGIN_URI = DEFAULT_VIEW_BASE_URI + "/login.html";
 
 	/**
 	 * Login page URI
@@ -191,9 +179,6 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	protected void applyDefaultIfNecessary() {
 		super.applyDefaultIfNecessary();
 
-		// Default URL filter chain.
-		addDefaultFilterChain();
-
 		// Default success endPoint.
 		if (isBlank(getSuccessService())) {
 			setSuccessEndpoint(environment.getProperty("spring.application.name") + "@" + DEFAULT_VIEW_INDEX_URI);
@@ -201,24 +186,40 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	}
 
 	/**
-	 * Add default filter chain settings. </br>
+	 * Adds iam server default filter chain settings. </br>
 	 * For example: {@link DefaultOauth2SnsController#connect} </br>
 	 */
-	final private void addDefaultFilterChain() {
+	@Override
+	protected void applyBuildinDefaultFilterChains(Map<String, String> chains) {
 		// Default view access files request rules.
-		getFilterChain().put(DEFAULT_VIEW_BASE_URI + "/**", "anon");
+		chains.put(DEFAULT_VIEW_BASE_URI + "/**", "anon");
 		// Default Iam-JSSDK controller rules.
-		getFilterChain().put(DEFAULT_JSSDK_BASE_URI + "/**", "anon");
+		chains.put(DEFAULT_JSSDK_BASE_URI + "/**", "anon");
 		// SNS authenticator controller rules.
-		getFilterChain().put(URI_S_SNS_BASE + "/**", "anon");
+		chains.put(URI_S_SNS_BASE + "/**", "anon");
 		// Login authenticator controller rules.
-		getFilterChain().put(URI_S_LOGIN_BASE + "/**", "anon");
+		chains.put(URI_S_LOGIN_BASE + "/**", "anon");
 		// Verify(CAPTCHA/SMS) authenticator controller rules.
-		getFilterChain().put(URI_S_VERIFY_BASE + "/**", "anon");
+		chains.put(URI_S_VERIFY_BASE + "/**", "anon");
 		// RCM(Simple risk control) controller rules.
-		getFilterChain().put(URI_S_RCM_BASE + "/**", "anon");
+		chains.put(URI_S_RCM_BASE + "/**", "anon");
 		// API(v1) controller rules.
-		getFilterChain().put(URI_S_API_V1_BASE + "/**", ServerInternalAuthenticationFilter.NAME);
+		chains.put(URI_S_API_V1_BASE + "/**", ServerInternalAuthenticationFilter.NAME);
 	}
+
+	/**
+	 * Default Iam-JSSDK loader path
+	 */
+	final public static String DEFAULT_JSSDK_LOCATION = "classpath*:/iam-jssdk-webapps";
+
+	/**
+	 * Default Iam-JSSDK base URI.
+	 */
+	final public static String DEFAULT_JSSDK_BASE_URI = "/iam-jssdk";
+
+	/**
+	 * Default view login URI.
+	 */
+	final public static String DEFAULT_VIEW_LOGIN_URI = DEFAULT_VIEW_BASE_URI + "/login.html";
 
 }

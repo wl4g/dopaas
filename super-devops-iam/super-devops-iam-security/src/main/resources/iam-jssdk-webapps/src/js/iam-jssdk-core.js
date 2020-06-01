@@ -11,7 +11,7 @@
 		iamVerboseStoredKey : '__IAM_VERBOSE',
         baseUriStoredKey : '__IAM_BASEURI',
         umidTokenStorageKey : '__IAM_UMIDTOKEN',
-        authenticatedRedirectCountStorageKey : '__IAM_AUTHC_REDIRECT_COUNT',
+        authRedirectRecordStorageKey : '__IAM_AUTHC_REDIRECT_RECORD',
         useSecureAlgorithmName: 'RSA', // 提交认证相关请求时，选择的非对称加密算法（ 默认：RSA）
     };
 
@@ -68,13 +68,13 @@
 							umdata = Common.Util.Codec.encodeBase58(umdata);
 						}
 						umdata = n + "!" + umdata;
-						console.debug("Generated apply umidToken data: "+ umdata);
+						_iamConsole.debug("Generated apply umidToken data: "+ umdata);
 						umidParam.set("umdata", umdata);
 						_doIamRequest("post", true, "{applyUmTokenUri}", umidParam, function(res){
 							Common.Util.checkEmpty("init.onPostUmidToken", settings.init.onPostUmidToken)(res); // 获得umtoken完成回调
 							var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue",settings.definition.codeOkValue);
 							if(!Common.Util.isEmpty(res) && (res.code == codeOkValue)){
-								console.debug("Got umidToken: " + res.data.umidToken);
+								_iamConsole.debug("Got umidToken: " + res.data.umidToken);
 								// Encoding umidToken
 								var encodeUmidToken = Common.Util.Codec.encodeBase58(res.data.umidToken);
 								sessionStorage.setItem(constant.umidTokenStorageKey, encodeUmidToken);
@@ -132,7 +132,7 @@
 						runtime.handshake._currentlyInGettingValuePromise = null;
 					}, function(errmsg) {
 						runtime.handshake._currentlyInGettingValuePromise = null;
-						console.log("Failed to handshake, " + errmsg);
+						_iamConsole.log("Failed to handshake, " + errmsg);
 						Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 异常回调
 					}, null, false);
 				}));
@@ -236,7 +236,7 @@
 					}, 15000); // 至少15sec才能点击刷新
 				}
 			}, function(req, status, errmsg){
-				console.debug("Failed to apply captcha, " + errmsg);
+				_iamConsole.error("Failed to apply captcha, " + errmsg);
 				Common.Util.checkEmpty("captcha.onError", settings.captcha.onError)(errmsg);
 			}, null, true);
 		}
@@ -294,17 +294,17 @@
 		// 初始相关配置(Event)
  		init: {
  			onPostUmidToken: function(res){
- 				console.debug("onPostUmidToken... "+ res);
+ 				_iamConsole.debug("onPostUmidToken... "+ res);
  			},
  			onPostHandshake: function(res){
- 				console.debug("onPostHandshake... "+ res);
+ 				_iamConsole.debug("onPostHandshake... ", res);
  			},
  			onPreCheck: function(principal){
- 				console.debug("onPreCheck... principal:"+ principal);
+ 				_iamConsole.debug("onPreCheck... principal:"+ principal);
  				return true; // continue after?
  			},
  			onPostCheck: function(res){
- 				console.debug("onPostCheck... " + res);
+ 				_iamConsole.debug("onPostCheck... " + res);
  			},
  			onError: function(errmsg){
  				console.error("Failed to initialize... "+ errmsg);
@@ -350,13 +350,13 @@
 							_getVerifyAnalysisUrl: _getVerifyAnalysisUrl,
                             repeatIcon: 'fa fa-redo',
                             onSuccess: function (verifiedToken) {
-								console.debug("Jigsaw captcha verify successful. verifiedToken is '"+ verifiedToken + "'");
+                            	_iamConsole.debug("Jigsaw captcha verify successful. verifiedToken is '"+ verifiedToken + "'");
 								runtime.flags.isCurrentlyApplying = false; // Apply captcha completed.
 								runtime.verifiedModel.verifiedToken = verifiedToken; // [MARK4], See: 'MARK2'
 								Common.Util.checkEmpty("captcha.onSuccess", settings.captcha.onSuccess)(verifiedToken);
                             },
 							onFail: function(element){
-								console.debug("Failed to jigsaw captcha verify. element => "+ element);
+								_iamConsole.debug("Failed to jigsaw captcha verify. element => "+ element);
 								runtime.flags.isCurrentlyApplying = false; // Apply captcha completed.
 								runtime.verifiedModel.verifiedToken = ""; // Clear
 								Common.Util.checkEmpty("captcha.onError", settings.captcha.onError)(element);
@@ -366,7 +366,7 @@
 				},
 			},
 			onSuccess: function(verifiedToken) {
-				console.debug("Jigsaw captcha verify successfully. verifiedToken is '"+ verifiedToken+"'");
+				_iamConsole.debug("Jigsaw captcha verify successfully. verifiedToken is '"+ verifiedToken+"'");
 			},
 			onError: function(errmsg) { // 如:申请过于频繁
 				console.error("Failed to jigsaw captcha verify. " + errmsg);
@@ -380,11 +380,11 @@
 			credentialInput: null, // 登录凭据input对象
 			customParamMap: new Map(), // 提交登录附加参数
 			onBeforeSubmit: function(principal, credentials, verifiedToken){ // 默认提交之前回调实现
-				console.debug("Prepare to submit login request. principal=" + principal + ", verifiedToken=" + verifiedToken);
+				_iamConsole.debug("Prepare to submit login request. principal=" + principal + ", verifiedToken=" + verifiedToken);
 				return true;
 			},
 			onSuccess: function(principal, data){ // 登录成功回调
-				console.info("Sign in successfully. " + data.principal + ", " + data.redirectUrl);
+				_iamConsole.info("Sign in successfully. " + data.principal + ", " + data.redirectUrl);
 				return true;
 			},
 			onError: function(errmsg){ // 登录异常回调
@@ -400,11 +400,11 @@
 			mobile: null, // 手机号input对象
 			onBeforeSubmit: function(mobileNum, smsCode){ // 默认SMS提交之前回调实现
 				//throw "Unsupported errors, please implement to support login submission";
-				console.log("Prepare to submit SMS login request. mobileNum=" + mobileNum + ", smsCode=" + smsCode);
+				_iamConsole.log("Prepare to submit SMS login request. mobileNum=" + mobileNum + ", smsCode=" + smsCode);
 				return true;
 			},
 			onSuccess: function(resp){
-				console.log("SMS success. " + resp.message);
+				_iamConsole.log("SMS success. " + resp.message);
 			},
 			onError: function(errmsg){ // SMS登录异常回调
 				throw "SMS login error. " + errmsg;
@@ -446,28 +446,53 @@
 			}
 			return false;
 		},
-		debug: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.debug(msg);
+		_doLog: function (level, msgArgs) {
+			if (_iamConsole._isVerbose()) {
+				var prefix = new Date().format("[yyyy-MM-dd hh:mm:ss.S]") + " " + level + " --- ";
+				var args = [];
+				args.push(prefix);
+				for(var i in msgArgs) {
+					args.push(msgArgs[i]);
+				}
+				switch (level) {
+				case "TRACE":
+					console.trace.apply(console, args);
+					break;
+				case "DEBUG":
+					console.debug.apply(console, args);
+					break;
+				case "INFO":
+					console.info.apply(console, args);
+					break;
+				case "WARN":
+					console.warn.apply(console, args);
+					break;
+				case "ERROR":
+					console.error.apply(console, args);
+					break;
+				default:
+					console.log.apply(console, args);
+					break;
+				}
 			}
 		},
-		info: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.info(msg);
-			}
+		trace: function () {
+			_iamConsole._doLog("TRACE", arguments);
 		},
-		warn: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.warn(msg);
-			}
+		debug: function () {
+			_iamConsole._doLog("DEBUG", arguments);
 		},
-		error: function (msg) {
-			if (IAMCore.Console._isVerbose()) {
-				console.error(msg);
-			}
+		info: function () {
+			_iamConsole._doLog("INFO", arguments);
 		},
-		log: function (msg) {
-			_iamConsole.info(msg);
+		warn: function () {
+			_iamConsole._doLog("WARN", arguments);
+		},
+		error: function () {
+			_iamConsole._doLog("ERROR", arguments);
+		},
+		log: function () {
+			_iamConsole._doLog("INFO", arguments);
 		},
 	};
 
@@ -508,11 +533,11 @@
 
 		// Gets xsrf from cookie.
 		var xsrfToken = Common.Util.getCookie(xsrfTokenCookieName, null);
-		IAMCore.Console.debug("Load xsrfToken: " + xsrfToken + " by cookieName: " + xsrfTokenCookieName);
+		_iamConsole.debug("Load xsrfToken: ", xsrfToken, " by cookieName: ", xsrfTokenCookieName);
 
 		// First visit? init xsrf token
 		if (!xsrfToken) {
-			//console.debug("Initializing xsrf token...");
+			_iamConsole.debug("Initializing xsrf token...");
 			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
 			$.ajax({
 				url: applyXsrfTokenUrl,
@@ -524,7 +549,7 @@
 					xsrfToken = Common.Util.getCookie(xsrfTokenCookieName);
 				},
 				error: function(req, status, errmsg){
-					console.debug("Failed to init xsrf token. " + errmsg);
+					_iamConsole.debug("Failed to init xsrf token. " + errmsg);
 				}
 			});
 		}
@@ -562,7 +587,7 @@
 		var replayTokenHeaderName = Common.Util.checkEmpty("definition.replayTokenHeaderKey", settings.definition.replayTokenHeaderKey);
 		var replayTokenParamName = Common.Util.checkEmpty("definition.replayTokenParamKey", settings.definition.replayTokenParamKey);
 		var replayToken = Common.Util.Codec.encodeBase58(replayTokenPlain);
-		IAMCore.Console.debug("Generated replay token(plain): "+ replayTokenPlain + " - " + replayToken);
+		_iamConsole.debug("Generated replay token(plain): ", replayTokenPlain, " - ", replayToken);
 		return {
 			headerName: replayTokenHeaderName,
 			paramName: replayTokenParamName,
@@ -573,7 +598,7 @@
 	// --- Helper function's. End] ---
 
 	// Gets default IAM baseUri
-	var _getDefaultIamBaseUri = function() {
+	var _getIamBaseUri = function() {
 		// 获取地址栏默认baseUri
 		var protocol = location.protocol;
 		var hostname = location.hostname;
@@ -606,11 +631,11 @@
 	var _initConfigure = function(obj) {
 		// 将外部配置深度拷贝到settings，注意：Object.assign(oldObj, newObj)只能浅层拷贝
 		settings = $.extend(true, settings, obj);
-		IAMCore.Console.debug("Merged iam core settings: "+ JSON.stringify(settings));
+		_iamConsole.debug("Merged iam core settings: ", settings);
 
 		//if (Common.Util.isEmpty(settings.deploy.baseUri)) {
-        settings.deploy.baseUri = _getDefaultIamBaseUri();
-        IAMCore.Console.info("Use overlay iam baseUri: " + settings.deploy.baseUri);
+        settings.deploy.baseUri = _getIamBaseUri();
+        _iamConsole.info("Use overlay iam baseUri: ", settings.deploy.baseUri);
 	    //}
 
 		// Storage iamBaseUri
@@ -766,7 +791,7 @@
 	var _initSNSAuthenticator = function() {
 		// Check authenticator enable?
 		if (!settings.sns.enable) {
-			console.debug("SNS authenticator not enable!");
+			_iamConsole.debug("SNS authenticator not enable!");
 			return;
 		}
 
@@ -823,7 +848,7 @@
 					callback(res);
 				}
 			}, function(errmsg){
-				console.log("Failed to safe check, " + errmsg);
+				_iamConsole.log("Failed to safe check, " + errmsg);
 				Common.Util.checkEmpty("init.onError", settings.init.onError)(errmsg); // 登录异常回调
 			}, null, true);
 		});
@@ -833,7 +858,7 @@
 	var _initCaptchaVerifier = function() {
 		// Check authenticator enable?
 		if (!settings.captcha.enable) {
-			console.debug("Captcha verifier not enable!");
+			_iamConsole.debug("Captcha verifier not enable!");
 			return;
 		}
 
@@ -887,7 +912,7 @@
 	var _initAccountAuthenticator = function() {
 		// Check authenticator enable?
 		if (!settings.account.enable) {
-			console.debug("Account authenticator not enable!");
+			_iamConsole.debug("Account authenticator not enable!");
 			return;
 		}
 
@@ -984,7 +1009,7 @@
 	var _initSMSAuthenticator = function(){
 		// Check authenticator enable?
 		if (!settings.sms.enable) {
-			console.debug("SMS authenticator not enable!");
+			_iamConsole.debug("SMS authenticator not enable!");
 			return;
 		}
 
@@ -1099,7 +1124,7 @@
 		var osTypes = Common.Util.PlatformType;
 		for(var osname in osTypes){
 		    if(osTypes[osname]){
-		        console.debug("Got current OS: "+ osname);
+		    	_iamConsole.debug("Got current OS: "+ osname);
 		        clientRef = osname;
 		        break;
 		    }
@@ -1183,14 +1208,15 @@
 			_doIamRequest(method, async, url, params || {}, successFn, errorFn, completeFn, false);
 		},
 		// 检查返回未登录(code=401)时是否跳转登录页，(仅当TGC过期(真正过期)是才跳转登录页，iam-client过期无需跳转登陆页)
-		checkTGCExpiredAndRedirectToLogin: function (res) {
+		checkTGCExpiredAndRedirectToLogin: function (res, redirectFn) {
 			const handler = _multiModularAuthenticatingHandler;
-		    console.debug("TGC validating... res: " + JSON.stringify(res));
+			_iamConsole.debug("TGC validating... res: ", res);
 		    if (_isRespUnauthenticated(res)) {
 		        // IamWithCasAppClient/IamWithCasAppServer
-		        if (res.data.serviceRole == 'IamWithCasAppServer') { // TGC过期?
-		            console.debug("TGC expired, redirectTo: " + res.data[settings.definition.redirectUrlKey]);
+		        if (res.data && res.data.serviceRole == 'IamWithCasAppServer') { // TGC过期?
+		        	_iamConsole.info("TGC expired, redirectTo: ", res.data[settings.definition.redirectUrlKey]);
 		            // e.g: window.location.href = '/#/login';
+		        	redirectFn(res);
 		            return true;
 		        }
 		    }
@@ -1199,42 +1225,61 @@
 		// 获取URL同源的并发认证控制器
 		getMutexController: function (url) {
 			const handler = _multiModularAuthenticatingHandler;
-		    const _url = new URL(url);
-		    const urlSame = _url.protocol + "://" + _url.host;
+			var urlSame = null;
+			if (url.toUpperCase().startsWith("HTTP://")) { // Absloute url
+				const _url = new URL(url);
+				urlSame = _url.protocol + "://" + _url.host;
+			} else { // Relative url
+				urlSame = location.origin + "//" + url;
+			}
 		    var controller = handler.mutexControllerManager.get(urlSame);
 		    if (!controller) {
 		    	handler.mutexControllerManager.set(urlSame, (controller = {
+		    		_cache_auth_state: {
+		    			state: false, time: 0,
+		    		},
 		            urlSame: urlSame,
-		            currentlyState: false,
+		            currentlyInAuthenticatingState: false,
 		            requestQueue: [], // FIFO
-		            authenticated: false,
+		            authenticated: function (state) {
+		            	var _cas = controller._cache_auth_state;
+		            	if (state) { // Setting
+		            		_cas.state = state;
+		            		_cas.time = new Date().getTime();
+						} else { // Getting
+							// 1, 使用authenticated状态判断是为了解决同一模块接口并发请求的问题,
+							// 2, 给authenticated增加有效期, 是为了防止后台session过期而authenticated还是为true, 导致误认为还是已认证状态
+							return _cas.state && Math.abs(new Date().getTime() - _cas.time) < 10000;
+						}
+		            },
 		        }));
 		    }
 		    return controller;
 		},
 		// 拦截处理多模块并发认证请求（401重定向）
-		doHandle: function (res, method, url, successFn, errorFn, params) {
+		doHandle: function (res, method, url, successFn, errorFn, params, redirectFn) {
 			const handler = _multiModularAuthenticatingHandler;
 			// Check parameters requires.
 			Common.Util.checkEmpty('multiModularAuthenticatingRequest.res', res);
 			Common.Util.checkEmpty('multiModularAuthenticatingRequest.method', method);
 			Common.Util.checkEmpty('multiModularAuthenticatingRequest.url', url);
+			Common.Util.checkEmpty('multiModularAuthenticatingRequest.redirectFn', redirectFn);
 			// Check authentication status.
 			if (!_isRespUnauthenticated(res)) {
-				IAMCore.Console.debug("Ignore non-unauthenticated res. url: " + url + ", res: " + res);
+				_iamConsole.debug("Ignore authenticated of url: ", url, ", res: ", res);
 				return;
 			}
 			// 获取url(源)对应的并发认证控制器
             const controller = handler.getMutexController(url);
-            if (!controller.currentlyState) {
-                controller.currentlyState = true; // Mark authenticating
+            if (!controller.currentlyInAuthenticatingState) {
+                controller.currentlyInAuthenticatingState = true; // Mark authenticating
                 new Promise(function (resolve, reject) {
-                	IAMCore.Console.info("Biz unauth response: " + JSON.stringify(res));
-                    if (controller.authenticated) {
+                	_iamConsole.info("Biz unauth response: ", res);
+                    if (controller.authenticated()) {
                         resolve();
                         return;
                     }
-                    if (handler.checkTGCExpiredAndRedirectToLogin(res)) {
+                    if (handler.checkTGCExpiredAndRedirectToLogin(res, redirectFn)) {
                         return;
                     }
                     if (!res.data || !res.data.redirect_url) {
@@ -1244,11 +1289,11 @@
                     // Request IAM server authenticator.
                     handler.doMultiModularRequest(method, res.data.redirect_url, true, null, resolve, errorFn, null);
                 }).then(function (res1) {
-                	IAMCore.Console.info("Iam-server response: " + JSON.stringify(res1));
-                    if (controller.authenticated) {
+                	_iamConsole.info("Iam-server response: ", res1);
+                    if (controller.authenticated()) {
                         return;
                     }
-                    if (handler.checkTGCExpiredAndRedirectToLogin(res1)) {
+                    if (handler.checkTGCExpiredAndRedirectToLogin(res1, redirectFn)) {
                         return;
                     }
                     if (!res1.data || !res1.data.redirect_url) {
@@ -1258,44 +1303,44 @@
                         return;
                     }
                     return new Promise((resolve, reject) => {
-                        // Request IAM client authenticator.
+                    	// Request IAM client authenticator.
                         handler.doMultiModularRequest('get', res1.data.redirect_url, true, null, resolve, errorFn, null);
                     });
                 }).then(function (res2) {
-                	IAMCore.Console.info("Iam-client response: " + JSON.stringify(res2));
-                    controller.currentlyState = false;  // Mark authenticated completed
+                	_iamConsole.info("Iam-client response: ", res2);
+                    controller.currentlyInAuthenticatingState = false;  // Mark authentication completed
 
                     handler.doMultiModularRequest(method, url, true, params, function (res3) {
-                    	IAMCore.Console.info("Redirect origin biz response: " + JSON.stringify(res3));
+                    	_iamConsole.info("Redirect origin biz response: ", res3);
                         if (!_isRespUnauthenticated(res3)) {
                             if (successFn) {
                             	successFn(res3);
 							}
-                            controller.authenticated = true;
-                        } else { // need authRequest???
-                            controller.authenticated = false;
+                            controller.authenticated(true);
+                        } else { // Need authRequest???
+                            controller.authenticated(false);
                         }
                     }, function (errmsg) {
                         if (errorFn) {
                             errorFn(errmsg);
                         } else {
-                        	console.error(errmsg);
+                        	_iamConsole.error(errmsg);
                         }
                     }, function () {
                         // Next biz requests
                         if (controller.requestQueue.length > 0) {
                             const authRequest = controller.requestQueue[0]; // Poll first
                             controller.requestQueue.splice(0, 1); // Remove
-                            IAMCore.Console.info('Poll authenticating queue first: ' + authRequest + ', requestQueue: ' + controller.requestQueue);
+                            _iamConsole.info('Poll authenticating queue first: ', authRequest, ', requestQueue: ', controller.requestQueue);
                             handler.doHandle(authRequest.res, authRequest.method, authRequest.url,
-                                authRequest.successFn, authRequest.errorFn, authRequest.params)
+                                authRequest.successFn, authRequest.errorFn, authRequest.params, redirectFn);
                         }
                     });
                 });
             } else { // Offer queue
                 const authRequest = { res: res, method: method, url: url, successFn: successFn, errorFn: errorFn, params: params };
                 controller.requestQueue.push(authRequest);
-                IAMCore.Console.info('Offered authenticating authRequest: ' + authRequest + ', requestQueue: ' + controller.requestQueue);
+                _iamConsole.info('Offered authenticating authRequest: ', authRequest, ', requestQueue: ', controller.requestQueue);
             }
         },
 	};
@@ -1303,22 +1348,31 @@
 	// Check authentication and redirection
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
 		// Prevent flashing when redirecting to the home page.
-		IAMCore.Console.info("Hidden login document(*) ... ");
-		document.write("<style id='iam_check_authc_redirect_style'>*{display:none;}</style>"); // Hide
+		_iamConsole.info("Hidden login document(*) ... ");
+		$("<style id='iam_check_authc_redirect_style'>*{display:none;}</style>").appendTo($("head")); // Hide
 
 		return new Promise(resolve => {
 			_initHandshakeIfNecessary(true).then(res => {
 				if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
-					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, 0);
-					var count = parseInt(sessionStorage.getItem(constant.authenticatedRedirectCountStorageKey) || 0);
-					if (count > 10) { throw Error("Too many failure redirects: " + count); }
-					sessionStorage.setItem(constant.authenticatedRedirectCountStorageKey, ++count);
-					IAMCore.Console.info("Login authenticated, redirect to: " + redirectUrl);
+					var redirectRecord = JSON.parse(sessionStorage.getItem(constant.authRedirectRecordStorageKey));
+					// Check null or expired? 
+					if (!redirectRecord || (redirectRecord && Math.abs(new Date().getTime() - redirectRecord.t) > 60000)) {
+						sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // For renew
+						redirectRecord = { c: 0, t: new Date().getTime() };
+					}
+					if (redirectRecord.c > 5) {
+						throw "Too many failure redirections: "+ redirectRecord.c;
+					}
+					++redirectRecord.c;
+					redirectRecord.t = new Date().getTime();
+					sessionStorage.setItem(constant.authRedirectRecordStorageKey, JSON.stringify(redirectRecord));
+					_iamConsole.info("Authenticated and redirection to: ", redirectUrl);
 					window.location = redirectUrl;
 				} else {
-					resolve(res);
-					IAMCore.Console.info("Show login body... ");
+					_iamConsole.info("Unauthentication rendering login ... ");
 					$("#iam_check_authc_redirect_style").remove(); // Show
+					sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // For reset
+					resolve(res);
 				}
 			});
 		});
@@ -1377,7 +1431,7 @@
 	};
 	// Export build.
 	IAMCore.prototype.build = function() {
-		IAMCore.Console.info("IAMCore init and building ...");
+		_iamConsole.info("IAMCore init and building ...");
 		// 1: Ensure execution sequence（1.1: get umidToken; 1.2: get handshake; 1.3: init any authenticators）
 		// 2: Forced refresh is to solve the problem that you can't log in again after exiting SPM application. 
 		// The reason is that SPM project is a single page application, and the action of logging out is only to 
@@ -1400,7 +1454,7 @@
 		_defaultCaptchaVerifier = null;
 		runtime = null;
 		settings = null;
-		console.log("Destroyed IAMCore instance.");
+		_iamConsole.log("Destroyed IAMCore instance.");
 	};
 
 	// Export getXsrfToken
@@ -1426,8 +1480,9 @@
 
 	// Export function getIamBaseURI
 	IAMCore.getIamBaseUri = function() {
+		var iamBaseUri = _getIamBaseUri(); 
 		// Overlay
-		sessionStorage.setItem(constant.baseUriStoredKey, (iamBaseUri = _getDefaultIamBaseUri()));
+		sessionStorage.setItem(constant.baseUriStoredKey, iamBaseUri);
 		return iamBaseUri;
 	};
 

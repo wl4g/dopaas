@@ -40,6 +40,8 @@ import com.wl4g.devops.ci.vcs.coding.CodingVcsOperator;
 import com.wl4g.devops.ci.vcs.gitee.GiteeVcsOperator;
 import com.wl4g.devops.ci.vcs.github.GithubVcsOperator;
 import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
+import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
+import com.wl4g.devops.ci.tool.PipelineLogPurger;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.framework.beans.PrototypeAlias;
@@ -282,8 +284,8 @@ public class CiCdAutoConfiguration {
 	// --- Tool's. ---
 
 	@Bean
-	public LogPipelineCleaner logPipelineCleaner() {
-		return new LogPipelineCleaner();
+	public PipelineLogPurger logPipelineCleaner() {
+		return new PipelineLogPurger();
 	}
 
 	// --- PCM's (Project collaboration management). ---

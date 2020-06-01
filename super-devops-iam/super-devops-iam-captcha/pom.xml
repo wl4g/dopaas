@@ -33,7 +33,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-tool-opencv</artifactId>
+			<artifactId>super-devops-components-tools-opencv</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

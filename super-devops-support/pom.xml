@@ -5,12 +5,12 @@
 	<artifactId>super-devops-support</artifactId>
 	<packaging>jar</packaging>
 	<name>Super DevOps Support</name>
-	<url>http://maven.apache.org</url>
+	<url>https://super-devops.wl4g.com</url>
+	<description>A Super Devops module of support.</description>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>super-devops</artifactId>
 		<version>master</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

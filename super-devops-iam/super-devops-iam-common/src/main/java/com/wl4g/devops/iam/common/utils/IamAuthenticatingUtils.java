@@ -23,7 +23,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.apache.shiro.session.Session;
 
-import com.wl4g.devops.tool.common.crypto.symmetric.AESCryptor;
+import com.wl4g.devops.tool.common.crypto.symmetric.AES128ECBPKCS5;
 
 import static org.apache.commons.codec.digest.HmacUtils.hmacSha256Hex;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -162,7 +162,7 @@ public abstract class IamAuthenticatingUtils extends IamSecurityHolder {
 	 * @return
 	 */
 	final public static String generateDataCipherKey() {
-		return new AESCryptor().generateKey(128).toHex();
+		return new AES128ECBPKCS5().generateKey(128).toHex();
 	}
 
 	/**

@@ -25,8 +25,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.devops.ScmServer;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.scm.handler.CentralConfigureHandler;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
-import com.wl4g.devops.scm.context.ConfigContextHandler;
 import com.wl4g.devops.tool.common.lang.ThreadUtils2;
 
 @RunWith(SpringRunner.class)
@@ -38,7 +38,7 @@ public class ScmServerEndpointTests {
 	 * Scm config handler.
 	 */
 	@Autowired
-	protected ConfigContextHandler contextHandler;
+	protected CentralConfigureHandler contextHandler;
 
 	/**
 	 * Simulation config release. </br>

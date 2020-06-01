@@ -18,9 +18,6 @@ package com.wl4g.devops.scm.client.endpoint;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestParam;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.ResponseBody;
-//import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
@@ -28,7 +25,7 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.client.configure.refresh.ScmContextRefresher;
+import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
 
 /**
  * See:<a href=

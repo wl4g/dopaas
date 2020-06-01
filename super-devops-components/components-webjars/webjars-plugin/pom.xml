@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-components-webjars-plugin</artifactId>
@@ -66,8 +67,8 @@
 			<id>minify</id>
 			<build>
 				<plugins>
-					<!-- Minify plugin @see https://samaxes.github.io/minify-maven-plugin/index.html For example: 
-						mvn -U clean install -DskipTests -Pminify -->
+					<!-- Minify plugin @see https://samaxes.github.io/minify-maven-plugin/index.html 
+						For example: mvn -U clean install -DskipTests -Pminify -->
 					<plugin>
 						<groupId>com.samaxes.maven</groupId>
 						<artifactId>minify-maven-plugin</artifactId>
@@ -92,13 +93,13 @@
 									<cssSourceDir>css</cssSourceDir>
 									<jsEngine>CLOSURE</jsEngine>
 									<jsSourceDir>js</jsSourceDir>
-									<jsFiles>
-										<jsFile>jquery-3.3.1.js</jsFile>
-										<jsFile>fingerprint2-2.1.0.js</jsFile>
-										<jsFile>crypto-js-4.0.0.js</jsFile>
-										<jsFile>common-util-2.0.0.js</jsFile>
-										<jsFile>sysmodule-2.0.0.js</jsFile>
-									</jsFiles>
+									<jsIncludes>
+										<jsInclude>jquery-*.js</jsInclude>
+										<jsInclude>fingerprint2-*.js</jsInclude>
+										<jsInclude>crypto-js-*.js</jsInclude>
+										<jsInclude>common-util-*.js</jsInclude>
+										<jsInclude>sysloader-*.js</jsInclude>
+									</jsIncludes>
 								</configuration>
 							</execution>
 							<execution>
@@ -122,13 +123,13 @@
 									<jsEngine>CLOSURE</jsEngine>
 									<jsSourceDir>js</jsSourceDir>
 									<jsFinalFile>${webplugin-final-js.name}</jsFinalFile>
-									<jsFiles>
-										<jsFile>jquery-3.3.1.js</jsFile>
-										<jsFile>fingerprint2-2.1.0.js</jsFile>
-										<jsFile>crypto-js-4.0.0.js</jsFile>
-										<jsFile>common-util-2.0.0.js</jsFile>
-										<!-- <jsFile>sysmodule-2.0.0.js</jsFile> -->
-									</jsFiles>
+									<jsIncludes>
+										<jsInclude>jquery-*.js</jsInclude>
+										<jsInclude>fingerprint2-*.js</jsInclude>
+										<jsInclude>crypto-js-*.js</jsInclude>
+										<jsInclude>common-util-*.js</jsInclude>
+										<!-- <jsInclude>sysloader-*.js</jsInclude> -->
+									</jsIncludes>
 								</configuration>
 							</execution>
 						</executions>

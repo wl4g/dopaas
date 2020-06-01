@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-scm-example</artifactId>
@@ -32,6 +31,12 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-scm-client</artifactId>
 		</dependency>
+		<!-- Optional(Opening the comment means that the Iam authentication component will be loaded 
+			and the IamWithScmClientConfiguration will be started automatically) -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.wl4g</groupId> -->
+		<!-- <artifactId>super-devops-iam-client</artifactId> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-dao</artifactId>

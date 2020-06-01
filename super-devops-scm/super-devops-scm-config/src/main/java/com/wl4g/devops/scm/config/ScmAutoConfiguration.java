@@ -23,12 +23,15 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.context.ConfigContextHandler;
-import com.wl4g.devops.scm.context.CheckImpledConfigContextHandler;
 import com.wl4g.devops.scm.endpoint.ScmServerEndpoint;
+import com.wl4g.devops.scm.handler.CentralConfigureHandler;
+import com.wl4g.devops.scm.handler.CheckImpledCentralConfigureHandler;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
 import com.wl4g.devops.scm.publish.DefaultRedisConfigSourcePublisher;
+import com.wl4g.devops.scm.session.ScmServerConfigSecurityManager;
 import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.tool.common.crypto.asymmetric.RSACryptor;
+import com.wl4g.devops.tool.common.crypto.symmetric.AES128ECBPKCS5;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
@@ -41,8 +44,6 @@ import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
  */
 public class ScmAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
 
-	final public static String BEAN_MVC_EXECUTOR = "mvcTaskExecutor";
-
 	@Bean
 	@ConfigurationProperties(prefix = "spring.cloud.devops.scm")
 	public ScmProperties scmProperties() {
@@ -51,8 +52,8 @@ public class ScmAutoConfiguration extends OptionalPrefixControllerAutoConfigurat
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ConfigContextHandler configContextHandler() {
-		return new CheckImpledConfigContextHandler();
+	public CentralConfigureHandler configContextHandler() {
+		return new CheckImpledCentralConfigureHandler();
 	}
 
 	@Bean
@@ -75,18 +76,25 @@ public class ScmAutoConfiguration extends OptionalPrefixControllerAutoConfigurat
 		return new ScmWebMvcConfigurer(config, executor);
 	}
 
+	@Bean
+	public ScmServerConfigSecurityManager scmServerConfigSecurityManager() {
+		return new ScmServerConfigSecurityManager(new RSACryptor(), new AES128ECBPKCS5());
+	}
+
 	//
-	// Endpoint's
+	// --- Endpoint's. ---
 	//
 
 	@Bean
-	public ScmServerEndpoint scmServerEnndpoint(ConfigContextHandler contextHandler) {
-		return new ScmServerEndpoint(contextHandler);
+	public ScmServerEndpoint scmServerEnndpoint() {
+		return new ScmServerEndpoint();
 	}
 
 	@Bean
 	public PrefixHandlerMapping scmServerEndpointPrefixHandlerMapping() {
 		return super.newPrefixHandlerMapping(URI_S_BASE, ScmEndpoint.class);
 	}
+
+	final public static String BEAN_MVC_EXECUTOR = "mvcTaskExecutor";
 
 }

@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -181,6 +183,7 @@ public abstract class BaseBean implements Serializable {
 		this.remark = remark;
 	}
 
+
 	public String getOrganizationCode() {
 		return organizationCode;
 	}
@@ -188,4 +191,10 @@ public abstract class BaseBean implements Serializable {
 	public void setOrganizationCode(String organizationCode) {
 		this.organizationCode = organizationCode;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " => " + toJSONString(this);
+	}
+
 }

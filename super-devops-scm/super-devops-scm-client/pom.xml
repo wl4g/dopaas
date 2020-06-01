@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-scm-client</artifactId>
@@ -31,9 +30,16 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-scm-common</artifactId>
 		</dependency>
+		<!-- Optional(Iam with SCM configuration will not be loaded by default) -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-client</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!-- Requires -->
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-support</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.retry</groupId>
@@ -101,8 +107,7 @@
 						<option>-useuniqueclassmembernames</option>
 						<!-- 不混淆所有包名，本人测试混淆后WEB项目问题实在太多，毕竟Spring配置中有大量固定写法的包名 -->
 						<option>-keeppackagenames</option>
-						<!-- [*** 非常重要，不加生成jar的目录结构spring将扫描不到(同时被spring的@Configuration注解的类不能混淆, 
-							原因未知 ???) ***] -->
+						<!-- [*** 非常重要，不加生成jar的目录结构spring将扫描不到(同时被spring的@Configuration注解的类不能混淆, 原因未知 ???) ***] -->
 						<option>-keepdirectories</option>
 						<!-- 不混淆所有特殊的类 -->
 						<option>-keepattributes
@@ -117,7 +122,8 @@
 							com.wl4g.devops.scm.client.configure.RefreshBean { *; }</option>
 						<option>-keep class
 							com.wl4g.devops.scm.client.configure.BeanCurrentlyConfigureAspect
-							{ *; }</option>
+							{
+							*; }</option>
 					</options>
 					<outjar>${project.artifactId}-${project.version}-pg.jar</outjar>
 					<!-- 添加依赖，可以按你的需要修改，这里测试只需要一个JRE的Runtime包就行了 -->

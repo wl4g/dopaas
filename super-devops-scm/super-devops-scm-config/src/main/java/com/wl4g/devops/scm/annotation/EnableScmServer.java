@@ -22,6 +22,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
+import com.wl4g.devops.scm.config.IamWithScmAutoConfiguration;
 import com.wl4g.devops.scm.config.ScmAutoConfiguration;
 
 /**
@@ -31,7 +32,7 @@ import com.wl4g.devops.scm.config.ScmAutoConfiguration;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
-@Import({ ScmAutoConfiguration.class })
+@Import({ IamWithScmAutoConfiguration.class, ScmAutoConfiguration.class })
 public @interface EnableScmServer {
 
 }

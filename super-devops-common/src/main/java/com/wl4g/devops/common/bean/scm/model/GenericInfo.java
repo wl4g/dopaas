@@ -16,13 +16,13 @@
 package com.wl4g.devops.common.bean.scm.model;
 
 import com.google.common.net.HostAndPort;
-import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.*;
 
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
@@ -99,7 +99,7 @@ public class GenericInfo implements Serializable {
 
 	@Override
 	public String toString() {
-		return JacksonUtils.toJSONString(this);
+		return getClass().getSimpleName() + " => " + toJSONString(this);
 	}
 
 	public void validation(boolean validVersion, boolean validRelease) {
