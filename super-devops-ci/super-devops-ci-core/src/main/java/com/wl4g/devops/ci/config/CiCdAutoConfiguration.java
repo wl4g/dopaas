@@ -31,7 +31,7 @@ import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator
 import com.wl4g.devops.ci.pipeline.deploy.*;
 import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
-import com.wl4g.devops.ci.tool.LogPipelineCleaner;
+import com.wl4g.devops.ci.tool.PipelineLogPurger;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.ci.vcs.alicode.AlicodeVcsOperator;
@@ -40,8 +40,6 @@ import com.wl4g.devops.ci.vcs.coding.CodingVcsOperator;
 import com.wl4g.devops.ci.vcs.gitee.GiteeVcsOperator;
 import com.wl4g.devops.ci.vcs.github.GithubVcsOperator;
 import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
-import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
-import com.wl4g.devops.ci.tool.PipelineLogPurger;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.framework.beans.PrototypeAlias;
