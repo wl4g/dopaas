@@ -3,6 +3,7 @@ package com.wl4g.devops.iam.common.utils;
 import com.wl4g.devops.common.utils.web.WebUtils3;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.tool.common.codec.Base58;
+import com.wl4g.devops.tool.common.lang.Assert2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -50,7 +51,7 @@ public class IamOrganizationUtils {
      * @return
      */
     public static List<String> getCurrentOrganizationCodes() {
-        String code = getCurrentOrganizationCode();
+        String code = WebUtils3.getRequestParameter(CURRENT_ORGANIZATION_CODE);
         code = new String(Base58.decode(code), UTF_8);
         if (StringUtils.isBlank(code) || StringUtils.equals("all", code)) {
             List<OrganizationInfo> organizationFromSession = getOrganizationFromSession();
@@ -70,7 +71,16 @@ public class IamOrganizationUtils {
      * @return
      */
     public static String getCurrentOrganizationCode() {
-        return WebUtils3.getRequestParameter(CURRENT_ORGANIZATION_CODE);
+        String code = WebUtils3.getRequestParameter(CURRENT_ORGANIZATION_CODE);
+        code = new String(Base58.decode(code), UTF_8);
+        if(StringUtils.isBlank(code) || StringUtils.equals("all", code)){
+            List<OrganizationInfo> organizations = getOrganizationFromSession();
+            List<OrganizationInfo> tops = getTop(organizations);
+            Assert2.notEmptyOf(tops,"CurrentOrganizationCode");
+            return tops.get(0).getOrganizationCode();
+        }else{
+            return code;
+        }
     }
 
     /**
