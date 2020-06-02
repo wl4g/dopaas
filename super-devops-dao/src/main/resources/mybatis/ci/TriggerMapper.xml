@@ -232,6 +232,12 @@
       AND DATE_FORMAT(create_date,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
       AND DATE_FORMAT(create_date,'%Y-%m-%d %H:%i') &lt; DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
     </if>
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>
   </select>
 
   <select id="getTriggerByAppClusterIdAndBranch" resultMap="BaseResultMap" parameterType="java.util.Map" >

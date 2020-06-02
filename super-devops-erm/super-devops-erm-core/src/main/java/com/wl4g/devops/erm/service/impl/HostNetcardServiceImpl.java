@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
@@ -61,7 +62,7 @@ public class HostNetcardServiceImpl implements HostNetcardService {
 
     public void save(HostNetcard hostNetcard){
         if(isNull(hostNetcard.getId())){
-            hostNetcard.preInsert();
+            hostNetcard.preInsert(getCurrentOrganizationCode());
             insert(hostNetcard);
         }else{
             hostNetcard.preUpdate();

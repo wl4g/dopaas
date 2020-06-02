@@ -19,7 +19,7 @@ public interface PipelineHistoryDao {
 
     int updateByPrimaryKey(PipelineHistory record);
 
-    List<TaskHistory> list(@Param("pipeName") String pipeName, @Param("clusterName") String clusterName,
+    List<TaskHistory> list(@Param("organizationCodes")List<String> organizationCodes, @Param("pipeName") String pipeName, @Param("clusterName") String clusterName,
                            @Param("environment") String environment, @Param("startDate") String startDate,
                            @Param("endDate") String endDate, @Param("providerKind") String providerKind);
 

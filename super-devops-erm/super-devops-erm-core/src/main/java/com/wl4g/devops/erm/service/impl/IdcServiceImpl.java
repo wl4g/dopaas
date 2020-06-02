@@ -27,6 +27,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
@@ -54,7 +55,7 @@ public class IdcServiceImpl implements IdcService {
 
     public void save(Idc idc){
         if(isNull(idc.getId())){
-            idc.preInsert();
+            idc.preInsert(getCurrentOrganizationCode());
             insert(idc);
         }else{
             idc.preUpdate();

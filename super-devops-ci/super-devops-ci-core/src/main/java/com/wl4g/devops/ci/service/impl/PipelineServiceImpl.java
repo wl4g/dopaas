@@ -20,6 +20,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -67,7 +69,7 @@ public class PipelineServiceImpl implements PipelineService {
     @Override
     public PageModel list(PageModel pm, String pipeName, String providerKind, String environment) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(pipelineDao.list(null, pipeName, providerKind, environment));
+        pm.setRecords(pipelineDao.list(getCurrentOrganizationCodes(),null, pipeName, providerKind, environment));
         return pm;
     }
 
@@ -136,7 +138,7 @@ public class PipelineServiceImpl implements PipelineService {
     public void insert(Pipeline pipeline) {
         Assert2.notNullOf(pipeline, "pipeline");
         // Insert Pipeline
-        pipeline.preInsert();
+        pipeline.preInsert(getCurrentOrganizationCode());
         pipelineDao.insertSelective(pipeline);
         // Insert PipeInstance
         Integer[] instanceIds = pipeline.getInstanceIds();
@@ -342,7 +344,7 @@ public class PipelineServiceImpl implements PipelineService {
 
     @Override
     public List<Pipeline> getForSelect() {
-        return pipelineDao.list(null, null, null, null);
+        return pipelineDao.list(getCurrentOrganizationCodes(),null, null, null, null);
     }
 
     private PipeStepBuildingProject getPipeStepBuildingProject(List<PipeStepBuildingProject> pipeStepBuildingProjects, Integer projectId) {

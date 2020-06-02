@@ -32,6 +32,8 @@ import org.springframework.util.Assert;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_TYPE_TIMMING;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 
 /**
  * @author vjay
@@ -54,7 +56,7 @@ public class TriggerServiceImpl implements TriggerService {
 			endDateStr = DateUtils2.formatDate(DateUtils2.addDays(DateUtils2.parseDate(endDate), 1));
 		}
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(triggerDao.list(id, name, taskId, enable, startDate, endDateStr));
+		pm.setRecords(triggerDao.list(getCurrentOrganizationCodes(), id, name, taskId, enable, startDate, endDateStr));
 		return pm;
 	}
 
@@ -65,7 +67,7 @@ public class TriggerServiceImpl implements TriggerService {
 			trigger.preUpdate();
 			trigger = update(trigger);
 		} else {
-			trigger.preInsert();
+			trigger.preInsert(getCurrentOrganizationCode());
 			trigger.setDelFlag(DEL_FLAG_NORMAL);
 			trigger = insert(trigger);
 		}
@@ -76,7 +78,6 @@ public class TriggerServiceImpl implements TriggerService {
 
 	@Transactional
 	public Trigger insert(Trigger trigger) {
-		trigger.preInsert();
 		triggerDao.insertSelective(trigger);
 		return trigger;
 	}

@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.Orchestration">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -23,11 +24,11 @@
 
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, status, type, remark, del_flag, create_date, create_by, update_date, update_by
+    id, name, organization_code, status, type, remark, del_flag, create_date, create_by, update_date, update_by
   </sql>
 
   <sql id="Base_Column_List_o">
-    o.id, o.name, o.status, o.type, o.remark, o.del_flag, o.create_date, o.create_by, o.update_date, o.update_by
+    o.id, o.name, o.organization_code, o.status, o.type, o.remark, o.del_flag, o.create_date, o.create_by, o.update_date, o.update_by
   </sql>
 
   <sql id="Orchestration_Pipeline_Column_List">
@@ -53,6 +54,12 @@
     <if test="name != null and name != ''" >
       AND name LIKE CONCAT('%','${name}','%')
     </if>
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>
   </select>
 
 
@@ -61,11 +68,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Orchestration">
-    insert into ci_orchestration (id, name, status, 
+    insert into ci_orchestration (id, name, organization_code, status,
       type, remark, del_flag, 
       create_date, create_by, update_date, 
       update_by)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
       #{type,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, 
       #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=VARCHAR})
@@ -78,6 +85,9 @@
       </if>
       <if test="name != null">
         name,
+      </if>
+      <if test="organizationCode != null">
+        organization_code,
       </if>
       <if test="status != null">
         status,
@@ -111,6 +121,9 @@
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
       </if>
@@ -143,6 +156,9 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
@@ -173,6 +189,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.Orchestration">
     update ci_orchestration
     set name = #{name,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},

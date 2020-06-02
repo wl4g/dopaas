@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 
 @Service
@@ -68,7 +69,7 @@ public class AppInstanceServiceImpl implements AppInstanceService {
     }
 
     private void insert(AppInstance appInstance) {
-        appInstance.preInsert();
+        appInstance.preInsert(getCurrentOrganizationCode());
         appInstanceDao.insertSelective(appInstance);
     }
 

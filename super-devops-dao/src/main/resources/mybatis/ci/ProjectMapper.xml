@@ -264,6 +264,12 @@
     <if test="isBoot != null">
       AND p.is_boot = #{isBoot,jdbcType=INTEGER}
     </if>
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and p.organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>
   </select>
 
   <select id="getByProjectName" parameterType="java.lang.String" resultMap="BaseResultMap">

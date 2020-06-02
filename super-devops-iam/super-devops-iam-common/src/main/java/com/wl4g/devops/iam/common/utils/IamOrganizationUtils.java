@@ -50,7 +50,7 @@ public class IamOrganizationUtils {
      * @return
      */
     public static List<String> getCurrentOrganizationCodes() {
-        String code = WebUtils3.getRequestParameter(CURRENT_ORGANIZATION_CODE);
+        String code = getCurrentOrganizationCode();
         code = new String(Base58.decode(code), UTF_8);
         if (StringUtils.isBlank(code) || StringUtils.equals("all", code)) {
             List<OrganizationInfo> organizationFromSession = getOrganizationFromSession();
@@ -62,6 +62,15 @@ public class IamOrganizationUtils {
         } else {
             return getOrganizationCodesByCode(code);
         }
+    }
+
+    /**
+     * Get Organization Codes By current Code
+     *
+     * @return
+     */
+    public static String getCurrentOrganizationCode() {
+        return WebUtils3.getRequestParameter(CURRENT_ORGANIZATION_CODE);
     }
 
     /**

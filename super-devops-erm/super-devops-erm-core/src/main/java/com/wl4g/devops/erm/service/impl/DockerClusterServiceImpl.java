@@ -31,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
@@ -61,7 +62,7 @@ public class DockerClusterServiceImpl implements DockerClusterService {
 
     public void save(DockerCluster dockerCluster){
         if(isNull(dockerCluster.getId())){
-            dockerCluster.preInsert();
+            dockerCluster.preInsert(getCurrentOrganizationCode());
             insert(dockerCluster);
         }else{
             dockerCluster.preUpdate();

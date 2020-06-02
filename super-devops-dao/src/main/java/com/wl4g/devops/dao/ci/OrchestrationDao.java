@@ -18,5 +18,5 @@ public interface OrchestrationDao {
 
     int updateByPrimaryKey(Orchestration record);
 
-    List<Orchestration> list(@Param("name") String name);
+    List<Orchestration> list(@Param("organizationCodes")List<String> organizationCodes, @Param("name") String name);
 }

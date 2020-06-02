@@ -39,6 +39,7 @@ import java.util.UUID;
 
 import static com.wl4g.devops.erm.util.SshkeyUtils.decryptSshkeyFromHex;
 import static com.wl4g.devops.erm.util.SshkeyUtils.encryptSshkeyToHex;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
@@ -75,7 +76,7 @@ public class SshServiceImpl implements SshService {
 
     public void save(Ssh ssh){
         if(isNull(ssh.getId())){
-            ssh.preInsert();
+            ssh.preInsert(getCurrentOrganizationCode());
             insert(ssh);
         }else{
             ssh.preUpdate();
