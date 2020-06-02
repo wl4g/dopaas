@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(Test) configuration. ####
+# #### Environment(Dev) configuration. ####
 #
 spring:
   boot: # Spring boot admin.
