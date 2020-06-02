@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(Test) configuration. ####
+# #### Environment(FAT Test) configuration. ####
 #
 spring:
   cloud:
@@ -38,16 +38,16 @@ spring:
           wechat-mp:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}${server.contextPath}/sns/wechatmp/callback
+            redirect-url: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.fat}${server.contextPath}/sns/wechatmp/callback
           wechat:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: http://passport.wl4g.com${server.contextPath}/sns/wechat/callback
-            href: https://${DEVOPS_DOMAIN_TOP:wl4g.com}/${server.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+            redirect-url: http://passport.wl4g.fat${server.contextPath}/sns/wechat/callback
+            href: https://${DEVOPS_DOMAIN_TOP:wl4g.fat}/${server.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
           qq:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
-            redirect-url: http://passport.wl4g.com${server.contextPath}/sns/qq/callback
+            redirect-url: http://passport.wl4g.fat${server.contextPath}/sns/qq/callback
   # Spring datasource configuration.
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

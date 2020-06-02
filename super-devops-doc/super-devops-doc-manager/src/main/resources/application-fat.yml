@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(Test) configuration. ####
+# #### Environment(FAT Test) configuration. ####
 #
 spring:
   cloud:
