@@ -33,6 +33,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
+
 /**
  * @author vjay
  * @date 2019-11-12 11:05:00
@@ -52,14 +55,14 @@ public class PcmServcieImpl implements PcmService {
 	@Override
 	public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(pcmDao.list(name, providerKind, authType));
+		pm.setRecords(pcmDao.list(getCurrentOrganizationCodes(), name, providerKind, authType));
 		return pm;
 	}
 
 	@Override
 	public void save(Pcm pcm) {
 		if (pcm.getId() == null) {
-			pcm.preInsert();
+			pcm.preInsert(getCurrentOrganizationCode());
 			insert(pcm);
 		} else {
 			pcm.preUpdate();
@@ -90,7 +93,7 @@ public class PcmServcieImpl implements PcmService {
 
 	@Override
 	public List<Pcm> all() {
-		return pcmDao.list(null, null, null);
+		return pcmDao.list(getCurrentOrganizationCodes(), null, null, null);
 	}
 
 	@Override

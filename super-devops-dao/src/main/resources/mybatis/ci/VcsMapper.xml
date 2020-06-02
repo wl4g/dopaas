@@ -46,6 +46,12 @@
     <if test="authType != null" >
       AND auth_type = #{authType,jdbcType=INTEGER}
     </if>
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >

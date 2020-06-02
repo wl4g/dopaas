@@ -256,6 +256,12 @@
     <if test="providerKind != null and providerKind != ''" >
       AND p.provider_kind = #{providerKind,jdbcType=VARCHAR}
     </if>
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and p.organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>
     order by p.create_date desc
   </select>
 

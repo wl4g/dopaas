@@ -31,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
@@ -61,7 +62,7 @@ public class K8sClusterServiceImpl implements K8sClusterService {
 
     public void save(K8sCluster k8sCluster){
         if(isNull(k8sCluster.getId())){
-            k8sCluster.preInsert();
+            k8sCluster.preInsert(getCurrentOrganizationCode());
             insert(k8sCluster);
         }else{
             k8sCluster.preUpdate();

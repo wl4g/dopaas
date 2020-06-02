@@ -5,6 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="pipe_id" jdbcType="INTEGER" property="pipeId" />
     <result column="provider_kind" jdbcType="VARCHAR" property="providerKind" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="sha_local" jdbcType="VARCHAR" property="shaLocal" />
     <result column="ref_id" jdbcType="INTEGER" property="refId" />
@@ -25,11 +26,11 @@
     <result column="create_by_name" property="createByName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, pipe_id, provider_kind, status, sha_local, ref_id, cost_time, track_type, track_id, 
+    id, pipe_id, provider_kind, organization_code, status, sha_local, ref_id, cost_time, track_type, track_id,
     annex, remark, create_date, create_by, update_date, update_by, del_flag
   </sql>
   <sql id="Base_Column_List_h">
-    h.id, h.pipe_id, h.provider_kind, h.status, h.sha_local, h.ref_id, h.cost_time, h.track_type, h.track_id,
+    h.id, h.pipe_id, h.provider_kind, h.organization_code, h.status, h.sha_local, h.ref_id, h.cost_time, h.track_type, h.track_id,
     h.annex, h.remark, h.create_date, h.create_by, h.update_date, h.update_by, h.del_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -45,13 +46,13 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistory">
-    insert into ci_pipe_history (id, pipe_id, provider_kind,
+    insert into ci_pipe_history (id, pipe_id, provider_kind, organization_code,
       status, sha_local, ref_id, 
       cost_time, track_type, track_id, 
       annex, remark, create_date, 
       create_by, update_date, update_by, 
       del_flag)
-    values (#{id,jdbcType=INTEGER}, #{pipeId,jdbcType=INTEGER}, #{providerKind,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{pipeId,jdbcType=INTEGER}, #{providerKind,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR},
       #{status,jdbcType=INTEGER}, #{shaLocal,jdbcType=VARCHAR}, #{refId,jdbcType=INTEGER}, 
       #{costTime,jdbcType=TIMESTAMP}, #{trackType,jdbcType=VARCHAR}, #{trackId,jdbcType=VARCHAR},
       #{annex,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
@@ -69,6 +70,9 @@
       </if>
       <if test="providerKind != null">
         provider_kind,
+      </if>
+      <if test="organizationCode != null">
+        organization_code,
       </if>
       <if test="status != null">
         status,
@@ -120,6 +124,9 @@
       <if test="providerKind != null">
         #{providerKind,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
       </if>
@@ -170,6 +177,9 @@
       <if test="providerKind != null">
         provider_kind = #{providerKind,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
@@ -216,6 +226,7 @@
     update ci_pipe_history
     set pipe_id = #{pipeId,jdbcType=INTEGER},
       provider_kind = #{providerKind,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       sha_local = #{shaLocal,jdbcType=VARCHAR},
       ref_id = #{refId,jdbcType=INTEGER},
@@ -255,6 +266,12 @@
     <if test="startDate!=null and startDate!='' and endDate!='' and endDate !=null">
       AND DATE_FORMAT(h.create_date,'%Y-%m-%d %H:%i') &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
       AND DATE_FORMAT(h.create_date,'%Y-%m-%d %H:%i') &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+    </if>
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and h.organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
     </if>
     order by h.create_date desc
   </select>

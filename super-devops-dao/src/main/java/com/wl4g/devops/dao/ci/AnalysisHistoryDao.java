@@ -16,6 +16,7 @@
 package com.wl4g.devops.dao.ci;
 
 import com.wl4g.devops.common.bean.ci.AnalysisHistory;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -32,5 +33,5 @@ public interface AnalysisHistoryDao {
 
     int updateByPrimaryKey(AnalysisHistory record);
 
-    List<AnalysisHistory> list();
+    List<AnalysisHistory> list(@Param("organizationCodes")List<String> organizationCodes);
 }

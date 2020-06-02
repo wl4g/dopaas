@@ -20,5 +20,5 @@ public interface PipelineDao {
 
     int updateByPrimaryKey(Pipeline record);
 
-    List<Pipeline> list(@Param("id") Integer id,@Param("pipeName") String pipeName, @Param("providerKind") String providerKind,  @Param("environment") String environment);
+    List<Pipeline> list(@Param("organizationCodes")List<String> organizationCodes, @Param("id") Integer id,@Param("pipeName") String pipeName, @Param("providerKind") String providerKind,  @Param("environment") String environment);
 }

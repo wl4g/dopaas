@@ -31,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
@@ -63,7 +64,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public void save(Host host){
         if(isNull(host.getId())){
-            host.preInsert();
+            host.preInsert(getCurrentOrganizationCode());
             insert(host);
         }else{
             host.preUpdate();
