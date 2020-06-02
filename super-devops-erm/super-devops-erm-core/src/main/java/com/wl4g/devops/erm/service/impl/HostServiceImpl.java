@@ -82,6 +82,7 @@ public class HostServiceImpl implements HostService {
                 hostSsh.preInsert();
                 hostSsh.setHostId(host.getId());
                 hostSsh.setSshId(sshId);
+                hostSshs.add(hostSsh);
             }
             hostSshDao.insertBatch(hostSshs);
         }

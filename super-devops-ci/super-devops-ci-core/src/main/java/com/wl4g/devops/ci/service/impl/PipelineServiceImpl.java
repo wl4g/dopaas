@@ -109,8 +109,10 @@ public class PipelineServiceImpl implements PipelineService {
 
         //Pipeline Notification
         PipeStepNotification pipeStepNotification = pipeStepNotificationDao.selectByPipeId(id);
-        pipeStepNotification.setContactGroupId2(pipeStepNotification.getContactGroupIds().split(","));
-        pipeline.setPipeStepNotification(pipeStepNotification);
+        if(Objects.nonNull(pipeStepNotification)){
+            pipeStepNotification.setContactGroupId2(pipeStepNotification.getContactGroupIds().split(","));
+            pipeline.setPipeStepNotification(pipeStepNotification);
+        }
 
         //Pipeline Instance Command
         PipeStepInstanceCommand pipeStepInstanceCommand = pipeStepInstanceCommandDao.selectByPipeId(id);
