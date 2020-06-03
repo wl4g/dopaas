@@ -106,7 +106,8 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @param data
 	 */
 	public static void writeALineFile(File file, String data) {
-		writeFile(file, LINE_SEPARATOR + data, Charset.forName("UTF-8"), true);
+		writeFile(file, LINE_SEPARATOR, UTF_8, true);
+		writeFile(file, data, UTF_8, true);
 	}
 
 	/**
@@ -121,7 +122,8 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @param data
 	 */
 	public static void writeBLineFile(File file, String data) {
-		writeFile(file, data + LINE_SEPARATOR, Charset.forName("UTF-8"), true);
+		writeFile(file, data, UTF_8, true);
+		writeFile(file, LINE_SEPARATOR, UTF_8, true);
 	}
 
 	/**
@@ -131,7 +133,7 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @param data
 	 */
 	public static void writeFile(File file, String data) {
-		writeFile(file, data, Charset.forName("UTF-8"), true);
+		writeFile(file, data, UTF_8, true);
 	}
 
 	/**
@@ -142,7 +144,7 @@ public abstract class FileIOUtils extends FileUtils {
 	 * @param append
 	 */
 	public static void writeFile(File file, String data, boolean append) {
-		writeFile(file, data, Charset.forName("UTF-8"), append);
+		writeFile(file, data, UTF_8, append);
 	}
 
 	/**
@@ -154,7 +156,7 @@ public abstract class FileIOUtils extends FileUtils {
 	 */
 	public static void writeFile(File file, String data, Charset charset, boolean append) {
 		notNull(file, "Write file must not be null");
-		hasText(data, "Write data must not be empty");
+		notNull(data, "Write data must not be empty");
 		notNull(charset, "Write charset must not be null");
 
 		ensureFile(file);
