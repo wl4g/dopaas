@@ -39,6 +39,7 @@ import com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils;
  * @since
  */
 public class HfileBulkImporter {
+
 	final static Log log = LogFactory.getLog(HfileBulkImporter.class);
 
 	/**
@@ -58,9 +59,9 @@ public class HfileBulkImporter {
 	public static void main(String[] args) throws Exception {
 		HbaseMigrateUtils.showBanner();
 
-		CommandLine line = new Builder().option("z", "zkaddr", true, "Zookeeper address.")
-				.option("t", "tabname", true, "Hbase table name.")
-				.option("p", "path", true, "Data hdfs path to be import. e.g. hdfs://localhost:9000/bak/safeclound.tb_air")
+		CommandLine line = new Builder().option("z", "zkaddr", null, "Zookeeper address.")
+				.option("t", "tabname", null, "Hbase table name.")
+				.option("p", "path", null, "Data hdfs path to be import. e.g. hdfs://localhost:9000/bak/safeclound.tb_air")
 				.build(args);
 
 		Configuration cfg = HBaseConfiguration.create();

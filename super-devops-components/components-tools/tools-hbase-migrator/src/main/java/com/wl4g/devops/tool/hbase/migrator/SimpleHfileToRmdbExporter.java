@@ -18,6 +18,7 @@ package com.wl4g.devops.tool.hbase.migrator;
 import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
 
 import static com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils.*;
+import static java.lang.String.valueOf;
 
 import java.net.URI;
 
@@ -90,25 +91,23 @@ public class SimpleHfileToRmdbExporter {
 		HbaseMigrateUtils.showBanner();
 
 		Builder builder = new Builder();
-		builder.option("V", "verbose", false,
-				"Set to true to show messages about what the migrator(MR) is doing. default: false");
-		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_MR_TMPDIR);
-		builder.option("z", "zkaddr", true, "Zookeeper address.");
-		builder.option("t", "tabname", true, "Hbase table name.");
-		builder.option("o", "outputDir", false,
-				"Hfile export output hdfs directory. default:" + DEFAULT_HFILE_OUTPUT_DIR + "/{tableName}");
-		builder.option("b", "batchSize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
-		builder.option("s", "startRow", false, "Scan start rowkey.");
-		builder.option("e", "endRow", false, "Scan end rowkey.");
-		builder.option("S", "startTime", false, "Scan start timestamp.");
-		builder.option("E", "endTime", false, "Scan end timestamp.");
-		builder.option("U", "user", false, "User name used for scan check (default: hbase)");
-		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default: " + DEFAULT_MAPPER_CLASS);
-		builder.option("j", "jdbcUrl", true, "Hbase to rmdb database jdbc url");
-		builder.option("u", "username", true, "Hbase to rmdb database jdbc username");
-		builder.option("p", "password", true, "Hbase to rmdb database jdbc password");
-		builder.option("c", "maxConnections", false,
-				"Hbase to rmdb database jdbc maxConnections. default: " + DEFAULT_RMDB_MAXCONNECTIONS);
+		builder.option("V", "verbose", "false", "Set to true to show messages about what the migrator(MR) is doing.");
+		builder.option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.");
+		builder.option("z", "zkaddr", null, "Zookeeper address.");
+		builder.option("t", "tabname", null, "Hbase table name.");
+		builder.option("o", "outputDir", DEFAULT_HFILE_OUTPUT_DIR + "/{tableName}", "Hfile export output hdfs directory.");
+		builder.option("b", "batchSize", DEFAULT_SCAN_BATCH_SIZE, "Scan batch size.");
+		// builder.option("s", "startRow", EMPTY, "Scan start rowkey.");
+		// builder.option("e", "endRow", EMPTY, "Scan end rowkey.");
+		// builder.option("S", "startTime", EMPTY, "Scan start timestamp.");
+		// builder.option("E", "endTime", EMPTY, "Scan end timestamp.");
+		builder.option("U", "user", "hbase", "User name used for scan check.");
+		builder.option("M", "mapperClass", DEFAULT_MAPPER_CLASS, "Transfrom migration mapper class name.");
+		builder.option("j", "jdbcUrl", null, "Hbase to rmdb database jdbc url");
+		builder.option("u", "username", null, "Hbase to rmdb database jdbc username");
+		builder.option("p", "password", null, "Hbase to rmdb database jdbc password");
+		builder.option("c", "maxConnections", valueOf(DEFAULT_RMDB_MAXCONNECTIONS),
+				"Hbase to rmdb database jdbc maxConnections.");
 		CommandLine line = builder.build(args);
 
 		// Gets rmdb provider instance.

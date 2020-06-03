@@ -47,6 +47,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.IOException;
@@ -61,6 +62,7 @@ import java.sql.Timestamp;
  * @since
  */
 public class HfileBulkExporter {
+
 	final static Log log = LogFactory.getLog(HfileBulkExporter.class);
 
 	final public static String DEFAULT_MAPPER_CLASS = NoOpTransformMapper.class.getName();
@@ -85,18 +87,17 @@ public class HfileBulkExporter {
 		HbaseMigrateUtils.showBanner();
 
 		Builder builder = new Builder();
-		builder.option("T", "tmpdir", false, "Hfile export tmp directory. default:" + DEFAULT_HBASE_MR_TMPDIR);
-		builder.option("z", "zkaddr", true, "Zookeeper address.");
-		builder.option("t", "tabname", true, "Hbase table name.");
-		builder.option("o", "outputDir", false,
-				"Hfile export output hdfs directory. default:" + DEFAULT_HFILE_OUTPUT_DIR + "/{tableName}");
-		builder.option("b", "batchSize", false, "Scan batch size. default: " + DEFAULT_SCAN_BATCH_SIZE);
-		builder.option("s", "startRow", false, "Scan start rowkey.");
-		builder.option("e", "endRow", false, "Scan end rowkey.");
-		builder.option("S", "startTime", false, "Scan start timestamp.");
-		builder.option("E", "endTime", false, "Scan end timestamp.");
-		builder.option("U", "user", false, "User name used for scan check (default: hbase)");
-		builder.option("M", "mapperClass", false, "Transfrom migration mapper class name. default: " + DEFAULT_MAPPER_CLASS);
+		builder.option("T", "tmpdir", DEFAULT_HBASE_MR_TMPDIR, "Hfile export tmp directory.");
+		builder.option("z", "zkaddr", null, "Zookeeper address.");
+		builder.option("t", "tabname", null, "Hbase table name.");
+		builder.option("o", "outputDir", DEFAULT_HFILE_OUTPUT_DIR + "/{tableName}", "Hfile export output hdfs directory.");
+		builder.option("b", "batchSize", DEFAULT_SCAN_BATCH_SIZE, "Scan batch size.");
+		builder.option("s", "startRow", EMPTY, "Scan start rowkey.");
+		builder.option("e", "endRow", EMPTY, "Scan end rowkey.");
+		builder.option("S", "startTime", EMPTY, "Scan start timestamp.");
+		builder.option("E", "endTime", EMPTY, "Scan end timestamp.");
+		builder.option("U", "user", "hbase", "User name used for scan check.");
+		builder.option("M", "mapperClass", DEFAULT_MAPPER_CLASS, "Transfrom migration mapper class name.");
 		doExporting(builder.build(args));
 	}
 
