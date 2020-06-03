@@ -21,6 +21,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.notEmptyOf;
 import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.replace;
 import static org.apache.commons.lang3.StringUtils.split;
 
 import java.io.BufferedReader;
@@ -50,7 +51,9 @@ import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternRes
  */
 public class SourceCodeCounterTool {
 
-	final public static String DEFAULT_INCLUDES_FILE_EXT = ".java,.js,.sh,.py";
+	final public static String DEFAULT_EXCLUDES_FILE_PATHS = replace("/node_modules/,/target/,/dist/,/assets/", "/",
+			File.separator);
+	final public static String DEFAULT_INCLUDES_FILE_EXTS = ".java,.js,.sh,.py,.go,.css,.html,.htm,.c,.h,.cpp";
 
 	public static void main(String[] args) throws Exception {
 		showBanner();
@@ -59,20 +62,23 @@ public class SourceCodeCounterTool {
 		Builder builder = new Builder();
 		builder.option("V", "verbose", "false", "Show print running verbose details.");
 		builder.option("r", "rootDir", null, "Start scan root directory path.");
-		builder.option("i", "fileExtIncludes", DEFAULT_INCLUDES_FILE_EXT, "Includes file ext.");
+		builder.option("i", "fileIncludes", DEFAULT_INCLUDES_FILE_EXTS, "Includes file path parts. eg: .java,.sh");
+		builder.option("e", "fileExcludes", DEFAULT_EXCLUDES_FILE_PATHS, "Excludes file path parts. eg: /target/,/node_modules/");
 		CommandLine line = builder.build(args);
 
 		boolean verbose = Boolean.parseBoolean(line.getOptionValue("verbose", "false"));
 		String rootDir = line.getOptionValue("rootDir");
-		String includes = line.getOptionValue("fileExtIncludes", DEFAULT_INCLUDES_FILE_EXT);
-		SourceCodeCounter counter = new SourceCodeCounter(verbose, asList(split(includes, ",")));
-		out.println("  Starting scanning analysis ......");
+		List<String> includes = asList(split(line.getOptionValue("fileIncludes", DEFAULT_INCLUDES_FILE_EXTS), ","));
+		List<String> excludes = asList(split(line.getOptionValue("fileExcludes", DEFAULT_EXCLUDES_FILE_PATHS), ","));
+		SourceCodeCounter counter = new SourceCodeCounter(verbose, includes, excludes);
+		out.println("  Startup scanning analysis ......");
 		counter.process(rootDir);
 		out.println("  Scanned Analysis Result:");
 		out.println(format("     Root directory: %s", rootDir));
-		out.println(format("     Scan source file include exts: %s", includes));
-		out.println(format("     Scan source files total: %s", new DecimalFormat(",###.##").format(counter.getFileTotalCount())));
-		out.println(format("     Source code rows total: %s", new DecimalFormat(",###.##").format(counter.getRowsTotalCount())));
+		out.println(format("     Scanned file ext includes: %s", includes));
+		out.println(format("     Scanned file path excludes: %s", excludes));
+		out.println(format("     Scanned files total: %s", new DecimalFormat(",###.##").format(counter.getFileTotalCount())));
+		out.println(format("     Source codes lines: %s", new DecimalFormat(",###.##").format(counter.getLineTotalCount())));
 	}
 
 	/**
@@ -95,23 +101,27 @@ public class SourceCodeCounterTool {
 	public static class SourceCodeCounter implements ProcessFunction<String, Integer> {
 
 		final private boolean verbose;
-		final private List<String> fileExtIncludes;
+		final private List<String> fileIncludes;
+		final private List<String> fileExcludes;
+
 		final private AtomicInteger fileTotalCount = new AtomicInteger(0);
-		final private AtomicInteger rowsTotalCount = new AtomicInteger(0);
+		final private AtomicInteger lineTotalCount = new AtomicInteger(0);
 		final private List<String> sourceFiles = new ArrayList<>(128);
 
-		public SourceCodeCounter(boolean verbose, List<String> fileExtIncludes) {
-			notEmptyOf(fileExtIncludes, "fileExtIncludes");
+		public SourceCodeCounter(boolean verbose, List<String> fileIncludes, List<String> fileExcludes) {
+			notEmptyOf(fileIncludes, "fileIncludes");
+			notEmptyOf(fileExcludes, "fileExcludes");
 			this.verbose = verbose;
-			this.fileExtIncludes = fileExtIncludes;
+			this.fileIncludes = fileIncludes;
+			this.fileExcludes = fileExcludes;
 		}
 
 		public int getFileTotalCount() {
 			return fileTotalCount.get();
 		}
 
-		public int getRowsTotalCount() {
-			return rowsTotalCount.get();
+		public int getLineTotalCount() {
+			return lineTotalCount.get();
 		}
 
 		@Override
@@ -121,7 +131,7 @@ public class SourceCodeCounterTool {
 
 			sourceFiles.forEach(file -> doStatisticsCodeNumbers(new File(file)));
 
-			return getRowsTotalCount();
+			return getLineTotalCount();
 		}
 
 		/**
@@ -137,7 +147,7 @@ public class SourceCodeCounterTool {
 				while (br.readLine() != null) {
 					++count;
 				}
-				rowsTotalCount.addAndGet(count);
+				lineTotalCount.addAndGet(count);
 				if (verbose) {
 					out.println(format("Source code scanned lines: %-6s - %snd file: %s", count, fileTotalCount, file));
 				}
@@ -164,11 +174,24 @@ public class SourceCodeCounterTool {
 						addCodeFiles(f.getPath());
 					} else {
 						String _path = f.getAbsolutePath();
+						boolean matchInclude = false, matchExclude = false;
 						if (_path.contains(".")) {
-							String fileExt = _path.substring(_path.lastIndexOf("."));
-							if (fileExtIncludes.contains(fileExt)) {
-								sourceFiles.add(f.getPath());
+							String ext = _path.substring(_path.lastIndexOf("."));
+							for (String include : fileIncludes) {
+								if (ext.contains(include)) {
+									matchInclude = true;
+									break;
+								}
 							}
+						}
+						for (String exclude : fileExcludes) {
+							if (_path.contains(exclude)) {
+								matchExclude = true;
+								break;
+							}
+						}
+						if (matchInclude && !matchExclude) {
+							sourceFiles.add(f.getPath());
 						}
 					}
 				}

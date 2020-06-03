@@ -31,6 +31,10 @@ import java.io.File;
 public class SourceCodeCounterToolTests {
 
 	public static void main(String[] args) throws Exception {
+		statisThatRootCodesTests();
+	}
+
+	public static void statisThatRootCodesTests() throws Exception {
 		// String rootDir = USER_DIR;
 		String[] parts = split(USER_DIR, File.separator);
 		String rootDir = null;
