@@ -20,8 +20,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -177,9 +177,10 @@ public class PipelineServiceImpl implements PipelineService {
             //Insert PipeStepBuildingProject
             List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding().getPipeStepBuildingProjects();
             if (!CollectionUtils.isEmpty(pipeStepBuildingProjects)) {
-                for (PipeStepBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects) {
-                    pipeStepBuildingProject.preInsert();
-                    pipeStepBuildingProject.setBuildingId(pipeStepBuilding.getId());
+                for (int i=0; i<pipeStepBuildingProjects.size();i++) {
+                    pipeStepBuildingProjects.get(i).preInsert();
+                    pipeStepBuildingProjects.get(i).setSort(i+1);
+                    pipeStepBuildingProjects.get(i).setBuildingId(pipeStepBuilding.getId());
                 }
                 pipeStepBuildingProjectDao.insertBatch(pipeStepBuildingProjects);
             }
@@ -259,9 +260,10 @@ public class PipelineServiceImpl implements PipelineService {
             //Update PipeStepBuildingProject
             List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeline.getPipeStepBuilding().getPipeStepBuildingProjects();
             if (!CollectionUtils.isEmpty(pipeStepBuildingProjects)) {
-                for (PipeStepBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects) {
-                    pipeStepBuildingProject.preInsert();
-                    pipeStepBuildingProject.setBuildingId(pipeline.getPipeStepBuilding().getId());
+                for (int i=0; i<pipeStepBuildingProjects.size();i++) {
+                    pipeStepBuildingProjects.get(i).preInsert();
+                    pipeStepBuildingProjects.get(i).setSort(i+1);
+                    pipeStepBuildingProjects.get(i).setBuildingId(pipeStepBuilding.getId());
                 }
                 pipeStepBuildingProjectDao.insertBatch(pipeStepBuildingProjects);
             }

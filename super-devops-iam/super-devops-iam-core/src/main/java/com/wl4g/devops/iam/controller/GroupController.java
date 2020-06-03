@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.controller;
 
 import com.wl4g.devops.common.bean.iam.Group;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.iam.common.utils.IamOrganizationUtils;
+import com.wl4g.devops.iam.common.utils.IamOrganizationHolder;
 import com.wl4g.devops.iam.service.GroupService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,8 +78,8 @@ public class GroupController {
 	@RequestMapping(value = "/getOrganizations")
 	public RespBase<?> getOrganizationTree() {
 		RespBase<Object> resp = RespBase.create();
-		resp.forMap().put("tree",IamOrganizationUtils.getOrganizationTree());
-		resp.forMap().put("list",IamOrganizationUtils.getOrganizationFromSession());
+		resp.forMap().put("tree", IamOrganizationHolder.getOrganizationTree());
+		resp.forMap().put("list", IamOrganizationHolder.getOrganizationFromSession());
 		return resp;
 	}
 

@@ -412,6 +412,10 @@ public class FlowManager {
 		}
 		List<Integer> modules = new ArrayList<>();
 
+		if (CollectionUtils.isEmpty(pipeline.getModulesPorjects())) {
+			return;
+		}
+
 		pipeline.getModulesPorjects().forEach((modulesPorject) -> {
 			modules.add(modulesPorject.getProjectId());
 		});

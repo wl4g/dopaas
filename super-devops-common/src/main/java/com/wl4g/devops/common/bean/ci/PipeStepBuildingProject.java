@@ -15,6 +15,8 @@ public class PipeStepBuildingProject extends BaseBean {
 
     private String ref;
 
+    private Integer sort;
+
     // ext
     private String projectName;
 
@@ -66,6 +68,14 @@ public class PipeStepBuildingProject extends BaseBean {
 
     public void setBranchs(List<String> branchs) {
         this.branchs = branchs;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
     }
 
     @Override

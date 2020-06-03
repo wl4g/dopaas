@@ -32,8 +32,8 @@ import org.springframework.util.Assert;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_TYPE_TIMMING;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
 
 /**
  * @author vjay
