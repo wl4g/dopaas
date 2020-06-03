@@ -34,7 +34,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.util.stream.Collectors.toList;

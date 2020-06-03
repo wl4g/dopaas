@@ -36,8 +36,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
 
 @Service
 @Transactional

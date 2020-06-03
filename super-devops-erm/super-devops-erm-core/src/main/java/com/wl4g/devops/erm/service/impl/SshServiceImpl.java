@@ -39,8 +39,8 @@ import java.util.UUID;
 
 import static com.wl4g.devops.erm.util.SshkeyUtils.decryptSshkeyFromHex;
 import static com.wl4g.devops.erm.util.SshkeyUtils.encryptSshkeyToHex;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**

@@ -41,12 +41,12 @@ spring:
               search-projects-default-page-limit: 20
           build:
             job-max-clean-interval-ms: 30_000
-            job-timeout-ms: 600_000
-            shared-dependency-try-timeout-ms: 300_000
+            job-timeout-ms: 3000_000
+            shared-dependency-try-timeout-ms: 1200_000
           deploy:
             #remoteHome-tmp-dir: # Default by to $HOME/.ci-temporary
             cipher-key: 03DE18C2FC4E605F
-            transfer-timeout-ms: 100_000
+            transfer-timeout-ms: 300_000
             docker-native:
               docker-push-username: xburnerair00
               docker-push-password: hwj13535248668

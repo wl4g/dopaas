@@ -23,7 +23,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @author vjay
  * @date 2020-05-20 11:18:00
  */
-public class IamOrganizationUtils {
+public class IamOrganizationHolder {
 
     final private static String CURRENT_ORGANIZATION_CODE = "organization_code";
 

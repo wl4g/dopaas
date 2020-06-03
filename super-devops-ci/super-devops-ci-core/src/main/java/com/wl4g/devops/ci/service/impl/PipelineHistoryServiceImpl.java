@@ -26,8 +26,8 @@ import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_CREATE;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOPING;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
 
 /**
  * @author vjay
@@ -47,8 +47,6 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
     @Autowired
     private PipelineInstanceDao pipelineInstanceDao;
 
-
-
     @Override
     public PipelineHistory createPipelineHistory(NewParameter newParameter) {
         Assert2.notNullOf(newParameter,"newParameter");
@@ -63,7 +61,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
         Assert2.notNullOf(pipeline,"pipeline");
 
         PipelineHistory pipelineHistory = new PipelineHistory();
-        pipelineHistory.preInsert(getCurrentOrganizationCode());
+        pipelineHistory.preInsert(pipeline.getOrganizationCode());
         pipelineHistory.setPipeId(pipeId);
         pipelineHistory.setProviderKind(pipeline.getProviderKind());
         pipelineHistory.setAnnex(annex);

@@ -37,8 +37,8 @@ import java.util.Objects;
 
 import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_PRE;
 import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_SCAN_BATCH;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
 
 /**
  * @author vjay

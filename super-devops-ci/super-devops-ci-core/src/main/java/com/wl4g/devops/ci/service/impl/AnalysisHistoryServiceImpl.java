@@ -23,7 +23,7 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.dao.ci.AnalysisHistoryDao;
 import com.wl4g.devops.page.PageModel;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationUtils.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
 
 /**
  * @author vjay
