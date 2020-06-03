@@ -21,13 +21,16 @@ import static com.wl4g.devops.tool.common.lang.Assert2.notEmptyOf;
 import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
+import static java.util.Objects.nonNull;
+import static java.lang.Boolean.*;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.replace;
 import static org.apache.commons.lang3.StringUtils.split;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
@@ -38,6 +41,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.cli.CommandLine;
 
 import com.google.common.io.Resources;
+import static com.wl4g.devops.tool.common.io.FileIOUtils.*;
+import static com.wl4g.devops.tool.common.lang.SystemUtils2.*;
 import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
 import com.wl4g.devops.tool.common.function.ProcessFunction;
 import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
@@ -60,17 +65,19 @@ public class SourceCodeCounterTool {
 
 		// Builder lines
 		Builder builder = new Builder();
-		builder.option("V", "verbose", "false", "Show print running verbose details.");
+		builder.option("V", "verbose", TRUE.toString(), "Show print running verbose details.");
+		builder.option("O", "output", EMPTY, "Output append write to file path.");
 		builder.option("r", "rootDir", null, "Start scan root directory path.");
 		builder.option("i", "fileIncludes", DEFAULT_INCLUDES_FILE_EXTS, "Includes file path parts. eg: .java,.sh");
 		builder.option("e", "fileExcludes", DEFAULT_EXCLUDES_FILE_PATHS, "Excludes file path parts. eg: /target/,/node_modules/");
 		CommandLine line = builder.build(args);
 
-		boolean verbose = Boolean.parseBoolean(line.getOptionValue("verbose", "false"));
+		boolean verbose = Boolean.parseBoolean(line.getOptionValue("verbose", TRUE.toString()));
+		String output = line.getOptionValue("output");
 		String rootDir = line.getOptionValue("rootDir");
 		List<String> includes = asList(split(line.getOptionValue("fileIncludes", DEFAULT_INCLUDES_FILE_EXTS), ","));
 		List<String> excludes = asList(split(line.getOptionValue("fileExcludes", DEFAULT_EXCLUDES_FILE_PATHS), ","));
-		SourceCodeCounter counter = new SourceCodeCounter(verbose, includes, excludes);
+		SourceCodeCounter counter = new SourceCodeCounter(verbose, output, includes, excludes);
 		out.println("  Startup scanning analysis ......");
 		counter.process(rootDir);
 		out.println("  Scanned Analysis Result:");
@@ -101,6 +108,7 @@ public class SourceCodeCounterTool {
 	public static class SourceCodeCounter implements ProcessFunction<String, Integer> {
 
 		final private boolean verbose;
+		final private File output; // output path
 		final private List<String> fileIncludes;
 		final private List<String> fileExcludes;
 
@@ -108,10 +116,15 @@ public class SourceCodeCounterTool {
 		final private AtomicInteger lineTotalCount = new AtomicInteger(0);
 		final private List<String> sourceFiles = new ArrayList<>(128);
 
-		public SourceCodeCounter(boolean verbose, List<String> fileIncludes, List<String> fileExcludes) {
+		public SourceCodeCounter(boolean verbose, String output, List<String> fileIncludes, List<String> fileExcludes) {
 			notEmptyOf(fileIncludes, "fileIncludes");
 			notEmptyOf(fileExcludes, "fileExcludes");
 			this.verbose = verbose;
+			if (!isBlank(output)) {
+				this.output = new File(output);
+			} else {
+				this.output = null;
+			}
 			this.fileIncludes = fileIncludes;
 			this.fileExcludes = fileExcludes;
 		}
@@ -144,16 +157,21 @@ public class SourceCodeCounterTool {
 					BufferedReader br = new BufferedReader(new InputStreamReader(fis));) {
 				fileTotalCount.incrementAndGet();
 				int count = 0;
-				while (br.readLine() != null) {
+				String line = null;
+				while (nonNull(line = br.readLine())) {
 					++count;
+					if (nonNull(output)) {
+						writeBLineFile(output, line);
+					}
+				}
+				if (nonNull(output)) {
+					writeFile(output, LINE_SEPARATOR, true);
 				}
 				lineTotalCount.addAndGet(count);
 				if (verbose) {
 					out.println(format("Source code scanned lines: %-6s - %snd file: %s", count, fileTotalCount, file));
 				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
