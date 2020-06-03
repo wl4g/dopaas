@@ -45,7 +45,7 @@ public class VideoFaceTests {
 		} else { // External lib file needs to be load
 			// Load native library.
 			CommandLine line = CommandUtils.newBuilder()
-					.option("l", "libLocationPattern", true, "Load external native file location match pattern").build(args);
+					.option("l", "libLocationPattern", null, "Load external native file location match pattern").build(args);
 			String location = line.getOptionValue("libLocationPattern");
 			location = startsWithIgnoreCase(location, "file://") ? location : ("file://" + location);
 			OpenCvNativeLibraryLoader.loadLibrarys(location);
@@ -90,8 +90,8 @@ public class VideoFaceTests {
 	 */
 	public static Mat getFace(Mat image) throws IOException {
 		// 1 读取OpenCV自带的人脸识别特征XML文件
-		File faceFile = new ClassPathResourcePatternResolver()
-				.getResource("opencv/data/haarcascade_frontalface_alt.xml").getFile();
+		File faceFile = new ClassPathResourcePatternResolver().getResource("opencv/data/haarcascade_frontalface_alt.xml")
+				.getFile();
 		CascadeClassifier facebook = new CascadeClassifier(faceFile.getAbsolutePath());
 		// 2 特征匹配类
 		MatOfRect face = new MatOfRect();

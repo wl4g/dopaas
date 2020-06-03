@@ -15,7 +15,10 @@
  */
 package com.wl4g.devops.tool.common.cli;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
@@ -71,17 +74,22 @@ public class CommandUtils {
 		}
 
 		/**
-		 * Add option to options.
+		 * Adds option to options.
 		 * 
 		 * @param opt
+		 *            Short option.
 		 * @param longOpt
-		 * @param required
+		 *            Long option.
+		 * @param defaultValue
+		 *            Null means there is no default value, that is, the
+		 *            parameter is required
 		 * @param description
-		 * @return
+		 * @return Argument description
 		 */
-		public Builder option(String opt, String longOpt, boolean required, String description) {
-			Assert2.notNull(options, "Options did not initialize creation");
-			Option option = new Option(opt, longOpt, true, description);
+		public Builder option(String opt, String longOpt, String defaultValue, String description) {
+			notNull(options, "Options did not initialize creation");
+			boolean required = isNull(defaultValue);
+			HelpOption option = new HelpOption(opt, longOpt, defaultValue, required, description);
 			option.setRequired(required);
 			options.addOption(option);
 			return this;
@@ -125,6 +133,41 @@ public class CommandUtils {
 				throw new ParseException(e.getMessage());
 			}
 			return line;
+		}
+
+	}
+
+	/**
+	 * Help option.</br>
+	 * 
+	 * @author Wangl.sir <983708408@qq.com>
+	 * @version v1.0 2019年5月12日
+	 * @since
+	 */
+	public static class HelpOption extends Option {
+		private static final long serialVersionUID = 1950613325131445963L;
+
+		/**
+		 * Shell option default value.
+		 */
+		final private String defaultValue;
+
+		public HelpOption(String opt, String longOpt, String defaultValue, boolean required, String description)
+				throws IllegalArgumentException {
+			super(opt, longOpt, true, null);
+			isTrue(opt.length() == 1,
+					format("Short option: '%s' (%s), non GNU specification, name length must be 1", opt, description));
+			this.defaultValue = defaultValue;
+			setRequired(required);
+			if (!isRequired()) {
+				setArgName("default=" + defaultValue);
+			} else {
+				setArgName("required");
+			}
+		}
+
+		public String getDefaultValue() {
+			return defaultValue;
 		}
 
 	}
