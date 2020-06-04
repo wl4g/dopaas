@@ -1488,8 +1488,8 @@
                         $(jigsawPanel).JigsawIamCaptcha({
                         	// 提交验证码的参数名
                         	verifyDataKey: Common.Util.checkEmpty("definition.verifyDataKey", settings.definition.verifyDataKey),
-                            _getApplyCaptchaUrl: _getApplyCaptchaUrl,
-							_getVerifyAnalysisUrl: _getVerifyAnalysisUrl,
+                            getApplyCaptchaUrl: _getApplyCaptchaUrl,
+							getVerifyAnalysisUrl: _getVerifyAnalysisUrl,
                             repeatIcon: 'fa fa-redo',
                             onSuccess: function (verifiedToken) {
                             	_iamConsole.debug("Jigsaw captcha verify successful. verifiedToken is '"+ verifiedToken + "'");
