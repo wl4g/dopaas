@@ -143,16 +143,6 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 
 	}
 
-	private void checkRefreshProtectInterval() {
-		long now = currentTimeMillis();
-		long intervalMs = now - lastUpdateTime;
-		if (intervalMs < config.getRefreshProtectIntervalMs()) {
-			log.warn("Refresh too fast? Watch long polling waiting... , lastUpdateTime: {}, now: {}, intervalMs: {}",
-					lastUpdateTime, now, intervalMs);
-			sleep(config.getRefreshProtectIntervalMs());
-		}
-	}
-
 	/**
 	 * Do handle long-polling watching request.
 	 *
@@ -180,12 +170,26 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 				backendReport();
 				break;
 			case NOT_MODIFIED: // Next long-polling
+				log.trace("Unchanged and continue next long-polling ... ");
 				break;
 			default:
 				throw new IllegalStateException(format("Unsupporteds scm protocal status: '%s'", resp.getStatusCodeValue()));
 			}
 		}
 
+	}
+
+	/**
+	 * Check refresh portection internal.
+	 */
+	private void checkRefreshProtectInterval() {
+		long now = currentTimeMillis();
+		long intervalMs = now - lastUpdateTime;
+		if (intervalMs < config.getRefreshProtectIntervalMs()) {
+			log.warn("Refresh too fast? Watch long polling waiting... , lastUpdateTime: {}, now: {}, intervalMs: {}",
+					lastUpdateTime, now, intervalMs);
+			sleep(config.getRefreshProtectIntervalMs());
+		}
 	}
 
 	/**
