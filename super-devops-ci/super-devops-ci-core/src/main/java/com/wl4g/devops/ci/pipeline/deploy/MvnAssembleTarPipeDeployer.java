@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
-import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.util.List;
@@ -30,14 +30,14 @@ import java.util.List;
  */
 public class MvnAssembleTarPipeDeployer extends GenericHostPipeDeployer<MvnAssembleTarPipelineProvider> {
 
-	public MvnAssembleTarPipeDeployer(MvnAssembleTarPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryInstance> taskHistoryInstances) {
-		super(provider, instance, taskHistoryInstances);
-	}
+    public MvnAssembleTarPipeDeployer(MvnAssembleTarPipelineProvider provider, AppInstance instance,
+                                      List<PipelineHistoryInstance> pipelineHistoryInstances) {
+        super(provider, instance, pipelineHistoryInstances);
+    }
 
-	@Override
-	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
-		super.doRemoteDeploying(remoteHost, user, sshkey);
-	}
+    @Override
+    protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
+        super.doRemoteDeploying(remoteHost, user, sshkey);
+    }
 
 }

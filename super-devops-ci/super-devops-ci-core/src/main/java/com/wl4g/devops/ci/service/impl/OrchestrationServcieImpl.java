@@ -37,6 +37,8 @@ import java.util.Objects;
 
 import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_PRE;
 import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_SCAN_BATCH;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
 
 /**
  * @author vjay
@@ -60,14 +62,14 @@ public class OrchestrationServcieImpl implements OrchestrationService {
     @Override
     public PageModel list(PageModel pm, String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(orchestrationDao.list(name));
+        pm.setRecords(orchestrationDao.list(getCurrentOrganizationCodes(), name));
         return pm;
     }
 
     @Override
     public void save(Orchestration orchestration) {
         if (orchestration.getId() == null) {
-            orchestration.preInsert();
+            orchestration.preInsert(getCurrentOrganizationCode());
             insert(orchestration);
         } else {
             orchestration.preUpdate();
@@ -151,7 +153,7 @@ public class OrchestrationServcieImpl implements OrchestrationService {
     }
 
     @Override
-    public void run(Integer id,String remark, String taskTraceId, Integer taskTraceType, String annex) {
+    public void run(Integer id,String remark, String taskTraceId, String taskTraceType, String annex) {
         Assert2.notNullOf(id, "id");
         Assert2.isTrue(!isMaxRuner(),"Runner is biggest , cant not create any more");
         Orchestration orchestration = orchestrationDao.selectByPrimaryKey(id);

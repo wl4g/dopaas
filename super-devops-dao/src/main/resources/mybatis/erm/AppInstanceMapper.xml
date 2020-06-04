@@ -3,91 +3,175 @@
 <mapper namespace="com.wl4g.devops.dao.erm.AppInstanceDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.AppInstance" >
     <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
     <result column="cluster_id" property="clusterId" jdbcType="INTEGER" />
     <result column="version_id" property="versionId" jdbcType="INTEGER" />
+    <result column="deploy_type" property="deployType" jdbcType="INTEGER" />
     <result column="host_id" property="hostId" jdbcType="INTEGER" />
+    <result column="k8s_id" property="k8sId" jdbcType="INTEGER" />
+    <result column="docker_id" property="dockerId" jdbcType="INTEGER" />
+    <result column="coss_ref_bucket" property="cossRefBucket" jdbcType="VARCHAR" />
     <result column="env_type" property="envType" jdbcType="VARCHAR" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="ssh_id" property="sshId" jdbcType="INTEGER" />
     <result column="endpoint" property="endpoint" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="ssh_user" property="sshUser" jdbcType="VARCHAR" />
     <result column="create_by" property="createBy" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="INTEGER" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
-    <result column="ssh_key" property="sshKey" jdbcType="LONGVARCHAR" />
-    <result column="ssh_key_pub" property="sshKeyPub" jdbcType="LONGVARCHAR" />
 
-    <!--other-->
     <result column="hostname" property="hostname" jdbcType="VARCHAR" />
+
+    <association property="ssh" javaType="com.wl4g.devops.common.bean.erm.Ssh">
+      <id column="s.id" jdbcType="INTEGER" property="id" />
+      <result column="s.name" jdbcType="VARCHAR" property="name" />
+      <result column="s.username" jdbcType="VARCHAR" property="username" />
+      <result column="s.password" jdbcType="VARCHAR" property="password" />
+      <result column="s.ssh_key" jdbcType="VARCHAR" property="sshKey" />
+      <result column="s.ssh_key_pub" jdbcType="VARCHAR" property="sshKeyPub" />
+      <result column="s.auth_type" jdbcType="VARCHAR" property="authType" />
+      <result column="s.create_by" jdbcType="INTEGER" property="createBy" />
+      <result column="s.create_date" jdbcType="TIMESTAMP" property="createDate" />
+      <result column="s.update_by" jdbcType="INTEGER" property="updateBy" />
+      <result column="s.update_date" jdbcType="TIMESTAMP" property="updateDate" />
+      <result column="s.del_flag" jdbcType="INTEGER" property="delFlag" />
+    </association>
+
+
+  </resultMap>
+
+  <resultMap id="BaseResultMapWithOUtSsh" type="com.wl4g.devops.common.bean.erm.AppInstance" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
+    <result column="cluster_id" property="clusterId" jdbcType="INTEGER" />
+    <result column="version_id" property="versionId" jdbcType="INTEGER" />
+    <result column="deploy_type" property="deployType" jdbcType="INTEGER" />
+    <result column="host_id" property="hostId" jdbcType="INTEGER" />
+    <result column="k8s_id" property="k8sId" jdbcType="INTEGER" />
+    <result column="docker_id" property="dockerId" jdbcType="INTEGER" />
+    <result column="coss_ref_bucket" property="cossRefBucket" jdbcType="VARCHAR" />
+    <result column="env_type" property="envType" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="ssh_id" property="sshId" jdbcType="INTEGER" />
+    <result column="endpoint" property="endpoint" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+
+    <result column="hostname" property="hostname" jdbcType="VARCHAR" />
+    <result column="cluster_name" property="clusterName" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, cluster_id, version_id, host_id, env_type, enable, endpoint, remark, ssh_user, 
-    create_by, create_date, update_by, update_date, del_flag,ssh_key, ssh_key_pub
+    id, name, organization_code, cluster_id, version_id, deploy_type, host_id, k8s_id, docker_id, coss_ref_bucket, env_type, enable, ssh_id, endpoint, remark,
+    create_by, create_date, update_by, update_date, del_flag
   </sql>
 
   <sql id="Base_Column_List_i" >
-    i.id, i.cluster_id, i.version_id, i.host_id, i.env_type, i.enable, i.endpoint, i.remark, i.ssh_user,
-    i.create_by, i.create_date, i.update_by, i.update_date, i.del_flag,i.ssh_key, i.ssh_key_pub
+    i.id, i.name, i.organization_code, i.cluster_id, i.version_id, i.deploy_type, i.host_id, i.k8s_id, i.docker_id, i.coss_ref_bucket, i.env_type, i.enable, i.ssh_id, i.endpoint, i.remark,
+    i.create_by, i.create_date, i.update_by, i.update_date, i.del_flag
+  </sql>
+
+  <sql id="Ssh_Column_List">
+    s.id as 's.id', s.name as 's.name', s.username as 's.username', s.password as 's.password', s.ssh_key as 's.ssh_key',
+    s.ssh_key_pub as 's.ssh_key_pub', s.auth_type as 's.auth_type', s.create_by as 's.create_by', s.create_date as 's.create_date',
+    s.update_by as 's.update_by', s.update_date as 's.update_date', s.del_flag as 's.del_flag'
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
-    <include refid="Base_Column_List_i" />,h.hostname
-    from app_instance i
-    left join app_host h on h.id = i.host_id
+    <include refid="Base_Column_List_i" />,<include refid="Ssh_Column_List" />,h.hostname
+    from erm_app_instance i
+    left join erm_ssh s on s.id = i.ssh_id
+    left join erm_host h on h.id = i.host_id
     where i.id = #{id,jdbcType=INTEGER}
   </select>
 
-  <select id="selectByClusterId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByClusterId" resultMap="BaseResultMapWithOUtSsh" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
-    from app_instance
+    from erm_app_instance
     where cluster_id = #{clusterId,jdbcType=INTEGER} and del_flag!=1
   </select>
 
-  <select id="selectByClusterIdAndEnvType" resultMap="BaseResultMap" parameterType="java.util.Map" >
+  <select id="selectByClusterIdAndEnvType" resultMap="BaseResultMap" parameterType="java.util.Map">
     select
-    <include refid="Base_Column_List_i" />,h.hostname
-    from app_instance i
-    left join app_host h on h.id = i.host_id
+    <include refid="Base_Column_List_i" />,<include refid="Ssh_Column_List" />,h.hostname
+    from erm_app_instance i
+    left join erm_ssh s on s.id = i.ssh_id
+    left join erm_host h on h.id = i.host_id
     where i.cluster_id = #{clusterId,jdbcType=INTEGER}
     and i.env_type = #{envType,jdbcType=VARCHAR}
     and i.del_flag!=1
   </select>
 
+  <select id="list" resultMap="BaseResultMapWithOUtSsh" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List_i" />,c.name cluster_name
+    from erm_app_instance i
+    left join erm_app_cluster c on i.cluster_id=c.id
+    where i.del_flag != 1
+    <if test="name != null and name != ''" >
+      AND i.name LIKE CONCAT('%','${name}','%')
+    </if>
+    <if test="clusterId != null" >
+      and i.cluster_id = #{clusterId,jdbcType=INTEGER}
+    </if>
+    <if test="envType != null and envType != ''" >
+      and i.env_type = #{envType,jdbcType=VARCHAR}
+    </if>
+    <if test="deployType != null" >
+      and i.deploy_type = #{deployType,jdbcType=INTEGER}
+    </if>
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and i.organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>
+  </select>
+
   <select id="countByClusterId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select
     count(1)
-    from app_instance
+    from erm_app_instance
     where cluster_id = #{id,jdbcType=INTEGER} and del_flag!=1
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from app_instance
+    delete from erm_app_instance
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
-    insert into app_instance (id, cluster_id, version_id, 
-      host_id, env_type, enable, 
-      endpoint, remark, ssh_user, 
-      create_by, create_date, update_by, 
-      update_date, del_flag, ssh_key, 
-      ssh_key_pub)
-    values (#{id,jdbcType=INTEGER}, #{clusterId,jdbcType=INTEGER}, #{versionId,jdbcType=INTEGER}, 
-      #{hostId,jdbcType=INTEGER}, #{envType,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, 
-      #{endpoint,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{sshUser,jdbcType=VARCHAR}, 
-      #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER}, #{sshKey,jdbcType=LONGVARCHAR}, 
-      #{sshKeyPub,jdbcType=LONGVARCHAR})
+    insert into erm_app_instance (id, name,organization_code, cluster_id, version_id, deploy_type,
+      host_id, k8s_id, docker_id, coss_ref_bucket, env_type, enable, ssh_id,
+      endpoint, remark,
+      create_by, create_date, update_by,
+      update_date, del_flag)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},#{organizationCode,jdbcType=VARCHAR}, #{clusterId,jdbcType=INTEGER}, #{versionId,jdbcType=INTEGER},#{serverType,jdbcType=INTEGER},
+      #{hostId,jdbcType=INTEGER},#{k8sId,jdbcType=INTEGER},#{dockerId,jdbcType=INTEGER}, #{cossRefBucket,jdbcType=VARCHAR}, #{envType,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{sshId,jdbcType=INTEGER},
+      #{endpoint,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+      #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER},
+      #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
-    insert into app_instance
+    insert into erm_app_instance
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="organizationCode != null" >
+        organization_code,
       </if>
       <if test="clusterId != null" >
         cluster_id,
@@ -95,8 +179,20 @@
       <if test="versionId != null" >
         version_id,
       </if>
+      <if test="deployType != null" >
+        deploy_type,
+      </if>
       <if test="hostId != null" >
         host_id,
+      </if>
+      <if test="k8sId != null" >
+        k8s_id,
+      </if>
+      <if test="dockerId != null" >
+        docker_id,
+      </if>
+      <if test="cossRefBucket != null" >
+        coss_ref_bucket,
       </if>
       <if test="envType != null" >
         env_type,
@@ -104,14 +200,14 @@
       <if test="enable != null" >
         enable,
       </if>
+      <if test="sshId != null" >
+        ssh_id,
+      </if>
       <if test="endpoint != null" >
         endpoint,
       </if>
       <if test="remark != null" >
         remark,
-      </if>
-      <if test="sshUser != null" >
-        ssh_user,
       </if>
       <if test="createBy != null" >
         create_by,
@@ -128,16 +224,16 @@
       <if test="delFlag != null" >
         del_flag,
       </if>
-      <if test="sshKey != null" >
-        ssh_key,
-      </if>
-      <if test="sshKeyPub != null" >
-        ssh_key_pub,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationCode != null" >
+        #{organizationCode,jdbcType=VARCHAR},
       </if>
       <if test="clusterId != null" >
         #{clusterId,jdbcType=INTEGER},
@@ -145,8 +241,20 @@
       <if test="versionId != null" >
         #{versionId,jdbcType=INTEGER},
       </if>
+      <if test="deployType != null" >
+        #{deployType,jdbcType=INTEGER},
+      </if>
       <if test="hostId != null" >
         #{hostId,jdbcType=INTEGER},
+      </if>
+      <if test="k8sId != null" >
+        #{k8sId,jdbcType=INTEGER},
+      </if>
+      <if test="dockerId != null" >
+        #{dockerId,jdbcType=INTEGER},
+      </if>
+      <if test="cossRefBucket != null" >
+        #{cossRefBucket,jdbcType=VARCHAR},
       </if>
       <if test="envType != null" >
         #{envType,jdbcType=VARCHAR},
@@ -154,14 +262,14 @@
       <if test="enable != null" >
         #{enable,jdbcType=INTEGER},
       </if>
+      <if test="sshId != null" >
+        #{sshId,jdbcType=INTEGER},
+      </if>
       <if test="endpoint != null" >
         #{endpoint,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="sshUser != null" >
-        #{sshUser,jdbcType=VARCHAR},
       </if>
       <if test="createBy != null" >
         #{createBy,jdbcType=INTEGER},
@@ -178,25 +286,37 @@
       <if test="delFlag != null" >
         #{delFlag,jdbcType=INTEGER},
       </if>
-      <if test="sshKey != null" >
-        #{sshKey,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="sshKeyPub != null" >
-        #{sshKeyPub,jdbcType=LONGVARCHAR},
-      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
-    update app_instance
+    update erm_app_instance
     <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationCode != null" >
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="clusterId != null" >
         cluster_id = #{clusterId,jdbcType=INTEGER},
       </if>
       <if test="versionId != null" >
         version_id = #{versionId,jdbcType=INTEGER},
       </if>
+      <if test="deployType != null" >
+        deploy_type = #{deployType,jdbcType=INTEGER},
+      </if>
       <if test="hostId != null" >
         host_id = #{hostId,jdbcType=INTEGER},
+      </if>
+      <if test="k8sId != null" >
+        k8s_id = #{k8sId,jdbcType=INTEGER},
+      </if>
+      <if test="dockerId != null" >
+        docker_id = #{dockerId,jdbcType=INTEGER},
+      </if>
+      <if test="cossRefBucket != null" >
+        coss_ref_bucket = #{cossRefBucket,jdbcType=VARCHAR},
       </if>
       <if test="envType != null" >
         env_type = #{envType,jdbcType=VARCHAR},
@@ -204,14 +324,14 @@
       <if test="enable != null" >
         enable = #{enable,jdbcType=INTEGER},
       </if>
+      <if test="sshId != null" >
+        ssh_id = #{sshId,jdbcType=INTEGER},
+      </if>
       <if test="endpoint != null" >
         endpoint = #{endpoint,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="sshUser != null" >
-        ssh_user = #{sshUser,jdbcType=VARCHAR},
       </if>
       <if test="createBy != null" >
         create_by = #{createBy,jdbcType=INTEGER},
@@ -228,25 +348,25 @@
       <if test="delFlag != null" >
         del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
-      <if test="sshKey != null" >
-        ssh_key = #{sshKey,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="sshKeyPub != null" >
-        ssh_key_pub = #{sshKeyPub,jdbcType=LONGVARCHAR},
-      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppInstance" >
-    update app_instance
-    set cluster_id = #{clusterId,jdbcType=INTEGER},
+    update erm_app_instance
+    set name = #{name,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
+      cluster_id = #{clusterId,jdbcType=INTEGER},
       version_id = #{versionId,jdbcType=INTEGER},
+      deploy_type = #{deployType,jdbcType=INTEGER},
       host_id = #{hostId,jdbcType=INTEGER},
+      k8s_id = #{k8sId,jdbcType=INTEGER},
+      docker_id = #{dockerId,jdbcType=INTEGER},
+      coss_ref_bucket = #{cossRefBucket,jdbcType=VARCHAR},
       env_type = #{envType,jdbcType=VARCHAR},
       enable = #{enable,jdbcType=INTEGER},
+      ssh_id = #{sshId,jdbcType=INTEGER},
       endpoint = #{endpoint,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
-      ssh_user = #{sshUser,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=INTEGER},

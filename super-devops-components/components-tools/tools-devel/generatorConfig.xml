@@ -14,22 +14,22 @@
             <property name="suppressAllComments" value="true"/>
         </commentGenerator>
         <!--数据库链接URL，用户名、密码 -->
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.0.160:3306/devops_dev" userId="gzsm" password="gzsm@%#jh?">
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.0.160:3306/devops_dev_ci" userId="gzsm" password="gzsm@%#jh?">
         </jdbcConnection>
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
         <!-- 生成模型的包名和位置-->
-        <javaModelGenerator targetPackage="com.wl4g.devops.common.bean.umc" targetProject="../../super-devops-common/src/main/java">
+        <javaModelGenerator targetPackage="com.wl4g.devops.common.bean.erm" targetProject="../../super-devops-common/src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
         <!-- 生成映射文件的包名和位置-->
-        <sqlMapGenerator targetPackage="resources.mybatis.umc" targetProject="../../super-devops-dao/src/main">
+        <sqlMapGenerator targetPackage="resources.mybatis.erm" targetProject="../../super-devops-dao/src/main">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
         <!-- 生成DAO的包名和位置-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.wl4g.devops.dao.umc" targetProject="../../super-devops-dao/src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.wl4g.devops.dao.erm" targetProject="../../super-devops-dao/src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
@@ -49,10 +49,6 @@
             <columnOverride column="description" javaType="java.lang.String" jdbcType="VARCHAR" />
         </table>-->
 
-        <table tableName="umc_custom_datasource_properties" domainObjectName="CustomDataSourceProperties"
-               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-        </table>
-
         <!--<table tableName="umc_custom_alarm_event" domainObjectName="CustomAlarmEvent"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
@@ -60,7 +56,87 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
 -->
+        <!--<table tableName="ci_pipe_step_building" domainObjectName="PipeStepBuilding"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+            <columnOverride column="pre_command" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <columnOverride column="post_command" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </table>
 
+        <table tableName="ci_pipe_step_building_project" domainObjectName="PipeStepBuildingProject"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+            <columnOverride column="build_command" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </table>
+
+        <table tableName="ci_pipe_step_notification" domainObjectName="PipeStepNotification"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="ci_pipe_step_pcm" domainObjectName="PipeStepPcm"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+            <columnOverride column="x_description" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <columnOverride column="x_custom_fields" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </table>
+
+        <table tableName="ci_pipeline" domainObjectName="Pipeline"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="ci_pipeline_history" domainObjectName="PipelineHistory"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="ci_pipeline_history_instance" domainObjectName="PipelineHistoryInstance"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="ci_pipeline_history_step" domainObjectName="PipelineHistoryStep"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>-->
+
+        <!--<table tableName="ci_pipeline_instance" domainObjectName="PipelineInstance"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>-->
+        <!--<table tableName="ci_pipe_history_pcm" domainObjectName="PipeHistoryPcm"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+            <columnOverride column="x_description" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <columnOverride column="x_custom_fields" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </table>-->
+
+        <!--<table tableName="ci_pipe_step_instance_command" domainObjectName="PipeStepInstanceCommand"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+            <columnOverride column="pre_command" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <columnOverride column="post_command" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </table>-->
+
+
+        <!--<table tableName="erm_idc" domainObjectName="Idc"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="erm_k8s_cluster" domainObjectName="K8sCluster"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="erm_k8s_instance" domainObjectName="K8sInstance"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="erm_docker_cluster" domainObjectName="DockerCluster"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="erm_docker_instance" domainObjectName="DockerInstance"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>-->
+
+        <!--<table tableName="erm_ssh" domainObjectName="Ssh"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="erm_host_ssh" domainObjectName="HostSsh"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>-->
+
+        <!--<table tableName="ci_pipe_step_deploy" domainObjectName="PipeStepDeploy"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+            <columnOverride column="deploy_dockerfile_content" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <columnOverride column="deploy_config_content" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </table>-->
+
+        <table tableName="erm_coss_cluster" domainObjectName="CossCluster"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
 
     </context>
 </generatorConfiguration>

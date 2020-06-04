@@ -16,17 +16,24 @@
 package com.wl4g.devops.ci.pcm.redmine;
 
 import com.wl4g.devops.ci.pcm.AbstractPcmOperator;
-import com.wl4g.devops.ci.pcm.redmine.model.RedmineIssues;
+import com.wl4g.devops.ci.pcm.redmine.model.*;
 import com.wl4g.devops.ci.pcm.redmine.model.RedmineIssues.RedmineIssue;
-import com.wl4g.devops.ci.pcm.redmine.model.RedmineProjects;
-import com.wl4g.devops.ci.pcm.redmine.model.RedmineUsers;
 import com.wl4g.devops.common.bean.ci.Pcm;
+import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 import com.wl4g.devops.common.web.model.SelectionModel;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import static java.util.Objects.nonNull;
 
 /**
  * PCM API operator of redmine.
@@ -74,6 +81,51 @@ public class RedminePcmOperator extends AbstractPcmOperator {
 	}
 
 	@Override
+	public List<SelectionModel> getTracker(Pcm pcm) {
+		check(pcm);
+		String url = pcm.getBaseUrl() + "/trackers.json";
+		RedmineTrackers trackers = restTemplate.getForObject(url, RedmineTrackers.class);
+		List<SelectionModel> result = new ArrayList<>();
+		for (RedmineTrackers.RedmineTracker tracker : trackers.getTrackers()) {
+			SelectionModel selectInfo = new SelectionModel();
+			selectInfo.setValue(String.valueOf(tracker.getId()));
+			selectInfo.setLabel(tracker.getName());
+			result.add(selectInfo);
+		}
+		return result;
+	}
+
+	@Override
+	public List<SelectionModel> getStatuses(Pcm pcm) {
+		check(pcm);
+		String url = pcm.getBaseUrl() + "/issue_statuses.json";
+		RedmineIssueStatuses trackers = restTemplate.getForObject(url, RedmineIssueStatuses.class);
+		List<SelectionModel> result = new ArrayList<>();
+		for (RedmineIssueStatuses.IssueStatus tracker : trackers.getIssueStatuses()) {
+			SelectionModel selectInfo = new SelectionModel();
+			selectInfo.setValue(String.valueOf(tracker.getId()));
+			selectInfo.setLabel(tracker.getName());
+			result.add(selectInfo);
+		}
+		return result;
+	}
+
+	@Override
+	public List<SelectionModel> getPriorities(Pcm pcm) {
+		check(pcm);
+		String url = pcm.getBaseUrl() + "/enumerations/issue_priorities.json";
+		RedmineIssuePriorities issuePriorities = restTemplate.getForObject(url, RedmineIssuePriorities.class);
+		List<SelectionModel> result = new ArrayList<>();
+		for (RedmineIssuePriorities.IssuesPriorities issuesPriority : issuePriorities.getIssuePriorities()) {
+			SelectionModel selectInfo = new SelectionModel();
+			selectInfo.setValue(String.valueOf(issuesPriority.getId()));
+			selectInfo.setLabel(issuesPriority.getName());
+			result.add(selectInfo);
+		}
+		return result;
+	}
+
+	@Override
 	public List<SelectionModel> getIssues(Pcm pcm, String userId, String projectId, String searchSubject) {
 		check(pcm);
 		String url = pcm.getBaseUrl() + "/issues.json?limit=100&key=" + pcm.getAccessToken();
@@ -96,6 +148,53 @@ public class RedminePcmOperator extends AbstractPcmOperator {
 		}
 		return result;
 	}
+
+	@Override
+	public void createIssues(Pcm pcm, PipeHistoryPcm pipeHistoryPcm) {
+		check(pcm);
+		String url = pcm.getBaseUrl() + "/issues.json?key=" + pcm.getAccessToken();
+
+		HttpHeaders httpHeaders = new HttpHeaders();
+		MediaType type = MediaType.parseMediaType("application/json;charset=UTF-8");
+		httpHeaders.setContentType(type);
+		//MultiValueMap<String, Object> map=new LinkedMultiValueMap<>();
+		HashMap<String, Object> map = new HashMap<>();
+
+		//Necessary parameters
+		map.put("project_id", pipeHistoryPcm.getxProjectId());
+		map.put("subject", pipeHistoryPcm.getxSubject());
+		map.put("assigned_to_id", pipeHistoryPcm.getxAssignTo());
+
+		//Not Necessary parameters
+		if(nonNull(pipeHistoryPcm.getxTracker())){
+			map.put("tracker_id", pipeHistoryPcm.getxTracker());
+		}
+		if(nonNull(pipeHistoryPcm.getxStatus())){
+			map.put("status_id", pipeHistoryPcm.getxStatus());
+		}
+		if(nonNull(pipeHistoryPcm.getxPriority())){
+			map.put("priority_id", pipeHistoryPcm.getxPriority());
+		}
+		if(nonNull(pipeHistoryPcm.getxDescription())){
+			map.put("description", pipeHistoryPcm.getxDescription());
+		}
+		if(nonNull(pipeHistoryPcm.getxStartDate())){
+			map.put("start_date", pipeHistoryPcm.getxStartDate());
+		}
+		if(nonNull(pipeHistoryPcm.getxExpectedTime())){
+			map.put("estimated_hours", pipeHistoryPcm.getxExpectedTime());
+		}
+
+		HashMap<String, Object> map2 = new HashMap<>();
+		map2.put("issue",map);
+
+		HttpEntity<String> objectHttpEntity = new HttpEntity<>(JacksonUtils.toJSONString(map2), httpHeaders);
+
+		ResponseEntity<String> responseResultResponseEntity = restTemplate.postForEntity(url, objectHttpEntity, String.class);
+		String result = responseResultResponseEntity.getBody();
+		log.info(result);
+	}
+
 
 	private void check(Pcm pcm) {
 		Assert.notNull(pcm, "pcm is null");

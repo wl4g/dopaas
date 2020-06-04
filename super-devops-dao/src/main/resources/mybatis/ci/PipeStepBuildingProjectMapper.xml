@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.devops.dao.ci.PipeStepBuildingProjectDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.PipeStepBuildingProject">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="project_id" jdbcType="INTEGER" property="projectId" />
+    <result column="build_command" jdbcType="VARCHAR" property="buildCommand" />
+    <result column="ref" jdbcType="VARCHAR" property="ref" />
+    <result column="enable" jdbcType="INTEGER" property="enable" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, building_id, project_id, build_command, ref, enable, sort
+  </sql>
+  <sql id="Base_Column_List_bp">
+    bp.id, bp.building_id, bp.project_id, bp.build_command, bp.ref, bp.enable, bp.sort
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ci_pipe_step_building_project
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByBuildingId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ci_pipe_step_building_project
+    where building_id = #{buildingId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByPipeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List_bp" />
+    from ci_pipe_step_building_project bp inner join ci_pipe_step_building b on b.id=bp.building_id
+    where b.pipe_id = #{pipeId,jdbcType=INTEGER}
+    order by bp.sort asc
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ci_pipe_step_building_project
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByBuildingId" parameterType="java.lang.Integer">
+    delete from ci_pipe_step_building_project
+    where building_id = #{buildingId,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByPipeId" parameterType="java.lang.Integer">
+    delete t1 from ci_pipe_step_building_project t1,ci_pipe_step_building t2 where t1.building_id=t2.id and t2.pipe_id=#{pipeId,jdbcType=INTEGER};
+  </delete>
+
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuildingProject">
+    insert into ci_pipe_step_building_project (id, building_id, project_id, 
+      build_command, ref, enable, sort
+      )
+    values (#{id,jdbcType=INTEGER}, #{buildingId,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
+      #{buildCommand,jdbcType=VARCHAR}, #{ref,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}
+      )
+  </insert>
+
+  <insert id="insertBatch" parameterType="java.util.Map">
+    insert into ci_pipe_step_building_project (id, building_id, project_id,
+    build_command, ref, enable, sort
+    )
+    VALUES
+    <foreach collection="pipeStepBuildingProjects" item="pipeStepBuildingProject" separator=",">
+      (#{pipeStepBuildingProject.id,jdbcType=INTEGER}, #{pipeStepBuildingProject.buildingId,jdbcType=INTEGER}, #{pipeStepBuildingProject.projectId,jdbcType=INTEGER},
+       #{pipeStepBuildingProject.buildCommand,jdbcType=VARCHAR},#{pipeStepBuildingProject.ref,jdbcType=VARCHAR}, #{pipeStepBuildingProject.enable,jdbcType=INTEGER},#{pipeStepBuildingProject.sort,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuildingProject">
+    insert into ci_pipe_step_building_project
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="buildingId != null">
+        building_id,
+      </if>
+      <if test="projectId != null">
+        project_id,
+      </if>
+      <if test="buildCommand != null">
+        build_command,
+      </if>
+      <if test="ref != null">
+        ref,
+      </if>
+      <if test="enable != null">
+        enable,
+      </if>
+      <if test="sort != null">
+        sort,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="buildingId != null">
+        #{buildingId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null">
+        #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="buildCommand != null">
+        #{buildCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="ref != null">
+        #{ref,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null">
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null">
+        #{sort,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuildingProject">
+    update ci_pipe_step_building_project
+    <set>
+      <if test="buildingId != null">
+        building_id = #{buildingId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null">
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="buildCommand != null">
+        build_command = #{buildCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="ref != null">
+        ref = #{ref,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null">
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null">
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuildingProject">
+    update ci_pipe_step_building_project
+    set building_id = #{buildingId,jdbcType=INTEGER},
+      project_id = #{projectId,jdbcType=INTEGER},
+      build_command = #{buildCommand,jdbcType=VARCHAR},
+      ref = #{ref,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

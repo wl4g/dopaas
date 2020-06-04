@@ -19,8 +19,8 @@ import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.flow.FlowManager;
+import com.wl4g.devops.ci.pipeline.deploy.CossPipeDeployer;
 import com.wl4g.devops.ci.service.DependencyService;
-import com.wl4g.devops.ci.service.TaskHistoryService;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -28,6 +28,7 @@ import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.dao.ci.PipeStepBuildingProjectDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
@@ -84,11 +85,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected DestroableProcessManager pm;
 	@Autowired
 	protected GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsAdapter;
-
 	@Autowired
 	protected DependencyService dependencyService;
-	@Autowired
-	protected TaskHistoryService taskHistoryService;
 	@Autowired
 	protected TaskHistoryBuildCommandDao taskHistoryBuildCommandDao;
 	@Autowired
@@ -97,6 +95,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected TaskSignDao taskSignDao;
 	@Autowired
 	protected FlowManager flowManager;
+	@Autowired
+	protected PipeStepBuildingProjectDao pipeStepBuildingProjectDao;
 
 	/**
 	 * Pull project source from VCS files fingerprint.
@@ -243,16 +243,16 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 		// Creating transfer instances jobs.
 		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
 			return (Runnable) () -> {
-				File jobDeployerLog = config.getJobDeployerLog(context.getTaskHistory().getId(), i.getId());
+				File jobDeployerLog = config.getJobDeployerLog(context.getPipelineHistory().getId(), i.getId());
 				try {
 					writeBLineFile(jobDeployerLog, LOG_FILE_START);
 
 					// Do deploying.
-					newPipeDeployer(i).run();
+					newPipeDeployerByType(i).run();
 
 					// Print successful.
 					writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
-							getContext().getAppCluster().getName(), i.getSshUser(), i.getHostname());
+							getContext().getAppCluster().getName(), i.getSsh().getUsername(), i.getHostname());
 				} catch (Exception e) {
 					String logmsg = writeBuildLog("Failed to deployed to remote! Caused by: \n%s", getStackTraceAsString(e));
 					log.error(logmsg);
@@ -285,9 +285,9 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected String writeBuildLog(String format, Object... args) {
 		String content = String.format(format, args);
-		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"), getContext().getTaskHistory().getId(),
+		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"), getContext().getPipelineHistory().getId(),
 				content);
-		writeALineFile(config.getJobLog(context.getTaskHistory().getId()), message);
+		writeALineFile(config.getJobLog(context.getPipelineHistory().getId()), message);
 		return content;
 	}
 
@@ -308,6 +308,18 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 * @return
 	 */
 	protected abstract Runnable newPipeDeployer(AppInstance instance);
+
+	//TODO
+	protected Runnable newPipeDeployerByType(AppInstance instance){
+
+		if(instance.getDeployType()==4){
+			Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
+			return beanFactory.getBean(CossPipeDeployer.class, args);
+		}
+
+		return newPipeDeployer(instance);
+
+	};
 
 	/**
 	 * Placeholder variables resolver.
@@ -360,16 +372,16 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 			commands = replace(commands, PH_PROJECT_DIR, projectDir);
 
 			// Replace for backupDir.
-			File tmpScriptFile = config.getJobTmpCommandFile(getContext().getTaskHistory().getId(),
+			File tmpScriptFile = config.getJobTmpCommandFile(getContext().getPipelineHistory().getId(),
 					getContext().getProject().getId());
 			commands = replace(commands, PH_TMP_SCRIPT_FILE, tmpScriptFile.getAbsolutePath());
 
 			// Replace for backupDir.
-			File backupDir = config.getJobBackupDir(getContext().getTaskHistory().getId());
+			File backupDir = config.getJobBackupDir(getContext().getPipelineHistory().getId());
 			commands = replace(commands, PH_BACKUP_DIR, backupDir.getAbsolutePath());
 
 			// Replace for logPath.
-			File logFile = config.getJobLog(getContext().getTaskHistory().getId());
+			File logFile = config.getJobLog(getContext().getPipelineHistory().getId());
 			commands = replace(commands, PH_LOG_FILE, logFile.getAbsolutePath());
 
 			// Replace for remoteTmpDir.

@@ -17,16 +17,22 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.AppHost;
-import com.wl4g.devops.dao.erm.AppHostDao;
+import com.wl4g.devops.common.bean.erm.Host;
+import com.wl4g.devops.common.bean.erm.HostSsh;
+import com.wl4g.devops.dao.erm.HostDao;
+import com.wl4g.devops.dao.erm.HostSshDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.erm.service.HostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**
@@ -37,24 +43,28 @@ import static java.util.Objects.isNull;
 public class HostServiceImpl implements HostService {
 
     @Autowired
-    private AppHostDao appHostDao;
+    private HostDao appHostDao;
+
+    @Autowired
+    private HostSshDao hostSshDao;
 
     @Override
-    public List<AppHost> list(String name, String hostname, Integer idcId) {
-        List<AppHost> list = appHostDao.list(name, hostname, idcId);
+    public List<Host> list(String name, String hostname, Integer idcId) {
+        List<Host> list = appHostDao.list(getCurrentOrganizationCodes(), name, hostname, idcId);
         return list;
     }
 
     @Override
     public PageModel page(PageModel pm,String name, String hostname, Integer idcId) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(appHostDao.list(name, hostname, idcId));
+        pm.setRecords(appHostDao.list(getCurrentOrganizationCodes(), name, hostname, idcId));
         return pm;
     }
 
-    public void save(AppHost host){
+    @Override
+    public void save(Host host){
         if(isNull(host.getId())){
-            host.preInsert();
+            host.preInsert(getCurrentOrganizationCode());
             insert(host);
         }else{
             host.preUpdate();
@@ -62,23 +72,51 @@ public class HostServiceImpl implements HostService {
         }
     }
 
-    private void insert(AppHost host){
+    private void insert(Host host){
         appHostDao.insertSelective(host);
+        List<Integer> sshIds = host.getSshIds();
+        if(!CollectionUtils.isEmpty(sshIds)){
+            List<HostSsh> hostSshs = new ArrayList<>();
+            for(Integer sshId : sshIds){
+                HostSsh hostSsh = new HostSsh();
+                hostSsh.preInsert();
+                hostSsh.setHostId(host.getId());
+                hostSsh.setSshId(sshId);
+                hostSshs.add(hostSsh);
+            }
+            hostSshDao.insertBatch(hostSshs);
+        }
     }
 
-    private void update(AppHost host){
+    private void update(Host host){
         appHostDao.updateByPrimaryKeySelective(host);
+        hostSshDao.deleteByHostId(host.getId());
+        List<Integer> sshIds = host.getSshIds();
+        if(!CollectionUtils.isEmpty(sshIds)){
+            List<HostSsh> hostSshs = new ArrayList<>();
+            for(Integer sshId : sshIds){
+                HostSsh hostSsh = new HostSsh();
+                hostSsh.preInsert();
+                hostSsh.setHostId(host.getId());
+                hostSsh.setSshId(sshId);
+                hostSshs.add(hostSsh);
+            }
+            hostSshDao.insertBatch(hostSshs);
+        }
     }
 
 
-    public AppHost detail(Integer id){
+    public Host detail(Integer id){
         Assert.notNull(id,"id is null");
-        return appHostDao.selectByPrimaryKey(id);
+        Host host = appHostDao.selectByPrimaryKey(id);
+        List<Integer> integers = hostSshDao.selectByHostId(id);
+        host.setSshIds(integers);
+        return host;
     }
 
     public void del(Integer id){
         Assert.notNull(id,"id is null");
-        AppHost host = new AppHost();
+        Host host = new Host();
         host.setId(id);
         host.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         appHostDao.updateByPrimaryKeySelective(host);

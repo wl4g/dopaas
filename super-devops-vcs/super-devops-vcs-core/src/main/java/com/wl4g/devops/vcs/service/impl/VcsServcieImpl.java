@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.util.stream.Collectors.toList;
@@ -57,7 +58,7 @@ public class VcsServcieImpl implements VcsService {
     @Override
     public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(vcsDao.list(name, providerKind, authType));
+        pm.setRecords(vcsDao.list(getCurrentOrganizationCodes(),name, providerKind, authType));
         return pm;
     }
 
@@ -95,7 +96,7 @@ public class VcsServcieImpl implements VcsService {
 
     @Override
     public List<Vcs> all() {
-        return vcsDao.list(null, null, null);
+        return vcsDao.list(getCurrentOrganizationCodes(),null, null, null);
     }
 
     @Override

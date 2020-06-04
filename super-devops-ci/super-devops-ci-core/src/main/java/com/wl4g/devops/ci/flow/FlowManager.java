@@ -49,7 +49,7 @@ public class FlowManager {
 
 	public static final String REDIS_CI_RUN_PRE = "CI_RUN_";// redis key
 
-	public static final int REDIS_CI_RUN_SCAN_BATCH = 10;// redis scan batch
+	public static final int REDIS_CI_RUN_SCAN_BATCH = 100;// redis scan batch
 
 	// TODO config
 	private static String node = "master-1";
@@ -63,7 +63,7 @@ public class FlowManager {
 	 * 
 	 * @param orchestration
 	 */
-	public void runOrchestration(Orchestration orchestration, String remark, String taskTraceId, Integer taskTraceType,
+	public void runOrchestration(Orchestration orchestration, String remark, String taskTraceId, String taskTraceType,
 			String annex) {
 		List<OrchestrationPipeline> orchestrationPipelines = orchestration.getOrchestrationPipelines();
 		List<List<OrchestrationPipeline>> orchestrationPipelinesSort = sortByPriority(orchestrationPipelines);
@@ -152,7 +152,7 @@ public class FlowManager {
 	 * 
 	 * @param lists
 	 */
-	public void handOut(List<List<PipelineModel>> pipelineModelSort, String remark, String taskTraceId, Integer taskTraceType,
+	public void handOut(List<List<PipelineModel>> pipelineModelSort, String remark, String taskTraceId, String taskTraceType,
 			String annex) throws Exception {
 		// Create runner.
 		GenericTaskRunner<?> runner = createGenericTaskRunner(2);
@@ -206,7 +206,7 @@ public class FlowManager {
 	 *
 	 * @param pipelineModel
 	 */
-	public void master2slave(PipelineModel pipelineModel, String remark, String taskTraceId, Integer taskTraceType,
+	public void master2slave(PipelineModel pipelineModel, String remark, String taskTraceId, String taskTraceType,
 			String annex) {
 		log.info(
 				"FlowManager.master2slave prarms::"
@@ -242,6 +242,7 @@ public class FlowManager {
 	 * @param pipelineId
 	 * @return
 	 */
+	//TODO 这里需要添加redis锁（）jedisService.setMap()
 	public PipelineModel buildPipeline(Integer pipelineId) {
 		// check pipeline is running
 		Assert2.isTrue(!isPipelineRunning(pipelineId), "this pipeline is running, Please try later");
@@ -268,7 +269,7 @@ public class FlowManager {
 	/**
 	 * when pipeline state change , call this method
 	 */
-	public synchronized void pipelineStateChange(PipelineModel pipelineModel) {
+	public void pipelineStateChange(PipelineModel pipelineModel) {
 		RunModel runModel = getRunModel(pipelineModel.getRunId());
 		Pipeline pipeline = getPipeline(runModel.getPipelines(), pipelineModel.getPipeId());
 		BeanUtils.copyProperties(pipelineModel, pipeline);
@@ -377,9 +378,9 @@ public class FlowManager {
 	 * @param projectName
 	 * @return
 	 */
-	public boolean isDependencyBuilded(String projectId) {
+	public boolean isDependencyBuilded(Integer projectId) {
 		List<RunModel> runModels = getRunModels();
-		Set<String> alreadBuild = new HashSet<>();
+		Set<Integer> alreadBuild = new HashSet<>();
 		for (RunModel runModel : runModels) {
 			List<Pipeline> pipelines = runModel.getPipelines();
 			for (Pipeline pipeline : pipelines) {
@@ -405,25 +406,35 @@ public class FlowManager {
 		return false;
 	}
 
-	private void getAlreadyBuildModules(Pipeline pipeline, Set<String> alreadBuild) {
+	private void getAlreadyBuildModules(Pipeline pipeline, Set<Integer> alreadBuild) {
 		if (!StringUtils.equals(pipeline.getNode(), node)) {
 			return;
 		}
-		List<String> modules = pipeline.getModules();
+		List<Integer> modules = new ArrayList<>();
+
+		if (CollectionUtils.isEmpty(pipeline.getModulesPorjects())) {
+			return;
+		}
+
+		pipeline.getModulesPorjects().forEach((modulesPorject) -> {
+			modules.add(modulesPorject.getProjectId());
+		});
+
 		if (CollectionUtils.isEmpty(modules)) {
 			return;
 		}
+		//TODO FAILED --> throw
 		if (StringUtils.equalsAnyIgnoreCase(pipeline.getStatus(), RUNNING_DEPLOY.toString(), FAILED.toString(),
 				SUCCESS.toString())) {
 			alreadBuild.addAll(modules);
 			return;
 		}
-		String current = pipeline.getCurrent();
-		if (StringUtils.isBlank(current)) {// if null ,it mean : not begin build
+		Integer current = pipeline.getCurrent();
+		if (isNull(current)) {// if null ,it mean : not begin build
 			return;
 		}
-		for (String module : modules) {
-			if (StringUtils.equals(module, current)) {
+		for (Integer module : modules) {
+			if (current.equals(module)) {
 				break;
 			} else {
 				alreadBuild.add(module);

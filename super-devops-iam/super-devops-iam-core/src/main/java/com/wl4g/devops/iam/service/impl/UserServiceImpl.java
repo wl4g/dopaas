@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
 			list = userDao.list(null, userName, displayName);
 		} else {
 
-			Set<Group> groups = groupService.getGroupsSet();
+			Set<Group> groups = groupService.getGroupsSet(new User(info.getPrincipal()));
 			List<Integer> groupIds = new ArrayList<>();
 			for (Group group : groups) {
 				groupIds.add(group.getId());

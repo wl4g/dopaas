@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
@@ -41,10 +42,12 @@ import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOPING;
 
+*/
 /**
  * @author vjay
  * @date 2019-05-17 11:44:00
- */
+ *//*
+
 @Service
 public class TaskHistoryServiceImpl implements TaskHistoryService {
 
@@ -93,7 +96,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 	@Transactional
 	public TaskHistory createTaskHistory(Project project, List<AppInstance> instances, int type, int status, String branchName,
 			String sha, Integer refId, String buildCommand, String preCommand, String postCommand, String tarType,String branchType,
-			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, Integer trackType, String remark,
+			Integer contactGroupId, List<TaskBuildCommand> taskBuildCommands, String trackId, String trackType, String remark,
 			String envType, String annex,String parentAppHome,String assetsPath) {
 		Assert.notNull(project, "not found project,please check che project config");
 		TaskHistory taskHistory = new TaskHistory();
@@ -113,7 +116,7 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistory.setContactGroupId(contactGroupId);
 		// 1107 add
 		taskHistory.setTrackId(trackId);
-		taskHistory.setTrackType(trackType);
+		//taskHistory.setTrackType(trackType);
 		taskHistory.setRemark(remark);
 		taskHistory.setEnvType(envType);
 		taskHistory.setAnnex(annex);
@@ -202,4 +205,4 @@ public class TaskHistoryServiceImpl implements TaskHistoryService {
 		taskHistoryDetailDao.updateByPrimaryKeySelective(taskHistoryInstance);
 	}
 
-}
+}*/

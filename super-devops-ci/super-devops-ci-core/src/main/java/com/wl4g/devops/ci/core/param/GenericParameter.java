@@ -15,15 +15,12 @@
  */
 package com.wl4g.devops.ci.core.param;
 
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
-import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.isTrue;
-import static org.springframework.util.Assert.notNull;
-
-import java.io.Serializable;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static org.springframework.util.Assert.*;
 
 /**
  * Generic pipeline handle command parameter.
@@ -40,7 +37,7 @@ public abstract class GenericParameter implements Serializable {
 	 * Pipeline taskId.
 	 */
 	@NotNull
-	private Integer taskId;
+	private Integer pipeId;
 
 	/**
 	 * Pipeline task remark.
@@ -52,19 +49,19 @@ public abstract class GenericParameter implements Serializable {
 		super();
 	}
 
-	public GenericParameter(Integer taskId, String remark) {
-		setTaskId(taskId);
+	public GenericParameter(Integer pipeId, String remark) {
+		setPipeId(pipeId);
 		setRemark(remark);
 	}
 
-	public Integer getTaskId() {
-		return taskId;
+	public Integer getPipeId() {
+		return pipeId;
 	}
 
-	public void setTaskId(Integer taskId) {
-		notNull(taskId, "Pipeline taskId can't be null.");
-		isTrue(taskId >= 0, "Pipeline taskId must be >=0.");
-		this.taskId = taskId;
+	public void setPipeId(Integer pipeId) {
+		notNull(pipeId, "Pipeline pipeId can't be null.");
+		isTrue(pipeId >= 0, "Pipeline pipeId must be >=0.");
+		this.pipeId = pipeId;
 	}
 
 	public String getRemark() {

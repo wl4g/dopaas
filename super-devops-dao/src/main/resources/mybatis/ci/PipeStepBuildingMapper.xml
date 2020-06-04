@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.devops.dao.ci.PipeStepBuildingDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.PipeStepBuilding">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="pipe_id" jdbcType="INTEGER" property="pipeId" />
+    <result column="pre_command" jdbcType="VARCHAR" property="preCommand" />
+    <result column="post_command" jdbcType="VARCHAR" property="postCommand" />
+    <result column="ref_type" jdbcType="INTEGER" property="refType" />
+
+
+    <collection property="pipeStepBuildingProjects" javaType="list" ofType="com.wl4g.devops.common.bean.ci.PipeStepBuildingProject">
+      <id column="p.id" jdbcType="INTEGER" property="id" />
+      <result column="p.building_id" jdbcType="INTEGER" property="buildingId" />
+      <result column="p.project_id" jdbcType="INTEGER" property="projectId" />
+      <result column="p.build_command" jdbcType="VARCHAR" property="buildCommand" />
+      <result column="p.ref" jdbcType="VARCHAR" property="ref" />
+      <result column="p.enable" jdbcType="INTEGER" property="enable" />
+    </collection>
+
+
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, pipe_id, pre_command, post_command, ref_type
+  </sql>
+
+  <sql id="Base_Column_List_b">
+    b.id, b.pipe_id, b.pre_command, b.post_command, b.ref_type
+  </sql>
+
+  <sql id="PipeStepBuildingProjectsColumn">
+		p.id as "p.id",
+		p.building_id as "p.building_id",
+		p.project_id as "p.project_id",
+		p.build_command as "p.build_command",
+		p.ref as "p.ref",
+		p.enable as "p.enable"
+	</sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List_b" />,<include refid="PipeStepBuildingProjectsColumn" />
+    from ci_pipe_step_building b left join ci_pipe_step_building_project p on b.id = p.building_id
+    where b.id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByPipeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List_b" />,<include refid="PipeStepBuildingProjectsColumn" />
+    from ci_pipe_step_building b left join ci_pipe_step_building_project p on b.id = p.building_id
+    where b.pipe_id = #{pipeId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ci_pipe_step_building
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByPipeId" parameterType="java.lang.Integer">
+    delete from ci_pipe_step_building
+    where pipe_id = #{pipeId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuilding">
+    insert into ci_pipe_step_building (id, pipe_id, pre_command, 
+      post_command, ref_type)
+    values (#{id,jdbcType=INTEGER}, #{pipeId,jdbcType=INTEGER}, #{preCommand,jdbcType=VARCHAR}, 
+      #{postCommand,jdbcType=VARCHAR}, #{refType,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuilding">
+    insert into ci_pipe_step_building
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="pipeId != null">
+        pipe_id,
+      </if>
+      <if test="preCommand != null">
+        pre_command,
+      </if>
+      <if test="postCommand != null">
+        post_command,
+      </if>
+      <if test="refType != null">
+        ref_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="pipeId != null">
+        #{pipeId,jdbcType=INTEGER},
+      </if>
+      <if test="preCommand != null">
+        #{preCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="postCommand != null">
+        #{postCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="refType != null">
+        #{refType,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuilding">
+    update ci_pipe_step_building
+    <set>
+      <if test="pipeId != null">
+        pipe_id = #{pipeId,jdbcType=INTEGER},
+      </if>
+      <if test="preCommand != null">
+        pre_command = #{preCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="postCommand != null">
+        post_command = #{postCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="refType != null">
+        ref_type = #{refType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.PipeStepBuilding">
+    update ci_pipe_step_building
+    set pipe_id = #{pipeId,jdbcType=INTEGER},
+      pre_command = #{preCommand,jdbcType=VARCHAR},
+      post_command = #{postCommand,jdbcType=VARCHAR},
+      ref_type = #{refType,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
-import java.util.List;
-
 import com.wl4g.devops.ci.pipeline.SpringExecutableJarPipelineProvider;
-import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+
+import java.util.List;
 
 /**
  * Spring executable JAR transfer job.
@@ -31,8 +31,8 @@ import com.wl4g.devops.common.bean.erm.AppInstance;
 public class SpringExecutableJarPipeDeployer extends GenericHostPipeDeployer<SpringExecutableJarPipelineProvider> {
 
 	public SpringExecutableJarPipeDeployer(SpringExecutableJarPipelineProvider provider, AppInstance instance,
-			List<TaskHistoryInstance> taskHistoryInstances) {
-		super(provider, instance, taskHistoryInstances);
+										   List<PipelineHistoryInstance> pipelineHistoryInstances) {
+		super(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Override

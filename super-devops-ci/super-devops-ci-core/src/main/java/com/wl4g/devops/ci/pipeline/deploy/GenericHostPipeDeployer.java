@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.pipeline.deploy;
 
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
-import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders;
 import org.slf4j.Logger;
@@ -41,8 +41,8 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
-	public GenericHostPipeDeployer(P provider, AppInstance instance, List<TaskHistoryInstance> taskHistoryInstances) {
-		super(provider, instance, taskHistoryInstances);
+	public GenericHostPipeDeployer(P provider, AppInstance instance, List<PipelineHistoryInstance> pipelineHistoryInstances) {
+		super(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @throws Exception
 	 */
 	protected void transferToRemoteTmpDir(String remoteHost, String user, String sshkey) throws Exception {
-		String localFile = config.getJobBackupDir(getContext().getTaskHistory().getId()) + "/" + getPrgramInstallFileName() + "."
+		String localFile = config.getJobBackupDir(getContext().getPipelineHistory().getId()) + "/" + getPrgramInstallFileName() + "."
 				+ DEFAULT_FILE_SUFFIX;
 
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
@@ -174,7 +174,7 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @return
 	 */
 	protected String getProgramInstallDir() {
-		return getContext().getTaskHistory().getParentAppHome();
+		return getContext().getPipeline().getParentAppHome();
 	}
 
 	/**

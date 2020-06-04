@@ -15,13 +15,14 @@
  */
 package com.wl4g.devops.erm.controller;
 
-import com.wl4g.devops.common.bean.erm.AppHost;
+import com.wl4g.devops.common.bean.erm.Host;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.erm.service.HostService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,7 +44,7 @@ public class AppHostController extends BaseController {
 	@RequestMapping(value = "/allHost")
 	public RespBase<?> all() {
 		RespBase<Object> resp = RespBase.create();
-		List<AppHost> list = hostService.list(null, null, null);
+		List<Host> list = hostService.list(null, null, null);
 		resp.setData(list);
 		return resp;
 	}
@@ -58,7 +59,7 @@ public class AppHostController extends BaseController {
 
 	@RequestMapping(value = "/save")
 	@RequiresPermissions(value = { "erm:host" })
-	public RespBase<?> save(AppHost host) {
+	public RespBase<?> save(@RequestBody Host host) {
 		RespBase<Object> resp = RespBase.create();
 		hostService.save(host);
 		return resp;

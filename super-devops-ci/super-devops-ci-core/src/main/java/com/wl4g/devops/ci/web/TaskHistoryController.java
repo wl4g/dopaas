@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 package com.wl4g.devops.ci.web;
 
 import com.wl4g.devops.ci.bean.PipelineModel;
@@ -35,13 +36,15 @@ import java.util.List;
 
 import static org.apache.shiro.authz.annotation.Logical.AND;
 
+*/
 /**
  * Task History controller
  *
  * @author Wangl.sir <983708408@qq.com>
  * @author vjay
  * @date 2019-05-16 15:05:00
- */
+ *//*
+
 @RestController
 @RequestMapping("/taskHis")
 public class TaskHistoryController extends BaseController {
@@ -55,7 +58,8 @@ public class TaskHistoryController extends BaseController {
 	@Autowired
 	private FlowManager flowManager;
 
-	/**
+	*/
+/**
 	 * List
 	 * 
 	 * @param groupName
@@ -63,7 +67,8 @@ public class TaskHistoryController extends BaseController {
 	 * @param branchName
 	 * @param customPage
 	 * @return
-	 */
+	 *//*
+
 	@RequestMapping(value = "/list")
 	@RequiresPermissions(value = { "ci", "ci:taskhis" }, logical = AND)
 	public RespBase<?> list(PageModel pm, String groupName, String projectName, String branchName, String startDate,
@@ -74,12 +79,14 @@ public class TaskHistoryController extends BaseController {
 		return resp;
 	}
 
-	/**
+	*/
+/**
 	 * Detail by id
 	 * 
 	 * @param taskId
 	 * @return
-	 */
+	 *//*
+
 	@RequestMapping(value = "/detail")
 	@RequiresPermissions(value = { "ci", "ci:taskhis" }, logical = AND)
 	public RespBase<?> detail(Integer taskId) {
@@ -95,12 +102,14 @@ public class TaskHistoryController extends BaseController {
 		return resp;
 	}
 
-	/**
+	*/
+/**
 	 * Rollback
 	 * 
 	 * @param taskId
 	 * @return
-	 */
+	 *//*
+
 	@RequestMapping(value = "/rollback")
 	@RequiresPermissions(value = { "ci", "ci:taskhis" }, logical = AND)
 	public RespBase<?> rollback(Integer taskId) {
@@ -137,4 +146,4 @@ public class TaskHistoryController extends BaseController {
 		return resp;
 	}
 
-}
+}*/

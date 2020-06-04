@@ -17,7 +17,7 @@ package com.wl4g.devops.common.bean.erm;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wl4g.devops.common.bean.erm.log.Beat;
-import com.wl4g.devops.common.bean.erm.log.Host;
+import com.wl4g.devops.common.bean.erm.log.LogHost;
 import com.wl4g.devops.common.bean.erm.log.Input;
 import com.wl4g.devops.common.bean.erm.log.Prospector;
 
@@ -34,7 +34,7 @@ public class Log {
 
 	private Beat beat;
 
-	private Host host;
+	private LogHost host;
 
 	private Prospector prospector;
 
@@ -72,11 +72,11 @@ public class Log {
 		this.beat = beat;
 	}
 
-	public Host getHost() {
+	public LogHost getHost() {
 		return host;
 	}
 
-	public void setHost(Host host) {
+	public void setHost(LogHost host) {
 		this.host = host;
 	}
 

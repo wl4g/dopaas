@@ -26,11 +26,23 @@ import com.wl4g.devops.common.bean.BaseBean;
 public class AppInstance extends BaseBean {
 	private static final long serialVersionUID = 4324569366421220002L;
 
+	private String name;
+
 	private Integer clusterId;
 
 	private Integer versionId;
 
+	private Integer deployType;
+
 	private Integer hostId;
+
+	private Integer k8sId;
+
+	private Integer dockerId;
+
+	private String cossRefBucket;
+
+	private Integer sshId;
 
 	private String envType;
 
@@ -40,17 +52,15 @@ public class AppInstance extends BaseBean {
 
 	private String remark;
 
-	private String sshUser;
-
-	private String sshKey;
-
-	private String sshKeyPub;
+	private Ssh ssh;
 
 	//
 	// --- Temporary fields. ---
 	//
 
 	private String hostname;
+
+	private String clusterName;
 
 	public Integer getClusterId() {
 		return clusterId;
@@ -112,28 +122,52 @@ public class AppInstance extends BaseBean {
 		this.remark = remark;
 	}
 
-	public String getSshUser() {
-		return sshUser;
+	public Integer getDeployType() {
+		return deployType;
 	}
 
-	public void setSshUser(String sshUser) {
-		this.sshUser = sshUser;
+	public void setDeployType(Integer deployType) {
+		this.deployType = deployType;
 	}
 
-	public String getSshKey() {
-		return sshKey;
+	public Integer getK8sId() {
+		return k8sId;
 	}
 
-	public void setSshKey(String sshKey) {
-		this.sshKey = sshKey;
+	public void setK8sId(Integer k8sId) {
+		this.k8sId = k8sId;
 	}
 
-	public String getSshKeyPub() {
-		return sshKeyPub;
+	public Integer getDockerId() {
+		return dockerId;
 	}
 
-	public void setSshKeyPub(String sshKeyPub) {
-		this.sshKeyPub = sshKeyPub;
+	public void setDockerId(Integer dockerId) {
+		this.dockerId = dockerId;
+	}
+
+	public Integer getSshId() {
+		return sshId;
+	}
+
+	public void setSshId(Integer sshId) {
+		this.sshId = sshId;
+	}
+
+	public Ssh getSsh() {
+		return ssh;
+	}
+
+	public void setSsh(Ssh ssh) {
+		this.ssh = ssh;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getHostname() {
@@ -144,20 +178,39 @@ public class AppInstance extends BaseBean {
 		this.hostname = hostname;
 	}
 
+
+	public String getClusterName() {
+		return clusterName;
+	}
+
+	public void setClusterName(String clusterName) {
+		this.clusterName = clusterName;
+	}
+
+	public String getCossRefBucket() {
+		return cossRefBucket;
+	}
+
+	public void setCossRefBucket(String cossRefBucket) {
+		this.cossRefBucket = cossRefBucket;
+	}
+
 	@Override
 	public String toString() {
 		return "AppInstance{" +
-				"clusterId=" + clusterId +
+				"name='" + name + '\'' +
+				", clusterId=" + clusterId +
 				", versionId=" + versionId +
+				", deployType=" + deployType +
 				", hostId=" + hostId +
+				", k8sId=" + k8sId +
+				", dockerId=" + dockerId +
+				", sshId=" + sshId +
 				", envType='" + envType + '\'' +
 				", enable=" + enable +
 				", endpoint='" + endpoint + '\'' +
 				", remark='" + remark + '\'' +
-				", sshUser='" + sshUser + '\'' +
-				", sshKey='" + sshKey + '\'' +
-				", sshKeyPub='" + sshKeyPub + '\'' +
-				", hostname='" + hostname + '\'' +
+				", ssh=" + ssh +
 				'}';
 	}
 }

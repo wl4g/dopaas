@@ -78,10 +78,10 @@
   </insert>
 
   <insert id="insertBatch" parameterType="java.util.Map">
-    INSERT INTO sys_role_menu (role_id, menu_id,create_by, create_date)
+    INSERT INTO sys_role_menu (id, role_id, menu_id,create_by, create_date)
     VALUES
     <foreach collection="roleMenus" item="roleMenu" separator=",">
-      (#{roleMenu.roleId},#{roleMenu.menuId},#{roleMenu.createBy},#{roleMenu.createDate})
+      (#{roleMenu.id},#{roleMenu.roleId},#{roleMenu.menuId},#{roleMenu.createBy},#{roleMenu.createDate})
     </foreach>
   </insert>
 
