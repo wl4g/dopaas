@@ -34,11 +34,10 @@ import com.wl4g.devops.support.mybatis.loader.SqlSessionMapperHotspotLoader.Hots
  */
 @Configuration
 public class SqlSessionHotspotAutoConfiguration {
-	final public static String CONF_P = "spring.cloud.devops.support.devel.mybatis-loader";
 
 	@Bean
-	@ConditionalOnJdwpDebug(enableProperty = CONF_P + ".enable")
-	@ConfigurationProperties(prefix = CONF_P)
+	@ConditionalOnJdwpDebug(enableProperty = KEY_PREFIX + ".enable")
+	@ConfigurationProperties(prefix = KEY_PREFIX)
 	@ConditionalOnBean(SqlSessionFactoryBean.class)
 	public HotspotLoadProperties hotspotLoaderProperties() {
 		return new HotspotLoadProperties();
@@ -50,5 +49,7 @@ public class SqlSessionHotspotAutoConfiguration {
 			HotspotLoadProperties config) {
 		return new SqlSessionMapperHotspotLoader(sessionFactory, config);
 	}
+
+	final public static String KEY_PREFIX = "spring.cloud.devops.support.devel.mybatis-loader";
 
 }

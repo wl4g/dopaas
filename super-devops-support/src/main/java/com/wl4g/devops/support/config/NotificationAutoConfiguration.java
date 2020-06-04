@@ -15,13 +15,12 @@
  */
 package com.wl4g.devops.support.config;
 
-import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -61,7 +60,6 @@ import static com.wl4g.devops.support.notification.NoOpMessageNotifier.*;
  */
 @Configuration
 public class NotificationAutoConfiguration {
-	final public static String KEY_NOTIFY_PREFIX = "spring.cloud.devops.support.notification";
 
 	// --- Notify properties. ---
 
@@ -219,22 +217,41 @@ public class NotificationAutoConfiguration {
 	 * @param notifiers
 	 * @return
 	 */
-	@Bean
+	@Bean(BEAN_NOTIFIER_ADAPTER)
+	@ConditionalOnBean(MessageNotifier.class)
 	public GenericOperatorAdapter<NotifierKind, MessageNotifier> compositeMessageNotifierAdapter(
-			@Autowired(required = false) List<MessageNotifier> notifiers) {
-		if (isNull(notifiers))
-			return defaultMessageNotifier;
-
+			List<MessageNotifier> notifiers) {
 		return new GenericOperatorAdapter<NotifierKind, MessageNotifier>(
 				notifiers.stream().map(n -> ((MessageNotifier) n)).collect(toList()), DefaultNoOp) {
 		};
 	}
 
 	/**
-	 * Default message notifier. {@link MessageNotifier}
+	 * Default NoOp message notifier.
 	 */
-	final private static GenericOperatorAdapter<NotifierKind, MessageNotifier> defaultMessageNotifier = new GenericOperatorAdapter<NotifierKind, MessageNotifier>(
-			DefaultNoOp) {
-	};
+	@Bean
+	@ConditionalOnMissingBean(name = BEAN_NOTIFIER_ADAPTER)
+	public NoOpMessageNotifierAdapter noOpCompositeMessageNotifierAdapter() {
+		return new NoOpMessageNotifierAdapter();
+	}
+
+	/**
+	 * {@link NoOpMessageNotifierAdapter}
+	 *
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2020年6月4日
+	 * @since
+	 */
+	public static class NoOpMessageNotifierAdapter extends GenericOperatorAdapter<NotifierKind, MessageNotifier> {
+
+		public NoOpMessageNotifierAdapter() {
+			super(DefaultNoOp);
+		}
+
+	}
+
+	final public static String BEAN_NOTIFIER_ADAPTER = "compositeMessageNotifierAdapter";
+
+	final public static String KEY_NOTIFY_PREFIX = "spring.cloud.devops.support.notification";
 
 }
