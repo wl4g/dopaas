@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
-import java.io.File;
-
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.Python3PipeDeployer;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+
+import java.io.File;
 
 /**
  * Pipeline provider for deployment python3 standard project.
@@ -46,7 +46,7 @@ public class Python3PipelineProvider extends RestorableDeployPipelineProvider {
 
 	@Override
 	protected Runnable newPipeDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
+		Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
 		return beanFactory.getBean(Python3PipeDeployer.class, args);
 	}
 

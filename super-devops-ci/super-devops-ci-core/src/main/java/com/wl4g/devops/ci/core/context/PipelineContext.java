@@ -16,9 +16,7 @@
 package com.wl4g.devops.ci.core.context;
 
 import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
-import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 
@@ -39,7 +37,7 @@ public abstract interface PipelineContext {
 	final public static PipelineContext EMPTY = new PipelineContext() {
 
 		@Override
-		public List<TaskHistoryInstance> getTaskHistoryInstances() {
+		public List<PipelineHistoryInstance> getPipelineHistoryInstances() {
 			throw new UnsupportedOperationException();
 		}
 
@@ -49,14 +47,30 @@ public abstract interface PipelineContext {
 		}
 
 		@Override
-		public TaskHistory getTaskHistory() {
+		public PipeStepInstanceCommand getPipeStepInstanceCommand() {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public TaskHistory getRefTaskHistory() {
+		public Pipeline getPipeline() {
 			throw new UnsupportedOperationException();
 		}
+
+		@Override
+		public PipeStepNotification getPipeStepNotification() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public PipeStepBuilding getPipeStepBuilding() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public PipelineHistory getPipelineHistory() {
+			throw new UnsupportedOperationException();
+		}
+
 
 		@Override
 		public String getProjectSourceDir() {
@@ -112,22 +126,23 @@ public abstract interface PipelineContext {
 	 * 
 	 * @return
 	 */
-	TaskHistory getTaskHistory();
-
-	/**
-	 * Get current pipeline reference last task history.
-	 * 
-	 * @return
-	 */
-	TaskHistory getRefTaskHistory();
+	PipelineHistory getPipelineHistory();
 
 	/**
 	 * Get current pipeline task record instance.
 	 * 
 	 * @return
 	 */
-	List<TaskHistoryInstance> getTaskHistoryInstances();
+	List<PipelineHistoryInstance> getPipelineHistoryInstances();
 
 	PipelineModel getPipelineModel();
+
+	PipeStepInstanceCommand getPipeStepInstanceCommand();
+
+	Pipeline getPipeline();
+
+	PipeStepNotification getPipeStepNotification();
+
+	PipeStepBuilding getPipeStepBuilding();
 
 }

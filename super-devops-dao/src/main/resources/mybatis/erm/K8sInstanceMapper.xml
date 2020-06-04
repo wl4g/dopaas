@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.devops.dao.erm.K8sInstanceDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.K8sInstance">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="k8s_id" jdbcType="INTEGER" property="k8sId" />
+    <result column="host_id" jdbcType="INTEGER" property="hostId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, k8s_id, host_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from erm_k8s_instance
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectHostIdByK8sId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select
+    host_id
+    from erm_k8s_instance
+    where k8s_id = #{k8sId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from erm_k8s_instance
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByK8sId" parameterType="java.lang.Integer">
+    delete from erm_k8s_instance
+    where k8s_id = #{k8sId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.K8sInstance">
+    insert into erm_k8s_instance (id, k8s_id, host_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{k8sId,jdbcType=INTEGER}, #{hostId,jdbcType=INTEGER}
+      )
+  </insert>
+
+  <insert id="insertBatch" parameterType="java.util.Map">
+    insert into erm_k8s_instance (id, k8s_id, host_id)
+    VALUES
+    <foreach collection="k8sInstances" item="k8sInstance" separator=",">
+      (#{k8sInstance.id,jdbcType=INTEGER}, #{k8sInstance.k8sId,jdbcType=INTEGER}, #{k8sInstance.hostId,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.K8sInstance">
+    insert into erm_k8s_instance
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="k8sId != null">
+        k8s_id,
+      </if>
+      <if test="hostId != null">
+        host_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="k8sId != null">
+        #{k8sId,jdbcType=INTEGER},
+      </if>
+      <if test="hostId != null">
+        #{hostId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.K8sInstance">
+    update erm_k8s_instance
+    <set>
+      <if test="k8sId != null">
+        k8s_id = #{k8sId,jdbcType=INTEGER},
+      </if>
+      <if test="hostId != null">
+        host_id = #{hostId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.K8sInstance">
+    update erm_k8s_instance
+    set k8s_id = #{k8sId,jdbcType=INTEGER},
+      host_id = #{hostId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

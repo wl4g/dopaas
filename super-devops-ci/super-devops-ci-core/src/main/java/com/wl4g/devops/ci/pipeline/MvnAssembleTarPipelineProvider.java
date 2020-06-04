@@ -34,7 +34,7 @@ public class MvnAssembleTarPipelineProvider extends BasedMavenPipelineProvider {
 
 	@Override
 	protected Runnable newPipeDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
+		Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
 		return beanFactory.getBean(MvnAssembleTarPipeDeployer.class, args);
 	}
 

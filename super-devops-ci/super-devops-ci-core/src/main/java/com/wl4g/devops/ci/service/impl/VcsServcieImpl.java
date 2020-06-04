@@ -27,6 +27,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+
 /**
  * @author vjay
  * @date 2019-11-12 11:05:00
@@ -34,51 +37,51 @@ import java.util.List;
 @Service
 public class VcsServcieImpl implements VcsService {
 
-	@Autowired
-	private VcsDao vcsDao;
+    @Autowired
+    private VcsDao vcsDao;
 
-	@Override
-	public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
-		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(vcsDao.list(name, providerKind, authType));
-		return pm;
-	}
+    @Override
+    public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
+        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+        pm.setRecords(vcsDao.list(getCurrentOrganizationCodes(), name, providerKind, authType));
+        return pm;
+    }
 
-	@Override
-	public void save(Vcs vcs) {
-		if (vcs.getId() == null) {
-			vcs.preInsert();
-			insert(vcs);
-		} else {
-			vcs.preUpdate();
-			update(vcs);
-		}
-	}
+    @Override
+    public void save(Vcs vcs) {
+        if (vcs.getId() == null) {
+            vcs.preInsert(getCurrentOrganizationCode());
+            insert(vcs);
+        } else {
+            vcs.preUpdate();
+            update(vcs);
+        }
+    }
 
-	private void insert(Vcs vcs) {
-		vcsDao.insertSelective(vcs);
-	}
+    private void insert(Vcs vcs) {
+        vcsDao.insertSelective(vcs);
+    }
 
-	private void update(Vcs vcs) {
-		vcsDao.updateByPrimaryKeySelective(vcs);
-	}
+    private void update(Vcs vcs) {
+        vcsDao.updateByPrimaryKeySelective(vcs);
+    }
 
-	@Override
-	public void del(Integer id) {
-		Vcs vcs = new Vcs();
-		vcs.setId(id);
-		vcs.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		vcsDao.updateByPrimaryKeySelective(vcs);
-	}
+    @Override
+    public void del(Integer id) {
+        Vcs vcs = new Vcs();
+        vcs.setId(id);
+        vcs.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        vcsDao.updateByPrimaryKeySelective(vcs);
+    }
 
-	@Override
-	public Vcs detail(Integer id) {
-		return vcsDao.selectByPrimaryKey(id);
-	}
+    @Override
+    public Vcs detail(Integer id) {
+        return vcsDao.selectByPrimaryKey(id);
+    }
 
-	@Override
-	public List<Vcs> all() {
-		return vcsDao.list(null, null, null);
-	}
+    @Override
+    public List<Vcs> all() {
+        return vcsDao.list(getCurrentOrganizationCodes(), null, null, null);
+    }
 
 }

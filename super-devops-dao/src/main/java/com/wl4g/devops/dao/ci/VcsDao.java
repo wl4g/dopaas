@@ -19,6 +19,8 @@ import com.github.pagehelper.Page;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface VcsDao {
 	int deleteByPrimaryKey(Integer id);
 
@@ -32,6 +34,6 @@ public interface VcsDao {
 
 	int updateByPrimaryKey(Vcs record);
 
-	Page<Vcs> list(@Param("name")String name,@Param("providerKind")String providerKind,@Param("authType")Integer authType);
+	Page<Vcs> list(@Param("organizationCodes") List<String> organizationCodes, @Param("name")String name, @Param("providerKind")String providerKind, @Param("authType")Integer authType);
 
 }

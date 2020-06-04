@@ -15,12 +15,10 @@
  */
 package com.wl4g.devops.ci.core.param;
 
+import javax.validation.constraints.NotBlank;
+
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.Assert.hasText;
-
-import java.io.Serializable;
-
-import javax.validation.constraints.NotBlank;
 
 /**
  * Hook pipeline handle parameter.
@@ -29,7 +27,7 @@ import javax.validation.constraints.NotBlank;
  * @version v1.0 2019年11月12日
  * @since
  */
-public class HookParameter implements Serializable {
+public class HookParameter  extends GenericParameter {
 	private static final long serialVersionUID = 9219348162378842689L;
 
 	@NotBlank

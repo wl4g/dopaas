@@ -17,15 +17,15 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.NpmViewPipeDeployer;
+import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
-import static java.lang.String.format;
-
 import java.io.File;
+
+import static java.lang.String.format;
 
 /**
  * Pipeline provider for deployment NPM/(VUE/AngularJS/ReactJS...) standard
@@ -50,21 +50,21 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 
 	@Override
 	protected Runnable newPipeDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
+		Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
 		return beanFactory.getBean(NpmViewPipeDeployer.class, args);
 	}
 
 	@Override
 	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
 		Project project = getContext().getProject();
-		TaskHistory taskHistory = getContext().getTaskHistory();
-		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
+		PipelineHistory pipelineHistory = getContext().getPipelineHistory();
+		File tmpCmdFile = config.getJobTmpCommandFile(pipelineHistory.getId(), project.getId());
 
 		// Execution command.
 		String defaultNpmBuildCmd = format(DEFAULT_NPM_CMD, projectDir);
 		log.info(writeBuildLog("Building with npm default command: %s", defaultNpmBuildCmd));
 		// TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), defaultNpmBuildCmd, tmpCmdFile,
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), defaultNpmBuildCmd, tmpCmdFile,
 				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
@@ -87,10 +87,10 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 	protected void postModuleBuiltCommand() throws Exception {
 		Project project = getContext().getProject();
 		String prgramInstallFileName = config.getPrgramInstallFileName(getContext().getAppCluster().getName());
-		TaskHistory taskHistory = getContext().getTaskHistory();
+		PipelineHistory pipelineHistory = getContext().getPipelineHistory();
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
+		File tmpCmdFile = config.getJobTmpCommandFile(pipelineHistory.getId(), project.getId());
+		File jobLogFile = config.getJobLog(pipelineHistory.getId());
 
 		String tarCommand = format("cd %s/dist\nmkdir %s\nmv `ls -A|grep -v %s` %s/\ntar -cvf %s/dist/%s.tar *", projectDir,
 				prgramInstallFileName, prgramInstallFileName, prgramInstallFileName, projectDir, prgramInstallFileName);
@@ -98,7 +98,7 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 
 		// Execution command.
 		// TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), tarCommand, tmpCmdFile, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}

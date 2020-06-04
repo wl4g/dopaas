@@ -16,13 +16,16 @@
 package com.wl4g.devops.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
-import org.apache.commons.lang3.RandomUtils;
+import static java.util.Objects.isNull;
 
 /**
  * DB based bean entity.
@@ -76,17 +79,34 @@ public abstract class BaseBean implements Serializable {
 	private String remark; // 备注
 
 	/**
+	 * For data permission, associated Organization (tree) code query
+	 */
+	private String organizationCode;
+
+	/**
 	 * Execute method before inserting, need to call manually
 	 */
 	public void preInsert() {
 		// TODO Use random number just for now
-		setId(RandomUtils.nextInt(1_0000, 10_0000));
+		setId(RandomUtils.nextInt(1_0000, 10000_0000));
 
 		setCreateDate(new Date());
 		setCreateBy(DEFAULT_USER_ID);
 		setUpdateDate(getCreateDate());
 		setUpdateBy(DEFAULT_USER_ID);
 		setDelFlag(DEL_FLAG_NORMAL);
+		setEnable(ENABLED);
+	}
+
+	/**
+	 * Execute method before inserting, need to call manually
+	 * @param organizationCode
+	 */
+	public void preInsert(String organizationCode) {
+		if(StringUtils.isBlank(this.organizationCode)){
+			this.organizationCode = organizationCode;
+		}
+		preInsert();
 	}
 
 	/**
@@ -150,7 +170,9 @@ public abstract class BaseBean implements Serializable {
 	}
 
 	public void setEnable(Integer enable) {
-		this.enable = enable;
+		if(isNull(this.enable)){
+			this.enable = enable;
+		}
 	}
 
 	public String getRemark() {
@@ -159,6 +181,15 @@ public abstract class BaseBean implements Serializable {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+
+	public String getOrganizationCode() {
+		return organizationCode;
+	}
+
+	public void setOrganizationCode(String organizationCode) {
+		this.organizationCode = organizationCode;
 	}
 
 	@Override

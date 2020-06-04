@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.devops.dao.ci.PipeStepInstanceCommandDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.PipeStepInstanceCommand">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="pipe_id" jdbcType="INTEGER" property="pipeId" />
+    <result column="enable" jdbcType="INTEGER" property="enable" />
+    <result column="pre_command" jdbcType="VARCHAR" property="preCommand" />
+    <result column="post_command" jdbcType="VARCHAR" property="postCommand" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, pipe_id, enable, pre_command, post_command
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ci_pipe_step_deploy_instance_command
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByPipeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ci_pipe_step_deploy_instance_command
+    where pipe_id = #{pipeId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ci_pipe_step_deploy_instance_command
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByPipeId" parameterType="java.lang.Integer">
+    delete from ci_pipe_step_deploy_instance_command
+    where pipe_id = #{pipeId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipeStepInstanceCommand">
+    insert into ci_pipe_step_deploy_instance_command (id, enable, pipe_id, pre_command,
+      post_command)
+    values (#{id,jdbcType=INTEGER},#{enable,jdbcType=INTEGER}, #{pipeId,jdbcType=INTEGER}, #{preCommand,jdbcType=VARCHAR},
+      #{postCommand,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStepInstanceCommand">
+    insert into ci_pipe_step_deploy_instance_command
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="enable != null">
+        enable,
+      </if>
+      <if test="pipeId != null">
+        pipe_id,
+      </if>
+      <if test="preCommand != null">
+        pre_command,
+      </if>
+      <if test="postCommand != null">
+        post_command,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null">
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="pipeId != null">
+        #{pipeId,jdbcType=INTEGER},
+      </if>
+      <if test="preCommand != null">
+        #{preCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="postCommand != null">
+        #{postCommand,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStepInstanceCommand">
+    update ci_pipe_step_deploy_instance_command
+    <set>
+      <if test="enable != null">
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="pipeId != null">
+        pipe_id = #{pipeId,jdbcType=INTEGER},
+      </if>
+      <if test="preCommand != null">
+        pre_command = #{preCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="postCommand != null">
+        post_command = #{postCommand,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.PipeStepInstanceCommand">
+    update ci_pipe_step_deploy_instance_command
+    set pipe_id = #{pipeId,jdbcType=INTEGER},
+      enable = #{enable,jdbcType=INTEGER},
+      pre_command = #{preCommand,jdbcType=VARCHAR},
+      post_command = #{postCommand,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

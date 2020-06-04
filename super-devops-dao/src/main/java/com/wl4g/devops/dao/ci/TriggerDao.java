@@ -33,7 +33,7 @@ public interface TriggerDao {
 
 	int updateByPrimaryKey(Trigger record);
 
-	List<Trigger> list(@Param("id") Integer id, @Param("name") String name, @Param("taskId") Integer taskId,
+	List<Trigger> list(@Param("organizationCodes")List<String> organizationCodes, @Param("id") Integer id, @Param("name") String name, @Param("taskId") Integer taskId,
 			@Param("enable") Integer enable, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
 	Trigger getTriggerByAppClusterIdAndBranch(@Param("appClusterId") Integer appClusterId,

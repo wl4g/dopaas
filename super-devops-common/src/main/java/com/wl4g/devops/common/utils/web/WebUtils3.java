@@ -42,4 +42,6 @@ public class WebUtils3 extends WebUtils2 {
 		return request.getParameter(name);
 	}
 
+    public static void getRequestParameter() {
+    }
 }

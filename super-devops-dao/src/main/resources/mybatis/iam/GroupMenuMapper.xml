@@ -43,10 +43,10 @@
   </insert>
 
   <insert id="insertBatch" parameterType="java.util.Map">
-    insert into sys_group_menu (group_id, menu_id,create_by, create_date)
+    insert into sys_group_menu (id, group_id, menu_id,create_by, create_date)
     VALUES
     <foreach collection="groupMenus" item="groupMenu" separator=",">
-      (#{groupMenu.groupId,jdbcType=INTEGER}, #{groupMenu.menuId,jdbcType=INTEGER},
+      (#{groupMenu.id,jdbcType=INTEGER}, #{groupMenu.groupId,jdbcType=INTEGER}, #{groupMenu.menuId,jdbcType=INTEGER},
       #{groupMenu.createBy,jdbcType=INTEGER}, #{groupMenu.createDate,jdbcType=TIMESTAMP})
     </foreach>
   </insert>

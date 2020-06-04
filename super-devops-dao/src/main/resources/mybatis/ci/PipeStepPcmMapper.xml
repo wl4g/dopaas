@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.devops.dao.ci.PipeStepPcmDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.PipeStepPcm">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="enable" jdbcType="INTEGER" property="enable" />
+    <result column="pipe_id" jdbcType="INTEGER" property="pipeId" />
+    <result column="pcm_id" jdbcType="INTEGER" property="pcmId" />
+    <result column="x_project_id" jdbcType="VARCHAR" property="xProjectId" />
+    <result column="x_tracker" jdbcType="VARCHAR" property="xTracker" />
+    <result column="x_assign_to" jdbcType="VARCHAR" property="xAssignTo" />
+    <result column="x_status" jdbcType="VARCHAR" property="xStatus" />
+    <result column="x_priority" jdbcType="VARCHAR" property="xPriority" />
+    <result column="x_custom_fields" jdbcType="VARCHAR" property="xCustomFields" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, enable, pipe_id, pcm_id, x_project_id, x_tracker,x_assign_to, x_status,
+    x_priority, x_custom_fields
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ci_pipe_step_pcm
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByPipeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ci_pipe_step_pcm
+    where pipe_id = #{pipeId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ci_pipe_step_pcm
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByPipeId" parameterType="java.lang.Integer">
+    delete from ci_pipe_step_pcm
+    where pipe_id = #{pipeId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipeStepPcm">
+    insert into ci_pipe_step_pcm (id, enable, pipe_id, 
+      pcm_id, x_project_id, x_tracker, x_assign_to,
+      x_status,
+      x_priority,
+      x_custom_fields)
+    values (#{id,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, #{pipeId,jdbcType=INTEGER}, 
+      #{pcmId,jdbcType=INTEGER}, #{xProjectId,jdbcType=VARCHAR}, #{xTracker,jdbcType=VARCHAR},#{xAssignTo,jdbcType=VARCHAR},
+      #{xStatus,jdbcType=VARCHAR},
+      #{xPriority,jdbcType=VARCHAR},
+      #{xCustomFields,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStepPcm">
+    insert into ci_pipe_step_pcm
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="enable != null">
+        enable,
+      </if>
+      <if test="pipeId != null">
+        pipe_id,
+      </if>
+      <if test="pcmId != null">
+        pcm_id,
+      </if>
+      <if test="xProjectId != null">
+        x_project_id,
+      </if>
+      <if test="xTracker != null">
+        x_tracker,
+      </if>
+      <if test="xAssignTo != null">
+        x_assign_to,
+      </if>
+      <if test="xStatus != null">
+        x_status,
+      </if>
+      <if test="xPriority != null">
+        x_priority,
+      </if>
+      <if test="xCustomFields != null">
+        x_custom_fields,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null">
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="pipeId != null">
+        #{pipeId,jdbcType=INTEGER},
+      </if>
+      <if test="pcmId != null">
+        #{pcmId,jdbcType=INTEGER},
+      </if>
+      <if test="xProjectId != null">
+        #{xProjectId,jdbcType=VARCHAR},
+      </if>
+      <if test="xTracker != null">
+        #{xTracker,jdbcType=VARCHAR},
+      </if>
+      <if test="xAssignTo != null">
+        #{xAssignTo,jdbcType=VARCHAR},
+      </if>
+      <if test="xStatus != null">
+        #{xStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="xPriority != null">
+        #{xPriority,jdbcType=VARCHAR},
+      </if>
+      <if test="xCustomFields != null">
+        #{xCustomFields,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.PipeStepPcm">
+    update ci_pipe_step_pcm
+    <set>
+      <if test="enable != null">
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="pipeId != null">
+        pipe_id = #{pipeId,jdbcType=INTEGER},
+      </if>
+      <if test="pcmId != null">
+        pcm_id = #{pcmId,jdbcType=INTEGER},
+      </if>
+      <if test="xProjectId != null">
+        x_project_id = #{xProjectId,jdbcType=VARCHAR},
+      </if>
+      <if test="xTracker != null">
+        x_tracker = #{xTracker,jdbcType=VARCHAR},
+      </if>
+      <if test="xAssignTo != null">
+        x_assign_to = #{xAssignTo,jdbcType=VARCHAR},
+      </if>
+      <if test="xStatus != null">
+        x_status = #{xStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="xPriority != null">
+        x_priority = #{xPriority,jdbcType=VARCHAR},
+      </if>
+      <if test="xCustomFields != null">
+        x_custom_fields = #{xCustomFields,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.PipeStepPcm">
+    update ci_pipe_step_pcm
+    set enable = #{enable,jdbcType=INTEGER},
+      pipe_id = #{pipeId,jdbcType=INTEGER},
+      pcm_id = #{pcmId,jdbcType=INTEGER},
+      x_project_id = #{xProjectId,jdbcType=VARCHAR},
+      x_tracker = #{xTracker,jdbcType=VARCHAR},
+      x_assign_to = #{xAssignTo,jdbcType=VARCHAR},
+      x_status = #{xStatus,jdbcType=VARCHAR},
+      x_priority = #{xPriority,jdbcType=VARCHAR},
+      x_custom_fields = #{xCustomFields,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

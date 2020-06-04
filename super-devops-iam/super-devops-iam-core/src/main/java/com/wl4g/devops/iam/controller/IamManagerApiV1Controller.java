@@ -60,7 +60,7 @@ public class IamManagerApiV1Controller extends BaseController {
 	private ClusterConfigDao clusterConfigDao;
 
 	/**
-	 * Find IAM server list of app_cluster_config.
+	 * Find IAM server list of erm_cluster_config.
 	 * 
 	 * @return
 	 * @throws Exception

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
-import com.wl4g.devops.ci.pipeline.RktNativePipelineProvider;
-import com.wl4g.devops.common.bean.ci.TaskHistoryInstance;
+import com.wl4g.devops.ci.pipeline.container.RktNativePipelineProvider;
+import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.util.List;
@@ -31,8 +31,8 @@ import java.util.List;
 public class RktNativePipeDeployer extends GenericHostPipeDeployer<RktNativePipelineProvider> {
 
 	public RktNativePipeDeployer(RktNativePipelineProvider provider, AppInstance instance,
-			List<TaskHistoryInstance> taskHistoryInstances) {
-		super(provider, instance, taskHistoryInstances);
+								 List<PipelineHistoryInstance> pipelineHistoryInstances) {
+		super(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Override

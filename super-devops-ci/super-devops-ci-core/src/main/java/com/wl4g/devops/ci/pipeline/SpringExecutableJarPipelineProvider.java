@@ -17,8 +17,8 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.deploy.SpringExecutableJarPipeDeployer;
+import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.TaskHistory;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
@@ -40,31 +40,34 @@ public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvi
 		super(context);
 	}
 
+
 	@Override
-	protected void postModuleBuiltCommand() throws Exception {
-		//TODO need tar Executable's Jar?
+	protected void postBuiltModulesDependencies() throws Exception {
 
 		Project project = getContext().getProject();
 		String prgramInstallFileName = config.getPrgramInstallFileName(getContext().getAppCluster().getName());
-		TaskHistory taskHistory = getContext().getTaskHistory();
+		PipelineHistory pipelineHistory = getContext().getPipelineHistory();
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
-		File tmpCmdFile = config.getJobTmpCommandFile(taskHistory.getId(), project.getId());
-		File jobLogFile = config.getJobLog(getContext().getTaskHistory().getId());
+		File tmpCmdFile = config.getJobTmpCommandFile(pipelineHistory.getId(), project.getId());
+		File jobLogFile = config.getJobLog(pipelineHistory.getId());
+		String assetsDir = getContext().getPipeline().getAssetsDir();
 
-		String tarCommand = format("cd %s/target\nmkdir %s\ncp *.jar %s/\ntar -cvf %s/target/%s.tar %s", projectDir,
-				prgramInstallFileName, prgramInstallFileName, projectDir, prgramInstallFileName,prgramInstallFileName);
+		String tarCommand = format("cd %s/\nmkdir %s\ncp *.jar %s/\ntar -cvf %s/%s.tar %s", projectDir+assetsDir,
+				prgramInstallFileName, prgramInstallFileName, projectDir+assetsDir, prgramInstallFileName,prgramInstallFileName);
 		log.info(writeBuildLog("view native built, packing the assets file command: %s", tarCommand));
 
 		// Execution command.
 		// TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(taskHistory.getId()), tarCommand, tmpCmdFile, 300000L)
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), tarCommand, tmpCmdFile, 300000L)
 				.setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
+
+		super.postBuiltModulesDependencies();
 	}
 
 	@Override
 	protected Runnable newPipeDeployer(AppInstance instance) {
-		Object[] args = { this, instance, getContext().getTaskHistoryInstances() };
+		Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
 		return beanFactory.getBean(SpringExecutableJarPipeDeployer.class, args);
 	}
 

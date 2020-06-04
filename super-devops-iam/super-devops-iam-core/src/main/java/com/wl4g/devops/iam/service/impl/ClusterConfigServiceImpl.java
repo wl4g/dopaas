@@ -43,7 +43,7 @@ public class ClusterConfigServiceImpl implements ClusterConfigService {
 	@Override
 	public Map<String, Object> info() {
 		List<ClusterConfig> list = clusterConfigDao.getByAppNames(null, profile, null);
-		Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'app_cluster_config'");
+		Assert.notEmpty(list, "not found cluster config info , Please Check your db , table = 'erm_cluster_config'");
 		Map<String, Object> map = new HashMap<>();
 		for (ClusterConfig entryAddress : list) {
 			map.put(entryAddress.getName(), entryAddress);

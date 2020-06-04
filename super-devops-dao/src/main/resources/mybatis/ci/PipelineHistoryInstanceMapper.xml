@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wl4g.devops.dao.ci.PipelineHistoryInstanceDao">
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.ci.PipelineHistoryInstance">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="pipe_history_id" jdbcType="INTEGER" property="pipeHistoryId" />
+    <result column="instance_id" jdbcType="INTEGER" property="instanceId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="cost_time" jdbcType="BIGINT" property="costTime" />
+    <!--ohter-->
+    <result column="instance_name" jdbcType="VARCHAR" property="instanceName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, pipe_history_id, instance_id, status, create_date, cost_time
+  </sql>
+  <sql id="Base_Column_List_hi">
+    hi.id, hi.pipe_history_id, hi.instance_id, hi.status, hi.create_date, hi.cost_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ci_pipe_history_instance
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPipeHistoryId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List_hi" />,i.name instance_name
+    from ci_pipe_history_instance hi
+    left join erm_app_instance i on i.id=hi.instance_id
+    where pipe_history_id = #{pipeHistoryId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ci_pipe_history_instance
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistoryInstance">
+    insert into ci_pipe_history_instance (id, pipe_history_id, instance_id,
+      status, create_date, cost_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{pipeHistoryId,jdbcType=INTEGER}, #{instanceId,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{costTime,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistoryInstance">
+    insert into ci_pipe_history_instance
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="pipeHistoryId != null">
+        pipe_history_id,
+      </if>
+      <if test="instanceId != null">
+        instance_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="costTime != null">
+        cost_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="pipeHistoryId != null">
+        #{pipeHistoryId,jdbcType=INTEGER},
+      </if>
+      <if test="instanceId != null">
+        #{instanceId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="costTime != null">
+        #{costTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistoryInstance">
+    update ci_pipe_history_instance
+    <set>
+      <if test="pipeHistoryId != null">
+        pipe_history_id = #{pipeHistoryId,jdbcType=INTEGER},
+      </if>
+      <if test="instanceId != null">
+        instance_id = #{instanceId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="costTime != null">
+        cost_time = #{costTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.ci.PipelineHistoryInstance">
+    update ci_pipe_history_instance
+    set pipe_history_id = #{pipeHistoryId,jdbcType=INTEGER},
+      instance_id = #{instanceId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      cost_time = #{costTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

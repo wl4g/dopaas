@@ -16,6 +16,7 @@
 package com.wl4g.devops.ci.service;
 
 import com.wl4g.devops.common.bean.ci.Pcm;
+import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 import com.wl4g.devops.common.web.model.SelectionModel;
 import com.wl4g.devops.page.PageModel;
 
@@ -37,10 +38,20 @@ public interface PcmService {
 
 	List<Pcm> all();
 
-	List<SelectionModel> getUsers(Integer taskId);
+	List<SelectionModel> getUsers(Integer pcmId);
 
-	List<SelectionModel> getProjects(Integer taskId);
+	List<SelectionModel> getProjects(Integer pcmId);
 
-	List<SelectionModel> getIssues(Integer taskId,String userId, String projectId,String search);
+	List<SelectionModel> getIssues(Integer pcmId, String userId, String projectId, String search);
+
+	List<SelectionModel> getProjectsByPcmId(Integer pcmId);
+
+	List<SelectionModel> getTrackers(Integer pcmId);
+
+	List<SelectionModel> getStatuses(Integer pcmId);
+
+	List<SelectionModel> getPriorities(Integer pcmId);
+
+	void createIssues(Integer pcmId, PipeHistoryPcm pipeHistoryPcm);
 
 }

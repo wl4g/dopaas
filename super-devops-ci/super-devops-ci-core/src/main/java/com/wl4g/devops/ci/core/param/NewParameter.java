@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.ci.core.param;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * New create pipeline handle parameter.
  * 
@@ -32,16 +30,15 @@ public class NewParameter extends GenericParameter {
 	 * Pipeline Pipeline task processing depends on external task tracking ID
 	 * (e.g. task ID of external project or business docs management system).
 	 */
-	@NotNull
-	private String taskTraceId;
+	private String trackId;
 
 	/**
 	 * External task tracking type.
-	 * 
+	 *
 	 * @see {@link #taskTraceId}
 	 */
-	@NotNull
-	private Integer taskTraceType;
+	private String trackType;
+
 
 	private String annex;
 
@@ -49,32 +46,30 @@ public class NewParameter extends GenericParameter {
 		super();
 	}
 
-	public NewParameter(Integer taskId, String remark, @NotNull String taskTraceId, @NotNull Integer taskTraceType,
+	public NewParameter(Integer pipeId, String remark, String trackId, String trackType,
 			String annex) {
-		super(taskId, remark);
-		setTaskTraceId(taskTraceId);
-		setTaskTraceType(taskTraceType);
+		super(pipeId, remark);
+		setTrackId(trackId);
+		setTrackType(trackType);
 		setAnnex(annex);
 	}
 
-	public String getTaskTraceId() {
-		return taskTraceId;
+	public String getTrackId() {
+		return trackId;
 	}
 
-	public void setTaskTraceId(String taskTraceId) {
+	public void setTrackId(String trackId) {
 		//when pcm not config, this params can be null
-		//notNull(taskTraceId, "Pipeline taskTraceId can't be null.");
-		this.taskTraceId = taskTraceId;
+		this.trackId = trackId;
 	}
 
-	public Integer getTaskTraceType() {
-		return taskTraceType;
+	public String getTrackType() {
+		return trackType;
 	}
 
-	public void setTaskTraceType(Integer taskTraceType) {
+	public void setTrackType(String trackType) {
 		//when pcm not config, this params can be null
-		//notNull(taskTraceType, "Pipeline taskTraceType can't be null.");
-		this.taskTraceType = taskTraceType;
+		this.trackType = trackType;
 	}
 
 	public String getAnnex() {

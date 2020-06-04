@@ -27,7 +27,7 @@ public class Group extends BaseBean implements Serializable {
 
 	private Integer id;
 
-	private String identification;
+	private String organizationCode;
 
 	private String name;
 
@@ -38,6 +38,10 @@ public class Group extends BaseBean implements Serializable {
 	private Integer parentId;
 
 	private Integer status;
+
+	private String parentCode;
+
+	private Integer areaId;
 
 	//
 	// --- Temporary fields. ---
@@ -133,12 +137,28 @@ public class Group extends BaseBean implements Serializable {
 		this.groupExt = groupExt;
 	}
 
-	public String getIdentification() {
-		return identification;
+	public String getOrganizationCode() {
+		return organizationCode;
 	}
 
-	public void setIdentification(String identification) {
-		this.identification = identification;
+	public void setOrganizationCode(String organizationCode) {
+		this.organizationCode = organizationCode;
+	}
+
+	public String getParentCode() {
+		return parentCode;
+	}
+
+	public void setParentCode(String parentCode) {
+		this.parentCode = parentCode;
+	}
+
+	public Integer getAreaId() {
+		return areaId;
+	}
+
+	public void setAreaId(Integer areaId) {
+		this.areaId = areaId;
 	}
 
 	@Override

@@ -57,7 +57,7 @@ spring:
             templates: # http://www.bejson.com/convert/unicode_chinese
               tpl1: Application health notification：${appInfo} status changed from ${fromStatus} to ${toStatus}, details：${msg}
               tpl2: Your verification code is：${code} valid for 5 minutes. You can't tell anyone if you're dead. Thank you for using!
-              tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}
+              tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}, projectName is ${projectName}, createDate is ${createDate}, costTime is ${costTime}
           sms:
             enable: false # Default[false]
             aliyun:
@@ -66,7 +66,7 @@ spring:
               templates: # https://dysms.console.aliyun.com/dysms.htm#/domestic/text/template
                 tpl1: SMS_140726862 # Alarm notice template.
                 tpl2: SMS_109490228 # VerificationCode notice template.
-                tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}
+                tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}, projectName is ${projectName}, createDate is ${createDate}, costTime is ${costTime}
           vms:
             enable: false # Default[false]
             aliyun:
@@ -74,7 +74,7 @@ spring:
               templates:
                 tpl1: TTS_184825642 # Alarm notice template.
                 tpl2: TTS_184820765 # VerificationCode notice template.
-                tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}
+                tpl3: CI build ${isSuccess}, pipelineId is ${pipelineId}, projectName is ${projectName}, createDate is ${createDate}, costTime is ${costTime}
   http: # Upload file limit
     multipart:
       max-file-size: 50Mb

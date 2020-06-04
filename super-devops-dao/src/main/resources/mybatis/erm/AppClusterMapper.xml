@@ -3,8 +3,8 @@
 <mapper namespace="com.wl4g.devops.dao.erm.AppClusterDao" >
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.AppCluster" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="dept_id" property="deptId" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="enable" property="enable" jdbcType="INTEGER" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -15,40 +15,40 @@
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, dept_id, name, type, enable, remark, create_by, create_date, update_by, update_date, 
+    id, name, organization_code, type, enable, remark, create_by, create_date, update_by, update_date,
     del_flag
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from app_cluster
+    from erm_app_cluster
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from app_cluster
+    delete from erm_app_cluster
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" >
-    insert into app_cluster (id, dept_id, name, 
+    insert into erm_app_cluster (id, name, organization_code,
       type, enable, remark, 
       create_by, create_date, update_by, 
       update_date, del_flag)
-    values (#{id,jdbcType=INTEGER}, #{deptId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR},
       #{type,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
       #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" useGeneratedKeys="true" keyProperty="id">
-    insert into app_cluster
+    insert into erm_app_cluster
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="deptId != null" >
-        dept_id,
-      </if>
       <if test="name != null" >
         name,
+      </if>
+      <if test="organizationCode != null" >
+        organization_code,
       </if>
       <if test="type != null" >
         type,
@@ -79,11 +79,11 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="deptId != null" >
-        #{deptId,jdbcType=INTEGER},
-      </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationCode != null" >
+        #{organizationCode,jdbcType=VARCHAR},
       </if>
       <if test="type != null" >
         #{type,jdbcType=INTEGER},
@@ -112,13 +112,13 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" >
-    update app_cluster
+    update erm_app_cluster
     <set >
-      <if test="deptId != null" >
-        dept_id = #{deptId,jdbcType=INTEGER},
-      </if>
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationCode != null" >
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
       </if>
       <if test="type != null" >
         type = #{type,jdbcType=INTEGER},
@@ -148,9 +148,9 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppCluster" >
-    update app_cluster
-    set dept_id = #{deptId,jdbcType=INTEGER},
-      name = #{name,jdbcType=VARCHAR},
+    update erm_app_cluster
+    set name = #{name,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
       enable = #{enable,jdbcType=INTEGER},
       remark = #{remark,jdbcType=VARCHAR},
@@ -166,10 +166,16 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from app_cluster
+    from erm_app_cluster
     where del_flag!=1
     <if test="clusterName != null and clusterName != ''" >
       AND name LIKE CONCAT('%','${clusterName}','%')
+    </if>
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
     </if>
   </select>
 

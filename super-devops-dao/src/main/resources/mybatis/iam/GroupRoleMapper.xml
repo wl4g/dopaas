@@ -55,10 +55,10 @@
   </insert>
 
   <insert id="insertBatch" parameterType="java.util.Map">
-    insert into sys_group_role (group_id, role_id,create_by, create_date)
+    insert into sys_group_role (id, group_id, role_id,create_by, create_date)
     VALUES
     <foreach collection="groupRoles" item="groupRole" separator=",">
-      (#{groupRole.groupId,jdbcType=INTEGER}, #{groupRole.roleId,jdbcType=INTEGER},
+      (#{groupRole.id,jdbcType=INTEGER}, #{groupRole.groupId,jdbcType=INTEGER}, #{groupRole.roleId,jdbcType=INTEGER},
       #{groupRole.createBy,jdbcType=INTEGER}, #{groupRole.createDate,jdbcType=TIMESTAMP})
     </foreach>
   </insert>

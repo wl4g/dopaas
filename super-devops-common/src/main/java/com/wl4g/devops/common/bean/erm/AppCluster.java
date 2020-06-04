@@ -21,84 +21,76 @@ import java.util.List;
 
 /**
  * 对应表：app_cluster
- * 
+ *
  * @date 2018年9月19日
  */
 public class AppCluster extends BaseBean {
-	private static final long serialVersionUID = -3298424126317938674L;
+    private static final long serialVersionUID = -3298424126317938674L;
 
-	private Integer deptId;
+    private String name;
 
-	private String name;
+    private Integer type;
 
-	private Integer type;
+    private Integer enable;
 
-	private Integer enable;
+    private String remark;
 
-	private String remark;
+    // --- Temporary. ---
 
-	// --- Temporary. ---
+    private int instanceCount;
 
-	private int instanceCount;
-	private List<AppInstance> instances;
+    private List<AppInstance> instances;
 
-	public Integer getDeptId() {
-		return deptId;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setDeptId(Integer deptId) {
-		this.deptId = deptId;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Integer getType() {
+        return type;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setType(Integer type) {
+        this.type = type;
+    }
 
-	public Integer getType() {
-		return type;
-	}
+    @Override
+    public Integer getEnable() {
+        return enable;
+    }
 
-	public void setType(Integer type) {
-		this.type = type;
-	}
+    @Override
+    public void setEnable(Integer enable) {
+        this.enable = enable;
+    }
 
-	@Override
-	public Integer getEnable() {
-		return enable;
-	}
+    @Override
+    public String getRemark() {
+        return remark;
+    }
 
-	@Override
-	public void setEnable(Integer enable) {
-		this.enable = enable;
-	}
+    @Override
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
-	@Override
-	public String getRemark() {
-		return remark;
-	}
+    public List<AppInstance> getInstances() {
+        return instances;
+    }
 
-	@Override
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
+    public void setInstances(List<AppInstance> instances) {
+        this.instances = instances;
+    }
 
-	public List<AppInstance> getInstances() {
-		return instances;
-	}
+    public int getInstanceCount() {
+        return instanceCount;
+    }
 
-	public void setInstances(List<AppInstance> instances) {
-		this.instances = instances;
-	}
+    public void setInstanceCount(int instanceCount) {
+        this.instanceCount = instanceCount;
+    }
 
-	public int getInstanceCount() {
-		return instanceCount;
-	}
-
-	public void setInstanceCount(int instanceCount) {
-		this.instanceCount = instanceCount;
-	}
 }

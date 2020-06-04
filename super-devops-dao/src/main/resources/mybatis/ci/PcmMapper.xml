@@ -5,6 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="provider_kind" jdbcType="VARCHAR" property="providerKind" />
+    <result column="organization_code" jdbcType="VARCHAR" property="organizationCode" />
     <result column="base_url" jdbcType="VARCHAR" property="baseUrl" />
     <result column="auth_type" jdbcType="INTEGER" property="authType" />
     <result column="access_token" jdbcType="VARCHAR" property="accessToken" />
@@ -18,7 +19,7 @@
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, provider_kind, base_url, auth_type, access_token, username, password, remark,
+    id, name, provider_kind, organization_code, base_url, auth_type, access_token, username, password, remark,
     del_flag, create_date, create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -42,6 +43,12 @@
     <if test="authType != null" >
       AND auth_type = #{authType,jdbcType=INTEGER}
     </if>
+    <if test="organizationCodes != null and organizationCodes.size() > 0">
+      and organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -49,12 +56,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.ci.Pcm">
-    insert into ci_pcm (id, name, provider_kind,
+    insert into ci_pcm (id, name, provider_kind,organization_code,
       base_url, auth_type, access_token,
       username, password, remark, 
       del_flag, create_date, create_by, 
       update_date, update_by)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{providerKind,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{providerKind,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR},
       #{baseUrl,jdbcType=VARCHAR}, #{authType,jdbcType=INTEGER}, #{accessToken,jdbcType=VARCHAR},
       #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
@@ -71,6 +78,9 @@
       </if>
       <if test="providerKind != null">
         provider_kind,
+      </if>
+      <if test="organizationCode != null">
+        organization_code,
       </if>
       <if test="baseUrl != null">
         base_url,
@@ -116,6 +126,9 @@
       <if test="providerKind != null">
         #{providerKind,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="baseUrl != null">
         #{baseUrl,jdbcType=VARCHAR},
       </if>
@@ -160,6 +173,9 @@
       <if test="providerKind != null">
         provider_kind = #{providerKind,jdbcType=VARCHAR},
       </if>
+      <if test="organizationCode != null">
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
       <if test="baseUrl != null">
         base_url = #{baseUrl,jdbcType=VARCHAR},
       </if>
@@ -200,6 +216,7 @@
     update ci_pcm
     set name = #{name,jdbcType=VARCHAR},
       provider_kind = #{providerKind,jdbcType=VARCHAR},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
       base_url = #{baseUrl,jdbcType=VARCHAR},
       auth_type = #{authType,jdbcType=INTEGER},
       access_token = #{accessToken,jdbcType=VARCHAR},
