@@ -53,11 +53,6 @@ import static com.wl4g.devops.support.config.JedisAutoConfiguration.JedisPropert
 @Configuration
 public class JedisAutoConfiguration {
 
-	/**
-	 * Resolving spring byName injection conflict.
-	 */
-	final public static String BEAN_NAME_REDIS = "JedisAutoConfiguration.JedisService.Bean";
-
 	@Bean
 	@ConditionalOnProperty(name = KEY_JEDIS_PREFIX + ".nodes", matchIfMissing = false)
 	@ConfigurationProperties(prefix = KEY_JEDIS_PREFIX)
@@ -183,5 +178,10 @@ public class JedisAutoConfiguration {
 		}
 
 	}
+
+	/**
+	 * Resolving spring byName injection conflict.
+	 */
+	final public static String BEAN_NAME_REDIS = "JedisAutoConfiguration.JedisService.Bean";
 
 }
