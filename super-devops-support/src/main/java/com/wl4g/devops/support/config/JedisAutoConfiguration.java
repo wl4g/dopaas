@@ -41,7 +41,6 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.exceptions.JedisException;
-import static com.wl4g.devops.support.config.JedisAutoConfiguration.JedisProperties.*;
 
 /**
  * JEDIS properties configuration.
@@ -88,8 +87,8 @@ public class JedisAutoConfiguration {
 	 */
 	public static class JedisProperties implements Serializable {
 		final private static long serialVersionUID = 1906168160146495488L;
-		final public static String KEY_JEDIS_PREFIX = "redis";
-		final protected static Pattern DefaultNodePattern = Pattern.compile("^.+[:]\\d{1,9}\\s*$");
+
+		final private static Pattern DefaultNodePattern = Pattern.compile("^.+[:]\\d{1,9}\\s*$");
 
 		protected SmartLogger log = getLogger(getClass());
 
@@ -178,6 +177,11 @@ public class JedisAutoConfiguration {
 		}
 
 	}
+
+	/**
+	 * That jedis configuration property key.
+	 */
+	final public static String KEY_JEDIS_PREFIX = "redis";
 
 	/**
 	 * Resolving spring byName injection conflict.
