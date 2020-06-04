@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.commons.cli.Option;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.*;
 
 /**
@@ -47,7 +48,7 @@ public class HelpOption extends Option {
 			throws IllegalArgumentException {
 		super(opt, longOpt, true, null);
 		isTrue(opt.length() == 1,
-				String.format("Short option: '%s' (%s), non GNU specification, name length must be 1", opt, description));
+				format("Short option: '%s' (%s), non GNU specification, name length must be 1", opt, description));
 		this.defaultValue = defaultValue;
 		setRequired(required);
 		if (!isRequired()) {
@@ -59,9 +60,9 @@ public class HelpOption extends Option {
 		// [MARK0]: Special example hints are required for list/set/array and
 		// map types. See:com.wl4g.devops.shell.utils.Types#simpleSetConvert
 		if (Collection.class.isAssignableFrom(paramType) || paramType.isArray()) {
-			setDescription(String.format("%s\t(e.g. arg1 --list x1,x2... )", description));
+			setDescription(format("%s\t(e.g. arg1 --list x1,x2... )", description));
 		} else if (Map.class.isAssignableFrom(paramType)) {
-			setDescription(String.format("%s\t(e.g. arg1 --map x1=y1,x2=y2... )", description));
+			setDescription(format("%s\t(e.g. arg1 --map x1=y1,x2=y2... )", description));
 		} else {
 			setDescription(description);
 		}
