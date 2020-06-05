@@ -16,7 +16,6 @@
 package com.wl4g.devops.tool.common.codec;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -98,10 +97,7 @@ public abstract class Base58 {
 	 * @throws IllegalArgumentException
 	 */
 	public static byte[] decodeBase58(String input) throws IllegalArgumentException {
-		if (isNull(input)) {
-			return null;
-		}
-		if (input.length() == 0) {
+		if (isBlank(input)) {
 			return new byte[0];
 		}
 
