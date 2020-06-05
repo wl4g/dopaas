@@ -31,8 +31,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**
@@ -51,18 +51,18 @@ public class DockerClusterServiceImpl implements DockerClusterService {
     @Override
     public PageModel page(PageModel pm,String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(dockerClusterDao.list(getCurrentOrganizationCodes(), name));
+        pm.setRecords(dockerClusterDao.list(getRequestOrganizationCodes(), name));
         return pm;
     }
 
     @Override
     public List<DockerCluster> getForSelect() {
-        return dockerClusterDao.list(getCurrentOrganizationCodes(),null);
+        return dockerClusterDao.list(getRequestOrganizationCodes(),null);
     }
 
     public void save(DockerCluster dockerCluster){
         if(isNull(dockerCluster.getId())){
-            dockerCluster.preInsert(getCurrentOrganizationCode());
+            dockerCluster.preInsert(getRequestOrganizationCode());
             insert(dockerCluster);
         }else{
             dockerCluster.preUpdate();

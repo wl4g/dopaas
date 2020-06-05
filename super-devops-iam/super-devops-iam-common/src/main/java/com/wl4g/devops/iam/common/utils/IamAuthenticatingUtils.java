@@ -30,7 +30,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.hash.Hashing.sha512;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.tool.common.codec.Base58.encode;
+import static com.wl4g.devops.tool.common.codec.Base58.encodeBase58;
 import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
@@ -153,7 +153,7 @@ public abstract class IamAuthenticatingUtils extends IamSecurityHolder {
 		notNullOf(session, "session");
 		hasTextOf(accessTokenSignKey, "accessTokenSignKey");
 		final String accessTokenPlain = valueOf(session.getId());
-		return encode(hmacSha256Hex(toBytes(accessTokenSignKey), toBytes(accessTokenPlain)).getBytes(UTF_8));
+		return encodeBase58(hmacSha256Hex(toBytes(accessTokenSignKey), toBytes(accessTokenPlain)).getBytes(UTF_8));
 	}
 
 	/**

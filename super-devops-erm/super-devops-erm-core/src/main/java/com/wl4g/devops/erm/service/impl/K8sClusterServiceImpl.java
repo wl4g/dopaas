@@ -31,8 +31,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**
@@ -51,18 +51,18 @@ public class K8sClusterServiceImpl implements K8sClusterService {
     @Override
     public PageModel page(PageModel pm,String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(k8sClusterDao.list(getCurrentOrganizationCodes(), name));
+        pm.setRecords(k8sClusterDao.list(getRequestOrganizationCodes(), name));
         return pm;
     }
 
     @Override
     public List<K8sCluster> getForSelect() {
-        return k8sClusterDao.list(getCurrentOrganizationCodes(),null);
+        return k8sClusterDao.list(getRequestOrganizationCodes(),null);
     }
 
     public void save(K8sCluster k8sCluster){
         if(isNull(k8sCluster.getId())){
-            k8sCluster.preInsert(getCurrentOrganizationCode());
+            k8sCluster.preInsert(getRequestOrganizationCode());
             insert(k8sCluster);
         }else{
             k8sCluster.preUpdate();

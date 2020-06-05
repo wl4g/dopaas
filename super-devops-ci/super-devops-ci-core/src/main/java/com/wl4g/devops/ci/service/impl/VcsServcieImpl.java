@@ -27,8 +27,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 /**
  * @author vjay
@@ -43,14 +43,14 @@ public class VcsServcieImpl implements VcsService {
     @Override
     public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(vcsDao.list(getCurrentOrganizationCodes(), name, providerKind, authType));
+        pm.setRecords(vcsDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
         return pm;
     }
 
     @Override
     public void save(Vcs vcs) {
         if (vcs.getId() == null) {
-            vcs.preInsert(getCurrentOrganizationCode());
+            vcs.preInsert(getRequestOrganizationCode());
             insert(vcs);
         } else {
             vcs.preUpdate();
@@ -81,7 +81,7 @@ public class VcsServcieImpl implements VcsService {
 
     @Override
     public List<Vcs> all() {
-        return vcsDao.list(getCurrentOrganizationCodes(), null, null, null);
+        return vcsDao.list(getRequestOrganizationCodes(), null, null, null);
     }
 
 }

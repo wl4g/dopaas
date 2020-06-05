@@ -39,8 +39,8 @@ import java.util.UUID;
 
 import static com.wl4g.devops.erm.util.SshkeyUtils.decryptSshkeyFromHex;
 import static com.wl4g.devops.erm.util.SshkeyUtils.encryptSshkeyToHex;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**
@@ -65,18 +65,18 @@ public class SshServiceImpl implements SshService {
     @Override
     public PageModel page(PageModel pm,String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(sshDao.list(getCurrentOrganizationCodes(), name));
+        pm.setRecords(sshDao.list(getRequestOrganizationCodes(), name));
         return pm;
     }
 
     @Override
     public List<Ssh> getForSelect() {
-        return sshDao.list(getCurrentOrganizationCodes(),null);
+        return sshDao.list(getRequestOrganizationCodes(),null);
     }
 
     public void save(Ssh ssh){
         if(isNull(ssh.getId())){
-            ssh.preInsert(getCurrentOrganizationCode());
+            ssh.preInsert(getRequestOrganizationCode());
             insert(ssh);
         }else{
             ssh.preUpdate();

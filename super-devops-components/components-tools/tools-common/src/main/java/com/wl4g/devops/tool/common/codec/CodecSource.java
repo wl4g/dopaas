@@ -117,7 +117,7 @@ public class CodecSource implements Serializable {
 
 	public synchronized String toBase58() {
 		if (isNull(cachedBase58)) {
-			cachedBase58 = Base58.encode(getBytes());
+			cachedBase58 = Base58.encodeBase58(getBytes());
 		}
 		return cachedBase58;
 	}
@@ -194,7 +194,7 @@ public class CodecSource implements Serializable {
 	 * @return
 	 */
 	public static CodecSource fromBase58(final String base58) {
-		return new CodecSource(Base58.decode(base58));
+		return new CodecSource(Base58.decodeBase58(base58));
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class CodecSource implements Serializable {
 	 * @return
 	 */
 	public static CodecSource fromBase58(final byte[] base58Array) {
-		return new CodecSource(Base58.decode(new String(base58Array, UTF_8)));
+		return new CodecSource(Base58.decodeBase58(new String(base58Array, UTF_8)));
 	}
 
 }

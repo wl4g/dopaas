@@ -37,8 +37,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 @Service
 @Transactional
@@ -56,7 +56,7 @@ public class AppClueterServiceImpl implements AppClusterService {
     public Map<String, Object> list(PageModel pm, String clusterName) {
         Map<String, Object> data = new HashMap<>();
         Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-        List<AppCluster> list = appClusterDao.list(getCurrentOrganizationCodes(),clusterName);
+        List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(),clusterName);
         for (AppCluster appCluster : list) {
             int count = appInstanceDao.countByClusterId(appCluster.getId());
             appCluster.setInstanceCount(count);
@@ -69,7 +69,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 
     @Override
     public List<AppCluster> clusters() {
-        return appClusterDao.list(getCurrentOrganizationCodes(),null);
+        return appClusterDao.list(getRequestOrganizationCodes(),null);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class AppClueterServiceImpl implements AppClusterService {
     }
 
     private void insert(AppCluster appCluster) {
-        appCluster.preInsert(getCurrentOrganizationCode());
+        appCluster.preInsert(getRequestOrganizationCode());
         appClusterDao.insertSelective(appCluster);
         /*Integer clusterId = appCluster.getId();
 

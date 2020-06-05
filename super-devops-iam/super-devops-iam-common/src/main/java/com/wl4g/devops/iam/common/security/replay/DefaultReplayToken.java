@@ -114,7 +114,7 @@ public final class DefaultReplayToken implements ReplayToken {
 	public static DefaultReplayToken build(String replayToken) {
 		hasTextOf(replayToken, "replayToken");
 		isTrueOf(!equalsAnyIgnoreCase(replayToken, "null", "undefined", ""), "replayToken");
-		String decodeSignature = new String(decode(replayToken), UTF_8);
+		String decodeSignature = new String(decodeBase58(replayToken), UTF_8);
 		return parseJSON(decodeSignature, DefaultReplayToken.class);
 	}
 
