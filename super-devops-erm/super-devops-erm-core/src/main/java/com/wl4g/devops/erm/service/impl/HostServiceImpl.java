@@ -31,8 +31,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**
@@ -50,21 +50,21 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public List<Host> list(String name, String hostname, Integer idcId) {
-        List<Host> list = appHostDao.list(getCurrentOrganizationCodes(), name, hostname, idcId);
+        List<Host> list = appHostDao.list(getRequestOrganizationCodes(), name, hostname, idcId);
         return list;
     }
 
     @Override
     public PageModel page(PageModel pm,String name, String hostname, Integer idcId) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(appHostDao.list(getCurrentOrganizationCodes(), name, hostname, idcId));
+        pm.setRecords(appHostDao.list(getRequestOrganizationCodes(), name, hostname, idcId));
         return pm;
     }
 
     @Override
     public void save(Host host){
         if(isNull(host.getId())){
-            host.preInsert(getCurrentOrganizationCode());
+            host.preInsert(getRequestOrganizationCode());
             insert(host);
         }else{
             host.preUpdate();

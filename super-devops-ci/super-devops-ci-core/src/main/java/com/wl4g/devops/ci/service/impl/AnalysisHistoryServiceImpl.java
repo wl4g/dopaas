@@ -23,7 +23,7 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.dao.ci.AnalysisHistoryDao;
 import com.wl4g.devops.page.PageModel;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 /**
  * @author vjay
@@ -38,7 +38,7 @@ public class AnalysisHistoryServiceImpl implements AnalysisHistoryService {
 	@Override
 	public PageModel list(PageModel pm) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(analysisHistoryDao.list(getCurrentOrganizationCodes()));
+		pm.setRecords(analysisHistoryDao.list(getRequestOrganizationCodes()));
 		return pm;
 	}
 }

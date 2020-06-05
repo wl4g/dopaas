@@ -122,7 +122,7 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 		// Reponed handshake result.
 		HandshakeResult handshake = new HandshakeResult(V2_0_0.getVersion());
 		// Current supports crypt algorithms.
-		handshake.setAlgorithms(cryptAdapter.getRunningKinds().stream().map(k -> encode(k.getAlgorithm())).collect(toList()));
+		handshake.setAlgorithms(cryptAdapter.getRunningKinds().stream().map(k -> encodeBase58(k.getAlgorithm())).collect(toList()));
 		// Assgin sessionKeyId
 		handshake.getSession().setSessionKey(config.getParam().getSid());
 		handshake.getSession().setSessionValue(getSession(true).getId());

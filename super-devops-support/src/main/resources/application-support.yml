@@ -17,16 +17,16 @@ spring:
       #support:
       #  devel:
       #    mybatis-loader: # Mybatis mappers autoloader for development only(Note: production disabled)
-      #      enable: false  # Default with: auto(enable jdwp?)
+      #      enable: false  # Default[false] with jdwp
       #      fast-fail: false
       #      monitor-loader-interval-ms: 1000
       #  notification:
       #    mail:
       #      enable: false # Default[false]
-      #      host: smtp.sina.com
+      #      host: mail.google.com
       #      port: 465
-      #      username: safec7782@sina.com
-      #      password: safec7782
+      #      username: super-devops@gmail.com
+      #      password: 123456
       #      protocol: smtp
       #      default-encoding: UTF-8
       #      properties:
@@ -45,7 +45,7 @@ spring:
       #        tpl2: Your verification code is：${code} valid for 5 minutes. You can't tell anyone if you're dead. Thank you for using!
       #    # Some configuration...
       #    sms:
-      #      enable: true # Default[false]
+      #      enable: false # Default[false]
       #      aliyun:
       #        regionId: cn-hangzhou
       #        accessKeyId: ${ALIYUN_KEY}
@@ -55,7 +55,7 @@ spring:
       #          tpl1: SMS_140726862 # Alarm notice template.
       #          tpl2: SMS_109490228 # VerificationCode notice template.
       #    vms:
-      #      enable: true # Default[false]
+      #      enable: false # Default[false]
       #      aliyun:
       #        regionId: cn-hangzhou
       #        accessKeyId: ${ALIYUN_KEY}

@@ -16,6 +16,7 @@
 package com.wl4g.devops.tool.common.codec;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -36,11 +37,11 @@ public abstract class Base58 {
 	 * @param input
 	 * @return
 	 */
-	public static String encode(String input) {
+	public static String encodeBase58(String input) {
 		if (isBlank(input)) {
 			return EMPTY;
 		}
-		return encode(input.getBytes(UTF_8));
+		return encodeBase58(input.getBytes(UTF_8));
 	}
 
 	/**
@@ -49,7 +50,7 @@ public abstract class Base58 {
 	 * @param input
 	 * @return
 	 */
-	public static String encode(byte[] input) {
+	public static String encodeBase58(byte[] input) {
 		if (input.length == 0) {
 			return EMPTY;
 		}
@@ -96,8 +97,11 @@ public abstract class Base58 {
 	 * @return
 	 * @throws IllegalArgumentException
 	 */
-	public static byte[] decode(String input) throws IllegalArgumentException {
-		if (isBlank(input)) {
+	public static byte[] decodeBase58(String input) throws IllegalArgumentException {
+		if (isNull(input)) {
+			return null;
+		}
+		if (input.length() == 0) {
 			return new byte[0];
 		}
 

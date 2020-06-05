@@ -16,16 +16,17 @@
 package com.wl4g.devops.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.StringUtils;
 
+import static com.wl4g.devops.tool.common.codec.CheckSums.crc32String;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
 
+import static java.util.UUID.*;
+import static java.lang.Math.abs;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * DB based bean entity.
@@ -35,48 +36,45 @@ import static java.util.Objects.isNull;
  * @since
  */
 public abstract class BaseBean implements Serializable {
+
 	private static final long serialVersionUID = 8940373806493080114L;
 
 	/**
-	 * Status: enabled
+	 * Bean info unqiue ID.
 	 */
-	final public static int ENABLED = 1;
-
-	/**
-	 * Status: disabled
-	 */
-	final public static int DISABLED = 0;
-
-	/**
-	 * Status: normal (not deleted)
-	 */
-	final public static int DEL_FLAG_NORMAL = 0;
-
-	/**
-	 * Status: deleted
-	 */
-	final public static int DEL_FLAG_DELETE = 1;
-
-	/**
-	 * Default userId.
-	 */
-	final public static int DEFAULT_USER_ID = 1;
-
-	/*
-	 * User: Super administrator account name
-	 */
-	final public static String DEFAULT_USER_ROOT = "root";
-
 	private Integer id;
-	private Integer createBy; // 创建人
+
+	/**
+	 * Bean info create user.
+	 */
+	private Integer createBy;
+
+	/**
+	 * Bean info create date.
+	 */
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	private Date createDate; // 创建时间
-	private Integer updateBy; // 修改人
+	private Date createDate;
+
+	/**
+	 * Bean info update user.
+	 */
+	private Integer updateBy;
+
+	/**
+	 * Bean info update date.
+	 */
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	private Date updateDate; // 修改日期
-	private Integer delFlag; // 删除状态
-	private Integer enable; // 启用状态
-	private String remark; // 备注
+	private Date updateDate;
+
+	/**
+	 * Is enabled
+	 */
+	private Integer enable;
+
+	/**
+	 * Bean info remark desciprtion.
+	 */
+	private String remark;
 
 	/**
 	 * For data permission, associated Organization (tree) code query
@@ -84,11 +82,20 @@ public abstract class BaseBean implements Serializable {
 	private String organizationCode;
 
 	/**
+	 * Logistic delete status.
+	 */
+	private Integer delFlag;
+
+	/**
 	 * Execute method before inserting, need to call manually
 	 */
 	public void preInsert() {
-		// TODO Use random number just for now
-		setId(RandomUtils.nextInt(1_0000, 10000_0000));
+		// TODO
+		// This is a temporary ID generation scheme. You can change
+		// it to a primary key generation service later.
+
+		// setId(crc32String(randomUUID().toString()));
+		setId(abs((int) crc32String(randomUUID().toString()))); // unsafe!!!
 
 		setCreateDate(new Date());
 		setCreateBy(DEFAULT_USER_ID);
@@ -100,11 +107,12 @@ public abstract class BaseBean implements Serializable {
 
 	/**
 	 * Execute method before inserting, need to call manually
+	 * 
 	 * @param organizationCode
 	 */
 	public void preInsert(String organizationCode) {
-		if(StringUtils.isBlank(this.organizationCode)){
-			this.organizationCode = organizationCode;
+		if (isBlank(getOrganizationCode())) {
+			setOrganizationCode(organizationCode);
 		}
 		preInsert();
 	}
@@ -170,7 +178,7 @@ public abstract class BaseBean implements Serializable {
 	}
 
 	public void setEnable(Integer enable) {
-		if(isNull(this.enable)){
+		if (isNull(this.enable)) {
 			this.enable = enable;
 		}
 	}
@@ -183,7 +191,6 @@ public abstract class BaseBean implements Serializable {
 		this.remark = remark;
 	}
 
-
 	public String getOrganizationCode() {
 		return organizationCode;
 	}
@@ -194,7 +201,37 @@ public abstract class BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " => " + toJSONString(this);
+		return getClass().getSimpleName() + "<" + toJSONString(this) + ">";
 	}
+
+	/**
+	 * Status: enabled
+	 */
+	final public static int ENABLED = 1;
+
+	/**
+	 * Status: disabled
+	 */
+	final public static int DISABLED = 0;
+
+	/**
+	 * Status: normal (not deleted)
+	 */
+	final public static int DEL_FLAG_NORMAL = 0;
+
+	/**
+	 * Status: deleted
+	 */
+	final public static int DEL_FLAG_DELETE = 1;
+
+	/**
+	 * Default userId.
+	 */
+	final public static int DEFAULT_USER_ID = 1;
+
+	/*
+	 * User: Super administrator account.
+	 */
+	final public static String DEFAULT_USER_ROOT = "root";
 
 }

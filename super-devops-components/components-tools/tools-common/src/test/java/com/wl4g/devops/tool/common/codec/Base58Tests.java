@@ -18,9 +18,9 @@ package com.wl4g.devops.tool.common.codec;
 public class Base58Tests {
 
 	public static void main(String[] args) {
-		String enc = Base58.encode("123".getBytes());
+		String enc = Base58.encodeBase58("123".getBytes());
 		System.out.println(enc);
-		byte[] dec = Base58.decode(enc);
+		byte[] dec = Base58.decodeBase58(enc);
 		System.out.println(new String(dec));
 	}
 

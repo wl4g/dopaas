@@ -42,8 +42,8 @@ import java.util.List;
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
 import static com.wl4g.devops.common.bean.BaseBean.ENABLED;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS_UNLOCK;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.util.stream.Collectors.toList;
@@ -74,7 +74,7 @@ public class ProjectServiceImpl implements ProjectService {
 			project.preUpdate();
 			update(project);
 		} else {
-			project.preInsert(getCurrentOrganizationCode());
+			project.preInsert(getRequestOrganizationCode());
 			project.setDelFlag(DEL_FLAG_NORMAL);
 			project.setEnable(ENABLED);
 			project.setLockStatus(TASK_LOCK_STATUS_UNLOCK);
@@ -137,7 +137,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public PageModel list(PageModel pm, String groupName, String projectName) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		List<Project> list = projectDao.list(getCurrentOrganizationCodes(), groupName, projectName, null);
+		List<Project> list = projectDao.list(getRequestOrganizationCodes(), groupName, projectName, null);
 		for (Project project : list) {
 			project.setVcs(null);
 		}
@@ -147,7 +147,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public List<Project> getBySelect(Integer isBoot) {
-		return projectDao.list(getCurrentOrganizationCodes(),null, null, isBoot);
+		return projectDao.list(getRequestOrganizationCodes(),null, null, isBoot);
 	}
 
 	@Override

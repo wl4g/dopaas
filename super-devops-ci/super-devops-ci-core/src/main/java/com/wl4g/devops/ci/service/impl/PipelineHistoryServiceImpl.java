@@ -26,8 +26,8 @@ import java.util.List;
 
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_CREATE;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOPING;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 /**
  * @author vjay
@@ -87,7 +87,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
         Assert2.notNullOf(pipeline,"pipeline");
 
         PipelineHistory pipelineHistory = new PipelineHistory();
-        pipelineHistory.preInsert(getCurrentOrganizationCode());
+        pipelineHistory.preInsert(getRequestOrganizationCode());
         pipelineHistory.setPipeId(pipeId);
         pipelineHistory.setProviderKind(pipeline.getProviderKind());
         pipelineHistory.setAnnex(null);
@@ -118,7 +118,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 
         PipelineHistory pipelineHistory = new PipelineHistory();
         BeanUtils.copyProperties(oldPipelineHistory,pipelineHistory);
-        pipelineHistory.preInsert(getCurrentOrganizationCode());
+        pipelineHistory.preInsert(getRequestOrganizationCode());
         pipelineHistory.setPipeId(pipeId);
         pipelineHistory.setProviderKind(pipeline.getProviderKind());
         pipelineHistory.setStatus(TASK_STATUS_CREATE);
@@ -188,7 +188,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
     @Override
     public PageModel list(PageModel pm,  String pipeName, String clusterName, String environment, String startDate, String endDate, String providerKind) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(pipelineHistoryDao.list(getCurrentOrganizationCodes(), pipeName, clusterName, environment, startDate, endDate, providerKind));
+        pm.setRecords(pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterName, environment, startDate, endDate, providerKind));
         return pm;
     }
 

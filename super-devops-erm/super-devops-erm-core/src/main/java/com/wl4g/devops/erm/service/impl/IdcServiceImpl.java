@@ -27,8 +27,8 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**
@@ -44,18 +44,18 @@ public class IdcServiceImpl implements IdcService {
     @Override
     public PageModel page(PageModel pm,String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(idcDao.list(getCurrentOrganizationCodes(), name));
+        pm.setRecords(idcDao.list(getRequestOrganizationCodes(), name));
         return pm;
     }
 
     @Override
     public List<Idc> getForSelect() {
-        return idcDao.list(getCurrentOrganizationCodes(),null);
+        return idcDao.list(getRequestOrganizationCodes(),null);
     }
 
     public void save(Idc idc){
         if(isNull(idc.getId())){
-            idc.preInsert(getCurrentOrganizationCode());
+            idc.preInsert(getRequestOrganizationCode());
             insert(idc);
         }else{
             idc.preUpdate();

@@ -169,7 +169,7 @@ public abstract class AbstractSecurityVerifier implements SecurityVerifier {
 			SecureAlgKind kind = SecureAlgKind.of(getRequestParam(request, config.getParam().getSecretAlgKindName(), true));
 
 			// Decoding
-			params = new String(Base58.decode(params), UTF_8);
+			params = new String(Base58.decodeBase58(params), UTF_8);
 			// Gets request verifyCode.
 			Object submitCode = getRequestVerifyCode(params, request);
 			// Stored verifyCode.
