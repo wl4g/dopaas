@@ -100,7 +100,7 @@ public class SimpleRcmEvaluatorEndpoint extends AbstractAuthenticatorEndpoint {
 		String umItemData = umdata.substring(umdata.indexOf("!") + 1);
 		int iterations = n % 3 + 1;
 		for (int i = 0; i < iterations; i++) {
-			umItemData = new String(Base58.decode(umItemData));
+			umItemData = new String(Base58.decodeBase58(umItemData));
 		}
 
 		// To risk control parameters.

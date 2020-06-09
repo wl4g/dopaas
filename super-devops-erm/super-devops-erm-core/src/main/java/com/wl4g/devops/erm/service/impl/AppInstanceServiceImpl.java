@@ -36,8 +36,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 @Service
 @Transactional
@@ -55,7 +55,7 @@ public class AppInstanceServiceImpl implements AppInstanceService {
     @Override
     public PageModel list(PageModel pm, String name, Integer instanceId, String envType, Integer deployType) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(appInstanceDao.list(getCurrentOrganizationCodes(), name, instanceId,envType,deployType));
+        pm.setRecords(appInstanceDao.list(getRequestOrganizationCodes(), name, instanceId,envType,deployType));
         return pm;
     }
 
@@ -69,7 +69,7 @@ public class AppInstanceServiceImpl implements AppInstanceService {
     }
 
     private void insert(AppInstance appInstance) {
-        appInstance.preInsert(getCurrentOrganizationCode());
+        appInstance.preInsert(getRequestOrganizationCode());
         appInstanceDao.insertSelective(appInstance);
     }
 

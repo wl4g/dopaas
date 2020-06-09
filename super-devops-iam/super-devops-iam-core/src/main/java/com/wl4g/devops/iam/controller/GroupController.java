@@ -78,8 +78,8 @@ public class GroupController {
 	@RequestMapping(value = "/getOrganizations")
 	public RespBase<?> getOrganizationTree() {
 		RespBase<Object> resp = RespBase.create();
-		resp.forMap().put("tree", IamOrganizationHolder.getOrganizationTree());
-		resp.forMap().put("list", IamOrganizationHolder.getOrganizationFromSession());
+		resp.forMap().put("tree", IamOrganizationHolder.getOrganizationTrees());
+		resp.forMap().put("list", IamOrganizationHolder.getSessionOrganizations());
 		return resp;
 	}
 

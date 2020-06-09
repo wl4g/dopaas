@@ -43,9 +43,9 @@
 		applyCaptcha: function(img1, img2, tipText) {
 			var that = this;
 			var applyCaptchaUrl = Common.Util.checkEmpty("options.getApplyCaptchaUrl", that.getApplyCaptchaUrl());
-			applyCaptchaUri = applyCaptchaUrl.substring(0, applyCaptchaUrl.lastIndexOf("?"));
+			var _uri = applyCaptchaUrl.substring(0, applyCaptchaUrl.lastIndexOf("?"));
 			$.ajax({
-				url: applyCaptchaUri,
+				url: _uri,
 				type: 'post',
 				data: Common.Util.toUrl({}, Common.Util.toUrlQueryParam(applyCaptchaUrl)),
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
@@ -86,11 +86,11 @@
             // 提交验证码获取分析结果
 			var that = this;
 			var verifyAnalysisUrl = Common.Util.checkEmpty("options.getVerifyAnalysisUrl", that.getVerifyAnalysisUrl());
-			verifyAnalysisUri = verifyAnalysisUrl.substring(0, verifyAnalysisUrl.lastIndexOf("?"));
+			var _uri = verifyAnalysisUrl.substring(0, verifyAnalysisUrl.lastIndexOf("?"));
 			var paramMap = Common.Util.toUrlQueryParam(verifyAnalysisUrl);
 			paramMap.set(Common.Util.checkEmpty("options.verifyDataKey", that.verifyDataKey), Common.Util.Codec.encodeBase58(JSON.stringify(verifyData)));
             $.ajax({
-                url: verifyAnalysisUri,
+                url: _uri,
 				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
                 type: 'post',
                 //contentType: 'application/json',

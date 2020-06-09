@@ -1,207 +1,225 @@
 package com.wl4g.devops.iam.common.utils;
 
-import com.wl4g.devops.common.utils.web.WebUtils3;
-import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.tool.common.codec.Base58;
-import com.wl4g.devops.tool.common.lang.Assert2;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.devops.common.utils.web.WebUtils3.*;
 import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
-import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static com.wl4g.devops.tool.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
+ * {@link IamOrganizationHolder}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
- * @date 2020-05-20 11:18:00
+ * @version v1.0 2020年5月20日
+ * @since
  */
-public class IamOrganizationHolder {
+public abstract class IamOrganizationHolder extends IamSecurityHolder {
 
-    final private static String CURRENT_ORGANIZATION_CODE = "organization_code";
+	/**
+	 * Gets organizations from Session
+	 *
+	 * @return
+	 */
+	public static List<OrganizationInfo> getSessionOrganizations() {
+		return safeList(getPrincipalInfo().getOrganization().getOrganizations());
+	}
 
+	/**
+	 * Gets session organization all tree.
+	 *
+	 * @return
+	 */
+	public static List<OrganizationInfoTree> getOrganizationTrees() {
+		List<OrganizationInfo> organs = getSessionOrganizations();
 
-    /**
-     * Get Organization Tree for show  -- complite
-     *
-     * @return
-     */
-    public static List<OrganizationInfoTree> getOrganizationTree() {
-        List<OrganizationInfo> organizations = getOrganizationFromSession();
-        List<OrganizationInfo> tops = getTop(organizations);
-        List<OrganizationInfoTree> organizationInfoTrees = new ArrayList<>();
-        for (OrganizationInfo top : tops) {
-            OrganizationInfoTree organizationInfoTree = new OrganizationInfoTree(top);
-            getChildTree(organizations, organizationInfoTree);
-            organizationInfoTrees.add(organizationInfoTree);
-        }
-        return organizationInfoTrees;
-    }
+		List<OrganizationInfoTree> trees = new ArrayList<>();
+		List<OrganizationInfo> parentOrgans = getParentOrganizations(organs);
+		for (OrganizationInfo parent : parentOrgans) {
+			OrganizationInfoTree tree = new OrganizationInfoTree(parent);
+			addChildrenOrganizations(organs, tree);
+			trees.add(tree);
+		}
 
-    /**
-     * Get Organization Codes By current Code
-     *
-     * @return
-     */
-    public static List<String> getCurrentOrganizationCodes() {
-        String code = WebUtils3.getRequestParameter(CURRENT_ORGANIZATION_CODE);
-        code = new String(Base58.decode(code), UTF_8);
-        if (StringUtils.isBlank(code) || StringUtils.equals("all", code)) {
-            List<OrganizationInfo> organizationFromSession = getOrganizationFromSession();
-            List<String> list = new ArrayList<>();
-            organizationFromSession.forEach((a) -> {
-                list.add(a.getOrganizationCode());
-            });
-            return list;
-        } else {
-            return getOrganizationCodesByCode(code);
-        }
-    }
+		return trees;
+	}
 
-    /**
-     * Get Organization Codes By current Code
-     *
-     * @return
-     */
-    public static String getCurrentOrganizationCode() {
-        String code = WebUtils3.getRequestParameter(CURRENT_ORGANIZATION_CODE);
-        code = new String(Base58.decode(code), UTF_8);
-        if(StringUtils.isBlank(code) || StringUtils.equals("all", code)){
-            List<OrganizationInfo> organizations = getOrganizationFromSession();
-            List<OrganizationInfo> tops = getTop(organizations);
-            Assert2.notEmptyOf(tops,"CurrentOrganizationCode");
-            return tops.get(0).getOrganizationCode();
-        }else{
-            return code;
-        }
-    }
+	/**
+	 * Gets organization codes by current request.
+	 *
+	 * @return
+	 */
+	public static List<String> getRequestOrganizationCodes() {
+		String organCode = getRequestParameter(PARAM_ORGANIZATION_CODE);
+		organCode = new String(Base58.decodeBase58(organCode), UTF_8);
+		if (isBlank(organCode) || "ALL".equalsIgnoreCase(organCode)) {
+			List<OrganizationInfo> organs = getSessionOrganizations();
+			return organs.stream().map(a -> a.getOrganizationCode()).collect(toList());
+		} else {
+			return getChildOrganizationCodes(organCode);
+		}
+	}
 
-    /**
-     * Get Organizations from Session
-     *
-     * @return
-     */
-    public static List<OrganizationInfo> getOrganizationFromSession() {
-        IamPrincipalInfo principalInfo = getPrincipalInfo();
-        PrincipalOrganization organization = principalInfo.getOrganization();
-        if (Objects.nonNull(organization)) {
-            return organization.getOrganizations();
-        }
-        return Collections.emptyList();
-    }
+	/**
+	 * Gets organization code by current request.
+	 *
+	 * @return
+	 */
+	public static String getRequestOrganizationCode() {
+		String organCode = getRequestParameter(PARAM_ORGANIZATION_CODE);
+		organCode = new String(Base58.decodeBase58(organCode), UTF_8);
 
+		if (isBlank(organCode) || "ALL".equalsIgnoreCase(organCode)) {
+			List<OrganizationInfo> organs = getSessionOrganizations();
+			List<OrganizationInfo> parentOrgans = getParentOrganizations(organs);
 
-    /**
-     * Get Organization Codes By current Code
-     *
-     * @param code
-     * @return
-     */
-    private static List<OrganizationInfo> getOrganizationsByCode(String code) {
-        List<OrganizationInfo> organizations = getOrganizationFromSession();
-        List<OrganizationInfo> children = new ArrayList<>();
-        getChilds(organizations, code, children);
-        OrganizationInfo organization = getOrganizationByCode(organizations, code);
-        notNull(organization,"Not found organization code: %s" , code);
-        children.add(organization);
-        return children;
-    }
+			notEmptyOf(parentOrgans, "organizationCode");
+			return parentOrgans.get(0).getOrganizationCode();
+		} else {
+			return organCode;
+		}
+	}
 
-    /**
-     * Get Organization Codes By current Code
-     *
-     * @param code
-     * @return
-     */
-    private static List<String> getOrganizationCodesByCode(String code) {
-        List<OrganizationInfo> organizationsByCode;
-        if (isBlank(code)) {
-            organizationsByCode = getOrganizationFromSession();
-        } else {
-            organizationsByCode = getOrganizationsByCode(code);
-        }
+	/**
+	 * Gets child organization codes by organ code
+	 *
+	 * @param organCode
+	 * @return
+	 */
+	private static List<String> getChildOrganizationCodes(String organCode) {
+		List<OrganizationInfo> organs;
+		if (isBlank(organCode)) {
+			organs = getSessionOrganizations();
+		} else {
+			organs = getChildOrganizations(organCode);
+		}
+		return safeList(organs).stream().map(o -> o.getOrganizationCode()).collect(toList());
+	}
 
-        List<String> codes = new ArrayList<>();
-        for (OrganizationInfo organizationInfo : organizationsByCode) {
-            codes.add(organizationInfo.getOrganizationCode());
-        }
-        return codes;
-    }
+	/**
+	 * Gets child organizations by code
+	 *
+	 * @param organCode
+	 * @return
+	 */
+	private static List<OrganizationInfo> getChildOrganizations(String organCode) {
+		List<OrganizationInfo> organs = getSessionOrganizations();
 
-    private static OrganizationInfo getOrganizationByCode(List<OrganizationInfo> organizations, String code) {
-        for (OrganizationInfo organizationInfo : organizations) {
-            String organizationCode = organizationInfo.getOrganizationCode();
-            if (StringUtils.equals(organizationCode, code)) {
-                return organizationInfo;
-            }
-        }
-        return null;
-    }
+		List<OrganizationInfo> childrens = new ArrayList<>();
+		addChildrenOrganizations(organs, organCode, childrens);
 
-    private static void getChilds(List<OrganizationInfo> organizations, String code, List<OrganizationInfo> children) {
-        for (OrganizationInfo organizationInfo : organizations) {
-            String organizationCode = organizationInfo.getOrganizationCode();
-            String parent = organizationInfo.getParent();
-            if (StringUtils.equals(parent, code)) {
-                children.add(organizationInfo);
-                getChilds(organizations, organizationCode, children);
-            }
-        }
-    }
+		OrganizationInfo organ = extOrganization(organs, organCode);
+		notNull(organ, "Not found organization code: %s", organCode);
 
-    private static void getChildTree(List<OrganizationInfo> organizations, OrganizationInfoTree organizationInfoTree) {
-        for (OrganizationInfo organizationInfo : organizations) {
-            if (StringUtils.equals(organizationInfoTree.getOrganizationCode(), organizationInfo.getParent())) {
-                OrganizationInfoTree childTree = new OrganizationInfoTree(organizationInfo);
-                if(CollectionUtils.isEmpty(organizationInfoTree.getChildren())){
-                    organizationInfoTree.setChildren(new ArrayList<>());
-                }
-                organizationInfoTree.getChildren().add(childTree);
-                getChildTree(organizations, childTree);
-            }
-        }
-    }
+		childrens.add(organ);
+		return childrens;
+	}
 
-    private static List<OrganizationInfo> getTop(List<OrganizationInfo> organizationInfos) {
-        List<OrganizationInfo> top = new ArrayList<>();
-        for (OrganizationInfo organizationInfo : organizationInfos) {
-            boolean hasParent = false;
-            for (OrganizationInfo organizationInfoParent : organizationInfos) {
-                if (StringUtils.equals(organizationInfoParent.getOrganizationCode(), organizationInfo.getParent())) {
-                    hasParent = true;
-                    break;
-                }
-            }
-            if (!hasParent) {
-                top.add(organizationInfo);
-            }
-        }
-        return top;
-    }
+	/**
+	 * Extract organization info by orgainzation code.
+	 * 
+	 * @param organs
+	 * @param organCode
+	 * @return
+	 */
+	private static OrganizationInfo extOrganization(List<OrganizationInfo> organs, String organCode) {
+		Optional<OrganizationInfo> opt = safeList(organs).stream()
+				.filter(o -> StringUtils.equals(o.getOrganizationCode(), organCode)).findFirst();
+		return opt.get();
+	}
 
-    public static class OrganizationInfoTree extends OrganizationInfo {
+	/**
+	 * Adds children organizations.
+	 * 
+	 * @param organs
+	 * @param organCode
+	 * @param childrens
+	 */
+	private static void addChildrenOrganizations(List<OrganizationInfo> organs, String organCode,
+			List<OrganizationInfo> childrens) {
+		for (OrganizationInfo organ : organs) {
+			String _organCode = organ.getOrganizationCode();
+			String parent = organ.getParent();
+			if (StringUtils.equals(parent, organCode)) {
+				childrens.add(organ);
+				addChildrenOrganizations(organs, _organCode, childrens);
+			}
+		}
+	}
 
-        private List<OrganizationInfoTree> children;
+	/**
+	 * Adds children organizations
+	 * 
+	 * @param organs
+	 * @param tree
+	 */
+	private static void addChildrenOrganizations(List<OrganizationInfo> organs, OrganizationInfoTree tree) {
+		for (OrganizationInfo o : organs) {
+			if (StringUtils.equals(tree.getOrganizationCode(), o.getParent())) {
+				OrganizationInfoTree childTree = new OrganizationInfoTree(o);
+				tree.getChildren().add(childTree);
+				addChildrenOrganizations(organs, childTree);
+			}
+		}
+	}
 
-        public OrganizationInfoTree(OrganizationInfo organizationInfo) {
-            super(organizationInfo.getOrganizationCode(), organizationInfo.getParent(), organizationInfo.getType(),organizationInfo.getName(),organizationInfo.getAreaId());
-        }
+	/**
+	 * Gets parent organizations
+	 * 
+	 * @param organs
+	 * @return
+	 */
+	private static List<OrganizationInfo> getParentOrganizations(List<OrganizationInfo> organs) {
+		List<OrganizationInfo> parentOrgans = new ArrayList<>();
+		for (OrganizationInfo o : organs) {
+			// Find parent organization
+			Optional<OrganizationInfo> opt = organs.stream()
+					.filter(p -> StringUtils.equals(p.getOrganizationCode(), o.getParent())).findAny();
+			if (!opt.isPresent()) {
+				parentOrgans.add(o);
+			}
+		}
+		return parentOrgans;
+	}
 
-        public List<OrganizationInfoTree> getChildren() {
-            return children;
-        }
+	/**
+	 * {@link OrganizationInfoTree}
+	 *
+	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+	 * @version v1.0 2020年5月25日
+	 * @since
+	 */
+	public static class OrganizationInfoTree extends OrganizationInfo {
+		private static final long serialVersionUID = 7353905956153984552L;
 
-        public void setChildren(List<OrganizationInfoTree> children) {
-            this.children = children;
-        }
-    }
+		private List<OrganizationInfoTree> children = new ArrayList<>();
 
+		public OrganizationInfoTree(OrganizationInfo organ) {
+			super(organ.getOrganizationCode(), organ.getParent(), organ.getType(), organ.getName(), organ.getAreaId());
+		}
+
+		public List<OrganizationInfoTree> getChildren() {
+			return children;
+		}
+
+		public void setChildren(List<OrganizationInfoTree> children) {
+			this.children = children;
+		}
+	}
+
+	/**
+	 * Request parameter organization code.
+	 */
+	final private static String PARAM_ORGANIZATION_CODE = "organization_code";
 
 }
