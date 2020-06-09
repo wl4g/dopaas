@@ -32,7 +32,7 @@ public class AppInstance extends BaseBean {
 
 	private Integer versionId;
 
-	private Integer deployType;
+	//private Integer deployType;
 
 	private Integer hostId;
 
@@ -42,13 +42,13 @@ public class AppInstance extends BaseBean {
 
 	private String cossRefBucket;
 
-	private Integer sshId;
+	//private Integer sshId;
 
 	private String envType;
 
 	private Integer enable;
 
-	private String endpoint;
+	//private String endpoint;
 
 	private String remark;
 
@@ -104,13 +104,7 @@ public class AppInstance extends BaseBean {
 		this.enable = enable;
 	}
 
-	public String getEndpoint() {
-		return endpoint;
-	}
 
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
 
 	@Override
 	public String getRemark() {
@@ -122,13 +116,7 @@ public class AppInstance extends BaseBean {
 		this.remark = remark;
 	}
 
-	public Integer getDeployType() {
-		return deployType;
-	}
 
-	public void setDeployType(Integer deployType) {
-		this.deployType = deployType;
-	}
 
 	public Integer getK8sId() {
 		return k8sId;
@@ -146,13 +134,7 @@ public class AppInstance extends BaseBean {
 		this.dockerId = dockerId;
 	}
 
-	public Integer getSshId() {
-		return sshId;
-	}
 
-	public void setSshId(Integer sshId) {
-		this.sshId = sshId;
-	}
 
 	public Ssh getSsh() {
 		return ssh;
@@ -201,14 +183,11 @@ public class AppInstance extends BaseBean {
 				"name='" + name + '\'' +
 				", clusterId=" + clusterId +
 				", versionId=" + versionId +
-				", deployType=" + deployType +
 				", hostId=" + hostId +
 				", k8sId=" + k8sId +
 				", dockerId=" + dockerId +
-				", sshId=" + sshId +
 				", envType='" + envType + '\'' +
 				", enable=" + enable +
-				", endpoint='" + endpoint + '\'' +
 				", remark='" + remark + '\'' +
 				", ssh=" + ssh +
 				'}';

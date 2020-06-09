@@ -35,6 +35,14 @@ public class AppCluster extends BaseBean {
 
     private String remark;
 
+    private String endpoint;
+
+    private Integer sshId;
+
+    private Integer deployType;
+
+    private Ssh ssh;
+
     // --- Temporary. ---
 
     private int instanceCount;
@@ -93,4 +101,35 @@ public class AppCluster extends BaseBean {
         this.instanceCount = instanceCount;
     }
 
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public Integer getSshId() {
+        return sshId;
+    }
+
+    public void setSshId(Integer sshId) {
+        this.sshId = sshId;
+    }
+
+    public Integer getDeployType() {
+        return deployType;
+    }
+
+    public void setDeployType(Integer deployType) {
+        this.deployType = deployType;
+    }
+
+    public Ssh getSsh() {
+        return ssh;
+    }
+
+    public void setSsh(Ssh ssh) {
+        this.ssh = ssh;
+    }
 }
