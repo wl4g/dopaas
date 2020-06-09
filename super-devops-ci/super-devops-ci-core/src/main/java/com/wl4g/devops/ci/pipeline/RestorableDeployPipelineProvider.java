@@ -57,6 +57,8 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 		// Handling backup
 		handleDiskBackupAssets();
 
+		containerPipelineProvider.buildImage();
+
 		// Deploying to remote instances.
 		startupExecuteRemoteDeploying();
 	}

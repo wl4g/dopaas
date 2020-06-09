@@ -13,6 +13,14 @@ ARG APP_PORT=14040
 ARG MAIN_CLASS="com.wl4g.devops.IamServer"
 ARG ACTIVE="dev"
 
+
+
+
+
+
+
+
+
 ### ENV APP_BIN_NAME ${APP_BIN_NAME}
 
 RUN echo "myparams ${APP_BIN_NAME}  ----  ${APP_PORT}  ----   ${MAIN_CLASS} ----  ${ACTIVE} "
@@ -35,3 +43,5 @@ ENV RUN_COM "java -server -Xms256M -Xmx1G  -Dfile.encoding=UTF-8 -cp .:/${APP_BI
 RUN echo "mycommand ${RUN_COM}"
 
 CMD ["/bin/sh", "-c", "${RUN_COM}"]
+
+

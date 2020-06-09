@@ -61,8 +61,8 @@ public class DockerJavaUtil {
      * @return
      * @throws IOException
      */
-    public static String buildImage(DockerClient client, Set<String> tags, File tarPath, File dockerTemplate, String appBinName, Map<String, String> args) throws IOException {
-        File workSpace = copyFile2WorkSpace(tarPath, dockerTemplate, appBinName);
+    public static String buildImage(DockerClient client, Set<String> tags, File workSpace, File dockerTemplate, Map<String, String> args) throws IOException {
+        copyFile2WorkSpace(workSpace, dockerTemplate);
 
         BuildImageResultCallback callback = new BuildImageResultCallback() {
             @Override
@@ -87,16 +87,15 @@ public class DockerJavaUtil {
      * @return
      * @throws IOException
      */
-    private static File copyFile2WorkSpace(File tarPath, File dockerTemplate, String appBinName) throws IOException {//为什么要把文件复制出来？因为COPY failed: Forbidden path outside the build context，dockerfile不允许使用上下文外的文件
-        String property = System.getProperty("user.home");
-        File workspace = new File(property + "/tmp/docker_file_workspace/" + System.currentTimeMillis());
-        if (!workspace.exists()) {
-            workspace.mkdirs();
+    private static void copyFile2WorkSpace(File workSpace, File dockerTemplate) throws IOException {//为什么要把文件复制出来？因为COPY failed: Forbidden path outside the build context，dockerfile不允许使用上下文外的文件
+        //String property = System.getProperty("user.home");
+        //File workspace = new File(property + "/tmp/docker_file_workspace/" + System.currentTimeMillis());
+        if (!workSpace.exists()) {
+            workSpace.mkdirs();
         }
-        Assert2.isTrue(workspace.exists(), "create dir fail");
-        Files.copy(tarPath.toPath(), new File(workspace.getCanonicalPath() + "/" + appBinName + ".tar").toPath());
-        Files.copy(dockerTemplate.toPath(), new File(workspace.getCanonicalPath() + "/Dockerfile").toPath());
-        return workspace;
+        Assert2.isTrue(workSpace.exists(), "create dir fail");
+        //Files.copy(tarPath.toPath(), new File(workspace.getCanonicalPath() + "/" + appBinName + ".tar").toPath());
+        Files.copy(dockerTemplate.toPath(), new File(workSpace.getCanonicalPath() + "/Dockerfile").toPath());
     }
 
 

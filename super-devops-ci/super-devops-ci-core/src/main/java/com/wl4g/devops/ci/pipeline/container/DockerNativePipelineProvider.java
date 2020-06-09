@@ -15,12 +15,21 @@
  */
 package com.wl4g.devops.ci.pipeline.container;
 
+import com.github.dockerjava.api.DockerClient;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
+import com.wl4g.devops.ci.utils.DockerJavaUtil;
+import com.wl4g.devops.common.bean.ci.Pipeline;
+import com.wl4g.devops.common.bean.ci.PipelineHistory;
+import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.support.cli.command.DestroableCommand;
-import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Docker native integrate pipeline provider.
@@ -31,23 +40,55 @@ import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
  */
 public class DockerNativePipelineProvider extends AbstractPipelineProvider implements ContainerPipelineProvider {
 
+	/**
+	 * Docker hub server url. TODO just for now, need move to config file
+	 */
+	final private static String SERVER_URL = "tcp://localhost:2376";
+
+	/**
+	 * Docker app bin name
+	 */
+	final private static String APP_BIN_NAME = "APP_BIN_NAME";
+
+	final private static String MAIN_CLASS = "MAIN_CLASS";
+
+	final private static String ACTIVE = "ACTIVE";
+
+
 	public DockerNativePipelineProvider(PipelineContext context) {
 		super(context);
 	}
 
 	@Override
-	public void buildImage(String remoteHost, String user, String sshkey, String projectDir) throws Exception {
-		String command = "mvn -f " + projectDir
-				+ "/pom.xml -Pdocker:push dockerfile:build  dockerfile:push -Ddockerfile.username="
-				+ config.getDeploy().getDockerNative().getDockerPushUsername() + " -Ddockerfile.password="
-				+ config.getDeploy().getDockerNative().getDockerPushPasswd();
-		// File jogLogFile =
-		// config.getJobLog(getContext().getTaskHistory().getId());
+	public void buildImage() throws Exception {
+		DockerClient dockerClient = DockerJavaUtil.sampleConnect(SERVER_URL);//"tcp://10.0.0.161:2375"
+		try {
+			AppCluster appCluster = getContext().getAppCluster();
+			Pipeline pipeline = getContext().getPipeline();
+			PipelineHistory pipelineHistory = getContext().getPipelineHistory();
 
-		// TODO timeoutMs?
-		DestroableCommand cmd = new RemoteDestroableCommand(String.valueOf(getContext().getPipelineHistory().getId()), command,
-				180_000L, user, remoteHost, sshkey.toCharArray());
-		pm.execWaitForComplete(cmd);
+
+			Map<String, String> args = new HashMap<>();
+			args.put(APP_BIN_NAME, appCluster.getName()+"-master-bin");
+			//args.put("APP_PORT", "14040");
+			args.put(MAIN_CLASS, "com.wl4g.devops.IamServer");//TODO 启动需要，如何获取
+			args.put(ACTIVE, pipeline.getEnvironment());
+
+			Set<String> tags = new HashSet<>();
+			tags.add(appCluster.getName());//冒号前面为名字，冒号后面为版本，版本为空则为latest
+
+			String containerId = DockerJavaUtil.buildImage(dockerClient, tags,
+					new File(config.getJobBackupDir(pipelineHistory.getId()).getAbsolutePath()),
+					new File("./Dockerfile"),
+					args);
+
+			log.info("create container success. containerId = {}", containerId);
+		}finally {
+			dockerClient.close();
+		}
+
+
+
 	}
 
 	@Override

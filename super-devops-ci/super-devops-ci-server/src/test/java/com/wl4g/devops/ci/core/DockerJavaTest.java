@@ -59,9 +59,8 @@ public class DockerJavaTest {
         tags.add("mytag:v0.1");//冒号前面为名字，冒号后面为版本，版本为空则为latest
 
         String containerId = DockerJavaUtil.buildImage(dockerClient, tags,
-                new File("../../super-devops-iam/super-devops-iam-server/target/iam-server-master-bin.tar"),
+                new File("/Users/vjay/.ci-workspace/jobs/job.98883840"),
                 new File("./Dockerfile"),
-                "iam-server-master-bin",
                 args);
 
         System.out.println("create container success. containerId = " + containerId);

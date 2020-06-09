@@ -19,6 +19,7 @@ import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.flow.FlowManager;
+import com.wl4g.devops.ci.pipeline.container.ContainerPipelineProvider;
 import com.wl4g.devops.ci.pipeline.deploy.CossPipeDeployer;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.vcs.VcsOperator;
@@ -37,7 +38,6 @@ import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.symmetric.AES128ECBPKCS5;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +97,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected FlowManager flowManager;
 	@Autowired
 	protected PipeStepBuildingProjectDao pipeStepBuildingProjectDao;
+	@Autowired
+	protected ContainerPipelineProvider containerPipelineProvider;
 
 	/**
 	 * Pull project source from VCS files fingerprint.
