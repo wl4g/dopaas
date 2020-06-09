@@ -23,6 +23,7 @@
 
     <result column="hostname" property="hostname" jdbcType="VARCHAR" />
     <result column="cluster_name" property="clusterName" jdbcType="VARCHAR" />
+    <result column="deploy_type" property="deployType" jdbcType="VARCHAR" />
 
   </resultMap>
 
@@ -39,7 +40,7 @@
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
-    <include refid="Base_Column_List_i" />,h.hostname,c.endpoint
+    <include refid="Base_Column_List_i" />,h.hostname,c.endpoint, c.deploy_type
     from erm_app_instance i
     left join erm_host h on h.id = i.host_id
     left join erm_app_cluster c on c.id=i.cluster_id
