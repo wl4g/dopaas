@@ -49,6 +49,8 @@ public class AppCluster extends BaseBean {
 
     private List<AppInstance> instances;
 
+    private List<AppEnvironment> environments;
+
     public String getName() {
         return name;
     }
@@ -131,5 +133,13 @@ public class AppCluster extends BaseBean {
 
     public void setSsh(Ssh ssh) {
         this.ssh = ssh;
+    }
+
+    public List<AppEnvironment> getEnvironments() {
+        return environments;
+    }
+
+    public void setEnvironments(List<AppEnvironment> environments) {
+        this.environments = environments;
     }
 }
