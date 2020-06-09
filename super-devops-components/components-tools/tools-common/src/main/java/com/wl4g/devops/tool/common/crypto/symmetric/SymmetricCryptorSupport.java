@@ -325,6 +325,12 @@ abstract class SymmetricCryptorSupport {
 		return new byte[][] { key, iv };
 	}
 
+	/**
+	 * Gets cipher key from environment.
+	 * 
+	 * @param envCipherKey
+	 * @return
+	 */
 	public static byte[] getEnvCipherKey(String envCipherKey) {
 		hasTextOf(envCipherKey, "envCipherKey");
 
