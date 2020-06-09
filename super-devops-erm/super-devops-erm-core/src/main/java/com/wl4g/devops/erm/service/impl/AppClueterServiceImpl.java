@@ -59,10 +59,10 @@ public class AppClueterServiceImpl implements AppClusterService {
     private DictDao dictDao;
 
     @Override
-    public Map<String, Object> list(PageModel pm, String clusterName) {
+    public Map<String, Object> list(PageModel pm, String clusterName, Integer deployType) {
         Map<String, Object> data = new HashMap<>();
         Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-        List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(),clusterName);
+        List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(),clusterName, deployType);
         for (AppCluster appCluster : list) {
             int count = appInstanceDao.countByClusterId(appCluster.getId());
             appCluster.setInstanceCount(count);
@@ -75,7 +75,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 
     @Override
     public List<AppCluster> clusters() {
-        return appClusterDao.list(getRequestOrganizationCodes(),null);
+        return appClusterDao.list(getRequestOrganizationCodes(),null, null);
     }
 
     @Override

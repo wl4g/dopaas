@@ -230,6 +230,9 @@
     <if test="clusterName != null and clusterName != ''" >
       AND name LIKE CONCAT('%','${clusterName}','%')
     </if>
+    <if test="deployType != null" >
+      AND deploy_type = #{deployType,jdbcType=INTEGER}
+    </if>
     <if test="organizationCodes != null and organizationCodes.size() > 0">
       and organization_code in
       <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
