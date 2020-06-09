@@ -26,6 +26,7 @@ import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.erm.Ssh;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
@@ -243,6 +244,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected final void startupExecuteRemoteDeploying() {
 		// Creating transfer instances jobs.
+		Ssh ssh = getContext().getAppCluster().getSsh();
 		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
 			return (Runnable) () -> {
 				File jobDeployerLog = config.getJobDeployerLog(context.getPipelineHistory().getId(), i.getId());
@@ -254,7 +256,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 					// Print successful.
 					writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
-							getContext().getAppCluster().getName(), i.getSsh().getUsername(), i.getHostname());
+							getContext().getAppCluster().getName(), ssh.getUsername(), i.getHostname());
 				} catch (Exception e) {
 					String logmsg = writeBuildLog("Failed to deployed to remote! Caused by: \n%s", getStackTraceAsString(e));
 					log.error(logmsg);
@@ -314,7 +316,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	//TODO
 	protected Runnable newPipeDeployerByType(AppInstance instance){
 
-		if(instance.getDeployType()==4){
+		if(getContext().getAppCluster().getDeployType()==4){
 			Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
 			return beanFactory.getBean(CossPipeDeployer.class, args);
 		}
