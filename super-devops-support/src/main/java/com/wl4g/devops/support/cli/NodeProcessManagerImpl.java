@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
@@ -54,8 +54,9 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	/** Default destruction signal expired seconds. */
 	final public static int DEFAULT_SIGNAL_EXPIRED_SEC = (int) (3 * TimeUnit.MILLISECONDS.toSeconds(DEFAULT_MAX_WATCH_MS));
 
-	@Autowired
-	protected ConfigurableEnvironment environment;
+	/** Application name. */
+	@Value("${spring.application.name}")
+	protected String appName;
 
 	/** Jedis service. */
 	@Autowired
@@ -193,7 +194,7 @@ public class NodeProcessManagerImpl extends GenericProcessManager {
 	 * @return
 	 */
 	private String getDestroyLockName() {
-		return environment.getRequiredProperty("spring.application.name") + "." + LOCK_CLI_PROCESS_DESTROY;
+		return appName + "." + LOCK_CLI_PROCESS_DESTROY;
 	}
 
 	/**
