@@ -133,15 +133,19 @@
 					</div>
 				</div>`;
 		var loginForm = $(loginFormHtmlStr);
-		// If it is an SPM application, the skip login route will repeat when exiting
-		$(renderObj).empty(); // If already created?
+		// Already initialized? (e.g: SPM application, the skip login route will repeat when exiting)
+		if (runtime.iamCore) {
+			$(renderObj).empty();
+		} else {
+			Common.Util.printSafeWarn("This browser function is for developers only. Please do not paste and execute any content here, which may cause your account to be attacked and bring you loss!");
+		}
 		loginForm.appendTo($(renderObj));
 
-		// 绑定UI Tab事件
-		initUITab();
+		// 初始化绑定UI/Tab事件
+		_initUIEvent();
 
-		// 绑定IAM SDK事件
-		initUISDK(iamCoreConfig);
+		// 初始化创建IAMCore实例
+		_initIAMCore(iamCoreConfig);
 	};
 
 	// Exposing IAMCore object
@@ -162,7 +166,7 @@
 	// --- UI event processing function's. ---
 	//
 
-	function changeTab(showId, hideId) {
+	var _changeTab = function(showId, hideId) {
 	    $("#" + showId).show();
 	    $("#" + showId + "_1").css({
 	        "color": "#0b86f3",
@@ -174,9 +178,9 @@
 	    });
 	    $("#" + hideId).hide();
 	}
-	
-	// 绑定UI Tab事件
-	function initUITab() {
+
+	// 绑定UI/Tab事件
+	var _initUIEvent = function() {
 		$(".iamjssdk-login-link").click(function(){
 		    var that = this;
 		    $(".iamjssdk-login-link").each(function(ele, obj){
@@ -203,10 +207,8 @@
 	    });
 	}
 
-	// 绑定IAM UI SDK事件
-	function initUISDK(iamCoreConfig) {
-		Common.Util.printSafeWarn("This browser function is for developers only. Please do not paste and execute any content here, which may cause your account to be attacked and bring you loss!");
-
+	// 初始化创建IAMCore实例
+	var _initIAMCore = function(iamCoreConfig) {
 		// Default settings.
 		var defaultSettings = {
 			deploy: {
@@ -326,7 +328,7 @@
 				// 点击SNS服务商授权请求之前回调事件
 				onBefore: function (provider, panelType) {
 					if (provider == 'wechat') { // 只有微信等扫码登录时，才切换tab
-						changeTab('iamjssdk_login_scan_panel', 'iamjssdk_login_scan_pass');
+						_changeTab('iamjssdk_login_scan_panel', 'iamjssdk_login_scan_pass');
 					}
 					// 执行后续逻辑，返回false会阻止继续
 					return true;
@@ -348,7 +350,7 @@
 				try {
 					window.location.href = JSON.parse(e.data).refresh_url;
 				} catch(e) {
-					IAMCore.Console.error("Could't parse event message, data: "+ e.data);
+					IAMCore.Console.error("Can't parse event message, e.data: ", e.data);
 				}
 			}
 		}

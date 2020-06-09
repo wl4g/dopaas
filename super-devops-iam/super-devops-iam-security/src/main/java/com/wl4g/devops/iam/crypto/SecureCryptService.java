@@ -140,7 +140,7 @@ public interface SecureCryptService extends Operator<SecureAlgKind> {
 
 		public static SecureAlgKind of(boolean decode, String algKindStr) {
 			if (decode) {
-				algKindStr = new String(Base58.decode(algKindStr));
+				algKindStr = new String(Base58.decodeBase58(algKindStr));
 			}
 			SecureAlgKind kind = safeOf(algKindStr);
 			notNull(kind, "Illegal secure algorithm kind: %s", algKindStr);

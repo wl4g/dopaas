@@ -36,8 +36,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 /**
  * @author vjay
@@ -58,14 +58,14 @@ public class PcmServcieImpl implements PcmService {
     @Override
     public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(pcmDao.list(getCurrentOrganizationCodes(), name, providerKind, authType));
+        pm.setRecords(pcmDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
         return pm;
     }
 
     @Override
     public void save(Pcm pcm) {
         if (pcm.getId() == null) {
-            pcm.preInsert(getCurrentOrganizationCode());
+            pcm.preInsert(getRequestOrganizationCode());
             insert(pcm);
         } else {
             pcm.preUpdate();
@@ -96,7 +96,7 @@ public class PcmServcieImpl implements PcmService {
 
     @Override
     public List<Pcm> all() {
-        return pcmDao.list(getCurrentOrganizationCodes(), null, null, null);
+        return pcmDao.list(getRequestOrganizationCodes(), null, null, null);
     }
 
     @Override
@@ -147,7 +147,7 @@ public class PcmServcieImpl implements PcmService {
     private Pcm getPcm(Integer pcmId) {
         Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
         if (Objects.isNull(pcm)) {
-            Page<Pcm> list = pcmDao.list(getCurrentOrganizationCodes(), null, null, null);
+            Page<Pcm> list = pcmDao.list(getRequestOrganizationCodes(), null, null, null);
             if (!CollectionUtils.isEmpty(list)) {
                 pcm = list.get(0);
             }

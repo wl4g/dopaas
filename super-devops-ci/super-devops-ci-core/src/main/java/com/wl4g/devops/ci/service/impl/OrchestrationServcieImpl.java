@@ -37,8 +37,8 @@ import java.util.Objects;
 
 import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_PRE;
 import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_SCAN_BATCH;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getCurrentOrganizationCodes;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 /**
  * @author vjay
@@ -62,14 +62,14 @@ public class OrchestrationServcieImpl implements OrchestrationService {
     @Override
     public PageModel list(PageModel pm, String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(orchestrationDao.list(getCurrentOrganizationCodes(), name));
+        pm.setRecords(orchestrationDao.list(getRequestOrganizationCodes(), name));
         return pm;
     }
 
     @Override
     public void save(Orchestration orchestration) {
         if (orchestration.getId() == null) {
-            orchestration.preInsert(getCurrentOrganizationCode());
+            orchestration.preInsert(getRequestOrganizationCode());
             insert(orchestration);
         } else {
             orchestration.preUpdate();
