@@ -48,6 +48,16 @@ public class DES56ECBPKCS5Tests {
 		out.println("key => " + key);
 		out.println("encrypt => " + cipherText.toBase64());
 		out.println("decrypt => " + des3.decrypt(key.getBytes(), cipherText).toString());
+
+		System.out.println("-------------------");
+		productionDbPasswordDecryptTest1();
+	}
+
+	public static void productionDbPasswordDecryptTest1() {
+		DES56ECBPKCS5 des = new DES56ECBPKCS5();
+		String plainText = "2xg9mqvAmHILk8Op8iof/g+NsvJ+nhF7";
+		CodecSource key = new CodecSource("c716a85d4fcd9101");
+		System.out.println(des.decrypt(key.getBytes(), CodecSource.fromBase64(plainText)));
 	}
 
 }

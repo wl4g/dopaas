@@ -48,6 +48,16 @@ public class AES128ECBPKCS5Tests {
 		out.println("key => " + key);
 		out.println("encrypt => " + cipherText.toBase64());
 		out.println("decrypt => " + aes.decrypt(key.getBytes(), cipherText).toString());
+
+		System.out.println("-------------------");
+		// productionDbPasswordDecryptTest1();
+	}
+
+	public static void productionDbPasswordDecryptTest1() {
+		AES128ECBPKCS5 aes = new AES128ECBPKCS5();
+		String plainText = "DFDDD7F502E694F3E40D750FEEAE423D";
+		CodecSource key = new CodecSource(System.getenv("DEVOPS_DB_PASSWD"));
+		System.out.println(aes.decrypt(key.getBytes(), CodecSource.fromHex(plainText)));
 	}
 
 }
