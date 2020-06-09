@@ -52,7 +52,7 @@ public class AppInstance extends BaseBean {
 
 	private String remark;
 
-	private Ssh ssh;
+	//private Ssh ssh;
 
 	//
 	// --- Temporary fields. ---
@@ -61,6 +61,8 @@ public class AppInstance extends BaseBean {
 	private String hostname;
 
 	private String clusterName;
+
+	private String endpoint;
 
 	public Integer getClusterId() {
 		return clusterId;
@@ -135,15 +137,6 @@ public class AppInstance extends BaseBean {
 	}
 
 
-
-	public Ssh getSsh() {
-		return ssh;
-	}
-
-	public void setSsh(Ssh ssh) {
-		this.ssh = ssh;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -177,6 +170,14 @@ public class AppInstance extends BaseBean {
 		this.cossRefBucket = cossRefBucket;
 	}
 
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
+
 	@Override
 	public String toString() {
 		return "AppInstance{" +
@@ -189,7 +190,6 @@ public class AppInstance extends BaseBean {
 				", envType='" + envType + '\'' +
 				", enable=" + enable +
 				", remark='" + remark + '\'' +
-				", ssh=" + ssh +
 				'}';
 	}
 }

@@ -22,6 +22,7 @@ import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.erm.Ssh;
 import com.wl4g.devops.common.exception.ci.PipelineDeployingException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.devops.dao.erm.ClusterConfigDao;
@@ -113,6 +114,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
         notNull(pipeHisInstanceId, "Transfer job for taskDetailId inmust not be null");
         Integer projectId = getContext().getProject().getId();
         String projectName = getContext().getProject().getProjectName();
+        Ssh ssh = getContext().getAppCluster().getSsh();
         log.info("Starting transfer job for instanceId:{}, projectId:{}, projectName:{} ...", instance.getId(), projectId,
                 projectName);
 
@@ -125,15 +127,15 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 
             // PRE commands.
             if (provider.getContext().getPipeStepInstanceCommand().getEnable() == 1 && !isBlank(provider.getContext().getPipeStepInstanceCommand().getPreCommand())) {
-                doRemoteCommand(instance.getHostname(), instance.getSsh().getUsername(), provider.getContext().getPipeStepInstanceCommand().getPreCommand(), instance.getSsh().getSshKey());
+                doRemoteCommand(instance.getHostname(), ssh.getUsername(), provider.getContext().getPipeStepInstanceCommand().getPreCommand(), ssh.getSshKey());
             }
 
             // Deploying distribute to remote.
-            doRemoteDeploying(instance.getHostname(), instance.getSsh().getUsername(), instance.getSsh().getSshKey());
+            doRemoteDeploying(instance.getHostname(), ssh.getUsername(), ssh.getSshKey());
 
             // Post remote commands.(e.g: restart)
             if (provider.getContext().getPipeStepInstanceCommand().getEnable() == 1 && !isBlank(provider.getContext().getPipeStepInstanceCommand().getPostCommand())) {
-                doRemoteCommand(instance.getHostname(), instance.getSsh().getUsername(), provider.getContext().getPipeStepInstanceCommand().getPostCommand(), instance.getSsh().getSshKey());
+                doRemoteCommand(instance.getHostname(), ssh.getUsername(), provider.getContext().getPipeStepInstanceCommand().getPostCommand(), ssh.getSshKey());
             }
 
             // Update status to success.
