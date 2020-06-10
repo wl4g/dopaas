@@ -17,52 +17,50 @@ import java.util.Objects;
 @Service
 public class AreaServiceImpl implements AreaService {
 
-    @Autowired
-    private AreaDao areaDao;
+	@Autowired
+	private AreaDao areaDao;
 
+	@Override
+	public List<Area> getAreaTree() {
+		List<Area> total = getTotal();
+		List<Area> tops = getTops(total);
+		for (Area top : tops) {
+			getChildren(total, top);
+		}
+		return tops;
+	}
 
-    @Override
-    public List<Area> getAreaTree() {
-        List<Area> total = getTotal();
-        List<Area> tops = getTops(total);
-        for(Area top : tops){
-            getChildren(total,top);
-        }
-        return tops;
-    }
+	public void getChildren(List<Area> total, Area top) {
+		for (Area area : total) {
+			if (top.getId().equals(area.getParentId())) {
+				getChildrenOrCreate(top).add(area);
+				getChildren(total, area);
+			}
+		}
+	}
 
-    public void getChildren(List<Area> total,Area top){
-        for(Area area : total){
-            if(top.getId().equals(area.getParentId())){
-                getChildrenOrCreate(top).add(area);
-                getChildren(total, area);
-            }
-        }
-    }
+	private List<Area> getTotal() {
+		return areaDao.getTotal();
+	}
 
-    private List<Area> getTotal() {
-        return areaDao.getTotal();
-    }
+	private List<Area> getTops(List<Area> areas) {
+		List<Area> list = new ArrayList<>();
+		for (Area area : areas) {
+			if (Objects.nonNull(area.getLevel()) && area.getLevel() == 1) {
+				list.add(area);
+			}
+		}
+		return list;
+	}
 
-    private List<Area> getTops(List<Area> areas) {
-        List<Area> list = new ArrayList<>();
-        for (Area area : areas) {
-            if (Objects.nonNull(area.getLevel()) && area.getLevel() == 1) {
-                list.add(area);
-            }
-        }
-        return list;
-    }
-
-    private List getChildrenOrCreate(Area area){
-        if(Objects.isNull(area.getChildren())){
-            List<Area> children = new ArrayList<>();
-            area.setChildren(children);
-            return children;
-        }else{
-            return area.getChildren();
-        }
-    }
-
+	private List<Area> getChildrenOrCreate(Area area) {
+		if (Objects.isNull(area.getChildren())) {
+			List<Area> children = new ArrayList<>();
+			area.setChildren(children);
+			return children;
+		} else {
+			return area.getChildren();
+		}
+	}
 
 }
