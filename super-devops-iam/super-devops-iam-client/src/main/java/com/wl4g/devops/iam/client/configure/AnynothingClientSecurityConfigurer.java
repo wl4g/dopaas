@@ -18,21 +18,20 @@ package com.wl4g.devops.iam.client.configure;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 
 public class AnynothingClientSecurityConfigurer implements ClientSecurityConfigurer {
 
 	@Override
-	public String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject, ServletRequest request,
-			ServletResponse response) {
+	public String decorateAuthenticateSuccessUrl(String successUrl, AuthenticationToken token, Subject subject,
+			ServletRequest request, ServletResponse response) {
 		return successUrl;
 	}
 
 	@Override
-	public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
-			ServletRequest request, ServletResponse response) {
+	public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, Throwable ae, ServletRequest request,
+			ServletResponse response) {
 		return loginUrl;
 	}
 

@@ -18,7 +18,6 @@ package com.wl4g.devops.iam.common.configure;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 
@@ -71,7 +70,7 @@ public interface SecurityConfigurer {
 	 * @param response
 	 * @return
 	 */
-	default String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
+	default String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, Throwable ae,
 			ServletRequest request, ServletResponse response) {
 		return loginUrl;
 	}
