@@ -22,7 +22,7 @@ RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
 
 COPY ${APP_BIN_NAME} /${APP_BIN_NAME}
 
-RUN tar -xvf /${APP_BIN_NAME}
+RUN tar -xvf /${APP_BIN_NAME} && rm -rf /${APP_BIN_NAME}
 
 ### EXPOSE ${APP_PORT}
 

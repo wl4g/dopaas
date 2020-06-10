@@ -15,10 +15,9 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
-import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
+import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.erm.Ssh;
 
 import java.util.List;
 
@@ -29,23 +28,23 @@ import java.util.List;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class DockerNativePipeDeployer extends GenericHostPipeDeployer<DockerNativePipelineProvider> {
+public class DockerNativePipeDeployer extends GenericHostPipeDeployer<PipelineProvider> {
 
-	public DockerNativePipeDeployer(DockerNativePipelineProvider provider, AppInstance instance,
-			List<PipelineHistoryInstance> pipelineHistoryInstances) {
+	public DockerNativePipeDeployer(PipelineProvider provider, AppInstance instance,
+									List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		super(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Override
 	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
-		Ssh ssh = getContext().getAppCluster().getSsh();
+		/*Ssh ssh = getContext().getAppCluster().getSsh();
 		String groupName = getContext().getProject().getGroupName();
 		// Pull
 		provider.imagePull(instance.getHostname(), ssh.getUsername(), "wl4g/" + groupName
-				+ ":master"/*
+				+ ":master"*//*
 							 * TODO 要改成动态的
 							 * provider.getTaskHistory().getPreCommand()
-							 */, ssh.getSshKey());
+							 *//*, ssh.getSshKey());
 		// Restart
 		provider.stopContainer(instance.getHostname(), ssh.getUsername(), groupName, ssh.getSshKey());
 
@@ -53,10 +52,11 @@ public class DockerNativePipeDeployer extends GenericHostPipeDeployer<DockerNati
 		provider.destroyContainer(instance.getHostname(), ssh.getUsername(), groupName, ssh.getSshKey());
 		// Run
 		provider.startContainer(instance.getHostname(), ssh.getUsername(), "docker run wl4g/" + groupName
-				+ ":master"/*
+				+ ":master"*//*
 							 * TODO 要改成动态的
 							 * provider.getTaskHistory().getPostCommand()
-							 */, ssh.getSshKey());
+							 *//*, ssh.getSshKey());*/
+		log.info("docker stop & pull & restart container");
 	}
 
 }
