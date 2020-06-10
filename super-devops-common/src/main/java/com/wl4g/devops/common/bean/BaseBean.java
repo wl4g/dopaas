@@ -16,14 +16,13 @@
 package com.wl4g.devops.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wl4g.devops.tool.common.id.SnowflakeIdGenerator;
 
-import static com.wl4g.devops.tool.common.codec.CheckSums.crc32String;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import static java.util.UUID.*;
 import static java.lang.Math.abs;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -94,8 +93,7 @@ public abstract class BaseBean implements Serializable {
 		// This is a temporary ID generation scheme. You can change
 		// it to a primary key generation service later.
 
-		// setId(crc32String(randomUUID().toString()));
-		setId(abs((int) crc32String(randomUUID().toString()))); // unsafe!!!
+		setId(abs((int) SnowflakeIdGenerator.getDefault().nextId())); // unsafe-convert!!!
 
 		setCreateDate(new Date());
 		setCreateBy(DEFAULT_USER_ID);
