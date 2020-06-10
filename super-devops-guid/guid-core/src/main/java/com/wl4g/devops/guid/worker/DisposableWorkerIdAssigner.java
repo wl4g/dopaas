@@ -30,8 +30,10 @@ import com.wl4g.devops.guid.worker.entity.WorkerNode;
 
 /**
  * DB编号分配器(利用数据库来管理)
- * 
- * @author yutianbao
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class DisposableWorkerIdAssigner implements WorkerIdAssigner {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DisposableWorkerIdAssigner.class);

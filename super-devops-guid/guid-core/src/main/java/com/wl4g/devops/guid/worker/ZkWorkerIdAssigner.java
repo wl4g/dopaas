@@ -28,27 +28,11 @@ import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
 /**
- * @类名称 ZkWorkerIdAssigner.java
- * @类描述
- * 
- *      <pre>
  * zk编号分配器{可设置interval-心跳间隔、pidHome-workerId文件存储目录、zkAddress-zk地址、pidPort-使用端口(默认不开,同机多uid应用时区分端口)}
- *      </pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2018年4月27日 下午8:14:21
- * @版本 2.1.0
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.0.0 	庄梦蝶殇 	2018年04月27日             利用zk的版本实现workid
- *     2.0.0    庄梦蝶殇      2018年09月04日             引入leaf的理念基于zkclient进行开发
- *     2.1.0    庄梦蝶殇      2019年03月27日             使用原生Zookeeper。去除zkclient依赖
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class ZkWorkerIdAssigner extends AbstractIntervalWorkId {
 	public static final String ZK_SPLIT = "/";

@@ -28,25 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @类名称 NetUtils.java
- * @类描述
- * 
- *      <pre>
- *      网络ip辅助类(本机)
- * 		</pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2018年9月3日 下午5:04:05
- * @版本 1.00
+ * {@link NetUtils}
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.00 	庄梦蝶殇 	2018年9月3日             
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class NetUtils {
 	public static Logger logger = LoggerFactory.getLogger(NetUtils.class);

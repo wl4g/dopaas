@@ -22,26 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
 /**
- * @类名称 RedisWorkIdAssigner.java
- * @类描述
- * 
- *      <pre>
- *      Redis编号分配器
- *      </pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2019年1月16日 下午3:32:07
- * @版本 1.0.1
+ * Redis编号分配器
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.0.0 		庄梦蝶殇 	2019年1月16日             
- *     1.0.1        庄梦蝶殇    2019年1月18日      完善代码
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class RedisWorkIdAssigner extends AbstractIntervalWorkId {
 

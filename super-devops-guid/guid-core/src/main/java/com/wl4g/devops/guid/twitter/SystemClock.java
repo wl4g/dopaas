@@ -41,8 +41,10 @@ import com.wl4g.devops.guid.baidu.utils.NamingThreadFactory;
  * <p>
  * 100万：50,10,5.0%
  * <p>
- * 
- * @author lry
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class SystemClock {
 

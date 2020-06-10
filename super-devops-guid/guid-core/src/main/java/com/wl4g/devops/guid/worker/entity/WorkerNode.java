@@ -22,9 +22,11 @@ import com.wl4g.devops.guid.worker.WorkerNodeType;
 import lombok.ToString;
 
 /**
- * Entity for M_WORKER_NODE
+ * {@link WorkerNode}
  *
- * @author yutianbao
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 @ToString
 public class WorkerNode {

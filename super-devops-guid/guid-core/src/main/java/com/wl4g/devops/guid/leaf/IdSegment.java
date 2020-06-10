@@ -18,27 +18,14 @@ package com.wl4g.devops.guid.leaf;
 import java.util.Date;
 
 /**
- * @类名称 IdSegment.java
- * @类描述
- * 
- *      <pre>
- *      分段ID实体
- * 		</pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2018年9月6日 下午3:58:29
- * @版本 1.00
+ * 分段ID实体
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.00 	庄梦蝶殇 	2018年9月6日             
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class IdSegment {
+
 	/**
 	 * 最小id
 	 */

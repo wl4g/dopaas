@@ -18,17 +18,19 @@ package com.wl4g.devops.guid.worker;
 import com.wl4g.devops.guid.baidu.utils.ValuedEnum;
 
 /**
- * WorkerNodeType
- * <li>CONTAINER: Such as Docker
- * <li>ACTUAL: Actual machine
- * 
- * @author yutianbao
+ * {@link WorkerNodeType}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public enum WorkerNodeType implements ValuedEnum<Integer> {
+
 	/**
-	 * docker容器节点
+	 * Docker容器节点
 	 */
 	CONTAINER(1),
+
 	/**
 	 * 普通节点
 	 */

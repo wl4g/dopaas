@@ -26,27 +26,11 @@ import com.wl4g.devops.guid.baidu.UidGenerator;
 import com.wl4g.devops.guid.extend.annotation.UidModel;
 
 /**
- * baidu uid生成策略
- * 
- * @类名称 BaiduUidStrategy.java
- * @类描述
- * 
- *      <pre>
- * baidu uid生成策略
- *      </pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2018年4月27日 下午8:47:27
- * @版本 1.00
+ * Baidu uid生成策略
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.00 	庄梦蝶殇 	2018年4月27日             
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class BaiduUidStrategy implements IUidStrategy {
 
@@ -68,7 +52,7 @@ public class BaiduUidStrategy implements IUidStrategy {
 	 * 
 	 *       <pre>
 	 *       获取uid生成器
-	 * 		</pre>
+	 *       </pre>
 	 * 
 	 * @param prefix
 	 *            前缀

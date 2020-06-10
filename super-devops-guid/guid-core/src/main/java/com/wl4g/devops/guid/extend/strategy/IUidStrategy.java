@@ -18,27 +18,14 @@ package com.wl4g.devops.guid.extend.strategy;
 import com.wl4g.devops.guid.extend.annotation.UidModel;
 
 /**
- * @类名称 IUidStrategy.java
- * @类描述
- * 
- *      <pre>
- *      uid策略接口
- * 		</pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2018年8月31日 下午5:27:38
- * @版本 1.00
+ * uid策略接口
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.00 	庄梦蝶殇 	2018年8月31日             
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public interface IUidStrategy {
+
 	/**
 	 * 策略名
 	 * 
@@ -47,7 +34,7 @@ public interface IUidStrategy {
 	 * 
 	 *       <pre>
 	 *       策略名
-	 * 		</pre>
+	 *       </pre>
 	 * 
 	 * @return
 	 */
@@ -59,7 +46,7 @@ public interface IUidStrategy {
 	 * 
 	 *       <pre>
 	 *       获取ID
-	 * 		</pre>
+	 *       </pre>
 	 * 
 	 * @param group
 	 *            分组
@@ -73,7 +60,7 @@ public interface IUidStrategy {
 	 * 
 	 *       <pre>
 	 *       解析ID
-	 * 		</pre>
+	 *       </pre>
 	 * 
 	 * @param uid
 	 * @param group

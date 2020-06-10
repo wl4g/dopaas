@@ -33,27 +33,11 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import com.wl4g.devops.guid.baidu.utils.NamingThreadFactory;
 
 /**
- * @类名称 SegmentServiceImpl.java
- * @类描述
- * 
- *      <pre>
  * Segment 策略id生成实现类
- *      </pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2018年9月6日 下午4:28:36
- * @版本 1.0.2
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.0.0    庄梦蝶殇    2018年09月06日             
- *     1.0.1    庄梦蝶殇    2019年02月28日             更改阈值碰撞时重复执行问题
- *     1.0.2    庄梦蝶殇    2019年03月06日             突破并发数被step限制的bug
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class SegmentServiceImpl implements ISegmentService {
 
