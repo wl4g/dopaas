@@ -2,6 +2,7 @@ package com.wl4g.devops.ci.core;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.model.Image;
 import com.github.dockerjava.api.model.Info;
 import com.github.dockerjava.api.model.SearchItem;
 import com.wl4g.devops.ci.utils.DockerJavaUtil;
@@ -10,7 +11,6 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.springframework.util.ClassUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +43,14 @@ public class DockerJavaTest {
     public void test_2_serachImage() {
         // 搜索镜像
         List<SearchItem> dockerSearch = dockerClient.searchImagesCmd("busybox").exec();
+        for(SearchItem searchItem : dockerSearch){
+            System.out.println(searchItem.toString());
+        }
         System.out.println("Search returned" + dockerSearch.toString());
+        List<Image> exec = dockerClient.listImagesCmd().withImageNameFilter("openjdk:8-jre-alpine").exec();
+        for(Image image : exec){
+            System.out.println(image.getId()+ "--"+image.getRepoTags()[0]);
+        }
     }
 
 
@@ -61,7 +68,6 @@ public class DockerJavaTest {
 
         String containerId = DockerJavaUtil.buildImage(dockerClient, tags,
                 new File("/Users/vjay/.ci-workspace/jobs/job.98883840"),
-                new File("./Dockerfile"),
                 args);
 
         System.out.println("create container success. containerId = " + containerId);
@@ -91,10 +97,13 @@ public class DockerJavaTest {
 
     }
 
-    public static void main(String[] args){
-        String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
-        System.out.println(path);
+    @Test
+    public void test_5_removeImage() throws InterruptedException {
+        dockerClient.removeImageCmd("trend");
+
     }
+
+
 
 
     //@Test

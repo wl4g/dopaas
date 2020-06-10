@@ -20,6 +20,7 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.deploy.CossPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
@@ -34,7 +35,6 @@ import com.wl4g.devops.dao.ci.PipeStepBuildingProjectDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
-import com.wl4g.devops.dao.erm.AppEnvironmentDao;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
@@ -317,12 +317,16 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	//TODO
 	protected Runnable newPipeDeployerByType(AppInstance instance){
 
-		if(getContext().getAppCluster().getDeployType()==4){
-			Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
-			return beanFactory.getBean(CossPipeDeployer.class, args);
+		switch (getContext().getAppCluster().getDeployType()){
+			case 2:
+				Object[] args2 = { this, instance, getContext().getPipelineHistoryInstances() };
+				return beanFactory.getBean(DockerNativePipeDeployer.class, args2);
+			case 4:
+				Object[] args4 = { this, instance, getContext().getPipelineHistoryInstances() };
+				return beanFactory.getBean(CossPipeDeployer.class, args4);
+			default:
+				return newPipeDeployer(instance);
 		}
-
-		return newPipeDeployer(instance);
 
 	};
 

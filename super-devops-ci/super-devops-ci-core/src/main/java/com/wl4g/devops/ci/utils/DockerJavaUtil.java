@@ -3,10 +3,7 @@ package com.wl4g.devops.ci.utils;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.BuildImageCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.model.BuildResponseItem;
-import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.Ports;
+import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
@@ -16,9 +13,13 @@ import com.wl4g.devops.tool.common.lang.Assert2;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
+import static com.wl4g.devops.ci.utils.DockerFileBuilder.makeDockerFile;
 
 /**
  * @author vjay
@@ -61,8 +62,13 @@ public class DockerJavaUtil {
      * @return
      * @throws IOException
      */
-    public static String buildImage(DockerClient client, Set<String> tags, File workSpace, File dockerTemplate, Map<String, String> args) throws IOException {
-        copyFile2WorkSpace(workSpace, dockerTemplate);
+    public static String buildImage(DockerClient client, Set<String> tags, File workSpace, Map<String, String> args) throws IOException {
+        //copyFile2WorkSpace(workSpace, dockerTemplate);
+        for(String tag : tags){
+            removeImage(client,tag);
+        }
+
+        makeDockerFile(new File(workSpace.getCanonicalPath() + "/Dockerfile"));
 
         BuildImageResultCallback callback = new BuildImageResultCallback() {
             @Override
@@ -78,6 +84,20 @@ public class DockerJavaUtil {
             buildImageCmd.withBuildArg(key, value);
         }
         return buildImageCmd.exec(callback).awaitImageId();
+    }
+
+    public static void removeImage(DockerClient client, String imageName){
+        List<String> filterName = new ArrayList<>();
+        filterName.add(imageName);
+        List<Container> containers = client.listContainersCmd().withNameFilter(filterName).exec();
+        for(Container container : containers){
+            client.removeContainerCmd(container.getId()).exec();
+        }
+
+        List<Image> images = client.listImagesCmd().withImageNameFilter(imageName).exec();
+        for(Image image : images){
+            client.removeImageCmd(image.getId()).exec();
+        }
     }
 
     /**

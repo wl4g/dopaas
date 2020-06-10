@@ -80,7 +80,6 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
 
             String containerId = DockerJavaUtil.buildImage(dockerClient, tags,
                     new File(config.getJobBackupDir(pipelineHistory.getId()).getAbsolutePath()),
-                    new File("Dockerfile"),
                     args);
 
             log.info("create container success. containerId = {}", containerId);

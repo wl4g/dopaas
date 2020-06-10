@@ -17,14 +17,11 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
-import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.exception.ci.NotFoundBackupAssetsFileException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
-import java.util.List;
-import java.util.Objects;
 
 import static com.wl4g.devops.ci.pipeline.PipelineKind.DOCKER_NATIVE;
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
@@ -71,19 +68,10 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	}
 
 	private void buildImage() throws Exception {
-		List<AppInstance> instances = getContext().getInstances();
-		boolean needBuildImage = false;
-		for(AppInstance instance : instances){
-			if(Objects.nonNull(instance.getDeployType())&&instance.getDeployType()==2){//docker
-				needBuildImage = true;
-				break;
-			}
+		if(getContext().getAppCluster().getDeployType()==2){
+			DockerNativePipelineProvider p = aliasPrototypeBeanFactory.getPrototypeBean(DOCKER_NATIVE, getContext());
+			p.buildImage();
 		}
-		if(!needBuildImage){
-			return;
-		}
-		DockerNativePipelineProvider p = aliasPrototypeBeanFactory.getPrototypeBean(DOCKER_NATIVE, getContext());
-		p.buildImage();
 	}
 
 	/**
