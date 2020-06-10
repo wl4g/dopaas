@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.guid.spring;
+package com.wl4g.devops.guid;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,25 +22,11 @@ import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer
 import com.wl4g.devops.guid.leaf.SegmentServiceImpl;
 
 /**
- * @类名称 ColumnMaxValueIncrementer.java
- * @类描述
- * 
- *      <pre>
  * Spring 增量id实现(基于Segment策略)
- *      </pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2018年9月12日 下午3:55:17
- * @版本 1.0.0
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.0.0 		庄梦蝶殇 	2018年9月12日             
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class ColumnMaxValueIncrementer extends SegmentServiceImpl implements DataFieldMaxValueIncrementer {
 

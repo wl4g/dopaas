@@ -20,27 +20,14 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 /**
- * @类名称 WorkerIdUtils.java
- * @类描述
- * 
- *      <pre>
- * workid 文件操作类
- *      </pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2019年1月16日 下午2:31:31
- * @版本 1.0.0
+ * {@link WorkerIdUtils}
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.0.0 		庄梦蝶殇 	2019年1月16日             
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class WorkerIdUtils {
+
 	/**
 	 * workerID文件 分隔符
 	 */
@@ -52,7 +39,7 @@ public class WorkerIdUtils {
 	 * 
 	 *       <pre>
 	 *       获取workId文件名
-	 * 		</pre>
+	 *       </pre>
 	 * 
 	 * @param pidPort
 	 *            使用端口(同机多uid应用时区分端口)
@@ -113,7 +100,7 @@ public class WorkerIdUtils {
 	 * 
 	 *       <pre>
 	 *       回拨时间睡眠等待
-	 * 		</pre>
+	 *       </pre>
 	 * 
 	 * @param ms
 	 *            平均心跳时间

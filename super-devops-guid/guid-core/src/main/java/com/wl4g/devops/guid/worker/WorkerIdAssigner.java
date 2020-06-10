@@ -18,8 +18,10 @@ package com.wl4g.devops.guid.worker;
 /**
  * Represents a worker id assigner for
  * {@link com.wl4g.devops.guid.baidu.impl.DefaultUidGenerator}
- * 
- * @author yutianbao
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public interface WorkerIdAssigner {
 

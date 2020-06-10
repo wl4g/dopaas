@@ -19,12 +19,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * twitter Snowflake 算法，提供uid生成器
+ * {@link SnowflakeIdWorker}
  * 
- * @类名称 SnowflakeIdWorker.java
- * @类描述
- * 
- *      <pre>
+ * <pre>
  * twitter Snowflake 算法，提供uid生成器：
  * <br>
  * SnowFlake的结构如下(每部分用-分开):
@@ -44,26 +41,14 @@ import java.util.Date;
  * <br>
  * <br>
  * 加起来刚好64位，为一个Long型。<br>
- *      </pre>
+ * </pre>
  * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2018年3月23日 下午6:31:48
- * @版本 1.0.2
- *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.0.0 	庄梦蝶殇 	2018年3月23日         参考多版本Snowflake算法进行合并
- *     1.0.1    庄梦蝶殇     2018年8月31日         引进闰秒回拨处理机制     
- *     1.0.2    庄梦蝶殇     2018年9月3日           新增parseId(反解析方法)        
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class SnowflakeIdWorker {
-	// ==============================
-	// Constants===========================================
+
 	/**
 	 * 回拨超时错误
 	 */
@@ -204,7 +189,7 @@ public class SnowflakeIdWorker {
 	 * 
 	 *       <pre>
 	 *       反解析UID
-	 * 		</pre>
+	 *       </pre>
 	 */
 	public String parseUID(Long uid) {
 		// 总位数

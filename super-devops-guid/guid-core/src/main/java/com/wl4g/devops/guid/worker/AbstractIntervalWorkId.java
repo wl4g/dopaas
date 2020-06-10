@@ -28,25 +28,11 @@ import com.wl4g.devops.guid.baidu.utils.NamingThreadFactory;
 import com.wl4g.devops.guid.util.WorkerIdUtils;
 
 /**
- * @类名称 AbstractIntervalWorkId.java
- * @类描述
- * 
- *      <pre>
- *      WorkId生成基类
- *      </pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2019年1月17日 下午4:21:17
- * @版本 1.0.0
+ * WorkId生成基类
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.0.0 		庄梦蝶殇 	2019年1月17日             
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public abstract class AbstractIntervalWorkId implements WorkerIdAssigner, InitializingBean {
 

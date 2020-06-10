@@ -15,32 +15,19 @@
  */
 package com.wl4g.devops.guid.extend.strategy;
 
+import com.wl4g.devops.guid.ColumnMaxValueIncrementer;
 import com.wl4g.devops.guid.extend.annotation.UidModel;
 import com.wl4g.devops.guid.leaf.ISegmentService;
-import com.wl4g.devops.guid.spring.ColumnMaxValueIncrementer;
 
 /**
- * @类名称 SpringStrategy.java
- * @类描述
- * 
- *      <pre>
  * spring 分段批量Id策略(可配置asynLoadingSegment-异步标识)
- *      </pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2019年3月15日 下午7:48:58
- * @版本 1.0.0
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.0.0 	       庄梦蝶殇 	2019年3月15日             
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class SpringStrategy extends LeafSegmentStrategy {
+
 	@Override
 	public UidModel getName() {
 		return UidModel.step;

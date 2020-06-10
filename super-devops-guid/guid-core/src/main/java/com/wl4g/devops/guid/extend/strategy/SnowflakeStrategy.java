@@ -25,27 +25,14 @@ import com.wl4g.devops.guid.util.NetUtils;
 import com.wl4g.devops.guid.worker.WorkerIdAssigner;
 
 /**
- * @类名称 TwitterSnowflakeStrategy.java
- * @类描述
- * 
- *      <pre>
- *      Twitter策略(workerId的获取可使用WorkerIdAssigner的各种实例)
- * 		</pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2018年8月31日 下午5:05:15
- * @版本 1.00
+ * Twitter/Snowflake策略(workerId的获取可使用WorkerIdAssigner的各种实例)
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.00 	庄梦蝶殇 	2018年8月31日             
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
-public class TwitterSnowflakeStrategy implements IUidStrategy {
+public class SnowflakeStrategy implements IUidStrategy {
+
 	/**
 	 * 生成器集合
 	 */
@@ -86,7 +73,7 @@ public class TwitterSnowflakeStrategy implements IUidStrategy {
 	 * 
 	 *       <pre>
 	 *       获取uid生成器
-	 * 		</pre>
+	 *       </pre>
 	 * 
 	 * @param prefix
 	 *            前缀

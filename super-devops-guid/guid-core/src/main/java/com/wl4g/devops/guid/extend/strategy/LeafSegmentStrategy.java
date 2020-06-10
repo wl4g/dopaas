@@ -26,25 +26,11 @@ import com.wl4g.devops.guid.leaf.ISegmentService;
 import com.wl4g.devops.guid.leaf.SegmentServiceImpl;
 
 /**
- * @类名称 LeafSegmentStrategy.java
- * @类描述
- * 
- *      <pre>
- *      Leaf分段批量Id策略(可配置asynLoadingSegment - 异步标识)
- *      </pre>
- * 
- * @作者 庄梦蝶殇 linhuaichuan1989@126.com
- * @创建时间 2018年9月5日 上午11:35:53
- * @版本 1.00
+ * Leaf分段批量Id策略(可配置asynLoadingSegment - 异步标识)
  *
- * @修改记录
- * 
- *       <pre>
- *     版本                       修改人 		修改日期 		 修改内容描述
- *     ----------------------------------------------
- *     1.00 	庄梦蝶殇 	2018年9月5日             
- *     ----------------------------------------------
- *       </pre>
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年2月10日
+ * @since
  */
 public class LeafSegmentStrategy implements IUidStrategy {
 
