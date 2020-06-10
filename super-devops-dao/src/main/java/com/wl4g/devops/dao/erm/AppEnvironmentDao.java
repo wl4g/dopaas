@@ -20,6 +20,8 @@ public interface AppEnvironmentDao {
 
     List<AppEnvironment> selectByClusterId(Integer id);
 
+    AppEnvironment selectByClusterIdAndEnv(@Param("clusterId") Integer clusterId,@Param("envType") String envType);
+
     int updateByPrimaryKeySelective(AppEnvironment record);
 
     int updateByPrimaryKeyWithBLOBs(AppEnvironment record);

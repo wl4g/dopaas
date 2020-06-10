@@ -64,7 +64,7 @@ public class AppInstance extends BaseBean {
 
 	private String endpoint;
 
-	private String deployType;
+	private Integer deployType;
 
 	public Integer getClusterId() {
 		return clusterId;
@@ -180,11 +180,11 @@ public class AppInstance extends BaseBean {
 		this.endpoint = endpoint;
 	}
 
-	public String getDeployType() {
+	public Integer getDeployType() {
 		return deployType;
 	}
 
-	public void setDeployType(String deployType) {
+	public void setDeployType(Integer deployType) {
 		this.deployType = deployType;
 	}
 

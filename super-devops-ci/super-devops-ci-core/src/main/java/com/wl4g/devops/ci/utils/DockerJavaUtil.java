@@ -94,8 +94,9 @@ public class DockerJavaUtil {
             workSpace.mkdirs();
         }
         Assert2.isTrue(workSpace.exists(), "create dir fail");
+        String property = System.getProperty("user.dir");
         //Files.copy(tarPath.toPath(), new File(workspace.getCanonicalPath() + "/" + appBinName + ".tar").toPath());
-        Files.copy(dockerTemplate.toPath(), new File(workSpace.getCanonicalPath() + "/Dockerfile").toPath());
+        Files.copy(new File(dockerTemplate.getCanonicalPath()).toPath(), new File(workSpace.getCanonicalPath() + "/Dockerfile").toPath());
     }
 
 

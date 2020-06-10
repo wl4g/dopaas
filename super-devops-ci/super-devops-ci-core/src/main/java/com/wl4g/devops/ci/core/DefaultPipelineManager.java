@@ -28,6 +28,7 @@ import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.ci.service.PipelineService;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.iam.Contact;
 import com.wl4g.devops.common.bean.iam.ContactChannel;
@@ -35,6 +36,7 @@ import com.wl4g.devops.common.framework.beans.AliasPrototypeBeanFactory;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.erm.AppClusterDao;
+import com.wl4g.devops.dao.erm.AppEnvironmentDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.iam.ContactDao;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
@@ -113,6 +115,9 @@ public class DefaultPipelineManager implements PipelineManager {
     private PipeStepBuildingDao pipeStepBuildingDao;
     @Autowired
     private PipelineInstanceDao pipelineInstanceDao;
+    @Autowired
+    private AppEnvironmentDao appEnvironmentDao;
+
 
 
     @Override
@@ -485,9 +490,11 @@ public class DefaultPipelineManager implements PipelineManager {
 
         PipeStepBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeline.getId());
 
+        AppEnvironment environment = appEnvironmentDao.selectByClusterIdAndEnv(appCluster.getId(), pipeline.getEnvironment());
+
         // TODO add pipeline status track
         PipelineContext context = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, pipelineHistory,
-                pipelineHistoryInstances, pipelineModel, pipeStepInstanceCommand, pipeline, pipeStepNotification, pipeStepBuilding);
+                pipelineHistoryInstances, pipelineModel, pipeStepInstanceCommand, pipeline, pipeStepNotification, pipeStepBuilding,environment);
 
         // Get prototype provider.
         return beanFactory.getPrototypeBean(pipeline.getProviderKind(), context);

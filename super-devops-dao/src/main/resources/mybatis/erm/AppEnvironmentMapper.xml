@@ -31,6 +31,13 @@
     from erm_app_environment
     where cluster_id = #{clusterId,jdbcType=INTEGER}
   </select>
+  <select id="selectByClusterIdAndEnv" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List"/>
+    from erm_app_environment
+    where cluster_id = #{clusterId,jdbcType=INTEGER}
+    and env_type = #{envType,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from erm_app_environment
     where id = #{id,jdbcType=INTEGER}

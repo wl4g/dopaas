@@ -16,12 +16,17 @@
 package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.core.context.PipelineContext;
+import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.exception.ci.NotFoundBackupAssetsFileException;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
+import java.util.List;
+import java.util.Objects;
 
+import static com.wl4g.devops.ci.pipeline.PipelineKind.DOCKER_NATIVE;
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
 import static com.wl4g.devops.tool.common.codec.FingerprintUtils.getMd5Fingerprint;
 import static java.lang.String.format;
@@ -57,10 +62,28 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 		// Handling backup
 		handleDiskBackupAssets();
 
-		containerPipelineProvider.buildImage();
+		// Handing Build Image
+		buildImage();
+
 
 		// Deploying to remote instances.
 		startupExecuteRemoteDeploying();
+	}
+
+	private void buildImage() throws Exception {
+		List<AppInstance> instances = getContext().getInstances();
+		boolean needBuildImage = false;
+		for(AppInstance instance : instances){
+			if(Objects.nonNull(instance.getDeployType())&&instance.getDeployType()==2){//docker
+				needBuildImage = true;
+				break;
+			}
+		}
+		if(!needBuildImage){
+			return;
+		}
+		DockerNativePipelineProvider p = aliasPrototypeBeanFactory.getPrototypeBean(DOCKER_NATIVE, getContext());
+		p.buildImage();
 	}
 
 	/**
