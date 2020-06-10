@@ -14,7 +14,6 @@
 	</parent>
 	<modules>
 		<module>components-tools</module>
-		<!-- <module>components-core</module> -->
 		<module>components-shell</module>
 		<module>components-webjars</module>
 	</modules>

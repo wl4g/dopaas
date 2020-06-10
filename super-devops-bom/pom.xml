@@ -52,6 +52,7 @@
 		<commons-fileupload.version>1.4</commons-fileupload.version>
 		<commons-csv.version>1.0</commons-csv.version>
 		<commons-exec.version>1.3</commons-exec.version>
+		<lombok.version>1.18.4</lombok.version>
 		<!-- Performance & quality's. -->
 		<spotbugs.version>4.0.0-beta4</spotbugs.version>
 		<metrics.version>3.0.2</metrics.version>
@@ -97,6 +98,8 @@
 		<glusterfs-javafs.version>1.0.4</glusterfs-javafs.version>
 		<!-- Docker's -->
 		<docker-java.version>3.1.5</docker-java.version>
+		<!-- Discover's -->
+		<zookeeper.version>3.4.14</zookeeper.version>
 	</properties>
 	<distributionManagement>
 		<snapshotRepository>
@@ -412,6 +415,25 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- GUID dependentcie's -->
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-guid-common</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-guid-core</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-guid-client</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
 			<!-- Spring's. -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
@@ -637,6 +659,12 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-exec</artifactId>
 				<version>${commons-exec.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<!-- Performance & quality's. -->
@@ -998,6 +1026,27 @@
 					<exclusion>
 						<groupId>io.netty</groupId>
 						<artifactId>netty-transport-native-unix-common</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- Discover's -->
+			<dependency>
+				<groupId>org.apache.zookeeper</groupId>
+				<artifactId>zookeeper</artifactId>
+				<version>${zookeeper.version}</version>
+				<optional>true</optional>
+				<exclusions>
+					<exclusion>
+						<artifactId>log4j</artifactId>
+						<groupId>log4j</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>slf4j-log4j12</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
