@@ -19,7 +19,6 @@ import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.flow.FlowManager;
-import com.wl4g.devops.ci.pipeline.container.ContainerPipelineProvider;
 import com.wl4g.devops.ci.pipeline.deploy.CossPipeDeployer;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.vcs.VcsOperator;
@@ -29,11 +28,13 @@ import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.erm.Ssh;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
+import com.wl4g.devops.common.framework.beans.AliasPrototypeBeanFactory;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.PipeStepBuildingProjectDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskHistoryBuildCommandDao;
 import com.wl4g.devops.dao.ci.TaskSignDao;
+import com.wl4g.devops.dao.erm.AppEnvironmentDao;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
@@ -81,6 +82,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected BeanFactory beanFactory;
 	@Autowired
+	protected AliasPrototypeBeanFactory aliasPrototypeBeanFactory;
+	@Autowired
 	protected JedisLockManager lockManager;
 	@Autowired
 	protected DestroableProcessManager pm;
@@ -98,8 +101,6 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected FlowManager flowManager;
 	@Autowired
 	protected PipeStepBuildingProjectDao pipeStepBuildingProjectDao;
-	@Autowired
-	protected ContainerPipelineProvider containerPipelineProvider;
 
 	/**
 	 * Pull project source from VCS files fingerprint.

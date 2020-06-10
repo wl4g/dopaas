@@ -23,7 +23,7 @@
 
     <result column="hostname" property="hostname" jdbcType="VARCHAR" />
     <result column="cluster_name" property="clusterName" jdbcType="VARCHAR" />
-    <result column="deploy_type" property="deployType" jdbcType="VARCHAR" />
+    <result column="deploy_type" property="deployType" jdbcType="INTEGER" />
 
   </resultMap>
 

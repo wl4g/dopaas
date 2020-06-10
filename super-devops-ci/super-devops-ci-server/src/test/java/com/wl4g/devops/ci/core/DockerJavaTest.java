@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.springframework.util.ClassUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,6 +89,11 @@ public class DockerJavaTest {
         //remove container
         DockerJavaUtil.removeContainer(dockerClient, containerId);
 
+    }
+
+    public static void main(String[] args){
+        String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
+        System.out.println(path);
     }
 
 
