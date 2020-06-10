@@ -129,7 +129,7 @@ public class LogoutAuthenticationFilter extends AbstractClientIamAuthenticationF
 	}
 
 	@Override
-	protected void decorateFailureRedirectParams(AuthenticationToken token, Throwable cause, HttpServletRequest request,
+	protected void customFailureRedirectParams(AuthenticationToken token, Throwable cause, HttpServletRequest request,
 			Map<String, String> params) {
 		// When exiting, the principal will be pushed to the server along with
 		// the redirection, so that the server can realize special handling of
