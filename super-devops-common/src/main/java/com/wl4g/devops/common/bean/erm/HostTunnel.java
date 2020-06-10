@@ -8,13 +8,15 @@ import com.wl4g.devops.common.bean.BaseBean;
  */
 public class HostTunnel extends BaseBean {
 
-    private String name;
+	private static final long serialVersionUID = -804616114914312710L;
 
-    public String getName() {
-        return name;
-    }
+	private String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }
