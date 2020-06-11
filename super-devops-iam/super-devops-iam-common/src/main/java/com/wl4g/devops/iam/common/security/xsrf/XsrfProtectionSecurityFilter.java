@@ -111,7 +111,7 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 		}
 
 		// Ignore not xsrf request requires validation.
-		if (xtokenRepository.isXsrfRequired(request)) {
+		if (!xtokenRepository.isXsrfRequired(request)) {
 			log.debug("Skip not xsrf requires request of: {}", requestPath);
 			filterChain.doFilter(request, response);
 			return;
