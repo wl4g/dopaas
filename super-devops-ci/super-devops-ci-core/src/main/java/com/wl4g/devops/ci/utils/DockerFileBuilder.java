@@ -27,8 +27,9 @@ public class DockerFileBuilder {
     }
 
     private static void appendARG(StringBuilder stringBuilder){
-        stringBuilder.append("ARG APP_BIN_NAME=\"iam-server-master-bin.tar\"\n");
+        stringBuilder.append("ARG APP_BIN_NAME=\"iam-server-master-bin\"\n");
         stringBuilder.append("ARG RUN_COM=\"echo helloworld\"\n");
+        stringBuilder.append("ENV RUN_CMD \"${RUN_COM}\"\n");
 
     }
 
@@ -43,12 +44,12 @@ public class DockerFileBuilder {
                 //.append("&& apk add --no-cache procps unzip curl bash tzdata font-adobe-100dpi ttf-dejavu fontconfig \\\n")//remove some unnecessary
                 .append("&& ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \\\n")
                 .append("&& echo \"Asia/Shanghai\" > /etc/timezone \\\n")
-                .append("&& tar -xvf /${APP_BIN_NAME} \\\n")
-                .append("&& rm -rf ${APP_BIN_NAME} \\\n")  //clean app tar
+                //.append("&& tar -xvf /${APP_BIN_NAME} \\\n")
+                //.append("&& rm -rf ${APP_BIN_NAME} \\\n")  //clean app tar
                 .append("&& rm -rf /var/lib/apt/lists/*\n"); // clean apt cache
 
 
-        stringBuilder.append("CMD [\"/bin/sh\", \"-c\", \"${RUN_COM}\"]\n");
+        stringBuilder.append("CMD [\"/bin/sh\", \"-c\", \"${RUN_CMD}\"]\n");
     }
 
 

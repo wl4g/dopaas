@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
+import com.github.dockerjava.api.DockerClient;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
+import com.wl4g.devops.ci.utils.DockerJavaUtil;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 
@@ -37,6 +39,10 @@ public class DockerNativePipeDeployer extends GenericHostPipeDeployer<PipelinePr
 
 	@Override
 	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
+		String dockerMasterAddr = instance.getDockerCluster().getMasterAddr();
+
+		DockerClient dockerClient = DockerJavaUtil.sampleConnect(dockerMasterAddr);
+
 		/*Ssh ssh = getContext().getAppCluster().getSsh();
 		String groupName = getContext().getProject().getGroupName();
 		// Pull

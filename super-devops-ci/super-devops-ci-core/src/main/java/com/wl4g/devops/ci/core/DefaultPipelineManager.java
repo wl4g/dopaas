@@ -489,6 +489,7 @@ public class DefaultPipelineManager implements PipelineManager {
         PipeStepNotification pipeStepNotification = pipeStepNotificationDao.selectByPipeId(pipeline.getId());
 
         PipeStepBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeline.getId());
+        setPipeStepBuildingRef(pipeStepBuilding, project.getId());
 
         AppEnvironment environment = appEnvironmentDao.selectByClusterIdAndEnv(appCluster.getId(), pipeline.getEnvironment());
 
@@ -544,6 +545,17 @@ public class DefaultPipelineManager implements PipelineManager {
                 log.info("Completed for rollback pipeline taskId: {}", taskId);
             }
         });
+    }
+
+    private void setPipeStepBuildingRef(PipeStepBuilding pipeStepBuilding,Integer projectId){
+        List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeStepBuilding.getPipeStepBuildingProjects();
+        for(PipeStepBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects){
+            if(projectId.equals(pipeStepBuildingProject.getProjectId())){
+                pipeStepBuilding.setRef(pipeStepBuildingProject.getRef());
+                return;
+            }
+        }
+
     }
 
 }

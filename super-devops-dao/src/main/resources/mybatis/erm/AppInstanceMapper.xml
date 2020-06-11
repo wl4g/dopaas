@@ -25,6 +25,18 @@
     <result column="cluster_name" property="clusterName" jdbcType="VARCHAR" />
     <result column="deploy_type" property="deployType" jdbcType="INTEGER" />
 
+    <association property="dockerCluster" javaType="com.wl4g.devops.common.bean.erm.DockerCluster">
+      <id column="d.id" jdbcType="INTEGER" property="id" />
+      <result column="d.name" jdbcType="VARCHAR" property="name" />
+      <result column="d.organization_code" jdbcType="VARCHAR" property="organizationCode" />
+      <result column="d.master_addr" jdbcType="VARCHAR" property="masterAddr" />
+      <result column="d.create_date" jdbcType="TIMESTAMP" property="createDate" />
+      <result column="d.create_by" jdbcType="VARCHAR" property="createBy" />
+      <result column="d.update_date" jdbcType="TIMESTAMP" property="updateDate" />
+      <result column="d.update_by" jdbcType="VARCHAR" property="updateBy" />
+      <result column="d.del_flag" jdbcType="INTEGER" property="delFlag" />
+    </association>
+
   </resultMap>
 
 
@@ -38,12 +50,18 @@
     i.create_by, i.create_date, i.update_by, i.update_date, i.del_flag
   </sql>
 
+  <sql id="Docker_Column_List">
+    d.id as 'd.id', d.name as 'd.name', d.organization_code as 'd.organization_code', d.master_addr as 'd.master_addr', d.create_date as 'd.create_date',
+    d.create_by as 'd.create_by', d.update_date as 'd.update_date', d.update_by as 'd.update_by', d.del_flag as 'd.del_flag'
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
-    <include refid="Base_Column_List_i" />,h.hostname,c.endpoint, c.deploy_type
+    <include refid="Base_Column_List_i" />,h.hostname,c.endpoint, c.deploy_type,<include refid="Docker_Column_List" />
     from erm_app_instance i
     left join erm_host h on h.id = i.host_id
     left join erm_app_cluster c on c.id=i.cluster_id
+    left join erm_docker_cluster d on d.id = i.docker_id
     where i.id = #{id,jdbcType=INTEGER}
   </select>
 
