@@ -2,9 +2,8 @@ package com.wl4g.devops.ci.core;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.model.Image;
-import com.github.dockerjava.api.model.Info;
-import com.github.dockerjava.api.model.SearchItem;
+import com.github.dockerjava.api.command.CreateServiceResponse;
+import com.github.dockerjava.api.model.*;
 import com.wl4g.devops.ci.utils.DockerJavaUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -51,6 +50,7 @@ public class DockerJavaTest {
         for(Image image : exec){
             System.out.println(image.getId()+ "--"+image.getRepoTags()[0]);
         }
+
     }
 
 
@@ -104,8 +104,6 @@ public class DockerJavaTest {
     }
 
 
-
-
     //@Test
     public void stop() {
         DockerJavaUtil.stopContainer(dockerClient, "b80f575b375ca7c824f7866bb9c23a8b81196043bb46ad84664a200495c0e053");
@@ -114,6 +112,35 @@ public class DockerJavaTest {
     //@Test
     public void remmoveContainer() {
         DockerJavaUtil.removeContainer(dockerClient, "b80f575b375ca7c824f7866bb9c23a8b81196043bb46ad84664a200495c0e053");
+    }
+
+
+    @Test
+    public void test_6_create_service() throws Exception {
+        ServiceSpec serviceSpec = new ServiceSpec();
+        serviceSpec.withName("nginx");
+        ServiceModeConfig serviceModeConfig = new ServiceModeConfig();
+        ServiceReplicatedModeOptions serviceReplicatedModeOptions = new ServiceReplicatedModeOptions();
+        serviceReplicatedModeOptions.withReplicas(3);
+        serviceModeConfig.withReplicated(serviceReplicatedModeOptions);
+        serviceSpec.withMode(serviceModeConfig);
+        CreateServiceResponse exec = dockerClient.createServiceCmd(serviceSpec).exec();
+        System.out.println(exec.toString());
+
+        /*dockerClient.createServiceCmd(new ServiceSpec()
+                .withName(SERVICE_NAME)
+                .withTaskTemplate(new TaskSpec()
+                        .withContainerSpec(new ContainerSpec()
+                                .withImage(DEFAULT_IMAGE))))
+                .exec();*/
+
+        /*List<Service> services = dockerClient.listServicesCmd()
+                .withNameFilter(Lists.newArrayList(SERVICE_NAME))
+                .exec();
+
+        assertThat(services, hasSize(1));
+
+        dockerClient.removeServiceCmd(SERVICE_NAME).exec();*/
     }
 
 
