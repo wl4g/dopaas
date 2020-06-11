@@ -415,22 +415,22 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- GUID dependentcie's -->
+			<!-- DGuid dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-guid-common</artifactId>
+				<artifactId>super-devops-dguid-common</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-guid-core</artifactId>
+				<artifactId>super-devops-dguid-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-guid-client</artifactId>
+				<artifactId>super-devops-dguid-client</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
