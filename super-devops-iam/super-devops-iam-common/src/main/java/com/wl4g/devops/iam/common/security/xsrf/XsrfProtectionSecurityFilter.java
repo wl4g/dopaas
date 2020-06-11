@@ -103,9 +103,16 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		String requestPath = getPathWithinApplication(toHttp(request));
 
-		// Ignore non replay request methods.
+		// Ignore non xsrf request methods.
 		if (!xsrfProtectMatcher.matches(request)) {
-			log.debug("Skip xsrf protection of: {}", requestPath);
+			log.debug("Skip non xsrf protection request of: {}", requestPath);
+			filterChain.doFilter(request, response);
+			return;
+		}
+
+		// Ignore not xsrf request requires validation.
+		if (xtokenRepository.isXsrfRequired(request)) {
+			log.debug("Skip not xsrf requires request of: {}", requestPath);
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -120,7 +127,6 @@ public final class XsrfProtectionSecurityFilter extends OncePerRequestFilter {
 		}
 
 		// XSRF validation
-		// request.setAttribute(HttpServletResponse.class.getName(), response);
 		XsrfToken xsrfToken = xtokenRepository.getXToken(request);
 		final boolean missingToken = isNull(xsrfToken);
 		if (missingToken) {

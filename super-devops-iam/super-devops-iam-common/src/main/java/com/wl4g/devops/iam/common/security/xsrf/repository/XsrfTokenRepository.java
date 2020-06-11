@@ -68,6 +68,14 @@ public interface XsrfTokenRepository {
 	XsrfToken getXToken(HttpServletRequest request);
 
 	/**
+	 * Check if xsrf token must be validation.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	boolean isXsrfRequired(HttpServletRequest request);
+
+	/**
 	 * {@link XsrfUtil}
 	 * 
 	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
