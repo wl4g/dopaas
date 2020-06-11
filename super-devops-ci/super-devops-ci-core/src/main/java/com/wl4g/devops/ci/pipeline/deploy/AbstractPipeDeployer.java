@@ -19,8 +19,10 @@ import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
+import com.wl4g.devops.common.bean.ci.PipeStepInstanceCommand;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
+import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.erm.Ssh;
 import com.wl4g.devops.common.exception.ci.PipelineDeployingException;
@@ -114,7 +116,9 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
         notNull(pipeHisInstanceId, "Transfer job for taskDetailId inmust not be null");
         Integer projectId = getContext().getProject().getId();
         String projectName = getContext().getProject().getProjectName();
-        Ssh ssh = getContext().getAppCluster().getSsh();
+        AppCluster appCluster = getContext().getAppCluster();
+        Ssh ssh = appCluster.getSsh();
+        PipeStepInstanceCommand pipeStepInstanceCommand = provider.getContext().getPipeStepInstanceCommand();
         log.info("Starting transfer job for instanceId:{}, projectId:{}, projectName:{} ...", instance.getId(), projectId,
                 projectName);
 
@@ -126,16 +130,16 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
                     TASK_STATUS_RUNNING, pipeHisInstanceId, instance.getId(), projectId, projectName);
 
             // PRE commands.
-            if (provider.getContext().getPipeStepInstanceCommand().getEnable() == 1 && !isBlank(provider.getContext().getPipeStepInstanceCommand().getPreCommand())) {
-                doRemoteCommand(instance.getHostname(), ssh.getUsername(), provider.getContext().getPipeStepInstanceCommand().getPreCommand(), ssh.getSshKey());
+            if (pipeStepInstanceCommand.getEnable() == 1 && !isBlank(pipeStepInstanceCommand.getPreCommand()) && appCluster.getDeployType()==1) {
+                doRemoteCommand(instance.getHostname(), ssh.getUsername(), pipeStepInstanceCommand.getPreCommand(), ssh.getSshKey());
             }
 
             // Deploying distribute to remote.
             doRemoteDeploying(instance.getHostname(), ssh.getUsername(), ssh.getSshKey());
 
             // Post remote commands.(e.g: restart)
-            if (provider.getContext().getPipeStepInstanceCommand().getEnable() == 1 && !isBlank(provider.getContext().getPipeStepInstanceCommand().getPostCommand())) {
-                doRemoteCommand(instance.getHostname(), ssh.getUsername(), provider.getContext().getPipeStepInstanceCommand().getPostCommand(), ssh.getSshKey());
+            if (pipeStepInstanceCommand.getEnable() == 1 && !isBlank(pipeStepInstanceCommand.getPostCommand()) && appCluster.getDeployType()==1) {
+                doRemoteCommand(instance.getHostname(), ssh.getUsername(), pipeStepInstanceCommand.getPostCommand(), ssh.getSshKey());
             }
 
             // Update status to success.

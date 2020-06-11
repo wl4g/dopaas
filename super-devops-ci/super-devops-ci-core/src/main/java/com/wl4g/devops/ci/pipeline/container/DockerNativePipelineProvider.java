@@ -20,10 +20,14 @@ import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.ci.utils.DockerJavaUtil;
+import com.wl4g.devops.common.bean.ci.PipeStepBuilding;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.support.cli.command.DestroableCommand;
+import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -50,6 +54,9 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
      */
     final private static String APP_BIN_NAME = "APP_BIN_NAME";
 
+    /**
+     * Docker run command
+     */
     final private static String RUN_COM = "RUN_COM";
 
 
@@ -60,27 +67,43 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
     @Override
     public void buildImage() throws Exception {
         DockerClient dockerClient = DockerJavaUtil.sampleConnect(SERVER_URL);//"tcp://10.0.0.161:2375"
+        PipelineHistory pipelineHistory = getContext().getPipelineHistory();
+        AppCluster appCluster = getContext().getAppCluster();
+        PipeStepBuilding pipeStepBuilding = getContext().getPipeStepBuilding();
+        AppEnvironment environment = getContext().getEnvironment();
+        File jobLogFile = config.getJobLog(pipelineHistory.getId());
+        String installFileName = config.getPrgramInstallFileName(appCluster.getName());
+        String tarFileName = config.getTarFileNameWithTar(appCluster.getName());
+        File jobBackDir = config.getJobBackupDir(pipelineHistory.getId());
         try {
-            AppCluster appCluster = getContext().getAppCluster();
-            AppEnvironment environment = getContext().getEnvironment();
-            PipelineHistory pipelineHistory = getContext().getPipelineHistory();
-
             Map<String, String> args = new HashMap<>();
-            args.put(APP_BIN_NAME, config.getTarFileNameWithTar(appCluster.getName()));
+            args.put(APP_BIN_NAME, installFileName);
             args.put(RUN_COM, environment.getRunCommand());
-
             //args.put("APP_PORT", "14040");
             //args.put(MAIN_CLASS, "com.wl4g.devops.IamServer");
             //args.put(ACTIVE, pipeline.getEnvironment());
 
             Set<String> tags = new HashSet<>();
-            tags.add(appCluster.getName());//冒号前面为名字，冒号后面为版本，版本为空则为latest
+            if(StringUtils.isNotBlank(pipeStepBuilding.getRef())){
+                tags.add(appCluster.getName()+":"+pipeStepBuilding.getRef());//冒号前面为名字，冒号后面为版本，版本为空则为latest
+            }else{
+                tags.add(appCluster.getName());
+            }
 
-            //String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
+            //tar
+            DestroableCommand tarCmd = new LocalDestroableCommand(String.format("cd %s\ntar -xvf %s",jobBackDir,tarFileName),
+                    jobBackDir, 300000L)
+                    .setStdout(jobLogFile).setStderr(jobLogFile);
+            pm.execWaitForComplete(tarCmd);
 
-            String containerId = DockerJavaUtil.buildImage(dockerClient, tags,
-                    new File(config.getJobBackupDir(pipelineHistory.getId()).getAbsolutePath()),
-                    args);
+            String containerId = DockerJavaUtil.buildImage(dockerClient, tags, jobBackDir, args);
+
+            //remove dir
+            if(StringUtils.isNotBlank(installFileName) && !StringUtils.equals(installFileName,"/")){
+                DestroableCommand rmCmd = new LocalDestroableCommand(String.format("cd %s\nrm -Rf %s",jobBackDir,installFileName), jobBackDir, 300000L)
+                        .setStdout(jobLogFile).setStderr(jobLogFile);
+                pm.execWaitForComplete(rmCmd);
+            }
 
             log.info("create container success. containerId = {}", containerId);
         } finally {

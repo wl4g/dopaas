@@ -66,6 +66,8 @@ public class AppInstance extends BaseBean {
 
 	private Integer deployType;
 
+	private DockerCluster dockerCluster;
+
 	public Integer getClusterId() {
 		return clusterId;
 	}
@@ -186,6 +188,14 @@ public class AppInstance extends BaseBean {
 
 	public void setDeployType(Integer deployType) {
 		this.deployType = deployType;
+	}
+
+	public DockerCluster getDockerCluster() {
+		return dockerCluster;
+	}
+
+	public void setDockerCluster(DockerCluster dockerCluster) {
+		this.dockerCluster = dockerCluster;
 	}
 
 	@Override

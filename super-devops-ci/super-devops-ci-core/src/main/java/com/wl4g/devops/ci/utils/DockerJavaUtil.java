@@ -2,17 +2,17 @@ package com.wl4g.devops.ci.utils;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.BuildImageCmd;
+import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
-import com.wl4g.devops.tool.common.lang.Assert2;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +86,11 @@ public class DockerJavaUtil {
         return buildImageCmd.exec(callback).awaitImageId();
     }
 
+    /**
+     * Docker remove Image
+     * @param client
+     * @param imageName
+     */
     public static void removeImage(DockerClient client, String imageName){
         List<String> filterName = new ArrayList<>();
         filterName.add(imageName);
@@ -101,23 +106,14 @@ public class DockerJavaUtil {
     }
 
     /**
-     * @param tarPath
-     * @param dockerTemplate
-     * @param appBinName
-     * @return
-     * @throws IOException
+     * pullImage
+     * @param client
+     * @param repository
      */
-    private static void copyFile2WorkSpace(File workSpace, File dockerTemplate) throws IOException {//为什么要把文件复制出来？因为COPY failed: Forbidden path outside the build context，dockerfile不允许使用上下文外的文件
-        //String property = System.getProperty("user.home");
-        //File workspace = new File(property + "/tmp/docker_file_workspace/" + System.currentTimeMillis());
-        if (!workSpace.exists()) {
-            workSpace.mkdirs();
-        }
-        Assert2.isTrue(workSpace.exists(), "create dir fail");
-        String property = System.getProperty("user.dir");
-        //Files.copy(tarPath.toPath(), new File(workspace.getCanonicalPath() + "/" + appBinName + ".tar").toPath());
-        Files.copy(new File(dockerTemplate.getCanonicalPath()).toPath(), new File(workSpace.getCanonicalPath() + "/Dockerfile").toPath());
+    public static void pullImage(DockerClient client, String repository){
+        client.pullImageCmd(repository);
     }
+
 
 
     /**
@@ -128,22 +124,24 @@ public class DockerJavaUtil {
      */
     public static CreateContainerResponse createContainers(DockerClient client, String containerName, String imageName, Map<Integer, Integer> ports) {//TODO 优化
 
-        //TODO 处理端口映射
-        List<ExposedPort> exposedPorts = new ArrayList<>();
-        Ports portBindings = new Ports();
-        for (Map.Entry<Integer, Integer> entry : ports.entrySet()) {
-            Integer key = entry.getKey();
-            Integer value = entry.getValue();
-            ExposedPort exposedPort = ExposedPort.tcp(key);
-            exposedPorts.add(exposedPort);
-            portBindings.bind(exposedPort, Ports.Binding.bindPort(value));
-        }
-        HostConfig hostConfig = newHostConfig().withPortBindings(portBindings);
+        CreateContainerCmd createContainerCmd = client.createContainerCmd(imageName).withName(containerName);
 
-        return client.createContainerCmd(imageName)
-                .withName(containerName)
-                .withHostConfig(hostConfig)
-                .withExposedPorts(exposedPorts).exec();
+        //TODO 处理端口映射
+        if(!CollectionUtils.isEmpty(ports)){
+            List<ExposedPort> exposedPorts = new ArrayList<>();
+            Ports portBindings = new Ports();
+            for (Map.Entry<Integer, Integer> entry : ports.entrySet()) {
+                Integer key = entry.getKey();
+                Integer value = entry.getValue();
+                ExposedPort exposedPort = ExposedPort.tcp(key);
+                exposedPorts.add(exposedPort);
+                portBindings.bind(exposedPort, Ports.Binding.bindPort(value));
+            }
+            HostConfig hostConfig = newHostConfig().withPortBindings(portBindings);
+
+            createContainerCmd .withHostConfig(hostConfig).withExposedPorts(exposedPorts);
+        }
+        return createContainerCmd.exec();
 
     }
 
