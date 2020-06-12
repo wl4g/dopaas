@@ -13,6 +13,8 @@ public class AppEnvironment extends BaseBean {
 
     private String runCommand;
 
+    private String configContent;
+
     public Integer getClusterId() {
         return clusterId;
     }
@@ -43,5 +45,13 @@ public class AppEnvironment extends BaseBean {
 
     public void setRunCommand(String runCommand) {
         this.runCommand = runCommand == null ? null : runCommand.trim();
+    }
+
+    public String getConfigContent() {
+        return configContent;
+    }
+
+    public void setConfigContent(String configContent) {
+        this.configContent = configContent;
     }
 }
