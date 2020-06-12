@@ -2,7 +2,6 @@ package com.wl4g.devops.ci.core;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.command.CreateServiceResponse;
 import com.github.dockerjava.api.model.*;
 import com.wl4g.devops.ci.utils.DockerJavaUtil;
 import org.junit.After;
@@ -117,31 +116,31 @@ public class DockerJavaTest {
 
     @Test
     public void test_6_create_service() throws Exception {
-        ServiceSpec serviceSpec = new ServiceSpec();
-        serviceSpec.withName("nginx");
         ServiceModeConfig serviceModeConfig = new ServiceModeConfig();
         ServiceReplicatedModeOptions serviceReplicatedModeOptions = new ServiceReplicatedModeOptions();
         serviceReplicatedModeOptions.withReplicas(3);
         serviceModeConfig.withReplicated(serviceReplicatedModeOptions);
-        serviceSpec.withMode(serviceModeConfig);
-        CreateServiceResponse exec = dockerClient.createServiceCmd(serviceSpec).exec();
-        System.out.println(exec.toString());
 
-        /*dockerClient.createServiceCmd(new ServiceSpec()
-                .withName(SERVICE_NAME)
+        dockerClient.createServiceCmd(new ServiceSpec()
+                .withMode(serviceModeConfig)
+                .withName("nginx")
                 .withTaskTemplate(new TaskSpec()
                         .withContainerSpec(new ContainerSpec()
-                                .withImage(DEFAULT_IMAGE))))
-                .exec();*/
+                                .withImage("nginx"))))
+                .exec();
 
         /*List<Service> services = dockerClient.listServicesCmd()
                 .withNameFilter(Lists.newArrayList(SERVICE_NAME))
-                .exec();
+                .exec();*/
 
-        assertThat(services, hasSize(1));
 
-        dockerClient.removeServiceCmd(SERVICE_NAME).exec();*/
     }
+
+    @Test
+    public void test_7_remove_service() throws Exception {
+        dockerClient.removeServiceCmd("nginx").exec();
+    }
+
 
 
     @After
