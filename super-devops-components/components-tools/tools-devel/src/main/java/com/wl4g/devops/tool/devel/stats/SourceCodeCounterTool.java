@@ -56,8 +56,8 @@ import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternRes
  */
 public class SourceCodeCounterTool {
 
-	final public static String DEFAULT_EXCLUDES_FILE_PATHS = replace("/node_modules/,/target/,/dist/,/assets/", "/",
-			File.separator);
+	final public static String DEFAULT_EXCLUDES_FILE_PATHS = replace(
+			"/node_modules/,/target/,/bin/,/run/,/tmp/,/temp/,/log/,/logs/,/data/,/dist/,/assets/", "/", File.separator);
 	final public static String DEFAULT_INCLUDES_FILE_EXTS = ".java,.js,.sh,.py,.go,.css,.html,.htm,.c,.h,.cpp";
 
 	public static void main(String[] args) throws Exception {
