@@ -34,10 +34,11 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.config.XsrfProperties;
 import com.wl4g.devops.iam.common.web.servlet.IamCookie;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.*;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrueOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.WebUtils2.extDomainString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.extTopDomainString;
 import static org.springframework.web.util.WebUtils.getCookie;
@@ -54,6 +55,8 @@ import static org.springframework.web.util.WebUtils.getCookie;
  * @since
  */
 public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Xsrf properties config.
@@ -118,6 +121,11 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 
 	@Override
 	public XsrfToken getXToken(HttpServletRequest request) {
+		if (!isXsrfRequired(request)) {
+			log.debug("Requests that do not requires XSRF validation, RequestUri: %s", getRequestUri(request));
+			return null;
+		}
+
 		javax.servlet.http.Cookie cookie = getCookie(request, getXsrfTokenCookieName(request));
 		if (isNull(cookie)) {
 			return null;
@@ -164,9 +172,6 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 	 * @return
 	 */
 	private String getXsrfTokenCookieName(HttpServletRequest request) {
-		isTrueOf(isXsrfRequired(request),
-				format("Requests that do not requires XSRF validation, RequestUri: %s", getRequestUri(request)));
-
 		String xsrfCookieName = xconfig.getXsrfCookieName();
 		if (!isBlank(xsrfCookieName)) {
 			return xsrfCookieName;
