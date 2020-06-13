@@ -149,6 +149,89 @@
 			}
 			return null;
 		},
+		Http: {
+			createXMLHttpRequest: function() {      
+				if (window.ActiveXObject) {           
+					var ieArr = ["Msxml2.XMLHTTP.6.0", "Msxml2.XMLHTTP.3.0", "Msxml2.XMLHTTP", "Microsoft.XMLHTTP"];                          
+					for (var i = 0; i < ieArr.length; i++)                {               
+						var xmlhttp = new ActiveXObject(ieArr[i]);               
+					}               
+					return xmlhttp;      
+				} else if (window.XMLHttpRequest) {              
+					return new XMLHttpRequest();           
+				}
+			},
+			/**
+			 * e.g:
+			 * <pre>
+			 * Common.Util.Http.request({
+			 *	    url: "http://my.domain.com/myapp/list", 
+			 *	    method: "head",
+			 *	    timeout: 1000,
+			 *	    async: false,
+			 *	    withCredentials: true,
+			 *	    success: function(data, xhr) {
+			 *	    debugger
+			 *	        console.log("Response data:", data)
+			 *	    },
+			 *	    error: function(err, xhr) {
+			 *	        console.log("Request processing error:", err)
+			 *	    }
+			 *	})
+			 * </pre>
+			 */
+			request: function(option) {
+				var url = option.url,
+				method = option.method || "POST",
+				async = option.async || true,
+				data = option.data || null,
+				withCredentials = option.withCredentials || false,
+				timeout = option.timeout || 30000,
+				success = option.success || function(data, xhr) {},
+				error = option.error || function(err, xhr) { console.error(err); };
+				try {
+					// Check arguments requires.
+					Common.Util.checkEmpty("url", url);
+
+					// 1.创建XMLHttpRequest组建
+					var _xhr = null;
+					if (!_xhr) {
+						_xhr = Common.Util.Http.createXMLHttpRequest();
+					}
+					_xhr.withCredentials = withCredentials;
+
+					var _responsed = false;
+					// 2.设置超时检查函数
+					var _timeoutChecker = window.setTimeout(function() {
+						if (!_responsed) {
+							error("Timeout waiting for response, " + timeout);
+						}
+					},
+					timeout);
+
+					// 3.设置回调函数
+					_xhr.onreadystatechange = function() {
+						if (_xhr.readyState == 4) {
+							_responsed = true;
+							window.clearTimeout(_timeoutChecker);
+							// 3.1获取返回数据
+							var resData = _xhr.responseText;
+							if (_xhr.status == 200) {
+								success(resData, _xhr);
+							} else {
+								error(resData, _xhr);
+							}
+						}
+					};
+					// 4.初始化XMLHttpRequest组建
+					_xhr.open(method.toUpperCase(), url, async);
+					// 5.发送请求
+					_xhr.send(data);
+				} catch(e) {
+					error(e);
+				}
+			}
+		},
 		PlatformType: (function() {
 		    var ua = navigator.userAgent.toLowerCase();
 		    var mua = {
