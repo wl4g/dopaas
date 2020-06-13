@@ -1302,7 +1302,7 @@
                         return;
                     }
                     // Request IAM server authenticator.
-                    handler.doMultiModularRequest(method, res.data.redirect_url, true, null, resolve, errorFn, null);
+                    handler.doMultiModularRequest(method, res.data.redirect_url, null, resolve, errorFn, null);
                 }).then(function (res1) {
                 	_iamConsole.info("Iam-server response: ", res1);
                     if (controller.authenticated()) {
@@ -1319,13 +1319,13 @@
                     }
                     return new Promise((resolve, reject) => {
                     	// Request IAM client authenticator.
-                        handler.doMultiModularRequest('get', res1.data.redirect_url, true, null, resolve, errorFn, null);
+                        handler.doMultiModularRequest('get', res1.data.redirect_url, null, resolve, errorFn, null);
                     });
                 }).then(function (res2) {
                 	_iamConsole.info("Iam-client response: ", res2);
                     controller.currentlyInAuthenticatingState = false;  // Mark authentication completed
 
-                    handler.doMultiModularRequest(method, url, true, params, function (res3) {
+                    handler.doMultiModularRequest(method, url, params, function (res3) {
                     	_iamConsole.info("Redirect origin biz response: ", res3);
                         if (!_isRespUnauthenticated(res3)) {
                             if (successFn) {
