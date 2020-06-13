@@ -552,19 +552,19 @@
 		if (!xsrfTokenValue) {
 			_iamConsole.debug("Loading new xsrf token...");
 			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
-			Common.Util.Http.request({
+			$.ajax({
 				url: applyXsrfTokenUrl,
-				method: 'HEAD',
+				type: 'HEAD',
 				async: !_sync, // Note: Jquery1.8 has deprecated, @see https://api.jquery.com/jQuery.ajax/#jQuery-ajax-settings
-				withCredentials: true, // Send cookies when support cross-domain request.
-				success: function(res, xhr){
+				xhrFields: { withCredentials: true }, // Send cookies when support cross-domain request.
+				success: function(data, textStatus, xhr){
 					xsrfTokenValue = Common.Util.getCookie(_xsrfTokenCookieName);
 					_iamConsole.info("Loaded new xsrfTokenValue:", xsrfTokenValue, "by cookieName:", _xsrfTokenCookieName);
 					if (!_sync) {
 						callback(_outXsrfToken(xsrfTokenHeaderName, xsrfTokenParamName, xsrfTokenValue));
 					}
 				},
-				error: function(err, xhr){
+				error: function(xhr, textStatus, errmsg){
 					_iamConsole.error("Failed to init xsrf token. " + err);
 				}
 			});
