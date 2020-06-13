@@ -170,25 +170,26 @@
 			 *	    timeout: 1000,
 			 *	    async: false,
 			 *	    withCredentials: true,
-			 *	    success: function(data, xhr) {
+			 *	    success: function(data, textStatus, xhr) {
 			 *	    debugger
 			 *	        console.log("Response data:", data)
 			 *	    },
-			 *	    error: function(err, xhr) {
-			 *	        console.log("Request processing error:", err)
+			 *	    error: function(xhr, textStatus, errmsg) {
+			 *	        console.log("Request processing error:", errmsg)
 			 *	    }
 			 *	})
 			 * </pre>
 			 */
 			request: function(option) {
 				var url = option.url,
-				method = option.method || "POST",
+				method = option.method || "GET",
+				type = option.type || option.method, // For jQuery compatible
 				async = option.async || true,
 				data = option.data || null,
 				withCredentials = option.withCredentials || false,
 				timeout = option.timeout || 30000,
-				success = option.success || function(data, xhr) {},
-				error = option.error || function(err, xhr) { console.error(err); };
+				success = option.success || function(data, textStatus, xhr) {},
+				error = option.error || function(xhr, textStatus, errmsg) { console.error(errmsg); };
 				try {
 					// Check arguments requires.
 					Common.Util.checkEmpty("url", url);
@@ -204,10 +205,9 @@
 					// 2.设置超时检查函数
 					var _timeoutChecker = window.setTimeout(function() {
 						if (!_responsed) {
-							error("Timeout waiting for response, " + timeout);
+							error(_xhr, null, "Timeout waiting for response, " + timeout);
 						}
-					},
-					timeout);
+					}, timeout);
 
 					// 3.设置回调函数
 					_xhr.onreadystatechange = function() {
@@ -215,20 +215,20 @@
 							_responsed = true;
 							window.clearTimeout(_timeoutChecker);
 							// 3.1获取返回数据
-							var resData = _xhr.responseText;
+							var res = _xhr.responseText;
 							if (_xhr.status == 200) {
-								success(resData, _xhr);
+								success(res, _xhr.textStatus, _xhr);
 							} else {
-								error(resData, _xhr);
+								error(_xhr, _xhr.textStatus, "Error status");
 							}
 						}
 					};
 					// 4.初始化XMLHttpRequest组建
-					_xhr.open(method.toUpperCase(), url, async);
+					_xhr.open(type.toUpperCase(), url, async);
 					// 5.发送请求
 					_xhr.send(data);
 				} catch(e) {
-					error(e);
+					error(_xhr, null, e);
 				}
 			}
 		},
