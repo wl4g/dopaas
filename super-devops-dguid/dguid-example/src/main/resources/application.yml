@@ -8,6 +8,13 @@
 # limitations under the License.
 #
 
+spring:
+  mvc:
+    #static-path-pattern: /static/**
+    view:
+      prefix: /view/
+      suffix: .html
+
 # ### Logging configuration. ###
 logging:
   file: ${server.tomcat.basedir}/logs/${spring.application.name}.log

@@ -11,13 +11,21 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: guid-example
+  application.name: dguid-example
+  profiles:
+    active: dev
+  cloud: # Spring cloud configuration.
+    devops:
+      embedded-webapps:
+        enabled: true # Default false
+        base-uri: /
+        webapp-location: classpath*:/default-webapps
 
 # ### Server configuration. ###
 server:
   port: 14072
   sessionTimeout: 30
-  contextPath: /${spring.application.name}
+  contextPath: /
   tomcat:
     uri-encoding: UTF-8
     protocolHeader: x-forwarded-proto

@@ -39,14 +39,16 @@ import com.wl4g.devops.dguid.baidu.utils.NamingThreadFactory;
  * @version v1.0 2019年2月10日
  * @since
  */
-public class SegmentServiceImpl implements ISegmentService {
+public class DefaultLeafIdSegmentHandler implements LeafIdSegmentHandler {
 
 	/**
 	 * 线程名-心跳
 	 */
 	public static final String THREAD_BUFFER_NAME = "leaf_buffer_sw";
 
-	private static ReentrantLock lock = new ReentrantLock();
+	final private static ReentrantLock lock = new ReentrantLock();
+
+	private JdbcTemplate jdbcTemplate;
 
 	/**
 	 * 创建线程池
@@ -56,7 +58,7 @@ public class SegmentServiceImpl implements ISegmentService {
 	/**
 	 * 两段buffer
 	 */
-	private volatile IdSegment[] segment = new IdSegment[2];
+	private volatile LeafSegment[] segment = new LeafSegment[2];
 
 	/**
 	 * 缓冲切换标识(true-切换，false-不切换)
@@ -67,8 +69,6 @@ public class SegmentServiceImpl implements ISegmentService {
 	 * 当前id
 	 */
 	private AtomicLong currentId;
-
-	private JdbcTemplate jdbcTemplate;
 
 	/**
 	 * 业务标识
@@ -83,9 +83,9 @@ public class SegmentServiceImpl implements ISegmentService {
 	/**
 	 * 异步线程任务
 	 */
-	FutureTask<Boolean> asynLoadSegmentTask = null;
+	private FutureTask<Boolean> asynLoadSegmentTask = null;
 
-	public SegmentServiceImpl(JdbcTemplate jdbcTemplate, String bizTag) {
+	public DefaultLeafIdSegmentHandler(JdbcTemplate jdbcTemplate, String bizTag) {
 		this.jdbcTemplate = jdbcTemplate;
 		if (taskExecutor == null) {
 			taskExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(),
@@ -101,9 +101,7 @@ public class SegmentServiceImpl implements ISegmentService {
 
 	@Override
 	public Long getId() {
-		// 1.0.1 fix:uid:ecp-190227001
-		// #1(github)更改阈值(middle与max)lock在高速碰撞时的可能多次执行
-		// 下一个id
+		// 更改阈值(middle与max)lock在高速碰撞时的可能多次执行下一个id
 		Long nextId = null;
 		if (segment[index()].getMiddleId().equals(currentId.longValue())
 				|| segment[index()].getMaxId().equals(currentId.longValue())) {
@@ -123,7 +121,7 @@ public class SegmentServiceImpl implements ISegmentService {
 			}
 		}
 		nextId = null == nextId ? currentId.incrementAndGet() : nextId;
-		// 1.0.2 fix:uid:ecp-190306001 突破并发数被step限制的bug
+		// 突破并发数被step限制的bug
 		return nextId <= segment[index()].getMaxId() ? nextId : getId();
 	}
 
@@ -184,18 +182,15 @@ public class SegmentServiceImpl implements ISegmentService {
 	}
 
 	/**
-	 * @方法名称 doUpdateNextSegment
-	 * @功能描述
-	 * 
-	 *       <pre>
-	 *       更新下一个buffer
-	 *       </pre>
+	 * <pre>
+	 * 更新下一个buffer
+	 * </pre>
 	 * 
 	 * @param bizTag
 	 *            业务标识
 	 * @return 下一个buffer的分段id实体
 	 */
-	private IdSegment doUpdateNextSegment(String bizTag) {
+	private LeafSegment doUpdateNextSegment(String bizTag) {
 		try {
 			return updateId(bizTag);
 		} catch (Exception e) {
@@ -204,10 +199,10 @@ public class SegmentServiceImpl implements ISegmentService {
 		return null;
 	}
 
-	private IdSegment updateId(String bizTag) throws Exception {
+	private LeafSegment updateId(String bizTag) throws Exception {
 		String querySql = "select step, max_id, last_update_time, current_update_time from id_segment where biz_tag=?";
 		String updateSql = "update id_segment set max_id=?, last_update_time=?, current_update_time=now() where biz_tag=? and max_id=?";
-		final IdSegment currentSegment = new IdSegment();
+		final LeafSegment currentSegment = new LeafSegment();
 		this.jdbcTemplate.query(querySql, new String[] { bizTag }, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -233,7 +228,7 @@ public class SegmentServiceImpl implements ISegmentService {
 		int row = this.jdbcTemplate.update(updateSql,
 				new Object[] { newMaxId, currentSegment.getCurrentUpdateTime(), bizTag, currentSegment.getMaxId() });
 		if (row == 1) {
-			IdSegment newSegment = new IdSegment();
+			LeafSegment newSegment = new LeafSegment();
 			newSegment.setStep(currentSegment.getStep());
 			newSegment.setMaxId(newMaxId);
 			return newSegment;

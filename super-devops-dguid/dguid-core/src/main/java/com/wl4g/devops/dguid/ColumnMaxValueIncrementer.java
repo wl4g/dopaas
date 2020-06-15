@@ -19,7 +19,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 
-import com.wl4g.devops.dguid.leaf.SegmentServiceImpl;
+import com.wl4g.devops.dguid.leaf.DefaultLeafIdSegmentHandler;
 
 /**
  * Spring 增量id实现(基于Segment策略)
@@ -28,7 +28,7 @@ import com.wl4g.devops.dguid.leaf.SegmentServiceImpl;
  * @version v1.0 2019年2月10日
  * @since
  */
-public class ColumnMaxValueIncrementer extends SegmentServiceImpl implements DataFieldMaxValueIncrementer {
+public class ColumnMaxValueIncrementer extends DefaultLeafIdSegmentHandler implements DataFieldMaxValueIncrementer {
 
 	/**
 	 * 填充长度

@@ -18,11 +18,14 @@ package com.wl4g.devops;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.wl4g.devops.dguid.client.annotation.EnableDguidClient;
+
+@EnableDguidClient
 @SpringBootApplication
-public class GuidExample {
+public class DguidExample {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GuidExample.class, args);
+		SpringApplication.run(DguidExample.class, args);
 	}
 
 }
