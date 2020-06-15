@@ -172,7 +172,7 @@
 			 *	    url: "http://my.domain.com/myapp/list", 
 			 *	    type: "post",
 			 *	    timeout: 1000,
-			 *	    async: false,
+			 *	    //async: false,
 			 *	    xhrFields: {withCredentials: true},
 			 *	    success: function(data, textStatus, xhr) {
 			 *	        console.log("Response data:", data)
@@ -187,7 +187,7 @@
 				var url = options.url,
 				method = options.method || "GET",
 				type = options.type || method, // for jquery compatible
-				async = !(!options.async),
+				async = options.async,
 				xhrFields = options.xhrFields || {},
 				headers = options.headers || {},
 				data = options.data || null,
@@ -1804,7 +1804,7 @@
 		if (!xsrfTokenValue) {
 			_iamConsole.debug("Loading new xsrf token...");
 			var applyXsrfTokenUrl = IAMCore.getIamBaseUri() + Common.Util.checkEmpty("definition.applyXsrfTokenUrlKey", settings.definition.applyXsrfTokenUrlKey);
-			$.ajax({
+			Common.Util.Http.request({
 				url: applyXsrfTokenUrl,
 				type: 'HEAD',
 				async: !_sync, // Note: Jquery1.8 has deprecated, @see https://api.jquery.com/jQuery.ajax/#jQuery-ajax-settings
@@ -2627,7 +2627,7 @@
 						sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // For renew
 						redirectRecord = { c: 0, t: new Date().getTime() };
 					}
-					if (redirectRecord.c > 5) {
+					if (redirectRecord.c > 10) {
 						throw "Too many failure redirections: "+ redirectRecord.c;
 					}
 					++redirectRecord.c;

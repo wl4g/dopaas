@@ -19,10 +19,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GuidServer {
+public class DguidServer {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GuidServer.class, args);
+		SpringApplication.run(DguidServer.class, args);
 	}
 
 }
