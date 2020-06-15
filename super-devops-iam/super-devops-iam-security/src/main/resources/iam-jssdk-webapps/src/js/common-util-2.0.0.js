@@ -172,7 +172,7 @@
 			 *	    url: "http://my.domain.com/myapp/list", 
 			 *	    type: "post",
 			 *	    timeout: 1000,
-			 *	    async: false,
+			 *	    //async: false,
 			 *	    xhrFields: {withCredentials: true},
 			 *	    success: function(data, textStatus, xhr) {
 			 *	        console.log("Response data:", data)
@@ -187,7 +187,7 @@
 				var url = options.url,
 				method = options.method || "GET",
 				type = options.type || method, // for jquery compatible
-				async = !(!options.async),
+				async = options.async,
 				xhrFields = options.xhrFields || {},
 				headers = options.headers || {},
 				data = options.data || null,
