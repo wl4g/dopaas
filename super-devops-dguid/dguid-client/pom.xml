@@ -31,6 +31,10 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-dguid-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-common</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

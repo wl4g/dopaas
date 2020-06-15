@@ -21,8 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.wl4g.devops.dguid.leaf.ISegmentService;
-import com.wl4g.devops.dguid.leaf.SegmentServiceImpl;
+import com.wl4g.devops.dguid.leaf.LeafIdSegmentHandler;
+import com.wl4g.devops.dguid.leaf.DefaultLeafIdSegmentHandler;
 
 /**
  * Leaf分段批量Id策略(可配置asynLoadingSegment - 异步标识)
@@ -38,7 +38,7 @@ public class LeafSegmentStrategy implements IUidStrategy {
 	/**
 	 * 生成器集合
 	 */
-	protected static Map<String, ISegmentService> generatorMap = new ConcurrentHashMap<>();
+	protected static Map<String, LeafIdSegmentHandler> generatorMap = new ConcurrentHashMap<>();
 
 	@Autowired
 	protected JdbcTemplate jdbcTemplate;
@@ -59,12 +59,12 @@ public class LeafSegmentStrategy implements IUidStrategy {
 	 *            前缀
 	 * @return uid生成器
 	 */
-	public ISegmentService getSegmentService(String prefix) {
-		ISegmentService segmentService = generatorMap.get(prefix);
+	public LeafIdSegmentHandler getSegmentService(String prefix) {
+		LeafIdSegmentHandler segmentService = generatorMap.get(prefix);
 		if (null == segmentService) {
 			synchronized (generatorMap) {
 				if (null == segmentService) {
-					segmentService = new SegmentServiceImpl(jdbcTemplate, prefix);
+					segmentService = new DefaultLeafIdSegmentHandler(jdbcTemplate, prefix);
 				}
 				generatorMap.put(prefix, segmentService);
 			}

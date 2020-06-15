@@ -24,7 +24,7 @@ import java.util.Date;
  * @version v1.0 2019年2月10日
  * @since
  */
-public class IdSegment {
+public class LeafSegment {
 
 	/**
 	 * 最小id
@@ -56,7 +56,7 @@ public class IdSegment {
 	 */
 	private Date currentUpdateTime;
 
-	public IdSegment() {
+	public LeafSegment() {
 
 	}
 

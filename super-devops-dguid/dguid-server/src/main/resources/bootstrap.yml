@@ -15,12 +15,10 @@ spring:
   profiles:
     include: common,support,util
     active: dev
-  cloud:
-    devops:
 
 # ### Server configuration. ###
 server:
-  port: 14051
+  port: 14071
   #address: 0.0.0.0
   sessionTimeout: 30
   contextPath: /${spring.application.name}

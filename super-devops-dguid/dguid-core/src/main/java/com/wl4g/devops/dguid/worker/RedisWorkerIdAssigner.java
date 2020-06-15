@@ -33,7 +33,7 @@ public class RedisWorkerIdAssigner extends AbstractIntervalWorkerId {
 	/**
 	 * redis上uid 机器节点的key前缀
 	 */
-	public static final String UID_ROOT = "ecp:uid:";
+	public static final String UID_ROOT = "dguid:";
 
 	/**
 	 * uid 机器节点列表

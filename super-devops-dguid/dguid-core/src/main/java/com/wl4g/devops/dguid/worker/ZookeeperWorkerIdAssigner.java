@@ -40,7 +40,7 @@ public class ZookeeperWorkerIdAssigner extends AbstractIntervalWorkerId {
 	/**
 	 * ZK上uid根目录
 	 */
-	public static final String UID_ROOT = "/ecp-uid";
+	public static final String UID_ROOT = "/dguid-root";
 
 	/**
 	 * 持久顺序节点根目录(用于保存节点的顺序编号)

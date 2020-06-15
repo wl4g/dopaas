@@ -22,7 +22,8 @@ package com.wl4g.devops.dguid.leaf;
  * @version v1.0 2019年2月10日
  * @since
  */
-public interface ISegmentService {
+public interface LeafIdSegmentHandler {
+
 	/**
 	 * 获取id
 	 * 

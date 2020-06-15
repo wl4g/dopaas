@@ -220,7 +220,7 @@
 									<jsSourceDir>js</jsSourceDir>
 									<jsFinalFile>IAM.all.js</jsFinalFile>
 									<jsSourceIncludes>
-										<jsSourceInclude>jquery-3.5.1.js</jsSourceInclude>
+										<!-- <jsSourceInclude>jquery-3.5.1.js</jsSourceInclude> -->
 										<jsSourceInclude>crypto-js-4.0.0.js</jsSourceInclude>
 										<jsSourceInclude>common-util-**.js</jsSourceInclude>
 										<jsSourceInclude>fingerprint2-2.1.0.js</jsSourceInclude>
