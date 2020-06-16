@@ -16,21 +16,20 @@
 package com.wl4g.devops.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
-import static com.wl4g.devops.tool.common.codec.CheckSums.crc32String;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import com.wl4g.devops.tool.common.id.SnowflakeIdGenerator;
+import com.wl4g.devops.tool.common.lang.period.PeriodFormatterHolder;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import static java.util.UUID.*;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.Math.abs;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * DB based bean entity.
- * 
+ *
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2018-09-05
  * @since
@@ -94,8 +93,7 @@ public abstract class BaseBean implements Serializable {
 		// This is a temporary ID generation scheme. You can change
 		// it to a primary key generation service later.
 
-		// setId(crc32String(randomUUID().toString()));
-		setId(abs((int) crc32String(randomUUID().toString()))); // unsafe!!!
+		setId(abs((int) (SnowflakeIdGenerator.getDefault().nextId() % 10_000_000_000L))); // unsafe-convert!!!
 
 		setCreateDate(new Date());
 		setCreateBy(DEFAULT_USER_ID);
@@ -107,7 +105,7 @@ public abstract class BaseBean implements Serializable {
 
 	/**
 	 * Execute method before inserting, need to call manually
-	 * 
+	 *
 	 * @param organizationCode
 	 */
 	public void preInsert(String organizationCode) {
@@ -199,9 +197,21 @@ public abstract class BaseBean implements Serializable {
 		this.organizationCode = organizationCode;
 	}
 
+	//
+	// --- Function's. ---
+	//
+
+	public String getHumanCreateDate() {
+		return defaultPeriodFormatter.formatHumanDate(getCreateDate().getTime());
+	}
+
+	public String getHumanUpdateDate() {
+		return defaultPeriodFormatter.formatHumanDate(getUpdateDate().getTime());
+	}
+
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "<" + toJSONString(this) + ">";
+		return getClass().getSimpleName().concat("<").concat(toJSONString(this)).concat(">");
 	}
 
 	/**
@@ -233,5 +243,10 @@ public abstract class BaseBean implements Serializable {
 	 * User: Super administrator account.
 	 */
 	final public static String DEFAULT_USER_ROOT = "root";
+
+	/*
+	 * Human date formatter instance.
+	 */
+	final public static PeriodFormatterHolder defaultPeriodFormatter = PeriodFormatterHolder.getDefault();
 
 }

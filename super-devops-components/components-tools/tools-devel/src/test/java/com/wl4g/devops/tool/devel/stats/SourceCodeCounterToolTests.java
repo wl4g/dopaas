@@ -17,6 +17,7 @@ package com.wl4g.devops.tool.devel.stats;
 
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.split;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
 import static org.apache.commons.lang3.SystemUtils.USER_DIR;
 
 import java.io.File;
@@ -42,6 +43,9 @@ public class SourceCodeCounterToolTests {
 			rootDir = join(parts, File.separator, 0, parts.length - 3);
 		} else {
 			rootDir = join(parts, File.separator);
+		}
+		if (IS_OS_UNIX) {
+			rootDir = "/".concat(rootDir);
 		}
 		String[] _args = new String[] { "-V", "true", "-r", rootDir };
 		SourceCodeCounterTool.main(_args);

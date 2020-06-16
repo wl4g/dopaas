@@ -26,7 +26,6 @@ import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.model.SelectionModel;
 import com.wl4g.devops.dao.ci.PcmDao;
-import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,128 +45,124 @@ import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestO
 @Service
 public class PcmServcieImpl implements PcmService {
 
-    @Autowired
-    private PcmDao pcmDao;
+	@Autowired
+	private PcmDao pcmDao;
 
-    @Autowired
-    private TaskDao taskDao;
+	@Autowired
+	private GenericOperatorAdapter<PcmKind, PcmOperator> pcmOperator;
 
-    @Autowired
-    private GenericOperatorAdapter<PcmKind, PcmOperator> pcmOperator;
+	@Override
+	public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(pcmDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
+		return pm;
+	}
 
-    @Override
-    public PageModel list(PageModel pm, String name, String providerKind, Integer authType) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(pcmDao.list(getRequestOrganizationCodes(), name, providerKind, authType));
-        return pm;
-    }
+	@Override
+	public void save(Pcm pcm) {
+		if (pcm.getId() == null) {
+			pcm.preInsert(getRequestOrganizationCode());
+			insert(pcm);
+		} else {
+			pcm.preUpdate();
+			update(pcm);
+		}
+	}
 
-    @Override
-    public void save(Pcm pcm) {
-        if (pcm.getId() == null) {
-            pcm.preInsert(getRequestOrganizationCode());
-            insert(pcm);
-        } else {
-            pcm.preUpdate();
-            update(pcm);
-        }
-    }
+	private void insert(Pcm pcm) {
+		pcmDao.insertSelective(pcm);
+	}
 
-    private void insert(Pcm pcm) {
-        pcmDao.insertSelective(pcm);
-    }
+	private void update(Pcm pcm) {
+		pcmDao.updateByPrimaryKeySelective(pcm);
+	}
 
-    private void update(Pcm pcm) {
-        pcmDao.updateByPrimaryKeySelective(pcm);
-    }
+	@Override
+	public void del(Integer id) {
+		Pcm pcm = new Pcm();
+		pcm.setId(id);
+		pcm.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		pcmDao.updateByPrimaryKeySelective(pcm);
+	}
 
-    @Override
-    public void del(Integer id) {
-        Pcm pcm = new Pcm();
-        pcm.setId(id);
-        pcm.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        pcmDao.updateByPrimaryKeySelective(pcm);
-    }
+	@Override
+	public Pcm detail(Integer id) {
+		return pcmDao.selectByPrimaryKey(id);
+	}
 
-    @Override
-    public Pcm detail(Integer id) {
-        return pcmDao.selectByPrimaryKey(id);
-    }
+	@Override
+	public List<Pcm> all() {
+		return pcmDao.list(getRequestOrganizationCodes(), null, null, null);
+	}
 
-    @Override
-    public List<Pcm> all() {
-        return pcmDao.list(getRequestOrganizationCodes(), null, null, null);
-    }
+	@Override
+	public List<SelectionModel> getUsers(Integer pcmId) {
+		Pcm pcm = getPcm(pcmId);
+		if (Objects.isNull(pcm)) {
+			return null;
+		}
+		return pcmOperator.forOperator(pcm.getProviderKind()).getUsers(pcm);
+	}
 
-    @Override
-    public List<SelectionModel> getUsers(Integer pcmId) {
-        Pcm pcm = getPcm(pcmId);
-        if (Objects.isNull(pcm)) {
-            return null;
-        }
-        return pcmOperator.forOperator(pcm.getProviderKind()).getUsers(pcm);
-    }
+	@Override
+	public List<SelectionModel> getProjects(Integer pcmId) {
+		Pcm pcm = getPcm(pcmId);
+		if (Objects.isNull(pcm)) {
+			return null;
+		}
+		return pcmOperator.forOperator(pcm.getProviderKind()).getProjects(pcm);
+	}
 
-    @Override
-    public List<SelectionModel> getProjects(Integer pcmId) {
-        Pcm pcm = getPcm(pcmId);
-        if (Objects.isNull(pcm)) {
-            return null;
-        }
-        return pcmOperator.forOperator(pcm.getProviderKind()).getProjects(pcm);
-    }
+	@Override
+	public List<SelectionModel> getIssues(Integer pcmId, String userId, String projectId, String search) {
+		Pcm pcm = getPcm(pcmId);
+		if (Objects.isNull(pcm)) {
+			return null;
+		}
+		return pcmOperator.forOperator(pcm.getProviderKind()).getIssues(pcm, userId, projectId, search);
+	}
 
-    @Override
-    public List<SelectionModel> getIssues(Integer pcmId, String userId, String projectId, String search) {
-        Pcm pcm = getPcm(pcmId);
-        if (Objects.isNull(pcm)) {
-            return null;
-        }
-        return pcmOperator.forOperator(pcm.getProviderKind()).getIssues(pcm, userId, projectId, search);
-    }
+	@Override
+	public List<SelectionModel> getProjectsByPcmId(Integer pcmId) {
+		Pcm pcm = getPcm(pcmId);
+		return pcmOperator.forOperator(pcm.getProviderKind()).getProjects(pcm);
+	}
 
-    @Override
-    public List<SelectionModel> getProjectsByPcmId(Integer pcmId) {
-        Pcm pcm = getPcm(pcmId);
-        return pcmOperator.forOperator(pcm.getProviderKind()).getProjects(pcm);
-    }
+	@Override
+	public List<SelectionModel> getTrackers(Integer pcmId) {
+		Pcm pcm = getPcm(pcmId);
+		return pcmOperator.forOperator(pcm.getProviderKind()).getTracker(pcm);
+	}
 
-    @Override
-    public List<SelectionModel> getTrackers(Integer pcmId) {
-        Pcm pcm = getPcm(pcmId);
-        return pcmOperator.forOperator(pcm.getProviderKind()).getTracker(pcm);
-    }
+	@Override
+	public List<SelectionModel> getStatuses(Integer pcmId) {
+		Pcm pcm = getPcm(pcmId);
+		return pcmOperator.forOperator(pcm.getProviderKind()).getStatuses(pcm);
+	}
 
-    @Override
-    public List<SelectionModel> getStatuses(Integer pcmId) {
-        Pcm pcm = getPcm(pcmId);
-        return pcmOperator.forOperator(pcm.getProviderKind()).getStatuses(pcm);
-    }
+	private Pcm getPcm(Integer pcmId) {
+		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
+		if (Objects.isNull(pcm)) {
+			Page<Pcm> list = pcmDao.list(getRequestOrganizationCodes(), null, null, null);
+			if (!CollectionUtils.isEmpty(list)) {
+				pcm = list.get(0);
+			}
+		}
+		Assert2.notNullOf(pcm, "pcm");
+		return pcm;
+	}
 
-    private Pcm getPcm(Integer pcmId) {
-        Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
-        if (Objects.isNull(pcm)) {
-            Page<Pcm> list = pcmDao.list(getRequestOrganizationCodes(), null, null, null);
-            if (!CollectionUtils.isEmpty(list)) {
-                pcm = list.get(0);
-            }
-        }
-        Assert2.notNullOf(pcm, "pcm");
-        return pcm;
-    }
+	@Override
+	public List<SelectionModel> getPriorities(Integer pcmId) {
+		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
+		return pcmOperator.forOperator(pcm.getProviderKind()).getPriorities(pcm);
+	}
 
-    @Override
-    public List<SelectionModel> getPriorities(Integer pcmId) {
-        Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
-        return pcmOperator.forOperator(pcm.getProviderKind()).getPriorities(pcm);
-    }
+	@Override
+	public void createIssues(Integer pcmId, PipeHistoryPcm pipeHistoryPcm) {
+		Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
+		pcmOperator.forOperator(pcm.getProviderKind()).createIssues(pcm, pipeHistoryPcm);
 
-    @Override
-    public void createIssues(Integer pcmId, PipeHistoryPcm pipeHistoryPcm) {
-        Pcm pcm = pcmDao.selectByPrimaryKey(pcmId);
-        pcmOperator.forOperator(pcm.getProviderKind()).createIssues(pcm, pipeHistoryPcm);
-
-    }
-
+	}
 
 }

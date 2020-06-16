@@ -68,6 +68,14 @@ public interface XsrfTokenRepository {
 	XsrfToken getXToken(HttpServletRequest request);
 
 	/**
+	 * Check if xsrf token must be validation.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	boolean isXsrfRequired(HttpServletRequest request);
+
+	/**
 	 * {@link XsrfUtil}
 	 * 
 	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
@@ -87,16 +95,19 @@ public interface XsrfTokenRepository {
 		 */
 		public static XsrfToken saveWebXsrfTokenIfNecessary(XsrfTokenRepository repository, HttpServletRequest request,
 				HttpServletResponse response, boolean forceRenew) {
+
 			XsrfToken xtoken = null;
-			if (!isNull(repository) && isBrowser(request)) {
+			if (repository.isXsrfRequired(request) && !isNull(repository) && isBrowser(request)) {
 				xtoken = repository.getXToken(request);
 				if (isNull(xtoken) || forceRenew) {
 					// Generate XSRF token.
 					xtoken = repository.generateXToken(request);
+
 					// Save XSRF token.
 					repository.saveXToken(xtoken, request, response);
 				}
 			}
+
 			return xtoken;
 		}
 

@@ -591,12 +591,12 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 			redirect.setRedirectUrl(getLoginUrl());
 		}
 
-		// after expand determine failure loginUrl.
+		// Determinte failure loginUrl
 		String determinedLoginUrl = configurer.decorateAuthenticateFailureUrl(redirect.getRedirectUrl(), token, ae, request,
 				response);
-		redirect.setRedirectUrl(cleanURI(determinedLoginUrl)); // Check-symbol
+		redirect.setRedirectUrl(cleanURI(determinedLoginUrl)); // Symbol check
 		// hasTextOf(redirect.getFromAppName(), "application"); //Probably-empty
-		hasText(redirect.getRedirectUrl(), "Failure redirectUrl empty, please check the configure");
+		hasText(redirect.getRedirectUrl(), "Failure redirectUrl is required, please check the configure");
 		return redirect;
 	}
 

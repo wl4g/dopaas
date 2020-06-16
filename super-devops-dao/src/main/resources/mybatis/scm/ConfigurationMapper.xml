@@ -116,7 +116,7 @@
 	</insert>
 
 	<update id="updateNode" parameterType="java.util.Map">
-		UPDATE erm_instance a
+		UPDATE erm_app_instance a
 		<set>
 			<if test="vid != null and vid != ''">
 				version_id = #{vid},
@@ -133,7 +133,7 @@
 	</update>
 
 	<select id="nodeIsVersion" parameterType="java.util.Map" resultType="string">
-		SELECT version_id FROM  erm_instance
+		SELECT version_id FROM  erm_app_instance
 		WHERE
 		<if test="nodeid != null and nodeid != ''">
 			id = #{nodeid}
@@ -189,7 +189,7 @@
 			c.id as appClusterId,
 			b.env_type as envType
 		FROM scm_version a
-		JOIN erm_instance b ON a.id = b.version_id
+		JOIN erm_app_instance b ON a.id = b.version_id
 		left join erm_host h on h.id=b.host_id
 		JOIN erm_app_cluster c ON b.cluster_id = c.id
 		<where>
@@ -246,7 +246,7 @@
 		FROM
 			scm_release_detail rd
 		INNER JOIN scm_release_history rh ON rh.id = rd.release_id
-		INNER JOIN erm_instance i ON i.id = rd.instance_id
+		INNER JOIN erm_app_instance i ON i.id = rd.instance_id
 		INNER JOIN erm_app_cluster g ON g.id = i.cluster_id
 		INNER JOIN scm_version_detail vd ON vd.version_id = i.version_id
 		left join erm_host h on h.id=i.host_id
@@ -277,7 +277,7 @@
 	<!-- 更新发布client返回结果 -->
 	<update id="updateReleaseDetail">
 		UPDATE scm_release_detail rd
-		INNER JOIN erm_instance i ON i.id = rd.instance_id
+		INNER JOIN erm_app_instance i ON i.id = rd.instance_id
 		<set>
 			rd.result = #{detailsJSONString},
 			rd.status = #{status.value},
