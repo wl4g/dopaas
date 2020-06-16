@@ -9,6 +9,7 @@ import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
+import com.github.dockerjava.core.command.PushImageResultCallback;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
 import static com.wl4g.devops.ci.utils.DockerFileBuilder.makeDockerFile;
@@ -62,7 +64,7 @@ public class DockerJavaUtil {
      * @return
      * @throws IOException
      */
-    public static String buildImage(DockerClient client, Set<String> tags, File workSpace, Map<String, String> args) throws IOException {
+    public static String buildImage(DockerClient client, Set<String> tags, File workSpace, Map<String, String> args) throws IOException, InterruptedException {
         //copyFile2WorkSpace(workSpace, dockerTemplate);
         for(String tag : tags){
             removeImage(client,tag);
@@ -83,7 +85,19 @@ public class DockerJavaUtil {
             String value = entry.getValue();
             buildImageCmd.withBuildArg(key, value);
         }
+
         return buildImageCmd.exec(callback).awaitImageId();
+    }
+
+    public static void pushImage(DockerClient client,String pushTag, String registryAddress,String username, String password) throws InterruptedException {
+        AuthConfig authConfig = new AuthConfig()
+                .withRegistryAddress(registryAddress)
+                .withUsername(username)
+                .withPassword(password);
+
+        PushImageResultCallback pushImageResultCallback = new PushImageResultCallback();
+        client.pushImageCmd(pushTag).withAuthConfig(authConfig).exec(pushImageResultCallback).awaitCompletion(600, TimeUnit.SECONDS);;
+
     }
 
     /**
@@ -110,10 +124,34 @@ public class DockerJavaUtil {
      * @param client
      * @param repository
      */
-    public static void pullImage(DockerClient client, String repository){
+    public static void pullImage(DockerClient client, String repository){//create service will auto pull image, so this metho may be unnecessary
         client.pullImageCmd(repository);
     }
 
+    public static void createService(DockerClient client,String imageName,String name){
+        ServiceModeConfig serviceModeConfig = new ServiceModeConfig();
+        ServiceReplicatedModeOptions serviceReplicatedModeOptions = new ServiceReplicatedModeOptions();
+        serviceReplicatedModeOptions.withReplicas(1);
+        serviceModeConfig.withReplicated(serviceReplicatedModeOptions);
+
+        client.createServiceCmd(new ServiceSpec()
+                .withMode(serviceModeConfig)
+                .withName(name)
+                .withTaskTemplate(new TaskSpec()
+                        .withContainerSpec(new ContainerSpec()
+                                .withImage(imageName))))
+                .exec();
+    }
+
+
+    public static void removeService(DockerClient client,String serviceId){
+        List names = new ArrayList();
+        names.add(serviceId);
+        List<Service> exec = client.listServicesCmd().withNameFilter(names).exec();
+        if(!CollectionUtils.isEmpty(exec)){// if not found but del, it will throw exception
+            client.removeServiceCmd(serviceId).exec();
+        }
+    }
 
 
     /**
@@ -123,9 +161,7 @@ public class DockerJavaUtil {
      * @return
      */
     public static CreateContainerResponse createContainers(DockerClient client, String containerName, String imageName, Map<Integer, Integer> ports) {//TODO 优化
-
         CreateContainerCmd createContainerCmd = client.createContainerCmd(imageName).withName(containerName);
-
         //TODO 处理端口映射
         if(!CollectionUtils.isEmpty(ports)){
             List<ExposedPort> exposedPorts = new ArrayList<>();
@@ -138,11 +174,9 @@ public class DockerJavaUtil {
                 portBindings.bind(exposedPort, Ports.Binding.bindPort(value));
             }
             HostConfig hostConfig = newHostConfig().withPortBindings(portBindings);
-
             createContainerCmd .withHostConfig(hostConfig).withExposedPorts(exposedPorts);
         }
         return createContainerCmd.exec();
-
     }
 
 
