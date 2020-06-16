@@ -3,6 +3,7 @@ package com.wl4g.devops.ci.core;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.*;
+import com.github.dockerjava.core.command.PushImageResultCallback;
 import com.wl4g.devops.ci.utils.DockerJavaUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -13,6 +14,7 @@ import org.junit.runners.MethodSorters;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author vjay
@@ -54,7 +56,7 @@ public class DockerJavaTest {
 
 
     @Test
-    public void test_3_buildImage() throws IOException {
+    public void test_3_buildImage() throws IOException, InterruptedException {
 
         Map<String, String> args = new HashMap<>();
         args.put("APP_BIN_NAME", "iam-server-master-bin");
@@ -123,22 +125,32 @@ public class DockerJavaTest {
 
         dockerClient.createServiceCmd(new ServiceSpec()
                 .withMode(serviceModeConfig)
-                .withName("nginx")
+                .withName("trends")
                 .withTaskTemplate(new TaskSpec()
                         .withContainerSpec(new ContainerSpec()
-                                .withImage("nginx"))))
+                                .withImage("wl4g.harbor/my_first_project/trends"))))
                 .exec();
-
-        /*List<Service> services = dockerClient.listServicesCmd()
-                .withNameFilter(Lists.newArrayList(SERVICE_NAME))
-                .exec();*/
-
 
     }
 
     @Test
-    public void test_7_remove_service() throws Exception {
-        dockerClient.removeServiceCmd("nginx").exec();
+    public void test_7_push_image() throws Exception {
+
+        PushImageResultCallback pushImageResultCallback = new PushImageResultCallback();
+
+        AuthConfig authConfig = new AuthConfig()
+                .withRegistryAddress("wl4g.harbor")
+                .withUsername("admin")
+                .withPassword("Shangmai7782");
+
+        dockerClient.pushImageCmd("wl4g.harbor/my_first_project/trends:0.1.1-beta1").withAuthConfig(authConfig).exec(pushImageResultCallback)
+                .awaitCompletion(300, TimeUnit.SECONDS);
+        System.out.println("finish");
+    }
+
+    @Test
+    public void test_8_remove_service() throws Exception {
+        dockerClient.removeServiceCmd("trends").exec();
     }
 
 

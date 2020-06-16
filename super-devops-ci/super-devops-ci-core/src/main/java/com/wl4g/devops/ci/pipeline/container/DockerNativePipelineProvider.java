@@ -45,9 +45,25 @@ import java.util.Set;
 public class DockerNativePipelineProvider extends AbstractPipelineProvider implements ContainerPipelineProvider {
 
     /**
-     * Docker hub server url. TODO just for now, need move to config file
+     * Docker server url. TODO just for now, need move to config file
      */
     final private static String SERVER_URL = "tcp://localhost:2376";
+
+    /**
+     * Docker hub server addr with project name. TODO just for now, need move to config file
+     */
+    final public static String DOCKER_HUB_ADDR = "wl4g.harbor/my_first_project/";
+
+    /**
+     * Docker hub server addr. TODO just for now , need move to config file
+     */
+    final private static String DOCKER_HUB_REGISTRY_ADDRESS = "wl4g.harbor";
+
+    //TODO Docker hub username. just for now ,need move to config file
+    final private static String DOCKER_HUB_USERNAME = "admin";
+
+    //TODO Docker hub password. just for now ,need move to config file
+    final private static String DOCKER_HUB_PASSWORD = "Shangmai7782";
 
     /**
      * Docker app bin name
@@ -84,23 +100,27 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
             //args.put(ACTIVE, pipeline.getEnvironment());
 
             Set<String> tags = new HashSet<>();
-            if(StringUtils.isNotBlank(pipeStepBuilding.getRef())){
-                tags.add(appCluster.getName()+":"+pipeStepBuilding.getRef());//冒号前面为名字，冒号后面为版本，版本为空则为latest
-            }else{
-                tags.add(appCluster.getName());
+            String tag;
+            if (StringUtils.isNotBlank(pipeStepBuilding.getRef())) {
+                tag = DOCKER_HUB_ADDR + appCluster.getName() + ":" + pipeStepBuilding.getRef();
+                tags.add(tag);//冒号前面为名字，冒号后面为版本，版本为空则为latest
+            } else {
+                tag = DOCKER_HUB_ADDR + appCluster.getName();
+                tags.add(tag);
             }
 
             //tar
-            DestroableCommand tarCmd = new LocalDestroableCommand(String.format("cd %s\ntar -xvf %s",jobBackDir,tarFileName),
+            DestroableCommand tarCmd = new LocalDestroableCommand(String.format("cd %s\ntar -xvf %s", jobBackDir, tarFileName),
                     jobBackDir, 300000L)
                     .setStdout(jobLogFile).setStderr(jobLogFile);
             pm.execWaitForComplete(tarCmd);
 
             String containerId = DockerJavaUtil.buildImage(dockerClient, tags, jobBackDir, args);
+            DockerJavaUtil.pushImage(dockerClient, tag, DOCKER_HUB_REGISTRY_ADDRESS, DOCKER_HUB_USERNAME, DOCKER_HUB_PASSWORD);
 
             //remove dir
-            if(StringUtils.isNotBlank(installFileName) && !StringUtils.equals(installFileName,"/")){
-                DestroableCommand rmCmd = new LocalDestroableCommand(String.format("cd %s\nrm -Rf %s",jobBackDir,installFileName), jobBackDir, 300000L)
+            if (StringUtils.isNotBlank(installFileName) && !StringUtils.equals(installFileName, "/")) {
+                DestroableCommand rmCmd = new LocalDestroableCommand(String.format("cd %s\nrm -Rf %s", jobBackDir, installFileName), jobBackDir, 300000L)
                         .setStdout(jobLogFile).setStderr(jobLogFile);
                 pm.execWaitForComplete(rmCmd);
             }

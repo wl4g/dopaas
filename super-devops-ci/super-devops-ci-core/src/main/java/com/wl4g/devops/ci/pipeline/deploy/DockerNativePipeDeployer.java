@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
+import com.github.dockerjava.api.DockerClient;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
+import com.wl4g.devops.ci.utils.DockerJavaUtil;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppCluster;
@@ -27,6 +29,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.List;
+
+import static com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider.DOCKER_HUB_ADDR;
 
 /**
  * Docker native deployments task.
@@ -49,37 +53,57 @@ public class DockerNativePipeDeployer extends GenericHostPipeDeployer<PipelinePr
 
 		//String dockerMasterAddr = instance.getDockerCluster().getMasterAddr();
 		//DockerClient dockerClient = DockerJavaUtil.sampleConnect(dockerMasterAddr);
+		String ref = getContext().getPipeStepBuilding().getRef();
 		PipelineHistory pipelineHistory = getContext().getPipelineHistory();
 		AppCluster appCluster = getContext().getAppCluster();
 		AppEnvironment environment = getContext().getEnvironment();
 
-		//write config file to job dir
-		File ymlFile = new File(config.getJobBaseDir(pipelineHistory.getId()).getCanonicalPath() + ymlFileName);
-		FileIOUtils.writeFile(ymlFile,environment.getConfigContent(),false);
+		if(StringUtils.isNotBlank(environment.getConfigContent())){
+			File ymlFile = new File(config.getJobBaseDir(pipelineHistory.getId()).getCanonicalPath() + ymlFileName);
+			createServiceWithStack(remoteHost,user,sshkey,ymlFile,environment.getConfigContent(),appCluster.getName());
+		}else{
+			createServiceWithDockerJavaClient(DOCKER_HUB_ADDR+appCluster.getName()+":"+ref,appCluster.getName());
+		}
 
-		transferYmlFileToRemote(ymlFile,remoteHost,user,sshkey);
-
-		// run
-		String remoteYmlFileName = config.getDeploy().getRemoteHomeTmpDir()+ymlFileName;
-		String cmd = "docker stack deploy -c "+remoteYmlFileName+" "+ appCluster.getName();
-		provider.doRemoteCommand(remoteHost,user,"",sshkey);
-
-		//clean temp file
-		cleanupRemoteYmlTmpFile(remoteHost,user,sshkey);
 
 		log.info("docker stop & pull & restart container");
 	}
 
 
-	private void transferYmlFileToRemote(File file,String remoteHost, String user, String sshkey) throws Exception {
+	//TODO need move to docker client expand
+	private void createServiceWithStack(String remoteHost, String user, String sshkey, File ymlFile, String configContent, String stackName) throws Exception {
+		//write config file to job dir
+		FileIOUtils.writeFile(ymlFile,configContent,false);
 
+		//transfer yml file
+		transferYmlFileToRemote(ymlFile,remoteHost,user,sshkey);
+
+		// run
+		String remoteYmlFileName = config.getDeploy().getRemoteHomeTmpDir()+ymlFileName;
+		String cmd = "docker stack deploy -c "+remoteYmlFileName+" "+ stackName;
+		provider.doRemoteCommand(remoteHost,user,cmd,sshkey);
+
+		//clean temp file
+		cleanupRemoteYmlTmpFile(remoteHost,user,sshkey);
+	}
+
+	private void createServiceWithDockerJavaClient(String imageName,String name){
+		String dockerMasterAddr = instance.getDockerCluster().getMasterAddr();
+		DockerClient dockerClient = DockerJavaUtil.sampleConnect(dockerMasterAddr);
+		DockerJavaUtil.removeService(dockerClient,name);
+		DockerJavaUtil.pullImage(dockerClient,imageName);
+		DockerJavaUtil.createService(dockerClient,imageName,name);
+	}
+
+
+
+	private void transferYmlFileToRemote(File file,String remoteHost, String user, String sshkey) throws Exception {
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
 		writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, file));
-
 		SSH2Holders.getDefault().scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey), file, remoteTmpDir);
 	}
 
-	protected void cleanupRemoteYmlTmpFile(String remoteHost, String user, String sshkey) throws Exception {
+	private void cleanupRemoteYmlTmpFile(String remoteHost, String user, String sshkey) throws Exception {
 		String remoteYmlFileName = config.getDeploy().getRemoteHomeTmpDir()+ymlFileName;
 		if(StringUtils.isNotBlank(remoteYmlFileName) && StringUtils.equals(remoteYmlFileName,"/")){
 			String command = "rm -Rf " + remoteYmlFileName;

@@ -40,8 +40,8 @@ public class DockerFileBuilder {
         stringBuilder.append("RUN echo \"http://mirrors.aliyun.com/alpine/v3.8/main\" > /etc/apk/repositories \\\n")
                 .append("&& echo \"http://mirrors.aliyun.com/alpine/v3.8/community\" >> /etc/apk/repositories \\\n")
                 .append("&& apk update upgrade \\\n")
-                .append("&& apk add --no-cache bash \\\n")
-                //.append("&& apk add --no-cache procps unzip curl bash tzdata font-adobe-100dpi ttf-dejavu fontconfig \\\n")//remove some unnecessary
+                //.append("&& apk add --no-cache bash \\\n")
+                .append("&& apk add --no-cache procps unzip curl bash tzdata font-adobe-100dpi ttf-dejavu fontconfig \\\n")//remove some unnecessary
                 .append("&& ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \\\n")
                 .append("&& echo \"Asia/Shanghai\" > /etc/timezone \\\n")
                 //.append("&& tar -xvf /${APP_BIN_NAME} \\\n")
