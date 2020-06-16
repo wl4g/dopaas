@@ -13,28 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dguid.client.utils;
+package com.wl4g.devops.tool.common.lang;
 
-import com.wl4g.devops.dguid.client.buffer.UidGeneratedBuffer;
+import static com.wl4g.devops.tool.common.lang.DateUtils2.*;
 
-/**
- * {@link DguidUtils}
- *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年6月15日
- * @since
- */
-public abstract class DguidUtils {
+import java.util.Date;
 
-	/**
-	 * 
-	 * Gets uid generated buffer.
-	 * 
-	 * @return
-	 */
-	public static UidGeneratedBuffer getUidGeneratedBuffer() {
+public class DateUtils2Tests {
 
-		return null;
+	public static void main(String[] args) {
+		System.out.println(formatDate(parseDate("2010/3/6")));
+		System.out.println(getDate("yyyy年MM月dd日 E"));
+		long time = new Date().getTime() - parseDate("2012-11-19").getTime();
+		System.out.println(time / (24 * 60 * 60 * 1000));
 	}
 
 }

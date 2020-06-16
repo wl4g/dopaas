@@ -17,6 +17,7 @@ package com.wl4g.devops.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wl4g.devops.tool.common.id.SnowflakeIdGenerator;
+import com.wl4g.devops.tool.common.lang.period.PeriodFormatterHolder;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -35,200 +36,217 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public abstract class BaseBean implements Serializable {
 
-    private static final long serialVersionUID = 8940373806493080114L;
+	private static final long serialVersionUID = 8940373806493080114L;
 
-    /**
-     * Bean info unqiue ID.
-     */
-    private Integer id;
+	/**
+	 * Bean info unqiue ID.
+	 */
+	private Integer id;
 
-    /**
-     * Bean info create user.
-     */
-    private Integer createBy;
+	/**
+	 * Bean info create user.
+	 */
+	private Integer createBy;
 
-    /**
-     * Bean info create date.
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date createDate;
+	/**
+	 * Bean info create date.
+	 */
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+	private Date createDate;
 
-    /**
-     * Bean info update user.
-     */
-    private Integer updateBy;
+	/**
+	 * Bean info update user.
+	 */
+	private Integer updateBy;
 
-    /**
-     * Bean info update date.
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date updateDate;
+	/**
+	 * Bean info update date.
+	 */
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+	private Date updateDate;
 
-    /**
-     * Is enabled
-     */
-    private Integer enable;
+	/**
+	 * Is enabled
+	 */
+	private Integer enable;
 
-    /**
-     * Bean info remark desciprtion.
-     */
-    private String remark;
+	/**
+	 * Bean info remark desciprtion.
+	 */
+	private String remark;
 
-    /**
-     * For data permission, associated Organization (tree) code query
-     */
-    private String organizationCode;
+	/**
+	 * For data permission, associated Organization (tree) code query
+	 */
+	private String organizationCode;
 
-    /**
-     * Logistic delete status.
-     */
-    private Integer delFlag;
+	/**
+	 * Logistic delete status.
+	 */
+	private Integer delFlag;
 
-    /**
-     * Execute method before inserting, need to call manually
-     */
-    public void preInsert() {
-        // TODO
-        // This is a temporary ID generation scheme. You can change
-        // it to a primary key generation service later.
+	/**
+	 * Execute method before inserting, need to call manually
+	 */
+	public void preInsert() {
+		// TODO
+		// This is a temporary ID generation scheme. You can change
+		// it to a primary key generation service later.
 
-        setId(abs((int) (SnowflakeIdGenerator.getDefault().nextId() % 10_000_000_000L))); // unsafe-convert!!!
+		setId(abs((int) (SnowflakeIdGenerator.getDefault().nextId() % 10_000_000_000L))); // unsafe-convert!!!
 
-        setCreateDate(new Date());
-        setCreateBy(DEFAULT_USER_ID);
-        setUpdateDate(getCreateDate());
-        setUpdateBy(DEFAULT_USER_ID);
-        setDelFlag(DEL_FLAG_NORMAL);
-        setEnable(ENABLED);
-    }
+		setCreateDate(new Date());
+		setCreateBy(DEFAULT_USER_ID);
+		setUpdateDate(getCreateDate());
+		setUpdateBy(DEFAULT_USER_ID);
+		setDelFlag(DEL_FLAG_NORMAL);
+		setEnable(ENABLED);
+	}
 
-    /**
-     * Execute method before inserting, need to call manually
-     *
-     * @param organizationCode
-     */
-    public void preInsert(String organizationCode) {
-        if (isBlank(getOrganizationCode())) {
-            setOrganizationCode(organizationCode);
-        }
-        preInsert();
-    }
+	/**
+	 * Execute method before inserting, need to call manually
+	 *
+	 * @param organizationCode
+	 */
+	public void preInsert(String organizationCode) {
+		if (isBlank(getOrganizationCode())) {
+			setOrganizationCode(organizationCode);
+		}
+		preInsert();
+	}
 
-    /**
-     * Execute method before update, need to call manually
-     */
-    public void preUpdate() {
-        setUpdateDate(new Date());
-        setUpdateBy(DEFAULT_USER_ID);
-    }
+	/**
+	 * Execute method before update, need to call manually
+	 */
+	public void preUpdate() {
+		setUpdateDate(new Date());
+		setUpdateBy(DEFAULT_USER_ID);
+	}
 
-    public Integer getId() {
-        return id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public Integer getCreateBy() {
-        return createBy;
-    }
+	public Integer getCreateBy() {
+		return createBy;
+	}
 
-    public void setCreateBy(Integer createBy) {
-        this.createBy = createBy;
-    }
+	public void setCreateBy(Integer createBy) {
+		this.createBy = createBy;
+	}
 
-    public Integer getUpdateBy() {
-        return updateBy;
-    }
+	public Integer getUpdateBy() {
+		return updateBy;
+	}
 
-    public void setUpdateBy(Integer updateBy) {
-        this.updateBy = updateBy;
-    }
+	public void setUpdateBy(Integer updateBy) {
+		this.updateBy = updateBy;
+	}
 
-    public Date getCreateDate() {
-        return createDate;
-    }
+	public Date getCreateDate() {
+		return createDate;
+	}
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 
-    public Date getUpdateDate() {
-        return updateDate;
-    }
+	public Date getUpdateDate() {
+		return updateDate;
+	}
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
 
-    public Integer getDelFlag() {
-        return delFlag;
-    }
+	public Integer getDelFlag() {
+		return delFlag;
+	}
 
-    public void setDelFlag(Integer delFlag) {
-        this.delFlag = delFlag;
-    }
+	public void setDelFlag(Integer delFlag) {
+		this.delFlag = delFlag;
+	}
 
-    public Integer getEnable() {
-        return enable;
-    }
+	public Integer getEnable() {
+		return enable;
+	}
 
-    public void setEnable(Integer enable) {
-        if (isNull(this.enable)) {
-            this.enable = enable;
-        }
-    }
+	public void setEnable(Integer enable) {
+		if (isNull(this.enable)) {
+			this.enable = enable;
+		}
+	}
 
-    public String getRemark() {
-        return remark;
-    }
+	public String getRemark() {
+		return remark;
+	}
 
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 
-    public String getOrganizationCode() {
-        return organizationCode;
-    }
+	public String getOrganizationCode() {
+		return organizationCode;
+	}
 
-    public void setOrganizationCode(String organizationCode) {
-        this.organizationCode = organizationCode;
-    }
+	public void setOrganizationCode(String organizationCode) {
+		this.organizationCode = organizationCode;
+	}
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "<" + toJSONString(this) + ">";
-    }
+	//
+	// --- Function's. ---
+	//
 
-    /**
-     * Status: enabled
-     */
-    final public static int ENABLED = 1;
+	public String getHumanCreateDate() {
+		return defaultPeriodFormatter.formatHumanDate(getCreateDate().getTime());
+	}
 
-    /**
-     * Status: disabled
-     */
-    final public static int DISABLED = 0;
+	public String getHumanUpdateDate() {
+		return defaultPeriodFormatter.formatHumanDate(getUpdateDate().getTime());
+	}
 
-    /**
-     * Status: normal (not deleted)
-     */
-    final public static int DEL_FLAG_NORMAL = 0;
+	@Override
+	public String toString() {
+		return getClass().getSimpleName().concat("<").concat(toJSONString(this)).concat(">");
+	}
 
-    /**
-     * Status: deleted
-     */
-    final public static int DEL_FLAG_DELETE = 1;
+	/**
+	 * Status: enabled
+	 */
+	final public static int ENABLED = 1;
 
-    /**
-     * Default userId.
-     */
-    final public static int DEFAULT_USER_ID = 1;
+	/**
+	 * Status: disabled
+	 */
+	final public static int DISABLED = 0;
 
-    /*
-     * User: Super administrator account.
-     */
-    final public static String DEFAULT_USER_ROOT = "root";
+	/**
+	 * Status: normal (not deleted)
+	 */
+	final public static int DEL_FLAG_NORMAL = 0;
+
+	/**
+	 * Status: deleted
+	 */
+	final public static int DEL_FLAG_DELETE = 1;
+
+	/**
+	 * Default userId.
+	 */
+	final public static int DEFAULT_USER_ID = 1;
+
+	/*
+	 * User: Super administrator account.
+	 */
+	final public static String DEFAULT_USER_ROOT = "root";
+
+	/*
+	 * Human date formatter instance.
+	 */
+	final public static PeriodFormatterHolder defaultPeriodFormatter = PeriodFormatterHolder.getDefault();
 
 }

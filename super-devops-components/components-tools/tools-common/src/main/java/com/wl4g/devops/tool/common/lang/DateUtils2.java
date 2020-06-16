@@ -56,16 +56,33 @@ public abstract class DateUtils2 extends DateUtils {
 		return dates;
 	}
 
-	public static String toUtc(String time) {
+	/**
+	 * Convert timestamp to UTC
+	 * 
+	 * @param timestamp
+	 * @return
+	 */
+	public static String timeToUTC(long timestamp) {
+		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		df2.setTimeZone(TimeZone.getTimeZone("UTC"));
+		String re = df2.format(new Date(timestamp));
+		return re;
+	}
+
+	/**
+	 * Convert date string to UTC
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static String dateToUTC(String date) {
 		SimpleDateFormat sdf1 = new SimpleDateFormat(UTC);
 		SimpleDateFormat sdf2 = new SimpleDateFormat(YMD_HMS);
 		String str = null;
 		try {
-			Date date = sdf2.parse(time);// 拿到Date对象
-			str = sdf1.format(date);// 输出格式：2017-01-22 09:28:33
-
+			str = sdf1.format(sdf2.parse(date));
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new IllegalStateException(e);
 		}
 		return str;
 	}
@@ -85,48 +102,48 @@ public abstract class DateUtils2 extends DateUtils {
 	}
 
 	/**
-	 * 获取当前时间前几秒钟
+	 * Seconds before getting the current time
 	 * 
-	 * @param stuff
-	 *            前几秒钟
+	 * @param beforeSec
+	 *            A few seconds ago
 	 * @return
 	 */
-	public static String getCurrentTimeBySecound(int stuff) {
+	public static String getCurrentBeforeTimeBySec(int beforeSec) {
 		SimpleDateFormat sdf = new SimpleDateFormat(YMD_HMS);
 		Calendar beforeTime = Calendar.getInstance();
-		beforeTime.add(Calendar.SECOND, stuff);// 几秒钟之前的时间
+		beforeTime.add(Calendar.SECOND, beforeSec);// 几秒钟之前的时间
 		Date beforeD = beforeTime.getTime();
 		String time = sdf.format(beforeD);
 		return time;
 	}
 
 	/**
-	 * 获取当前时间前几分钟
+	 * Minutes before getting the current time
 	 * 
-	 * @param stuff
-	 *            前几分钟
+	 * @param beforeMin
+	 *            A few minutes ago
 	 * @return
 	 */
-	public static String getCurrentTime(int stuff) {
+	public static String getCurrentBeforeTimeByMin(int beforeMin) {
 		SimpleDateFormat sdf = new SimpleDateFormat(YMD_HMS);
 		Calendar beforeTime = Calendar.getInstance();
-		beforeTime.add(Calendar.MINUTE, stuff);// 几分钟之前的时间
+		beforeTime.add(Calendar.MINUTE, beforeMin);// 几分钟之前的时间
 		Date beforeD = beforeTime.getTime();
 		String time = sdf.format(beforeD);
 		return time;
 	}
 
 	/**
-	 * 获取当前时间前几小时
+	 * Hours before getting the current time
 	 * 
-	 * @param stuff
-	 *            前几小时
+	 * @param beforeHour
+	 *            A few hours ago
 	 * @return
 	 */
-	public static String getCurrentTimeByHour(int stuff) {
+	public static String getCurrentBeforeTimeByHour(int beforeHour) {
 		SimpleDateFormat sdf = new SimpleDateFormat(YMD_HMS);
 		Calendar beforeTime = Calendar.getInstance();
-		beforeTime.add(Calendar.HOUR, stuff);
+		beforeTime.add(Calendar.HOUR, beforeHour);
 		Date beforeD = beforeTime.getTime();
 		String time = sdf.format(beforeD);
 		return time;
@@ -281,30 +298,6 @@ public abstract class DateUtils2 extends DateUtils {
 		long beforeTime = before.getTime();
 		long afterTime = after.getTime();
 		return (afterTime - beforeTime) / (1000 * 60 * 60 * 24);
-	}
-
-	/**
-	 * 时间戳转UTC
-	 * 
-	 * @param timeStamp
-	 * @return
-	 */
-	public static String timeStampToUTC(long timeStamp) {
-		SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		df2.setTimeZone(TimeZone.getTimeZone("UTC"));
-		String re = df2.format(new Date(timeStamp));
-		return re;
-	}
-
-	/**
-	 * @param args
-	 * @throws ParseException
-	 */
-	public static void main(String[] args) throws ParseException {
-		// System.out.println(formatDate(parseDate("2010/3/6")));
-		// System.out.println(getDate("yyyy年MM月dd日 E"));
-		// long time = new Date().getTime()-parseDate("2012-11-19").getTime();
-		// System.out.println(time/(24*60*60*1000));
 	}
 
 }
