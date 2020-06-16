@@ -68,12 +68,12 @@ public class XsrfProtectionEndpoint extends BaseController {
 	@Autowired
 	protected CorsProperties corsConfig;
 
-	@RequestMapping(method = { HEAD/* , GET */ }, path = URI_XSRF_APPLY_TOKEN)
+	@RequestMapping(method = { HEAD/* , GET, POST */ }, path = URI_XSRF_APPLY_TOKEN)
 	public void applyXsrfToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		log.info("Apply xsrf token <= {}", request.getRequestURI());
 
+		String requestOrigin = request.getHeader("Origin");
 		try {
-			String requestOrigin = request.getHeader("Origin");
 			hasTextOf(requestOrigin, "xsrfTokenRequestOrigin");
 			// Assertion cors origin
 			corsConfig.assertCorsOrigin(requestOrigin);
@@ -92,7 +92,7 @@ public class XsrfProtectionEndpoint extends BaseController {
 		// Generate & save xsrf token.
 		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xtokenRepository, request, response, true);
 
-		log.info("Apply xsrf token => {}", xtoken);
+		log.info("Apply xsrf token => {} by requestOrigin: {}", xtoken, requestOrigin);
 	}
 
 }

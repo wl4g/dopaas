@@ -85,7 +85,7 @@ public class DataSourceAutoConfiguration {
 		datasource.setUrl(prop.getUrl());
 		datasource.setUsername(prop.getUsername());
 		String plain = prop.getPassword();
-		if (valueOf(env.getProperty("spring.profiles.active")).equalsIgnoreCase("prod")) {
+		if (valueOf(env.getProperty("spring.profiles.active")).startsWith("pro")) {
 			try {
 				// TODO using dynamic cipherKey??
 				byte[] cipherKey = AES128ECBPKCS5.getEnvCipherKey("DEVOPS_CIPHER_KEY");

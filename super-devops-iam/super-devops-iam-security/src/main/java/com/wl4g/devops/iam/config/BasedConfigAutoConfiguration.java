@@ -23,7 +23,6 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Parameter;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.InitializingBean;
@@ -69,7 +68,7 @@ public class BasedConfigAutoConfiguration {
 		}
 
 		@Override
-		public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
+		public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, Throwable ae,
 				ServletRequest request, ServletResponse response) {
 			throw new UnsupportedOperationException();
 		}

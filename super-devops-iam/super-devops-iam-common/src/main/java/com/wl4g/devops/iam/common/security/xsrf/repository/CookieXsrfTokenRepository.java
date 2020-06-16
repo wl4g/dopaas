@@ -21,6 +21,7 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.shiro.web.util.WebUtils.getRequestUri;
 
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +34,11 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.config.XsrfProperties;
 import com.wl4g.devops.iam.common.web.servlet.IamCookie;
+import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.web.WebUtils2.extDomainString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.extTopDomainString;
 import static org.springframework.web.util.WebUtils.getCookie;
@@ -51,6 +55,8 @@ import static org.springframework.web.util.WebUtils.getCookie;
  * @since
  */
 public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Xsrf properties config.
@@ -115,6 +121,11 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 
 	@Override
 	public XsrfToken getXToken(HttpServletRequest request) {
+		if (!isXsrfRequired(request)) {
+			log.debug("Requests that do not requires XSRF validation, RequestUri: %s", getRequestUri(request));
+			return null;
+		}
+
 		javax.servlet.http.Cookie cookie = getCookie(request, getXsrfTokenCookieName(request));
 		if (isNull(cookie)) {
 			return null;
@@ -124,6 +135,12 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 			return null;
 		}
 		return new DefaultXsrfToken(xconfig.getXsrfHeaderName(), xconfig.getXsrfParamName(), xtoken);
+	}
+
+	@Override
+	public boolean isXsrfRequired(HttpServletRequest request) {
+		String origin = getXsrfRequestOrigin(request);
+		return !isBlank(origin) && !equalsAnyIgnoreCase(origin, "null", "undefined", EMPTY);
 	}
 
 	/**
@@ -161,9 +178,11 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 		}
 
 		// @see: iam-jssdk-core.js#[MARK55]
-		String xsrfUri = getXsrfRequestUri(request);
-		String domain = extDomainString(xsrfUri);
-		String topDomain = extTopDomainString(xsrfUri);
+		String xsrfOriginUri = getXsrfRequestOrigin(request);
+		hasTextOf(xsrfOriginUri, "Could't get XSRF request origin");
+
+		String domain = extDomainString(xsrfOriginUri);
+		String topDomain = extTopDomainString(xsrfOriginUri);
 		String defaultServName = domain;
 		int index = domain.indexOf(topDomain);
 		if (index > 0) {
@@ -185,19 +204,23 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 	 * @return
 	 */
 	private String getXsrfTokenCookieDomain(HttpServletRequest request) {
-		return extTopDomainString(getXsrfRequestUri(request));
+		return extTopDomainString(getXsrfRequestOrigin(request));
 	}
 
 	/**
-	 * Gets xsrf request uri.
+	 * Gets xsrf request origin uri.
 	 * 
 	 * @param request
 	 * @return
 	 */
-	private String getXsrfRequestUri(HttpServletRequest request) {
+	private String getXsrfRequestOrigin(HttpServletRequest request) {
 		String domainUri = request.getHeader("Origin");
 		domainUri = isBlank(domainUri) ? request.getHeader("Referer") : domainUri;
-		domainUri = isBlank(domainUri) ? request.getServerName() : domainUri;
+		/*
+		 * Xsrf validation is required only when there is a request header for
+		 * Origin/Referer.
+		 */
+		// domainUri = isBlank(domainUri) ? request.getServerName() : domainUri;
 		return domainUri;
 	}
 

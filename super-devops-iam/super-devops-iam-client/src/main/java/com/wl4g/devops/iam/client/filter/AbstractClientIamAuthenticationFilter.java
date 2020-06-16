@@ -230,7 +230,7 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 		// Failure redirect URL
 		String failRedirectUrl = null;
 		try {
-			failRedirectUrl = makeFailureRedirectUrl(token, cause, toHttp(request));
+			failRedirectUrl = makeFailureRedirectUrl(token, ae, toHttp(request), toHttp(response));
 		} catch (TooManyRequestAuthentcationException ex) {
 			cause = ex;
 		}
@@ -288,7 +288,8 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	 * @param request
 	 * @return
 	 */
-	protected String makeFailureRedirectUrl(AuthenticationToken token, Throwable cause, HttpServletRequest request) {
+	protected String makeFailureRedirectUrl(AuthenticationToken token, Throwable cause, HttpServletRequest request,
+			HttpServletResponse response) {
 		if (cause instanceof UnauthorizedException) { // Unauthorized error?
 			return config.getUnauthorizedUri();
 		} else { // Unauthenticated or other error.
@@ -322,22 +323,25 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 			clientUrlParams.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
 
 			// Custom decorate failure parameters.
-			decorateFailureRedirectParams(token, cause, request, clientUrlParams);
+			customFailureRedirectParams(token, cause, request, clientUrlParams);
+
+			// Determinte failure loginUrl
+			String determinedLoginUrl = configurer.decorateAuthenticateFailureUrl(getLoginUrl(), token, cause, request, response);
 
 			// Build to query URL.
-			return applyQueryURL(getLoginUrl(), clientUrlParams);
+			return applyQueryURL(determinedLoginUrl, clientUrlParams);
 		}
 	}
 
 	/**
-	 * Decorate authenticate failure redirection parameter.
+	 * Custom authenticate failure redirection parameters.
 	 * 
 	 * @param token
 	 * @param cause
 	 * @param request
 	 * @param params
 	 */
-	protected void decorateFailureRedirectParams(AuthenticationToken token, Throwable cause, HttpServletRequest request,
+	protected void customFailureRedirectParams(AuthenticationToken token, Throwable cause, HttpServletRequest request,
 			Map<String, String> params) {
 	}
 

@@ -149,6 +149,116 @@
 			}
 			return null;
 		},
+		Http: {
+			createXMLHttpRequest: function() {      
+				if (window.ActiveXObject) {      
+					var ieArr = ["Msxml2.XMLHTTP.6.0", "Msxml2.XMLHTTP.3.0", "Msxml2.XMLHTTP", "Microsoft.XMLHTTP"];
+					for (var i = 0; i < ieArr.length; i++) {
+						try {
+							var xmlhttp = new ActiveXObject(ieArr[i]);
+							if (xmlhttp) {
+								return xmlhttp;
+							}
+						} catch (e) {}
+					}
+				} else if (window.XMLHttpRequest) {
+					return new XMLHttpRequest();
+				}
+			},
+			/**
+			 * e.g:
+			 * <pre>
+			 * Common.Util.Http.request({
+			 *	    url: "http://my.domain.com/myapp/list", 
+			 *	    type: "post",
+			 *	    timeout: 1000,
+			 *	    //async: false,
+			 *	    xhrFields: {withCredentials: true},
+			 *	    success: function(data, textStatus, xhr) {
+			 *	        console.log("Response data:", data)
+			 *	    },
+			 *	    error: function(xhr, textStatus, errmsg) {
+			 *	        console.log("Request error:", errmsg)
+			 *	    }
+			 *	})
+			 * </pre>
+			 */
+			request: function(options) {
+				var url = options.url,
+				method = options.method || "GET",
+				type = options.type || method, // for jquery compatible
+				async = options.async,
+				xhrFields = options.xhrFields || {},
+				headers = options.headers || {},
+				data = options.data || null,
+				timeout = options.timeout || 30000,
+				success = options.success || function(data, textStatus, xhr) {},
+				error = options.error || function(xhr, textStatus, errmsg) { console.error(errmsg); };
+				try {
+					// Check arguments requires.
+					Common.Util.checkEmpty("url", url);
+
+					// 1.创建XMLHttpRequest组建
+					var _xhr = null;
+					if (!_xhr) {
+						_xhr = Common.Util.Http.createXMLHttpRequest();
+					}
+					// Apply custom fields if provided
+					if (xhrFields) {
+						for (i in xhrFields) {
+							// e.g: _xhr.withCredentials = withCredentials;
+							_xhr[i] = xhrFields[i];
+						}
+					}
+					// Set headers
+					for (i in headers) {
+						_xhr.setRequestHeader(i, headers[i]);
+					}
+
+					// Synchronous requests must not set a timeout.
+					// @see https://chromium.googlesource.com/chromium/blink.git/+/refs/heads/master/Source/core/xmlhttprequest/XMLHttpRequest.cpp#606
+					if (async) {
+						_xhr.timeout = timeout;
+					}
+
+					// 2.设置超时检查函数
+					//var _responsedMark = false;
+					//var _timeoutTimer = window.setTimeout(function() {
+					//	if (!_responsedMark) {
+					//		error(_xhr, null, "Timeout waiting for response, " + timeout);
+					//	}
+					//}, timeout);
+
+					// 3.设置回调函数
+					_xhr.onreadystatechange = function() {
+						if (_xhr.readyState == 4) {
+							//_responsedMark = true;
+							//window.clearTimeout(_timeoutTimer);
+							// 3.1获取返回数据
+							var res = _xhr.responseText;
+							if (_xhr.status == 200) {
+								success(res, _xhr.textStatus, _xhr);
+							} else {
+								error(_xhr, _xhr.textStatus, "Error status " + _xhr.status);
+							}
+						}
+					};
+					_xhr.ontimeout = function() {
+						error(_xhr, null, "Timeout waiting for response, " + timeout);
+					}
+					_xhr.onerror = function(status) {
+						error(_xhr, null, "Error status " + status);
+					}
+
+					// 4.初始化XMLHttpRequest组建
+					_xhr.open(type.toUpperCase(), url, async);
+					// 5.发送请求
+					_xhr.send(data);
+				} catch(e) {
+					error(_xhr, null, e);
+				}
+			}
+		},
 		PlatformType: (function() {
 		    var ua = navigator.userAgent.toLowerCase();
 		    var mua = {

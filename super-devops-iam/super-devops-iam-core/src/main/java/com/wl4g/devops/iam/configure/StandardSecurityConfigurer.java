@@ -18,7 +18,6 @@ package com.wl4g.devops.iam.configure;
 import com.wl4g.devops.common.bean.erm.ClusterConfig;
 import com.wl4g.devops.common.bean.iam.*;
 import com.wl4g.devops.dao.erm.ClusterConfigDao;
-import com.wl4g.devops.dao.iam.GroupDao;
 import com.wl4g.devops.dao.iam.MenuDao;
 import com.wl4g.devops.dao.iam.RoleDao;
 import com.wl4g.devops.dao.iam.UserDao;
@@ -29,7 +28,6 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SimpleParameter;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.SnsParameter;
 import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
 import com.wl4g.devops.iam.service.GroupService;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,8 +75,6 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	@Autowired
 	private transient MenuDao menuDao;
 	@Autowired
-	private transient GroupDao groupDao;
-	@Autowired
 	private GroupService groupService;
 
 	@Value("${spring.profiles.active}")
@@ -91,8 +87,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 	}
 
 	@Override
-	public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, AuthenticationException ae,
-			ServletRequest request, ServletResponse response) {
+	public String decorateAuthenticateFailureUrl(String loginUrl, AuthenticationToken token, Throwable ae, ServletRequest request,
+			ServletResponse response) {
 		return loginUrl;
 	}
 
@@ -188,8 +184,8 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 		if (nonNull(user)) {
 			// Sets user organizations.
 			Set<Group> groupsSet = groupService.getGroupsSet(user);
-			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(), o.getParentCode(),o.getType(),o.getDisplayName(), o.getAreaId()))
-					.collect(toList());
+			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(),
+					o.getParentCode(), o.getType(), o.getDisplayName(), o.getAreaId())).collect(toList());
 			return new SimplePrincipalInfo(String.valueOf(user.getId()), user.getUserName(), user.getPassword(),
 					getRoles(user.getUserName()), getPermissions(user.getUserName()), new PrincipalOrganization(oInfo));
 		}

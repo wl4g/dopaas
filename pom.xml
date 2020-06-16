@@ -58,6 +58,7 @@
 		<module>super-devops-components</module>
 		<module>super-devops-common</module>
 		<module>super-devops-support</module>
+		<module>super-devops-dguid</module>
 		<module>super-devops-erm</module>
 		<module>super-devops-dao</module>
 		<module>super-devops-scm</module>

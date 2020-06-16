@@ -52,6 +52,8 @@
 		<commons-fileupload.version>1.4</commons-fileupload.version>
 		<commons-csv.version>1.0</commons-csv.version>
 		<commons-exec.version>1.3</commons-exec.version>
+		<joda-time.version>2.10.6</joda-time.version>
+		<lombok.version>1.18.4</lombok.version>
 		<!-- Performance & quality's. -->
 		<spotbugs.version>4.0.0-beta4</spotbugs.version>
 		<metrics.version>3.0.2</metrics.version>
@@ -95,8 +97,10 @@
 		<aliyun-sdk-oss.version>3.8.1</aliyun-sdk-oss.version>
 		<aws-sdk-s3.version>1.11.734</aws-sdk-s3.version>
 		<glusterfs-javafs.version>1.0.4</glusterfs-javafs.version>
-		<!-- dockder-java -->
+		<!-- Docker's -->
 		<docker-java.version>3.1.5</docker-java.version>
+		<!-- Discover's -->
+		<zookeeper.version>3.4.14</zookeeper.version>
 	</properties>
 	<distributionManagement>
 		<snapshotRepository>
@@ -412,6 +416,25 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- DGuid dependentcie's -->
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-dguid-common</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-dguid-core</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-dguid-client</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
 			<!-- Spring's. -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
@@ -637,6 +660,19 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-exec</artifactId>
 				<version>${commons-exec.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<!-- Lang Utility -->
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>${joda-time.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<!-- Performance & quality's. -->
@@ -946,12 +982,81 @@
 				<version>${glusterfs-javafs.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!--docker-java-->
+			<!-- Docker's. -->
 			<dependency>
 				<groupId>com.github.docker-java</groupId>
 				<artifactId>docker-java</artifactId>
 				<version>${docker-java.version}</version>
 				<scope>compile</scope>
+				<!-- Solve the problem that the pit cannot be read and written due to the inconsistent version 
+					of the .os local library (such as netty-transport-native-epoll) -->
+				<exclusions>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-buffer</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-codec</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-codec-http</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-common</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-handler</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-handler-proxy</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-resolver</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-transport</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-transport-native-epoll</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-transport-native-kqueue</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-transport-native-unix-common</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- Discover's -->
+			<dependency>
+				<groupId>org.apache.zookeeper</groupId>
+				<artifactId>zookeeper</artifactId>
+				<version>${zookeeper.version}</version>
+				<optional>true</optional>
+				<exclusions>
+					<exclusion>
+						<artifactId>log4j</artifactId>
+						<groupId>log4j</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>slf4j-log4j12</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

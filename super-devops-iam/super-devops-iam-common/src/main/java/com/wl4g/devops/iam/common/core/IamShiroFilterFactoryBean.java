@@ -93,7 +93,7 @@ public class IamShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 		Map<String, Filter> defaultFilters = chainManager.getFilters();
 		// apply global settings if necessary:
 		for (Filter filter : defaultFilters.values()) {
-			applyGlobalPropertiesIfNecessary(filter);
+			applyAllPropertiesIfNecessary(filter);
 		}
 
 		// Apply the acquired and/or configured filters:
@@ -102,7 +102,7 @@ public class IamShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 			for (Map.Entry<String, Filter> entry : filters.entrySet()) {
 				String name = entry.getKey();
 				Filter filter = entry.getValue();
-				applyGlobalPropertiesIfNecessary(filter);
+				applyAllPropertiesIfNecessary(filter);
 				if (filter instanceof Nameable) {
 					((Nameable) filter).setName(name);
 				}
@@ -125,6 +125,17 @@ public class IamShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 		}
 
 		return chainManager;
+	}
+
+	/**
+	 * See: {@link ShiroFilterFactoryBean#applyGlobalPropertiesIfNecessary}
+	 *
+	 * @param filter
+	 */
+	private void applyAllPropertiesIfNecessary(Filter filter) {
+		applyLoginUrlIfNecessary(filter);
+		applySuccessUrlIfNecessary(filter);
+		applyUnauthorizedUrlIfNecessary(filter);
 	}
 
 	/**
@@ -179,17 +190,6 @@ public class IamShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 				authzFilter.setUnauthorizedUrl(unauthorizedUrl);
 			}
 		}
-	}
-
-	/**
-	 * See: {@link ShiroFilterFactoryBean#applyGlobalPropertiesIfNecessary}
-	 *
-	 * @param filter
-	 */
-	private void applyGlobalPropertiesIfNecessary(Filter filter) {
-		applyLoginUrlIfNecessary(filter);
-		applySuccessUrlIfNecessary(filter);
-		applyUnauthorizedUrlIfNecessary(filter);
 	}
 
 	/**
