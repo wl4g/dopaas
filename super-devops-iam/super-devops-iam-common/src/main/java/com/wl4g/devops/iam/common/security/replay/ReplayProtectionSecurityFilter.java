@@ -144,14 +144,14 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 	protected void assertReplayTokenValidity(ReplayToken replayToken, HttpServletRequest request, String requestPath)
 			throws ReplayException {
 		if (isNull(replayToken)) {
-			throw new MissingReplayTokenException(format("Missing replay token, Request: %s", requestPath));
+			throw new MissingReplayTokenException(format("Locked, Missing replay token, Request: %s", requestPath));
 		}
 
 		// Check replay timestamp offset.
 		long now = currentTimeMillis();
 		if (abs(now - replayToken.getTimestamp()) >= rconfig.getTermTimeMs()) {
-			throw new InvalidReplayTimestampException(
-					format("Invalid replay token t: %s, now: %s, Request: %s", replayToken.getTimestamp(), now, requestPath));
+			throw new InvalidReplayTimestampException(format("Locked, Invalid replay token t: %s, now: %s, Request: %s",
+					replayToken.getTimestamp(), now, requestPath));
 		}
 
 		// Puts replay token.
@@ -160,7 +160,7 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 		final boolean islegalRequest = cacheManager.getIamCache(CACHE_REPLAY_SIGN).putIfAbsent(key, requestPath);
 		if (!islegalRequest) { // Replay request locked?
 			throw new LockedReplayTokenException(
-					format("Locked replay token signature: %s, Request: %s", replayToken.getSignature(), requestPath));
+					format("Locked, replay token signature: %s, Request: %s", replayToken.getSignature(), requestPath));
 		}
 
 		// Validation signature.
@@ -179,7 +179,7 @@ public final class ReplayProtectionSecurityFilter extends OncePerRequestFilter {
 		}
 		if (!equalsIgnoreCase(cipherSign, replayToken.getSignature())) {
 			throw new InvalidReplayTokenException(
-					format("Invalid replay token signature: %s, Request: %s", replayToken.getSignature(), requestPath));
+					format("Locked, Invalid replay token signature: %s, Request: %s", replayToken.getSignature(), requestPath));
 		}
 
 	}
