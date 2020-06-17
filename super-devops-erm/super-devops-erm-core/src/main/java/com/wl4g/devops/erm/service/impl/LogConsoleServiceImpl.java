@@ -118,10 +118,10 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 		if (null != startTime && null != endTime && (endTime != 0 || startTime != 0)) {
 			RangeQueryBuilder rqb = rangeQuery("@timestamp").timeZone(DateTimeZone.UTC.toString());
 			if (null != startTime) {
-				rqb.gte(DateUtils2.timeStampToUTC(startTime));
+				rqb.gte(DateUtils2.timeToUTC(startTime));
 			}
 			if (null != endTime) {
-				rqb.lt(DateUtils2.timeStampToUTC(endTime));
+				rqb.lt(DateUtils2.timeToUTC(endTime));
 			}
 			boolQueryBuilder.filter(rqb);
 		}
