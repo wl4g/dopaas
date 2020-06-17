@@ -4,8 +4,10 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.AppEnvironment" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="cluster_id" property="clusterId" jdbcType="INTEGER" />
+    <result column="repository_id" property="repositoryId" jdbcType="INTEGER" />
     <result column="env_type" property="envType" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="custom_repository_config" property="customRepositoryConfig" jdbcType="LONGVARCHAR" />
     <result column="create_by" property="createBy" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="update_by" property="updateBy" jdbcType="INTEGER" />
@@ -18,7 +20,7 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, cluster_id, env_type, remark, create_by, create_date, update_by, update_date, 
+    id, cluster_id, repository_id, env_type, remark, custom_repository_config, create_by, create_date, update_by, update_date,
     del_flag, enable, organization_code,run_command, config_content
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -49,24 +51,24 @@
     where cluster_id = #{clusterId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
-    insert into erm_app_cluster_env (id, cluster_id, env_type,
-      remark, create_by, create_date, 
+    insert into erm_app_cluster_env (id, cluster_id, repository_id, env_type,
+      remark, custom_repository_config, create_by, create_date,
       update_by, update_date, del_flag, enable,
       organization_code, run_command, config_content)
-    values (#{id,jdbcType=INTEGER}, #{clusterId,jdbcType=INTEGER}, #{envType,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=INTEGER}, #{clusterId,jdbcType=INTEGER}, #{repositoryId,jdbcType=INTEGER}, #{envType,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR}, #{customRepositoryConfig,jdbcType=LONGVARCHAR}, #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER},
       #{organizationCode,jdbcType=VARCHAR}, #{runCommand,jdbcType=LONGVARCHAR}, #{configContent,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertBatch" parameterType="java.util.Map">
-    insert into erm_app_cluster_env (id, cluster_id, env_type,
-    remark, create_by, create_date,
+    insert into erm_app_cluster_env (id, cluster_id, repository_id, env_type,
+    remark, custom_repository_config, create_by, create_date,
     update_by, update_date, del_flag, enable,
     organization_code, run_command, config_content)
     VALUES
     <foreach collection="environments" item="environment" separator=",">
-      (#{environment.id,jdbcType=INTEGER}, #{environment.clusterId,jdbcType=INTEGER}, #{environment.envType,jdbcType=VARCHAR},
-      #{environment.remark,jdbcType=VARCHAR}, #{environment.createBy,jdbcType=INTEGER}, #{environment.createDate,jdbcType=TIMESTAMP},
+      (#{environment.id,jdbcType=INTEGER}, #{environment.clusterId,jdbcType=INTEGER}, #{environment.repositoryId,jdbcType=INTEGER}, #{environment.envType,jdbcType=VARCHAR},
+      #{environment.remark,jdbcType=VARCHAR},#{environment.customRepositoryConfig,jdbcType=LONGVARCHAR}, #{environment.createBy,jdbcType=INTEGER}, #{environment.createDate,jdbcType=TIMESTAMP},
       #{environment.updateBy,jdbcType=INTEGER}, #{environment.updateDate,jdbcType=TIMESTAMP}, #{environment.delFlag,jdbcType=INTEGER}, #{environment.enable,jdbcType=INTEGER},
       #{environment.organizationCode,jdbcType=VARCHAR}, #{environment.runCommand,jdbcType=LONGVARCHAR}, #{environment.configContent,jdbcType=LONGVARCHAR})
     </foreach>
@@ -80,11 +82,17 @@
       <if test="clusterId != null" >
         cluster_id,
       </if>
+      <if test="repositoryId != null" >
+        repository_id,
+      </if>
       <if test="envType != null" >
         env_type,
       </if>
       <if test="remark != null" >
         remark,
+      </if>
+      <if test="customRepositoryConfig != null">
+        custom_repository_config,
       </if>
       <if test="createBy != null" >
         create_by,
@@ -121,11 +129,17 @@
       <if test="clusterId != null" >
         #{clusterId,jdbcType=INTEGER},
       </if>
+      <if test="repositoryId != null" >
+        #{repositoryId,jdbcType=INTEGER},
+      </if>
       <if test="envType != null" >
         #{envType,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="customRepositoryConfig != null" >
+        #{customRepositoryConfig,jdbcType=LONGVARCHAR},
       </if>
       <if test="createBy != null" >
         #{createBy,jdbcType=INTEGER},
@@ -162,11 +176,17 @@
       <if test="clusterId != null" >
         cluster_id = #{clusterId,jdbcType=INTEGER},
       </if>
+      <if test="repositoryId != null" >
+        repository_id = #{repositoryId,jdbcType=INTEGER},
+      </if>
       <if test="envType != null" >
         env_type = #{envType,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="customRepositoryConfig != null" >
+        custom_repository_config = #{customRepositoryConfig,jdbcType=LONGVARCHAR},
       </if>
       <if test="createBy != null" >
         create_by = #{createBy,jdbcType=INTEGER},
@@ -201,8 +221,10 @@
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
     update erm_app_cluster_env
     set cluster_id = #{clusterId,jdbcType=INTEGER},
+      repository_id = #{repositoryId,jdbcType=INTEGER},
       env_type = #{envType,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
+      custom_repository_config = #{customRepositoryConfig,jdbcType=LONGVARCHAR},
       create_by = #{createBy,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=INTEGER},
@@ -217,8 +239,10 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
     update erm_app_cluster_env
     set cluster_id = #{clusterId,jdbcType=INTEGER},
+      repository_id = #{repositoryId,jdbcType=INTEGER},
       env_type = #{envType,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
+      custom_repository_config = #{customRepositoryConfig,jdbcType=LONGVARCHAR},
       create_by = #{createBy,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=INTEGER},
