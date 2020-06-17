@@ -7,6 +7,7 @@
     <result column="repository_id" property="repositoryId" jdbcType="INTEGER" />
     <result column="env_type" property="envType" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="repository_namespace" property="repositoryNamespace" jdbcType="VARCHAR" />
     <result column="custom_repository_config" property="customRepositoryConfig" jdbcType="LONGVARCHAR" />
     <result column="create_by" property="createBy" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
@@ -20,8 +21,12 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, cluster_id, repository_id, env_type, remark, custom_repository_config, create_by, create_date, update_by, update_date,
+    id, cluster_id, repository_id, env_type, remark, repository_namespace, custom_repository_config, create_by, create_date, update_by, update_date,
     del_flag, enable, organization_code,run_command, config_content
+  </sql>
+  <sql id="Base_Column_List_e" >
+    e.id, e.cluster_id, e.repository_id, e.env_type, e.remark, e.repository_namespace, e.custom_repository_config, e.create_by, e.create_date, e.update_by, e.update_date,
+    e.del_flag, e.enable, e.organization_code,e.run_command, e.config_content
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -31,9 +36,11 @@
   </select>
   <select id="selectByClusterId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
-    <include refid="Base_Column_List"/>
-    from erm_app_cluster_env
-    where cluster_id = #{clusterId,jdbcType=INTEGER}
+    <include refid="Base_Column_List_e"/>
+    from erm_app_cluster_env e
+    left join sys_dict d on e.env_type = d.value and d.type='app_ns_type'
+    where e.cluster_id = #{clusterId,jdbcType=INTEGER}
+    order by d.sort
   </select>
   <select id="selectByClusterIdAndEnv" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
@@ -52,23 +59,23 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
     insert into erm_app_cluster_env (id, cluster_id, repository_id, env_type,
-      remark, custom_repository_config, create_by, create_date,
+      remark, repository_namespace, custom_repository_config, create_by, create_date,
       update_by, update_date, del_flag, enable,
       organization_code, run_command, config_content)
     values (#{id,jdbcType=INTEGER}, #{clusterId,jdbcType=INTEGER}, #{repositoryId,jdbcType=INTEGER}, #{envType,jdbcType=VARCHAR},
-      #{remark,jdbcType=VARCHAR}, #{customRepositoryConfig,jdbcType=LONGVARCHAR}, #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
+      #{remark,jdbcType=VARCHAR}, #{repositoryNamespace,jdbcType=VARCHAR}, #{customRepositoryConfig,jdbcType=LONGVARCHAR}, #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
       #{updateBy,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER},
       #{organizationCode,jdbcType=VARCHAR}, #{runCommand,jdbcType=LONGVARCHAR}, #{configContent,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertBatch" parameterType="java.util.Map">
     insert into erm_app_cluster_env (id, cluster_id, repository_id, env_type,
-    remark, custom_repository_config, create_by, create_date,
+    remark, repository_namespace, custom_repository_config, create_by, create_date,
     update_by, update_date, del_flag, enable,
     organization_code, run_command, config_content)
     VALUES
     <foreach collection="environments" item="environment" separator=",">
       (#{environment.id,jdbcType=INTEGER}, #{environment.clusterId,jdbcType=INTEGER}, #{environment.repositoryId,jdbcType=INTEGER}, #{environment.envType,jdbcType=VARCHAR},
-      #{environment.remark,jdbcType=VARCHAR},#{environment.customRepositoryConfig,jdbcType=LONGVARCHAR}, #{environment.createBy,jdbcType=INTEGER}, #{environment.createDate,jdbcType=TIMESTAMP},
+      #{environment.remark,jdbcType=VARCHAR},#{environment.repositoryNamespace,jdbcType=VARCHAR},#{environment.customRepositoryConfig,jdbcType=LONGVARCHAR}, #{environment.createBy,jdbcType=INTEGER}, #{environment.createDate,jdbcType=TIMESTAMP},
       #{environment.updateBy,jdbcType=INTEGER}, #{environment.updateDate,jdbcType=TIMESTAMP}, #{environment.delFlag,jdbcType=INTEGER}, #{environment.enable,jdbcType=INTEGER},
       #{environment.organizationCode,jdbcType=VARCHAR}, #{environment.runCommand,jdbcType=LONGVARCHAR}, #{environment.configContent,jdbcType=LONGVARCHAR})
     </foreach>
@@ -90,6 +97,9 @@
       </if>
       <if test="remark != null" >
         remark,
+      </if>
+      <if test="repositoryNamespace != null" >
+        repository_namespace,
       </if>
       <if test="customRepositoryConfig != null">
         custom_repository_config,
@@ -138,6 +148,9 @@
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="repositoryNamespace != null" >
+        #{repositoryNamespace,jdbcType=VARCHAR},
+      </if>
       <if test="customRepositoryConfig != null" >
         #{customRepositoryConfig,jdbcType=LONGVARCHAR},
       </if>
@@ -185,6 +198,9 @@
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="repositoryNamespace != null" >
+        repository_namespace = #{repositoryNamespace,jdbcType=VARCHAR},
+      </if>
       <if test="customRepositoryConfig != null" >
         custom_repository_config = #{customRepositoryConfig,jdbcType=LONGVARCHAR},
       </if>
@@ -224,6 +240,7 @@
       repository_id = #{repositoryId,jdbcType=INTEGER},
       env_type = #{envType,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
+      repository_namespace = #{repositoryNamespace,jdbcType=VARCHAR},
       custom_repository_config = #{customRepositoryConfig,jdbcType=LONGVARCHAR},
       create_by = #{createBy,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
@@ -242,6 +259,7 @@
       repository_id = #{repositoryId,jdbcType=INTEGER},
       env_type = #{envType,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
+      repository_namespace = #{repositoryNamespace,jdbcType=VARCHAR},
       custom_repository_config = #{customRepositoryConfig,jdbcType=LONGVARCHAR},
       create_by = #{createBy,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},

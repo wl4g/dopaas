@@ -227,6 +227,7 @@
     <include refid="Base_Column_List" />
     from sys_dict
     where type = #{type,jdbcType=VARCHAR}
+    order by sort
   </select>
 
   <select id="getByKey" parameterType="java.lang.String" resultMap="BaseResultMap">
