@@ -378,6 +378,19 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- Gateway dependentcie's -->
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-gateway-common</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-gateway-core</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
 			<!-- RCM dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
@@ -403,20 +416,33 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<!-- VCS dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-vcs-manager</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- VCS dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-vcs-core</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- DGuid dependentcie's -->
+			<!-- CodeGen dependentcie's -->
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-codegen-manager</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-codegen-core</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<!-- Dguid dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
 				<artifactId>super-devops-dguid-common</artifactId>
