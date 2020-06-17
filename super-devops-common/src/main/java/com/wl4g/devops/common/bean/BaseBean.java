@@ -202,11 +202,11 @@ public abstract class BaseBean implements Serializable {
 	//
 
 	public String getHumanCreateDate() {
-		return defaultPeriodFormatter.formatHumanDate(getCreateDate().getTime());
+		return isNull(getCreateDate()) ? null : defaultPeriodFormatter.formatHumanDate(getCreateDate().getTime());
 	}
 
 	public String getHumanUpdateDate() {
-		return defaultPeriodFormatter.formatHumanDate(getUpdateDate().getTime());
+		return isNull(getUpdateDate()) ? null : defaultPeriodFormatter.formatHumanDate(getUpdateDate().getTime());
 	}
 
 	@Override
