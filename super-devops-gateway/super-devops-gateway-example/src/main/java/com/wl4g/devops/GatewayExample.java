@@ -1,3 +1,4 @@
+package com.wl4g.devops;
 /*
  * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
  *
@@ -13,25 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.constants;
 
-/**
- * Based share constants
- * 
- * @author Wangl.sir <983708408@qq.com>
- * @author vjay
- * @date 2019-05-20 09:21:00
- */
-public abstract class ShareDevOpsConstants extends DevOpsConstants {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-	/**
-	 * System dictionaries cache.
-	 */
-	public static final String KEY_CACHE_SYS_DICT_INIT_CACHE = "dict_init_cache";
+@SpringBootApplication
+public class GatewayExample {
 
-	/**
-	 * Config dict cache time(second)
-	 */
-	public static final int CONFIG_DICT_CACHE_TIME_SECOND = 60;
+	public static void main(String[] args) {
+		SpringApplication.run(GatewayExample.class, args);
+	}
 
 }
