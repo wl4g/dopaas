@@ -7,6 +7,8 @@ public class AppEnvironment extends BaseBean {
 
     private Integer clusterId;
 
+    private Integer repositoryId;
+
     private String envType;
 
     private String organizationCode;
@@ -14,6 +16,8 @@ public class AppEnvironment extends BaseBean {
     private String runCommand;
 
     private String configContent;
+
+    private String customRepositoryConfig;
 
     public Integer getClusterId() {
         return clusterId;
@@ -53,5 +57,13 @@ public class AppEnvironment extends BaseBean {
 
     public void setConfigContent(String configContent) {
         this.configContent = configContent;
+    }
+
+    public Integer getRepositoryId() {
+        return repositoryId;
+    }
+
+    public void setRepositoryId(Integer repositoryId) {
+        this.repositoryId = repositoryId;
     }
 }
