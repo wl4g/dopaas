@@ -19,6 +19,12 @@ public class AppEnvironment extends BaseBean {
 
     private String customRepositoryConfig;
 
+    private String repositoryNamespace;
+
+    //expand
+
+    private DockerRepository dockerRepository;
+
     public Integer getClusterId() {
         return clusterId;
     }
@@ -65,5 +71,29 @@ public class AppEnvironment extends BaseBean {
 
     public void setRepositoryId(Integer repositoryId) {
         this.repositoryId = repositoryId;
+    }
+
+    public String getCustomRepositoryConfig() {
+        return customRepositoryConfig;
+    }
+
+    public void setCustomRepositoryConfig(String customRepositoryConfig) {
+        this.customRepositoryConfig = customRepositoryConfig;
+    }
+
+    public DockerRepository getDockerRepository() {
+        return dockerRepository;
+    }
+
+    public void setDockerRepository(DockerRepository dockerRepository) {
+        this.dockerRepository = dockerRepository;
+    }
+
+    public String getRepositoryNamespace() {
+        return repositoryNamespace;
+    }
+
+    public void setRepositoryNamespace(String repositoryNamespace) {
+        this.repositoryNamespace = repositoryNamespace;
     }
 }
