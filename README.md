@@ -29,7 +29,7 @@ For the sake of brevity, each service only deploys a single node to the same phy
 
 - step1：Compile
 ```
-cd super-devops
+cd super-cloudops
 mvn -U clean install -DskipTests -T 2C
 ```
 - step2, Initialize the db, First prepare a CentOS 6.5 + and MySQL 5.6 + instance, create a new database named Devops (utf8 / utf8_bin), and then use [initial SQL script] (dB /) to initialize it.（Note: this script corresponds to the code version, and we will update it regularly. Please use the latest one according to the named suffix date）
