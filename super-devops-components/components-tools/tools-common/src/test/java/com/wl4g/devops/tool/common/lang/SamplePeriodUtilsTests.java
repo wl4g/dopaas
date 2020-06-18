@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.tool.common.lang;
 
-import com.wl4g.devops.tool.common.lang.period.PeriodFormatterHolder;
+import com.wl4g.devops.components.tools.common.lang.period.PeriodFormatterHolder;
 
 /**
  * {@link SamplePeriodUtilsTests}

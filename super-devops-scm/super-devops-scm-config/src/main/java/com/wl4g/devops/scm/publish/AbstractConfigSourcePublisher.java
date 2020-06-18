@@ -18,6 +18,9 @@ package com.wl4g.devops.scm.publish;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import static com.google.common.collect.Multimaps.synchronizedSetMultimap;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
@@ -35,8 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;

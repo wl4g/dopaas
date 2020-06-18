@@ -25,14 +25,14 @@ import org.apache.shiro.config.ConfigurationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.tool.common.collection.Collections2;
-import com.wl4g.devops.tool.common.crypto.digest.DigestUtils2;
-import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.collection.Collections2;
+import com.wl4g.devops.components.tools.common.crypto.digest.DigestUtils2;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Collections.singletonList;
 
 /**

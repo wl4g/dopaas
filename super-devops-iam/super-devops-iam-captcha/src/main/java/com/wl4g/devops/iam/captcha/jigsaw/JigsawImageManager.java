@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.iam.captcha.jigsaw;
 
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.ImageTailor.TailoredImage;
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -37,10 +37,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_VERIFY_JIGSAW_IMG;
-import static com.wl4g.devops.tool.common.codec.Encodes.toBytes;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.state;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.codec.Encodes.toBytes;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.state;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;

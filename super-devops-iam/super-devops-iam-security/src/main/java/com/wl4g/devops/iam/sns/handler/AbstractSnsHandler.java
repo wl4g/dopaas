@@ -31,6 +31,7 @@ import org.springframework.cglib.beans.BeanMap;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.common.exception.iam.SnsApiBindingException;
+import com.wl4g.devops.components.tools.common.web.WebUtils2;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
@@ -42,17 +43,17 @@ import com.wl4g.devops.iam.filter.ProviderSupport;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_AFTER_CALLBACK_AGENT;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+import static com.wl4g.devops.components.tools.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.getRFCBaseURI;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SNSAUTH;
 import static com.wl4g.devops.iam.filter.AbstractServerIamAuthenticationFilter.URI_BASE_MAPPING;
 import static com.wl4g.devops.iam.sns.web.AbstractSnsController.PARAM_SNS_PRIVIDER;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
-import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.web.WebUtils2.getRFCBaseURI;
-import static com.wl4g.devops.tool.common.web.WebUtils2.safeEncodeURL;
 import static com.wl4g.devops.iam.sns.web.AbstractSnsController.PARAM_SNS_CODE;
 import static com.wl4g.devops.iam.sns.web.AbstractSnsController.KEY_SNS_CALLBACK_PARAMS;
 import static com.wl4g.devops.iam.sns.web.AbstractSnsController.PARAM_SNS_CALLBACK_ID;
@@ -63,7 +64,6 @@ import com.wl4g.devops.iam.sns.OAuth2ApiBindingFactory;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
-import com.wl4g.devops.tool.common.web.WebUtils2;
 
 /**
  * Abstract based social networking services handler

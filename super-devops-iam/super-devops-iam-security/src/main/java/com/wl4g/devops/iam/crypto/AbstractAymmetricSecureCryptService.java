@@ -16,10 +16,10 @@
 package com.wl4g.devops.iam.crypto;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_CRYPTO;
-import static com.wl4g.devops.tool.common.codec.CodecSource.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.codec.CodecSource.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static io.netty.util.internal.ThreadLocalRandom.current;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.exception.ExceptionUtils.wrapAndThrow;
@@ -33,15 +33,15 @@ import java.util.concurrent.locks.Lock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 
+import com.wl4g.devops.components.tools.common.codec.CodecSource;
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.AsymmetricCryptor;
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.config.properties.CryptoProperties;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.tool.common.codec.CodecSource;
-import com.wl4g.devops.tool.common.crypto.asymmetric.AsymmetricCryptor;
-import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Abstract secretKey asymmetric secure crypt service.

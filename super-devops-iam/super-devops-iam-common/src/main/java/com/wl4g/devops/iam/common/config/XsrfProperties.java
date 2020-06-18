@@ -18,10 +18,10 @@ package com.wl4g.devops.iam.common.config;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_XSRF_BASE;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Collections.singletonList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -34,8 +34,8 @@ import javax.servlet.http.Cookie;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.tool.common.collection.Collections2;
-import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.collection.Collections2;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
 /**
  * XSRF configuration properties

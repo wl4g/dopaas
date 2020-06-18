@@ -16,12 +16,12 @@
 package com.wl4g.devops.iam.crypto;
 
 import com.wl4g.devops.common.framework.operator.Operator;
-import com.wl4g.devops.tool.common.codec.Base58;
-import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.devops.components.tools.common.codec.Base58;
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.spec.KeyPairSpec;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
 import static com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 
 import java.security.spec.KeySpec;
 

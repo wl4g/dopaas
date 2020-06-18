@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.access;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 
 import java.io.InputStream;
 import java.nio.file.FileSystem;

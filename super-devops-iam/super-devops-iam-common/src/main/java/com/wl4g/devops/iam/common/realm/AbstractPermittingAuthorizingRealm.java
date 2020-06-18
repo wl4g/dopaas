@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static org.apache.shiro.util.Assert.notNull;
 
 import java.util.ArrayList;

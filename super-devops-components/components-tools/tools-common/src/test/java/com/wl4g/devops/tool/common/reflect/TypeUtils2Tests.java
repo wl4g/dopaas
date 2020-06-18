@@ -17,6 +17,8 @@ package com.wl4g.devops.tool.common.reflect;
 
 import java.util.Map;
 
+import com.wl4g.devops.components.tools.common.reflect.TypeUtils2;
+
 public class TypeUtils2Tests {
 
 	public static void main(String[] args) {

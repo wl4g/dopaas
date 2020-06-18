@@ -17,7 +17,7 @@ package com.wl4g.devops.scm.client.utils;
 
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.devops.components.tools.common.lang.Exceptions.getRootCausesString;
 import static java.net.NetworkInterface.getNetworkInterfaces;
 import java.net.InetAddress;
 import java.net.NetworkInterface;

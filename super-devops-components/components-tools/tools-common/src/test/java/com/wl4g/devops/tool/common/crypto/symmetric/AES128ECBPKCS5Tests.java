@@ -17,7 +17,8 @@ package com.wl4g.devops.tool.common.crypto.symmetric;
 
 import static java.lang.System.out;
 
-import com.wl4g.devops.tool.common.codec.CodecSource;
+import com.wl4g.devops.components.tools.common.codec.CodecSource;
+import com.wl4g.devops.components.tools.common.crypto.symmetric.AES128ECBPKCS5;
 
 /**
  * {@link AES128ECBPKCS5Tests}

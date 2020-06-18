@@ -22,7 +22,7 @@ import org.springframework.util.Assert;
 
 import javax.validation.constraints.*;
 
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;

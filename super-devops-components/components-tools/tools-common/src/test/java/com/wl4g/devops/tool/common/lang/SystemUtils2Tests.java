@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.tool.common.lang;
 
+import com.wl4g.devops.components.tools.common.lang.SystemUtils2;
+
 public class SystemUtils2Tests {
 
 	public static void main(String[] args) {

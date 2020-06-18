@@ -23,7 +23,7 @@ import io.protostuff.ProtostuffIOUtil;
 import io.protostuff.Schema;
 import io.protostuff.runtime.RuntimeSchema;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 import static java.util.Objects.isNull;
 
 import java.util.ArrayList;

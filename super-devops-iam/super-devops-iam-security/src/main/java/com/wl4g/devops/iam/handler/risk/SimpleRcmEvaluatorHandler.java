@@ -16,8 +16,8 @@
 package com.wl4g.devops.iam.handler.risk;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.web.CookieUtils.getCookie;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.web.CookieUtils.getCookie;
 import static java.util.Collections.sort;
 import static java.util.Locale.US;
 import static java.util.stream.Collectors.toList;
@@ -38,11 +38,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * {@link SimpleRcmEvaluatorHandler}

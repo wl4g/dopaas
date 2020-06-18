@@ -27,10 +27,10 @@ import static org.apache.shiro.web.util.WebUtils.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.web.UserAgentUtils.isBrowser;
 import static java.lang.Boolean.TRUE;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
@@ -56,6 +56,8 @@ import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
+import com.wl4g.devops.components.tools.common.lang.StringUtils2;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
@@ -64,8 +66,6 @@ import com.wl4g.devops.iam.common.configure.SecurityCoprocessor;
 import com.wl4g.devops.iam.common.session.GrantCredentialsInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.web.servlet.IamCookie;
-import com.wl4g.devops.tool.common.lang.StringUtils2;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Abstract custom IAM session management

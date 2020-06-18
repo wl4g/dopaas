@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.client.filter;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
-import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.getFullRequestURL;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;

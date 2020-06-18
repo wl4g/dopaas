@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.components.webide.generate.parse;
 
-import static com.wl4g.devops.tool.common.lang.StringUtils2.endsWithIgnoreCase;
+import static com.wl4g.devops.components.tools.common.lang.StringUtils2.endsWithIgnoreCase;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.replace;
 

@@ -16,12 +16,12 @@
 package com.wl4g.devops.components.shell.utils;
 
 import com.wl4g.devops.components.shell.annotation.ShellOption;
-import com.wl4g.devops.tool.common.bean.BeanUtils2;
+import com.wl4g.devops.components.tools.common.bean.BeanUtils2;
 
+import static com.wl4g.devops.components.tools.common.reflect.TypeUtils2.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
-import static com.wl4g.devops.tool.common.reflect.TypeUtils2.*;
 
 import java.util.Collection;
 import java.util.Map;

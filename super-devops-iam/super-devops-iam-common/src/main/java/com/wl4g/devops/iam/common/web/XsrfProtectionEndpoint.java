@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.iam.common.security.xsrf.repository.XsrfTokenRepository.XsrfUtil.saveWebXsrfTokenIfNecessary;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static java.lang.String.format;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
 

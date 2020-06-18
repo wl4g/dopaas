@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.utils;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.devops.tool.common.annotation.Reserved;
+import com.wl4g.devops.components.tools.common.annotation.Reserved;
 
 import java.util.HashMap;
 import java.util.Map;

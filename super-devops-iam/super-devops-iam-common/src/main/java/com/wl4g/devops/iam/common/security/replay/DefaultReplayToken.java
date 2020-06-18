@@ -16,16 +16,15 @@
 package com.wl4g.devops.iam.common.security.replay;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrueOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.codec.Base58.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrueOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import static com.wl4g.devops.tool.common.codec.Base58.*;
 
 /**
  * A default replay attacks protection token.

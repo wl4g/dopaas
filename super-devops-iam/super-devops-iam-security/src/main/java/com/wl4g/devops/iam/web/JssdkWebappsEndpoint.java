@@ -15,11 +15,12 @@
  */
 package com.wl4g.devops.iam.web;
 
+import static com.wl4g.devops.components.tools.common.jvm.JvmRuntimeKit.*;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.wl4g.devops.common.config.DefaultEmbeddedWebappsAutoConfiguration.GenericEmbeddedWebappsProperties;
 import com.wl4g.devops.common.web.embedded.GenericEmbeddedWebappsEndpoint;
-import static com.wl4g.devops.tool.common.jvm.JvmRuntimeKit.*;
 
 /**
  * Jssdk embedded webapps endpoint.

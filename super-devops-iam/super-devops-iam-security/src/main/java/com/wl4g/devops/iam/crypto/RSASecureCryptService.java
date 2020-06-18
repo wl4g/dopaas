@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.iam.crypto;
 
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.RSACryptor;
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.spec.RSAKeyPairSpec;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.tool.common.crypto.asymmetric.RSACryptor;
-import com.wl4g.devops.tool.common.crypto.asymmetric.spec.RSAKeyPairSpec;
 
 /**
  * RSA cryptographic service.

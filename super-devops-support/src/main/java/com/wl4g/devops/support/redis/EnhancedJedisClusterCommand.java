@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.support.redis;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
-import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
 import redis.clients.jedis.HostAndPort;
 import static redis.clients.jedis.HostAndPort.*;

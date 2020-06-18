@@ -1,6 +1,6 @@
 package com.wl4g.devops.tool.hbase.migrator.rmdb;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
 import static java.util.Collections.unmodifiableMap;
 import static org.apache.commons.lang3.StringUtils.contains;
 

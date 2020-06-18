@@ -16,8 +16,8 @@
 package com.wl4g.devops.components.webide;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.tool.common.lang.StringUtils2.endsWithIgnoreCase;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.lang.StringUtils2.endsWithIgnoreCase;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 
 import javax.servlet.http.HttpServletRequest;
 

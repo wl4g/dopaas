@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.iam.filter;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURL;
-import static com.wl4g.devops.tool.common.web.WebUtils2.isMediaRequest;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.getFullRequestURL;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.isMediaRequest;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import javax.servlet.ServletRequest;

@@ -25,9 +25,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.devops.ScmServer;
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.components.tools.common.lang.ThreadUtils2;
 import com.wl4g.devops.scm.handler.CentralConfigureHandler;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
-import com.wl4g.devops.tool.common.lang.ThreadUtils2;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ScmServer.class)

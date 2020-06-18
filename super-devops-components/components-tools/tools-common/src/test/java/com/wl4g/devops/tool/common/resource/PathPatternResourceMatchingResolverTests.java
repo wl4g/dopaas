@@ -17,7 +17,8 @@ package com.wl4g.devops.tool.common.resource;
 
 import java.util.Set;
 
-import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
+import com.wl4g.devops.components.tools.common.resource.StreamResource;
+import com.wl4g.devops.components.tools.common.resource.resolver.ClassPathResourcePatternResolver;
 
 public class PathPatternResourceMatchingResolverTests {
 

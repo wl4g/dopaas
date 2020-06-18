@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.components.shell.config;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static java.lang.String.format;
 
 import java.util.Map;

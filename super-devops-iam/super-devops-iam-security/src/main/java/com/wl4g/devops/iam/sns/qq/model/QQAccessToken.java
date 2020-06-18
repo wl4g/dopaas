@@ -20,10 +20,10 @@ import java.util.Map;
 import org.apache.shiro.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wl4g.devops.components.tools.common.lang.TypeConverts;
+import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
+import com.wl4g.devops.components.tools.common.web.WebUtils2;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
-import com.wl4g.devops.tool.common.lang.TypeConverts;
-import com.wl4g.devops.tool.common.serialize.JacksonUtils;
-import com.wl4g.devops.tool.common.web.WebUtils2;
 
 public class QQAccessToken implements Oauth2AccessToken {
 	private static final long serialVersionUID = 6525294825751214763L;

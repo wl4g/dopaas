@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.support.mybatis.session;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.ReflectionUtils.findField;
 import static org.springframework.util.ReflectionUtils.getField;
@@ -30,8 +30,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.core.io.Resource;
 
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.support.mybatis.logging.LogbackImpl;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Multiple DB connection composite sqlSessionFactory.

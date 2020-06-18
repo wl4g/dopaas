@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.tool.common.bean;
 
-import static com.wl4g.devops.tool.common.bean.BeanUtils2.DEFAULT_FIELD_FILTER;
-import static com.wl4g.devops.tool.common.bean.BeanUtils2.deepCopyFieldState;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.makeAccessible;
+import static com.wl4g.devops.components.tools.common.bean.BeanUtils2.DEFAULT_FIELD_FILTER;
+import static com.wl4g.devops.components.tools.common.bean.BeanUtils2.deepCopyFieldState;
+import static com.wl4g.devops.components.tools.common.reflect.ReflectionUtils2.makeAccessible;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 
 public class BeanUtils2Tests {
 

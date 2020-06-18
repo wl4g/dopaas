@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.tool.hbase.migrator;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.state;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.state;
 import static com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils.*;
 import static java.lang.String.format;
 
-import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
-import com.wl4g.devops.tool.common.lang.Assert2;
+import com.wl4g.devops.components.tools.common.cli.CommandUtils.Builder;
+import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.tool.hbase.migrator.mapred.NoOpTransformMapper;
 import com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils;
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.authc;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.HashMap;

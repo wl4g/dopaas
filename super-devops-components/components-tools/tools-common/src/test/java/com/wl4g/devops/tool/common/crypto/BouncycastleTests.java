@@ -19,7 +19,7 @@ import org.bouncycastle.crypto.engines.DESEngine;
 import org.bouncycastle.crypto.engines.DESedeEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
 
-import com.wl4g.devops.tool.common.codec.CodecSource;
+import com.wl4g.devops.components.tools.common.codec.CodecSource;
 
 public class BouncycastleTests {
 

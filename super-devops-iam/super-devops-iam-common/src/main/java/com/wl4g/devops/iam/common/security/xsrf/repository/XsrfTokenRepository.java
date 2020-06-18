@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.common.security.xsrf.repository;
 
-import static com.wl4g.devops.tool.common.web.UserAgentUtils.isBrowser;
+import static com.wl4g.devops.components.tools.common.web.UserAgentUtils.isBrowser;
 import static java.util.Objects.isNull;
 
 import javax.servlet.http.HttpServletRequest;

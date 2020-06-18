@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.common.framework.beans;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -48,7 +48,7 @@ import org.springframework.core.type.MethodMetadata;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 
-import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
 /**
  * Delegate prototype bean factory.</br>

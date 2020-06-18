@@ -16,6 +16,8 @@
 package com.wl4g.devops.iam.captcha.verification;
 
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.components.tools.common.codec.CheckSums;
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.iam.captcha.config.CaptchaProperties;
 import com.wl4g.devops.iam.captcha.jigsaw.ImageTailor.TailoredImage;
 import com.wl4g.devops.iam.captcha.jigsaw.JigsawImageManager;
@@ -25,8 +27,6 @@ import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
-import com.wl4g.devops.tool.common.codec.CheckSums;
-import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,9 +43,9 @@ import static org.springframework.util.Assert.isTrue;
 import java.util.List;
 import java.util.Objects;
 
+import static com.wl4g.devops.components.tools.common.codec.Encodes.encodeBase64;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
-import static com.wl4g.devops.tool.common.codec.Encodes.encodeBase64;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 
 /**
  * JIGSAW slider CAPTCHA verification handler.

@@ -15,14 +15,15 @@
  */
 package com.wl4g.devops.support.notification;
 
-import com.wl4g.devops.tool.common.log.SmartLogger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
+
 import javax.validation.Validator;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 
 import java.lang.reflect.Method;

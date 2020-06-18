@@ -16,16 +16,17 @@
 package com.wl4g.devops.erm.service.impl;
 
 import static com.wl4g.devops.common.constants.ERMDevOpsConstants.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
 import static java.util.Objects.isNull;
 
 import com.wl4g.devops.common.bean.erm.Log;
 import com.wl4g.devops.common.bean.erm.QueryLogModel;
 import com.wl4g.devops.common.bean.erm.Querycriteria;
+import com.wl4g.devops.components.tools.common.lang.DateUtils2;
 import com.wl4g.devops.erm.es.handler.LogHandler;
 import com.wl4g.devops.erm.service.LogConsoleService;
-import com.wl4g.devops.tool.common.lang.DateUtils2;
+
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;

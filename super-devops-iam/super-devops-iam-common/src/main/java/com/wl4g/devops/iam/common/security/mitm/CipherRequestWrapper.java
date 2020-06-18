@@ -18,10 +18,6 @@ package com.wl4g.devops.iam.common.security.mitm;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -29,12 +25,16 @@ import static org.apache.commons.lang3.StringUtils.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import static com.wl4g.devops.components.tools.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.iam.common.config.AbstractIamProperties.CipherProperties.*;
 
 import com.wl4g.devops.common.exception.iam.UnableDecryptionCipherParameterException;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Abstract ciper parameters {@link HttpServletRequestWrapper} implements.

@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.cli.Option;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.*;
 

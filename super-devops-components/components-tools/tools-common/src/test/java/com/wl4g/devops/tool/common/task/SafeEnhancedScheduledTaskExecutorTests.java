@@ -22,6 +22,8 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.wl4g.devops.components.tools.common.task.SafeEnhancedScheduledTaskExecutor;
+
 public class SafeEnhancedScheduledTaskExecutorTests {
 
 	public static void main(String[] args) throws Exception {

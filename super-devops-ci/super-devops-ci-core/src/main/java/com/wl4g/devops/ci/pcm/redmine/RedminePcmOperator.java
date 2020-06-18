@@ -21,7 +21,8 @@ import com.wl4g.devops.ci.pcm.redmine.model.RedmineIssues.RedmineIssue;
 import com.wl4g.devops.common.bean.ci.Pcm;
 import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
 import com.wl4g.devops.common.web.model.SelectionModel;
-import com.wl4g.devops.tool.common.serialize.JacksonUtils;
+import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

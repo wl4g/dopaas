@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.iam.authc.credential.secure;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
-
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * Final credentials token

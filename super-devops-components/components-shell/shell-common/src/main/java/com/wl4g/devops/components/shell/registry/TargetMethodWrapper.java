@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.cli.Option;
 import static org.apache.commons.lang3.StringUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 import com.wl4g.devops.components.shell.annotation.ShellMethod;
 import com.wl4g.devops.components.shell.annotation.ShellOption;
@@ -37,11 +36,12 @@ import com.wl4g.devops.components.shell.cli.BuiltInCommand;
 import com.wl4g.devops.components.shell.cli.HelpOption;
 import com.wl4g.devops.components.shell.cli.HelpOptions;
 
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isGenericModifier;
 import static com.wl4g.devops.components.shell.cli.BuiltInCommand.*;
 import static com.wl4g.devops.components.shell.registry.TargetMethodWrapper.TargetParameter.*;
-import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
-import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleCollectionType;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.reflect.ReflectionUtils2.isGenericModifier;
+import static com.wl4g.devops.components.tools.common.reflect.TypeUtils2.isSimpleCollectionType;
+import static com.wl4g.devops.components.tools.common.reflect.TypeUtils2.isSimpleType;
 import static java.lang.String.format;
 import static java.lang.System.err;
 import static java.util.Objects.nonNull;

@@ -26,7 +26,7 @@ import org.jline.reader.ParsedLine;
 import org.jline.reader.impl.completer.StringsCompleter;
 
 import static com.wl4g.devops.components.shell.annotation.ShellOption.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 
 import com.wl4g.devops.components.shell.cli.HelpOptions;
 import com.wl4g.devops.components.shell.utils.LineUtils;

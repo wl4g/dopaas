@@ -16,6 +16,7 @@
 package com.wl4g.devops.coss.natives;
 
 import com.google.common.hash.HashCode;
+import com.wl4g.devops.components.tools.common.io.FileIOUtils;
 import com.wl4g.devops.coss.AbstractCossEndpoint;
 import com.wl4g.devops.coss.config.StandardFSCossProperties;
 import com.wl4g.devops.coss.exception.CossException;
@@ -24,7 +25,7 @@ import com.wl4g.devops.coss.model.*;
 import com.wl4g.devops.coss.model.bucket.Bucket;
 import com.wl4g.devops.coss.model.bucket.BucketList;
 import com.wl4g.devops.coss.model.bucket.BucketMetadata;
-import com.wl4g.devops.tool.common.io.FileIOUtils;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,11 +42,11 @@ import java.util.List;
 import java.util.Set;
 
 import static com.google.common.hash.Hashing.md5;
+import static com.wl4g.devops.components.tools.common.io.FileDeletionUtils.deleteAnyone;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.coss.model.ACL.*;
 import static com.wl4g.devops.coss.model.metadata.ObjectsStatusMetaData.ObjectStatusMetaData;
-import static com.wl4g.devops.tool.common.io.FileDeletionUtils.deleteAnyone;
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;

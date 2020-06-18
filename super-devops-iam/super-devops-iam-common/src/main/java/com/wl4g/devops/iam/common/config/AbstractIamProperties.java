@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.iam.common.config;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.reflect.ReflectionUtils2.invokeMethod;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.invokeMethod;
 import static java.lang.String.valueOf;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Locale.US;
@@ -40,10 +40,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
+import com.wl4g.devops.components.tools.common.collection.RegisteredSetList;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.web.servlet.IamCookie;
-import com.wl4g.devops.tool.common.collection.RegisteredSetList;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * IAM abstract configuration properties.

@@ -42,8 +42,8 @@ import java.util.Objects;
 
 import static com.wl4g.devops.common.bean.BaseBean.*;
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**

@@ -28,16 +28,16 @@ import java.util.Map.Entry;
 import java.util.zip.CRC32;
 import java.util.Optional;
 
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.doFullWithFields;
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isGenericModifier;
 import static java.lang.String.format;
 import static java.lang.System.*;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static com.wl4g.devops.components.shell.utils.ShellUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static com.wl4g.devops.tool.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
+import static com.wl4g.devops.components.tools.common.reflect.ReflectionUtils2.doFullWithFields;
+import static com.wl4g.devops.components.tools.common.reflect.ReflectionUtils2.isGenericModifier;
 
 import com.wl4g.devops.components.shell.annotation.ShellOption;
 import com.wl4g.devops.components.shell.config.AbstractConfiguration;
@@ -46,7 +46,7 @@ import com.wl4g.devops.components.shell.registry.ShellHandlerRegistrar;
 import com.wl4g.devops.components.shell.registry.TargetMethodWrapper;
 import com.wl4g.devops.components.shell.registry.TargetMethodWrapper.TargetParameter;
 import com.wl4g.devops.components.shell.utils.LineUtils;
-import com.wl4g.devops.tool.common.reflect.TypeUtils2;
+import com.wl4g.devops.components.tools.common.reflect.TypeUtils2;
 
 /**
  * Abstract shell component actuator handler.

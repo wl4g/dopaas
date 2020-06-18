@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aws.config;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 
 import javax.validation.constraints.NotBlank;
 

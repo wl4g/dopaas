@@ -38,7 +38,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
-import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
 import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.toList;
 

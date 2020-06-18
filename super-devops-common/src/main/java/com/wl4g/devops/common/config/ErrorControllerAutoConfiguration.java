@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.config;
 
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.convertBean;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.convertBean;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.HashMap;

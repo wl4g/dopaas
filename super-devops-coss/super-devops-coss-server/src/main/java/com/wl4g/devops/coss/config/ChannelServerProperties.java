@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.config;
 
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 
 import java.io.Serializable;
 

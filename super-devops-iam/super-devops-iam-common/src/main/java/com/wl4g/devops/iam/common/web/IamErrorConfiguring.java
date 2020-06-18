@@ -27,7 +27,8 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
-import static com.wl4g.devops.tool.common.lang.Exceptions.*;
+import static com.wl4g.devops.components.tools.common.lang.Exceptions.*;
+
 import com.wl4g.devops.common.web.error.ErrorConfiguring;
 
 /**

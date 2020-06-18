@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.support.task;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
 
 import java.io.Serializable;
 import java.util.concurrent.RejectedExecutionHandler;

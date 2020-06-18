@@ -20,12 +20,12 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SECOND_V
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_SNS_CONNECT;
 import static com.wl4g.devops.common.web.RespBase.RetCode.PRECONDITITE_LIMITED;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.writeJson;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.ResponseType.isJSONResp;
 import static com.wl4g.devops.iam.client.filter.AbstractClientIamAuthenticationFilter.SAVE_GRANT_TICKET;
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.Authenticated;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
-import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.isJSONResp;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
@@ -49,12 +49,12 @@ import org.springframework.web.client.RestTemplate;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.client.annotation.SecondaryAuthenticate;
 import com.wl4g.devops.iam.common.authc.SecondaryAuthenticationException;
 import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
 import com.wl4g.devops.iam.client.config.IamClientProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Secondary authentication processor.

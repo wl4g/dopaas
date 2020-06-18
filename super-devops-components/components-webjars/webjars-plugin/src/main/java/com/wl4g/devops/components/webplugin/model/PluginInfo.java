@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.components.webplugin.model;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static org.springframework.util.CollectionUtils.isEmpty;

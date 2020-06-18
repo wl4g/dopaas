@@ -24,7 +24,7 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
 import java.io.IOException;
 
 import com.google.common.io.Resources;
-import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
+import com.wl4g.devops.components.tools.common.resource.resolver.ClassPathResourcePatternResolver;
 
 /**
  * {@link HbaseMigrateUtils}

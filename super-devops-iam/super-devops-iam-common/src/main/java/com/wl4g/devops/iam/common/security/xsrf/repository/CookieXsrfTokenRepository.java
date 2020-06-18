@@ -30,17 +30,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.web.servlet.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.config.XsrfProperties;
 import com.wl4g.devops.iam.common.web.servlet.IamCookie;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.extDomainString;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.extTopDomainString;
 import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.web.WebUtils2.extDomainString;
-import static com.wl4g.devops.tool.common.web.WebUtils2.extTopDomainString;
 import static org.springframework.web.util.WebUtils.getCookie;
 
 /**

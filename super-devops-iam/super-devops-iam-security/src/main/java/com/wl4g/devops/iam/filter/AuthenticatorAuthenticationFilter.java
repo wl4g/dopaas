@@ -24,8 +24,8 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.subject.Subject;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_AUTHENTICATOR;
+import static com.wl4g.devops.components.tools.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipal;
-import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 

@@ -22,7 +22,7 @@ import com.wl4g.devops.components.shell.annotation.ShellMethod;
 import com.wl4g.devops.components.shell.handler.SimpleShellContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.components.tools.common.lang.Exceptions.getStackTraceAsString;
 import static java.lang.String.format;
 
 /**

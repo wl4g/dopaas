@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.tool.common.task;
 
+import com.wl4g.devops.components.tools.common.task.QuartzCronUtils;
+
 public class QuartzCronUtilsTests {
 
 	public static void main(String[] args) {

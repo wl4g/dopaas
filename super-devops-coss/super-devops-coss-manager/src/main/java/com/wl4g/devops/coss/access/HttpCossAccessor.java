@@ -50,8 +50,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static com.wl4g.devops.coss.natives.MetadataIndexManager.BUCKET_METADATA;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * Web/HTTP based coss accessor

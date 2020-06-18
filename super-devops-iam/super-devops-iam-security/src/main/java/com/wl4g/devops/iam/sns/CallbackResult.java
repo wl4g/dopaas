@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.sns;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**

@@ -20,12 +20,13 @@ import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.CustomAlarmEventService;
+
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 
 /**
  * @author vjay

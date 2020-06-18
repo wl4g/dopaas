@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.iam.common.utils.cumulate;
 
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.*;
 
@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.shiro.session.Session;
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
 /**
  * Security limit accumulation counter based on {@link Session} implementation.

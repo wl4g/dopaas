@@ -1,7 +1,8 @@
 package com.wl4g.devops.iam.common.utils;
 
-import com.wl4g.devops.tool.common.codec.Base58;
 import org.apache.commons.lang3.StringUtils;
+
+import com.wl4g.devops.components.tools.common.codec.Base58;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +10,10 @@ import java.util.Optional;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.utils.web.WebUtils3.*;
+import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
 import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.OrganizationInfo;
-import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
-import static com.wl4g.devops.tool.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 

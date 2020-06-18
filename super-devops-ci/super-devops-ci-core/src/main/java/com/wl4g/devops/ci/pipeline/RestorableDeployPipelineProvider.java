@@ -23,7 +23,7 @@ import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 import java.io.File;
 
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
-import static com.wl4g.devops.tool.common.codec.FingerprintUtils.getMd5Fingerprint;
+import static com.wl4g.devops.components.tools.common.codec.FingerprintUtils.getMd5Fingerprint;
 import static java.lang.String.format;
 
 /**

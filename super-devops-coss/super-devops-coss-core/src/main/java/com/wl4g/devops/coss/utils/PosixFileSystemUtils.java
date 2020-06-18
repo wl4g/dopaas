@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.coss.utils;
 
+import static com.wl4g.devops.components.tools.common.lang.TypeConverts.*;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 
 import com.wl4g.devops.coss.model.ACL;
-import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
 
 /**
  * {@link PosixFileSystemUtils}

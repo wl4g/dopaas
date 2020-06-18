@@ -1,8 +1,8 @@
 package com.wl4g.devops.coss.aliyun.model;
 
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.findField;
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.getField;
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.makeAccessible;
+import static com.wl4g.devops.components.tools.common.reflect.ReflectionUtils2.findField;
+import static com.wl4g.devops.components.tools.common.reflect.ReflectionUtils2.getField;
+import static com.wl4g.devops.components.tools.common.reflect.ReflectionUtils2.makeAccessible;
 import static java.util.Objects.isNull;
 
 import java.lang.reflect.Field;

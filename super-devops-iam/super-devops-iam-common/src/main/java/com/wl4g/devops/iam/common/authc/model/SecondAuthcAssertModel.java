@@ -20,7 +20,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.devops.tool.common.serialize.JacksonUtils;
+import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 
 /**
  * Secondary authentication assertion.

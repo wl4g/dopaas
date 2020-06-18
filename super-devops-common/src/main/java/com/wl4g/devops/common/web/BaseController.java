@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.common.web;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 import java.io.IOException;
 
@@ -24,8 +24,8 @@ import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.tool.common.log.SmartLogger;
-import com.wl4g.devops.tool.common.web.WebUtils2;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.web.WebUtils2;
 
 /**
  * Based abstract controller

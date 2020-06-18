@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.support.cli.process;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
 import static org.springframework.util.Assert.notNull;
 
 import java.io.IOException;

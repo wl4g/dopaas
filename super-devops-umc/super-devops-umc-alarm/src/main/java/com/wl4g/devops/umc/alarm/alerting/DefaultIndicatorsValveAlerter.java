@@ -48,8 +48,8 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import static com.wl4g.devops.common.constants.UMCDevOpsConstants.ALARM_SATUS_SEND;
-import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.Math.abs;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.emptyMap;

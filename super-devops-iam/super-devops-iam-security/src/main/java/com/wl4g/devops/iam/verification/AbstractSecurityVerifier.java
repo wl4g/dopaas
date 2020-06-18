@@ -32,17 +32,19 @@ import org.springframework.util.CollectionUtils;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.BEAN_DELEGATE_MSG_SOURCE;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.getRequestParam;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.unbind;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.web.WebUtils2.getRequestParam;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
+import com.wl4g.devops.components.tools.common.codec.Base58;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
@@ -50,8 +52,6 @@ import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.verification.model.GenericVerifyResult;
-import com.wl4g.devops.tool.common.codec.Base58;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Abstract IAM verification handler

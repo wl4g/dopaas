@@ -31,12 +31,12 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 
-import com.wl4g.devops.tool.common.collection.RegisteredSetList;
+import com.wl4g.devops.components.tools.common.collection.RegisteredSetList;
 
 import static com.wl4g.devops.iam.common.config.CorsProperties.IamCorsValidator.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.isSameWildcardOrigin;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.tool.common.web.WebUtils2.isSameWildcardOrigin;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;

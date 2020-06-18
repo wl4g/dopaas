@@ -23,7 +23,7 @@ import com.wl4g.devops.components.shell.annotation.ShellOption;
 
 import static org.apache.commons.lang3.StringUtils.*;
 import static com.wl4g.devops.components.shell.utils.LineUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 
 /**
  * Internal built-in commands

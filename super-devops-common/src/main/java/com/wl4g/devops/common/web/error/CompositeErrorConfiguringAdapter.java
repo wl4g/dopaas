@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.common.web.error;
 
-import com.wl4g.devops.tool.common.collection.RegisteredUnmodifiableList;
-
 import org.springframework.core.annotation.Order;
 import org.springframework.util.Assert;
+
+import com.wl4g.devops.components.tools.common.collection.RegisteredUnmodifiableList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

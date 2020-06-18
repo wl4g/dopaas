@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.tool.common.cli.ssh2;
 
-import com.wl4g.devops.tool.common.io.ByteStreams2;
-import com.wl4g.devops.tool.common.resource.ResourceUtils2;
+import com.wl4g.devops.components.tools.common.cli.ssh2.EthzHolder;
+import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders;
+import com.wl4g.devops.components.tools.common.io.ByteStreams2;
+import com.wl4g.devops.components.tools.common.resource.ResourceUtils2;
 
 import java.io.File;
 

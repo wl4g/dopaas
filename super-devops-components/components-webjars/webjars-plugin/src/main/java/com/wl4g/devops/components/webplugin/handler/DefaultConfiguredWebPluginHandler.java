@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.components.webplugin.handler;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
 import static java.util.Locale.US;
 import static java.util.stream.Collectors.toMap;
 
@@ -30,9 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import com.wl4g.devops.common.exception.compoents.ParsePluginDependenciesException;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.components.webplugin.config.WebPluginProperties;
 import com.wl4g.devops.components.webplugin.model.PluginInfo;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * {@link DefaultConfiguredWebPluginHandler}

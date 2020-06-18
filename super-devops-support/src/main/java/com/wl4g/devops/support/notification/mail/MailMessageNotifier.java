@@ -24,7 +24,7 @@ import org.springframework.mail.javamail.MimeMailMessage;
 import java.util.Date;
 import java.util.Properties;
 
-import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;

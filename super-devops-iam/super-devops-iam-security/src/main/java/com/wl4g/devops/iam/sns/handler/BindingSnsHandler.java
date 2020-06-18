@@ -16,8 +16,8 @@
 package com.wl4g.devops.iam.sns.handler;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ERR_SESSION_SAVED;
+import static com.wl4g.devops.components.tools.common.lang.Exceptions.getRootCauses;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
-import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCauses;
 
 import com.wl4g.devops.common.bean.iam.SocialConnectInfo;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.Which;

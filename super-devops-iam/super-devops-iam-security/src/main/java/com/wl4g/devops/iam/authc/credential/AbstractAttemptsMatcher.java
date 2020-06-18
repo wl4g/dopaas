@@ -23,13 +23,13 @@ import com.wl4g.devops.iam.config.properties.MatcherProperties;
 
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.*;
 import static com.wl4g.devops.iam.common.utils.RiskControlSecurityUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;

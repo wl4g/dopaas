@@ -20,6 +20,8 @@ import static java.lang.System.out;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wl4g.devops.components.tools.common.collection.RegisteredSetList;
+
 public class RegisteredSetListTests {
 
 	public static void main(String[] args) {

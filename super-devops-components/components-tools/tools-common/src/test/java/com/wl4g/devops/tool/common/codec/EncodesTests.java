@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.tool.common.codec;
 
+import com.wl4g.devops.components.tools.common.codec.Encodes;
+
 public class EncodesTests {
 
 	public static void main(String[] args) {

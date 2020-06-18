@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.tool.hbase.migrator;
 
-import com.wl4g.devops.tool.common.cli.CommandUtils.Builder;
-
 import static com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils.*;
 import static java.lang.String.valueOf;
 
@@ -40,6 +38,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import com.wl4g.devops.components.tools.common.cli.CommandUtils.Builder;
 import com.wl4g.devops.tool.hbase.migrator.mapred.SimpleHfileToRmdbMapper;
 import com.wl4g.devops.tool.hbase.migrator.rmdb.RmdbMigrateManager;
 import com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils;

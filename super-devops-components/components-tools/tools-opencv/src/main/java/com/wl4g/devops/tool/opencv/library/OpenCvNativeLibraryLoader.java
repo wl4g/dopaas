@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wl4g.devops.tool.common.natives.LoadNativeLibraryError;
-import com.wl4g.devops.tool.common.natives.PathPatternNativeLibraryLoader;
+import com.wl4g.devops.components.tools.common.natives.LoadNativeLibraryError;
+import com.wl4g.devops.components.tools.common.natives.PathPatternNativeLibraryLoader;
 
 /**
  * OpenCv dynamic link library loader.</br>

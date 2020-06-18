@@ -9,6 +9,7 @@ import com.wl4g.devops.common.bean.ci.Pipeline;
 import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.ci.PipelineInstance;
+import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.dao.ci.PipelineDao;
 import com.wl4g.devops.dao.ci.PipelineHistoryDao;
 import com.wl4g.devops.dao.ci.PipelineHistoryInstanceDao;
@@ -16,7 +17,7 @@ import com.wl4g.devops.dao.ci.PipelineInstanceDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.destroy.DestroySignal;
-import com.wl4g.devops.tool.common.lang.Assert2;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

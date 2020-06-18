@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.vcs.gitee;
 import com.wl4g.devops.ci.vcs.GenericBasedGitVcsOperator;
 import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.tool.common.annotation.Reserved;
+import com.wl4g.devops.components.tools.common.annotation.Reserved;
 
 import java.util.List;
 

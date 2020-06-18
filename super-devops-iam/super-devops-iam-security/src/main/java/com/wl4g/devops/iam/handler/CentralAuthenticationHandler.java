@@ -55,12 +55,12 @@ import java.util.Objects;
 import java.util.Set;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.getHttpRemoteAddr;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.isEqualWithDomain;
 import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Status.ExpiredAuthorized;
 import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.*;
 import static com.wl4g.devops.iam.sns.handler.SecondaryAuthcSnsHandler.SECOND_AUTHC_CACHE;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
-import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;

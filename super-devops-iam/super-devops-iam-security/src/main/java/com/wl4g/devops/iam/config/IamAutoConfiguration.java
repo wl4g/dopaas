@@ -331,114 +331,119 @@ public class IamAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public FilterRegistrationBean authenticatorFilterRegistrationBean(
+	public FilterRegistrationBean<AuthenticatorAuthenticationFilter> authenticatorFilterRegistrationBean(
 			@Qualifier(BEAN_AUTH_FILTER) AuthenticatorAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+		FilterRegistrationBean<AuthenticatorAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean rootFilterRegistrationBean(@Qualifier(BEAN_ROOT_FILTER) ROOTAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<ROOTAuthenticationFilter> rootFilterRegistrationBean(
+			@Qualifier(BEAN_ROOT_FILTER) ROOTAuthenticationFilter filter) {
+		FilterRegistrationBean<ROOTAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean internalServerFilterRegistrationBean(ServerInternalAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<ServerInternalAuthenticationFilter> internalServerFilterRegistrationBean(
+			ServerInternalAuthenticationFilter filter) {
+		FilterRegistrationBean<ServerInternalAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean facebookFilterRegistrationBean(FacebookAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<FacebookAuthenticationFilter> facebookFilterRegistrationBean(
+			FacebookAuthenticationFilter filter) {
+		FilterRegistrationBean<FacebookAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean smsFilterRegistrationBean(SmsAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<SmsAuthenticationFilter> smsFilterRegistrationBean(SmsAuthenticationFilter filter) {
+		FilterRegistrationBean<SmsAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean qrcodeFilterRegistrationBean(QrcodeAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<QrcodeAuthenticationFilter> qrcodeFilterRegistrationBean(QrcodeAuthenticationFilter filter) {
+		FilterRegistrationBean<QrcodeAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean wechatFilterRegistrationBean(WechatAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<WechatAuthenticationFilter> wechatFilterRegistrationBean(WechatAuthenticationFilter filter) {
+		FilterRegistrationBean<WechatAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean wechatMpFilterRegistrationBean(WechatMpAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<WechatMpAuthenticationFilter> wechatMpFilterRegistrationBean(
+			WechatMpAuthenticationFilter filter) {
+		FilterRegistrationBean<WechatMpAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean genericFilterRegistrationBean(GenericAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<GenericAuthenticationFilter> genericFilterRegistrationBean(GenericAuthenticationFilter filter) {
+		FilterRegistrationBean<GenericAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean logoutFilterRegistrationBean(LogoutAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<LogoutAuthenticationFilter> logoutFilterRegistrationBean(LogoutAuthenticationFilter filter) {
+		FilterRegistrationBean<LogoutAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean dingtalkFilterRegistrationBean(DingtalkAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<DingtalkAuthenticationFilter> dingtalkFilterRegistrationBean(
+			DingtalkAuthenticationFilter filter) {
+		FilterRegistrationBean<DingtalkAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean googleFilterRegistrationBean(GoogleAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<GoogleAuthenticationFilter> googleFilterRegistrationBean(GoogleAuthenticationFilter filter) {
+		FilterRegistrationBean<GoogleAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean qqFilterRegistrationBean(QQAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<QQAuthenticationFilter> qqFilterRegistrationBean(QQAuthenticationFilter filter) {
+		FilterRegistrationBean<QQAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean twitterFilterRegistrationBean(TwitterAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<TwitterAuthenticationFilter> twitterFilterRegistrationBean(TwitterAuthenticationFilter filter) {
+		FilterRegistrationBean<TwitterAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean githubFilterRegistrationBean(GithubAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<GithubAuthenticationFilter> githubFilterRegistrationBean(GithubAuthenticationFilter filter) {
+		FilterRegistrationBean<GithubAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean sinaFilterRegistrationBean(SinaAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<SinaAuthenticationFilter> sinaFilterRegistrationBean(SinaAuthenticationFilter filter) {
+		FilterRegistrationBean<SinaAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}

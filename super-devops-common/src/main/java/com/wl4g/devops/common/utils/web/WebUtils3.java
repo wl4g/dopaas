@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.wl4g.devops.tool.common.web.WebUtils2;
+import com.wl4g.devops.components.tools.common.web.WebUtils2;
 
 /**
  * {@link WebUtils3}

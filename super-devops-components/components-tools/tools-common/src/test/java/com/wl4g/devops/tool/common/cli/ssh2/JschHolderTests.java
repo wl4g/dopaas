@@ -15,8 +15,9 @@
  */
 package com.wl4g.devops.tool.common.cli.ssh2;
 
-import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders.AlgorithmType;
-import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders.Ssh2KeyPair;
+import com.wl4g.devops.components.tools.common.cli.ssh2.JschHolder;
+import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders.AlgorithmType;
+import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders.Ssh2KeyPair;
 
 /**
  * {@link JschHolderTests}

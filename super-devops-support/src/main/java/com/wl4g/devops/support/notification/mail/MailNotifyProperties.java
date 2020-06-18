@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.support.notification.mail;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.stateOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.stateOf;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
