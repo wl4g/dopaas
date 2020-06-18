@@ -38,6 +38,11 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-gateway-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-gateway-core</artifactId>
+			<version>2.0.0.RELEASE</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

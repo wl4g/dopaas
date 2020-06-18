@@ -15,7 +15,7 @@ spring:
 
 # ### Server configuration. ###
 server:
-  port: 14061
+  port: 14086
   sessionTimeout: 30
   contextPath: /${spring.application.name}
   tomcat:
