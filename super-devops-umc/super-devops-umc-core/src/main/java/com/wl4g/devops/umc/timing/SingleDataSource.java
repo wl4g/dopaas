@@ -1,10 +1,11 @@
 package com.wl4g.devops.umc.timing;
 
-import com.wl4g.devops.tool.common.lang.Assert2;
-
 import javax.sql.DataSource;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import com.wl4g.devops.components.tools.common.lang.Assert2;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;

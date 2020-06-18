@@ -16,8 +16,8 @@
 package com.wl4g.devops.iam.config.properties;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.cleanURI;
 import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.correctAuthenticaitorURI;
-import static com.wl4g.devops.tool.common.web.WebUtils2.cleanURI;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.hasText;

@@ -7,8 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
+import com.wl4g.devops.components.tools.common.cli.ProcessUtils.DelegateProcess;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
-import com.wl4g.devops.tool.common.cli.ProcessUtils.DelegateProcess;
 
 /**
  * Local destroable process implements.

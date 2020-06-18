@@ -40,13 +40,13 @@ import com.wl4g.devops.iam.common.cache.JedisIamCacheManager;
 import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.applyQueryURL;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.isTrue;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_LOGOUT;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getBindValue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipal;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
-import static com.wl4g.devops.tool.common.web.WebUtils2.applyQueryURL;
-import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.config.properties;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.tool.common.lang.StringUtils2.startsWithIgnoreCase;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.components.tools.common.lang.StringUtils2.startsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -28,9 +28,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.components.tools.common.lang.Exceptions;
 import com.wl4g.devops.iam.common.annotation.IamController;
 import com.wl4g.devops.iam.common.authc.model.LogoutModel;
-import com.wl4g.devops.tool.common.lang.Exceptions;
 
 /**
  * IAM client authenticator controller

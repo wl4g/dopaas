@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.tool.opencv;
 
-import static com.wl4g.devops.tool.common.lang.StringUtils2.startsWithIgnoreCase;
+import static com.wl4g.devops.components.tools.common.lang.StringUtils2.startsWithIgnoreCase;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 
 import java.io.File;
@@ -33,8 +33,8 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.videoio.VideoCapture;
 
-import com.wl4g.devops.tool.common.cli.CommandUtils;
-import com.wl4g.devops.tool.common.resource.resolver.ClassPathResourcePatternResolver;
+import com.wl4g.devops.components.tools.common.cli.CommandUtils;
+import com.wl4g.devops.components.tools.common.resource.resolver.ClassPathResourcePatternResolver;
 import com.wl4g.devops.tool.opencv.library.OpenCvNativeLibraryLoader;
 
 public class VideoFaceTests {

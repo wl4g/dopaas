@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.common.core;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 import java.util.Map;
 
@@ -36,7 +36,7 @@ import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
 /**
  * IAM customize shiro-spring filter factory bean

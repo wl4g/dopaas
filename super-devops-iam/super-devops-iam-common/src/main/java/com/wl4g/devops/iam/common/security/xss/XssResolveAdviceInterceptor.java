@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.iam.common.security.xss;
 
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.annotation.UnsafeXss;
 import com.wl4g.devops.iam.common.config.XssProperties;
 import com.wl4g.devops.iam.common.security.xss.resolve.XssSecurityResolver;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -35,9 +35,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import static com.wl4g.devops.tool.common.bean.BeanUtils2.deepCopyFieldState;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isCompatibleType;
+import static com.wl4g.devops.components.tools.common.bean.BeanUtils2.deepCopyFieldState;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.reflect.ReflectionUtils2.isCompatibleType;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;

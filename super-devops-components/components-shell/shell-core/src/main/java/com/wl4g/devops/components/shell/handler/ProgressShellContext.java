@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.components.shell.handler;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 
@@ -28,8 +28,8 @@ import com.wl4g.devops.components.shell.exception.ChannelShellException;
 import com.wl4g.devops.components.shell.exception.NoSupportedInterruptShellException;
 import com.wl4g.devops.components.shell.exception.ProgressShellException;
 import com.wl4g.devops.components.shell.signal.ProgressSignal;
-import com.wl4g.devops.tool.common.annotation.Reserved;
-import com.wl4g.devops.tool.common.math.Maths;
+import com.wl4g.devops.components.tools.common.annotation.Reserved;
+import com.wl4g.devops.components.tools.common.math.Maths;
 
 /**
  * {@link ProgressShellContext}

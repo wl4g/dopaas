@@ -41,9 +41,9 @@ import java.util.List;
 import java.util.Set;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
+import static com.wl4g.devops.components.tools.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
 import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
-import static com.wl4g.devops.tool.common.collection.Collections2.isEmptyArray;
-import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;

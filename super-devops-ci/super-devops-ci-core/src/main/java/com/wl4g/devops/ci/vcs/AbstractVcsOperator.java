@@ -32,8 +32,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.List;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
 import static org.springframework.util.Assert.*;
 
 /**

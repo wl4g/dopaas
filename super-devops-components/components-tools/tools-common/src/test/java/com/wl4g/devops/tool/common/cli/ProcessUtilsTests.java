@@ -16,15 +16,15 @@
 package com.wl4g.devops.tool.common.cli;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.tool.common.cli.ProcessUtils.buildCrossSingleCommands;
-import static com.wl4g.devops.tool.common.cli.ProcessUtils.execMulti;
+import static com.wl4g.devops.components.tools.common.cli.ProcessUtils.buildCrossSingleCommands;
+import static com.wl4g.devops.components.tools.common.cli.ProcessUtils.execMulti;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 
-import com.wl4g.devops.tool.common.cli.ProcessUtils;
+import com.wl4g.devops.components.tools.common.cli.ProcessUtils;
 
 public class ProcessUtilsTests {
 

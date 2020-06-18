@@ -34,9 +34,9 @@ import com.wl4g.devops.iam.common.authc.model.TicketValidateModel;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSession;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_NAME;

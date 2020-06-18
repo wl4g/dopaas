@@ -22,7 +22,7 @@ import javax.validation.constraints.NotEmpty;
 
 import org.springframework.util.CollectionUtils;
 
-import com.wl4g.devops.tool.common.serialize.JacksonUtils;
+import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 
 /**
  * Session validation assertion.

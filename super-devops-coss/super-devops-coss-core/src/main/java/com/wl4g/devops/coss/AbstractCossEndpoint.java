@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.coss;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.InitializingBean;

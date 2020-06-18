@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.tool.common.codec;
 
+import com.wl4g.devops.components.tools.common.codec.Base58;
+
 public class Base58Tests {
 
 	public static void main(String[] args) {

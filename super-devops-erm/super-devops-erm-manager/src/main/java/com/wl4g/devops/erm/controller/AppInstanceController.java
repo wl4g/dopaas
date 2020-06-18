@@ -18,10 +18,11 @@ package com.wl4g.devops.erm.controller;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.components.tools.common.cli.ssh2.JschHolder;
+import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders;
 import com.wl4g.devops.erm.service.AppInstanceService;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.tool.common.cli.ssh2.JschHolder;
-import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

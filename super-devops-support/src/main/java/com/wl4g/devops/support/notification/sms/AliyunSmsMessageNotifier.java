@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.support.notification.sms;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.isNull;
 
 import org.apache.commons.lang3.StringUtils;

@@ -31,10 +31,10 @@ import com.wl4g.devops.components.shell.signal.Signal;
 import com.wl4g.devops.components.shell.signal.StderrSignal;
 import com.wl4g.devops.components.shell.signal.StdoutSignal;
 
-import static com.wl4g.devops.tool.common.cli.ProcessUtils.*;
 import static com.wl4g.devops.components.shell.cli.BuiltInCommand.*;
 import static com.wl4g.devops.components.shell.config.DefaultShellHandlerRegistrar.getSingle;
 import static com.wl4g.devops.components.shell.utils.ShellUtils.isTrue;
+import static com.wl4g.devops.components.tools.common.cli.ProcessUtils.*;
 import static java.lang.String.format;
 import static java.lang.System.*;
 

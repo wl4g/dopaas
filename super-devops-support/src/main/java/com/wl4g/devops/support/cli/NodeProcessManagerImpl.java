@@ -16,8 +16,8 @@
 package com.wl4g.devops.support.cli;
 
 import static com.wl4g.devops.common.constants.SupportDevOpsConstants.*;
-import static com.wl4g.devops.tool.common.lang.Exceptions.getRootCausesString;
-import static com.wl4g.devops.tool.common.lang.ThreadUtils2.sleepRandom;
+import static com.wl4g.devops.components.tools.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.devops.components.tools.common.lang.ThreadUtils2.sleepRandom;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 

@@ -16,8 +16,8 @@
 package com.wl4g.devops.iam.filter;
 
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.isTrue;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
-import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
 
 import java.util.Map;

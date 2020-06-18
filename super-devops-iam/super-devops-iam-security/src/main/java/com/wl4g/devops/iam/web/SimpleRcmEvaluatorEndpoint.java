@@ -16,9 +16,10 @@
 package com.wl4g.devops.iam.web;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.components.tools.common.collection.Collections2.safeMap;
+import static com.wl4g.devops.components.tools.common.lang.TypeConverts.*;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.toQueryParams;
 import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.sessionStatus;
-import static com.wl4g.devops.tool.common.collection.Collections2.safeMap;
-import static com.wl4g.devops.tool.common.web.WebUtils2.toQueryParams;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -33,12 +34,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.components.tools.common.codec.Base58;
 import com.wl4g.devops.iam.annotation.SimpleRcmController;
 import com.wl4g.devops.iam.handler.risk.SimpleRcmEvaluatorHandler;
 import com.wl4g.devops.iam.web.model.SimpleRcmTokenResult;
-import com.wl4g.devops.tool.common.codec.Base58;
-
-import static com.wl4g.devops.tool.common.lang.TypeConverts.*;
 
 /**
  * Simple risk control controller.

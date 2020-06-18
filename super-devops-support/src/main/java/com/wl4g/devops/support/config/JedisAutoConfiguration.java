@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.support.config;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,11 +31,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.redis.EnhancedJedisCluster;
 import com.wl4g.devops.support.redis.JedisClusterFactoryBean;
 import com.wl4g.devops.support.redis.JedisService;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;

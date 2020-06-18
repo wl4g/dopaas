@@ -18,8 +18,8 @@ package com.wl4g.devops.components.shell;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static org.apache.commons.lang3.StringUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 import com.wl4g.devops.components.shell.config.Configuration;
 import com.wl4g.devops.components.shell.handler.CliShellHandler;

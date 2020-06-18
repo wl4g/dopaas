@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.iam.common.crypto;
 
-import static com.wl4g.devops.tool.common.codec.CodecSource.*;
+import static com.wl4g.devops.components.tools.common.codec.CodecSource.*;
 
-import com.wl4g.devops.tool.common.codec.CodecSource;
-import com.wl4g.devops.tool.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.devops.components.tools.common.codec.CodecSource;
+import com.wl4g.devops.components.tools.common.crypto.symmetric.AES128ECBPKCS5;
 
 /**
  * {@link AesIamCipherService}

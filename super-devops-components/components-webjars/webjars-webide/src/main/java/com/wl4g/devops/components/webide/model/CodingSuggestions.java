@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.components.webide.model;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
 
-import com.wl4g.devops.tool.common.annotation.Reserved;
+import com.wl4g.devops.components.tools.common.annotation.Reserved;
 
 /**
  * {@link CodingSuggestions}

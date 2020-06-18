@@ -25,9 +25,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.wl4g.devops.tool.common.resource.ResourceUtils2;
+import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders;
+import com.wl4g.devops.components.tools.common.cli.ssh2.SshjHolder;
+import com.wl4g.devops.components.tools.common.resource.ResourceUtils2;
 
-import static com.wl4g.devops.tool.common.io.ByteStreams2.readFullyToString;
+import static com.wl4g.devops.components.tools.common.io.ByteStreams2.readFullyToString;
 import static java.util.Objects.nonNull;
 
 /**

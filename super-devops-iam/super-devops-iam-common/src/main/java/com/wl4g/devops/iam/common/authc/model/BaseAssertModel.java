@@ -21,7 +21,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.tool.common.serialize.JacksonUtils;
+import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 
 public class BaseAssertModel implements Serializable {
 	private static final long serialVersionUID = 151897009229689455L;

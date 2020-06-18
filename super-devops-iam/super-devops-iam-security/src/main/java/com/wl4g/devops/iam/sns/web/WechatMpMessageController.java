@@ -27,9 +27,9 @@ import com.wl4g.devops.common.exception.iam.IllegalRequestException;
 import com.wl4g.devops.common.web.BaseController;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_WECHAT_MP_RECEIVE;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.web.WebUtils2.getFullRequestURI;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.getFullRequestURI;
 import static java.lang.String.format;
 
 import java.io.IOException;

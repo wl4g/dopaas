@@ -17,10 +17,10 @@ package com.wl4g.devops.tool.common.io;
 
 import static com.google.common.base.Charsets.ISO_8859_1;
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.tool.common.io.FileIOUtils.ensureFile;
-import static com.wl4g.devops.tool.common.io.FileIOUtils.readLines;
-import static com.wl4g.devops.tool.common.io.FileIOUtils.seekReadLines;
-import static com.wl4g.devops.tool.common.io.FileIOUtils.seekReadString;
+import static com.wl4g.devops.components.tools.common.io.FileIOUtils.ensureFile;
+import static com.wl4g.devops.components.tools.common.io.FileIOUtils.readLines;
+import static com.wl4g.devops.components.tools.common.io.FileIOUtils.seekReadLines;
+import static com.wl4g.devops.components.tools.common.io.FileIOUtils.seekReadString;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.SystemUtils.USER_DIR;
 

@@ -42,9 +42,9 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.*;
 import static java.lang.System.*;
 import static java.util.Collections.singletonMap;
-import static com.wl4g.devops.tool.common.web.WebUtils2.*;
 
 public class WebUtils2Tests {
 

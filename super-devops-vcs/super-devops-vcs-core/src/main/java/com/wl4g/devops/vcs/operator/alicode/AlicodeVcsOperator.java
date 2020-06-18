@@ -17,7 +17,7 @@ package com.wl4g.devops.vcs.operator.alicode;
 
 
 import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.tool.common.annotation.Reserved;
+import com.wl4g.devops.components.tools.common.annotation.Reserved;
 import com.wl4g.devops.vcs.operator.AbstractVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;

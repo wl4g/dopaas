@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.common.utils;
 
 import static com.wl4g.devops.iam.common.session.NoOpSession.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.isNull;

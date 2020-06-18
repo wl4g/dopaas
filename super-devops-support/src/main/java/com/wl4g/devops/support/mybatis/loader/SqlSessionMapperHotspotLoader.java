@@ -15,10 +15,11 @@
  */
 package com.wl4g.devops.support.mybatis.loader;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
-import static com.wl4g.devops.tool.common.lang.Assert2.state;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.state;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.reflect.ReflectionUtils2.*;
 import static java.lang.Thread.sleep;
 import static java.lang.String.format;
 import static java.lang.System.*;
@@ -46,9 +47,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import com.wl4g.devops.tool.common.log.SmartLogger;
-
-import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.*;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
 /**
  * Mybatis {@link SqlSessionFactory} developments hotspot mapper re-loader.

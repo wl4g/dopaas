@@ -17,13 +17,13 @@ package com.wl4g.devops.iam.verification;
 
 import com.wl4g.devops.common.exception.iam.VerificationException;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.utils.cumulate.Cumulator;
 import com.wl4g.devops.iam.config.properties.MatcherProperties;
 import com.wl4g.devops.iam.crypto.SecureCryptService;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
-import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,15 +37,15 @@ import java.util.List;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_CAPTCHA_COUNTER;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_FAILFAST_MATCH_COUNTER;
+import static com.wl4g.devops.components.tools.common.codec.Encodes.encodeBase64;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.state;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.getRequestParam;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSessionId;
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.newCumulator;
 import static com.wl4g.devops.iam.common.utils.cumulate.CumulateHolder.newSessionCumulator;
-import static com.wl4g.devops.tool.common.codec.Encodes.encodeBase64;
-import static com.wl4g.devops.tool.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
-import static com.wl4g.devops.tool.common.lang.Assert2.state;
-import static com.wl4g.devops.tool.common.web.WebUtils2.getRequestParam;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;

@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.tool.common.crypto.asymmetric;
 
-import com.wl4g.devops.tool.common.codec.CodecSource;
-import com.wl4g.devops.tool.common.crypto.asymmetric.RSACryptor;
-import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.devops.components.tools.common.codec.CodecSource;
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.AsymmetricCryptor;
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.RSACryptor;
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.spec.KeyPairSpec;
 
 public class RSACryptorTests {
 

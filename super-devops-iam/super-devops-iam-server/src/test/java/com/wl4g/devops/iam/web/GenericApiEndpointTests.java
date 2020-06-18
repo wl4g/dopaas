@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.web;
 
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

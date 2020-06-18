@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Collections.emptyMap;
 import static org.springframework.util.CollectionUtils.isEmpty;
 

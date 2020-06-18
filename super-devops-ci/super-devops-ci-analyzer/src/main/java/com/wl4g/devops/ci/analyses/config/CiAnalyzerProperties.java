@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.analyses.config;
 
-import static com.wl4g.devops.tool.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.lang.SystemUtils2.LOCAL_PROCESS_ID;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
 

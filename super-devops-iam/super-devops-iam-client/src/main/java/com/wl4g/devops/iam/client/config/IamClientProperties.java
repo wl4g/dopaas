@@ -23,9 +23,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.client.config.IamClientProperties.ClientParamProperties;
+
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 @ConfigurationProperties(prefix = "spring.cloud.devops.iam.client")
 public class IamClientProperties extends AbstractIamProperties<ClientParamProperties> implements InitializingBean {

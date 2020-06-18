@@ -15,9 +15,8 @@
  */
 package com.wl4g.devops.common.config;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.reflect.Modifier.*;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -49,7 +48,7 @@ import com.wl4g.devops.common.framework.operator.EmptyOperator;
 import com.wl4g.devops.common.framework.operator.Operator;
 import com.wl4g.devops.common.logging.TraceLoggingMDCFilter;
 import com.wl4g.devops.common.web.RespBase.ErrorPromptMessageBuilder;
-import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
 /**
  * System boot properties auto configuration.

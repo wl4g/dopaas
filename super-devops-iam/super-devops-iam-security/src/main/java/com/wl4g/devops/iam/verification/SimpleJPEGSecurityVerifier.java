@@ -15,17 +15,17 @@
  */
 package com.wl4g.devops.iam.verification;
 
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.verification.model.GenericApplyResult;
 import com.wl4g.devops.iam.verification.model.GenericVerifyResult;
-import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

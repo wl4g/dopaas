@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-iam-security</artifactId>
@@ -38,8 +39,8 @@
 			<artifactId>super-devops-components-webjars-plugin</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> <version>1.8.7</version> 
-			</dependency> -->
+		<!-- <dependency> <groupId>org.pac4j</groupId> <artifactId>pac4j-oauth</artifactId> 
+			<version>1.8.7</version> </dependency> -->
 	</dependencies>
 	<build>
 		<resources>
@@ -101,12 +102,12 @@
 				<groupId>com.github.wvengen</groupId>
 				<artifactId>proguard-maven-plugin</artifactId>
 				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>proguard</goal>
-						</goals>
-					</execution>
+					<!-- <execution> -->
+					<!-- <phase>package</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>proguard</goal> -->
+					<!-- </goals> -->
+					<!-- </execution> -->
 				</executions>
 				<configuration>
 					<attach>true</attach>
@@ -149,8 +150,8 @@
 			<id>minify</id>
 			<build>
 				<plugins>
-					<!-- Minify plugin @see https://samaxes.github.io/minify-maven-plugin/index.html For example: 
-						mvn -U clean install -DskipTests -Pminify -->
+					<!-- Minify plugin @see https://samaxes.github.io/minify-maven-plugin/index.html 
+						For example: mvn -U clean install -DskipTests -Pminify -->
 					<plugin>
 						<groupId>com.samaxes.maven</groupId>
 						<artifactId>minify-maven-plugin</artifactId>

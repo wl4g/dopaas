@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.tool.common.lang;
 
-import static com.wl4g.devops.tool.common.lang.DateUtils2.*;
+import static com.wl4g.devops.components.tools.common.lang.DateUtils2.*;
 
 import java.util.Date;
 

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.web.model;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 
 import java.io.Serializable;
 import java.util.ArrayList;

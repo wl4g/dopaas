@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.tool.common.web.WebUtils2;
+import com.wl4g.devops.components.tools.common.web.WebUtils2;
 
 /**
  * {@link DefaultReplayRejectHandler}

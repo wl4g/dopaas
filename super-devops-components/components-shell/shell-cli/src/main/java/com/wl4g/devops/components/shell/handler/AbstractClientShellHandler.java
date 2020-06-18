@@ -50,12 +50,12 @@ import static com.wl4g.devops.components.shell.cli.BuiltInCommand.INTERNAL_HELP;
 import static com.wl4g.devops.components.shell.config.DefaultShellHandlerRegistrar.*;
 import static com.wl4g.devops.components.shell.utils.LineUtils.clean;
 import static com.wl4g.devops.components.shell.utils.LineUtils.parse;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import static org.jline.reader.LineReader.HISTORY_FILE;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * Abstract shell component runner

@@ -17,9 +17,9 @@ package com.wl4g.devops.tool.common.lang;
 
 import java.util.regex.Pattern;
 
+import static com.wl4g.devops.components.tools.common.lang.StringUtils2.*;
 import static java.util.Locale.US;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
-import static com.wl4g.devops.tool.common.lang.StringUtils2.*;
 
 public class StringUtils2Tests {
 

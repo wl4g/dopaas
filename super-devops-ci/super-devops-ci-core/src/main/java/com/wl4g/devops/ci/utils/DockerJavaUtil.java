@@ -11,7 +11,7 @@ import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
-import com.wl4g.devops.tool.common.lang.Assert2;
+import com.wl4g.devops.components.tools.common.lang.Assert2;
 
 import java.io.File;
 import java.io.IOException;

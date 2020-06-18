@@ -25,8 +25,8 @@ import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.util.Bytes;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.hbase.migrator.utils.HbaseMigrateUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 import java.io.IOException;
 import java.util.Iterator;

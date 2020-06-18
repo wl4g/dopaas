@@ -17,7 +17,7 @@ package com.wl4g.devops.iam.common.authc.model;
 
 import javax.validation.constraints.NotBlank;
 
-import com.wl4g.devops.tool.common.lang.StringUtils2;
+import com.wl4g.devops.components.tools.common.lang.StringUtils2;
 
 public final class TicketValidateModel extends BaseAssertModel {
 	private static final long serialVersionUID = 1383145313778896117L;

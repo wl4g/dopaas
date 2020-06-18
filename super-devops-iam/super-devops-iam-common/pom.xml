@@ -107,12 +107,12 @@
 				<groupId>com.github.wvengen</groupId>
 				<artifactId>proguard-maven-plugin</artifactId>
 				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>proguard</goal>
-						</goals>
-					</execution>
+					<!-- <execution> -->
+					<!-- <phase>package</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>proguard</goal> -->
+					<!-- </goals> -->
+					<!-- </execution> -->
 				</executions>
 				<configuration>
 					<attach>true</attach>
@@ -120,7 +120,7 @@
 					<attachArtifactClassifier>pg</attachArtifactClassifier>
 					<proguardInclude>${basedir}/proguard.cfg</proguardInclude>
 					<options>
-						<option>-target 1.8</option>
+						<option>-target 10</option>
 						<option>-dontshrink</option>
 						<option>-dontoptimize</option>
 						<option>-dontskipnonpubliclibraryclasses</option>
@@ -137,8 +137,8 @@
 					<outjar>${project.artifactId}-${project.version}-pg.jar</outjar>
 					<libs>
 						<lib>${java.home}/lib/rt.jar</lib>
-						<lib>${java.home}/lib/jsse.jar</lib>
-						<lib>${java.home}/lib/jce.jar</lib>
+						<!-- <lib>${java.home}/lib/jsse.jar</lib> -->
+						<!-- <lib>${java.home}/lib/jce.jar</lib> -->
 					</libs>
 					<addMavenDescriptor>true</addMavenDescriptor>
 					<injar>classes</injar>

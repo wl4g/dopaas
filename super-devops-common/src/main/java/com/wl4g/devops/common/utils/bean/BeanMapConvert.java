@@ -22,7 +22,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.*;
 
-import static com.wl4g.devops.tool.common.reflect.TypeUtils2.isSimpleType;
+import static com.wl4g.devops.components.tools.common.reflect.TypeUtils2.isSimpleType;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.components.shell.handler;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.DisposableBean;

@@ -33,8 +33,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
 import static org.springframework.util.Assert.*;
 
 /**

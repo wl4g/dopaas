@@ -31,9 +31,9 @@ import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.sns.handler.AbstractSnsHandler;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_SNSAUTH;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.state;
 import static com.wl4g.devops.iam.sns.web.AbstractSnsController.PARAM_SNS_CALLBACK_ID;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.tool.common.lang.Assert2.state;
 
 /**
  * SNS oauth2 authentication abstract filter

@@ -1,12 +1,12 @@
 package com.wl4g.devops.coss.utils;
 
-import com.wl4g.devops.tool.common.io.FileIOUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+
+import com.wl4g.devops.components.tools.common.io.FileIOUtils;
 
 /**
  * @author vjay

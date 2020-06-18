@@ -1,6 +1,6 @@
 package com.wl4g.devops.coss.startup;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
 import static java.util.Objects.nonNull;
 
 import javax.net.ssl.SSLException;

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.components.shell.signal;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
 
 /**
  * Pre-Confirm interrupt message

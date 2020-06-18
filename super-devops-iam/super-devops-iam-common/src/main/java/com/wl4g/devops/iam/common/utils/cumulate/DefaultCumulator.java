@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.common.utils.cumulate;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 import java.util.List;
 
@@ -26,8 +26,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.wl4g.devops.iam.common.cache.IamCache;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.cache.CacheKey;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Default security limit accumulation counter based on distributed

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.components.webide.generate;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;

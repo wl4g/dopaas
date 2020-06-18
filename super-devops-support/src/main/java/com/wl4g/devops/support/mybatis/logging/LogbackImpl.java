@@ -1,6 +1,6 @@
 package com.wl4g.devops.support.mybatis.logging;
 
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 import org.apache.ibatis.logging.Log;
 import org.slf4j.Logger;

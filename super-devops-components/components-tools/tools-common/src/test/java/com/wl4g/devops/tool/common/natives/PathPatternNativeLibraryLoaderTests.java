@@ -18,6 +18,8 @@ package com.wl4g.devops.tool.common.natives;
 import static org.apache.commons.lang3.SystemUtils.OS_ARCH;
 import static org.apache.commons.lang3.SystemUtils.OS_NAME;
 
+import com.wl4g.devops.components.tools.common.natives.PathPatternNativeLibraryLoader;
+
 public class PathPatternNativeLibraryLoaderTests {
 
 	public static void main(String[] args) throws Exception {

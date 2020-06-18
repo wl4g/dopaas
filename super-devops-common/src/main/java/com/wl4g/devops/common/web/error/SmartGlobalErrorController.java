@@ -47,12 +47,12 @@ import static org.springframework.http.MediaType.*;
 import static com.google.common.base.Charsets.UTF_8;
 
 import static com.wl4g.devops.common.constants.DevOpsConstants.PARAM_STACK_TRACE;
-import static com.wl4g.devops.tool.common.lang.Exceptions.getStackTraceAsString;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.*;
-import static com.wl4g.devops.tool.common.web.WebUtils2.isTrue;
-import static com.wl4g.devops.tool.common.web.WebUtils2.write;
-import static com.wl4g.devops.tool.common.web.WebUtils2.writeJson;
-import static com.wl4g.devops.tool.common.web.WebUtils2.ResponseType.*;
+import static com.wl4g.devops.components.tools.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.*;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.isTrue;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.write;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.writeJson;
+import static com.wl4g.devops.components.tools.common.web.WebUtils2.ResponseType.*;
 
 import com.wl4g.devops.common.annotation.DevopsErrorController;
 import com.wl4g.devops.common.config.ErrorControllerAutoConfiguration.ErrorControllerProperties;

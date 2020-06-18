@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.common.security.mitm;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 import java.io.IOException;
 
@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
-import com.wl4g.devops.tool.common.log.SmartLogger;
 
 /**
  * Perform automatic decryption decoding filtering for encrypted parameters.

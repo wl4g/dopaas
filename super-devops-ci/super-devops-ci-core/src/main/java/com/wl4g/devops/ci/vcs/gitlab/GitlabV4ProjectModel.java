@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.vcs.gitlab;
 
 import java.util.List;
 
-import com.wl4g.devops.tool.common.annotation.Reserved;
+import com.wl4g.devops.components.tools.common.annotation.Reserved;
 
 /**
  * Gitlab API-v4 for projects model.

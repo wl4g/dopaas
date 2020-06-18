@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.tool.common.codec;
 
+import static com.wl4g.devops.components.tools.common.codec.CheckSums.*;
 import static java.lang.System.out;
 
 import java.util.UUID;
 
-import static com.wl4g.devops.tool.common.codec.CheckSums.*;
-import com.wl4g.devops.tool.common.lang.TypeConverts;
+import com.wl4g.devops.components.tools.common.lang.TypeConverts;
 
 public class ChechSumsTests {
 

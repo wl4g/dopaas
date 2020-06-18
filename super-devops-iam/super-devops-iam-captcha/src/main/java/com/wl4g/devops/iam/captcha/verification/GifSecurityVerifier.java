@@ -15,19 +15,19 @@
  */
 package com.wl4g.devops.iam.captcha.verification;
 
+import com.wl4g.devops.components.tools.common.crypto.asymmetric.spec.KeyPairSpec;
 import com.wl4g.devops.iam.captcha.gif.Captcha;
 import com.wl4g.devops.iam.captcha.gif.GifCaptcha;
 import com.wl4g.devops.iam.captcha.gif.model.GifApplyImgModel;
 import com.wl4g.devops.iam.captcha.gif.model.GifVerifyImgModel;
 import com.wl4g.devops.iam.crypto.SecureCryptService.SecureAlgKind;
 import com.wl4g.devops.iam.verification.GraphBasedSecurityVerifier;
-import com.wl4g.devops.tool.common.crypto.asymmetric.spec.KeyPairSpec;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

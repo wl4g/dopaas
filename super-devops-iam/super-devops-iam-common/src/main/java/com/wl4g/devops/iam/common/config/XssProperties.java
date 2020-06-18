@@ -27,10 +27,10 @@ import static org.apache.commons.lang3.StringEscapeUtils.*;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.springframework.beans.factory.InitializingBean;
 
-import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * XSS configuration properties

@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.common.security.replay;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -39,6 +38,7 @@ import org.apache.shiro.util.AntPathMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.config.ReplayProperties;
@@ -48,11 +48,12 @@ import com.wl4g.devops.iam.common.security.replay.handler.LockedReplayTokenExcep
 import com.wl4g.devops.iam.common.security.replay.handler.MissingReplayTokenException;
 import com.wl4g.devops.iam.common.security.replay.handler.ReplayException;
 import com.wl4g.devops.iam.common.security.replay.handler.ReplayRejectHandler;
-import com.wl4g.devops.tool.common.log.SmartLogger;
-import static com.wl4g.devops.tool.common.codec.CheckSums.crc16String;
+
 import static org.apache.commons.codec.binary.Hex.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.CACHE_REPLAY_SIGN;
-import static com.wl4g.devops.tool.common.crypto.digest.DigestUtils2.*;
+import static com.wl4g.devops.components.tools.common.codec.CheckSums.crc16String;
+import static com.wl4g.devops.components.tools.common.crypto.digest.DigestUtils2.*;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * Replay attacks request protection security filter.

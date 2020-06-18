@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;

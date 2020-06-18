@@ -23,9 +23,9 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
-import static com.wl4g.devops.tool.common.jvm.JvmRuntimeKit.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.common.annotation.conditional.ConditionalOnJdwpDebug.*;
+import static com.wl4g.devops.components.tools.common.jvm.JvmRuntimeKit.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;

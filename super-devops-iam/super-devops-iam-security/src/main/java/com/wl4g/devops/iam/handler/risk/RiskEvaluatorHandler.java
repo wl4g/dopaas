@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.handler.risk;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static java.util.Collections.unmodifiableList;
 
 import java.util.ArrayList;

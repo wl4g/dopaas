@@ -16,13 +16,13 @@
 package com.wl4g.devops.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wl4g.devops.tool.common.id.SnowflakeIdGenerator;
-import com.wl4g.devops.tool.common.lang.period.PeriodFormatterHolder;
+import com.wl4g.devops.components.tools.common.id.SnowflakeIdGenerator;
+import com.wl4g.devops.components.tools.common.lang.period.PeriodFormatterHolder;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.Math.abs;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.sns;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -35,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.Charsets;
 import com.wl4g.devops.common.exception.iam.SnsApiBindingException;
+import com.wl4g.devops.components.tools.common.web.WebUtils2;
 import com.wl4g.devops.iam.common.cache.IamCache;
 import com.wl4g.devops.iam.config.properties.SnsProperties.AbstractSocialProperties;
 import com.wl4g.devops.iam.sns.support.OAuth2GrantType;
@@ -42,7 +43,6 @@ import com.wl4g.devops.iam.sns.support.OAuth2ResponseType;
 import com.wl4g.devops.iam.sns.support.Oauth2AccessToken;
 import com.wl4g.devops.iam.sns.support.Oauth2OpenId;
 import com.wl4g.devops.iam.sns.support.Oauth2UserProfile;
-import com.wl4g.devops.tool.common.web.WebUtils2;
 
 /**
  * Abstract generic based social networking connection binding implement

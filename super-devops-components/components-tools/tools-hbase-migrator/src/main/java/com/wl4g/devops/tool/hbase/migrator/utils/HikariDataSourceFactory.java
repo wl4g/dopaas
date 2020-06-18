@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.tool.hbase.migrator.utils;
 
-import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
 import static java.lang.String.format;
 
 import java.sql.Connection;

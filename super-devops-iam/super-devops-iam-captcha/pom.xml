@@ -64,12 +64,12 @@
 				<groupId>com.github.wvengen</groupId>
 				<artifactId>proguard-maven-plugin</artifactId>
 				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>proguard</goal>
-						</goals>
-					</execution>
+					<!-- <execution> -->
+					<!-- <phase>package</phase> -->
+					<!-- <goals> -->
+					<!-- <goal>proguard</goal> -->
+					<!-- </goals> -->
+					<!-- </execution> -->
 				</executions>
 				<configuration>
 					<attach>true</attach>

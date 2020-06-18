@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.iam.authc.credential.secure;
 
-import static com.wl4g.devops.tool.common.codec.CheckSums.crc32;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.codec.CheckSums.crc32;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.components.shell.signal;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.*;
 
 /**
  * Stderr exception message.

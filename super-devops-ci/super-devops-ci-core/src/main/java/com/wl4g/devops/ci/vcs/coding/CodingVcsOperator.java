@@ -18,7 +18,7 @@ package com.wl4g.devops.ci.vcs.coding;
 import com.wl4g.devops.ci.vcs.AbstractVcsOperator;
 import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.tool.common.annotation.Reserved;
+import com.wl4g.devops.components.tools.common.annotation.Reserved;
 
 import org.springframework.http.HttpEntity;
 
