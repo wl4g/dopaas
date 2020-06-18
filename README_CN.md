@@ -28,7 +28,7 @@ English version goes [here](README.md)
 为了更简洁起见，每个服务仅部署单节点到同一台物理机，作为伪集群。
 - step1：编译
 ```
-cd super-devops
+cd super-cloudops
 mvn -U clean install -DskipTests -T 2C
 ```
 - step2：初始化数据库，首先准备一台CentOS6.5+以及MySQL5.6+实例，新建名为devops(utf8/utf8_bin)的数据库，再使用 [初始sql脚本](db/) 进行初始化它。（注：此脚本与代码版本对应，我们会定期更新，请按命名后缀日期使用最新的即可）
