@@ -33,8 +33,8 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.listener.AbstractMessageListenerContainer.AckMode;
-import org.springframework.kafka.listener.config.ContainerProperties;
+import org.springframework.kafka.listener.ContainerProperties.AckMode;
+import org.springframework.kafka.listener.ContainerProperties;
 
 import java.util.Map;
 import java.util.Properties;
@@ -111,7 +111,10 @@ public class UmcReceiveAutoConfiguration extends OptionalPrefixControllerAutoCon
 		ContainerProperties containerProps = factory.getContainerProperties();
 		containerProps.setPollTimeout(conf.getKafka().getPollTimeout());
 		// Bulk consumption change buffer queue size.
-		containerProps.setQueueDepth(conf.getKafka().getQueueDepth());
+		// containerProps.setQueueDepth(conf.getKafka().getQueueDepth());
+		// TODO
+		// containerProps.setIdleEventInterval(null);
+		// containerProps.setIdleBetweenPolls(0);
 		containerProps.setAckMode(AckMode.MANUAL_IMMEDIATE);
 		return factory;
 	}

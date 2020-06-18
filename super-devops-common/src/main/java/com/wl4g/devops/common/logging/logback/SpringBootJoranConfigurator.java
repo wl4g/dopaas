@@ -29,7 +29,7 @@ import org.springframework.core.env.Environment;
  *
  * @author Phillip Webb
  */
-public class SpringBootJoranConfigurator extends JoranConfigurator {
+class SpringBootJoranConfigurator extends JoranConfigurator {
 
 	private LoggingInitializationContext initializationContext;
 
@@ -42,7 +42,7 @@ public class SpringBootJoranConfigurator extends JoranConfigurator {
 		super.addInstanceRules(rs);
 		Environment environment = this.initializationContext.getEnvironment();
 		rs.addRule(new ElementSelector("configuration/springProperty"), new SpringPropertyAction(environment));
-		rs.addRule(new ElementSelector("*/springProfile"), new SpringProfileAction(this.initializationContext.getEnvironment()));
+		rs.addRule(new ElementSelector("*/springProfile"), new SpringProfileAction(environment));
 		rs.addRule(new ElementSelector("*/springProfile/*"), new NOPAction());
 	}
 

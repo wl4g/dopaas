@@ -16,8 +16,9 @@
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- Spring's. -->
-		<spring-boot.version>1.5.13.RELEASE</spring-boot.version>
-		<spring-boot-admin.version>1.5.7</spring-boot-admin.version>
+		<spring-boot.version>2.2.3.RELEASE</spring-boot.version>
+		<spring-boot-admin.version>2.2.2</spring-boot-admin.version>
+		<spring-boot-admin-server-ui-login.version>1.5.7</spring-boot-admin-server-ui-login.version>
 		<!-- Javax's. -->
 		<javax-inject.version>1</javax-inject.version>
 		<javax-mail.version>1.4.7</javax-mail.version>
@@ -461,7 +462,7 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- Spring's. -->
+			<!-- Spring Boot. -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
@@ -469,10 +470,11 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<!-- Spring Cloud. -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Edgware.SR5</version>
+				<version>Hoxton.SR5</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -492,6 +494,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<!-- Spring Boot Admin. -->
 			<dependency>
 				<groupId>de.codecentric</groupId>
 				<artifactId>spring-boot-admin-starter-client</artifactId>
@@ -500,20 +503,14 @@
 			</dependency>
 			<dependency>
 				<groupId>de.codecentric</groupId>
-				<artifactId>spring-boot-admin-server</artifactId>
-				<version>${spring-boot-admin.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>de.codecentric</groupId>
-				<artifactId>spring-boot-admin-server-ui</artifactId>
+				<artifactId>spring-boot-admin-starter-server</artifactId>
 				<version>${spring-boot-admin.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>de.codecentric</groupId>
 				<artifactId>spring-boot-admin-server-ui-login</artifactId>
-				<version>${spring-boot-admin.version}</version>
+				<version>${spring-boot-admin-server-ui-login.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<!-- Javax's. -->

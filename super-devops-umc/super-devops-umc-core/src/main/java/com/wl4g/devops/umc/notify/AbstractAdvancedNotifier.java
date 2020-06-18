@@ -16,25 +16,27 @@
 package com.wl4g.devops.umc.notify;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wl4g.devops.common.constants.UMCDevOpsConstants;
 import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.tool.common.log.SmartLogger;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 import com.wl4g.devops.umc.model.StatusMessage;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.*;
 
-import de.codecentric.boot.admin.event.ClientApplicationEvent;
-import de.codecentric.boot.admin.model.StatusInfo;
-import de.codecentric.boot.admin.notify.AbstractStatusChangeNotifier;
+import de.codecentric.boot.admin.server.domain.entities.Instance;
+import de.codecentric.boot.admin.server.domain.entities.InstanceRepository;
+import de.codecentric.boot.admin.server.domain.events.InstanceEvent;
+import de.codecentric.boot.admin.server.domain.values.StatusInfo;
+import de.codecentric.boot.admin.server.notify.AbstractStatusChangeNotifier;
+import reactor.core.publisher.Mono;
 
 /**
  * Note that when multiple types of notifications are opened, the circular
@@ -52,14 +54,9 @@ import de.codecentric.boot.admin.notify.AbstractStatusChangeNotifier;
  * @since
  */
 public abstract class AbstractAdvancedNotifier extends AbstractStatusChangeNotifier {
-	final protected Logger log = getLogger(getClass());
-	final private static String DEFAULT_APPINFO = "#{application.name}-#{application.id}";
-	final private static String DEFAULT_APPHEALTHURL = "#{application.healthUrl}";
-	final private static String DEFAULT_FROMSTATUS = "#{from.status}";
-	final private static String DEFAULT_TOSTATUS = "#{to.status}";
-	final private SpelExpressionParser parser = new SpelExpressionParser();
-	final private ObjectMapper mapper = new ObjectMapper();
-	final public static String INFO_PREFIX = "sba_event_";
+
+	final protected SmartLogger log = getLogger(getClass());
+
 	private Expression appInfo;
 	private Expression healthUrl;
 	private Expression fromStatus;
@@ -75,40 +72,41 @@ public abstract class AbstractAdvancedNotifier extends AbstractStatusChangeNotif
 	@Autowired
 	protected JedisService jedisService;
 
-	public AbstractAdvancedNotifier() {
-		this.appInfo = this.parser.parseExpression(DEFAULT_APPINFO, ParserContext.TEMPLATE_EXPRESSION);
-		this.healthUrl = this.parser.parseExpression(DEFAULT_APPHEALTHURL, ParserContext.TEMPLATE_EXPRESSION);
-		this.fromStatus = this.parser.parseExpression(DEFAULT_FROMSTATUS, ParserContext.TEMPLATE_EXPRESSION);
-		this.toStatus = this.parser.parseExpression(DEFAULT_TOSTATUS, ParserContext.TEMPLATE_EXPRESSION);
+	public AbstractAdvancedNotifier(InstanceRepository repository) {
+		super(repository);
+		this.appInfo = parser.parseExpression(DEFAULT_APPINFO, ParserContext.TEMPLATE_EXPRESSION);
+		this.healthUrl = parser.parseExpression(DEFAULT_APPHEALTHURL, ParserContext.TEMPLATE_EXPRESSION);
+		this.fromStatus = parser.parseExpression(DEFAULT_FROMSTATUS, ParserContext.TEMPLATE_EXPRESSION);
+		this.toStatus = parser.parseExpression(DEFAULT_TOSTATUS, ParserContext.TEMPLATE_EXPRESSION);
 	}
 
 	@Override
-	protected void doNotify(ClientApplicationEvent e) throws Exception {
+	protected Mono<Void> doNotify(InstanceEvent event, Instance instance) {
 		if (log.isInfoEnabled())
-			log.info("Application event. {}", e.getApplication());
+			log.info("Application event. {}", instance.getId());
 
-		StatusInfo info = e.getApplication().getStatusInfo();
+		StatusInfo info = instance.getStatusInfo();
 		// Get info.
 		List<String> mailTo = Arrays.asList(getMailTo());
 		List<String> phoneTo = Arrays.asList(getPhoneTo());
-		String appInfo = this.getAppInfoText(e);
-		String healthUrl = this.getHealthUrlText(e);
-		String fStatus = this.getFromStatusText(e);
-		String tStatus = this.getToStatusText(e);
+		String appInfo = getAppInfoText(event, instance);
+		String healthUrl = getHealthUrlText(event, instance);
+		String fStatus = getFromStatusText(event, instance);
+		String tStatus = getToStatusText(event, instance);
 		String msgId = UUID.randomUUID().toString().replaceAll("-", "").substring(16, 24);
 		String detailsUrl = getHrefUrl() + UMCDevOpsConstants.URI_ADMIN_HOME + msgId;
 
 		// Save StatusMessage to cache.
-		StatusMessage msg = StatusMessage.wrap(appInfo, healthUrl, fStatus, tStatus, info.getTimestamp(), mailTo, phoneTo,
-				detailsUrl, msgId, info);
-		String msgStr = this.mapper.writeValueAsString(msg);
-		this.jedisService.set((INFO_PREFIX + msgId), msgStr, this.getExpireSec());
-
-		if (log.isInfoEnabled())
-			log.info("Notifier status message. {}", msgStr);
+		StatusMessage msg = StatusMessage.wrap(appInfo, healthUrl, fStatus, tStatus, event.getTimestamp().toEpochMilli(), mailTo,
+				phoneTo, detailsUrl, msgId, info);
+		String msgStr = JacksonUtils.toJSONString(msg);
+		jedisService.set((INFO_PREFIX + msgId), msgStr, getExpireSec());
+		log.info("Notifier status message. {}", msgStr);
 
 		// Notifier processing.
-		this.doNotify(msg);
+		doNotify(msg);
+
+		return null;
 	}
 
 	protected abstract void doNotify(StatusMessage status);
@@ -162,26 +160,27 @@ public abstract class AbstractAdvancedNotifier extends AbstractStatusChangeNotif
 		this.hrefUrl = serverUrl;
 	}
 
-	private String getAppInfoText(ClientApplicationEvent event) {
+	private String getAppInfoText(InstanceEvent event, Instance instance) {
 		return this.appInfo.getValue(event, String.class);
 	}
 
-	private String getHealthUrlText(ClientApplicationEvent event) {
+	private String getHealthUrlText(InstanceEvent event, Instance instance) {
 		return this.healthUrl.getValue(event, String.class);
 	}
 
-	private String getFromStatusText(ClientApplicationEvent event) {
+	private String getFromStatusText(InstanceEvent event, Instance instance) {
 		return this.fromStatus.getValue(event, String.class);
 	}
 
-	private String getToStatusText(ClientApplicationEvent event) {
+	private String getToStatusText(InstanceEvent event, Instance instance) {
 		return this.toStatus.getValue(event, String.class);
 	}
 
-	static {
-		// To prevent decompile.
-		new HashMap<>().forEach((k, v) -> {
-		});
-	}
+	final private static String DEFAULT_APPINFO = "#{application.name}-#{application.id}";
+	final private static String DEFAULT_APPHEALTHURL = "#{application.healthUrl}";
+	final private static String DEFAULT_FROMSTATUS = "#{from.status}";
+	final private static String DEFAULT_TOSTATUS = "#{to.status}";
+	final public static String INFO_PREFIX = "sba_event_";
+	final private static SpelExpressionParser parser = new SpelExpressionParser();
 
 }

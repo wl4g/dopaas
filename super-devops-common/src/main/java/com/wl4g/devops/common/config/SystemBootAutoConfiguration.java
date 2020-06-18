@@ -25,14 +25,7 @@ import static java.util.stream.Collectors.toList;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.coyote.AbstractProtocol;
-import org.apache.coyote.ProtocolHandler;
-import org.apache.tomcat.util.threads.TaskQueue;
-import org.apache.tomcat.util.threads.TaskThreadFactory;
-import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.MethodMatcher;
 import org.springframework.aop.Pointcut;
@@ -41,9 +34,6 @@ import org.springframework.aop.support.AbstractGenericPointcutAdvisor;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -72,12 +62,7 @@ import com.wl4g.devops.tool.common.log.SmartLogger;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class SystemBootAutoConfiguration implements ApplicationContextAware {
 
-	final private static SmartLogger log = getLogger(SystemBootAutoConfiguration.class);
-
-	/**
-	 * API prompt max length.
-	 */
-	final private static int PROMPT_MAX_LEN = 4;
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * {@link ApplicationContext}
@@ -97,7 +82,7 @@ public class SystemBootAutoConfiguration implements ApplicationContextAware {
 	 * @param env
 	 */
 	protected void initBootProperties(Environment env) {
-		// Set API message prompt
+		// Sets API message prompt
 		initErrorPrompt(env);
 	}
 
@@ -113,7 +98,6 @@ public class SystemBootAutoConfiguration implements ApplicationContextAware {
 		} else {
 			ErrorPromptMessageBuilder.setPrompt(appName.substring(0, 4));
 		}
-
 	}
 
 	// --- C U S T O M A T I O N _ L O G G I N G _ M D C. ---
@@ -127,8 +111,8 @@ public class SystemBootAutoConfiguration implements ApplicationContextAware {
 
 	@Bean
 	@ConditionalOnBean(TraceLoggingMDCFilter.class)
-	public FilterRegistrationBean defaultTraceLoggingMDCFilterBean(TraceLoggingMDCFilter filter) {
-		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<TraceLoggingMDCFilter> defaultTraceLoggingMDCFilterBean(TraceLoggingMDCFilter filter) {
+		FilterRegistrationBean<TraceLoggingMDCFilter> filterBean = new FilterRegistrationBean<>(filter);
 		filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
 		// Cannot use '/*' or it will not be added to the container chain (only
 		// '/**')
@@ -137,53 +121,6 @@ public class SystemBootAutoConfiguration implements ApplicationContextAware {
 	}
 
 	// --- C U S T O M A T I O N _ S E R V L E T _ C O N T A I N E R. ---
-
-	/**
-	 * 
-	 * Customization servlet container configuring. </br>
-	 * 
-	 * @see {@link EmbeddedServletContainerAutoConfiguration}
-	 * 
-	 * @return
-	 */
-	@Bean
-	public EmbeddedServletContainerCustomizer customEmbeddedServletContainerCustomizer() {
-		return container -> {
-			// Tomcat container customization
-			if (container instanceof TomcatEmbeddedServletContainerFactory) {
-				TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) container;
-				tomcat.addConnectorCustomizers(connector -> {
-					ProtocolHandler handler = connector.getProtocolHandler();
-					if (handler instanceof AbstractProtocol) {
-						AbstractProtocol<?> protocol = (AbstractProtocol<?>) handler;
-						/**
-						 * {@link org.apache.tomcat.util.net.NioEndpoint#startInternal()}
-						 * {@link org.apache.tomcat.util.net.NioEndpoint#createExecutor()}
-						 */
-						protocol.setExecutor(customTomcatExecutor(protocol));
-					}
-				});
-			} else {
-				log.warn("Skip using custom servlet container, EmbeddedServletContainer: {}", container);
-			}
-		};
-
-	}
-
-	/**
-	 * Custom tomcat executor
-	 * 
-	 * @param protocol
-	 * @return
-	 */
-	private Executor customTomcatExecutor(AbstractProtocol<?> protocol) {
-		TaskThreadFactory tf = new TaskThreadFactory(protocol.getName() + "-exe-", true, protocol.getThreadPriority());
-		TaskQueue taskqueue = new TaskQueue();
-		Executor executor = new ThreadPoolExecutor(protocol.getMinSpareThreads(), protocol.getMaxThreads(), 60, TimeUnit.SECONDS,
-				taskqueue, tf);
-		taskqueue.setParent((ThreadPoolExecutor) executor);
-		return executor;
-	}
 
 	// --- E N H A N C E D _ F R A M E W O R K. ---
 
@@ -256,5 +193,10 @@ public class SystemBootAutoConfiguration implements ApplicationContextAware {
 		advisor.setAdvice(advice);
 		return advisor;
 	}
+
+	/**
+	 * API prompt max length.
+	 */
+	final private static int PROMPT_MAX_LEN = 4;
 
 }

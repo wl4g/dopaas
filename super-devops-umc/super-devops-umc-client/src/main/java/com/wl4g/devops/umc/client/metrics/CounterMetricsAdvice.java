@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -29,6 +28,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
 
 import com.wl4g.devops.common.exception.umc.UmcException;
+
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 
 /**
  * It can be used to monitor the execution time of any method it is called.<br/>
@@ -42,16 +44,17 @@ public class CounterMetricsAdvice extends AbstractMetricsAdvice {
 	final private static Logger log = LoggerFactory.getLogger(CounterMetricsAdvice.class);
 
 	@Autowired
-	private CounterService counterService;
+	private MeterRegistry registry;
 
 	/**
 	 * Number of times the AOP statistical method is called.
 	 */
 	@Override
-	public Object invoke(MethodInvocation invocation) throws Throwable {
+	public Object invoke(MethodInvocation invo) throws Throwable {
 		try {
-			this.counterService.increment(getMetricName(invocation));
-			return invocation.proceed();
+			Counter counter = registry.counter(getMetricName(invo), "method", invo.getMethod().toGenericString());
+			counter.increment(1);
+			return invo.proceed();
 		} catch (Throwable e) {
 			throw new UmcException(e);
 		}

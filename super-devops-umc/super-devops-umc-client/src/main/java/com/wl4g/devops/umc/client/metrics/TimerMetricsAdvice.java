@@ -15,12 +15,13 @@
  */
 package com.wl4g.devops.umc.client.metrics;
 
+import java.util.concurrent.TimeUnit;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.metrics.GaugeService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -28,6 +29,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.wl4g.devops.common.exception.umc.UmcException;
 import com.wl4g.devops.umc.client.indicator.TimeoutsHealthIndicator;
 
@@ -52,7 +55,7 @@ public class TimerMetricsAdvice extends AbstractMetricsAdvice {
 	 * Services / BufferGaugeService / ServoMetric Services
 	 */
 	@Autowired
-	private GaugeService gaugeService;
+	private MetricRegistry registry;
 
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
@@ -65,10 +68,11 @@ public class TimerMetricsAdvice extends AbstractMetricsAdvice {
 			long timeDiff = System.currentTimeMillis() - start;
 
 			// Save gauge.
-			this.gaugeService.submit(warpTimerName(metricName), timeDiff);
+			Timer timer = registry.timer(warpTimerName(metricName));
+			timer.update(timeDiff, TimeUnit.MILLISECONDS);
 
 			// Save gauge to healthIndicator.
-			this.saveHealthIndicator(metricName, timeDiff);
+			saveHealthIndicator(metricName, timeDiff);
 
 			return res;
 		} catch (Throwable e) {
@@ -83,8 +87,8 @@ public class TimerMetricsAdvice extends AbstractMetricsAdvice {
 	 * @param timeDiff
 	 */
 	private void saveHealthIndicator(String metricName, long timeDiff) {
-		if (this.timeoutsHealthIndicator != null) {
-			this.timeoutsHealthIndicator.addTimes(metricName, timeDiff);
+		if (timeoutsHealthIndicator != null) {
+			timeoutsHealthIndicator.addTimes(metricName, timeDiff);
 		}
 	}
 

@@ -24,7 +24,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class RestTemplateConfiguration {
+public class RestTemplateAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean

@@ -33,7 +33,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
  * @since
  */
 @Configuration
-public class EngineAutoConfiguration {
+public class DynamicEngineAutoConfiguration {
 
 	@Bean
 	public CodeExecutor codeExecutor() {

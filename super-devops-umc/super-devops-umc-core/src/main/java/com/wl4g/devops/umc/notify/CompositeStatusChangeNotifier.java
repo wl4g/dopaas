@@ -21,6 +21,9 @@ import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.umc.model.StatusMessage;
+
+import de.codecentric.boot.admin.server.domain.entities.InstanceRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -35,6 +38,10 @@ public class CompositeStatusChangeNotifier extends AbstractAdvancedNotifier {
 
 	@Autowired
 	private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
+
+	public CompositeStatusChangeNotifier(InstanceRepository repository) {
+		super(repository);
+	}
 
 	@Override
 	protected void doNotify(StatusMessage status) {
