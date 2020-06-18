@@ -19,9 +19,10 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
@@ -31,10 +32,14 @@ import ch.qos.logback.classic.turbo.TurboFilter;
 import ch.qos.logback.classic.util.ContextInitializer;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.spi.FilterReply;
+import ch.qos.logback.core.status.OnConsoleStatusListener;
 import ch.qos.logback.core.status.Status;
+import ch.qos.logback.core.util.StatusListenerConfigHelper;
+
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.slf4j.impl.StaticLoggerBinder;
 
 import org.springframework.boot.logging.LogFile;
@@ -42,7 +47,9 @@ import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggerConfiguration;
 import org.springframework.boot.logging.LoggingInitializationContext;
 import org.springframework.boot.logging.LoggingSystem;
+import org.springframework.boot.logging.LoggingSystemProperties;
 import org.springframework.boot.logging.Slf4JLoggingSystem;
+import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
@@ -59,7 +66,7 @@ public class LogbackLoggingSystem extends Slf4JLoggingSystem {
 
 	private static final String CONFIGURATION_FILE_PROPERTY = "logback.configurationFile";
 
-	private static final LogLevels<Level> LEVELS = new LogLevels<Level>();
+	private static final LogLevels<Level> LEVELS = new LogLevels<>();
 
 	static {
 		LEVELS.map(LogLevel.TRACE, Level.TRACE);
@@ -99,7 +106,6 @@ public class LogbackLoggingSystem extends Slf4JLoggingSystem {
 		}
 		super.beforeInitialize();
 		loggerContext.getTurboFilterList().add(FILTER);
-		configureJBossLoggingToUseSlf4j();
 	}
 
 	@Override
@@ -108,12 +114,12 @@ public class LogbackLoggingSystem extends Slf4JLoggingSystem {
 		if (isAlreadyInitialized(loggerContext)) {
 			return;
 		}
-		loggerContext.getTurboFilterList().remove(FILTER);
 		super.initialize(initializationContext, configLocation, logFile);
+		loggerContext.getTurboFilterList().remove(FILTER);
 		markAsInitialized(loggerContext);
 		if (StringUtils.hasText(System.getProperty(CONFIGURATION_FILE_PROPERTY))) {
-			getLogger(LogbackLoggingSystem.class.getName()).warn(
-					"Ignoring '" + CONFIGURATION_FILE_PROPERTY + "' system property. " + "Please use 'logging.config' instead.");
+			getLogger(LogbackLoggingSystem.class.getName())
+					.warn("Ignoring '" + CONFIGURATION_FILE_PROPERTY + "' system property. Please use 'logging.config' instead.");
 		}
 	}
 
@@ -121,10 +127,25 @@ public class LogbackLoggingSystem extends Slf4JLoggingSystem {
 	protected void loadDefaults(LoggingInitializationContext initializationContext, LogFile logFile) {
 		LoggerContext context = getLoggerContext();
 		stopAndReset(context);
-		LogbackConfigurator configurator = new LogbackConfigurator(context);
-		context.putProperty("LOG_LEVEL_PATTERN",
-				initializationContext.getEnvironment().resolvePlaceholders("${logging.pattern.level:${LOG_LEVEL_PATTERN:%5p}}"));
+		boolean debug = Boolean.getBoolean("logback.debug");
+		if (debug) {
+			StatusListenerConfigHelper.addOnConsoleListenerInstance(context, new OnConsoleStatusListener());
+		}
+		LogbackConfigurator configurator = debug ? new DebugLogbackConfigurator(context) : new LogbackConfigurator(context);
+		Environment environment = initializationContext.getEnvironment();
+		context.putProperty(LoggingSystemProperties.LOG_LEVEL_PATTERN,
+				environment.resolvePlaceholders("${logging.pattern.level:${LOG_LEVEL_PATTERN:%5p}}"));
+		context.putProperty(LoggingSystemProperties.LOG_DATEFORMAT_PATTERN, environment
+				.resolvePlaceholders("${logging.pattern.dateformat:${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}}"));
+		context.putProperty(LoggingSystemProperties.ROLLING_FILE_NAME_PATTERN,
+				environment.resolvePlaceholders("${logging.pattern.rolling-file-name:${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz}"));
+
+		//
+		// [Start] Custom enhanced logback configurer.
+		//
 		new EnhancedLogbackConfiguration(initializationContext, logFile).apply(configurator);
+		// [End] Custom enhanced logback configurer.
+
 		context.setPackagingDataEnabled(true);
 	}
 
@@ -142,7 +163,7 @@ public class LogbackLoggingSystem extends Slf4JLoggingSystem {
 		StringBuilder errors = new StringBuilder();
 		for (Status status : statuses) {
 			if (status.getLevel() == Status.ERROR) {
-				errors.append(errors.length() > 0 ? String.format("%n") : "");
+				errors.append((errors.length() > 0) ? String.format("%n") : "");
 				errors.append(status.toString());
 			}
 		}
@@ -165,9 +186,18 @@ public class LogbackLoggingSystem extends Slf4JLoggingSystem {
 	private void stopAndReset(LoggerContext loggerContext) {
 		loggerContext.stop();
 		loggerContext.reset();
-		if (isBridgeHandlerAvailable()) {
+		if (isBridgeHandlerInstalled()) {
 			addLevelChangePropagator(loggerContext);
 		}
+	}
+
+	private boolean isBridgeHandlerInstalled() {
+		if (!isBridgeHandlerAvailable()) {
+			return false;
+		}
+		java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
+		Handler[] handlers = rootLogger.getHandlers();
+		return handlers.length == 1 && handlers[0] instanceof SLF4JBridgeHandler;
 	}
 
 	private void addLevelChangePropagator(LoggerContext loggerContext) {
@@ -193,17 +223,13 @@ public class LogbackLoggingSystem extends Slf4JLoggingSystem {
 		loadConfiguration(initializationContext, getSelfInitializationConfig(), null);
 	}
 
-	private void configureJBossLoggingToUseSlf4j() {
-		System.setProperty("org.jboss.logging.provider", "slf4j");
-	}
-
 	@Override
 	public List<LoggerConfiguration> getLoggerConfigurations() {
-		List<LoggerConfiguration> result = new ArrayList<LoggerConfiguration>();
+		List<LoggerConfiguration> result = new ArrayList<>();
 		for (ch.qos.logback.classic.Logger logger : getLoggerContext().getLoggerList()) {
 			result.add(getLoggerConfiguration(logger));
 		}
-		Collections.sort(result, CONFIGURATION_COMPARATOR);
+		result.sort(CONFIGURATION_COMPARATOR);
 		return result;
 	}
 
@@ -249,7 +275,6 @@ public class LogbackLoggingSystem extends Slf4JLoggingSystem {
 			name = Logger.ROOT_LOGGER_NAME;
 		}
 		return factory.getLogger(name);
-
 	}
 
 	private LoggerContext getLoggerContext() {

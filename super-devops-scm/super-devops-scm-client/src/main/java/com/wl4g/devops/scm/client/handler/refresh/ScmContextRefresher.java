@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.boot.Banner.Mode;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.config.ConfigFileApplicationListener;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -105,8 +106,8 @@ public class ScmContextRefresher extends ContextRefresher {
 			StandardEnvironment environment = copyEnvironment(context.getEnvironment());
 
 			// Temporarily create a simple non-Web application context
-			SpringApplicationBuilder builder = new SpringApplicationBuilder(Empty.class).bannerMode(Mode.OFF).web(false)
-					.environment(environment);
+			SpringApplicationBuilder builder = new SpringApplicationBuilder(Empty.class).bannerMode(Mode.OFF)
+					.web(WebApplicationType.NONE).environment(environment);
 			// Just the listeners that affect the environment (e.g. excluding
 			// logging listener because it has side effects)
 			builder.application().setListeners(REQUIRE_LISTENERS);

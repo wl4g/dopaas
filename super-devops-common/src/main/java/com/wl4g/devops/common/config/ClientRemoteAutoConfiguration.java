@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.client.RestTemplate;
 
 import io.netty.handler.ssl.ClientAuth;
@@ -60,6 +61,9 @@ public class ClientRemoteAutoConfiguration {
 	@ConditionalOnMissingBean
 	public ClientHttpRequestFactory netty4ClientHttpRequestFactory(
 			RemoteProperties config/* , SslContext sslContext */) {
+
+//		ReactorClientHttpConnector connector = new ReactorClientHttpConnector();
+
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
 		factory.setReadTimeout(config.getReadTimeout());
 		factory.setConnectTimeout(config.getConnectTimeout());

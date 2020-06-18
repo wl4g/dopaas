@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.devops.umc.notify.CompositeStatusChangeNotifier;
 
-import de.codecentric.boot.admin.config.NotifierConfiguration.NotifierListenerConfiguration;
+import de.codecentric.boot.admin.server.domain.entities.InstanceRepository;
 
 /**
  * Automatic configuration of custom message notification. <br/>
@@ -39,15 +39,16 @@ import de.codecentric.boot.admin.config.NotifierConfiguration.NotifierListenerCo
  */
 @Configuration
 @ConditionalOnProperty(prefix = "spring.boot.admin.notify.composite", name = "enabled")
-@AutoConfigureBefore({ NotifierListenerConfiguration.class,
-		de.codecentric.boot.admin.config.NotifierConfiguration.CompositeNotifierConfiguration.class })
-public class CompositeNotifierConfiguration {
+@AutoConfigureBefore({
+		de.codecentric.boot.admin.server.config.AdminServerNotifierAutoConfiguration.CompositeNotifierConfiguration.class })
+public class CompositeNotifierAutoConfiguration {
 
+	// TODO
 	@Bean
 	@ConditionalOnMissingBean
 	@ConfigurationProperties("spring.boot.admin.notify.composite")
-	public CompositeStatusChangeNotifier compositeStatusChangeNotifier() {
-		return new CompositeStatusChangeNotifier();
+	public CompositeStatusChangeNotifier compositeStatusChangeNotifier(InstanceRepository repository) {
+		return new CompositeStatusChangeNotifier(repository);
 	}
 
 }

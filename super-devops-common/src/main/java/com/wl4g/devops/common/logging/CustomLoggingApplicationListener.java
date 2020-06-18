@@ -17,7 +17,7 @@ package com.wl4g.devops.common.logging;
 
 import static org.springframework.boot.logging.LoggingSystem.SYSTEM_PROPERTY;
 
-import org.springframework.boot.logging.LoggingApplicationListener;
+import org.springframework.boot.context.logging.LoggingApplicationListener;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

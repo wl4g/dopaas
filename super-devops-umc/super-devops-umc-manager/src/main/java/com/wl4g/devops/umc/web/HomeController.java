@@ -23,7 +23,7 @@ import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
-import com.wl4g.devops.umc.handle.DashboardHandle;
+import com.wl4g.devops.umc.handler.DashboardHandler;
 import com.wl4g.devops.umc.model.StatusMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController extends BaseController {
 
 	@Autowired
-	private DashboardHandle dashboardService;
+	private DashboardHandler dashboardService;
 
 	@Autowired
 	private GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;

@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wl4g.devops.tool.common.serialize.JacksonUtils;
 
-import de.codecentric.boot.admin.model.StatusInfo;
+import de.codecentric.boot.admin.server.domain.values.StatusInfo;
 
 /**
  * Status message.
