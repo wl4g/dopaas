@@ -74,8 +74,8 @@
 		<elastic-job.version>2.1.5</elastic-job.version>
 		<curator.version>2.10.0</curator.version>
 		<!-- Serialized's -->
-		<fastjson.version>1.2.56</fastjson.version>
-		<jackson.version>2.9.8</jackson.version>
+		<!-- <fastjson.version>1.2.56</fastjson.version> -->
+		<jackson.version>2.11.0</jackson.version>
 		<protobuf.version>3.8.0</protobuf.version>
 		<!-- <protobuf.version>2.5.0</protobuf.version> hbase-1.2.5 dependency -->
 		<protostuff.version>1.6.0</protostuff.version>
@@ -825,11 +825,11 @@
 				<version>${curator.version}</version>
 			</dependency>
 			<!-- Serialized's -->
-			<dependency>
-				<groupId>com.alibaba</groupId>
-				<artifactId>fastjson</artifactId>
-				<version>${fastjson.version}</version>
-			</dependency>
+			<!-- <dependency> -->
+			<!-- <groupId>com.alibaba</groupId> -->
+			<!-- <artifactId>fastjson</artifactId> -->
+			<!-- <version>${fastjson.version}</version> -->
+			<!-- </dependency> -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
