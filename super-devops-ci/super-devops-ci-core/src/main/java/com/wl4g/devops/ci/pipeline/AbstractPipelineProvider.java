@@ -318,10 +318,10 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected Runnable newPipeDeployerByType(AppInstance instance){
 
 		switch (getContext().getAppCluster().getDeployType()){
-			case 2:
+			case 2://docker
 				Object[] args2 = { this, instance, getContext().getPipelineHistoryInstances() };
 				return beanFactory.getBean(DockerNativePipeDeployer.class, args2);
-			case 4:
+			case 4://coss
 				Object[] args4 = { this, instance, getContext().getPipelineHistoryInstances() };
 				return beanFactory.getBean(CossPipeDeployer.class, args4);
 			default:

@@ -25,6 +25,7 @@ import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.erm.DockerRepository;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 import org.apache.commons.lang3.StringUtils;
@@ -43,18 +44,6 @@ import java.util.Set;
  * @date 2019-10-25
  */
 public class DockerNativePipelineProvider extends AbstractPipelineProvider implements ContainerPipelineProvider {
-
-    //TODO Docker hub server addr with project name. just for now, need move to config file
-    final public static String DOCKER_HUB_ADDR = "wl4g.harbor/my_first_project/";
-
-    //TODO Docker hub server addr. just for now , need move to config file
-    final private static String DOCKER_REGISTRY_ADDRESS = "wl4g.harbor";
-
-    //TODO Docker hub username. just for now ,need move to config file
-    final private static String DOCKER_REGISTRY_USERNAME = "admin";
-
-    //TODO Docker hub password. just for now ,need move to config file
-    final private static String DOCKER_REGISTRY_PASSWORD = "Shangmai7782";
 
     /**
      * Docker app bin name
@@ -78,6 +67,8 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
         AppCluster appCluster = getContext().getAppCluster();
         PipeStepBuilding pipeStepBuilding = getContext().getPipeStepBuilding();
         AppEnvironment environment = getContext().getEnvironment();
+        DockerRepository dockerRepository = environment.getDockerRepository();
+        DockerRepository.AuthConfigModel authConfigModel = dockerRepository.getAuthConfigModel();
         File jobLogFile = config.getJobLog(pipelineHistory.getId());
         String installFileName = config.getPrgramInstallFileName(appCluster.getName());
         String tarFileName = config.getTarFileNameWithTar(appCluster.getName());
@@ -93,10 +84,10 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
             Set<String> tags = new HashSet<>();
             String tag;
             if (StringUtils.isNotBlank(pipeStepBuilding.getRef())) {
-                tag = DOCKER_HUB_ADDR + appCluster.getName() + ":" + pipeStepBuilding.getRef();
+                tag = dockerRepository.getRegistryAddress() + "/" + environment.getRepositoryNamespace() + "/" + appCluster.getName() + ":" + pipeStepBuilding.getRef();
                 tags.add(tag);//冒号前面为名字，冒号后面为版本，版本为空则为latest
             } else {
-                tag = DOCKER_HUB_ADDR + appCluster.getName();
+                tag = dockerRepository.getRegistryAddress() + "/" + environment.getRepositoryNamespace() + "/" + appCluster.getName();
                 tags.add(tag);
             }
 
@@ -107,7 +98,7 @@ public class DockerNativePipelineProvider extends AbstractPipelineProvider imple
             pm.execWaitForComplete(tarCmd);
 
             String containerId = DockerJavaUtil.buildImage(dockerClient, tags, jobBackDir, args);
-            DockerJavaUtil.pushImage(dockerClient, tag, DOCKER_REGISTRY_ADDRESS, DOCKER_REGISTRY_USERNAME, DOCKER_REGISTRY_PASSWORD);
+            DockerJavaUtil.pushImage(dockerClient, tag, dockerRepository.getRegistryAddress(), authConfigModel.getUsername(), authConfigModel.getPassword());
 
             //remove dir
             if (StringUtils.isNotBlank(installFileName) && !StringUtils.equals(installFileName, "/")) {

@@ -30,8 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.List;
 
-import static com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider.DOCKER_HUB_ADDR;
-
 /**
  * Docker native deployments task.
  *
@@ -41,77 +39,77 @@ import static com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider
  */
 public class DockerNativePipeDeployer extends GenericHostPipeDeployer<PipelineProvider> {
 
-	final private static String ymlFileName = "/swarm_config.yml";
+    final private static String ymlFileName = "/swarm_config.yml";
 
-	public DockerNativePipeDeployer(PipelineProvider provider, AppInstance instance,
-									List<PipelineHistoryInstance> pipelineHistoryInstances) {
-		super(provider, instance, pipelineHistoryInstances);
-	}
+    public DockerNativePipeDeployer(PipelineProvider provider, AppInstance instance,
+                                    List<PipelineHistoryInstance> pipelineHistoryInstances) {
+        super(provider, instance, pipelineHistoryInstances);
+    }
 
-	@Override
-	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
+    @Override
+    protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
 
-		//String dockerMasterAddr = instance.getDockerCluster().getMasterAddr();
-		//DockerClient dockerClient = DockerJavaUtil.sampleConnect(dockerMasterAddr);
-		String ref = getContext().getPipeStepBuilding().getRef();
-		PipelineHistory pipelineHistory = getContext().getPipelineHistory();
-		AppCluster appCluster = getContext().getAppCluster();
-		AppEnvironment environment = getContext().getEnvironment();
+        //String dockerMasterAddr = instance.getDockerCluster().getMasterAddr();
+        //DockerClient dockerClient = DockerJavaUtil.sampleConnect(dockerMasterAddr);
+        String ref = getContext().getPipeStepBuilding().getRef();
+        PipelineHistory pipelineHistory = getContext().getPipelineHistory();
+        AppCluster appCluster = getContext().getAppCluster();
+        AppEnvironment environment = getContext().getEnvironment();
 
-		if(StringUtils.isNotBlank(environment.getConfigContent())){
-			File ymlFile = new File(config.getJobBaseDir(pipelineHistory.getId()).getCanonicalPath() + ymlFileName);
-			createServiceWithStack(remoteHost,user,sshkey,ymlFile,environment.getConfigContent(),appCluster.getName());
-		}else{
-			createServiceWithDockerJavaClient(DOCKER_HUB_ADDR+appCluster.getName()+":"+ref,appCluster.getName());
-		}
-
-
-		log.info("docker stop & pull & restart container");
-	}
+        if (StringUtils.isNotBlank(environment.getConfigContent())) {
+            File ymlFile = new File(config.getJobBaseDir(pipelineHistory.getId()).getCanonicalPath() + ymlFileName);
+            createServiceWithStack(remoteHost, user, sshkey, ymlFile, environment.getConfigContent(), appCluster.getName());
+        } else {
+            createServiceWithDockerJavaClient(environment.getDockerRepository().getRegistryAddress()
+                    + "/" + environment.getRepositoryNamespace() + "/" + appCluster.getName() + ":" + ref, appCluster.getName());
+        }
 
 
-	//TODO need move to docker client expand
-	private void createServiceWithStack(String remoteHost, String user, String sshkey, File ymlFile, String configContent, String stackName) throws Exception {
-		//write config file to job dir
-		FileIOUtils.writeFile(ymlFile,configContent,false);
-
-		//transfer yml file
-		transferYmlFileToRemote(ymlFile,remoteHost,user,sshkey);
-
-		// run
-		String remoteYmlFileName = config.getDeploy().getRemoteHomeTmpDir()+ymlFileName;
-		String cmd = "docker stack deploy -c "+remoteYmlFileName+" "+ stackName;
-		provider.doRemoteCommand(remoteHost,user,cmd,sshkey);
-
-		//clean temp file
-		cleanupRemoteYmlTmpFile(remoteHost,user,sshkey);
-	}
-
-	private void createServiceWithDockerJavaClient(String imageName,String name){
-		String dockerMasterAddr = instance.getDockerCluster().getMasterAddr();
-		DockerClient dockerClient = DockerJavaUtil.sampleConnect(dockerMasterAddr);
-		DockerJavaUtil.removeService(dockerClient,name);
-		DockerJavaUtil.pullImage(dockerClient,imageName);
-		DockerJavaUtil.createService(dockerClient,imageName,name);
-	}
+        log.info("docker stop & pull & restart container");
+    }
 
 
+    //TODO need move to docker client expand
+    private void createServiceWithStack(String remoteHost, String user, String sshkey, File ymlFile, String configContent, String stackName) throws Exception {
+        //write config file to job dir
+        FileIOUtils.writeFile(ymlFile, configContent, false);
 
-	private void transferYmlFileToRemote(File file,String remoteHost, String user, String sshkey) throws Exception {
-		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
-		writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, file));
-		SSH2Holders.getDefault().scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey),null, file, remoteTmpDir);
-	}
+        //transfer yml file
+        transferYmlFileToRemote(ymlFile, remoteHost, user, sshkey);
 
-	private void cleanupRemoteYmlTmpFile(String remoteHost, String user, String sshkey) throws Exception {
-		String remoteYmlFileName = config.getDeploy().getRemoteHomeTmpDir()+ymlFileName;
-		if(StringUtils.isNotBlank(remoteYmlFileName) && StringUtils.equals(remoteYmlFileName,"/")){
-			String command = "rm -Rf " + remoteYmlFileName;
-			writeDeployLog("Cleanup remote temporary program file: %s@%s [%s]", user, remoteHost, command);
-			doRemoteCommand(remoteHost, user, command, sshkey);
-		}
+        // run
+        String remoteYmlFileName = config.getDeploy().getRemoteHomeTmpDir() + ymlFileName;
+        String cmd = "docker stack deploy -c " + remoteYmlFileName + " " + stackName;
+        provider.doRemoteCommand(remoteHost, user, cmd, sshkey);
+
+        //clean temp file
+        cleanupRemoteYmlTmpFile(remoteHost, user, sshkey);
+    }
+
+    private void createServiceWithDockerJavaClient(String imageName, String name) {
+        String dockerMasterAddr = instance.getDockerCluster().getMasterAddr();
+        DockerClient dockerClient = DockerJavaUtil.sampleConnect(dockerMasterAddr);
+        DockerJavaUtil.removeService(dockerClient, name);
+        DockerJavaUtil.pullImage(dockerClient, imageName);
+        DockerJavaUtil.createService(dockerClient, imageName, name);
+    }
 
 
-	}
+    private void transferYmlFileToRemote(File file, String remoteHost, String user, String sshkey) throws Exception {
+        String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
+        writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, file));
+        SSH2Holders.getDefault().scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey), null, file, remoteTmpDir);
+    }
+
+    private void cleanupRemoteYmlTmpFile(String remoteHost, String user, String sshkey) throws Exception {
+        String remoteYmlFileName = config.getDeploy().getRemoteHomeTmpDir() + ymlFileName;
+        if (StringUtils.isNotBlank(remoteYmlFileName) && StringUtils.equals(remoteYmlFileName, "/")) {
+            String command = "rm -Rf " + remoteYmlFileName;
+            writeDeployLog("Cleanup remote temporary program file: %s@%s [%s]", user, remoteHost, command);
+            doRemoteCommand(remoteHost, user, command, sshkey);
+        }
+
+
+    }
 
 }

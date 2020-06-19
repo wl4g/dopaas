@@ -179,7 +179,7 @@ public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 	@Override
 	public <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String password, String command,
 			ProcessFunction<Session, T> processor, long timeoutMs) throws Exception {
-		return doExecCommand(host, user, pemPrivateKey, command,password, session -> {
+		return doExecCommand(host, user, pemPrivateKey, password,command, session -> {
 			// Wait for completed by condition.
 			session.waitForCondition((CLOSED), timeoutMs);
 			return processor.process(session);

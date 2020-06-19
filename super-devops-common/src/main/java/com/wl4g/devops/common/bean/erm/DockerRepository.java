@@ -1,6 +1,10 @@
 package com.wl4g.devops.common.bean.erm;
 
 import com.wl4g.devops.common.bean.BaseBean;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 public class DockerRepository extends BaseBean {
 
@@ -33,6 +37,9 @@ public class DockerRepository extends BaseBean {
     }
 
     public String getAuthConfig() {
+        if(StringUtils.isBlank(authConfig)&& Objects.nonNull(authConfigModel)){
+            authConfig = JacksonUtils.toJSONString(authConfigModel);
+        }
         return authConfig;
     }
 
@@ -41,6 +48,9 @@ public class DockerRepository extends BaseBean {
     }
 
     public AuthConfigModel getAuthConfigModel() {
+        if(Objects.isNull(authConfigModel) && StringUtils.isNotBlank(authConfig)){
+            authConfigModel = JacksonUtils.parseJSON(authConfig, AuthConfigModel.class);
+        }
         return authConfigModel;
     }
 
