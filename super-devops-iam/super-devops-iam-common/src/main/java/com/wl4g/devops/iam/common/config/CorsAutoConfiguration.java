@@ -89,9 +89,9 @@ public class CorsAutoConfiguration {
 	 */
 	@Bean
 	@ConditionalOnBean(CorsProperties.class)
-	public FilterRegistrationBean corsResolveSecurityFilterBean(CorsSecurityFilter filter) {
+	public FilterRegistrationBean<CorsSecurityFilter> corsResolveSecurityFilterBean(CorsSecurityFilter filter) {
 		// Register CORS filter
-		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		FilterRegistrationBean<CorsSecurityFilter> filterBean = new FilterRegistrationBean<>(filter);
 		filterBean.setOrder(ORDER_CORS_PRECEDENCE);
 		// Cannot use '/*' or it will not be added to the container chain (only
 		// '/**')

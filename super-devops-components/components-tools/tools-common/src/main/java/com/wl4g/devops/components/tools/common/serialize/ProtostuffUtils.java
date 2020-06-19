@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.common.utils.serialize;
+package com.wl4g.devops.components.tools.common.serialize;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
@@ -24,21 +24,24 @@ import io.protostuff.Schema;
 import io.protostuff.runtime.RuntimeSchema;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static java.lang.Thread.currentThread;
 import static java.util.Objects.isNull;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.springframework.objenesis.Objenesis;
-import org.springframework.objenesis.ObjenesisStd;
 
 /**
  * Google Protostuff serialize utils
@@ -64,11 +67,6 @@ public abstract class ProtostuffUtils {
 	 * Caching object and object schema information set
 	 */
 	final private static Map<Class<?>, Schema<?>> schemaCache = Maps.newConcurrentMap();
-
-	/**
-	 * Spring packaging compatible object creator
-	 */
-	final private static Objenesis objenesis = new ObjenesisStd(true);
 
 	/**
 	 * Improving memory allocation speed by using current thread pool caching
@@ -154,7 +152,7 @@ public abstract class ProtostuffUtils {
 			T bean = simpleConversion(data, clazz);
 			if (bean == null) {
 				if (!warpperSet.contains(clazz) && !clazz.isArray()) {
-					bean = objenesis.newInstance(clazz); // java原生实例化必须调用constructor故使用objenesis
+					bean = newBeanInstance(clazz); // java原生实例化必须调用constructor故使用objenesis
 					ProtostuffIOUtil.mergeFrom(data, bean, getSchema(clazz));
 					return bean;
 				} else {
@@ -225,6 +223,24 @@ public abstract class ProtostuffUtils {
 	}
 
 	/**
+	 * New create bean instance.
+	 * 
+	 * @param beanClass
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private static <T> T newBeanInstance(Class<?> beanClass) {
+		try {
+			if (!Objects.isNull(objenesis)) {
+				return (T) objenesisStdNewInstanceMethod.invoke(objenesis, new Object[] { beanClass });
+			}
+			return (T) beanClass.newInstance();
+		} catch (Exception ex) {
+			throw new Error("Unexpected reflection exception - " + ex.getClass().getName() + ": " + ex.getMessage());
+		}
+	}
+
+	/**
 	 * 序列化/反序列化对象包装类 专为基于 Protostuff 进行序列化/反序列化而定义。 Protostuff
 	 * 是基于POJO进行序列化和反序列化操作。 如果需要进行序列化/反序列化的对象不知道其类型，不能进行序列化/反序列化；
 	 * 比如Map、List、String、Enum等是不能进行正确的序列化/反序列化。
@@ -254,6 +270,36 @@ public abstract class ProtostuffUtils {
 			return wrapper;
 		}
 
+	}
+
+	// Spring packaging compatible object creator.
+	final private static String OBJENSIS_CLASS = "org.springframework.objenesis.ObjenesisStd";
+	final private static Object objenesis;
+	final private static Method objenesisStdNewInstanceMethod;
+
+	static {
+		Object _objenesis = null;
+		Method _objenesisStdNewInstanceMethod = null;
+		try {
+			Class<?> objenesisClass = Class.forName(OBJENSIS_CLASS, false, currentThread().getContextClassLoader());
+			if (!Objects.isNull(objenesisClass)) {
+				_objenesisStdNewInstanceMethod = objenesisClass.getMethod("newInstance", Class.class);
+				// Objenesis object.
+				for (Constructor<?> c : objenesisClass.getConstructors()) {
+					Class<?>[] paramClasses = c.getParameterTypes();
+					if (paramClasses != null && paramClasses.length == 1 && boolean.class.isAssignableFrom(paramClasses[0])) {
+						_objenesis = c.newInstance(new Object[] { true });
+						break;
+					}
+				}
+			}
+		} catch (ClassNotFoundException e) { // Ignore
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new IllegalStateException(e);
+		}
+		objenesis = _objenesis;
+		objenesisStdNewInstanceMethod = _objenesisStdNewInstanceMethod;
 	}
 
 }

@@ -938,14 +938,17 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @since
 	 */
 	public static class OnlyFilterChainMap extends LinkedHashMap<String, String> {
-
 		private static final long serialVersionUID = 8580940081413814344L;
+
+		final protected SmartLogger log = getLogger(getClass());
 
 		@Override
 		public String put(String pattern, String chain) {
 			String res = super.putIfAbsent(pattern, chain);
 			// Overwrite not allowed
-			isTrue(isBlank(res), "Already pattern filter chain: %s => %s", pattern, chain);
+			if (!isBlank(res)) {
+				log.warn("Ignore set already pattern filter chain: {} => {}", pattern, chain);
+			}
 			return res;
 		}
 

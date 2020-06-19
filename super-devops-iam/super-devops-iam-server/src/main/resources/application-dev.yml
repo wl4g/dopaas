@@ -16,8 +16,8 @@ spring:
       iam: # IAM configuration.
         cors:
           rules:
-            /**:
-              allowsOrigins:
+            '[/**]':
+              allows-origins:
                 - http://${DEVOPS_DOMAIN_TOP:wl4g.dev}
                 - http://${DEVOPS_DOMAIN_TOP:wl4g.dev:${server.port}}
                 - http://${DEVOPS_DOMAIN_TOP:wl4g.local}

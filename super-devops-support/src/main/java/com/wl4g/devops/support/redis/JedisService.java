@@ -18,10 +18,10 @@ package com.wl4g.devops.support.redis;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
 import com.wl4g.devops.components.tools.common.lang.StringUtils2;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
-import com.wl4g.devops.components.tools.common.serialize.SerializeUtils;
+import com.wl4g.devops.components.tools.common.serialize.JdkSerializeUtils;
+import com.wl4g.devops.components.tools.common.serialize.ProtostuffUtils;
 
 import org.springframework.util.Assert;
 import redis.clients.jedis.JedisCluster;
@@ -31,11 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.serialize;
 import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
 import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.devops.components.tools.common.serialize.ProtostuffUtils.serialize;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -627,16 +627,16 @@ public class JedisService {
 		if (object instanceof String) {
 			return StringUtils2.getBytes((String) object);
 		} else {
-			return SerializeUtils.serialize(object);
+			return JdkSerializeUtils.serialize(object);
 		}
 	}
 
 	public static byte[] toBytes(Object object) {
-		return SerializeUtils.serialize(object);
+		return JdkSerializeUtils.serialize(object);
 	}
 
 	public static Object toObject(byte[] bytes) {
-		return SerializeUtils.unserialize(bytes);
+		return JdkSerializeUtils.unserialize(bytes);
 	}
 
 	public interface Callback {

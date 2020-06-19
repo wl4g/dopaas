@@ -322,9 +322,10 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public FilterRegistrationBean cipherRequestSecurityFilterBean(CipherRequestSecurityFilter filter) {
+	public FilterRegistrationBean<CipherRequestSecurityFilter> cipherRequestSecurityFilterBean(
+			CipherRequestSecurityFilter filter) {
 		// Register cipher filter
-		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		FilterRegistrationBean<CipherRequestSecurityFilter> filterBean = new FilterRegistrationBean<>(filter);
 		filterBean.setOrder(ORDER_CIPHER_PRECEDENCE);
 		// Cannot use '/*' or it will not be added to the container chain (only
 		// '/**')

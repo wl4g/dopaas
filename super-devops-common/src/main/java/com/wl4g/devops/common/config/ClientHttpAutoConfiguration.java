@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.common.config;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,23 +34,30 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
+import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.http.client.reactive.ReactorResourceFactory;
 import org.springframework.web.client.RestTemplate;
 
+import static com.wl4g.devops.components.tools.common.lang.TypeConverts.safeLongToInt;
+import static io.netty.channel.ChannelOption.*;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.tcp.TcpClient;
 
 @Configuration
-@ConditionalOnClass({ RestTemplate.class, Netty4ClientHttpRequestFactory.class })
-public class ClientRemoteAutoConfiguration {
+@ConditionalOnClass({ RestTemplate.class, ClientHttpConnector.class, HttpClient.class })
+public class ClientHttpAutoConfiguration {
 
 	@Bean
 	@ConfigurationProperties(prefix = "spring.web.remote")
-	public RemoteProperties remoteProperties() {
-		return new RemoteProperties();
+	public ClientHttpProperties remoteProperties() {
+		return new ClientHttpProperties();
 	}
 
 	@Bean
@@ -57,13 +66,11 @@ public class ClientRemoteAutoConfiguration {
 		return new RestTemplate(factory);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Bean
 	@ConditionalOnMissingBean
 	public ClientHttpRequestFactory netty4ClientHttpRequestFactory(
-			RemoteProperties config/* , SslContext sslContext */) {
-
-//		ReactorClientHttpConnector connector = new ReactorClientHttpConnector();
-
+			ClientHttpProperties config/* , SslContext sslContext */) {
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
 		factory.setReadTimeout(config.getReadTimeout());
 		factory.setConnectTimeout(config.getConnectTimeout());
@@ -71,6 +78,15 @@ public class ClientRemoteAutoConfiguration {
 		// factory.setSslContext(sslContext);
 		return factory;
 	}
+	
+//	@Bean
+//	@ConditionalOnMissingBean
+//	public ClientHttpConnector clientHttpConnector(ClientHttpProperties config, ReactorResourceFactory reactorFactory) {
+//		TcpClient client = TcpClient.create(reactorFactory.getConnectionProvider()).runOn(reactorFactory.getLoopResources())
+//				.option(CONNECT_TIMEOUT_MILLIS, safeLongToInt(SECONDS.toMillis(config.getConnectTimeout())))
+//				.doOnConnected(conn -> conn.addHandlerLast(new ReadTimeoutHandler(config.getReadTimeout())));
+//		return new ReactorClientHttpConnector(HttpClient.from(client));
+//	}
 
 	/**
 	 * Clearly specify OpenSSL, because jdk8 may have performance problems, See:
@@ -82,8 +98,8 @@ public class ClientRemoteAutoConfiguration {
 	 */
 	// @Bean
 	// @ConditionalOnMissingBean
-	public SslContext sslContext(RemoteProperties props) throws SSLException {
-		SslProperties ssl = props.getSslProperties();
+	public SslContext sslContext(ClientHttpProperties config) throws SSLException {
+		SslProperties ssl = config.getSslProperties();
 		List<String> ciphers = ssl.getCiphers() == null ? SslProperties.DEFAULT_CIPHERS : ssl.getCiphers();
 		return SslContextBuilder.forServer(new File(ssl.getKeyCertChainFile()), new File(ssl.getKeyFile()))
 				.sslProvider(SslProvider.OPENSSL).ciphers(ciphers).clientAuth(ClientAuth.REQUIRE)
@@ -193,34 +209,34 @@ public class ClientRemoteAutoConfiguration {
 	 * @date 2018年11月20日
 	 * @since
 	 */
-	public static class RemoteProperties {
+	public static class ClientHttpProperties {
 
-		private Integer readTimeout = 60_000;
-		private Integer connectTimeout = 10_000;
-		private Integer maxResponseSize = 1024 * 1024 * 10;
+		private int readTimeout = 60_000;
+		private int connectTimeout = 10_000;
+		private int maxResponseSize = 1024 * 1024 * 10;
 		private SslProperties sslProperties = new SslProperties();
 
 		public Integer getReadTimeout() {
 			return readTimeout;
 		}
 
-		public void setReadTimeout(Integer readTimeout) {
+		public void setReadTimeout(int readTimeout) {
 			this.readTimeout = readTimeout;
 		}
 
-		public Integer getConnectTimeout() {
+		public int getConnectTimeout() {
 			return connectTimeout;
 		}
 
-		public void setConnectTimeout(Integer connectTimeout) {
+		public void setConnectTimeout(int connectTimeout) {
 			this.connectTimeout = connectTimeout;
 		}
 
-		public Integer getMaxResponseSize() {
+		public int getMaxResponseSize() {
 			return maxResponseSize;
 		}
 
-		public void setMaxResponseSize(Integer maxResponseSize) {
+		public void setMaxResponseSize(int maxResponseSize) {
 			this.maxResponseSize = maxResponseSize;
 		}
 

@@ -51,7 +51,7 @@ import com.wl4g.devops.common.web.RespBase.ErrorPromptMessageBuilder;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
 /**
- * System boot properties auto configuration.
+ * System boot defaults auto configuration.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年2月20日
@@ -92,7 +92,7 @@ public class SystemBootAutoConfiguration implements ApplicationContextAware {
 	 */
 	protected void initErrorPrompt(Environment env) {
 		String appName = env.getRequiredProperty("spring.application.name");
-		if (appName.length() < PROMPT_MAX_LEN) {
+		if (appName.length() < DEFAULT_PROMPT_MAX_LENGTH) {
 			ErrorPromptMessageBuilder.setPrompt(appName);
 		} else {
 			ErrorPromptMessageBuilder.setPrompt(appName.substring(0, 4));
@@ -119,9 +119,7 @@ public class SystemBootAutoConfiguration implements ApplicationContextAware {
 		return filterBean;
 	}
 
-	// --- C U S T O M A T I O N _ S E R V L E T _ C O N T A I N E R. ---
-
-	// --- E N H A N C E D _ F R A M E W O R K. ---
+	// --- C U S T O M A T I O N _ F R A M E W O R K. ---
 
 	@Bean
 	@ConditionalOnMissingBean(Operator.class)
@@ -193,9 +191,11 @@ public class SystemBootAutoConfiguration implements ApplicationContextAware {
 		return advisor;
 	}
 
+	// --- C U S T O M A T I O N _ S E R V L E T _ C O N T A I N E R. ---
+
 	/**
 	 * API prompt max length.
 	 */
-	final private static int PROMPT_MAX_LEN = 4;
+	final private static int DEFAULT_PROMPT_MAX_LENGTH = 4;
 
 }
