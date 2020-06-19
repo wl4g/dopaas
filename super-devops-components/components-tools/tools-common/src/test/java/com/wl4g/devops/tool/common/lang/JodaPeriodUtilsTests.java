@@ -35,7 +35,15 @@ public class JodaPeriodUtilsTests {
 		PeriodFormatterHolder formatter = PeriodFormatterHolder.getInstance(JodaPeriodFormatter.class);
 
 		// Pretend the current time is: 1978-06-16 16:51:22
-		long nowTime1 = 266835082000L;
+		long nowTime0 = 266835082000L;
+		// Pretend the my birth date time is: 1978-06-16 16:51:11
+		long myBirthDate0 = 266835071000L;
+		System.out.println(formatter.formatHumanDate(nowTime0, myBirthDate0));
+
+		System.out.println("-------------------------------------------------------");
+
+		// Pretend the current time is: 1978-06-16 16:51:52
+		long nowTime1 = 266835112000L;
 		// Pretend the my birth date time is: 1978-06-16 16:51:11
 		long myBirthDate1 = 266835071000L;
 		System.out.println(formatter.formatHumanDate(nowTime1, myBirthDate1));
@@ -87,6 +95,14 @@ public class JodaPeriodUtilsTests {
 		// Pretend the my birth date time is: 1976-01-16 16:51:22
 		long myBirthDate7 = 190630282000L;
 		System.out.println(formatter.formatHumanDate(nowTime7, myBirthDate7));
+
+		System.out.println("-------------------------------------------------------");
+
+		// Pretend the current time is: 1978-06-16 16:51:22
+		long nowTime8 = 266835082000L;
+		// Pretend the my birth date time is: 1977-01-16 16:51:22
+		long myBirthDate8 = 222252682000L;
+		System.out.println(formatter.formatHumanDate(nowTime8, myBirthDate8));
 
 	}
 

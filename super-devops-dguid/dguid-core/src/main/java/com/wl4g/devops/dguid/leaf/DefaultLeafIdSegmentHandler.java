@@ -61,17 +61,17 @@ public class DefaultLeafIdSegmentHandler implements LeafIdSegmentHandler {
 	private volatile LeafSegment[] segment = new LeafSegment[2];
 
 	/**
-	 * 缓冲切换标识(true-切换，false-不切换)
+	 * Buffer switch ID (true switch, false do not switch)
 	 */
 	private volatile boolean sw;
 
 	/**
-	 * 当前id
+	 * Current ID
 	 */
 	private AtomicLong currentId;
 
 	/**
-	 * 业务标识
+	 * Business ID tag.
 	 */
 	private String bizTag;
 
@@ -168,14 +168,14 @@ public class DefaultLeafIdSegmentHandler implements LeafIdSegmentHandler {
 	}
 
 	/**
-	 * 获取下一个buffer的索引
+	 * Gets the index of the next buffer
 	 */
 	private int reIndex() {
 		return isSw() ? 0 : 1;
 	}
 
 	/**
-	 * 获取当前buffer的索引
+	 * Gets the index of the current buffer
 	 */
 	private int index() {
 		return isSw() ? 1 : 0;
@@ -262,4 +262,5 @@ public class DefaultLeafIdSegmentHandler implements LeafIdSegmentHandler {
 	public void setAsynLoadingSegment(boolean asynLoadingSegment) {
 		this.asynLoadingSegment = asynLoadingSegment;
 	}
+
 }

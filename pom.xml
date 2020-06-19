@@ -65,11 +65,13 @@
 		<module>super-devops-ci</module>
 		<module>super-devops-iam</module>
 		<module>super-devops-umc</module>
-		<!--<module>super-devops-djob</module> -->
+		<module>super-devops-djob</module>
 		<module>super-devops-doc</module>
 		<module>super-devops-coss</module>
-		<module>super-devops-rcm</module>
+		<module>super-devops-gateway</module>
+		<!--<module>super-devops-rcm</module>-->
 		<module>super-devops-vcs</module>
+		<module>super-devops-codegen</module>
 		<!-- <module>super-devops-esm</module> -->
 		<!-- <module>super-devops-im</module> -->
 	</modules>
@@ -84,7 +86,7 @@
 		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
 		<maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-		<proguard-maven-plugin.version>2.0.11</proguard-maven-plugin.version>
+		<proguard-maven-plugin.version>2.2.0</proguard-maven-plugin.version>
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 		<dockerfile-maven-plugin.version>1.4.9</dockerfile-maven-plugin.version>
 		<mybatis-generator-maven-plugin.version>1.3.2</mybatis-generator-maven-plugin.version>

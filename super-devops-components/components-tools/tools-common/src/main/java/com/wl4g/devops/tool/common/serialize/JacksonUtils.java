@@ -35,11 +35,6 @@ import java.io.InputStream;
  * @since
  */
 public abstract class JacksonUtils {
-	final private static ObjectMapper mapper = new ObjectMapper();
-
-	static {
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	}
 
 	/**
 	 * Object to JSON strings.
@@ -51,7 +46,7 @@ public abstract class JacksonUtils {
 		if (isNull(object))
 			return null;
 		try {
-			return mapper.writeValueAsString(object);
+			return defaultObjectMapper.writeValueAsString(object);
 		} catch (JsonProcessingException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -69,7 +64,7 @@ public abstract class JacksonUtils {
 			return null;
 		}
 		try {
-			return mapper.readValue(content, clazz);
+			return defaultObjectMapper.readValue(content, clazz);
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -86,7 +81,7 @@ public abstract class JacksonUtils {
 		if (isNull(src))
 			return null;
 		try {
-			return mapper.readValue(src, clazz);
+			return defaultObjectMapper.readValue(src, clazz);
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -103,7 +98,7 @@ public abstract class JacksonUtils {
 		if (isNull(src))
 			return null;
 		try {
-			return mapper.readValue(src, clazz);
+			return defaultObjectMapper.readValue(src, clazz);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -120,7 +115,7 @@ public abstract class JacksonUtils {
 		if (isNull(src))
 			return null;
 		try {
-			return mapper.readValue(src, valueTypeRef);
+			return defaultObjectMapper.readValue(src, valueTypeRef);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -137,7 +132,7 @@ public abstract class JacksonUtils {
 		if (isNull(src))
 			return null;
 		try {
-			return mapper.readValue(src, valueTypeRef);
+			return defaultObjectMapper.readValue(src, valueTypeRef);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -155,7 +150,7 @@ public abstract class JacksonUtils {
 			return null;
 		}
 		try {
-			return mapper.readValue(content, valueTypeRef);
+			return defaultObjectMapper.readValue(content, valueTypeRef);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -172,7 +167,7 @@ public abstract class JacksonUtils {
 	 * @return
 	 */
 	public static <T> T convertBean(Object bean, Class<T> toType) {
-		return mapper.convertValue(bean, toType);
+		return defaultObjectMapper.convertValue(bean, toType);
 	}
 
 	/**
@@ -185,8 +180,8 @@ public abstract class JacksonUtils {
 	 * @param typeRef
 	 * @return
 	 */
-	public static <T> T convertBean(Object bean, TypeReference<?> typeRef) {
-		return mapper.convertValue(bean, typeRef);
+	public static <T> T convertBean(Object bean, TypeReference<T> typeRef) {
+		return defaultObjectMapper.convertValue(bean, typeRef);
 	}
 
 	/**
@@ -200,7 +195,16 @@ public abstract class JacksonUtils {
 	 * @return
 	 */
 	public static <T> T convertBean(Object bean, JavaType toJavaType) {
-		return mapper.convertValue(bean, toJavaType);
+		return defaultObjectMapper.convertValue(bean, toJavaType);
+	}
+
+	/**
+	 * Default {@link ObjectMapper} instance.
+	 */
+	final private static ObjectMapper defaultObjectMapper = new ObjectMapper();
+
+	static {
+		defaultObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
 }

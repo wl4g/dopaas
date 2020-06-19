@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
-import static com.wl4g.devops.common.constants.ShareDevOpsConstants.CONFIG_DICT_CACHE_TIME_SECOND;
-import static com.wl4g.devops.common.constants.ShareDevOpsConstants.KEY_CACHE_SYS_DICT_INIT_CACHE;
+import static com.wl4g.devops.common.constants.ERMDevOpsConstants.CONFIG_DICT_CACHE_TIME_SECOND;
+import static com.wl4g.devops.common.constants.ERMDevOpsConstants.KEY_CACHE_SYS_DICT_INIT_CACHE;
 
 /**
  * @author vjay

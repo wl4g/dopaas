@@ -78,7 +78,7 @@ abstract class AbstractAttemptsMatcher extends IamBasedMatcher implements Initia
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		MatcherProperties matcher = config.getMatcher();
-		this.lockCache = cacheManager.getIamCache(CACHE_MATCH_LOCK);
+		this.lockCache = cacheManager.getIamCache(LOCK_CREDENTIALS_MATCH);
 		this.matchCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_MATCH_COUNTER),
 				matcher.getFailFastMatchDelay());
 		this.applyCaptchaCumulator = newCumulator(cacheManager.getIamCache(CACHE_FAILFAST_CAPTCHA_COUNTER),

@@ -1,4 +1,4 @@
-DGUID (Distributed Global Unique ID) 是一款基于美团leaf、百度UidGenerator、原生snowflake集成并改进全局唯一ID生成器，与springboot无缝集成（可作为独立项目运行）
+DGUID (Distributed Global Unique ID) 是一款基于美团leaf、百度UidGenerator、原生snowflake集成并改进全局唯一ID生成器，目前仅支持springboot集成
 
 English version goes [here](README_EN.md).
 
