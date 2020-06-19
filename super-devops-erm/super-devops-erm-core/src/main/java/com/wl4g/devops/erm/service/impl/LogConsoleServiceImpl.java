@@ -15,10 +15,14 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
+import static com.wl4g.devops.common.constants.ERMDevOpsConstants.*;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static java.util.Objects.isNull;
+
 import com.wl4g.devops.common.bean.erm.Log;
 import com.wl4g.devops.common.bean.erm.QueryLogModel;
 import com.wl4g.devops.common.bean.erm.Querycriteria;
-import com.wl4g.devops.common.constants.SRMDevOpsConstants;
 import com.wl4g.devops.erm.es.handler.LogHandler;
 import com.wl4g.devops.erm.service.LogConsoleService;
 import com.wl4g.devops.tool.common.lang.DateUtils2;
@@ -30,7 +34,6 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTimeZone;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -50,11 +53,11 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 
 	@Override
 	public List<String> console(QueryLogModel model) throws Exception {
-		Assert.notNull(model, "params is error");
-		Assert.hasText(model.getIndex(), "index is null");
+		notNull(model, "params");
+		hasText(model.getIndex(), "index");
 
-		// set default
-		if (model.getLimit() == null || model.getLimit() == 0) {
+		// Sets defaults
+		if (isNull(model.getLimit()) || model.getLimit() == 0) {
 			model.setLimit(100);
 		}
 
@@ -62,23 +65,37 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 		String index = model.getIndex();
 		Long startTime = model.getStartTime();
 		Date startTimeD = null;
-		if (null == startTime || startTime == 0) {
+		if (isNull(startTime) || startTime == 0) {
 			startTimeD = new Date();
 		} else {
 			startTimeD = new Date(startTime);
 		}
 		index = index + "-" + DateUtils2.formatDate(startTimeD);
 
-		List<Log> console = console(index, model.getStartTime(), model.getEndTime(), model.getFrom(), model.getLimit(),
-				model.getQueryList(), model.getLevel());
+		List<Log> logs = queryLogFromESDocuments(index, model.getStartTime(), model.getEndTime(), model.getFrom(),
+				model.getLimit(), model.getQueryList(), model.getLevel());
 		List<String> result = new ArrayList<>();
-		for (Log log : console) {
+		for (Log log : logs) {
 			result.add(log.getMessage());
 		}
+
 		return result;
 	}
 
-	public List<Log> console(String index, Long startTime, Long endTime, Integer from, Integer limit,
+	/**
+	 * Query log from ES documents
+	 * 
+	 * @param index
+	 * @param startTime
+	 * @param endTime
+	 * @param from
+	 * @param limit
+	 * @param queryList
+	 * @param level
+	 * @return
+	 * @throws Exception
+	 */
+	protected List<Log> queryLogFromESDocuments(String index, Long startTime, Long endTime, Integer from, Integer limit,
 			List<Querycriteria> queryList, Integer level) throws Exception {
 
 		// create bool query
@@ -94,13 +111,13 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 				// con = QueryParser.escape(con);
 				query = "\"" + query + "\"";// for Special characters
 				if (u.isEnable()) {// enable? must match
-					// boolQueryBuilder.must(fuzzyQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG,
+					// boolQueryBuilder.must(fuzzyQuery(KEY_DEFAULT_MSG,
 					// con));
-					boolQueryBuilder.must(queryStringQuery(query).field(SRMDevOpsConstants.KEY_DEFAULT_MSG));
+					boolQueryBuilder.must(queryStringQuery(query).field(KEY_DEFAULT_MSG));
 				} else {// not enbale ? must not match
-					// boolQueryBuilder.mustNot(fuzzyQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG,
+					// boolQueryBuilder.mustNot(fuzzyQuery(KEY_DEFAULT_MSG,
 					// con));
-					boolQueryBuilder.mustNot(queryStringQuery(query).field(SRMDevOpsConstants.KEY_DEFAULT_MSG));
+					boolQueryBuilder.mustNot(queryStringQuery(query).field(KEY_DEFAULT_MSG));
 				}
 			});
 		}
@@ -108,8 +125,8 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 		// fix log level match
 		if (!Objects.isNull(level) && level > 0) {
 			BoolQueryBuilder boolQueryBuilder1 = boolQuery();
-			for (int i = level - 1; i < SRMDevOpsConstants.LOG_LEVEL.size(); i++) {
-				boolQueryBuilder1.should(matchQuery(SRMDevOpsConstants.KEY_DEFAULT_MSG, SRMDevOpsConstants.LOG_LEVEL.get(i)));
+			for (int i = level - 1; i < LOG_LEVEL.size(); i++) {
+				boolQueryBuilder1.should(matchQuery(KEY_DEFAULT_MSG, LOG_LEVEL.get(i)));
 			}
 			boolQueryBuilder.must(boolQueryBuilder1);
 		}
@@ -130,13 +147,11 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 		sourceBuilder.query(boolQueryBuilder);
 		sourceBuilder.from(Objects.isNull(from) ? 0 : from);// from
 		sourceBuilder.size(Objects.isNull(limit) ? 100 : limit);// limit
-		sourceBuilder.sort(new FieldSortBuilder("@timestamp").order(SortOrder.DESC));// order
-																						// by
-																						// timestamp
-																						// desc
+		// order by timestamp desc
+		sourceBuilder.sort(new FieldSortBuilder("@timestamp").order(SortOrder.DESC));
 
 		SearchRequest searchRequest = new SearchRequest(index);
-		// searchRequest.types("doc");//useful
+		// searchRequest.types("doc"); // useful
 		searchRequest.source(sourceBuilder);
 		List<Log> logList = logHandler.findAll(searchRequest);
 		return logList;

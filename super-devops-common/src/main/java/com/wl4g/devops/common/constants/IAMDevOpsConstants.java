@@ -236,10 +236,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 */
 	final public static String CACHE_FAILFAST_MATCH_COUNTER = ":iam:counter:credentials:";
 	/**
-	 * Login failure overrun, lock cache name.
-	 */
-	final public static String CACHE_MATCH_LOCK = ":iam:lock:credentials:";
-	/**
 	 * Security verifier for jigsaw captcha image cache name.
 	 */
 	final public static String CACHE_VERIFY_JIGSAW_IMG = ":iam:verify:jigsaw:imgs";
@@ -249,6 +245,11 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String CACHE_CRYPTO = ":iam:crypto:keypairs";
 	/** Simple risk control handler umidToken cache key. */
 	final public static String CACHE_SIMPLE_RCM_UMIDTOKEN = ":iam:rcm:simpleumidtoken:";
+
+	/**
+	 * Login failure overrun, lock cache name.
+	 */
+	final public static String LOCK_CREDENTIALS_MATCH = ":iam:lock:credentials:";
 
 	/**
 	 * The public key index by logged-in users
@@ -293,6 +294,12 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * processing.
 	 */
 	final public static String KEY_SERVICE_ROLE_VALUE_IAMCLIENT = "IamWithCasAppClient";
+
+	/**
+	 * Only one node of the cluster is required to run the client session
+	 * validity verification.
+	 */
+	final public static String LOCK_SESSION_VALIDATING = ":iam:c:validating:";
 
 	/** Fast-CAS client base URI. */
 	final public static String URI_C_BASE = "/internal";

@@ -1,5 +1,5 @@
 ![SuperDevops](shots/logo.jpg)
-## One stop DevoSecOps Cloud platform(saas) developed based on spring cloud. Its main function modules are: continuous delivery of CI/CD(Support distributed compilation, pptpvpn/OpenVPN/SSH tunnel deployment), certification center, monitoring center, configuration center, resource management center, scheduling center, elastic scaling, shell tools, various tool components (such as HBase/OSS operation and maintenance), document management, timely communication, lightweight risk control, private object storage, version control, etc
+## One stop Micoservice + DevoSecOps Cloud platform(SaaS) developed based on spring cloud. Its main function modules are: continuous delivery of CI/CD(Support distributed compilation, pptpvpn/OpenVPN/SSH tunnel deployment), certification center, monitoring center, configuration center, resource management center, scheduling center, elastic scaling, shell tools, various tool components (such as HBase/OSS operation and maintenance), document management, timely communication, lightweight risk control, private object storage, version control, etc
 
 [![Build Status](https://travis-ci.org/wl4g/super-devops.svg)](https://travis-ci.org/wl4g/super-devops)
 ![License](https://img.shields.io/badge/license-Apache2.0+-green.svg)
@@ -29,7 +29,7 @@ For the sake of brevity, each service only deploys a single node to the same phy
 
 - step1：Compile
 ```
-cd super-devops
+cd super-cloudops
 mvn -U clean install -DskipTests -T 2C
 ```
 - step2, Initialize the db, First prepare a CentOS 6.5 + and MySQL 5.6 + instance, create a new database named Devops (utf8 / utf8_bin), and then use [initial SQL script] (dB /) to initialize it.（Note: this script corresponds to the code version, and we will update it regularly. Please use the latest one according to the named suffix date）

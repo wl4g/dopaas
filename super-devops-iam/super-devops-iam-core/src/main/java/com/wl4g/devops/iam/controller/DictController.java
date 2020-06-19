@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.common.constants.ShareDevOpsConstants.KEY_CACHE_SYS_DICT_INIT_CACHE;
+import static com.wl4g.devops.common.constants.ERMDevOpsConstants.KEY_CACHE_SYS_DICT_INIT_CACHE;
 
 /**
  * Dictionaries controller
