@@ -14,6 +14,10 @@
 
 # Global error handling configuration.
 spring:
+  # Starting banner configuration.
+  banner:
+    charset: UTF-8
+    location: classpath:banner.txt
   cloud:
     devops:
       error:
@@ -30,8 +34,3 @@ spring:
       #  enabled: false # Default false
       #  base-uri: /default-view
       #  webapp-location: classpath*:/default-webapps
-
-# Starting banner configuration.
-banner:
-  charset: UTF-8
-  location: classpath:banner.txt

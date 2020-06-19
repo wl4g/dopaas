@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
  * @time 2017年4月13日
  * @since
  */
-public abstract class SerializeUtils {
+public abstract class JdkSerializeUtils {
 
 	/**
 	 * Annotate to object copying, only copy the methods that match.

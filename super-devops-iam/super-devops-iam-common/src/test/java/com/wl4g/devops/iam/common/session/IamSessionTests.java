@@ -18,7 +18,7 @@ package com.wl4g.devops.iam.common.session;
 import org.apache.commons.lang3.SerializationUtils;
 
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
-import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
+import com.wl4g.devops.components.tools.common.serialize.ProtostuffUtils;
 
 public class IamSessionTests {
 

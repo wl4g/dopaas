@@ -29,7 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.devops.IamServer;
-import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
+import com.wl4g.devops.components.tools.common.serialize.ProtostuffUtils;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.support.redis.ScanCursor;
 

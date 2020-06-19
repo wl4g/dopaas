@@ -89,16 +89,20 @@
 			<artifactId>ganymed-ssh2</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		<!-- Commond line -->
-		<dependency>
-			<groupId>org.jline</groupId>
-			<artifactId>jline</artifactId>
-			<scope>compile</scope>
-		</dependency>
 		<!-- UnCompression -->
 		<dependency>
 			<groupId>org.xerial.snappy</groupId>
 			<artifactId>snappy-java</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.protostuff</groupId>
+			<artifactId>protostuff-core</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.protostuff</groupId>
+			<artifactId>protostuff-runtime</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<!-- User Agent -->

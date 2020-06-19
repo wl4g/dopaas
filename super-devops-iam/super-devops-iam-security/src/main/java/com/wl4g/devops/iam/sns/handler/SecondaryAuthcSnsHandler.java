@@ -150,7 +150,7 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 		 * Save authenticated to cache.
 		 * See:xx.iam.handler.DefaultAuthenticationHandler#secondValidate()
 		 */
-		String secondAuthCode = generateSecondAuthcCode(sourceApp);
+		String secondAuthCode = generateSecondaryAuthcCode(sourceApp);
 		CacheKey ekey = new CacheKey(secondAuthCode, snsConfig.getOauth2ConnectExpireMs());
 		cacheManager.getIamCache(SECOND_AUTHC_CACHE).put(ekey, model);
 		log.info("Saved secondary authentication. {}[{}], result[{}]", config.getParam().getSecondaryAuthCode(), secondAuthCode,
@@ -203,8 +203,8 @@ public class SecondaryAuthcSnsHandler extends AbstractSnsHandler {
 	 * @param application
 	 * @return
 	 */
-	private String generateSecondAuthcCode(String application) {
-		return SimpleIdGenerator.genVariableMeaningUUID("sac_", 32);
+	private String generateSecondaryAuthcCode(String application) {
+		return SimpleIdGenerator.generateVariableUid("sec_", 32);
 	}
 
 }

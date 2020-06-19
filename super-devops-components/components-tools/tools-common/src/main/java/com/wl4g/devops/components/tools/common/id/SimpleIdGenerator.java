@@ -17,56 +17,58 @@ package com.wl4g.devops.components.tools.common.id;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import static java.util.UUID.*;
 
-import com.wl4g.devops.components.tools.common.lang.Assert2;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 /**
- * ID generator utility tools.
+ * Simple ID generator utility tools.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年3月4日
  * @since
  */
-public class SimpleIdGenerator {
+public abstract class SimpleIdGenerator {
 
 	/**
-	 * Secure generation of specified minimum length UUID random strings
+	 * Generate of specified minimum length UUID random strings
 	 * 
-	 * @param minLen
+	 * @param minSize
 	 * @return
 	 */
-	public static String genVariableMeaningUUID(int minLen) {
-		return genVariableMeaningUUID("g", minLen);
+	public static String generateVariableUid(int minSize) {
+		return generateVariableUid("g", minSize);
 	}
 
 	/**
-	 * Secure generation of specified minimum length UUID random strings
+	 * Generate of specified minimum length UUID random strings
 	 * 
 	 * @param prefix
-	 * @param minLen
+	 * @param minSize
 	 * @return
 	 */
-	public static String genVariableMeaningUUID(String prefix, int minLen) {
+	public static String generateVariableUid(String prefix, int minSize) {
 		// UUID origin
 		StringBuffer uuids = new StringBuffer();
 		int len = uuids.length();
-		while ((len = uuids.length()) <= minLen) {
+		while ((len = uuids.length()) <= minSize) {
 			// Generate random UUID
-			uuids.append(UUID.randomUUID().toString().replaceAll("-", ""));
+			uuids.append(randomUUID().toString().replaceAll("-", ""));
 		}
-		Assert2.isTrue((minLen < (len - 1)), String.format("Minimum length (%s) greater than UUID length (%s)", minLen, len));
+		isTrue((minSize < (len - 1)), "Minimum length (%s) greater than UUID length (%s)", minSize, len);
 
-		// Random
+		// Create randomer
 		ThreadLocalRandom current = ThreadLocalRandom.current();
-		int start = current.nextInt(0, len - minLen);
-		int end = current.nextInt(start + minLen, len);
+		int start = current.nextInt(0, len - minSize);
+		int end = current.nextInt(start + minSize, len);
 		// Sub random UUID
-		String res = uuids.substring(Math.min(start, end), Math.max(start, end));
+		String res = uuids.substring(min(start, end), max(start, end));
 		// Append prefix
 		if (!isBlank(prefix)) {
-			res = prefix + res.substring(2);
+			res = prefix.concat(res.substring(2));
 		}
 		return res;
 	}

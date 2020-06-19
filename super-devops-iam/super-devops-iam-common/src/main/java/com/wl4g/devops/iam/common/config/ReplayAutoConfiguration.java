@@ -71,9 +71,10 @@ public class ReplayAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean(ReplayProperties.class)
-	public FilterRegistrationBean replayProtectionSecurityFilterBean(ReplayProtectionSecurityFilter filter) {
+	public FilterRegistrationBean<ReplayProtectionSecurityFilter> replayProtectionSecurityFilterBean(
+			ReplayProtectionSecurityFilter filter) {
 		// Register XSRF filter
-		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		FilterRegistrationBean<ReplayProtectionSecurityFilter> filterBean = new FilterRegistrationBean<>(filter);
 		filterBean.setOrder(ORDER_REPAY_PRECEDENCE);
 		// Cannot use '/*' or it will not be added to the container chain (only
 		// '/**')

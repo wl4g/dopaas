@@ -82,9 +82,10 @@ public class XsrfAutoConfiguration extends OptionalPrefixControllerAutoConfigura
 
 	@Bean
 	@ConditionalOnBean(XsrfProperties.class)
-	public FilterRegistrationBean xsrfProtectionSecurityFilterBean(XsrfProtectionSecurityFilter filter) {
+	public FilterRegistrationBean<XsrfProtectionSecurityFilter> xsrfProtectionSecurityFilterBean(
+			XsrfProtectionSecurityFilter filter) {
 		// Register XSRF filter
-		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		FilterRegistrationBean<XsrfProtectionSecurityFilter> filterBean = new FilterRegistrationBean<>(filter);
 		filterBean.setOrder(ORDER_XSRF_PRECEDENCE);
 		// Cannot use '/*' or it will not be added to the container chain (only
 		// '/**')

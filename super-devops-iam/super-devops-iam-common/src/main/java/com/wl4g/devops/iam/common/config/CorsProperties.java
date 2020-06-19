@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 import static java.util.Locale.*;
 
 import org.springframework.http.HttpMethod;
@@ -37,6 +38,7 @@ import static com.wl4g.devops.iam.common.config.CorsProperties.IamCorsValidator.
 import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.components.tools.common.web.WebUtils2.isSameWildcardOrigin;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.*;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.*;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
@@ -65,22 +67,10 @@ public class CorsProperties implements Serializable {
 	 */
 	private Map<String, CorsRule> rules = new HashMap<String, CorsRule>() {
 		private static final long serialVersionUID = -8576461225674624807L;
-
-		/**
-		 * Default allowes headers.
-		 */
-		private final String[] defaultAllowedHeaders = { DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*", "Cookie", "X-Requested-With",
-				"Content-Type", "Content-Length", "User-Agent", "Referer", "Origin", "Accept", "Accept-Language",
-				"Accept-Encoding" };
-
-		/**
-		 * Default allowes methods.
-		 */
-		private final String[] defaultAllowedMethods = { GET.name(), HEAD.name(), POST.name(), OPTIONS.name() };
 		{
 			// Default settings.
 			put("/**", new CorsRule().addAllowsOrigins("http://localhost:8080").setAllowCredentials(true)
-					.addAllowsHeaders(defaultAllowedHeaders).addAllowsMethods(defaultAllowedMethods));
+					.addAllowsHeaders(DEFAULT_ALLOWED_HEADERS).addAllowsMethods(DEFAULT_ALLOWED_METHODS));
 		}
 	};
 
@@ -98,7 +88,7 @@ public class CorsProperties implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CorsProperties [rules=" + rules + "]";
+		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 	}
 
 	//
@@ -345,6 +335,11 @@ public class CorsProperties implements Serializable {
 			}
 		}
 
+		@Override
+		public String toString() {
+			return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+		}
+
 	}
 
 	/**
@@ -514,6 +509,21 @@ public class CorsProperties implements Serializable {
 
 	}
 
+	/**
+	 * Cors key properties.
+	 */
 	final public static String KEY_CORS_PREFIX = "spring.cloud.devops.iam.cors";
+
+	/**
+	 * Default allowes headers.
+	 */
+	final public static String[] DEFAULT_ALLOWED_HEADERS = { DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*", "Cookie",
+			"X-Requested-With", "Content-Type", "Content-Length", "User-Agent", "Referer", "Origin", "Accept", "Accept-Language",
+			"Accept-Encoding" };
+
+	/**
+	 * Default allowes methods.
+	 */
+	final public static String[] DEFAULT_ALLOWED_METHODS = { GET.name(), HEAD.name(), POST.name(), OPTIONS.name() };
 
 }

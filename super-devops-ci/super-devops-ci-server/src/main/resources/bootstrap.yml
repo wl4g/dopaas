@@ -21,12 +21,11 @@ spring:
         cors:
           enabled: true # Default: true
           rules:
-            /**:
-              allowsMethods: GET,HEAD,OPTIONS,POST
-              allowsHeaders:
-                - X-Iam-*
-              allowCredentials: true
-              allowsOrigins:
+            '[/**]':
+              allows-methods: [GET,HEAD,POST,OPTIONS]
+              allows-headers: [X-Iam-*]
+              allow-credentials: true
+              #allows-origins:
                 #- '*'
         xsrf:
           enabled: true

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.support.redis;
 
-import static com.wl4g.devops.common.utils.serialize.ProtostuffUtils.*;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.serialize.ProtostuffUtils.*;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
