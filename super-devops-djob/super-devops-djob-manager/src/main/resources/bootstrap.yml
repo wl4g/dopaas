@@ -18,6 +18,23 @@ spring:
   cloud:
     devops:
       iam: # IAM client configuration.
+        cors:
+          enabled: true # Default: true
+          rules:
+            '[/**]':
+              allows-methods: [GET,HEAD,OPTIONS,POST]
+              allows-headers: [X-Iam-*]
+              allow-credentials: true
+              #allows-origins:
+                #- '*'
+        xsrf:
+          enabled: true # Default: false
+          #exclude-valid-uri-patterns:
+        replay:
+          enabled: true # Default: false
+          #exclude-valid-uri-patterns:
+        xss:
+          enabled: true # Default: true
         client: # IAM client configuration.
           service-name: ${spring.application.name}
           use-remember-redirect: false
@@ -26,10 +43,11 @@ spring:
 
 # ### Server configuration. ###
 server:
-  port: 14059
+  servlet:
+    contextPath: /${spring.application.name}
   #address: 0.0.0.0
+  port: 14059
   sessionTimeout: 30
-  contextPath: /${spring.application.name}
   tomcat:
     uri-encoding: UTF-8
     protocolHeader: x-forwarded-proto

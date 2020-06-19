@@ -16,8 +16,8 @@ spring:
       iam:
         cors:
           rules:
-            /**:
-              allowsOrigins:
+            '[/**]':
+              allows-origins:
                 - https://${DEVOPS_DOMAIN_TOP:wl4g.com}
                 - http://${DEVOPS_DOMAIN_TOP:wl4g.com}
                 - https://*.${DEVOPS_DOMAIN_TOP:wl4g.com}

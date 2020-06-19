@@ -24,12 +24,11 @@ spring:
         cors:
           enabled: true # Default: true
           rules:
-            /**:
-              allowsMethods: GET,HEAD,POST,OPTIONS
-              allowsHeaders:
-                - X-Iam-*
-              allowCredentials: true
-              allowsOrigins:
+            '[/**]':
+              allows-methods: [GET,HEAD,POST,OPTIONS]
+              allows-headers: [X-Iam-*]
+              allow-credentials: true
+              #allows-origins:
                 #- '*'
         xsrf:
           enabled: true
@@ -45,10 +44,10 @@ spring:
 
 # ### Server configuration. ###
 server:
-  port: 14055
+  servlet:
+    contextPath: /${spring.application.name}
   #address: 0.0.0.0
-  sessionTimeout: 30
-  contextPath: /${spring.application.name}
+  port: 14055
   tomcat:
     uri-encoding: UTF-8
     protocolHeader: x-forwarded-proto

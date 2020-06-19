@@ -15,9 +15,10 @@ spring:
 
 # ### Server configuration. ###
 server:
+  servlet:
+    contextPath: /${spring.application.name}
+  #address: 0.0.0.0
   port: 14086
-  sessionTimeout: 30
-  contextPath: /${spring.application.name}
   tomcat:
     uri-encoding: UTF-8
     protocolHeader: x-forwarded-proto

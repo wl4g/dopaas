@@ -28,12 +28,11 @@ spring:
         cors:
           enabled: true # Default: true
           rules:
-            /**:
-              allowsMethods: GET,HEAD,OPTIONS,POST
-              allowsHeaders:
-                - X-Iam-*
-              allowCredentials: true
-              allowsOrigins:
+            '[/**]':
+              allows-methods: [GET,HEAD,OPTIONS,POST]
+              allows-headers: [X-Iam-*]
+              allow-credentials: true
+              #allows-origins:
                 #- '*'
         xsrf:
           enabled: true
@@ -50,16 +49,18 @@ spring:
             enable-data-cipher: true # Default by true
           session:
             enable-access-token-validity: true # Default by true
-  http:
-    multipart:
-      max-file-size: 5000Mb
-      max-request-size: 5000Mb
+  servlet:
+    http:
+      multipart:
+        max-file-size: 5000Mb
+        max-request-size: 5000Mb
 # ### Server configuration. ###
 server:
-  port: 14060
+  servlet:
+    contextPath: /${spring.application.name}
   #address: 0.0.0.0
+  port: 14060
   sessionTimeout: 30
-  contextPath: /${spring.application.name}
   tomcat:
     uri-encoding: UTF-8
     protocolHeader: x-forwarded-proto
