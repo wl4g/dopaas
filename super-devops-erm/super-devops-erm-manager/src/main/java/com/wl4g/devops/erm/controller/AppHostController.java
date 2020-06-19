@@ -90,7 +90,7 @@ public class AppHostController extends BaseController {
 		return hostService.createAndDownloadTemplate(idcId,organizationCode);
 	}
 
-	@PostMapping(value = "/importHost")
+	@RequestMapping(value = "/importHost")
 	public RespBase<?> importHost(@RequestParam(value = "file") MultipartFile file,Integer force,Integer sshAutoCreate) throws IOException {
 		RespBase<Object> resp = RespBase.create();
 		Map<String, Object> result = hostService.importHost(file, force, sshAutoCreate);

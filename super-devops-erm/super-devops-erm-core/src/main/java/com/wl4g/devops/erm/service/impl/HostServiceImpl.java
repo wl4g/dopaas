@@ -35,11 +35,13 @@ import com.wl4g.devops.tool.common.io.FileIOUtils;
 import com.wl4g.devops.tool.common.lang.Assert2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,6 +50,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static com.wl4g.devops.erm.util.SshkeyUtils.encryptSshkeyToHex;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
@@ -74,6 +77,9 @@ public class HostServiceImpl implements HostService {
     @Autowired
     protected DestroableProcessManager pm;
 
+    @Value("${cipher-key}")
+    protected String cipherKey;
+
     final private static String IMPORT_HOST_TEMPLATE = "/import_host_template/";
     final private static String IMPORT_HOST_DATA = "/import_host_data/";
 
@@ -90,6 +96,7 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
+    @Transactional(rollbackFor=Exception.class)
     public void save(Host host) {
         if (isNull(host.getId())) {
             host.preInsert(getRequestOrganizationCode());
@@ -100,7 +107,8 @@ public class HostServiceImpl implements HostService {
         }
     }
 
-    private void insert(Host host) {
+    @Transactional(rollbackFor=Exception.class)
+    public void insert(Host host) {
         appHostDao.insertSelective(host);
         List<Integer> sshIds = host.getSshIds();
         if (!CollectionUtils.isEmpty(sshIds)) {
@@ -116,7 +124,8 @@ public class HostServiceImpl implements HostService {
         }
     }
 
-    private void update(Host host) {
+    @Transactional(rollbackFor=Exception.class)
+    public void update(Host host) {
         appHostDao.updateByPrimaryKeySelective(host);
         hostSshDao.deleteByHostId(host.getId());
         List<Integer> sshIds = host.getSshIds();
@@ -195,7 +204,7 @@ public class HostServiceImpl implements HostService {
         List<String> lines = FileIOUtils.readLines(new File(path), "UTF-8");
         Assert2.notEmptyOf(lines, "lines");
         String[] split = lines.get(0).split(",");
-        Assert2.isTrue(split.length == 4, "template error");
+        Assert2.isTrue(split.length == 6, "template error");
         String[] idcStr = split[4].split("=");
         Assert2.isTrue(idcStr.length == 2, "template error");
         String idcId = idcStr[1];
@@ -223,63 +232,82 @@ public class HostServiceImpl implements HostService {
         return result;
     }
 
-    private void insertHost(String idcId, String organizationCode, String line) throws Exception {
+    @Transactional(rollbackFor=Exception.class)
+    public void insertHost(String idcId, String organizationCode, String line) throws Exception {
 
         if (StringUtils.isBlank(line)) {
             return;
         }
         String[] split = line.split(",");
+        Assert2.isTrue(split.length>0,"template error");
         String hostname = split[0];
-        String ssh = split[1];
-        String username = split[2];
-        String password = split[3];
+
+        String ssh = null;
+        if(split.length>1){
+            ssh = split[1];
+        }
+        String username = null;
+        String password = null;
+        if(split.length==4){
+            username = split[2];
+            password = split[3];
+        }
 
         Host host = new Host();
+        host.preInsert();
         host.setHostname(hostname);
         host.setName(hostname);
-        List<Integer> sshIds = createOrGetSSH(ssh, hostname, username, password);
+        List<Integer> sshIds = null;
+        if(StringUtils.isNotBlank(ssh)){
+            sshIds = createOrGetSSH(ssh, hostname, username, password);
+        }
+
         host.setSshIds(sshIds);
-        host.setId(Integer.valueOf(idcId));
+        host.setIdcId(Integer.valueOf(idcId));
         host.setOrganizationCode(organizationCode);
         insert(host);
 
-
     }
 
-    private List<Integer> createOrGetSSH(String sshCell, String hostname, String username, String password) throws Exception {
+    @Transactional(rollbackFor=Exception.class)
+    public List<Integer> createOrGetSSH(String sshCell, String hostname, String username, String password) throws Exception {
         if (StringUtils.isBlank(sshCell)) {
             return null;
         }
         List<Integer> sshIds = new ArrayList<>();
-        String[] split = sshCell.split("|");
+        String[] split = sshCell.split("\\|");
         for (String sshname : split) {
             Ssh ssh = sshDao.selectByName(sshname);
             if (Objects.nonNull(ssh)) {
                 sshIds.add(ssh.getId());
             } else {
-                //TODO create ssh
-                ssh = new Ssh();
-                ssh.preInsert();
-                ssh.setName(username);
-                ssh.setUsername(username);
-                ssh.setAuthType("2");
-                SSH2Holders.Ssh2KeyPair ssh2KeyPair = SSH2Holders.getInstance(JschHolder.class).generateKeypair(SSH2Holders.AlgorithmType.RSA, "generateBySystem");
-                ssh.setSshKey(ssh2KeyPair.getPrivateKey());
-                ssh.setSshKeyPub(ssh2KeyPair.getPublicKey());
-                sshDao.insertSelective(ssh);
-                createUserAndAddSSHKey(hostname, username, password,ssh2KeyPair.getPrivateKey());
-                sshIds.add(ssh.getId());
+                if(StringUtils.isNoneBlank(hostname,password)){
+                    //TODO create ssh
+                    ssh = new Ssh();
+                    ssh.preInsert();
+                    ssh.setName(sshname);
+                    ssh.setUsername(sshname);
+                    ssh.setAuthType("2");
+                    SSH2Holders.Ssh2KeyPair ssh2KeyPair = SSH2Holders.getInstance(JschHolder.class).generateKeypair(SSH2Holders.AlgorithmType.RSA, "generateBySystem");
+                    ssh.setSshKey(ssh2KeyPair.getPrivateKey());
+                    ssh.setSshKeyPub(ssh2KeyPair.getPublicKey());
+                    if(StringUtils.isNotBlank(ssh.getSshKey())){
+                        ssh.setSshKey(encryptSshkeyToHex(cipherKey, ssh.getSshKey()));
+                    }
+                    createUserAndAddSSHKey(hostname, sshname, username, password,ssh2KeyPair.getPublicKey());
+                    sshDao.insertSelective(ssh);
+                    sshIds.add(ssh.getId());
+                }
             }
         }
         return sshIds;
     }
 
-    private void createUserAndAddSSHKey(String hostname, String username, String password,String sshKey) throws Exception {
+    private void createUserAndAddSSHKey(String hostname,String sshname, String username, String password,String publicKey) throws Exception {
         StringBuilder remoteCommand = new StringBuilder();
-        remoteCommand.append("useradd username\n");
-        remoteCommand.append("echo \""+sshKey+"\" >> /home/"+ username+"/.ssh/authorized_keys");
-        RemoteDestroableCommand cmd = new RemoteDestroableCommand(remoteCommand.toString(), 10000, username, hostname,
-                password);
+        remoteCommand.append("useradd "+ sshname+ " && ");
+        remoteCommand.append("su - "+sshname+" -c \"mkdir -p ~/.ssh && chmod 700 ~/.ssh && echo '"+publicKey+"' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys\"");
+        RemoteDestroableCommand cmd = new RemoteDestroableCommand(remoteCommand.toString(), 10000, username, hostname, password);
         // Execution command.
         String outmsg = pm.execWaitForComplete(cmd);
     }
