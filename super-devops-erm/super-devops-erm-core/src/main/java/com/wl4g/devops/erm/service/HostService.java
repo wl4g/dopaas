@@ -17,8 +17,13 @@ package com.wl4g.devops.erm.service;
 
 import com.wl4g.devops.common.bean.erm.Host;
 import com.wl4g.devops.page.PageModel;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author vjay
@@ -35,4 +40,8 @@ public interface HostService {
 	Host detail(Integer id);
 
 	void del(Integer id);
+
+	ResponseEntity<FileSystemResource> createAndDownloadTemplate(Integer idcId, String organizationCode) throws IOException;
+
+	Map<String, Object> importHost(MultipartFile file, Integer force,Integer sshAutoCreate) throws IOException;
 }

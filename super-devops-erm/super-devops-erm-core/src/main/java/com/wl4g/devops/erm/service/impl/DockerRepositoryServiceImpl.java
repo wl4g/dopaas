@@ -135,8 +135,7 @@ public class DockerRepositoryServiceImpl implements DockerRepositoryService {
         RestTemplate restTemplate = new RestTemplate(generateHttpRequestFactory());
         ParameterizedTypeReference<List<RepositoryProject>> responseType = new ParameterizedTypeReference<List<RepositoryProject>>() {};
         ResponseEntity<List<RepositoryProject>> result = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
-        List<RepositoryProject> body = result.getBody();
-        return body;
+        return result.getBody();
     }
 
     private HttpComponentsClientHttpRequestFactory generateHttpRequestFactory()

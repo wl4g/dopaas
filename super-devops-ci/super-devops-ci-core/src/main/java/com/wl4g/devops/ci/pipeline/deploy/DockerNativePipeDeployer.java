@@ -100,7 +100,7 @@ public class DockerNativePipeDeployer extends GenericHostPipeDeployer<PipelinePr
 	private void transferYmlFileToRemote(File file,String remoteHost, String user, String sshkey) throws Exception {
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
 		writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, file));
-		SSH2Holders.getDefault().scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey), file, remoteTmpDir);
+		SSH2Holders.getDefault().scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey),null, file, remoteTmpDir);
 	}
 
 	private void cleanupRemoteYmlTmpFile(String remoteHost, String user, String sshkey) throws Exception {

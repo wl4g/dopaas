@@ -14,6 +14,8 @@ public interface SshDao {
 
     Ssh selectByPrimaryKey(Integer id);
 
+    Ssh selectByName(String name);
+
     int updateByPrimaryKeySelective(Ssh record);
 
     int updateByPrimaryKey(Ssh record);

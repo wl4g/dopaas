@@ -15,10 +15,6 @@
  */
 package com.wl4g.devops.ci.analyses.coordinate;
 
-import static org.apache.commons.lang3.SystemUtils.JAVA_CLASS_PATH;
-
-import java.io.File;
-
 import com.wl4g.devops.ci.analyses.config.ExecutorProperties;
 import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
 import com.wl4g.devops.ci.analyses.model.AnalysisResultModel;
@@ -27,13 +23,16 @@ import com.wl4g.devops.support.cli.DestroableProcessManager.ProcessCallback;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
+import java.io.File;
+
+import static org.apache.commons.lang3.SystemUtils.JAVA_CLASS_PATH;
+
 /**
  * SPOTBUGS analyzer coordinator. </br>
- * 
+ *
  * <pre>
  * &#64;see https://github.com/spotbugs/spotbugs/blob/b38806a67ce454e271ab8f759787e228dc8cf78c/spotbugs/src/gui/main/edu/umd/cs/findbugs/gui2/NewProjectWizard.java#L211
  * &#64;see {@link edu.umd.cs.findbugs.gui2.NewProjectWizard}
- * &#64;see {@link edu.umd.cs.findbugs.gui2.new ActionListener(){...}#actionPerformed(ActionEvent)}
  * &#64;see {@link edu.umd.cs.findbugs.gui2.AnalyzingDialog#show(Project)}
  * &#64;see {@link edu.umd.cs.findbugs.gui2.AnalyzingDialog#show(Project,AnalysisCallback,boolean)}
  * &#64;see {@link edu.umd.cs.findbugs.gui2.AnalyzingDialog.AnalysisThread}
@@ -41,7 +40,7 @@ import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
  * &#64;see {@link edu.umd.cs.findbugs.gui2.AnalyzingDialog#predictPassCount(int[])}
  * &#64;see {@link edu.umd.cs.findbugs.gui2.MainFrameLoadSaveHelper#saveAs()}
  * </pre>
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2019年11月18日
  * @since

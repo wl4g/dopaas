@@ -26,6 +26,12 @@
     from erm_ssh
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from erm_ssh
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from erm_ssh
     where id = #{id,jdbcType=INTEGER}

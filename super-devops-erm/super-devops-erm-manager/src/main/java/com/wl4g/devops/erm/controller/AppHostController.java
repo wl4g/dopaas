@@ -18,15 +18,18 @@ package com.wl4g.devops.erm.controller;
 import com.wl4g.devops.common.bean.erm.Host;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.erm.service.HostService;
+import com.wl4g.devops.page.PageModel;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 字典
@@ -78,6 +81,20 @@ public class AppHostController extends BaseController {
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		hostService.del(id);
+		return resp;
+	}
+
+
+	@RequestMapping(value = "/createAndDownloadTemplate")
+	public ResponseEntity<FileSystemResource> createAndDownloadTemplate(Integer idcId,String organizationCode) throws IOException {
+		return hostService.createAndDownloadTemplate(idcId,organizationCode);
+	}
+
+	@PostMapping(value = "/importHost")
+	public RespBase<?> importHost(@RequestParam(value = "file") MultipartFile file,Integer force,Integer sshAutoCreate) throws IOException {
+		RespBase<Object> resp = RespBase.create();
+		Map<String, Object> result = hostService.importHost(file, force, sshAutoCreate);
+		resp.setData(result);
 		return resp;
 	}
 

@@ -81,7 +81,7 @@ public abstract class SSH2Holders<S, F> {
 	 * @param remoteFilePath
 	 * @throws Exception
 	 */
-	public abstract void scpGetFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteFilePath)
+	public abstract void scpGetFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteFilePath)
 			throws Exception;
 
 	/**
@@ -94,7 +94,7 @@ public abstract class SSH2Holders<S, F> {
 	 * @param remoteDir
 	 * @throws Exception
 	 */
-	public abstract void scpPutFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteDir)
+	public abstract void scpPutFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteDir)
 			throws Exception;
 
 	/**
@@ -107,7 +107,7 @@ public abstract class SSH2Holders<S, F> {
 	 * @param processor
 	 * @throws IOException
 	 */
-	protected abstract void doScpTransfer(String host, String user, char[] pemPrivateKey, CallbackFunction<F> processor)
+	protected abstract void doScpTransfer(String host, String user, char[] pemPrivateKey, String password, CallbackFunction<F> processor)
 			throws Exception;
 
 	// --- Execution commands. ---
@@ -123,7 +123,7 @@ public abstract class SSH2Holders<S, F> {
 	 * @return
 	 * @throws IOException
 	 */
-	public abstract SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
+	public abstract SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String password, String command, long timeoutMs)
 			throws Exception;
 
 	/**
@@ -138,7 +138,7 @@ public abstract class SSH2Holders<S, F> {
 	 * @return
 	 * @throws IOException
 	 */
-	public abstract <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String command,
+	public abstract <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String password, String command,
 			ProcessFunction<S, T> processor, long timeoutMs) throws Exception;
 
 	/**
@@ -152,7 +152,7 @@ public abstract class SSH2Holders<S, F> {
 	 * @return
 	 * @throws IOException
 	 */
-	public abstract <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String command,
+	public abstract <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String password, String command,
 			ProcessFunction<S, T> processor) throws Exception;
 
 	/**
