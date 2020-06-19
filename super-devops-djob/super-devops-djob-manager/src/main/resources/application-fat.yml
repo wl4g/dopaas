@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(Test) configuration. ####
+# #### Environment(FAT) configuration. ####
 #
 spring:
   cloud:
@@ -16,12 +16,12 @@ spring:
       iam:
         cors:
           rules:
-            /**:
-              allowsOrigins:
-                - https://${DEVOPS_DOMAIN_TOP:wl4g.test}
-                - http://${DEVOPS_DOMAIN_TOP:wl4g.test}
-                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
-                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.test}
+            '[/**]':
+              allows-origins:
+                - https://${DEVOPS_DOMAIN_TOP:wl4g.fat}
+                - http://${DEVOPS_DOMAIN_TOP:wl4g.fat}
+                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.fat}
+                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.fat}
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
@@ -29,36 +29,7 @@ spring:
         client:
           server-uri: http://iam.${DEVOPS_DOMAIN_TOP:wl4g.test}/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/ci/taskhis
-      ci:
-        analyzers: # CI analyses configuration.
-          executor:
-            concurrency: 10
-            accept-queue: 2
-          spotbugs:
-            analyzer-run-class: edu.umd.cs.findbugs.FindBugs2
-            jvm-args: 
-              -Xms1G -Xmx4G
-              -XX:+HeapDumpOnOutOfMemoryError
-              -XX:HeapDumpPath=${server.tomcat.basedir}/jvm_dump.hprof
-              -XX:+UseG1GC
-              -XX:MaxGCPauseMillis=20
-              -XX:InitiatingHeapOccupancyPercent=35
-              -XX:+DisableExplicitGC
-              -verbose:gc
-              -Xloggc:${server.tomcat.basedir}/gc.log
-              -XX:+PrintGCDetails
-              -XX:+PrintGCDateStamps
-              -XX:+PrintGCTimeStamps
-              -XX:+UseGCLogFileRotation
-              -XX:NumberOfGCLogFiles=10
-              -XX:GCLogFileSize=100M
-              -XX:GCLogFileSize=100M
-              -Dfile.encoding=UTF-8
-              -Djava.awt.headless=true
-              -Djava.security.egd=file:/dev/./urandom
-
-  # Datasource configuration.
+          success-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.test}/#/srm/console
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
@@ -80,12 +51,6 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
-  mail:
-    host: smtp.exmail.qq.com
-    port: 465
-    username: syslog@7782.co
-    password: Sm#1234
-    protocol: smtp
 
 # Redis configuration.
 redis:
@@ -93,4 +58,4 @@ redis:
   connect-timeout: 10000
   max-attempts: 10
   # Redis's cluster nodes.
-  nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
+  nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:63811}

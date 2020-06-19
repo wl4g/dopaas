@@ -8,9 +8,10 @@
 # limitations under the License.
 #
 
-banner:
-  charset: UTF-8
-  location: classpath:banner.txt
+spring:
+  banner:
+    charset: UTF-8
+    location: classpath:banner.txt
 
 # ### Logging configuration. ###
 logging:

@@ -24,12 +24,11 @@ spring: # Base configuration.
           enabled: true # Default: true
           # Default rules: allowsOrigins=http://localhost:8080; allowsHeaders=X-Iam-*; allowsMethods=GET,HEAD,POST,OPTIONS
           rules:
-            /**:
-              allowsMethods: GET,HEAD,POST,OPTIONS
-              allowsHeaders:
-                - X-Iam-*
-              allowCredentials: true
-              allowsOrigins:
+            '[/**]':
+              allows-methods: [GET,HEAD,POST,OPTIONS]
+              allows-headers: [X-Iam-*]
+              allow-credentials: true
+              #allows-origins:
                 #- '*'
         xsrf:
           enabled: true
@@ -54,8 +53,11 @@ spring: # Base configuration.
 
 # #### Server configuration. ####
 server:
+  servlet:
+    contextPath: /${spring.application.name}
+  #address: 0.0.0.0
   port: 14041
-  contextPath: /${spring.application.name}
+  sessionTimeout: 30
   tomcat:
     uri-encoding: UTF-8
     basedir: /tmp/${spring.application.name}

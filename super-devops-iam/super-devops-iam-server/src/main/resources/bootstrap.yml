@@ -38,7 +38,7 @@ spring:
               # front end has a little intrusion transformation, that is: each request needs to manually set the current token. For more information 
               # about iam-jssdk, please refer to: /default-webapps/sdk/{version}/src/js/IAM.js
               allow-credentials: true
-              #allows-origins:
+              ##allows-origins:
                 #- '*'
         xsrf:
           enabled: true # Default: false
