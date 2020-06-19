@@ -60,9 +60,10 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.springframework.util.Assert.*;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * Default CI/CD pipeline management implements.
@@ -492,6 +493,10 @@ public class DefaultPipelineManager implements PipelineManager {
         setPipeStepBuildingRef(pipeStepBuilding, project.getId());
 
         AppEnvironment environment = appEnvironmentDao.selectByClusterIdAndEnv(appCluster.getId(), pipeline.getEnvironment());
+        Integer repositoryId = environment.getRepositoryId();
+        if(nonNull(repositoryId)){
+
+        }
 
         // TODO add pipeline status track
         PipelineContext context = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, pipelineHistory,

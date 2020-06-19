@@ -15,20 +15,19 @@
  */
 package com.wl4g.devops.tool.common.cli.ssh2;
 
+import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders.SshExecResponse;
+import com.wl4g.devops.tool.common.resource.ResourceUtils2;
+import org.apache.commons.io.FileUtils;
+import org.apache.sshd.client.channel.ClientChannelEvent;
+
+import java.io.File;
+import java.io.IOException;
+
 import static com.google.common.base.Charsets.UTF_8;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import static java.util.Collections.singleton;
 import static java.util.Objects.nonNull;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.sshd.client.channel.ClientChannelEvent;
-
-import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders.SshExecResponse;
-import com.wl4g.devops.tool.common.resource.ResourceUtils2;
 
 /**
  * {@link SshdHolderTests}
@@ -61,7 +60,7 @@ public class SshdHolderTests {
 	public static void execCatCommandTest1() throws Exception {
 		String cmd = "cat /tmp/test_vim_file.txt";
 		SshExecResponse resp = SSH2Holders.getInstance(SshdHolder.class).execWaitForResponse("127.0.0.1", "wanglsir",
-				PRIVATE_KEY.toCharArray(), cmd, 3_000);
+				PRIVATE_KEY.toCharArray(),null, cmd, 3_000);
 		out.println("stdout=" + resp.getMessage());
 		out.println("stderr=" + resp.getErrmsg());
 		out.println("exitCode=" + resp.getExitCode());
@@ -70,7 +69,7 @@ public class SshdHolderTests {
 
 	public static void execVimCommandTest2() throws Exception {
 		String cmd = "vim /tmp/test_vim_file.txt";
-		SSH2Holders.getInstance(SshdHolder.class).doExecCommand("127.0.0.1", "wanglsir", PRIVATE_KEY.toCharArray(), cmd,
+		SSH2Holders.getInstance(SshdHolder.class).doExecCommand("127.0.0.1", "wanglsir", PRIVATE_KEY.toCharArray(),null, cmd,
 				chSession -> {
 					chSession.waitFor(singleton(ClientChannelEvent.CLOSED), 3_000);
 
@@ -92,7 +91,7 @@ public class SshdHolderTests {
 		long begin = currentTimeMillis();
 		// Test upload file
 		String loaclFile = "/Users/vjay/Downloads/elasticsearch-7.6.0-linux-x86_64.tar";
-		SSH2Holders.getInstance(SshdHolder.class).scpPutFile("10.0.0.160", "root", PRIVATE_KEY.toCharArray(), new File(loaclFile),
+		SSH2Holders.getInstance(SshdHolder.class).scpPutFile("10.0.0.160", "root", PRIVATE_KEY.toCharArray(),null, new File(loaclFile),
 				"$HOME/testssh/elasticsearch-7.6.0-linux-x86_64.tar");
 		long end = currentTimeMillis();
 		out.println("cost:" + (end - begin));// 80801ms 150<cpu<200
