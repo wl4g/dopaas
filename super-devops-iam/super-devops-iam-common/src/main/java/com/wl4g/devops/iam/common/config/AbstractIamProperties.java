@@ -95,6 +95,11 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	private CipherProperties cipher = new CipherProperties();
 
 	/**
+	 * Domain security configuration properties.
+	 */
+	private DomainSecurityProperties domain = new DomainSecurityProperties();
+
+	/**
 	 * Application name. e.g. http://host:port/{serviceName}/shiro-cas
 	 */
 	private String serviceName;
@@ -178,6 +183,14 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 	public void setCipher(CipherProperties cipher) {
 		this.cipher = cipher;
+	}
+
+	public DomainSecurityProperties getDomain() {
+		return domain;
+	}
+
+	public void setDomain(DomainSecurityProperties domain) {
+		this.domain = domain;
 	}
 
 	@Override
@@ -815,6 +828,39 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		public CipherProperties setCaseSensitive(boolean isCaseSensitive) {
 			this.isCaseSensitive = isCaseSensitive;
 			return this;
+		}
+
+	}
+
+	/**
+	 * Domain security configuration properties.
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年6月20日 v1.0.0
+	 * @see
+	 */
+	public static class DomainSecurityProperties implements Serializable {
+
+		final private static long serialVersionUID = -5701992202115239835L;
+
+		/**
+		 * Profiles environment activation conditions for HSTS
+		 */
+		private List<String> hstsProfilesActive = new ArrayList<String>(4) {
+			private static final long serialVersionUID = 3114838319180606668L;
+			{
+				add("pro");
+				add("prod");
+				add("production");
+			}
+		};
+
+		public List<String> getHstsProfilesActive() {
+			return hstsProfilesActive;
+		}
+
+		public void setHstsProfilesActive(List<String> hstsProfilesActive) {
+			this.hstsProfilesActive = hstsProfilesActive;
 		}
 
 	}
