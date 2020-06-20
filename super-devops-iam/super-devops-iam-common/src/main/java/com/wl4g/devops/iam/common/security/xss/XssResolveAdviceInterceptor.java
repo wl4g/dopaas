@@ -40,7 +40,6 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.reflect.ReflectionUtils2.isCompatibleType;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.ReflectionUtils.makeAccessible;
 
@@ -234,20 +233,6 @@ public class XssResolveAdviceInterceptor implements MethodInterceptor {
 		 * behavior.
 		 */
 		response.setHeader("X-Content-Type-Options", "nosniff");
-
-		// Strict-Transport-Security:
-		if (equalsIgnoreCase(request.getScheme(), "HTTPS")) {
-			if (!response.containsHeader("Strict-Transport-Security")) {
-				response.addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-				response.addHeader("Strict-Transport-Security", "max-age=0");
-			}
-		}
-
-		// Timing-Allow-Origin:
-		response.setHeader("Timing-Allow-Origin", "*");
-
-		// X-Download-Options:
-		response.setHeader("X-Download-Options", "noopen");
 
 	}
 

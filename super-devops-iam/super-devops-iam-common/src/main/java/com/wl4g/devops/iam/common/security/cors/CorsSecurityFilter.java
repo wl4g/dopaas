@@ -56,6 +56,9 @@ public final class CorsSecurityFilter extends CorsFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
+		// Timing-Allow-Origin:
+		response.setHeader("Timing-Allow-Origin", "*");
+
 		// response.addHeader("P3P", "CP='CURa ADMa DEVa PSAo PSDo OUR BUS UNI
 		// PUR INT DEM STA PRE COM NAV OTC NOI DSP COR'");
 		// response.addHeader("Set-Cookie", "HttpOnly;Secure;SameSite=None");
