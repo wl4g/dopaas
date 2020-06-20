@@ -75,7 +75,7 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 		Parameter parameter = new SnsAuthorizingParameter(token.getSocial().getProvider(), token.getSocial().getOpenId(),
 				token.getSocial().getUnionId());
 		IamPrincipalInfo info = configurer.getIamAccount(parameter);
-		log.info("Get authenticate accountInfo: {}, by sns parameter: {}", toJSONString(info), toJSONString(parameter));
+		log.info("Got authentication accountInfo: {}, by sns parameter: {}", toJSONString(info), toJSONString(parameter));
 
 		if (nonNull(info) && !isBlank(info.getPrincipal())) {
 			// Authenticate attributes.(roles/permissions/rememberMe)
