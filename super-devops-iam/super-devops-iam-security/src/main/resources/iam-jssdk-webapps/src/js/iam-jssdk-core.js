@@ -565,7 +565,7 @@
 					}
 				},
 				error: function(xhr, textStatus, errmsg){
-					_iamConsole.error("Failed to init xsrf token. " + err);
+					_iamConsole.error("Failed to init xsrf token. " + errmsg);
 				}
 			});
 		}
@@ -1188,6 +1188,7 @@
 		}
 		// Convert data params
 		var dataParams = Common.Util.isMap(params) ? Common.Util.toUrl(settings.definition, params) : params;
+		_iamConsole.debug("Requesting for - url:", _url, "headers:", headers);
 		$.ajax({
 			url: _url,
 			type: method,
