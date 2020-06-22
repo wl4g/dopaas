@@ -193,25 +193,45 @@
 				data = options.data || null,
 				timeout = options.timeout || 30000,
 				success = options.success || function(data, textStatus, xhr) {},
-				error = options.error || function(xhr, textStatus, errmsg) { console.error(errmsg); };
+				error = options.error || function(xhr, textStatus, errmsg) { console.error(errmsg); },
+				complete = options.complete || function(status, statusText, response, responseHeaders) {};
 				try {
 					// Check arguments requires.
 					Common.Util.checkEmpty("url", url);
 
-					// 1.创建XMLHttpRequest组建
+					// Create XMLHttpRequest
 					var _xhr = null;
 					if (!_xhr) {
 						_xhr = Common.Util.Http.createXMLHttpRequest();
 					}
+
+					// Init XMLHttpRequest
+					_xhr.open(type.toUpperCase(), url, async);
+
 					// Apply custom fields if provided
 					if (xhrFields) {
-						for (i in xhrFields) {
+						for (var i in xhrFields) {
 							// e.g: _xhr.withCredentials = withCredentials;
 							_xhr[i] = xhrFields[i];
 						}
 					}
+
+					// Override mime type if needed
+					if (options.mimeType && xhr.overrideMimeType) {
+						_xhr.overrideMimeType(options.mimeType);
+					}
+
+					// X-Requested-With header
+					// For cross-domain requests, seeing as conditions for a preflight are
+					// akin to a jigsaw puzzle, we simply never set it to be sure.
+					// (it can always be set on a per-request basis or even using ajaxSetup)
+					// For same-domain requests, won't change header if already provided.
+					if (!options.crossDomain && !headers["X-Requested-With"]) {
+						headers["X-Requested-With"] = "XMLHttpRequest";
+					}
+
 					// Set headers
-					for (i in headers) {
+					for (var i in headers) {
 						_xhr.setRequestHeader(i, headers[i]);
 					}
 
@@ -221,7 +241,7 @@
 						_xhr.timeout = timeout;
 					}
 
-					// 2.设置超时检查函数
+					// 设置超时检查函数
 					//var _responsedMark = false;
 					//var _timeoutTimer = window.setTimeout(function() {
 					//	if (!_responsedMark) {
@@ -229,7 +249,7 @@
 					//	}
 					//}, timeout);
 
-					// 3.设置回调函数
+					// 设置回调函数
 					_xhr.onreadystatechange = function() {
 						if (_xhr.readyState == 4) {
 							//_responsedMark = true;
@@ -243,16 +263,41 @@
 							}
 						}
 					};
-					_xhr.ontimeout = function() {
-						error(_xhr, null, "Timeout waiting for response, " + timeout);
-					}
-					_xhr.onerror = function(status) {
-						error(_xhr, null, "Error status " + status);
-					}
 
-					// 4.初始化XMLHttpRequest组建
-					_xhr.open(type.toUpperCase(), url, async);
-					// 5.发送请求
+					// Callback
+					var callback = function(type) {
+						return function() {
+							if (callback) {
+								callback = _xhr.onload = _xhr.onerror = _xhr.onabort = _xhr.ontimeout = null;
+								if (type === "abort") {
+									_xhr.abort();
+								} else if (type === "error") {
+									complete(
+										// File: protocol always yields status 0; see #8605, #14207
+										_xhr.status,
+										_xhr.statusText
+									);
+								} else {
+									complete(
+										_xhr.status,
+										_xhr.statusText,
+										// For XHR2 non-text, let the caller handle it (gh-2498)
+										(_xhr.responseType || "text") === "text" ? {text: _xhr.responseText} : {binary: _xhr.response},
+										_xhr.getAllResponseHeaders()
+									);
+								}
+							}
+						};
+					};
+
+					// Listen to events
+					_xhr.onload = callback();
+					_xhr.onabort = _xhr.onerror = _xhr.ontimeout = callback("error");
+
+					// Create the abort callback
+					callback = callback("abort");
+
+					// Do send the request (this may raise an exception)
 					_xhr.send(data);
 				} catch(e) {
 					error(_xhr, null, e);
@@ -1817,7 +1862,7 @@
 					}
 				},
 				error: function(xhr, textStatus, errmsg){
-					_iamConsole.error("Failed to init xsrf token. " + err);
+					_iamConsole.error("Failed to init xsrf token. " + errmsg);
 				}
 			});
 		}
@@ -2440,6 +2485,7 @@
 		}
 		// Convert data params
 		var dataParams = Common.Util.isMap(params) ? Common.Util.toUrl(settings.definition, params) : params;
+		_iamConsole.debug("Requesting for - url:", _url, "headers:", headers);
 		$.ajax({
 			url: _url,
 			type: method,
