@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.iam.common.security.domain;
 
-import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import java.io.IOException;
