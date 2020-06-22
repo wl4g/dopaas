@@ -47,20 +47,6 @@ public abstract class PlatformInfo extends SystemUtils2 {
 	final public static String IBMZ_64 = "s390x";
 	final public static String AARCH_64 = "aarch64";
 
-	public static void main(String[] args) {
-		if (args.length >= 1) {
-			if ("--os".equals(args[0])) {
-				System.out.print(OS_NAME);
-				return;
-			} else if ("--arch".equals(args[0])) {
-				System.out.print(getSpecArchName());
-				return;
-			}
-		}
-
-		System.out.print(getNativeLibFolderPathForCurrentOS());
-	}
-
 	/**
 	 * General specification path to get shared file of native library.
 	 * 
@@ -260,6 +246,20 @@ public abstract class PlatformInfo extends SystemUtils2 {
 
 	private static String translateArchNameToFolderName(String archName) {
 		return archName.replaceAll("\\W", "");
+	}
+
+	public static void main(String[] args) {
+		if (args.length >= 1) {
+			if ("--os".equals(args[0])) {
+				System.out.print(OS_NAME);
+				return;
+			} else if ("--arch".equals(args[0])) {
+				System.out.print(getSpecArchName());
+				return;
+			}
+		}
+
+		System.out.print(getNativeLibFolderPathForCurrentOS());
 	}
 
 }

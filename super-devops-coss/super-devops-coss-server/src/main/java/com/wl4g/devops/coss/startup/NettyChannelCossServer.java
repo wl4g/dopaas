@@ -3,6 +3,7 @@ package com.wl4g.devops.coss.startup;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
 import static java.util.Objects.nonNull;
 
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLException;
 
 import com.wl4g.devops.coss.config.ChannelServerProperties;
@@ -166,7 +167,8 @@ public class NettyChannelCossServer extends ChannelCossServer {
 	private SslContext getServerSslContext() {
 		try {
 			// TODO
-			return SslContextBuilder.forServer(null).build();
+			return SslContextBuilder.forServer(new KeyManager() {
+			}).build();
 		} catch (SSLException ex) {
 			throw new IllegalStateException("Could not create default server sslContext", ex);
 		}
