@@ -63,7 +63,7 @@ spring:
             download-url: http://wl4g.debug:14046/ci-server/fs/download
           docker:
             #make docker image in where addr,e.g: tcp://localhost:2375 default port is 2375
-            make-image-addr: tcp://localhost:2376
+            make-image-addr: tcp://10.0.0.161:2375
       support:
         notification:
           mail:
