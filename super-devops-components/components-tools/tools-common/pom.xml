@@ -166,6 +166,12 @@
 			<groupId>com.jcraft</groupId>
 			<artifactId>jsch</artifactId>
 		</dependency>
+		<!-- Runtime -->
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>

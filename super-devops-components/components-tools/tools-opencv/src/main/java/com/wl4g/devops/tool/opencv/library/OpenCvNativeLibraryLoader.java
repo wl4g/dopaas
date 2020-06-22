@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wl4g.devops.components.tools.common.natives.LoadNativeLibraryError;
-import com.wl4g.devops.components.tools.common.natives.PathPatternNativeLibraryLoader;
+import com.wl4g.devops.components.tools.common.natives.ClassPathNativeLibraryLoader;
 
 /**
  * OpenCv dynamic link library loader.</br>
@@ -54,7 +54,7 @@ public final class OpenCvNativeLibraryLoader {
 	/**
 	 * Opencv native librarys loader.
 	 */
-	private final static PathPatternNativeLibraryLoader loader = new PathPatternNativeLibraryLoader();
+	private final static ClassPathNativeLibraryLoader loader = new ClassPathNativeLibraryLoader();
 
 	/**
 	 * Loading OpenCv native librarys.

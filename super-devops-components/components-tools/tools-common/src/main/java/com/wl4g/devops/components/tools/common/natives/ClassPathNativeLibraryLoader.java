@@ -58,7 +58,7 @@ import com.wl4g.devops.components.tools.common.resource.resolver.ClassPathResour
  * @version v1.0 2019年12月3日
  * @since
  */
-public class PathPatternNativeLibraryLoader extends PlatformInfo {
+public class ClassPathNativeLibraryLoader extends PlatformInfo {
 	final protected Logger log = getLogger(getClass());
 
 	/**
@@ -82,7 +82,7 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 	 */
 	final private List<File> loadLibFiles = new ArrayList<>(8);
 
-	public PathPatternNativeLibraryLoader() {
+	public ClassPathNativeLibraryLoader() {
 		this(getDefaultClassLoader());
 	}
 
@@ -90,7 +90,7 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 	 * For example:
 	 * 
 	 * <pre>
-	 * new PathPatternNativeLibraryLoader("/opencv/native/××/×.×");
+	 * new {@link ClassPathNativeLibraryLoader}("/opencv/native/××/×.×");
 	 * </pre>
 	 * 
 	 * <font color=red>Note: Because of the Java multiline annotation problem,
@@ -100,14 +100,14 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 	 * @param archShareMapping
 	 * @param libLocationPattern
 	 */
-	public PathPatternNativeLibraryLoader(ClassLoader classLoader) {
+	public ClassPathNativeLibraryLoader(ClassLoader classLoader) {
 		notNull(classLoader, "Native library classLoader can't null.");
 		this.classLoader = classLoader;
 		this.archShareLibFolderPathLowerCase = getNativeLibFolderPathForCurrentOS().toLowerCase(Locale.US);
 	}
 
 	/**
-	 * Check current {@link PathPatternNativeLibraryLoader} loaded?
+	 * Check current {@link ClassPathNativeLibraryLoader} loaded?
 	 * 
 	 * @return
 	 */
@@ -121,8 +121,6 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 	 * String as filename because the pathname is "abstract", not
 	 * system-dependent.
 	 * 
-	 * @param classLoader
-	 *            {@link ClassLoader} for loading native class library
 	 * @param libLocationPatterns
 	 *            lib Location patterns
 	 * @throws IOException
@@ -186,6 +184,23 @@ public class PathPatternNativeLibraryLoader extends PlatformInfo {
 
 		// Cleanup nativelib temporary files.
 		cleanupTmpNativeLibs();
+	}
+
+	/**
+	 * The file from JAR(CLASSPATH) is copied into system temporary directory
+	 * and then loaded. The temporary file is deleted after exiting. Method uses
+	 * String as filename because the pathname is "abstract", not
+	 * system-dependent.
+	 * 
+	 * @param libLocationPatterns
+	 *            lib Location patterns
+	 * @throws IOException
+	 *             Dynamic library read write error
+	 * @throws LoadNativeLibraryError
+	 *             The specified file was not found in the jar package.
+	 */
+	protected void doLoadLibrary(String... libLocationPatterns) throws IOException, LoadNativeLibraryError {
+
 	}
 
 	/**
