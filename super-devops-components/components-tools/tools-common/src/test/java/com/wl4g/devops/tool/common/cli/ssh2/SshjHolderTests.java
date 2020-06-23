@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.tool.common.cli.ssh2;
 
-import com.wl4g.devops.tool.common.resource.ResourceUtils2;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;

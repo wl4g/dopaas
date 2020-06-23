@@ -1,6 +1,7 @@
 package com.wl4g.devops.ci.utils;
 
-import com.wl4g.devops.tool.common.io.FileIOUtils;
+
+import com.wl4g.devops.components.tools.common.io.FileIOUtils;
 
 import java.io.File;
 

@@ -15,22 +15,21 @@
  */
 package com.wl4g.devops.iam.common.security.domain;
 
-import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-
-import java.io.IOException;
-import java.util.Optional;
+import com.wl4g.devops.iam.common.config.AbstractIamProperties;
+import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import org.springframework.core.env.Environment;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Optional;
 
-import org.springframework.core.env.Environment;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.wl4g.devops.iam.common.config.AbstractIamProperties;
-import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
+import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**
  * HTTP strict transport security filter

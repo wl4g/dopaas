@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.components.tools.common.cli.ssh2;
 
+import com.wl4g.devops.components.tools.common.collection.Collections2;
+import com.wl4g.devops.components.tools.common.function.CallbackFunction;
+import com.wl4g.devops.components.tools.common.function.ProcessFunction;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
@@ -27,9 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-
-import com.wl4g.devops.components.tools.common.function.CallbackFunction;
-import com.wl4g.devops.components.tools.common.function.ProcessFunction;
 
 import static com.wl4g.devops.components.tools.common.io.ByteStreams2.readFullyToString;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;

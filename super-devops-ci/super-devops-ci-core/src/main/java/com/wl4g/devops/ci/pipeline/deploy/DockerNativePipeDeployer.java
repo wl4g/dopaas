@@ -23,8 +23,8 @@ import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders;
-import com.wl4g.devops.tool.common.io.FileIOUtils;
+import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders;
+import com.wl4g.devops.components.tools.common.io.FileIOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
