@@ -18,6 +18,7 @@ package com.wl4g.devops.ci.core.context;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.util.List;
@@ -47,11 +48,13 @@ public class DefaultPipelineContext implements PipelineContext {
 	final private PipeStepInstanceCommand pipeStepInstanceCommand;
 	final private PipeStepNotification pipeStepNotification;
 	final private PipeStepBuilding pipeStepBuilding;
+	final private AppEnvironment environment;
 
 
 	public DefaultPipelineContext(Project project, String projectSourceDir, AppCluster appCluster, List<AppInstance> instances,
 								  PipelineHistory pipelineHistory, List<PipelineHistoryInstance> pipelineHistoryInstances, PipelineModel pipelineModel,
-								  PipeStepInstanceCommand pipeStepInstanceCommand,Pipeline pipeline,PipeStepNotification pipeStepNotification,PipeStepBuilding pipeStepBuilding) {
+								  PipeStepInstanceCommand pipeStepInstanceCommand, Pipeline pipeline, PipeStepNotification pipeStepNotification,
+								  PipeStepBuilding pipeStepBuilding, AppEnvironment environment) {
 		notNull(project, "project must not be null");
 		hasText(projectSourceDir, "projectSourceDir must not be empty");
 		notNull(appCluster, "AppCluster must not be empty");
@@ -68,6 +71,7 @@ public class DefaultPipelineContext implements PipelineContext {
 		this.pipeline = pipeline;
 		this.pipeStepNotification = pipeStepNotification;
 		this.pipeStepBuilding = pipeStepBuilding;
+		this.environment = environment;
 	}
 
 	@Override
@@ -121,5 +125,10 @@ public class DefaultPipelineContext implements PipelineContext {
 	@Override
 	public PipeStepBuilding getPipeStepBuilding() {
 		return pipeStepBuilding;
+	}
+
+	@Override
+	public AppEnvironment getEnvironment() {
+		return environment;
 	}
 }

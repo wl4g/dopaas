@@ -13,27 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.service;
-
-import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.page.PageModel;
-
-import java.util.List;
+package com.wl4g.devops.ci.config;
 
 /**
+ * Test and inspection report configuration.
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2019-11-12 11:05:00
+ * @version 2020年1月7日 v1.0.0
+ * @see
  */
-public interface VcsService {
+public class DockerProperties {
 
-	PageModel list(PageModel pm, String name, String provider, Integer authType);
+	private String makeImageAddr;
 
-	void save(Vcs vcs);
+	public String getMakeImageAddr() {
+		return makeImageAddr;
+	}
 
-	void del(Integer id);
-
-	Vcs detail(Integer id);
-
-	List<Vcs> all();
-
+	public void setMakeImageAddr(String makeImageAddr) {
+		this.makeImageAddr = makeImageAddr;
+	}
 }

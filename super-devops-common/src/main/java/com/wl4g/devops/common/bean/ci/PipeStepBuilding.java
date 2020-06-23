@@ -19,6 +19,8 @@ public class PipeStepBuilding extends BaseBean {
 
     private List<PipeStepBuildingProject> pipeStepBuildingProjects;
 
+    private String ref;
+
     public Integer getPipeId() {
         return pipeId;
     }
@@ -57,5 +59,13 @@ public class PipeStepBuilding extends BaseBean {
 
     public void setRefType(Integer refType) {
         this.refType = refType;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
     }
 }

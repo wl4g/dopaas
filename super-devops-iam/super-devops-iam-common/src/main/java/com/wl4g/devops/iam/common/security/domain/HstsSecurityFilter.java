@@ -26,7 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
@@ -41,17 +41,41 @@ import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
  */
 public class HstsSecurityFilter extends OncePerRequestFilter {
 
-	@Autowired
-	protected AbstractIamProperties<ParamProperties> config;
+	/**
+	 * {@link Environment}
+	 */
+	final Environment environment;
+
+	/**
+	 * {@link AbstractIamProperties}
+	 */
+	final protected AbstractIamProperties<? extends ParamProperties> config;
+
+	/**
+	 * Enabled hsts with profiles active. </br>
+	 * Http-Strict-Transport-Security
+	 */
+	final protected boolean enableHstsWithProfilesActive;
+
+	public HstsSecurityFilter(AbstractIamProperties<? extends ParamProperties> config, Environment environment) {
+		notNullOf(config, "config");
+		notNullOf(environment, "environment");
+		this.config = config;
+		this.environment = environment;
+
+		// Http Strict-Transport-Security:
+		String active = environment.getRequiredProperty("spring.profiles.active");
+		Optional<String> hstsOpt = safeList(config.getDomain().getHstsProfilesActive()).stream()
+				.filter(a -> equalsIgnoreCase(a, active)).findAny();
+		this.enableHstsWithProfilesActive = hstsOpt.isPresent();
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
-		// Http strict transport security:
-		Optional<String> hstsOpt = safeList(config.getDomain().getHstsProfilesActive()).stream()
-				.filter(a -> equalsIgnoreCase(a, config.getSpringApplicationName())).findAny();
-		if (hstsOpt.isPresent()) {
+		// Sets Http-Strict-Transport-Security:
+		if (enableHstsWithProfilesActive) {
 			if (!response.containsHeader("Strict-Transport-Security")) {
 				response.addHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
 				response.addHeader("Strict-Transport-Security", "max-age=0");
@@ -62,6 +86,7 @@ public class HstsSecurityFilter extends OncePerRequestFilter {
 		// https://stackoverflow.com/questions/15299325/x-download-options-noopen-equivalent
 		response.setHeader("X-Download-Options", "noopen");
 
+		filterChain.doFilter(request, response);
 	}
 
 }

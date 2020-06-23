@@ -16,7 +16,6 @@
 package com.wl4g.devops.ci.web;
 
 import com.wl4g.devops.ci.service.ProjectService;
-import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -153,15 +152,6 @@ public class ProjectController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 		Assert.notNull(id, "id can not be null");
 		projectService.updateLockStatus(id, TASK_LOCK_STATUS_UNLOCK);
-		return resp;
-	}
-
-	@RequestMapping(value = "/vcsProjects")
-	@RequiresPermissions(value = { "ci", "ci:project" }, logical = AND)
-	public RespBase<?> searchVcsProjects(Integer vcsId, String projectName) {
-		RespBase<Object> resp = RespBase.create();
-		List<CompositeBasicVcsProjectModel> remoteProjects = projectService.vcsProjects(vcsId, projectName);
-		resp.setData(remoteProjects);
 		return resp;
 	}
 

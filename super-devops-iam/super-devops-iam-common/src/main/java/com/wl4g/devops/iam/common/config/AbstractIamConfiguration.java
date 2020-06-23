@@ -40,6 +40,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.Environment;
+
 import static org.springframework.util.ReflectionUtils.*;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
@@ -60,6 +62,7 @@ import com.wl4g.devops.iam.common.filter.IamAuthenticationFilter;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.mgt.IamSubjectFactory;
 import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
+import com.wl4g.devops.iam.common.security.domain.HstsSecurityFilter;
 import com.wl4g.devops.iam.common.security.mitm.CipherRequestSecurityFilter;
 import com.wl4g.devops.iam.common.security.mitm.CipherRequestWrapper;
 import com.wl4g.devops.iam.common.security.mitm.CipherRequestWrapperFactory;
@@ -333,6 +336,27 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 		return filterBean;
 	}
 
+	//
+	// D O M A I N _ S E C U I T Y _ F I L T E R _ C O N F I G's.
+	//
+
+	@Bean
+	public HstsSecurityFilter hstsSecurityFilter(AbstractIamProperties<? extends ParamProperties> config,
+			Environment environment) {
+		return new HstsSecurityFilter(config, environment);
+	}
+
+	@Bean
+	public FilterRegistrationBean hstsSecurityFilterBean(HstsSecurityFilter filter) {
+		// Register cipher filter
+		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		filterBean.setOrder(ORDER_DOMAIN_PRECEDENCE);
+		// Cannot use '/*' or it will not be added to the container chain (only
+		// '/**')
+		filterBean.addUrlPatterns("/*");
+		return filterBean;
+	}
+
 	// ==============================
 	// IAM _ O T H E R _ C O N F I G's.
 	// ==============================
@@ -346,6 +370,7 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	// Build-in security protection filter order-precedence definitions.
 	//
 
+	final public static int ORDER_DOMAIN_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 8;
 	final public static int ORDER_CORS_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 9;
 	final public static int ORDER_XSRF_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 10;
 	final public static int ORDER_CIPHER_PRECEDENCE = Ordered.HIGHEST_PRECEDENCE + 11;

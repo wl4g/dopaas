@@ -15,10 +15,19 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
-import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
+import com.github.dockerjava.api.DockerClient;
+import com.wl4g.devops.ci.pipeline.PipelineProvider;
+import com.wl4g.devops.ci.utils.DockerJavaUtil;
+import com.wl4g.devops.common.bean.ci.PipelineHistory;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
+import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.tool.common.cli.ssh2.SSH2Holders;
+import com.wl4g.devops.tool.common.io.FileIOUtils;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -28,33 +37,79 @@ import java.util.List;
  * @version v1.0 2019年5月24日
  * @since
  */
-public class DockerNativePipeDeployer extends GenericHostPipeDeployer<DockerNativePipelineProvider> {
+public class DockerNativePipeDeployer extends GenericHostPipeDeployer<PipelineProvider> {
 
-	public DockerNativePipeDeployer(DockerNativePipelineProvider provider, AppInstance instance,
-			List<PipelineHistoryInstance> pipelineHistoryInstances) {
-		super(provider, instance, pipelineHistoryInstances);
-	}
+    final private static String ymlFileName = "/swarm_config.yml";
 
-	@Override
-	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
-		String groupName = getContext().getProject().getGroupName();
-		// Pull
-		provider.imagePull(instance.getHostname(), instance.getSsh().getUsername(), "wl4g/" + groupName
-				+ ":master"/*
-							 * TODO 要改成动态的
-							 * provider.getTaskHistory().getPreCommand()
-							 */, instance.getSsh().getSshKey());
-		// Restart
-		provider.stopContainer(instance.getHostname(), instance.getSsh().getUsername(), groupName, instance.getSsh().getSshKey());
+    public DockerNativePipeDeployer(PipelineProvider provider, AppInstance instance,
+                                    List<PipelineHistoryInstance> pipelineHistoryInstances) {
+        super(provider, instance, pipelineHistoryInstances);
+    }
 
-		// Remove Container
-		provider.destroyContainer(instance.getHostname(), instance.getSsh().getUsername(), groupName, instance.getSsh().getSshKey());
-		// Run
-		provider.startContainer(instance.getHostname(), instance.getSsh().getUsername(), "docker run wl4g/" + groupName
-				+ ":master"/*
-							 * TODO 要改成动态的
-							 * provider.getTaskHistory().getPostCommand()
-							 */, instance.getSsh().getSshKey());
-	}
+    @Override
+    protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
+
+        //String dockerMasterAddr = instance.getDockerCluster().getMasterAddr();
+        //DockerClient dockerClient = DockerJavaUtil.sampleConnect(dockerMasterAddr);
+        String ref = getContext().getPipeStepBuilding().getRef();
+        PipelineHistory pipelineHistory = getContext().getPipelineHistory();
+        AppCluster appCluster = getContext().getAppCluster();
+        AppEnvironment environment = getContext().getEnvironment();
+
+        if (StringUtils.isNotBlank(environment.getConfigContent())) {
+            File ymlFile = new File(config.getJobBaseDir(pipelineHistory.getId()).getCanonicalPath() + ymlFileName);
+            createServiceWithStack(remoteHost, user, sshkey, ymlFile, environment.getConfigContent(), appCluster.getName());
+        } else {
+            createServiceWithDockerJavaClient(environment.getDockerRepository().getRegistryAddress()
+                    + "/" + environment.getRepositoryNamespace() + "/" + appCluster.getName() + ":" + ref, appCluster.getName());
+        }
+
+
+        log.info("docker stop & pull & restart container");
+    }
+
+
+    //TODO need move to docker client expand
+    private void createServiceWithStack(String remoteHost, String user, String sshkey, File ymlFile, String configContent, String stackName) throws Exception {
+        //write config file to job dir
+        FileIOUtils.writeFile(ymlFile, configContent, false);
+
+        //transfer yml file
+        transferYmlFileToRemote(ymlFile, remoteHost, user, sshkey);
+
+        // run
+        String remoteYmlFileName = config.getDeploy().getRemoteHomeTmpDir() + ymlFileName;
+        String cmd = "docker stack deploy -c " + remoteYmlFileName + " " + stackName;
+        provider.doRemoteCommand(remoteHost, user, cmd, sshkey);
+
+        //clean temp file
+        cleanupRemoteYmlTmpFile(remoteHost, user, sshkey);
+    }
+
+    private void createServiceWithDockerJavaClient(String imageName, String name) {
+        String dockerMasterAddr = instance.getDockerCluster().getMasterAddr();
+        DockerClient dockerClient = DockerJavaUtil.sampleConnect(dockerMasterAddr);
+        DockerJavaUtil.removeService(dockerClient, name);
+        DockerJavaUtil.pullImage(dockerClient, imageName);
+        DockerJavaUtil.createService(dockerClient, imageName, name);
+    }
+
+
+    private void transferYmlFileToRemote(File file, String remoteHost, String user, String sshkey) throws Exception {
+        String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
+        writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, file));
+        SSH2Holders.getDefault().scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey), null, file, remoteTmpDir);
+    }
+
+    private void cleanupRemoteYmlTmpFile(String remoteHost, String user, String sshkey) throws Exception {
+        String remoteYmlFileName = config.getDeploy().getRemoteHomeTmpDir() + ymlFileName;
+        if (StringUtils.isNotBlank(remoteYmlFileName) && StringUtils.equals(remoteYmlFileName, "/")) {
+            String command = "rm -Rf " + remoteYmlFileName;
+            writeDeployLog("Cleanup remote temporary program file: %s@%s [%s]", user, remoteHost, command);
+            doRemoteCommand(remoteHost, user, command, sshkey);
+        }
+
+
+    }
 
 }

@@ -49,9 +49,9 @@ public class AppClusterController extends BaseController {
 	private AppClusterService appClusterService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String clusterName) {
+	public RespBase<?> list(PageModel pm, String clusterName, Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
-		Map<String, Object> result = appClusterService.list(pm, clusterName);
+		Map<String, Object> result = appClusterService.list(pm, clusterName, deployType);
 		resp.setData(result);
 		return resp;
 	}
