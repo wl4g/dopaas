@@ -84,6 +84,8 @@ spring:
           session-validation-interval: 360_000
         cookie:
           name: _TGC
+        #domain:
+          #hsts-profiles-active: [pro,prod,production]
         #acl:
           #secure: false # Turn off protection will trust any same intranet IP.
           #allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
