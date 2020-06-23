@@ -15,10 +15,11 @@
  */
 package com.wl4g.devops.erm.service;
 
+import com.wl4g.devops.common.bean.erm.Log;
 import com.wl4g.devops.common.bean.erm.QueryLogModel;
 
 import java.util.List;
 
 public interface LogConsoleService {
-	List<String> console(QueryLogModel model) throws Exception;
+	List<Log> console(QueryLogModel model) throws Exception;
 }
