@@ -20,13 +20,16 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.deploy.CossPipeDeployer;
+import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.erm.Ssh;
 import com.wl4g.devops.common.exception.ci.BadCommandScriptException;
 import com.wl4g.devops.common.exception.ci.PipelineIntegrationBuildingException;
+import com.wl4g.devops.common.framework.beans.AliasPrototypeBeanFactory;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.PipeStepBuildingProjectDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
@@ -37,7 +40,6 @@ import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.tool.common.codec.CodecSource;
 import com.wl4g.devops.tool.common.crypto.symmetric.AES128ECBPKCS5;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +81,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired
 	protected BeanFactory beanFactory;
+	@Autowired
+	protected AliasPrototypeBeanFactory aliasPrototypeBeanFactory;
 	@Autowired
 	protected JedisLockManager lockManager;
 	@Autowired
@@ -241,6 +245,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected final void startupExecuteRemoteDeploying() {
 		// Creating transfer instances jobs.
+		Ssh ssh = getContext().getAppCluster().getSsh();
 		List<Runnable> jobs = safeList(getContext().getInstances()).stream().map(i -> {
 			return (Runnable) () -> {
 				File jobDeployerLog = config.getJobDeployerLog(context.getPipelineHistory().getId(), i.getId());
@@ -252,7 +257,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 
 					// Print successful.
 					writeBuildLog("Deployed pipeline successfully, with cluster: '%s', remote instance: '%s@%s'",
-							getContext().getAppCluster().getName(), i.getSsh().getUsername(), i.getHostname());
+							getContext().getAppCluster().getName(), ssh.getUsername(), i.getHostname());
 				} catch (Exception e) {
 					String logmsg = writeBuildLog("Failed to deployed to remote! Caused by: \n%s", getStackTraceAsString(e));
 					log.error(logmsg);
@@ -312,12 +317,16 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	//TODO
 	protected Runnable newPipeDeployerByType(AppInstance instance){
 
-		if(instance.getDeployType()==4){
-			Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
-			return beanFactory.getBean(CossPipeDeployer.class, args);
+		switch (getContext().getAppCluster().getDeployType()){
+			case 2://docker
+				Object[] args2 = { this, instance, getContext().getPipelineHistoryInstances() };
+				return beanFactory.getBean(DockerNativePipeDeployer.class, args2);
+			case 4://coss
+				Object[] args4 = { this, instance, getContext().getPipelineHistoryInstances() };
+				return beanFactory.getBean(CossPipeDeployer.class, args4);
+			default:
+				return newPipeDeployer(instance);
 		}
-
-		return newPipeDeployer(instance);
 
 	};
 

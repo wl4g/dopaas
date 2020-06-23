@@ -28,19 +28,25 @@ import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.ci.service.PipelineService;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
+import com.wl4g.devops.common.bean.erm.DockerRepository;
 import com.wl4g.devops.common.bean.iam.Contact;
 import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.framework.beans.AliasPrototypeBeanFactory;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.erm.AppClusterDao;
+import com.wl4g.devops.dao.erm.AppEnvironmentDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
+import com.wl4g.devops.dao.erm.DockerRepositoryDao;
 import com.wl4g.devops.dao.iam.ContactDao;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.tool.common.io.FileIOUtils.*;
+import com.wl4g.devops.tool.common.serialize.JacksonUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -58,9 +64,10 @@ import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.springframework.util.Assert.*;
+import static org.springframework.util.Assert.notNull;
 
 /**
  * Default CI/CD pipeline management implements.
@@ -113,6 +120,10 @@ public class DefaultPipelineManager implements PipelineManager {
     private PipeStepBuildingDao pipeStepBuildingDao;
     @Autowired
     private PipelineInstanceDao pipelineInstanceDao;
+    @Autowired
+    private AppEnvironmentDao appEnvironmentDao;
+    @Autowired
+    private DockerRepositoryDao dockerRepositoryDao;
 
 
     @Override
@@ -392,7 +403,7 @@ public class DefaultPipelineManager implements PipelineManager {
 
         // Successful execute job notification.
 
-        notificationResult(provider.getContext().getPipeStepNotification().getContactGroupIds(), taskId, "Success",provider);
+        notificationResult(provider.getContext().getPipeStepNotification().getContactGroupIds(), taskId, "Success", provider);
     }
 
     /**
@@ -404,7 +415,7 @@ public class DefaultPipelineManager implements PipelineManager {
      */
     protected void postPipelineRunFailure(Integer taskId, PipelineProvider provider, Throwable e) {
         // Failure execute job notification.
-        notificationResult(provider.getContext().getPipeStepNotification().getContactGroupIds(), taskId, "Fail",provider);
+        notificationResult(provider.getContext().getPipeStepNotification().getContactGroupIds(), taskId, "Fail", provider);
     }
 
     /**
@@ -440,7 +451,7 @@ public class DefaultPipelineManager implements PipelineManager {
                     msg.addParameter("pipelineId", taskId);
                     msg.addParameter("projectName", provider.getContext().getProject().getProjectName());
                     msg.addParameter("createDate", provider.getContext().getPipelineHistory().getCreateDate());
-                    msg.addParameter("costTime", currentTimeMillis()-provider.getContext().getPipelineHistory().getCreateDate().getTime());
+                    msg.addParameter("costTime", currentTimeMillis() - provider.getContext().getPipelineHistory().getCreateDate().getTime());
 
                     notifierAdapter.forOperator(contactChannel.getKind()).send(msg);
                 }
@@ -484,10 +495,23 @@ public class DefaultPipelineManager implements PipelineManager {
         PipeStepNotification pipeStepNotification = pipeStepNotificationDao.selectByPipeId(pipeline.getId());
 
         PipeStepBuilding pipeStepBuilding = pipeStepBuildingDao.selectByPipeId(pipeline.getId());
+        setPipeStepBuildingRef(pipeStepBuilding, project.getId());
+
+        AppEnvironment environment = appEnvironmentDao.selectByClusterIdAndEnv(appCluster.getId(), pipeline.getEnvironment());
+        Integer repositoryId = environment.getRepositoryId();
+        if (nonNull(repositoryId) && repositoryId != -1) {
+            DockerRepository dockerRepository = dockerRepositoryDao.selectByPrimaryKey(repositoryId);
+            environment.setDockerRepository(dockerRepository);
+        } else {
+            if (StringUtils.isNotBlank(environment.getCustomRepositoryConfig())) {
+                DockerRepository dockerRepository = JacksonUtils.parseJSON(environment.getCustomRepositoryConfig(), DockerRepository.class);
+                environment.setDockerRepository(dockerRepository);
+            }
+        }
 
         // TODO add pipeline status track
         PipelineContext context = new DefaultPipelineContext(project, projectSourceDir, appCluster, instances, pipelineHistory,
-                pipelineHistoryInstances, pipelineModel, pipeStepInstanceCommand, pipeline, pipeStepNotification, pipeStepBuilding);
+                pipelineHistoryInstances, pipelineModel, pipeStepInstanceCommand, pipeline, pipeStepNotification, pipeStepBuilding, environment);
 
         // Get prototype provider.
         return beanFactory.getPrototypeBean(pipeline.getProviderKind(), context);
@@ -537,6 +561,17 @@ public class DefaultPipelineManager implements PipelineManager {
                 log.info("Completed for rollback pipeline taskId: {}", taskId);
             }
         });
+    }
+
+    private void setPipeStepBuildingRef(PipeStepBuilding pipeStepBuilding, Integer projectId) {
+        List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeStepBuilding.getPipeStepBuildingProjects();
+        for (PipeStepBuildingProject pipeStepBuildingProject : pipeStepBuildingProjects) {
+            if (projectId.equals(pipeStepBuildingProject.getProjectId())) {
+                pipeStepBuilding.setRef(pipeStepBuildingProject.getRef());
+                return;
+            }
+        }
+
     }
 
 }

@@ -15,8 +15,12 @@
  */
 package com.wl4g.devops.support.cli.command;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
+
 import static org.springframework.util.Assert.hasText;
-import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.isTrue;
 
 /**
  * SSH remote command's wrapper.
@@ -37,29 +41,36 @@ public class RemoteDestroableCommand extends DestroableCommand {
 	/** SSH2 (public key) of the remote host. */
 	final private char[] pemPrivateKey;
 
+	final private String password;
+
 	public RemoteDestroableCommand(String command, long timeoutMs, String user, String host, char[] pemPrivateKey) {
-		this(null, command, false, timeoutMs, user, host, pemPrivateKey);
+		this(null, command, false, timeoutMs, user, host, pemPrivateKey,null);
 	}
 
 	public RemoteDestroableCommand(String command, boolean destroable, long timeoutMs, String user, String host,
 			char[] pemPrivateKey) {
-		this(null, command, destroable, timeoutMs, user, host, pemPrivateKey);
+		this(null, command, destroable, timeoutMs, user, host, pemPrivateKey,null);
 	}
 
 	public RemoteDestroableCommand(String processId, String command, long timeoutMs, String user, String host,
 			char[] pemPrivateKey) {
-		this(processId, command, true, timeoutMs, user, host, pemPrivateKey);
+		this(processId, command, true, timeoutMs, user, host, pemPrivateKey,null);
+	}
+
+	public RemoteDestroableCommand(String command, long timeoutMs, String user, String host, String  passrod) {
+		this(null, command, false, timeoutMs, user, host, null,passrod);
 	}
 
 	public RemoteDestroableCommand(String processId, String command, boolean destroable, long timeoutMs, String user, String host,
-			char[] pemPrivateKey) {
+			char[] pemPrivateKey,String password) {
 		super(processId, command, destroable, timeoutMs);
 		hasText(user, "Command remote user can't empty.");
 		hasText(host, "Command remote host can't empty.");
-		notNull(pemPrivateKey, "Command remote ssh pubkey can't empty.");
+		isTrue(Objects.nonNull(pemPrivateKey) || StringUtils.isNotBlank(password),"Command remote ssh pubkey or passrod can't empty.");
 		this.user = user;
 		this.host = host;
 		this.pemPrivateKey = pemPrivateKey;
+		this.password = password;
 	}
 
 	public String getUser() {
@@ -74,4 +85,7 @@ public class RemoteDestroableCommand extends DestroableCommand {
 		return pemPrivateKey;
 	}
 
+	public String getPassword() {
+		return password;
+	}
 }

@@ -8,14 +8,10 @@
 FROM openjdk:8-jre-alpine
 LABEL maintainer="Wanglsir<983708408@qq.com>"
 
-ARG APP_BIN_NAME="iam-server-master-bin"
-ARG APP_PORT=14040
-ARG MAIN_CLASS="com.wl4g.devops.IamServer"
-ARG ACTIVE="dev"
+ARG APP_BIN_NAME="iam-server-master-bin.tar"
+ARG RUN_COM="echo helloworld"
 
-### ENV APP_BIN_NAME ${APP_BIN_NAME}
-
-RUN echo "myparams ${APP_BIN_NAME}  ----  ${APP_PORT}  ----   ${MAIN_CLASS} ----  ${ACTIVE} "
+RUN echo "params APP_BIN_NAME = ${APP_BIN_NAME}  ----  ${RUN_COM}"
 
 RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
 && echo "http://mirrors.aliyun.com/alpine/v3.8/community" >> /etc/apk/repositories \
@@ -24,14 +20,14 @@ RUN echo "http://mirrors.aliyun.com/alpine/v3.8/main" > /etc/apk/repositories \
 && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
 && echo "Asia/Shanghai" > /etc/timezone
 
-COPY ${APP_BIN_NAME}.tar /${APP_BIN_NAME}.tar
+COPY ${APP_BIN_NAME} /${APP_BIN_NAME}
 
-RUN tar -xvf /${APP_BIN_NAME}.tar && rm -rf /${APP_BIN_NAME}.tar
+RUN tar -xvf /${APP_BIN_NAME} && rm -rf /${APP_BIN_NAME}
 
-EXPOSE ${APP_PORT}
+### EXPOSE ${APP_PORT}
 
-ENV RUN_COM "java -server -Xms256M -Xmx1G  -Dfile.encoding=UTF-8 -cp .:/${APP_BIN_NAME}/conf:/${APP_BIN_NAME}/libs/* ${MAIN_CLASS}  --spring.profiles.active=${ACTIVE} --server.tomcat.basedir=/basedir --logging.file=/log/out.log"
-
-RUN echo "mycommand ${RUN_COM}"
+### ENV RUN_COM "java -server -Xms256M -Xmx1G  -Dfile.encoding=UTF-8 -cp .:/${APP_BIN_NAME}/conf:/${APP_BIN_NAME}/libs/* ${MAIN_CLASS}  --spring.profiles.active=${ACTIVE} --server.tomcat.basedir=/basedir --logging.file=/log/out.log"
 
 CMD ["/bin/sh", "-c", "${RUN_COM}"]
+
+
