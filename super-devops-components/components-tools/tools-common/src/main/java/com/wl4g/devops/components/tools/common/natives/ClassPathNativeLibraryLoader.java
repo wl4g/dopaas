@@ -25,7 +25,6 @@ import static java.util.Locale.US;
 import static java.util.Objects.nonNull;
 import static java.nio.file.StandardCopyOption.*;
 
-import org.slf4j.Logger;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -43,6 +42,7 @@ import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static com.wl4g.devops.components.tools.common.lang.ClassUtils2.getDefaultClassLoader;
 import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.components.tools.common.resource.StreamResource;
 import com.wl4g.devops.components.tools.common.resource.resolver.ClassPathResourcePatternResolver;
 
@@ -61,7 +61,8 @@ import com.wl4g.devops.components.tools.common.resource.resolver.ClassPathResour
  * @since
  */
 public class ClassPathNativeLibraryLoader extends PlatformInfo {
-	final protected Logger log = getLogger(getClass());
+
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Loaded state flag.
