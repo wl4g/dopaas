@@ -17,8 +17,11 @@ package com.wl4g.devops.components.tools.common.natives;
 
 import static java.lang.Runtime.*;
 import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
+import static java.lang.System.load;
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
+import static java.util.Locale.US;
 import static java.util.Objects.nonNull;
 import static java.nio.file.StandardCopyOption.*;
 
@@ -32,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -103,7 +105,7 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 	public ClassPathNativeLibraryLoader(ClassLoader classLoader) {
 		notNull(classLoader, "Native library classLoader can't null.");
 		this.classLoader = classLoader;
-		this.archShareLibFolderPathLowerCase = getNativeLibFolderPathForCurrentOS().toLowerCase(Locale.US);
+		this.archShareLibFolderPathLowerCase = getNativeLibFolderPathForCurrentOS().toLowerCase(US);
 	}
 
 	/**
@@ -127,10 +129,13 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 	 *             Dynamic library read write error
 	 * @throws LoadNativeLibraryError
 	 *             The specified file was not found in the jar package.
+	 * @return {@link ClassPathNativeLibraryLoader}
 	 */
-	public final synchronized void loadLibrarys(String... libLocationPatterns) throws IOException, LoadNativeLibraryError {
+	@SuppressWarnings("unchecked")
+	public final synchronized <T extends ClassPathNativeLibraryLoader> T loadLibrarys(String... libLocationPatterns)
+			throws IOException, LoadNativeLibraryError {
 		if (!loadedState.compareAndSet(false, true)) { // Loaded?
-			return;
+			return (T) this;
 		}
 		assertLibLocationPatterns(libLocationPatterns);
 
@@ -147,7 +152,7 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 				log.warn("Unable to load native class library file: {}", r.getURL().toString());
 				continue;
 			}
-			if (!matchCurrentOSArchPath(r.getURL())) {
+			if (!matchArchWithCurrentOS(r.getURL())) {
 				continue;
 			}
 			log.info("Load native class library of: {}", r.getURL().toString());
@@ -161,7 +166,7 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 				Files.copy(in, tmpLibFile.toPath(), REPLACE_EXISTING);
 
 				// Load to JVM.
-				System.load(tmpLibFile.getAbsolutePath());
+				load(tmpLibFile.getAbsolutePath());
 			} catch (IOException e) {
 				if (nonNull(tmpLibFile))
 					tmpLibFile.delete();
@@ -184,23 +189,8 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 
 		// Cleanup nativelib temporary files.
 		cleanupTmpNativeLibs();
-	}
 
-	/**
-	 * The file from JAR(CLASSPATH) is copied into system temporary directory
-	 * and then loaded. The temporary file is deleted after exiting. Method uses
-	 * String as filename because the pathname is "abstract", not
-	 * system-dependent.
-	 * 
-	 * @param libLocationPatterns
-	 *            lib Location patterns
-	 * @throws IOException
-	 *             Dynamic library read write error
-	 * @throws LoadNativeLibraryError
-	 *             The specified file was not found in the jar package.
-	 */
-	protected void doLoadLibrary(String... libLocationPatterns) throws IOException, LoadNativeLibraryError {
-
+		return (T) this;
 	}
 
 	/**
@@ -208,8 +198,8 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 	 * 
 	 * @return
 	 */
-	protected boolean matchCurrentOSArchPath(URL path) {
-		return path.toString().toLowerCase(Locale.US).contains(archShareLibFolderPathLowerCase);
+	protected boolean matchArchWithCurrentOS(URL path) {
+		return path.toString().toLowerCase(US).contains(archShareLibFolderPathLowerCase);
 	}
 
 	/**
@@ -229,12 +219,11 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 					try {
 						unloadNativeLibrary(loadFile);
 					} catch (Throwable th) {
-						log.warn(String.format("Failed to unload native library tmpfile: %", loadFile), th);
+						log.warn(format("Failed to unload native library tmpfile: %", loadFile), th);
 					}
 				}
 			}
 		});
-
 	}
 
 	/**
@@ -303,16 +292,16 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 	}
 
 	/**
-	 * Get or create a temporary folder under the system temporary folder
+	 * Create or make a temporary folder under the system temporary folder
 	 * 
 	 * @param path
 	 * @return
 	 * @throws IOException
 	 */
-	private final synchronized static File libsTmpDirectory0(String path) {
+	private final synchronized static File createlibsTmpDirectory0(String path) {
 		File libsTmpDir = new File(JAVA_IO_TMPDIR, path);
 		if (!libsTmpDir.exists()) {
-			state(libsTmpDir.mkdirs(), "Failed to create temp directory [" + libsTmpDir.getName() + "]");
+			state(libsTmpDir.mkdirs(), "Failed to create tmp directory [" + libsTmpDir.getName() + "]");
 		}
 		return libsTmpDir;
 	}
@@ -326,8 +315,8 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 	/**
 	 * Java dynamic link native libraries temporary base directory path.
 	 */
-	final public static File libNativeTmpDir = libsTmpDirectory0(File.separator + "javanativelibs_" + USER_NAME + File.separator
-			+ LOCAL_PROCESS_ID + "-" + System.currentTimeMillis());
+	final public static File libNativeTmpDir = createlibsTmpDirectory0(
+			File.separator + "javanativelibs_" + USER_NAME + File.separator + LOCAL_PROCESS_ID + "-" + currentTimeMillis());
 
 	/**
 	 * {@link StreamResource} URL path ASC comparator.
