@@ -2,23 +2,27 @@ package com.wl4g.devops.ci.utils;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.BuildImageCmd;
+import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.model.BuildResponseItem;
-import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.Ports;
+import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
+import com.github.dockerjava.core.command.PushImageResultCallback;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static com.github.dockerjava.api.model.HostConfig.newHostConfig;
+import static com.wl4g.devops.ci.utils.DockerFileBuilder.makeDockerFile;
 
 /**
  * @author vjay
@@ -61,8 +65,13 @@ public class DockerJavaUtil {
      * @return
      * @throws IOException
      */
-    public static String buildImage(DockerClient client, Set<String> tags, File tarPath, File dockerTemplate, String appBinName, Map<String, String> args) throws IOException {
-        File workSpace = copyFile2WorkSpace(tarPath, dockerTemplate, appBinName);
+    public static String buildImage(DockerClient client, Set<String> tags, File workSpace, Map<String, String> args) throws IOException, InterruptedException {
+        //copyFile2WorkSpace(workSpace, dockerTemplate);
+        for(String tag : tags){
+            removeImage(client,tag);
+        }
+
+        makeDockerFile(new File(workSpace.getCanonicalPath() + "/Dockerfile"));
 
         BuildImageResultCallback callback = new BuildImageResultCallback() {
             @Override
@@ -77,26 +86,72 @@ public class DockerJavaUtil {
             String value = entry.getValue();
             buildImageCmd.withBuildArg(key, value);
         }
+
         return buildImageCmd.exec(callback).awaitImageId();
     }
 
+    public static void pushImage(DockerClient client,String pushTag, String registryAddress,String username, String password) throws InterruptedException {
+        AuthConfig authConfig = new AuthConfig()
+                .withRegistryAddress(registryAddress)
+                .withUsername(username)
+                .withPassword(password);
+
+        PushImageResultCallback pushImageResultCallback = new PushImageResultCallback();
+        client.pushImageCmd(pushTag).withAuthConfig(authConfig).exec(pushImageResultCallback).awaitCompletion(600, TimeUnit.SECONDS);;
+
+    }
+
     /**
-     * @param tarPath
-     * @param dockerTemplate
-     * @param appBinName
-     * @return
-     * @throws IOException
+     * Docker remove Image
+     * @param client
+     * @param imageName
      */
-    private static File copyFile2WorkSpace(File tarPath, File dockerTemplate, String appBinName) throws IOException {//为什么要把文件复制出来？因为COPY failed: Forbidden path outside the build context，dockerfile不允许使用上下文外的文件
-        String property = System.getProperty("user.home");
-        File workspace = new File(property + "/tmp/docker_file_workspace/" + System.currentTimeMillis());
-        if (!workspace.exists()) {
-            workspace.mkdirs();
+    public static void removeImage(DockerClient client, String imageName){
+        List<String> filterName = new ArrayList<>();
+        filterName.add(imageName);
+        List<Container> containers = client.listContainersCmd().withNameFilter(filterName).exec();
+        for(Container container : containers){
+            client.removeContainerCmd(container.getId()).exec();
         }
-        Assert2.isTrue(workspace.exists(), "create dir fail");
-        Files.copy(tarPath.toPath(), new File(workspace.getCanonicalPath() + "/" + appBinName + ".tar").toPath());
-        Files.copy(dockerTemplate.toPath(), new File(workspace.getCanonicalPath() + "/Dockerfile").toPath());
-        return workspace;
+
+        List<Image> images = client.listImagesCmd().withImageNameFilter(imageName).exec();
+        for(Image image : images){
+            client.removeImageCmd(image.getId()).exec();
+        }
+    }
+
+    /**
+     * pullImage
+     * @param client
+     * @param repository
+     */
+    public static void pullImage(DockerClient client, String repository){//create service will auto pull image, so this metho may be unnecessary
+        client.pullImageCmd(repository);
+    }
+
+    public static void createService(DockerClient client,String imageName,String name){
+        ServiceModeConfig serviceModeConfig = new ServiceModeConfig();
+        ServiceReplicatedModeOptions serviceReplicatedModeOptions = new ServiceReplicatedModeOptions();
+        serviceReplicatedModeOptions.withReplicas(1);
+        serviceModeConfig.withReplicated(serviceReplicatedModeOptions);
+
+        client.createServiceCmd(new ServiceSpec()
+                .withMode(serviceModeConfig)
+                .withName(name)
+                .withTaskTemplate(new TaskSpec()
+                        .withContainerSpec(new ContainerSpec()
+                                .withImage(imageName))))
+                .exec();
+    }
+
+
+    public static void removeService(DockerClient client,String serviceId){
+        List names = new ArrayList();
+        names.add(serviceId);
+        List<Service> exec = client.listServicesCmd().withNameFilter(names).exec();
+        if(!CollectionUtils.isEmpty(exec)){// if not found but del, it will throw exception
+            client.removeServiceCmd(serviceId).exec();
+        }
     }
 
 
@@ -107,24 +162,22 @@ public class DockerJavaUtil {
      * @return
      */
     public static CreateContainerResponse createContainers(DockerClient client, String containerName, String imageName, Map<Integer, Integer> ports) {//TODO 优化
-
+        CreateContainerCmd createContainerCmd = client.createContainerCmd(imageName).withName(containerName);
         //TODO 处理端口映射
-        List<ExposedPort> exposedPorts = new ArrayList<>();
-        Ports portBindings = new Ports();
-        for (Map.Entry<Integer, Integer> entry : ports.entrySet()) {
-            Integer key = entry.getKey();
-            Integer value = entry.getValue();
-            ExposedPort exposedPort = ExposedPort.tcp(key);
-            exposedPorts.add(exposedPort);
-            portBindings.bind(exposedPort, Ports.Binding.bindPort(value));
+        if(!CollectionUtils.isEmpty(ports)){
+            List<ExposedPort> exposedPorts = new ArrayList<>();
+            Ports portBindings = new Ports();
+            for (Map.Entry<Integer, Integer> entry : ports.entrySet()) {
+                Integer key = entry.getKey();
+                Integer value = entry.getValue();
+                ExposedPort exposedPort = ExposedPort.tcp(key);
+                exposedPorts.add(exposedPort);
+                portBindings.bind(exposedPort, Ports.Binding.bindPort(value));
+            }
+            HostConfig hostConfig = newHostConfig().withPortBindings(portBindings);
+            createContainerCmd .withHostConfig(hostConfig).withExposedPorts(exposedPorts);
         }
-        HostConfig hostConfig = newHostConfig().withPortBindings(portBindings);
-
-        return client.createContainerCmd(imageName)
-                .withName(containerName)
-                .withHostConfig(hostConfig)
-                .withExposedPorts(exposedPorts).exec();
-
+        return createContainerCmd.exec();
     }
 
 

@@ -19,12 +19,9 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
 import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
-import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
-import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
@@ -47,6 +44,7 @@ import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.stream.Collectors.toList;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 
 /**
  * @author vjay
@@ -206,17 +204,6 @@ public class ProjectServiceImpl implements ProjectService {
 			return vcsOperator.forOperator(project.getVcs().getProviderKind())
 					.getRemoteBranchNames(project.getVcs(), vcsProjectId);
 		}
-	}
-
-	@Override
-	public List<CompositeBasicVcsProjectModel> vcsProjects(Integer vcsId, String projectName) {
-		notNullOf(vcsId, "vcsId");
-		// Gets VCS information.
-		Vcs vcs = vcsDao.selectByPrimaryKey(vcsId);
-
-		// Search remote projects.
-		List<VcsProjectModel> projects = vcsOperator.forOperator(vcs.getProviderKind()).searchRemoteProjects(vcs, projectName);
-		return safeList(projects).stream().map(p -> p.toCompositeVcsProject()).collect(toList());
 	}
 
 	/**

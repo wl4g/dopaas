@@ -18,10 +18,13 @@ package com.wl4g.devops.erm.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.erm.AppCluster;
+import com.wl4g.devops.common.bean.erm.AppEnvironment;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.dao.erm.AppClusterDao;
+import com.wl4g.devops.dao.erm.AppEnvironmentDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
+import com.wl4g.devops.dao.iam.DictDao;
 import com.wl4g.devops.erm.service.AppClusterService;
 import com.wl4g.devops.page.PageModel;
 
@@ -30,12 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.security.InvalidParameterException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
@@ -51,13 +52,17 @@ public class AppClueterServiceImpl implements AppClusterService {
     @Autowired
     private AppInstanceDao appInstanceDao;
 
+    @Autowired
+    private AppEnvironmentDao appEnvironmentDao;
 
+    @Autowired
+    private DictDao dictDao;
 
     @Override
-    public Map<String, Object> list(PageModel pm, String clusterName) {
+    public Map<String, Object> list(PageModel pm, String clusterName, Integer deployType) {
         Map<String, Object> data = new HashMap<>();
         Page<AppCluster> page = PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true);
-        List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(),clusterName);
+        List<AppCluster> list = appClusterDao.list(getRequestOrganizationCodes(),clusterName, deployType);
         for (AppCluster appCluster : list) {
             int count = appInstanceDao.countByClusterId(appCluster.getId());
             appCluster.setInstanceCount(count);
@@ -70,7 +75,7 @@ public class AppClueterServiceImpl implements AppClusterService {
 
     @Override
     public List<AppCluster> clusters() {
-        return appClusterDao.list(getRequestOrganizationCodes(),null);
+        return appClusterDao.list(getRequestOrganizationCodes(),null, null);
     }
 
     @Override
@@ -85,16 +90,36 @@ public class AppClueterServiceImpl implements AppClusterService {
     private void insert(AppCluster appCluster) {
         appCluster.preInsert(getRequestOrganizationCode());
         appClusterDao.insertSelective(appCluster);
-        /*Integer clusterId = appCluster.getId();
+        saveEnvironments(appCluster);
+    }
 
-        List<InstanceDtoModel> instanceDtoModels = appCluster.getInstanceDtoModels();
-        List<AppInstance> appInstances = InstanceDtoModel.dtoModelToInstances(instanceDtoModels);
-        checkRepeat(appInstances);
-        for (AppInstance appInstance : appInstances) {
-            appInstance.preInsert();
-            appInstance.setClusterId(clusterId);
-            appInstanceDao.insertSelective(appInstance);
-        }*/
+    private void saveEnvironments(AppCluster appCluster){
+        List<AppEnvironment> environments = appCluster.getEnvironments();
+        appEnvironmentDao.deleteByClusterId(appCluster.getId());
+        if(!CollectionUtils.isEmpty(environments)){
+            for(AppEnvironment environment : environments){
+                environment.preInsert();
+                environment.setOrganizationCode(appCluster.getOrganizationCode());
+                environment.setClusterId(appCluster.getId());
+                if(Objects.nonNull(environment.getDockerRepository())){
+                    environment.setCustomRepositoryConfig(JacksonUtils.toJSONString(environment.getDockerRepository()));
+                }
+            }
+            appEnvironmentDao.insertBatch(environments);
+        }else{
+            environments = new ArrayList<>();
+            List<Dict> appNsTypes = dictDao.selectByType("app_ns_type");
+            for(Dict appNsType : appNsTypes){
+                AppEnvironment environment = new AppEnvironment();
+                environment.preInsert();
+                environment.setOrganizationCode(appCluster.getOrganizationCode());
+                environment.setClusterId(appCluster.getId());
+                environment.setEnvType(appNsType.getValue());
+                environments.add(environment);
+            }
+            appEnvironmentDao.insertBatch(environments);
+        }
+
     }
 
     private void checkRepeat(List<AppInstance> instances) {
@@ -127,6 +152,8 @@ public class AppClueterServiceImpl implements AppClusterService {
     private void update(AppCluster appCluster) {
         appCluster.preUpdate();
         appClusterDao.updateByPrimaryKeySelective(appCluster);
+
+        saveEnvironments(appCluster);
 
         /*List<InstanceDtoModel> instanceDtoModels = appCluster.getInstanceDtoModels();
         List<AppInstance> appInstances = InstanceDtoModel.dtoModelToInstances(instanceDtoModels);
@@ -171,6 +198,27 @@ public class AppClueterServiceImpl implements AppClusterService {
     public AppCluster detail(Integer clusterId) {
         Assert.notNull(clusterId, "clusterId is null");
         AppCluster appCluster = appClusterDao.selectByPrimaryKey(clusterId);
+
+        List<AppEnvironment> environments = appEnvironmentDao.selectByClusterId(clusterId);
+        if(CollectionUtils.isEmpty(environments)){
+            environments = new ArrayList<>();
+            List<Dict> appNsTypes = dictDao.selectByType("app_ns_type");
+            for(Dict appNsType : appNsTypes){
+                AppEnvironment environment = new AppEnvironment();
+                environment.preInsert();
+                environment.setOrganizationCode(appCluster.getOrganizationCode());
+                environment.setClusterId(appCluster.getId());
+                environment.setEnvType(appNsType.getValue());
+                environments.add(environment);
+            }
+        }
+        for(AppEnvironment appEnvironment : environments){
+            if(StringUtils.isNotBlank(appEnvironment.getCustomRepositoryConfig())){
+                DockerRepository dockerRepository = JacksonUtils.parseJSON(appEnvironment.getCustomRepositoryConfig(), DockerRepository.class);
+                appEnvironment.setDockerRepository(dockerRepository);
+            }
+        }
+        appCluster.setEnvironments(environments);
         //List<AppInstance> appInstances = appInstanceDao.selectByClusterId(clusterId);
         //List<InstanceDtoModel> instanceDtoModels = InstanceDtoModel.instanesToDtoModels(appInstances);
         //appCluster.setInstances(appInstances);

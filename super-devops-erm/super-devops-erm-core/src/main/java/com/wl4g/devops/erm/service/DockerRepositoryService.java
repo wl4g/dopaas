@@ -15,11 +15,29 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.devops.common.bean.erm.Log;
-import com.wl4g.devops.common.bean.erm.QueryLogModel;
+import com.wl4g.devops.common.bean.erm.DockerRepository;
+import com.wl4g.devops.common.bean.erm.model.RepositoryProject;
+import com.wl4g.devops.page.PageModel;
 
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-public interface LogConsoleService {
-	List<Log> console(QueryLogModel model) throws Exception;
+/**
+ * @author vjay
+ */
+public interface DockerRepositoryService {
+
+	PageModel page(PageModel pm, String name);
+
+	List<DockerRepository> getForSelect();
+
+	void save(DockerRepository dockerRepository);
+
+	DockerRepository detail(Integer id);
+
+	void del(Integer id);
+
+	List<RepositoryProject> getRepositoryProjects(Integer id, String address,String name) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException;
 }

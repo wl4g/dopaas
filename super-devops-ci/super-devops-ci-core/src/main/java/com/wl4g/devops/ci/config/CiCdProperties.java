@@ -85,6 +85,11 @@ public class CiCdProperties implements InitializingBean {
 	private TestedReportProperties testedReport = new TestedReportProperties();
 
 	/**
+	 * Docker Properties
+	 */
+	private DockerProperties docker = new DockerProperties();
+
+	/**
 	 * project collaboration management configuration.
 	 */
 	private PcmProperties pcm = new PcmProperties();
@@ -151,6 +156,14 @@ public class CiCdProperties implements InitializingBean {
 
 	public void setTestedReport(TestedReportProperties testReport) {
 		this.testedReport = testReport;
+	}
+
+	public DockerProperties getDocker() {
+		return docker;
+	}
+
+	public void setDocker(DockerProperties docker) {
+		this.docker = docker;
 	}
 
 	public PcmProperties getPcm() {

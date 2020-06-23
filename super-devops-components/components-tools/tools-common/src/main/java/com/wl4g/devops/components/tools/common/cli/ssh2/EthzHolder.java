@@ -54,7 +54,7 @@ public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 	 * @throws Exception
 	 */
 	@Override
-	public void scpGetFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteFilePath)
+	public void scpGetFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteFilePath)
 			throws Exception {
 		notNull(localFile, "Transfer localFile must not be null.");
 		hasText(remoteFilePath, "Transfer remoteDir can't empty.");
@@ -62,7 +62,7 @@ public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 
 		try {
 			// Transfer get file.
-			doScpTransfer(host, user, pemPrivateKey, scp -> {
+			doScpTransfer(host, user, pemPrivateKey, password, scp -> {
 				try (SCPInputStream sis = scp.get(remoteFilePath); FileOutputStream fos = new FileOutputStream(localFile);) {
 					int i = 0;
 					byte[] buf = new byte[DEFAULT_TRANSFER_BUFFER];
@@ -91,14 +91,14 @@ public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 	 * @throws Exception
 	 */
 	@Override
-	public void scpPutFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteDir) throws Exception {
+	public void scpPutFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteDir) throws Exception {
 		notNull(localFile, "Transfer localFile must not be null.");
 		hasText(remoteDir, "Transfer remoteDir can't empty.");
 		log.debug("SSH2 transfer file from {} to {}@{}:{}", localFile.getAbsolutePath(), user, host, remoteDir);
 
 		try {
 			// Transfer send file.
-			doScpTransfer(host, user, pemPrivateKey, scp -> {
+			doScpTransfer(host, user, pemPrivateKey, password, scp -> {
 				try (SCPOutputStream sos = scp.put(localFile.getName(), localFile.length(), remoteDir, "0744");
 						FileInputStream fis = new FileInputStream(localFile);) {
 					int i = 0;
@@ -128,7 +128,7 @@ public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 	 * @throws IOException
 	 */
 	@Override
-	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, CallbackFunction<SCPClient> processor)
+	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, String password, CallbackFunction<SCPClient> processor)
 			throws Exception {
 		hasText(host, "Transfer host can't empty.");
 		hasText(user, "Transfer user can't empty.");
@@ -143,7 +143,7 @@ public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 		Connection conn = null;
 		try {
 			// Transfer file(put/get).
-			processor.process(new SCPClient(conn = createSsh2Connection(host, user, pemPrivateKey)));
+			processor.process(new SCPClient(conn = createSsh2Connection(host, user, pemPrivateKey, password)));
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -160,9 +160,9 @@ public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 	// --- Execution commands. ---
 
 	@Override
-	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
+	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String password, String command, long timeoutMs)
 			throws Exception {
-		return execWaitForComplete(host, user, pemPrivateKey, command, session -> {
+		return execWaitForComplete(host, user, pemPrivateKey,password, command, session -> {
 			String message = null, errmsg = null;
 			if (nonNull(session.getStdout())) {
 				message = readFullyToString(session.getStdout());
@@ -175,9 +175,9 @@ public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 	}
 
 	@Override
-	public <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String command,
+	public <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String password, String command,
 			ProcessFunction<Session, T> processor, long timeoutMs) throws Exception {
-		return doExecCommand(host, user, pemPrivateKey, command, session -> {
+		return doExecCommand(host, user, pemPrivateKey, password,command, session -> {
 			// Wait for completed by condition.
 			session.waitForCondition((CLOSED), timeoutMs);
 			return processor.process(session);
@@ -185,7 +185,7 @@ public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 	}
 
 	@Override
-	public final <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String command,
+	public final <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String password, String command,
 			ProcessFunction<Session, T> processor) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
@@ -201,7 +201,7 @@ public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 		Session session = null;
 		try {
 			// Session & send command.
-			session = (conn = createSsh2Connection(host, user, pemPrivateKey)).openSession();
+			session = (conn = createSsh2Connection(host, user, pemPrivateKey, password)).openSession();
 			if (log.isInfoEnabled()) {
 				log.info("SSH2 sending command to {}@{}, ({})", user, host, command);
 			}
@@ -236,16 +236,24 @@ public class EthzHolder extends SSH2Holders<Session, SCPClient> {
 	 * @return
 	 * @throws IOException
 	 */
-	private final Connection createSsh2Connection(String host, String user, char[] pemPrivateKey) throws IOException {
+	private final Connection createSsh2Connection(String host, String user, char[] pemPrivateKey,String password) throws IOException {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
-		notNull(pemPrivateKey, "SSH2 command pemPrivateKey must not be null.");
+		//notNull(pemPrivateKey, "SSH2 command pemPrivateKey must not be null.");
+		isTrueOf(!Collections2.isEmptyArray(pemPrivateKey) || StringUtils.isNotBlank(password), "pemPrivateKey");
 
 		Connection conn = new Connection(host);
 		conn.connect();
-		// Authentication with pub-key.
-		isTrue(conn.authenticateWithPublicKey(user, pemPrivateKey, null),
-				String.format("Failed to SSH2 authenticate with %s@%s privateKey(%s)", user, host, new String(pemPrivateKey)));
+
+
+		if(!Collections2.isEmptyArray(pemPrivateKey)){
+			// Authentication with pub-key.
+			isTrue(conn.authenticateWithPublicKey(user, pemPrivateKey, null),
+					String.format("Failed to SSH2 authenticate with %s@%s privateKey(%s)", user, host, new String(pemPrivateKey)));
+		}else {
+			isTrue(conn.authenticateWithPassword(user, password),
+					String.format("Failed to SSH2 authenticate with %s@%s password(%s)", user, host, password));
+		}
 
 		log.debug("SSH2 connected to {}@{}", user, host);
 		return conn;

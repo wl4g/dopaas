@@ -59,7 +59,7 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 	 * @throws Exception
 	 */
 	@Override
-	public void scpGetFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteFilePath)
+	public void scpGetFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteFilePath)
 			throws Exception {
 		notNull(localFile, "Transfer localFile must not be null.");
 		hasText(remoteFilePath, "Transfer remoteDir can't empty.");
@@ -67,7 +67,7 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 
 		try {
 			// Transfer get file.
-			doScpTransfer(host, user, pemPrivateKey, scp -> {
+			doScpTransfer(host, user, pemPrivateKey,password, scp -> {
 				scp.download(remoteFilePath, new FileSystemFile(localFile));
 			});
 
@@ -89,14 +89,14 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 	 * @throws Exception
 	 */
 	@Override
-	public void scpPutFile(String host, String user, char[] pemPrivateKey, File localFile, String remoteDir) throws Exception {
+	public void scpPutFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteDir) throws Exception {
 		notNull(localFile, "Transfer localFile must not be null.");
 		hasText(remoteDir, "Transfer remoteDir can't empty.");
 		log.debug("SSH2 transfer file from {} to {}@{}:{}", localFile.getAbsolutePath(), user, host, remoteDir);
 
 		try {
 			// Transfer send file.
-			doScpTransfer(host, user, pemPrivateKey, scp -> {
+			doScpTransfer(host, user, pemPrivateKey,password, scp -> {
 				// scp.upload(new FileSystemFile(localFile), remoteDir);
 				scp.newSCPUploadClient().copy(new FileSystemFile(localFile), remoteDir, ScpCommandLine.EscapeMode.NoEscape);
 			});
@@ -119,7 +119,7 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 	 * @throws IOException
 	 */
 	@Override
-	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, CallbackFunction<SCPFileTransfer> processor)
+	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, String password, CallbackFunction<SCPFileTransfer> processor)
 			throws Exception {
 		hasText(host, "Transfer host can't empty.");
 		hasText(user, "Transfer user can't empty.");
@@ -160,9 +160,9 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 
 	// --- Execution commands. ---
 
-	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String command, long timeoutMs)
+	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String password, String command, long timeoutMs)
 			throws Exception {
-		return execWaitForComplete(host, user, pemPrivateKey, command, cmd -> {
+		return execWaitForComplete(host, user, pemPrivateKey,password, command, cmd -> {
 			String message = null, errmsg = null;
 			if (nonNull(cmd.getInputStream())) {
 				message = readFullyToString(cmd.getInputStream());
@@ -176,9 +176,9 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 	}
 
 	@Override
-	public <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String command,
+	public <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String password, String command,
 			ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception {
-		return doExecCommand(host, user, pemPrivateKey, command, cmd -> {
+		return doExecCommand(host, user, pemPrivateKey,password, command, cmd -> {
 			// Wait for completed by condition.
 			cmd.join(timeoutMs, TimeUnit.MILLISECONDS);
 			return processor.process(cmd);
@@ -186,7 +186,7 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 	}
 
 	@Override
-	public <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String command,
+	public <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String password, String command,
 			ProcessFunction<Session.Command, T> processor) throws Exception {
 		hasText(host, "SSH2 command host can't empty.");
 		hasText(user, "SSH2 command user can't empty.");
@@ -205,8 +205,13 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 			ssh = new SSHClient();
 			ssh.addHostKeyVerifier(new PromiscuousVerifier());
 			ssh.connect(host);
-			KeyProvider keyProvider = ssh.loadKeys(new String(pemPrivateKey), null, null);
-			ssh.authPublickey(user, keyProvider);
+
+			if(!Collections2.isEmptyArray(pemPrivateKey)){
+				KeyProvider keyProvider = ssh.loadKeys(new String(pemPrivateKey), null, null);
+				ssh.authPublickey(user, keyProvider);
+			}else{
+				ssh.authPassword(user,password);
+			}
 			session = ssh.startSession();
 			// TODO
 			command = "source /etc/profile\nsource /etc/bashrc\n" + command;
