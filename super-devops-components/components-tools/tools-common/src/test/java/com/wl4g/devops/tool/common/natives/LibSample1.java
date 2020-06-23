@@ -16,7 +16,6 @@
 package com.wl4g.devops.tool.common.natives;
 
 import com.sun.jna.Library;
-import com.sun.jna.Native;
 
 /**
  * {@link LibSample1}
@@ -26,8 +25,6 @@ import com.sun.jna.Native;
  * @see https://studygolang.com/articles/13646
  */
 public interface LibSample1 extends Library {
-
-	LibSample1 INSTANCE = Native.load(LibSample1.class);
 
 	int Sum(int a, int b);
 
