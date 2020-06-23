@@ -246,7 +246,7 @@ public class CiCdAutoConfiguration {
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public DockerNativePipeDeployer dockerNativePipeDeployer(DockerNativePipelineProvider provider, AppInstance instance,
+	public DockerNativePipeDeployer dockerNativePipeDeployer(PipelineProvider provider, AppInstance instance,
 															 List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new DockerNativePipeDeployer(provider, instance, pipelineHistoryInstances);
 	}

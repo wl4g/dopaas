@@ -32,7 +32,7 @@ public interface AppClusterService {
 
 	void save(AppCluster appCluster);
 
-	Map<String, Object> list(PageModel pm, String clusterName);
+	Map<String, Object> list(PageModel pm, String clusterName, Integer deployType);
 
 	List<AppCluster> clusters();
 

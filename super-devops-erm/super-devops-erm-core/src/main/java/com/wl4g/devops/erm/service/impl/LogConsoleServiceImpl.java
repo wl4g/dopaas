@@ -15,11 +15,6 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import static com.wl4g.devops.common.constants.ERMDevOpsConstants.*;
-import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
-import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
-import static java.util.Objects.isNull;
-
 import com.wl4g.devops.common.bean.erm.Log;
 import com.wl4g.devops.common.bean.erm.QueryLogModel;
 import com.wl4g.devops.common.bean.erm.Querycriteria;
@@ -38,11 +33,15 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static com.wl4g.devops.common.constants.ERMDevOpsConstants.KEY_DEFAULT_MSG;
+import static com.wl4g.devops.common.constants.ERMDevOpsConstants.LOG_LEVEL;
+import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
+import static com.wl4g.devops.tool.common.lang.Assert2.notNull;
+import static java.util.Objects.isNull;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
 @Service
@@ -52,7 +51,7 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 	private LogHandler logHandler;
 
 	@Override
-	public List<String> console(QueryLogModel model) throws Exception {
+	public List<Log> console(QueryLogModel model) throws Exception {
 		notNull(model, "params");
 		hasText(model.getIndex(), "index");
 
@@ -74,12 +73,12 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 
 		List<Log> logs = queryLogFromESDocuments(index, model.getStartTime(), model.getEndTime(), model.getFrom(),
 				model.getLimit(), model.getQueryList(), model.getLevel());
-		List<String> result = new ArrayList<>();
+		/*List<String> result = new ArrayList<>();
 		for (Log log : logs) {
 			result.add(log.getMessage());
-		}
+		}*/
 
-		return result;
+		return logs;
 	}
 
 	/**

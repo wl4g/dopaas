@@ -33,7 +33,7 @@ public interface ContainerPipelineProvider {
 	 * @param projectDir
 	 * @throws Exception
 	 */
-	void buildImage(String remoteHost, String user, String sshkey, String projectDir) throws Exception;
+	void buildImage() throws Exception;
 
 	/**
 	 * Pull container image.

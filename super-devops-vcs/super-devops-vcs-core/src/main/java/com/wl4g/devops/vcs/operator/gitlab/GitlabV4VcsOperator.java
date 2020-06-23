@@ -170,13 +170,17 @@ public class GitlabV4VcsOperator extends AbstractVcsOperator {
         } else {
             limit = 10;
         }
+        int pageNum = 1;
+        if(nonNull(pm) && nonNull(pm.getPageNum())){
+            pageNum = pm.getPageNum();
+        }
         String url;
         if (nonNull(groupId)) {
             // Search of remote URL.
             url = String.format((credentials.getBaseUri() + "/api/v4/groups/%d/projects?simple=true&search=%s&per_page=%s&page=%s"), groupId, projectName, limit,pm.getPageNum());
         } else {
             // Search of remote URL.
-            url = String.format((credentials.getBaseUri() + "/api/v4/projects?simple=true&search=%s&per_page=%s&page=%s"), projectName, limit,pm.getPageNum());
+            url = String.format((credentials.getBaseUri() + "/api/v4/projects?simple=true&search=%s&per_page=%s&page=%s"), projectName, limit,pageNum);
         }
 
         HttpHeaders headers = new HttpHeaders();

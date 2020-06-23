@@ -209,7 +209,7 @@ public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProp
 		log.info("Exec remote command: {}", cmd.getCmd());
 
 		return SSH2Holders.getInstance(EthzHolder.class).execWaitForComplete(cmd.getHost(), cmd.getUser(),
-				cmd.getPemPrivateKey(), cmd.getCmd(), s -> new RemoteDestroableProcess(cmd.getProcessId(), cmd, s),
+				cmd.getPemPrivateKey(), cmd.getPassword(), cmd.getCmd(), s -> new RemoteDestroableProcess(cmd.getProcessId(), cmd, s),
 				cmd.getTimeoutMs());
 	}
 

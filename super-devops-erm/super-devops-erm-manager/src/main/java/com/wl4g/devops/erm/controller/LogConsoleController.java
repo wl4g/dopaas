@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.erm.controller;
 
+import com.wl4g.devops.common.bean.erm.Log;
 import com.wl4g.devops.common.bean.erm.QueryLogModel;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
@@ -44,8 +45,8 @@ public class LogConsoleController extends BaseController {
 
         RespBase<Object> resp = RespBase.create();
         try {
-            List<String> result = logConsoleService.console(model);
-            resp.forMap().put("data", result);
+            List<Log> result = logConsoleService.console(model);
+            resp.setData(result);
         } catch (Exception e) {
             log.info("Failed to reading logfile.", e);
             resp.setThrowable(e);

@@ -33,7 +33,7 @@ public class RktNativePipelineProvider extends AbstractPipelineProvider implemen
 	}
 
 	@Override
-	public void buildImage(String remoteHost, String user, String sshkey, String projectDir) throws Exception {
+	public void buildImage() throws Exception {
 		throw new UnsupportedOperationException();
 	}
 

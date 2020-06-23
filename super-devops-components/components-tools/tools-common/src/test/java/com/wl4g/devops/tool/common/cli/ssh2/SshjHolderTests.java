@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.tool.common.cli.ssh2;
 
+import com.wl4g.devops.tool.common.resource.ResourceUtils2;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
@@ -24,8 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import com.wl4g.devops.tool.common.resource.ResourceUtils2;
 
 import static com.wl4g.devops.tool.common.io.ByteStreams2.readFullyToString;
 import static java.util.Objects.nonNull;
@@ -52,7 +51,7 @@ public class SshjHolderTests {
 	public static void sshjExecTest() throws Exception {
 		// Test execute command
 		SSH2Holders.SshExecResponse sshExecResponse = SSH2Holders.getInstance(SshjHolder.class).execWaitForResponse("10.0.0.160", "root",
-				PRIVATE_KEY.toCharArray(), "mvn -version", 60000);
+				PRIVATE_KEY.toCharArray(),null, "mvn -version", 60000);
 		System.out.println("success=" + sshExecResponse.getMessage());
 		System.out.println("fail=" + sshExecResponse.getErrmsg());
 		System.out.println("exitCode=" + sshExecResponse.getExitCode());
@@ -62,7 +61,7 @@ public class SshjHolderTests {
 		long t1 = System.currentTimeMillis();
 		// Test upload file
 		String loaclFile = "/Users/vjay/Downloads/elasticsearch-7.6.0-linux-x86_64.tar";
-		SSH2Holders.getInstance(SshjHolder.class).scpPutFile("10.0.0.160", "root", PRIVATE_KEY.toCharArray(), new File(loaclFile),
+		SSH2Holders.getInstance(SshjHolder.class).scpPutFile("10.0.0.160", "root", PRIVATE_KEY.toCharArray(),null, new File(loaclFile),
 				"$HOME/testssh/elasticsearch-7.6.0-linux-x86_64.tar");
 		long t2 = System.currentTimeMillis();
 		System.out.println(t2 - t1);

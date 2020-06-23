@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.devops.ci.vcs.model.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.page.PageModel;
 
@@ -46,7 +45,5 @@ public interface ProjectService {
 	List<String> getBranchs(Integer appClusterId, Integer tagOrBranch);
 
 	List<String> getBranchsByProjectId(Integer projectId, Integer tagOrBranch);
-
-	List<CompositeBasicVcsProjectModel> vcsProjects(Integer vcsId, String projectName);
 
 }

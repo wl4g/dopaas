@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.erm.AppEnvironmentDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.AppEnvironment" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cluster_id" property="clusterId" jdbcType="INTEGER" />
+    <result column="repository_id" property="repositoryId" jdbcType="INTEGER" />
+    <result column="env_type" property="envType" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="repository_namespace" property="repositoryNamespace" jdbcType="VARCHAR" />
+    <result column="custom_repository_config" property="customRepositoryConfig" jdbcType="LONGVARCHAR" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="organization_code" property="organizationCode" jdbcType="VARCHAR" />
+    <result column="run_command" property="runCommand" jdbcType="LONGVARCHAR" />
+    <result column="config_content" property="configContent" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, cluster_id, repository_id, env_type, remark, repository_namespace, custom_repository_config, create_by, create_date, update_by, update_date,
+    del_flag, enable, organization_code,run_command, config_content
+  </sql>
+  <sql id="Base_Column_List_e" >
+    e.id, e.cluster_id, e.repository_id, e.env_type, e.remark, e.repository_namespace, e.custom_repository_config, e.create_by, e.create_date, e.update_by, e.update_date,
+    e.del_flag, e.enable, e.organization_code,e.run_command, e.config_content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from erm_app_cluster_env
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByClusterId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List_e"/>
+    from erm_app_cluster_env e
+    left join sys_dict d on e.env_type = d.value and d.type='app_ns_type'
+    where e.cluster_id = #{clusterId,jdbcType=INTEGER}
+    order by d.sort
+  </select>
+  <select id="selectByClusterIdAndEnv" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List"/>
+    from erm_app_cluster_env
+    where cluster_id = #{clusterId,jdbcType=INTEGER}
+    and env_type = #{envType,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from erm_app_cluster_env
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByClusterId" parameterType="java.lang.Integer" >
+    delete from erm_app_cluster_env
+    where cluster_id = #{clusterId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
+    insert into erm_app_cluster_env (id, cluster_id, repository_id, env_type,
+      remark, repository_namespace, custom_repository_config, create_by, create_date,
+      update_by, update_date, del_flag, enable,
+      organization_code, run_command, config_content)
+    values (#{id,jdbcType=INTEGER}, #{clusterId,jdbcType=INTEGER}, #{repositoryId,jdbcType=INTEGER}, #{envType,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR}, #{repositoryNamespace,jdbcType=VARCHAR}, #{customRepositoryConfig,jdbcType=LONGVARCHAR}, #{createBy,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
+      #{updateBy,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER},
+      #{organizationCode,jdbcType=VARCHAR}, #{runCommand,jdbcType=LONGVARCHAR}, #{configContent,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertBatch" parameterType="java.util.Map">
+    insert into erm_app_cluster_env (id, cluster_id, repository_id, env_type,
+    remark, repository_namespace, custom_repository_config, create_by, create_date,
+    update_by, update_date, del_flag, enable,
+    organization_code, run_command, config_content)
+    VALUES
+    <foreach collection="environments" item="environment" separator=",">
+      (#{environment.id,jdbcType=INTEGER}, #{environment.clusterId,jdbcType=INTEGER}, #{environment.repositoryId,jdbcType=INTEGER}, #{environment.envType,jdbcType=VARCHAR},
+      #{environment.remark,jdbcType=VARCHAR},#{environment.repositoryNamespace,jdbcType=VARCHAR},#{environment.customRepositoryConfig,jdbcType=LONGVARCHAR}, #{environment.createBy,jdbcType=INTEGER}, #{environment.createDate,jdbcType=TIMESTAMP},
+      #{environment.updateBy,jdbcType=INTEGER}, #{environment.updateDate,jdbcType=TIMESTAMP}, #{environment.delFlag,jdbcType=INTEGER}, #{environment.enable,jdbcType=INTEGER},
+      #{environment.organizationCode,jdbcType=VARCHAR}, #{environment.runCommand,jdbcType=LONGVARCHAR}, #{environment.configContent,jdbcType=LONGVARCHAR})
+    </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
+    insert into erm_app_cluster_env
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="clusterId != null" >
+        cluster_id,
+      </if>
+      <if test="repositoryId != null" >
+        repository_id,
+      </if>
+      <if test="envType != null" >
+        env_type,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="repositoryNamespace != null" >
+        repository_namespace,
+      </if>
+      <if test="customRepositoryConfig != null">
+        custom_repository_config,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="organizationCode != null" >
+        organization_code,
+      </if>
+      <if test="runCommand != null" >
+        run_command,
+      </if>
+      <if test="configContent != null" >
+        config_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="clusterId != null" >
+        #{clusterId,jdbcType=INTEGER},
+      </if>
+      <if test="repositoryId != null" >
+        #{repositoryId,jdbcType=INTEGER},
+      </if>
+      <if test="envType != null" >
+        #{envType,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="repositoryNamespace != null" >
+        #{repositoryNamespace,jdbcType=VARCHAR},
+      </if>
+      <if test="customRepositoryConfig != null" >
+        #{customRepositoryConfig,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="organizationCode != null" >
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="runCommand != null" >
+        #{runCommand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="configContent != null" >
+        #{configContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
+    update erm_app_cluster_env
+    <set >
+      <if test="clusterId != null" >
+        cluster_id = #{clusterId,jdbcType=INTEGER},
+      </if>
+      <if test="repositoryId != null" >
+        repository_id = #{repositoryId,jdbcType=INTEGER},
+      </if>
+      <if test="envType != null" >
+        env_type = #{envType,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="repositoryNamespace != null" >
+        repository_namespace = #{repositoryNamespace,jdbcType=VARCHAR},
+      </if>
+      <if test="customRepositoryConfig != null" >
+        custom_repository_config = #{customRepositoryConfig,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="organizationCode != null" >
+        organization_code = #{organizationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="runCommand != null" >
+        run_command = #{runCommand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="configContent != null" >
+        config_content = #{configContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
+    update erm_app_cluster_env
+    set cluster_id = #{clusterId,jdbcType=INTEGER},
+      repository_id = #{repositoryId,jdbcType=INTEGER},
+      env_type = #{envType,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      repository_namespace = #{repositoryNamespace,jdbcType=VARCHAR},
+      custom_repository_config = #{customRepositoryConfig,jdbcType=LONGVARCHAR},
+      create_by = #{createBy,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      enable = #{enable,jdbcType=INTEGER},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
+      run_command = #{runCommand,jdbcType=LONGVARCHAR},
+      config_content = #{configContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.AppEnvironment" >
+    update erm_app_cluster_env
+    set cluster_id = #{clusterId,jdbcType=INTEGER},
+      repository_id = #{repositoryId,jdbcType=INTEGER},
+      env_type = #{envType,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      repository_namespace = #{repositoryNamespace,jdbcType=VARCHAR},
+      custom_repository_config = #{customRepositoryConfig,jdbcType=LONGVARCHAR},
+      create_by = #{createBy,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      enable = #{enable,jdbcType=INTEGER},
+      organization_code = #{organizationCode,jdbcType=VARCHAR},
+      run_command = #{runCommand,jdbcType=LONGVARCHAR},
+      config_content = #{configContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
