@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.components.tools.common.cli.ssh2;
 
+import com.wl4g.devops.components.tools.common.collection.Collections2;
+import com.wl4g.devops.components.tools.common.function.CallbackFunction;
+import com.wl4g.devops.components.tools.common.function.ProcessFunction;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ChannelExec;
 import org.apache.sshd.client.channel.ClientChannelEvent;
@@ -24,16 +27,14 @@ import org.apache.sshd.client.scp.ScpClient;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.util.security.SecurityUtils;
 
-import com.wl4g.devops.components.tools.common.function.CallbackFunction;
-import com.wl4g.devops.components.tools.common.function.ProcessFunction;
-
 import java.io.*;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.util.Iterator;
 import java.util.Objects;
 
-import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
 import static java.util.Collections.singleton;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;

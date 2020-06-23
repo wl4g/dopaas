@@ -15,22 +15,22 @@
  */
 package com.wl4g.devops.components.tools.common.cli.ssh2;
 
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.SCPClient;
-import ch.ethz.ssh2.SCPInputStream;
-import ch.ethz.ssh2.SCPOutputStream;
-import ch.ethz.ssh2.Session;
-
-import java.io.*;
-
+import ch.ethz.ssh2.*;
+import com.wl4g.devops.components.tools.common.collection.Collections2;
 import com.wl4g.devops.components.tools.common.function.CallbackFunction;
 import com.wl4g.devops.components.tools.common.function.ProcessFunction;
+import org.apache.commons.lang3.StringUtils;
 
-import static ch.ethz.ssh2.ChannelCondition.*;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static ch.ethz.ssh2.ChannelCondition.CLOSED;
 import static com.wl4g.devops.components.tools.common.io.ByteStreams2.readFullyToString;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * Ethz based SSH2 tools.
