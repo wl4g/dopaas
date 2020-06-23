@@ -571,7 +571,7 @@
 		}
 
 		if (_sync) {
-			return _outXsrfToken(xsrfTokenHeaderName, xsrfTokenParamName, xsrfTokenValue);
+			return _outXsrfToken(xsrfTokenHeaderName, xsrfTokenParamName, Common.Util.getCookie(_xsrfTokenCookieName));
 		}
 	};
 
