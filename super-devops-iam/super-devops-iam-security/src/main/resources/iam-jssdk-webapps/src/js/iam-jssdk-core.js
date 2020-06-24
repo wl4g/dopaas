@@ -1374,9 +1374,9 @@
 		// Prevent flashing when redirecting to the home page.
 		_iamConsole.info("Hidden login document(*) ... ");
 		// Hide body and Loading
-		$("<style id='iam_check_authc_redirect_style'>div:not(#iam_check_authc_redirect_shade){display:none;}</style>").appendTo($("head"));
+		$("<style id='iam_check_authc_redirect_style'>div:not(#iam_check_authc_redirect_shade){display:none;}body{background:none !important}</style>").appendTo($("head"));
 		var _body = $("body");
-		_body.append($('<div style="background:url('+settings.resources.loading+');position:absolute;width:30px;height:30px;left:48%;top:50%;" id="iam_check_authc_redirect_shade"></div>'));
+		_body.append($('<div style="background:url('+settings.resources.loading+');position:absolute;width:30px;height:30px;left:48%;top:48%;" id="iam_check_authc_redirect_shade"></div>'));
 		// If body has style and class attr.
 		var _bodyStyle = _body.attr("style");
 		var _bodyClass = _body.attr("class");
@@ -1390,7 +1390,7 @@
 				_initHandshakeIfNecessary(true).then(res => {
 					if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
 						var redirectRecord = JSON.parse(sessionStorage.getItem(constant.authRedirectRecordStorageKey));
-						// Check null or expired? 
+						// Check null or expired?
 						if (!redirectRecord || (redirectRecord && Math.abs(new Date().getTime() - redirectRecord.t) > 15000)) {
 							sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // For renew
 							redirectRecord = { c: 0, t: new Date().getTime() };
