@@ -950,71 +950,75 @@
 					return;
 				}
 
-				_initSafeCheck(principal, function(res){
-					// 生成client公钥(用于获取认证成功后加密接口的密钥)
-					runtime.clientSecretKey = IAMCrypto.RSA.generateKey();
-					// 获取Server公钥(用于提交账号密码)
-					var secretKey = Common.Util.checkEmpty("Secret is required", runtime.safeCheck.checkGeneric.secretKey);
-					var credentials = encodeURIComponent(IAMCrypto.RSA.encryptToHexString(secretKey, plainPasswd));
-					// 已校验的验证码Token(如果有)
-					var verifiedToken = "";
-					if(runtime.safeCheck.checkCaptcha.enabled) {
-						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
-						if(Common.Util.isEmpty(verifiedToken)){ // Required
-							settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete man-machine verify");
-							_resetCaptcha(false);
-							return;
-						}
-					}
-					// 检查必须参数
-					if(Common.Util.isAnyEmpty(principal, credentials)){
-						settings.account.onError("No empty login name or password allowed");
-						return;
-					}
-					// Call before submission login.
-					if(!settings.account.onBeforeSubmit(principal, credentials, verifiedToken)){
-						return;
-					}
-
-					// 锁定登录按钮
-					$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
-					// 创建登录请求参数
-					var loginParam = new Map();
-					loginParam.set("{principalKey}", principal);
-					//loginParam.set("{principalKey}", Common.Util.Codec.toHex(principal));
-					loginParam.set("{credentialKey}", credentials);
-					loginParam.set("{clientSecretKey}", runtime.clientSecretKey.publicKeyHex);
-					loginParam.set("{clientRefKey}", _getClientRef());
-					loginParam.set("{verifiedTokenKey}", verifiedToken);
-					loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
-					loginParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
-					// 设备指纹umidToken(初始化页面时获取, 必须)
-					loginParam.set("{umidTokenKey}", runtime.umid.getValue());
-					// 添加自定义参数
-					Common.Util.mergeMap(settings.account.customParamMap, loginParam);
-					// 请求提交登录
-					_doIamRequest("post", "{accountSubmitUri}", loginParam, function(res) {
-						// 解锁登录按钮
-						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
-
-						runtime.verifiedModel.verifiedToken = ""; // Clear
-						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
-						if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
-							_resetCaptcha(true); // 刷新验证码
-							settings.account.onError(res.message); // 登录失败回调
-						} else { // 登录成功，直接重定向
-                            $(document).unbind("keydown");
-							var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", res.data[settings.definition.redirectUrlKey]);
-							if(settings.account.onSuccess(principal, res.data)){
-								Common.Util.getRootWindow(window).location.href = redirectUrl;
+				// [bugfix] 建议强制刷新handshake， 可以解决如：当从官网点击‘登录演示账号’window.open()到首页后，
+				// 点击了退出，此时再次点击‘登录演示账号’时之前handshake保存的session已被销毁，check接口会出现400错误.
+				_initHandshakeIfNecessary(true).then(res0 => {
+					_initSafeCheck(principal, function(res) {
+						// 生成client公钥(用于获取认证成功后加密接口的密钥)
+						runtime.clientSecretKey = IAMCrypto.RSA.generateKey();
+						// 获取Server公钥(用于提交账号密码)
+						var secretKey = Common.Util.checkEmpty("Secret is required", runtime.safeCheck.checkGeneric.secretKey);
+						var credentials = encodeURIComponent(IAMCrypto.RSA.encryptToHexString(secretKey, plainPasswd));
+						// 已校验的验证码Token(如果有)
+						var verifiedToken = "";
+						if(runtime.safeCheck.checkCaptcha.enabled) {
+							verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
+							if(Common.Util.isEmpty(verifiedToken)){ // Required
+								settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete man-machine verify");
+								_resetCaptcha(false);
+								return;
 							}
 						}
-					}, function(errmsg){
-						// 失败时也要解锁登录按钮
-						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
-						runtime.verifiedModel.verifiedToken = ""; // Clear
-						settings.account.onError(errmsg); // 登录异常回调
-					}, null, true);
+						// 检查必须参数
+						if(Common.Util.isAnyEmpty(principal, credentials)){
+							settings.account.onError("No empty login name or password allowed");
+							return;
+						}
+						// Call before submission login.
+						if(!settings.account.onBeforeSubmit(principal, credentials, verifiedToken)){
+							return;
+						}
+
+						// 锁定登录按钮
+						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
+						// 创建登录请求参数
+						var loginParam = new Map();
+						loginParam.set("{principalKey}", principal);
+						//loginParam.set("{principalKey}", Common.Util.Codec.toHex(principal));
+						loginParam.set("{credentialKey}", credentials);
+						loginParam.set("{clientSecretKey}", runtime.clientSecretKey.publicKeyHex);
+						loginParam.set("{clientRefKey}", _getClientRef());
+						loginParam.set("{verifiedTokenKey}", verifiedToken);
+						loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
+						loginParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
+						// 设备指纹umidToken(初始化页面时获取, 必须)
+						loginParam.set("{umidTokenKey}", runtime.umid.getValue());
+						// 添加自定义参数
+						Common.Util.mergeMap(settings.account.customParamMap, loginParam);
+						// 请求提交登录
+						_doIamRequest("post", "{accountSubmitUri}", loginParam, function(res) {
+							// 解锁登录按钮
+							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
+
+							runtime.verifiedModel.verifiedToken = ""; // Clear
+							var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
+							if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
+								_resetCaptcha(true); // 刷新验证码
+								settings.account.onError(res.message); // 登录失败回调
+							} else { // 登录成功，直接重定向
+	                            $(document).unbind("keydown");
+								var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", res.data[settings.definition.redirectUrlKey]);
+								if(settings.account.onSuccess(principal, res.data)){
+									Common.Util.getRootWindow(window).location.href = redirectUrl;
+								}
+							}
+						}, function(errmsg){
+							// 失败时也要解锁登录按钮
+							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
+							runtime.verifiedModel.verifiedToken = ""; // Clear
+							settings.account.onError(errmsg); // 登录异常回调
+						}, null, true);
+					});
 				});
 			});
 		});
@@ -1412,8 +1416,8 @@
 		return runtim.umid.getValue();
 	};
 	// Export safeCheck
-	IAMCore.prototype.safeCheck = function(principal, callback) {
-		_initHandshakeIfNecessary().then(res => {
+	IAMCore.prototype.safeCheck = function(principal, callback, refreshHandshake) {
+		_initHandshakeIfNecessary(refreshHandshake).then(res => {
 			_initSafeCheck(principal, callback);
 		});
 		return this;
