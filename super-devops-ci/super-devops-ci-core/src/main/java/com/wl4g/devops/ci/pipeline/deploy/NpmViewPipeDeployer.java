@@ -31,7 +31,7 @@ import java.util.List;
 public class NpmViewPipeDeployer extends GenericHostPipeDeployer<NpmViewPipelineProvider> {
 
 	public NpmViewPipeDeployer(NpmViewPipelineProvider provider, AppInstance instance,
-							   List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		super(provider, instance, pipelineHistoryInstances);
 	}
 

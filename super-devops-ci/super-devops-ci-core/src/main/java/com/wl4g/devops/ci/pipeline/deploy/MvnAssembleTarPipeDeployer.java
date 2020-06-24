@@ -30,14 +30,9 @@ import java.util.List;
  */
 public class MvnAssembleTarPipeDeployer extends GenericHostPipeDeployer<MvnAssembleTarPipelineProvider> {
 
-    public MvnAssembleTarPipeDeployer(MvnAssembleTarPipelineProvider provider, AppInstance instance,
-                                      List<PipelineHistoryInstance> pipelineHistoryInstances) {
-        super(provider, instance, pipelineHistoryInstances);
-    }
-
-    @Override
-    protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
-        super.doRemoteDeploying(remoteHost, user, sshkey);
-    }
+	public MvnAssembleTarPipeDeployer(MvnAssembleTarPipelineProvider provider, AppInstance instance,
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
+		super(provider, instance, pipelineHistoryInstances);
+	}
 
 }

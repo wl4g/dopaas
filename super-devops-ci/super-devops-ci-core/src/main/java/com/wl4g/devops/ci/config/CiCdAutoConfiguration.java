@@ -92,41 +92,29 @@ public class CiCdAutoConfiguration {
 
 	// --- VCS's (Version Control System) ---
 
-	/*@Bean
-	public GitlabV4VcsOperator gitlabV4VcsOperator() {
-		return new GitlabV4VcsOperator();
-	}
-
-	@Bean
-	public GithubVcsOperator githubV4VcsOperator() {
-		return new GithubVcsOperator();
-	}
-
-	@Bean
-	public BitbucketVcsOperator bitbucketVcsOperator() {
-		return new BitbucketVcsOperator();
-	}
-
-	@Bean
-	public CodingVcsOperator codingVcsOperator() {
-		return new CodingVcsOperator();
-	}
-
-	@Bean
-	public GiteeVcsOperator giteeVcsOperator() {
-		return new GiteeVcsOperator();
-	}
-
-	@Bean
-	public AlicodeVcsOperator alicodeVcsOperator() {
-		return new AlicodeVcsOperator();
-	}
-
-	@Bean
-	public GenericOperatorAdapter<VcsProviderKind, VcsOperator> compositeVcsOperateAdapter(List<VcsOperator> operators) {
-		return new GenericOperatorAdapter<VcsProviderKind, VcsOperator>(operators) {
-		};
-	}*/
+	/*
+	 * @Bean public GitlabV4VcsOperator gitlabV4VcsOperator() { return new
+	 * GitlabV4VcsOperator(); }
+	 * 
+	 * @Bean public GithubVcsOperator githubV4VcsOperator() { return new
+	 * GithubVcsOperator(); }
+	 * 
+	 * @Bean public BitbucketVcsOperator bitbucketVcsOperator() { return new
+	 * BitbucketVcsOperator(); }
+	 * 
+	 * @Bean public CodingVcsOperator codingVcsOperator() { return new
+	 * CodingVcsOperator(); }
+	 * 
+	 * @Bean public GiteeVcsOperator giteeVcsOperator() { return new
+	 * GiteeVcsOperator(); }
+	 * 
+	 * @Bean public AlicodeVcsOperator alicodeVcsOperator() { return new
+	 * AlicodeVcsOperator(); }
+	 * 
+	 * @Bean public GenericOperatorAdapter<VcsProviderKind, VcsOperator>
+	 * compositeVcsOperateAdapter(List<VcsOperator> operators) { return new
+	 * GenericOperatorAdapter<VcsProviderKind, VcsOperator>(operators) { }; }
+	 */
 
 	// --- Flow Manager ---
 	@Bean
@@ -197,21 +185,21 @@ public class CiCdAutoConfiguration {
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public MvnAssembleTarPipeDeployer mvnAssembleTarPipeDeployer(MvnAssembleTarPipelineProvider provider, AppInstance instance,
-																 List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new MvnAssembleTarPipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public NpmViewPipeDeployer npmViewPipeDeployer(NpmViewPipelineProvider provider, AppInstance instance,
-												   List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new NpmViewPipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public ViewNativePipeDeployer viewNativePipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,
-														 List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new ViewNativePipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
@@ -225,35 +213,35 @@ public class CiCdAutoConfiguration {
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public Python3PipeDeployer python3PipeDeployer(Python3PipelineProvider provider, AppInstance instance,
-												   List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new Python3PipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public GolangModPipeDeployer golangModPipeDeployer(Python3PipelineProvider provider, AppInstance instance,
-													   List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new GolangModPipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DockerNativePipeDeployer dockerNativePipeDeployer(PipelineProvider provider, AppInstance instance,
-															 List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new DockerNativePipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public RktNativePipeDeployer rktNativePipeDeployer(RktNativePipelineProvider provider, AppInstance instance,
-													   List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new RktNativePipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public CossPipeDeployer cossPipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,
-														 List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new CossPipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 

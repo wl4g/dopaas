@@ -40,7 +40,6 @@ public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvi
 		super(context);
 	}
 
-
 	@Override
 	protected void postBuiltModulesDependencies() throws Exception {
 
@@ -52,14 +51,15 @@ public class SpringExecutableJarPipelineProvider extends BasedMavenPipelineProvi
 		File jobLogFile = config.getJobLog(pipelineHistory.getId());
 		String assetsDir = getContext().getPipeline().getAssetsDir();
 
-		String tarCommand = format("cd %s/\nmkdir %s\ncp *.jar %s/\ntar -cvf %s/%s.tar %s", projectDir+assetsDir,
-				prgramInstallFileName, prgramInstallFileName, projectDir+assetsDir, prgramInstallFileName,prgramInstallFileName);
+		String tarCommand = format("cd %s/\nmkdir %s\ncp *.jar %s/\ntar -cvf %s/%s.tar %s", projectDir + assetsDir,
+				prgramInstallFileName, prgramInstallFileName, projectDir + assetsDir, prgramInstallFileName,
+				prgramInstallFileName);
 		log.info(writeBuildLog("view native built, packing the assets file command: %s", tarCommand));
 
 		// Execution command.
 		// TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), tarCommand, tmpCmdFile, 300000L)
-				.setStdout(jobLogFile).setStderr(jobLogFile);
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), tarCommand, tmpCmdFile,
+				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 
 		super.postBuiltModulesDependencies();

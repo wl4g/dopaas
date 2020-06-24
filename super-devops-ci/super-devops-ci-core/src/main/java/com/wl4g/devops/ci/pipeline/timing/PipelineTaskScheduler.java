@@ -155,7 +155,7 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 			boolean cancel = future.cancel(true);
 			if (cancel) {
 				map.remove(key);
-			}else{
+			} else {
 				throw new IllegalStateException(String.format("Failed to stopped timing pipeline of '%s'", key));
 			}
 		}

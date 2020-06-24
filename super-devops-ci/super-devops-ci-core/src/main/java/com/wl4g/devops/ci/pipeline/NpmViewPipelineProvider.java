@@ -64,8 +64,8 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 		String defaultNpmBuildCmd = format(DEFAULT_NPM_CMD, projectDir);
 		log.info(writeBuildLog("Building with npm default command: %s", defaultNpmBuildCmd));
 		// TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), defaultNpmBuildCmd, tmpCmdFile,
-				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), defaultNpmBuildCmd,
+				tmpCmdFile, 300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
 
@@ -98,8 +98,8 @@ public class NpmViewPipelineProvider extends RestorableDeployPipelineProvider {
 
 		// Execution command.
 		// TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), tarCommand, tmpCmdFile, 300000L)
-				.setStdout(jobLogFile).setStderr(jobLogFile);
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), tarCommand, tmpCmdFile,
+				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
 

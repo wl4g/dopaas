@@ -53,22 +53,23 @@ public interface PcmOperator extends Operator<PcmKind> {
 
 	/**
 	 * Get Pcm Tracker
+	 * 
 	 * @param pcm
 	 * @return
 	 */
 	List<SelectionModel> getTracker(Pcm pcm);
 
-
 	/**
 	 * Get Pcm priorities
+	 * 
 	 * @param pcm
 	 * @return
 	 */
 	List<SelectionModel> getPriorities(Pcm pcm);
 
-
 	/**
 	 * Get Pcm Statuses
+	 * 
 	 * @param pcm
 	 * @return
 	 */
@@ -85,7 +86,6 @@ public interface PcmOperator extends Operator<PcmKind> {
 	 * @return
 	 */
 	List<SelectionModel> getIssues(Pcm pcm, String userId, String projectId, String searchSubject);
-
 
 	void createIssues(Pcm pcm, PipeHistoryPcm pipeStepPcm);
 

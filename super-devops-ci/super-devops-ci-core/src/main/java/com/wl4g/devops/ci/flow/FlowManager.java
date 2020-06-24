@@ -207,8 +207,7 @@ public class FlowManager {
 	 *
 	 * @param pipelineModel
 	 */
-	public void master2slave(PipelineModel pipelineModel, String remark, String taskTraceId, String taskTraceType,
-			String annex) {
+	public void master2slave(PipelineModel pipelineModel, String remark, String taskTraceId, String taskTraceType, String annex) {
 		log.info(
 				"FlowManager.master2slave prarms::"
 						+ "pipelineModel = {} , remark = {} , taskTraceId = {} , taskTraceType = {} , annex = {} ",
@@ -243,7 +242,7 @@ public class FlowManager {
 	 * @param pipelineId
 	 * @return
 	 */
-	//TODO 这里需要添加redis锁（）jedisService.setMap()
+	// TODO 这里需要添加redis锁（）jedisService.setMap()
 	public PipelineModel buildPipeline(Integer pipelineId) {
 		// check pipeline is running
 		Assert2.isTrue(!isPipelineRunning(pipelineId), "this pipeline is running, Please try later");
@@ -424,7 +423,7 @@ public class FlowManager {
 		if (CollectionUtils.isEmpty(modules)) {
 			return;
 		}
-		//TODO FAILED --> throw
+		// TODO FAILED --> throw
 		if (StringUtils.equalsAnyIgnoreCase(pipeline.getStatus(), RUNNING_DEPLOY.toString(), FAILED.toString(),
 				SUCCESS.toString())) {
 			alreadBuild.addAll(modules);

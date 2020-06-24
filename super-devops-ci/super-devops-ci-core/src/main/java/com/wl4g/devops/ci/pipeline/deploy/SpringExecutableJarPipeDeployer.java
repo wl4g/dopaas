@@ -31,7 +31,7 @@ import java.util.List;
 public class SpringExecutableJarPipeDeployer extends GenericHostPipeDeployer<SpringExecutableJarPipelineProvider> {
 
 	public SpringExecutableJarPipeDeployer(SpringExecutableJarPipelineProvider provider, AppInstance instance,
-										   List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		super(provider, instance, pipelineHistoryInstances);
 	}
 

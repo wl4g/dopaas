@@ -97,7 +97,8 @@ public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<Runner
 			// acquire lock are on ready in place.
 			if (lock.tryLock()) {
 				long begin = System.currentTimeMillis();
-				//int count = taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
+				// int count =
+				// taskHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
 				int count = pipelineHistoryDao.updateStatus(config.getBuild().getJobTimeoutSec());
 				if (count > 0) {
 					log.info("Updated pipeline timeout jobs, with jobTimeoutSec:{}, count:{}, cost: {}ms",

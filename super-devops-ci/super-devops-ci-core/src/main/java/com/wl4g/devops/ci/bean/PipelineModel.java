@@ -6,14 +6,14 @@ package com.wl4g.devops.ci.bean;
  */
 public class PipelineModel extends RunModel.Pipeline {
 
-    private String runId;
+	private String runId;
 
-    public String getRunId() {
-        return runId;
-    }
+	public String getRunId() {
+		return runId;
+	}
 
-    public void setRunId(String runId) {
-        this.runId = runId;
-    }
+	public void setRunId(String runId) {
+		this.runId = runId;
+	}
 
 }

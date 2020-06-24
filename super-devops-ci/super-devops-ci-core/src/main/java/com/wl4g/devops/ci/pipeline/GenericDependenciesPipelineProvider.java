@@ -19,7 +19,6 @@ import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
-import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.vcs.operator.VcsOperator;
@@ -27,7 +26,6 @@ import com.wl4g.devops.vcs.operator.VcsOperator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -35,12 +33,11 @@ import static com.wl4g.devops.ci.bean.RunModel.Pipeline.ModulesPorject;
 import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.RUNNING_BUILD;
 import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.RUNNING_DEPLOY;
 import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_DEPENDENCY_BUILD;
-import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Generic modular dependencies pipeline provider.</br>
@@ -72,29 +69,25 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 */
 	protected void buildModular() throws Exception {
 		PipelineHistory pipelineHistory = getContext().getPipelineHistory();
-		Project project = getContext().getProject();
+
 		File jobLog = config.getJobLog(pipelineHistory.getId());
 		log.info(writeBuildLog("Analyzing pipeline building appcluster dependencies... stdout to '%s'",
 				getContext().getAppCluster().getName(), jobLog.getAbsolutePath()));
 
 		// Resolve project dependencies.
-		List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeStepBuildingProjectDao.selectByPipeId(getContext().getPipeline().getId());
-		//LinkedHashSet<Dependency> dependencies = dependencyService.getHierarchyDependencys(project.getId(), null);
+		List<PipeStepBuildingProject> pipeStepBuildingProjects = pipeStepBuildingProjectDao
+				.selectByPipeId(getContext().getPipeline().getId());
+		// LinkedHashSet<Dependency> dependencies =
+		// dependencyService.getHierarchyDependencys(project.getId(), null);
 		log.info(writeBuildLog("Analyzed pipeline for hierarchy of appcluster: %s, dependencies: %s",
 				getContext().getAppCluster().getName(), pipeStepBuildingProjects));
 
-		// Custom dependency commands.
-		//List<TaskBuildCommand> commands = taskHistoryBuildCommandDao.selectByTaskHisId(pipelineHistory.getId());
-
 		// Pipeline State Change
-		//List<String> modules = new ArrayList<>();
 		List<ModulesPorject> modulesPorjects = new ArrayList<>();
 		for (PipeStepBuildingProject depd : pipeStepBuildingProjects) {
-			//modules.add(depd.getProjectId().toString());
 			ModulesPorject modulesPorject = new ModulesPorject();
 			modulesPorject.setProjectId(depd.getProjectId());
 			modulesPorject.setRef(depd.getRef());
-			//modulesPorject.setStatus();
 			modulesPorjects.add(modulesPorject);
 		}
 		PipelineModel pipelineModel = getContext().getPipelineModel();
@@ -102,29 +95,20 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		pipelineModel.setModulesPorjects(modulesPorjects);
 		flowManager.pipelineStateChange(pipelineModel);
 
-		log.info(writeBuildLog("Analyzed pipelineModel=%s", JacksonUtils.toJSONString(pipelineModel)));
+		log.info(writeBuildLog("Analyzed pipelineModel=%s", toJSONString(pipelineModel)));
 
 		// Build of dependencies sub-modules.
 		for (PipeStepBuildingProject buildingProject : pipeStepBuildingProjects) {
-
 			// Is dependency Already build
 			if (flowManager.isDependencyBuilded(buildingProject.getProjectId())) {
 				continue;
 			}
-
 			pipelineModel.setCurrent(buildingProject.getProjectId());
 			flowManager.pipelineStateChange(pipelineModel);
-			//TaskBuildCommand taskBuildCommand = extractDependencyBuildCommand(commands, buildingProject.getProjectId());
 
-			//Assert2.notNullOf(taskBuildCommand, "taskBuildCommand");
-			doMutexBuildModuleInDependencies(buildingProject.getProjectId(), buildingProject.getRef(), buildingProject.getBuildCommand());
-
+			doMutexBuildModuleInDependencies(buildingProject.getProjectId(), buildingProject.getRef(),
+					buildingProject.getBuildCommand());
 		}
-
-		// Build for primary(self).
-		/*pipelineModel.setCurrent(project.getId().toString());
-		flowManager.pipelineStateChange(pipelineModel);
-		doMutexBuildModuleInDependencies(project, taskHisy.getBranchName(), taskHisy.getBuildCommand());*/
 
 		// Build Success
 		pipelineModel.setCurrent(null);
@@ -144,24 +128,6 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 	 * @throws Exception
 	 */
 	protected abstract void postBuiltModulesDependencies() throws Exception;
-
-	/**
-	 * Extract dependencies project custom command.
-	 * 
-	 * @param buildCommands
-	 * @param projectId
-	 * @return
-	 */
-	private TaskBuildCommand extractDependencyBuildCommand(List<TaskBuildCommand> buildCommands, Integer projectId) {
-		if (isEmpty(buildCommands)) {
-			return null;
-		}
-		notNull(projectId, "Mvn building dependency projectId is null");
-
-		Optional<TaskBuildCommand> buildCmdOp = safeList(buildCommands).stream()
-				.filter(cmd -> cmd.getProjectId().intValue() == projectId.intValue()).findFirst();
-		return buildCmdOp.isPresent() ? buildCmdOp.get() : null;
-	}
 
 	/**
 	 * Building module in dependencies with mutually.
@@ -233,7 +199,8 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		// Checked out? pull and merge.
 		if (getVcsOperator(project).hasLocalRepository(projectDir)) {
 			log.info(writeBuildLog("Pulling project source to '%s:%s' ...", branch, projectDir));
-			getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir, branch, VcsOperator.VcsAction.of(pipeStepBuilding.getRefType().toString()));
+			getVcsOperator(project).checkoutAndPull(project.getVcs(), projectDir, branch,
+					VcsOperator.VcsAction.of(pipeStepBuilding.getRefType().toString()));
 		} else { // Unchecked out? new clone & checkout.
 			log.info(writeBuildLog("New checkout project source to '%s:%s' ...", branch, projectDir));
 			getVcsOperator(project).clone(project.getVcs(), project.getHttpUrl(), projectDir, branch);

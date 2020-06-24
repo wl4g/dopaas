@@ -6,22 +6,23 @@ package com.wl4g.devops.vcs.config;
  */
 public class VcsProperties {
 
-    private String branchFormat;
-    private String tagFormat;
+	private String branchFormat;
 
-    public String getBranchFormat() {
-        return branchFormat;
-    }
+	private String tagFormat;
 
-    public void setBranchFormat(String branchFormat) {
-        this.branchFormat = branchFormat;
-    }
+	public String getBranchFormat() {
+		return branchFormat;
+	}
 
-    public String getTagFormat() {
-        return tagFormat;
-    }
+	public void setBranchFormat(String branchFormat) {
+		this.branchFormat = branchFormat;
+	}
 
-    public void setTagFormat(String tagFormat) {
-        this.tagFormat = tagFormat;
-    }
+	public String getTagFormat() {
+		return tagFormat;
+	}
+
+	public void setTagFormat(String tagFormat) {
+		this.tagFormat = tagFormat;
+	}
 }

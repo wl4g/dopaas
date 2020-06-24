@@ -28,46 +28,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class VcsAutoConfiguration {
 
-    @Bean
-    @ConfigurationProperties(prefix = "vcs")
-    public VcsProperties ciCdProperties() {
-        return new VcsProperties();
-    }
+	@Bean
+	@ConfigurationProperties(prefix = "vcs")
+	public VcsProperties ciCdProperties() {
+		return new VcsProperties();
+	}
 
-	/*// --- Basic's ---
-    @Bean
-    public VcsOperator gitlabV4VcsOperator() {
-        return new GitlabV4VcsOperator();
-    }
-
-    @Bean
-    public VcsOperator githubV4VcsOperator() {
-        return new GithubVcsOperator();
-    }
-
-    @Bean
-    public VcsOperator bitbucketVcsOperator() {
-        return new BitbucketVcsOperator();
-    }
-
-    @Bean
-    public VcsOperator codingVcsOperator() {
-        return new CodingVcsOperator();
-    }
-
-    @Bean
-    public VcsOperator giteeVcsOperator() {
-        return new GiteeVcsOperator();
-    }
-
-    @Bean
-    public VcsOperator alicodeVcsOperator() {
-        return new AlicodeVcsOperator();
-    }
-
-    @Bean
-    public GenericOperatorAdapter<VcsOperator.VcsProviderKind, VcsOperator> compositeVcsOperateAdapter(List<VcsOperator> operators) {
-        return new GenericOperatorAdapter<VcsOperator.VcsProviderKind, VcsOperator>(operators) {
-        };
-    }*/
 }

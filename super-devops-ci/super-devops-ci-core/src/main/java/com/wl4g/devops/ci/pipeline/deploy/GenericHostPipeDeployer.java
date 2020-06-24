@@ -98,14 +98,14 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 	 * @throws Exception
 	 */
 	protected void transferToRemoteTmpDir(String remoteHost, String user, String sshkey) throws Exception {
-		String localFile = config.getJobBackupDir(getContext().getPipelineHistory().getId()) + "/" + getPrgramInstallFileName() + "."
-				+ DEFAULT_FILE_SUFFIX;
+		String localFile = config.getJobBackupDir(getContext().getPipelineHistory().getId()) + "/" + getPrgramInstallFileName()
+				+ "." + DEFAULT_FILE_SUFFIX;
 
 		String remoteTmpDir = config.getDeploy().getRemoteHomeTmpDir();
 		writeDeployLog(String.format("Transfer to remote tmpdir: %s@%s [%s]", user, remoteHost, localFile));
 
-		SSH2Holders.getDefault().scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey),null,
-				new File(localFile), remoteTmpDir);
+		SSH2Holders.getDefault().scpPutFile(remoteHost, user, provider.getUsableCipherSshKey(sshkey), null, new File(localFile),
+				remoteTmpDir);
 	}
 
 	/**
