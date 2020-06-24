@@ -2671,7 +2671,8 @@
 		// Prevent flashing when redirecting to the home page.
 		_iamConsole.info("Hidden login document(*) ... ");
 		// Hide body and Loading
-		$("<style id='iam_check_authc_redirect_style'>div:not(#iam_check_authc_redirect_shade){display:none;}body{background:none !important}</style>").appendTo($("head"));
+		$("<style id='iam_check_authc_redirect_style'>div:not(#iam_check_authc_redirect_shade){display:none;}" +
+				"img,span,p,a,b{display:none;}body{background:none !important}</style>").appendTo($("head"));
 		var _body = $("body");
 		_body.append($('<div style="background:url('+settings.resources.loading+');position:absolute;width:30px;height:30px;left:48%;top:48%;" id="iam_check_authc_redirect_shade"></div>'));
 		// If body has style and class attr.
