@@ -10,6 +10,7 @@
 		<version>master</version>
 	</parent>
 	<modules>
+		<module>super-devops-vcs-operator</module>
 		<module>super-devops-vcs-core</module>
 		<module>super-devops-vcs-manager</module>
 	</modules>

@@ -431,6 +431,12 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-vcs-operator</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
 			<!-- CodeGen dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>

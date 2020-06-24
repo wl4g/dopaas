@@ -15,10 +15,20 @@
  */
 package com.wl4g.devops.vcs.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.vcs.operator.VcsOperator;
+import com.wl4g.devops.vcs.operator.alicode.AlicodeVcsOperator;
+import com.wl4g.devops.vcs.operator.bitbucket.BitbucketVcsOperator;
+import com.wl4g.devops.vcs.operator.coding.CodingVcsOperator;
+import com.wl4g.devops.vcs.operator.gitee.GiteeVcsOperator;
+import com.wl4g.devops.vcs.operator.github.GithubVcsOperator;
+import com.wl4g.devops.vcs.operator.gitlab.GitlabV4VcsOperator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
+import static com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
 /**
  * Vcs auto configuration.
  *
@@ -26,15 +36,15 @@ import org.springframework.context.annotation.Configuration;
  * @since
  */
 @Configuration
-public class VcsAutoConfiguration {
+public class VcsOperatorAutoConfiguration {
 
-    @Bean
+    /*@Bean
     @ConfigurationProperties(prefix = "vcs")
     public VcsProperties ciCdProperties() {
         return new VcsProperties();
-    }
+    }*/
 
-	/*// --- Basic's ---
+	// --- Basic's ---
     @Bean
     public VcsOperator gitlabV4VcsOperator() {
         return new GitlabV4VcsOperator();
@@ -66,8 +76,8 @@ public class VcsAutoConfiguration {
     }
 
     @Bean
-    public GenericOperatorAdapter<VcsOperator.VcsProviderKind, VcsOperator> compositeVcsOperateAdapter(List<VcsOperator> operators) {
-        return new GenericOperatorAdapter<VcsOperator.VcsProviderKind, VcsOperator>(operators) {
+    public GenericOperatorAdapter<VcsProviderKind, VcsOperator> compositeVcsOperateAdapter(List<VcsOperator> operators) {
+        return new GenericOperatorAdapter<VcsProviderKind, VcsOperator>(operators) {
         };
-    }*/
+    }
 }

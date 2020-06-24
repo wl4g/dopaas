@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>super-devops-ci-core</artifactId>
+	<artifactId>super-devops-vcs-operator</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevOps CI Core</name>
+	<name>Super DevOps VCS Operator</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
-		<artifactId>super-devops-ci</artifactId>
+		<artifactId>super-devops-vcs</artifactId>
 		<version>master</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -35,28 +35,8 @@
 			<artifactId>super-devops-dao</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-components-shell-cli</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-components-shell-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-vcs-operator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-iam-client</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.github.docker-java</groupId>
-			<artifactId>docker-java</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

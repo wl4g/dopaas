@@ -38,6 +38,10 @@
 			<groupId>com.wl4g</groupId>
 			<artifactId>super-devops-iam-client</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-vcs-operator</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

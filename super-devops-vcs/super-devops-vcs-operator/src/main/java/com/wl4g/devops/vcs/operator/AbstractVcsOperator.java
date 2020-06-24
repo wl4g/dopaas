@@ -29,6 +29,7 @@ import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
@@ -184,6 +185,68 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 
 	@Override
 	public <T extends VcsTagModel> T createRemoteTag(Vcs credentials, int projectId, String tag, String ref, String message, String releaseDescription) {
+		return null;
+	}
+
+	@Override
+	public <T> T clone(Vcs credentials, String remoteUrl, String projecDir, String branchName) throws IOException {
+		notNull(credentials, "Clone credentials is requires.");
+		hasText(remoteUrl, "Clone remoteUrl can't is empty");
+		hasText(projecDir, "Clone projecDir can't is empty");
+		hasText(branchName, "Clone branchName can't is empty");
+		if (log.isInfoEnabled()) {
+			log.info("Cloning VCS repository for remoteUrl: {}, projecDir: {}, branchName:{}", remoteUrl, projecDir, branchName);
+		}
+		return null;
+	}
+
+	@Override
+	public <T> T checkoutAndPull(Vcs credentials, String projecDir, String branchName, VcsAction action) {
+		notNull(credentials, "Checkout & pull credentials is requires.");
+		hasText(projecDir, "Checkout & pull projecDir can't is empty");
+		hasText(branchName, "Checkout & pull branchName can't is empty");
+		if (log.isInfoEnabled()) {
+			log.info("Checkout & pull for projecDir: {}, branchName: {}", projecDir, branchName);
+		}
+		return null;
+	}
+
+	@Override
+	public List<String> delLocalBranch(String projecDir, String branchName, boolean force) {
+		hasText(projecDir, "Deletion local branch projecDir can't is empty");
+		hasText(branchName, "Deletion local branch  branchName can't is empty");
+		if (log.isInfoEnabled()) {
+			log.info("Deletion local branch for projecDir: {}, branchName: {}, force: {}", projecDir, branchName, force);
+		}
+		return null;
+	}
+
+	@Override
+	public boolean hasLocalRepository(String projecDir) {
+		hasText(projecDir, "Check VCS repository projecDir can't is empty");
+		if (log.isInfoEnabled()) {
+			log.info("Check VCS repository for projecDir: {}", projecDir);
+		}
+		return false;
+	}
+
+	@Override
+	public String getLatestCommitted(String projecDir) throws Exception {
+		hasText(projecDir, "Get committed projecDir can't is empty");
+		if (log.isInfoEnabled()) {
+			log.info("Get latest committed for projecDir: {}", projecDir);
+		}
+		return null;
+	}
+
+	@Override
+	public <T> T rollback(Vcs credentials, String projecDir, String sign) {
+		notNull(credentials, "Rollback credentials is requires.");
+		hasText(projecDir, "Rollback projecDir can't is empty");
+		hasText(sign, "Rollback sign can't is empty");
+		if (log.isInfoEnabled()) {
+			log.info("Rollback for projecDir: {}, sign: {}", projecDir, sign);
+		}
 		return null;
 	}
 }

@@ -17,12 +17,12 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.ci.vcs.VcsOperator;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
 import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
+import com.wl4g.devops.vcs.operator.VcsOperator;
 
 import java.io.File;
 import java.util.ArrayList;
