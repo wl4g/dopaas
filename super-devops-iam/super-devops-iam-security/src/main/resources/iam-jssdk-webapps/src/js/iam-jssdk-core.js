@@ -244,6 +244,10 @@
 
 	// Global settings.
 	var settings = {
+		// 基础资源定义
+		resources: {
+			loading: "data:image/gif;base64,R0lGODlhHgAeAPf/AGzI8iqM4ev4/YnU9YrR9HLK8le67+f2/Knf94zU9ZLV9nbK8vr9/uP1/fL7/k+57mTC8TCm6TOp6t/0/WG+8GPE8FO98HvH8rbj+LLi+JzX9mjE8czq+k2679Pu+yqI4Tar637L8z+y7fT7/s7s+8zt+zCg53jM83HJ8vf7/uv3/d7z/M3s+i+g6MLn+bTj+KPe95HV9Uy57j2x7dHu+4HP9DCm6S2b5iyV5SyW5S2Y5SyW5C6c5i2Z5i2X5S6e5zGn6S6f5yyV5C2Z5S2a5iyS4/b8/iyU5C6d5y+l6S+k6IPO8y6d5vT7/lW98GrH8S+j6C+i6C+h6P7///z+/yuQ4/X7/v3+/2zG8UK07cXq+i6e5vL6/drx/CuR45DW9dTw/O75/fH6/YjS9fn9/l7A77bj+Tiu62zD8dfx/IbP9C+k6XfN81zA7yyT5Nbw/EK27tv0/b/m+e/5/p/b93zK8kCy7C2b5TKn6r7n+fb9/vz//4XQ9GfG8I7T9XbL85XX9svr+km07cbp+tvx/MDo+oDQ9E257qXd+Pf9/t7z/XjK8pPX9tfw/D6s673m+SyT43/P9LPl+X3L8zKn6S2a5X/O84HP8+Dz/YHO9Jva9yuP4k237lu/7zCj6fz9/jer6srr+rfj+a3f963h97/n+WnF8Fa88NXu+2/J8vn9/4jS9F/C8JLV9ZLW9VzB70257qLd+HXK8jGn6pzZ9t3y/ILP9O34/S2a5aDe+GLB777m+XHI8fX8/4vS9afc9y6d53XL82/H8oHN8/v+/37J8v3//1a98JLX9lq/72fA74XP84XR9IfR9J3a9/D5/dfv/F2/8VK779vy/C6c5rzl+bvm+XbI8pvc9l7B8C+h6C6e6Eaw7Ea17ZbZ9zOd5pfX9UOy7L7n+i6a5S2Y5ZTV9p/a9y6h5/T8/tDu+8fp+uD0/c/u+57b99jx/L3o+SyS5JDU9ZvY9tLy/LXi9zeu633I8vf+/7Dh90Cv66Hd95zZ95za9i6f6P///////yH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkIyQjlEMzRFOEY2QzExRTU5MzVCODg0NzA4NjRDMDNCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkIyQjlEMzRGOEY2QzExRTU5MzVCODg0NzA4NjRDMDNCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QjJCOUQzNEM4RjZDMTFFNTkzNUI4ODQ3MDg2NEMwM0IiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QjJCOUQzNEQ4RjZDMTFFNTkzNUI4ODQ3MDg2NEMwM0IiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4B//79/Pv6+fj39vX08/Lx8O/u7ezr6uno5+bl5OPi4eDf3t3c29rZ2NfW1dTT0tHQz87NzMvKycjHxsXEw8LBwL++vby7urm4t7a1tLOysbCvrq2sq6qpqKempaSjoqGgn56dnJuamZiXlpWUk5KRkI+OjYyLiomIh4aFhIOCgYB/fn18e3p5eHd2dXRzcnFwb25tbGtqaWhnZmVkY2JhYF9eXVxbWllYV1ZVVFNSUVBPTk1MS0pJSEdGRURDQkFAPz49PDs6OTg3NjU0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",
+		},
 		// 字典参数定义
 		definition: {
 			codeOkValue: "200", // 接口返回成功码判定标准
@@ -571,7 +575,7 @@
 		}
 
 		if (_sync) {
-			return _outXsrfToken(xsrfTokenHeaderName, xsrfTokenParamName, xsrfTokenValue);
+			return _outXsrfToken(xsrfTokenHeaderName, xsrfTokenParamName, Common.Util.getCookie(_xsrfTokenCookieName));
 		}
 	};
 
@@ -950,71 +954,75 @@
 					return;
 				}
 
-				_initSafeCheck(principal, function(res){
-					// 生成client公钥(用于获取认证成功后加密接口的密钥)
-					runtime.clientSecretKey = IAMCrypto.RSA.generateKey();
-					// 获取Server公钥(用于提交账号密码)
-					var secretKey = Common.Util.checkEmpty("Secret is required", runtime.safeCheck.checkGeneric.secretKey);
-					var credentials = encodeURIComponent(IAMCrypto.RSA.encryptToHexString(secretKey, plainPasswd));
-					// 已校验的验证码Token(如果有)
-					var verifiedToken = "";
-					if(runtime.safeCheck.checkCaptcha.enabled) {
-						verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
-						if(Common.Util.isEmpty(verifiedToken)){ // Required
-							settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete man-machine verify");
-							_resetCaptcha(false);
-							return;
-						}
-					}
-					// 检查必须参数
-					if(Common.Util.isAnyEmpty(principal, credentials)){
-						settings.account.onError("No empty login name or password allowed");
-						return;
-					}
-					// Call before submission login.
-					if(!settings.account.onBeforeSubmit(principal, credentials, verifiedToken)){
-						return;
-					}
-
-					// 锁定登录按钮
-					$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
-					// 创建登录请求参数
-					var loginParam = new Map();
-					loginParam.set("{principalKey}", principal);
-					//loginParam.set("{principalKey}", Common.Util.Codec.toHex(principal));
-					loginParam.set("{credentialKey}", credentials);
-					loginParam.set("{clientSecretKey}", runtime.clientSecretKey.publicKeyHex);
-					loginParam.set("{clientRefKey}", _getClientRef());
-					loginParam.set("{verifiedTokenKey}", verifiedToken);
-					loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
-					loginParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
-					// 设备指纹umidToken(初始化页面时获取, 必须)
-					loginParam.set("{umidTokenKey}", runtime.umid.getValue());
-					// 添加自定义参数
-					Common.Util.mergeMap(settings.account.customParamMap, loginParam);
-					// 请求提交登录
-					_doIamRequest("post", "{accountSubmitUri}", loginParam, function(res) {
-						// 解锁登录按钮
-						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
-
-						runtime.verifiedModel.verifiedToken = ""; // Clear
-						var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
-						if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
-							_resetCaptcha(true); // 刷新验证码
-							settings.account.onError(res.message); // 登录失败回调
-						} else { // 登录成功，直接重定向
-                            $(document).unbind("keydown");
-							var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", res.data[settings.definition.redirectUrlKey]);
-							if(settings.account.onSuccess(principal, res.data)){
-								Common.Util.getRootWindow(window).location.href = redirectUrl;
+				// [bugfix] 建议强制刷新handshake， 可以解决如：当从官网点击‘登录演示账号’window.open()到首页后，
+				// 点击了退出，此时再次点击‘登录演示账号’时之前handshake保存的session已被销毁，check接口会出现400错误.
+				_initHandshakeIfNecessary(true).then(res0 => {
+					_initSafeCheck(principal, function(res) {
+						// 生成client公钥(用于获取认证成功后加密接口的密钥)
+						runtime.clientSecretKey = IAMCrypto.RSA.generateKey();
+						// 获取Server公钥(用于提交账号密码)
+						var secretKey = Common.Util.checkEmpty("Secret is required", runtime.safeCheck.checkGeneric.secretKey);
+						var credentials = encodeURIComponent(IAMCrypto.RSA.encryptToHexString(secretKey, plainPasswd));
+						// 已校验的验证码Token(如果有)
+						var verifiedToken = "";
+						if(runtime.safeCheck.checkCaptcha.enabled) {
+							verifiedToken = runtime.verifiedModel.verifiedToken; // [MARK2], see: 'MARK1,MARK4'
+							if(Common.Util.isEmpty(verifiedToken)){ // Required
+								settings.account.onError(Common.Util.isZhCN()?"请完成人机验证":"Please complete man-machine verify");
+								_resetCaptcha(false);
+								return;
 							}
 						}
-					}, function(errmsg){
-						// 失败时也要解锁登录按钮
-						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
-						runtime.verifiedModel.verifiedToken = ""; // Clear
-						settings.account.onError(errmsg); // 登录异常回调
-					}, null, true);
+						// 检查必须参数
+						if(Common.Util.isAnyEmpty(principal, credentials)){
+							settings.account.onError("No empty login name or password allowed");
+							return;
+						}
+						// Call before submission login.
+						if(!settings.account.onBeforeSubmit(principal, credentials, verifiedToken)){
+							return;
+						}
+
+						// 锁定登录按钮
+						$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).attr("disabled", true);
+						// 创建登录请求参数
+						var loginParam = new Map();
+						loginParam.set("{principalKey}", principal);
+						//loginParam.set("{principalKey}", Common.Util.Codec.toHex(principal));
+						loginParam.set("{credentialKey}", credentials);
+						loginParam.set("{clientSecretKey}", runtime.clientSecretKey.publicKeyHex);
+						loginParam.set("{clientRefKey}", _getClientRef());
+						loginParam.set("{verifiedTokenKey}", verifiedToken);
+						loginParam.set("{verifyTypeKey}", Common.Util.checkEmpty("captcha.use", settings.captcha.use));
+						loginParam.set("{secureAlgKey}", runtime.handshake.handleChooseSecureAlg());
+						// 设备指纹umidToken(初始化页面时获取, 必须)
+						loginParam.set("{umidTokenKey}", runtime.umid.getValue());
+						// 添加自定义参数
+						Common.Util.mergeMap(settings.account.customParamMap, loginParam);
+						// 请求提交登录
+						_doIamRequest("post", "{accountSubmitUri}", loginParam, function(res) {
+							// 解锁登录按钮
+							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
+
+							runtime.verifiedModel.verifiedToken = ""; // Clear
+							var codeOkValue = Common.Util.checkEmpty("definition.codeOkValue", settings.definition.codeOkValue);
+							if(!Common.Util.isEmpty(res) && (res.code != codeOkValue)){ // Failed?
+								_resetCaptcha(true); // 刷新验证码
+								settings.account.onError(res.message); // 登录失败回调
+							} else { // 登录成功，直接重定向
+	                            $(document).unbind("keydown");
+								var redirectUrl = Common.Util.checkEmpty("Login successfully, response data.redirect_url is empty", res.data[settings.definition.redirectUrlKey]);
+								if(settings.account.onSuccess(principal, res.data)){
+									Common.Util.getRootWindow(window).location.href = redirectUrl;
+								}
+							}
+						}, function(errmsg){
+							// 失败时也要解锁登录按钮
+							$(Common.Util.checkEmpty("account.submitBtn", settings.account.submitBtn)).removeAttr("disabled");
+							runtime.verifiedModel.verifiedToken = ""; // Clear
+							settings.account.onError(errmsg); // 登录异常回调
+						}, null, true);
+					});
 				});
 			});
 		});
@@ -1365,32 +1373,52 @@
 	var _checkAuthenticationAndRedirect = function(redirectUrl) {
 		// Prevent flashing when redirecting to the home page.
 		_iamConsole.info("Hidden login document(*) ... ");
-		$("<style id='iam_check_authc_redirect_style'>*{display:none;}</style>").appendTo($("head")); // Hide
+		// Hide body and Loading
+		$("<style id='iam_check_authc_redirect_style'>div:not(#iam_check_authc_redirect_shade){display:none;}</style>").appendTo($("head"));
+		var _body = $("body");
+		_body.append($('<div style="background:url('+settings.resources.loading+');position:absolute;width:30px;height:30px;left:48%;top:50%;" id="iam_check_authc_redirect_shade"></div>'));
+		// If body has style and class attr.
+		var _bodyStyle = _body.attr("style");
+		var _bodyClass = _body.attr("class");
+		_body.removeAttr("style");
+		_body.removeAttr("class");
 
 		return new Promise(resolve => {
-			_initHandshakeIfNecessary(true).then(res => {
-				if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
-					var redirectRecord = JSON.parse(sessionStorage.getItem(constant.authRedirectRecordStorageKey));
-					// Check null or expired? 
-					if (!redirectRecord || (redirectRecord && Math.abs(new Date().getTime() - redirectRecord.t) > 60000)) {
-						sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // For renew
-						redirectRecord = { c: 0, t: new Date().getTime() };
+			// When initializing the page, the delayed loading animation is specially displayed to prevent the white flash screen.
+			_iamConsole.info("Checking authentication status ...");
+			setTimeout(function() {
+				_initHandshakeIfNecessary(true).then(res => {
+					if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
+						var redirectRecord = JSON.parse(sessionStorage.getItem(constant.authRedirectRecordStorageKey));
+						// Check null or expired? 
+						if (!redirectRecord || (redirectRecord && Math.abs(new Date().getTime() - redirectRecord.t) > 15000)) {
+							sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // For renew
+							redirectRecord = { c: 0, t: new Date().getTime() };
+						}
+						if (redirectRecord.c > 10) {
+							throw "Too many failure redirections: "+ redirectRecord.c;
+						}
+						++redirectRecord.c;
+						redirectRecord.t = new Date().getTime();
+						sessionStorage.setItem(constant.authRedirectRecordStorageKey, JSON.stringify(redirectRecord));
+						_iamConsole.info("Authenticated and redirection to: ", redirectUrl);
+						// Load animation prompt before redirection.
+						setTimeout(function() {
+							window.location = redirectUrl;
+						}, 200);
+					} else {
+						_iamConsole.info("Unauthentication rendering login page ... ");
+						// Show(Remove shade)
+						$("#iam_check_authc_redirect_style").remove();
+						$("#iam_check_authc_redirect_shade").remove();
+						// Show(Recovery style, If necessary)
+						if (_bodyStyle) { _body.attr("style", _bodyStyle); }
+						if (_bodyClass) { _body.attr("class", _bodyClass); }
+						sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // For reset
+						resolve(res);
 					}
-					if (redirectRecord.c > 10) {
-						throw "Too many failure redirections: "+ redirectRecord.c;
-					}
-					++redirectRecord.c;
-					redirectRecord.t = new Date().getTime();
-					sessionStorage.setItem(constant.authRedirectRecordStorageKey, JSON.stringify(redirectRecord));
-					_iamConsole.info("Authenticated and redirection to: ", redirectUrl);
-					window.location = redirectUrl;
-				} else {
-					_iamConsole.info("Unauthentication rendering login ... ");
-					$("#iam_check_authc_redirect_style").remove(); // Show
-					sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // For reset
-					resolve(res);
-				}
-			});
+				});
+			}, (500+parseInt(Math.random()*800))); // Random delay
 		});
 	};
 
@@ -1412,8 +1440,8 @@
 		return runtim.umid.getValue();
 	};
 	// Export safeCheck
-	IAMCore.prototype.safeCheck = function(principal, callback) {
-		_initHandshakeIfNecessary().then(res => {
+	IAMCore.prototype.safeCheck = function(principal, callback, refreshHandshake) {
+		_initHandshakeIfNecessary(refreshHandshake).then(res => {
 			_initSafeCheck(principal, callback);
 		});
 		return this;
@@ -1448,12 +1476,15 @@
 	// Export build.
 	IAMCore.prototype.build = function() {
 		_iamConsole.info("IAMCore init and building ...");
-		// 1: Ensure execution sequence（1.1: get umidToken; 1.2: get handshake; 1.3: init any authenticators）
+		// 1: Ensure execution sequence.
+		// 1.1: get umidToken; 
+		// 1.2: get handshake;
+		// 1.3: init any authenticators
 		// 2: Forced refresh is to solve the problem that you can't log in again after exiting SPM application. 
 		// The reason is that SPM project is a single page application, and the action of logging out is only to 
 		// execute push('/#/login'), but not to refresh the page At this time, the old session information (due to cache) 
-		// is used, and the correct operation should refresh the handshake interface to get the new session information 
-		// as long as the login page is rendered. Of course, external calls can also be made iamUi.destroy() to solve this problem.
+		// is used, and the correct operation should refresh the handshake interface to get the new session information
+		// as long as the login page is rendered. of course, external calls can also be made iamUi.destroy() to solve this problem.
 		_initHandshakeIfNecessary(true).then(res => {
 			_initAccountAuthenticator();
 			_initSMSAuthenticator();
