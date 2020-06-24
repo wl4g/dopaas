@@ -22,8 +22,6 @@ import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.deploy.CossPipeDeployer;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.ci.service.DependencyService;
-import com.wl4g.devops.ci.vcs.VcsOperator;
-import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.erm.Ssh;
@@ -40,7 +38,7 @@ import com.wl4g.devops.dao.ci.TaskSignDao;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-
+import com.wl4g.devops.vcs.operator.VcsOperator;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +87,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected DestroableProcessManager pm;
 	@Autowired
-	protected GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsAdapter;
+	protected GenericOperatorAdapter<VcsOperator.VcsProviderKind, VcsOperator> vcsAdapter;
 	@Autowired
 	protected DependencyService dependencyService;
 	@Autowired

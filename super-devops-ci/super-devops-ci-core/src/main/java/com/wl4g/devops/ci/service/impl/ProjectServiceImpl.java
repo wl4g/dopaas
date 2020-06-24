@@ -17,8 +17,6 @@ package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.ci.service.ProjectService;
-import com.wl4g.devops.ci.vcs.VcsOperator;
-import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.common.bean.ci.Project;
@@ -27,6 +25,9 @@ import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.vcs.operator.VcsOperator;
+import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
+import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_NORMAL;
@@ -58,7 +60,7 @@ public class ProjectServiceImpl implements ProjectService {
 	private DependencyDao dependencyDao;
 
 	@Autowired
-	private GenericOperatorAdapter<VcsProviderKind, VcsOperator> vcsOperator;
+	private GenericOperatorAdapter<VcsOperator.VcsProviderKind, VcsOperator> vcsOperator;
 
 	@Autowired
 	private VcsDao vcsDao;
@@ -192,15 +194,23 @@ public class ProjectServiceImpl implements ProjectService {
 				projectName);
 		notNullOf(vcsProjectId, "vcsProjectId");
 
+		List<String> result = new ArrayList<>();
 		if (tagOrBranch != null && tagOrBranch == 2) { // tag
-			return vcsOperator.forOperator(project.getVcs().getProviderKind()).getRemoteTags(project.getVcs(),
+			List<VcsTagModel> remoteTags = vcsOperator.forOperator(project.getVcs().getProviderKind()).getRemoteTags(project.getVcs(),
 					vcsProjectId);
+			for(VcsTagModel vcsTagModel : remoteTags){
+				result.add(vcsTagModel.getName());
+			}
 		}
 		// Branch
 		else {
-			return vcsOperator.forOperator(project.getVcs().getProviderKind())
-					.getRemoteBranchNames(project.getVcs(), vcsProjectId);
+			List<VcsBranchModel> remoteBranchs = vcsOperator.forOperator(project.getVcs().getProviderKind())
+					.getRemoteBranchs(project.getVcs(), vcsProjectId);
+			for(VcsBranchModel vcsBranchModel : remoteBranchs){
+				result.add(vcsBranchModel.getName());
+			}
 		}
+		return result;
 	}
 
 	/**

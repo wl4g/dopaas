@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.ci.vcs;
+package com.wl4g.devops.vcs.operator;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.devops.ci.vcs.model.VcsProjectModel;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.common.framework.operator.Operator;
+import com.wl4g.devops.page.PageModel;
+import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
+import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
+import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
+import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
 
-import static com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
 import static java.util.Objects.isNull;
 import static org.springframework.util.Assert.notNull;
 
@@ -36,7 +39,7 @@ import static org.springframework.util.Assert.notNull;
  * @since
  */
 @Beta
-public interface VcsOperator extends Operator<VcsProviderKind> {
+public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 
 	// --- APIs operator. ---
 
@@ -48,7 +51,18 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	List<String> getRemoteBranchNames(Vcs credentials, int projectId);
+	<T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, int projectId);
+
+	/**
+	 * Create Branch
+	 * @param credentials
+	 * @param projectId
+	 * @param branch
+	 * @param ref
+	 * @param <T>
+	 * @return
+	 */
+	<T extends VcsBranchModel> T createRemoteBranch(Vcs credentials, int projectId, String branch, String ref);
 
 	/**
 	 * Gets VCS remote tag names.
@@ -58,7 +72,18 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param projectId
 	 * @return
 	 */
-	List<String> getRemoteTags(Vcs credentials, int projectId);
+	<T extends VcsTagModel> List<T> getRemoteTags(Vcs credentials, int projectId);
+
+	/**
+	 *
+	 * @param credentials
+	 * @param projectId
+	 * @param branch
+	 * @param ref
+	 * @param <T>
+	 * @return
+	 */
+	<T extends VcsTagModel> T createRemoteTag(Vcs credentials, int projectId, String tag, String ref,String message,String releaseDescription);
 
 	/**
 	 * Gets remote project ID by project name.
@@ -77,8 +102,8 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName) {
-		return searchRemoteProjects(credentials, projectName, Integer.MAX_VALUE);
+	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName,PageModel pm) {
+		return searchRemoteProjects(credentials, groupId, projectName, Integer.MAX_VALUE, pm);
 	}
 
 	/**
@@ -92,13 +117,45 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 	 *            Page limit maximum
 	 * @return
 	 */
-	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, String projectName, int limit);
+	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName, int limit, PageModel pm);
 
-	// --- VCS commands. ---
+
+	/**
+	 * Search find remote projects by Id.
+	 *
+	 * @param credentials
+	 * @param projectId
+	 * @return
+	 */
+	<T extends VcsProjectModel> T searchRemoteProjectsById(Vcs credentials, Integer projectId);
+
+	/**
+	 * Search find remote groups by name.(unlimited)
+	 *
+	 * @param credentials
+	 * @param projectName
+	 * @return
+	 */
+	default <T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName) {
+		return searchRemoteGroups(credentials, groupName, Integer.MAX_VALUE);
+	}
+
+	/**
+	 * Search find remote groups by name.
+	 *
+	 * @param credentials
+	 * @param projectName
+	 *            The item name to be searched can be empty. If it is empty, it
+	 *            means unconditional.
+	 * @param limit
+	 *            Page limit maximum
+	 * @return
+	 */
+	<T extends VcsGroupModel> List<T> searchRemoteGroups(Vcs credentials, String groupName, int limit);
 
 	/**
 	 * Clone from remote VCS server.
-	 * 
+	 *
 	 * @param <T>
 	 * @param credentials
 	 *            VCS authentication credentials
@@ -115,7 +172,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 
 	/**
 	 * Clone from remote VCS server.
-	 * 
+	 *
 	 * @param <T>
 	 * @param credentials
 	 *            VCS authentication credentials
@@ -131,7 +188,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 
 	/**
 	 * Checkout and pull of VCS repository.
-	 * 
+	 *
 	 * @param credentials
 	 *            VCS authentication credentials
 	 * @param projecDir
@@ -142,7 +199,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 
 	/**
 	 * Delete (local) branch.
-	 * 
+	 *
 	 * @param projecDir
 	 *            project local VCS repository directory absolute path.
 	 * @param branchName
@@ -153,7 +210,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 
 	/**
 	 * Check VCS project have local repository exist.
-	 * 
+	 *
 	 * @param projecDir
 	 *            project local VCS repository directory absolute path.
 	 * @return
@@ -162,7 +219,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 
 	/**
 	 * Gets (local) latest committed ID.
-	 * 
+	 *
 	 * @param projecDir
 	 *            project local VCS repository directory absolute path.
 	 * @return
@@ -172,7 +229,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 
 	/**
 	 * Roll-back VCS project local repository(fetch and checkout).
-	 * 
+	 *
 	 * @param <T>
 	 * @param credentials
 	 *            VCS authentication credentials
@@ -302,5 +359,7 @@ public interface VcsOperator extends Operator<VcsProviderKind> {
 		}
 
 	}
+
+
 
 }

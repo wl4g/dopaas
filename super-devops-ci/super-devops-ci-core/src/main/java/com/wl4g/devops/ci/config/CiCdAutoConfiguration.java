@@ -32,14 +32,6 @@ import com.wl4g.devops.ci.pipeline.deploy.*;
 import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
 import com.wl4g.devops.ci.tool.PipelineLogPurger;
-import com.wl4g.devops.ci.vcs.VcsOperator;
-import com.wl4g.devops.ci.vcs.VcsOperator.VcsProviderKind;
-import com.wl4g.devops.ci.vcs.alicode.AlicodeVcsOperator;
-import com.wl4g.devops.ci.vcs.bitbucket.BitbucketVcsOperator;
-import com.wl4g.devops.ci.vcs.coding.CodingVcsOperator;
-import com.wl4g.devops.ci.vcs.gitee.GiteeVcsOperator;
-import com.wl4g.devops.ci.vcs.github.GithubVcsOperator;
-import com.wl4g.devops.ci.vcs.gitlab.GitlabV4VcsOperator;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.framework.beans.PrototypeAlias;
@@ -100,7 +92,7 @@ public class CiCdAutoConfiguration {
 
 	// --- VCS's (Version Control System) ---
 
-	@Bean
+	/*@Bean
 	public GitlabV4VcsOperator gitlabV4VcsOperator() {
 		return new GitlabV4VcsOperator();
 	}
@@ -134,7 +126,7 @@ public class CiCdAutoConfiguration {
 	public GenericOperatorAdapter<VcsProviderKind, VcsOperator> compositeVcsOperateAdapter(List<VcsOperator> operators) {
 		return new GenericOperatorAdapter<VcsProviderKind, VcsOperator>(operators) {
 		};
-	}
+	}*/
 
 	// --- Flow Manager ---
 	@Bean
