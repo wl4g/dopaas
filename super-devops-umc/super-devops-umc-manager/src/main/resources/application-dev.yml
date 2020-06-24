@@ -77,7 +77,7 @@ spring:
       log-slow-sql: true
 
 # Spring-security config.
-security.user:
+spring.security.user:
   name: sba_user
   password: hnGsFm6k0klJP9j
 
