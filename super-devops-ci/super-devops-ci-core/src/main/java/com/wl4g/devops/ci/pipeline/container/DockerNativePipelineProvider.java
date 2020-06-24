@@ -45,101 +45,103 @@ import java.util.Set;
  */
 public class DockerNativePipelineProvider extends AbstractPipelineProvider implements ContainerPipelineProvider {
 
-    /**
-     * Docker app bin name
-     */
-    final private static String APP_BIN_NAME = "APP_BIN_NAME";
+	/**
+	 * Docker app bin name
+	 */
+	final private static String APP_BIN_NAME = "APP_BIN_NAME";
 
-    /**
-     * Docker run command
-     */
-    final private static String RUN_COM = "RUN_COM";
+	/**
+	 * Docker run command
+	 */
+	final private static String RUN_COM = "RUN_COM";
 
+	public DockerNativePipelineProvider(PipelineContext context) {
+		super(context);
+	}
 
-    public DockerNativePipelineProvider(PipelineContext context) {
-        super(context);
-    }
+	@Override
+	public void buildImage() throws Exception {
+		DockerClient dockerClient = DockerJavaUtil.sampleConnect(config.getDocker().getMakeImageAddr());// "tcp://10.0.0.161:2375"
+		PipelineHistory pipelineHistory = getContext().getPipelineHistory();
+		AppCluster appCluster = getContext().getAppCluster();
+		PipeStepBuilding pipeStepBuilding = getContext().getPipeStepBuilding();
+		AppEnvironment environment = getContext().getEnvironment();
+		DockerRepository dockerRepository = environment.getDockerRepository();
+		DockerRepository.AuthConfigModel authConfigModel = dockerRepository.getAuthConfigModel();
+		File jobLogFile = config.getJobLog(pipelineHistory.getId());
+		String installFileName = config.getPrgramInstallFileName(appCluster.getName());
+		String tarFileName = config.getTarFileNameWithTar(appCluster.getName());
+		File jobBackDir = config.getJobBackupDir(pipelineHistory.getId());
+		try {
+			Map<String, String> args = new HashMap<>();
+			args.put(APP_BIN_NAME, installFileName);
+			args.put(RUN_COM, environment.getRunCommand());
+			// args.put("APP_PORT", "14040");
+			// args.put(MAIN_CLASS, "com.wl4g.devops.IamServer");
+			// args.put(ACTIVE, pipeline.getEnvironment());
 
-    @Override
-    public void buildImage() throws Exception {
-        DockerClient dockerClient = DockerJavaUtil.sampleConnect(config.getDocker().getMakeImageAddr());//"tcp://10.0.0.161:2375"
-        PipelineHistory pipelineHistory = getContext().getPipelineHistory();
-        AppCluster appCluster = getContext().getAppCluster();
-        PipeStepBuilding pipeStepBuilding = getContext().getPipeStepBuilding();
-        AppEnvironment environment = getContext().getEnvironment();
-        DockerRepository dockerRepository = environment.getDockerRepository();
-        DockerRepository.AuthConfigModel authConfigModel = dockerRepository.getAuthConfigModel();
-        File jobLogFile = config.getJobLog(pipelineHistory.getId());
-        String installFileName = config.getPrgramInstallFileName(appCluster.getName());
-        String tarFileName = config.getTarFileNameWithTar(appCluster.getName());
-        File jobBackDir = config.getJobBackupDir(pipelineHistory.getId());
-        try {
-            Map<String, String> args = new HashMap<>();
-            args.put(APP_BIN_NAME, installFileName);
-            args.put(RUN_COM, environment.getRunCommand());
-            //args.put("APP_PORT", "14040");
-            //args.put(MAIN_CLASS, "com.wl4g.devops.IamServer");
-            //args.put(ACTIVE, pipeline.getEnvironment());
+			Set<String> tags = new HashSet<>();
+			String tag;
+			if (StringUtils.isNotBlank(pipeStepBuilding.getRef())) {
+				tag = dockerRepository.getRegistryAddress() + "/" + environment.getRepositoryNamespace() + "/"
+						+ appCluster.getName() + ":" + pipeStepBuilding.getRef();
+				tags.add(tag);// 冒号前面为名字，冒号后面为版本，版本为空则为latest
+			} else {
+				tag = dockerRepository.getRegistryAddress() + "/" + environment.getRepositoryNamespace() + "/"
+						+ appCluster.getName();
+				tags.add(tag);
+			}
 
-            Set<String> tags = new HashSet<>();
-            String tag;
-            if (StringUtils.isNotBlank(pipeStepBuilding.getRef())) {
-                tag = dockerRepository.getRegistryAddress() + "/" + environment.getRepositoryNamespace() + "/" + appCluster.getName() + ":" + pipeStepBuilding.getRef();
-                tags.add(tag);//冒号前面为名字，冒号后面为版本，版本为空则为latest
-            } else {
-                tag = dockerRepository.getRegistryAddress() + "/" + environment.getRepositoryNamespace() + "/" + appCluster.getName();
-                tags.add(tag);
-            }
+			// tar
+			DestroableCommand tarCmd = new LocalDestroableCommand(String.format("cd %s\ntar -xvf %s", jobBackDir, tarFileName),
+					jobBackDir, 300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+			pm.execWaitForComplete(tarCmd);
 
-            //tar
-            DestroableCommand tarCmd = new LocalDestroableCommand(String.format("cd %s\ntar -xvf %s", jobBackDir, tarFileName),
-                    jobBackDir, 300000L)
-                    .setStdout(jobLogFile).setStderr(jobLogFile);
-            pm.execWaitForComplete(tarCmd);
+			String containerId = DockerJavaUtil.buildImage(dockerClient, tags, jobBackDir, args);
+			DockerJavaUtil.pushImage(dockerClient, tag, dockerRepository.getRegistryAddress(), authConfigModel.getUsername(),
+					authConfigModel.getPassword());
 
-            String containerId = DockerJavaUtil.buildImage(dockerClient, tags, jobBackDir, args);
-            DockerJavaUtil.pushImage(dockerClient, tag, dockerRepository.getRegistryAddress(), authConfigModel.getUsername(), authConfigModel.getPassword());
+			// remove dir
+			if (StringUtils.isNotBlank(installFileName) && !StringUtils.equals(installFileName, "/")) {
+				DestroableCommand rmCmd = new LocalDestroableCommand(
+						String.format("cd %s\nrm -Rf %s", jobBackDir, installFileName), jobBackDir, 300000L).setStdout(jobLogFile)
+								.setStderr(jobLogFile);
+				pm.execWaitForComplete(rmCmd);
+			}
 
-            //remove dir
-            if (StringUtils.isNotBlank(installFileName) && !StringUtils.equals(installFileName, "/")) {
-                DestroableCommand rmCmd = new LocalDestroableCommand(String.format("cd %s\nrm -Rf %s", jobBackDir, installFileName), jobBackDir, 300000L)
-                        .setStdout(jobLogFile).setStderr(jobLogFile);
-                pm.execWaitForComplete(rmCmd);
-            }
+			log.info("create container success. containerId = {}", containerId);
+		} finally {
+			dockerClient.close();
+		}
+	}
 
-            log.info("create container success. containerId = {}", containerId);
-        } finally {
-            dockerClient.close();
-        }
-    }
+	@Override
+	public void imagePull(String remoteHost, String user, String sshkey, String image) throws Exception {
+		String command = "docker pull " + image;
+		doRemoteCommand(remoteHost, user, command, sshkey);
+	}
 
-    @Override
-    public void imagePull(String remoteHost, String user, String sshkey, String image) throws Exception {
-        String command = "docker pull " + image;
-        doRemoteCommand(remoteHost, user, command, sshkey);
-    }
+	@Override
+	public void stopContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
+		String command = "docker stop " + container;
+		doRemoteCommand(remoteHost, user, command, sshkey);
+	}
 
-    @Override
-    public void stopContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
-        String command = "docker stop " + container;
-        doRemoteCommand(remoteHost, user, command, sshkey);
-    }
+	@Override
+	public void destroyContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
+		String command = "docker rm " + container;
+		doRemoteCommand(remoteHost, user, command, sshkey);
+	}
 
-    @Override
-    public void destroyContainer(String remoteHost, String user, String sshkey, String container) throws Exception {
-        String command = "docker rm " + container;
-        doRemoteCommand(remoteHost, user, command, sshkey);
-    }
+	@Override
+	public void startContainer(String remoteHost, String user, String sshkey, String runContainerCommands) throws Exception {
+		doRemoteCommand(remoteHost, user, runContainerCommands, sshkey);
+	}
 
-    @Override
-    public void startContainer(String remoteHost, String user, String sshkey, String runContainerCommands) throws Exception {
-        doRemoteCommand(remoteHost, user, runContainerCommands, sshkey);
-    }
-
-    @Override
-    protected Runnable newPipeDeployer(AppInstance instance) {
-        Object[] args = {this, instance, getContext().getPipelineHistoryInstances()};
-        return beanFactory.getBean(DockerNativePipeDeployer.class, args);
-    }
+	@Override
+	protected Runnable newPipeDeployer(AppInstance instance) {
+		Object[] args = { this, instance, getContext().getPipelineHistoryInstances() };
+		return beanFactory.getBean(DockerNativePipeDeployer.class, args);
+	}
 
 }

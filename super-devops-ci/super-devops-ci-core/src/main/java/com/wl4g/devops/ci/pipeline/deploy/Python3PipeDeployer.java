@@ -31,13 +31,8 @@ import java.util.List;
 public class Python3PipeDeployer extends GenericHostPipeDeployer<Python3PipelineProvider> {
 
 	public Python3PipeDeployer(Python3PipelineProvider provider, AppInstance instance,
-							   List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		super(provider, instance, pipelineHistoryInstances);
-	}
-
-	@Override
-	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
-		super.doRemoteDeploying(remoteHost, user, sshkey);
 	}
 
 }

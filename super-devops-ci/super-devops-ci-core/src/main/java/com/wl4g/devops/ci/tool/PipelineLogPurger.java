@@ -85,10 +85,11 @@ public class PipelineLogPurger extends GenericOperatorTool {
 	}
 
 	private void cleanCiTaskHistory() {
+		// TODO
 		Date currentTimeBySecound = beforeTimeSec(beforeSec);
 		try {
-			//logPipelineCleanerDao.cleanCiTaskHistorySublist(currentTimeBySecound);
-			//logPipelineCleanerDao.cleanCiTaskHistory(currentTimeBySecound);
+			// logPipelineCleanerDao.cleanCiTaskHistorySublist(currentTimeBySecound);
+			// logPipelineCleanerDao.cleanCiTaskHistory(currentTimeBySecound);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -31,7 +31,7 @@ import java.util.List;
 public class RktNativePipeDeployer extends GenericHostPipeDeployer<RktNativePipelineProvider> {
 
 	public RktNativePipeDeployer(RktNativePipelineProvider provider, AppInstance instance,
-								 List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		super(provider, instance, pipelineHistoryInstances);
 	}
 

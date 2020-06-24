@@ -15,28 +15,29 @@ import java.util.List;
  */
 public interface PipelineHistoryService {
 
-    PipelineHistory createPipelineHistory(NewParameter newParameter);
+	PipelineHistory createPipelineHistory(NewParameter newParameter);
 
-    PipelineHistory createPipelineHistory(HookParameter hookParameter);
+	PipelineHistory createPipelineHistory(HookParameter hookParameter);
 
-    PipelineHistory createPipelineHistory(RollbackParameter rollbackParameter);
+	PipelineHistory createPipelineHistory(RollbackParameter rollbackParameter);
 
-    void updatePipeHisInstanceStatus(int pipeInstanceId, int status);
+	void updatePipeHisInstanceStatus(int pipeInstanceId, int status);
 
-    void updateStatus(int pipeId, int status);
+	void updateStatus(int pipeId, int status);
 
-    void updateStatusAndResultAndSha(int pipeId, int status, String sha);
+	void updateStatusAndResultAndSha(int pipeId, int status, String sha);
 
-    void stopByPipeHisId(Integer taskHisId);
+	void stopByPipeHisId(Integer taskHisId);
 
-    void updateCostTime(int taskId, long costTime);
+	void updateCostTime(int taskId, long costTime);
 
-    PageModel list(PageModel pm,  String pipeName, String clusterName, String environment, String startDate, String endDate, String providerKind);
+	PageModel list(PageModel pm, String pipeName, String clusterName, String environment, String startDate, String endDate,
+			String providerKind);
 
-    List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Integer pipeHisId);
+	List<PipelineHistoryInstance> getPipeHisInstanceByPipeId(Integer pipeHisId);
 
-    PipelineHistory detail(Integer pipeHisId);
+	PipelineHistory detail(Integer pipeHisId);
 
-    PipelineHistory getById(Integer pipeHisId);
+	PipelineHistory getById(Integer pipeHisId);
 
 }

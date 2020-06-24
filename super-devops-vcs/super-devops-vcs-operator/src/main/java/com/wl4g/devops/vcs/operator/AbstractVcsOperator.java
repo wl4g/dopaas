@@ -48,7 +48,6 @@ import static org.springframework.util.Assert.*;
 public abstract class AbstractVcsOperator implements VcsOperator, InitializingBean {
 	final protected Logger log = getLogger(getClass());
 
-
 	/**
 	 * Rest template.
 	 */
@@ -62,7 +61,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	 * @param typeRef
 	 * @return
 	 */
-	protected <T> T doRemoteExchange(Vcs credentials, String url,HttpHeaders headers, TypeReference<T> typeRef) {
+	protected <T> T doRemoteExchange(Vcs credentials, String url, HttpHeaders headers, TypeReference<T> typeRef) {
 		// Create httpEntity.
 		HttpEntity<String> entity = createVcsRequestHttpEntity(credentials);
 
@@ -75,7 +74,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		if (log.isInfoEnabled()) {
 			log.info("Vcs remote response <= {}", resp.getBody());
 		}
-		if(Objects.nonNull(headers)){
+		if (Objects.nonNull(headers)) {
 			headers.putAll(resp.getHeaders());
 		}
 		return parseJSON(resp.getBody(), typeRef);
@@ -89,7 +88,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	 * @param typeRef
 	 * @return
 	 */
-	protected <T> T doRemotePost(Vcs credentials, String url,HttpHeaders headers, TypeReference<T> typeRef) {
+	protected <T> T doRemotePost(Vcs credentials, String url, HttpHeaders headers, TypeReference<T> typeRef) {
 		// Create httpEntity.
 		HttpEntity<String> entity = createVcsRequestHttpEntity(credentials);
 		// Do request.
@@ -101,7 +100,7 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 		if (log.isInfoEnabled()) {
 			log.info("Vcs remote response <= {}", resp.getBody());
 		}
-		if(Objects.nonNull(headers)){
+		if (Objects.nonNull(headers)) {
 			headers.putAll(resp.getHeaders());
 		}
 		return parseJSON(resp.getBody(), typeRef);
@@ -114,7 +113,6 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	 * @return
 	 */
 	protected abstract HttpEntity<String> createVcsRequestHttpEntity(Vcs credentials);
-
 
 	@Override
 	public <T extends VcsBranchModel> List<T> getRemoteBranchs(Vcs credentials, int projectId) {
@@ -147,7 +145,8 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName, int limit, PageModel pm) {
+	public <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName,
+			int limit, PageModel pm) {
 		notNull(credentials, "Search remote projects credentials can't is null.");
 		/*
 		 * The item name to be searched can be empty. If it is empty, it means
@@ -184,7 +183,8 @@ public abstract class AbstractVcsOperator implements VcsOperator, InitializingBe
 	}
 
 	@Override
-	public <T extends VcsTagModel> T createRemoteTag(Vcs credentials, int projectId, String tag, String ref, String message, String releaseDescription) {
+	public <T extends VcsTagModel> T createRemoteTag(Vcs credentials, int projectId, String tag, String ref, String message,
+			String releaseDescription) {
 		return null;
 	}
 

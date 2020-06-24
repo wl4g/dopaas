@@ -41,7 +41,6 @@ public class CiCdConsole {
 	@Autowired
 	private GlobalTimeoutJobCleanupCoordinator coordinator;
 
-
 	/**
 	 * Reset timeout cleanup expression.
 	 * 
@@ -63,7 +62,5 @@ public class CiCdConsole {
 			context.completed();
 		}
 	}
-
-
 
 }

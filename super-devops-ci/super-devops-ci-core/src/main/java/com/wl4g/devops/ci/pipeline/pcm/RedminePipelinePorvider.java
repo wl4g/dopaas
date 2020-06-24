@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class RedminePipelinePorvider implements PcmPipelineProvider {
 
-    @Autowired
-    private PcmService pcmService;
+	@Autowired
+	private PcmService pcmService;
 
-    @Override
-    public void createIssues(Integer pcmId, PipeHistoryPcm pipeHistoryPcm) {
-        pcmService.createIssues(pcmId, pipeHistoryPcm);
-    }
+	@Override
+	public void createIssues(Integer pcmId, PipeHistoryPcm pipeHistoryPcm) {
+		pcmService.createIssues(pcmId, pipeHistoryPcm);
+	}
 
 }

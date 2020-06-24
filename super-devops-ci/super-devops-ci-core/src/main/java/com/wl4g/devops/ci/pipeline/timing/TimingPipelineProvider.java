@@ -80,10 +80,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 
 	@Override
 	public void run() {
-		if (log.isInfoEnabled()) {
-			log.info("Timing pipeline... project:{}, task:{}, trigger:{}", project, task, trigger);
-		}
-
+		log.info("Timing pipeline... project:{}, task:{}, trigger:{}", project, task, trigger);
 		trigger = triggerDao.selectByPrimaryKey(trigger.getId());
 
 		// Gets VCS operator.
@@ -92,12 +89,13 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 			if (!checkCommittedChanged(vcsOperator)) { // Changed?
 				log.info("Skip timing tasks pipeline, because commit unchanged, with project:{}, task:{}, trigger:{}", project,
 						task, trigger);
+				return;
 			}
 
 			// Creating pipeline task.
 			// TODO traceId???
 			PipelineModel pipelineModel = flowManager.buildPipeline(task.getId());
-			pipeManager.runPipeline(new NewParameter(task.getId(), "rollback", "1", "1", null),pipelineModel);
+			pipeManager.runPipeline(new NewParameter(task.getId(), "rollback", "1", "1", null), pipelineModel);
 
 			// set new sha in db
 			String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
@@ -108,10 +106,8 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 			triggerService.updateSha(trigger.getId(), latestSha);
 			trigger.setSha(latestSha);
 
-			if (log.isInfoEnabled()) {
-				log.info("Timing pipeline tasks executed successful, with triggerId: {}, projectId:{}, projectName:{} ",
-						trigger.getId(), project.getId(), project.getProjectName());
-			}
+			log.info("Timing pipeline tasks executed successful, with triggerId: {}, projectId:{}, projectName:{} ",
+					trigger.getId(), project.getId(), project.getProjectName());
 		} catch (Exception e) {
 			log.error("", e);
 		}
@@ -130,7 +126,8 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	private boolean checkCommittedChanged(VcsOperator vcsOperator) throws Exception {
 		String projectDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
 		if (vcsOperator.hasLocalRepository(projectDir)) {
-			vcsOperator.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName(), VcsOperator.VcsAction.safeOf(task.getBranchType()));
+			vcsOperator.checkoutAndPull(project.getVcs(), projectDir, task.getBranchName(),
+					VcsOperator.VcsAction.safeOf(task.getBranchType()));
 		} else {
 			vcsOperator.clone(project.getVcs(), project.getHttpUrl(), projectDir, task.getBranchName());
 		}

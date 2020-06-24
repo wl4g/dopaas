@@ -289,8 +289,8 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected String writeBuildLog(String format, Object... args) {
 		String content = String.format(format, args);
-		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"), getContext().getPipelineHistory().getId(),
-				content);
+		String message = String.format("%s - pipe(%s) : %s", getDate("yy/MM/dd HH:mm:ss"),
+				getContext().getPipelineHistory().getId(), content);
 		writeALineFile(config.getJobLog(context.getPipelineHistory().getId()), message);
 		return content;
 	}
@@ -313,18 +313,18 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	 */
 	protected abstract Runnable newPipeDeployer(AppInstance instance);
 
-	//TODO
-	protected Runnable newPipeDeployerByType(AppInstance instance){
+	// TODO
+	protected Runnable newPipeDeployerByType(AppInstance instance) {
 
-		switch (getContext().getAppCluster().getDeployType()){
-			case 2://docker
-				Object[] args2 = { this, instance, getContext().getPipelineHistoryInstances() };
-				return beanFactory.getBean(DockerNativePipeDeployer.class, args2);
-			case 4://coss
-				Object[] args4 = { this, instance, getContext().getPipelineHistoryInstances() };
-				return beanFactory.getBean(CossPipeDeployer.class, args4);
-			default:
-				return newPipeDeployer(instance);
+		switch (getContext().getAppCluster().getDeployType()) {
+		case 2:// docker
+			Object[] args2 = { this, instance, getContext().getPipelineHistoryInstances() };
+			return beanFactory.getBean(DockerNativePipeDeployer.class, args2);
+		case 4:// coss
+			Object[] args4 = { this, instance, getContext().getPipelineHistoryInstances() };
+			return beanFactory.getBean(CossPipeDeployer.class, args4);
+		default:
+			return newPipeDeployer(instance);
 		}
 
 	};

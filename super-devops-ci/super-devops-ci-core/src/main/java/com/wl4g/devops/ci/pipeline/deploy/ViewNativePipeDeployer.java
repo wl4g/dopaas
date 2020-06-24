@@ -31,13 +31,8 @@ import java.util.List;
 public class ViewNativePipeDeployer extends GenericHostPipeDeployer<ViewNativePipelineProvider> {
 
 	public ViewNativePipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,
-								  List<PipelineHistoryInstance> pipelineHistoryInstances) {
+			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		super(provider, instance, pipelineHistoryInstances);
-	}
-
-	@Override
-	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
-		super.doRemoteDeploying(remoteHost, user, sshkey);
 	}
 
 }

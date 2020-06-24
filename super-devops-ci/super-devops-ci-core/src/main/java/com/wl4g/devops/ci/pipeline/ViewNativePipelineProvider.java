@@ -28,8 +28,7 @@ import java.io.File;
 import static java.lang.String.format;
 
 /**
- * Pipeline provider for deployment native view standard
- * project.
+ * Pipeline provider for deployment native view standard project.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月22日
@@ -37,14 +36,11 @@ import static java.lang.String.format;
  */
 public class ViewNativePipelineProvider extends RestorableDeployPipelineProvider {
 
-
 	final public static String DEFAULT_CMD = "cd %s\nrm -Rf dist\nmkdir dist\ncp -R `ls -A|grep -v dist` dist/\n";
 
 	public ViewNativePipelineProvider(PipelineContext context) {
 		super(context);
 	}
-
-
 
 	@Override
 	protected Runnable newPipeDeployer(AppInstance instance) {
@@ -62,14 +58,14 @@ public class ViewNativePipelineProvider extends RestorableDeployPipelineProvider
 		String defaultViewNativeBuildCmd = format(DEFAULT_CMD, projectDir);
 		log.info(writeBuildLog("Building with native default command: %s", defaultViewNativeBuildCmd));
 		// TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), defaultViewNativeBuildCmd, tmpCmdFile,
-				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), defaultViewNativeBuildCmd,
+				tmpCmdFile, 300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
 
 	/**
-	 * Handling the view native built installation package asset file, and convert the
-	 * dist directory to a formal tar compressed package.
+	 * Handling the view native built installation package asset file, and
+	 * convert the dist directory to a formal tar compressed package.
 	 * 
 	 * </br>
 	 * For example:
@@ -96,8 +92,8 @@ public class ViewNativePipelineProvider extends RestorableDeployPipelineProvider
 
 		// Execution command.
 		// TODO timeoutMs?
-		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), tarCommand, tmpCmdFile, 300000L)
-				.setStdout(jobLogFile).setStderr(jobLogFile);
+		DestroableCommand cmd = new LocalDestroableCommand(String.valueOf(pipelineHistory.getId()), tarCommand, tmpCmdFile,
+				300000L).setStdout(jobLogFile).setStderr(jobLogFile);
 		pm.execWaitForComplete(cmd);
 	}
 

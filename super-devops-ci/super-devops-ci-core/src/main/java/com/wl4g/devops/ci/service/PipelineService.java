@@ -12,19 +12,18 @@ import java.util.List;
  */
 public interface PipelineService {
 
-    PageModel list(PageModel pm, String pipeName, String providerKind, String environment);
+	PageModel list(PageModel pm, String pipeName, String providerKind, String environment);
 
-    void save(Pipeline pipeline);
+	void save(Pipeline pipeline);
 
-    Pipeline detail(Integer id);
+	Pipeline detail(Integer id);
 
-    void del(Integer id);
+	void del(Integer id);
 
-    List<Pipeline> getByClusterId(Integer clusterId);
+	List<Pipeline> getByClusterId(Integer clusterId);
 
-    PipeStepBuilding getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer refType);
+	PipeStepBuilding getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer refType);
 
-    List<Pipeline> getForSelect();
-
+	List<Pipeline> getForSelect();
 
 }

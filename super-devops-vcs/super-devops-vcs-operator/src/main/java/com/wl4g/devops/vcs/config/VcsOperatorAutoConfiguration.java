@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 import static com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
+
 /**
  * Vcs auto configuration.
  *
@@ -38,46 +39,42 @@ import static com.wl4g.devops.vcs.operator.VcsOperator.VcsProviderKind;
 @Configuration
 public class VcsOperatorAutoConfiguration {
 
-    /*@Bean
-    @ConfigurationProperties(prefix = "vcs")
-    public VcsProperties ciCdProperties() {
-        return new VcsProperties();
-    }*/
+	// --- VCS operator's ---
 
-	// --- Basic's ---
-    @Bean
-    public VcsOperator gitlabV4VcsOperator() {
-        return new GitlabV4VcsOperator();
-    }
+	@Bean
+	public VcsOperator gitlabV4VcsOperator() {
+		return new GitlabV4VcsOperator();
+	}
 
-    @Bean
-    public VcsOperator githubV4VcsOperator() {
-        return new GithubVcsOperator();
-    }
+	@Bean
+	public VcsOperator githubV4VcsOperator() {
+		return new GithubVcsOperator();
+	}
 
-    @Bean
-    public VcsOperator bitbucketVcsOperator() {
-        return new BitbucketVcsOperator();
-    }
+	@Bean
+	public VcsOperator bitbucketVcsOperator() {
+		return new BitbucketVcsOperator();
+	}
 
-    @Bean
-    public VcsOperator codingVcsOperator() {
-        return new CodingVcsOperator();
-    }
+	@Bean
+	public VcsOperator codingVcsOperator() {
+		return new CodingVcsOperator();
+	}
 
-    @Bean
-    public VcsOperator giteeVcsOperator() {
-        return new GiteeVcsOperator();
-    }
+	@Bean
+	public VcsOperator giteeVcsOperator() {
+		return new GiteeVcsOperator();
+	}
 
-    @Bean
-    public VcsOperator alicodeVcsOperator() {
-        return new AlicodeVcsOperator();
-    }
+	@Bean
+	public VcsOperator alicodeVcsOperator() {
+		return new AlicodeVcsOperator();
+	}
 
-    @Bean
-    public GenericOperatorAdapter<VcsProviderKind, VcsOperator> compositeVcsOperateAdapter(List<VcsOperator> operators) {
-        return new GenericOperatorAdapter<VcsProviderKind, VcsOperator>(operators) {
-        };
-    }
+	@Bean
+	public GenericOperatorAdapter<VcsProviderKind, VcsOperator> compositeVcsOperateAdapter(List<VcsOperator> operators) {
+		return new GenericOperatorAdapter<VcsProviderKind, VcsOperator>(operators) {
+		};
+	}
+
 }

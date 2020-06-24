@@ -14,63 +14,57 @@ import static com.wl4g.devops.ci.bean.GraphTask.Project;
  */
 public class GraphTaskManager {
 
-    final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected Logger log = LoggerFactory.getLogger(getClass());
 
+	public void add(Project project) {
 
+	}
 
+	/**
+	 * Get All Graph Task
+	 * 
+	 * @return
+	 */
+	public List<GraphTask> getGraphTasks() {
+		// TODO get from redis
+		return null;
+	}
 
+	/**
+	 * For Step Build
+	 */
+	public static enum ProjectStatus {
 
-    public void add(Project project){
+		WAITING, BUILDING, SUCCESS, FAILED;
 
-    }
+		/**
+		 * Converter string to {@link FlowManager.FlowStatus}
+		 *
+		 * @param stauts
+		 * @return
+		 */
+		public static ProjectStatus of(String stauts) {
+			ProjectStatus wh = safeOf(stauts);
+			if (wh == null) {
+				throw new IllegalArgumentException(String.format("Illegal action '%s'", stauts));
+			}
+			return wh;
+		}
 
+		/**
+		 * Safe converter string to {@link FlowManager.FlowStatus}
+		 *
+		 * @param stauts
+		 * @return
+		 */
+		public static ProjectStatus safeOf(String stauts) {
+			for (ProjectStatus t : values()) {
+				if (String.valueOf(stauts).equalsIgnoreCase(t.name())) {
+					return t;
+				}
+			}
+			return null;
+		}
 
-
-
-    /**
-     * Get All Graph Task
-     * @return
-     */
-    public List<GraphTask> getGraphTasks(){
-        //TODO get from redis
-        return null;
-    }
-
-    /**
-     * For Step Build
-     */
-    public static enum ProjectStatus {
-
-        WAITING, BUILDING, SUCCESS, FAILED;
-
-        /**
-         * Converter string to {@link FlowManager.FlowStatus}
-         *
-         * @param stauts
-         * @return
-         */
-        public static ProjectStatus of(String stauts) {
-            ProjectStatus wh = safeOf(stauts);
-            if (wh == null) {
-                throw new IllegalArgumentException(String.format("Illegal action '%s'", stauts));
-            }
-            return wh;
-        }
-
-        /**
-         * Safe converter string to {@link FlowManager.FlowStatus}
-         *
-         * @param stauts
-         * @return
-         */
-        public static ProjectStatus safeOf(String stauts) {
-            for (ProjectStatus t : values()) {
-                if (String.valueOf(stauts).equalsIgnoreCase(t.name())) {
-                    return t;
-                }
-            }
-            return null;
-        }
-
-    }
+	}
 }

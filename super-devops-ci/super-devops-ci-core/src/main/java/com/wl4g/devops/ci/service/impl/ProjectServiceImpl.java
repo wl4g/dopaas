@@ -23,7 +23,6 @@ import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import com.wl4g.devops.dao.ci.ProjectDao;
-import com.wl4g.devops.dao.ci.VcsDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
@@ -61,9 +60,6 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Autowired
 	private GenericOperatorAdapter<VcsOperator.VcsProviderKind, VcsOperator> vcsOperator;
-
-	@Autowired
-	private VcsDao vcsDao;
 
 	@Override
 	public void save(Project project) {
@@ -144,7 +140,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public List<Project> getBySelect(Integer isBoot) {
-		return projectDao.list(getRequestOrganizationCodes(),null, null, isBoot);
+		return projectDao.list(getRequestOrganizationCodes(), null, null, isBoot);
 	}
 
 	@Override
@@ -173,7 +169,7 @@ public class ProjectServiceImpl implements ProjectService {
 		Assert.notNull(appClusterId, "id can not be null");
 		Project project = projectDao.getByAppClusterId(appClusterId);
 		Assert.notNull(project, "not found project ,please check you project config");
-		return getBranchByProject(project,tagOrBranch);
+		return getBranchByProject(project, tagOrBranch);
 	}
 
 	@Override
@@ -181,11 +177,10 @@ public class ProjectServiceImpl implements ProjectService {
 		Assert.notNull(projectId, "id can not be null");
 		Project project = projectDao.selectByPrimaryKey(projectId);
 		Assert.notNull(project, "not found project ,please check you project config");
-		return getBranchByProject(project,tagOrBranch);
+		return getBranchByProject(project, tagOrBranch);
 	}
 
-
-	private List<String> getBranchByProject(Project project, Integer tagOrBranch){
+	private List<String> getBranchByProject(Project project, Integer tagOrBranch) {
 		String url = project.getHttpUrl();
 		// Find remote projectIds.
 		String projectName = extProjectName(url);
@@ -196,9 +191,9 @@ public class ProjectServiceImpl implements ProjectService {
 
 		List<String> result = new ArrayList<>();
 		if (tagOrBranch != null && tagOrBranch == 2) { // tag
-			List<VcsTagModel> remoteTags = vcsOperator.forOperator(project.getVcs().getProviderKind()).getRemoteTags(project.getVcs(),
-					vcsProjectId);
-			for(VcsTagModel vcsTagModel : remoteTags){
+			List<VcsTagModel> remoteTags = vcsOperator.forOperator(project.getVcs().getProviderKind())
+					.getRemoteTags(project.getVcs(), vcsProjectId);
+			for (VcsTagModel vcsTagModel : remoteTags) {
 				result.add(vcsTagModel.getName());
 			}
 		}
@@ -206,7 +201,7 @@ public class ProjectServiceImpl implements ProjectService {
 		else {
 			List<VcsBranchModel> remoteBranchs = vcsOperator.forOperator(project.getVcs().getProviderKind())
 					.getRemoteBranchs(project.getVcs(), vcsProjectId);
-			for(VcsBranchModel vcsBranchModel : remoteBranchs){
+			for (VcsBranchModel vcsBranchModel : remoteBranchs) {
 				result.add(vcsBranchModel.getName());
 			}
 		}

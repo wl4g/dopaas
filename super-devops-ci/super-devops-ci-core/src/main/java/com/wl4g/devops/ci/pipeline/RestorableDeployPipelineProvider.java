@@ -45,7 +45,7 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 	@Override
 	protected void postBuiltModulesDependencies() throws Exception {
 		// Source code fingerprint.
-		// TODO  应获取可打包的主项目project对象
+		// TODO 应获取可打包的主项目project对象
 		setSourceFingerprint(getVcsOperator(getContext().getProject()).getLatestCommitted(getContext().getProjectSourceDir()));
 
 		// Assets file fingerprint.
@@ -62,13 +62,12 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 		// Handing Build Image
 		buildImage();
 
-
 		// Deploying to remote instances.
 		startupExecuteRemoteDeploying();
 	}
 
 	private void buildImage() throws Exception {
-		if(getContext().getAppCluster().getDeployType()==2){
+		if (getContext().getAppCluster().getDeployType() == 2) {
 			DockerNativePipelineProvider p = aliasPrototypeBeanFactory.getPrototypeBean(DOCKER_NATIVE, getContext());
 			p.buildImage();
 		}
