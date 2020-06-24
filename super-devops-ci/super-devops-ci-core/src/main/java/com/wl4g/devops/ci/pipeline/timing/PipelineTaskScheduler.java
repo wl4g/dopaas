@@ -17,7 +17,6 @@ package com.wl4g.devops.ci.pipeline.timing;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.service.TriggerService;
 import com.wl4g.devops.common.bean.ci.Project;
 import com.wl4g.devops.common.bean.ci.Task;
 import com.wl4g.devops.common.bean.ci.TaskInstance;
@@ -63,13 +62,10 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 	protected BeanFactory beanFactory;
 	@Autowired
 	private ThreadPoolTaskScheduler taskScheduler;
-
 	@Autowired
 	protected TriggerDao triggerDao;
 	@Autowired
 	protected ProjectDao projectDao;
-	@Autowired
-	protected TriggerService triggerService;
 	@Autowired
 	protected TaskDao taskDao;
 	@Autowired
