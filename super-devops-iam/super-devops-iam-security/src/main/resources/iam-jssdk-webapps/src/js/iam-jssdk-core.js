@@ -1370,29 +1370,52 @@
 	};
 
 	// Check authentication and redirection
-	var _checkAuthenticationAndRedirect = function(redirectUrl) {
+	var _checkAuthenticationAndRedirect = {
+		cache: {
+			bodyStyle: null,
+			bodyClass: null,
+		},
+		hideDocumentAndOpenLoading: function() {
+			var handler = _checkAuthenticationAndRedirect;
+			var _body = $("body");
+			// Hide body
+			handler.cache.bodyStyle = _body.attr("style");
+			handler.cache.bodyClass = _body.attr("class");
+			_body.removeAttr("style");
+			_body.removeAttr("class");
+			// Hide other elements
+			$("<style class='iam_check_authc_redirect_style'>div:not(.iam_check_authc_redirect_loading){display:none;}" +
+					"img,span,p,a,b{display:none;}body{background:none !important}</style>").appendTo($("head"));
+			// Show loading
+			_body.append($("<div class='iam_check_authc_redirect_loading' style='background:url("+ settings.resources.loading +
+					");position:absolute;width:30px;height:30px;left:48%;top:48%;z-index:9999;'></div>"));
+		},
+		showDocumentAndCloseLoading: function() {
+			var handler = _checkAuthenticationAndRedirect;
+			var _body = $("body");
+			// Show body(If necessary)
+			if (handler.cache.bodyStyle) { _body.attr("style", handler.cache.bodyStyle); }
+			if (handler.cache.bodyClass) { _body.attr("class", handler.cache.bodyClass); }
+			// Show other elements
+			$(".iam_check_authc_redirect_style").remove();
+			// Hide loading
+			$(".iam_check_authc_redirect_loading").remove();
+		},
 		// Prevent flashing when redirecting to the home page.
-		_iamConsole.info("Hidden login document(*) ... ");
-		// Hide body and Loading
-		$("<style id='iam_check_authc_redirect_style'>div:not(#iam_check_authc_redirect_shade){display:none;}" +
-				"img,span,p,a,b{display:none;}body{background:none !important}</style>").appendTo($("head"));
-		var _body = $("body");
-		_body.append($('<div style="background:url('+settings.resources.loading+');position:absolute;width:30px;height:30px;left:48%;top:48%;" id="iam_check_authc_redirect_shade"></div>'));
-		// If body has style and class attr.
-		var _bodyStyle = _body.attr("style");
-		var _bodyClass = _body.attr("class");
-		_body.removeAttr("style");
-		_body.removeAttr("class");
+		doHandle: function(redirectUrl) {
+			_iamConsole.info("Checking unauthenticated and redirection ... ");
+			var handler = _checkAuthenticationAndRedirect;
+			// 隐藏body元素及加载动画(注:在这里调用是为了解决:当前js文件是通过sysloader.js异步加载时,body会在之前就已渲染的顺序问题,会出现闪屏)
+			handler.hideDocumentAndOpenLoading();
 
-		return new Promise(resolve => {
-			// When initializing the page, the delayed loading animation is specially displayed to prevent the white flash screen.
-			_iamConsole.info("Checking authentication status ...");
-			setTimeout(function() {
+			return new Promise(resolve => {
+				// When initializing the page, the delayed loading animation is specially displayed to prevent the white flash screen.
+				_iamConsole.info("Checking authentication state ...");
 				_initHandshakeIfNecessary(true).then(res => {
 					if(!IAMCore.checkRespUnauthenticated(res)) { // Authenticated?
 						var redirectRecord = JSON.parse(sessionStorage.getItem(constant.authRedirectRecordStorageKey));
 						// Check null or expired?
-						if (!redirectRecord || (redirectRecord && Math.abs(new Date().getTime() - redirectRecord.t) > 15000)) {
+						if (!redirectRecord || (redirectRecord && Math.abs(new Date().getTime() - redirectRecord.t) > 10000)) {
 							sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // For renew
 							redirectRecord = { c: 0, t: new Date().getTime() };
 						}
@@ -1403,24 +1426,25 @@
 						redirectRecord.t = new Date().getTime();
 						sessionStorage.setItem(constant.authRedirectRecordStorageKey, JSON.stringify(redirectRecord));
 						_iamConsole.info("Authenticated and redirection to: ", redirectUrl);
-						// Load animation prompt before redirection.
+						// 延迟重定向之前先显示加载动画
+						handler.hideDocumentAndOpenLoading();
 						setTimeout(function() {
+							handler.showDocumentAndCloseLoading();
 							window.location = redirectUrl;
-						}, 200);
+						}, (200+parseInt(Math.random()*400))); // Random
 					} else {
 						_iamConsole.info("Unauthentication rendering login page ... ");
-						// Show(Remove shade)
-						$("#iam_check_authc_redirect_style").remove();
-						$("#iam_check_authc_redirect_shade").remove();
-						// Show(Recovery style, If necessary)
-						if (_bodyStyle) { _body.attr("style", _bodyStyle); }
-						if (_bodyClass) { _body.attr("class", _bodyClass); }
-						sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // For reset
-						resolve(res);
+						// 先延迟显示加载动画
+						handler.hideDocumentAndOpenLoading();
+						setTimeout(function() {
+							handler.showDocumentAndCloseLoading();
+							sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // reset
+							resolve(res);
+						}, (200+parseInt(Math.random()*1000))); // Random
 					}
 				});
-			}, (500+parseInt(Math.random()*800))); // Random delay
-		});
+			});
+		}
 	};
 
 	// Init Handshake authentication(PRE) implements.
@@ -1512,7 +1536,7 @@
 	IAMCore.prototype.generateReplayToken = _generateReplayToken;
 
 	// Export check authentication and redirection
-	IAMCore.prototype.checkAuthenticationAndRedirect = _checkAuthenticationAndRedirect;
+	IAMCore.prototype.checkAuthenticationAndRedirect = _checkAuthenticationAndRedirect.doHandle;
 
 	// Export function Iam console
 	IAMCore.Console = _iamConsole;
