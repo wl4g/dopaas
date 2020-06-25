@@ -247,7 +247,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 	})();
 
 	// Use js
-	var _useJs = function(feature, callback, asyncLoad) {
+	var _useJs = function(feature, callback) {
 		if(Object.prototype.toString.call(feature) == '[object Function]' || !feature || callback == null || !callback) {
 			throw Error("useJs parameters (feature, callback) is required!");
 		}
@@ -267,7 +267,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 			return {"modName": d.modName, "url": d[mode]+"?t="+rtime};
 		});
 		// Loading multiple scripts.
-		(function loadScripts(scripts, path, asyncLoad) {
+		(function loadScripts(scripts, path) {
 			scripts.forEach(function(src, i) {
 				// Already load?
 				if(window[src.modName]) {
@@ -275,40 +275,51 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 					callback(); // [MARK2]
 					return;
 				}
-				var _srcUrl = (path || "") + src.url;
-				if (asyncLoad) { // 异步加载?
-					var script = document.createElement('script');
-					// 注: 如果 async="async"：脚本相对于页面的其余部分异步地执行（当页面继续进行解析时，脚本将被执行）
-					// 如果不使用 async 且 defer="defer"：脚本将在页面完成解析时执行
-					// 如果既不使用 async 也不使用 defer：在浏览器继续解析页面之前，立即读取并执行脚本
-					script.type = 'text/javascript';
-					script.charset = 'UTF-8';
-					script.src = _srcUrl;
-					script.async = true;
-					// If last script, bind the callback event to resolve
-					if (i == scripts.length - 1) {
-						// Multiple binding for browser compatibility
-						script.onload = script.onreadystatechange = function(e) {
-							if (!script.readyState || script.readyState == 'loaded' || script.readyState == 'complete') {
-								console.debug("Loaded scripts feature: "+feature+", readyState: "+ this.readyState);
-								callback(); // [MARK1]
-							}
-						};
-					}
-					document.head.appendChild(script);
-					//document.body.appendChild(script);
-				} else {
-					document.write('<scr'+'ipt type="text/javascript" src="'+ _srcUrl +'"></scr'+'ipt>');
+				var script = document.createElement('script');
+				script.type = 'text/javascript';
+				script.charset = 'UTF-8';
+				script.src = (path || "") + src.url;
+				script.async = false;
+				// If last script, bind the callback event to resolve
+				if (i == scripts.length - 1) {
+					// Multiple binding for browser compatibility
+					script.onload = script.onreadystatechange = function(e) {
+						if (!script.readyState || script.readyState == 'loaded' || script.readyState == 'complete') {
+			            	console.debug("Loaded scripts feature: "+feature+", readyState: "+ this.readyState);
+							callback(); // [MARK1]
+						}
+			        };
 				}
+				// Fire the loading
+				document.head.appendChild(script);
+				//document.body.appendChild(script);
 			});
-			if (!asyncLoad) { // 同步加载完所有js后回调
-				callback(); // [MARK1]
-			}
-		})(scripts, path, (asyncLoad||true)); // 默认异步加载
+		})(scripts, path);
+
+		// --- JQuery Versions. ---
+		//$.when(scripts, $.Deferred(d => $(d.resolve))).done(function(response, status){
+		//	console.debug("Loaded script of feature: "+ feature);
+		//	callback(status);
+		//});
+
+		//$.when($.getScript("./js/fingerprint2-v2.1.0.js"),
+		//$.getScript("./js/common-util.js"),
+		//$.getScript("./js/iam-jssdk-core.js"),
+		//$.getScript("./js/iam-jssdk-crypto.js"),
+		//$.getScript("./js/iam-jssdk-captcha-jigsaw.js"),
+		//$.getScript("./js/iam-jssdk-ui.js"),
+		//$.getScript("./js/cryptojs-4.0.0/crypto-js.min.js"),
+		//$.Deferred(function(deferred){
+		//    $(deferred.resolve);
+		//})).done(function(){
+		//	console.debug("Loaded script of feature: "+ feature);
+		//	callback("loaded");
+		//});
+		//}
 	};
 
 	// Use css
-	var _useCss = function(feature, callback, asyncLoad) {
+	var _useCss = function(feature, callback) {
 		if(Object.prototype.toString.call(feature) == '[object Function]' || !feature || callback == null || !callback) {
 			throw Error("useCss parameters (feature, callback) is required!");
 		}
@@ -325,7 +336,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 			return {"modName": d.modName, "url": d["css_"+mode]+"?t="+rtime};
 		});
 		// Loading multiple css
-		(function loadCss(csses, path, asyncLoad) {
+		(function loadCss(csses, path) {
 			csses.forEach(function(src, i) {
 				// Already load?
 				if(window[src.modName]) {
@@ -333,32 +344,25 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 					callback();
 					return;
 				}
-				var _srcUrl = (path || "") + src.url;
-				if (asyncLoad) { // 异步加载?
-					var link = document.createElement('link');
-					link.rel = 'stylesheet';
-					link.charset = 'UTF-8';
-					link.href = _srcUrl;
-					link.async = false;
-					// If last link, bind the callback event to resolve
-					if (i == csses.length - 1) {
-						// Multiple binding for browser compatibility
-						link.onload = link.onreadystatechange = function(e) {
-							if (!link.readyState || link.readyState == 'loaded' || link.readyState == 'complete') {
-								console.debug("Loaded links feature: "+feature+", readyState: "+ this.readyState);
-								callback();
-							}
-						};
-					}
-					document.head.appendChild(link);
-				} else {
-					document.write('<link rel="stylesheet" href="'+ _srcUrl +'" />');
+				var link = document.createElement('link');
+				link.rel = 'stylesheet';
+				link.charset = 'UTF-8';
+				link.href = (path || "") + src.url;
+				link.async = false;
+				// If last link, bind the callback event to resolve
+				if (i == csses.length - 1) {
+					// Multiple binding for browser compatibility
+					link.onload = link.onreadystatechange = function(e) {
+						if (!link.readyState || link.readyState == 'loaded' || link.readyState == 'complete') {
+			            	console.debug("Loaded links feature: "+feature+", readyState: "+ this.readyState);
+							callback();
+						}
+			        };
 				}
+				// Fire the loading
+				document.head.appendChild(link);
 			});
-			if (!asyncLoad) { // 同步加载完所有css后回调
-				callback(); // [MARK1]
-			}
-		})(csses, path, (asyncLoad||true));
+		})(csses, path);
 	};
 
 	// Export LoaderJS.
@@ -384,9 +388,9 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 	 * @param name Module feature(alias).
 	 * @param callback Loaded callback function.
 	 **/
-	LoaderJS.prototype.use = function(feature, callback, asyncLoad) {
-		this.useCss(feature, function(){}, asyncLoad);
-		this.useJs(feature, callback, asyncLoad);
+	LoaderJS.prototype.use = function(feature, callback) {
+		this.useCss(feature, function(){});
+		this.useJs(feature, callback);
 	};
 	LoaderJS.prototype.useJs = _useJs,
 	LoaderJS.prototype.useCss = _useCss;
