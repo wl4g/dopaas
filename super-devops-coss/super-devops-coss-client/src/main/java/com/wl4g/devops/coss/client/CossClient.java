@@ -18,23 +18,23 @@ package com.wl4g.devops.coss.client;
 import java.io.InputStream;
 import java.net.URL;
 
-import com.wl4g.devops.coss.model.ACL;
-import com.wl4g.devops.coss.model.AccessControlList;
-import com.wl4g.devops.coss.model.CopyObjectResult;
-import com.wl4g.devops.coss.model.ObjectAcl;
-import com.wl4g.devops.coss.model.ObjectListing;
-import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.ObjectSummary;
-import com.wl4g.devops.coss.model.ObjectSymlink;
-import com.wl4g.devops.coss.model.ObjectValue;
-import com.wl4g.devops.coss.model.PutObjectResult;
-import com.wl4g.devops.coss.model.RestoreObjectRequest;
-import com.wl4g.devops.coss.model.RestoreObjectResult;
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
-import com.wl4g.devops.coss.model.bucket.BucketMetadata;
-import com.wl4g.devops.coss.exception.CossException;
-import com.wl4g.devops.coss.exception.ServerCossException;
+import com.wl4g.devops.coss.common.exception.CossException;
+import com.wl4g.devops.coss.common.exception.ServerCossException;
+import com.wl4g.devops.coss.common.model.ACL;
+import com.wl4g.devops.coss.common.model.AccessControlList;
+import com.wl4g.devops.coss.common.model.CopyObjectResult;
+import com.wl4g.devops.coss.common.model.ObjectAcl;
+import com.wl4g.devops.coss.common.model.ObjectListing;
+import com.wl4g.devops.coss.common.model.ObjectMetadata;
+import com.wl4g.devops.coss.common.model.ObjectSummary;
+import com.wl4g.devops.coss.common.model.ObjectSymlink;
+import com.wl4g.devops.coss.common.model.ObjectValue;
+import com.wl4g.devops.coss.common.model.CossPutObjectResult;
+import com.wl4g.devops.coss.common.model.CossRestoreObjectRequest;
+import com.wl4g.devops.coss.common.model.CossRestoreObjectResult;
+import com.wl4g.devops.coss.common.model.bucket.Bucket;
+import com.wl4g.devops.coss.common.model.bucket.BucketList;
+import com.wl4g.devops.coss.common.model.bucket.BucketMetadata;
 
 /**
  * Composite object storage client API. {@link CossClient}
@@ -189,7 +189,7 @@ public interface CossClient {
 	 * @throws CossException
 	 * @throws ServerCossException
 	 */
-	default PutObjectResult putObject(String bucketName, String key, InputStream input) {
+	default CossPutObjectResult putObject(String bucketName, String key, InputStream input) {
 		return putObject(bucketName, key, input, null);
 	}
 
@@ -211,7 +211,7 @@ public interface CossClient {
 	 * @throws CossException
 	 * @throws ServerCossException
 	 */
-	PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata)
+	CossPutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata)
 			throws CossException, ServerCossException;
 
 	/**
@@ -278,9 +278,9 @@ public interface CossClient {
 	 * calling getObject() on an archive object.
 	 * 
 	 * @param request
-	 * @return A {@link RestoreObjectResult} instance.
+	 * @return A {@link CossRestoreObjectResult} instance.
 	 */
-	RestoreObjectResult restoreObject(RestoreObjectRequest request) throws CossException, ServerCossException;
+	CossRestoreObjectResult restoreObject(CossRestoreObjectRequest request) throws CossException, ServerCossException;
 
 	/**
 	 * Gets the Access Control List (ACL) of the OSS object.

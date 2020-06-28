@@ -28,7 +28,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-components-tools-common</artifactId>
+			<artifactId>super-devops-common</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

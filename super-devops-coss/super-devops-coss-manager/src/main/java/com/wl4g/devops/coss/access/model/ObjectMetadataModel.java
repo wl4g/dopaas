@@ -1,9 +1,9 @@
 package com.wl4g.devops.coss.access.model;
 
-import com.wl4g.devops.coss.model.ObjectKey;
-
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.wl4g.devops.coss.common.model.ObjectKey;
 
 /**
  * @author vjay

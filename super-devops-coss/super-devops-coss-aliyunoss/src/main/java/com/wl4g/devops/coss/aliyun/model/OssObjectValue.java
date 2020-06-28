@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aliyun.model;
 
-import com.wl4g.devops.coss.model.ObjectValue;
+import com.wl4g.devops.coss.common.model.ObjectValue;
 
 public class OssObjectValue extends ObjectValue {
 

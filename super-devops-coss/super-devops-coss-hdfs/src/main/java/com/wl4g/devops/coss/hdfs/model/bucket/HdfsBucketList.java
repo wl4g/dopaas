@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.coss.hdfs.model.bucket;
 
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
+import com.wl4g.devops.coss.common.model.bucket.Bucket;
+import com.wl4g.devops.coss.common.model.bucket.BucketList;
 
 public class HdfsBucketList extends BucketList<Bucket>{
 

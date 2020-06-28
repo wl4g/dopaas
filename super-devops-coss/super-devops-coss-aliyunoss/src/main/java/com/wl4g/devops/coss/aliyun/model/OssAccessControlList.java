@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aliyun.model;
 
-import com.wl4g.devops.coss.model.AccessControlList;
+import com.wl4g.devops.coss.common.model.AccessControlList;
 
 public class OssAccessControlList extends AccessControlList {
 

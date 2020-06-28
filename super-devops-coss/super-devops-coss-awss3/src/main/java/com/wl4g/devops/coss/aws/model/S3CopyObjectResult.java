@@ -17,7 +17,7 @@ package com.wl4g.devops.coss.aws.model;
 
 import java.util.Date;
 
-import com.wl4g.devops.coss.model.CopyObjectResult;
+import com.wl4g.devops.coss.common.model.CopyObjectResult;
 
 public class S3CopyObjectResult extends CopyObjectResult {
 

@@ -17,11 +17,11 @@ package com.wl4g.devops.coss.config;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
-import com.wl4g.devops.coss.CossEndpoint;
-import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.access.ConsoleCossAccessor;
 import com.wl4g.devops.coss.access.HttpCossAccessor;
 import com.wl4g.devops.coss.access.SftpCossAccessor;
+import com.wl4g.devops.coss.common.endpoint.CossEndpoint;
+import com.wl4g.devops.coss.common.endpoint.CossProvider;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;

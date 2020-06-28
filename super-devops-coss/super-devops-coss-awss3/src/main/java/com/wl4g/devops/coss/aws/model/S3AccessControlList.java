@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aws.model;
 
-import com.wl4g.devops.coss.model.AccessControlList;
+import com.wl4g.devops.coss.common.model.AccessControlList;
 
 public class S3AccessControlList extends AccessControlList {
 

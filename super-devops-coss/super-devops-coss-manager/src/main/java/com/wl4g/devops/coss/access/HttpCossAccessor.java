@@ -18,22 +18,22 @@ package com.wl4g.devops.coss.access;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.coss.CossEndpoint;
-import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
 import com.wl4g.devops.coss.access.model.ObjectMetadataModel;
 import com.wl4g.devops.coss.access.model.ObjectValueModel;
 import com.wl4g.devops.coss.access.model.ProviderBucketModel;
+import com.wl4g.devops.coss.common.endpoint.CossEndpoint;
+import com.wl4g.devops.coss.common.endpoint.CossProvider;
+import com.wl4g.devops.coss.common.exception.CossException;
+import com.wl4g.devops.coss.common.model.ACL;
+import com.wl4g.devops.coss.common.model.ObjectMetadata;
+import com.wl4g.devops.coss.common.model.ObjectValue;
+import com.wl4g.devops.coss.common.model.CossPutObjectResult;
+import com.wl4g.devops.coss.common.model.bucket.Bucket;
+import com.wl4g.devops.coss.common.model.bucket.BucketList;
 import com.wl4g.devops.coss.config.CossAccessProperties;
 import com.wl4g.devops.coss.config.StandardFSCossProperties;
-import com.wl4g.devops.coss.exception.CossException;
-import com.wl4g.devops.coss.model.ACL;
-import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.ObjectValue;
-import com.wl4g.devops.coss.model.PutObjectResult;
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
-import com.wl4g.devops.coss.model.metadata.BucketStatusMetaData;
+import com.wl4g.devops.coss.common.model.metadata.BucketStatusMetaData;
 import com.wl4g.devops.coss.natives.MetadataIndexManager;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,18 +106,18 @@ public class HttpCossAccessor extends BaseController {
 	@RequestMapping("listBucketsWithProvider")
 	public RespBase<Object> listBucketsWithProvider(String organizationCode) {
 		RespBase<Object> resp = RespBase.create();
-		List<ProviderBucketModel> result = new ArrayList();
+		List<ProviderBucketModel> result = new ArrayList<>();
 		CossProvider[] values = CossProvider.values();
-		for(CossProvider value : values){
+		for (CossProvider value : values) {
 			GenericCossParameter param = new GenericCossParameter();
 			param.setCossProvider(value.toString());
-			try{//TODO just for now
+			try {// TODO just for now
 				BucketList<Bucket> bucketBucketList = getCossEndpoint(param).listBuckets("", null, null);
-				for(Bucket bucket : bucketBucketList.getBucketList()){
-					ProviderBucketModel providerBucketModel = new ProviderBucketModel(value.toString(),bucket.getName());
+				for (Bucket bucket : bucketBucketList.getBucketList()) {
+					ProviderBucketModel providerBucketModel = new ProviderBucketModel(value.toString(), bucket.getName());
 					result.add(providerBucketModel);
 				}
-			}catch (Exception e){
+			} catch (Exception e) {
 
 			}
 		}
@@ -213,7 +213,7 @@ public class HttpCossAccessor extends BaseController {
 		return resp;
 	}
 
-	public PutObjectResult putObject(GenericCossParameter param, String bucketName, String key, InputStream input,
+	public CossPutObjectResult putObject(GenericCossParameter param, String bucketName, String key, InputStream input,
 			ObjectMetadata metadata) {
 		return getCossEndpoint(param).putObject(bucketName, key, input, metadata);
 	}

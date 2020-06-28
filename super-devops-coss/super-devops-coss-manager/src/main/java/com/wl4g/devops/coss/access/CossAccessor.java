@@ -18,17 +18,17 @@ package com.wl4g.devops.coss.access;
 import java.io.InputStream;
 
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
-import com.wl4g.devops.coss.model.AccessControlList;
-import com.wl4g.devops.coss.model.ObjectAcl;
-import com.wl4g.devops.coss.model.ObjectListing;
-import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.ObjectSummary;
-import com.wl4g.devops.coss.model.ObjectSymlink;
-import com.wl4g.devops.coss.model.ObjectValue;
-import com.wl4g.devops.coss.model.PutObjectResult;
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
-import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+import com.wl4g.devops.coss.common.model.AccessControlList;
+import com.wl4g.devops.coss.common.model.ObjectAcl;
+import com.wl4g.devops.coss.common.model.ObjectListing;
+import com.wl4g.devops.coss.common.model.ObjectMetadata;
+import com.wl4g.devops.coss.common.model.ObjectSummary;
+import com.wl4g.devops.coss.common.model.ObjectSymlink;
+import com.wl4g.devops.coss.common.model.ObjectValue;
+import com.wl4g.devops.coss.common.model.CossPutObjectResult;
+import com.wl4g.devops.coss.common.model.bucket.Bucket;
+import com.wl4g.devops.coss.common.model.bucket.BucketList;
+import com.wl4g.devops.coss.common.model.bucket.BucketMetadata;
 
 /**
  * Browse or access the coss file viewer.
@@ -173,7 +173,7 @@ public interface CossAccessor {
 	 *            the Content-Length information, the data is encoded by chunked
 	 *            tranfer encoding.
 	 */
-	PutObjectResult putObject(GenericCossParameter param, String bucketName, String key, InputStream input,
+	CossPutObjectResult putObject(GenericCossParameter param, String bucketName, String key, InputStream input,
 			ObjectMetadata metadata);
 
 	/**

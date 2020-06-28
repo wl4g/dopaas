@@ -3,12 +3,12 @@ package com.wl4g.devops.coss.aws.model;
 import java.util.Date;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.PutObjectResult;
+import com.wl4g.devops.coss.common.model.CossPutObjectResult;
 
 /**
  * The result class of a Put Object request.
  */
-public class S3PutObjectResult extends PutObjectResult {
+public class S3PutObjectResult extends CossPutObjectResult {
 
 	/** The time this object expires, or null if it has no expiration */
 	private Date expirationTime;

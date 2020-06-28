@@ -4,8 +4,8 @@ import com.wl4g.devops.components.tools.common.io.FileIOUtils;
 import com.wl4g.devops.components.tools.common.io.FileLockUtils;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
-import com.wl4g.devops.coss.model.metadata.BucketStatusMetaData;
-import com.wl4g.devops.coss.model.metadata.ObjectsStatusMetaData;
+import com.wl4g.devops.coss.common.model.metadata.BucketStatusMetaData;
+import com.wl4g.devops.coss.common.model.metadata.ObjectsStatusMetaData;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Map;
 
-import static com.wl4g.devops.coss.model.metadata.ObjectsStatusMetaData.ObjectStatusMetaData;
+import static com.wl4g.devops.coss.common.model.metadata.ObjectsStatusMetaData.ObjectStatusMetaData;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 

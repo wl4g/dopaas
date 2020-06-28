@@ -12,8 +12,8 @@ import java.util.Map;
 
 import com.aliyun.oss.internal.OSSHeaders;
 import com.aliyun.oss.model.CannedAccessControlList;
-import com.wl4g.devops.coss.model.ACL;
-import com.wl4g.devops.coss.model.ObjectMetadata;
+import com.wl4g.devops.coss.common.model.ACL;
+import com.wl4g.devops.coss.common.model.ObjectMetadata;
 
 /**
  * Hdfs storage object metadata wrapper.
