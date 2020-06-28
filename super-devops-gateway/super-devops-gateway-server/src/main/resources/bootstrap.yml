@@ -13,7 +13,7 @@
 spring:
   application.name: gateway-server
   profiles:
-    include: common,support,util
+    include: common,support,util,routing
     active: dev
   cloud:
     devops:
