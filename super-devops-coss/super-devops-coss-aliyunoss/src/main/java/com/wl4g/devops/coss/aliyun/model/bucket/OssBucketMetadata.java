@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aliyun.model.bucket;
 
-import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+import com.wl4g.devops.coss.common.model.bucket.BucketMetadata;
 
 public class OssBucketMetadata extends BucketMetadata {
 

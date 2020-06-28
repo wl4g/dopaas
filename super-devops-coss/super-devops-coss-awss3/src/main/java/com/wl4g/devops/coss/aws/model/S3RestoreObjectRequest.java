@@ -20,8 +20,8 @@ import com.amazonaws.services.s3.model.OutputLocation;
 import com.amazonaws.services.s3.model.RestoreRequestType;
 import com.amazonaws.services.s3.model.SelectParameters;
 import com.amazonaws.services.s3.model.Tier;
-import com.wl4g.devops.coss.exception.ServerCossException;
-import com.wl4g.devops.coss.model.RestoreObjectRequest;
+import com.wl4g.devops.coss.common.exception.ServerCossException;
+import com.wl4g.devops.coss.common.model.CossRestoreObjectRequest;
 
 /**
  * {@link S3RestoreObjectRequest}
@@ -30,7 +30,7 @@ import com.wl4g.devops.coss.model.RestoreObjectRequest;
  * @version 2020年3月21日 v1.0.0
  * @see {@link com.amazonaws.services.s3.model.RestoreObjectRequest}
  */
-public class S3RestoreObjectRequest extends RestoreObjectRequest {
+public class S3RestoreObjectRequest extends CossRestoreObjectRequest {
 
 	/**
 	 * Lifetime of the active copy in days. Do not use with restores that
@@ -104,7 +104,7 @@ public class S3RestoreObjectRequest extends RestoreObjectRequest {
 	 *            The key, the name of the reference to the object to restore,
 	 *            which is now stored in Amazon Glacier.
 	 *
-	 * @see RestoreObjectRequest#RestoreObjectRequest(String, String, int)
+	 * @see CossRestoreObjectRequest#RestoreObjectRequest(String, String, int)
 	 */
 	public S3RestoreObjectRequest(String bucketName, String key) {
 		this(bucketName, key, -1);
@@ -140,7 +140,7 @@ public class S3RestoreObjectRequest extends RestoreObjectRequest {
 	 *            The time, in days, between when an object is restored to the
 	 *            bucket and when it expires
 	 *
-	 * @see RestoreObjectRequest#RestoreObjectRequest(String, String)
+	 * @see CossRestoreObjectRequest#RestoreObjectRequest(String, String)
 	 */
 	public S3RestoreObjectRequest(String bucketName, String key, int expirationInDays) {
 		super(bucketName, key, null);
@@ -251,7 +251,7 @@ public class S3RestoreObjectRequest extends RestoreObjectRequest {
 	 *            New value for restore request type.
 	 * @return This object for method chaining.
 	 */
-	public RestoreObjectRequest withType(RestoreRequestType restoreRequestType) {
+	public CossRestoreObjectRequest withType(RestoreRequestType restoreRequestType) {
 		setType(restoreRequestType == null ? null : restoreRequestType.toString());
 		return this;
 	}
@@ -280,7 +280,7 @@ public class S3RestoreObjectRequest extends RestoreObjectRequest {
 	 *            New value for tier.
 	 * @return This object for method chaining.
 	 */
-	public RestoreObjectRequest withTier(Tier tier) {
+	public CossRestoreObjectRequest withTier(Tier tier) {
 		this.tier = tier == null ? null : tier.toString();
 		return this;
 	}

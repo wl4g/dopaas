@@ -1,6 +1,6 @@
 package com.wl4g.devops.coss.hdfs.model;
 
-import com.wl4g.devops.coss.model.ObjectMetadata;
+import com.wl4g.devops.coss.common.model.ObjectMetadata;
 
 /**
  * Hdfs storage object metadata wrapper.

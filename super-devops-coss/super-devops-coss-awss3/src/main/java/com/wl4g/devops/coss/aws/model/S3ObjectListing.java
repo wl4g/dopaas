@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aws.model;
 
-import com.wl4g.devops.coss.model.ObjectListing;
+import com.wl4g.devops.coss.common.model.ObjectListing;
 
 public class S3ObjectListing extends ObjectListing<S3ObjectSummary> {
 

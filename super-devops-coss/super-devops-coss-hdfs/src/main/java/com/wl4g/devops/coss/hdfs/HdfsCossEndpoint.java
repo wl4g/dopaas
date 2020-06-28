@@ -15,17 +15,28 @@
  */
 package com.wl4g.devops.coss.hdfs;
 
-import com.wl4g.devops.coss.AbstractCossEndpoint;
-import com.wl4g.devops.coss.CossProvider;
-import com.wl4g.devops.coss.exception.CossException;
-import com.wl4g.devops.coss.exception.ServerCossException;
+import com.wl4g.devops.coss.common.endpoint.AbstractCossEndpoint;
+import com.wl4g.devops.coss.common.endpoint.CossProvider;
+import com.wl4g.devops.coss.common.exception.CossException;
+import com.wl4g.devops.coss.common.exception.ServerCossException;
+import com.wl4g.devops.coss.common.model.bucket.Bucket;
+import com.wl4g.devops.coss.common.model.bucket.BucketMetadata;
 import com.wl4g.devops.coss.hdfs.config.HdfsCossProperties;
 import com.wl4g.devops.coss.hdfs.model.HdfsObjectListing;
 import com.wl4g.devops.coss.hdfs.model.HdfsObjectSummary;
 import com.wl4g.devops.coss.hdfs.model.bucket.HdfsBucketList;
-import com.wl4g.devops.coss.model.*;
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+import com.wl4g.devops.coss.common.model.ACL;
+import com.wl4g.devops.coss.common.model.AccessControlList;
+import com.wl4g.devops.coss.common.model.CopyObjectResult;
+import com.wl4g.devops.coss.common.model.ObjectAcl;
+import com.wl4g.devops.coss.common.model.ObjectMetadata;
+import com.wl4g.devops.coss.common.model.ObjectSymlink;
+import com.wl4g.devops.coss.common.model.ObjectValue;
+import com.wl4g.devops.coss.common.model.Owner;
+import com.wl4g.devops.coss.common.model.CossPutObjectResult;
+import com.wl4g.devops.coss.common.model.CossRestoreObjectRequest;
+import com.wl4g.devops.coss.common.model.CossRestoreObjectResult;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.fs.permission.FsPermission;
@@ -242,14 +253,14 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	}
 
 	@Override
-	public PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
+	public CossPutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
 		// TODO
 		return null;
 	}
 
 	@Override
-	public PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
-		PutObjectResult result = new PutObjectResult();
+	public CossPutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
+		CossPutObjectResult result = new CossPutObjectResult();
 		try {
 			Path path = new Path(config.getBucketRootPath(), bucketName + "/" + key);
 			// TODO Existed check?
@@ -295,8 +306,7 @@ public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
 	}
 
 	@Override
-	public RestoreObjectResult restoreObject(RestoreObjectRequest request, String bucketName, String key)
-			throws CossException, ServerCossException {
+	public CossRestoreObjectResult restoreObject(CossRestoreObjectRequest request) throws CossException, ServerCossException {
 		// TODO Auto-generated method stub
 		return null;
 	}

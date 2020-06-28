@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aliyun.model;
 
-import com.wl4g.devops.coss.model.CopyObjectResult;
+import com.wl4g.devops.coss.common.model.CopyObjectResult;
 
 public class OssCopyObjectResult extends CopyObjectResult {
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aliyun.model.bucket;
 
-import com.wl4g.devops.coss.model.bucket.BucketList;
+import com.wl4g.devops.coss.common.model.bucket.BucketList;
 
 public class OssBucketList extends BucketList<OssBucket> {
 

@@ -17,14 +17,27 @@ package com.wl4g.devops.coss.natives;
 
 import com.google.common.hash.HashCode;
 import com.wl4g.devops.components.tools.common.io.FileIOUtils;
-import com.wl4g.devops.coss.AbstractCossEndpoint;
+import com.wl4g.devops.coss.common.endpoint.AbstractCossEndpoint;
+import com.wl4g.devops.coss.common.exception.CossException;
+import com.wl4g.devops.coss.common.exception.ServerCossException;
+import com.wl4g.devops.coss.common.model.bucket.Bucket;
+import com.wl4g.devops.coss.common.model.bucket.BucketList;
+import com.wl4g.devops.coss.common.model.bucket.BucketMetadata;
 import com.wl4g.devops.coss.config.StandardFSCossProperties;
-import com.wl4g.devops.coss.exception.CossException;
-import com.wl4g.devops.coss.exception.ServerCossException;
-import com.wl4g.devops.coss.model.*;
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
-import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+import com.wl4g.devops.coss.common.model.ACL;
+import com.wl4g.devops.coss.common.model.AccessControlList;
+import com.wl4g.devops.coss.common.model.CopyObjectResult;
+import com.wl4g.devops.coss.common.model.ObjectAcl;
+import com.wl4g.devops.coss.common.model.ObjectKey;
+import com.wl4g.devops.coss.common.model.ObjectListing;
+import com.wl4g.devops.coss.common.model.ObjectMetadata;
+import com.wl4g.devops.coss.common.model.ObjectSummary;
+import com.wl4g.devops.coss.common.model.ObjectSymlink;
+import com.wl4g.devops.coss.common.model.ObjectValue;
+import com.wl4g.devops.coss.common.model.Owner;
+import com.wl4g.devops.coss.common.model.CossPutObjectResult;
+import com.wl4g.devops.coss.common.model.CossRestoreObjectRequest;
+import com.wl4g.devops.coss.common.model.CossRestoreObjectResult;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +58,8 @@ import static com.google.common.hash.Hashing.md5;
 import static com.wl4g.devops.components.tools.common.io.FileDeletionUtils.deleteAnyone;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.coss.model.ACL.*;
-import static com.wl4g.devops.coss.model.metadata.ObjectsStatusMetaData.ObjectStatusMetaData;
+import static com.wl4g.devops.coss.common.model.ACL.*;
+import static com.wl4g.devops.coss.common.model.metadata.ObjectsStatusMetaData.ObjectStatusMetaData;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
@@ -251,7 +264,7 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 	}
 
 	@Override
-	public PutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
+	public CossPutObjectResult putObject(String bucketName, String key, InputStream input, ObjectMetadata metadata) {
 		File objectPath = config.getObjectPath(bucketName, key);
 		File bucketPath = config.getBucketPath(bucketName);
 		try {
@@ -270,7 +283,7 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		return null;
 	}
 
-	public PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
+	public CossPutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
 		File objectPath = config.getObjectPath(bucketName, key);
 		try {
 			ObjectStatusMetaData objectStatusMetaData = new ObjectStatusMetaData();
@@ -281,7 +294,7 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new PutObjectResult();
+		return new CossPutObjectResult();
 	}
 
 	@Override
@@ -338,11 +351,10 @@ public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties>
 	}
 
 	@Override
-	public RestoreObjectResult restoreObject(RestoreObjectRequest request, String bucketName, String key)
-			throws CossException, ServerCossException {
-		File trash = new File(config.getObjectPathTrash(bucketName) + File.separator + key);
+	public CossRestoreObjectResult restoreObject(CossRestoreObjectRequest request) throws CossException, ServerCossException {
+		File trash = new File(config.getObjectPathTrash(request.getBucketName()).concat(File.separator).concat(request.getKey()));
 		if (trash.exists()) {
-
+			// TODO
 		}
 		return null;
 	}

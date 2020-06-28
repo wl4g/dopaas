@@ -1,7 +1,8 @@
 package com.wl4g.devops.coss.access.model;
 
-import com.wl4g.devops.coss.model.ObjectValue;
 import org.springframework.beans.BeanUtils;
+
+import com.wl4g.devops.coss.common.model.ObjectValue;
 
 /**
  * {@link ObjectValueModel}

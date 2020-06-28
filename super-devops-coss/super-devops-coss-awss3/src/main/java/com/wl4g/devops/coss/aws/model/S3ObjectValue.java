@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aws.model;
 
-import com.wl4g.devops.coss.model.ObjectValue;
+import com.wl4g.devops.coss.common.model.ObjectValue;
 
 public class S3ObjectValue extends ObjectValue {
 

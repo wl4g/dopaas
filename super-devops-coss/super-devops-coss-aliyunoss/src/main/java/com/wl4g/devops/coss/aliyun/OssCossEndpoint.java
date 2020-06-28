@@ -22,19 +22,19 @@ import com.aliyun.oss.model.*;
 import com.aliyun.oss.model.ObjectAcl;
 import com.aliyun.oss.model.ObjectListing;
 import com.aliyun.oss.model.PutObjectResult;
-import com.wl4g.devops.coss.AbstractCossEndpoint;
-import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.aliyun.config.AliyunOssProperties;
 import com.wl4g.devops.coss.aliyun.model.*;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucket;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucketList;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucketMetadata;
-import com.wl4g.devops.coss.exception.CossException;
-import com.wl4g.devops.coss.exception.ServerCossException;
-import com.wl4g.devops.coss.model.*;
-import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.Owner;
-import com.wl4g.devops.coss.model.RestoreObjectResult;
+import com.wl4g.devops.coss.common.endpoint.AbstractCossEndpoint;
+import com.wl4g.devops.coss.common.endpoint.CossProvider;
+import com.wl4g.devops.coss.common.exception.CossException;
+import com.wl4g.devops.coss.common.exception.ServerCossException;
+import com.wl4g.devops.coss.common.model.*;
+import com.wl4g.devops.coss.common.model.ObjectMetadata;
+import com.wl4g.devops.coss.common.model.Owner;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
@@ -147,8 +147,8 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 	}
 
 	@Override
-	public com.wl4g.devops.coss.model.PutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
-		//TODO
+	public CossPutObjectResult putObjectMetaData(String bucketName, String key, ObjectMetadata metadata) {
+		// TODO
 		return null;
 	}
 
@@ -181,14 +181,14 @@ public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
 
 	@Override
 	public void deleteVersion(String bucketName, String key, String versionId) throws CossException, ServerCossException {
-		// TODO Auto-generated method stub
-
+		ossClient.deleteVersion(bucketName, key, versionId);
 	}
 
 	@Override
-	public RestoreObjectResult restoreObject(RestoreObjectRequest request,String bucketName, String key) throws CossException, ServerCossException {
-		// TODO Auto-generated method stub
-		return null;
+	public CossRestoreObjectResult restoreObject(CossRestoreObjectRequest request) throws CossException, ServerCossException {
+		RestoreObjectResult ossRes = ossClient.restoreObject(request.getBucketName(), request.getKey());
+		log.debug("Restore object result: {}", ossRes);
+		return new CossRestoreObjectResult();
 	}
 
 	@Override

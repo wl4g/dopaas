@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aliyun.model;
 
-import com.wl4g.devops.coss.model.ObjectAcl;
+import com.wl4g.devops.coss.common.model.ObjectAcl;
 
 public class OssObjectAcl extends ObjectAcl {
 

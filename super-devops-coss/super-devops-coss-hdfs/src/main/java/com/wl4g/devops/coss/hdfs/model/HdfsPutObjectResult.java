@@ -5,12 +5,12 @@ import static java.util.Objects.isNull;
 import java.util.Date;
 import java.util.Properties;
 
-import com.wl4g.devops.coss.model.PutObjectResult;
+import com.wl4g.devops.coss.common.model.CossPutObjectResult;
 
 /**
  * The result class of a Put Object request.
  */
-public class HdfsPutObjectResult extends PutObjectResult {
+public class HdfsPutObjectResult extends CossPutObjectResult {
 
 	/** The time this object expires, or null if it has no expiration */
 	private Date expirationTime;

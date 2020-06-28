@@ -27,22 +27,22 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.components.shell.annotation.ShellComponent;
 import com.wl4g.devops.components.shell.annotation.ShellMethod;
 import com.wl4g.devops.components.shell.annotation.ShellOption;
-import com.wl4g.devops.coss.CossEndpoint;
-import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
-import com.wl4g.devops.coss.exception.CossException;
-import com.wl4g.devops.coss.model.ACL;
-import com.wl4g.devops.coss.model.AccessControlList;
-import com.wl4g.devops.coss.model.ObjectAcl;
-import com.wl4g.devops.coss.model.ObjectListing;
-import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.ObjectSummary;
-import com.wl4g.devops.coss.model.ObjectSymlink;
-import com.wl4g.devops.coss.model.ObjectValue;
-import com.wl4g.devops.coss.model.PutObjectResult;
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
-import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+import com.wl4g.devops.coss.common.endpoint.CossEndpoint;
+import com.wl4g.devops.coss.common.endpoint.CossProvider;
+import com.wl4g.devops.coss.common.exception.CossException;
+import com.wl4g.devops.coss.common.model.ACL;
+import com.wl4g.devops.coss.common.model.AccessControlList;
+import com.wl4g.devops.coss.common.model.ObjectAcl;
+import com.wl4g.devops.coss.common.model.ObjectListing;
+import com.wl4g.devops.coss.common.model.ObjectMetadata;
+import com.wl4g.devops.coss.common.model.ObjectSummary;
+import com.wl4g.devops.coss.common.model.ObjectSymlink;
+import com.wl4g.devops.coss.common.model.ObjectValue;
+import com.wl4g.devops.coss.common.model.CossPutObjectResult;
+import com.wl4g.devops.coss.common.model.bucket.Bucket;
+import com.wl4g.devops.coss.common.model.bucket.BucketList;
+import com.wl4g.devops.coss.common.model.bucket.BucketMetadata;
 
 /**
  * Console based coss accessor
@@ -128,7 +128,7 @@ public class ConsoleCossAccessor implements CossAccessor {
 	}
 
 	@ShellMethod(keys = "putObject", group = CONSOLE_GROUP, help = "Put object")
-	public PutObjectResult putObject(GenericCossParameter param,
+	public CossPutObjectResult putObject(GenericCossParameter param,
 			@ShellOption(opt = "b", lopt = "bucketName", help = "Bucket name") String bucketName,
 			@ShellOption(opt = "k", lopt = "key", help = "Bucket key") String key,
 			@ShellOption(opt = "f", lopt = "file", help = "Local input file path") String localInputFile,
@@ -145,7 +145,7 @@ public class ConsoleCossAccessor implements CossAccessor {
 	}
 
 	@Override
-	public PutObjectResult putObject(GenericCossParameter param, String bucketName, String key, InputStream input,
+	public CossPutObjectResult putObject(GenericCossParameter param, String bucketName, String key, InputStream input,
 			ObjectMetadata metadata) {
 		return getCossEndpoint(param).putObject(bucketName, key, input, metadata);
 	}

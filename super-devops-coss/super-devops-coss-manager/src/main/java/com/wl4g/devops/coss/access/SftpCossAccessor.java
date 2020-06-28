@@ -23,20 +23,20 @@ import java.nio.file.FileSystem;
 import org.apache.sshd.common.file.FileSystemAware;
 
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
-import com.wl4g.devops.coss.CossEndpoint;
-import com.wl4g.devops.coss.CossProvider;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
-import com.wl4g.devops.coss.model.AccessControlList;
-import com.wl4g.devops.coss.model.ObjectAcl;
-import com.wl4g.devops.coss.model.ObjectListing;
-import com.wl4g.devops.coss.model.ObjectMetadata;
-import com.wl4g.devops.coss.model.ObjectSummary;
-import com.wl4g.devops.coss.model.ObjectSymlink;
-import com.wl4g.devops.coss.model.ObjectValue;
-import com.wl4g.devops.coss.model.PutObjectResult;
-import com.wl4g.devops.coss.model.bucket.Bucket;
-import com.wl4g.devops.coss.model.bucket.BucketList;
-import com.wl4g.devops.coss.model.bucket.BucketMetadata;
+import com.wl4g.devops.coss.common.endpoint.CossEndpoint;
+import com.wl4g.devops.coss.common.endpoint.CossProvider;
+import com.wl4g.devops.coss.common.model.AccessControlList;
+import com.wl4g.devops.coss.common.model.ObjectAcl;
+import com.wl4g.devops.coss.common.model.ObjectListing;
+import com.wl4g.devops.coss.common.model.ObjectMetadata;
+import com.wl4g.devops.coss.common.model.ObjectSummary;
+import com.wl4g.devops.coss.common.model.ObjectSymlink;
+import com.wl4g.devops.coss.common.model.ObjectValue;
+import com.wl4g.devops.coss.common.model.CossPutObjectResult;
+import com.wl4g.devops.coss.common.model.bucket.Bucket;
+import com.wl4g.devops.coss.common.model.bucket.BucketList;
+import com.wl4g.devops.coss.common.model.bucket.BucketMetadata;
 
 /**
  * SFTP based coss accessor
@@ -116,7 +116,7 @@ public class SftpCossAccessor implements CossAccessor, FileSystemAware {
 	}
 
 	@Override
-	public PutObjectResult putObject(GenericCossParameter param, String bucketName, String key, InputStream input,
+	public CossPutObjectResult putObject(GenericCossParameter param, String bucketName, String key, InputStream input,
 			ObjectMetadata metadata) {
 		// TODO Auto-generated method stub
 		return null;

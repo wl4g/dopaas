@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.aliyun.model;
 
-import com.wl4g.devops.coss.model.ObjectListing;
+import com.wl4g.devops.coss.common.model.ObjectListing;
 
 public class OssObjectListing extends ObjectListing<OssObjectSummary> {
 

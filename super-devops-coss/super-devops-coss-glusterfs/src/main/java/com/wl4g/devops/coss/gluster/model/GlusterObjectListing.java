@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.gluster.model;
 
-import com.wl4g.devops.coss.model.ObjectListing;
+import com.wl4g.devops.coss.common.model.ObjectListing;
 
 public class GlusterObjectListing extends ObjectListing<GlusterObjectSummary> {
 

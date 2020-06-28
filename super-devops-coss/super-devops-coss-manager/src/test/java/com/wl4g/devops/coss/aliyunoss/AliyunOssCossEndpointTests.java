@@ -23,8 +23,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.devops.CossManager;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
-import com.wl4g.devops.coss.CossEndpoint;
-import com.wl4g.devops.coss.CossProvider;
+import com.wl4g.devops.coss.common.endpoint.CossEndpoint;
+import com.wl4g.devops.coss.common.endpoint.CossProvider;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CossManager.class, properties = {})

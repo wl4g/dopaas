@@ -16,9 +16,9 @@
 package com.wl4g.devops.coss.aws.model;
 
 import com.amazonaws.services.s3.model.RestoreObjectResult;
-import com.wl4g.devops.coss.model.RestoreObjectRequest;
+import com.wl4g.devops.coss.common.model.CossRestoreObjectRequest;
 
-public class S3RestoreObjectResult extends RestoreObjectRequest {
+public class S3RestoreObjectResult extends CossRestoreObjectRequest {
 
 	/**
 	 * Indicate if the requester is charged for conducting this operation from

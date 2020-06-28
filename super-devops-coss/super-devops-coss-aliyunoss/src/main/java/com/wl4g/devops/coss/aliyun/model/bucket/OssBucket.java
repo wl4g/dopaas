@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.coss.aliyun.model.bucket;
 
-import com.wl4g.devops.coss.model.Owner;
-import com.wl4g.devops.coss.model.bucket.Bucket;
+import com.wl4g.devops.coss.common.model.Owner;
+import com.wl4g.devops.coss.common.model.bucket.Bucket;
 
 public class OssBucket extends Bucket {
 
