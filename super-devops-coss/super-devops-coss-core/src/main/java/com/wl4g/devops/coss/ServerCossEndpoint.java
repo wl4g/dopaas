@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.coss.common.endpoint;
+package com.wl4g.devops.coss;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import com.wl4g.devops.common.framework.operator.Operator;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
+import com.wl4g.devops.coss.common.endpoint.CossEndpoint;
+import com.wl4g.devops.coss.common.endpoint.CossProvider;
 import com.wl4g.devops.coss.common.model.Owner;
 
 /**
@@ -30,7 +33,7 @@ import com.wl4g.devops.coss.common.model.Owner;
  * @version v1.0 2020年2月28日
  * @since
  */
-public abstract class AbstractCossEndpoint<C> implements CossEndpoint, InitializingBean {
+public abstract class ServerCossEndpoint<C> implements CossEndpoint, Operator<CossProvider>, InitializingBean {
 
 	final protected SmartLogger log = getLogger(getClass());
 
@@ -39,7 +42,7 @@ public abstract class AbstractCossEndpoint<C> implements CossEndpoint, Initializ
 	 */
 	final protected C config;
 
-	public AbstractCossEndpoint(C config) {
+	public ServerCossEndpoint(C config) {
 		notNullOf(config, "cossProperties");
 		this.config = config;
 	}

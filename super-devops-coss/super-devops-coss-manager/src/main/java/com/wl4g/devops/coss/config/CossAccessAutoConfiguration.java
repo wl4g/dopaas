@@ -17,10 +17,10 @@ package com.wl4g.devops.coss.config;
 
 import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.coss.ServerCossEndpoint;
 import com.wl4g.devops.coss.access.ConsoleCossAccessor;
 import com.wl4g.devops.coss.access.HttpCossAccessor;
 import com.wl4g.devops.coss.access.SftpCossAccessor;
-import com.wl4g.devops.coss.common.endpoint.CossEndpoint;
 import com.wl4g.devops.coss.common.endpoint.CossProvider;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -46,17 +46,17 @@ public class CossAccessAutoConfiguration extends OptionalPrefixControllerAutoCon
 	}
 
 	@Bean
-	public ConsoleCossAccessor consoleCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
+	public ConsoleCossAccessor consoleCossAccessor(GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter) {
 		return new ConsoleCossAccessor(endpointAdapter);
 	}
 
 	@Bean
-	public HttpCossAccessor httpCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
+	public HttpCossAccessor httpCossAccessor(GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter) {
 		return new HttpCossAccessor(endpointAdapter);
 	}
 
 	@Bean
-	public SftpCossAccessor sftpCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
+	public SftpCossAccessor sftpCossAccessor(GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter) {
 		return new SftpCossAccessor(endpointAdapter);
 	}
 

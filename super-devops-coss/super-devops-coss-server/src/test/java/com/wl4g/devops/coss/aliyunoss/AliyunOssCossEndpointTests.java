@@ -16,7 +16,7 @@
 package com.wl4g.devops.coss.aliyunoss;
 
 import org.junit.FixMethodOrder;
-import org.junit.Test; 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.devops.CossServer;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.coss.ServerCossEndpoint;
 import com.wl4g.devops.coss.common.endpoint.CossEndpoint;
 import com.wl4g.devops.coss.common.endpoint.CossProvider;
 
@@ -34,7 +35,7 @@ import com.wl4g.devops.coss.common.endpoint.CossProvider;
 public class AliyunOssCossEndpointTests {
 
 	@Autowired
-	private GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter;
+	private GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter;
 
 	@Test
 	public void ossEndpointTest1() {

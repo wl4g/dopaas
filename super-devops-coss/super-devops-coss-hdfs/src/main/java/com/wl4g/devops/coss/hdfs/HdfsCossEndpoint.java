@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.hdfs;
 
-import com.wl4g.devops.coss.common.endpoint.AbstractCossEndpoint;
+import com.wl4g.devops.coss.ServerCossEndpoint;
 import com.wl4g.devops.coss.common.endpoint.CossProvider;
 import com.wl4g.devops.coss.common.exception.CossException;
 import com.wl4g.devops.coss.common.exception.ServerCossException;
@@ -62,7 +62,7 @@ import static java.util.Objects.isNull;
  * @version v1.0 2020年3月17日
  * @since
  */
-public class HdfsCossEndpoint extends AbstractCossEndpoint<HdfsCossProperties> {
+public class HdfsCossEndpoint extends ServerCossEndpoint<HdfsCossProperties> {
 
 	/**
 	 * Cache refresh timestamp.

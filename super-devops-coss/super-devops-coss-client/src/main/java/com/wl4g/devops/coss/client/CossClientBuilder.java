@@ -15,13 +15,142 @@
  */
 package com.wl4g.devops.coss.client;
 
+import com.wl4g.devops.coss.client.config.CossClientConfiguration;
+import com.wl4g.devops.coss.common.auth.CredentialsProvider;
+import com.wl4g.devops.coss.common.auth.DefaultCredentialProvider;
+
 /**
  * {@link CossClientBuilder}
- *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年6月28日
- * @since
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年6月29日 v1.0.0
+ * @see
  */
 public abstract class CossClientBuilder {
+
+	/**
+	 * Building {@link CossClient}
+	 * 
+	 * @param endpoint
+	 * @param accessKeyId
+	 * @param secretAccessKey
+	 * @return
+	 */
+	public CossClient build(String endpoint, String accessKeyId, String secretAccessKey) {
+		return new CossClientImpl(endpoint, getDefaultCredentialProvider(accessKeyId, secretAccessKey), getClientConfiguration());
+	}
+
+	/**
+	 * Building {@link CossClient}
+	 * 
+	 * @param endpoint
+	 * @param accessKeyId
+	 * @param secretAccessKey
+	 * @param securityToken
+	 * @return
+	 */
+	public CossClient build(String endpoint, String accessKeyId, String secretAccessKey, String securityToken) {
+		return new CossClientImpl(endpoint, getDefaultCredentialProvider(accessKeyId, secretAccessKey, securityToken),
+				getClientConfiguration());
+	}
+
+	/**
+	 * Building {@link CossClient}
+	 * 
+	 * @param endpoint
+	 * @param accessKeyId
+	 * @param secretAccessKey
+	 * @param config
+	 * @return
+	 */
+	public CossClient build(String endpoint, String accessKeyId, String secretAccessKey, CossClientConfiguration config) {
+		return new CossClientImpl(endpoint, getDefaultCredentialProvider(accessKeyId, secretAccessKey),
+				getClientConfiguration(config));
+	}
+
+	/**
+	 * Building {@link CossClient}
+	 * 
+	 * @param endpoint
+	 * @param accessKeyId
+	 * @param secretAccessKey
+	 * @param securityToken
+	 * @param config
+	 * @return
+	 */
+	public CossClient build(String endpoint, String accessKeyId, String secretAccessKey, String securityToken,
+			CossClientConfiguration config) {
+		return new CossClientImpl(endpoint, getDefaultCredentialProvider(accessKeyId, secretAccessKey, securityToken),
+				getClientConfiguration(config));
+	}
+
+	/**
+	 * Building {@link CossClient}
+	 * 
+	 * @param endpoint
+	 * @param credsProvider
+	 * @return
+	 */
+	public CossClient build(String endpoint, CredentialsProvider credsProvider) {
+		return new CossClientImpl(endpoint, credsProvider, getClientConfiguration());
+	}
+
+	/**
+	 * Building {@link CossClient}
+	 * 
+	 * @param endpoint
+	 * @param credsProvider
+	 * @param config
+	 * @return
+	 */
+	public CossClient build(String endpoint, CredentialsProvider credsProvider, CossClientConfiguration config) {
+		return new CossClientImpl(endpoint, credsProvider, getClientConfiguration(config));
+	}
+
+	/**
+	 * Gets coss client configuration
+	 * 
+	 * @return
+	 */
+	private static CossClientConfiguration getClientConfiguration() {
+		return new CossClientConfiguration();
+	}
+
+	/**
+	 * Gets coss client configuration
+	 * 
+	 * @param config
+	 * @return
+	 */
+	private static CossClientConfiguration getClientConfiguration(CossClientConfiguration config) {
+		if (config == null) {
+			config = new CossClientConfiguration();
+		}
+		return config;
+	}
+
+	/**
+	 * Gets default credential provider
+	 * 
+	 * @param accessKeyId
+	 * @param secretAccessKey
+	 * @return
+	 */
+	private static DefaultCredentialProvider getDefaultCredentialProvider(String accessKeyId, String secretAccessKey) {
+		return new DefaultCredentialProvider(accessKeyId, secretAccessKey);
+	}
+
+	/**
+	 * Gets default credential provider
+	 * 
+	 * @param accessKeyId
+	 * @param secretAccessKey
+	 * @param securityToken
+	 * @return
+	 */
+	private static DefaultCredentialProvider getDefaultCredentialProvider(String accessKeyId, String secretAccessKey,
+			String securityToken) {
+		return new DefaultCredentialProvider(accessKeyId, secretAccessKey, securityToken);
+	}
 
 }

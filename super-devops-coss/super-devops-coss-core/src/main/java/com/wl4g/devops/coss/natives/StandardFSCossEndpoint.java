@@ -17,7 +17,7 @@ package com.wl4g.devops.coss.natives;
 
 import com.google.common.hash.HashCode;
 import com.wl4g.devops.components.tools.common.io.FileIOUtils;
-import com.wl4g.devops.coss.common.endpoint.AbstractCossEndpoint;
+import com.wl4g.devops.coss.ServerCossEndpoint;
 import com.wl4g.devops.coss.common.exception.CossException;
 import com.wl4g.devops.coss.common.exception.ServerCossException;
 import com.wl4g.devops.coss.common.model.bucket.Bucket;
@@ -73,7 +73,7 @@ import static java.util.stream.Collectors.toList;
  * @version v1.0 2020年3月17日
  * @since
  */
-public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties> extends AbstractCossEndpoint<C> {
+public abstract class StandardFSCossEndpoint<C extends StandardFSCossProperties> extends ServerCossEndpoint<C> {
 
 	/**
 	 * Standard FS of {@link FileSystem}

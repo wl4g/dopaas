@@ -32,6 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.devops.CossServer;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.coss.ServerCossEndpoint;
 import com.wl4g.devops.coss.common.endpoint.CossEndpoint;
 import com.wl4g.devops.coss.common.endpoint.CossProvider;
 import com.wl4g.devops.coss.common.model.AccessControlList;
@@ -49,7 +50,7 @@ public class HdfsCossEndpointTests {
 	private CossEndpoint endpoint;
 
 	@Autowired
-	public void createHdfsEndpoint(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
+	public void createHdfsEndpoint(GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter) {
 		System.out.println("createHdfsEndpoint...");
 		endpoint = endpointAdapter.forOperator(CossProvider.Hdfs);
 	}

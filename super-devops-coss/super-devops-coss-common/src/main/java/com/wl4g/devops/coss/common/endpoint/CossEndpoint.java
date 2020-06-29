@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.coss.common.endpoint;
 
-import com.wl4g.devops.common.framework.operator.Operator;
 import com.wl4g.devops.coss.common.exception.CossException;
 import com.wl4g.devops.coss.common.exception.ServerCossException;
 import com.wl4g.devops.coss.common.model.bucket.Bucket;
@@ -46,7 +45,14 @@ import static java.lang.String.format;
  * @version v1.0 2020年2月28日
  * @since
  */
-public interface CossEndpoint extends Operator<CossProvider> {
+public interface CossEndpoint {
+
+	/**
+	 * Gets {@link CossProvider}
+	 * 
+	 * @return
+	 */
+	CossProvider kind();
 
 	// --- Bucket's function ---
 
