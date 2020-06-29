@@ -307,7 +307,7 @@ var VAR_PLUGIN_MODULES = "${{plugin_modules}}";
 					};
 				}
 			});
-		})(scripts, path, (asyncLoad==null||asyncLoad==undefined||asyncLoad==''||asyncLoad==true)?true:false); // 默认异步加载
+		})(scripts, path, (asyncLoad==null||asyncLoad==undefined||asyncLoad==true)?true:false); // 默认异步加载
 	};
 
 	// Use css
