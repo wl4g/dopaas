@@ -23,6 +23,7 @@ import java.nio.file.FileSystem;
 import org.apache.sshd.common.file.FileSystemAware;
 
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+import com.wl4g.devops.coss.ServerCossEndpoint;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
 import com.wl4g.devops.coss.common.endpoint.CossEndpoint;
 import com.wl4g.devops.coss.common.endpoint.CossProvider;
@@ -50,14 +51,14 @@ public class SftpCossAccessor implements CossAccessor, FileSystemAware {
 	/**
 	 * {@link CossEndpoint}
 	 */
-	final protected GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter;
+	final protected GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter;
 
 	/**
 	 * {@link FileSystem}
 	 */
 	protected FileSystem fileSystem;
 
-	public SftpCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
+	public SftpCossAccessor(GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter) {
 		notNullOf(endpointAdapter, "endpointAdapter");
 		this.endpointAdapter = endpointAdapter;
 	}

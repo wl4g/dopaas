@@ -18,6 +18,7 @@ package com.wl4g.devops.coss.access;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.coss.ServerCossEndpoint;
 import com.wl4g.devops.coss.access.model.GenericCossParameter;
 import com.wl4g.devops.coss.access.model.ObjectMetadataModel;
 import com.wl4g.devops.coss.access.model.ObjectValueModel;
@@ -68,7 +69,7 @@ public class HttpCossAccessor extends BaseController {
 	/**
 	 * {@link CossEndpoint}
 	 */
-	final protected GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter;
+	final protected GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter;
 
 	@Autowired
 	private MetadataIndexManager metadataIndexManager;
@@ -79,7 +80,7 @@ public class HttpCossAccessor extends BaseController {
 	@Autowired
 	private CossAccessProperties accessConfig;
 
-	public HttpCossAccessor(GenericOperatorAdapter<CossProvider, CossEndpoint> endpointAdapter) {
+	public HttpCossAccessor(GenericOperatorAdapter<CossProvider, ServerCossEndpoint<?>> endpointAdapter) {
 		notNullOf(endpointAdapter, "endpointAdapter");
 		this.endpointAdapter = endpointAdapter;
 	}

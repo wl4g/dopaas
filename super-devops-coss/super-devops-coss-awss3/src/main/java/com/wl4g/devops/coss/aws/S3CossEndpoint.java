@@ -24,11 +24,11 @@ import com.amazonaws.services.s3.model.AccessControlList;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.ListBucketsRequest;
 import com.amazonaws.services.s3.model.RestoreObjectRequest;
+import com.wl4g.devops.coss.ServerCossEndpoint;
 import com.wl4g.devops.coss.aws.config.S3CossProperties;
 import com.wl4g.devops.coss.aws.model.*;
 import com.wl4g.devops.coss.aws.model.bucket.S3Bucket;
 import com.wl4g.devops.coss.aws.model.bucket.S3BucketList;
-import com.wl4g.devops.coss.common.endpoint.AbstractCossEndpoint;
 import com.wl4g.devops.coss.common.endpoint.CossProvider;
 import com.wl4g.devops.coss.common.exception.CossException;
 import com.wl4g.devops.coss.common.exception.ServerCossException;
@@ -59,7 +59,7 @@ import static java.util.stream.Collectors.toList;
  *      "https://docs.aws.amazon.com/zh_cn/sdk-for-java/v1/developer-guide/examples-s3.html">Aws
  *      S3 docs</a>
  */
-public class S3CossEndpoint extends AbstractCossEndpoint<S3CossProperties> {
+public class S3CossEndpoint extends ServerCossEndpoint<S3CossProperties> {
 
 	/**
 	 * {@link AmazonS3ClientBuilder}

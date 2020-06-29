@@ -22,12 +22,12 @@ import com.aliyun.oss.model.*;
 import com.aliyun.oss.model.ObjectAcl;
 import com.aliyun.oss.model.ObjectListing;
 import com.aliyun.oss.model.PutObjectResult;
+import com.wl4g.devops.coss.ServerCossEndpoint;
 import com.wl4g.devops.coss.aliyun.config.AliyunOssProperties;
 import com.wl4g.devops.coss.aliyun.model.*;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucket;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucketList;
 import com.wl4g.devops.coss.aliyun.model.bucket.OssBucketMetadata;
-import com.wl4g.devops.coss.common.endpoint.AbstractCossEndpoint;
 import com.wl4g.devops.coss.common.endpoint.CossProvider;
 import com.wl4g.devops.coss.common.exception.CossException;
 import com.wl4g.devops.coss.common.exception.ServerCossException;
@@ -41,7 +41,7 @@ import java.io.InputStream;
 
 import static java.util.stream.Collectors.toList;
 
-public class OssCossEndpoint extends AbstractCossEndpoint<AliyunOssProperties> {
+public class OssCossEndpoint extends ServerCossEndpoint<AliyunOssProperties> {
 
 	/**
 	 * Aliyun OSS client.

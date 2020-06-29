@@ -18,6 +18,8 @@ package com.wl4g.devops.coss.client;
 import java.io.InputStream;
 import java.net.URL;
 
+import com.wl4g.devops.coss.client.config.CossClientConfiguration;
+import com.wl4g.devops.coss.common.auth.CredentialsProvider;
 import com.wl4g.devops.coss.common.exception.CossException;
 import com.wl4g.devops.coss.common.exception.ServerCossException;
 import com.wl4g.devops.coss.common.model.ACL;
@@ -37,15 +39,16 @@ import com.wl4g.devops.coss.common.model.bucket.BucketList;
 import com.wl4g.devops.coss.common.model.bucket.BucketMetadata;
 
 /**
- * {@link CossClientImpl} 
+ * {@link CossClientImpl}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年6月28日
  * @since
  */
 public class CossClientImpl implements CossClient {
-	
-	
+
+	public CossClientImpl(String endpoint, CredentialsProvider credsProvider, CossClientConfiguration config) {
+	}
 
 	@Override
 	public Bucket createBucket(String bucketName) throws CossException, ServerCossException {
