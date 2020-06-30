@@ -18,6 +18,7 @@ package com.wl4g.devops.erm.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.common.bean.erm.Host;
+import com.wl4g.devops.components.tools.common.collection.Collections2;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.erm.HostDao;
 import com.wl4g.devops.erm.service.AppInstanceService;
@@ -70,7 +71,16 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 
     private void insert(AppInstance appInstance) {
         appInstance.preInsert(getRequestOrganizationCode());
-        appInstanceDao.insertSelective(appInstance);
+        if(!Collections2.isEmptyArray(appInstance.getHosts())){
+            for(Integer hostId : appInstance.getHosts()){
+                appInstance.preInsert();
+                appInstance.setHostId(hostId);
+                appInstanceDao.insertSelective(appInstance);
+            }
+        }else{
+            appInstanceDao.insertSelective(appInstance);
+        }
+
     }
 
     private void update(AppInstance appInstance) {

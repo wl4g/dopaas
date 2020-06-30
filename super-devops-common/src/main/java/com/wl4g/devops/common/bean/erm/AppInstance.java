@@ -17,6 +17,8 @@ package com.wl4g.devops.common.bean.erm;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
+import java.util.List;
+
 /**
  * 对应：app_instance表
  * 
@@ -67,6 +69,8 @@ public class AppInstance extends BaseBean {
 	private Integer deployType;
 
 	private DockerCluster dockerCluster;
+
+	private List<Integer> hosts;
 
 	public Integer getClusterId() {
 		return clusterId;
@@ -196,6 +200,14 @@ public class AppInstance extends BaseBean {
 
 	public void setDockerCluster(DockerCluster dockerCluster) {
 		this.dockerCluster = dockerCluster;
+	}
+
+	public List<Integer> getHosts() {
+		return hosts;
+	}
+
+	public void setHosts(List<Integer> hosts) {
+		this.hosts = hosts;
 	}
 
 	@Override
