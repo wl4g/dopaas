@@ -9,11 +9,9 @@ import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.page.PageModel;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -75,7 +73,6 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    @Transactional(rollbackFor=Exception.class)
     public void save(Pipeline pipeline) {
         if (nonNull(pipeline.getId())) {
             update(pipeline);
@@ -137,7 +134,6 @@ public class PipelineServiceImpl implements PipelineService {
         return pipelineDao.selectByClusterId(clusterId);
     }
 
-    @Transactional(rollbackFor=Exception.class)
     public void insert(Pipeline pipeline) {
         Assert2.notNullOf(pipeline, "pipeline");
         // Insert Pipeline
@@ -215,7 +211,6 @@ public class PipelineServiceImpl implements PipelineService {
 
     }
 
-    @Transactional(rollbackFor=Exception.class)
     public void update(Pipeline pipeline) {
         pipeline.preUpdate();
         Assert2.notNullOf(pipeline, "pipeline");
