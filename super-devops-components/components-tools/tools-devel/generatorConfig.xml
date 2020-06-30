@@ -134,9 +134,20 @@
             <columnOverride column="deploy_config_content" javaType="java.lang.String" jdbcType="VARCHAR" />
         </table>-->
 
-        <table tableName="erm_docker_repository" domainObjectName="DockerRepository"
+        <table tableName="erm_dns_operation_log" domainObjectName="DnsOperationLog"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-            <columnOverride column="auth_config" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </table>
+        <table tableName="erm_dns_private_domain" domainObjectName="DnsPrivateDomain"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="erm_dns_private_resolution" domainObjectName="DnsPrivateResolution"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="erm_dns_private_server" domainObjectName="DnsPrivateServer"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="erm_dns_public_domain" domainObjectName="DnsPublicDomain"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
 
     </context>
