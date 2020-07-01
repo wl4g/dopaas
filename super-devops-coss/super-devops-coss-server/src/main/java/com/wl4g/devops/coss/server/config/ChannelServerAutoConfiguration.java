@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.coss.config;
+package com.wl4g.devops.coss.server.config;
 
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.coss.startup.ChannelCossServer;
-import com.wl4g.devops.coss.startup.CossServerBootsstrap;
-import com.wl4g.devops.coss.startup.NettyChannelCossServer;
+import com.wl4g.devops.coss.server.ChannelCossServer;
+import com.wl4g.devops.coss.server.CossServerBootsstrap;
+import com.wl4g.devops.coss.server.NettyChannelCossServer;
 
 /**
  * {@link ChannelServerAutoConfiguration}

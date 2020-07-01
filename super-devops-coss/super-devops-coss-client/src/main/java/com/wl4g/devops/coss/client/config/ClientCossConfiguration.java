@@ -39,7 +39,7 @@ import com.wl4g.devops.coss.common.utils.VersionInfoUtils;
  * @version 2020年6月29日 v1.0.0
  * @see
  */
-public class CossClientConfiguration {
+public class ClientCossConfiguration {
 
 	public static final String DEFAULT_USER_AGENT = VersionInfoUtils.getDefaultUserAgent();
 
@@ -99,7 +99,7 @@ public class CossClientConfiguration {
 
 	protected long tickOffset = 0;
 
-	public CossClientConfiguration() {
+	public ClientCossConfiguration() {
 		super();
 		AppendDefaultExcludeList(this.cnameExcludeList);
 	}
@@ -473,7 +473,7 @@ public class CossClientConfiguration {
 	 * @param supportCname
 	 *            The flag if supporting CName.
 	 */
-	public CossClientConfiguration setSupportCname(boolean supportCname) {
+	public ClientCossConfiguration setSupportCname(boolean supportCname) {
 		this.supportCname = supportCname;
 		return this;
 	}
@@ -496,7 +496,7 @@ public class CossClientConfiguration {
 	 * @param enabled
 	 *            True if it's enabled; False if it's disabled.
 	 */
-	public CossClientConfiguration setSLDEnabled(boolean enabled) {
+	public ClientCossConfiguration setSLDEnabled(boolean enabled) {
 		this.sldEnabled = enabled;
 		return this;
 	}

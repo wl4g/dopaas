@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.coss.client;
 
-import com.wl4g.devops.coss.client.config.CossClientConfiguration;
+import com.wl4g.devops.coss.client.config.ClientCossConfiguration;
 import com.wl4g.devops.coss.common.auth.CredentialsProvider;
 import com.wl4g.devops.coss.common.auth.DefaultCredentialProvider;
 
@@ -63,9 +63,9 @@ public abstract class CossClientBuilder {
 	 * @param config
 	 * @return
 	 */
-	public CossClient build(String endpoint, String accessKeyId, String secretAccessKey, CossClientConfiguration config) {
+	public CossClient build(String endpoint, String accessKeyId, String secretAccessKey, ClientCossConfiguration config) {
 		return new CossClientImpl(endpoint, getDefaultCredentialProvider(accessKeyId, secretAccessKey),
-				getClientConfiguration(config));
+				ensureClientConfiguration(config));
 	}
 
 	/**
@@ -79,9 +79,9 @@ public abstract class CossClientBuilder {
 	 * @return
 	 */
 	public CossClient build(String endpoint, String accessKeyId, String secretAccessKey, String securityToken,
-			CossClientConfiguration config) {
+			ClientCossConfiguration config) {
 		return new CossClientImpl(endpoint, getDefaultCredentialProvider(accessKeyId, secretAccessKey, securityToken),
-				getClientConfiguration(config));
+				ensureClientConfiguration(config));
 	}
 
 	/**
@@ -103,8 +103,8 @@ public abstract class CossClientBuilder {
 	 * @param config
 	 * @return
 	 */
-	public CossClient build(String endpoint, CredentialsProvider credsProvider, CossClientConfiguration config) {
-		return new CossClientImpl(endpoint, credsProvider, getClientConfiguration(config));
+	public CossClient build(String endpoint, CredentialsProvider credsProvider, ClientCossConfiguration config) {
+		return new CossClientImpl(endpoint, credsProvider, ensureClientConfiguration(config));
 	}
 
 	/**
@@ -112,8 +112,8 @@ public abstract class CossClientBuilder {
 	 * 
 	 * @return
 	 */
-	private static CossClientConfiguration getClientConfiguration() {
-		return new CossClientConfiguration();
+	private static ClientCossConfiguration getClientConfiguration() {
+		return new ClientCossConfiguration();
 	}
 
 	/**
@@ -122,9 +122,9 @@ public abstract class CossClientBuilder {
 	 * @param config
 	 * @return
 	 */
-	private static CossClientConfiguration getClientConfiguration(CossClientConfiguration config) {
+	private static ClientCossConfiguration ensureClientConfiguration(ClientCossConfiguration config) {
 		if (config == null) {
-			config = new CossClientConfiguration();
+			config = new ClientCossConfiguration();
 		}
 		return config;
 	}

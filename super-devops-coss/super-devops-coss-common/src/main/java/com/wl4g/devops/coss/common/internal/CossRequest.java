@@ -17,6 +17,9 @@ public abstract class CossRequest {
 	private Map<String, String> parameters = new LinkedHashMap<String, String>();
 	private Map<String, String> headers = new LinkedHashMap<String, String>();
 
+	/**
+	 * Additional header names
+	 */
 	private Set<String> additionalHeaderNames = new HashSet<String>();
 
 	public Map<String, String> getParameters() {

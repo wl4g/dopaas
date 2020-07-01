@@ -18,7 +18,7 @@ package com.wl4g.devops.coss.client;
 import java.io.InputStream;
 import java.net.URL;
 
-import com.wl4g.devops.coss.client.config.CossClientConfiguration;
+import com.wl4g.devops.coss.client.config.ClientCossConfiguration;
 import com.wl4g.devops.coss.common.auth.CredentialsProvider;
 import com.wl4g.devops.coss.common.exception.CossException;
 import com.wl4g.devops.coss.common.exception.ServerCossException;
@@ -46,8 +46,10 @@ import com.wl4g.devops.coss.common.model.bucket.BucketMetadata;
  * @since
  */
 public class CossClientImpl implements CossClient {
+	
+	
 
-	public CossClientImpl(String endpoint, CredentialsProvider credsProvider, CossClientConfiguration config) {
+	public CossClientImpl(String endpoint, CredentialsProvider credsProvider, ClientCossConfiguration config) {
 	}
 
 	@Override

@@ -15,10 +15,9 @@
  */
 package com.wl4g.devops.components.tools.common.codec;
 
+import java.nio.charset.Charset;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
-
-import com.google.common.base.Charsets;
 
 /**
  * Um CheckSum algorithmen - zusammenfassung
@@ -36,7 +35,7 @@ public abstract class CheckSums {
 	 * @return
 	 */
 	public static long crc16String(String str) {
-		return crc16(str.getBytes(Charsets.UTF_8));
+		return crc16(str.getBytes(UTF_8));
 	}
 
 	/**
@@ -56,7 +55,7 @@ public abstract class CheckSums {
 	 * @return
 	 */
 	public static long crc32String(String str) {
-		return crc32(str.getBytes(Charsets.UTF_8));
+		return crc32(str.getBytes(UTF_8));
 	}
 
 	/**
@@ -69,6 +68,28 @@ public abstract class CheckSums {
 		CRC32 crc32 = new CRC32();
 		crc32.update(bys);
 		return crc32.getValue();
+	}
+
+	/**
+	 * Die berechnung der CRC64
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static long crc64String(String str) {
+		return crc64(str.getBytes(UTF_8));
+	}
+
+	/**
+	 * Die berechnung der CRC64
+	 * 
+	 * @param bys
+	 * @return
+	 */
+	public static long crc64(byte[] bys) {
+		PureJavaCrc64 crc64 = new PureJavaCrc64();
+		crc64.update(bys, bys.length);
+		return crc64.getValue();
 	}
 
 	/**
@@ -630,5 +651,283 @@ public abstract class CheckSums {
 				0x71E413A9, 0x7B211AB0, 0xB78B1A2E, 0x39041DCD, 0xF5AE1D53, 0x2C8E0FFF, 0xE0240F61, 0x6EAB0882, 0xA201081C,
 				0xA8C40105, 0x646E019B, 0xEAE10678, 0x264B06E6 };
 	}
+
+	/**
+	 * CRC-64 implementation with ability to combine checksums calculated over
+	 * different blocks of data. Standard ECMA-182,
+	 * http://www.ecma-international.org/publications/standards/Ecma-182.htm
+	 */
+	public static class PureJavaCrc64 implements Checksum {
+
+		/* Current CRC value. */
+		private long value;
+
+		public PureJavaCrc64() {
+			this.value = 0;
+		}
+
+		public PureJavaCrc64(long value) {
+			this.value = value;
+		}
+
+		public PureJavaCrc64(byte[] b, int len) {
+			this.value = 0;
+			update(b, len);
+		}
+
+		/**
+		 * Get 8 byte representation of current CRC64 value.
+		 **/
+		public byte[] getBytes() {
+			byte[] b = new byte[8];
+			for (int i = 0; i < 8; i++) {
+				b[7 - i] = (byte) (this.value >>> (i * 8));
+			}
+			return b;
+		}
+
+		/**
+		 * Get long representation of current CRC64 value.
+		 **/
+		@Override
+		public long getValue() {
+			return this.value;
+		}
+
+		/**
+		 * Update CRC64 with new byte block.
+		 **/
+		public void update(byte[] b, int len) {
+			int idx = 0;
+			this.value = ~this.value;
+			while (len > 0) {
+				this.value = table[((int) (this.value ^ b[idx])) & 0xff] ^ (this.value >>> 8);
+				idx++;
+				len--;
+			}
+			this.value = ~this.value;
+		}
+
+		/**
+		 * Update CRC64 with new byte.
+		 **/
+		public void update(byte b) {
+			this.value = ~this.value;
+			this.value = table[((int) (this.value ^ b)) & 0xff] ^ (this.value >>> 8);
+			this.value = ~this.value;
+		}
+
+		@Override
+		public void update(int b) {
+			update((byte) (b & 0xFF));
+		}
+
+		@Override
+		public void update(byte[] b, int off, int len) {
+			for (int i = off; len > 0; len--) {
+				update(b[i++]);
+			}
+		}
+
+		@Override
+		public void reset() {
+			this.value = 0;
+		}
+
+		/**
+		 * Construct new CRC64 instance from byte array.
+		 **/
+		public static PureJavaCrc64 fromBytes(byte[] b) {
+			long l = 0;
+			for (int i = 0; i < 4; i++) {
+				l <<= 8;
+				l ^= (long) b[i] & 0xFF;
+			}
+			return new PureJavaCrc64(l);
+		}
+
+		/*
+		 * Return the CRC-64 of two sequential blocks, where summ1 is the CRC-64
+		 * of the first block, summ2 is the CRC-64 of the second block, and len2
+		 * is the length of the second block.
+		 */
+		public static PureJavaCrc64 combine(PureJavaCrc64 summ1, PureJavaCrc64 summ2, long len2) {
+			// degenerate case.
+			if (len2 == 0) {
+				return new PureJavaCrc64(summ1.getValue());
+			}
+
+			int n;
+			long row;
+			long[] even = new long[GF2_DIM]; // even-power-of-two zeros operator
+			long[] odd = new long[GF2_DIM]; // odd-power-of-two zeros operator
+
+			// put operator for one zero bit in odd
+			odd[0] = POLY; // CRC-64 polynomial
+
+			row = 1;
+			for (n = 1; n < GF2_DIM; n++) {
+				odd[n] = row;
+				row <<= 1;
+			}
+
+			// put operator for two zero bits in even
+			gf2MatrixSquare(even, odd);
+
+			// put operator for four zero bits in odd
+			gf2MatrixSquare(odd, even);
+
+			// apply len2 zeros to crc1 (first square will put the operator for
+			// one
+			// zero byte, eight zero bits, in even)
+			long crc1 = summ1.getValue();
+			long crc2 = summ2.getValue();
+			do {
+				// apply zeros operator for this bit of len2
+				gf2MatrixSquare(even, odd);
+				if ((len2 & 1) == 1)
+					crc1 = gf2MatrixTimes(even, crc1);
+				len2 >>>= 1;
+
+				// if no more bits set, then done
+				if (len2 == 0)
+					break;
+
+				// another iteration of the loop with odd and even swapped
+				gf2MatrixSquare(odd, even);
+				if ((len2 & 1) == 1)
+					crc1 = gf2MatrixTimes(odd, crc1);
+				len2 >>>= 1;
+
+				// if no more bits set, then done
+			} while (len2 != 0);
+
+			// return combined crc.
+			crc1 ^= crc2;
+			return new PureJavaCrc64(crc1);
+		}
+
+		/*
+		 * Return the CRC-64 of two sequential blocks, where summ1 is the CRC-64
+		 * of the first block, summ2 is the CRC-64 of the second block, and len2
+		 * is the length of the second block.
+		 */
+		public static long combine(long crc1, long crc2, long len2) {
+			// degenerate case.
+			if (len2 == 0)
+				return crc1;
+
+			int n;
+			long row;
+			long[] even = new long[GF2_DIM]; // even-power-of-two zeros operator
+			long[] odd = new long[GF2_DIM]; // odd-power-of-two zeros operator
+
+			// put operator for one zero bit in odd
+			odd[0] = POLY; // CRC-64 polynomial
+
+			row = 1;
+			for (n = 1; n < GF2_DIM; n++) {
+				odd[n] = row;
+				row <<= 1;
+			}
+
+			// put operator for two zero bits in even
+			gf2MatrixSquare(even, odd);
+
+			// put operator for four zero bits in odd
+			gf2MatrixSquare(odd, even);
+
+			// apply len2 zeros to crc1 (first square will put the operator for
+			// one
+			// zero byte, eight zero bits, in even)
+			do {
+				// apply zeros operator for this bit of len2
+				gf2MatrixSquare(even, odd);
+				if ((len2 & 1) == 1)
+					crc1 = gf2MatrixTimes(even, crc1);
+				len2 >>>= 1;
+
+				// if no more bits set, then done
+				if (len2 == 0)
+					break;
+
+				// another iteration of the loop with odd and even swapped
+				gf2MatrixSquare(odd, even);
+				if ((len2 & 1) == 1)
+					crc1 = gf2MatrixTimes(odd, crc1);
+				len2 >>>= 1;
+
+				// if no more bits set, then done
+			} while (len2 != 0);
+
+			// return combined crc.
+			crc1 ^= crc2;
+			return crc1;
+		}
+
+		/**
+		 * Gets gf2 matrix times
+		 * 
+		 * @param mat
+		 * @param vec
+		 * @return
+		 */
+		private static long gf2MatrixTimes(long[] mat, long vec) {
+			long sum = 0;
+			int idx = 0;
+			while (vec != 0) {
+				if ((vec & 1) == 1)
+					sum ^= mat[idx];
+				vec >>>= 1;
+				idx++;
+			}
+			return sum;
+		}
+
+		/**
+		 * Gets gf2 matrix square
+		 * 
+		 * @param square
+		 * @param mat
+		 */
+		private static void gf2MatrixSquare(long[] square, long[] mat) {
+			for (int n = 0; n < GF2_DIM; n++)
+				square[n] = gf2MatrixTimes(mat, mat[n]);
+		}
+
+		/**
+		 * ECMA-182
+		 */
+		private final static long POLY = (long) 0xc96c5795d7870f42L;
+
+		/* CRC64 calculation table. */
+		private final static long[] table;
+
+		/**
+		 * dimension of GF(2) vectors (length of CRC)
+		 */
+		private static final int GF2_DIM = 64;
+
+		static {
+			table = new long[256];
+			for (int n = 0; n < 256; n++) {
+				long crc = n;
+				for (int k = 0; k < 8; k++) {
+					if ((crc & 1) == 1) {
+						crc = (crc >>> 1) ^ POLY;
+					} else {
+						crc = (crc >>> 1);
+					}
+				}
+				table[n] = crc;
+			}
+		}
+
+	}
+
+	/**
+	 * Charset of UTF-8
+	 */
+	final public static Charset UTF_8 = Charset.forName("UTF-8");
 
 }

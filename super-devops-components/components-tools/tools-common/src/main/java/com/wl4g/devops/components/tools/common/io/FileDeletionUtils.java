@@ -2,6 +2,13 @@ package com.wl4g.devops.components.tools.common.io;
 
 import java.io.File;
 
+/**
+ * {@link FileDeletionUtils}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年4月1日
+ * @since
+ */
 public class FileDeletionUtils {
 
 	/**
