@@ -23,9 +23,16 @@ import com.wl4g.devops.coss.common.exception.InvalidCredentialsException;
 
 /**
  * Default implementation of {@link CredentialsProvider}.
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年7月1日
+ * @since
  */
 public class DefaultCredentialProvider implements CredentialsProvider {
 
+	/**
+	 * COSS credentials info
+	 */
 	private volatile Credentials creds;
 
 	public DefaultCredentialProvider(Credentials creds) {
@@ -41,7 +48,9 @@ public class DefaultCredentialProvider implements CredentialsProvider {
 		setCredentials(new DefaultCredentials(accessKeyId, secretAccessKey, securityToken));
 	}
 
-	@Override
+	/**
+	 * Sets credentials.
+	 */
 	public synchronized void setCredentials(Credentials creds) {
 		if (creds == null) {
 			throw new InvalidCredentialsException("creds should not be null.");
