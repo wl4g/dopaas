@@ -70,7 +70,7 @@
 		<!-- Compression's. -->
 		<snappy.version>1.1.7.3</snappy.version>
 		<!-- Task scheduler's -->
-		<quartz.version>2.2.2</quartz.version>
+		<quartz.version>2.3.2</quartz.version>
 		<elastic-job.version>2.1.5</elastic-job.version>
 		<curator.version>2.10.0</curator.version>
 		<!-- Serialized's -->
