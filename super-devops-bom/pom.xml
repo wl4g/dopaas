@@ -25,7 +25,7 @@
 		<hibernate-validator.version>6.0.16.Final</hibernate-validator.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>
 		<!-- JDBC's -->
-		<mysql.version>5.1.21</mysql.version>
+		<mysql.version>8.0.16</mysql.version>
 		<derby.version>10.14.2.0</derby.version>
 		<druid.version>1.0.26</druid.version>
 		<hikariCP.version>3.4.5</hikariCP.version>
