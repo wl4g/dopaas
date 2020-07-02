@@ -7,6 +7,8 @@ import java.util.Date;
 public class DnsPrivateResolution extends BaseBean {
     private static final long serialVersionUID = -3298424126317938674L;
 
+    private Integer domainId;
+
     private String host;
 
     private String resolveType;
@@ -21,6 +23,13 @@ public class DnsPrivateResolution extends BaseBean {
 
     private String status;
 
+    public Integer getDomainId() {
+        return domainId;
+    }
+
+    public void setDomainId(Integer domainId) {
+        this.domainId = domainId;
+    }
 
     public String getHost() {
         return host;

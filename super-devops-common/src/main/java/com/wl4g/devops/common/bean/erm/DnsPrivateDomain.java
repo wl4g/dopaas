@@ -3,6 +3,7 @@ package com.wl4g.devops.common.bean.erm;
 import com.wl4g.devops.common.bean.BaseBean;
 
 import java.util.Date;
+import java.util.List;
 
 public class DnsPrivateDomain extends BaseBean {
 
@@ -18,17 +19,7 @@ public class DnsPrivateDomain extends BaseBean {
 
     private Date dueDate;
 
-    private String remark;
-
-    private String createBy;
-
-    private Date createDate;
-
-    private String updateBy;
-
-    private Date updateDate;
-
-    private Integer delFlag;
+    private List<DnsPrivateResolution> dnsPrivateResolutions;
 
     public String getZone() {
         return zone;
@@ -70,4 +61,11 @@ public class DnsPrivateDomain extends BaseBean {
         this.dueDate = dueDate;
     }
 
+    public List<DnsPrivateResolution> getDnsPrivateResolutions() {
+        return dnsPrivateResolutions;
+    }
+
+    public void setDnsPrivateResolutions(List<DnsPrivateResolution> dnsPrivateResolutions) {
+        this.dnsPrivateResolutions = dnsPrivateResolutions;
+    }
 }

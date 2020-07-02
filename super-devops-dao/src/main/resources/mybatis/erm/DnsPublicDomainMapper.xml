@@ -68,4 +68,20 @@
       dns_kind = #{dnsKind,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from erm_dns_public_domain
+    where 1=1
+    <if test="zone != null and zone != ''" >
+      AND `zone` LIKE CONCAT('%','${zone}','%')
+    </if>
+    <!--<if test="organizationCodes != null and organizationCodes.size() > 0">
+      and organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>-->
+  </select>
 </mapper>
