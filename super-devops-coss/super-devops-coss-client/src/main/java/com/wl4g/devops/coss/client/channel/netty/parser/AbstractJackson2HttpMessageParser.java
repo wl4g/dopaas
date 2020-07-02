@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.client.channel.netty.codec;
+package com.wl4g.devops.coss.client.channel.netty.parser;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -28,12 +28,12 @@ import org.springframework.util.TypeUtils;
 
 /**
  * Abstract base class for Jackson based and content type independent
- * {@link HttpMessageCodec} implementations.
+ * {@link HttpMessageParser} implementations.
  *
  * <p>
  * Compatible with Jackson 2.6 and higher, as of Spring 4.3.
  */
-public abstract class AbstractJackson2HttpMessageCodec extends AbstractGenericHttpMessageCodec<Object> {
+public abstract class AbstractJackson2HttpMessageParser extends AbstractGenericHttpMessageParser<Object> {
 
 	protected ObjectMapper objectMapper;
 
@@ -41,16 +41,16 @@ public abstract class AbstractJackson2HttpMessageCodec extends AbstractGenericHt
 
 	private PrettyPrinter ssePrettyPrinter;
 
-	protected AbstractJackson2HttpMessageCodec(ObjectMapper objectMapper) {
+	protected AbstractJackson2HttpMessageParser(ObjectMapper objectMapper) {
 		init(objectMapper);
 	}
 
-	protected AbstractJackson2HttpMessageCodec(ObjectMapper objectMapper, MediaType supportedMediaType) {
+	protected AbstractJackson2HttpMessageParser(ObjectMapper objectMapper, MediaType supportedMediaType) {
 		super(supportedMediaType);
 		init(objectMapper);
 	}
 
-	protected AbstractJackson2HttpMessageCodec(ObjectMapper objectMapper, MediaType... supportedMediaTypes) {
+	protected AbstractJackson2HttpMessageParser(ObjectMapper objectMapper, MediaType... supportedMediaTypes) {
 		super(supportedMediaTypes);
 		init(objectMapper);
 	}

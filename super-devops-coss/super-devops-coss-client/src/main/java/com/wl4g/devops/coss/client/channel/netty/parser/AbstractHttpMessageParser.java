@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.client.channel.netty.codec;
+package com.wl4g.devops.coss.client.channel.netty.parser;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,7 +16,7 @@ import com.wl4g.devops.coss.client.channel.netty.HttpHeaders;
 import com.wl4g.devops.coss.client.channel.netty.MediaType;
 
 /**
- * Abstract base class for most {@link HttpMessageCodec} implementations.
+ * Abstract base class for most {@link HttpMessageParser} implementations.
  *
  * <p>
  * This base class adds support for setting supported {@code MediaTypes},
@@ -24,7 +24,7 @@ import com.wl4g.devops.coss.client.channel.netty.MediaType;
  * property. It also adds support for {@code Content-Type} and
  * {@code Content-Length} when writing to output messages.
  */
-public abstract class AbstractHttpMessageCodec<T> implements HttpMessageCodec<T> {
+public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<T> {
 
 	/** Logger available to subclasses */
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -39,7 +39,7 @@ public abstract class AbstractHttpMessageCodec<T> implements HttpMessageCodec<T>
 	 * 
 	 * @see #setSupportedMediaTypes
 	 */
-	protected AbstractHttpMessageCodec() {
+	protected AbstractHttpMessageParser() {
 	}
 
 	/**
@@ -49,7 +49,7 @@ public abstract class AbstractHttpMessageCodec<T> implements HttpMessageCodec<T>
 	 * @param supportedMediaType
 	 *            the supported media type
 	 */
-	protected AbstractHttpMessageCodec(MediaType supportedMediaType) {
+	protected AbstractHttpMessageParser(MediaType supportedMediaType) {
 		setSupportedMediaTypes(Collections.singletonList(supportedMediaType));
 	}
 
@@ -60,7 +60,7 @@ public abstract class AbstractHttpMessageCodec<T> implements HttpMessageCodec<T>
 	 * @param supportedMediaTypes
 	 *            the supported media types
 	 */
-	protected AbstractHttpMessageCodec(MediaType... supportedMediaTypes) {
+	protected AbstractHttpMessageParser(MediaType... supportedMediaTypes) {
 		setSupportedMediaTypes(Arrays.asList(supportedMediaTypes));
 	}
 
@@ -74,7 +74,7 @@ public abstract class AbstractHttpMessageCodec<T> implements HttpMessageCodec<T>
 	 *            the supported media types
 	 * @since 4.3
 	 */
-	protected AbstractHttpMessageCodec(Charset defaultCharset, MediaType... supportedMediaTypes) {
+	protected AbstractHttpMessageParser(Charset defaultCharset, MediaType... supportedMediaTypes) {
 		this.defaultCharset = defaultCharset;
 		setSupportedMediaTypes(Arrays.asList(supportedMediaTypes));
 	}

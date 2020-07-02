@@ -1,8 +1,8 @@
-package com.wl4g.devops.coss.client.channel.netty.codec;
+package com.wl4g.devops.coss.client.channel.netty.parser;
 
 /**
- * Thrown by {@link HttpMessageCodec} implementations when the
- * {@link HttpMessageCodec#read} method fails.
+ * Thrown by {@link HttpMessageParser} implementations when the
+ * {@link HttpMessageParser#read} method fails.
  */
 @SuppressWarnings("serial")
 public class HttpMessageNotReadableException extends RuntimeException {

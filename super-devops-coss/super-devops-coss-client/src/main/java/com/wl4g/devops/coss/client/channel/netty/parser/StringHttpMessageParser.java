@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.client.channel.netty.codec;
+package com.wl4g.devops.coss.client.channel.netty.parser;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -10,7 +10,7 @@ import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
 import com.wl4g.devops.coss.client.channel.netty.MediaType;
 
 /**
- * Implementation of {@link HttpMessageCodec} that can read and write
+ * Implementation of {@link HttpMessageParser} that can read and write
  * strings.
  *
  * <p>
@@ -23,7 +23,7 @@ import com.wl4g.devops.coss.client.channel.netty.MediaType;
  * @author Juergen Hoeller
  * @since 3.0
  */
-public class StringHttpMessageCodec extends AbstractHttpMessageCodec<String> {
+public class StringHttpMessageParser extends AbstractHttpMessageParser<String> {
 
 	public static final Charset DEFAULT_CHARSET = Charset.forName("ISO-8859-1");
 
@@ -37,7 +37,7 @@ public class StringHttpMessageCodec extends AbstractHttpMessageCodec<String> {
 	 * 
 	 * @see #StringHttpMessageConverter(Charset)
 	 */
-	public StringHttpMessageCodec() {
+	public StringHttpMessageParser() {
 		this(DEFAULT_CHARSET);
 	}
 
@@ -45,7 +45,7 @@ public class StringHttpMessageCodec extends AbstractHttpMessageCodec<String> {
 	 * A constructor accepting a default charset to use if the requested content
 	 * type does not specify one.
 	 */
-	public StringHttpMessageCodec(Charset defaultCharset) {
+	public StringHttpMessageParser(Charset defaultCharset) {
 		super(defaultCharset, MediaType.TEXT_PLAIN, MediaType.ALL);
 	}
 

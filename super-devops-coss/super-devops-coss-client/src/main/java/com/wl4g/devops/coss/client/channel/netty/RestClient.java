@@ -23,8 +23,8 @@ import org.springframework.web.util.UriTemplateHandler;
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.lang.ClassUtils2;
-import com.wl4g.devops.coss.client.channel.netty.codec.GenericHttpMessageCodec;
-import com.wl4g.devops.coss.client.channel.netty.codec.HttpMessageCodec;
+import com.wl4g.devops.coss.client.channel.netty.parser.GenericHttpMessageParser;
+import com.wl4g.devops.coss.client.channel.netty.parser.HttpMessageParser;
 
 import io.netty.handler.codec.http.HttpMethod;
 
@@ -38,7 +38,7 @@ import io.netty.handler.codec.http.HttpMethod;
  * addition to the generalized {@code exchange} and {@code execute} methods that
  * support of less frequent cases.
  *
- * @see HttpMessageCodec
+ * @see HttpMessageParser
  * @see RequestCallback
  * @see ResponseExtractor
  * @see ResponseErrorHandler
@@ -56,7 +56,7 @@ public class RestClient {
 				&& ClassUtils2.isPresent("com.fasterxml.jackson.core.JsonGenerator", classLoader);
 	}
 
-	private final List<HttpMessageCodec<?>> messageConverters = new ArrayList<>();
+	private final List<HttpMessageParser<?>> messageConverters = new ArrayList<>();
 
 	private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
 
@@ -66,16 +66,16 @@ public class RestClient {
 
 	/**
 	 * Create a new instance of the {@link RestClient} using default settings.
-	 * Default {@link HttpMessageCodec HttpMessageConverters} are
+	 * Default {@link HttpMessageParser HttpMessageConverters} are
 	 * initialized.
 	 */
 	public RestClient() {
-		this.messageConverters.add(new ByteArrayHttpMessageCodec());
-		this.messageConverters.add(new StringHttpMessageCodec());
-		this.messageConverters.add(new ResourceHttpMessageCodec(false));
+		this.messageConverters.add(new ByteArrayHttpMessageParser());
+		this.messageConverters.add(new StringHttpMessageParser());
+		this.messageConverters.add(new ResourceHttpMessageParser(false));
 
 		if (jackson2Present) {
-			this.messageConverters.add(new MappingJackson2HttpMessageCodec());
+			this.messageConverters.add(new MappingJackson2HttpMessageParser());
 		} else if (jsonbPresent) {
 			this.messageConverters.add(new JsonbHttpMessageConverter());
 		}
@@ -99,13 +99,13 @@ public class RestClient {
 
 	/**
 	 * Create a new instance of the {@link RestClient} using the given list of
-	 * {@link HttpMessageCodec} to use.
+	 * {@link HttpMessageParser} to use.
 	 * 
 	 * @param messageConverters
-	 *            the list of {@link HttpMessageCodec} to use
+	 *            the list of {@link HttpMessageParser} to use
 	 * @since 3.2.7
 	 */
-	public RestClient(List<HttpMessageCodec<?>> messageConverters) {
+	public RestClient(List<HttpMessageParser<?>> messageConverters) {
 		validateConverters(messageConverters);
 		this.messageConverters.addAll(messageConverters);
 		this.uriTemplateHandler = initUriTemplateHandler();
@@ -124,7 +124,7 @@ public class RestClient {
 	 * These converters are used to convert from and to HTTP requests and
 	 * responses.
 	 */
-	public void setMessageConverters(List<HttpMessageCodec<?>> messageConverters) {
+	public void setMessageConverters(List<HttpMessageParser<?>> messageConverters) {
 		validateConverters(messageConverters);
 		// Take getMessageConverters() List as-is when passed in here
 		if (this.messageConverters != messageConverters) {
@@ -133,7 +133,7 @@ public class RestClient {
 		}
 	}
 
-	private void validateConverters(List<HttpMessageCodec<?>> messageConverters) {
+	private void validateConverters(List<HttpMessageParser<?>> messageConverters) {
 		Assert2.notEmpty(messageConverters, "At least one HttpMessageConverter is required");
 		Assert2.noNullElements(messageConverters, "The HttpMessageConverter list must not contain null elements");
 	}
@@ -143,7 +143,7 @@ public class RestClient {
 	 * <p>
 	 * The returned {@link List} is active and may get appended to.
 	 */
-	public List<HttpMessageCodec<?>> getMessageConverters() {
+	public List<HttpMessageParser<?>> getMessageConverters() {
 		return this.messageConverters;
 	}
 
@@ -1176,18 +1176,18 @@ public class RestClient {
 			}
 		}
 
-		private boolean canReadResponse(Type responseType, HttpMessageCodec<?> converter) {
+		private boolean canReadResponse(Type responseType, HttpMessageParser<?> converter) {
 			Class<?> responseClass = (responseType instanceof Class ? (Class<?>) responseType : null);
 			if (responseClass != null) {
 				return converter.canRead(responseClass, null);
-			} else if (converter instanceof GenericHttpMessageCodec) {
-				GenericHttpMessageCodec<?> genericConverter = (GenericHttpMessageCodec<?>) converter;
+			} else if (converter instanceof GenericHttpMessageParser) {
+				GenericHttpMessageParser<?> genericConverter = (GenericHttpMessageParser<?>) converter;
 				return genericConverter.canRead(responseType, null, null);
 			}
 			return false;
 		}
 
-		private Stream<MediaType> getSupportedMediaTypes(HttpMessageCodec<?> messageConverter) {
+		private Stream<MediaType> getSupportedMediaTypes(HttpMessageParser<?> messageConverter) {
 			return messageConverter.getSupportedMediaTypes().stream().map(mediaType -> {
 				if (mediaType.getCharset() != null) {
 					return new MediaType(mediaType.getType(), mediaType.getSubtype());
@@ -1241,9 +1241,9 @@ public class RestClient {
 				HttpHeaders httpHeaders = httpRequest.getHeaders();
 				HttpHeaders requestHeaders = this.requestEntity.getHeaders();
 				MediaType requestContentType = requestHeaders.getContentType();
-				for (HttpMessageCodec<?> messageConverter : getMessageConverters()) {
-					if (messageConverter instanceof GenericHttpMessageCodec) {
-						GenericHttpMessageCodec<Object> genericConverter = (GenericHttpMessageCodec<Object>) messageConverter;
+				for (HttpMessageParser<?> messageConverter : getMessageConverters()) {
+					if (messageConverter instanceof GenericHttpMessageParser) {
+						GenericHttpMessageParser<Object> genericConverter = (GenericHttpMessageParser<Object>) messageConverter;
 						if (genericConverter.canWrite(requestBodyType, requestBodyClass, requestContentType)) {
 							if (!requestHeaders.isEmpty()) {
 								requestHeaders.forEach((key, values) -> httpHeaders.put(key, new LinkedList<>(values)));
@@ -1257,7 +1257,7 @@ public class RestClient {
 							requestHeaders.forEach((key, values) -> httpHeaders.put(key, new LinkedList<>(values)));
 						}
 						logBody(requestBody, requestContentType, messageConverter);
-						((HttpMessageCodec<Object>) messageConverter).write(requestBody, requestContentType, httpRequest);
+						((HttpMessageParser<Object>) messageConverter).write(requestBody, requestContentType, httpRequest);
 						return;
 					}
 				}
@@ -1269,7 +1269,7 @@ public class RestClient {
 			}
 		}
 
-		private void logBody(Object body, @Nullable MediaType mediaType, HttpMessageCodec<?> converter) {
+		private void logBody(Object body, @Nullable MediaType mediaType, HttpMessageParser<?> converter) {
 			if (log.isDebugEnabled()) {
 				if (mediaType != null) {
 					log.debug("Writing [" + body + "] as \"" + mediaType + "\"");

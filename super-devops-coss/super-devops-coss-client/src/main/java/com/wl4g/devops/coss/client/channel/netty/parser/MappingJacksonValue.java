@@ -1,10 +1,10 @@
-package com.wl4g.devops.coss.client.channel.netty.codec;
+package com.wl4g.devops.coss.client.channel.netty.parser;
 
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 
 /**
  * A simple holder for the POJO to serialize via
- * {@link MappingJackson2HttpMessageCodec} along with further serialization
+ * {@link MappingJackson2HttpMessageParser} along with further serialization
  * instructions to be passed in to the converter.
  *
  * <p>
