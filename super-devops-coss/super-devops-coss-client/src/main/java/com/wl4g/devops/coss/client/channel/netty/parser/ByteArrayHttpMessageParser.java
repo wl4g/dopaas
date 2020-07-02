@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.client.channel.netty.codec;
+package com.wl4g.devops.coss.client.channel.netty.parser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
 import com.wl4g.devops.coss.client.channel.netty.MediaType;
 
 /**
- * Implementation of {@link HttpMessageCodec} that can read and write byte
+ * Implementation of {@link HttpMessageParser} that can read and write byte
  * arrays.
  *
  * <p>
@@ -20,12 +20,12 @@ import com.wl4g.devops.coss.client.channel.netty.MediaType;
  * @author Juergen Hoeller
  * @since 3.0
  */
-public class ByteArrayHttpMessageCodec extends AbstractHttpMessageCodec<byte[]> {
+public class ByteArrayHttpMessageParser extends AbstractHttpMessageParser<byte[]> {
 
 	/**
 	 * Create a new instance of the {@code ByteArrayHttpMessageConverter}.
 	 */
-	public ByteArrayHttpMessageCodec() {
+	public ByteArrayHttpMessageParser() {
 		super(new MediaType("application", "octet-stream"), MediaType.ALL);
 	}
 

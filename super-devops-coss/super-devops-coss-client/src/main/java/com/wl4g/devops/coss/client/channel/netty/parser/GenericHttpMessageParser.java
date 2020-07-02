@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.client.channel.netty.codec;
+package com.wl4g.devops.coss.client.channel.netty.parser;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -6,16 +6,16 @@ import java.lang.reflect.Type;
 import com.wl4g.devops.coss.client.channel.netty.MediaType;
 
 /**
- * A specialization of {@link HttpMessageCodec} that can convert an HTTP
+ * A specialization of {@link HttpMessageParser} that can convert an HTTP
  * request into a target object of a specified generic type and a source object
  * of a specified generic type into an HTTP response.
  */
-public interface GenericHttpMessageCodec<T> extends HttpMessageCodec<T> {
+public interface GenericHttpMessageParser<T> extends HttpMessageParser<T> {
 
 	/**
 	 * Indicates whether the given type can be read by this converter. This
 	 * method should perform the same checks than
-	 * {@link HttpMessageCodec#canRead(Class, MediaType)} with additional
+	 * {@link HttpMessageParser#canRead(Class, MediaType)} with additional
 	 * ones related to the generic type.
 	 * 
 	 * @param type
@@ -58,7 +58,7 @@ public interface GenericHttpMessageCodec<T> extends HttpMessageCodec<T> {
 	 * Indicates whether the given class can be written by this converter.
 	 * <p>
 	 * This method should perform the same checks than
-	 * {@link HttpMessageCodec#canWrite(Class, MediaType)} with additional
+	 * {@link HttpMessageParser#canWrite(Class, MediaType)} with additional
 	 * ones related to the generic type.
 	 * 
 	 * @param type

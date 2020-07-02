@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.client.channel.netty.codec;
+package com.wl4g.devops.coss.client.channel.netty.parser;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -8,11 +8,11 @@ import com.wl4g.devops.coss.client.channel.netty.HttpHeaders;
 import com.wl4g.devops.coss.client.channel.netty.MediaType;
 
 /**
- * Abstract base class for most {@link GenericHttpMessageCodec}
+ * Abstract base class for most {@link GenericHttpMessageParser}
  * implementations.
  */
-public abstract class AbstractGenericHttpMessageCodec<T> extends AbstractHttpMessageCodec<T>
-		implements GenericHttpMessageCodec<T> {
+public abstract class AbstractGenericHttpMessageParser<T> extends AbstractHttpMessageParser<T>
+		implements GenericHttpMessageParser<T> {
 
 	/**
 	 * Construct an {@code AbstractGenericHttpMessageConverter} with no
@@ -20,7 +20,7 @@ public abstract class AbstractGenericHttpMessageCodec<T> extends AbstractHttpMes
 	 * 
 	 * @see #setSupportedMediaTypes
 	 */
-	protected AbstractGenericHttpMessageCodec() {
+	protected AbstractGenericHttpMessageParser() {
 	}
 
 	/**
@@ -30,7 +30,7 @@ public abstract class AbstractGenericHttpMessageCodec<T> extends AbstractHttpMes
 	 * @param supportedMediaType
 	 *            the supported media type
 	 */
-	protected AbstractGenericHttpMessageCodec(MediaType supportedMediaType) {
+	protected AbstractGenericHttpMessageParser(MediaType supportedMediaType) {
 		super(supportedMediaType);
 	}
 
@@ -41,7 +41,7 @@ public abstract class AbstractGenericHttpMessageCodec<T> extends AbstractHttpMes
 	 * @param supportedMediaTypes
 	 *            the supported media types
 	 */
-	protected AbstractGenericHttpMessageCodec(MediaType... supportedMediaTypes) {
+	protected AbstractGenericHttpMessageParser(MediaType... supportedMediaTypes) {
 		super(supportedMediaTypes);
 	}
 

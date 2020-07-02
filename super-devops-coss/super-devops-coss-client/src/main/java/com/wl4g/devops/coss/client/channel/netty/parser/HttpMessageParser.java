@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.client.channel.netty.codec;
+package com.wl4g.devops.coss.client.channel.netty.parser;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +13,7 @@ import com.wl4g.devops.coss.client.channel.netty.MediaType;
  * @author Juergen Hoeller
  * @since 3.0
  */
-public interface HttpMessageCodec<T> {
+public interface HttpMessageParser<T> {
 
 	/**
 	 * Indicates whether the given class can be read by this converter.

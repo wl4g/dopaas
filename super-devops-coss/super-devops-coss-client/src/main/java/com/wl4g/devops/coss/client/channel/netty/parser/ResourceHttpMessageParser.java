@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.client.channel.netty.codec;
+package com.wl4g.devops.coss.client.channel.netty.parser;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import org.springframework.util.StreamUtils;
 import com.wl4g.devops.components.tools.common.lang.ClassUtils2;
 
 /**
- * Implementation of {@link HttpMessageCodec} that can read/write
+ * Implementation of {@link HttpMessageParser} that can read/write
  * {@link Resource Resources} and supports byte range requests.
  *
  * <p>
@@ -30,12 +30,12 @@ import com.wl4g.devops.components.tools.common.lang.ClassUtils2;
  * @author Kazuki Shimizu
  * @since 3.0.2
  */
-public class ResourceHttpMessageCodec extends AbstractHttpMessageCodec<Resource> {
+public class ResourceHttpMessageParser extends AbstractHttpMessageParser<Resource> {
 
 	private static final boolean jafPresent = ClassUtils2.isPresent("javax.activation.FileTypeMap",
-			ResourceHttpMessageCodec.class.getClassLoader());
+			ResourceHttpMessageParser.class.getClassLoader());
 
-	public ResourceHttpMessageCodec() {
+	public ResourceHttpMessageParser() {
 		super(MediaType.ALL);
 	}
 

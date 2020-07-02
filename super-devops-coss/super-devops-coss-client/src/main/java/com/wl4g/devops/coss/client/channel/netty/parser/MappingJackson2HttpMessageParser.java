@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.client.channel.netty.codec;
+package com.wl4g.devops.coss.client.channel.netty.parser;
 
 import java.io.IOException;
 
@@ -27,26 +27,26 @@ import com.wl4g.devops.coss.client.channel.netty.MediaType;
  *
  * <p>
  */
-public class MappingJackson2HttpMessageCodec extends AbstractJackson2HttpMessageCodec {
+public class MappingJackson2HttpMessageParser extends AbstractJackson2HttpMessageParser {
 
 	private String jsonPrefix;
 
 	/**
-	 * Construct a new {@link MappingJackson2HttpMessageCodec} using default
+	 * Construct a new {@link MappingJackson2HttpMessageParser} using default
 	 * configuration provided by {@link Jackson2ObjectMapperBuilder}.
 	 */
-	public MappingJackson2HttpMessageCodec() {
+	public MappingJackson2HttpMessageParser() {
 		this(Jackson2ObjectMapperBuilder.json().build());
 	}
 
 	/**
-	 * Construct a new {@link MappingJackson2HttpMessageCodec} with a custom
+	 * Construct a new {@link MappingJackson2HttpMessageParser} with a custom
 	 * {@link ObjectMapper}. You can use {@link Jackson2ObjectMapperBuilder} to
 	 * build it easily.
 	 * 
 	 * @see Jackson2ObjectMapperBuilder#json()
 	 */
-	public MappingJackson2HttpMessageCodec(ObjectMapper objectMapper) {
+	public MappingJackson2HttpMessageParser(ObjectMapper objectMapper) {
 		super(objectMapper, MediaType.APPLICATION_JSON, new MediaType("application", "*+json"));
 	}
 
