@@ -62,7 +62,8 @@ abstract class AbstractFileResolvingResource extends AbstractStreamResource {
 	 * This implementation returns a File reference for the underlying class
 	 * path resource, provided that it refers to a file in the file system.
 	 * 
-	 * @see com.wl4g.devops.tool.common.resource.resolver.ResourceUtils2.util.ResourceUtils#getFile(java.net.URL, String)
+	 * @see com.wl4g.devops.tool.common.resource.resolver.ResourceUtils2.util.ResourceUtils#getFile(java.net.URL,
+	 *      String)
 	 */
 	@Override
 	public File getFile() throws IOException {
@@ -95,7 +96,8 @@ abstract class AbstractFileResolvingResource extends AbstractStreamResource {
 	 * This implementation returns a File reference for the given URI-identified
 	 * resource, provided that it refers to a file in the file system.
 	 * 
-	 * @see com.wl4g.devops.tool.common.resource.resolver.ResourceUtils2.util.ResourceUtils#getFile(java.net.URI, String)
+	 * @see com.wl4g.devops.tool.common.resource.resolver.ResourceUtils2.util.ResourceUtils#getFile(java.net.URI,
+	 *      String)
 	 */
 	protected File getFile(URI uri) throws IOException {
 		if (uri.getScheme().startsWith(ResourceUtils2.URL_PROTOCOL_VFS)) {

@@ -17,7 +17,6 @@ package com.wl4g.devops.coss.natives;
 
 import java.nio.file.FileSystems;
 
-import com.wl4g.devops.coss.common.endpoint.CossProvider;
 import com.wl4g.devops.coss.config.NativeFSCossProperties;
 
 /**

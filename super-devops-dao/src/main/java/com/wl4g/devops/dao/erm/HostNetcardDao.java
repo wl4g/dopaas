@@ -7,17 +7,18 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface HostNetcardDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(HostNetcard record);
+	int insert(HostNetcard record);
 
-    int insertSelective(HostNetcard record);
+	int insertSelective(HostNetcard record);
 
-    HostNetcard selectByPrimaryKey(Integer id);
+	HostNetcard selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(HostNetcard record);
+	int updateByPrimaryKeySelective(HostNetcard record);
 
-    int updateByPrimaryKey(HostNetcard record);
+	int updateByPrimaryKey(HostNetcard record);
 
-    List<Host> list(@Param("organizationCodes")List<String> organizationCodes, @Param("hostId") Integer hostId, @Param("name") String name);
+	List<Host> list(@Param("organizationCodes") List<String> organizationCodes, @Param("hostId") Integer hostId,
+			@Param("name") String name);
 }

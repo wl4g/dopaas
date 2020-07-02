@@ -28,8 +28,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.wl4g.devops.coss.common.auth.RequestSigner;
 import com.wl4g.devops.coss.common.exception.ClientCossException;
 import com.wl4g.devops.coss.common.internal.SignVersion;
-import com.wl4g.devops.coss.common.utils.COSSConstants;
-import com.wl4g.devops.coss.common.utils.LocalizedHelper;
+import com.wl4g.devops.coss.common.internal.define.COSSConstants;
+import com.wl4g.devops.coss.common.utils.LocalizedManager;
 import com.wl4g.devops.coss.common.utils.VersionInfoUtils;
 
 /**
@@ -161,7 +161,7 @@ public class ClientCossConfiguration {
 	public void setProxyPort(int proxyPort) throws ClientCossException {
 		if (proxyPort <= 0) {
 			throw new ClientCossException(
-					LocalizedHelper.getInstance(COSSConstants.RESOURCE_NAME_COMMON).getString("ParameterIsInvalid"), null);
+					LocalizedManager.getInstance(COSSConstants.RESOURCE_NAME_COMMON).getString("ParameterIsInvalid"), null);
 		}
 		this.proxyPort = proxyPort;
 	}

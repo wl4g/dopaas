@@ -6,21 +6,21 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface DockerInstanceDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int deleteByDockerId(Integer dockerId);
+	int deleteByDockerId(Integer dockerId);
 
-    int insert(DockerInstance record);
+	int insert(DockerInstance record);
 
-    int insertSelective(DockerInstance record);
+	int insertSelective(DockerInstance record);
 
-    DockerInstance selectByPrimaryKey(Integer id);
+	DockerInstance selectByPrimaryKey(Integer id);
 
-    List<Integer> selectHostIdByDockerId(Integer dockerId);
+	List<Integer> selectHostIdByDockerId(Integer dockerId);
 
-    int updateByPrimaryKeySelective(DockerInstance record);
+	int updateByPrimaryKeySelective(DockerInstance record);
 
-    int updateByPrimaryKey(DockerInstance record);
+	int updateByPrimaryKey(DockerInstance record);
 
-    int insertBatch(@Param("dockerInstances") List<DockerInstance> dockerInstances);
+	int insertBatch(@Param("dockerInstances") List<DockerInstance> dockerInstances);
 }

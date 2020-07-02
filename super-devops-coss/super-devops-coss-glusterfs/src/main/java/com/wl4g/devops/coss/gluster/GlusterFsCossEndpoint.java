@@ -20,7 +20,6 @@ package com.wl4g.devops.coss.gluster;
 
 import static java.nio.file.FileSystems.*;
 
-import com.wl4g.devops.coss.common.endpoint.CossProvider;
 import com.wl4g.devops.coss.gluster.config.GlusterFsCossProperties;
 import com.wl4g.devops.coss.natives.StandardFSCossEndpoint;
 

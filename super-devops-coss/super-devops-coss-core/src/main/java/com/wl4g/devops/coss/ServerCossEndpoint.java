@@ -22,8 +22,8 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.wl4g.devops.common.framework.operator.Operator;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
-import com.wl4g.devops.coss.common.endpoint.CossEndpoint;
-import com.wl4g.devops.coss.common.endpoint.CossProvider;
+import com.wl4g.devops.coss.common.CossEndpoint;
+import com.wl4g.devops.coss.common.CossEndpoint.CossProvider;
 import com.wl4g.devops.coss.common.model.Owner;
 
 /**

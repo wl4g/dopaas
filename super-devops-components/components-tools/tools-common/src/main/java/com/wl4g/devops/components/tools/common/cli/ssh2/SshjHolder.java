@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static com.wl4g.devops.components.tools.common.io.ByteStreams2.readFullyToString;
+import static com.wl4g.devops.components.tools.common.io.ByteStreamUtils.readFullyToString;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
 import static java.util.Objects.isNull;
@@ -67,7 +67,7 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 
 		try {
 			// Transfer get file.
-			doScpTransfer(host, user, pemPrivateKey,password, scp -> {
+			doScpTransfer(host, user, pemPrivateKey, password, scp -> {
 				scp.download(remoteFilePath, new FileSystemFile(localFile));
 			});
 
@@ -89,14 +89,15 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 	 * @throws Exception
 	 */
 	@Override
-	public void scpPutFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteDir) throws Exception {
+	public void scpPutFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteDir)
+			throws Exception {
 		notNull(localFile, "Transfer localFile must not be null.");
 		hasText(remoteDir, "Transfer remoteDir can't empty.");
 		log.debug("SSH2 transfer file from {} to {}@{}:{}", localFile.getAbsolutePath(), user, host, remoteDir);
 
 		try {
 			// Transfer send file.
-			doScpTransfer(host, user, pemPrivateKey,password, scp -> {
+			doScpTransfer(host, user, pemPrivateKey, password, scp -> {
 				// scp.upload(new FileSystemFile(localFile), remoteDir);
 				scp.newSCPUploadClient().copy(new FileSystemFile(localFile), remoteDir, ScpCommandLine.EscapeMode.NoEscape);
 			});
@@ -119,8 +120,8 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 	 * @throws IOException
 	 */
 	@Override
-	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, String password, CallbackFunction<SCPFileTransfer> processor)
-			throws Exception {
+	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, String password,
+			CallbackFunction<SCPFileTransfer> processor) throws Exception {
 		hasText(host, "Transfer host can't empty.");
 		hasText(user, "Transfer user can't empty.");
 		notNull(processor, "Transfer processor can't null.");
@@ -160,9 +161,9 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 
 	// --- Execution commands. ---
 
-	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String password, String command, long timeoutMs)
-			throws Exception {
-		return execWaitForComplete(host, user, pemPrivateKey,password, command, cmd -> {
+	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String password, String command,
+			long timeoutMs) throws Exception {
+		return execWaitForComplete(host, user, pemPrivateKey, password, command, cmd -> {
 			String message = null, errmsg = null;
 			if (nonNull(cmd.getInputStream())) {
 				message = readFullyToString(cmd.getInputStream());
@@ -178,7 +179,7 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 	@Override
 	public <T> T execWaitForComplete(String host, String user, char[] pemPrivateKey, String password, String command,
 			ProcessFunction<Session.Command, T> processor, long timeoutMs) throws Exception {
-		return doExecCommand(host, user, pemPrivateKey,password, command, cmd -> {
+		return doExecCommand(host, user, pemPrivateKey, password, command, cmd -> {
 			// Wait for completed by condition.
 			cmd.join(timeoutMs, TimeUnit.MILLISECONDS);
 			return processor.process(cmd);
@@ -206,11 +207,11 @@ public class SshjHolder extends SSH2Holders<Session.Command, SCPFileTransfer> {
 			ssh.addHostKeyVerifier(new PromiscuousVerifier());
 			ssh.connect(host);
 
-			if(!Collections2.isEmptyArray(pemPrivateKey)){
+			if (!Collections2.isEmptyArray(pemPrivateKey)) {
 				KeyProvider keyProvider = ssh.loadKeys(new String(pemPrivateKey), null, null);
 				ssh.authPublickey(user, keyProvider);
-			}else{
-				ssh.authPassword(user,password);
+			} else {
+				ssh.authPassword(user, password);
 			}
 			session = ssh.startSession();
 			// TODO

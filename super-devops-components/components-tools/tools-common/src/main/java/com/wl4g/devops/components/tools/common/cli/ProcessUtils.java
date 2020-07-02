@@ -42,7 +42,7 @@ import static java.lang.System.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
-import static com.wl4g.devops.components.tools.common.io.ByteStreams2.*;
+import static com.wl4g.devops.components.tools.common.io.ByteStreamUtils.*;
 import static com.wl4g.devops.components.tools.common.io.FileIOUtils.ensureFile;
 import static com.wl4g.devops.components.tools.common.io.FileIOUtils.writeFile;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;

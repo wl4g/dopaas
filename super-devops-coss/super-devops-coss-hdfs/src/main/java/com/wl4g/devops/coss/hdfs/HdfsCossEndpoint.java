@@ -16,7 +16,6 @@
 package com.wl4g.devops.coss.hdfs;
 
 import com.wl4g.devops.coss.ServerCossEndpoint;
-import com.wl4g.devops.coss.common.endpoint.CossProvider;
 import com.wl4g.devops.coss.common.exception.CossException;
 import com.wl4g.devops.coss.common.exception.ServerCossException;
 import com.wl4g.devops.coss.common.model.bucket.Bucket;

@@ -33,6 +33,7 @@ public interface HostDao {
 
 	int updateByPrimaryKey(Host record);
 
-	List<Host> list(@Param("organizationCodes")List<String> organizationCodes, @Param("name") String name, @Param("hostname") String hostname, @Param("idcId") Integer idcId);
+	List<Host> list(@Param("organizationCodes") List<String> organizationCodes, @Param("name") String name,
+			@Param("hostname") String hostname, @Param("idcId") Integer idcId);
 
 }

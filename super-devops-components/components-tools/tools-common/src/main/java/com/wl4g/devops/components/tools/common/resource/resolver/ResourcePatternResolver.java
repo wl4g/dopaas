@@ -54,8 +54,8 @@ import com.wl4g.devops.components.tools.common.resource.StreamResource;
  * context) can be checked whether it implements this extended interface too.
  *
  * <p>
- * {@link ClassPathResourcePatternResolver} is a standalone implementation
- * that is usable outside an ApplicationContext, also used by
+ * {@link ClassPathResourcePatternResolver} is a standalone implementation that
+ * is usable outside an ApplicationContext, also used by
  * {@link ResourceArrayPropertyEditor} for populating Resource array bean
  * properties.
  *

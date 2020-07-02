@@ -29,7 +29,7 @@ import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders;
 import com.wl4g.devops.components.tools.common.cli.ssh2.SshjHolder;
 import com.wl4g.devops.components.tools.common.resource.ResourceUtils2;
 
-import static com.wl4g.devops.components.tools.common.io.ByteStreams2.readFullyToString;
+import static com.wl4g.devops.components.tools.common.io.ByteStreamUtils.readFullyToString;
 import static java.util.Objects.nonNull;
 
 /**

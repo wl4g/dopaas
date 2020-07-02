@@ -81,8 +81,8 @@ public abstract class SSH2Holders<S, F> {
 	 * @param remoteFilePath
 	 * @throws Exception
 	 */
-	public abstract void scpGetFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteFilePath)
-			throws Exception;
+	public abstract void scpGetFile(String host, String user, char[] pemPrivateKey, String password, File localFile,
+			String remoteFilePath) throws Exception;
 
 	/**
 	 * Transfer put file to remote host directory.
@@ -94,8 +94,8 @@ public abstract class SSH2Holders<S, F> {
 	 * @param remoteDir
 	 * @throws Exception
 	 */
-	public abstract void scpPutFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteDir)
-			throws Exception;
+	public abstract void scpPutFile(String host, String user, char[] pemPrivateKey, String password, File localFile,
+			String remoteDir) throws Exception;
 
 	/**
 	 * Perform file transfer with remote host, including scp.put/upload or
@@ -107,8 +107,8 @@ public abstract class SSH2Holders<S, F> {
 	 * @param processor
 	 * @throws IOException
 	 */
-	protected abstract void doScpTransfer(String host, String user, char[] pemPrivateKey, String password, CallbackFunction<F> processor)
-			throws Exception;
+	protected abstract void doScpTransfer(String host, String user, char[] pemPrivateKey, String password,
+			CallbackFunction<F> processor) throws Exception;
 
 	// --- Execution commands. ---
 
@@ -123,8 +123,8 @@ public abstract class SSH2Holders<S, F> {
 	 * @return
 	 * @throws IOException
 	 */
-	public abstract SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String password, String command, long timeoutMs)
-			throws Exception;
+	public abstract SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String password,
+			String command, long timeoutMs) throws Exception;
 
 	/**
 	 * Execution commands wait for complete with SSH2

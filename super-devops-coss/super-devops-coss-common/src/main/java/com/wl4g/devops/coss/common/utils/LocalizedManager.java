@@ -11,20 +11,20 @@ import java.util.ResourceBundle;
  * @version 2020年6月29日 v1.0.0
  * @see
  */
-public class LocalizedHelper {
+public class LocalizedManager {
 
 	private ResourceBundle bundle;
 
-	LocalizedHelper(String baseName, Locale locale) {
+	LocalizedManager(String baseName, Locale locale) {
 		this.bundle = ResourceBundle.getBundle(baseName, locale);
 	}
 
-	public static LocalizedHelper getInstance(String baseName) {
-		return new LocalizedHelper(baseName, Locale.getDefault());
+	public static LocalizedManager getInstance(String baseName) {
+		return new LocalizedManager(baseName, Locale.getDefault());
 	}
 
-	public static LocalizedHelper getInstance(String baseName, Locale locale) {
-		return new LocalizedHelper(baseName, locale);
+	public static LocalizedManager getInstance(String baseName, Locale locale) {
+		return new LocalizedManager(baseName, locale);
 	}
 
 	public String getString(String key) {
@@ -34,4 +34,5 @@ public class LocalizedHelper {
 	public String getFormattedString(String key, Object... args) {
 		return MessageFormat.format(getString(key), args);
 	}
+
 }

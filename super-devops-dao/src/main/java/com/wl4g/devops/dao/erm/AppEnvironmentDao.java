@@ -6,25 +6,25 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface AppEnvironmentDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int deleteByClusterId(Integer cluster);
+	int deleteByClusterId(Integer cluster);
 
-    int insert(AppEnvironment record);
+	int insert(AppEnvironment record);
 
-    int insertBatch(@Param("environments") List<AppEnvironment> environments);
+	int insertBatch(@Param("environments") List<AppEnvironment> environments);
 
-    int insertSelective(AppEnvironment record);
+	int insertSelective(AppEnvironment record);
 
-    AppEnvironment selectByPrimaryKey(Integer id);
+	AppEnvironment selectByPrimaryKey(Integer id);
 
-    List<AppEnvironment> selectByClusterId(Integer id);
+	List<AppEnvironment> selectByClusterId(Integer id);
 
-    AppEnvironment selectByClusterIdAndEnv(@Param("clusterId") Integer clusterId,@Param("envType") String envType);
+	AppEnvironment selectByClusterIdAndEnv(@Param("clusterId") Integer clusterId, @Param("envType") String envType);
 
-    int updateByPrimaryKeySelective(AppEnvironment record);
+	int updateByPrimaryKeySelective(AppEnvironment record);
 
-    int updateByPrimaryKeyWithBLOBs(AppEnvironment record);
+	int updateByPrimaryKeyWithBLOBs(AppEnvironment record);
 
-    int updateByPrimaryKey(AppEnvironment record);
+	int updateByPrimaryKey(AppEnvironment record);
 }

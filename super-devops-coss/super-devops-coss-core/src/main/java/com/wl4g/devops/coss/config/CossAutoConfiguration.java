@@ -17,7 +17,7 @@ package com.wl4g.devops.coss.config;
 
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.coss.ServerCossEndpoint;
-import com.wl4g.devops.coss.common.endpoint.CossProvider;
+import com.wl4g.devops.coss.common.CossEndpoint.CossProvider;
 import com.wl4g.devops.coss.natives.MetadataIndexManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

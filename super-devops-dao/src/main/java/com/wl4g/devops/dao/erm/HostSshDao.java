@@ -6,21 +6,21 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface HostSshDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int deleteByHostId(Integer hostId);
+	int deleteByHostId(Integer hostId);
 
-    int insert(HostSsh record);
+	int insert(HostSsh record);
 
-    int insertSelective(HostSsh record);
+	int insertSelective(HostSsh record);
 
-    HostSsh selectByPrimaryKey(Integer id);
+	HostSsh selectByPrimaryKey(Integer id);
 
-    List<Integer> selectByHostId(Integer hostId);
+	List<Integer> selectByHostId(Integer hostId);
 
-    int updateByPrimaryKeySelective(HostSsh record);
+	int updateByPrimaryKeySelective(HostSsh record);
 
-    int updateByPrimaryKey(HostSsh record);
+	int updateByPrimaryKey(HostSsh record);
 
-    int insertBatch(@Param("hostSshes") List<HostSsh> hostSshes);
+	int insertBatch(@Param("hostSshes") List<HostSsh> hostSshes);
 }
