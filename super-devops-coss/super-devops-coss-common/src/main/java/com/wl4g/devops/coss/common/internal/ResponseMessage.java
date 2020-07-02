@@ -2,9 +2,14 @@ package com.wl4g.devops.coss.common.internal;
 
 import com.wl4g.devops.coss.common.utils.COSSHeaders;
 
+/**
+ * {@link ResponseMessage}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020年7月2日
+ * @since
+ */
 public class ResponseMessage extends HttpMesssage {
-
-	private static final int HTTP_SUCCESS_STATUS_CODE = 200;
 
 	private String uri;
 	private int statusCode;
@@ -43,5 +48,7 @@ public class ResponseMessage extends HttpMesssage {
 	public void setErrorResponseAsString(String errorResponseAsString) {
 		this.errorResponseAsString = errorResponseAsString;
 	}
+
+	private static final int HTTP_SUCCESS_STATUS_CODE = 200;
 
 }

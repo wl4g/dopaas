@@ -40,21 +40,22 @@ public class JschHolder extends SSH2Holders<Void, Void> {
 	}
 
 	@Override
-	public void scpPutFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteDir) throws Exception {
+	public void scpPutFile(String host, String user, char[] pemPrivateKey, String password, File localFile, String remoteDir)
+			throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, String password, CallbackFunction<Void> processor)
-			throws Exception {
+	protected void doScpTransfer(String host, String user, char[] pemPrivateKey, String password,
+			CallbackFunction<Void> processor) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	// --- Execution commands. ---
 
 	@Override
-	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String password, String command, long timeoutMs)
-			throws Exception {
+	public SshExecResponse execWaitForResponse(String host, String user, char[] pemPrivateKey, String password, String command,
+			long timeoutMs) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -65,8 +66,8 @@ public class JschHolder extends SSH2Holders<Void, Void> {
 	}
 
 	@Override
-	public <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String password, String command, ProcessFunction<Void, T> processor)
-			throws Exception {
+	public <T> T doExecCommand(String host, String user, char[] pemPrivateKey, String password, String command,
+			ProcessFunction<Void, T> processor) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 

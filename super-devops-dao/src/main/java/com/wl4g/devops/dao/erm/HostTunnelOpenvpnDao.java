@@ -6,17 +6,17 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface HostTunnelOpenvpnDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(HostTunnelOpenvpn record);
+	int insert(HostTunnelOpenvpn record);
 
-    int insertSelective(HostTunnelOpenvpn record);
+	int insertSelective(HostTunnelOpenvpn record);
 
-    HostTunnelOpenvpn selectByPrimaryKey(Integer id);
+	HostTunnelOpenvpn selectByPrimaryKey(Integer id);
 
-    List<HostTunnelOpenvpn> selectAll(@Param("organizationCodes")List<String> organizationCodes);
+	List<HostTunnelOpenvpn> selectAll(@Param("organizationCodes") List<String> organizationCodes);
 
-    int updateByPrimaryKeySelective(HostTunnelOpenvpn record);
+	int updateByPrimaryKeySelective(HostTunnelOpenvpn record);
 
-    int updateByPrimaryKey(HostTunnelOpenvpn record);
+	int updateByPrimaryKey(HostTunnelOpenvpn record);
 }

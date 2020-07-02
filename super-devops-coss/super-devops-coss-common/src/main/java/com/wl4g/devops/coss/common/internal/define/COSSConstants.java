@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.common.utils;
+package com.wl4g.devops.coss.common.internal.define;
 
 /**
  * Miscellaneous constants used for oss client service.

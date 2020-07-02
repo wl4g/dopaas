@@ -6,17 +6,17 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface IdcDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(Idc record);
+	int insert(Idc record);
 
-    int insertSelective(Idc record);
+	int insertSelective(Idc record);
 
-    Idc selectByPrimaryKey(Integer id);
+	Idc selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(Idc record);
+	int updateByPrimaryKeySelective(Idc record);
 
-    int updateByPrimaryKey(Idc record);
+	int updateByPrimaryKey(Idc record);
 
-    List<Idc> list(@Param("organizationCodes")List<String> organizationCodes, @Param("name") String name);
+	List<Idc> list(@Param("organizationCodes") List<String> organizationCodes, @Param("name") String name);
 }

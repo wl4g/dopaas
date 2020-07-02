@@ -15,14 +15,13 @@
  */
 package com.wl4g.devops.components.tools.common.log;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
 import static java.util.Objects.isNull;
 
 import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.Marker;
-
-import com.wl4g.devops.components.tools.common.lang.Assert2;
 
 /**
  * Enhanced logger for intelligent/dynamic/humanized wrapper.
@@ -39,7 +38,7 @@ public class SmartLogger implements Logger {
 	final private Logger orig;
 
 	public SmartLogger(Logger orig) {
-		Assert2.notNull(orig, "Origin logger can't null.");
+		notNull(orig, "Origin logger can't null.");
 		this.orig = orig;
 	}
 

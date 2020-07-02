@@ -240,7 +240,8 @@ public class UrlStreamResource extends AbstractFileResolvingResource {
 	 * This implementation returns a File reference for the underlying URL/URI,
 	 * provided that it refers to a file in the file system.
 	 * 
-	 * @see com.wl4g.devops.tool.common.resource.resolver.ResourceUtils2.util.ResourceUtils#getFile(java.net.URL, String)
+	 * @see com.wl4g.devops.tool.common.resource.resolver.ResourceUtils2.util.ResourceUtils#getFile(java.net.URL,
+	 *      String)
 	 */
 	@Override
 	public File getFile() throws IOException {

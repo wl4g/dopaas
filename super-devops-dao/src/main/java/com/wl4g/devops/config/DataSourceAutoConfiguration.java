@@ -142,8 +142,8 @@ public class DataSourceAutoConfiguration {
 	}
 
 	@Bean
-	public ServletRegistrationBean druidServlet(DruidProperties prop) {
-		ServletRegistrationBean reg = new ServletRegistrationBean();
+	public ServletRegistrationBean<StatViewServlet> druidServlet(DruidProperties prop) {
+		ServletRegistrationBean<StatViewServlet> reg = new ServletRegistrationBean<>();
 		reg.setServlet(new StatViewServlet());
 		reg.addUrlMappings("/druid/*");
 		reg.addInitParameter("loginUsername", prop.getWebLoginUsername());
@@ -153,8 +153,8 @@ public class DataSourceAutoConfiguration {
 	}
 
 	@Bean
-	public FilterRegistrationBean filterRegistrationBean() {
-		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+	public FilterRegistrationBean<WebStatFilter> filterRegistrationBean() {
+		FilterRegistrationBean<WebStatFilter> filterRegistrationBean = new FilterRegistrationBean<>();
 		filterRegistrationBean.setFilter(new WebStatFilter());
 		filterRegistrationBean.addUrlPatterns("/druid/*");
 		filterRegistrationBean.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*");

@@ -17,7 +17,7 @@ package com.wl4g.devops.tool.common.cli.ssh2;
 
 import com.wl4g.devops.components.tools.common.cli.ssh2.EthzHolder;
 import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders;
-import com.wl4g.devops.components.tools.common.io.ByteStreams2;
+import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
 import com.wl4g.devops.components.tools.common.resource.ResourceUtils2;
 
 import java.io.File;
@@ -42,8 +42,8 @@ public class EthzHolderTests {
 	public static void executeCommand() throws Exception {
 		String command = "sleep 10";
 		SSH2Holders.getInstance(EthzHolder.class).execWaitForComplete("10.0.0.160", "root", null,null, command, s -> {
-			System.err.println(ByteStreams2.readFullyToString(s.getStderr()));
-			System.out.println(ByteStreams2.readFullyToString(s.getStdout()));
+			System.err.println(ByteStreamUtils.readFullyToString(s.getStderr()));
+			System.out.println(ByteStreamUtils.readFullyToString(s.getStdout()));
 			s.close();
 			System.err.println("signal:" + s.getExitSignal() + ", state:" + s.getState() + ", status:" + s.getExitStatus());
 			return null;

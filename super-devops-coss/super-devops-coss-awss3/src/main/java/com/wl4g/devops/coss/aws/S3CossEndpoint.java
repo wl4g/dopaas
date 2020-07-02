@@ -29,7 +29,7 @@ import com.wl4g.devops.coss.aws.config.S3CossProperties;
 import com.wl4g.devops.coss.aws.model.*;
 import com.wl4g.devops.coss.aws.model.bucket.S3Bucket;
 import com.wl4g.devops.coss.aws.model.bucket.S3BucketList;
-import com.wl4g.devops.coss.common.endpoint.CossProvider;
+import com.wl4g.devops.coss.common.CossEndpoint.CossProvider;
 import com.wl4g.devops.coss.common.exception.CossException;
 import com.wl4g.devops.coss.common.exception.ServerCossException;
 import com.wl4g.devops.coss.common.model.bucket.BucketMetadata;

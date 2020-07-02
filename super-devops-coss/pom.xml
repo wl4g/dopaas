@@ -12,7 +12,7 @@
 		<version>master</version>
 	</parent>
 	<modules>
-		<module>super-devops-coss-client</module>
+<!-- 		<module>super-devops-coss-client</module> -->
 		<module>super-devops-coss-common</module>
 		<module>super-devops-coss-core</module>
 		<module>super-devops-coss-hdfs</module>

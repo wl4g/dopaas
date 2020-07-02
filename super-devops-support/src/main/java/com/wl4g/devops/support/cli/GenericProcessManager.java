@@ -40,7 +40,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import static com.wl4g.devops.components.tools.common.cli.ProcessUtils.*;
-import static com.wl4g.devops.components.tools.common.io.ByteStreams2.*;
+import static com.wl4g.devops.components.tools.common.io.ByteStreamUtils.*;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static com.wl4g.devops.components.tools.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.components.tools.common.lang.Exceptions.getStackTraceAsString;

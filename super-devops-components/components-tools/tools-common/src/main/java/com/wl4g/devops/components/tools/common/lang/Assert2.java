@@ -26,6 +26,7 @@ import java.util.Objects;
 
 import static com.wl4g.devops.components.tools.common.lang.StringUtils2.*;
 import static java.lang.Math.max;
+import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 
 /**
@@ -808,6 +809,57 @@ public abstract class Assert2 {
 	 */
 	public static void isAssignable(Class<?> superType, Class<?> subType) {
 		isAssignable(superType, subType, "");
+	}
+
+	/**
+	 * Assertion parameters in range
+	 * 
+	 * @param paramValue
+	 * @param lowerValue
+	 * @param upperValue
+	 */
+	public static void assertInRange(long paramValue, long lowerValue, long upperValue) {
+		if (!checkParameterInRange(paramValue, lowerValue, true, upperValue, true)) {
+			throw new IllegalArgumentException(format("%d not in valid range [%d, %d]", paramValue, lowerValue, upperValue));
+		}
+	}
+
+	/**
+	 * Check parameters in range
+	 * 
+	 * @param param
+	 * @param from
+	 * @param leftInclusive
+	 * @param to
+	 * @param rightInclusive
+	 * @return
+	 */
+	private static boolean checkParameterInRange(long param, long from, boolean leftInclusive, long to, boolean rightInclusive) {
+		if (leftInclusive && rightInclusive) { // [from, to]
+			if (from <= param && param <= to) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (leftInclusive && !rightInclusive) { // [from, to)
+			if (from <= param && param < to) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (!leftInclusive && !rightInclusive) { // (from, to)
+			if (from < param && param < to) {
+				return true;
+			} else {
+				return false;
+			}
+		} else { // (from, to]
+			if (from < param && param <= to) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 	}
 
 	/**

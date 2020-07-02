@@ -25,8 +25,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.wl4g.devops.coss.common.COSSResultCode;
 import com.wl4g.devops.coss.common.exception.ServiceException;
+import com.wl4g.devops.coss.common.internal.define.COSSResultCode;
 
 /**
  * {@link LogUtils}

@@ -1,4 +1,4 @@
-package com.wl4g.devops.coss.common;
+package com.wl4g.devops.coss.common.internal.define;
 
 /**
  * COSS Server side error code.

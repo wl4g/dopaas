@@ -15,25 +15,24 @@
  */
 package com.wl4g.devops.dao.erm;
 
-
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface AppClusterDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(AppCluster record);
+	int insert(AppCluster record);
 
-    int insertSelective(AppCluster record);
+	int insertSelective(AppCluster record);
 
-    AppCluster selectByPrimaryKey(Integer id);
+	AppCluster selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(AppCluster record);
+	int updateByPrimaryKeySelective(AppCluster record);
 
-    int updateByPrimaryKey(AppCluster record);
+	int updateByPrimaryKey(AppCluster record);
 
-    List<AppCluster> list(@Param("organizationCodes") List<String> organizationCodes, @Param("clusterName") String clusterName,
-                          @Param("deployType") Integer deployType);
+	List<AppCluster> list(@Param("organizationCodes") List<String> organizationCodes, @Param("clusterName") String clusterName,
+			@Param("deployType") Integer deployType);
 }

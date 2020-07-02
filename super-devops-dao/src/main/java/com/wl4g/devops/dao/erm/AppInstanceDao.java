@@ -15,35 +15,31 @@
  */
 package com.wl4g.devops.dao.erm;
 
-
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface AppInstanceDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(AppInstance record);
+	int insert(AppInstance record);
 
-    int insertSelective(AppInstance record);
+	int insertSelective(AppInstance record);
 
-    AppInstance selectByPrimaryKey(Integer id);
+	AppInstance selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(AppInstance record);
+	int updateByPrimaryKeySelective(AppInstance record);
 
-    int updateByPrimaryKey(AppInstance record);
+	int updateByPrimaryKey(AppInstance record);
 
-    List<AppInstance> selectByClusterId(Integer clusterId);
+	List<AppInstance> selectByClusterId(Integer clusterId);
 
-    int countByClusterId(Integer clusterId);
+	int countByClusterId(Integer clusterId);
 
-    List<AppInstance> selectByClusterIdAndEnvType(@Param("clusterId") Integer clusterId,@Param("envType") String envType);
+	List<AppInstance> selectByClusterIdAndEnvType(@Param("clusterId") Integer clusterId, @Param("envType") String envType);
 
-    List<AppInstance> list(@Param("organizationCodes")List<String> organizationCodes,@Param("name") String name, @Param("clusterId") Integer clusterId,
-                           @Param("envType") String envType,@Param("deployType") Integer deployType);
-
-
-
+	List<AppInstance> list(@Param("organizationCodes") List<String> organizationCodes, @Param("name") String name,
+			@Param("clusterId") Integer clusterId, @Param("envType") String envType, @Param("deployType") Integer deployType);
 
 }
