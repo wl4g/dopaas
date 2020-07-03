@@ -17,12 +17,12 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.DnsPrivateDomain;
+import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
-import com.wl4g.devops.dao.erm.DnsPrivateDomainDao;
+import com.wl4g.devops.dao.erm.DnsPrivateZoneDao;
 import com.wl4g.devops.dao.erm.DnsPrivateResolutionDao;
 import com.wl4g.devops.erm.dns.DnsServerInterface;
-import com.wl4g.devops.erm.service.DnsPrivateDomainService;
+import com.wl4g.devops.erm.service.DnsPrivateZoneService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,14 +39,14 @@ import static java.util.Objects.isNull;
  * @date 2019-11-14 14:10:00
  */
 @Service
-public class DnsPrivateDomainServiceImpl implements DnsPrivateDomainService {
+public class DnsPrivateZoneServiceImpl implements DnsPrivateZoneService {
 
 //    final private static String RUNNING = "RUNNING";
 //    final private static String DISABLED = "DISABLED";
 //    final private static String EXPIRED = "EXPIRED";
 
     @Autowired
-    private DnsPrivateDomainDao dnsPrivateDomainDao;
+    private DnsPrivateZoneDao dnsPrivateDomainDao;
 
     @Autowired
     private DnsPrivateResolutionDao dnsPrivateResolutionDao;
@@ -57,12 +57,12 @@ public class DnsPrivateDomainServiceImpl implements DnsPrivateDomainService {
     @Override
     public PageModel page(PageModel pm,String zone) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        List<DnsPrivateDomain> list = dnsPrivateDomainDao.list(getRequestOrganizationCodes(), zone);
+        List<DnsPrivateZone> list = dnsPrivateDomainDao.list(getRequestOrganizationCodes(), zone);
         pm.setRecords(list);
         return pm;
     }
 
-    public void save(DnsPrivateDomain dnsPrivateDomain){
+    public void save(DnsPrivateZone dnsPrivateDomain){
         if(isNull(dnsPrivateDomain.getId())){
             dnsPrivateDomain.preInsert(getRequestOrganizationCode());
             dnsPrivateDomain.setStatus("RUNNING");
@@ -73,22 +73,22 @@ public class DnsPrivateDomainServiceImpl implements DnsPrivateDomainService {
         }
     }
 
-    private void insert(DnsPrivateDomain dnsPrivateDomain){
+    private void insert(DnsPrivateZone dnsPrivateDomain){
         dnsPrivateDomainDao.insertSelective(dnsPrivateDomain);
     }
 
-    private void update(DnsPrivateDomain dnsPrivateDomain){
+    private void update(DnsPrivateZone dnsPrivateDomain){
         dnsPrivateDomainDao.updateByPrimaryKeySelective(dnsPrivateDomain);
     }
 
-    public DnsPrivateDomain detail(Integer id){
+    public DnsPrivateZone detail(Integer id){
         Assert.notNull(id,"id is null");
         return dnsPrivateDomainDao.selectByPrimaryKey(id);
     }
 
     public void del(Integer id){
         Assert.notNull(id,"id is null");
-        DnsPrivateDomain dnsPrivateDomain = dnsPrivateDomainDao.selectByPrimaryKey(id);
+        DnsPrivateZone dnsPrivateDomain = dnsPrivateDomainDao.selectByPrimaryKey(id);
         dnsPrivateDomain.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         dnsPrivateDomainDao.updateByPrimaryKeySelective(dnsPrivateDomain);
         dnsServerInterface.delDomain(dnsPrivateDomain.getZone());
@@ -96,8 +96,8 @@ public class DnsPrivateDomainServiceImpl implements DnsPrivateDomainService {
 
     @Override
     public void loadDnsAtStart() {
-        List<DnsPrivateDomain> list = dnsPrivateDomainDao.list(null, null);
-        for(DnsPrivateDomain dnsPrivateDomain : list){
+        List<DnsPrivateZone> list = dnsPrivateDomainDao.list(null, null);
+        for(DnsPrivateZone dnsPrivateDomain : list){
             List<DnsPrivateResolution> dnsPrivateResolutions = dnsPrivateResolutionDao.selectByDomainId(dnsPrivateDomain.getId());
             dnsPrivateDomain.setDnsPrivateResolutions(dnsPrivateResolutions);
             dnsServerInterface.putDomian(dnsPrivateDomain);

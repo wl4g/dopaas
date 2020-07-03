@@ -6,7 +6,7 @@ import com.wl4g.devops.common.bean.BaseBean;
 import java.util.Date;
 import java.util.List;
 
-public class DnsPrivateDomain extends BaseBean {
+public class DnsPrivateZone extends BaseBean {
 
     private static final long serialVersionUID = -3298424126317938674L;
 

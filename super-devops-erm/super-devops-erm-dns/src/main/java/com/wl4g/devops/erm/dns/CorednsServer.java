@@ -1,6 +1,6 @@
 package com.wl4g.devops.erm.dns;
 
-import com.wl4g.devops.common.bean.erm.DnsPrivateDomain;
+import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
@@ -24,7 +24,7 @@ public class CorednsServer implements DnsServerInterface {
     private DnsProperties dnsProperties;
 
     @Override
-    public void putDomian(DnsPrivateDomain domian) {
+    public void putDomian(DnsPrivateZone domian) {
         String domain = domian.getZone();
         int catcheSecond = getDistanceSecondOfTwoDate(new Date(), domian.getDueDate());
         List<DnsPrivateResolution> dnsPrivateResolutions = domian.getDnsPrivateResolutions();

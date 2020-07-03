@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.erm.controller;
 
-import com.wl4g.devops.common.bean.erm.DnsPrivateDomain;
+import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.erm.service.DnsPrivateDomainService;
+import com.wl4g.devops.erm.service.DnsPrivateZoneService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,10 +33,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/dnsPrivateDomain")
-public class DnsPrivateDomainController extends BaseController {
+public class DnsPrivateZoneController extends BaseController {
 
 	@Autowired
-	private DnsPrivateDomainService dnsPrivateDomainService;
+	private DnsPrivateZoneService dnsPrivateDomainService;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String zone) {
@@ -46,7 +46,7 @@ public class DnsPrivateDomainController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(@RequestBody DnsPrivateDomain dnsPrivateDomain) {
+	public RespBase<?> save(@RequestBody DnsPrivateZone dnsPrivateDomain) {
 		RespBase<Object> resp = RespBase.create();
 		dnsPrivateDomainService.save(dnsPrivateDomain);
 		return resp;

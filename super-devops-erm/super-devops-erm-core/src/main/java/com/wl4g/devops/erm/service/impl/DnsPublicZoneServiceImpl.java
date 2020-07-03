@@ -17,9 +17,9 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.DnsPublicDomain;
-import com.wl4g.devops.dao.erm.DnsPublicDomainDao;
-import com.wl4g.devops.erm.service.DnsPublicDomainService;
+import com.wl4g.devops.common.bean.erm.DnsPublicZone;
+import com.wl4g.devops.dao.erm.DnsPublicZoneDao;
+import com.wl4g.devops.erm.service.DnsPublicZoneService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,10 +34,10 @@ import static java.util.Objects.isNull;
  * @date 2019-11-14 14:10:00
  */
 @Service
-public class DnsPublicDomainServiceImpl implements DnsPublicDomainService {
+public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 
     @Autowired
-    private DnsPublicDomainDao dnsPublicDomainDao;
+    private DnsPublicZoneDao dnsPublicDomainDao;
 
     @Override
     public PageModel page(PageModel pm,String name) {
@@ -46,7 +46,7 @@ public class DnsPublicDomainServiceImpl implements DnsPublicDomainService {
         return pm;
     }
 
-    public void save(DnsPublicDomain dnsPublicDomain){
+    public void save(DnsPublicZone dnsPublicDomain){
         if(isNull(dnsPublicDomain.getId())){
             dnsPublicDomain.preInsert(getRequestOrganizationCode());
             insert(dnsPublicDomain);
@@ -56,23 +56,23 @@ public class DnsPublicDomainServiceImpl implements DnsPublicDomainService {
         }
     }
 
-    private void insert(DnsPublicDomain dnsPublicDomain){
+    private void insert(DnsPublicZone dnsPublicDomain){
         dnsPublicDomainDao.insertSelective(dnsPublicDomain);
     }
 
-    private void update(DnsPublicDomain dnsPublicDomain){
+    private void update(DnsPublicZone dnsPublicDomain){
         dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);
     }
 
 
-    public DnsPublicDomain detail(Integer id){
+    public DnsPublicZone detail(Integer id){
         Assert.notNull(id,"id is null");
         return dnsPublicDomainDao.selectByPrimaryKey(id);
     }
 
     public void del(Integer id){
         Assert.notNull(id,"id is null");
-        DnsPublicDomain dnsPublicDomain = new DnsPublicDomain();
+        DnsPublicZone dnsPublicDomain = new DnsPublicZone();
         dnsPublicDomain.setId(id);
         dnsPublicDomain.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);
