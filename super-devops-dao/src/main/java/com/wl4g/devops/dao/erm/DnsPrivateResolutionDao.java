@@ -17,7 +17,7 @@ public interface DnsPrivateResolutionDao {
 
     List<DnsPrivateResolution> selectByDomainId(Integer domainId);
 
-    List<DnsPrivateZone> list(@Param("organizationCodes") List<String> organizationCodes, @Param("host") String host);
+    List<DnsPrivateZone> list(@Param("organizationCodes") List<String> organizationCodes, @Param("host") String host, @Param("domainId") Integer domainId);
 
 	int updateByPrimaryKeySelective(DnsPrivateResolution record);
 

@@ -222,6 +222,9 @@
     <if test="host != null and host != ''" >
       AND `host` LIKE CONCAT('%','${host}','%')
     </if>
+    <if test="domainId != null" >
+      AND domain_id = #{domainId,jdbcType=INTEGER}
+    </if>
     <!--<if test="organizationCodes != null and organizationCodes.size() > 0">
       and organization_code in
       <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
