@@ -9,10 +9,7 @@ import com.wl4g.devops.erm.dns.model.ResolveType;
 import com.wl4g.devops.support.redis.JedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author vjay
@@ -29,10 +26,10 @@ public class CorednsServer implements DnsServerInterface {
     @Override
     public void putDomian(DnsPrivateDomain domian) {
         String domain = domian.getZone();
-        int catcheSecond = getDistanceSecondOfTwoDate(new Date(),domian.getDueDate());
+        int catcheSecond = getDistanceSecondOfTwoDate(new Date(), domian.getDueDate());
         List<DnsPrivateResolution> dnsPrivateResolutions = domian.getDnsPrivateResolutions();
-        Map<String,String> hosts = new HashMap();
-        for(DnsPrivateResolution dnsPrivateResolution : dnsPrivateResolutions){
+        Map<String, String> hosts = new HashMap();
+        for (DnsPrivateResolution dnsPrivateResolution : dnsPrivateResolutions) {
             Map map = buildMap(dnsPrivateResolution);
             hosts.put(dnsPrivateResolution.getHost(), JacksonUtils.toJSONString(map));
         }
@@ -42,7 +39,7 @@ public class CorednsServer implements DnsServerInterface {
 
     @Override
     public void putHost(String domain, DnsPrivateResolution dnsPrivateResolution) {
-        Map<String,String> hosts = new HashMap();
+        Map<String, String> hosts = new HashMap();
         Map map = buildMap(dnsPrivateResolution);
         hosts.put(dnsPrivateResolution.getHost(), JacksonUtils.toJSONString(map));
         put(domain, hosts, 0);
@@ -63,8 +60,8 @@ public class CorednsServer implements DnsServerInterface {
         jedisService.del(assemblKey(domian));
     }
 
-    private String assemblKey(String domian){
-        return dnsProperties.getPrefix()+domian+"."+dnsProperties.getSuffix();
+    private String assemblKey(String domian) {
+        return dnsProperties.getPrefix() + domian + "." + dnsProperties.getSuffix();
     }
 
     private Map buildMap(DnsPrivateResolution dnsPrivateResolution) {
@@ -76,35 +73,47 @@ public class CorednsServer implements DnsServerInterface {
 
         switch (ResolveType.of(resolveType)) {
             case A:
-                obj.put("ip4", dnsPrivateResolution.getValue());
+                obj.put("ip", dnsPrivateResolution.getValue());
                 obj.put("ttl", dnsPrivateResolution.getTtl());
-                result.put("a", obj);
+                ArrayList<Map> a = new ArrayList<>();
+                a.add(obj);
+                result.put("a", a);
                 break;
             case AAAA:
-                obj.put("ip6", dnsPrivateResolution.getValue());
+                obj.put("ip", dnsPrivateResolution.getValue());
                 obj.put("ttl", dnsPrivateResolution.getTtl());
-                result.put("aaaa", obj);
+                ArrayList<Map> aaaa = new ArrayList<>();
+                aaaa.add(obj);
+                result.put("aaaa", aaaa);
                 break;
             case CNAME:
                 obj.put("host", dnsPrivateResolution.getValue());
                 obj.put("ttl", dnsPrivateResolution.getTtl());
-                result.put("cname", obj);
+                ArrayList<Map> cname = new ArrayList<>();
+                cname.add(obj);
+                result.put("cname", cname);
                 break;
             case TXT:
                 obj.put("text", dnsPrivateResolution.getValue());
                 obj.put("ttl", dnsPrivateResolution.getTtl());
-                result.put("txt", obj);
+                ArrayList<Map> txt = new ArrayList<>();
+                txt.add(obj);
+                result.put("txt", txt);
                 break;
             case NS:
                 obj.put("host", dnsPrivateResolution.getValue());
                 obj.put("ttl", dnsPrivateResolution.getTtl());
-                result.put("ns", obj);
+                ArrayList<Map> ns = new ArrayList<>();
+                ns.add(obj);
+                result.put("ns", ns);
                 break;
             case MX:
                 obj.put("host", dnsPrivateResolution.getValue());
                 obj.put("priority", dnsPrivateResolution.getPriority());
                 obj.put("ttl", dnsPrivateResolution.getTtl());
-                result.put("mx", obj);
+                ArrayList<Map> mx = new ArrayList<>();
+                mx.add(obj);
+                result.put("mx", mx);
                 break;
             case SRV:
                 //主机名+空格+优先级+空格+权重+空格+端口。
@@ -116,7 +125,9 @@ public class CorednsServer implements DnsServerInterface {
                 obj.put("priority", split[1]);
                 obj.put("weight", split[2]);
                 obj.put("ttl", dnsPrivateResolution.getTtl());
-                result.put("srv", obj);
+                ArrayList<Map> srv = new ArrayList<>();
+                srv.add(obj);
+                result.put("srv", srv);
                 break;
             case SOA:
                 String value1 = dnsPrivateResolution.getValue();
@@ -140,7 +151,7 @@ public class CorednsServer implements DnsServerInterface {
         long beforeTime = before.getTime();
         long afterTime = after.getTime();
         long result = ((afterTime - beforeTime) / (1000));
-        if(result > Integer.MAX_VALUE){
+        if (result > Integer.MAX_VALUE || result < 0) {
             result = 0;
         }
         return (int) result;

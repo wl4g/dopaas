@@ -30,4 +30,6 @@ public interface DnsPrivateDomainService {
 	DnsPrivateDomain detail(Integer id);
 
 	void del(Integer id);
+
+	void loadDnsAtStart();
 }
