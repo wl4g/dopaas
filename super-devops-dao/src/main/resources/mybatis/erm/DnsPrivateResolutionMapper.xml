@@ -8,6 +8,7 @@
     <result column="line_isp" property="lineIsp" jdbcType="VARCHAR" />
     <result column="value" property="value" jdbcType="VARCHAR" />
     <result column="ttl" property="ttl" jdbcType="INTEGER" />
+    <result column="domain_id" property="domainId" jdbcType="INTEGER" />
     <result column="priority" property="priority" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -18,7 +19,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, host, resolve_type, line_isp, value, ttl, priority, status, remark, del_flag, 
+    id, host, resolve_type, line_isp, value, ttl, domain_id, priority, status, remark, del_flag,
     create_date, create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -33,12 +34,12 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateResolution" >
     insert into erm_dns_private_resolution (id, host, resolve_type, 
-      line_isp, value, ttl, 
+      line_isp, value, ttl, domain_id,
       priority, status, remark, 
       del_flag, create_date, create_by, 
       update_date, update_by)
     values (#{id,jdbcType=INTEGER}, #{host,jdbcType=VARCHAR}, #{resolveType,jdbcType=VARCHAR}, 
-      #{lineIsp,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, #{ttl,jdbcType=INTEGER}, 
+      #{lineIsp,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, #{ttl,jdbcType=INTEGER}, #{domainId,jdbcType=INTEGER},
       #{priority,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
       #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
@@ -63,6 +64,9 @@
       </if>
       <if test="ttl != null" >
         ttl,
+      </if>
+      <if test="domainId != null" >
+        domain_id,
       </if>
       <if test="priority != null" >
         priority,
@@ -108,6 +112,9 @@
       <if test="ttl != null" >
         #{ttl,jdbcType=INTEGER},
       </if>
+      <if test="domainId != null" >
+        #{domainId,jdbcType=INTEGER},
+      </if>
       <if test="priority != null" >
         #{priority,jdbcType=INTEGER},
       </if>
@@ -152,6 +159,9 @@
       <if test="ttl != null" >
         ttl = #{ttl,jdbcType=INTEGER},
       </if>
+      <if test="domainId != null" >
+        domain_id = #{domainId,jdbcType=INTEGER},
+      </if>
       <if test="priority != null" >
         priority = #{priority,jdbcType=INTEGER},
       </if>
@@ -186,6 +196,7 @@
       line_isp = #{lineIsp,jdbcType=VARCHAR},
       value = #{value,jdbcType=VARCHAR},
       ttl = #{ttl,jdbcType=INTEGER},
+      domain_id = #{domainId,jdbcType=INTEGER},
       priority = #{priority,jdbcType=INTEGER},
       status = #{status,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
@@ -196,4 +207,21 @@
       update_by = #{updateBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from erm_dns_private_resolution
+    where del_flag!=1
+    <if test="host != null and host != ''" >
+      AND `host` LIKE CONCAT('%','${host}','%')
+    </if>
+    <!--<if test="organizationCodes != null and organizationCodes.size() > 0">
+      and organization_code in
+      <foreach collection="organizationCodes" item="organizationCode" index="index" open="(" close=")" separator=",">
+        #{organizationCode}
+      </foreach>
+    </if>-->
+  </select>
+
 </mapper>

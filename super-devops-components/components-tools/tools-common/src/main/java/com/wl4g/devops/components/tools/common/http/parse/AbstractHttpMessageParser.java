@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.http.HttpHeaders;
-import com.wl4g.devops.components.tools.common.http.MediaType;
+import com.wl4g.devops.components.tools.common.http.HttpMediaType;
 
 /**
  * Abstract base class for most {@link HttpMessageParser} implementations.
@@ -29,7 +29,7 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	/** Logger available to subclasses */
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private List<MediaType> supportedMediaTypes = Collections.emptyList();
+	private List<HttpMediaType> supportedMediaTypes = Collections.emptyList();
 
 	private Charset defaultCharset;
 
@@ -49,7 +49,7 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	 * @param supportedMediaType
 	 *            the supported media type
 	 */
-	protected AbstractHttpMessageParser(MediaType supportedMediaType) {
+	protected AbstractHttpMessageParser(HttpMediaType supportedMediaType) {
 		setSupportedMediaTypes(Collections.singletonList(supportedMediaType));
 	}
 
@@ -60,7 +60,7 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	 * @param supportedMediaTypes
 	 *            the supported media types
 	 */
-	protected AbstractHttpMessageParser(MediaType... supportedMediaTypes) {
+	protected AbstractHttpMessageParser(HttpMediaType... supportedMediaTypes) {
 		setSupportedMediaTypes(Arrays.asList(supportedMediaTypes));
 	}
 
@@ -74,21 +74,22 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	 *            the supported media types
 	 * @since 4.3
 	 */
-	protected AbstractHttpMessageParser(Charset defaultCharset, MediaType... supportedMediaTypes) {
+	protected AbstractHttpMessageParser(Charset defaultCharset, HttpMediaType... supportedMediaTypes) {
 		this.defaultCharset = defaultCharset;
 		setSupportedMediaTypes(Arrays.asList(supportedMediaTypes));
 	}
 
 	/**
-	 * Set the list of {@link MediaType} objects supported by this converter.
+	 * Set the list of {@link HttpMediaType} objects supported by this
+	 * converter.
 	 */
-	public void setSupportedMediaTypes(List<MediaType> supportedMediaTypes) {
+	public void setSupportedMediaTypes(List<HttpMediaType> supportedMediaTypes) {
 		Assert2.notEmpty(supportedMediaTypes, "MediaType List must not be empty");
-		this.supportedMediaTypes = new ArrayList<MediaType>(supportedMediaTypes);
+		this.supportedMediaTypes = new ArrayList<HttpMediaType>(supportedMediaTypes);
 	}
 
 	@Override
-	public List<MediaType> getSupportedMediaTypes() {
+	public List<HttpMediaType> getSupportedMediaTypes() {
 		return Collections.unmodifiableList(this.supportedMediaTypes);
 	}
 
@@ -114,17 +115,19 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	 * This implementation checks if the given class is
 	 * {@linkplain #supports(Class) supported}, and if the
 	 * {@linkplain #getSupportedMediaTypes() supported media types}
-	 * {@linkplain MediaType#includes(MediaType) include} the given media type.
+	 * {@linkplain HttpMediaType#includes(HttpMediaType) include} the given
+	 * media type.
 	 */
 	@Override
-	public boolean canRead(Class<?> clazz, MediaType mediaType) {
+	public boolean canRead(Class<?> clazz, HttpMediaType mediaType) {
 		return supports(clazz) && canRead(mediaType);
 	}
 
 	/**
 	 * Returns {@code true} if any of the
 	 * {@linkplain #setSupportedMediaTypes(List) supported} media types
-	 * {@link MediaType#includes(MediaType) include} the given media type.
+	 * {@link HttpMediaType#includes(HttpMediaType) include} the given media
+	 * type.
 	 * 
 	 * @param mediaType
 	 *            the media type to read, can be {@code null} if not specified.
@@ -132,11 +135,11 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	 * @return {@code true} if the supported media types include the media type,
 	 *         or if the media type is {@code null}
 	 */
-	protected boolean canRead(MediaType mediaType) {
+	protected boolean canRead(HttpMediaType mediaType) {
 		if (mediaType == null) {
 			return true;
 		}
-		for (MediaType supportedMediaType : getSupportedMediaTypes()) {
+		for (HttpMediaType supportedMediaType : getSupportedMediaTypes()) {
 			if (supportedMediaType.includes(mediaType)) {
 				return true;
 			}
@@ -148,10 +151,11 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	 * This implementation checks if the given class is
 	 * {@linkplain #supports(Class) supported}, and if the
 	 * {@linkplain #getSupportedMediaTypes() supported} media types
-	 * {@linkplain MediaType#includes(MediaType) include} the given media type.
+	 * {@linkplain HttpMediaType#includes(HttpMediaType) include} the given
+	 * media type.
 	 */
 	@Override
-	public boolean canWrite(Class<?> clazz, MediaType mediaType) {
+	public boolean canWrite(Class<?> clazz, HttpMediaType mediaType) {
 		return supports(clazz) && canWrite(mediaType);
 	}
 
@@ -165,11 +169,11 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	 * @return {@code true} if the supported media types are compatible with the
 	 *         media type, or if the media type is {@code null}
 	 */
-	protected boolean canWrite(MediaType mediaType) {
-		if (mediaType == null || MediaType.ALL.equals(mediaType)) {
+	protected boolean canWrite(HttpMediaType mediaType) {
+		if (mediaType == null || HttpMediaType.ALL.equals(mediaType)) {
 			return true;
 		}
-		for (MediaType supportedMediaType : getSupportedMediaTypes()) {
+		for (HttpMediaType supportedMediaType : getSupportedMediaTypes()) {
 			if (supportedMediaType.isCompatibleWith(mediaType)) {
 				return true;
 			}
@@ -192,7 +196,7 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	 * {@link #addDefaultHeaders}, and then calls {@link #writeInternal}.
 	 */
 	@Override
-	public final void write(final T t, MediaType contentType, HttpOutputMessage outputMessage)
+	public final void write(final T t, HttpMediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 
 		final HttpHeaders headers = outputMessage.getHeaders();
@@ -232,20 +236,20 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	 * 
 	 * @since 4.2
 	 */
-	protected void addDefaultHeaders(HttpHeaders headers, T t, MediaType contentType) throws IOException {
+	protected void addDefaultHeaders(HttpHeaders headers, T t, HttpMediaType contentType) throws IOException {
 		if (headers.getContentType() == null) {
-			MediaType contentTypeToUse = contentType;
+			HttpMediaType contentTypeToUse = contentType;
 			if (contentType == null || contentType.isWildcardType() || contentType.isWildcardSubtype()) {
 				contentTypeToUse = getDefaultContentType(t);
-			} else if (MediaType.APPLICATION_OCTET_STREAM.equals(contentType)) {
-				MediaType mediaType = getDefaultContentType(t);
+			} else if (HttpMediaType.APPLICATION_OCTET_STREAM.equals(contentType)) {
+				HttpMediaType mediaType = getDefaultContentType(t);
 				contentTypeToUse = (mediaType != null ? mediaType : contentTypeToUse);
 			}
 			if (contentTypeToUse != null) {
 				if (contentTypeToUse.getCharset() == null) {
 					Charset defaultCharset = getDefaultCharset();
 					if (defaultCharset != null) {
-						contentTypeToUse = new MediaType(contentTypeToUse, defaultCharset);
+						contentTypeToUse = new HttpMediaType(contentTypeToUse, defaultCharset);
 					}
 				}
 				headers.setContentType(contentTypeToUse);
@@ -271,8 +275,8 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	 *            the type to return the content type for
 	 * @return the content type, or {@code null} if not known
 	 */
-	protected MediaType getDefaultContentType(T t) throws IOException {
-		List<MediaType> mediaTypes = getSupportedMediaTypes();
+	protected HttpMediaType getDefaultContentType(T t) throws IOException {
+		List<HttpMediaType> mediaTypes = getSupportedMediaTypes();
 		return (!mediaTypes.isEmpty() ? mediaTypes.get(0) : null);
 	}
 
@@ -286,7 +290,7 @@ public abstract class AbstractHttpMessageParser<T> implements HttpMessageParser<
 	 *            the type to return the content length for
 	 * @return the content length, or {@code null} if not known
 	 */
-	protected Long getContentLength(T t, MediaType contentType) throws IOException {
+	protected Long getContentLength(T t, HttpMediaType contentType) throws IOException {
 		return null;
 	}
 

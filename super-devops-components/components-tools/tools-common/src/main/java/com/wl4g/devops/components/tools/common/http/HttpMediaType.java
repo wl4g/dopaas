@@ -15,12 +15,12 @@ import java.util.Map;
 
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
 import com.wl4g.devops.components.tools.common.collection.CollectionUtils2;
-import com.wl4g.devops.components.tools.common.http.MimeType.MimeTypeUtils.InvalidMimeTypeException;
+import com.wl4g.devops.components.tools.common.http.HttpMimeType.MimeTypeUtils.InvalidMimeTypeException;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 
 /**
- * A subclass of {@link MimeType} that adds support for quality parameters as
- * defined in the HTTP specification.
+ * A subclass of {@link HttpMimeType} that adds support for quality parameters
+ * as defined in the HTTP specification.
  *
  * @author Arjen Poutsma
  * @author Juergen Hoeller
@@ -32,7 +32,7 @@ import com.wl4g.devops.components.tools.common.lang.Assert2;
  * @see <a href="https://tools.ietf.org/html/rfc7231#section-3.1.1.1"> HTTP 1.1:
  *      Semantics and Content, section 3.1.1.1</a>
  */
-public class MediaType extends MimeType implements Serializable {
+public class HttpMediaType extends HttpMimeType implements Serializable {
 
 	private static final long serialVersionUID = 2069937152339670231L;
 
@@ -40,20 +40,20 @@ public class MediaType extends MimeType implements Serializable {
 	 * Public constant media type that includes all media ranges (i.e.
 	 * "&#42;/&#42;").
 	 */
-	public static final MediaType ALL;
+	public static final HttpMediaType ALL;
 
 	/**
-	 * A String equivalent of {@link MediaType#ALL}.
+	 * A String equivalent of {@link HttpMediaType#ALL}.
 	 */
 	public static final String ALL_VALUE = "*/*";
 
 	/**
 	 * Public constant media type for {@code application/atom+xml}.
 	 */
-	public static final MediaType APPLICATION_ATOM_XML;
+	public static final HttpMediaType APPLICATION_ATOM_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_ATOM_XML}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_ATOM_XML}.
 	 */
 	public static final String APPLICATION_ATOM_XML_VALUE = "application/atom+xml";
 
@@ -62,10 +62,10 @@ public class MediaType extends MimeType implements Serializable {
 	 * 
 	 * @since 5.2
 	 */
-	public static final MediaType APPLICATION_CBOR;
+	public static final HttpMediaType APPLICATION_CBOR;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_CBOR}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_CBOR}.
 	 * 
 	 * @since 5.2
 	 */
@@ -74,20 +74,20 @@ public class MediaType extends MimeType implements Serializable {
 	/**
 	 * Public constant media type for {@code application/x-www-form-urlencoded}.
 	 */
-	public static final MediaType APPLICATION_FORM_URLENCODED;
+	public static final HttpMediaType APPLICATION_FORM_URLENCODED;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_FORM_URLENCODED}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_FORM_URLENCODED}.
 	 */
 	public static final String APPLICATION_FORM_URLENCODED_VALUE = "application/x-www-form-urlencoded";
 
 	/**
 	 * Public constant media type for {@code application/json}.
 	 */
-	public static final MediaType APPLICATION_JSON;
+	public static final HttpMediaType APPLICATION_JSON;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_JSON}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_JSON}.
 	 * 
 	 * @see #APPLICATION_JSON_UTF8_VALUE
 	 */
@@ -104,10 +104,10 @@ public class MediaType extends MimeType implements Serializable {
 	 *             {@code charset=UTF-8} parameter.
 	 */
 	@Deprecated
-	public static final MediaType APPLICATION_JSON_UTF8;
+	public static final HttpMediaType APPLICATION_JSON_UTF8;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_JSON_UTF8}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_JSON_UTF8}.
 	 * 
 	 * @deprecated as of 5.2 in favor of {@link #APPLICATION_JSON_VALUE} since
 	 *             major browsers like Chrome <a href=
@@ -122,10 +122,10 @@ public class MediaType extends MimeType implements Serializable {
 	/**
 	 * Public constant media type for {@code application/octet-stream}.
 	 */
-	public static final MediaType APPLICATION_OCTET_STREAM;
+	public static final HttpMediaType APPLICATION_OCTET_STREAM;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_OCTET_STREAM}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_OCTET_STREAM}.
 	 */
 	public static final String APPLICATION_OCTET_STREAM_VALUE = "application/octet-stream";
 
@@ -134,10 +134,10 @@ public class MediaType extends MimeType implements Serializable {
 	 * 
 	 * @since 4.3
 	 */
-	public static final MediaType APPLICATION_PDF;
+	public static final HttpMediaType APPLICATION_PDF;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_PDF}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_PDF}.
 	 * 
 	 * @since 4.3
 	 */
@@ -150,10 +150,10 @@ public class MediaType extends MimeType implements Serializable {
 	 * @see <a href="https://tools.ietf.org/html/rfc7807#section-6.1"> Problem
 	 *      Details for HTTP APIs, 6.1. application/problem+json</a>
 	 */
-	public static final MediaType APPLICATION_PROBLEM_JSON;
+	public static final HttpMediaType APPLICATION_PROBLEM_JSON;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_PROBLEM_JSON}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_PROBLEM_JSON}.
 	 * 
 	 * @since 5.0
 	 */
@@ -173,10 +173,11 @@ public class MediaType extends MimeType implements Serializable {
 	 *             {@code charset=UTF-8} parameter.
 	 */
 	@Deprecated
-	public static final MediaType APPLICATION_PROBLEM_JSON_UTF8;
+	public static final HttpMediaType APPLICATION_PROBLEM_JSON_UTF8;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_PROBLEM_JSON_UTF8}.
+	 * A String equivalent of
+	 * {@link HttpMediaType#APPLICATION_PROBLEM_JSON_UTF8}.
 	 * 
 	 * @since 5.0
 	 * @deprecated as of 5.2 in favor of {@link #APPLICATION_PROBLEM_JSON_VALUE}
@@ -196,10 +197,10 @@ public class MediaType extends MimeType implements Serializable {
 	 * @see <a href="https://tools.ietf.org/html/rfc7807#section-6.2"> Problem
 	 *      Details for HTTP APIs, 6.2. application/problem+xml</a>
 	 */
-	public static final MediaType APPLICATION_PROBLEM_XML;
+	public static final HttpMediaType APPLICATION_PROBLEM_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_PROBLEM_XML}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_PROBLEM_XML}.
 	 * 
 	 * @since 5.0
 	 */
@@ -210,10 +211,10 @@ public class MediaType extends MimeType implements Serializable {
 	 * 
 	 * @since 4.3.6
 	 */
-	public static final MediaType APPLICATION_RSS_XML;
+	public static final HttpMediaType APPLICATION_RSS_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_RSS_XML}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_RSS_XML}.
 	 * 
 	 * @since 4.3.6
 	 */
@@ -224,10 +225,10 @@ public class MediaType extends MimeType implements Serializable {
 	 * 
 	 * @since 5.0
 	 */
-	public static final MediaType APPLICATION_STREAM_JSON;
+	public static final HttpMediaType APPLICATION_STREAM_JSON;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_STREAM_JSON}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_STREAM_JSON}.
 	 * 
 	 * @since 5.0
 	 */
@@ -236,60 +237,60 @@ public class MediaType extends MimeType implements Serializable {
 	/**
 	 * Public constant media type for {@code application/xhtml+xml}.
 	 */
-	public static final MediaType APPLICATION_XHTML_XML;
+	public static final HttpMediaType APPLICATION_XHTML_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_XHTML_XML}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_XHTML_XML}.
 	 */
 	public static final String APPLICATION_XHTML_XML_VALUE = "application/xhtml+xml";
 
 	/**
 	 * Public constant media type for {@code application/xml}.
 	 */
-	public static final MediaType APPLICATION_XML;
+	public static final HttpMediaType APPLICATION_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#APPLICATION_XML}.
+	 * A String equivalent of {@link HttpMediaType#APPLICATION_XML}.
 	 */
 	public static final String APPLICATION_XML_VALUE = "application/xml";
 
 	/**
 	 * Public constant media type for {@code image/gif}.
 	 */
-	public static final MediaType IMAGE_GIF;
+	public static final HttpMediaType IMAGE_GIF;
 
 	/**
-	 * A String equivalent of {@link MediaType#IMAGE_GIF}.
+	 * A String equivalent of {@link HttpMediaType#IMAGE_GIF}.
 	 */
 	public static final String IMAGE_GIF_VALUE = "image/gif";
 
 	/**
 	 * Public constant media type for {@code image/jpeg}.
 	 */
-	public static final MediaType IMAGE_JPEG;
+	public static final HttpMediaType IMAGE_JPEG;
 
 	/**
-	 * A String equivalent of {@link MediaType#IMAGE_JPEG}.
+	 * A String equivalent of {@link HttpMediaType#IMAGE_JPEG}.
 	 */
 	public static final String IMAGE_JPEG_VALUE = "image/jpeg";
 
 	/**
 	 * Public constant media type for {@code image/png}.
 	 */
-	public static final MediaType IMAGE_PNG;
+	public static final HttpMediaType IMAGE_PNG;
 
 	/**
-	 * A String equivalent of {@link MediaType#IMAGE_PNG}.
+	 * A String equivalent of {@link HttpMediaType#IMAGE_PNG}.
 	 */
 	public static final String IMAGE_PNG_VALUE = "image/png";
 
 	/**
 	 * Public constant media type for {@code multipart/form-data}.
 	 */
-	public static final MediaType MULTIPART_FORM_DATA;
+	public static final HttpMediaType MULTIPART_FORM_DATA;
 
 	/**
-	 * A String equivalent of {@link MediaType#MULTIPART_FORM_DATA}.
+	 * A String equivalent of {@link HttpMediaType#MULTIPART_FORM_DATA}.
 	 */
 	public static final String MULTIPART_FORM_DATA_VALUE = "multipart/form-data";
 
@@ -298,10 +299,10 @@ public class MediaType extends MimeType implements Serializable {
 	 * 
 	 * @since 5.2
 	 */
-	public static final MediaType MULTIPART_MIXED;
+	public static final HttpMediaType MULTIPART_MIXED;
 
 	/**
-	 * A String equivalent of {@link MediaType#MULTIPART_MIXED}.
+	 * A String equivalent of {@link HttpMediaType#MULTIPART_MIXED}.
 	 * 
 	 * @since 5.2
 	 */
@@ -314,10 +315,10 @@ public class MediaType extends MimeType implements Serializable {
 	 * @see <a href="https://www.w3.org/TR/eventsource/">Server-Sent Events W3C
 	 *      recommendation</a>
 	 */
-	public static final MediaType TEXT_EVENT_STREAM;
+	public static final HttpMediaType TEXT_EVENT_STREAM;
 
 	/**
-	 * A String equivalent of {@link MediaType#TEXT_EVENT_STREAM}.
+	 * A String equivalent of {@link HttpMediaType#TEXT_EVENT_STREAM}.
 	 * 
 	 * @since 4.3.6
 	 */
@@ -326,10 +327,10 @@ public class MediaType extends MimeType implements Serializable {
 	/**
 	 * Public constant media type for {@code text/html}.
 	 */
-	public static final MediaType TEXT_HTML;
+	public static final HttpMediaType TEXT_HTML;
 
 	/**
-	 * A String equivalent of {@link MediaType#TEXT_HTML}.
+	 * A String equivalent of {@link HttpMediaType#TEXT_HTML}.
 	 */
 	public static final String TEXT_HTML_VALUE = "text/html";
 
@@ -338,10 +339,10 @@ public class MediaType extends MimeType implements Serializable {
 	 * 
 	 * @since 4.3
 	 */
-	public static final MediaType TEXT_MARKDOWN;
+	public static final HttpMediaType TEXT_MARKDOWN;
 
 	/**
-	 * A String equivalent of {@link MediaType#TEXT_MARKDOWN}.
+	 * A String equivalent of {@link HttpMediaType#TEXT_MARKDOWN}.
 	 * 
 	 * @since 4.3
 	 */
@@ -350,20 +351,20 @@ public class MediaType extends MimeType implements Serializable {
 	/**
 	 * Public constant media type for {@code text/plain}.
 	 */
-	public static final MediaType TEXT_PLAIN;
+	public static final HttpMediaType TEXT_PLAIN;
 
 	/**
-	 * A String equivalent of {@link MediaType#TEXT_PLAIN}.
+	 * A String equivalent of {@link HttpMediaType#TEXT_PLAIN}.
 	 */
 	public static final String TEXT_PLAIN_VALUE = "text/plain";
 
 	/**
 	 * Public constant media type for {@code text/xml}.
 	 */
-	public static final MediaType TEXT_XML;
+	public static final HttpMediaType TEXT_XML;
 
 	/**
-	 * A String equivalent of {@link MediaType#TEXT_XML}.
+	 * A String equivalent of {@link HttpMediaType#TEXT_XML}.
 	 */
 	public static final String TEXT_XML_VALUE = "text/xml";
 
@@ -371,31 +372,31 @@ public class MediaType extends MimeType implements Serializable {
 
 	static {
 		// Not using "valueOf' to avoid static init cost
-		ALL = new MediaType("*", "*");
-		APPLICATION_ATOM_XML = new MediaType("application", "atom+xml");
-		APPLICATION_CBOR = new MediaType("application", "cbor");
-		APPLICATION_FORM_URLENCODED = new MediaType("application", "x-www-form-urlencoded");
-		APPLICATION_JSON = new MediaType("application", "json");
-		APPLICATION_JSON_UTF8 = new MediaType("application", "json", StandardCharsets.UTF_8);
-		APPLICATION_OCTET_STREAM = new MediaType("application", "octet-stream");
-		APPLICATION_PDF = new MediaType("application", "pdf");
-		APPLICATION_PROBLEM_JSON = new MediaType("application", "problem+json");
-		APPLICATION_PROBLEM_JSON_UTF8 = new MediaType("application", "problem+json", StandardCharsets.UTF_8);
-		APPLICATION_PROBLEM_XML = new MediaType("application", "problem+xml");
-		APPLICATION_RSS_XML = new MediaType("application", "rss+xml");
-		APPLICATION_STREAM_JSON = new MediaType("application", "stream+json");
-		APPLICATION_XHTML_XML = new MediaType("application", "xhtml+xml");
-		APPLICATION_XML = new MediaType("application", "xml");
-		IMAGE_GIF = new MediaType("image", "gif");
-		IMAGE_JPEG = new MediaType("image", "jpeg");
-		IMAGE_PNG = new MediaType("image", "png");
-		MULTIPART_FORM_DATA = new MediaType("multipart", "form-data");
-		MULTIPART_MIXED = new MediaType("multipart", "mixed");
-		TEXT_EVENT_STREAM = new MediaType("text", "event-stream");
-		TEXT_HTML = new MediaType("text", "html");
-		TEXT_MARKDOWN = new MediaType("text", "markdown");
-		TEXT_PLAIN = new MediaType("text", "plain");
-		TEXT_XML = new MediaType("text", "xml");
+		ALL = new HttpMediaType("*", "*");
+		APPLICATION_ATOM_XML = new HttpMediaType("application", "atom+xml");
+		APPLICATION_CBOR = new HttpMediaType("application", "cbor");
+		APPLICATION_FORM_URLENCODED = new HttpMediaType("application", "x-www-form-urlencoded");
+		APPLICATION_JSON = new HttpMediaType("application", "json");
+		APPLICATION_JSON_UTF8 = new HttpMediaType("application", "json", StandardCharsets.UTF_8);
+		APPLICATION_OCTET_STREAM = new HttpMediaType("application", "octet-stream");
+		APPLICATION_PDF = new HttpMediaType("application", "pdf");
+		APPLICATION_PROBLEM_JSON = new HttpMediaType("application", "problem+json");
+		APPLICATION_PROBLEM_JSON_UTF8 = new HttpMediaType("application", "problem+json", StandardCharsets.UTF_8);
+		APPLICATION_PROBLEM_XML = new HttpMediaType("application", "problem+xml");
+		APPLICATION_RSS_XML = new HttpMediaType("application", "rss+xml");
+		APPLICATION_STREAM_JSON = new HttpMediaType("application", "stream+json");
+		APPLICATION_XHTML_XML = new HttpMediaType("application", "xhtml+xml");
+		APPLICATION_XML = new HttpMediaType("application", "xml");
+		IMAGE_GIF = new HttpMediaType("image", "gif");
+		IMAGE_JPEG = new HttpMediaType("image", "jpeg");
+		IMAGE_PNG = new HttpMediaType("image", "png");
+		MULTIPART_FORM_DATA = new HttpMediaType("multipart", "form-data");
+		MULTIPART_MIXED = new HttpMediaType("multipart", "mixed");
+		TEXT_EVENT_STREAM = new HttpMediaType("text", "event-stream");
+		TEXT_HTML = new HttpMediaType("text", "html");
+		TEXT_MARKDOWN = new HttpMediaType("text", "markdown");
+		TEXT_PLAIN = new HttpMediaType("text", "plain");
+		TEXT_XML = new HttpMediaType("text", "xml");
 	}
 
 	/**
@@ -409,7 +410,7 @@ public class MediaType extends MimeType implements Serializable {
 	 * @throws IllegalArgumentException
 	 *             if any of the parameters contain illegal characters
 	 */
-	public MediaType(String type) {
+	public HttpMediaType(String type) {
 		super(type);
 	}
 
@@ -425,7 +426,7 @@ public class MediaType extends MimeType implements Serializable {
 	 * @throws IllegalArgumentException
 	 *             if any of the parameters contain illegal characters
 	 */
-	public MediaType(String type, String subtype) {
+	public HttpMediaType(String type, String subtype) {
 		super(type, subtype, Collections.emptyMap());
 	}
 
@@ -442,7 +443,7 @@ public class MediaType extends MimeType implements Serializable {
 	 * @throws IllegalArgumentException
 	 *             if any of the parameters contain illegal characters
 	 */
-	public MediaType(String type, String subtype, Charset charset) {
+	public HttpMediaType(String type, String subtype, Charset charset) {
 		super(type, subtype, charset);
 	}
 
@@ -459,7 +460,7 @@ public class MediaType extends MimeType implements Serializable {
 	 * @throws IllegalArgumentException
 	 *             if any of the parameters contain illegal characters
 	 */
-	public MediaType(String type, String subtype, double qualityValue) {
+	public HttpMediaType(String type, String subtype, double qualityValue) {
 		this(type, subtype, Collections.singletonMap(PARAM_QUALITY_FACTOR, Double.toString(qualityValue)));
 	}
 
@@ -475,7 +476,7 @@ public class MediaType extends MimeType implements Serializable {
 	 *             if any of the parameters contain illegal characters
 	 * @since 4.3
 	 */
-	public MediaType(MediaType other, Charset charset) {
+	public HttpMediaType(HttpMediaType other, Charset charset) {
 		super(other, charset);
 	}
 
@@ -490,7 +491,7 @@ public class MediaType extends MimeType implements Serializable {
 	 * @throws IllegalArgumentException
 	 *             if any of the parameters contain illegal characters
 	 */
-	public MediaType(MediaType other, @Nullable Map<String, String> parameters) {
+	public HttpMediaType(HttpMediaType other, @Nullable Map<String, String> parameters) {
 		super(other.getType(), other.getSubtype(), parameters);
 	}
 
@@ -507,7 +508,7 @@ public class MediaType extends MimeType implements Serializable {
 	 * @throws IllegalArgumentException
 	 *             if any of the parameters contain illegal characters
 	 */
-	public MediaType(String type, String subtype, @Nullable Map<String, String> parameters) {
+	public HttpMediaType(String type, String subtype, @Nullable Map<String, String> parameters) {
 		super(type, subtype, parameters);
 	}
 
@@ -539,15 +540,15 @@ public class MediaType extends MimeType implements Serializable {
 	 * {@code text/html}, and {@code application/*+xml} includes
 	 * {@code application/soap+xml}, etc. This method is <b>not</b> symmetric.
 	 * <p>
-	 * Simply calls {@link MimeType#includes(MimeType)} but declared with a
-	 * {@code MediaType} parameter for binary backwards compatibility.
+	 * Simply calls {@link HttpMimeType#includes(HttpMimeType)} but declared
+	 * with a {@code MediaType} parameter for binary backwards compatibility.
 	 * 
 	 * @param other
 	 *            the reference media type with which to compare
 	 * @return {@code true} if this media type includes the given media type;
 	 *         {@code false} otherwise
 	 */
-	public boolean includes(@Nullable MediaType other) {
+	public boolean includes(@Nullable HttpMediaType other) {
 		return super.includes(other);
 	}
 
@@ -559,15 +560,16 @@ public class MediaType extends MimeType implements Serializable {
 	 * {@code text/html}, and vice versa. In effect, this method is similar to
 	 * {@link #includes}, except that it <b>is</b> symmetric.
 	 * <p>
-	 * Simply calls {@link MimeType#isCompatibleWith(MimeType)} but declared
-	 * with a {@code MediaType} parameter for binary backwards compatibility.
+	 * Simply calls {@link HttpMimeType#isCompatibleWith(HttpMimeType)} but
+	 * declared with a {@code MediaType} parameter for binary backwards
+	 * compatibility.
 	 * 
 	 * @param other
 	 *            the reference media type with which to compare
 	 * @return {@code true} if this media type is compatible with the given
 	 *         media type; {@code false} otherwise
 	 */
-	public boolean isCompatibleWith(@Nullable MediaType other) {
+	public boolean isCompatibleWith(@Nullable HttpMediaType other) {
 		return super.isCompatibleWith(other);
 	}
 
@@ -578,13 +580,13 @@ public class MediaType extends MimeType implements Serializable {
 	 * @return the same instance if the given MediaType doesn't have a quality
 	 *         value, or a new one otherwise
 	 */
-	public MediaType copyQualityValue(MediaType mediaType) {
+	public HttpMediaType copyQualityValue(HttpMediaType mediaType) {
 		if (!mediaType.getParameters().containsKey(PARAM_QUALITY_FACTOR)) {
 			return this;
 		}
 		Map<String, String> params = new LinkedHashMap<>(getParameters());
 		params.put(PARAM_QUALITY_FACTOR, mediaType.getParameters().get(PARAM_QUALITY_FACTOR));
-		return new MediaType(this, params);
+		return new HttpMediaType(this, params);
 	}
 
 	/**
@@ -593,13 +595,13 @@ public class MediaType extends MimeType implements Serializable {
 	 * @return the same instance if the media type doesn't contain a quality
 	 *         value, or a new one otherwise
 	 */
-	public MediaType removeQualityValue() {
+	public HttpMediaType removeQualityValue() {
 		if (!getParameters().containsKey(PARAM_QUALITY_FACTOR)) {
 			return this;
 		}
 		Map<String, String> params = new LinkedHashMap<>(getParameters());
 		params.remove(PARAM_QUALITY_FACTOR);
-		return new MediaType(this, params);
+		return new HttpMediaType(this, params);
 	}
 
 	/**
@@ -613,7 +615,7 @@ public class MediaType extends MimeType implements Serializable {
 	 *             if the media type value cannot be parsed
 	 * @see #parseMediaType(String)
 	 */
-	public static MediaType valueOf(String value) {
+	public static HttpMediaType valueOf(String value) {
 		return parseMediaType(value);
 	}
 
@@ -626,15 +628,15 @@ public class MediaType extends MimeType implements Serializable {
 	 * @throws InvalidMediaTypeException
 	 *             if the media type value cannot be parsed
 	 */
-	public static MediaType parseMediaType(String mediaType) {
-		MimeType type;
+	public static HttpMediaType parseMediaType(String mediaType) {
+		HttpMimeType type;
 		try {
 			type = MimeTypeUtils.parseMimeType(mediaType);
 		} catch (InvalidMimeTypeException ex) {
 			throw new InvalidMediaTypeException(ex);
 		}
 		try {
-			return new MediaType(type.getType(), type.getSubtype(), type.getParameters());
+			return new HttpMediaType(type.getType(), type.getSubtype(), type.getParameters());
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidMediaTypeException(mediaType, ex.getMessage());
 		}
@@ -652,13 +654,13 @@ public class MediaType extends MimeType implements Serializable {
 	 * @throws InvalidMediaTypeException
 	 *             if the media type value cannot be parsed
 	 */
-	public static List<MediaType> parseMediaTypes(@Nullable String mediaTypes) {
+	public static List<HttpMediaType> parseMediaTypes(@Nullable String mediaTypes) {
 		if (isBlank(mediaTypes)) {
 			return Collections.emptyList();
 		}
 		// Avoid using java.util.stream.Stream in hot paths
 		List<String> tokenizedTypes = MimeTypeUtils.tokenize(mediaTypes);
-		List<MediaType> result = new ArrayList<>(tokenizedTypes.size());
+		List<HttpMediaType> result = new ArrayList<>(tokenizedTypes.size());
 		for (String type : tokenizedTypes) {
 			if (!isBlank(type)) {
 				result.add(parseMediaType(type));
@@ -680,13 +682,13 @@ public class MediaType extends MimeType implements Serializable {
 	 *             if the media type value cannot be parsed
 	 * @since 4.3.2
 	 */
-	public static List<MediaType> parseMediaTypes(@Nullable List<String> mediaTypes) {
+	public static List<HttpMediaType> parseMediaTypes(@Nullable List<String> mediaTypes) {
 		if (CollectionUtils2.isEmpty(mediaTypes)) {
 			return Collections.emptyList();
 		} else if (mediaTypes.size() == 1) {
 			return parseMediaTypes(mediaTypes.get(0));
 		} else {
-			List<MediaType> result = new ArrayList<>(8);
+			List<HttpMediaType> result = new ArrayList<>(8);
 			for (String mediaType : mediaTypes) {
 				result.addAll(parseMediaTypes(mediaType));
 			}
@@ -699,10 +701,10 @@ public class MediaType extends MimeType implements Serializable {
 	 * 
 	 * @since 5.0
 	 */
-	public static List<MediaType> asMediaTypes(List<MimeType> mimeTypes) {
-		List<MediaType> mediaTypes = new ArrayList<>(mimeTypes.size());
-		for (MimeType mimeType : mimeTypes) {
-			mediaTypes.add(MediaType.asMediaType(mimeType));
+	public static List<HttpMediaType> asMediaTypes(List<HttpMimeType> mimeTypes) {
+		List<HttpMediaType> mediaTypes = new ArrayList<>(mimeTypes.size());
+		for (HttpMimeType mimeType : mimeTypes) {
+			mediaTypes.add(HttpMediaType.asMediaType(mimeType));
 		}
 		return mediaTypes;
 	}
@@ -712,11 +714,11 @@ public class MediaType extends MimeType implements Serializable {
 	 * 
 	 * @since 5.0
 	 */
-	public static MediaType asMediaType(MimeType mimeType) {
-		if (mimeType instanceof MediaType) {
-			return (MediaType) mimeType;
+	public static HttpMediaType asMediaType(HttpMimeType mimeType) {
+		if (mimeType instanceof HttpMediaType) {
+			return (HttpMediaType) mimeType;
 		}
-		return new MediaType(mimeType.getType(), mimeType.getSubtype(), mimeType.getParameters());
+		return new HttpMediaType(mimeType.getType(), mimeType.getSubtype(), mimeType.getParameters());
 	}
 
 	/**
@@ -730,7 +732,7 @@ public class MediaType extends MimeType implements Serializable {
 	 *            the media types to create a string representation for
 	 * @return the string representation
 	 */
-	public static String toString(Collection<MediaType> mediaTypes) {
+	public static String toString(Collection<HttpMediaType> mediaTypes) {
 		return MimeTypeUtils.toString(mediaTypes);
 	}
 
@@ -769,7 +771,7 @@ public class MediaType extends MimeType implements Serializable {
 	 * @see <a href="https://tools.ietf.org/html/rfc7231#section-5.3.2">HTTP
 	 *      1.1: Semantics and Content, section 5.3.2</a>
 	 */
-	public static void sortBySpecificity(List<MediaType> mediaTypes) {
+	public static void sortBySpecificity(List<HttpMediaType> mediaTypes) {
 		Assert2.notNull(mediaTypes, "'mediaTypes' must not be null");
 		if (mediaTypes.size() > 1) {
 			mediaTypes.sort(SPECIFICITY_COMPARATOR);
@@ -804,7 +806,7 @@ public class MediaType extends MimeType implements Serializable {
 	 *            the list of media types to be sorted
 	 * @see #getQualityValue()
 	 */
-	public static void sortByQualityValue(List<MediaType> mediaTypes) {
+	public static void sortByQualityValue(List<HttpMediaType> mediaTypes) {
 		Assert2.notNull(mediaTypes, "'mediaTypes' must not be null");
 		if (mediaTypes.size() > 1) {
 			mediaTypes.sort(QUALITY_VALUE_COMPARATOR);
@@ -815,20 +817,20 @@ public class MediaType extends MimeType implements Serializable {
 	 * Sorts the given list of {@code MediaType} objects by specificity as the
 	 * primary criteria and quality value the secondary.
 	 * 
-	 * @see MediaType#sortBySpecificity(List)
-	 * @see MediaType#sortByQualityValue(List)
+	 * @see HttpMediaType#sortBySpecificity(List)
+	 * @see HttpMediaType#sortByQualityValue(List)
 	 */
-	public static void sortBySpecificityAndQuality(List<MediaType> mediaTypes) {
+	public static void sortBySpecificityAndQuality(List<HttpMediaType> mediaTypes) {
 		Assert2.notNull(mediaTypes, "'mediaTypes' must not be null");
 		if (mediaTypes.size() > 1) {
-			mediaTypes.sort(MediaType.SPECIFICITY_COMPARATOR.thenComparing(MediaType.QUALITY_VALUE_COMPARATOR));
+			mediaTypes.sort(HttpMediaType.SPECIFICITY_COMPARATOR.thenComparing(HttpMediaType.QUALITY_VALUE_COMPARATOR));
 		}
 	}
 
 	/**
 	 * Comparator used by {@link #sortByQualityValue(List)}.
 	 */
-	public static final Comparator<MediaType> QUALITY_VALUE_COMPARATOR = (mediaType1, mediaType2) -> {
+	public static final Comparator<HttpMediaType> QUALITY_VALUE_COMPARATOR = (mediaType1, mediaType2) -> {
 		double quality1 = mediaType1.getQualityValue();
 		double quality2 = mediaType2.getQualityValue();
 		int qualityComparison = Double.compare(quality2, quality1);
@@ -872,10 +874,10 @@ public class MediaType extends MimeType implements Serializable {
 	/**
 	 * Comparator used by {@link #sortBySpecificity(List)}.
 	 */
-	public static final Comparator<MediaType> SPECIFICITY_COMPARATOR = new SpecificityComparator<MediaType>() {
+	public static final Comparator<HttpMediaType> SPECIFICITY_COMPARATOR = new SpecificityComparator<HttpMediaType>() {
 
 		@Override
-		protected int compareParameters(MediaType mediaType1, MediaType mediaType2) {
+		protected int compareParameters(HttpMediaType mediaType1, HttpMediaType mediaType2) {
 			double quality1 = mediaType1.getQualityValue();
 			double quality2 = mediaType2.getQualityValue();
 			int qualityComparison = Double.compare(quality2, quality1);
@@ -887,8 +889,8 @@ public class MediaType extends MimeType implements Serializable {
 	};
 
 	/**
-	 * Exception thrown from {@link MediaType#parseMediaType(String)} in case of
-	 * encountering an invalid media type specification String.
+	 * Exception thrown from {@link HttpMediaType#parseMediaType(String)} in
+	 * case of encountering an invalid media type specification String.
 	 *
 	 * @author Juergen Hoeller
 	 * @since 3.2.2

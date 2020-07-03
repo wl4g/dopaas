@@ -21,7 +21,7 @@ import java.util.TreeSet;
 
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
 import com.wl4g.devops.components.tools.common.collection.CollectionUtils2;
-import com.wl4g.devops.components.tools.common.collection.map.LinkedCaseInsensitiveMap;
+import com.wl4g.devops.components.tools.common.collection.multimap.LinkedCaseInsensitiveMap;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.lang.ObjectUtils;
 import com.wl4g.devops.components.tools.common.lang.StringUtils2;
@@ -42,7 +42,7 @@ import com.wl4g.devops.components.tools.common.lang.StringUtils2;
  * @since 4.0
  * @see MimeTypeUtils
  */
-public class MimeType implements Comparable<MimeType>, Serializable {
+public class HttpMimeType implements Comparable<HttpMimeType>, Serializable {
 
 	private static final long serialVersionUID = 4085923477777865903L;
 
@@ -107,7 +107,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * @throws IllegalArgumentException
 	 *             if any of the parameters contains illegal characters
 	 */
-	public MimeType(String type) {
+	public HttpMimeType(String type) {
 		this(type, WILDCARD_TYPE);
 	}
 
@@ -123,7 +123,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * @throws IllegalArgumentException
 	 *             if any of the parameters contains illegal characters
 	 */
-	public MimeType(String type, String subtype) {
+	public HttpMimeType(String type, String subtype) {
 		this(type, subtype, Collections.emptyMap());
 	}
 
@@ -140,7 +140,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * @throws IllegalArgumentException
 	 *             if any of the parameters contains illegal characters
 	 */
-	public MimeType(String type, String subtype, Charset charset) {
+	public HttpMimeType(String type, String subtype, Charset charset) {
 		this(type, subtype, Collections.singletonMap(PARAM_CHARSET, charset.name()));
 	}
 
@@ -156,7 +156,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 *             if any of the parameters contains illegal characters
 	 * @since 4.3
 	 */
-	public MimeType(MimeType other, Charset charset) {
+	public HttpMimeType(HttpMimeType other, Charset charset) {
 		this(other.getType(), other.getSubtype(), addCharsetParameter(charset, other.getParameters()));
 	}
 
@@ -171,7 +171,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * @throws IllegalArgumentException
 	 *             if any of the parameters contains illegal characters
 	 */
-	public MimeType(MimeType other, @Nullable Map<String, String> parameters) {
+	public HttpMimeType(HttpMimeType other, @Nullable Map<String, String> parameters) {
 		this(other.getType(), other.getSubtype(), parameters);
 	}
 
@@ -188,7 +188,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * @throws IllegalArgumentException
 	 *             if any of the parameters contains illegal characters
 	 */
-	public MimeType(String type, String subtype, @Nullable Map<String, String> parameters) {
+	public HttpMimeType(String type, String subtype, @Nullable Map<String, String> parameters) {
 		Assert2.hasLength(type, "'type' must not be empty");
 		Assert2.hasLength(subtype, "'subtype' must not be empty");
 		checkToken(type);
@@ -338,7 +338,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * @return {@code true} if this MIME Type includes the given MIME Type;
 	 *         {@code false} otherwise
 	 */
-	public boolean includes(@Nullable MimeType other) {
+	public boolean includes(@Nullable HttpMimeType other) {
 		if (other == null) {
 			return false;
 		}
@@ -383,7 +383,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * @return {@code true} if this MIME Type is compatible with the given MIME
 	 *         Type; {@code false} otherwise
 	 */
-	public boolean isCompatibleWith(@Nullable MimeType other) {
+	public boolean isCompatibleWith(@Nullable HttpMimeType other) {
 		if (other == null) {
 			return false;
 		}
@@ -423,7 +423,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * @return whether the two mime types have the same type and subtype
 	 * @since 5.1.4
 	 */
-	public boolean equalsTypeAndSubtype(@Nullable MimeType other) {
+	public boolean equalsTypeAndSubtype(@Nullable HttpMimeType other) {
 		if (other == null) {
 			return false;
 		}
@@ -432,16 +432,16 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 
 	/**
 	 * Unlike {@link Collection#contains(Object)} which relies on
-	 * {@link MimeType#equals(Object)}, this method only checks the type and the
-	 * subtype, but otherwise ignores parameters.
+	 * {@link HttpMimeType#equals(Object)}, this method only checks the type and
+	 * the subtype, but otherwise ignores parameters.
 	 * 
 	 * @param mimeTypes
 	 *            the list of mime types to perform the check against
 	 * @return whether the list contains the given mime type
 	 * @since 5.1.4
 	 */
-	public boolean isPresentIn(Collection<? extends MimeType> mimeTypes) {
-		for (MimeType mimeType : mimeTypes) {
+	public boolean isPresentIn(Collection<? extends HttpMimeType> mimeTypes) {
+		for (HttpMimeType mimeType : mimeTypes) {
 			if (mimeType.equalsTypeAndSubtype(this)) {
 				return true;
 			}
@@ -454,10 +454,10 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		if (this == other) {
 			return true;
 		}
-		if (!(other instanceof MimeType)) {
+		if (!(other instanceof HttpMimeType)) {
 			return false;
 		}
-		MimeType otherType = (MimeType) other;
+		HttpMimeType otherType = (HttpMimeType) other;
 		return (this.type.equalsIgnoreCase(otherType.type) && this.subtype.equalsIgnoreCase(otherType.subtype)
 				&& parametersAreEqual(otherType));
 	}
@@ -469,7 +469,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * 
 	 * @since 4.2
 	 */
-	private boolean parametersAreEqual(MimeType other) {
+	private boolean parametersAreEqual(HttpMimeType other) {
 		if (this.parameters.size() != other.parameters.size()) {
 			return false;
 		}
@@ -535,7 +535,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * @see MimeTypeUtils#sortBySpecificity(List)
 	 */
 	@Override
-	public int compareTo(MimeType other) {
+	public int compareTo(HttpMimeType other) {
 		int comp = getType().compareToIgnoreCase(other.getType());
 		if (comp != 0) {
 			return comp;
@@ -601,7 +601,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	 * 
 	 * @see MimeTypeUtils#parseMimeType(String)
 	 */
-	public static MimeType valueOf(String value) {
+	public static HttpMimeType valueOf(String value) {
 		return MimeTypeUtils.parseMimeType(value);
 	}
 
@@ -612,12 +612,13 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	}
 
 	/**
-	 * Comparator to sort {@link MimeType MimeTypes} in order of specificity.
+	 * Comparator to sort {@link HttpMimeType MimeTypes} in order of
+	 * specificity.
 	 *
 	 * @param <T>
 	 *            the type of mime types that may be compared by this comparator
 	 */
-	public static class SpecificityComparator<T extends MimeType> implements Comparator<T> {
+	public static class SpecificityComparator<T extends HttpMimeType> implements Comparator<T> {
 
 		@Override
 		public int compare(T mimeType1, T mimeType2) {
@@ -661,7 +662,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 	}
 
 	/**
-	 * Miscellaneous {@link MimeType} utility methods.
+	 * Miscellaneous {@link HttpMimeType} utility methods.
 	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020年7月2日
@@ -681,13 +682,13 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		/**
 		 * Comparator used by {@link #sortBySpecificity(List)}.
 		 */
-		public static final Comparator<MimeType> SPECIFICITY_COMPARATOR = new SpecificityComparator<MimeType>();
+		public static final Comparator<HttpMimeType> SPECIFICITY_COMPARATOR = new SpecificityComparator<HttpMimeType>();
 
 		/**
 		 * Public constant mime type that includes all media ranges (i.e.
 		 * "&#42;/&#42;").
 		 */
-		public static final MimeType ALL;
+		public static final HttpMimeType ALL;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#ALL}.
@@ -700,7 +701,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		 * @deprecated as of 4.3.6, in favor of {@code MediaType} constants
 		 */
 		@Deprecated
-		public final static MimeType APPLICATION_ATOM_XML;
+		public final static HttpMimeType APPLICATION_ATOM_XML;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#APPLICATION_ATOM_XML}.
@@ -717,7 +718,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		 * @deprecated as of 4.3.6, in favor of {@code MediaType} constants
 		 */
 		@Deprecated
-		public final static MimeType APPLICATION_FORM_URLENCODED;
+		public final static HttpMimeType APPLICATION_FORM_URLENCODED;
 
 		/**
 		 * A String equivalent of
@@ -731,7 +732,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		/**
 		 * Public constant mime type for {@code application/json}.
 		 */
-		public final static MimeType APPLICATION_JSON;
+		public final static HttpMimeType APPLICATION_JSON;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#APPLICATION_JSON}.
@@ -741,7 +742,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		/**
 		 * Public constant mime type for {@code application/octet-stream}.
 		 */
-		public final static MimeType APPLICATION_OCTET_STREAM;
+		public final static HttpMimeType APPLICATION_OCTET_STREAM;
 
 		/**
 		 * A String equivalent of
@@ -755,7 +756,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		 * @deprecated as of 4.3.6, in favor of {@code MediaType} constants
 		 */
 		@Deprecated
-		public final static MimeType APPLICATION_XHTML_XML;
+		public final static HttpMimeType APPLICATION_XHTML_XML;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#APPLICATION_XHTML_XML}.
@@ -768,7 +769,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		/**
 		 * Public constant mime type for {@code application/xml}.
 		 */
-		public final static MimeType APPLICATION_XML;
+		public final static HttpMimeType APPLICATION_XML;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#APPLICATION_XML}.
@@ -778,7 +779,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		/**
 		 * Public constant mime type for {@code image/gif}.
 		 */
-		public final static MimeType IMAGE_GIF;
+		public final static HttpMimeType IMAGE_GIF;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#IMAGE_GIF}.
@@ -788,7 +789,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		/**
 		 * Public constant mime type for {@code image/jpeg}.
 		 */
-		public final static MimeType IMAGE_JPEG;
+		public final static HttpMimeType IMAGE_JPEG;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#IMAGE_JPEG}.
@@ -798,7 +799,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		/**
 		 * Public constant mime type for {@code image/png}.
 		 */
-		public final static MimeType IMAGE_PNG;
+		public final static HttpMimeType IMAGE_PNG;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#IMAGE_PNG}.
@@ -811,7 +812,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		 * @deprecated as of 4.3.6, in favor of {@code MediaType} constants
 		 */
 		@Deprecated
-		public final static MimeType MULTIPART_FORM_DATA;
+		public final static HttpMimeType MULTIPART_FORM_DATA;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#MULTIPART_FORM_DATA}.
@@ -824,7 +825,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		/**
 		 * Public constant mime type for {@code text/html}.
 		 */
-		public final static MimeType TEXT_HTML;
+		public final static HttpMimeType TEXT_HTML;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#TEXT_HTML}.
@@ -834,7 +835,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		/**
 		 * Public constant mime type for {@code text/plain}.
 		 */
-		public final static MimeType TEXT_PLAIN;
+		public final static HttpMimeType TEXT_PLAIN;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#TEXT_PLAIN}.
@@ -844,7 +845,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		/**
 		 * Public constant mime type for {@code text/xml}.
 		 */
-		public final static MimeType TEXT_XML;
+		public final static HttpMimeType TEXT_XML;
 
 		/**
 		 * A String equivalent of {@link MimeTypeUtils#TEXT_XML}.
@@ -852,20 +853,20 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		public final static String TEXT_XML_VALUE = "text/xml";
 
 		static {
-			ALL = MimeType.valueOf(ALL_VALUE);
-			APPLICATION_ATOM_XML = MimeType.valueOf(APPLICATION_ATOM_XML_VALUE);
-			APPLICATION_FORM_URLENCODED = MimeType.valueOf(APPLICATION_FORM_URLENCODED_VALUE);
-			APPLICATION_JSON = MimeType.valueOf(APPLICATION_JSON_VALUE);
-			APPLICATION_OCTET_STREAM = MimeType.valueOf(APPLICATION_OCTET_STREAM_VALUE);
-			APPLICATION_XHTML_XML = MimeType.valueOf(APPLICATION_XHTML_XML_VALUE);
-			APPLICATION_XML = MimeType.valueOf(APPLICATION_XML_VALUE);
-			IMAGE_GIF = MimeType.valueOf(IMAGE_GIF_VALUE);
-			IMAGE_JPEG = MimeType.valueOf(IMAGE_JPEG_VALUE);
-			IMAGE_PNG = MimeType.valueOf(IMAGE_PNG_VALUE);
-			MULTIPART_FORM_DATA = MimeType.valueOf(MULTIPART_FORM_DATA_VALUE);
-			TEXT_HTML = MimeType.valueOf(TEXT_HTML_VALUE);
-			TEXT_PLAIN = MimeType.valueOf(TEXT_PLAIN_VALUE);
-			TEXT_XML = MimeType.valueOf(TEXT_XML_VALUE);
+			ALL = HttpMimeType.valueOf(ALL_VALUE);
+			APPLICATION_ATOM_XML = HttpMimeType.valueOf(APPLICATION_ATOM_XML_VALUE);
+			APPLICATION_FORM_URLENCODED = HttpMimeType.valueOf(APPLICATION_FORM_URLENCODED_VALUE);
+			APPLICATION_JSON = HttpMimeType.valueOf(APPLICATION_JSON_VALUE);
+			APPLICATION_OCTET_STREAM = HttpMimeType.valueOf(APPLICATION_OCTET_STREAM_VALUE);
+			APPLICATION_XHTML_XML = HttpMimeType.valueOf(APPLICATION_XHTML_XML_VALUE);
+			APPLICATION_XML = HttpMimeType.valueOf(APPLICATION_XML_VALUE);
+			IMAGE_GIF = HttpMimeType.valueOf(IMAGE_GIF_VALUE);
+			IMAGE_JPEG = HttpMimeType.valueOf(IMAGE_JPEG_VALUE);
+			IMAGE_PNG = HttpMimeType.valueOf(IMAGE_PNG_VALUE);
+			MULTIPART_FORM_DATA = HttpMimeType.valueOf(MULTIPART_FORM_DATA_VALUE);
+			TEXT_HTML = HttpMimeType.valueOf(TEXT_HTML_VALUE);
+			TEXT_PLAIN = HttpMimeType.valueOf(TEXT_PLAIN_VALUE);
+			TEXT_XML = HttpMimeType.valueOf(TEXT_XML_VALUE);
 		}
 
 		/**
@@ -877,7 +878,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		 * @throws InvalidMimeTypeException
 		 *             if the string cannot be parsed
 		 */
-		public static MimeType parseMimeType(String mimeType) {
+		public static HttpMimeType parseMimeType(String mimeType) {
 			if (isBlank(mimeType)) {
 				throw new InvalidMimeTypeException(mimeType, "'mimeType' must not be empty");
 			}
@@ -889,7 +890,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 			}
 
 			// java.net.HttpURLConnection returns a *; q=.2 Accept header
-			if (MimeType.WILDCARD_TYPE.equals(fullType)) {
+			if (HttpMimeType.WILDCARD_TYPE.equals(fullType)) {
 				fullType = "*/*";
 			}
 			int subIndex = fullType.indexOf('/');
@@ -901,7 +902,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 			}
 			String type = fullType.substring(0, subIndex);
 			String subtype = fullType.substring(subIndex + 1, fullType.length());
-			if (MimeType.WILDCARD_TYPE.equals(type) && !MimeType.WILDCARD_TYPE.equals(subtype)) {
+			if (HttpMimeType.WILDCARD_TYPE.equals(type) && !HttpMimeType.WILDCARD_TYPE.equals(subtype)) {
 				throw new InvalidMimeTypeException(mimeType, "wildcard type is legal only in '*/*' (all mime types)");
 			}
 
@@ -936,7 +937,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 			} while (index < mimeType.length());
 
 			try {
-				return new MimeType(type, subtype, parameters);
+				return new HttpMimeType(type, subtype, parameters);
 			} catch (UnsupportedCharsetException ex) {
 				throw new InvalidMimeTypeException(mimeType, "unsupported charset '" + ex.getCharsetName() + "'");
 			} catch (IllegalArgumentException ex) {
@@ -954,12 +955,12 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		 * @throws IllegalArgumentException
 		 *             if the string cannot be parsed
 		 */
-		public static List<MimeType> parseMimeTypes(String mimeTypes) {
+		public static List<HttpMimeType> parseMimeTypes(String mimeTypes) {
 			if (isBlank(mimeTypes)) {
 				return Collections.emptyList();
 			}
 			String[] tokens = StringUtils2.tokenizeToStringArray(mimeTypes, ",");
-			List<MimeType> result = new ArrayList<MimeType>(tokens.length);
+			List<HttpMimeType> result = new ArrayList<HttpMimeType>(tokens.length);
 			for (String token : tokens) {
 				result.add(parseMimeType(token));
 			}
@@ -1015,10 +1016,10 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		 * @throws IllegalArgumentException
 		 *             if the String cannot be parsed
 		 */
-		public static String toString(Collection<? extends MimeType> mimeTypes) {
+		public static String toString(Collection<? extends HttpMimeType> mimeTypes) {
 			StringBuilder builder = new StringBuilder();
-			for (Iterator<? extends MimeType> iterator = mimeTypes.iterator(); iterator.hasNext();) {
-				MimeType mimeType = iterator.next();
+			for (Iterator<? extends HttpMimeType> iterator = mimeTypes.iterator(); iterator.hasNext();) {
+				HttpMimeType mimeType = iterator.next();
 				mimeType.appendTo(builder);
 				if (iterator.hasNext()) {
 					builder.append(", ");
@@ -1032,21 +1033,21 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		 * <p>
 		 * Given two mime types:
 		 * <ol>
-		 * <li>if either mime type has a {@linkplain MimeType#isWildcardType()
-		 * wildcard type}, then the mime type without the wildcard is ordered
-		 * before the other.</li>
-		 * <li>if the two mime types have different
-		 * {@linkplain MimeType#getType() types}, then they are considered equal
-		 * and remain their current order.</li>
 		 * <li>if either mime type has a
-		 * {@linkplain MimeType#isWildcardSubtype() wildcard subtype} , then the
-		 * mime type without the wildcard is sorted before the other.</li>
+		 * {@linkplain HttpMimeType#isWildcardType() wildcard type}, then the
+		 * mime type without the wildcard is ordered before the other.</li>
 		 * <li>if the two mime types have different
-		 * {@linkplain MimeType#getSubtype() subtypes}, then they are considered
+		 * {@linkplain HttpMimeType#getType() types}, then they are considered
 		 * equal and remain their current order.</li>
+		 * <li>if either mime type has a
+		 * {@linkplain HttpMimeType#isWildcardSubtype() wildcard subtype} , then
+		 * the mime type without the wildcard is sorted before the other.</li>
+		 * <li>if the two mime types have different
+		 * {@linkplain HttpMimeType#getSubtype() subtypes}, then they are
+		 * considered equal and remain their current order.</li>
 		 * <li>if the two mime types have a different amount of
-		 * {@linkplain MimeType#getParameter(String) parameters}, then the mime
-		 * type with the most parameters is ordered before the other.</li>
+		 * {@linkplain HttpMimeType#getParameter(String) parameters}, then the
+		 * mime type with the most parameters is ordered before the other.</li>
 		 * </ol>
 		 * <p>
 		 * For example: <blockquote>audio/basic &lt; audio/* &lt;
@@ -1060,7 +1061,7 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		 * @see <a href="http://tools.ietf.org/html/rfc7231#section-5.3.2">HTTP
 		 *      1.1: Semantics and Content, section 5.3.2</a>
 		 */
-		public static void sortBySpecificity(List<MimeType> mimeTypes) {
+		public static void sortBySpecificity(List<HttpMimeType> mimeTypes) {
 			Assert2.notNull(mimeTypes, "'mimeTypes' must not be null");
 			if (mimeTypes.size() > 1) {
 				Collections.sort(mimeTypes, SPECIFICITY_COMPARATOR);
@@ -1122,14 +1123,14 @@ public class MimeType implements Comparable<MimeType>, Serializable {
 		}
 
 		/**
-		 * Comparator to sort {@link MimeType MimeTypes} in order of
+		 * Comparator to sort {@link HttpMimeType MimeTypes} in order of
 		 * specificity.
 		 *
 		 * @param <T>
 		 *            the type of mime types that may be compared by this
 		 *            comparator
 		 */
-		public static class SpecificityComparator<T extends MimeType> implements Comparator<T> {
+		public static class SpecificityComparator<T extends HttpMimeType> implements Comparator<T> {
 
 			@Override
 			public int compare(T mimeType1, T mimeType2) {

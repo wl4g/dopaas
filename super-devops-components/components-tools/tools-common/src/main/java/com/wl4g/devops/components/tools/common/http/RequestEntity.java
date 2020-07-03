@@ -5,9 +5,10 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-import com.wl4g.devops.components.tools.common.collection.map.MultiValueMap;
+import com.wl4g.devops.components.tools.common.collection.multimap.MultiValueMap;
 import com.wl4g.devops.components.tools.common.lang.ObjectUtils;
-import com.wl4g.devops.coss.common.utils.HttpMethod;
+
+import io.netty.handler.codec.http.HttpMethod;
 
 /**
  * Extension of {@link HttpEntity} that adds a {@linkplain HttpMethod method}
@@ -310,13 +311,13 @@ public class RequestEntity<T> extends HttpEntity<T> {
 		B header(String headerName, String... headerValues);
 
 		/**
-		 * Set the list of acceptable {@linkplain MediaType media types}, as
+		 * Set the list of acceptable {@linkplain HttpMediaType media types}, as
 		 * specified by the {@code Accept} header.
 		 * 
 		 * @param acceptableMediaTypes
 		 *            the acceptable media types
 		 */
-		B accept(MediaType... acceptableMediaTypes);
+		B accept(HttpMediaType... acceptableMediaTypes);
 
 		/**
 		 * Set the list of acceptable {@linkplain Charset charsets}, as
@@ -372,15 +373,15 @@ public class RequestEntity<T> extends HttpEntity<T> {
 		BodyBuilder contentLength(long contentLength);
 
 		/**
-		 * Set the {@linkplain MediaType media type} of the body, as specified
-		 * by the {@code Content-Type} header.
+		 * Set the {@linkplain HttpMediaType media type} of the body, as
+		 * specified by the {@code Content-Type} header.
 		 * 
 		 * @param contentType
 		 *            the content type
 		 * @return this builder
-		 * @see HttpHeaders#setContentType(MediaType)
+		 * @see HttpHeaders#setContentType(HttpMediaType)
 		 */
-		BodyBuilder contentType(MediaType contentType);
+		BodyBuilder contentType(HttpMediaType contentType);
 
 		/**
 		 * Set the body of the request entity and build the RequestEntity.
@@ -431,7 +432,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 		}
 
 		@Override
-		public BodyBuilder accept(MediaType... acceptableMediaTypes) {
+		public BodyBuilder accept(HttpMediaType... acceptableMediaTypes) {
 			this.headers.setAccept(Arrays.asList(acceptableMediaTypes));
 			return this;
 		}
@@ -449,7 +450,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 		}
 
 		@Override
-		public BodyBuilder contentType(MediaType contentType) {
+		public BodyBuilder contentType(HttpMediaType contentType) {
 			this.headers.setContentType(contentType);
 			return this;
 		}

@@ -287,6 +287,12 @@
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-erm-dns</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
 			<!-- UMC dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>

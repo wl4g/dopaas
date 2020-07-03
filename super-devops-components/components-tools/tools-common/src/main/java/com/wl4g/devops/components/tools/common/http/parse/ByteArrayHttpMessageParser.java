@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
-import com.wl4g.devops.components.tools.common.http.MediaType;
+import com.wl4g.devops.components.tools.common.http.HttpMediaType;
 
 /**
  * Implementation of {@link HttpMessageParser} that can read and write byte
@@ -26,7 +26,7 @@ public class ByteArrayHttpMessageParser extends AbstractHttpMessageParser<byte[]
 	 * Create a new instance of the {@code ByteArrayHttpMessageConverter}.
 	 */
 	public ByteArrayHttpMessageParser() {
-		super(new MediaType("application", "octet-stream"), MediaType.ALL);
+		super(new HttpMediaType("application", "octet-stream"), HttpMediaType.ALL);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class ByteArrayHttpMessageParser extends AbstractHttpMessageParser<byte[]
 	}
 
 	@Override
-	protected Long getContentLength(byte[] bytes, MediaType contentType) {
+	protected Long getContentLength(byte[] bytes, HttpMediaType contentType) {
 		return (long) bytes.length;
 	}
 

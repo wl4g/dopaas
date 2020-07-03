@@ -1,4 +1,4 @@
-package com.wl4g.devops.components.tools.common.collection.map;
+package com.wl4g.devops.components.tools.common.collection.multimap;
 
 import java.util.List;
 import java.util.Map;
