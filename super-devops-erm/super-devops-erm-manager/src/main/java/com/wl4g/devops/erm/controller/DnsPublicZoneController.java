@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.erm.controller;
 
-import com.wl4g.devops.common.bean.erm.DnsPublicDomain;
+import com.wl4g.devops.common.bean.erm.DnsPublicZone;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.erm.service.DnsPublicDomainService;
+import com.wl4g.devops.erm.service.DnsPublicZoneService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,10 +33,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/dnsPublicDomain")
-public class DnsPublicDomainController extends BaseController {
+public class DnsPublicZoneController extends BaseController {
 
 	@Autowired
-	private DnsPublicDomainService dnsPublicDomainService;
+	private DnsPublicZoneService dnsPublicDomainService;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String name) {
@@ -46,7 +46,7 @@ public class DnsPublicDomainController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(@RequestBody DnsPublicDomain dnsPublicDomain) {
+	public RespBase<?> save(@RequestBody DnsPublicZone dnsPublicDomain) {
 		RespBase<Object> resp = RespBase.create();
 		dnsPublicDomainService.save(dnsPublicDomain);
 		return resp;

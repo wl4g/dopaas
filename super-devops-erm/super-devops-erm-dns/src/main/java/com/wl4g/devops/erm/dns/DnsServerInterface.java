@@ -1,6 +1,6 @@
 package com.wl4g.devops.erm.dns;
 
-import com.wl4g.devops.common.bean.erm.DnsPrivateDomain;
+import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
 
 /**
@@ -9,7 +9,7 @@ import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
  */
 public interface DnsServerInterface {
 
-    void putDomian(DnsPrivateDomain domian);
+    void putDomian(DnsPrivateZone domian);
 
     void putHost(String domain, DnsPrivateResolution resolution);
 

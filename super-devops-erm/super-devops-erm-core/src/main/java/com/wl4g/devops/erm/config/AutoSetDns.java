@@ -1,6 +1,6 @@
 package com.wl4g.devops.erm.config;
 
-import com.wl4g.devops.erm.service.DnsPrivateDomainService;
+import com.wl4g.devops.erm.service.DnsPrivateZoneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class AutoSetDns implements ApplicationRunner {
 
     @Autowired
-    private DnsPrivateDomainService dnsPrivateDomainService;
+    private DnsPrivateZoneService dnsPrivateDomainService;
 
     @Override
     public void run(ApplicationArguments var) throws Exception {

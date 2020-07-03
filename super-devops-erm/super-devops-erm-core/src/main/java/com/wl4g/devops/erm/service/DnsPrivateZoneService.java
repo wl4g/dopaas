@@ -15,19 +15,21 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.devops.common.bean.erm.DnsPublicDomain;
+import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.page.PageModel;
 
 /**
  * @author vjay
  */
-public interface DnsPublicDomainService {
+public interface DnsPrivateZoneService {
 
-	PageModel page(PageModel pm, String name);
+	PageModel page(PageModel pm, String zone);
 
-	void save(DnsPublicDomain dnsPublicDomain);
+	void save(DnsPrivateZone dnsPrivateDomain);
 
-	DnsPublicDomain detail(Integer id);
+	DnsPrivateZone detail(Integer id);
 
 	void del(Integer id);
+
+	void loadDnsAtStart();
 }
