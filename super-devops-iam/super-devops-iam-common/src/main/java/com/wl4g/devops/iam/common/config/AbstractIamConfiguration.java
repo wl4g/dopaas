@@ -347,9 +347,9 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 	}
 
 	@Bean
-	public FilterRegistrationBean hstsSecurityFilterBean(HstsSecurityFilter filter) {
+	public FilterRegistrationBean<HstsSecurityFilter> hstsSecurityFilterBean(HstsSecurityFilter filter) {
 		// Register cipher filter
-		FilterRegistrationBean filterBean = new FilterRegistrationBean(filter);
+		FilterRegistrationBean<HstsSecurityFilter> filterBean = new FilterRegistrationBean<>(filter);
 		filterBean.setOrder(ORDER_DOMAIN_PRECEDENCE);
 		// Cannot use '/*' or it will not be added to the container chain (only
 		// '/**')
