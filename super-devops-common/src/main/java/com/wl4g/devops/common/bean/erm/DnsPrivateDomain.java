@@ -1,5 +1,6 @@
 package com.wl4g.devops.common.bean.erm;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wl4g.devops.common.bean.BaseBean;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ public class DnsPrivateDomain extends BaseBean {
 
     private Date registerDate;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date dueDate;
 
     private List<DnsPrivateResolution> dnsPrivateResolutions;

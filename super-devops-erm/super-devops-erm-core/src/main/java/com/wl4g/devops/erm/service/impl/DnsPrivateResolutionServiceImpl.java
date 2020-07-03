@@ -83,10 +83,12 @@ public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionServ
 
     public void del(Integer id){
         Assert.notNull(id,"id is null");
-        DnsPrivateResolution dnsPrivateResolution = new DnsPrivateResolution();
+        DnsPrivateResolution dnsPrivateResolution = dnsPrivateResolutionDao.selectByPrimaryKey(id);
+        DnsPrivateDomain dnsPrivateDomain = dnsPrivateDomainDao.selectByPrimaryKey(dnsPrivateResolution.getDomainId());
         dnsPrivateResolution.setId(id);
         dnsPrivateResolution.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         dnsPrivateResolutionDao.updateByPrimaryKeySelective(dnsPrivateResolution);
+        dnsServerInterface.delhost(dnsPrivateDomain.getZone(),dnsPrivateResolution.getHost());
     }
 
 

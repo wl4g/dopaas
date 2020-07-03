@@ -179,7 +179,7 @@
     select
     <include refid="Base_Column_List" />
     from erm_dns_private_domain
-    where 1=1
+    where del_flag!=1
     <if test="zone != null and zone != ''" >
       AND `zone` LIKE CONCAT('%','${zone}','%')
     </if>

@@ -78,4 +78,4 @@ fs:
   base-url: http://wl4g.debug:14051/share-manager
 
 dns:
-  prefix: _dns:
+  prefix: "_dns:"

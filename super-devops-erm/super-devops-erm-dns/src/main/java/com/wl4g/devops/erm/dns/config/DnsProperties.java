@@ -1,5 +1,7 @@
 package com.wl4g.devops.erm.dns.config;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class DnsProperties {
 
     private String prefix;
@@ -7,7 +9,10 @@ public class DnsProperties {
     private String suffix;
 
     public String getPrefix() {
-        return prefix;
+        if(StringUtils.isNoneBlank(prefix)){
+            return prefix;
+        }
+        return "";
     }
 
     public void setPrefix(String prefix) {
@@ -15,7 +20,10 @@ public class DnsProperties {
     }
 
     public String getSuffix() {
-        return suffix;
+        if(StringUtils.isNoneBlank(suffix)){
+            return suffix;
+        }
+        return "";
     }
 
     public void setSuffix(String suffix) {

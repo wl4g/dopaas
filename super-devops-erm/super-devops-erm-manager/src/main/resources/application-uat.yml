@@ -70,4 +70,4 @@ fs:
   base-url: http://share.anjiancloud.alpha/share-manager
 
 dns:
-  prefix: _dns:
+  prefix: "_dns:"
