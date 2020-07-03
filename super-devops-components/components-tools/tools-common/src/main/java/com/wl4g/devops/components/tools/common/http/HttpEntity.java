@@ -1,6 +1,6 @@
 package com.wl4g.devops.components.tools.common.http;
 
-import com.wl4g.devops.components.tools.common.collection.map.MultiValueMap;
+import com.wl4g.devops.components.tools.common.collection.multimap.MultiValueMap;
 import com.wl4g.devops.components.tools.common.lang.ObjectUtils;
 
 /**
@@ -12,11 +12,6 @@ import com.wl4g.devops.components.tools.common.lang.ObjectUtils;
  * @see #getHeaders()
  */
 public class HttpEntity<T> {
-
-	/**
-	 * The empty {@code HttpEntity}, with no body or headers.
-	 */
-	public static final HttpEntity<?> EMPTY = new HttpEntity<Object>();
 
 	private final HttpHeaders headers;
 
@@ -120,5 +115,10 @@ public class HttpEntity<T> {
 		builder.append('>');
 		return builder.toString();
 	}
+
+	/**
+	 * The empty {@code HttpEntity}, with no body or headers.
+	 */
+	public static final HttpEntity<?> EMPTY = new HttpEntity<Object>();
 
 }

@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Type;
 
 import com.wl4g.devops.components.tools.common.http.HttpHeaders;
-import com.wl4g.devops.components.tools.common.http.MediaType;
+import com.wl4g.devops.components.tools.common.http.HttpMediaType;
 
 /**
  * Abstract base class for most {@link GenericHttpMessageParser}
@@ -30,7 +30,7 @@ public abstract class AbstractGenericHttpMessageParser<T> extends AbstractHttpMe
 	 * @param supportedMediaType
 	 *            the supported media type
 	 */
-	protected AbstractGenericHttpMessageParser(MediaType supportedMediaType) {
+	protected AbstractGenericHttpMessageParser(HttpMediaType supportedMediaType) {
 		super(supportedMediaType);
 	}
 
@@ -41,7 +41,7 @@ public abstract class AbstractGenericHttpMessageParser<T> extends AbstractHttpMe
 	 * @param supportedMediaTypes
 	 *            the supported media types
 	 */
-	protected AbstractGenericHttpMessageParser(MediaType... supportedMediaTypes) {
+	protected AbstractGenericHttpMessageParser(HttpMediaType... supportedMediaTypes) {
 		super(supportedMediaTypes);
 	}
 
@@ -51,12 +51,12 @@ public abstract class AbstractGenericHttpMessageParser<T> extends AbstractHttpMe
 	}
 
 	@Override
-	public boolean canRead(Type type, Class<?> contextClass, MediaType mediaType) {
+	public boolean canRead(Type type, Class<?> contextClass, HttpMediaType mediaType) {
 		return (type instanceof Class ? canRead((Class<?>) type, mediaType) : canRead(mediaType));
 	}
 
 	@Override
-	public boolean canWrite(Type type, Class<?> clazz, MediaType mediaType) {
+	public boolean canWrite(Type type, Class<?> clazz, HttpMediaType mediaType) {
 		return canWrite(clazz, mediaType);
 	}
 
@@ -64,7 +64,7 @@ public abstract class AbstractGenericHttpMessageParser<T> extends AbstractHttpMe
 	 * This implementation sets the default headers by calling
 	 * {@link #addDefaultHeaders}, and then calls {@link #writeInternal}.
 	 */
-	public final void write(final T t, final Type type, MediaType contentType, HttpOutputMessage outputMessage)
+	public final void write(final T t, final Type type, HttpMediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 
 		final HttpHeaders headers = outputMessage.getHeaders();

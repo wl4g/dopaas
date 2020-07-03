@@ -1,5 +1,7 @@
 package com.wl4g.devops.components.tools.common.http.parse;
 
+import static com.google.common.base.Charsets.UTF_8;
+
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -21,10 +23,11 @@ import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.wl4g.devops.components.tools.common.http.MediaType;
+import com.wl4g.devops.components.tools.common.http.HttpMediaType;
+import com.wl4g.devops.components.tools.common.lang.Assert2;
+import com.wl4g.devops.components.tools.common.reflect.ResolvableType;
 
-import org.springframework.core.ResolvableType;
-import org.springframework.util.TypeUtils;
+import org.apache.commons.lang3.reflect.TypeUtils;
 
 /**
  * Abstract base class for Jackson based and content type independent
@@ -36,28 +39,26 @@ import org.springframework.util.TypeUtils;
 public abstract class AbstractJackson2HttpMessageParser extends AbstractGenericHttpMessageParser<Object> {
 
 	protected ObjectMapper objectMapper;
-
 	private Boolean prettyPrint;
-
 	private PrettyPrinter ssePrettyPrinter;
 
 	protected AbstractJackson2HttpMessageParser(ObjectMapper objectMapper) {
 		init(objectMapper);
 	}
 
-	protected AbstractJackson2HttpMessageParser(ObjectMapper objectMapper, MediaType supportedMediaType) {
+	protected AbstractJackson2HttpMessageParser(ObjectMapper objectMapper, HttpMediaType supportedMediaType) {
 		super(supportedMediaType);
 		init(objectMapper);
 	}
 
-	protected AbstractJackson2HttpMessageParser(ObjectMapper objectMapper, MediaType... supportedMediaTypes) {
+	protected AbstractJackson2HttpMessageParser(ObjectMapper objectMapper, HttpMediaType... supportedMediaTypes) {
 		super(supportedMediaTypes);
 		init(objectMapper);
 	}
 
 	protected void init(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
-		setDefaultCharset(DEFAULT_CHARSET);
+		setDefaultCharset(UTF_8);
 		DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
 		prettyPrinter.indentObjectsWith(new DefaultIndenter("  ", "\ndata:"));
 		this.ssePrettyPrinter = prettyPrinter;
@@ -76,7 +77,7 @@ public abstract class AbstractJackson2HttpMessageParser extends AbstractGenericH
 	 * custom-configured ObjectMapper is unnecessary.
 	 */
 	public void setObjectMapper(ObjectMapper objectMapper) {
-		Assert.notNull(objectMapper, "ObjectMapper must not be null");
+		Assert2.notNull(objectMapper, "ObjectMapper must not be null");
 		this.objectMapper = objectMapper;
 		configurePrettyPrint();
 	}
@@ -110,12 +111,12 @@ public abstract class AbstractJackson2HttpMessageParser extends AbstractGenericH
 	}
 
 	@Override
-	public boolean canRead(Class<?> clazz, MediaType mediaType) {
+	public boolean canRead(Class<?> clazz, HttpMediaType mediaType) {
 		return canRead(clazz, null, mediaType);
 	}
 
 	@Override
-	public boolean canRead(Type type, Class<?> contextClass, MediaType mediaType) {
+	public boolean canRead(Type type, Class<?> contextClass, HttpMediaType mediaType) {
 		if (!canRead(mediaType)) {
 			return false;
 		}
@@ -129,7 +130,7 @@ public abstract class AbstractJackson2HttpMessageParser extends AbstractGenericH
 	}
 
 	@Override
-	public boolean canWrite(Class<?> clazz, MediaType mediaType) {
+	public boolean canWrite(Class<?> clazz, HttpMediaType mediaType) {
 		if (!canWrite(mediaType)) {
 			return false;
 		}
@@ -210,7 +211,7 @@ public abstract class AbstractJackson2HttpMessageParser extends AbstractGenericH
 	protected void writeInternal(Object object, Type type, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 
-		MediaType contentType = outputMessage.getHeaders().getContentType();
+		HttpMediaType contentType = outputMessage.getHeaders().getContentType();
 		JsonEncoding encoding = getJsonEncoding(contentType);
 		JsonGenerator generator = this.objectMapper.getFactory().createGenerator(outputMessage.getBody(), encoding);
 		try {
@@ -241,7 +242,7 @@ public abstract class AbstractJackson2HttpMessageParser extends AbstractGenericH
 				objectWriter = objectWriter.forType(javaType);
 			}
 			SerializationConfig config = objectWriter.getConfig();
-			if (contentType != null && contentType.isCompatibleWith(TEXT_EVENT_STREAM)
+			if (contentType != null && contentType.isCompatibleWith(HttpMediaType.TEXT_EVENT_STREAM)
 					&& config.isEnabled(SerializationFeature.INDENT_OUTPUT)) {
 				objectWriter = objectWriter.with(this.ssePrettyPrinter);
 			}
@@ -371,7 +372,7 @@ public abstract class AbstractJackson2HttpMessageParser extends AbstractGenericH
 	 *            the media type as requested by the caller
 	 * @return the JSON encoding to use (never {@code null})
 	 */
-	protected JsonEncoding getJsonEncoding(MediaType contentType) {
+	protected JsonEncoding getJsonEncoding(HttpMediaType contentType) {
 		if (contentType != null && contentType.getCharset() != null) {
 			Charset charset = contentType.getCharset();
 			for (JsonEncoding encoding : JsonEncoding.values()) {
@@ -384,7 +385,7 @@ public abstract class AbstractJackson2HttpMessageParser extends AbstractGenericH
 	}
 
 	@Override
-	protected MediaType getDefaultContentType(Object object) throws IOException {
+	protected HttpMediaType getDefaultContentType(Object object) throws IOException {
 		if (object instanceof MappingJacksonValue) {
 			object = ((MappingJacksonValue) object).getValue();
 		}
@@ -392,7 +393,7 @@ public abstract class AbstractJackson2HttpMessageParser extends AbstractGenericH
 	}
 
 	@Override
-	protected Long getContentLength(Object object, MediaType contentType) throws IOException {
+	protected Long getContentLength(Object object, HttpMediaType contentType) throws IOException {
 		if (object instanceof MappingJacksonValue) {
 			object = ((MappingJacksonValue) object).getValue();
 		}

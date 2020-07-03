@@ -3,7 +3,7 @@ package com.wl4g.devops.components.tools.common.http.parse;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-import com.wl4g.devops.components.tools.common.http.MediaType;
+import com.wl4g.devops.components.tools.common.http.HttpMediaType;
 
 /**
  * A specialization of {@link HttpMessageParser} that can convert an HTTP
@@ -15,8 +15,8 @@ public interface GenericHttpMessageParser<T> extends HttpMessageParser<T> {
 	/**
 	 * Indicates whether the given type can be read by this converter. This
 	 * method should perform the same checks than
-	 * {@link HttpMessageParser#canRead(Class, MediaType)} with additional ones
-	 * related to the generic type.
+	 * {@link HttpMessageParser#canRead(Class, HttpMediaType)} with additional
+	 * ones related to the generic type.
 	 * 
 	 * @param type
 	 *            the (potentially generic) type to test for readability
@@ -29,7 +29,7 @@ public interface GenericHttpMessageParser<T> extends HttpMessageParser<T> {
 	 *            Typically the value of a {@code Content-Type} header.
 	 * @return {@code true} if readable; {@code false} otherwise
 	 */
-	boolean canRead(Type type, Class<?> contextClass, MediaType mediaType);
+	boolean canRead(Type type, Class<?> contextClass, HttpMediaType mediaType);
 
 	/**
 	 * Read an object of the given type form the given input message, and
@@ -58,8 +58,8 @@ public interface GenericHttpMessageParser<T> extends HttpMessageParser<T> {
 	 * Indicates whether the given class can be written by this converter.
 	 * <p>
 	 * This method should perform the same checks than
-	 * {@link HttpMessageParser#canWrite(Class, MediaType)} with additional ones
-	 * related to the generic type.
+	 * {@link HttpMessageParser#canWrite(Class, HttpMediaType)} with additional
+	 * ones related to the generic type.
 	 * 
 	 * @param type
 	 *            the (potentially generic) type to test for writability (can be
@@ -72,7 +72,7 @@ public interface GenericHttpMessageParser<T> extends HttpMessageParser<T> {
 	 * @return {@code true} if writable; {@code false} otherwise
 	 * @since 4.2
 	 */
-	boolean canWrite(Type type, Class<?> clazz, MediaType mediaType);
+	boolean canWrite(Type type, Class<?> clazz, HttpMediaType mediaType);
 
 	/**
 	 * Write an given object to the given output message.
@@ -102,7 +102,7 @@ public interface GenericHttpMessageParser<T> extends HttpMessageParser<T> {
 	 *             in case of conversion errors
 	 * @since 4.2
 	 */
-	void write(T t, Type type, MediaType contentType, HttpOutputMessage outputMessage)
+	void write(T t, Type type, HttpMediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException;
 
 }

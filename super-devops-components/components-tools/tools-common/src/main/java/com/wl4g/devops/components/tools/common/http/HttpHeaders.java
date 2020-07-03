@@ -34,9 +34,9 @@ import java.util.LinkedHashSet;
 
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
 import com.wl4g.devops.components.tools.common.collection.CollectionUtils2;
-import com.wl4g.devops.components.tools.common.collection.map.LinkedCaseInsensitiveMap;
-import com.wl4g.devops.components.tools.common.collection.map.LinkedMultiValueMap;
-import com.wl4g.devops.components.tools.common.collection.map.MultiValueMap;
+import com.wl4g.devops.components.tools.common.collection.multimap.LinkedCaseInsensitiveMap;
+import com.wl4g.devops.components.tools.common.collection.multimap.LinkedMultiValueMap;
+import com.wl4g.devops.components.tools.common.collection.multimap.MultiValueMap;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.lang.StringUtils2;
 
@@ -576,21 +576,21 @@ public class HttpHeaders implements MultiValueMap<String, String>, Serializable 
 	}
 
 	/**
-	 * Set the list of acceptable {@linkplain MediaType media types}, as
+	 * Set the list of acceptable {@linkplain HttpMediaType media types}, as
 	 * specified by the {@code Accept} header.
 	 */
-	public void setAccept(List<MediaType> acceptableMediaTypes) {
-		set(ACCEPT, MediaType.toString(acceptableMediaTypes));
+	public void setAccept(List<HttpMediaType> acceptableMediaTypes) {
+		set(ACCEPT, HttpMediaType.toString(acceptableMediaTypes));
 	}
 
 	/**
-	 * Return the list of acceptable {@linkplain MediaType media types}, as
+	 * Return the list of acceptable {@linkplain HttpMediaType media types}, as
 	 * specified by the {@code Accept} header.
 	 * <p>
 	 * Returns an empty list when the acceptable media types are unspecified.
 	 */
-	public List<MediaType> getAccept() {
-		return MediaType.parseMediaTypes(get(ACCEPT));
+	public List<HttpMediaType> getAccept() {
+		return HttpMediaType.parseMediaTypes(get(ACCEPT));
 	}
 
 	/**
@@ -1114,10 +1114,10 @@ public class HttpHeaders implements MultiValueMap<String, String>, Serializable 
 	}
 
 	/**
-	 * Set the {@linkplain MediaType media type} of the body, as specified by
-	 * the {@code Content-Type} header.
+	 * Set the {@linkplain HttpMediaType media type} of the body, as specified
+	 * by the {@code Content-Type} header.
 	 */
-	public void setContentType(@Nullable MediaType mediaType) {
+	public void setContentType(@Nullable HttpMediaType mediaType) {
 		if (mediaType != null) {
 			Assert2.isTrue(!mediaType.isWildcardType(), "Content-Type cannot contain wildcard type '*'");
 			Assert2.isTrue(!mediaType.isWildcardSubtype(), "Content-Type cannot contain wildcard subtype '*'");
@@ -1128,15 +1128,15 @@ public class HttpHeaders implements MultiValueMap<String, String>, Serializable 
 	}
 
 	/**
-	 * Return the {@linkplain MediaType media type} of the body, as specified by
-	 * the {@code Content-Type} header.
+	 * Return the {@linkplain HttpMediaType media type} of the body, as
+	 * specified by the {@code Content-Type} header.
 	 * <p>
 	 * Returns {@code null} when the content-type is unknown.
 	 */
 	@Nullable
-	public MediaType getContentType() {
+	public HttpMediaType getContentType() {
 		String value = getFirst(CONTENT_TYPE);
-		return (StringUtils2.hasLength(value) ? MediaType.parseMediaType(value) : null);
+		return (StringUtils2.hasLength(value) ? HttpMediaType.parseMediaType(value) : null);
 	}
 
 	/**
@@ -2092,32 +2092,32 @@ public class HttpHeaders implements MultiValueMap<String, String>, Serializable 
 		private static final long serialVersionUID = -8578554704772377436L;
 
 		@Nullable
-		private MediaType cachedContentType;
+		private HttpMediaType cachedContentType;
 
 		@Nullable
-		private List<MediaType> cachedAccept;
+		private List<HttpMediaType> cachedAccept;
 
 		ReadOnlyHttpHeaders(HttpHeaders headers) {
 			super(headers.headers);
 		}
 
 		@Override
-		public MediaType getContentType() {
+		public HttpMediaType getContentType() {
 			if (this.cachedContentType != null) {
 				return this.cachedContentType;
 			} else {
-				MediaType contentType = super.getContentType();
+				HttpMediaType contentType = super.getContentType();
 				this.cachedContentType = contentType;
 				return contentType;
 			}
 		}
 
 		@Override
-		public List<MediaType> getAccept() {
+		public List<HttpMediaType> getAccept() {
 			if (this.cachedAccept != null) {
 				return this.cachedAccept;
 			} else {
-				List<MediaType> accept = super.getAccept();
+				List<HttpMediaType> accept = super.getAccept();
 				this.cachedAccept = accept;
 				return accept;
 			}

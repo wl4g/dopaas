@@ -4,7 +4,8 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wl4g.devops.components.tools.common.http.MediaType;
+import com.wl4g.devops.components.tools.common.http.HttpMediaType;
+import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 
 /**
  * Implementation that can read and write JSON using
@@ -36,7 +37,7 @@ public class MappingJackson2HttpMessageParser extends AbstractJackson2HttpMessag
 	 * configuration provided by {@link Jackson2ObjectMapperBuilder}.
 	 */
 	public MappingJackson2HttpMessageParser() {
-		this(Jackson2ObjectMapperBuilder.json().build());
+		this(JacksonUtils.getDefaultObjectMapper());
 	}
 
 	/**
@@ -47,7 +48,7 @@ public class MappingJackson2HttpMessageParser extends AbstractJackson2HttpMessag
 	 * @see Jackson2ObjectMapperBuilder#json()
 	 */
 	public MappingJackson2HttpMessageParser(ObjectMapper objectMapper) {
-		super(objectMapper, MediaType.APPLICATION_JSON, new MediaType("application", "*+json"));
+		super(objectMapper, HttpMediaType.APPLICATION_JSON, new HttpMediaType("application", "*+json"));
 	}
 
 	/**

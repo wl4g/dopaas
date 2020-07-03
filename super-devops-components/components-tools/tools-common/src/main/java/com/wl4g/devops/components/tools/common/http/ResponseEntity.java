@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.wl4g.devops.components.tools.common.collection.map.MultiValueMap;
+import com.wl4g.devops.components.tools.common.collection.multimap.MultiValueMap;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.lang.ObjectUtils;
 
@@ -416,15 +416,15 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 		BodyBuilder contentLength(long contentLength);
 
 		/**
-		 * Set the {@linkplain MediaType media type} of the body, as specified
-		 * by the {@code Content-Type} header.
+		 * Set the {@linkplain HttpMediaType media type} of the body, as
+		 * specified by the {@code Content-Type} header.
 		 * 
 		 * @param contentType
 		 *            the content type
 		 * @return this builder
-		 * @see HttpHeaders#setContentType(MediaType)
+		 * @see HttpHeaders#setContentType(HttpMediaType)
 		 */
-		BodyBuilder contentType(MediaType contentType);
+		BodyBuilder contentType(HttpMediaType contentType);
 
 		/**
 		 * Set the body of the response entity and returns it.
@@ -477,7 +477,7 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 		}
 
 		@Override
-		public BodyBuilder contentType(MediaType contentType) {
+		public BodyBuilder contentType(HttpMediaType contentType) {
 			this.headers.setContentType(contentType);
 			return this;
 		}

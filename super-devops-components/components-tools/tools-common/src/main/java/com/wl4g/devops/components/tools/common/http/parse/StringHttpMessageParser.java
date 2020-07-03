@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
-import com.wl4g.devops.components.tools.common.http.MediaType;
+import com.wl4g.devops.components.tools.common.http.HttpMediaType;
 
 /**
  * Implementation of {@link HttpMessageParser} that can read and write strings.
@@ -45,7 +45,7 @@ public class StringHttpMessageParser extends AbstractHttpMessageParser<String> {
 	 * type does not specify one.
 	 */
 	public StringHttpMessageParser(Charset defaultCharset) {
-		super(defaultCharset, MediaType.TEXT_PLAIN, MediaType.ALL);
+		super(defaultCharset, HttpMediaType.TEXT_PLAIN, HttpMediaType.ALL);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class StringHttpMessageParser extends AbstractHttpMessageParser<String> {
 	}
 
 	@Override
-	protected Long getContentLength(String str, MediaType contentType) {
+	protected Long getContentLength(String str, HttpMediaType contentType) {
 		Charset charset = getContentTypeCharset(contentType);
 		try {
 			return (long) str.getBytes(charset.name()).length;
@@ -104,7 +104,7 @@ public class StringHttpMessageParser extends AbstractHttpMessageParser<String> {
 		return this.availableCharsets;
 	}
 
-	private Charset getContentTypeCharset(MediaType contentType) {
+	private Charset getContentTypeCharset(HttpMediaType contentType) {
 		if (contentType != null && contentType.getCharset() != null) {
 			return contentType.getCharset();
 		} else {

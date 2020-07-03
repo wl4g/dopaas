@@ -1,19 +1,21 @@
 package com.wl4g.devops.components.tools.common.http.parse;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpInputMessage;
-import org.springframework.http.HttpOutputMessage;
-import org.springframework.http.MediaType;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.StreamUtils;
+import javax.activation.FileTypeMap;
+import javax.activation.MimetypesFileTypeMap;
 
+import com.wl4g.devops.components.tools.common.http.HttpMediaType;
+import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
 import com.wl4g.devops.components.tools.common.lang.ClassUtils2;
+import com.wl4g.devops.components.tools.common.resource.ByteArrayStreamResource;
+import com.wl4g.devops.components.tools.common.resource.ClassPathStreamResource;
+import com.wl4g.devops.components.tools.common.resource.InputStreamResource;
+import com.wl4g.devops.components.tools.common.resource.StreamResource;
 
 /**
  * Implementation of {@link HttpMessageParser} that can read/write
@@ -30,45 +32,45 @@ import com.wl4g.devops.components.tools.common.lang.ClassUtils2;
  * @author Kazuki Shimizu
  * @since 3.0.2
  */
-public class ResourceHttpMessageParser extends AbstractHttpMessageParser<Resource> {
+public class ResourceHttpMessageParser extends AbstractHttpMessageParser<StreamResource> {
 
 	private static final boolean jafPresent = ClassUtils2.isPresent("javax.activation.FileTypeMap",
 			ResourceHttpMessageParser.class.getClassLoader());
 
 	public ResourceHttpMessageParser() {
-		super(MediaType.ALL);
+		super(HttpMediaType.ALL);
 	}
 
 	@Override
 	protected boolean supports(Class<?> clazz) {
-		return Resource.class.isAssignableFrom(clazz);
+		return StreamResource.class.isAssignableFrom(clazz);
 	}
 
 	@Override
-	protected Resource readInternal(Class<? extends Resource> clazz, HttpInputMessage inputMessage)
+	protected StreamResource readInternal(Class<? extends StreamResource> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 
 		if (InputStreamResource.class == clazz) {
 			return new InputStreamResource(inputMessage.getBody());
-		} else if (clazz.isAssignableFrom(ByteArrayResource.class)) {
-			byte[] body = StreamUtils.copyToByteArray(inputMessage.getBody());
-			return new ByteArrayResource(body);
+		} else if (clazz.isAssignableFrom(ByteArrayStreamResource.class)) {
+			byte[] body = ByteStreamUtils.copyToByteArray(inputMessage.getBody());
+			return new ByteArrayStreamResource(body);
 		} else {
 			throw new IllegalStateException("Unsupported resource class: " + clazz);
 		}
 	}
 
 	@Override
-	protected MediaType getDefaultContentType(Resource resource) {
+	protected HttpMediaType getDefaultContentType(StreamResource resource) {
 		if (jafPresent) {
 			return ActivationMediaTypeFactory.getMediaType(resource);
 		} else {
-			return MediaType.APPLICATION_OCTET_STREAM;
+			return HttpMediaType.APPLICATION_OCTET_STREAM;
 		}
 	}
 
 	@Override
-	protected Long getContentLength(Resource resource, MediaType contentType) throws IOException {
+	protected Long getContentLength(StreamResource resource, HttpMediaType contentType) throws IOException {
 		// Don't try to determine contentLength on InputStreamResource - cannot
 		// be read afterwards...
 		// Note: custom InputStreamResource subclasses could provide a
@@ -81,18 +83,18 @@ public class ResourceHttpMessageParser extends AbstractHttpMessageParser<Resourc
 	}
 
 	@Override
-	protected void writeInternal(Resource resource, HttpOutputMessage outputMessage)
+	protected void writeInternal(StreamResource resource, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 
 		writeContent(resource, outputMessage);
 	}
 
-	protected void writeContent(Resource resource, HttpOutputMessage outputMessage)
+	protected void writeContent(StreamResource resource, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		try {
 			InputStream in = resource.getInputStream();
 			try {
-				StreamUtils.copy(in, outputMessage.getBody());
+				ByteStreamUtils.copy(in, outputMessage.getBody());
 			} catch (NullPointerException ex) {
 				// ignore, see SPR-13620
 			} finally {
@@ -104,6 +106,54 @@ public class ResourceHttpMessageParser extends AbstractHttpMessageParser<Resourc
 			}
 		} catch (FileNotFoundException ex) {
 			// ignore, see SPR-12999
+		}
+	}
+
+	/**
+	 * Resolve {@code MediaType} for a given {@link Resource} using JAF.
+	 */
+	static class ActivationMediaTypeFactory {
+
+		private static final FileTypeMap fileTypeMap;
+
+		static {
+			fileTypeMap = loadFileTypeMapFromContextSupportModule();
+		}
+
+		private static FileTypeMap loadFileTypeMapFromContextSupportModule() {
+			// See if we can find the extended mime.types from the
+			// context-support
+			// module...
+			StreamResource mappingLocation = new ClassPathStreamResource("org/springframework/mail/javamail/mime.types");
+			if (mappingLocation.exists()) {
+				InputStream inputStream = null;
+				try {
+					inputStream = mappingLocation.getInputStream();
+					return new MimetypesFileTypeMap(inputStream);
+				} catch (IOException ex) {
+					// ignore
+				} finally {
+					if (inputStream != null) {
+						try {
+							inputStream.close();
+						} catch (IOException ex) {
+							// ignore
+						}
+					}
+				}
+			}
+			return FileTypeMap.getDefaultFileTypeMap();
+		}
+
+		public static HttpMediaType getMediaType(StreamResource resource) {
+			String filename = resource.getFilename();
+			if (filename != null) {
+				String mediaType = fileTypeMap.getContentType(filename);
+				if (!isBlank(mediaType)) {
+					return HttpMediaType.parseMediaType(mediaType);
+				}
+			}
+			return null;
 		}
 	}
 

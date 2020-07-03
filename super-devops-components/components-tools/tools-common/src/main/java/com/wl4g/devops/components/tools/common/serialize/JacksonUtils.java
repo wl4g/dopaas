@@ -199,6 +199,15 @@ public abstract class JacksonUtils {
 	}
 
 	/**
+	 * Gets default {@link ObjectMapper}
+	 * 
+	 * @return
+	 */
+	public static ObjectMapper getDefaultObjectMapper() {
+		return defaultObjectMapper;
+	}
+
+	/**
 	 * Default {@link ObjectMapper} instance.
 	 */
 	final private static ObjectMapper defaultObjectMapper = new ObjectMapper();

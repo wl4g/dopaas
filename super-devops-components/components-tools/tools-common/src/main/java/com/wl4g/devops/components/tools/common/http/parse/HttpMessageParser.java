@@ -3,7 +3,7 @@ package com.wl4g.devops.components.tools.common.http.parse;
 import java.io.IOException;
 import java.util.List;
 
-import com.wl4g.devops.components.tools.common.http.MediaType;
+import com.wl4g.devops.components.tools.common.http.HttpMediaType;
 
 /**
  * Strategy interface that specifies a converter that can convert from and to
@@ -25,7 +25,7 @@ public interface HttpMessageParser<T> {
 	 *            typically the value of a {@code Content-Type} header.
 	 * @return {@code true} if readable; {@code false} otherwise
 	 */
-	boolean canRead(Class<?> clazz, MediaType mediaType);
+	boolean canRead(Class<?> clazz, HttpMediaType mediaType);
 
 	/**
 	 * Indicates whether the given class can be written by this converter.
@@ -37,14 +37,15 @@ public interface HttpMessageParser<T> {
 	 *            specified); typically the value of an {@code Accept} header.
 	 * @return {@code true} if writable; {@code false} otherwise
 	 */
-	boolean canWrite(Class<?> clazz, MediaType mediaType);
+	boolean canWrite(Class<?> clazz, HttpMediaType mediaType);
 
 	/**
-	 * Return the list of {@link MediaType} objects supported by this converter.
+	 * Return the list of {@link HttpMediaType} objects supported by this
+	 * converter.
 	 * 
 	 * @return the list of supported media types
 	 */
-	List<MediaType> getSupportedMediaTypes();
+	List<HttpMediaType> getSupportedMediaTypes();
 
 	/**
 	 * Read an object of the given type from the given input message, and
@@ -86,6 +87,7 @@ public interface HttpMessageParser<T> {
 	 * @throws HttpMessageNotWritableException
 	 *             in case of conversion errors
 	 */
-	void write(T t, MediaType contentType, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException;
+	void write(T t, HttpMediaType contentType, HttpOutputMessage outputMessage)
+			throws IOException, HttpMessageNotWritableException;
 
 }
