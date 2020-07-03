@@ -142,30 +142,32 @@ public class IamClientAutoConfiguration extends AbstractIamConfiguration {
 	// ==============================
 
 	@Bean
-	public FilterRegistrationBean authenticatorFilterRegistrationBean(
+	public FilterRegistrationBean<AuthenticatorAuthenticationFilter> authenticatorFilterRegistrationBean(
 			@Qualifier(BEAN_AUTH_FILTER) AuthenticatorAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+		FilterRegistrationBean<AuthenticatorAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean rootFilterRegistrationBean(@Qualifier(BEAN_ROOT_FILTER) ROOTAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<ROOTAuthenticationFilter> rootFilterRegistrationBean(
+			@Qualifier(BEAN_ROOT_FILTER) ROOTAuthenticationFilter filter) {
+		FilterRegistrationBean<ROOTAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean internalClientFilterRegistrationBean(ClientInternalAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<ClientInternalAuthenticationFilter> internalClientFilterRegistrationBean(
+			ClientInternalAuthenticationFilter filter) {
+		FilterRegistrationBean<ClientInternalAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}
 
 	@Bean
-	public FilterRegistrationBean logoutFilterRegistrationBean(LogoutAuthenticationFilter filter) {
-		FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+	public FilterRegistrationBean<LogoutAuthenticationFilter> logoutFilterRegistrationBean(LogoutAuthenticationFilter filter) {
+		FilterRegistrationBean<LogoutAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
 		registration.setEnabled(false);
 		return registration;
 	}

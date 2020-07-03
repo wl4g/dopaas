@@ -107,6 +107,7 @@ public abstract class AbstractBasedIamValidator<R extends BaseAssertModel, A> im
 		log.info("Validating to URL: {}", url);
 
 		// Add headers
+		@SuppressWarnings("deprecation")
 		HttpEntity<R> entity = new HttpEntity<>(req, new LinkedMultiValueMap<String, String>(1) {
 			private static final long serialVersionUID = -630070874678386724L;
 			{
