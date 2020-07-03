@@ -2,11 +2,13 @@ package com.wl4g.devops.erm.dns;
 
 import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
+import com.wl4g.devops.components.tools.common.collection.CollectionUtils2;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 import com.wl4g.devops.erm.dns.config.DnsProperties;
 import com.wl4g.devops.erm.dns.model.ResolveType;
 import com.wl4g.devops.support.redis.JedisService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -47,7 +49,9 @@ public class CorednsServer implements DnsServerInterface {
 
 
     private void put(String domian, Map hosts, int cacheSeconds) {
-        jedisService.setMap(assemblKey(domian), hosts, cacheSeconds);
+        if(StringUtils.isNoneBlank(domian) && !CollectionUtils2.isEmpty(hosts)){
+            jedisService.setMap(assemblKey(domian), hosts, cacheSeconds);
+        }
     }
 
     @Override
