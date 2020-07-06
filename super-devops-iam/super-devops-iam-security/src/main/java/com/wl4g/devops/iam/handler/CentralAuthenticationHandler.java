@@ -22,6 +22,8 @@ import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.authc.LogoutAuthenticationToken;
+import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.model.LoggedModel;
 import com.wl4g.devops.iam.common.authc.model.LogoutModel;
 import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
@@ -59,6 +61,7 @@ import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Stat
 import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.*;
 import static com.wl4g.devops.iam.sns.handler.SecondaryAuthcSnsHandler.SECOND_AUTHC_CACHE;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
 import static java.lang.String.format;
@@ -164,21 +167,26 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 */
 		assertion.setValidUntilDate(new Date(now + getSessionRemainingTime()));
 
-		// Updating grantCredentials info
+		// Renew grant credentials
 		/**
 		 * Synchronize with: </br>
 		 * x.handler.impl.FastCasAuthenticationHandler#logout() </br>
 		 * x.session.mgt.IamSessionManager#getSessionId
 		 */
 		String newGrantTicket = generateGrantTicket();
+
+		// Principal info.
 		/**
 		 * {@link com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm#doAuthenticationInfo(AuthenticationToken)}
 		 */
 		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).setStoredCredentials(newGrantTicket));
 		log.info("New validated grantTicket: {}, sessionId: {}", newGrantTicket, getSessionId());
 
-		// Grants roles and permissions attributes.
-		Map<String, String> attributes = assertion.getPrincipalInfo().getAttributes();
+		// Principal info attributes.
+		/**
+		 * Grants roles and permissions attributes.
+		 */
+		Map<String, Object> attributes = assertion.getPrincipalInfo().getAttributes();
 		attributes.put(KEY_LANG_NAME, getBindValue(KEY_LANG_NAME));
 		attributes.put(KEY_PARENT_SESSIONID_NAME, valueOf(getSessionId()));
 
@@ -188,6 +196,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			childDataCipherKey = generateDataCipherKey();
 			attributes.put(KEY_DATA_CIPHER_NAME, childDataCipherKey);
 		}
+
 		// Sets re-generate childAccessToken(grant application)
 		String childAccessTokenSignKey = null;
 		if (config.getSession().isEnableAccessTokenValidity()) {
@@ -196,7 +205,15 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			attributes.put(KEY_ACCESSTOKEN_SIGN_NAME, childAccessTokenSignKey);
 		}
 
-		// Storage grantCredentials info.
+		// Sets SNS authorized info(if necessary).
+		IamAuthenticationToken authcToken = (IamAuthenticationToken) getBindValue(new RelationAttrKey(KEY_AUTHC_TOKEN));
+		if (!isNull(authcToken) && authcToken instanceof Oauth2SnsAuthenticationToken) {
+			Oauth2SnsAuthenticationToken snsToken = (Oauth2SnsAuthenticationToken) authcToken;
+			// TODO [optimize] chanage the type of stored value to object
+			attributes.put(KEY_SNS_AUTHORIZED_INFO, toJSONString(snsToken.getSocial()));
+		}
+
+		// Put grant credentials info.
 		GrantApp grant = new GrantApp(newGrantTicket).setDataCipher(childDataCipherKey)
 				.setAccessTokenSignKey(childAccessTokenSignKey);
 		putGrantCredentials(getSession(false), grantAppname, grant);

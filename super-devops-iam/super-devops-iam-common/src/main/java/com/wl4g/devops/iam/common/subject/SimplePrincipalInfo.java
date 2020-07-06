@@ -57,7 +57,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	private String permissions = EMPTY;
 
 	/** Authenticate principal attributes. */
-	private Map<String, String> attributes = new HashMap<>();
+	private Map<String, Object> attributes = new HashMap<>();
 
 	public SimplePrincipalInfo() {
 		super();
@@ -74,7 +74,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public SimplePrincipalInfo(@NotBlank String principalId, String principal, String storedCredentials, String roles,
-			String permissions, PrincipalOrganization organization, Map<String, String> attributes) {
+			String permissions, PrincipalOrganization organization, Map<String, Object> attributes) {
 		setPrincipalId(principalId);
 		setPrincipal(principal);
 		setStoredCredentials(storedCredentials);
@@ -157,7 +157,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * @return
 	 */
 	@Override
-	public final Map<String, String> getAttributes() {
+	public final Map<String, Object> getAttributes() {
 		notNull(attributes, "Principal attributes can't null");
 		return attributes;
 	}
@@ -168,7 +168,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * @param attributes
 	 * @return
 	 */
-	public final SimplePrincipalInfo setAttributes(Map<String, String> attributes) {
+	public final SimplePrincipalInfo setAttributes(Map<String, Object> attributes) {
 		if (!isEmpty(attributes)) {
 			// [MARK1]
 			/**

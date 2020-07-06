@@ -42,6 +42,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHE
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PARENT_SESSIONID_NAME;
 import static java.lang.Boolean.parseBoolean;
+import static java.lang.Boolean.FALSE;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
@@ -117,20 +118,20 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			getSession().setTimeout(maxIdleTimeMs);
 
 			IamPrincipalInfo info = validated.getPrincipalInfo();
-			// Storage authenticated attributes.
+			// Save authenticated attributes.
 			bind(KEY_LANG_NAME, info.getAttributes().get(KEY_LANG_NAME));
 			bind(KEY_PARENT_SESSIONID_NAME, info.getAttributes().get(KEY_PARENT_SESSIONID_NAME));
 			bind(KEY_DATA_CIPHER_NAME, info.getAttributes().get(KEY_DATA_CIPHER_NAME));
 			bind(KEY_ACCESSTOKEN_SIGN_NAME, info.getAttributes().get(KEY_ACCESSTOKEN_SIGN_NAME));
 
-			// Update settings grant ticket
+			// Update save grant ticket
 			String newGrantTicket = valueOf(info.getStoredCredentials());
 			ftk.setCredentials(newGrantTicket);
 
 			// Attribute of remember
 			String principal = validated.getPrincipalInfo().getPrincipal();
 			ftk.setPrincipal(principal); // MARK1
-			ftk.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
+			ftk.setRememberMe(parseBoolean(valueOf(info.getAttributes().getOrDefault(KEY_REMEMBERME_NAME, FALSE))));
 			log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
 
 			// Authenticate attributes.(roles/permissions/rememberMe)

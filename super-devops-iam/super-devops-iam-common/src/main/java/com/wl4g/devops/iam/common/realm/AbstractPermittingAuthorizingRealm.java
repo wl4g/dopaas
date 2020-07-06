@@ -70,7 +70,7 @@ public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingReal
 		notNull(info, "IamPrincipalInfo can't null");
 
 		// Authenticate attributes.(roles/permissions/rememberMe)
-		Map<String, String> principalMap = new HashMap<>(info.getAttributes());
+		Map<String, Object> principalMap = new HashMap<>(info.getAttributes());
 		principalMap.put(KEY_ROLES_ATTRIBUTE_NAME, info.getRoles());
 		principalMap.put(KEY_PERMITS_ATTRIBUTE_NAME, info.getPermissions());
 
