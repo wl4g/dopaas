@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Charsets;
+import com.wl4g.devops.tool.common.serialize.SerializeUtils;
 
 /**
  * Support for automatic expiration support, which can be used for login failure
@@ -183,5 +184,26 @@ public class CacheKey implements Serializable {
 	public static interface Deserializer {
 		<T> T deserialize(byte[] data, Class<T> clazz);
 	}
+
+	/**
+	 * Default object deserializer
+	 */
+	final public static Deserializer defaultDeserializer = new Deserializer() {
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T> T deserialize(byte[] data, Class<T> clazz) {
+			return (T) SerializeUtils.unserialize(data);
+		}
+	};
+
+	/**
+	 * Default object serializer
+	 */
+	final public static Serializer defaultSerializer = new Serializer() {
+		@Override
+		public <T> byte[] serialize(T bean) {
+			return SerializeUtils.serialize(bean);
+		}
+	};
 
 }
