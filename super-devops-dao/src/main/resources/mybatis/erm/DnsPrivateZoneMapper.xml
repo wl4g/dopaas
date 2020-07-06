@@ -25,6 +25,12 @@
     from erm_dns_private_zone
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByZone" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from erm_dns_private_zone
+    where zone = #{zone,jdbcType=VARCHAR} limit 1
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from erm_dns_private_zone
     where id = #{id,jdbcType=INTEGER}

@@ -14,6 +14,8 @@ public interface DnsPrivateZoneDao {
 
 	DnsPrivateZone selectByPrimaryKey(Integer id);
 
+	DnsPrivateZone selectByZone(String zone);
+
 	List<DnsPrivateZone> list(@Param("organizationCodes") List<String> organizationCodes, @Param("zone") String zone);
 
 	int updateByPrimaryKeySelective(DnsPrivateZone record);

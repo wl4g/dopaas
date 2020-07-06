@@ -19,6 +19,7 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
+import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.dao.erm.DnsPrivateZoneDao;
 import com.wl4g.devops.dao.erm.DnsPrivateResolutionDao;
 import com.wl4g.devops.erm.dns.DnsServerInterface;
@@ -27,6 +28,8 @@ import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.Objects;
 
 import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
@@ -56,10 +59,15 @@ public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionServ
     }
 
     public void save(DnsPrivateResolution dnsPrivateResolution){
+
+        DnsPrivateResolution dnsPrivateResolutionDB = dnsPrivateResolutionDao.selectByDomainIdAndHost(dnsPrivateResolution.getDomainId(), dnsPrivateResolution.getHost());
+
         if(isNull(dnsPrivateResolution.getId())){
+            Assert2.isNull(dnsPrivateResolutionDB,"repeat host");
             dnsPrivateResolution.preInsert(getRequestOrganizationCode());
             insert(dnsPrivateResolution);
         }else{
+            Assert2.isTrue(Objects.isNull(dnsPrivateResolutionDB) || dnsPrivateResolutionDB.getId().equals(dnsPrivateResolution.getId()),"repeat host");
             dnsPrivateResolution.preUpdate();
             update(dnsPrivateResolution);
         }
