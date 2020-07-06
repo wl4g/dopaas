@@ -275,9 +275,21 @@ public class JedisIamCache implements IamCache {
 	@Override
 	public <T> T getMapField(CacheKey fieldKey) {
 		notNullOf(fieldKey, "fieldKey");
-		notNullOf(fieldKey.getValueClass(), "valueClass");
+
+		// Load bytes
 		byte[] data = jedisCluster.hget(toKeyBytes(name), fieldKey.getKey());
-		return isNull(data) ? null : (T) deserialize(data, fieldKey.getValueClass());
+		if (isNull(data)) {
+			return null;
+		}
+
+		// Deserialization
+		if (isNull(fieldKey.getDeserializer())) {
+			notNullOf(fieldKey.getValueClass(), "valueClass");
+			// Protostuff deserializer
+			return (T) deserialize(data, fieldKey.getValueClass());
+		}
+
+		return (T) fieldKey.getDeserializer().deserialize(data, fieldKey.getValueClass());
 	}
 
 	@Override
