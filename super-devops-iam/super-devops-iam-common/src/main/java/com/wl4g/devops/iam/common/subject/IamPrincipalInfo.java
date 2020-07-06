@@ -17,6 +17,8 @@ package com.wl4g.devops.iam.common.subject;
 
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,8 +91,20 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	 * 
 	 * @return
 	 */
-	default Map<String, String> getAttributes() {
+	default Map<String, Object> getAttributes() {
 		return emptyMap();
+	}
+
+	/**
+	 * Gets account attribute value.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@JsonIgnore
+	default <T> T getAttributeValue(String key) {
+		return (T) getAttributes().get(key);
 	}
 
 	/**

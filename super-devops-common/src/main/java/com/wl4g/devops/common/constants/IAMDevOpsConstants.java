@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.common.constants;
 
+import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
+
 /**
  * DevOps SCM Constants.
  * 
@@ -103,6 +105,12 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * IAM XSRF token apply URI.
 	 */
 	final public static String URI_XSRF_APPLY_TOKEN = "xtoken";
+
+	/**
+	 * SNS authorized info stoage attribute key. </br>
+	 * {@link SocialAuthorizeInfo}
+	 */
+	final public static String KEY_SNS_AUTHORIZED_INFO = "snsAuthzInfoAttrKey";
 
 	//
 	// Server configuration.
