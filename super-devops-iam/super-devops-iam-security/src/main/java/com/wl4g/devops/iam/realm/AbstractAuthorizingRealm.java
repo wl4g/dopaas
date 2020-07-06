@@ -44,7 +44,8 @@ import com.wl4g.devops.common.exception.iam.AccessPermissionDeniedException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
-import com.wl4g.devops.iam.common.cache.CacheKey;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationTokenWrapper;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
@@ -148,8 +149,10 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		try {
+			IamAuthenticationToken tk = (IamAuthenticationToken) token;
+
 			// Validation token.
-			validator.validate(token);
+			validator.validate(tk);
 
 			/*
 			 * [Extension]: Can be used to check the parameter
@@ -162,8 +165,9 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
 			 */
 			// Obtain authentication info.
-			IamAuthenticationInfo info = doAuthenticationInfo(
-					(T) bind(new RelationAttrKey(KEY_AUTHC_TOKEN).serializer(CacheKey.objectSerializer), token));
+			IamAuthenticationTokenWrapper wrap = bind(new RelationAttrKey(KEY_AUTHC_TOKEN),
+					new IamAuthenticationTokenWrapper(tk));
+			IamAuthenticationInfo info = doAuthenticationInfo((T) wrap.getToken());
 			notNull(info, "Authentication info can't be empty. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
 
 			/**

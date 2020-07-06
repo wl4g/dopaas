@@ -23,7 +23,7 @@ import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.authc.LogoutAuthenticationToken;
 import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationTokenWrapper;
 import com.wl4g.devops.iam.common.authc.model.LoggedModel;
 import com.wl4g.devops.iam.common.authc.model.LogoutModel;
 import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
@@ -61,7 +61,6 @@ import static com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel.Stat
 import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.*;
 import static com.wl4g.devops.iam.sns.handler.SecondaryAuthcSnsHandler.SECOND_AUTHC_CACHE;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
-import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.tool.common.web.WebUtils2.getHttpRemoteAddr;
 import static com.wl4g.devops.tool.common.web.WebUtils2.isEqualWithDomain;
 import static java.lang.String.format;
@@ -205,13 +204,18 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			attributes.put(KEY_ACCESSTOKEN_SIGN_NAME, childAccessTokenSignKey);
 		}
 
-		// Sets SNS authorized info(if necessary).
-		IamAuthenticationToken authcToken = (IamAuthenticationToken) getBindValue(
-				new RelationAttrKey(KEY_AUTHC_TOKEN).deserializer(CacheKey.objectDeserializer));
-		if (!isNull(authcToken) && authcToken instanceof Oauth2SnsAuthenticationToken) {
-			Oauth2SnsAuthenticationToken snsToken = (Oauth2SnsAuthenticationToken) authcToken;
-			// TODO [optimize] chanage the type of stored value to object
-			attributes.put(KEY_SNS_AUTHORIZED_INFO, toJSONString(snsToken.getSocial()));
+		// Sets authenticaing token attributes.
+		IamAuthenticationTokenWrapper wrap = getBindValue(
+				new RelationAttrKey(KEY_AUTHC_TOKEN, IamAuthenticationTokenWrapper.class));
+		if (!isNull(wrap) && !isNull(wrap.getToken())) {
+			attributes.put(KEY_AUTHC_HOST_NAME, wrap.getToken().getHost());
+
+			// SNS authorized info(if necessary).
+			if (wrap.getToken() instanceof Oauth2SnsAuthenticationToken) {
+				Oauth2SnsAuthenticationToken snsToken = (Oauth2SnsAuthenticationToken) wrap.getToken();
+				// TODO [optimize] chanage the type of stored value to object
+				attributes.put(KEY_SNS_AUTHORIZED_INFO, snsToken.getSocial());
+			}
 		}
 
 		// Put grant credentials info.

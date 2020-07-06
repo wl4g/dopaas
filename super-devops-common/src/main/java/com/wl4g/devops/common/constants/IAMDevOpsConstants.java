@@ -39,6 +39,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Authentication principal language attribute name.
 	 */
 	final public static String KEY_LANG_NAME = "langAttrName";
+	/**
+	 * Authenticating host attribute name.
+	 */
+	final public static String KEY_AUTHC_HOST_NAME = "authcHostAttrName";
 
 	/**
 	 * This key is generated when the authentication is successful and can be
@@ -56,12 +60,12 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * @see {@link com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties#accessTokenName}
 	 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
 	 */
-	final public static String KEY_ACCESSTOKEN_SIGN_NAME = "accessTokenSignAttrKey";
+	final public static String KEY_ACCESSTOKEN_SIGN_NAME = "accessTokenSignAttrName";
 
 	/**
 	 * Iam-server/Iam-client parent sessionId.
 	 */
-	final public static String KEY_PARENT_SESSIONID_NAME = "parentSessionIdAttrKey";
+	final public static String KEY_PARENT_SESSIONID_NAME = "parentSessionIdAttrName";
 
 	/**
 	 * iamServer/iamClient the JSON node key that response the session
@@ -70,9 +74,9 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	final public static String KEY_SESSIONINFO_NAME = "session";
 
 	/** authentication token save session key-name */
-	final public static String KEY_AUTHC_TOKEN = "authcTokenAttrKey";
+	final public static String KEY_AUTHC_TOKEN = "authcTokenAttrName";
 	/** authentication accountInfo save session key-name */
-	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttrKey";
+	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttrName";
 
 	/**
 	 * IAM system service role parameter name.</br>
@@ -110,7 +114,7 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * SNS authorized info stoage attribute key. </br>
 	 * {@link SocialAuthorizeInfo}
 	 */
-	final public static String KEY_SNS_AUTHORIZED_INFO = "snsAuthzInfoAttrKey";
+	final public static String KEY_SNS_AUTHORIZED_INFO = "snsAuthzInfoAttrName";
 
 	//
 	// Server configuration.
