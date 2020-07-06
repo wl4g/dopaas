@@ -134,7 +134,7 @@
             <columnOverride column="deploy_config_content" javaType="java.lang.String" jdbcType="VARCHAR" />
         </table>-->
 
-        <table tableName="erm_dns_operation_log" domainObjectName="DnsOperationLog"
+        <!--<table tableName="erm_dns_operation_log" domainObjectName="DnsOperationLog"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
         <table tableName="erm_dns_private_domain" domainObjectName="DnsPrivateDomain"
@@ -147,6 +147,9 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
         <table tableName="erm_dns_public_domain" domainObjectName="DnsPublicDomain"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+        </table>-->
+        <table tableName="erm_dns_private_blacklist" domainObjectName="DnsPrivateBlacklist"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
 

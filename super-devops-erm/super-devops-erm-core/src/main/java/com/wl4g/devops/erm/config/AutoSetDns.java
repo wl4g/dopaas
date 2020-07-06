@@ -1,5 +1,6 @@
 package com.wl4g.devops.erm.config;
 
+import com.wl4g.devops.erm.service.DnsPrivateBlacklistService;
 import com.wl4g.devops.erm.service.DnsPrivateZoneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -16,11 +17,15 @@ public class AutoSetDns implements ApplicationRunner {
     @Autowired
     private DnsPrivateZoneService dnsPrivateDomainService;
 
+    @Autowired
+    private DnsPrivateBlacklistService dnsPrivateBlacklistService;
+
     @Override
     public void run(ApplicationArguments var) throws Exception {
         try {
-            //WeConfig.getAccessToken();
             dnsPrivateDomainService.loadDnsAtStart();
+            dnsPrivateBlacklistService.loadBlacklistAtStart();
+
         }catch (Exception e){
             throw e;
         }
