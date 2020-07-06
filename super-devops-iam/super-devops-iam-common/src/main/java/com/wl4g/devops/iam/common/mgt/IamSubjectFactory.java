@@ -44,6 +44,7 @@ import org.apache.shiro.web.subject.WebSubjectContext;
 import com.wl4g.devops.common.exception.iam.InvalidAccessTokenAuthenticationException;
 import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
@@ -165,7 +166,8 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		// Gets protocol configure info.
 		String sessionId = valueOf(session.getId());
 		String accessTokenSignKey = (String) session.getAttribute(KEY_ACCESSTOKEN_SIGN_NAME);
-		IamAuthenticationToken authcToken = (IamAuthenticationToken) session.getAttribute(new RelationAttrKey(KEY_AUTHC_TOKEN));
+		IamAuthenticationToken authcToken = (IamAuthenticationToken) session
+				.getAttribute(new RelationAttrKey(KEY_AUTHC_TOKEN).deserializer(CacheKey.defaultDeserializer));
 
 		// Gets request accessToken.
 		final String accessToken = getRequestAccessToken(request);
