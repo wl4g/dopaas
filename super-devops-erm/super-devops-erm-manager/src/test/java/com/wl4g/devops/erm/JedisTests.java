@@ -11,7 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author vjay
@@ -38,6 +40,26 @@ public class JedisTests {
     public void mapDelTest() {
         jedisService.mapRemove("_dns:example.com.","www");
     }
+
+    @Test
+    public void addListTest() {
+        //jedisService.setSetAdd("addListTest","abc");
+        //jedisService.setSetAdd("addListTest","abc");
+
+        Set set = new HashSet();
+        set.add("cde");
+        set.add("fgh");
+        jedisService.setSet("addListTest",set,0);
+
+    }
+    @Test
+    public void delListTest() {
+        jedisService.delSetMember("addListTest","abc");
+    }
+
+
+
+
 
 
 

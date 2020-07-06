@@ -1,7 +1,9 @@
 package com.wl4g.devops.erm.dns;
 
-import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
+import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
+
+import java.util.Set;
 
 /**
  * @author vjay
@@ -17,5 +19,12 @@ public interface DnsServerInterface {
 
     void delDomain(String domian);
 
+    /////
+
+    void addDnsPrivateBlacklist(String black,String white);
+
+    void removeDnsPrivateBlacklist(String black,String white);
+
+    void reloadDnsPrivateBlacklist(Set<String> blacks,Set<String> whites);
 
 }

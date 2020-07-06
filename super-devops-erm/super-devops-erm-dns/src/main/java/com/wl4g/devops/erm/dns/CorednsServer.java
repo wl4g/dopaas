@@ -19,6 +19,9 @@ import java.util.*;
  */
 public class CorednsServer implements DnsServerInterface {
 
+    final private static String DNS_BLACKLIST_KEY = "_dns_blacklist";
+    final private static String DNS_WHITELIST_KEY = "_dns_whitelist";
+
     @Autowired
     private JedisService jedisService;
 
@@ -149,6 +152,38 @@ public class CorednsServer implements DnsServerInterface {
                 break;
         }
         return result;
+    }
+
+    @Override
+    public void addDnsPrivateBlacklist(String black,String white){
+        if(StringUtils.isNotBlank(black)){
+            jedisService.setSetAdd(DNS_BLACKLIST_KEY,black);
+        }
+        if(StringUtils.isNotBlank(white)){
+            jedisService.setSetAdd(DNS_WHITELIST_KEY,white);
+        }
+    }
+
+    @Override
+    public void removeDnsPrivateBlacklist(String black,String white){
+        if(StringUtils.isNotBlank(black)){
+            jedisService.delSetMember(DNS_BLACKLIST_KEY,black);
+        }
+        if(StringUtils.isNotBlank(white)){
+            jedisService.delSetMember(DNS_WHITELIST_KEY,white);
+        }
+    }
+
+    @Override
+    public void reloadDnsPrivateBlacklist(Set<String> blacks,Set<String> whites){
+        jedisService.del(DNS_BLACKLIST_KEY);
+        jedisService.del(DNS_WHITELIST_KEY);
+        if(!CollectionUtils2.isEmpty(blacks)){
+            jedisService.setSet(DNS_BLACKLIST_KEY,blacks,0);
+        }
+        if(!CollectionUtils2.isEmpty(whites)){
+            jedisService.setSet(DNS_WHITELIST_KEY,whites,0);
+        }
     }
 
     private static int getDistanceSecondOfTwoDate(Date before, Date after) {
