@@ -28,6 +28,12 @@
     from erm_dns_private_resolution
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByDomainId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from erm_dns_private_resolution
+    where domain_id = #{domainId,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from erm_dns_private_resolution
     where id = #{id,jdbcType=INTEGER}
@@ -215,6 +221,9 @@
     where del_flag!=1
     <if test="host != null and host != ''" >
       AND `host` LIKE CONCAT('%','${host}','%')
+    </if>
+    <if test="domainId != null" >
+      AND domain_id = #{domainId,jdbcType=INTEGER}
     </if>
     <!--<if test="organizationCodes != null and organizationCodes.size() > 0">
       and organization_code in

@@ -17,9 +17,9 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.DnsPrivateDomain;
-import com.wl4g.devops.dao.erm.DnsPrivateDomainDao;
-import com.wl4g.devops.erm.service.DnsPrivateDomainService;
+import com.wl4g.devops.common.bean.erm.DnsPublicZone;
+import com.wl4g.devops.dao.erm.DnsPublicZoneDao;
+import com.wl4g.devops.erm.service.DnsPublicZoneService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,48 +34,48 @@ import static java.util.Objects.isNull;
  * @date 2019-11-14 14:10:00
  */
 @Service
-public class DnsPrivateDomainServiceImpl implements DnsPrivateDomainService {
+public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 
     @Autowired
-    private DnsPrivateDomainDao dnsPrivateDomainDao;
+    private DnsPublicZoneDao dnsPublicDomainDao;
 
     @Override
-    public PageModel page(PageModel pm,String zone) {
+    public PageModel page(PageModel pm,String name) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(dnsPrivateDomainDao.list(getRequestOrganizationCodes(), zone));
+        pm.setRecords(dnsPublicDomainDao.list(getRequestOrganizationCodes(), name));
         return pm;
     }
 
-    public void save(DnsPrivateDomain dnsPrivateDomain){
-        if(isNull(dnsPrivateDomain.getId())){
-            dnsPrivateDomain.preInsert(getRequestOrganizationCode());
-            insert(dnsPrivateDomain);
+    public void save(DnsPublicZone dnsPublicDomain){
+        if(isNull(dnsPublicDomain.getId())){
+            dnsPublicDomain.preInsert(getRequestOrganizationCode());
+            insert(dnsPublicDomain);
         }else{
-            dnsPrivateDomain.preUpdate();
-            update(dnsPrivateDomain);
+            dnsPublicDomain.preUpdate();
+            update(dnsPublicDomain);
         }
     }
 
-    private void insert(DnsPrivateDomain dnsPrivateDomain){
-        dnsPrivateDomainDao.insertSelective(dnsPrivateDomain);
+    private void insert(DnsPublicZone dnsPublicDomain){
+        dnsPublicDomainDao.insertSelective(dnsPublicDomain);
     }
 
-    private void update(DnsPrivateDomain dnsPrivateDomain){
-        dnsPrivateDomainDao.updateByPrimaryKeySelective(dnsPrivateDomain);
+    private void update(DnsPublicZone dnsPublicDomain){
+        dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);
     }
 
 
-    public DnsPrivateDomain detail(Integer id){
+    public DnsPublicZone detail(Integer id){
         Assert.notNull(id,"id is null");
-        return dnsPrivateDomainDao.selectByPrimaryKey(id);
+        return dnsPublicDomainDao.selectByPrimaryKey(id);
     }
 
     public void del(Integer id){
         Assert.notNull(id,"id is null");
-        DnsPrivateDomain dnsPrivateDomain = new DnsPrivateDomain();
-        dnsPrivateDomain.setId(id);
-        dnsPrivateDomain.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        dnsPrivateDomainDao.updateByPrimaryKeySelective(dnsPrivateDomain);
+        DnsPublicZone dnsPublicDomain = new DnsPublicZone();
+        dnsPublicDomain.setId(id);
+        dnsPublicDomain.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+        dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);
     }
 
 

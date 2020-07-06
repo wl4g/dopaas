@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.DnsPublicDomainDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DnsPublicDomain" >
+<mapper namespace="com.wl4g.devops.dao.erm.DnsPublicZoneDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="zone" property="zone" jdbcType="VARCHAR" />
     <result column="dns_kind" property="dnsKind" jdbcType="VARCHAR" />
@@ -12,21 +12,21 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from erm_dns_public_domain
+    from erm_dns_public_zone
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from erm_dns_public_domain
+    delete from erm_dns_public_zone
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicDomain" >
-    insert into erm_dns_public_domain (id, zone, dns_kind
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
+    insert into erm_dns_public_zone (id, zone, dns_kind
       )
     values (#{id,jdbcType=INTEGER}, #{zone,jdbcType=VARCHAR}, #{dnsKind,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicDomain" >
-    insert into erm_dns_public_domain
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
+    insert into erm_dns_public_zone
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -50,8 +50,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicDomain" >
-    update erm_dns_public_domain
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
+    update erm_dns_public_zone
     <set >
       <if test="zone != null" >
         zone = #{zone,jdbcType=VARCHAR},
@@ -62,8 +62,8 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicDomain" >
-    update erm_dns_public_domain
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
+    update erm_dns_public_zone
     set zone = #{zone,jdbcType=VARCHAR},
       dns_kind = #{dnsKind,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
@@ -72,7 +72,7 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_public_domain
+    from erm_dns_public_zone
     where 1=1
     <if test="zone != null and zone != ''" >
       AND `zone` LIKE CONCAT('%','${zone}','%')

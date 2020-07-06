@@ -2,7 +2,7 @@ package com.wl4g.devops.common.bean.erm;
 
 import com.wl4g.devops.common.bean.BaseBean;
 
-public class DnsPublicDomain extends BaseBean {
+public class DnsPublicZone extends BaseBean {
     private static final long serialVersionUID = -3298424126317938674L;
 
     private String zone;

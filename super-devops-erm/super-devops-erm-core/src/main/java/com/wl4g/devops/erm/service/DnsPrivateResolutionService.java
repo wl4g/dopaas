@@ -23,7 +23,7 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface DnsPrivateResolutionService {
 
-	PageModel page(PageModel pm, String host);
+	PageModel page(PageModel pm, String host,Integer domainId);
 
 	void save(DnsPrivateResolution dnsPrivateResolution);
 

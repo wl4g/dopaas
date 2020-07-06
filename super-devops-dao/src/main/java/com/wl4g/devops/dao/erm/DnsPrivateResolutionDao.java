@@ -1,6 +1,6 @@
 package com.wl4g.devops.dao.erm;
 
-import com.wl4g.devops.common.bean.erm.DnsPrivateDomain;
+import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,7 +15,9 @@ public interface DnsPrivateResolutionDao {
 
 	DnsPrivateResolution selectByPrimaryKey(Integer id);
 
-	List<DnsPrivateDomain> list(@Param("organizationCodes") List<String> organizationCodes, @Param("host") String host);
+    List<DnsPrivateResolution> selectByDomainId(Integer domainId);
+
+    List<DnsPrivateZone> list(@Param("organizationCodes") List<String> organizationCodes, @Param("host") String host, @Param("domainId") Integer domainId);
 
 	int updateByPrimaryKeySelective(DnsPrivateResolution record);
 
