@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.common.mgt;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_TOKEN;
 import static com.wl4g.devops.tool.common.lang.Assert2.hasText;
 import static com.wl4g.devops.tool.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
@@ -43,12 +42,9 @@ import org.apache.shiro.web.subject.WebSubjectContext;
 
 import com.wl4g.devops.common.exception.iam.InvalidAccessTokenAuthenticationException;
 import com.wl4g.devops.common.exception.iam.UnauthenticatedException;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.iam.common.core.IamShiroFilterFactoryBean;
-import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 import static com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter.*;
 import static com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager.*;
@@ -166,32 +162,27 @@ public class IamSubjectFactory extends DefaultWebSubjectFactory {
 		// Gets protocol configure info.
 		String sessionId = valueOf(session.getId());
 		String accessTokenSignKey = (String) session.getAttribute(KEY_ACCESSTOKEN_SIGN_NAME);
-		IamAuthenticationToken authcToken = (IamAuthenticationToken) session
-				.getAttribute(new RelationAttrKey(KEY_AUTHC_TOKEN).deserializer(CacheKey.defaultDeserializer));
 
 		// Gets request accessToken.
 		final String accessToken = getRequestAccessToken(request);
-		log.debug("Asserting accessToken, sessionId:{}, accessTokenSignKey: {}, authcToken: {}, accessToken: {}", sessionId,
-				accessTokenSignKey, authcToken, accessToken);
+		log.debug("Asserting accessToken, sessionId:{}, accessTokenSignKey: {}, accessToken: {}", sessionId, accessTokenSignKey,
+				accessToken);
 
-		// Only the account-password authentication is verified.
-		// if (authcToken instanceof ClientSecretIamAuthenticationToken) {
+		// Requires authentication parameters verified.
 		hasText(accessToken, UnauthenticatedException.class, "accessToken is required");
 		hasText(sessionId, UnauthenticatedException.class, "sessionId is required");
 		hasText(accessTokenSignKey, UnauthenticatedException.class, "No accessTokenSignKey"); // Shouldn't-here
 
 		// Calculating accessToken(signature).
 		final String validAccessToken = generateAccessToken(session, accessTokenSignKey);
-		log.debug(
-				"Asserted accessToken of sessionId: {}, accessTokenSignKey: {}, validAccessToken: {}, accessToken: {}, authcToken: {}",
-				sessionId, accessTokenSignKey, validAccessToken, accessToken, authcToken);
+		log.debug("Asserted accessToken of sessionId: {}, accessTokenSignKey: {}, validAccessToken: {}, accessToken: {}",
+				sessionId, accessTokenSignKey, validAccessToken, accessToken);
 
 		// Compare accessToken(signature)
 		if (!accessToken.equals(validAccessToken)) {
 			throw new InvalidAccessTokenAuthenticationException(
 					format("Illegal authentication accessToken: %s, accessTokenSignKey: %s", accessToken, accessTokenSignKey));
 		}
-		// }
 
 	}
 

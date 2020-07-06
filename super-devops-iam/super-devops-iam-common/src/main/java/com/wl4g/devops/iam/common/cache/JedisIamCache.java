@@ -247,8 +247,9 @@ public class JedisIamCache implements IamCache {
 
 	@Override
 	public String mapPutAll(Map<Object, Object> map, int expireSec) {
-		if (isEmpty(map))
+		if (isEmpty(map)) {
 			return null;
+		}
 		log.debug("mapPut map={}", map);
 
 		// Convert to fields map.
@@ -268,6 +269,7 @@ public class JedisIamCache implements IamCache {
 		if (expireSec > 0) {
 			jedisCluster.expire(mapKey, expireSec);
 		}
+
 		return res;
 	}
 

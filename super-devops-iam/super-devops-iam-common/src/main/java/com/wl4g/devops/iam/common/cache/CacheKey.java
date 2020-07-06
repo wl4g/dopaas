@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Charsets;
+import com.wl4g.devops.common.utils.serialize.ProtostuffUtils;
 import com.wl4g.devops.tool.common.serialize.SerializeUtils;
 
 /**
@@ -186,9 +187,9 @@ public class CacheKey implements Serializable {
 	}
 
 	/**
-	 * Default object deserializer
+	 * Jdk object deserializer
 	 */
-	final public static Deserializer defaultDeserializer = new Deserializer() {
+	final public static Deserializer objectDeserializer = new Deserializer() {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T> T deserialize(byte[] data, Class<T> clazz) {
@@ -197,12 +198,32 @@ public class CacheKey implements Serializable {
 	};
 
 	/**
-	 * Default object serializer
+	 * Jdk object serializer
 	 */
-	final public static Serializer defaultSerializer = new Serializer() {
+	final public static Serializer objectSerializer = new Serializer() {
 		@Override
 		public <T> byte[] serialize(T bean) {
 			return SerializeUtils.serialize(bean);
+		}
+	};
+
+	/**
+	 * Protostuff object deserializer
+	 */
+	final public static Deserializer pbDeserializer = new Deserializer() {
+		@Override
+		public <T> T deserialize(byte[] data, Class<T> clazz) {
+			return ProtostuffUtils.deserialize(data, clazz);
+		}
+	};
+
+	/**
+	 * Protostuff object serializer
+	 */
+	final public static Serializer pbSerializer = new Serializer() {
+		@Override
+		public <T> byte[] serialize(T bean) {
+			return ProtostuffUtils.serialize(bean);
 		}
 	};
 
