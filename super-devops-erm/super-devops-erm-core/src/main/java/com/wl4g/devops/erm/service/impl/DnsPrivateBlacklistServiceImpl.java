@@ -66,12 +66,19 @@ public class DnsPrivateBlacklistServiceImpl implements DnsPrivateBlacklistServic
             dnsPrivateBlacklist.preUpdate();
             update(dnsPrivateBlacklist);
         }
-        if (StringUtils.equals(BLACKLIST, dnsPrivateBlacklist.getType())) {
-            dnsServerInterface.addDnsPrivateBlacklist(dnsPrivateBlacklist.getExpression(), null);
-        } else {
-            dnsServerInterface.addDnsPrivateBlacklist(null, dnsPrivateBlacklist.getExpression());
+        if(dnsPrivateBlacklist.getEnable()==1){
+            if (StringUtils.equals(BLACKLIST, dnsPrivateBlacklist.getType())) {
+                dnsServerInterface.addDnsPrivateBlacklist(dnsPrivateBlacklist.getExpression(), null);
+            } else {
+                dnsServerInterface.addDnsPrivateBlacklist(null, dnsPrivateBlacklist.getExpression());
+            }
+        }else{
+            if (StringUtils.equals(BLACKLIST, dnsPrivateBlacklist.getType())) {
+                dnsServerInterface.removeDnsPrivateBlacklist(dnsPrivateBlacklist.getExpression(), null);
+            } else {
+                dnsServerInterface.removeDnsPrivateBlacklist(null, dnsPrivateBlacklist.getExpression());
+            }
         }
-
     }
 
     private void insert(DnsPrivateBlacklist dnsPrivateBlacklist) {

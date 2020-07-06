@@ -71,6 +71,10 @@ public class DnsPrivateZoneServiceImpl implements DnsPrivateZoneService {
             dnsPrivateDomain.preUpdate();
             update(dnsPrivateDomain);
         }
+
+        List<DnsPrivateResolution> dnsPrivateResolutions = dnsPrivateResolutionDao.selectByDomainId(dnsPrivateDomain.getId());
+        dnsPrivateDomain.setDnsPrivateResolutions(dnsPrivateResolutions);
+        dnsServerInterface.putDomian(dnsPrivateDomain);
     }
 
     private void insert(DnsPrivateZone dnsPrivateDomain){

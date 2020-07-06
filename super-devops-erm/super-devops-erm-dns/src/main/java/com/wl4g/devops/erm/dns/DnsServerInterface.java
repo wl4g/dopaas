@@ -13,7 +13,7 @@ public interface DnsServerInterface {
 
     void putDomian(DnsPrivateZone domian);
 
-    void putHost(String domain, DnsPrivateResolution resolution);
+    void putHost(DnsPrivateZone domain, DnsPrivateResolution resolution);
 
     void delhost(String domian, String host);
 

@@ -16,7 +16,6 @@
 package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.erm.DnsPublicZone;
 import com.wl4g.devops.dao.erm.DnsPublicZoneDao;
 import com.wl4g.devops.erm.service.DnsPublicZoneService;
@@ -40,9 +39,9 @@ public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
     private DnsPublicZoneDao dnsPublicDomainDao;
 
     @Override
-    public PageModel page(PageModel pm,String name) {
+    public PageModel page(PageModel pm,String zone) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(dnsPublicDomainDao.list(getRequestOrganizationCodes(), name));
+        pm.setRecords(dnsPublicDomainDao.list(getRequestOrganizationCodes(), zone));
         return pm;
     }
 
@@ -72,10 +71,11 @@ public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 
     public void del(Integer id){
         Assert.notNull(id,"id is null");
-        DnsPublicZone dnsPublicDomain = new DnsPublicZone();
+        /*DnsPublicZone dnsPublicDomain = new DnsPublicZone();
         dnsPublicDomain.setId(id);
         dnsPublicDomain.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);
+        dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);*/
+        dnsPublicDomainDao.deleteByPrimaryKey(id);
     }
 
 

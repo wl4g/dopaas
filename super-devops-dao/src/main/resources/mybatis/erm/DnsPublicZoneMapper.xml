@@ -7,7 +7,7 @@
     <result column="dns_kind" property="dnsKind" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, zone, dns_kind
+    id, `zone`, dns_kind
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -20,7 +20,7 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
-    insert into erm_dns_public_zone (id, zone, dns_kind
+    insert into erm_dns_public_zone (id, `zone`, dns_kind
       )
     values (#{id,jdbcType=INTEGER}, #{zone,jdbcType=VARCHAR}, #{dnsKind,jdbcType=VARCHAR}
       )
@@ -32,7 +32,7 @@
         id,
       </if>
       <if test="zone != null" >
-        zone,
+        `zone`,
       </if>
       <if test="dnsKind != null" >
         dns_kind,
@@ -54,7 +54,7 @@
     update erm_dns_public_zone
     <set >
       <if test="zone != null" >
-        zone = #{zone,jdbcType=VARCHAR},
+        `zone` = #{zone,jdbcType=VARCHAR},
       </if>
       <if test="dnsKind != null" >
         dns_kind = #{dnsKind,jdbcType=VARCHAR},
@@ -64,7 +64,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DnsPublicZone" >
     update erm_dns_public_zone
-    set zone = #{zone,jdbcType=VARCHAR},
+    set `zone` = #{zone,jdbcType=VARCHAR},
       dns_kind = #{dnsKind,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>

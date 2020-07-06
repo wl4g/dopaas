@@ -64,7 +64,7 @@ public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionServ
             update(dnsPrivateResolution);
         }
         DnsPrivateZone dnsPrivateDomain = dnsPrivateDomainDao.selectByPrimaryKey(dnsPrivateResolution.getDomainId());
-        dnsServerInterface.putHost(dnsPrivateDomain.getZone(),dnsPrivateResolution);
+        dnsServerInterface.putHost(dnsPrivateDomain,dnsPrivateResolution);
     }
 
     private void insert(DnsPrivateResolution dnsPrivateResolution){

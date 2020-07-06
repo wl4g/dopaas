@@ -29,10 +29,10 @@ public class CorednsServer implements DnsServerInterface {
     private DnsProperties dnsProperties;
 
     @Override
-    public void putDomian(DnsPrivateZone domian) {
-        String domain = domian.getZone();
-        int catcheSecond = getDistanceSecondOfTwoDate(new Date(), domian.getDueDate());
-        List<DnsPrivateResolution> dnsPrivateResolutions = domian.getDnsPrivateResolutions();
+    public void putDomian(DnsPrivateZone dnsPrivateZone) {
+        String domain = dnsPrivateZone.getZone();
+        int catcheSecond = getDistanceSecondOfTwoDate(new Date(), dnsPrivateZone.getDueDate());
+        List<DnsPrivateResolution> dnsPrivateResolutions = dnsPrivateZone.getDnsPrivateResolutions();
         Map<String, String> hosts = new HashMap();
         for (DnsPrivateResolution dnsPrivateResolution : dnsPrivateResolutions) {
             Map map = buildMap(dnsPrivateResolution);
@@ -43,13 +43,13 @@ public class CorednsServer implements DnsServerInterface {
     }
 
     @Override
-    public void putHost(String domain, DnsPrivateResolution dnsPrivateResolution) {
+    public void putHost(DnsPrivateZone dnsPrivateZone, DnsPrivateResolution dnsPrivateResolution) {
         Map<String, String> hosts = new HashMap();
         Map map = buildMap(dnsPrivateResolution);
+        int catcheSecond = getDistanceSecondOfTwoDate(new Date(), dnsPrivateZone.getDueDate());
         hosts.put(dnsPrivateResolution.getHost(), JacksonUtils.toJSONString(map));
-        put(domain, hosts, 0);
+        put(dnsPrivateZone.getZone(), hosts, catcheSecond);
     }
-
 
     private void put(String domian, Map hosts, int cacheSeconds) {
         if(StringUtils.isNoneBlank(domian) && !CollectionUtils2.isEmpty(hosts)){
