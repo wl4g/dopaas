@@ -93,9 +93,9 @@ public class CorsProperties implements InitializingBean, Serializable {
 	 * Apply default properties fields settings.
 	 */
 	private void applyDefaultPropertiesSet() {
-		// Default settings.
-		getRules().put("/**", new CorsRule().addAllowsOrigins("http://localhost:8080").setAllowCredentials(true)
-				.addAllowsHeaders(DEFAULT_ALLOWED_HEADERS).addAllowsMethods(DEFAULT_ALLOWED_METHODS));
+		// Append default cors allows(/**).
+		getRules().getOrDefault("/**", new CorsRule()).addAllowsOrigins("http://localhost:8080").setAllowCredentials(true)
+				.addAllowsHeaders(DEFAULT_ALLOWED_HEADERS).addAllowsMethods(DEFAULT_ALLOWED_METHODS);
 	}
 
 	//
