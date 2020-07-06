@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dao.erm.DnsPrivateDomainDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DnsPrivateDomain" >
+<mapper namespace="com.wl4g.devops.dao.erm.DnsPrivateZoneDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.erm.DnsPrivateZone" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="zone" property="zone" jdbcType="VARCHAR" />
     <result column="dns_server_id" property="dnsServerId" jdbcType="INTEGER" />
@@ -22,15 +22,15 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from erm_dns_private_domain
+    from erm_dns_private_zone
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from erm_dns_private_domain
+    delete from erm_dns_private_zone
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateDomain" >
-    insert into erm_dns_private_domain (id, zone, dns_server_id, 
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateZone" >
+    insert into erm_dns_private_zone (id, zone, dns_server_id, 
       status, register_date, due_date, 
       remark, create_by, create_date, 
       update_by, update_date, del_flag
@@ -41,8 +41,8 @@
       #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateDomain" >
-    insert into erm_dns_private_domain
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateZone" >
+    insert into erm_dns_private_zone
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -120,8 +120,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateDomain" >
-    update erm_dns_private_domain
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateZone" >
+    update erm_dns_private_zone
     <set >
       <if test="zone != null" >
         zone = #{zone,jdbcType=VARCHAR},
@@ -159,8 +159,8 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateDomain" >
-    update erm_dns_private_domain
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.erm.DnsPrivateZone" >
+    update erm_dns_private_zone
     set zone = #{zone,jdbcType=VARCHAR},
       dns_server_id = #{dnsServerId,jdbcType=INTEGER},
       status = #{status,jdbcType=VARCHAR},
@@ -178,8 +178,8 @@
   <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
-    from erm_dns_private_domain
-    where 1=1
+    from erm_dns_private_zone
+    where del_flag!=1
     <if test="zone != null and zone != ''" >
       AND `zone` LIKE CONCAT('%','${zone}','%')
     </if>

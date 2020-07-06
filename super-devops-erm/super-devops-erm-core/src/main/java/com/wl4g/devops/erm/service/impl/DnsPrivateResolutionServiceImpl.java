@@ -17,9 +17,9 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.DnsPrivateDomain;
+import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
-import com.wl4g.devops.dao.erm.DnsPrivateDomainDao;
+import com.wl4g.devops.dao.erm.DnsPrivateZoneDao;
 import com.wl4g.devops.dao.erm.DnsPrivateResolutionDao;
 import com.wl4g.devops.erm.dns.DnsServerInterface;
 import com.wl4g.devops.erm.service.DnsPrivateResolutionService;
@@ -46,12 +46,12 @@ public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionServ
     private DnsServerInterface dnsServerInterface;
 
     @Autowired
-    private DnsPrivateDomainDao dnsPrivateDomainDao;
+    private DnsPrivateZoneDao dnsPrivateDomainDao;
 
     @Override
-    public PageModel page(PageModel pm,String host) {
+    public PageModel page(PageModel pm,String host,Integer domainId) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(dnsPrivateResolutionDao.list(getRequestOrganizationCodes(), host));
+        pm.setRecords(dnsPrivateResolutionDao.list(getRequestOrganizationCodes(), host,domainId));
         return pm;
     }
 
@@ -63,7 +63,7 @@ public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionServ
             dnsPrivateResolution.preUpdate();
             update(dnsPrivateResolution);
         }
-        DnsPrivateDomain dnsPrivateDomain = dnsPrivateDomainDao.selectByPrimaryKey(dnsPrivateResolution.getDomainId());
+        DnsPrivateZone dnsPrivateDomain = dnsPrivateDomainDao.selectByPrimaryKey(dnsPrivateResolution.getDomainId());
         dnsServerInterface.putHost(dnsPrivateDomain.getZone(),dnsPrivateResolution);
     }
 
@@ -83,10 +83,12 @@ public class DnsPrivateResolutionServiceImpl implements DnsPrivateResolutionServ
 
     public void del(Integer id){
         Assert.notNull(id,"id is null");
-        DnsPrivateResolution dnsPrivateResolution = new DnsPrivateResolution();
+        DnsPrivateResolution dnsPrivateResolution = dnsPrivateResolutionDao.selectByPrimaryKey(id);
+        DnsPrivateZone dnsPrivateDomain = dnsPrivateDomainDao.selectByPrimaryKey(dnsPrivateResolution.getDomainId());
         dnsPrivateResolution.setId(id);
         dnsPrivateResolution.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         dnsPrivateResolutionDao.updateByPrimaryKeySelective(dnsPrivateResolution);
+        dnsServerInterface.delhost(dnsPrivateDomain.getZone(),dnsPrivateResolution.getHost());
     }
 
 

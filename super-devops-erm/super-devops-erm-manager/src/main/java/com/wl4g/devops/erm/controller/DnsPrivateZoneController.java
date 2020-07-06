@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.erm.controller;
 
-import com.wl4g.devops.common.bean.erm.DnsPublicDomain;
+import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.erm.service.DnsPublicDomainService;
+import com.wl4g.devops.erm.service.DnsPrivateZoneService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,37 +32,37 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2019-06-24 14:23:00
  */
 @RestController
-@RequestMapping("/dnsPublicDomain")
-public class DnsPublicDomainController extends BaseController {
+@RequestMapping("/dnsPrivateDomain")
+public class DnsPrivateZoneController extends BaseController {
 
 	@Autowired
-	private DnsPublicDomainService dnsPublicDomainService;
+	private DnsPrivateZoneService dnsPrivateDomainService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String name) {
+	public RespBase<?> list(PageModel pm, String zone) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(dnsPublicDomainService.page(pm, name));
+		resp.setData(dnsPrivateDomainService.page(pm, zone));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(@RequestBody DnsPublicDomain dnsPublicDomain) {
+	public RespBase<?> save(@RequestBody DnsPrivateZone dnsPrivateDomain) {
 		RespBase<Object> resp = RespBase.create();
-		dnsPublicDomainService.save(dnsPublicDomain);
+		dnsPrivateDomainService.save(dnsPrivateDomain);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(dnsPublicDomainService.detail(id));
+		resp.setData(dnsPrivateDomainService.detail(id));
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		dnsPublicDomainService.del(id);
+		dnsPrivateDomainService.del(id);
 		return resp;
 	}
 

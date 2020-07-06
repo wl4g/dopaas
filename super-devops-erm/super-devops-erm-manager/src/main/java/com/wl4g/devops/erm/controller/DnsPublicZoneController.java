@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.erm.controller;
 
-import com.wl4g.devops.common.bean.erm.DnsPrivateDomain;
+import com.wl4g.devops.common.bean.erm.DnsPublicZone;
 import com.wl4g.devops.common.web.BaseController;
 import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.erm.service.DnsPrivateDomainService;
+import com.wl4g.devops.erm.service.DnsPublicZoneService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,37 +32,37 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2019-06-24 14:23:00
  */
 @RestController
-@RequestMapping("/dnsPrivateDomain")
-public class DnsPrivateDomainController extends BaseController {
+@RequestMapping("/dnsPublicDomain")
+public class DnsPublicZoneController extends BaseController {
 
 	@Autowired
-	private DnsPrivateDomainService dnsPrivateDomainService;
+	private DnsPublicZoneService dnsPublicDomainService;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String name) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(dnsPrivateDomainService.page(pm, name));
+		resp.setData(dnsPublicDomainService.page(pm, name));
 		return resp;
 	}
 
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(@RequestBody DnsPrivateDomain dnsPrivateDomain) {
+	public RespBase<?> save(@RequestBody DnsPublicZone dnsPublicDomain) {
 		RespBase<Object> resp = RespBase.create();
-		dnsPrivateDomainService.save(dnsPrivateDomain);
+		dnsPublicDomainService.save(dnsPublicDomain);
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(dnsPrivateDomainService.detail(id));
+		resp.setData(dnsPublicDomainService.detail(id));
 		return resp;
 	}
 
 	@RequestMapping(value = "/del")
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		dnsPrivateDomainService.del(id);
+		dnsPublicDomainService.del(id);
 		return resp;
 	}
 
