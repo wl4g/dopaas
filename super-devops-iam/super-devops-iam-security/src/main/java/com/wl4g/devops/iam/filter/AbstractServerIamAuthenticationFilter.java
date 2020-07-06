@@ -47,6 +47,7 @@ import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.IllegalRequestException;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.devops.common.web.error.SmartGlobalErrorController;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
@@ -264,8 +265,8 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 
 		String errmsg = getRootCausesString(ae);
 		if (isNotBlank(errmsg)) {
-			String tip = String.format("Failed to authentication of token: %s", token);
-			if (log.isDebugEnabled()) {
+			String tip = format("Failed to authentication of token: %s", token);
+			if (SmartGlobalErrorController.checkStackTrace(request)) {
 				log.debug(tip, ae);
 			} else {
 				log.warn(tip + ", caused by: {}", errmsg);

@@ -38,6 +38,7 @@ import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSession;
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_HOST_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PARENT_SESSIONID_NAME;
@@ -120,6 +121,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			IamPrincipalInfo info = validated.getPrincipalInfo();
 			// Save authenticated attributes.
 			bind(KEY_LANG_NAME, info.getAttributes().get(KEY_LANG_NAME));
+			bind(KEY_AUTHC_HOST_NAME, info.getAttributes().get(KEY_AUTHC_HOST_NAME));
 			bind(KEY_PARENT_SESSIONID_NAME, info.getAttributes().get(KEY_PARENT_SESSIONID_NAME));
 			bind(KEY_DATA_CIPHER_NAME, info.getAttributes().get(KEY_DATA_CIPHER_NAME));
 			bind(KEY_ACCESSTOKEN_SIGN_NAME, info.getAttributes().get(KEY_ACCESSTOKEN_SIGN_NAME));
@@ -128,10 +130,12 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			String newGrantTicket = valueOf(info.getStoredCredentials());
 			ftk.setCredentials(newGrantTicket);
 
-			// Attribute of remember
+			// Merge add attributes
 			String principal = validated.getPrincipalInfo().getPrincipal();
 			ftk.setPrincipal(principal); // MARK1
 			ftk.setRememberMe(parseBoolean(valueOf(info.getAttributes().getOrDefault(KEY_REMEMBERME_NAME, FALSE))));
+			ftk.setHost((String) info.getAttributes().get(KEY_AUTHC_HOST_NAME));
+
 			log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
 
 			// Authenticate attributes.(roles/permissions/rememberMe)

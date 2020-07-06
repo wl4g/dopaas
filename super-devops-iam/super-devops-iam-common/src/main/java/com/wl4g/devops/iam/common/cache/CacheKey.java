@@ -16,6 +16,9 @@
 package com.wl4g.devops.iam.common.cache;
 
 import static com.wl4g.devops.tool.common.lang.Assert2.*;
+import static com.wl4g.devops.tool.common.lang.TypeConverts.safeLongToInt;
+import static java.util.Objects.isNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
@@ -39,8 +42,8 @@ public class CacheKey implements Serializable {
 	private String key;
 	private Integer expire; // 0 means never expired.
 	private Class<?> valueClass;
-	private Serializer serializer;
-	private Deserializer deserializer;
+	private Serializer serializer = PB_SERIALIZER;
+	private Deserializer deserializer = PB_DESERIALIZER;
 
 	public CacheKey(Serializable key) {
 		this(key, -1); // -1:not overdue
@@ -59,7 +62,7 @@ public class CacheKey implements Serializable {
 	}
 
 	public CacheKey(Serializable key, long expireMs) {
-		this(key, (int) TimeUnit.MILLISECONDS.toSeconds(expireMs));
+		this(key, safeLongToInt(MILLISECONDS.toSeconds(expireMs)));
 	}
 
 	public CacheKey(Serializable key, int expireSec) {
@@ -77,7 +80,7 @@ public class CacheKey implements Serializable {
 	}
 
 	public boolean hasExpire() {
-		return (getExpire() != null && getExpire() >= 0);
+		return (!isNull(getExpire()) && getExpire() >= 0);
 	}
 
 	public Integer getExpire() {
@@ -189,7 +192,7 @@ public class CacheKey implements Serializable {
 	/**
 	 * Jdk object deserializer
 	 */
-	final public static Deserializer objectDeserializer = new Deserializer() {
+	final public static Deserializer JDK_DESEIALIZER = new Deserializer() {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T> T deserialize(byte[] data, Class<T> clazz) {
@@ -200,7 +203,7 @@ public class CacheKey implements Serializable {
 	/**
 	 * Jdk object serializer
 	 */
-	final public static Serializer objectSerializer = new Serializer() {
+	final public static Serializer JDK_SERIALIZER = new Serializer() {
 		@Override
 		public <T> byte[] serialize(T bean) {
 			return SerializeUtils.serialize(bean);
@@ -210,7 +213,7 @@ public class CacheKey implements Serializable {
 	/**
 	 * Protostuff object deserializer
 	 */
-	final public static Deserializer pbDeserializer = new Deserializer() {
+	final public static Deserializer PB_DESERIALIZER = new Deserializer() {
 		@Override
 		public <T> T deserialize(byte[] data, Class<T> clazz) {
 			return ProtostuffUtils.deserialize(data, clazz);
@@ -220,7 +223,7 @@ public class CacheKey implements Serializable {
 	/**
 	 * Protostuff object serializer
 	 */
-	final public static Serializer pbSerializer = new Serializer() {
+	final public static Serializer PB_SERIALIZER = new Serializer() {
 		@Override
 		public <T> byte[] serialize(T bean) {
 			return ProtostuffUtils.serialize(bean);

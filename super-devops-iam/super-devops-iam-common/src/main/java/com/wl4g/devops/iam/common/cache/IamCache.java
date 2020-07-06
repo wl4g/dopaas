@@ -22,6 +22,9 @@ import java.util.Map;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 
+import com.wl4g.devops.iam.common.cache.CacheKey.Deserializer;
+import com.wl4g.devops.iam.common.cache.CacheKey.Serializer;
+
 /**
  * Enhanced implementation of Shiro cache support for automatic expiratio
  *
@@ -117,18 +120,20 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	 * Puts map fields all.
 	 * 
 	 * @param map
+	 * @param serializer
 	 * @return
 	 */
-	String mapPutAll(Map<Object, Object> map);
+	String mapPutAll(Map<Object, Object> map, Serializer serializer);
 
 	/**
 	 * Puts map fields all.
 	 * 
 	 * @param map
 	 * @param expireSec
+	 * @param serializer
 	 * @return
 	 */
-	String mapPutAll(Map<Object, Object> map, int expireSec);
+	String mapPutAll(Map<Object, Object> map, int expireSec, Serializer serializer);
 
 	/**
 	 * Remove f ields map.
@@ -154,9 +159,10 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	/**
 	 * Gets fields map.
 	 * 
+	 * @param deserializer
 	 * @return
 	 */
-	<T> Map<String, T> getMapAll(Class<T> valueClass);
+	<T> Map<String, T> getMapAll(Class<T> valueClass, Deserializer deserializer);
 
 	/**
 	 * Gets fields map.
