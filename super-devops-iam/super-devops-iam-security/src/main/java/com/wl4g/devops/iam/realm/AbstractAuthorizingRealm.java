@@ -44,9 +44,9 @@ import com.wl4g.devops.common.exception.iam.AccessPermissionDeniedException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
-import com.wl4g.devops.iam.common.cache.CacheKey;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
@@ -163,7 +163,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 			 */
 			// Obtain authentication info.
 			IamAuthenticationInfo info = doAuthenticationInfo(
-					(T) bind(new RelationAttrKey(KEY_AUTHC_TOKEN).serializer(CacheKey.defaultSerializer), token));
+					(T) bind(new RelationAttrKey(KEY_AUTHC_TOKEN).serializer(CacheKey.objectSerializer), token));
 			notNull(info, "Authentication info can't be empty. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
 
 			/**

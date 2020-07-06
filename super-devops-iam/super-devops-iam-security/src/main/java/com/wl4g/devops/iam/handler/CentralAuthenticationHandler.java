@@ -206,7 +206,8 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		}
 
 		// Sets SNS authorized info(if necessary).
-		IamAuthenticationToken authcToken = (IamAuthenticationToken) getBindValue(new RelationAttrKey(KEY_AUTHC_TOKEN));
+		IamAuthenticationToken authcToken = (IamAuthenticationToken) getBindValue(
+				new RelationAttrKey(KEY_AUTHC_TOKEN).deserializer(CacheKey.objectDeserializer));
 		if (!isNull(authcToken) && authcToken instanceof Oauth2SnsAuthenticationToken) {
 			Oauth2SnsAuthenticationToken snsToken = (Oauth2SnsAuthenticationToken) authcToken;
 			// TODO [optimize] chanage the type of stored value to object
