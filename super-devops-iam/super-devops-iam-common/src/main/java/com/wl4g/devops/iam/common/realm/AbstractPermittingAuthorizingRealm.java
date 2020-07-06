@@ -29,6 +29,7 @@ import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.get
 import static org.apache.shiro.util.Assert.notNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public abstract class AbstractPermittingAuthorizingRealm extends AuthorizingReal
 		notNull(info, "IamPrincipalInfo can't null");
 
 		// Authenticate attributes.(roles/permissions/rememberMe)
-		Map<String, String> principalMap = info.getAttributes();
+		Map<String, String> principalMap = new HashMap<>(info.getAttributes());
 		principalMap.put(KEY_ROLES_ATTRIBUTE_NAME, info.getRoles());
 		principalMap.put(KEY_PERMITS_ATTRIBUTE_NAME, info.getPermissions());
 
