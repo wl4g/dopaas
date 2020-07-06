@@ -19,6 +19,7 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
+import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.dao.erm.DnsPrivateZoneDao;
 import com.wl4g.devops.dao.erm.DnsPrivateResolutionDao;
 import com.wl4g.devops.erm.dns.DnsServerInterface;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
@@ -62,19 +64,21 @@ public class DnsPrivateZoneServiceImpl implements DnsPrivateZoneService {
         return pm;
     }
 
-    public void save(DnsPrivateZone dnsPrivateDomain){
-        if(isNull(dnsPrivateDomain.getId())){
-            dnsPrivateDomain.preInsert(getRequestOrganizationCode());
-            dnsPrivateDomain.setStatus("RUNNING");
-            insert(dnsPrivateDomain);
+    public void save(DnsPrivateZone dnsPrivateZone){
+        DnsPrivateZone dnsPrivateZoneDB = dnsPrivateDomainDao.selectByZone(dnsPrivateZone.getZone());
+        if(isNull(dnsPrivateZone.getId())){
+            Assert2.isNull(dnsPrivateZoneDB,"repeat zone");
+            dnsPrivateZone.preInsert(getRequestOrganizationCode());
+            dnsPrivateZone.setStatus("RUNNING");
+            insert(dnsPrivateZone);
         }else{
-            dnsPrivateDomain.preUpdate();
-            update(dnsPrivateDomain);
+            Assert2.isTrue(Objects.isNull(dnsPrivateZoneDB) || dnsPrivateZoneDB.getId().equals(dnsPrivateZone.getId()),"repeat zone");
+            dnsPrivateZone.preUpdate();
+            update(dnsPrivateZone);
         }
-
-        List<DnsPrivateResolution> dnsPrivateResolutions = dnsPrivateResolutionDao.selectByDomainId(dnsPrivateDomain.getId());
-        dnsPrivateDomain.setDnsPrivateResolutions(dnsPrivateResolutions);
-        dnsServerInterface.putDomian(dnsPrivateDomain);
+        List<DnsPrivateResolution> dnsPrivateResolutions = dnsPrivateResolutionDao.selectByDomainId(dnsPrivateZone.getId());
+        dnsPrivateZone.setDnsPrivateResolutions(dnsPrivateResolutions);
+        dnsServerInterface.putDomian(dnsPrivateZone);
     }
 
     private void insert(DnsPrivateZone dnsPrivateDomain){
