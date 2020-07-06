@@ -66,13 +66,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	/**
 	 * External custom filter chain pattern matching
 	 */
-	private Map<String, String> filterChain = new OnlyFilterChainMap() {
-		private static final long serialVersionUID = 5760821155893902560L;
-		{
-			// Adds default xsrf request rules.
-			putIfAbsent(XsrfProperties.DEFAULT_XSRF_BASE_PATTERN, "anon");
-		}
-	};
+	private Map<String, String> filterChain = new OnlyFilterChainMap();
 
 	/**
 	 * Session cache configuration properties.
@@ -196,7 +190,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// Apply default properties. (if necessary)
-		applyDefaultIfNecessary();
+		applyDefaultPropertiesSet();
 
 		// Validation.
 		validation();
@@ -217,7 +211,8 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	/**
 	 * Apply default config property.
 	 */
-	protected void applyDefaultIfNecessary() {
+	protected void applyDefaultPropertiesSet() {
+
 		// Sets Service name defaults.
 		if (isBlank(getServiceName())) {
 			setServiceName(getSpringApplicationName());
@@ -260,7 +255,8 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 *            url pattern.
 	 */
 	protected void applyBuildinDefaultFilterChains(Map<String, String> chains) {
-
+		// Adds default xsrf request rules.
+		getFilterChain().putIfAbsent(XsrfProperties.DEFAULT_XSRF_BASE_PATTERN, "anon");
 	}
 
 	/**

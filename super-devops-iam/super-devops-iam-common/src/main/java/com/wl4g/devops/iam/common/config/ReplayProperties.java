@@ -34,6 +34,7 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.isNull;
 
 /**
  * Replay attacks configuration properties
@@ -89,6 +90,9 @@ public class ReplayProperties implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		// Apply default settings.
+		applyDefaultPropertiesSet();
+
 		// Remove duplicate.
 		if (!isEmpty(excludeValidUriPatterns)) {
 			Collections2.disDupCollection(excludeValidUriPatterns);
@@ -138,10 +142,9 @@ public class ReplayProperties implements InitializingBean {
 	}
 
 	public ReplayProperties setExcludeValidUriPatterns(List<String> excludeValidUriPatterns) {
-		// if (!isEmpty(excludeValidUriPatterns)) {
-		// this.excludeValidUriPatterns.addAll(excludeValidUriPatterns);
-		// }
-		this.excludeValidUriPatterns = excludeValidUriPatterns;
+		if (!isNull(excludeValidUriPatterns)) {
+			this.excludeValidUriPatterns = excludeValidUriPatterns;
+		}
 		return this;
 	}
 
@@ -161,6 +164,14 @@ public class ReplayProperties implements InitializingBean {
 	public ReplayProperties setTermTimeMs(long termTimeMs) {
 		this.termTimeMs = termTimeMs;
 		return this;
+	}
+
+	/**
+	 * Apply default properties fields settings.
+	 */
+	private void applyDefaultPropertiesSet() {
+		getExcludeValidUriPatterns().add(URI_S_BASE + "/**");
+		getExcludeValidUriPatterns().add(URI_C_BASE + "/**");
 	}
 
 	public static final long DEFAULT_REPLAY_TOKEN_TERM_TIME = 15 * 60 * 1000L;

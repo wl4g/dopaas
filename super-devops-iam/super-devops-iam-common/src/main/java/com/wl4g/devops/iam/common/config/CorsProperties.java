@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import static java.util.Locale.*;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -57,32 +58,13 @@ import static org.springframework.http.HttpMethod.*;
  * @version v1.0 2019年3月4日
  * @since
  */
-public class CorsProperties implements Serializable {
+public class CorsProperties implements InitializingBean, Serializable {
 	final private static long serialVersionUID = -5701992202765239835L;
 
 	/**
 	 * {@link CorsRule}
 	 */
-	private Map<String, CorsRule> rules = new HashMap<String, CorsRule>() {
-		private static final long serialVersionUID = -8576461225674624807L;
-
-		/**
-		 * Default allowes headers.
-		 */
-		private final String[] defaultAllowedHeaders = { DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*", "Cookie", "X-Requested-With",
-				"Content-Type", "Content-Length", "User-Agent", "Referer", "Origin", "Accept", "Accept-Language",
-				"Accept-Encoding" };
-
-		/**
-		 * Default allowes methods.
-		 */
-		private final String[] defaultAllowedMethods = { GET.name(), HEAD.name(), POST.name(), OPTIONS.name() };
-		{
-			// Default settings.
-			put("/**", new CorsRule().addAllowsOrigins("http://localhost:8080").setAllowCredentials(true)
-					.addAllowsHeaders(defaultAllowedHeaders).addAllowsMethods(defaultAllowedMethods));
-		}
-	};
+	private Map<String, CorsRule> rules = new HashMap<>();
 
 	public Map<String, CorsRule> getRules() {
 		return rules;
@@ -99,6 +81,21 @@ public class CorsProperties implements Serializable {
 	@Override
 	public String toString() {
 		return "CorsProperties [rules=" + rules + "]";
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		// Apply default settings.
+		applyDefaultPropertiesSet();
+	}
+
+	/**
+	 * Apply default properties fields settings.
+	 */
+	private void applyDefaultPropertiesSet() {
+		// Default settings.
+		getRules().put("/**", new CorsRule().addAllowsOrigins("http://localhost:8080").setAllowCredentials(true)
+				.addAllowsHeaders(DEFAULT_ALLOWED_HEADERS).addAllowsMethods(DEFAULT_ALLOWED_METHODS));
 	}
 
 	//
@@ -515,5 +512,17 @@ public class CorsProperties implements Serializable {
 	}
 
 	final public static String KEY_CORS_PREFIX = "spring.cloud.devops.iam.cors";
+
+	/**
+	 * Default allowes headers.
+	 */
+	final private static String[] DEFAULT_ALLOWED_HEADERS = { DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*", "Cookie",
+			"X-Requested-With", "Content-Type", "Content-Length", "User-Agent", "Referer", "Origin", "Accept", "Accept-Language",
+			"Accept-Encoding" };
+
+	/**
+	 * Default allowes methods.
+	 */
+	final private static String[] DEFAULT_ALLOWED_METHODS = { GET.name(), HEAD.name(), POST.name(), OPTIONS.name() };
 
 }

@@ -84,13 +84,7 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	/**
 	 * Ignore xsrf validation request mappings.
 	 */
-	private List<String> excludeValidUriPatterns = new ArrayList<String>() {
-		private static final long serialVersionUID = 2330951352919056661L;
-		{
-			add(URI_S_BASE + "/**");
-			add(URI_C_BASE + "/**");
-		}
-	};
+	private List<String> excludeValidUriPatterns = new ArrayList<>();
 
 	/**
 	 * Temporary cors configuration.
@@ -100,6 +94,9 @@ public class XsrfProperties implements InitializingBean, Serializable {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		// Apply default settings.
+		applyDefaultPropertiesSet();
+
 		if (!isEmpty(excludeValidUriPatterns)) {
 			// Remove duplicate.
 			Collections2.disDupCollection(excludeValidUriPatterns);
@@ -200,6 +197,14 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	@Override
 	public String toString() {
 		return toJSONString(this);
+	}
+
+	/**
+	 * Apply default properties fields settings.
+	 */
+	private void applyDefaultPropertiesSet() {
+		getExcludeValidUriPatterns().add(URI_S_BASE + "/**");
+		getExcludeValidUriPatterns().add(URI_C_BASE + "/**");
 	}
 
 	final public static String KEY_XSRF_PREFIX = "spring.cloud.devops.iam.xsrf";
