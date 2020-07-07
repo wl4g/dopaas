@@ -17,7 +17,7 @@ package com.wl4g.devops.vcs.operator.coding;
 
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.components.tools.common.annotation.Reserved;
-import com.wl4g.devops.vcs.operator.AbstractVcsOperator;
+import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import org.springframework.http.HttpEntity;
@@ -32,7 +32,7 @@ import java.util.List;
  * @since
  */
 @Reserved
-public class CodingVcsOperator extends AbstractVcsOperator {
+public class CodingVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
 	public VcsProviderKind kind() {

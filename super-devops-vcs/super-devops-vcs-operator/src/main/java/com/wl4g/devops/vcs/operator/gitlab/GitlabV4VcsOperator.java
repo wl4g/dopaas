@@ -19,7 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.vcs.operator.AbstractVcsOperator;
+import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
@@ -38,7 +38,7 @@ import static org.apache.commons.lang3.StringUtils.*;
  * @version v1.0 2019年8月2日
  * @since
  */
-public class GitlabV4VcsOperator extends AbstractVcsOperator {
+public class GitlabV4VcsOperator extends GenericBasedGitVcsOperator {
 
     @Override
     public VcsProviderKind kind() {

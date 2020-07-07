@@ -18,7 +18,7 @@ package com.wl4g.devops.vcs.operator.bitbucket;
 
 import com.wl4g.devops.common.bean.ci.Vcs;
 import com.wl4g.devops.components.tools.common.annotation.Reserved;
-import com.wl4g.devops.vcs.operator.AbstractVcsOperator;
+import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;
 import org.springframework.http.HttpEntity;
@@ -33,7 +33,7 @@ import java.util.List;
  * @since
  */
 @Reserved
-public class BitbucketVcsOperator extends AbstractVcsOperator {
+public class BitbucketVcsOperator extends GenericBasedGitVcsOperator {
 
 	@Override
 	public VcsProviderKind kind() {
