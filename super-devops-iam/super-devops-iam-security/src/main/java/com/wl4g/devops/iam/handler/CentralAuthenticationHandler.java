@@ -37,6 +37,7 @@ import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Attributes;
 import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
 import com.wl4g.devops.support.redis.ScanCursor;
 
@@ -52,7 +53,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -185,7 +185,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		/**
 		 * Grants roles and permissions attributes.
 		 */
-		Map<String, Object> attributes = assertion.getPrincipalInfo().getAttributes();
+		Attributes attributes = assertion.getPrincipalInfo().getAttributes();
 		attributes.put(KEY_LANG_NAME, getBindValue(KEY_LANG_NAME));
 		attributes.put(KEY_PARENT_SESSIONID_NAME, valueOf(getSessionId()));
 
@@ -214,7 +214,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 			if (wrap.getToken() instanceof Oauth2SnsAuthenticationToken) {
 				Oauth2SnsAuthenticationToken snsToken = (Oauth2SnsAuthenticationToken) wrap.getToken();
 				// TODO [optimize] chanage the type of stored value to object
-				attributes.put(KEY_SNS_AUTHORIZED_INFO, snsToken.getSocial());
+				attributes.setSocialAuthorizeInfo(snsToken.getSocial());
 			}
 		}
 

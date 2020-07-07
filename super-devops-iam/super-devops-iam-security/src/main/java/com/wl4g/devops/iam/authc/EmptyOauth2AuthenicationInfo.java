@@ -52,7 +52,7 @@ public class EmptyOauth2AuthenicationInfo implements IamAuthenticationInfo {
 	}
 
 	@Override
-	public IamPrincipalInfo getAccountInfo() {
+	public IamPrincipalInfo getPrincipalInfo() {
 		return null;
 	}
 

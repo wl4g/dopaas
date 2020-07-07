@@ -17,15 +17,16 @@ package com.wl4g.devops.iam.common.subject;
 
 import org.springframework.util.Assert;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SNS_AUTHORIZED_INFO;
+import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
-import static java.util.Collections.emptyMap;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -87,34 +88,52 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	String getStoredCredentials();
 
 	/**
-	 * Get account attributes.
+	 * Gets account attributes.
 	 * 
 	 * @return
 	 */
-	default Map<String, Object> getAttributes() {
-		return emptyMap();
-	}
-
-	/**
-	 * Gets account attribute value.
-	 * 
-	 * @param key
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	@JsonIgnore
-	default <T> T getAttributeValue(String key) {
-		return (T) getAttributes().get(key);
-	}
+	Attributes getAttributes();
 
 	/**
 	 * Validation of principal information attribute.
 	 * 
 	 * @throws IllegalArgumentException
 	 */
-	void validate() throws IllegalArgumentException;
+	IamPrincipalInfo validate() throws IllegalArgumentException;
 
 	// --- Authenticating parameter's. ---
+
+	/**
+	 * {@link IamPrincipalInfo} attributes wrapper.
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年7月7日 v1.0.0
+	 * @see
+	 */
+	public static class Attributes extends LinkedHashMap<String, String> {
+		final private static long serialVersionUID = 3252340509258189795L;
+
+		/**
+		 * Gets sns {@link SocialAuthorizeInfo}
+		 * 
+		 * @return
+		 */
+		public SocialAuthorizeInfo getSocialAuthorizeInfo() {
+			String snsAuthzInfoJson = get(KEY_SNS_AUTHORIZED_INFO);
+			return parseJSON(snsAuthzInfoJson, SocialAuthorizeInfo.class);
+		}
+
+		/**
+		 * Sets sns {@link SocialAuthorizeInfo}
+		 * 
+		 * @return
+		 */
+		public Attributes setSocialAuthorizeInfo(SocialAuthorizeInfo info) {
+			put(KEY_SNS_AUTHORIZED_INFO, toJSONString(info));
+			return this;
+		}
+
+	}
 
 	/**
 	 * Parameters for obtaining account information
@@ -162,18 +181,18 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	}
 
 	/**
-	 * Abstract based parameters definition
+	 * Abstract base parameters definition
 	 * 
 	 * @author wangl.sir
 	 * @version v1.0 2019年1月8日
 	 * @since
 	 */
-	public static abstract class BasedParameter implements Parameter {
+	public static abstract class BaseParameter implements Parameter {
 		private static final long serialVersionUID = -898874009263858359L;
 
 		final private String principal;
 
-		public BasedParameter(String principal) {
+		public BaseParameter(String principal) {
 			Assert.hasText(principal, "'principal' must not be empty");
 			this.principal = principal;
 		}
@@ -191,7 +210,7 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	 * @version v1.0 2019年1月8日
 	 * @since
 	 */
-	public static class SimpleParameter extends BasedParameter {
+	public static class SimpleParameter extends BaseParameter {
 		private static final long serialVersionUID = -7501007252263127579L;
 
 		public SimpleParameter(String principal) {
@@ -207,7 +226,7 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	 * @version v1.0 2019年1月8日
 	 * @since
 	 */
-	public static class SmsParameter extends BasedParameter {
+	public static class SmsParameter extends BaseParameter {
 		private static final long serialVersionUID = -7501007252263557579L;
 
 		public SmsParameter(String principal) {

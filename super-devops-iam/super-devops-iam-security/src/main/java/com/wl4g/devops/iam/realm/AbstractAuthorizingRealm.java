@@ -175,7 +175,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 			 * session management and analysis. *
 			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
 			 */
-			IamPrincipalInfo pinfo = info.getAccountInfo();
+			IamPrincipalInfo pinfo = info.getPrincipalInfo();
 			pinfo.validate();
 			bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), pinfo);
 
@@ -218,7 +218,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 		}
 
 		// Assert when that no permissions are configured, forbid login.
-		if (isBlank(info0.getAccountInfo().getPermissions())) {
+		if (isBlank(info0.getPrincipalInfo().getPermissions())) {
 			throw new AccessPermissionDeniedException(bundle.getMessage("AbstractIamAuthorizingRealm.permission.denied"));
 		}
 

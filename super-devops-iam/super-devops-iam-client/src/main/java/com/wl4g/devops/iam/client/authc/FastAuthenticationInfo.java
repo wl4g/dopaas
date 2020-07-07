@@ -24,13 +24,13 @@ import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 public class FastAuthenticationInfo extends AbstractIamAuthenticationInfo {
 	private static final long serialVersionUID = -2294251445038637917L;
 
-	public FastAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, String realmName) {
-		this(accountInfo, principals, null, realmName);
+	public FastAuthenticationInfo(IamPrincipalInfo principalInfo, PrincipalCollection principals, String realmName) {
+		this(principalInfo, principals, null, realmName);
 	}
 
-	public FastAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
+	public FastAuthenticationInfo(IamPrincipalInfo principalInfo, PrincipalCollection principals, ByteSource credentialsSalt,
 			String realmName) {
-		super(accountInfo, principals, credentialsSalt, realmName);
+		super(principalInfo, principals, credentialsSalt, realmName);
 	}
 
 }
