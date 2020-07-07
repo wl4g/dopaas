@@ -75,9 +75,6 @@ import freemarker.template.TemplateException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class SmartGlobalErrorController extends AbstractErrorController implements InitializingBean {
-	final private static String DEFAULT_PATH_ERROR = "/error";
-	final private static String DEFAULT_REDIRECT_PREFIX = "redirect:";
-	final private static String DEFAULT_REDIRECT_KEY = "redirectUrl";
 
 	final private SmartLogger log = getLogger(getClass());
 
@@ -287,5 +284,9 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 		}
 		return isTrue(_stacktrace.toLowerCase(US), false);
 	}
+
+	final private static String DEFAULT_PATH_ERROR = "/error";
+	final private static String DEFAULT_REDIRECT_PREFIX = "redirect:";
+	final private static String DEFAULT_REDIRECT_KEY = "redirectUrl";
 
 }
