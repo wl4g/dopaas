@@ -43,7 +43,6 @@ public class CacheKey implements Serializable {
 	private Integer expire; // 0 means never expired.
 	private Class<?> valueClass;
 	private Serializer serializer = PB_SERIALIZER;
-	private Deserializer deserializer = PB_DESERIALIZER;
 
 	public CacheKey(Serializable key) {
 		this(key, -1); // -1:not overdue
@@ -108,16 +107,6 @@ public class CacheKey implements Serializable {
 		return serializer;
 	}
 
-	public CacheKey deserializer(Deserializer deserializer) {
-		notNull(deserializer, "'deserializer' must not be null");
-		this.deserializer = deserializer;
-		return this;
-	}
-
-	public Deserializer getDeserializer() {
-		return deserializer;
-	}
-
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " [" + (key != null ? "key=" + key + ", " : "")
@@ -175,30 +164,24 @@ public class CacheKey implements Serializable {
 	 * @since
 	 */
 	public static interface Serializer {
-		<T> byte[] serialize(T bean);
-	}
 
-	/**
-	 * Deserializer
-	 *
-	 * @author wangl.sir
-	 * @version v1.0 2019年1月22日
-	 * @since
-	 */
-	public static interface Deserializer {
+		/**
+		 * Serialization
+		 * 
+		 * @param bean
+		 * @return
+		 */
+		<T> byte[] serialize(T bean);
+
+		/**
+		 * Deserialization
+		 * 
+		 * @param data
+		 * @param clazz
+		 * @return
+		 */
 		<T> T deserialize(byte[] data, Class<T> clazz);
 	}
-
-	/**
-	 * Jdk object deserializer
-	 */
-	final public static Deserializer JDK_DESEIALIZER = new Deserializer() {
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T> T deserialize(byte[] data, Class<T> clazz) {
-			return (T) SerializeUtils.unserialize(data);
-		}
-	};
 
 	/**
 	 * Jdk object serializer
@@ -208,15 +191,11 @@ public class CacheKey implements Serializable {
 		public <T> byte[] serialize(T bean) {
 			return SerializeUtils.serialize(bean);
 		}
-	};
 
-	/**
-	 * Protostuff object deserializer
-	 */
-	final public static Deserializer PB_DESERIALIZER = new Deserializer() {
+		@SuppressWarnings("unchecked")
 		@Override
 		public <T> T deserialize(byte[] data, Class<T> clazz) {
-			return ProtostuffUtils.deserialize(data, clazz);
+			return (T) SerializeUtils.unserialize(data);
 		}
 	};
 
@@ -227,6 +206,11 @@ public class CacheKey implements Serializable {
 		@Override
 		public <T> byte[] serialize(T bean) {
 			return ProtostuffUtils.serialize(bean);
+		}
+
+		@Override
+		public <T> T deserialize(byte[] data, Class<T> clazz) {
+			return ProtostuffUtils.deserialize(data, clazz);
 		}
 	};
 
