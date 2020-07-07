@@ -31,7 +31,6 @@ import java.util.Set;
 import org.apache.shiro.cache.CacheException;
 
 import com.google.common.base.Charsets;
-import com.wl4g.devops.iam.common.cache.CacheKey.Deserializer;
 import com.wl4g.devops.iam.common.cache.CacheKey.Serializer;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 import static com.google.common.base.Charsets.UTF_8;
@@ -72,7 +71,7 @@ public class JedisIamCache implements IamCache {
 		log.debug("Get key={}", key);
 
 		byte[] data = jedisCluster.get(key.getKey(name));
-		return key.getDeserializer().deserialize(data, key.getValueClass());
+		return key.getSerializer().deserialize(data, key.getValueClass());
 	}
 
 	@Override
@@ -274,16 +273,16 @@ public class JedisIamCache implements IamCache {
 		}
 
 		// Deserialization
-		return (T) fieldKey.getDeserializer().deserialize(data, fieldKey.getValueClass());
+		return (T) fieldKey.getSerializer().deserialize(data, fieldKey.getValueClass());
 	}
 
 	@Override
-	public <T> Map<String, T> getMapAll(Class<T> valueClass, Deserializer deserializer) {
+	public <T> Map<String, T> getMapAll(Class<T> valueClass, Serializer serializer) {
 		return safeMap(jedisCluster.hgetAll(toKeyBytes(name))).entrySet().stream()
 				.collect(toMap(e -> new String(e.getKey(), UTF_8), e -> {
 					if (isNull(e.getValue()))
 						return null;
-					return deserializer.deserialize(e.getValue(), valueClass);
+					return serializer.deserialize(e.getValue(), valueClass);
 				}));
 	}
 

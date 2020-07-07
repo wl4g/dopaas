@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 
-import com.wl4g.devops.iam.common.cache.CacheKey.Deserializer;
 import com.wl4g.devops.iam.common.cache.CacheKey.Serializer;
 
 /**
@@ -159,10 +158,10 @@ public interface IamCache extends Cache<CacheKey, Object> {
 	/**
 	 * Gets fields map.
 	 * 
-	 * @param deserializer
+	 * @param serializer
 	 * @return
 	 */
-	<T> Map<String, T> getMapAll(Class<T> valueClass, Deserializer deserializer);
+	<T> Map<String, T> getMapAll(Class<T> valueClass, Serializer serializer);
 
 	/**
 	 * Gets fields map.
