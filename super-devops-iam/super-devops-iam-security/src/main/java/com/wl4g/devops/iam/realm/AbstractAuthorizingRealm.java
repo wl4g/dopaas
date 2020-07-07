@@ -175,14 +175,15 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 			 * session management and analysis. *
 			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
 			 */
-			IamPrincipalInfo principal = info.getAccountInfo();
-			principal.validate();
-			bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), principal);
+			IamPrincipalInfo pinfo = info.getAccountInfo();
+			pinfo.validate();
+			bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), pinfo);
 
 			return info;
 		} catch (Throwable e) {
 			throw new AuthenticationException(e);
 		}
+
 	}
 
 	/**
