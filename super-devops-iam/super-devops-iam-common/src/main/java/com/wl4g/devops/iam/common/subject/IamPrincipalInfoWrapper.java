@@ -29,6 +29,15 @@ public class IamPrincipalInfoWrapper {
 	 */
 	private IamPrincipalInfo info;
 
+	public IamPrincipalInfoWrapper() {
+		super();
+	}
+
+	public IamPrincipalInfoWrapper(IamPrincipalInfo info) {
+		super();
+		this.info = info;
+	}
+
 	public IamPrincipalInfo getInfo() {
 		return info;
 	}

@@ -26,6 +26,7 @@ import com.wl4g.devops.iam.common.authc.model.TicketValidatedAssertModel;
 import com.wl4g.devops.iam.common.authc.model.TicketValidateModel;
 import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfoWrapper;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.*;
@@ -62,7 +63,7 @@ public abstract class AbstractClientAuthorizingRealm extends AbstractPermittingA
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		IamAuthenticationInfo info = doAuthenticationInfo(token);
-		bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), info.getPrincipalInfo());
+		bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), new IamPrincipalInfoWrapper(info.getPrincipalInfo()));
 		return info;
 	}
 
