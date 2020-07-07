@@ -45,11 +45,6 @@ public enum ClientRef {
 	MicroMessenger("MicroMessenger"),
 
 	/**
-	 * Client WeChat open(other) platform.
-	 */
-	WeChat("wechat"),
-
-	/**
 	 * Client WeChat official platform.
 	 */
 	WeChatMp("wechatMp"),
