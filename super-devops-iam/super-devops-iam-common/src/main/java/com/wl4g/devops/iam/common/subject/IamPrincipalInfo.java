@@ -36,7 +36,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @version v1.0.0 2018-04-31
  * @since
  */
-public interface IamPrincipalInfo extends Cloneable, Serializable {
+public interface IamPrincipalInfo extends Serializable {
 
 	/**
 	 * Get account principal Id.

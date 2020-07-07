@@ -58,6 +58,7 @@ import com.wl4g.devops.common.annotation.DevopsErrorController;
 import com.wl4g.devops.common.config.ErrorControllerAutoConfiguration.ErrorControllerProperties;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.tool.common.jvm.JvmRuntimeKit;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
 import freemarker.template.Configuration;
@@ -204,7 +205,7 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	 * @return
 	 */
 	private boolean isStackTrace(ServletRequest request) {
-		if (log.isDebugEnabled()) {
+		if (log.isDebugEnabled() || JvmRuntimeKit.isJVMDebugging) {
 			return true;
 		}
 		return checkStackTrace(request);
