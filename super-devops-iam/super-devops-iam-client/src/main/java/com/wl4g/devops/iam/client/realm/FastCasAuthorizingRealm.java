@@ -133,7 +133,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 			// Merge add attributes
 			String principal = validated.getPrincipalInfo().getPrincipal();
 			ftk.setPrincipal(principal); // MARK1
-			ftk.setRememberMe(parseBoolean(valueOf(info.getAttributes().getOrDefault(KEY_REMEMBERME_NAME, FALSE))));
+			ftk.setRememberMe(parseBoolean(valueOf(info.getAttributes().getOrDefault(KEY_REMEMBERME_NAME, FALSE.toString()))));
 			ftk.setHost((String) info.getAttributes().get(KEY_AUTHC_HOST_NAME));
 
 			log.info("Validated grantTicket: {}, principal: {}", granticket, principal);

@@ -13,26 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.authc;
-
-import org.apache.shiro.authc.AuthenticationInfo;
-
-import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+package com.wl4g.devops.iam.common.subject;
 
 /**
- * IAM authentication information.
+ * {@link IamPrincipalInfoWrapper}
  * 
- * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
- * @version v1.0.0 2019-11-23
- * @since
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年7月7日 v1.0.0
+ * @see
  */
-public interface IamAuthenticationInfo extends AuthenticationInfo {
+public class IamPrincipalInfoWrapper {
 
 	/**
-	 * Get current authenticating information.
-	 * 
-	 * @return
+	 * {@link IamPrincipalInfo}
 	 */
-	IamPrincipalInfo getPrincipalInfo();
+	private IamPrincipalInfo info;
+
+	public IamPrincipalInfo getInfo() {
+		return info;
+	}
+
+	public void setInfo(IamPrincipalInfo info) {
+		this.info = info;
+	}
+
+	@Override
+	public String toString() {
+		return "IamPrincipalInfoWrapper [info=" + info + "]";
+	}
 
 }
