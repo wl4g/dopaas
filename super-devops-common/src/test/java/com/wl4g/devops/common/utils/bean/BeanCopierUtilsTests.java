@@ -43,7 +43,7 @@ public class BeanCopierUtilsTests {
 		user.setModifyTime(new Date());
 		user.setModifyUser("李四");
 		user.setIsValidate("1");
-		user.setComments("2020年疫情大爆发");
+		user.setComments("2020年 COVID-19");
 
 		try {
 			nameObj.setCreateTime(dateFormat.parse("2020-03-06"));

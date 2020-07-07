@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.iam.common.subject;
 
+import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.util.Assert.notNull;
@@ -87,7 +88,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final SimplePrincipalInfo setPrincipalId(String principalId) {
-		hasText(principalId, "Authenticate principalId must not be empty.");
+		hasTextOf(principalId, "principalId");
 		this.principalId = principalId;
 		return this;
 	}

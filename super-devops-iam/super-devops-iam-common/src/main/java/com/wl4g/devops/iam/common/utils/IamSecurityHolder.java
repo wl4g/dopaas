@@ -35,7 +35,6 @@ import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.subject.Subject;
 
 import com.wl4g.devops.iam.common.session.NoOpSession;
-import com.wl4g.devops.common.utils.bean.BeanCopierUtils;
 import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfoWrapper;
@@ -101,13 +100,16 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 					"Iam subject is required! unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
 		}
 		/**
+		 * [MARK2]:</br>
 		 * It is not recommended that external methods bind business attributes
 		 * here. We recommend that external methods bind business attributes
 		 * directly to the session, i.e: {@link #bind(Object, T)}
 		 * 
 		 * @see {@link com.wl4g.devops.iam.common.subject.SimplePrincipalInfo#setAttributes(Map)}#MARK1
 		 */
-		return BeanCopierUtils.mapper(wrap.getInfo(), wrap.getInfo().getClass()); // [MARK2]
+		// TODO uncopy fields value ??
+		// BeanCopierUtils.mapper(wrap.getInfo(), wrap.getInfo().getClass());
+		return wrap.getInfo();
 	}
 
 	/**
