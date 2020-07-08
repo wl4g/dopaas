@@ -22,12 +22,11 @@ import static java.util.Locale.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
@@ -53,11 +52,14 @@ import static com.wl4g.devops.components.tools.common.web.WebUtils2.isTrue;
 import static com.wl4g.devops.components.tools.common.web.WebUtils2.write;
 import static com.wl4g.devops.components.tools.common.web.WebUtils2.writeJson;
 import static com.wl4g.devops.components.tools.common.web.WebUtils2.ResponseType.*;
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 import com.wl4g.devops.common.annotation.DevopsErrorController;
 import com.wl4g.devops.common.config.ErrorControllerAutoConfiguration.ErrorControllerProperties;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.devops.components.tools.common.jvm.JvmRuntimeKit;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -74,11 +76,8 @@ import freemarker.template.TemplateException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class SmartGlobalErrorController extends AbstractErrorController implements InitializingBean {
-	final private static String DEFAULT_PATH_ERROR = "/error";
-	final private static String DEFAULT_REDIRECT_PREFIX = "redirect:";
-	final private static String DEFAULT_REDIRECT_KEY = "redirectUrl";
 
-	final private Logger log = LoggerFactory.getLogger(getClass());
+	final private SmartLogger log = getLogger(getClass());
 
 	/** Errors configuration properties. */
 	final private ErrorControllerProperties config;
@@ -205,19 +204,11 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	 * @param request
 	 * @return
 	 */
-	private boolean isStackTrace(HttpServletRequest request) {
-		if (log.isDebugEnabled()) {
+	private boolean isStackTrace(ServletRequest request) {
+		if (log.isDebugEnabled() || JvmRuntimeKit.isJVMDebugging) {
 			return true;
 		}
-		String _stacktrace = request.getParameter(PARAM_STACK_TRACE);
-		if (isBlank(_stacktrace)) {
-			Cookie _stacktraceC = getCookie(request, PARAM_STACK_TRACE);
-			_stacktrace = !isNull(_stacktraceC) ? _stacktraceC.getValue() : _stacktrace;
-		}
-		if (isBlank(_stacktrace)) {
-			return false;
-		}
-		return isTrue(_stacktrace.toLowerCase(US), false);
+		return checkStackTrace(request);
 	}
 
 	/**
@@ -276,5 +267,27 @@ public class SmartGlobalErrorController extends AbstractErrorController implemen
 	private boolean isErrorRedirectURI(String uriOrTpl) {
 		return startsWithIgnoreCase(uriOrTpl, DEFAULT_REDIRECT_PREFIX);
 	}
+
+	/**
+	 * Whether error stack information is enabled
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public static boolean checkStackTrace(ServletRequest request) {
+		String _stacktrace = request.getParameter(PARAM_STACK_TRACE);
+		if (isBlank(_stacktrace) && request instanceof HttpServletRequest) {
+			Cookie stCookie = getCookie((HttpServletRequest) request, PARAM_STACK_TRACE);
+			_stacktrace = !isNull(stCookie) ? stCookie.getValue() : _stacktrace;
+		}
+		if (isBlank(_stacktrace)) {
+			return false;
+		}
+		return isTrue(_stacktrace.toLowerCase(US), false);
+	}
+
+	final private static String DEFAULT_PATH_ERROR = "/error";
+	final private static String DEFAULT_REDIRECT_PREFIX = "redirect:";
+	final private static String DEFAULT_REDIRECT_KEY = "redirectUrl";
 
 }

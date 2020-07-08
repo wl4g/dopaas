@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.iam.authc;
 
+import org.apache.shiro.authc.HostAuthenticationToken;
+
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 
 /**
@@ -25,7 +27,7 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
  * @date 2018年11月19日
  * @since
  */
-public class LogoutAuthenticationToken implements IamAuthenticationToken {
+public class LogoutAuthenticationToken implements IamAuthenticationToken, HostAuthenticationToken {
 
 	private static final long serialVersionUID = 8587329689973009598L;
 

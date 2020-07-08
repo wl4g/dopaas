@@ -174,7 +174,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 		// Generate & save xsrf token.
 		XsrfToken xtoken = saveWebXsrfTokenIfNecessary(xTokenRepository, toHttp(request), toHttp(response), true);
 		// Deserialize xsrf token.
-		Map<String, String> xsrfInfo = convertBean(xtoken, TYPE_REF_STRING_HASHMAP);
+		Map<String, String> xsrfInfo = convertBean(xtoken, typeRefHashMapString);
 		return isNull(xsrfInfo) ? emptyMap() : xsrfInfo;
 	}
 
@@ -191,7 +191,7 @@ public abstract class AbstractIamAuthenticationFilter<C extends AbstractIamPrope
 	/**
 	 * {@link TypeReference}
 	 */
-	final public static TypeReference<HashMap<String, String>> TYPE_REF_STRING_HASHMAP = new TypeReference<HashMap<String, String>>() {
+	final public static TypeReference<HashMap<String, String>> typeRefHashMapString = new TypeReference<HashMap<String, String>>() {
 	};
 
 }

@@ -15,13 +15,11 @@
  */
 package com.wl4g.devops.iam.common.subject;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.shiro.util.Assert.hasText;
 import static org.apache.shiro.util.Assert.notNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.validation.constraints.NotBlank;
 
@@ -57,7 +55,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	private String permissions = EMPTY;
 
 	/** Authenticate principal attributes. */
-	private Map<String, String> attributes = new HashMap<>();
+	private Attributes attributes = new Attributes();
 
 	public SimplePrincipalInfo() {
 		super();
@@ -74,7 +72,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public SimplePrincipalInfo(@NotBlank String principalId, String principal, String storedCredentials, String roles,
-			String permissions, PrincipalOrganization organization, Map<String, String> attributes) {
+			String permissions, PrincipalOrganization organization, Attributes attributes) {
 		setPrincipalId(principalId);
 		setPrincipal(principal);
 		setStoredCredentials(storedCredentials);
@@ -90,7 +88,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final SimplePrincipalInfo setPrincipalId(String principalId) {
-		hasText(principalId, "Authenticate principalId must not be empty.");
+		hasTextOf(principalId, "principalId");
 		this.principalId = principalId;
 		return this;
 	}
@@ -101,7 +99,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final SimplePrincipalInfo setPrincipal(String principal) {
-		hasText(principal, "Authenticate principal name can't empty");
+		hasTextOf(principal, "principalName");
 		this.principal = principal;
 		return this;
 	}
@@ -157,7 +155,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * @return
 	 */
 	@Override
-	public final Map<String, String> getAttributes() {
+	public final Attributes getAttributes() {
 		notNull(attributes, "Principal attributes can't null");
 		return attributes;
 	}
@@ -168,7 +166,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * @param attributes
 	 * @return
 	 */
-	public final SimplePrincipalInfo setAttributes(Map<String, String> attributes) {
+	public final SimplePrincipalInfo setAttributes(Attributes attributes) {
 		if (!isEmpty(attributes)) {
 			// [MARK1]
 			/**
@@ -189,12 +187,13 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * Validation.
 	 */
 	@Override
-	public final void validate() throws IllegalArgumentException {
+	public final IamPrincipalInfo validate() throws IllegalArgumentException {
 		hasText(getPrincipalId(), "Authenticate principalId can't empty");
 		hasText(getPrincipal(), "Authenticate principal name can't empty");
 		// hasText(getRoles(), "Authenticate roles can't empty");
 		// notNull(getOrganization(), "Authenticate organization can't empty");
 		// hasText(getPermissions(), "Authenticate permissions can't empty");
+		return this;
 	}
 
 }

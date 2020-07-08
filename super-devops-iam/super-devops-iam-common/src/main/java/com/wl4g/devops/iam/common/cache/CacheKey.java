@@ -16,11 +16,16 @@
 package com.wl4g.devops.iam.common.cache;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static com.wl4g.devops.components.tools.common.lang.TypeConverts.safeLongToInt;
+import static java.util.Objects.isNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Charsets;
+import com.wl4g.devops.components.tools.common.serialize.ProtostuffUtils;
+import com.wl4g.devops.components.tools.common.serialize.JdkSerializeUtils;
 
 /**
  * Support for automatic expiration support, which can be used for login failure
@@ -37,8 +42,7 @@ public class CacheKey implements Serializable {
 	private String key;
 	private Integer expire; // 0 means never expired.
 	private Class<?> valueClass;
-	private Serializer serializer;
-	private Deserializer deserializer;
+	private Serializer serializer = PB_SERIALIZER;
 
 	public CacheKey(Serializable key) {
 		this(key, -1); // -1:not overdue
@@ -57,7 +61,7 @@ public class CacheKey implements Serializable {
 	}
 
 	public CacheKey(Serializable key, long expireMs) {
-		this(key, (int) TimeUnit.MILLISECONDS.toSeconds(expireMs));
+		this(key, safeLongToInt(MILLISECONDS.toSeconds(expireMs)));
 	}
 
 	public CacheKey(Serializable key, int expireSec) {
@@ -75,7 +79,7 @@ public class CacheKey implements Serializable {
 	}
 
 	public boolean hasExpire() {
-		return (getExpire() != null && getExpire() >= 0);
+		return (!isNull(getExpire()) && getExpire() >= 0);
 	}
 
 	public Integer getExpire() {
@@ -101,16 +105,6 @@ public class CacheKey implements Serializable {
 
 	public Serializer getSerializer() {
 		return serializer;
-	}
-
-	public CacheKey deserializer(Deserializer deserializer) {
-		notNull(deserializer, "'deserializer' must not be null");
-		this.deserializer = deserializer;
-		return this;
-	}
-
-	public Deserializer getDeserializer() {
-		return deserializer;
 	}
 
 	@Override
@@ -170,18 +164,54 @@ public class CacheKey implements Serializable {
 	 * @since
 	 */
 	public static interface Serializer {
+
+		/**
+		 * Serialization
+		 * 
+		 * @param bean
+		 * @return
+		 */
 		<T> byte[] serialize(T bean);
+
+		/**
+		 * Deserialization
+		 * 
+		 * @param data
+		 * @param clazz
+		 * @return
+		 */
+		<T> T deserialize(byte[] data, Class<T> clazz);
 	}
 
 	/**
-	 * Deserializer
-	 *
-	 * @author wangl.sir
-	 * @version v1.0 2019年1月22日
-	 * @since
+	 * Jdk object serializer
 	 */
-	public static interface Deserializer {
-		<T> T deserialize(byte[] data, Class<T> clazz);
-	}
+	final public static Serializer JDK_SERIALIZER = new Serializer() {
+		@Override
+		public <T> byte[] serialize(T bean) {
+			return JdkSerializeUtils.serialize(bean);
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T> T deserialize(byte[] data, Class<T> clazz) {
+			return (T) JdkSerializeUtils.unserialize(data);
+		}
+	};
+
+	/**
+	 * Protostuff object serializer
+	 */
+	final public static Serializer PB_SERIALIZER = new Serializer() {
+		@Override
+		public <T> byte[] serialize(T bean) {
+			return ProtostuffUtils.serialize(bean);
+		}
+
+		@Override
+		public <T> T deserialize(byte[] data, Class<T> clazz) {
+			return ProtostuffUtils.deserialize(data, clazz);
+		}
+	};
 
 }

@@ -16,8 +16,24 @@
 package com.wl4g.devops.iam.filter;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SNS_AUTHORIZED_INFO;
+import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.isInstanceOf;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 import com.wl4g.devops.iam.authc.WechatMpAuthenticationToken;
 
+/**
+ * {@link WechatMpAuthenticationFilter}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年7月8日
+ * @since
+ */
 @IamFilter
 public class WechatMpAuthenticationFilter extends Oauth2SnsAuthenticationFilter<WechatMpAuthenticationToken> {
 
@@ -34,6 +50,19 @@ public class WechatMpAuthenticationFilter extends Oauth2SnsAuthenticationFilter<
 	@Override
 	protected boolean enabled() {
 		return true;
+	}
+
+	@Override
+	protected IamAuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
+		// Gets sns wxmp token.
+		IamAuthenticationToken token = super.createToken(request, response);
+		isInstanceOf(WechatMpAuthenticationToken.class, token);
+
+		// Bind sns authorization info, for wxmp step 2 login with account
+		WechatMpAuthenticationToken wxmpToken = (WechatMpAuthenticationToken) token;
+		bind(KEY_SNS_AUTHORIZED_INFO, wxmpToken.getSocial());
+
+		return token;
 	}
 
 }

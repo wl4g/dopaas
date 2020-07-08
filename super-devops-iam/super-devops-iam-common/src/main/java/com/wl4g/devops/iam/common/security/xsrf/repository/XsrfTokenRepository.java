@@ -97,7 +97,7 @@ public interface XsrfTokenRepository {
 				HttpServletResponse response, boolean forceRenew) {
 
 			XsrfToken xtoken = null;
-			if (repository.isXsrfRequired(request) && !isNull(repository) && isBrowser(request)) {
+			if (!isNull(repository) && repository.isXsrfRequired(request) && isBrowser(request)) {
 				xtoken = repository.getXToken(request);
 				if (isNull(xtoken) || forceRenew) {
 					// Generate XSRF token.

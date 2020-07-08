@@ -15,8 +15,10 @@
  */
 package com.wl4g.devops.common.constants;
 
+import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
+
 /**
- * DevOps SCM Constants.
+ * DevOps IAM Constants.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
@@ -37,7 +39,10 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Authentication principal language attribute name.
 	 */
 	final public static String KEY_LANG_NAME = "langAttrName";
-
+	/**
+	 * Authenticating host attribute name.
+	 */
+	final public static String KEY_AUTHC_HOST_NAME = "authcHostAttrName";
 	/**
 	 * This key is generated when the authentication is successful and can be
 	 * used to encrypt and decrypt the transmission data of some sensitive api.
@@ -54,24 +59,21 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * @see {@link com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties#accessTokenName}
 	 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
 	 */
-	final public static String KEY_ACCESSTOKEN_SIGN_NAME = "accessTokenSignAttrKey";
-
+	final public static String KEY_ACCESSTOKEN_SIGN_NAME = "accessTokenSignAttrName";
 	/**
 	 * Iam-server/Iam-client parent sessionId.
 	 */
-	final public static String KEY_PARENT_SESSIONID_NAME = "parentSessionIdAttrKey";
+	final public static String KEY_PARENT_SESSIONID_NAME = "parentSessionIdAttrName";
+	/** authentication token save session key-name */
+	final public static String KEY_AUTHC_TOKEN = "authcTokenAttrName";
+	/** authentication accountInfo save session key-name */
+	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttrName";
 
 	/**
 	 * iamServer/iamClient the JSON node key that response the session
 	 * information.
 	 */
 	final public static String KEY_SESSIONINFO_NAME = "session";
-
-	/** authentication token save session key-name */
-	final public static String KEY_AUTHC_TOKEN = "authcTokenAttrKey";
-	/** authentication accountInfo save session key-name */
-	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttrKey";
-
 	/**
 	 * IAM system service role parameter name.</br>
 	 * Can be used for user-client interception of unregistered state
@@ -103,6 +105,12 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * IAM XSRF token apply URI.
 	 */
 	final public static String URI_XSRF_APPLY_TOKEN = "xtoken";
+
+	/**
+	 * SNS authorized info stoage attribute key. </br>
+	 * {@link SocialAuthorizeInfo}
+	 */
+	final public static String KEY_SNS_AUTHORIZED_INFO = "snsAuthzInfoAttrName";
 
 	//
 	// Server configuration.

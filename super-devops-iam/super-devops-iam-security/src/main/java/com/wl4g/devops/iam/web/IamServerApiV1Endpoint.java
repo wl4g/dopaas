@@ -22,6 +22,7 @@ import com.wl4g.devops.iam.common.annotation.IamApiV1Controller;
 import com.wl4g.devops.iam.common.authc.ClientRef;
 import com.wl4g.devops.iam.common.session.GrantCredentialsInfo;
 import com.wl4g.devops.iam.common.session.IamSession;
+import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.web.GenericApiEndpoint;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel;
 import com.wl4g.devops.iam.common.web.model.SessionAttributeModel.IamSessionInfo;
@@ -115,7 +116,7 @@ public class IamServerApiV1Endpoint extends GenericApiEndpoint {
 		}
 
 		// Authentication client type.
-		Object token = session.getAttribute(KEY_AUTHC_TOKEN);
+		Object token = session.getAttribute(new RelationAttrKey(KEY_AUTHC_TOKEN));
 		if (nonNull(token)) {
 			if (token instanceof GenericAuthenticationToken) {
 				sa.setClientRef(((GenericAuthenticationToken) token).getClientRef());

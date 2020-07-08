@@ -19,7 +19,6 @@ import static com.wl4g.devops.iam.common.session.NoOpSession.*;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_ACCOUNT_INFO;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static java.lang.System.currentTimeMillis;
-import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -38,7 +37,7 @@ import org.apache.shiro.subject.Subject;
 import com.wl4g.devops.iam.common.session.NoOpSession;
 import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
-import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfoWrapper;
 
 /**
  * Session bind holder utility.
@@ -94,20 +93,24 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	 * @see {@link com.wl4g.devops.iam.realm.AbstractIamAuthorizingRealm#doGetAuthenticationInfo(AuthenticationToken)}
 	 */
 	public static IamPrincipalInfo getPrincipalInfo(boolean assertion) {
-		SimplePrincipalInfo info = (SimplePrincipalInfo) getSession()
-				.getAttribute(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO, SimplePrincipalInfo.class));
+		IamPrincipalInfoWrapper wrap = (IamPrincipalInfoWrapper) getSession()
+				.getAttribute(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO, IamPrincipalInfoWrapper.class));
 		if (assertion) {
-			notNull(info, UnauthenticatedException.class,
-					"Authentication subject empty. unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
+			isTrue((!isNull(wrap) && !isNull(wrap.getInfo())), UnauthenticatedException.class,
+					"Iam subject is required! unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
 		}
+
 		/**
+		 * [MARK2]:</br>
 		 * It is not recommended that external methods bind business attributes
 		 * here. We recommend that external methods bind business attributes
 		 * directly to the session, i.e: {@link #bind(Object, T)}
 		 * 
 		 * @see {@link com.wl4g.devops.iam.common.subject.SimplePrincipalInfo#setAttributes(Map)}#MARK1
 		 */
-		return info.setAttributes(unmodifiableMap(info.getAttributes())); // [MARK2]
+		return wrap.getInfo();
+		// TODO uncopy fields value ??
+		// BeanCopierUtils.mapper(wrap.getInfo(), wrap.getInfo().getClass());
 	}
 
 	/**

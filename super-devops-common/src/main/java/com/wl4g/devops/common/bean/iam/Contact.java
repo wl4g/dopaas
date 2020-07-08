@@ -37,7 +37,6 @@ public class Contact extends BaseBean implements Serializable {
 		this.name = name == null ? null : name.trim();
 	}
 
-
 	public Integer[] getGroups() {
 		return groups;
 	}

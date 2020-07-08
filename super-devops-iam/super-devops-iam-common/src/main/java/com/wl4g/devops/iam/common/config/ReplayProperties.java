@@ -21,6 +21,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.config.ConfigurationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.wl4g.devops.components.tools.common.collection.Collections2;
 import com.wl4g.devops.components.tools.common.crypto.digest.DigestUtils2;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
+import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_C_BASE;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
+import static org.apache.shiro.web.filter.mgt.DefaultFilter.anon;
 import static java.util.Collections.singletonList;
+import static java.util.Objects.isNull;
 
 /**
  * Replay attacks configuration properties
@@ -82,13 +86,22 @@ public class ReplayProperties implements InitializingBean {
 	//
 
 	/**
-	 * Temporary cors configuration.
+	 * Temporary core configuration.
+	 */
+	@Autowired
+	private transient AbstractIamProperties<? extends ParamProperties> cConfig;
+
+	/**
+	 * Temporary configuration.
 	 */
 	@Autowired
 	private transient CorsProperties corsConfig;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		// Apply default settings.
+		applyDefaultPropertiesSet();
+
 		// Remove duplicate.
 		if (!isEmpty(excludeValidUriPatterns)) {
 			Collections2.disDupCollection(excludeValidUriPatterns);
@@ -138,10 +151,9 @@ public class ReplayProperties implements InitializingBean {
 	}
 
 	public ReplayProperties setExcludeValidUriPatterns(List<String> excludeValidUriPatterns) {
-		// if (!isEmpty(excludeValidUriPatterns)) {
-		// this.excludeValidUriPatterns.addAll(excludeValidUriPatterns);
-		// }
-		this.excludeValidUriPatterns = excludeValidUriPatterns;
+		if (!isNull(excludeValidUriPatterns)) {
+			this.excludeValidUriPatterns = excludeValidUriPatterns;
+		}
 		return this;
 	}
 
@@ -163,9 +175,25 @@ public class ReplayProperties implements InitializingBean {
 		return this;
 	}
 
-	public static final long DEFAULT_REPLAY_TOKEN_TERM_TIME = 15 * 60 * 1000L;
-	public static final String DEFAULT_REPLAY_TOKEN_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Replay-Token";
-	public static final String DEFAULT_REPLAY_TOKEN_PARAM_NAME = "_replayToken";
+	/**
+	 * Apply default properties fields settings.
+	 */
+	private void applyDefaultPropertiesSet() {
+		getExcludeValidUriPatterns().add(URI_S_BASE + "/**");
+		getExcludeValidUriPatterns().add(URI_C_BASE + "/**");
+
+		// Automatically exclude patterns with filter chains of anon type
+		cConfig.getFilterChain().forEach((pattern, filter) -> {
+			if (StringUtils.equals(filter, anon.name())) {
+				getExcludeValidUriPatterns().add(pattern);
+			}
+		});
+
+	}
+
+	final public static long DEFAULT_REPLAY_TOKEN_TERM_TIME = 15 * 60 * 1000L;
+	final public static String DEFAULT_REPLAY_TOKEN_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Replay-Token";
+	final public static String DEFAULT_REPLAY_TOKEN_PARAM_NAME = "_replayToken";
 	final public static String KEY_REPLAY_PREFIX = "spring.cloud.devops.iam.replay";
 
 }

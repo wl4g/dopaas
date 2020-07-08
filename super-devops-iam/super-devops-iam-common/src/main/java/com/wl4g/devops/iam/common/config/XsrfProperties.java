@@ -23,6 +23,7 @@ import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.get
 import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.iam.common.config.CorsProperties.CorsRule.DEFAULT_CORS_ALLOW_HEADER_PREFIX;
 import static java.util.Collections.singletonList;
+import static org.apache.shiro.web.filter.mgt.DefaultFilter.anon;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
@@ -31,11 +32,13 @@ import java.util.List;
 
 import javax.servlet.http.Cookie;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wl4g.devops.components.tools.common.collection.Collections2;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
+import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 
 /**
  * XSRF configuration properties
@@ -84,13 +87,17 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	/**
 	 * Ignore xsrf validation request mappings.
 	 */
-	private List<String> excludeValidUriPatterns = new ArrayList<String>() {
-		private static final long serialVersionUID = 2330951352919056661L;
-		{
-			add(URI_S_BASE + "/**");
-			add(URI_C_BASE + "/**");
-		}
-	};
+	private List<String> excludeValidUriPatterns = new ArrayList<>();
+
+	//
+	// --- Temporary fields. ---
+	//
+
+	/**
+	 * Temporary core configuration.
+	 */
+	@Autowired
+	private transient AbstractIamProperties<? extends ParamProperties> cConfig;
 
 	/**
 	 * Temporary cors configuration.
@@ -100,6 +107,9 @@ public class XsrfProperties implements InitializingBean, Serializable {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		// Apply default settings.
+		applyDefaultPropertiesSet();
+
 		if (!isEmpty(excludeValidUriPatterns)) {
 			// Remove duplicate.
 			Collections2.disDupCollection(excludeValidUriPatterns);
@@ -202,15 +212,31 @@ public class XsrfProperties implements InitializingBean, Serializable {
 		return toJSONString(this);
 	}
 
+	/**
+	 * Apply default properties fields settings.
+	 */
+	private void applyDefaultPropertiesSet() {
+		getExcludeValidUriPatterns().add(URI_S_BASE + "/**");
+		getExcludeValidUriPatterns().add(URI_C_BASE + "/**");
+
+		// Automatically exclude patterns with filter chains of anon type
+		cConfig.getFilterChain().forEach((pattern, filter) -> {
+			if (StringUtils.equals(filter, anon.name())) {
+				getExcludeValidUriPatterns().add(pattern);
+			}
+		});
+
+	}
+
 	final public static String KEY_XSRF_PREFIX = "spring.cloud.devops.iam.xsrf";
 
 	/**
 	 * Use to: IAM-{serviceName}-XSRF-TOKEN
 	 */
 	@Deprecated
-	public static final String DEFAULT_XSRF_COOKIE_NAME = "IAM-XSRF-TOKEN";
-	public static final String DEFAULT_XSRF_PARAM_NAME = "_xsrf";
-	public static final String DEFAULT_XSRF_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Xsrf-Token";
-	public static final String DEFAULT_XSRF_BASE_PATTERN = URI_XSRF_BASE + "/**";
+	final public static String DEFAULT_XSRF_COOKIE_NAME = "IAM-XSRF-TOKEN";
+	final public static String DEFAULT_XSRF_PARAM_NAME = "_xsrf";
+	final public static String DEFAULT_XSRF_HEADER_NAME = DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-Xsrf-Token";
+	final public static String DEFAULT_XSRF_BASE_PATTERN = URI_XSRF_BASE + "/**";
 
 }

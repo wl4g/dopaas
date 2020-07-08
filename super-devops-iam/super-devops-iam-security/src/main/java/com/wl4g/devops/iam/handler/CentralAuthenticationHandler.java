@@ -22,6 +22,7 @@ import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.authc.LogoutAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationTokenWrapper;
 import com.wl4g.devops.iam.common.authc.model.LoggedModel;
 import com.wl4g.devops.iam.common.authc.model.LogoutModel;
 import com.wl4g.devops.iam.common.authc.model.SecondAuthcAssertModel;
@@ -35,6 +36,7 @@ import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Attributes;
 import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
 import com.wl4g.devops.support.redis.ScanCursor;
 
@@ -50,7 +52,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -164,39 +165,51 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 */
 		assertion.setValidUntilDate(new Date(now + getSessionRemainingTime()));
 
-		// Updating grantCredentials info
+		// Renew grant credentials
 		/**
 		 * Synchronize with: </br>
 		 * x.handler.impl.FastCasAuthenticationHandler#logout() </br>
 		 * x.session.mgt.IamSessionManager#getSessionId
 		 */
 		String newGrantTicket = generateGrantTicket();
+
+		// Principal info.
 		/**
 		 * {@link com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm#doAuthenticationInfo(AuthenticationToken)}
 		 */
 		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).setStoredCredentials(newGrantTicket));
 		log.info("New validated grantTicket: {}, sessionId: {}", newGrantTicket, getSessionId());
 
-		// Grants roles and permissions attributes.
-		Map<String, String> attributes = assertion.getPrincipalInfo().getAttributes();
-		attributes.put(KEY_LANG_NAME, getBindValue(KEY_LANG_NAME));
-		attributes.put(KEY_PARENT_SESSIONID_NAME, valueOf(getSessionId()));
+		// Principal info attributes.
+		/**
+		 * Grants roles and permissions attributes.
+		 */
+		Attributes attrs = assertion.getPrincipalInfo().getAttributes();
+		attrs.setSessionLang(getBindValue(KEY_LANG_NAME));
+		attrs.setParentSessionId(valueOf(getSessionId()));
 
-		// Sets re-generate childDataCipherKey(grant application)
+		// Sets re-generate childDataCipherKey(for grant app)
 		String childDataCipherKey = null;
 		if (config.getCipher().isEnableDataCipher()) {
-			childDataCipherKey = generateDataCipherKey();
-			attributes.put(KEY_DATA_CIPHER_NAME, childDataCipherKey);
+			attrs.setDataCipher((childDataCipherKey = generateDataCipherKey()));
 		}
-		// Sets re-generate childAccessToken(grant application)
+
+		// Sets re-generate childAccessToken(for grant app)
 		String childAccessTokenSignKey = null;
 		if (config.getSession().isEnableAccessTokenValidity()) {
 			String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_NAME);
 			childAccessTokenSignKey = generateAccessTokenSignKey(model.getSessionId(), accessTokenSignKey);
-			attributes.put(KEY_ACCESSTOKEN_SIGN_NAME, childAccessTokenSignKey);
+			attrs.setAccessTokenSign(childAccessTokenSignKey);
 		}
 
-		// Storage grantCredentials info.
+		// Sets authenticaing client host.
+		IamAuthenticationTokenWrapper wrap = getBindValue(
+				new RelationAttrKey(KEY_AUTHC_TOKEN, IamAuthenticationTokenWrapper.class));
+		if (!isNull(wrap) && !isNull(wrap.getToken())) {
+			attrs.setClientHost(wrap.getToken().getHost());
+		}
+
+		// Put grant credentials info.
 		GrantApp grant = new GrantApp(newGrantTicket).setDataCipher(childDataCipherKey)
 				.setAccessTokenSignKey(childAccessTokenSignKey);
 		putGrantCredentials(getSession(false), grantAppname, grant);

@@ -32,16 +32,16 @@ import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.devops.iam.common.authc.model.TicketValidatedAssertModel;
 import com.wl4g.devops.iam.common.authc.model.TicketValidateModel;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Attributes;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.bind;
 import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getSession;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_HOST_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PARENT_SESSIONID_NAME;
-import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
@@ -116,21 +116,23 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 					validUntilDate, maxIdleTimeMs));
 			getSession().setTimeout(maxIdleTimeMs);
 
+			// Currenly authentication principal info.
 			IamPrincipalInfo info = validated.getPrincipalInfo();
-			// Storage authenticated attributes.
-			bind(KEY_LANG_NAME, info.getAttributes().get(KEY_LANG_NAME));
-			bind(KEY_PARENT_SESSIONID_NAME, info.getAttributes().get(KEY_PARENT_SESSIONID_NAME));
-			bind(KEY_DATA_CIPHER_NAME, info.getAttributes().get(KEY_DATA_CIPHER_NAME));
-			bind(KEY_ACCESSTOKEN_SIGN_NAME, info.getAttributes().get(KEY_ACCESSTOKEN_SIGN_NAME));
+			Attributes attrs = info.getAttributes();
 
-			// Update settings grant ticket
+			// Save common attributes
+			saveCommonAttributes(attrs);
+
+			// Update save grant ticket
 			String newGrantTicket = valueOf(info.getStoredCredentials());
 			ftk.setCredentials(newGrantTicket);
 
-			// Attribute of remember
+			// Merge add attributes
 			String principal = validated.getPrincipalInfo().getPrincipal();
 			ftk.setPrincipal(principal); // MARK1
-			ftk.setRememberMe(parseBoolean(info.getAttributes().get(KEY_REMEMBERME_NAME)));
+			ftk.setRememberMe(attrs.getRememberMe());
+			ftk.setHost(attrs.getClientHost());
+
 			log.info("Validated grantTicket: {}, principal: {}", granticket, principal);
 
 			// Authenticate attributes.(roles/permissions/rememberMe)
@@ -142,6 +144,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 		} catch (Exception e) {
 			throw new CredentialsException(format("Unable to validate ticket [%s]", granticket), e);
 		}
+
 	}
 
 	/**
@@ -157,6 +160,20 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		// Merge authorized string(roles/permission)
 		return mergeAuthorizedString(principals, new SimpleAuthorizationInfo());
+	}
+
+	/**
+	 * Save some common attributes for quick get.
+	 * 
+	 * @param attrs
+	 */
+	protected void saveCommonAttributes(Attributes attrs) {
+		// Save some common attributes for quick get.
+		bind(KEY_LANG_NAME, attrs.getSessionLang());
+		bind(KEY_AUTHC_HOST_NAME, attrs.getClientHost());
+		bind(KEY_PARENT_SESSIONID_NAME, attrs.getParentSessionId());
+		bind(KEY_DATA_CIPHER_NAME, attrs.getDataCipher());
+		bind(KEY_ACCESSTOKEN_SIGN_NAME, attrs.getAccessTokenSign());
 	}
 
 	/**

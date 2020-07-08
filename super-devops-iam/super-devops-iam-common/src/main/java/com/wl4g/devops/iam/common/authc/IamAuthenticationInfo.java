@@ -33,6 +33,6 @@ public interface IamAuthenticationInfo extends AuthenticationInfo {
 	 * 
 	 * @return
 	 */
-	IamPrincipalInfo getAccountInfo();
+	IamPrincipalInfo getPrincipalInfo();
 
 }
