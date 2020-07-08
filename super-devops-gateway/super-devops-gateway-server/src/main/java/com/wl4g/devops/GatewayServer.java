@@ -15,21 +15,34 @@
  */
 package com.wl4g.devops;
 
-import com.wl4g.devops.components.shell.annotation.EnableShellServer;
-import com.wl4g.devops.iam.client.annotation.EnableIamClient;
-
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
 
-@EnableIamClient
-@EnableShellServer
-@MapperScan("com.wl4g.devops.dao.*")
+//@EnableIamClient
+//@EnableShellServer
+//@MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication
 public class GatewayServer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(GatewayServer.class, args);
+	}
+
+	@Bean
+	public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+		return builder.routes()
+				.route(p -> p
+						.path("/get")
+						.filters(f -> f.addRequestHeader("Hello", "World"))
+						.uri("http://httpbin.org:80"))
+				/*.route(p -> p
+						.path("/iam-server/login/errread")
+						.filters(f -> f.addRequestHeader("Hello", "World"))
+						.uri("http://iam.sunwuu.uat"))*/
+				.build();
 	}
 
 }
