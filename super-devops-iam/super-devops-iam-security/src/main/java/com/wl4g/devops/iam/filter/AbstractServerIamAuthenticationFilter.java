@@ -49,10 +49,12 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.common.web.error.SmartGlobalErrorController;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationTokenWrapper;
 import com.wl4g.devops.iam.authc.ClientSecretIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.filter.AbstractIamAuthenticationFilter;
+import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.web.model.SessionInfo;
 import com.wl4g.devops.iam.common.web.servlet.IamCookie;
 import com.wl4g.devops.iam.config.properties.IamProperties;
@@ -173,7 +175,15 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		String clientRemoteAddr = getHttpRemoteAddr(req);
 
 		// Create authentication token
-		return doCreateToken(clientRemoteAddr, redirect, req, resp);
+		T token = doCreateToken(clientRemoteAddr, redirect, req, resp);
+
+		/**
+		 * Bind authenticate token, e.g: for online session management and
+		 * analysis.
+		 * @See:{@link com.wl4g.devops.iam.common.web.GenericApiEndpoint#convertIamSessionInfo(IamSession)}
+		 */
+		bind(new RelationAttrKey(KEY_AUTHC_TOKEN), new IamAuthenticationTokenWrapper(token));
+		return token;
 	}
 
 	protected abstract T doCreateToken(String remoteHost, RedirectInfo redirectInfo, HttpServletRequest request,
@@ -211,8 +221,8 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 					RespBase<String> resp = makeLoggedResponse(token, subject, request, response, grantTicket,
 							redirect.getRedirectUrl(), fullParams);
 
-					// Call authenticated success.
-					coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), resp.asMap());
+					// Handle post custom success.
+					afterAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), resp.asMap());
 
 					String logged = toJSONString(resp);
 					log.info("Response to success - {}", logged);
@@ -238,8 +248,8 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 				// Sets refresh xsrf token.
 				putXsrfTokenCookieIfNecessary(token, request, response);
 
-				// Call custom success handle.
-				coprocessor.postAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
+				// Handle post custom success.
+				afterAuthenticatingSuccess(tk, subject, toHttp(request), toHttp(response), fullParams);
 
 				log.info("Redirect to successUrl '{}', param:{}", redirect.getRedirectUrl(), fullParams);
 				issueRedirect(request, response, redirect.getRedirectUrl(), fullParams, true);
@@ -279,8 +289,8 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		// Failure redirect
 		RedirectInfo redirect = determineFailureRedirect(getRedirectInfo(request), tk, ae, request, response);
 
-		// Post handling of authentication failure.
-		coprocessor.postAuthenticatingFailure(tk, ae, request, response);
+		// Handle authentication failure.
+		afterAuthenticatingFailure(tk, ae, request, response);
 
 		// Obtain bound parameters.
 		Map fullParams = new HashMap();
@@ -372,97 +382,6 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		}
 
 		return new RedirectInfo();
-	}
-
-	/**
-	 * Saved the latest redirect info, such as response_type, source
-	 * application, etc.</br>
-	 * E.G.:</br>
-	 * </br>
-	 *
-	 * <b>Req1：</b>http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
-	 * <b>Resp1：</b>login.html</br>
-	 * </br>
-	 * <b>Req2：(Intercepted by
-	 * rootFilter)</b>http://localhost:14040/iam-server/favicon.ico</br>
-	 * <b>Resp2：</b>
-	 * 302->http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
-	 * </br>
-	 * <b>Req3：</b>http://localhost:14040/iam-server/view/login.html</br>
-	 * </br>
-	 * <p>
-	 * No parameters for the second request for login.html ??? This is the
-	 * problem to be solved by this method.
-	 *
-	 * @param redirect
-	 * @param request
-	 * @param response
-	 */
-	private void rememberRedirectInfo(RedirectInfo redirect, ServletRequest request, ServletResponse response) {
-		notNull(redirect, "Redirect info must not be null.");
-		// Safety encoding for URL fragment.
-		redirect.setRedirectUrl(safeEncodeParameterRedirectUrl(redirect.getRedirectUrl()));
-
-		// Response type.
-		String respTypeKey = DEFAULT_RESPTYPE_NAME;
-		String respType = getCleanParam(request, respTypeKey);
-
-		// Overlay to save the latest parameters.
-		bindKVParameters(KEY_REQ_AUTH_PARAMS, respTypeKey, respType, KEY_REQ_AUTH_REDIRECT, redirect);
-
-		log.debug("Binding for respType[{}], redirect[{}]", respType, redirect);
-	}
-
-	/**
-	 * The redirection URI of the secure encoding loop is mainly used to prevent
-	 * the loss of fragments such as for example "/#/index". </br>
-	 * e.g.
-	 *
-	 * <pre>
-	 * http://mydomain.com/iam-example/authenticator?redirect_url=http://mydomain.com/#/index
-	 * => http://mydomain.com/iam-example/authenticator?redirect_url=http%3A%2F%2Fmydomain.com%2F%23%2Findex
-	 * </pre>
-	 *
-	 * @param fullRedirectUrl
-	 *            Full redirect URL
-	 * @return
-	 */
-	private String safeEncodeParameterRedirectUrl(String fullRedirectUrl) {
-		if (!isBlank(fullRedirectUrl)) {
-			// To prevent automatic loss, such as the anchor part of "#".
-			URI uri = URI.create(fullRedirectUrl);
-			Map<String, String> params = toQueryParams(uri.getQuery() + "#" + uri.getFragment());
-			if (!isEmpty(params)) {
-				String clientRedirectUrl = params.get(config.getParam().getRedirectUrl());
-				if (!isBlank(clientRedirectUrl)) {
-					params.remove(config.getParam().getRedirectUrl());
-					params.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
-					String newRedirectUrl = getBaseURIForDefault(uri.getScheme(), uri.getHost(), uri.getPort()) + uri.getPath();
-					fullRedirectUrl = applyQueryURL(newRedirectUrl, params);
-				}
-			}
-		}
-		return fullRedirectUrl;
-	}
-
-	/**
-	 * Cleaning-up.(e.g.Save request parameters)
-	 *
-	 * @param token
-	 * @param subject
-	 * @param request
-	 * @param response
-	 */
-	private void cleanup(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) {
-		/*
-		 * Clean See:AuthenticatorAuthenticationFilter#bindRequestParameters()
-		 */
-		unbind(KEY_REQ_AUTH_PARAMS);
-
-		/*
-		 * Clean error messages. See:i.w.DiabloExtraController#errReads()
-		 */
-		unbind(KEY_ERR_SESSION_SAVED);
 	}
 
 	/**
@@ -602,6 +521,35 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 	}
 
 	/**
+	 * After handle authentication success.
+	 * 
+	 * @param token
+	 * @param subject
+	 * @param request
+	 * @param response
+	 * @param respParams
+	 */
+	protected void afterAuthenticatingSuccess(IamAuthenticationToken token, Subject subject, HttpServletRequest request,
+			HttpServletResponse response, Map<String, Object> respParams) {
+		// Invoke authentication success.
+		coprocessor.postAuthenticatingSuccess(token, subject, request, response, respParams);
+	}
+
+	/**
+	 * After handle authentication failure.
+	 * 
+	 * @param token
+	 * @param ae
+	 * @param request
+	 * @param response
+	 */
+	protected void afterAuthenticatingFailure(IamAuthenticationToken token, AuthenticationException ae, ServletRequest request,
+			ServletResponse response) {
+		// Invoke authentication failure.
+		coprocessor.postAuthenticatingFailure(token, ae, request, response);
+	}
+
+	/**
 	 * Post secret and tokens/signature handling.
 	 * 
 	 * @param token
@@ -702,6 +650,97 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		}
 
 		return new String[] { dataCipherKeyHex, accessToken, umidToken };
+	}
+
+	/**
+	 * Saved the latest redirect info, such as response_type, source
+	 * application, etc.</br>
+	 * E.G.:</br>
+	 * </br>
+	 *
+	 * <b>Req1：</b>http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
+	 * <b>Resp1：</b>login.html</br>
+	 * </br>
+	 * <b>Req2：(Intercepted by
+	 * rootFilter)</b>http://localhost:14040/iam-server/favicon.ico</br>
+	 * <b>Resp2：</b>
+	 * 302->http://localhost:14040/iam-server/view/login.html?service=iam-example&redirect_url=http://localhost:14041/iam-example/index.html</br>
+	 * </br>
+	 * <b>Req3：</b>http://localhost:14040/iam-server/view/login.html</br>
+	 * </br>
+	 * <p>
+	 * No parameters for the second request for login.html ??? This is the
+	 * problem to be solved by this method.
+	 *
+	 * @param redirect
+	 * @param request
+	 * @param response
+	 */
+	private void rememberRedirectInfo(RedirectInfo redirect, ServletRequest request, ServletResponse response) {
+		notNull(redirect, "Redirect info must not be null.");
+		// Safety encoding for URL fragment.
+		redirect.setRedirectUrl(safeEncodeParameterRedirectUrl(redirect.getRedirectUrl()));
+
+		// Response type.
+		String respTypeKey = DEFAULT_RESPTYPE_NAME;
+		String respType = getCleanParam(request, respTypeKey);
+
+		// Overlay to save the latest parameters.
+		bindKVParameters(KEY_REQ_AUTH_PARAMS, respTypeKey, respType, KEY_REQ_AUTH_REDIRECT, redirect);
+
+		log.debug("Binding for respType[{}], redirect[{}]", respType, redirect);
+	}
+
+	/**
+	 * The redirection URI of the secure encoding loop is mainly used to prevent
+	 * the loss of fragments such as for example "/#/index". </br>
+	 * e.g.
+	 *
+	 * <pre>
+	 * http://mydomain.com/iam-example/authenticator?redirect_url=http://mydomain.com/#/index
+	 * => http://mydomain.com/iam-example/authenticator?redirect_url=http%3A%2F%2Fmydomain.com%2F%23%2Findex
+	 * </pre>
+	 *
+	 * @param fullRedirectUrl
+	 *            Full redirect URL
+	 * @return
+	 */
+	private String safeEncodeParameterRedirectUrl(String fullRedirectUrl) {
+		if (!isBlank(fullRedirectUrl)) {
+			// To prevent automatic loss, such as the anchor part of "#".
+			URI uri = URI.create(fullRedirectUrl);
+			Map<String, String> params = toQueryParams(uri.getQuery() + "#" + uri.getFragment());
+			if (!isEmpty(params)) {
+				String clientRedirectUrl = params.get(config.getParam().getRedirectUrl());
+				if (!isBlank(clientRedirectUrl)) {
+					params.remove(config.getParam().getRedirectUrl());
+					params.put(config.getParam().getRedirectUrl(), safeEncodeURL(clientRedirectUrl));
+					String newRedirectUrl = getBaseURIForDefault(uri.getScheme(), uri.getHost(), uri.getPort()) + uri.getPath();
+					fullRedirectUrl = applyQueryURL(newRedirectUrl, params);
+				}
+			}
+		}
+		return fullRedirectUrl;
+	}
+
+	/**
+	 * Cleaning-up.(e.g.Save request parameters)
+	 *
+	 * @param token
+	 * @param subject
+	 * @param request
+	 * @param response
+	 */
+	private void cleanup(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) {
+		/*
+		 * Clean See:AuthenticatorAuthenticationFilter#bindRequestParameters()
+		 */
+		unbind(KEY_REQ_AUTH_PARAMS);
+
+		/*
+		 * Clean error messages. See:i.w.DiabloExtraController#errReads()
+		 */
+		unbind(KEY_ERR_SESSION_SAVED);
 	}
 
 	/**

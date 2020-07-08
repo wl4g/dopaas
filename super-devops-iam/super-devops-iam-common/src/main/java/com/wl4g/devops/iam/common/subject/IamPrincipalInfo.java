@@ -174,8 +174,8 @@ public interface IamPrincipalInfo extends Serializable {
 		 * 
 		 * @return
 		 */
-		public Attributes setParentSessionId(String pSessionId) {
-			put(KEY_PARENT_SESSIONID_NAME, pSessionId);
+		public Attributes setParentSessionId(String parentSessionId) {
+			put(KEY_PARENT_SESSIONID_NAME, parentSessionId);
 			return this;
 		}
 

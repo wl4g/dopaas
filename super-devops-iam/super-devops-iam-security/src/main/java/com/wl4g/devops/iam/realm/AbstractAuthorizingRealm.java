@@ -45,7 +45,6 @@ import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
-import com.wl4g.devops.iam.common.authc.IamAuthenticationTokenWrapper;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
@@ -150,25 +149,12 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		try {
-			IamAuthenticationToken tk = (IamAuthenticationToken) token;
+			IamAuthenticationToken itoken = (IamAuthenticationToken) token;
 
 			// Validation token.
-			validator.validate(tk);
+			validator.validate(itoken);
 
-			/*
-			 * [Extension]: Can be used to check the parameter
-			 * 'pre-grant-ticket'</br>
-			 */
-
-			/**
-			 * [Extension]: Save authenticate token, For example, for online
-			 * session management and analysis.
-			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
-			 */
-			// Obtain authentication info.
-			IamAuthenticationTokenWrapper wrap = bind(new RelationAttrKey(KEY_AUTHC_TOKEN),
-					new IamAuthenticationTokenWrapper(tk));
-			IamAuthenticationInfo info = doAuthenticationInfo((T) wrap.getToken());
+			IamAuthenticationInfo info = doAuthenticationInfo((T) itoken);
 			notNull(info, "Authentication info can't be empty. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
 
 			/**
@@ -176,8 +162,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 			 * session management and analysis. *
 			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
 			 */
-			IamPrincipalInfo pinfo = info.getPrincipalInfo();
-			pinfo.validate();
+			IamPrincipalInfo pinfo = info.getPrincipalInfo().validate();
 			bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), new IamPrincipalInfoWrapper(pinfo));
 
 			return info;
