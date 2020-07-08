@@ -157,13 +157,14 @@ public class IamClientProperties extends AbstractIamProperties<ClientParamProper
 	}
 
 	@Override
-	protected void applyDefaultIfNecessary() {
-		super.applyDefaultIfNecessary();
+	protected void applyDefaultPropertiesSet() {
+		super.applyDefaultPropertiesSet();
 
 		// Login page URI.
 		if (isBlank(getLoginUri())) {
 			setLoginUri(correctAuthenticaitorURI(getServerUri()));
 		}
+
 	}
 
 	/**

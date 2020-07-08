@@ -17,13 +17,27 @@ package com.wl4g.devops.iam.common.subject;
 
 import org.springframework.util.Assert;
 
+import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
-import static java.util.Collections.emptyMap;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_HOST_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PARENT_SESSIONID_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SNS_AUTHORIZED_INFO;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.String.valueOf;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -33,7 +47,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @version v1.0.0 2018-04-31
  * @since
  */
-public interface IamPrincipalInfo extends Cloneable, Serializable {
+public interface IamPrincipalInfo extends Serializable {
 
 	/**
 	 * Get account principal Id.
@@ -85,22 +99,180 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	String getStoredCredentials();
 
 	/**
-	 * Get account attributes.
+	 * Gets account attributes.
 	 * 
 	 * @return
 	 */
-	default Map<String, String> getAttributes() {
-		return emptyMap();
-	}
+	Attributes getAttributes();
 
 	/**
 	 * Validation of principal information attribute.
 	 * 
 	 * @throws IllegalArgumentException
 	 */
-	void validate() throws IllegalArgumentException;
+	IamPrincipalInfo validate() throws IllegalArgumentException;
 
 	// --- Authenticating parameter's. ---
+
+	/**
+	 * {@link IamPrincipalInfo} attributes wrapper.
+	 * 
+	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+	 * @version 2020年7月7日 v1.0.0
+	 * @see
+	 */
+	public static class Attributes extends LinkedHashMap<String, String> {
+		final private static long serialVersionUID = 3252340509258189795L;
+
+		/**
+		 * Gets session locale language
+		 * 
+		 * @return
+		 */
+		public String getSessionLang() {
+			return get(KEY_LANG_NAME);
+		}
+
+		/**
+		 * Sets session locale language
+		 * 
+		 * @return
+		 */
+		public Attributes setSessionLang(String lang) {
+			if (!isBlank(lang)) {
+				put(KEY_LANG_NAME, lang);
+			}
+			return this;
+		}
+
+		/**
+		 * Gets authenticating client remote host
+		 * 
+		 * @return
+		 */
+		public String getClientHost() {
+			return get(KEY_AUTHC_HOST_NAME);
+		}
+
+		/**
+		 * Sets authenticating client remote host
+		 * 
+		 * @return
+		 */
+		public Attributes setClientHost(String clientHost) {
+			if (!isBlank(clientHost)) {
+				put(KEY_AUTHC_HOST_NAME, clientHost);
+			}
+			return this;
+		}
+
+		/**
+		 * Gets authentication parent session id.
+		 * 
+		 * @return
+		 */
+		public String getParentSessionId() {
+			return get(KEY_PARENT_SESSIONID_NAME);
+		}
+
+		/**
+		 * Sets authentication parent session id.
+		 * 
+		 * @return
+		 */
+		public Attributes setParentSessionId(String parentSessionId) {
+			if (!isBlank(parentSessionId)) {
+				put(KEY_PARENT_SESSIONID_NAME, parentSessionId);
+			}
+			return this;
+		}
+
+		/**
+		 * Gets authentication data cipher.
+		 * 
+		 * @return
+		 */
+		public String getDataCipher() {
+			return get(KEY_DATA_CIPHER_NAME);
+		}
+
+		/**
+		 * Sets authentication data cipher.
+		 * 
+		 * @return
+		 */
+		public Attributes setDataCipher(String dataCipher) {
+			if (!isBlank(dataCipher)) {
+				put(KEY_DATA_CIPHER_NAME, dataCipher);
+			}
+			return this;
+		}
+
+		/**
+		 * Gets authentication access_token signature.
+		 * 
+		 * @return
+		 */
+		public String getAccessTokenSign() {
+			return get(KEY_ACCESSTOKEN_SIGN_NAME);
+		}
+
+		/**
+		 * Sets authentication access_token signature.
+		 * 
+		 * @return
+		 */
+		public Attributes setAccessTokenSign(String accessTokenSign) {
+			if (!isBlank(accessTokenSign)) {
+				put(KEY_ACCESSTOKEN_SIGN_NAME, accessTokenSign);
+			}
+			return this;
+		}
+
+		/**
+		 * Gets authentication rememberMe.
+		 * 
+		 * @return
+		 */
+		public boolean getRememberMe() {
+			return parseBoolean(valueOf(getOrDefault(KEY_REMEMBERME_NAME, FALSE.toString())));
+		}
+
+		/**
+		 * Sets authentication rememberMe.
+		 * 
+		 * @return
+		 */
+		public Attributes setRememberMe(String rememberMe) {
+			if (!isBlank(rememberMe)) {
+				put(KEY_REMEMBERME_NAME, rememberMe);
+			}
+			return this;
+		}
+
+		/**
+		 * Gets sns {@link SocialAuthorizeInfo}
+		 * 
+		 * @return
+		 */
+		public SocialAuthorizeInfo getSocialAuthorizeInfo() {
+			String snsAuthzInfoJson = get(KEY_SNS_AUTHORIZED_INFO);
+			return parseJSON(snsAuthzInfoJson, SocialAuthorizeInfo.class);
+		}
+
+		/**
+		 * Sets sns {@link SocialAuthorizeInfo}
+		 * 
+		 * @return
+		 */
+		public Attributes setSocialAuthorizeInfo(SocialAuthorizeInfo info) {
+			if (!isNull(info)) {
+				put(KEY_SNS_AUTHORIZED_INFO, toJSONString(info));
+			}
+			return this;
+		}
+
+	}
 
 	/**
 	 * Parameters for obtaining account information
@@ -148,18 +320,18 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	}
 
 	/**
-	 * Abstract based parameters definition
+	 * Abstract base parameters definition
 	 * 
 	 * @author wangl.sir
 	 * @version v1.0 2019年1月8日
 	 * @since
 	 */
-	public static abstract class BasedParameter implements Parameter {
+	public static abstract class BaseParameter implements Parameter {
 		private static final long serialVersionUID = -898874009263858359L;
 
 		final private String principal;
 
-		public BasedParameter(String principal) {
+		public BaseParameter(String principal) {
 			Assert.hasText(principal, "'principal' must not be empty");
 			this.principal = principal;
 		}
@@ -177,7 +349,7 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	 * @version v1.0 2019年1月8日
 	 * @since
 	 */
-	public static class SimpleParameter extends BasedParameter {
+	public static class SimpleParameter extends BaseParameter {
 		private static final long serialVersionUID = -7501007252263127579L;
 
 		public SimpleParameter(String principal) {
@@ -193,7 +365,7 @@ public interface IamPrincipalInfo extends Cloneable, Serializable {
 	 * @version v1.0 2019年1月8日
 	 * @since
 	 */
-	public static class SmsParameter extends BasedParameter {
+	public static class SmsParameter extends BaseParameter {
 		private static final long serialVersionUID = -7501007252263557579L;
 
 		public SmsParameter(String principal) {

@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import static java.util.Locale.*;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -59,20 +60,13 @@ import static org.springframework.http.HttpMethod.*;
  * @version v1.0 2019年3月4日
  * @since
  */
-public class CorsProperties implements Serializable {
+public class CorsProperties implements InitializingBean, Serializable {
 	final private static long serialVersionUID = -5701992202765239835L;
 
 	/**
 	 * {@link CorsRule}
 	 */
-	private Map<String, CorsRule> rules = new HashMap<String, CorsRule>() {
-		private static final long serialVersionUID = -8576461225674624807L;
-		{
-			// Default settings.
-			put("/**", new CorsRule().addAllowsOrigins("http://localhost:8080").setAllowCredentials(true)
-					.addAllowsHeaders(DEFAULT_ALLOWED_HEADERS).addAllowsMethods(DEFAULT_ALLOWED_METHODS));
-		}
-	};
+	private Map<String, CorsRule> rules = new HashMap<>();
 
 	public Map<String, CorsRule> getRules() {
 		return rules;
@@ -89,6 +83,21 @@ public class CorsProperties implements Serializable {
 	@Override
 	public String toString() {
 		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		// Apply default settings.
+		applyDefaultPropertiesSet();
+	}
+
+	/**
+	 * Apply default properties fields settings.
+	 */
+	private void applyDefaultPropertiesSet() {
+		// Append default cors allows(/**).
+		getRules().getOrDefault("/**", new CorsRule()).addAllowsOrigins("http://localhost:8080").setAllowCredentials(true)
+				.addAllowsHeaders(DEFAULT_ALLOWED_HEADERS).addAllowsMethods(DEFAULT_ALLOWED_METHODS);
 	}
 
 	//

@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.common.bean.iam;
 
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-
-import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 
 /**
  * Social provider authorized info
@@ -109,9 +109,18 @@ public class SocialAuthorizeInfo implements Serializable {
 		this.userProfile = userProfile;
 	}
 
+	/**
+	 * As json string.
+	 * 
+	 * @return
+	 */
+	public String asJsonString() {
+		return toJSONString(this);
+	}
+
 	@Override
 	public String toString() {
-		return JacksonUtils.toJSONString(this);
+		return asJsonString();
 	}
 
 }

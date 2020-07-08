@@ -176,13 +176,14 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	}
 
 	@Override
-	protected void applyDefaultIfNecessary() {
-		super.applyDefaultIfNecessary();
+	protected void applyDefaultPropertiesSet() {
+		super.applyDefaultPropertiesSet();
 
 		// Default success endPoint.
 		if (isBlank(getSuccessService())) {
 			setSuccessEndpoint(environment.getProperty("spring.application.name") + "@" + DEFAULT_VIEW_INDEX_URI);
 		}
+
 	}
 
 	/**

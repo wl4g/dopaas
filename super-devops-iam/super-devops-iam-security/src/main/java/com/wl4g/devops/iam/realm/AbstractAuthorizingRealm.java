@@ -44,12 +44,14 @@ import com.wl4g.devops.common.exception.iam.AccessPermissionDeniedException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.iam.authc.credential.IamBasedMatcher;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationInfo;
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.AbstractIamAuthenticationToken.RedirectInfo;
 import com.wl4g.devops.iam.common.i18n.SessionDelegateMessageBundle;
 import com.wl4g.devops.iam.common.realm.AbstractPermittingAuthorizingRealm;
 import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
+import com.wl4g.devops.iam.common.subject.IamPrincipalInfoWrapper;
 import com.wl4g.devops.iam.config.properties.IamProperties;
 import com.wl4g.devops.iam.configure.ServerSecurityConfigurer;
 import com.wl4g.devops.iam.configure.ServerSecurityCoprocessor;
@@ -147,21 +149,12 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 		try {
+			IamAuthenticationToken itoken = (IamAuthenticationToken) token;
+
 			// Validation token.
-			validator.validate(token);
+			validator.validate(itoken);
 
-			/*
-			 * [Extension]: Can be used to check the parameter
-			 * 'pre-grant-ticket'</br>
-			 */
-
-			/**
-			 * [Extension]: Save authenticate token, For example, for online
-			 * session management and analysis.
-			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
-			 */
-			// Obtain authentication info.
-			IamAuthenticationInfo info = doAuthenticationInfo((T) bind(KEY_AUTHC_TOKEN, token));
+			IamAuthenticationInfo info = doAuthenticationInfo((T) itoken);
 			notNull(info, "Authentication info can't be empty. refer to: o.a.s.a.ModularRealmAuthorizer.isPermitted()");
 
 			/**
@@ -169,14 +162,17 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 			 * session management and analysis. *
 			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
 			 */
-			IamPrincipalInfo principal = info.getAccountInfo();
-			principal.validate();
-			bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), principal);
+			IamPrincipalInfo pinfo = info.getPrincipalInfo().validate();
+			// Sets social attributes.(if necessary)
+			pinfo.getAttributes().setSocialAuthorizeInfo(getBindValue(KEY_SNS_AUTHORIZED_INFO, true));
+
+			bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), new IamPrincipalInfoWrapper(pinfo));
 
 			return info;
 		} catch (Throwable e) {
 			throw new AuthenticationException(e);
 		}
+
 	}
 
 	/**
@@ -211,7 +207,7 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 		}
 
 		// Assert when that no permissions are configured, forbid login.
-		if (isBlank(info0.getAccountInfo().getPermissions())) {
+		if (isBlank(info0.getPrincipalInfo().getPermissions())) {
 			throw new AccessPermissionDeniedException(bundle.getMessage("AbstractIamAuthorizingRealm.permission.denied"));
 		}
 

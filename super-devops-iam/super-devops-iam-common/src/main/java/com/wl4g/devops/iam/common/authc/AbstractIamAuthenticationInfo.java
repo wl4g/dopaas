@@ -39,27 +39,27 @@ public abstract class AbstractIamAuthenticationInfo extends SimpleAuthentication
 	/**
 	 * IAM account information.
 	 */
-	final private IamPrincipalInfo accountInfo;
+	final private IamPrincipalInfo principalInfo;
 
-	public AbstractIamAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, String realmName) {
-		this(accountInfo, principals, null, realmName);
+	public AbstractIamAuthenticationInfo(IamPrincipalInfo principalInfo, PrincipalCollection principals, String realmName) {
+		this(principalInfo, principals, null, realmName);
 	}
 
-	public AbstractIamAuthenticationInfo(IamPrincipalInfo accountInfo, PrincipalCollection principals, ByteSource credentialsSalt,
-			String realmName) {
+	public AbstractIamAuthenticationInfo(IamPrincipalInfo principalInfo, PrincipalCollection principals,
+			ByteSource credentialsSalt, String realmName) {
 		/*
 		 * Password is a string that may be set to empty.
 		 * See:xx.secure.AbstractCredentialsSecurerSupport#validate
 		 */
-		super(principals, (nonNull(accountInfo) ? accountInfo.getStoredCredentials() : EMPTY));
-		notNull(accountInfo, "Authenticate accountInfo can't null.");
-		this.accountInfo = accountInfo;
+		super(principals, (nonNull(principalInfo) ? principalInfo.getStoredCredentials() : EMPTY));
+		notNull(principalInfo, "Authenticate principalInfo can't null.");
+		this.principalInfo = principalInfo;
 		setCredentialsSalt(credentialsSalt);
 	}
 
 	@Override
-	public IamPrincipalInfo getAccountInfo() {
-		return accountInfo;
+	public IamPrincipalInfo getPrincipalInfo() {
+		return principalInfo;
 	}
 
 }

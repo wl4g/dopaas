@@ -30,11 +30,11 @@ import org.apache.shiro.cache.CacheException;
 import com.google.common.base.Charsets;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
 
+import com.wl4g.devops.iam.common.cache.CacheKey.Serializer;
 import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.devops.components.tools.common.collection.Collections2.safeMap;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.components.tools.common.serialize.ProtostuffUtils.*;
 import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisProtocolUtil.isSuccess;
 
 import redis.clients.jedis.JedisCluster;
@@ -72,11 +72,7 @@ public class JedisIamCache implements IamCache {
 		log.debug("Get key={}", key);
 
 		byte[] data = jedisCluster.get(key.getKey(name));
-		if (key.getDeserializer() != null) { // Using a custom deserializer
-			return key.getDeserializer().deserialize(data, key.getValueClass());
-		}
-
-		return deserialize(data, key.getValueClass());
+		return key.getSerializer().deserialize(data, key.getValueClass());
 	}
 
 	@Override
@@ -85,12 +81,8 @@ public class JedisIamCache implements IamCache {
 		notNullOf(value, "value");
 		log.debug("Put key={}, value={}", key, value);
 
-		byte[] data = null;
-		if (key.getSerializer() != null) { // Using a custom serializer
-			data = key.getSerializer().serialize(value);
-		} else {
-			data = serialize(value);
-		}
+		// Serialization
+		byte[] data = key.getSerializer().serialize(value);
 
 		String ret = null;
 		if (key.hasExpire()) {
@@ -215,12 +207,8 @@ public class JedisIamCache implements IamCache {
 		notNull(value, "'value' must not be null");
 		log.debug("Put key={}, value={}", key, value);
 
-		byte[] data = null;
-		if (key.getSerializer() != null) { // Using a custom serializer
-			data = key.getSerializer().serialize(value);
-		} else {
-			data = serialize(value);
-		}
+		// Serialization
+		byte[] data = key.getSerializer().serialize(value);
 
 		if (key.hasExpire()) {
 			String res = jedisCluster.set(key.getKey(name), data, NX, PX, key.getExpireMs());
@@ -237,18 +225,19 @@ public class JedisIamCache implements IamCache {
 		notNull(fieldKey, "fieldKey");
 		notNull(fieldValue, "fieldValue");
 		log.debug("mapPut key={}, value={}", fieldKey, fieldValue);
-		return mapPutAll(singletonMap(fieldKey, fieldValue), fieldKey.getExpire());
+		return mapPutAll(singletonMap(fieldKey, fieldValue), fieldKey.getExpire(), fieldKey.getSerializer());
 	}
 
 	@Override
-	public String mapPutAll(Map<Object, Object> map) {
-		return mapPutAll(map, 0);
+	public String mapPutAll(Map<Object, Object> map, Serializer serializer) {
+		return mapPutAll(map, 0, serializer);
 	}
 
 	@Override
-	public String mapPutAll(Map<Object, Object> map, int expireSec) {
-		if (isEmpty(map))
+	public String mapPutAll(Map<Object, Object> map, int expireSec, Serializer serializer) {
+		if (isEmpty(map)) {
 			return null;
+		}
 		log.debug("mapPut map={}", map);
 
 		// Convert to fields map.
@@ -257,10 +246,10 @@ public class JedisIamCache implements IamCache {
 			if (e.getKey() instanceof CacheKey) {
 				return ((CacheKey) e.getKey()).getKey();
 			}
-			return serialize(e.getKey());
+			return serializer.serialize(e.getKey());
 		}, e -> {
 			notNull(e.getValue(), "fieldValue");
-			return serialize(e.getValue());
+			return serializer.serialize(e.getValue());
 		}));
 		// Hash map sets
 		byte[] mapKey = toKeyBytes(name);
@@ -268,6 +257,7 @@ public class JedisIamCache implements IamCache {
 		if (expireSec > 0) {
 			jedisCluster.expire(mapKey, expireSec);
 		}
+
 		return res;
 	}
 
@@ -276,17 +266,24 @@ public class JedisIamCache implements IamCache {
 	public <T> T getMapField(CacheKey fieldKey) {
 		notNullOf(fieldKey, "fieldKey");
 		notNullOf(fieldKey.getValueClass(), "valueClass");
+
+		// Load bytes
 		byte[] data = jedisCluster.hget(toKeyBytes(name), fieldKey.getKey());
-		return isNull(data) ? null : (T) deserialize(data, fieldKey.getValueClass());
+		if (isNull(data)) {
+			return null;
+		}
+
+		// Deserialization
+		return (T) fieldKey.getSerializer().deserialize(data, fieldKey.getValueClass());
 	}
 
 	@Override
-	public <T> Map<String, T> getMapAll(Class<T> valueClass) {
+	public <T> Map<String, T> getMapAll(Class<T> valueClass, Serializer serializer) {
 		return safeMap(jedisCluster.hgetAll(toKeyBytes(name))).entrySet().stream()
 				.collect(toMap(e -> new String(e.getKey(), UTF_8), e -> {
 					if (isNull(e.getValue()))
 						return null;
-					return deserialize(e.getValue(), valueClass);
+					return serializer.deserialize(e.getValue(), valueClass);
 				}));
 	}
 

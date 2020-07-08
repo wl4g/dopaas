@@ -19,13 +19,15 @@ import javax.validation.constraints.NotBlank;
 
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 
+import com.wl4g.devops.iam.common.authc.IamAuthenticationToken;
+
 /**
  * This class represents a token for a CAS authentication (service ticket + user
  * id + remember me).
  *
  * @since 1.2
  */
-public class FastCasAuthenticationToken implements RememberMeAuthenticationToken {
+public class FastCasAuthenticationToken implements RememberMeAuthenticationToken, IamAuthenticationToken {
 	private static final long serialVersionUID = 8587329689973009598L;
 
 	/*
@@ -38,13 +40,23 @@ public class FastCasAuthenticationToken implements RememberMeAuthenticationToken
 	 */
 	private String userId;
 
+	/**
+	 * Authenticating host.
+	 */
+	private String host;
+
 	/*
 	 * is the user in a remember me mode ?
 	 */
 	private boolean isRememberMe = false;
 
 	public FastCasAuthenticationToken(String ticket) {
+		this(ticket, null);
+	}
+
+	public FastCasAuthenticationToken(String ticket, String host) {
 		this.ticket = ticket;
+		this.host = host;
 	}
 
 	@Override
@@ -67,6 +79,15 @@ public class FastCasAuthenticationToken implements RememberMeAuthenticationToken
 	}
 
 	@Override
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	@Override
 	public boolean isRememberMe() {
 		return isRememberMe;
 	}
@@ -74,4 +95,5 @@ public class FastCasAuthenticationToken implements RememberMeAuthenticationToken
 	public void setRememberMe(boolean isRememberMe) {
 		this.isRememberMe = isRememberMe;
 	}
+
 }
