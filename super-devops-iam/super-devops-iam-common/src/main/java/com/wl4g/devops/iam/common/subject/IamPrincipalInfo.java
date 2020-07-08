@@ -36,6 +36,8 @@ import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.valueOf;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -137,7 +139,9 @@ public interface IamPrincipalInfo extends Serializable {
 		 * @return
 		 */
 		public Attributes setSessionLang(String lang) {
-			put(KEY_LANG_NAME, lang);
+			if (!isBlank(lang)) {
+				put(KEY_LANG_NAME, lang);
+			}
 			return this;
 		}
 
@@ -156,7 +160,9 @@ public interface IamPrincipalInfo extends Serializable {
 		 * @return
 		 */
 		public Attributes setClientHost(String clientHost) {
-			put(KEY_AUTHC_HOST_NAME, clientHost);
+			if (!isBlank(clientHost)) {
+				put(KEY_AUTHC_HOST_NAME, clientHost);
+			}
 			return this;
 		}
 
@@ -175,7 +181,9 @@ public interface IamPrincipalInfo extends Serializable {
 		 * @return
 		 */
 		public Attributes setParentSessionId(String parentSessionId) {
-			put(KEY_PARENT_SESSIONID_NAME, parentSessionId);
+			if (!isBlank(parentSessionId)) {
+				put(KEY_PARENT_SESSIONID_NAME, parentSessionId);
+			}
 			return this;
 		}
 
@@ -194,7 +202,9 @@ public interface IamPrincipalInfo extends Serializable {
 		 * @return
 		 */
 		public Attributes setDataCipher(String dataCipher) {
-			put(KEY_DATA_CIPHER_NAME, dataCipher);
+			if (!isBlank(dataCipher)) {
+				put(KEY_DATA_CIPHER_NAME, dataCipher);
+			}
 			return this;
 		}
 
@@ -213,7 +223,9 @@ public interface IamPrincipalInfo extends Serializable {
 		 * @return
 		 */
 		public Attributes setAccessTokenSign(String accessTokenSign) {
-			put(KEY_ACCESSTOKEN_SIGN_NAME, accessTokenSign);
+			if (!isBlank(accessTokenSign)) {
+				put(KEY_ACCESSTOKEN_SIGN_NAME, accessTokenSign);
+			}
 			return this;
 		}
 
@@ -232,7 +244,9 @@ public interface IamPrincipalInfo extends Serializable {
 		 * @return
 		 */
 		public Attributes setRememberMe(String rememberMe) {
-			put(KEY_REMEMBERME_NAME, rememberMe);
+			if (!isBlank(rememberMe)) {
+				put(KEY_REMEMBERME_NAME, rememberMe);
+			}
 			return this;
 		}
 
@@ -252,7 +266,9 @@ public interface IamPrincipalInfo extends Serializable {
 		 * @return
 		 */
 		public Attributes setSocialAuthorizeInfo(SocialAuthorizeInfo info) {
-			put(KEY_SNS_AUTHORIZED_INFO, toJSONString(info));
+			if (!isNull(info)) {
+				put(KEY_SNS_AUTHORIZED_INFO, toJSONString(info));
+			}
 			return this;
 		}
 
