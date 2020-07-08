@@ -186,14 +186,13 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		 * Grants roles and permissions attributes.
 		 */
 		Attributes attributes = assertion.getPrincipalInfo().getAttributes();
-		attributes.put(KEY_LANG_NAME, getBindValue(KEY_LANG_NAME));
-		attributes.put(KEY_PARENT_SESSIONID_NAME, valueOf(getSessionId()));
+		attributes.setSessionLang(getBindValue(KEY_LANG_NAME));
+		attributes.setParentSessionId(valueOf(getSessionId()));
 
 		// Sets re-generate childDataCipherKey(grant application)
 		String childDataCipherKey = null;
 		if (config.getCipher().isEnableDataCipher()) {
-			childDataCipherKey = generateDataCipherKey();
-			attributes.put(KEY_DATA_CIPHER_NAME, childDataCipherKey);
+			attributes.setDataCipher((childDataCipherKey = generateDataCipherKey()));
 		}
 
 		// Sets re-generate childAccessToken(grant application)
@@ -201,19 +200,18 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		if (config.getSession().isEnableAccessTokenValidity()) {
 			String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_NAME);
 			childAccessTokenSignKey = generateAccessTokenSignKey(model.getSessionId(), accessTokenSignKey);
-			attributes.put(KEY_ACCESSTOKEN_SIGN_NAME, childAccessTokenSignKey);
+			attributes.setAccessTokenSign(childAccessTokenSignKey);
 		}
 
 		// Sets authenticaing token attributes.
 		IamAuthenticationTokenWrapper wrap = getBindValue(
 				new RelationAttrKey(KEY_AUTHC_TOKEN, IamAuthenticationTokenWrapper.class));
 		if (!isNull(wrap) && !isNull(wrap.getToken())) {
-			attributes.put(KEY_AUTHC_HOST_NAME, wrap.getToken().getHost());
+			attributes.setClientHost(wrap.getToken().getHost());
 
 			// SNS authorized info(if necessary).
 			if (wrap.getToken() instanceof Oauth2SnsAuthenticationToken) {
 				Oauth2SnsAuthenticationToken snsToken = (Oauth2SnsAuthenticationToken) wrap.getToken();
-				// TODO [optimize] chanage the type of stored value to object
 				attributes.setSocialAuthorizeInfo(snsToken.getSocial());
 			}
 		}
