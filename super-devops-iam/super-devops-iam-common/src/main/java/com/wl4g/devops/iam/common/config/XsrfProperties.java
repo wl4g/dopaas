@@ -23,6 +23,7 @@ import static com.wl4g.devops.tool.common.lang.Assert2.hasTextOf;
 import static com.wl4g.devops.tool.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Collections.singletonList;
+import static org.apache.shiro.web.filter.mgt.DefaultFilter.anon;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.io.Serializable;
@@ -31,9 +32,11 @@ import java.util.List;
 
 import javax.servlet.http.Cookie;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
 import com.wl4g.devops.tool.common.collection.Collections2;
 import com.wl4g.devops.tool.common.log.SmartLogger;
 
@@ -85,6 +88,16 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	 * Ignore xsrf validation request mappings.
 	 */
 	private List<String> excludeValidUriPatterns = new ArrayList<>();
+
+	//
+	// --- Temporary fields. ---
+	//
+
+	/**
+	 * Temporary core configuration.
+	 */
+	@Autowired
+	private transient AbstractIamProperties<? extends ParamProperties> cConfig;
 
 	/**
 	 * Temporary cors configuration.
@@ -205,6 +218,14 @@ public class XsrfProperties implements InitializingBean, Serializable {
 	private void applyDefaultPropertiesSet() {
 		getExcludeValidUriPatterns().add(URI_S_BASE + "/**");
 		getExcludeValidUriPatterns().add(URI_C_BASE + "/**");
+
+		// Automatically exclude patterns with filter chains of anon type
+		cConfig.getFilterChain().forEach((pattern, filter) -> {
+			if (StringUtils.equals(filter, anon.name())) {
+				getExcludeValidUriPatterns().add(pattern);
+			}
+		});
+
 	}
 
 	final public static String KEY_XSRF_PREFIX = "spring.cloud.devops.iam.xsrf";
