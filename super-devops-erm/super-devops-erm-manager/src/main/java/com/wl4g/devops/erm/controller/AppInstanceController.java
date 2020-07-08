@@ -57,9 +57,9 @@ public class AppInstanceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	public RespBase<?> del(Integer clusterId) {
+	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
-		appInstanceService.del(clusterId);
+		appInstanceService.del(id);
 		return resp;
 	}
 
