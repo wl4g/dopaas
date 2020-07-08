@@ -24,9 +24,18 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_HOST_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PARENT_SESSIONID_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SNS_AUTHORIZED_INFO;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.tool.common.serialize.JacksonUtils.toJSONString;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.String.valueOf;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
@@ -112,6 +121,120 @@ public interface IamPrincipalInfo extends Serializable {
 	 */
 	public static class Attributes extends LinkedHashMap<String, String> {
 		final private static long serialVersionUID = 3252340509258189795L;
+
+		/**
+		 * Gets session locale language
+		 * 
+		 * @return
+		 */
+		public String getSessionLang() {
+			return get(KEY_LANG_NAME);
+		}
+
+		/**
+		 * Sets session locale language
+		 * 
+		 * @return
+		 */
+		public Attributes setSessionLang(String lang) {
+			put(KEY_LANG_NAME, lang);
+			return this;
+		}
+
+		/**
+		 * Gets authenticating client remote host
+		 * 
+		 * @return
+		 */
+		public String getClientHost() {
+			return get(KEY_AUTHC_HOST_NAME);
+		}
+
+		/**
+		 * Sets authenticating client remote host
+		 * 
+		 * @return
+		 */
+		public Attributes setClientHost(String clientHost) {
+			put(KEY_AUTHC_HOST_NAME, clientHost);
+			return this;
+		}
+
+		/**
+		 * Gets authentication parent session id.
+		 * 
+		 * @return
+		 */
+		public String getParentSessionId() {
+			return get(KEY_PARENT_SESSIONID_NAME);
+		}
+
+		/**
+		 * Sets authentication parent session id.
+		 * 
+		 * @return
+		 */
+		public Attributes setParentSessionId(String pSessionId) {
+			put(KEY_PARENT_SESSIONID_NAME, pSessionId);
+			return this;
+		}
+
+		/**
+		 * Gets authentication data cipher.
+		 * 
+		 * @return
+		 */
+		public String getDataCipher() {
+			return get(KEY_DATA_CIPHER_NAME);
+		}
+
+		/**
+		 * Sets authentication data cipher.
+		 * 
+		 * @return
+		 */
+		public Attributes setDataCipher(String dataCipher) {
+			put(KEY_DATA_CIPHER_NAME, dataCipher);
+			return this;
+		}
+
+		/**
+		 * Gets authentication access_token signature.
+		 * 
+		 * @return
+		 */
+		public String getAccessTokenSign() {
+			return get(KEY_ACCESSTOKEN_SIGN_NAME);
+		}
+
+		/**
+		 * Sets authentication access_token signature.
+		 * 
+		 * @return
+		 */
+		public Attributes setAccessTokenSign(String accessTokenSign) {
+			put(KEY_ACCESSTOKEN_SIGN_NAME, accessTokenSign);
+			return this;
+		}
+
+		/**
+		 * Gets authentication rememberMe.
+		 * 
+		 * @return
+		 */
+		public boolean getRememberMe() {
+			return parseBoolean(valueOf(getOrDefault(KEY_REMEMBERME_NAME, FALSE.toString())));
+		}
+
+		/**
+		 * Sets authentication rememberMe.
+		 * 
+		 * @return
+		 */
+		public Attributes setRememberMe(String rememberMe) {
+			put(KEY_REMEMBERME_NAME, rememberMe);
+			return this;
+		}
 
 		/**
 		 * Gets sns {@link SocialAuthorizeInfo}
