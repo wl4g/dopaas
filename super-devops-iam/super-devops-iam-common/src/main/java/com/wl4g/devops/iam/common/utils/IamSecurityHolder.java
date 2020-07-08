@@ -295,7 +295,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 	public static <T> T bind(Object sessionKey, T value) throws InvalidSessionException {
 		notNullOf(sessionKey, "sessionKey");
 		if (!isNull(value)) {
-			getSession().setAttribute(sessionKey, value);
+			getSession(true).setAttribute(sessionKey, value);
 		}
 		return value;
 	}
