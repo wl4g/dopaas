@@ -71,18 +71,18 @@ public class GenericAuthorizingRealm extends AbstractAuthorizingRealm<GenericAut
 	 */
 	@Override
 	protected IamAuthenticationInfo doAuthenticationInfo(GenericAuthenticationToken token) throws AuthenticationException {
-		// Get account by loginId(user-name)
-		IamPrincipalInfo info = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
-		log.debug("Get IamPrincipalInfo:{} by token:{}", info, token);
+		// Gets account by loginId
+		IamPrincipalInfo pinfo = configurer.getIamAccount(new SimpleParameter((String) token.getPrincipal()));
+		log.debug("Gots Iam principalInfo: {} by token:{}", pinfo, token);
 
 		// To authenticationInfo
-		if (isNull(info) || isBlank(info.getPrincipal())) {
+		if (isNull(pinfo) || isBlank(pinfo.getPrincipal())) {
 			throw new UnknownAccountException(bundle.getMessage("GeneralAuthorizingRealm.notAccount", token.getPrincipal()));
 		}
 
 		// Authenticate attributes.(roles/permissions/rememberMe)
-		PrincipalCollection principals = createPermitPrincipalCollection(info);
-		return new GenericAuthenticationInfo(info, principals, getName());
+		PrincipalCollection principals = createPermitPrincipalCollection(pinfo);
+		return new GenericAuthenticationInfo(pinfo, principals, getName());
 	}
 
 	/**

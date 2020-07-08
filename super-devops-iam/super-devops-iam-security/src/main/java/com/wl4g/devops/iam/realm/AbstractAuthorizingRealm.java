@@ -163,6 +163,9 @@ public abstract class AbstractAuthorizingRealm<T extends AuthenticationToken> ex
 			 * See:{@link com.wl4g.devops.iam.common.web.GenericApiController#wrapSessionAttribute(IamSession)}
 			 */
 			IamPrincipalInfo pinfo = info.getPrincipalInfo().validate();
+			// Sets social attributes.(if necessary)
+			pinfo.getAttributes().setSocialAuthorizeInfo(getBindValue(KEY_SNS_AUTHORIZED_INFO, true));
+
 			bind(new RelationAttrKey(KEY_AUTHC_ACCOUNT_INFO), new IamPrincipalInfoWrapper(pinfo));
 
 			return info;

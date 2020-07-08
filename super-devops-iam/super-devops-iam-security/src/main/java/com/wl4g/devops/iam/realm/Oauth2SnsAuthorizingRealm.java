@@ -78,9 +78,6 @@ public abstract class Oauth2SnsAuthorizingRealm<T extends Oauth2SnsAuthenticatio
 		log.info("Gots authentication accountInfo: {}, by sns parameter: {}", toJSONString(pinfo), toJSONString(parameter));
 
 		if (nonNull(pinfo) && !isBlank(pinfo.getPrincipal())) {
-			// Sets social attributes.
-			pinfo.getAttributes().setSocialAuthorizeInfo(token.getSocial());
-
 			// Sets authentication attributes.(roles/permissions/rememberMe/...)
 			PrincipalCollection principals = createPermitPrincipalCollection(pinfo);
 			return new Oauth2SnsAuthenticationInfo(pinfo, principals, getName());

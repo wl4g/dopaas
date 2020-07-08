@@ -16,7 +16,6 @@
 package com.wl4g.devops.iam.handler;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
-import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
@@ -208,12 +207,6 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 				new RelationAttrKey(KEY_AUTHC_TOKEN, IamAuthenticationTokenWrapper.class));
 		if (!isNull(wrap) && !isNull(wrap.getToken())) {
 			attrs.setClientHost(wrap.getToken().getHost());
-		}
-
-		// Sets SNS authorize info(if necessary).
-		SocialAuthorizeInfo social = getBindValue(KEY_SNS_AUTHORIZED_INFO, true);
-		if (!isNull(social)) {
-			attrs.setSocialAuthorizeInfo(social);
 		}
 
 		// Put grant credentials info.
