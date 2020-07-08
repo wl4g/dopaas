@@ -99,7 +99,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	public final SimplePrincipalInfo setPrincipal(String principal) {
-		hasText(principal, "Authenticate principal name can't empty");
+		hasTextOf(principal, "principalName");
 		this.principal = principal;
 		return this;
 	}

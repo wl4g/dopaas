@@ -18,7 +18,7 @@ package com.wl4g.devops.common.constants;
 import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 
 /**
- * DevOps SCM Constants.
+ * DevOps IAM Constants.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0
@@ -43,7 +43,6 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * Authenticating host attribute name.
 	 */
 	final public static String KEY_AUTHC_HOST_NAME = "authcHostAttrName";
-
 	/**
 	 * This key is generated when the authentication is successful and can be
 	 * used to encrypt and decrypt the transmission data of some sensitive api.
@@ -61,23 +60,20 @@ public abstract class IAMDevOpsConstants extends DevOpsConstants {
 	 * @see {@link com.wl4g.devops.iam.common.mgt.IamSubjectFactory#assertRequestSignTokenValidity}
 	 */
 	final public static String KEY_ACCESSTOKEN_SIGN_NAME = "accessTokenSignAttrName";
-
 	/**
 	 * Iam-server/Iam-client parent sessionId.
 	 */
 	final public static String KEY_PARENT_SESSIONID_NAME = "parentSessionIdAttrName";
+	/** authentication token save session key-name */
+	final public static String KEY_AUTHC_TOKEN = "authcTokenAttrName";
+	/** authentication accountInfo save session key-name */
+	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttrName";
 
 	/**
 	 * iamServer/iamClient the JSON node key that response the session
 	 * information.
 	 */
 	final public static String KEY_SESSIONINFO_NAME = "session";
-
-	/** authentication token save session key-name */
-	final public static String KEY_AUTHC_TOKEN = "authcTokenAttrName";
-	/** authentication accountInfo save session key-name */
-	final public static String KEY_AUTHC_ACCOUNT_INFO = "authcAccountInfoAttrName";
-
 	/**
 	 * IAM system service role parameter name.</br>
 	 * Can be used for user-client interception of unregistered state

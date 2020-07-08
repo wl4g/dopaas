@@ -16,13 +16,13 @@
 package com.wl4g.devops.iam.handler;
 
 import com.wl4g.devops.common.bean.iam.ApplicationInfo;
+import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 import com.wl4g.devops.common.exception.iam.IamException;
 import com.wl4g.devops.common.exception.iam.IllegalApplicationAccessException;
 import com.wl4g.devops.common.exception.iam.IllegalCallbackDomainException;
 import com.wl4g.devops.common.exception.iam.InvalidGrantTicketException;
 import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.iam.authc.LogoutAuthenticationToken;
-import com.wl4g.devops.iam.authc.Oauth2SnsAuthenticationToken;
 import com.wl4g.devops.iam.common.authc.IamAuthenticationTokenWrapper;
 import com.wl4g.devops.iam.common.authc.model.LoggedModel;
 import com.wl4g.devops.iam.common.authc.model.LogoutModel;
@@ -185,35 +185,35 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		/**
 		 * Grants roles and permissions attributes.
 		 */
-		Attributes attributes = assertion.getPrincipalInfo().getAttributes();
-		attributes.setSessionLang(getBindValue(KEY_LANG_NAME));
-		attributes.setParentSessionId(valueOf(getSessionId()));
+		Attributes attrs = assertion.getPrincipalInfo().getAttributes();
+		attrs.setSessionLang(getBindValue(KEY_LANG_NAME));
+		attrs.setParentSessionId(valueOf(getSessionId()));
 
-		// Sets re-generate childDataCipherKey(grant application)
+		// Sets re-generate childDataCipherKey(for grant app)
 		String childDataCipherKey = null;
 		if (config.getCipher().isEnableDataCipher()) {
-			attributes.setDataCipher((childDataCipherKey = generateDataCipherKey()));
+			attrs.setDataCipher((childDataCipherKey = generateDataCipherKey()));
 		}
 
-		// Sets re-generate childAccessToken(grant application)
+		// Sets re-generate childAccessToken(for grant app)
 		String childAccessTokenSignKey = null;
 		if (config.getSession().isEnableAccessTokenValidity()) {
 			String accessTokenSignKey = getBindValue(KEY_ACCESSTOKEN_SIGN_NAME);
 			childAccessTokenSignKey = generateAccessTokenSignKey(model.getSessionId(), accessTokenSignKey);
-			attributes.setAccessTokenSign(childAccessTokenSignKey);
+			attrs.setAccessTokenSign(childAccessTokenSignKey);
 		}
 
-		// Sets authenticaing token attributes.
+		// Sets authenticaing client host.
 		IamAuthenticationTokenWrapper wrap = getBindValue(
 				new RelationAttrKey(KEY_AUTHC_TOKEN, IamAuthenticationTokenWrapper.class));
 		if (!isNull(wrap) && !isNull(wrap.getToken())) {
-			attributes.setClientHost(wrap.getToken().getHost());
+			attrs.setClientHost(wrap.getToken().getHost());
+		}
 
-			// SNS authorized info(if necessary).
-			if (wrap.getToken() instanceof Oauth2SnsAuthenticationToken) {
-				Oauth2SnsAuthenticationToken snsToken = (Oauth2SnsAuthenticationToken) wrap.getToken();
-				attributes.setSocialAuthorizeInfo(snsToken.getSocial());
-			}
+		// Sets SNS authorize info(if necessary).
+		SocialAuthorizeInfo social = getBindValue(KEY_SNS_AUTHORIZED_INFO, true);
+		if (!isNull(social)) {
+			attrs.setSocialAuthorizeInfo(social);
 		}
 
 		// Put grant credentials info.

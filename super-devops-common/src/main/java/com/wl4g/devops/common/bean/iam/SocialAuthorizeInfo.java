@@ -109,9 +109,18 @@ public class SocialAuthorizeInfo implements Serializable {
 		this.userProfile = userProfile;
 	}
 
+	/**
+	 * As json string.
+	 * 
+	 * @return
+	 */
+	public String asJsonString() {
+		return toJSONString(this);
+	}
+
 	@Override
 	public String toString() {
-		return toJSONString(this);
+		return asJsonString();
 	}
 
 }

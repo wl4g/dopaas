@@ -16,8 +16,16 @@
 package com.wl4g.devops.iam.filter;
 
 import com.wl4g.devops.iam.common.annotation.IamFilter;
+
 import com.wl4g.devops.iam.authc.WechatMpAuthenticationToken;
 
+/**
+ * {@link WechatMpAuthenticationFilter}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2019年7月8日
+ * @since
+ */
 @IamFilter
 public class WechatMpAuthenticationFilter extends Oauth2SnsAuthenticationFilter<WechatMpAuthenticationToken> {
 

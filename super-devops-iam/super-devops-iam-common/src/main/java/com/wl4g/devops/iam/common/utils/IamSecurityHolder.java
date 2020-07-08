@@ -99,6 +99,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 			isTrue((!isNull(wrap) && !isNull(wrap.getInfo())), UnauthenticatedException.class,
 					"Iam subject is required! unauthenticated? or is @EnableIamServer/@EnableIamClient not enabled? Also note the call order!");
 		}
+
 		/**
 		 * [MARK2]:</br>
 		 * It is not recommended that external methods bind business attributes
@@ -107,9 +108,9 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 		 * 
 		 * @see {@link com.wl4g.devops.iam.common.subject.SimplePrincipalInfo#setAttributes(Map)}#MARK1
 		 */
+		return wrap.getInfo();
 		// TODO uncopy fields value ??
 		// BeanCopierUtils.mapper(wrap.getInfo(), wrap.getInfo().getClass());
-		return wrap.getInfo();
 	}
 
 	/**
