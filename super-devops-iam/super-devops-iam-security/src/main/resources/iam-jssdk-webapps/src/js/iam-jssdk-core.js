@@ -1466,7 +1466,7 @@
 						sessionStorage.setItem(constant.authRedirectRecordStorageKey, JSON.stringify(redirectRecord));
 						_iamConsole.info("Authenticated and redirection to: ", redirectUrl);
 						setTimeout(function() {
-							handler.showDocumentAndCloseLoading();
+							//handler.showDocumentAndCloseLoading(); // 即将跳转无需关闭
 							window.location = redirectUrl;
 						}, (200+parseInt(Math.random()*500))); // Random
 					} else {

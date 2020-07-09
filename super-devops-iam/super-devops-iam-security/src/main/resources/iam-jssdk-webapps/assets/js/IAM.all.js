@@ -2666,7 +2666,46 @@
         },
 	};
 
-	// Check authentication and redirection
+	/**
+	 * Check authentication and redirection.
+	 * <pre>
+	 * Using for example:
+	 * -----------------------------------------------
+	 * <head>
+     *   <script type="text/javascript" src="./js/jquery.min.js"></script>
+     *   <script type="text/javascript">
+     *      // [1.动态引入js文件]
+     *      // 使用document.write动态引入js文件，不能将此段代码放到如loader.js文件里执行，
+     *      // 这样不能保证它执行的顺序（因为leader.js加载完成但还没有执行，但是document后面的js代码会马上执行）
+     *      var sdkBaseUri=location.protocol+"//sso-services."+location.hostname.split('.').slice(-2).join('.')+"/sso/iam-jssdk/assets/";
+     *      //var sdkBaseUri="http://wl4g.debug:14040/iam-server/iam-jssdk/assets/"; // for debug
+     *      document.write('<link rel="stylesheet" href="'+ sdkBaseUri +'/css/IAM.all.min.css" />');
+     *      document.write('<scr'+'ipt src="'+ sdkBaseUri +'/js/IAM.all.min.js"></scr'+'ipt>');
+     *
+     *      // [2.初始化IAM JSSDK]
+	 *	    var options = {
+	 *	        deploy: {
+	 *				// You can also display the address of the specified SSO back-end API service
+	 *	            //baseUri: "http://sso.wl4g.com/sso", // 也可写死sso后端api服务地址
+	 *	            defaultTwoDomain: "sso-services", // sso后端api服务对应二级域名
+	 *	            defaultContextPath: "/sso" // sso后端api服务的跟路径
+	 *	        }
+	 *	    };
+	 *	    // Automatic redirection to home. (Optional)
+	 *	    console.log("Check authentication redirect... ");
+	 *	    var topDomain = Common.Util.extTopDomainString(location.host);
+	 *	    var homeUrl = location.protocol + "//base." + topDomain;
+	 *	    new IAMCore(options).checkAuthenticationAndRedirect(homeUrl).then(() => {
+	 *	        $(function() {
+	 *	            console.log("IAM JSSDK UI creation... ");
+	 *	            new IAMUi().initUI(document.getElementById("content-right"), options);
+	 *	        });
+	 *	    });
+     *   </script>
+	 * </head>
+	 * -----------------------------------------------
+	 * </pre>
+	 */
 	var _checkAuthenticationAndRedirect = {
 		cache: {
 			bodyStyle: null,
@@ -2724,7 +2763,7 @@
 						sessionStorage.setItem(constant.authRedirectRecordStorageKey, JSON.stringify(redirectRecord));
 						_iamConsole.info("Authenticated and redirection to: ", redirectUrl);
 						setTimeout(function() {
-							handler.showDocumentAndCloseLoading();
+							//handler.showDocumentAndCloseLoading(); // 即将跳转无需关闭
 							window.location = redirectUrl;
 						}, (200+parseInt(Math.random()*500))); // Random
 					} else {
