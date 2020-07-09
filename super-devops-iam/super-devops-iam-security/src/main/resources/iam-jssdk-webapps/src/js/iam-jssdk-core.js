@@ -1369,7 +1369,24 @@
         },
 	};
 
-	// Check authentication and redirection
+	/**
+	 * Check authentication and redirection.
+	 * <pre>
+	 * Using for example:
+	 * -----------------------------------------------
+	 * <head>
+     *   <script type="text/javascript" src="./js/jquery.min.js"></script>
+     *   <script type="text/javascript">
+     *       var sdkBaseUri=location.protocol+"//sso-services."+location.hostname.split('.').slice(-2).join('.')+"/sso/iam-jssdk/assets/";
+     *       //var sdkBaseUri="http://wl4g.debug:14040/iam-server/iam-jssdk/assets/"; // for debug
+     *       document.write('<link rel="stylesheet" href="'+ sdkBaseUri +'/css/IAM.all.min.css" />');
+     *       document.write('<scr'+'ipt src="'+ sdkBaseUri +'/js/IAM.all.min.js"></scr'+'ipt>');
+     *   </script>
+     *   <script type="text/javascript" src="./static/js/login.js"></script>
+	 * </head>
+	 * -----------------------------------------------
+	 * </pre>
+	 */
 	var _checkAuthenticationAndRedirect = {
 		cache: {
 			bodyStyle: null,
