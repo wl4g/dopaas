@@ -22,10 +22,6 @@ package com.wl4g.devops.components.tools.common.http;
  * <p>
  * The HTTP status code series can be retrieved via {@link #series()}.
  *
- * @author Arjen Poutsma
- * @author Sebastien Deleuze
- * @author Brian Clozel
- * @since 3.0
  * @see HttpStatus.Series
  * @see <a href="https://www.iana.org/assignments/http-status-codes">HTTP Status
  *      Code Registry</a>
@@ -603,7 +599,7 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.http.springframework.http.HttpStatus.Series#INFORMATIONAL}.
+	 * {@link com.wl4g.devops.components.tools.common.http.HttpStatus.Series#INFORMATIONAL}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 4.0
@@ -615,7 +611,7 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.http.springframework.http.HttpStatus.Series#SUCCESSFUL}.
+	 * {@link com.wl4g.devops.components.tools.common.http.HttpStatus.Series#SUCCESSFUL}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 4.0
@@ -627,7 +623,7 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.http.springframework.http.HttpStatus.Series#REDIRECTION}.
+	 * {@link com.wl4g.devops.components.tools.common.http.HttpStatus.Series#REDIRECTION}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 4.0
@@ -639,7 +635,7 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.http.springframework.http.HttpStatus.Series#CLIENT_ERROR}.
+	 * {@link com.wl4g.devops.components.tools.common.http.HttpStatus.Series#CLIENT_ERROR}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 4.0
@@ -651,7 +647,7 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.http.springframework.http.HttpStatus.Series#SERVER_ERROR}.
+	 * {@link com.wl4g.devops.components.tools.common.http.HttpStatus.Series#SERVER_ERROR}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 4.0
@@ -663,9 +659,9 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.http.springframework.http.HttpStatus.Series#CLIENT_ERROR}
+	 * {@link com.wl4g.devops.components.tools.common.http.HttpStatus.Series#CLIENT_ERROR}
 	 * or
-	 * {@link com.wl4g.devops.components.tools.common.http.springframework.http.HttpStatus.Series#SERVER_ERROR}.
+	 * {@link com.wl4g.devops.components.tools.common.http.HttpStatus.Series#SERVER_ERROR}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 5.0

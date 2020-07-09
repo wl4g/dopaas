@@ -31,7 +31,7 @@ import io.netty.handler.codec.http.HttpVersion;
  * <p>
  * Created via the {@link Netty4ClientHttpRequestFactory}.
  */
-class Netty4ClientHttpRequest {
+class Netty4ClientHttpRequest extends AbstractAsyncClientHttpRequest implements ClientHttpRequest {
 
 	private final HttpHeaders headers = new HttpHeaders();
 
@@ -62,6 +62,11 @@ class Netty4ClientHttpRequest {
 		return this.method;
 	}
 
+	@Override
+	public String getMethodValue() {
+		return this.method.name();
+	}
+
 	/**
 	 * Return the URI of the request (including a query string if any, but only
 	 * if it is well-formed for a URI representation).
@@ -73,27 +78,6 @@ class Netty4ClientHttpRequest {
 	}
 
 	/**
-	 * Return the headers of this message.
-	 * 
-	 * @return a corresponding HttpHeaders object (never {@code null})
-	 */
-	public final HttpHeaders getHeaders() {
-		return (this.executed ? HttpHeaders.readOnlyHttpHeaders(this.headers) : this.headers);
-	}
-
-	/**
-	 * Return the body of the message as an output stream.
-	 * 
-	 * @return the output stream body (never {@code null})
-	 * @throws IOException
-	 *             in case of I/O errors
-	 */
-	public final OutputStream getBody() throws IOException {
-		assertNotExecuted();
-		return getBodyInternal(this.headers);
-	}
-
-	/**
 	 * Execute this request asynchronously, resulting in a Future handle.
 	 * {@link ClientHttpResponse} that can be read.
 	 * 
@@ -101,9 +85,9 @@ class Netty4ClientHttpRequest {
 	 * @throws java.io.IOException
 	 *             in case of I/O errors
 	 */
-	public ListenableFuture<Netty4ClientHttpResponse> executeAsync() throws IOException {
+	public ListenableFuture<ClientHttpResponse> executeAsync() throws IOException {
 		assertNotExecuted();
-		ListenableFuture<Netty4ClientHttpResponse> result = executeInternal(this.headers);
+		ListenableFuture<ClientHttpResponse> result = executeInternal(this.headers);
 		this.executed = true;
 		return result;
 	}
@@ -127,7 +111,7 @@ class Netty4ClientHttpRequest {
 	 * @throws IOException
 	 *             in case of I/O errors
 	 */
-	public Netty4ClientHttpResponse execute() throws IOException {
+	public ClientHttpResponse execute() throws IOException {
 		try {
 			return executeAsync().get();
 		} catch (InterruptedException ex) {
@@ -161,8 +145,8 @@ class Netty4ClientHttpRequest {
 	 *            the HTTP headers
 	 * @return the response object for the executed request
 	 */
-	protected ListenableFuture<Netty4ClientHttpResponse> executeInternal(final HttpHeaders headers) throws IOException {
-		final SettableFuture<Netty4ClientHttpResponse> responseFuture = SettableFuture.create();
+	protected ListenableFuture<ClientHttpResponse> executeInternal(final HttpHeaders headers) throws IOException {
+		final SettableFuture<ClientHttpResponse> responseFuture = SettableFuture.create();
 
 		ChannelFutureListener connectionListener = new ChannelFutureListener() {
 			@Override
@@ -219,9 +203,9 @@ class Netty4ClientHttpRequest {
 	 */
 	private static class RequestExecuteHandler extends SimpleChannelInboundHandler<FullHttpResponse> {
 
-		private final SettableFuture<Netty4ClientHttpResponse> responseFuture;
+		private final SettableFuture<ClientHttpResponse> responseFuture;
 
-		public RequestExecuteHandler(SettableFuture<Netty4ClientHttpResponse> responseFuture) {
+		public RequestExecuteHandler(SettableFuture<ClientHttpResponse> responseFuture) {
 			this.responseFuture = responseFuture;
 		}
 

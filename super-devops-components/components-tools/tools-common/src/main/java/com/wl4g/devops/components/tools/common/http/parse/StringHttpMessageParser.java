@@ -24,7 +24,7 @@ import com.wl4g.devops.components.tools.common.http.HttpMediaType;
  */
 public class StringHttpMessageParser extends AbstractHttpMessageParser<String> {
 
-	public static final Charset DEFAULT_CHARSET = Charset.forName("ISO-8859-1");
+	public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 	private volatile List<Charset> availableCharsets;
 
