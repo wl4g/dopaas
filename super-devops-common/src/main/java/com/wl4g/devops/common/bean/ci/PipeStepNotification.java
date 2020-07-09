@@ -1,8 +1,11 @@
 package com.wl4g.devops.common.bean.ci;
 
 import com.wl4g.devops.common.bean.BaseBean;
+import com.wl4g.devops.tool.common.collection.Collections2;
+import org.apache.commons.lang3.math.NumberUtils;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PipeStepNotification extends BaseBean {
     private static final long serialVersionUID = 6815608076300843748L;
@@ -40,12 +43,16 @@ public class PipeStepNotification extends BaseBean {
     }
 
     public void setContactGroupId2(String[] contactGroupId) {
-        if(Objects.nonNull(contactGroupId)){
-            Integer[] contactGroupIds = new Integer[contactGroupId.length];
+        if(!Collections2.isEmptyArray(contactGroupId)){
+            List<Integer> list = new ArrayList<>();
             for(int i = 0; i<contactGroupId.length;i++){
-                contactGroupIds[i] = Integer.parseInt(contactGroupId[i]);
+                if(NumberUtils.isCreatable(contactGroupId[i])){
+                    list.add(Integer.parseInt(contactGroupId[i]));
+                }
             }
-            this.contactGroupId = contactGroupIds;
+            Integer[] result = new Integer[list.size()];
+            list.toArray(result);
+            this.contactGroupId = result;
         }
     }
 

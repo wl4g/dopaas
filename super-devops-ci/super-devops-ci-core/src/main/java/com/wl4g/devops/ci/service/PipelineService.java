@@ -24,6 +24,6 @@ public interface PipelineService {
 
 	PipeStepBuilding getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer refType);
 
-	List<Pipeline> getForSelect();
+    List<Pipeline> getForSelect(String environment);
 
 }

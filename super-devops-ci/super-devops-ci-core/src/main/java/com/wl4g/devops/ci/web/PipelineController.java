@@ -184,11 +184,10 @@ public class PipelineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getForSelect")
-	public RespBase<?> getForSelect() {
+	public RespBase<?> getForSelect(String environment) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(pipelineService.getForSelect());
+		resp.setData(pipelineService.getForSelect(environment));
 		return resp;
-
 	}
 
 }
