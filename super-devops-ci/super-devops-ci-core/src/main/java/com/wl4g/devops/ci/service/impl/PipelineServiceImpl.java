@@ -347,8 +347,8 @@ public class PipelineServiceImpl implements PipelineService {
     }
 
     @Override
-    public List<Pipeline> getForSelect() {
-        return pipelineDao.list(getRequestOrganizationCodes(),null, null, null, null);
+    public List<Pipeline> getForSelect(String environment) {
+        return pipelineDao.list(getRequestOrganizationCodes(),null, null, null, environment);
     }
 
     private PipeStepBuildingProject getPipeStepBuildingProject(List<PipeStepBuildingProject> pipeStepBuildingProjects, Integer projectId) {
