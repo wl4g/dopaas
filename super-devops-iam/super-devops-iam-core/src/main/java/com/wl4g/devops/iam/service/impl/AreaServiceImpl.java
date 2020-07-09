@@ -46,7 +46,7 @@ public class AreaServiceImpl implements AreaService {
 	private List<Area> getTops(List<Area> areas) {
 		List<Area> list = new ArrayList<>();
 		for (Area area : areas) {
-			if (Objects.nonNull(area.getLevel()) && area.getLevel() == 1) {
+			if (Objects.nonNull(area.getLevel()) && area.getLevel() == 0) {
 				list.add(area);
 			}
 		}
