@@ -1,6 +1,5 @@
 package com.wl4g.devops.components.tools.common.http;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -14,7 +13,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 /**
  * {@link ClientHttpResponse} implementation based on Netty 4.
  */
-class Netty4ClientHttpResponse implements Closeable {
+class Netty4ClientHttpResponse extends AbstractClientHttpResponse {
 
 	private final ChannelHandlerContext context;
 

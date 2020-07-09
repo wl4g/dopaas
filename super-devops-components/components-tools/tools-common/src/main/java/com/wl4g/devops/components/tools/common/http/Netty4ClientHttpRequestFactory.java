@@ -60,7 +60,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
  * @author Mark Paluch
  * @since 4.1.2
  */
-public class Netty4ClientHttpRequestFactory implements Closeable {
+public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory, Closeable {
 
 	private final EventLoopGroup eventLoopGroup;
 
