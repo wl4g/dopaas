@@ -1369,7 +1369,46 @@
         },
 	};
 
-	// Check authentication and redirection
+	/**
+	 * Check authentication and redirection.
+	 * <pre>
+	 * Using for example:
+	 * -----------------------------------------------
+	 * <head>
+     *   <script type="text/javascript" src="./js/jquery.min.js"></script>
+     *   <script type="text/javascript">
+     *      // [1.动态引入js文件]
+     *      // 使用document.write动态引入js文件，不能将此段代码放到如loader.js文件里执行，
+     *      // 这样不能保证它执行的顺序（因为leader.js加载完成但还没有执行，但是document后面的js代码会马上执行）
+     *      var sdkBaseUri=location.protocol+"//sso-services."+location.hostname.split('.').slice(-2).join('.')+"/sso/iam-jssdk/assets/";
+     *      //var sdkBaseUri="http://wl4g.debug:14040/iam-server/iam-jssdk/assets/"; // for debug
+     *      document.write('<link rel="stylesheet" href="'+ sdkBaseUri +'/css/IAM.all.min.css" />');
+     *      document.write('<scr'+'ipt src="'+ sdkBaseUri +'/js/IAM.all.min.js"></scr'+'ipt>');
+     *
+     *      // [2.初始化IAM JSSDK]
+	 *	    var options = {
+	 *	        deploy: {
+	 *				// You can also display the address of the specified SSO back-end API service
+	 *	            //baseUri: "http://sso.wl4g.com/sso", // 也可写死sso后端api服务地址
+	 *	            defaultTwoDomain: "sso-services", // sso后端api服务对应二级域名
+	 *	            defaultContextPath: "/sso" // sso后端api服务的跟路径
+	 *	        }
+	 *	    };
+	 *	    // Automatic redirection to home. (Optional)
+	 *	    console.log("Check authentication redirect... ");
+	 *	    var topDomain = Common.Util.extTopDomainString(location.host);
+	 *	    var homeUrl = location.protocol + "//base." + topDomain;
+	 *	    new IAMCore(options).checkAuthenticationAndRedirect(homeUrl).then(() => {
+	 *	        $(function() {
+	 *	            console.log("IAM JSSDK UI creation... ");
+	 *	            new IAMUi().initUI(document.getElementById("content-right"), options);
+	 *	        });
+	 *	    });
+     *   </script>
+	 * </head>
+	 * -----------------------------------------------
+	 * </pre>
+	 */
 	var _checkAuthenticationAndRedirect = {
 		cache: {
 			bodyStyle: null,
@@ -1383,12 +1422,12 @@
 			handler.cache.bodyClass = _body.attr("class");
 			_body.removeAttr("style");
 			_body.removeAttr("class");
-			// Hide other elements
-			$("<style class='iam_check_authc_redirect_style'>div:not(.iam_check_authc_redirect_loading){display:none;}" +
-					"img,span,p,a,b{display:none;}body{background:none !important}</style>").appendTo($("head"));
-			// Show loading
-			_body.append($("<div class='iam_check_authc_redirect_loading' style='background:url("+ settings.resources.loading +
-					");position:absolute;width:30px;height:30px;left:48%;top:48%;z-index:9999;'></div>"));
+			// Hide elements and open loading. (if necessary)
+			if ($(".iam_check_authc_redirect_style").length <= 0) {
+				$("<style class='iam_check_authc_redirect_style'>" +
+					"div,img,span,p,a,b{display:none;}body{background:url(" + settings.resources.loading +
+					") no-repeat;background-position:center;!important}</style>").appendTo($("head"));
+			}
 		},
 		showDocumentAndCloseLoading: function() {
 			var handler = _checkAuthenticationAndRedirect;
@@ -1396,17 +1435,17 @@
 			// Show body(If necessary)
 			if (handler.cache.bodyStyle) { _body.attr("style", handler.cache.bodyStyle); }
 			if (handler.cache.bodyClass) { _body.attr("class", handler.cache.bodyClass); }
-			// Show other elements
+			// Show elements and close loading
 			$(".iam_check_authc_redirect_style").remove();
-			// Hide loading
-			$(".iam_check_authc_redirect_loading").remove();
 		},
 		// Prevent flashing when redirecting to the home page.
 		doHandle: function(redirectUrl) {
 			_iamConsole.info("Checking unauthenticated and redirection ... ");
 			var handler = _checkAuthenticationAndRedirect;
-			// 隐藏body元素及加载动画(注:在这里调用是为了解决:当前js文件是通过sysloader.js异步加载时,body会在之前就已渲染的顺序问题,会出现闪屏)
+
+			// 首先添加隐藏元素的style, 避免body先渲染完出现闪屏)
 			handler.hideDocumentAndOpenLoading();
+			$(function() { handler.hideDocumentAndOpenLoading(); }); // body渲染完立即执行, loading才能显示
 
 			return new Promise(resolve => {
 				// When initializing the page, the delayed loading animation is specially displayed to prevent the white flash screen.
@@ -1426,21 +1465,17 @@
 						redirectRecord.t = new Date().getTime();
 						sessionStorage.setItem(constant.authRedirectRecordStorageKey, JSON.stringify(redirectRecord));
 						_iamConsole.info("Authenticated and redirection to: ", redirectUrl);
-						// 延迟重定向之前先显示加载动画
-						handler.hideDocumentAndOpenLoading();
 						setTimeout(function() {
-							handler.showDocumentAndCloseLoading();
+							//handler.showDocumentAndCloseLoading(); // 即将跳转无需关闭
 							window.location = redirectUrl;
-						}, (200+parseInt(Math.random()*400))); // Random
+						}, (200+parseInt(Math.random()*500))); // Random
 					} else {
 						_iamConsole.info("Unauthentication rendering login page ... ");
-						// 先延迟显示加载动画
-						handler.hideDocumentAndOpenLoading();
 						setTimeout(function() {
 							handler.showDocumentAndCloseLoading();
 							sessionStorage.removeItem(constant.authRedirectRecordStorageKey); // reset
 							resolve(res);
-						}, (200+parseInt(Math.random()*1000))); // Random
+						}, (200+parseInt(Math.random()*2000))); // Random
 					}
 				});
 			});
