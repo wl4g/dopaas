@@ -36,8 +36,6 @@ import com.wl4g.devops.common.bean.iam.Contact;
 import com.wl4g.devops.common.bean.iam.ContactChannel;
 import com.wl4g.devops.common.framework.beans.AliasPrototypeBeanFactory;
 import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
-import com.wl4g.devops.components.tools.common.io.FileIOUtils.*;
-import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppEnvironmentDao;
@@ -47,6 +45,8 @@ import com.wl4g.devops.dao.iam.ContactDao;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.devops.components.tools.common.io.FileIOUtils.*;
+import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,76 +79,6 @@ import static org.springframework.util.Assert.notNull;
  * @since
  */
 public class DefaultPipelineManager implements PipelineManager {
-	final protected Logger log = getLogger(getClass());
-
-	@Autowired
-	protected CiCdProperties config;
-	@Autowired
-	protected AliasPrototypeBeanFactory beanFactory;
-	@Autowired
-	protected PipelineJobExecutor jobExecutor;
-	@Autowired
-	protected GenericOperatorAdapter<NotifierKind, MessageNotifier> notifierAdapter;
-	@Autowired
-	protected AppInstanceDao appInstanceDao;
-	@Autowired
-	protected AppClusterDao appClusterDao;
-	@Autowired
-	protected TriggerDao triggerDao;
-	@Autowired
-	protected ProjectDao projectDao;
-	@Autowired
-	protected TaskDetailDao taskDetailDao;
-	@Autowired
-	protected ContactDao contactDao;
-	@Autowired
-	protected TaskBuildCommandDao taskBuildCmdDao;
-	@Autowired
-	protected FlowManager flowManager;
-	@Autowired
-	private PipelineDao pipelineDao;
-	@Autowired
-	private PipelineHistoryService pipelineHistoryService;
-	@Autowired
-	private PipelineHistoryInstanceDao pipelineHistoryInstanceDao;
-	@Autowired
-	private PipeStepInstanceCommandDao pipeStepInstanceCommandDao;
-	@Autowired
-	private PipeStepNotificationDao pipeStepNotificationDao;
-	@Autowired
-	private PipeStepBuildingDao pipeStepBuildingDao;
-	@Autowired
-	private PipelineInstanceDao pipelineInstanceDao;
-	@Autowired
-	private AppEnvironmentDao appEnvironmentDao;
-	@Autowired
-	private DockerRepositoryDao dockerRepositoryDao;
-
-	@Override
-	public void runPipeline(NewParameter param, PipelineModel pipelineModel) {
-		log.info("Running pipeline job for: {}", param);
-
-		// Obtain task details.
-		List<String> instanceIds = safeList(pipelineInstanceDao.selectByPipeId(param.getPipeId())).stream()
-				.map(pipelineInstance -> String.valueOf(pipelineInstance.getInstanceId())).collect(toList());
-		// notEmpty(instanceIds, "InstanceIds is empty, please check
-		// configure.");
-
-		// Obtain task.
-		// Task task = taskDao.selectByPrimaryKey(param.getPipeId());
-		Pipeline pipeline = pipelineDao.selectByPrimaryKey(param.getPipeId());
-
-		notNull(pipeline, String.format("Not found task of %s", param.getPipeId()));
-		notNull(pipeline.getClusterId(), "Task clusterId must not be null.");
-		AppCluster appCluster = appClusterDao.selectByPrimaryKey(pipeline.getClusterId());
-		notNull(appCluster, "not found this app");
-
-		List<AppInstance> instances = new ArrayList<>();
-		for (String instanceId : instanceIds) {
-			AppInstance instance = appInstanceDao.selectByPrimaryKey(Integer.valueOf(instanceId));
-			instances.add(instance);
-		}
-
     final protected Logger log = getLogger(getClass());
 
     @Autowired
