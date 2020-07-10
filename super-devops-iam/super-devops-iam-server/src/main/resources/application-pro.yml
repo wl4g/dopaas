@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(Prod) configuration. ####
+# #### Environment(PRO) configuration. ####
 #
 spring:
   cloud:
@@ -22,7 +22,7 @@ spring:
                 - http://${DEVOPS_SERVICE_ZONE:wl4g.com}
                 - https://*.${DEVOPS_SERVICE_ZONE:wl4g.com}
                 - http://*.${DEVOPS_SERVICE_ZONE:wl4g.com}
-        login-uri: https://devops.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/login
+        login-uri: ${DEVOPS_SERVICE_SCHEMA:https}://devops.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/login
         unauthorized-uri: /view/403.html
         success-endpoint: umc-manager@https://umc.${DEVOPS_SERVICE_ZONE:wl4g.com}/umc-manager
         acl:

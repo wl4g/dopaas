@@ -8,7 +8,7 @@
 # limitations under the License.
 #
 
-# #### Environment(Prod) configuration. ####
+# #### Environment(PRO) configuration. ####
 #
 spring:
   cloud:
@@ -29,7 +29,7 @@ spring:
         client:
           server-uri: ${DEVOPS_SERVICE_SCHEMA:https}://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}/iam-server
           unauthorized-uri: ${spring.cloud.devops.iam.client.server-uri}/view/403.html
-          success-uri: https://devops.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/scm
+          success-uri: ${DEVOPS_SERVICE_SCHEMA:https}://devops.${DEVOPS_SERVICE_ZONE:wl4g.com}/#/scm
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
