@@ -274,18 +274,18 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
 		String errmsg = getRootCausesString(ae);
-		if (isNotBlank(errmsg)) {
-			String tip = format("Failed to authentication of token: %s", token);
-			if (SmartGlobalErrorController.checkStackTrace(request)) {
-				log.error(tip, ae);
-			} else {
-				log.warn(tip + ", caused by: {}", errmsg);
-			}
-			/**
-			 * {@link LoginAuthenticatorController#errReads()}
-			 */
-			bind(KEY_ERR_SESSION_SAVED, errmsg);
+		/**
+		 * {@link LoginAuthenticatorController#errReads()}
+		 */
+		bind(KEY_ERR_SESSION_SAVED, errmsg);
+
+		String tip = format("Failed to authentication of token: %s", token);
+		if (SmartGlobalErrorController.checkStackTrace(request)) {
+			log.error(tip, ae);
+		} else if (isNotBlank(errmsg)) {
+			log.error(tip + ", caused by: {}", errmsg);
 		}
+
 		// Failure redirect
 		RedirectInfo redirect = determineFailureRedirect(getRedirectInfo(request), tk, ae, request, response);
 
