@@ -19,6 +19,7 @@ import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders;
+import com.wl4g.devops.components.tools.common.lang.Assert2;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,11 @@ public abstract class GenericHostPipeDeployer<P extends PipelineProvider> extend
 
 	@Override
 	protected void doRemoteDeploying(String remoteHost, String user, String sshkey) throws Exception {
+
+		Assert2.hasText(remoteHost,"RemoteHost is empty, Please check your config in page(Instance)");
+		Assert2.hasText(user,"user is empty, Please check your config in page(Cluster)");
+		Assert2.hasText(sshkey,"sshkey is empty, Please check your config in page(Cluster)");
+
 		// Ensure remote home temporary dir.
 		createReplaceRemoteDirectory(remoteHost, user, sshkey, config.getDeploy().getRemoteHomeTmpDir());
 
