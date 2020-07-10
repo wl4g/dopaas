@@ -28,7 +28,7 @@ class Netty4ClientHttpResponse extends AbstractClientHttpResponse {
 		Assert2.notNull(nettyResponse, "FullHttpResponse must not be null");
 		this.context = context;
 		this.nettyResponse = nettyResponse;
-		this.body = new ByteBufInputStream(this.nettyResponse.content());
+		this.body = new ByteBufInputStream(nettyResponse.content());
 		this.nettyResponse.retain();
 	}
 
@@ -58,7 +58,7 @@ class Netty4ClientHttpResponse extends AbstractClientHttpResponse {
 	 */
 	@SuppressWarnings("deprecation")
 	public int getRawStatusCode() throws IOException {
-		return this.nettyResponse.getStatus().code();
+		return nettyResponse.getStatus().code();
 	}
 
 	/**
@@ -70,7 +70,7 @@ class Netty4ClientHttpResponse extends AbstractClientHttpResponse {
 	 */
 	@SuppressWarnings("deprecation")
 	public String getStatusText() throws IOException {
-		return this.nettyResponse.getStatus().reasonPhrase();
+		return nettyResponse.getStatus().reasonPhrase();
 	}
 
 	/**
@@ -79,14 +79,14 @@ class Netty4ClientHttpResponse extends AbstractClientHttpResponse {
 	 * @return a corresponding HttpHeaders object (never {@code null})
 	 */
 	public HttpHeaders getHeaders() {
-		if (this.headers == null) {
+		if (headers == null) {
 			HttpHeaders headers = new HttpHeaders();
-			for (Map.Entry<String, String> entry : this.nettyResponse.headers()) {
+			for (Map.Entry<String, String> entry : nettyResponse.headers()) {
 				headers.add(entry.getKey(), entry.getValue());
 			}
 			this.headers = headers;
 		}
-		return this.headers;
+		return headers;
 	}
 
 	/**
@@ -97,13 +97,13 @@ class Netty4ClientHttpResponse extends AbstractClientHttpResponse {
 	 *             in case of I/O errors
 	 */
 	public InputStream getBody() throws IOException {
-		return this.body;
+		return body;
 	}
 
 	@Override
 	public void close() {
-		this.nettyResponse.release();
-		this.context.close();
+		nettyResponse.release();
+		context.close();
 	}
 
 }

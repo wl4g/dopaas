@@ -1,5 +1,7 @@
 package com.wl4g.devops.components.tools.common.http;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -51,64 +53,45 @@ import io.netty.handler.codec.http.HttpMethod;
  */
 public class RestClient {
 
-	/** Logger available to subclasses */
-	protected final Log log = LogFactory.getLog(getClass());
+	final protected Log log = LogFactory.getLog(getClass());
 
-	private static final boolean jackson2Present;
-
-	static {
-		ClassLoader classLoader = RestClient.class.getClassLoader();
-		jackson2Present = ClassUtils2.isPresent("com.fasterxml.jackson.databind.ObjectMapper", classLoader)
-				&& ClassUtils2.isPresent("com.fasterxml.jackson.core.JsonGenerator", classLoader);
-	}
-
-	private ClientHttpRequestFactory requestFactory;
-
-	private final List<HttpMessageParser<?>> messageConverters = new ArrayList<>();
-
-	private final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
-
+	final private List<HttpMessageParser<?>> messageConverters = new ArrayList<>(4);
+	final private List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>(4);
+	final private ResponseExtractor<HttpHeaders> headersExtractor = new HeadersExtractor();
+	final private ClientHttpRequestFactory requestFactory;
 	private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
-
 	private UriTemplateHandler uriTemplateHandler;
-
-	private final ResponseExtractor<HttpHeaders> headersExtractor = new HeadersExtractor();
 
 	/**
 	 * Create a new instance of the {@link RestClient} using default settings.
 	 * Default {@link HttpMessageParser HttpMessageConverters} are initialized.
 	 */
+	@SuppressWarnings("serial")
 	public RestClient() {
-		this(new Netty4ClientHttpRequestFactory());
-		this.messageConverters.add(new ByteArrayHttpMessageParser());
-		this.messageConverters.add(new StringHttpMessageParser());
-		this.messageConverters.add(new ResourceHttpMessageParser(false));
-		if (jackson2Present) {
-			this.messageConverters.add(new MappingJackson2HttpMessageParser());
-		}
-		this.uriTemplateHandler = initUriTemplateHandler();
-	}
-
-	/**
-	 * Create a new instance of the {@link RestClient} based on the given
-	 * {@link Netty4ClientHttpRequestFactory}.
-	 * 
-	 * @param requestFactory
-	 *            the HTTP request factory to use
-	 */
-	public RestClient(ClientHttpRequestFactory requestFactory) {
-		this.requestFactory = requestFactory;
+		this(new Netty4ClientHttpRequestFactory(), new ArrayList<HttpMessageParser<?>>() {
+			{
+				add(new ByteArrayHttpMessageParser());
+				add(new StringHttpMessageParser());
+				add(new ResourceHttpMessageParser(false));
+				if (jackson2Present) {
+					add(new MappingJackson2HttpMessageParser());
+				}
+			}
+		});
 	}
 
 	/**
 	 * Create a new instance of the {@link RestClient} using the given list of
 	 * {@link HttpMessageParser} to use.
 	 * 
+	 * @param requestFactory
+	 *            the HTTP request factory to use
 	 * @param messageConverters
 	 *            the list of {@link HttpMessageParser} to use
-	 * @since 3.2.7
 	 */
-	public RestClient(List<HttpMessageParser<?>> messageConverters) {
+	public RestClient(ClientHttpRequestFactory requestFactory, List<HttpMessageParser<?>> messageConverters) {
+		notNullOf(requestFactory, "requestFactory");
+		this.requestFactory = requestFactory;
 		validateConverters(messageConverters);
 		this.messageConverters.addAll(messageConverters);
 		this.uriTemplateHandler = initUriTemplateHandler();
@@ -126,13 +109,14 @@ public class RestClient {
 	 * These converters are used to convert from and to HTTP requests and
 	 * responses.
 	 */
-	public void setMessageConverters(List<HttpMessageParser<?>> messageConverters) {
+	public RestClient setMessageConverters(List<HttpMessageParser<?>> messageConverters) {
 		validateConverters(messageConverters);
 		// Take getMessageConverters() List as-is when passed in here
 		if (this.messageConverters != messageConverters) {
 			this.messageConverters.clear();
 			this.messageConverters.addAll(messageConverters);
 		}
+		return this;
 	}
 
 	private void validateConverters(List<HttpMessageParser<?>> messageConverters) {
@@ -310,7 +294,7 @@ public class RestClient {
 
 	/**
 	 * Retrieve an entity by doing a GET on the specified URL. The response is
-	 * converted and stored in an {@link ResponseEntity}.
+	 * converted and stored in an {@link HttpResponseEntity}.
 	 * <p>
 	 * URI Template variables are expanded using the given URI variables, if
 	 * any.
@@ -324,17 +308,17 @@ public class RestClient {
 	 * @return the entity
 	 * @since 3.0.2
 	 */
-	public <T> ResponseEntity<T> getForEntity(String url, Class<T> responseType, Object... uriVariables)
+	public <T> HttpResponseEntity<T> getForEntity(String url, Class<T> responseType, Object... uriVariables)
 			throws RestClientException {
 
 		RequestCallback requestCallback = acceptHeaderRequestCallback(responseType);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
 		return nonNull(execute(url, HttpMethod.GET, requestCallback, responseExtractor, uriVariables));
 	}
 
 	/**
 	 * Retrieve a representation by doing a GET on the URI template. The
-	 * response is converted and stored in an {@link ResponseEntity}.
+	 * response is converted and stored in an {@link HttpResponseEntity}.
 	 * <p>
 	 * URI Template variables are expanded using the given map.
 	 * 
@@ -347,17 +331,17 @@ public class RestClient {
 	 * @return the converted object
 	 * @since 3.0.2
 	 */
-	public <T> ResponseEntity<T> getForEntity(String url, Class<T> responseType, Map<String, ?> uriVariables)
+	public <T> HttpResponseEntity<T> getForEntity(String url, Class<T> responseType, Map<String, ?> uriVariables)
 			throws RestClientException {
 
 		RequestCallback requestCallback = acceptHeaderRequestCallback(responseType);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
 		return nonNull(execute(url, HttpMethod.GET, requestCallback, responseExtractor, uriVariables));
 	}
 
 	/**
 	 * Retrieve a representation by doing a GET on the URL . The response is
-	 * converted and stored in an {@link ResponseEntity}.
+	 * converted and stored in an {@link HttpResponseEntity}.
 	 * 
 	 * @param url
 	 *            the URL
@@ -366,9 +350,9 @@ public class RestClient {
 	 * @return the converted object
 	 * @since 3.0.2
 	 */
-	public <T> ResponseEntity<T> getForEntity(URI url, Class<T> responseType) throws RestClientException {
+	public <T> HttpResponseEntity<T> getForEntity(URI url, Class<T> responseType) throws RestClientException {
 		RequestCallback requestCallback = acceptHeaderRequestCallback(responseType);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
 		return nonNull(execute(url, HttpMethod.GET, requestCallback, responseExtractor));
 	}
 
@@ -537,7 +521,7 @@ public class RestClient {
 
 	/**
 	 * Create a new resource by POSTing the given object to the URI template,
-	 * and returns the response as {@link ResponseEntity}.
+	 * and returns the response as {@link HttpResponseEntity}.
 	 * <p>
 	 * URI Template variables are expanded using the given URI variables, if
 	 * any.
@@ -555,11 +539,11 @@ public class RestClient {
 	 * @since 3.0.2
 	 * @see HttpEntity
 	 */
-	public <T> ResponseEntity<T> postForEntity(String url, @Nullable Object request, Class<T> responseType,
+	public <T> HttpResponseEntity<T> postForEntity(String url, @Nullable Object request, Class<T> responseType,
 			Object... uriVariables) throws RestClientException {
 
 		RequestCallback requestCallback = httpEntityCallback(request, responseType);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
 		return nonNull(execute(url, HttpMethod.POST, requestCallback, responseExtractor, uriVariables));
 	}
 
@@ -582,16 +566,16 @@ public class RestClient {
 	 * @since 3.0.2
 	 * @see HttpEntity
 	 */
-	public <T> ResponseEntity<T> postForEntity(String url, @Nullable Object request, Class<T> responseType,
+	public <T> HttpResponseEntity<T> postForEntity(String url, @Nullable Object request, Class<T> responseType,
 			Map<String, ?> uriVariables) throws RestClientException {
 		RequestCallback requestCallback = httpEntityCallback(request, responseType);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
 		return nonNull(execute(url, HttpMethod.POST, requestCallback, responseExtractor, uriVariables));
 	}
 
 	/**
 	 * Create a new resource by POSTing the given object to the URL, and returns
-	 * the response as {@link ResponseEntity}.
+	 * the response as {@link HttpResponseEntity}.
 	 * <p>
 	 * The {@code request} parameter can be a {@link HttpEntity} in order to add
 	 * additional HTTP headers to the request.
@@ -604,11 +588,11 @@ public class RestClient {
 	 * @since 3.0.2
 	 * @see HttpEntity
 	 */
-	public <T> ResponseEntity<T> postForEntity(URI url, @Nullable Object request, Class<T> responseType)
+	public <T> HttpResponseEntity<T> postForEntity(URI url, @Nullable Object request, Class<T> responseType)
 			throws RestClientException {
 
 		RequestCallback requestCallback = httpEntityCallback(request, responseType);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
 		return nonNull(execute(url, HttpMethod.POST, requestCallback, responseExtractor));
 	}
 
@@ -722,7 +706,7 @@ public class RestClient {
 	/**
 	 * Execute the HTTP method to the given URI template, writing the given
 	 * request entity to the request, and returns the response as
-	 * {@link ResponseEntity}.
+	 * {@link HttpResponseEntity}.
 	 * <p>
 	 * URI Template variables are expanded using the given URI variables, if
 	 * any.
@@ -741,18 +725,18 @@ public class RestClient {
 	 * @return the response as entity
 	 * @since 3.0.2
 	 */
-	public <T> ResponseEntity<T> exchange(String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
+	public <T> HttpResponseEntity<T> exchange(String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
 			Class<T> responseType, Object... uriVariables) throws RestClientException {
 
 		RequestCallback requestCallback = httpEntityCallback(requestEntity, responseType);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
 		return nonNull(execute(url, method, requestCallback, responseExtractor, uriVariables));
 	}
 
 	/**
 	 * Execute the HTTP method to the given URI template, writing the given
 	 * request entity to the request, and returns the response as
-	 * {@link ResponseEntity}.
+	 * {@link HttpResponseEntity}.
 	 * <p>
 	 * URI Template variables are expanded using the given URI variables, if
 	 * any.
@@ -771,18 +755,18 @@ public class RestClient {
 	 * @return the response as entity
 	 * @since 3.0.2
 	 */
-	public <T> ResponseEntity<T> exchange(String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
+	public <T> HttpResponseEntity<T> exchange(String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
 			Class<T> responseType, Map<String, ?> uriVariables) throws RestClientException {
 
 		RequestCallback requestCallback = httpEntityCallback(requestEntity, responseType);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
 		return nonNull(execute(url, method, requestCallback, responseExtractor, uriVariables));
 	}
 
 	/**
 	 * Execute the HTTP method to the given URI template, writing the given
 	 * request entity to the request, and returns the response as
-	 * {@link ResponseEntity}.
+	 * {@link HttpResponseEntity}.
 	 * 
 	 * @param url
 	 *            the URL
@@ -796,18 +780,18 @@ public class RestClient {
 	 * @return the response as entity
 	 * @since 3.0.2
 	 */
-	public <T> ResponseEntity<T> exchange(URI url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
+	public <T> HttpResponseEntity<T> exchange(URI url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
 			Class<T> responseType) throws RestClientException {
 
 		RequestCallback requestCallback = httpEntityCallback(requestEntity, responseType);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
 		return nonNull(execute(url, method, requestCallback, responseExtractor));
 	}
 
 	/**
 	 * Execute the HTTP method to the given URI template, writing the given
 	 * request entity to the request, and returns the response as
-	 * {@link ResponseEntity}. The given {@link ParameterizedTypeReference} is
+	 * {@link HttpResponseEntity}. The given {@link ParameterizedTypeReference} is
 	 * used to pass generic type information:
 	 * 
 	 * <pre class="code">
@@ -830,19 +814,19 @@ public class RestClient {
 	 * @return the response as entity
 	 * @since 3.2
 	 */
-	public <T> ResponseEntity<T> exchange(String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
+	public <T> HttpResponseEntity<T> exchange(String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
 			ParameterizedTypeReference<T> responseType, Object... uriVariables) throws RestClientException {
 
 		Type type = responseType.getType();
 		RequestCallback requestCallback = httpEntityCallback(requestEntity, type);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(type);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(type);
 		return nonNull(execute(url, method, requestCallback, responseExtractor, uriVariables));
 	}
 
 	/**
 	 * Execute the HTTP method to the given URI template, writing the given
 	 * request entity to the request, and returns the response as
-	 * {@link ResponseEntity}. The given {@link ParameterizedTypeReference} is
+	 * {@link HttpResponseEntity}. The given {@link ParameterizedTypeReference} is
 	 * used to pass generic type information:
 	 * 
 	 * <pre class="code">
@@ -865,19 +849,19 @@ public class RestClient {
 	 * @return the response as entity
 	 * @since 3.2
 	 */
-	public <T> ResponseEntity<T> exchange(String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
+	public <T> HttpResponseEntity<T> exchange(String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
 			ParameterizedTypeReference<T> responseType, Map<String, ?> uriVariables) throws RestClientException {
 
 		Type type = responseType.getType();
 		RequestCallback requestCallback = httpEntityCallback(requestEntity, type);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(type);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(type);
 		return nonNull(execute(url, method, requestCallback, responseExtractor, uriVariables));
 	}
 
 	/**
 	 * Execute the HTTP method to the given URI template, writing the given
 	 * request entity to the request, and returns the response as
-	 * {@link ResponseEntity}. The given {@link ParameterizedTypeReference} is
+	 * {@link HttpResponseEntity}. The given {@link ParameterizedTypeReference} is
 	 * used to pass generic type information:
 	 * 
 	 * <pre class="code">
@@ -898,18 +882,18 @@ public class RestClient {
 	 * @return the response as entity
 	 * @since 3.2
 	 */
-	public <T> ResponseEntity<T> exchange(URI url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
+	public <T> HttpResponseEntity<T> exchange(URI url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
 			ParameterizedTypeReference<T> responseType) throws RestClientException {
 
 		Type type = responseType.getType();
 		RequestCallback requestCallback = httpEntityCallback(requestEntity, type);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(type);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(type);
 		return nonNull(execute(url, method, requestCallback, responseExtractor));
 	}
 
 	/**
-	 * Execute the request specified in the given {@link RequestEntity} and
-	 * return the response as {@link ResponseEntity}. Typically used in
+	 * Execute the request specified in the given {@link HttpRequestEntity} and
+	 * return the response as {@link HttpResponseEntity}. Typically used in
 	 * combination with the static builder methods on {@code RequestEntity}, for
 	 * instance:
 	 * 
@@ -926,16 +910,16 @@ public class RestClient {
 	 * @return the response as entity
 	 * @since 4.1
 	 */
-	public <T> ResponseEntity<T> exchange(RequestEntity<?> requestEntity, Class<T> responseType) throws RestClientException {
+	public <T> HttpResponseEntity<T> exchange(HttpRequestEntity<?> requestEntity, Class<T> responseType) throws RestClientException {
 
 		RequestCallback requestCallback = httpEntityCallback(requestEntity, responseType);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(responseType);
 		return nonNull(doExecute(requestEntity.getUrl(), requestEntity.getMethod(), requestCallback, responseExtractor));
 	}
 
 	/**
-	 * Execute the request specified in the given {@link RequestEntity} and
-	 * return the response as {@link ResponseEntity}. The given
+	 * Execute the request specified in the given {@link HttpRequestEntity} and
+	 * return the response as {@link HttpResponseEntity}. The given
 	 * {@link ParameterizedTypeReference} is used to pass generic type
 	 * information:
 	 * 
@@ -953,12 +937,12 @@ public class RestClient {
 	 * @return the response as entity
 	 * @since 4.1
 	 */
-	public <T> ResponseEntity<T> exchange(RequestEntity<?> requestEntity, ParameterizedTypeReference<T> responseType)
+	public <T> HttpResponseEntity<T> exchange(HttpRequestEntity<?> requestEntity, ParameterizedTypeReference<T> responseType)
 			throws RestClientException {
 
 		Type type = responseType.getType();
 		RequestCallback requestCallback = httpEntityCallback(requestEntity, type);
-		ResponseExtractor<ResponseEntity<T>> responseExtractor = responseEntityExtractor(type);
+		ResponseExtractor<HttpResponseEntity<T>> responseExtractor = responseEntityExtractor(type);
 		return nonNull(doExecute(requestEntity.getUrl(), requestEntity.getMethod(), requestCallback, responseExtractor));
 	}
 
@@ -1133,9 +1117,9 @@ public class RestClient {
 
 	/**
 	 * Return a {@code ResponseExtractor} that prepares a
-	 * {@link ResponseEntity}.
+	 * {@link HttpResponseEntity}.
 	 */
-	public <T> ResponseExtractor<ResponseEntity<T>> responseEntityExtractor(Type responseType) {
+	public <T> ResponseExtractor<HttpResponseEntity<T>> responseEntityExtractor(Type responseType) {
 		return new ResponseEntityResponseExtractor<>(responseType);
 	}
 
@@ -1296,8 +1280,8 @@ public class RestClient {
 				}
 			} else {
 				Class<?> requestBodyClass = requestBody.getClass();
-				Type requestBodyType = (this.requestEntity instanceof RequestEntity
-						? ((RequestEntity<?>) this.requestEntity).getType() : requestBodyClass);
+				Type requestBodyType = (this.requestEntity instanceof HttpRequestEntity
+						? ((HttpRequestEntity<?>) this.requestEntity).getType() : requestBodyClass);
 				HttpHeaders httpHeaders = httpRequest.getHeaders();
 				HttpHeaders requestHeaders = this.requestEntity.getHeaders();
 				HttpMediaType requestContentType = requestHeaders.getContentType();
@@ -1370,7 +1354,7 @@ public class RestClient {
 	/**
 	 * Response extractor for {@link HttpEntity}.
 	 */
-	private class ResponseEntityResponseExtractor<T> implements ResponseExtractor<ResponseEntity<T>> {
+	private class ResponseEntityResponseExtractor<T> implements ResponseExtractor<HttpResponseEntity<T>> {
 
 		@Nullable
 		private final HttpMessageParserExtractor<T> delegate;
@@ -1384,12 +1368,12 @@ public class RestClient {
 		}
 
 		@Override
-		public ResponseEntity<T> extractData(ClientHttpResponse response) throws IOException {
+		public HttpResponseEntity<T> extractData(ClientHttpResponse response) throws IOException {
 			if (this.delegate != null) {
 				T body = this.delegate.extractData(response);
-				return ResponseEntity.status(response.getRawStatusCode()).headers(response.getHeaders()).body(body);
+				return HttpResponseEntity.status(response.getRawStatusCode()).headers(response.getHeaders()).body(body);
 			} else {
-				return ResponseEntity.status(response.getRawStatusCode()).headers(response.getHeaders()).build();
+				return HttpResponseEntity.status(response.getRawStatusCode()).headers(response.getHeaders()).build();
 			}
 		}
 	}
@@ -1458,6 +1442,14 @@ public class RestClient {
 			handleError(response);
 		}
 
+	}
+
+	private static final boolean jackson2Present;
+
+	static {
+		ClassLoader classLoader = RestClient.class.getClassLoader();
+		jackson2Present = ClassUtils2.isPresent("com.fasterxml.jackson.databind.ObjectMapper", classLoader)
+				&& ClassUtils2.isPresent("com.fasterxml.jackson.core.JsonGenerator", classLoader);
 	}
 
 }
