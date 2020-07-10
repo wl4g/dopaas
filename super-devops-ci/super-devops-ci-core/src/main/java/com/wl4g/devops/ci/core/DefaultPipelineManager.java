@@ -26,6 +26,7 @@ import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
 import com.wl4g.devops.ci.service.PipelineService;
+import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.ci.*;
 import com.wl4g.devops.common.bean.erm.AppCluster;
 import com.wl4g.devops.common.bean.erm.AppEnvironment;
@@ -429,7 +430,13 @@ public class DefaultPipelineManager implements PipelineManager {
             String[] split = contactGroupIds.split(",");
             List<Integer> ints = new ArrayList<>();
             for (int i = 0; i < split.length; i++) {
+                if(StringUtils.isBlank(split[i])){
+                    continue;
+                }
                 ints.add(Integer.parseInt(split[i]));
+            }
+            if(ints.size()<=0){
+                return;
             }
 
             List<Contact> contacts = contactDao.getContactByGroupIds(ints);
@@ -485,7 +492,8 @@ public class DefaultPipelineManager implements PipelineManager {
 
         // Obtain instances.
         List<AppInstance> instances = safeList(pipelineHistoryInstances).stream()
-                .map(detail -> appInstanceDao.selectByPrimaryKey(detail.getInstanceId())).collect(toList());
+                .map(detail -> appInstanceDao.selectByPrimaryKey(detail.getInstanceId()))
+                .filter(instance -> nonNull(instance.getEnable()) && instance.getEnable() == BaseBean.ENABLED).collect(toList());
 
         // New pipeline context.
         String projectSourceDir = config.getProjectSourceDir(project.getProjectName()).getAbsolutePath();
