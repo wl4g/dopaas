@@ -11,9 +11,12 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static com.wl4g.devops.tool.common.collection.Collections2.safeList;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
@@ -192,6 +195,20 @@ public class JgitTests {
         for (Ref ref : refs) {
             System.out.println("Remote tag: " + ref);
         }
+    }
+
+    @Test
+    public void testFilter(){
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
+        list.add(6);
+        List<Integer> instances = safeList(list).stream()
+                .map(detail -> detail+1).filter(instance -> instance==2||instance==3 ).collect(toList());
+        instances.forEach(System.out::println);
     }
 
 

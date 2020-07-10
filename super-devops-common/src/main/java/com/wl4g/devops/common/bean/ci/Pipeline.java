@@ -42,6 +42,8 @@ public class Pipeline extends BaseBean {
 
     private Integer pcmId;
 
+    private Integer deployId;
+
 
     public String getPipeName() {
         return pipeName;
@@ -169,5 +171,13 @@ public class Pipeline extends BaseBean {
 
     public void setPipeStepDeploy(PipeStepDeploy pipeStepDeploy) {
         this.pipeStepDeploy = pipeStepDeploy;
+    }
+
+    public Integer getDeployId() {
+        return deployId;
+    }
+
+    public void setDeployId(Integer deployId) {
+        this.deployId = deployId;
     }
 }
