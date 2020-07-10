@@ -23,14 +23,22 @@
     <result column="pcm_id" jdbcType="INTEGER" property="pcmId" />
 
 
-    <collection property="instances" javaType="list" ofType="com.wl4g.devops.common.bean.erm.AppInstance">
-      <result column="i.id" property="id" jdbcType="INTEGER" />
+
+    <!--<collection property="instances" javaType="list" ofType="com.wl4g.devops.common.bean.erm.AppInstance">
+      <id column="i.id" property="id" jdbcType="INTEGER" />
       <result column="i.hostname" property="hostname" jdbcType="VARCHAR" />
       <result column="i.endpoint" property="endpoint" jdbcType="INTEGER" />
       <result column="i.remark" property="remark" jdbcType="VARCHAR" />
-    </collection>
+    </collection>-->
 
   </resultMap>
+
+  <resultMap id="ListResultMap" type="com.wl4g.devops.common.bean.ci.Pipeline" extends="BaseResultMap">
+    <collection property="instances" select="selectInstancesByDeployId"  column="{deployId = deploy_id}" ofType="com.wl4g.devops.common.bean.erm.AppInstance" javaType="java.util.List">
+    </collection>
+  </resultMap>
+
+
   <sql id="Base_Column_List">
     id, pipe_name, organization_code, cluster_id, provider_kind, environment, parent_app_home, assets_dir,
     remark, create_date, create_by, update_date, update_by, del_flag
@@ -41,11 +49,16 @@
     p.remark, p.create_date, p.create_by, p.update_date, p.update_by, p.del_flag
   </sql>
 
-  <sql id="InstanceColumn">
-		,i.id as "i.id",
-		h.`hostname` as "i.hostname",
-		i.remark as "i.remark"
-	</sql>
+
+  <select id="selectInstancesByDeployId" resultMap="com.wl4g.devops.dao.erm.AppInstanceDao.BaseResultMap" parameterType="java.util.Map">
+        select
+            i.id,h.`hostname`,i.remark
+        from erm_app_instance i
+        inner join ci_pipe_step_deploy_instance pi on i.id=pi.instance_id
+        left join erm_host h on h.id=i.host_id
+        where pi.deploy_id= #{deployId};
+    </select>
+
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -231,17 +244,13 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+  <select id="list" resultMap="ListResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List_p" />
-    <include refid="InstanceColumn" />
-    ,c.name cluster_name,sp.enable pcm_enable,sp.pcm_id
+    ,c.name cluster_name,sp.enable pcm_enable,sp.pcm_id,d.id deploy_id
     from ci_pipeline p
     left join erm_app_cluster c on p.cluster_id=c.id
     left join ci_pipe_step_deploy d on d.pipe_id=p.id
-    left join ci_pipe_step_deploy_instance pi on pi.deploy_id=d.id
-    left join erm_app_instance i on i.id=pi.instance_id
-    left join erm_host h on h.id=i.host_id
     left join ci_pipe_step_pcm sp on sp.pipe_id=p.id
     where p.del_flag!=1
     <if test="id != null and id != ''" >
