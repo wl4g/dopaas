@@ -277,7 +277,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		if (isNotBlank(errmsg)) {
 			String tip = format("Failed to authentication of token: %s", token);
 			if (SmartGlobalErrorController.checkStackTrace(request)) {
-				log.debug(tip, ae);
+				log.error(tip, ae);
 			} else {
 				log.warn(tip + ", caused by: {}", errmsg);
 			}
