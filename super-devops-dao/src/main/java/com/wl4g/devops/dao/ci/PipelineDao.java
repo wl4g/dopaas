@@ -1,6 +1,7 @@
 package com.wl4g.devops.dao.ci;
 
 import com.wl4g.devops.common.bean.ci.Pipeline;
+import com.wl4g.devops.common.bean.erm.AppInstance;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -20,5 +21,7 @@ public interface PipelineDao {
 
     int updateByPrimaryKey(Pipeline record);
 
-    List<Pipeline> list(@Param("organizationCodes")List<String> organizationCodes, @Param("id") Integer id,@Param("pipeName") String pipeName, @Param("providerKind") String providerKind,  @Param("environment") String environment);
+    List<Pipeline> list(@Param("organizationCodes") List<String> organizationCodes, @Param("id") Integer id, @Param("pipeName") String pipeName, @Param("providerKind") String providerKind, @Param("environment") String environment);
+
+    List<AppInstance> selectInstancesByDeployId(@Param("deployId") Integer deployId);
 }
