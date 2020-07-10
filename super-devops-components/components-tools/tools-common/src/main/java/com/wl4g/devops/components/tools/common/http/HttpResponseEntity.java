@@ -17,7 +17,7 @@ import io.netty.handler.codec.http.HttpMethod;
  * 
  * @see #getStatusCode()
  */
-public class ResponseEntity<T> extends HttpEntity<T> {
+public class HttpResponseEntity<T> extends HttpEntity<T> {
 
 	private final Object status;
 
@@ -28,7 +28,7 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 	 * @param status
 	 *            the status code
 	 */
-	public ResponseEntity(HttpStatus status) {
+	public HttpResponseEntity(HttpStatus status) {
 		this(null, null, status);
 	}
 
@@ -41,7 +41,7 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 	 * @param status
 	 *            the status code
 	 */
-	public ResponseEntity(T body, HttpStatus status) {
+	public HttpResponseEntity(T body, HttpStatus status) {
 		this(body, null, status);
 	}
 
@@ -54,7 +54,7 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 	 * @param status
 	 *            the status code
 	 */
-	public ResponseEntity(MultiValueMap<String, String> headers, HttpStatus status) {
+	public HttpResponseEntity(MultiValueMap<String, String> headers, HttpStatus status) {
 		this(null, headers, status);
 	}
 
@@ -69,7 +69,7 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 	 * @param status
 	 *            the status code
 	 */
-	public ResponseEntity(T body, MultiValueMap<String, String> headers, HttpStatus status) {
+	public HttpResponseEntity(T body, MultiValueMap<String, String> headers, HttpStatus status) {
 		super(body, headers);
 		Assert2.notNull(status, "HttpStatus must not be null");
 		this.status = status;
@@ -87,7 +87,7 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 	 *            the status code (as {@code HttpStatus} or as {@code Integer}
 	 *            value)
 	 */
-	private ResponseEntity(T body, MultiValueMap<String, String> headers, Object status) {
+	private HttpResponseEntity(T body, MultiValueMap<String, String> headers, Object status) {
 		super(body, headers);
 		this.status = status;
 	}
@@ -127,7 +127,7 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 		if (!super.equals(other)) {
 			return false;
 		}
-		ResponseEntity<?> otherEntity = (ResponseEntity<?>) other;
+		HttpResponseEntity<?> otherEntity = (HttpResponseEntity<?>) other;
 		return ObjectUtils.nullSafeEquals(this.status, otherEntity.status);
 	}
 
@@ -204,7 +204,7 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 	 * @return the created {@code ResponseEntity}
 	 * @since 4.1
 	 */
-	public static <T> ResponseEntity<T> ok(T body) {
+	public static <T> HttpResponseEntity<T> ok(T body) {
 		BodyBuilder builder = ok();
 		return builder.body(body);
 	}
@@ -394,7 +394,7 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 		 * @return the response entity
 		 * @see BodyBuilder#body(Object)
 		 */
-		<T> ResponseEntity<T> build();
+		<T> HttpResponseEntity<T> build();
 	}
 
 	/**
@@ -435,7 +435,7 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 		 *            the body of the response entity
 		 * @return the built response entity
 		 */
-		<T> ResponseEntity<T> body(T body);
+		<T> HttpResponseEntity<T> body(T body);
 	}
 
 	private static class DefaultBuilder implements BodyBuilder {
@@ -524,13 +524,13 @@ public class ResponseEntity<T> extends HttpEntity<T> {
 		}
 
 		@Override
-		public <T> ResponseEntity<T> build() {
+		public <T> HttpResponseEntity<T> build() {
 			return body(null);
 		}
 
 		@Override
-		public <T> ResponseEntity<T> body(T body) {
-			return new ResponseEntity<T>(body, this.headers, this.statusCode);
+		public <T> HttpResponseEntity<T> body(T body) {
+			return new HttpResponseEntity<T>(body, this.headers, this.statusCode);
 		}
 	}
 

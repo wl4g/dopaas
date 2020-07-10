@@ -18,7 +18,7 @@ import io.netty.handler.codec.http.HttpMethod;
  * @see #getMethod()
  * @see #getUrl()
  */
-public class RequestEntity<T> extends HttpEntity<T> {
+public class HttpRequestEntity<T> extends HttpEntity<T> {
 
 	private final HttpMethod method;
 
@@ -34,7 +34,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 	 * @param url
 	 *            the URL
 	 */
-	public RequestEntity(HttpMethod method, URI url) {
+	public HttpRequestEntity(HttpMethod method, URI url) {
 		this(null, null, method, url);
 	}
 
@@ -48,7 +48,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 	 * @param url
 	 *            the URL
 	 */
-	public RequestEntity(T body, HttpMethod method, URI url) {
+	public HttpRequestEntity(T body, HttpMethod method, URI url) {
 		this(body, null, method, url, null);
 	}
 
@@ -65,7 +65,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 	 *            the type used for generic type resolution
 	 * @since 4.3
 	 */
-	public RequestEntity(T body, HttpMethod method, URI url, Type type) {
+	public HttpRequestEntity(T body, HttpMethod method, URI url, Type type) {
 		this(body, null, method, url, type);
 	}
 
@@ -79,7 +79,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 	 * @param url
 	 *            the URL
 	 */
-	public RequestEntity(MultiValueMap<String, String> headers, HttpMethod method, URI url) {
+	public HttpRequestEntity(MultiValueMap<String, String> headers, HttpMethod method, URI url) {
 		this(null, headers, method, url, null);
 	}
 
@@ -95,7 +95,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 	 * @param url
 	 *            the URL
 	 */
-	public RequestEntity(T body, MultiValueMap<String, String> headers, HttpMethod method, URI url) {
+	public HttpRequestEntity(T body, MultiValueMap<String, String> headers, HttpMethod method, URI url) {
 		this(body, headers, method, url, null);
 	}
 
@@ -114,7 +114,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 	 *            the type used for generic type resolution
 	 * @since 4.3
 	 */
-	public RequestEntity(T body, MultiValueMap<String, String> headers, HttpMethod method, URI url, Type type) {
+	public HttpRequestEntity(T body, MultiValueMap<String, String> headers, HttpMethod method, URI url, Type type) {
 		super(body, headers);
 		this.method = method;
 		this.url = url;
@@ -163,7 +163,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 		if (!super.equals(other)) {
 			return false;
 		}
-		RequestEntity<?> otherEntity = (RequestEntity<?>) other;
+		HttpRequestEntity<?> otherEntity = (HttpRequestEntity<?>) other;
 		return (ObjectUtils.nullSafeEquals(getMethod(), otherEntity.getMethod())
 				&& ObjectUtils.nullSafeEquals(getUrl(), otherEntity.getUrl()));
 	}
@@ -353,7 +353,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 		 * @return the request entity
 		 * @see BodyBuilder#body(Object)
 		 */
-		RequestEntity<Void> build();
+		HttpRequestEntity<Void> build();
 	}
 
 	/**
@@ -392,7 +392,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 		 *            the body of the request entity
 		 * @return the built request entity
 		 */
-		<T> RequestEntity<T> body(T body);
+		<T> HttpRequestEntity<T> body(T body);
 
 		/**
 		 * Set the body and type of the request entity and build the
@@ -407,7 +407,7 @@ public class RequestEntity<T> extends HttpEntity<T> {
 		 * @return the built request entity
 		 * @since 4.3
 		 */
-		<T> RequestEntity<T> body(T body, Type type);
+		<T> HttpRequestEntity<T> body(T body, Type type);
 	}
 
 	private static class DefaultBodyBuilder implements BodyBuilder {
@@ -468,18 +468,18 @@ public class RequestEntity<T> extends HttpEntity<T> {
 		}
 
 		@Override
-		public RequestEntity<Void> build() {
-			return new RequestEntity<Void>(this.headers, this.method, this.url);
+		public HttpRequestEntity<Void> build() {
+			return new HttpRequestEntity<Void>(this.headers, this.method, this.url);
 		}
 
 		@Override
-		public <T> RequestEntity<T> body(T body) {
-			return new RequestEntity<T>(body, this.headers, this.method, this.url);
+		public <T> HttpRequestEntity<T> body(T body) {
+			return new HttpRequestEntity<T>(body, this.headers, this.method, this.url);
 		}
 
 		@Override
-		public <T> RequestEntity<T> body(T body, Type type) {
-			return new RequestEntity<T>(body, this.headers, this.method, this.url, type);
+		public <T> HttpRequestEntity<T> body(T body, Type type) {
+			return new HttpRequestEntity<T>(body, this.headers, this.method, this.url, type);
 		}
 	}
 
