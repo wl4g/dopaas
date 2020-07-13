@@ -267,7 +267,7 @@
 			</if>
 			<if test="instance != null">
 				AND h.`hostname` = #{instance.host}
-				AND i.`endpoint` = #{instance.endpoint}
+				AND g.`endpoint` = #{instance.endpoint}
 			</if>
 		</where>
 		ORDER BY rh.create_date DESC
