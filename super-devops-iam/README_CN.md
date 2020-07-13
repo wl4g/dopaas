@@ -66,7 +66,7 @@ spring:
           wechat-mp:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}${server.contextPath}/sns/wechatmp/callback
+            redirect-url: https://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}${server.contextPath}/sns/wechatmp/callback
           wechat:
             app-id: yourappid
             app-secret: yoursecret

@@ -18,14 +18,14 @@ spring:
           rules:
             '[/**]':
               allows-origins:
-                - http://${DEVOPS_DOMAIN_TOP:wl4g.dev}
-                - http://${DEVOPS_DOMAIN_TOP:wl4g.dev:${server.port}}
-                - http://${DEVOPS_DOMAIN_TOP:wl4g.local}
-                - http://${DEVOPS_DOMAIN_TOP:wl4g.local:${server.port}}
-                - http://${DEVOPS_DOMAIN_TOP:wl4g.debug}
-                - http://${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
-                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug}
-                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.debug:${server.port}}
+                - http://${DEVOPS_SERVICE_ZONE:wl4g.dev}
+                - http://${DEVOPS_SERVICE_ZONE:wl4g.dev:${server.port}}
+                - http://${DEVOPS_SERVICE_ZONE:wl4g.local}
+                - http://${DEVOPS_SERVICE_ZONE:wl4g.local:${server.port}}
+                - http://${DEVOPS_SERVICE_ZONE:wl4g.debug}
+                - http://${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
+                - http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug}
+                - http://*.${DEVOPS_SERVICE_ZONE:wl4g.debug:${server.port}}
                 - http://localhost
                 - http://localhost:14040
                 - http://127.0.0.1
@@ -48,12 +48,12 @@ spring:
           wechat-mp:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.com}${server.contextPath}/sns/wechatmp/callback
+            redirect-url: https://iam.${DEVOPS_SERVICE_ZONE:wl4g.com}${server.contextPath}/sns/wechatmp/callback
           wechat:
             app-id: yourappid
             app-secret: yoursecret
             redirect-url: http://passport.wl4g.com${server.contextPath}/sns/wechat/callback
-            href: https://${DEVOPS_DOMAIN_TOP:wl4g.com}/${server.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+            href: https://${DEVOPS_SERVICE_ZONE:wl4g.com}/${server.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
           qq:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4

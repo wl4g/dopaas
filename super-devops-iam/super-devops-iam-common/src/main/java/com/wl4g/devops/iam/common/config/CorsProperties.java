@@ -332,8 +332,8 @@ public class CorsProperties implements InitializingBean, Serializable {
 
 			/*
 			 * Clean up invalid values that did not resolve successfully through
-			 * environment variables. e.g. http://${DEVOPS_DOMAIN_TOP}
-			 * https://${DEVOPS_DOMAIN_TOP}
+			 * environment variables. e.g. http://${DEVOPS_SERVICE_ZONE}
+			 * https://${DEVOPS_SERVICE_ZONE}
 			 */
 			Iterator<String> it2 = sources.iterator();
 			while (it2.hasNext()) {

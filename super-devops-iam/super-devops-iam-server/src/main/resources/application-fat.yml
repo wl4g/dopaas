@@ -18,14 +18,14 @@ spring:
           rules:
             '[/**]':
               allows-origins:
-                - https://${DEVOPS_DOMAIN_TOP:wl4g.fat}
-                - http://${DEVOPS_DOMAIN_TOP:wl4g.fat}
-                - https://*.${DEVOPS_DOMAIN_TOP:wl4g.fat}
-                - http://*.${DEVOPS_DOMAIN_TOP:wl4g.fat}
+                - https://${DEVOPS_SERVICE_ZONE:wl4g.fat}
+                - http://${DEVOPS_SERVICE_ZONE:wl4g.fat}
+                - https://*.${DEVOPS_SERVICE_ZONE:wl4g.fat}
+                - http://*.${DEVOPS_SERVICE_ZONE:wl4g.fat}
         #login-uri: /view/login.html
-        login-uri: http://devops.${DEVOPS_DOMAIN_TOP:wl4g.fat}/#/login
+        login-uri: http://devops.${DEVOPS_SERVICE_ZONE:wl4g.fat}/#/login
         unauthorized-uri: /view/403.html
-        success-endpoint: umc-manager@http://umc.${DEVOPS_DOMAIN_TOP:wl4g.fat}/umc-manager
+        success-endpoint: umc-manager@http://umc.${DEVOPS_SERVICE_ZONE:wl4g.fat}/umc-manager
         acl:
           secure: false # Turn off protection will trust any same intranet IP.
           allowIpRange: ${DEVOPS_IAM_ACL_ALLOW:127.0.0.1}
@@ -38,12 +38,12 @@ spring:
           wechat-mp:
             app-id: yourappid
             app-secret: yoursecret
-            redirect-url: https://iam.${DEVOPS_DOMAIN_TOP:wl4g.fat}${server.contextPath}/sns/wechatmp/callback
+            redirect-url: https://iam.${DEVOPS_SERVICE_ZONE:wl4g.fat}${server.contextPath}/sns/wechatmp/callback
           wechat:
             app-id: yourappid
             app-secret: yoursecret
             redirect-url: http://passport.wl4g.fat${server.contextPath}/sns/wechat/callback
-            href: https://${DEVOPS_DOMAIN_TOP:wl4g.fat}/${server.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
+            href: https://${DEVOPS_SERVICE_ZONE:wl4g.fat}/${server.contextPath}/iam-jssdk/assets/css/iam-jssdk-wx.min.css
           qq:
             app-id: 101542056
             app-secret: 46b2ba9fa24c2b973abc64ec898db3b4
