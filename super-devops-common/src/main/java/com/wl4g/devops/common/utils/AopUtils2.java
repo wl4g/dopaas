@@ -16,6 +16,7 @@
 package com.wl4g.devops.common.utils;
 
 import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 
 /**
  * Increasing the support of target objects for obtaining JDK dynamic proxy
@@ -26,7 +27,7 @@ import org.springframework.aop.framework.Advised;
  * @time 2016年11月9日
  * @since
  */
-public abstract class AopUtils extends org.springframework.aop.support.AopUtils {
+public abstract class AopUtils2 extends AopUtils {
 
 	/**
 	 * Get target object

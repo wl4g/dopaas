@@ -16,10 +16,17 @@
 package com.wl4g.devops.common.utils.bean;
 
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.cglib.core.Converter;
+import org.springframework.objenesis.Objenesis;
+import org.springframework.objenesis.ObjenesisStd;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.springframework.cglib.beans.BeanCopier.create;
+import static org.springframework.util.Assert.notNull;
+
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
 
 /**
  * {@link BeanCopierUtils}
@@ -31,123 +38,104 @@ import java.util.function.UnaryOperator;
 public abstract class BeanCopierUtils {
 
 	/***
-	 * 通过类复制属性（同一个类其实就是克隆自己） 属性相同才能复制
+	 * Copy bean object the properties of new objects. Note: only when there is
+	 * a corresponding setter method can be copied.
 	 * 
-	 * @param source
-	 *            需要复制的对象
-	 * @param target
-	 *            目标类
+	 * @param src
+	 *            source object
 	 * @param <O>
 	 * @param <T>
-	 * @return
+	 * @return return target dst object.
 	 */
-	public static <O, T> T mapper(O source, Class<T> target) {
-		return baseMapper(source, target);
-	}
-
-	/**
-	 * 通过类复制属性（同一个类其实就是克隆自己） 属性相同才能复制
-	 * 
-	 * @param source
-	 *            需要复制的对象
-	 * @param target
-	 *            目标类
-	 * @param action
-	 *            支持lambda操作
-	 * @param <O>
-	 * @param <T>
-	 * @return
-	 */
-	public static <O, T> T mapper(O source, Class<T> target, Consumer<T> action) {
-		T instance = mapper(source, target);
-		action.accept(instance);
-		return instance;
-	}
-
-	/**
-	 * 通过类复制属性（同一个类其实就是克隆自己） 属性相同才能复制
-	 * 
-	 * @param source
-	 *            需要复制的对象
-	 * @param target
-	 *            目标类
-	 * @param action
-	 *            支持lambda操作
-	 * @param <O>
-	 * @param <T>
-	 * @return
-	 */
-	public static <O, T> T mapper(O source, Class<T> target, UnaryOperator<T> action) {
-		T instance = mapper(source, target);
-		return action.apply(instance);
-	}
-
-	/***
-	 * 通过对象复制属性（同一个类其实就是克隆自己） 属性相同才能复制
-	 * 
-	 * @param source
-	 * @param target
-	 * @param <O>
-	 * @param <T>
-	 * @return
-	 */
-	public static <O, T> T mapperObject(O source, T target) {
-		String baseKey = generateKey(source.getClass(), target.getClass());
-		BeanCopier copier = null;
-		if (!mapCaches.containsKey(baseKey)) {
-			mapCaches.put(baseKey, (copier = create(source.getClass(), target.getClass(), false)));
-		} else {
-			copier = mapCaches.get(baseKey);
-		}
-		copier.copy(source, target, null);
-		return target;
-	}
-
-	public static <O, T> T mapperObject(O source, T target, Consumer<T> action) {
-		mapperObject(source, target);
-		action.accept(target);
-		return target;
-	}
-
-	public static <O, T> T mapperObject(O source, T target, UnaryOperator<T> action) {
-		mapperObject(source, target);
-		return action.apply(target);
-	}
-
-	private static <O, T> T baseMapper(O source, Class<T> target) {
-		String baseKey = generateKey(source.getClass(), target);
-		BeanCopier copier;
-		if (!mapCaches.containsKey(baseKey)) {
-			copier = BeanCopier.create(source.getClass(), target, false);
-			mapCaches.put(baseKey, copier);
-		} else {
-			copier = mapCaches.get(baseKey);
-		}
-		T instance = null;
+	@SuppressWarnings("unchecked")
+	public static <O> O clone(O src) {
+		notNull(src, "Mapper bean source object is required");
 		try {
-			// The object to be copied must have a parameterless constructor
-			instance = target.getDeclaredConstructor().newInstance();
+			O newObj = (O) objenesis.newInstance(src.getClass());
+			return (O) mapper(src, newObj, null);
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
-		copier.copy(source, instance, null);
-		return instance;
+	}
+
+	/***
+	 * Copy the properties of class objects. Note: only when the properties are
+	 * the same and there is a corresponding setter method can you copy them
+	 * 
+	 * @param src
+	 *            source object
+	 * @param dst
+	 *            target new object
+	 * @param <O>
+	 * @param <T>
+	 * @return return target dst object.
+	 */
+	public static <O, T> T mapper(O src, T dst) {
+		return mapper(src, dst, null);
+	}
+
+	/***
+	 * Copy the properties of class objects. Note: only when the properties are
+	 * the same and there is a corresponding setter method can you copy them
+	 * 
+	 * @param src
+	 *            source object
+	 * @param dst
+	 *            target new object
+	 * @param converter
+	 *            copier fields converter
+	 * @param <O>
+	 * @param <T>
+	 * @return return target dst object.
+	 */
+	public static <O, T> T mapper(O src, T dst, Converter converter) {
+		return doBeanMapper(src, dst, converter);
 	}
 
 	/**
-	 * Generate Key
+	 * Do bean copying fields mapper
 	 * 
-	 * @param class1
-	 * @param class2
+	 * @param src
+	 * @param dst
+	 * @param converter
 	 * @return
 	 */
-	private static String generateKey(Class<?> class1, Class<?> class2) {
-		return class1.toString() + class2.toString();
+	private static <O, T> T doBeanMapper(O src, T dst, Converter converter) {
+		notNull(src, "Mapper bean source object is required");
+		notNull(dst, "Mapper bean target object is required");
+
+		// Gets cache key.
+		String baseKey = generateKey(src.getClass(), dst.getClass());
+
+		// Gets BeanCopier
+		BeanCopier copier = mapCaches.get(baseKey);
+		if (isNull(copier)) {
+			mapCaches.put(baseKey, (copier = create(src.getClass(), dst.getClass(), nonNull(converter))));
+		}
+
+		copier.copy(src, dst, converter);
+		return dst;
+	}
+
+	/**
+	 * Gets generate Key
+	 * 
+	 * @param src
+	 * @param dst
+	 * @return
+	 */
+	private static String generateKey(Class<?> src, Class<?> dst) {
+		return src.toString() + dst.toString();
 	}
 
 	/**
 	 * Use cache to improve efficiency
 	 */
-	final private static ConcurrentHashMap<String, BeanCopier> mapCaches = new ConcurrentHashMap<>();
+	final private static Map<String, BeanCopier> mapCaches = new ConcurrentHashMap<>();
+
+	/**
+	 * Object instantiator
+	 */
+	final private static Objenesis objenesis = new ObjenesisStd(true);
 
 }

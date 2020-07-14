@@ -21,7 +21,7 @@ import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.shiro.web.util.WebUtils.getRequestUri;
+import static org.apache.shiro.web.util.WebUtils.getPathWithinApplication;
 
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
@@ -122,7 +122,7 @@ public final class CookieXsrfTokenRepository implements XsrfTokenRepository {
 	@Override
 	public XsrfToken getXToken(HttpServletRequest request) {
 		if (!isXsrfRequired(request)) {
-			log.debug("Requests that do not requires XSRF validation, RequestUri: %s", getRequestUri(request));
+			log.debug("Requests that do not requires XSRF validation, RequestUri: %s", getPathWithinApplication(request));
 			return null;
 		}
 

@@ -15,6 +15,9 @@
  */
 package com.wl4g.devops.common.utils;
 
+import static java.lang.String.valueOf;
+import static java.util.Objects.nonNull;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -85,8 +88,8 @@ public abstract class PropertySources {
 			ymlFb.afterPropertiesSet();
 			// Properties to map
 			Map<String, Object> map = new HashMap<>();
-			if (ymlFb.getObject() != null) {
-				ymlFb.getObject().forEach((k, v) -> map.put(String.valueOf(k), v));
+			if (nonNull(ymlFb) && nonNull(ymlFb.getObject())) {
+				ymlFb.getObject().forEach((k, v) -> map.put(valueOf(k), v));
 			}
 			return map;
 		}

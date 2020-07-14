@@ -17,7 +17,8 @@ package com.wl4g.devops.common.utils.web;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.web.context.request.RequestContextHolder;
+import static java.util.Objects.nonNull;
+import static org.springframework.web.context.request.RequestContextHolder.getRequestAttributes;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.wl4g.devops.components.tools.common.web.WebUtils2;
@@ -38,10 +39,14 @@ public class WebUtils3 extends WebUtils2 {
 	 * @return
 	 */
 	public static String getRequestParameter(String name) {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-		return request.getParameter(name);
+		ServletRequestAttributes attr = (ServletRequestAttributes) getRequestAttributes();
+		if (nonNull(attr)) {
+			HttpServletRequest request = attr.getRequest();
+			return nonNull(request) ? request.getParameter(name) : null;
+		}
+		return null;
 	}
 
-    public static void getRequestParameter() {
-    }
+	public static void getRequestParameter() {
+	}
 }

@@ -177,7 +177,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		/**
 		 * {@link com.wl4g.devops.iam.client.realm.FastCasAuthorizingRealm#doAuthenticationInfo(AuthenticationToken)}
 		 */
-		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).setStoredCredentials(newGrantTicket));
+		assertion.setPrincipalInfo(new SimplePrincipalInfo(getPrincipalInfo()).withStoredCredentials(newGrantTicket));
 		log.info("New validated grantTicket: {}, sessionId: {}", newGrantTicket, getSessionId());
 
 		// Principal info attributes.

@@ -16,64 +16,32 @@
 package com.wl4g.devops.common.utils.bean;
 
 import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
+import static java.lang.System.out;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.springframework.cglib.core.Converter;
 
 public class BeanCopierUtilsTests {
 
-	public static UserBean createUser() {
-		UserBean user = new UserBean();
-		NameBean nameObj = new NameBean();
-		user.setName(nameObj);
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		user.setPhone("18576670069");
-		user.setSex("1");
-		user.setAge(10);
-		try {
-			user.setBirthdate(dateFormat.parse("1990-10-11"));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		user.setMoney(99999l);
-		user.setCreateTime(new Date());
-		user.setCreateUser("张三");
-		user.setModifyTime(new Date());
-		user.setModifyUser("李四");
-		user.setIsValidate("1");
-		user.setComments("2020年 COVID-19");
-
-		try {
-			nameObj.setCreateTime(dateFormat.parse("2020-03-06"));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		nameObj.setCreateUser("王五");
-		nameObj.setModifyTime(new Date());
-		nameObj.setModifyUser("赵六");
-		nameObj.setIsValidate("1");
-		nameObj.setComments("2020年 COVID-19");
-
-		return user;
-	}
-
 	public static void main(String[] args) {
-		UserBean user = BeanCopierUtilsTests.createUser();
+		//
+		// 注：bean的setter方法必须是标准的，如：setter方法有返回值也会导致无法复制
+		//
+		SimpleUserPrincipal p1 = new SimpleUserPrincipal();
+		p1.setPrincipalId("001");
+		p1.setPrincipal("zs");
+		p1.getAttributes().put("aa", "11");
+		out.println("source p1 object: " + toJSONString(p1) + ", hashCode: " + p1.hashCode());
 
-		UserBean user2 = BeanCopierUtils.mapper(user, user.getClass());
-		System.out.println("user2: " + user2);
-		System.out.println("user2 json: " + toJSONString(user2));
-
-		UserBean user3 = BeanCopierUtils.mapper(user, user.getClass(), userBean -> {
-			userBean.getName().setFirstName("川_");
-			userBean.getName().setLastName("建国");
-			System.out.println("userBean: " + userBean);
-			return userBean;
+		SimpleUserPrincipal p2 = new SimpleUserPrincipal();
+		BeanCopierUtils.mapper(p1, p2, new Converter() {
+			@SuppressWarnings("rawtypes")
+			@Override
+			public Object convert(Object fieldValue, Class fieldClass, Object setterMethod) {
+				// System.out.println(arg0);
+				return fieldValue;
+			}
 		});
-		System.out.println("user3: " + user3);
-		System.out.println("user3 json: " + toJSONString(user3));
+		out.println("clone p2 object: " + toJSONString(p2) + ", hashCode: " + p2.hashCode());
 
 	}
 
