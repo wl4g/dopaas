@@ -17,9 +17,9 @@ package com.wl4g.devops.common.utils.bean;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import javax.validation.constraints.NotBlank;
 
@@ -36,26 +36,26 @@ public class SimpleUserPrincipal implements IUserPrincipal {
 
 	/** Authenticate principal ID. */
 	@NotBlank
-	private String principalId = EMPTY;
+	private String principalId;
 
 	/** Authenticate principal name. */
 	@NotBlank
-	private String principal = EMPTY;
+	private String principal;
 
 	/** Authenticate principal DB stored credenticals. */
-	private String storedCredentials = EMPTY;
+	private String storedCredentials;
 
 	/** Authenticate principal role codes. */
-	private String roles = EMPTY;
+	private String roles;
 
 	/** Authenticate principal organization. */
 	private PrincipalOrganization organization;
 
 	/** Authenticate principal permission. */
-	private String permissions = EMPTY;
+	private String permissions;
 
 	/** Authenticate principal attributes. */
-	private Attributes attributes = new Attributes();
+	private Attributes attributes;
 
 	public SimpleUserPrincipal() {
 		super();
@@ -87,10 +87,19 @@ public class SimpleUserPrincipal implements IUserPrincipal {
 		return principalId;
 	}
 
+	@Override
+	public String principalId() {
+		return isBlank(principalId) ? EMPTY : principalId;
+	}
+
 	public final void setPrincipalId(String principalId) {
 		hasTextOf(principalId, "principalId");
 		this.principalId = principalId;
-		// return this;
+	}
+
+	public final SimpleUserPrincipal withPrincipalId(String principalId) {
+		setPrincipalId(principalId);
+		return this;
 	}
 
 	@Override
@@ -98,9 +107,18 @@ public class SimpleUserPrincipal implements IUserPrincipal {
 		return principal;
 	}
 
-	public final SimpleUserPrincipal setPrincipal(String principal) {
+	@Override
+	public String principal() {
+		return isBlank(principal) ? EMPTY : principal;
+	}
+
+	public final void setPrincipal(String principal) {
 		hasTextOf(principal, "principalName");
 		this.principal = principal;
+	}
+
+	public final SimpleUserPrincipal withPrincipal(String principal) {
+		setPrincipal(principal);
 		return this;
 	}
 
@@ -109,10 +127,19 @@ public class SimpleUserPrincipal implements IUserPrincipal {
 		return storedCredentials;
 	}
 
-	public final SimpleUserPrincipal setStoredCredentials(String storedCredentials) {
+	@Override
+	public String storedCredentials() {
+		return isBlank(storedCredentials) ? EMPTY : storedCredentials;
+	}
+
+	public final void setStoredCredentials(String storedCredentials) {
 		// hasText(storedCredentials, "Authenticate storedCredentials can't
 		// empty");
 		this.storedCredentials = storedCredentials;
+	}
+
+	public final SimpleUserPrincipal withStoredCredentials(String storedCredentials) {
+		setStoredCredentials(storedCredentials);
 		return this;
 	}
 
@@ -121,9 +148,18 @@ public class SimpleUserPrincipal implements IUserPrincipal {
 		return roles;
 	}
 
-	public final SimpleUserPrincipal setRoles(String roles) {
+	@Override
+	public String roles() {
+		return isBlank(roles) ? EMPTY : roles;
+	}
+
+	public final void setRoles(String roles) {
 		// hasText(roles, "Authenticate roles can't empty");
 		this.roles = roles;
+	}
+
+	public final SimpleUserPrincipal withRoles(String roles) {
+		setRoles(roles);
 		return this;
 	}
 
@@ -132,9 +168,20 @@ public class SimpleUserPrincipal implements IUserPrincipal {
 		return organization;
 	}
 
-	public SimpleUserPrincipal setOrganization(PrincipalOrganization organization) {
+	@Override
+	public PrincipalOrganization organization(boolean create) {
+		return isNull(organization)
+				? (create ? (organization = new PrincipalOrganization()) : (organization = PrincipalOrganization.NOOP))
+				: organization;
+	}
+
+	public void setOrganization(PrincipalOrganization organization) {
 		// notNullOf(organization, "organization");
 		this.organization = organization;
+	}
+
+	public SimpleUserPrincipal withOrganization(PrincipalOrganization organization) {
+		setOrganization(organization);
 		return this;
 	}
 
@@ -143,21 +190,30 @@ public class SimpleUserPrincipal implements IUserPrincipal {
 		return permissions;
 	}
 
-	public final SimpleUserPrincipal setPermissions(String permissions) {
+	@Override
+	public String permissions() {
+		return isBlank(permissions) ? EMPTY : permissions;
+	}
+
+	public final void setPermissions(String permissions) {
 		// hasText(permissions, "Authenticate permissions can't empty");
 		this.permissions = permissions;
+	}
+
+	public final SimpleUserPrincipal withPermissions(String permissions) {
+		setPermissions(permissions);
 		return this;
 	}
 
-	/**
-	 * Gets principal account attributes.
-	 * 
-	 * @return
-	 */
 	@Override
 	public final Attributes getAttributes() {
-		notNull(attributes, "Principal attributes can't null");
+		// notNull(attributes, "Principal attributes can't null");
 		return attributes;
+	}
+
+	@Override
+	public final Attributes attributes(boolean create) {
+		return isNull(attributes) ? (create ? (attributes = new Attributes()) : (attributes = Attributes.NOOP)) : attributes;
 	}
 
 	/**
@@ -166,14 +222,18 @@ public class SimpleUserPrincipal implements IUserPrincipal {
 	 * @param attributes
 	 * @return
 	 */
-	public final SimpleUserPrincipal setAttributes(Attributes attributes) {
-		if (!isEmpty(attributes)) {
-			// [MARK1]
-			/**
-			 * @see {@link com.wl4g.devops.iam.common.utils.IamSecurityHolder#getPrincipalInfo(boolean)}#MARK2
-			 */
-			this.attributes.putAll(attributes);
-		}
+	public final void setAttributes(Attributes attributes) {
+		this.attributes = attributes;
+	}
+
+	/**
+	 * Sets with principal account attributes.
+	 * 
+	 * @param attributes
+	 * @return
+	 */
+	public final SimpleUserPrincipal withAttributes(Attributes attributes) {
+		setAttributes(attributes);
 		return this;
 	}
 

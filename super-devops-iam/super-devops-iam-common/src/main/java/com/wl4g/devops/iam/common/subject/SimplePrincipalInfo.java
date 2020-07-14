@@ -15,10 +15,12 @@
  */
 package com.wl4g.devops.iam.common.subject;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.shiro.util.Assert.hasText;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 import javax.validation.constraints.NotBlank;
 
@@ -35,26 +37,26 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 
 	/** Authenticate principal ID. */
 	@NotBlank
-	private String principalId = EMPTY;
+	private String principalId;
 
 	/** Authenticate principal name. */
 	@NotBlank
-	private String principal = EMPTY;
+	private String principal;
 
 	/** Authenticate principal DB stored credenticals. */
-	private String storedCredentials = EMPTY;
+	private String storedCredentials;
 
 	/** Authenticate principal role codes. */
-	private String roles = EMPTY;
+	private String roles;
 
 	/** Authenticate principal organization. */
 	private PrincipalOrganization organization;
 
 	/** Authenticate principal permission. */
-	private String permissions = EMPTY;
+	private String permissions;
 
 	/** Authenticate principal attributes. */
-	private Attributes attributes = new Attributes();
+	private Attributes attributes;
 
 	public SimplePrincipalInfo() {
 		super();
@@ -86,6 +88,11 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		return principalId;
 	}
 
+	@Override
+	public String principalId() {
+		return isBlank(principalId) ? EMPTY : principalId;
+	}
+
 	public final void setPrincipalId(String principalId) {
 		hasTextOf(principalId, "principalId");
 		this.principalId = principalId;
@@ -101,6 +108,11 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		return principal;
 	}
 
+	@Override
+	public String principal() {
+		return isBlank(principal) ? EMPTY : principal;
+	}
+
 	public final void setPrincipal(String principal) {
 		hasTextOf(principal, "principalName");
 		this.principal = principal;
@@ -114,6 +126,11 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	@Override
 	public final String getStoredCredentials() {
 		return storedCredentials;
+	}
+
+	@Override
+	public String storedCredentials() {
+		return isBlank(storedCredentials) ? EMPTY : storedCredentials;
 	}
 
 	public final void setStoredCredentials(String storedCredentials) {
@@ -132,6 +149,11 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		return roles;
 	}
 
+	@Override
+	public String roles() {
+		return isBlank(roles) ? EMPTY : roles;
+	}
+
 	public final void setRoles(String roles) {
 		// hasText(roles, "Authenticate roles can't empty");
 		this.roles = roles;
@@ -145,6 +167,13 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	@Override
 	public final PrincipalOrganization getOrganization() {
 		return organization;
+	}
+
+	@Override
+	public PrincipalOrganization organization(boolean create) {
+		return isNull(organization)
+				? (create ? (organization = new PrincipalOrganization()) : (organization = PrincipalOrganization.NOOP))
+				: organization;
 	}
 
 	public void setOrganization(PrincipalOrganization organization) {
@@ -162,6 +191,11 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		return permissions;
 	}
 
+	@Override
+	public String permissions() {
+		return isBlank(permissions) ? EMPTY : permissions;
+	}
+
 	public final void setPermissions(String permissions) {
 		// hasText(permissions, "Authenticate permissions can't empty");
 		this.permissions = permissions;
@@ -172,15 +206,15 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		return this;
 	}
 
-	/**
-	 * Gets principal account attributes.
-	 * 
-	 * @return
-	 */
 	@Override
 	public final Attributes getAttributes() {
 		// notNull(attributes, "Principal attributes can't null");
 		return attributes;
+	}
+
+	@Override
+	public final Attributes attributes(boolean create) {
+		return isNull(attributes) ? (create ? (attributes = new Attributes()) : (attributes = Attributes.NOOP)) : attributes;
 	}
 
 	/**
@@ -190,13 +224,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * @return
 	 */
 	public final void setAttributes(Attributes attributes) {
-		if (!isEmpty(attributes)) {
-			// [MARK1]
-			/**
-			 * @see {@link com.wl4g.devops.iam.common.utils.IamSecurityHolder#getPrincipalInfo(boolean)}#MARK2
-			 */
-			this.attributes.putAll(attributes);
-		}
+		this.attributes = attributes;
 	}
 
 	/**

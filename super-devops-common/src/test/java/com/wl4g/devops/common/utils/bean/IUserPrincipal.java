@@ -21,8 +21,15 @@ import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
@@ -37,8 +44,8 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * IAM principal account information.
@@ -57,11 +64,25 @@ public interface IUserPrincipal extends Serializable {
 	String getPrincipalId();
 
 	/**
+	 * Get account principal Id.
+	 * 
+	 * @return If null, the NOOP default value is returned
+	 */
+	String principalId();
+
+	/**
 	 * Get account principal name.
 	 * 
 	 * @return
 	 */
 	String getPrincipal();
+
+	/**
+	 * Get account principal name.
+	 * 
+	 * @return If null, the NOOP default value is returned
+	 */
+	String principal();
 
 	/**
 	 * Principal role codes. </br>
@@ -74,12 +95,32 @@ public interface IUserPrincipal extends Serializable {
 	String getRoles();
 
 	/**
+	 * Principal role codes. </br>
+	 * <p>
+	 * EG: sc_sys_mgt,sc_general_mgt,sc_general_operator,sc_user_jack
+	 * </p>
+	 *
+	 * @return principal role codes, If null, the NOOP default value is returned
+	 */
+	String roles();
+
+	/**
 	 * Principal organization. </br>
 	 * <p>
 	 *
 	 * @return principal organizations identifiers.
 	 */
 	PrincipalOrganization getOrganization();
+
+	/**
+	 * Principal organization. </br>
+	 * <p>
+	 * 
+	 * @param create
+	 * @return principal organizations identifiers, If null, the NOOP default
+	 *         value is returned
+	 */
+	PrincipalOrganization organization(boolean create);
 
 	/**
 	 * Principal permissions. </br>
@@ -92,6 +133,17 @@ public interface IUserPrincipal extends Serializable {
 	String getPermissions();
 
 	/**
+	 * Principal permissions. </br>
+	 * <p>
+	 * e.g.: sys:user:view,sys:user:edit,goods:order:view,goods:order:edit
+	 * </p>
+	 *
+	 * @return principal permission identifiers, If null, the NOOP default value
+	 *         is returned
+	 */
+	String permissions();
+
+	/**
 	 * Stored encrypted credentials
 	 * 
 	 * @return Encrypted credentials string
@@ -99,11 +151,27 @@ public interface IUserPrincipal extends Serializable {
 	String getStoredCredentials();
 
 	/**
+	 * Stored encrypted credentials
+	 * 
+	 * @return Encrypted credentials string, If null, the NOOP default value is
+	 *         returned
+	 */
+	String storedCredentials();
+
+	/**
 	 * Gets account attributes.
 	 * 
 	 * @return
 	 */
 	Attributes getAttributes();
+
+	/**
+	 * Gets account attributes.
+	 * 
+	 * @param create
+	 * @return If null, the NOOP default value is returned
+	 */
+	Attributes attributes(boolean create);
 
 	/**
 	 * Validation of principal information attribute.
@@ -271,6 +339,207 @@ public interface IUserPrincipal extends Serializable {
 			}
 			return this;
 		}
+
+		/**
+		 * NoOp {@link Attributes}
+		 */
+		final public static Attributes NOOP = new Attributes() {
+			private static final long serialVersionUID = 6965759508221042024L;
+
+			@Override
+			public String getSessionLang() {
+				return null;
+			}
+
+			@Override
+			public Attributes setSessionLang(String lang) {
+				return null;
+			}
+
+			@Override
+			public String getClientHost() {
+				return null;
+			}
+
+			@Override
+			public Attributes setClientHost(String clientHost) {
+				return null;
+			}
+
+			@Override
+			public String getParentSessionId() {
+				return null;
+			}
+
+			@Override
+			public Attributes setParentSessionId(String parentSessionId) {
+				return null;
+			}
+
+			@Override
+			public String getDataCipher() {
+				return null;
+			}
+
+			@Override
+			public Attributes setDataCipher(String dataCipher) {
+				return null;
+			}
+
+			@Override
+			public String getAccessTokenSign() {
+				return null;
+			}
+
+			@Override
+			public Attributes setAccessTokenSign(String accessTokenSign) {
+				return null;
+			}
+
+			@Override
+			public boolean getRememberMe() {
+				return false;
+			}
+
+			@Override
+			public Attributes setRememberMe(String rememberMe) {
+				return null;
+			}
+
+			@Override
+			public SocialAuthorizeInfo getSocialAuthorizeInfo() {
+				return null;
+			}
+
+			@Override
+			public Attributes setSocialAuthorizeInfo(SocialAuthorizeInfo info) {
+				return null;
+			}
+
+			@Override
+			public boolean containsValue(Object value) {
+				return false;
+			}
+
+			@Override
+			public String get(Object key) {
+				return null;
+			}
+
+			@Override
+			public String getOrDefault(Object key, String defaultValue) {
+				return null;
+			}
+
+			@Override
+			public void clear() {
+			}
+
+			@Override
+			protected boolean removeEldestEntry(Entry<String, String> eldest) {
+				return false;
+			}
+
+			@Override
+			public Set<String> keySet() {
+				return null;
+			}
+
+			@Override
+			public Collection<String> values() {
+				return null;
+			}
+
+			@Override
+			public Set<Entry<String, String>> entrySet() {
+				return null;
+			}
+
+			@Override
+			public void forEach(BiConsumer<? super String, ? super String> action) {
+			}
+
+			@Override
+			public void replaceAll(BiFunction<? super String, ? super String, ? extends String> function) {
+			}
+
+			@Override
+			public int size() {
+				return 0;
+			}
+
+			@Override
+			public boolean isEmpty() {
+				return false;
+			}
+
+			@Override
+			public boolean containsKey(Object key) {
+				return false;
+			}
+
+			@Override
+			public String put(String key, String value) {
+				return null;
+			}
+
+			@Override
+			public void putAll(Map<? extends String, ? extends String> m) {
+			}
+
+			@Override
+			public String remove(Object key) {
+				return null;
+			}
+
+			@Override
+			public String putIfAbsent(String key, String value) {
+				return null;
+			}
+
+			@Override
+			public boolean remove(Object key, Object value) {
+				return false;
+			}
+
+			@Override
+			public boolean replace(String key, String oldValue, String newValue) {
+				return false;
+			}
+
+			@Override
+			public String replace(String key, String value) {
+				return null;
+			}
+
+			@Override
+			public String computeIfAbsent(String key, Function<? super String, ? extends String> mappingFunction) {
+				return null;
+			}
+
+			@Override
+			public String computeIfPresent(String key,
+					BiFunction<? super String, ? super String, ? extends String> remappingFunction) {
+				return null;
+			}
+
+			@Override
+			public String compute(String key, BiFunction<? super String, ? super String, ? extends String> remappingFunction) {
+				return null;
+			}
+
+			@Override
+			public String merge(String key, String value,
+					BiFunction<? super String, ? super String, ? extends String> remappingFunction) {
+				return null;
+			}
+
+			@Override
+			public Object clone() {
+				return this;
+			}
+
+		};
 
 	}
 
@@ -463,10 +732,19 @@ public interface IUserPrincipal extends Serializable {
 			return organizations;
 		}
 
-		public PrincipalOrganization setOrganizations(List<OrganizationInfo> organizations) {
-			if (!isEmpty(organizations)) {
-				this.organizations.addAll(organizations);
-			}
+		public List<OrganizationInfo> organizations() {
+			return organizations;
+		}
+
+		public void setOrganizations(List<OrganizationInfo> organizations) {
+			// if (!isEmpty(organizations)) {
+			// this.organizations.addAll(organizations);
+			// }
+			this.organizations = organizations;
+		}
+
+		public PrincipalOrganization withOrganizations(List<OrganizationInfo> organizations) {
+			setOrganizations(organizations);
 			return this;
 		}
 
@@ -474,6 +752,34 @@ public interface IUserPrincipal extends Serializable {
 		public String toString() {
 			return getClass().getSimpleName() + " => " + toJSONString(this);
 		}
+
+		/**
+		 * NoOp {@link PrincipalOrganization}
+		 */
+		final public static PrincipalOrganization NOOP = new PrincipalOrganization() {
+
+			private static final long serialVersionUID = 6965751108221042024L;
+
+			@Override
+			public List<OrganizationInfo> getOrganizations() {
+				return null;
+			}
+
+			@Override
+			public List<OrganizationInfo> organizations() {
+				return null;
+			}
+
+			@Override
+			public void setOrganizations(List<OrganizationInfo> organizations) {
+			}
+
+			@Override
+			public PrincipalOrganization withOrganizations(List<OrganizationInfo> organizations) {
+				return null;
+			}
+
+		};
 
 	}
 
@@ -525,13 +831,27 @@ public interface IUserPrincipal extends Serializable {
 			return organizationCode;
 		}
 
+		public String organizationCode() {
+			return isBlank(organizationCode) ? EMPTY : organizationCode;
+		}
+
 		public void setOrganizationCode(String organizationCode) {
 			// hasTextOf(organizationCode, "organizationCode");
 			this.organizationCode = organizationCode;
 		}
 
+		public OrganizationInfo withOrganizationCode(String organizationCode) {
+			// hasTextOf(organizationCode, "organizationCode");
+			this.organizationCode = organizationCode;
+			return this;
+		}
+
 		public String getParent() {
 			return parent;
+		}
+
+		public String parent() {
+			return isBlank(parent) ? EMPTY : parent;
 		}
 
 		public void setParent(String parent) {
@@ -539,29 +859,70 @@ public interface IUserPrincipal extends Serializable {
 			this.parent = parent;
 		}
 
+		public OrganizationInfo withParent(String parent) {
+			setParent(parent);
+			return this;
+		}
+
 		public Integer getType() {
 			return type;
+		}
+
+		public Integer type() {
+			return isNull(type) ? -1 : type;
 		}
 
 		public void setType(Integer type) {
 			this.type = type;
 		}
 
+		public OrganizationInfo withType(Integer type) {
+			setType(type);
+			return this;
+		}
+
 		public String getName() {
 			return name;
+		}
+
+		public String name() {
+			return isBlank(name) ? EMPTY : name;
 		}
 
 		public void setName(String name) {
 			this.name = name;
 		}
 
+		public OrganizationInfo withName(String name) {
+			setName(name);
+			return this;
+		}
+
 		public Integer getAreaId() {
 			return areaId;
+		}
+
+		public Integer areaId() {
+			return isNull(areaId) ? -1 : areaId;
 		}
 
 		public void setAreaId(Integer areaId) {
 			this.areaId = areaId;
 		}
+
+		public OrganizationInfo withAreaId(Integer areaId) {
+			this.areaId = areaId;
+			return this;
+		}
+
+		/**
+		 * NoOp {@link OrganizationInfo}
+		 */
+		final public static OrganizationInfo NOOP = new OrganizationInfo() {
+			private static final long serialVersionUID = 6965751111221042024L;
+
+		};
+
 	}
 
 }
