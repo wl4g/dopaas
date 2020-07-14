@@ -18,8 +18,6 @@ package com.wl4g.devops.common.utils.bean;
 import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.System.out;
 
-import org.springframework.cglib.core.Converter;
-
 public class BeanCopierUtilsTests {
 
 	public static void main(String[] args) {
@@ -29,18 +27,20 @@ public class BeanCopierUtilsTests {
 		SimpleUserPrincipal p1 = new SimpleUserPrincipal();
 		p1.setPrincipalId("001");
 		p1.setPrincipal("zs");
-		p1.getAttributes().put("aa", "11");
+		p1.attributes(true).put("aa", "11");
 		out.println("source p1 object: " + toJSONString(p1) + ", hashCode: " + p1.hashCode());
 
 		SimpleUserPrincipal p2 = new SimpleUserPrincipal();
-		BeanCopierUtils.mapper(p1, p2, new Converter() {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public Object convert(Object fieldValue, Class fieldClass, Object setterMethod) {
-				// System.out.println(arg0);
-				return fieldValue;
-			}
-		});
+		// BeanCopierUtils.mapper(p1, p2, new Converter() {
+		// @SuppressWarnings("rawtypes")
+		// @Override
+		// public Object convert(Object fieldValue, Class fieldClass, Object
+		// setterMethod) {
+		// // System.out.println(arg0);
+		// return fieldValue;
+		// }
+		// });
+		p2 = BeanCopierUtils.clone(p1);
 		out.println("clone p2 object: " + toJSONString(p2) + ", hashCode: " + p2.hashCode());
 
 	}
