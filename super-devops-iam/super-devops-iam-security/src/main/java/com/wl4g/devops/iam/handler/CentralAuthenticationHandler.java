@@ -184,7 +184,7 @@ public class CentralAuthenticationHandler extends AbstractAuthenticationHandler 
 		/**
 		 * Grants roles and permissions attributes.
 		 */
-		Attributes attrs = assertion.getPrincipalInfo().getAttributes();
+		Attributes attrs = assertion.getPrincipalInfo().attributes();
 		attrs.setSessionLang(getBindValue(KEY_LANG_NAME));
 		attrs.setParentSessionId(valueOf(getSessionId()));
 

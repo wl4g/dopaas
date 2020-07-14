@@ -19,7 +19,6 @@ import static com.wl4g.devops.common.constants.IAMDevOpsConstants.*;
 import static com.wl4g.devops.iam.common.utils.IamAuthenticatingUtils.*;
 import static com.wl4g.devops.common.web.RespBase.RetCode.*;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
-import static com.wl4g.devops.components.tools.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static com.wl4g.devops.components.tools.common.web.UserAgentUtils.isBrowser;
 import static com.wl4g.devops.components.tools.common.web.WebUtils2.*;
@@ -36,6 +35,7 @@ import static java.util.Collections.singletonMap;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.apache.shiro.web.util.WebUtils.getCleanParam;
 import static org.apache.shiro.web.util.WebUtils.issueRedirect;
 import static org.apache.shiro.web.util.WebUtils.toHttp;
@@ -271,18 +271,18 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 			ServletResponse response) {
 		IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
-		String errmsg = getRootCausesString(ae);
-		if (isNotBlank(errmsg)) {
+		Throwable exroot = getRootCause(ae);
+		if (nonNull(exroot)) {
 			String tip = format("Failed to authentication of token: %s", token);
 			if (SmartGlobalErrorController.checkStackTrace(request)) {
-				log.debug(tip, ae);
+				log.warn(tip, ae);
 			} else {
-				log.warn(tip + ", caused by: {}", errmsg);
+				log.error(tip + ", caused by: {} - {}", exroot.getClass(), exroot.getMessage());
 			}
 			/**
 			 * {@link LoginAuthenticatorController#errReads()}
 			 */
-			bind(KEY_ERR_SESSION_SAVED, errmsg);
+			bind(KEY_ERR_SESSION_SAVED, exroot);
 		}
 		// Failure redirect
 		RedirectInfo redirect = determineFailureRedirect(getRedirectInfo(request), tk, ae, request, response);
@@ -300,7 +300,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		// Response JSON message.
 		if (isJSONResponse(request)) {
 			try {
-				RespBase<String> resp = makeFailedResponse(redirect.getRedirectUrl(), request, fullParams, errmsg);
+				RespBase<String> resp = makeFailedResponse(redirect.getRedirectUrl(), request, fullParams, exroot.getMessage());
 				String failed = toJSONString(resp);
 				log.info("Resp unauth: {}", failed);
 				writeJson(toHttp(response), failed);
