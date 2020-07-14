@@ -44,6 +44,7 @@ import static com.wl4g.devops.common.bean.BaseBean.DEFAULT_USER_ROOT;
 import static com.wl4g.devops.components.tools.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
 import static com.wl4g.devops.iam.common.subject.IamPrincipalInfo.PrincipalOrganization;
+import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
@@ -186,7 +187,7 @@ public class StandardSecurityConfigurer implements ServerSecurityConfigurer {
 			Set<Group> groupsSet = groupService.getGroupsSet(user);
 			List<OrganizationInfo> oInfo = groupsSet.stream().map(o -> new OrganizationInfo(o.getOrganizationCode(),
 					o.getParentCode(), o.getType(), o.getDisplayName(), o.getAreaId())).collect(toList());
-			return new SimplePrincipalInfo(String.valueOf(user.getId()), user.getUserName(), user.getPassword(),
+			return new SimplePrincipalInfo(valueOf(user.getId()), user.getUserName(), user.getPassword(),
 					getRoles(user.getUserName()), getPermissions(user.getUserName()), new PrincipalOrganization(oInfo));
 		}
 		return null;

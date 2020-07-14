@@ -118,7 +118,7 @@ public class FastCasAuthorizingRealm extends AbstractClientAuthorizingRealm {
 
 			// Currenly authentication principal info.
 			IamPrincipalInfo info = validated.getPrincipalInfo();
-			Attributes attrs = info.getAttributes();
+			Attributes attrs = info.attributes();
 
 			// Save common attributes
 			saveCommonAttributes(attrs);

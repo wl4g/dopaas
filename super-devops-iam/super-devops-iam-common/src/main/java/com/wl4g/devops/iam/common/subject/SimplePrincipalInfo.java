@@ -20,7 +20,6 @@ import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.shiro.util.Assert.hasText;
 
 import javax.validation.constraints.NotBlank;
 
@@ -64,7 +63,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 
 	public SimplePrincipalInfo(@NotBlank IamPrincipalInfo info) {
 		this(info.getPrincipalId(), info.getPrincipal(), info.getStoredCredentials(), info.getRoles(), info.getPermissions(),
-				info.getOrganization(), info.getAttributes());
+				info.getOrganization(), info.attributes());
 	}
 
 	public SimplePrincipalInfo(@NotBlank String principalId, String principal, String storedCredentials, String roles,
@@ -170,10 +169,8 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	@Override
-	public PrincipalOrganization organization(boolean create) {
-		return isNull(organization)
-				? (create ? (organization = new PrincipalOrganization()) : (organization = PrincipalOrganization.NOOP))
-				: organization;
+	public PrincipalOrganization organization() {
+		return isNull(organization) ? (organization = new PrincipalOrganization()) : organization;
 	}
 
 	public void setOrganization(PrincipalOrganization organization) {
@@ -213,8 +210,8 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	}
 
 	@Override
-	public final Attributes attributes(boolean create) {
-		return isNull(attributes) ? (create ? (attributes = new Attributes()) : (attributes = Attributes.NOOP)) : attributes;
+	public final Attributes attributes() {
+		return isNull(attributes) ? (attributes = new Attributes()) : attributes;
 	}
 
 	/**

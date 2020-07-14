@@ -27,7 +27,7 @@ public class BeanCopierUtilsTests {
 		SimpleUserPrincipal p1 = new SimpleUserPrincipal();
 		p1.setPrincipalId("001");
 		p1.setPrincipal("zs");
-		p1.attributes(true).put("aa", "11");
+		p1.attributes().put("aa", "11");
 		out.println("source p1 object: " + toJSONString(p1) + ", hashCode: " + p1.hashCode());
 
 		SimpleUserPrincipal p2 = new SimpleUserPrincipal();

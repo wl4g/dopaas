@@ -116,11 +116,10 @@ public interface IUserPrincipal extends Serializable {
 	 * Principal organization. </br>
 	 * <p>
 	 * 
-	 * @param create
-	 * @return principal organizations identifiers, If null, the NOOP default
-	 *         value is returned
+	 * @return principal organizations identifiers, If null, the new value is
+	 *         returned
 	 */
-	PrincipalOrganization organization(boolean create);
+	PrincipalOrganization organization();
 
 	/**
 	 * Principal permissions. </br>
@@ -168,10 +167,9 @@ public interface IUserPrincipal extends Serializable {
 	/**
 	 * Gets account attributes.
 	 * 
-	 * @param create
-	 * @return If null, the NOOP default value is returned
+	 * @return If null, the new value is returned
 	 */
-	Attributes attributes(boolean create);
+	Attributes attributes();
 
 	/**
 	 * Validation of principal information attribute.
