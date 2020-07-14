@@ -16,6 +16,7 @@
 package com.wl4g.devops.iam.web;
 
 import static com.wl4g.devops.components.tools.common.jvm.JvmRuntimeKit.*;
+import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,7 +42,8 @@ public class JssdkWebappsEndpoint extends GenericEmbeddedWebappsEndpoint {
 		if (isJVMDebugging) {
 			return true;
 		} else if (filepath.contains(DEFAULT_JSSDK_FILE_EXT)) {
-			return filepath.contains(DEFAULT_JSSDK_FILE_BIN);
+			return filepath.contains(DEFAULT_JSSDK_FILE_BIN)
+					|| equalsAnyIgnoreCase(request.getServerName(), "127.0.0.1", "0:0:0:0:0:0:0:1", "localhost");
 		} else {
 			return true;
 		}

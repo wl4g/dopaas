@@ -129,14 +129,14 @@ public abstract class AbstractClientIamAuthenticationFilter<T extends Authentica
 	 */
 	final protected Cumulator failedCumulator;
 
-	public AbstractClientIamAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer context,
+	public AbstractClientIamAuthenticationFilter(IamClientProperties config, ClientSecurityConfigurer configurer,
 			ClientSecurityCoprocessor coprocessor, JedisIamCacheManager cacheManager) {
 		notNull(config, "'config' must not be null");
-		notNull(context, "'context' must not be null");
+		notNull(configurer, "'configurer' must not be null");
 		notNull(coprocessor, "'interceptor' must not be null");
 		notNull(cacheManager, "'cacheManager' must not be null");
 		this.config = config;
-		this.configurer = context;
+		this.configurer = configurer;
 		this.coprocessor = coprocessor;
 		this.clientTicketCache = cacheManager.getIamCache(CACHE_TICKET_C);
 		this.failedCumulator = newSessionCumulator(KEY_TRY_REDIRECT_AUTHC, 10_000L);

@@ -39,8 +39,8 @@ spring:
           server-uri: http://localhost:14040/iam-server # Required
           # This config item is used to specify a custom login page, default to 
           # {spring.cloud.devops.iam.client.server-uri}, that is, the login page controlled by iam-server.
-          #login-uri: http://localhost:${server.port}${server.contextPath}/login.html
-          success-uri: http://localhost:${server.port}${server.contextPath}/index.html # Required
+          #login-uri: http://localhost:${server.port}${server.servlet.contextPath}/login.html
+          success-uri: http://localhost:${server.port}${server.servlet.contextPath}/index.html # Required
           unauthorized-uri: ${spring.cloud.devops.iam.client.base-uri}/view/403.html # Required
 
 # Redis configuration.

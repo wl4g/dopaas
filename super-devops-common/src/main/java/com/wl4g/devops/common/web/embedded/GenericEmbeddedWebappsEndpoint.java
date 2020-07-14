@@ -93,6 +93,11 @@ public abstract class GenericEmbeddedWebappsEndpoint extends BaseController {
 	public void doWebResources(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String uri = request.getRequestURI();
 		String filepath = uri.substring(uri.indexOf(config.getBaseUri()) + config.getBaseUri().length());
+		// e.g: /iam-server/view/login.html;JSESSIONID=sid9abdfdefa0944d2e867f5e
+		int partIndex = filepath.indexOf(";");
+		if (partIndex > 0) {
+			filepath = filepath.substring(0, partIndex);
+		}
 		doResponseFile(filepath, request, response);
 	}
 

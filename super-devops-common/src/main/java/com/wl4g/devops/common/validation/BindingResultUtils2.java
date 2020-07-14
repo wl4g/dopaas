@@ -16,6 +16,7 @@
 package com.wl4g.devops.common.validation;
 
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.BindingResultUtils;
 import org.springframework.validation.FieldError;
 
 /**
@@ -26,7 +27,7 @@ import org.springframework.validation.FieldError;
  * @date 2018年12月28日
  * @since
  */
-public abstract class BindingResultUtils extends org.springframework.validation.BindingResultUtils {
+public abstract class BindingResultUtils2 extends BindingResultUtils {
 
 	/**
 	 * BindResult field errors to string.<br/>

@@ -58,20 +58,20 @@ public class RestClientStreamingTests {
 
 	public static void downloadTest1() {
 		System.out.println("downloadTest1...");
-		startListenTestServer(new FSOutputChannelHandler());
+		startFSTestServer(new FSOutputChannelHandler());
 
 	}
 
 	public static void uploadTest2() {
 		System.out.println("uploadTest2...");
-		startListenTestServer(new FSInputChannelHandler());
+		startFSTestServer(new FSInputChannelHandler());
 
 	}
 
 	/**
-	 * Listen http server for test.
+	 * Listen http fs server for test.
 	 */
-	public static void startListenTestServer(ChannelHandler handler) {
+	public static void startFSTestServer(ChannelHandler handler) {
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		EventLoopGroup masters = new NioEventLoopGroup();
 		EventLoopGroup worker = new NioEventLoopGroup();

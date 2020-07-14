@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.iam.common.subject;
+package com.wl4g.devops.common.utils.bean;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.shiro.util.Assert.hasText;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import javax.validation.constraints.NotBlank;
@@ -29,7 +30,7 @@ import javax.validation.constraints.NotBlank;
  * @version v1.0.0 2018-04-31
  * @since
  */
-public class SimplePrincipalInfo implements IamPrincipalInfo {
+public class SimpleUserPrincipal implements IUserPrincipal {
 
 	private static final long serialVersionUID = -2148910955172545592L;
 
@@ -56,21 +57,21 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	/** Authenticate principal attributes. */
 	private Attributes attributes = new Attributes();
 
-	public SimplePrincipalInfo() {
+	public SimpleUserPrincipal() {
 		super();
 	}
 
-	public SimplePrincipalInfo(@NotBlank IamPrincipalInfo info) {
+	public SimpleUserPrincipal(@NotBlank IUserPrincipal info) {
 		this(info.getPrincipalId(), info.getPrincipal(), info.getStoredCredentials(), info.getRoles(), info.getPermissions(),
 				info.getOrganization(), info.getAttributes());
 	}
 
-	public SimplePrincipalInfo(@NotBlank String principalId, String principal, String storedCredentials, String roles,
+	public SimpleUserPrincipal(@NotBlank String principalId, String principal, String storedCredentials, String roles,
 			String permissions, PrincipalOrganization organization) {
 		this(principalId, principal, storedCredentials, roles, permissions, organization, null);
 	}
 
-	public SimplePrincipalInfo(@NotBlank String principalId, String principal, String storedCredentials, String roles,
+	public SimpleUserPrincipal(@NotBlank String principalId, String principal, String storedCredentials, String roles,
 			String permissions, PrincipalOrganization organization, Attributes attributes) {
 		setPrincipalId(principalId);
 		setPrincipal(principal);
@@ -89,11 +90,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	public final void setPrincipalId(String principalId) {
 		hasTextOf(principalId, "principalId");
 		this.principalId = principalId;
-	}
-
-	public final SimplePrincipalInfo withPrincipalId(String principalId) {
-		setPrincipalId(principalId);
-		return this;
+		// return this;
 	}
 
 	@Override
@@ -101,13 +98,9 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		return principal;
 	}
 
-	public final void setPrincipal(String principal) {
+	public final SimpleUserPrincipal setPrincipal(String principal) {
 		hasTextOf(principal, "principalName");
 		this.principal = principal;
-	}
-
-	public final SimplePrincipalInfo withPrincipal(String principal) {
-		setPrincipal(principal);
 		return this;
 	}
 
@@ -116,14 +109,10 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		return storedCredentials;
 	}
 
-	public final void setStoredCredentials(String storedCredentials) {
+	public final SimpleUserPrincipal setStoredCredentials(String storedCredentials) {
 		// hasText(storedCredentials, "Authenticate storedCredentials can't
 		// empty");
 		this.storedCredentials = storedCredentials;
-	}
-
-	public final SimplePrincipalInfo withStoredCredentials(String storedCredentials) {
-		setStoredCredentials(storedCredentials);
 		return this;
 	}
 
@@ -132,13 +121,9 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		return roles;
 	}
 
-	public final void setRoles(String roles) {
+	public final SimpleUserPrincipal setRoles(String roles) {
 		// hasText(roles, "Authenticate roles can't empty");
 		this.roles = roles;
-	}
-
-	public final SimplePrincipalInfo withRoles(String roles) {
-		setRoles(roles);
 		return this;
 	}
 
@@ -147,13 +132,9 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		return organization;
 	}
 
-	public void setOrganization(PrincipalOrganization organization) {
+	public SimpleUserPrincipal setOrganization(PrincipalOrganization organization) {
 		// notNullOf(organization, "organization");
 		this.organization = organization;
-	}
-
-	public SimplePrincipalInfo withOrganization(PrincipalOrganization organization) {
-		setOrganization(organization);
 		return this;
 	}
 
@@ -162,13 +143,9 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 		return permissions;
 	}
 
-	public final void setPermissions(String permissions) {
+	public final SimpleUserPrincipal setPermissions(String permissions) {
 		// hasText(permissions, "Authenticate permissions can't empty");
 		this.permissions = permissions;
-	}
-
-	public final SimplePrincipalInfo withPermissions(String permissions) {
-		setPermissions(permissions);
 		return this;
 	}
 
@@ -179,7 +156,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 */
 	@Override
 	public final Attributes getAttributes() {
-		// notNull(attributes, "Principal attributes can't null");
+		notNull(attributes, "Principal attributes can't null");
 		return attributes;
 	}
 
@@ -189,7 +166,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * @param attributes
 	 * @return
 	 */
-	public final void setAttributes(Attributes attributes) {
+	public final SimpleUserPrincipal setAttributes(Attributes attributes) {
 		if (!isEmpty(attributes)) {
 			// [MARK1]
 			/**
@@ -197,16 +174,6 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 			 */
 			this.attributes.putAll(attributes);
 		}
-	}
-
-	/**
-	 * Sets with principal account attributes.
-	 * 
-	 * @param attributes
-	 * @return
-	 */
-	public final SimplePrincipalInfo withAttributes(Attributes attributes) {
-		setAttributes(attributes);
 		return this;
 	}
 
@@ -220,7 +187,7 @@ public class SimplePrincipalInfo implements IamPrincipalInfo {
 	 * Validation.
 	 */
 	@Override
-	public final IamPrincipalInfo validate() throws IllegalArgumentException {
+	public final IUserPrincipal validate() throws IllegalArgumentException {
 		hasText(getPrincipalId(), "Authenticate principalId can't empty");
 		hasText(getPrincipal(), "Authenticate principal name can't empty");
 		// hasText(getRoles(), "Authenticate roles can't empty");

@@ -281,9 +281,7 @@ public class RespBase<D> implements Serializable {
 			 * example:{@link org.springframework.web.client.RestTemplate}.response]
 			 */
 			if (data instanceof Map) { // e.g:LinkedHashMap
-				if (data instanceof DataMap) {
-					this.data = (D) data;
-				} else {
+				if (!(data instanceof DataMap)) {
 					this.data = (D) new DataMap<>((Map) data);
 				}
 			} else {

@@ -35,6 +35,7 @@ import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.subject.Subject;
 
 import com.wl4g.devops.iam.common.session.NoOpSession;
+import com.wl4g.devops.common.utils.bean.BeanCopierUtils;
 import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfoWrapper;
@@ -108,9 +109,7 @@ public abstract class IamSecurityHolder extends SecurityUtils {
 		 * 
 		 * @see {@link com.wl4g.devops.iam.common.subject.SimplePrincipalInfo#setAttributes(Map)}#MARK1
 		 */
-		return wrap.getInfo();
-		// TODO uncopy fields value ??
-		// BeanCopierUtils.mapper(wrap.getInfo(), wrap.getInfo().getClass());
+		return BeanCopierUtils.clone(wrap.getInfo());
 	}
 
 	/**
