@@ -272,17 +272,18 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		IamAuthenticationToken tk = (IamAuthenticationToken) token;
 
 		Throwable exroot = getRootCause(ae);
-		if (nonNull(exroot)) {
-			String tip = format("Failed to authentication of token: %s", token);
-			if (SmartGlobalErrorController.checkStackTrace(request)) {
-				log.warn(tip, ae);
-			} else {
-				log.error(tip + ", caused by: {} - {}", exroot.getClass(), exroot.getMessage());
-			}
+		String errmsg = nonNull(exroot) ? exroot.getMessage() : null;
+		String tip = format("Failed to authentication of token: %s", token);
+		if (SmartGlobalErrorController.checkStackTrace(request)) {
+			log.error(tip, ae);
+		} else {
+			log.error("{}, caused by: {}", tip, errmsg);
+		}
+		if (!isBlank(errmsg)) {
 			/**
 			 * {@link LoginAuthenticatorController#errReads()}
 			 */
-			bind(KEY_ERR_SESSION_SAVED, exroot);
+			bind(KEY_ERR_SESSION_SAVED, errmsg);
 		}
 		// Failure redirect
 		RedirectInfo redirect = determineFailureRedirect(getRedirectInfo(request), tk, ae, request, response);
@@ -300,7 +301,7 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		// Response JSON message.
 		if (isJSONResponse(request)) {
 			try {
-				RespBase<String> resp = makeFailedResponse(redirect.getRedirectUrl(), request, fullParams, exroot.getMessage());
+				RespBase<String> resp = makeFailedResponse(redirect.getRedirectUrl(), request, fullParams, errmsg);
 				String failed = toJSONString(resp);
 				log.info("Resp unauth: {}", failed);
 				writeJson(toHttp(response), failed);
