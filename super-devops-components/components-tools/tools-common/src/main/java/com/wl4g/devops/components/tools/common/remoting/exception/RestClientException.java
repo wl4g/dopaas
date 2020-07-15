@@ -1,4 +1,4 @@
-package com.wl4g.devops.components.tools.common.remoting;
+package com.wl4g.devops.components.tools.common.remoting.exception;
 
 /**
  * Base class for exceptions thrown by {@link RestTemplate} whenever it

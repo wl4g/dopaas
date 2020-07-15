@@ -1,8 +1,10 @@
-package com.wl4g.devops.components.tools.common.remoting;
+package com.wl4g.devops.components.tools.common.remoting.exception;
 
 import java.nio.charset.Charset;
 
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
+import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.HttpStatus;
 
 /**
  * Exception thrown when an unknown (or custom) HTTP status code is received.

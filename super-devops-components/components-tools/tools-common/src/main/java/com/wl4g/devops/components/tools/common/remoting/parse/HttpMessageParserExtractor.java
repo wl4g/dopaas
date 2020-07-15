@@ -12,8 +12,8 @@ import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.reflect.ResolvableType;
 import com.wl4g.devops.components.tools.common.remoting.ClientHttpResponse;
 import com.wl4g.devops.components.tools.common.remoting.HttpMediaType;
-import com.wl4g.devops.components.tools.common.remoting.RestClientException;
-import com.wl4g.devops.components.tools.common.remoting.RestClient.ResponseExtractor;
+import com.wl4g.devops.components.tools.common.remoting.RestClient.ResponseProcessor;
+import com.wl4g.devops.components.tools.common.remoting.exception.RestClientException;
 
 /**
  * Response extractor that uses the given {@linkplain HttpMessageParser entity
@@ -23,16 +23,16 @@ import com.wl4g.devops.components.tools.common.remoting.RestClient.ResponseExtra
  *            the data type
  * @see RestTemplate
  */
-public class HttpMessageParserExtractor<T> implements ResponseExtractor<T> {
+public class HttpMessageParserExtractor<T> implements ResponseProcessor<T> {
 
 	private final Type responseType;
 
 	@Nullable
 	private final Class<T> responseClass;
 
-	private final List<HttpMessageParser<?>> messageConverters;
+	private final List<HttpMessageParser<?>> messageParsers;
 
-	private final Log logger;
+	private final Log log;
 
 	/**
 	 * Create a new instance of the {@code HttpMessageParserExtractor} with the
@@ -58,49 +58,48 @@ public class HttpMessageParserExtractor<T> implements ResponseExtractor<T> {
 		Assert2.notEmpty(messageConverters, "'messageConverters' must not be empty");
 		this.responseType = responseType;
 		this.responseClass = (responseType instanceof Class ? (Class<T>) responseType : null);
-		this.messageConverters = messageConverters;
-		this.logger = logger;
+		this.messageParsers = messageConverters;
+		this.log = logger;
 	}
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes", "resource" })
 	public T extractData(ClientHttpResponse response) throws IOException {
-		MessageBodyClientHttpResponseWrapper responseWrapper = new MessageBodyClientHttpResponseWrapper(response);
-		if (!responseWrapper.hasMessageBody() || responseWrapper.hasEmptyMessageBody()) {
+		MessageBodyClientHttpResponseWrapper wrapper = new MessageBodyClientHttpResponseWrapper(response);
+		if (!wrapper.hasMessageBody() || wrapper.hasEmptyMessageBody()) {
 			return null;
 		}
-		HttpMediaType contentType = getContentType(responseWrapper);
+		HttpMediaType contentType = getContentType(wrapper);
 
 		try {
-			for (HttpMessageParser<?> messageConverter : this.messageConverters) {
-				if (messageConverter instanceof GenericHttpMessageParser) {
-					GenericHttpMessageParser<?> genericMessageConverter = (GenericHttpMessageParser<?>) messageConverter;
-					if (genericMessageConverter.canRead(this.responseType, null, contentType)) {
-						if (logger.isDebugEnabled()) {
-							ResolvableType resolvableType = ResolvableType.forType(this.responseType);
-							logger.debug("Reading to [" + resolvableType + "]");
+			for (HttpMessageParser<?> parser : messageParsers) {
+				if (parser instanceof GenericHttpMessageParser) {
+					GenericHttpMessageParser<?> genericMessageConverter = (GenericHttpMessageParser<?>) parser;
+					if (genericMessageConverter.canRead(responseType, null, contentType)) {
+						if (log.isDebugEnabled()) {
+							ResolvableType type = ResolvableType.forType(responseType);
+							log.debug("Reading to [" + type + "]");
 						}
-						return (T) genericMessageConverter.read(this.responseType, null, responseWrapper);
+						return (T) genericMessageConverter.read(responseType, null, wrapper);
 					}
 				}
-				if (this.responseClass != null) {
-					if (messageConverter.canRead(this.responseClass, contentType)) {
-						if (logger.isDebugEnabled()) {
-							String className = this.responseClass.getName();
-							logger.debug("Reading to [" + className + "] as \"" + contentType + "\"");
+				if (responseClass != null) {
+					if (parser.canRead(responseClass, contentType)) {
+						if (log.isDebugEnabled()) {
+							String className = responseClass.getName();
+							log.debug("Reading to [" + className + "] as \"" + contentType + "\"");
 						}
-						return (T) messageConverter.read((Class) this.responseClass, responseWrapper);
+						return (T) parser.read((Class) responseClass, wrapper);
 					}
 				}
 			}
 		} catch (IOException | HttpMessageNotReadableException ex) {
 			throw new RestClientException(
-					"Error while extracting response for type [" + this.responseType + "] and content type [" + contentType + "]",
-					ex);
+					"Error while extracting response for type [" + responseType + "] and content type [" + contentType + "]", ex);
 		}
 
 		throw new RestClientException("Could not extract response: no suitable HttpMessageParser found " + "for response type ["
-				+ this.responseType + "] and content type [" + contentType + "]");
+				+ responseType + "] and content type [" + contentType + "]");
 	}
 
 	/**
@@ -116,8 +115,8 @@ public class HttpMessageParserExtractor<T> implements ResponseExtractor<T> {
 	protected HttpMediaType getContentType(MessageBodyClientHttpResponseWrapper response) {
 		HttpMediaType contentType = response.getHeaders().getContentType();
 		if (contentType == null) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("No content-type, using 'application/octet-stream'");
+			if (log.isTraceEnabled()) {
+				log.trace("No content-type, using 'application/octet-stream'");
 			}
 			contentType = HttpMediaType.APPLICATION_OCTET_STREAM;
 		}

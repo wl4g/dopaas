@@ -2,7 +2,7 @@ package com.wl4g.devops.components.tools.common.remoting.uri;
 
 import java.io.IOException;
 
-import com.wl4g.devops.components.tools.common.remoting.RestClientException;
+import com.wl4g.devops.components.tools.common.remoting.exception.RestClientException;
 
 /**
  * Exception thrown when an I/O error occurs.

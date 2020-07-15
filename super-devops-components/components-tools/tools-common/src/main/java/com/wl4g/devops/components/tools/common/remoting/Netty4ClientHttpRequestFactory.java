@@ -156,8 +156,8 @@ public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory,
 	 * @return
 	 * @throws IOException
 	 */
-	public Netty4ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod) throws IOException {
-		return createRequestInternal(uri, httpMethod);
+	public ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod) throws IOException {
+		return new Netty4ClientHttpRequest(getBootstrap(uri), uri, httpMethod);
 	}
 
 	/**
@@ -174,10 +174,6 @@ public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory,
 		if (this.connectTimeout >= 0) {
 			config.setConnectTimeoutMillis(this.connectTimeout);
 		}
-	}
-
-	private Netty4ClientHttpRequest createRequestInternal(URI uri, HttpMethod httpMethod) {
-		return new Netty4ClientHttpRequest(getBootstrap(uri), uri, httpMethod);
 	}
 
 	private SslContext getSslContext() {
@@ -207,19 +203,20 @@ public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory,
 
 	private Bootstrap buildBootstrap(URI uri, boolean isSecure) {
 		Bootstrap bootstrap = new Bootstrap();
-		bootstrap.group(this.eventLoopGroup).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
+		bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
 			@Override
 			protected void initChannel(SocketChannel channel) throws Exception {
 				configureChannel(channel.config());
-				ChannelPipeline pipeline = channel.pipeline();
+				ChannelPipeline pipe = channel.pipeline();
+				// pipe.addLast(new LoggingHandler(LogLevel.INFO));
 				if (isSecure) {
 					notNull(getSslContext(), "sslContext should not be null");
-					pipeline.addLast(getSslContext().newHandler(channel.alloc(), uri.getHost(), uri.getPort()));
+					pipe.addLast(getSslContext().newHandler(channel.alloc(), uri.getHost(), uri.getPort()));
 				}
-				pipeline.addLast(new HttpClientCodec());
-				pipeline.addLast(new HttpObjectAggregator(maxResponseSize));
+				pipe.addLast(new HttpClientCodec());
+				pipe.addLast(new HttpObjectAggregator(maxResponseSize));
 				if (readTimeout > 0) {
-					pipeline.addLast(new ReadTimeoutHandler(readTimeout, TimeUnit.MILLISECONDS));
+					pipe.addLast(new ReadTimeoutHandler(readTimeout, TimeUnit.MILLISECONDS));
 				}
 			}
 		});

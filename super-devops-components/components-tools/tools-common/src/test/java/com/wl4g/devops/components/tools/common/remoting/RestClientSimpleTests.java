@@ -42,7 +42,6 @@ public class RestClientSimpleTests {
 	public static class BaiduWeatherBean {
 
 		private String status;
-
 		private String message;
 
 		public String getStatus() {
