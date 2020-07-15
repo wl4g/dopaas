@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * The entity class for representing an object in OSS.
+ * The entity class for representing an object in COSS.
  * <p>
- * In OSS, every file is an OSSObject and every single file should be less than
+ * In COSS, every file is an COSS Object and every single file should be less than
  * 5G for using Simple upload, Form upload and Append Upload. Only multipart
  * upload could upload a single file more than 5G. Any object has key, data and
  * user metadata. The key is the object's name and the data is object's file

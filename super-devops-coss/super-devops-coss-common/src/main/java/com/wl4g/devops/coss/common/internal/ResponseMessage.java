@@ -1,5 +1,6 @@
 package com.wl4g.devops.coss.common.internal;
 
+import com.wl4g.devops.components.tools.common.remoting.HttpStatus;
 import com.wl4g.devops.coss.common.utils.COSSHeaders;
 
 /**
@@ -38,7 +39,7 @@ public class ResponseMessage extends HttpMesssage {
 	}
 
 	public boolean isSuccessful() {
-		return statusCode / 100 == HTTP_SUCCESS_STATUS_CODE / 100;
+		return statusCode / 100 == HttpStatus.OK.value() / 100;
 	}
 
 	public String getErrorResponseAsString() {
@@ -48,7 +49,5 @@ public class ResponseMessage extends HttpMesssage {
 	public void setErrorResponseAsString(String errorResponseAsString) {
 		this.errorResponseAsString = errorResponseAsString;
 	}
-
-	private static final int HTTP_SUCCESS_STATUS_CODE = 200;
 
 }

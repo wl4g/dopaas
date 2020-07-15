@@ -23,13 +23,13 @@ public class CossServerBootsstrap implements ApplicationRunner {
 
 	final protected SmartLogger log = getLogger(getClass());
 
-	/** {@link ChannelCossServer} list. */
-	final protected List<ChannelCossServer> servers;
+	/** {@link CossServer} list. */
+	final protected List<CossServer> servers;
 
 	/** {@link ChannelServerProperties} */
 	final protected ChannelServerProperties config;
 
-	public CossServerBootsstrap(ChannelServerProperties config, List<ChannelCossServer> servers) {
+	public CossServerBootsstrap(ChannelServerProperties config, List<CossServer> servers) {
 		notNullOf(config, "config");
 		notEmptyOf(servers, "servers");
 		this.servers = servers;
@@ -46,7 +46,7 @@ public class CossServerBootsstrap implements ApplicationRunner {
 	 * Do startup servers.
 	 */
 	private void doStartupServers() {
-		for (ChannelCossServer server : servers) {
+		for (CossServer server : servers) {
 			server.start();
 		}
 
