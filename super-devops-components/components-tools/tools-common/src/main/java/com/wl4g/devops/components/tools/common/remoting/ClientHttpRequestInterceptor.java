@@ -2,6 +2,8 @@ package com.wl4g.devops.components.tools.common.remoting;
 
 import java.io.IOException;
 
+import com.wl4g.devops.components.tools.common.remoting.exception.ClientHttpRequestExecution;
+
 /**
  * Intercepts client-side HTTP requests. as to modify the outgoing
  * {@link ClientHttpRequest} and/or the incoming {@link ClientHttpResponse}.

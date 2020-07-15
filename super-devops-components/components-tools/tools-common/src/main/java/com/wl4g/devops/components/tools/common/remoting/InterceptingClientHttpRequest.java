@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
+import com.wl4g.devops.components.tools.common.remoting.exception.ClientHttpRequestExecution;
 
 import io.netty.handler.codec.http.HttpMethod;
 

@@ -12,13 +12,13 @@ import com.wl4g.devops.components.tools.common.annotation.Nullable;
 import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
 import com.wl4g.devops.components.tools.common.lang.ObjectUtils;
 import com.wl4g.devops.components.tools.common.remoting.ClientHttpResponse;
-import com.wl4g.devops.components.tools.common.remoting.HttpClientErrorException;
 import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
 import com.wl4g.devops.components.tools.common.remoting.HttpMediaType;
-import com.wl4g.devops.components.tools.common.remoting.HttpServerErrorException;
 import com.wl4g.devops.components.tools.common.remoting.HttpStatus;
-import com.wl4g.devops.components.tools.common.remoting.UnknownHttpStatusCodeException;
 import com.wl4g.devops.components.tools.common.remoting.RestClient.ResponseErrorHandler;
+import com.wl4g.devops.components.tools.common.remoting.exception.HttpClientErrorException;
+import com.wl4g.devops.components.tools.common.remoting.exception.HttpServerErrorException;
+import com.wl4g.devops.components.tools.common.remoting.exception.UnknownHttpStatusCodeException;
 
 /**
  * Default implementation of the {@link ResponseErrorHandler} interface.

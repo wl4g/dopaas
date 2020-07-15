@@ -1,5 +1,7 @@
 package com.wl4g.devops.components.tools.common.remoting.parse;
 
+import static java.lang.String.format;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,7 +73,14 @@ public class ResourceHttpMessageParser extends AbstractHttpMessageParser<StreamR
 				}
 			};
 		} else if (StreamResource.class == clazz || ByteArrayStreamResource.class.isAssignableFrom(clazz)) {
-			byte[] body = ByteStreamUtils.copyToByteArray(inputMessage.getBody());
+			InputStream in = inputMessage.getBody();
+			long bytes = in.available();
+			if (bytes >= DEFAULT_MEMORY_FILE_BYTES_LIMIT) {
+				throw new IOException(format(
+						"This file object is too large, about %s bytes. It is recommended to use the request with accept ranges header to support interrupt download",
+						bytes));
+			}
+			byte[] body = ByteStreamUtils.copyToByteArray(in);
 			return new ByteArrayStreamResource(body) {
 				@Override
 				@Nullable
@@ -128,5 +137,7 @@ public class ResourceHttpMessageParser extends AbstractHttpMessageParser<StreamR
 			// ignore, see SPR-12999
 		}
 	}
+
+	final public static long DEFAULT_MEMORY_FILE_BYTES_LIMIT = 1024 * 1024 * 10;
 
 }

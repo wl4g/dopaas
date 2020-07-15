@@ -1,7 +1,9 @@
-package com.wl4g.devops.components.tools.common.remoting;
+package com.wl4g.devops.components.tools.common.remoting.exception;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+
+import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
 
 /**
  * Common base class for exceptions that contain actual HTTP response data.

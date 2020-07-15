@@ -5,15 +5,23 @@ import java.io.OutputStream;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
+import com.wl4g.devops.components.tools.common.remoting.parse.HttpOutputMessage;
 
 /**
  * Abstract base for {@link AsyncClientHttpRequest} that makes sure that headers
- * and body are not written multiple times.
+ * and body are not written multiple times. </br>
+ * Represents a client-side asynchronous HTTP request. Created via an
+ * implementation of the {@link AsyncClientHttpRequestFactory}.
+ *
+ * <p>
+ * A {@code AsyncHttpRequest} can be {@linkplain #executeAsync() executed},
+ * getting a future {@link ClientHttpResponse} which can be read from.
+ * 
+ * @see AsyncClientHttpRequestFactory#createAsyncRequest
  */
-abstract class AbstractAsyncClientHttpRequest implements AsyncClientHttpRequest {
+abstract class AbstractAsyncClientHttpRequest implements HttpRequest, HttpOutputMessage {
 
 	private final HttpHeaders headers = new HttpHeaders();
-
 	private boolean executed = false;
 
 	@Override
@@ -27,7 +35,14 @@ abstract class AbstractAsyncClientHttpRequest implements AsyncClientHttpRequest 
 		return getBodyInternal(this.headers);
 	}
 
-	@Override
+	/**
+	 * Execute this request asynchronously, resulting in a Future handle.
+	 * {@link ClientHttpResponse} that can be read.
+	 * 
+	 * @return the future response result of the execution
+	 * @throws java.io.IOException
+	 *             in case of I/O errors
+	 */
 	public ListenableFuture<ClientHttpResponse> executeAsync() throws IOException {
 		assert2NotExecuted();
 		ListenableFuture<ClientHttpResponse> result = executeInternal(this.headers);
