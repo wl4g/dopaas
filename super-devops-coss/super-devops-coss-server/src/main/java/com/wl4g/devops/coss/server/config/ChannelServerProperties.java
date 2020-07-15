@@ -38,7 +38,7 @@ public class ChannelServerProperties implements Serializable {
 	private int inetPort = 10030;
 
 	/** Server channel TCP backlog. */
-	private int backlog = 512;
+	private int backlog = 4096;
 
 	/** Server channel read timeout seconds. */
 	private int readTimeoutSec = 30 * 60 * 5;

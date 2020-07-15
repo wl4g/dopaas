@@ -19,10 +19,13 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
-import com.wl4g.devops.coss.server.ChannelCossServer;
+import com.wl4g.devops.coss.server.CossServer;
 import com.wl4g.devops.coss.server.CossServerBootsstrap;
-import com.wl4g.devops.coss.server.NettyChannelCossServer;
+import com.wl4g.devops.coss.server.NettyCossServer;
+import com.wl4g.devops.coss.server.handler.CossActionProvider;
+import com.wl4g.devops.coss.server.handler.DefaultCossActionProvider;
 
 /**
  * {@link ChannelServerAutoConfiguration}
@@ -40,13 +43,19 @@ public class ChannelServerAutoConfiguration {
 	}
 
 	@Bean
-	public ChannelCossServer nettyChannelCossServer(ChannelServerProperties config) {
-		return new NettyChannelCossServer(config);
+	@Primary
+	public CossServer nettyCossServer(ChannelServerProperties config) {
+		return new NettyCossServer(config);
 	}
 
 	@Bean
-	public CossServerBootsstrap cossServerBootsstrap(ChannelServerProperties config, List<ChannelCossServer> servers) {
+	public CossServerBootsstrap cossServerBootsstrap(ChannelServerProperties config, List<CossServer> servers) {
 		return new CossServerBootsstrap(config, servers);
+	}
+
+	@Bean
+	public CossActionProvider defaultCossActionProvider() {
+		return new DefaultCossActionProvider();
 	}
 
 }
