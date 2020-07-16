@@ -1,4 +1,4 @@
-package com.wl4g.devops.components.tools.common.remoting;
+package com.wl4g.devops.components.tools.common.remoting.standard;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,10 +23,6 @@ import com.wl4g.devops.components.tools.common.resource.StreamResource;
  */
 public final class MediaTypeFactory {
 
-	private static final String MIME_TYPES_FILE_NAME = "/org/springframework/http/mime.types";
-
-	private static final MultiValueMap<String, HttpMediaType> fileExtensionToMediaTypes = parseMimeTypes();
-
 	private MediaTypeFactory() {
 	}
 
@@ -44,7 +40,7 @@ public final class MediaTypeFactory {
 	 * @return a multi-value map, mapping media types to file extensions.
 	 */
 	private static MultiValueMap<String, HttpMediaType> parseMimeTypes() {
-		InputStream is = MediaTypeFactory.class.getResourceAsStream(MIME_TYPES_FILE_NAME);
+		InputStream is = MediaTypeFactory.class.getResourceAsStream(defaultMimeTypesFileName);
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.US_ASCII))) {
 			MultiValueMap<String, HttpMediaType> result = new LinkedMultiValueMap<>();
 			String line;
@@ -61,7 +57,7 @@ public final class MediaTypeFactory {
 			}
 			return result;
 		} catch (IOException ex) {
-			throw new IllegalStateException("Could not load '" + MIME_TYPES_FILE_NAME + "'", ex);
+			throw new IllegalStateException("Could not load '" + defaultMimeTypesFileName + "'", ex);
 		}
 	}
 
@@ -98,5 +94,10 @@ public final class MediaTypeFactory {
 		return Optional.ofNullable(StringUtils2.getFilenameExtension(filename)).map(s -> s.toLowerCase(Locale.ENGLISH))
 				.map(fileExtensionToMediaTypes::get).orElse(Collections.emptyList());
 	}
+
+	private static final MultiValueMap<String, HttpMediaType> fileExtensionToMediaTypes = parseMimeTypes();
+	// e.g: com/wl4g/devops/components/tools/common/remoting/mime.types
+	private static final String defaultMimeTypesFileName = MediaTypeFactory.class.getName().replace(".", "/")
+			.replace(MediaTypeFactory.class.getSimpleName(), "").concat("mime.types");
 
 }

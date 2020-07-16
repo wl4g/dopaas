@@ -24,14 +24,13 @@ public interface ClientHttpRequestInterceptor {
 	 * pattern:
 	 * <ol>
 	 * <li>Examine the {@linkplain HttpRequest request} and body</li>
-	 * <li>Optionally
-	 * {@linkplain org.springframework.http.client.support.HttpRequestWrapper
-	 * wrap} the request to filter HTTP attributes.</li>
+	 * <li>Optionally {@linkplain HttpRequestWrapper wrap} the request to filter
+	 * HTTP attributes.</li>
 	 * <li>Optionally modify the body of the request.</li>
 	 * <li><strong>Either</strong>
 	 * <ul>
 	 * <li>execute the request using
-	 * {@link ClientHttpRequestExecution#execute(org.springframework.http.HttpRequest, byte[])},</li>
+	 * {@link ClientHttpRequestExecution#execute(HttpRequest, byte[])},</li>
 	 * <strong>or</strong>
 	 * <li>do not execute the request to block the execution altogether.</li>
 	 * </ul>

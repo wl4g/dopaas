@@ -3,7 +3,7 @@ package com.wl4g.devops.components.tools.common.remoting.parse;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
 
 /**
  * {@link HttpInputMessage} that can eventually stores a Jackson view that will

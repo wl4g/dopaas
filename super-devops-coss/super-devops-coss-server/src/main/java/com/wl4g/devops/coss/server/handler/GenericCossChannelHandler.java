@@ -16,9 +16,10 @@
 package com.wl4g.devops.coss.server.handler;
 
 import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static java.util.Objects.nonNull;
 
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
-import com.wl4g.devops.components.tools.common.remoting.HttpMediaType;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelFuture;
@@ -30,7 +31,9 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.timeout.IdleStateEvent;
 
 /**
@@ -142,6 +145,20 @@ public abstract class GenericCossChannelHandler extends ChannelDuplexHandler {
 
 		// Output
 		ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+	}
+
+	/**
+	 * If necessary, add listener close channel future
+	 * 
+	 * @param ctx
+	 */
+	protected void handleHttpKeepAlive(ChannelHandlerContext ctx, FullHttpRequest req, FullHttpResponse resp) {
+		if (nonNull(ctx) && nonNull(req) && HttpUtil.isKeepAlive(req)) {
+			if (nonNull(resp)) {
+				HttpUtil.setKeepAlive(resp, true);
+			}
+			ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT).addListener(ChannelFutureListener.CLOSE);
+		}
 	}
 
 	/**

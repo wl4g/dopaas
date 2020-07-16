@@ -3,7 +3,7 @@ package com.wl4g.devops.components.tools.common.remoting.parse;
 import java.io.IOException;
 import java.util.List;
 
-import com.wl4g.devops.components.tools.common.remoting.HttpMediaType;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
 
 /**
  * Strategy interface that specifies a converter that can convert from and to

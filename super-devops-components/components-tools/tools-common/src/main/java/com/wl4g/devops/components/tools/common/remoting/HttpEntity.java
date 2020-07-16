@@ -2,6 +2,7 @@ package com.wl4g.devops.components.tools.common.remoting;
 
 import com.wl4g.devops.components.tools.common.collection.multimap.MultiValueMap;
 import com.wl4g.devops.components.tools.common.lang.ObjectUtils;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
 
 /**
  * Represents an HTTP request or response entity, consisting of headers and

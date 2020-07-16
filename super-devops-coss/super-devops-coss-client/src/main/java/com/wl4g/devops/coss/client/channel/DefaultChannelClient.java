@@ -11,8 +11,8 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
-import com.wl4g.devops.components.tools.common.remoting.HttpStatus;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus;
 import com.wl4g.devops.coss.client.config.ClientCossConfiguration;
 import com.wl4g.devops.coss.common.exception.ClientCossException;
 import com.wl4g.devops.coss.common.internal.ExecutionContext;

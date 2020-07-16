@@ -1,4 +1,4 @@
-package com.wl4g.devops.components.tools.common.remoting;
+package com.wl4g.devops.components.tools.common.remoting.standard;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 

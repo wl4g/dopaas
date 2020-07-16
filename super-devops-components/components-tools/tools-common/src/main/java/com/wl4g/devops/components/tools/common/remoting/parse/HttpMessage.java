@@ -1,6 +1,6 @@
 package com.wl4g.devops.components.tools.common.remoting.parse;
 
-import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
 
 /**
  * Represents the base interface for HTTP request and response messages.

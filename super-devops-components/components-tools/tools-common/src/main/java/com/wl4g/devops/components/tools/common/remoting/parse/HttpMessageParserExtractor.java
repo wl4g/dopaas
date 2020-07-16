@@ -11,9 +11,9 @@ import com.wl4g.devops.components.tools.common.annotation.Nullable;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.reflect.ResolvableType;
 import com.wl4g.devops.components.tools.common.remoting.ClientHttpResponse;
-import com.wl4g.devops.components.tools.common.remoting.HttpMediaType;
 import com.wl4g.devops.components.tools.common.remoting.RestClient.ResponseProcessor;
 import com.wl4g.devops.components.tools.common.remoting.exception.RestClientException;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
 
 /**
  * Response extractor that uses the given {@linkplain HttpMessageParser entity

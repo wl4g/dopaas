@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
 import com.wl4g.devops.components.tools.common.remoting.exception.ClientHttpRequestExecution;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
 
 import io.netty.handler.codec.http.HttpMethod;
 

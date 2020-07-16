@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+
 /**
  * Base implementation of {@link ClientHttpRequest} that buffers output in a
  * byte array before sending it over the wire.

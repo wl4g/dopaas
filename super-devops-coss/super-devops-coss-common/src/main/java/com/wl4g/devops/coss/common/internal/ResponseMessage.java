@@ -1,6 +1,6 @@
 package com.wl4g.devops.coss.common.internal;
 
-import com.wl4g.devops.components.tools.common.remoting.HttpStatus;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus;
 import com.wl4g.devops.coss.common.utils.COSSHeaders;
 
 /**

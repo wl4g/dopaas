@@ -3,7 +3,7 @@ package com.wl4g.devops.components.tools.common.remoting.parse;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-import com.wl4g.devops.components.tools.common.remoting.HttpMediaType;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
 
 /**
  * A specialization of {@link HttpMessageParser} that can convert an HTTP

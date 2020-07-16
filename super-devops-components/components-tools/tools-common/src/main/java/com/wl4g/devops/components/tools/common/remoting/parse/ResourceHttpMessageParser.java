@@ -8,8 +8,8 @@ import java.io.InputStream;
 
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
 import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
-import com.wl4g.devops.components.tools.common.remoting.HttpMediaType;
-import com.wl4g.devops.components.tools.common.remoting.MediaTypeFactory;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
+import com.wl4g.devops.components.tools.common.remoting.standard.MediaTypeFactory;
 import com.wl4g.devops.components.tools.common.resource.ByteArrayStreamResource;
 import com.wl4g.devops.components.tools.common.resource.InputStreamResource;
 import com.wl4g.devops.components.tools.common.resource.StreamResource;

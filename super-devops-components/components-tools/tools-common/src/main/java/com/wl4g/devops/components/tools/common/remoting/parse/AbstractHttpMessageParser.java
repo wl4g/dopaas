@@ -12,8 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.wl4g.devops.components.tools.common.lang.Assert2;
-import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
-import com.wl4g.devops.components.tools.common.remoting.HttpMediaType;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
 
 /**
  * Abstract base class for most {@link HttpMessageParser} implementations.

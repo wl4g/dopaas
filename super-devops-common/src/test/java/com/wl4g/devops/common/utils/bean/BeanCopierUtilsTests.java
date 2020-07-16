@@ -24,23 +24,13 @@ public class BeanCopierUtilsTests {
 		//
 		// 注：bean的setter方法必须是标准的，如：setter方法有返回值也会导致无法复制
 		//
-		SimpleUserPrincipal p1 = new SimpleUserPrincipal();
+		MyUserPrincipal p1 = new MyUserPrincipal();
 		p1.setPrincipalId("001");
 		p1.setPrincipal("zs");
 		p1.attributes().put("aa", "11");
 		out.println("source p1 object: " + toJSONString(p1) + ", hashCode: " + p1.hashCode());
 
-		SimpleUserPrincipal p2 = new SimpleUserPrincipal();
-		// BeanCopierUtils.mapper(p1, p2, new Converter() {
-		// @SuppressWarnings("rawtypes")
-		// @Override
-		// public Object convert(Object fieldValue, Class fieldClass, Object
-		// setterMethod) {
-		// // System.out.println(arg0);
-		// return fieldValue;
-		// }
-		// });
-		p2 = BeanCopierUtils.clone(p1);
+		MyUserPrincipal p2 = BeanCopierUtils.clone(p1);
 		out.println("clone p2 object: " + toJSONString(p2) + ", hashCode: " + p2.hashCode());
 
 	}

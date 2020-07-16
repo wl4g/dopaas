@@ -1,4 +1,4 @@
-package com.wl4g.devops.components.tools.common.remoting;
+package com.wl4g.devops.components.tools.common.remoting.standard;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;

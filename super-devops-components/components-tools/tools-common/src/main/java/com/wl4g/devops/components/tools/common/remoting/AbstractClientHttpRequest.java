@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.wl4g.devops.components.tools.common.lang.Assert2;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
 
 /**
  * Abstract base for {@link ClientHttpRequest} that makes sure that headers and

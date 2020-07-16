@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wl4g.devops.components.tools.common.remoting.HttpMediaType;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
 import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 
 /**

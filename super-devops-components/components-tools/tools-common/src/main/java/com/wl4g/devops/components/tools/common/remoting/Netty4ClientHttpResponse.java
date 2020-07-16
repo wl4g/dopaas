@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.Map;
 
 import com.wl4g.devops.components.tools.common.lang.Assert2;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus;
 
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,11 +18,8 @@ import io.netty.handler.codec.http.FullHttpResponse;
 class Netty4ClientHttpResponse extends AbstractClientHttpResponse {
 
 	private final ChannelHandlerContext context;
-
 	private final FullHttpResponse nettyResponse;
-
 	private final ByteBufInputStream body;
-
 	private volatile HttpHeaders headers;
 
 	public Netty4ClientHttpResponse(ChannelHandlerContext context, FullHttpResponse nettyResponse) {

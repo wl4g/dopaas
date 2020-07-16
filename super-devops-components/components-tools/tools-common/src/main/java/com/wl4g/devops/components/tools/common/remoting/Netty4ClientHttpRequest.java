@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBufOutputStream;
@@ -33,16 +34,11 @@ import io.netty.handler.codec.http.HttpVersion;
 class Netty4ClientHttpRequest extends AbstractAsyncClientHttpRequest implements ClientHttpRequest {
 
 	private final HttpHeaders headers = new HttpHeaders();
-
-	private boolean executed = false;
-
 	private final Bootstrap bootstrap;
-
 	private final URI uri;
-
 	private final HttpMethod method;
-
 	private final ByteBufOutputStream body;
+	private boolean executed = false;
 
 	public Netty4ClientHttpRequest(Bootstrap bootstrap, URI uri, HttpMethod method) {
 		this.bootstrap = bootstrap;
@@ -86,7 +82,7 @@ class Netty4ClientHttpRequest extends AbstractAsyncClientHttpRequest implements 
 	 */
 	public ListenableFuture<ClientHttpResponse> executeAsync() throws IOException {
 		assertNotExecuted();
-		ListenableFuture<ClientHttpResponse> result = executeInternal(this.headers);
+		ListenableFuture<ClientHttpResponse> result = executeInternal(headers);
 		this.executed = true;
 		return result;
 	}
@@ -99,7 +95,7 @@ class Netty4ClientHttpRequest extends AbstractAsyncClientHttpRequest implements 
 	 *             if this request has been executed
 	 */
 	protected void assertNotExecuted() {
-		Assert2.state(!this.executed, "ClientHttpRequest already executed");
+		Assert2.state(!executed, "ClientHttpRequest already executed");
 	}
 
 	/**
@@ -151,31 +147,30 @@ class Netty4ClientHttpRequest extends AbstractAsyncClientHttpRequest implements 
 			if (future.isSuccess()) {
 				Channel channel = future.channel();
 				channel.pipeline().addLast(new RequestExecuteHandler(responseFuture));
-				FullHttpRequest nettyRequest = createFullHttpRequest(headers);
-				channel.writeAndFlush(nettyRequest);
+				channel.writeAndFlush(createFullHttpRequest(headers));
 			} else {
 				responseFuture.setException(future.cause());
 			}
 		};
 
-		this.bootstrap.connect(this.uri.getHost(), getPort(this.uri)).addListener(connectionListener);
+		this.bootstrap.connect(uri.getHost(), getPort(uri)).addListener(connectionListener);
 		return responseFuture;
 	}
 
 	private FullHttpRequest createFullHttpRequest(HttpHeaders headers) {
-		io.netty.handler.codec.http.HttpMethod nettyMethod = io.netty.handler.codec.http.HttpMethod.valueOf(this.method.name());
+		io.netty.handler.codec.http.HttpMethod nettyMethod = io.netty.handler.codec.http.HttpMethod.valueOf(method.name());
 
-		String authority = this.uri.getRawAuthority();
-		String path = this.uri.toString().substring(this.uri.toString().indexOf(authority) + authority.length());
-		FullHttpRequest nettyRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, nettyMethod, path, this.body.buffer());
+		String authority = uri.getRawAuthority();
+		String path = uri.toString().substring(uri.toString().indexOf(authority) + authority.length());
+		FullHttpRequest nettyRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, nettyMethod, path, body.buffer());
 
-		nettyRequest.headers().set(HttpHeaders.HOST, this.uri.getHost() + ":" + getPort(uri));
+		nettyRequest.headers().set(HttpHeaders.HOST, uri.getHost() + ":" + getPort(uri));
 		nettyRequest.headers().set(HttpHeaders.CONNECTION, "close");
 		for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
 			nettyRequest.headers().add(entry.getKey(), entry.getValue());
 		}
-		if (!nettyRequest.headers().contains(HttpHeaders.CONTENT_LENGTH) && this.body.buffer().readableBytes() > 0) {
-			nettyRequest.headers().set(HttpHeaders.CONTENT_LENGTH, this.body.buffer().readableBytes());
+		if (!nettyRequest.headers().contains(HttpHeaders.CONTENT_LENGTH) && body.buffer().readableBytes() > 0) {
+			nettyRequest.headers().set(HttpHeaders.CONTENT_LENGTH, body.buffer().readableBytes());
 		}
 
 		return nettyRequest;

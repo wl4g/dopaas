@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.reflect.ResolvableType;
-import com.wl4g.devops.components.tools.common.remoting.HttpMediaType;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
 
 import org.apache.commons.lang3.reflect.TypeUtils;
 

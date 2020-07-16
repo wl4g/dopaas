@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.remoting.parse.HttpOutputMessage;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
 
 /**
  * Abstract base for {@link AsyncClientHttpRequest} that makes sure that headers

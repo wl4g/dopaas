@@ -3,8 +3,8 @@ package com.wl4g.devops.components.tools.common.remoting.exception;
 import java.nio.charset.Charset;
 
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
-import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
-import com.wl4g.devops.components.tools.common.remoting.HttpStatus;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus;
 
 /**
  * Exception thrown when an HTTP 4xx is received.
