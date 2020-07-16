@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 
 import com.wl4g.devops.components.tools.common.remoting.ClientHttpResponse;
-import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
-import com.wl4g.devops.components.tools.common.remoting.HttpStatus;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus;
 
 /**
  * Implementation of {@link Netty4ClientHttpResponse} that can not only check if

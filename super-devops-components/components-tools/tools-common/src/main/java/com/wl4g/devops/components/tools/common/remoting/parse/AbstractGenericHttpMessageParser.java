@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 
-import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
-import com.wl4g.devops.components.tools.common.remoting.HttpMediaType;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
 
 /**
  * Abstract base class for most {@link GenericHttpMessageParser}

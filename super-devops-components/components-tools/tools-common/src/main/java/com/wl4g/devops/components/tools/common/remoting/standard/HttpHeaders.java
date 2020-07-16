@@ -1,4 +1,4 @@
-package com.wl4g.devops.components.tools.common.remoting;
+package com.wl4g.devops.components.tools.common.remoting.standard;
 
 import static java.util.Collections.emptySet;
 
@@ -602,10 +602,8 @@ public class HttpHeaders implements MultiValueMap<String, String>, Serializable 
 	public void setAcceptLanguage(List<Locale.LanguageRange> languages) {
 		Assert2.notNull(languages, "LanguageRange List must not be null");
 		DecimalFormat decimal = new DecimalFormat("0.0", DECIMAL_FORMAT_SYMBOLS);
-		List<String> values = languages.stream()
-				.map(range -> range.getWeight() == Locale.LanguageRange.MAX_WEIGHT ? range.getRange()
-						: range.getRange() + ";q=" + decimal.format(range.getWeight()))
-				.collect(Collectors.toList());
+		List<String> values = languages.stream().map(range -> range.getWeight() == Locale.LanguageRange.MAX_WEIGHT
+				? range.getRange() : range.getRange() + ";q=" + decimal.format(range.getWeight())).collect(Collectors.toList());
 		set(ACCEPT_LANGUAGE, toCommaDelimitedString(values));
 	}
 
@@ -2199,7 +2197,7 @@ public class HttpHeaders implements MultiValueMap<String, String>, Serializable 
 		@Override
 		public Set<Entry<String, List<String>>> entrySet() {
 			// Retain original ordering of entries
-			return this.headers.entrySet().stream().map(SimpleImmutableEntry::new).collect(
+			return this.headers.entrySet().stream().map(SimpleImmutableEntry<String, List<String>>::new).collect(
 					Collectors.collectingAndThen(Collectors.toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
 		}
 

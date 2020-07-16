@@ -17,6 +17,8 @@
 package com.wl4g.devops.components.tools.common.remoting;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
+import static java.util.Objects.isNull;
+import static java.lang.Runtime.getRuntime;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -24,6 +26,8 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLException;
+
+import com.wl4g.devops.components.tools.common.annotation.Nullable;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelConfig;
@@ -37,6 +41,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -62,20 +68,16 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
  */
 public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory, Closeable {
 
+	private final boolean defaultEventLoopGroup;
 	private final EventLoopGroup eventLoopGroup;
 
-	private final boolean defaultEventLoopGroup;
-
-	private int maxResponseSize = DEFAULT_MAX_RESPONSE_SIZE;
-
-	/**
-	 * Nullabled
-	 */
+	@Nullable
 	private SslContext sslContext;
 
+	private boolean debug = false;
 	private int connectTimeout = -1;
-
 	private int readTimeout = -1;
+	private int maxResponseSize = DEFAULT_MAX_RESPONSE_SIZE;
 
 	/**
 	 * Nullabled
@@ -87,9 +89,17 @@ public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory,
 	 * {@link NioEventLoopGroup}.
 	 */
 	public Netty4ClientHttpRequestFactory() {
-		int ioWorkerCount = Runtime.getRuntime().availableProcessors() * 2;
-		this.eventLoopGroup = new NioEventLoopGroup(ioWorkerCount);
-		this.defaultEventLoopGroup = true;
+		this(false);
+	}
+
+	/**
+	 * Create a new {@code Netty4ClientHttpRequestFactory} with a default
+	 * {@link NioEventLoopGroup}.
+	 * 
+	 * @param debug
+	 */
+	public Netty4ClientHttpRequestFactory(boolean debug) {
+		this(new NioEventLoopGroup(getRuntime().availableProcessors() * 2), debug);
 	}
 
 	/**
@@ -99,11 +109,14 @@ public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory,
 	 * <b>NOTE:</b> the given group will <strong>not</strong> be
 	 * {@linkplain EventLoopGroup#shutdownGracefully() shutdown} by this
 	 * factory; doing so becomes the responsibility of the caller.
+	 * 
+	 * @param debug
 	 */
-	public Netty4ClientHttpRequestFactory(EventLoopGroup eventLoopGroup) {
-		notNull(eventLoopGroup, "EventLoopGroup must not be null");
+	public Netty4ClientHttpRequestFactory(EventLoopGroup eventLoopGroup, boolean debug) {
+		// notNull(eventLoopGroup, "EventLoopGroup must not be null");
 		this.eventLoopGroup = eventLoopGroup;
-		this.defaultEventLoopGroup = false;
+		this.defaultEventLoopGroup = isNull(eventLoopGroup);
+		this.debug = debug;
 	}
 
 	/**
@@ -194,21 +207,23 @@ public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory,
 	private Bootstrap getBootstrap(URI uri) {
 		boolean isSecure = (uri.getPort() == 443 || "https".equalsIgnoreCase(uri.getScheme()));
 		if (isSecure) {
-			return buildBootstrap(uri, true);
-		} else if (bootstrap == null) {
-			this.bootstrap = buildBootstrap(uri, false);
+			return createBootstrap(uri, true);
+		} else if (isNull(bootstrap)) {
+			this.bootstrap = createBootstrap(uri, false);
 		}
 		return bootstrap;
 	}
 
-	private Bootstrap buildBootstrap(URI uri, boolean isSecure) {
+	private Bootstrap createBootstrap(URI uri, boolean isSecure) {
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
 			@Override
 			protected void initChannel(SocketChannel channel) throws Exception {
 				configureChannel(channel.config());
 				ChannelPipeline pipe = channel.pipeline();
-				// pipe.addLast(new LoggingHandler(LogLevel.INFO));
+				if (debug) {
+					pipe.addLast(new LoggingHandler(LogLevel.INFO));
+				}
 				if (isSecure) {
 					notNull(getSslContext(), "sslContext should not be null");
 					pipe.addLast(getSslContext().newHandler(channel.alloc(), uri.getHost(), uri.getPort()));

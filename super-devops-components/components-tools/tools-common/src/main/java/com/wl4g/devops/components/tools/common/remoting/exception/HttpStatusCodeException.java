@@ -5,8 +5,8 @@ import java.nio.charset.Charset;
 import org.apache.commons.lang3.StringUtils;
 
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
-import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
-import com.wl4g.devops.components.tools.common.remoting.HttpStatus;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus;
 
 /**
  * Abstract base class for exceptions based on an {@link HttpStatus}.

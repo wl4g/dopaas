@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wl4g.devops.components.tools.common.remoting;
+package com.wl4g.devops.components.tools.common.remoting.standard;
 
 /**
  * Enumeration of HTTP status codes.
@@ -599,7 +599,7 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.remoting.HttpStatus.Series#INFORMATIONAL}.
+	 * {@link com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus.Series#INFORMATIONAL}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 4.0
@@ -611,7 +611,7 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.remoting.HttpStatus.Series#SUCCESSFUL}.
+	 * {@link com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus.Series#SUCCESSFUL}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 4.0
@@ -623,7 +623,7 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.remoting.HttpStatus.Series#REDIRECTION}.
+	 * {@link com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus.Series#REDIRECTION}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 4.0
@@ -635,7 +635,7 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.remoting.HttpStatus.Series#CLIENT_ERROR}.
+	 * {@link com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus.Series#CLIENT_ERROR}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 4.0
@@ -647,7 +647,7 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.remoting.HttpStatus.Series#SERVER_ERROR}.
+	 * {@link com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus.Series#SERVER_ERROR}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 4.0
@@ -659,9 +659,9 @@ public enum HttpStatus {
 
 	/**
 	 * Whether this status code is in the HTTP series
-	 * {@link com.wl4g.devops.components.tools.common.remoting.HttpStatus.Series#CLIENT_ERROR}
+	 * {@link com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus.Series#CLIENT_ERROR}
 	 * or
-	 * {@link com.wl4g.devops.components.tools.common.remoting.HttpStatus.Series#SERVER_ERROR}.
+	 * {@link com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus.Series#SERVER_ERROR}.
 	 * This is a shortcut for checking the value of {@link #series()}.
 	 * 
 	 * @since 5.0

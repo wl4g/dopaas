@@ -19,7 +19,7 @@ import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.lang.ObjectUtils;
 import com.wl4g.devops.components.tools.common.lang.StringUtils2;
 import com.wl4g.devops.components.tools.common.remoting.ClientHttpRequest;
-import com.wl4g.devops.components.tools.common.remoting.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
 import com.wl4g.devops.components.tools.common.remoting.uri.HierarchicalUriComponents.PathComponent;
 import com.wl4g.devops.components.tools.common.remoting.uri.UriComponents.UriTemplateVariables;
 

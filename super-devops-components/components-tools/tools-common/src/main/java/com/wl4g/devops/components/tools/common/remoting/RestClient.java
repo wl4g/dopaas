@@ -23,6 +23,9 @@ import com.wl4g.devops.components.tools.common.remoting.parse.HttpMessageParserE
 import com.wl4g.devops.components.tools.common.remoting.parse.MappingJackson2HttpMessageParser;
 import com.wl4g.devops.components.tools.common.remoting.parse.ResourceHttpMessageParser;
 import com.wl4g.devops.components.tools.common.remoting.parse.StringHttpMessageParser;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpStatus;
 import com.wl4g.devops.components.tools.common.remoting.uri.AbstractUriTemplateHandler;
 import com.wl4g.devops.components.tools.common.remoting.uri.DefaultResponseErrorHandler;
 import com.wl4g.devops.components.tools.common.remoting.uri.DefaultUriBuilderFactory;
@@ -43,9 +46,9 @@ import io.netty.handler.codec.http.HttpMethod;
  * {@code HttpURLConnection}, Apache HttpComponents, and others.
  *
  * <p>
- * The RestClient offers templates for common scenarios by HTTP method, in
- * addition to the generalized {@code exchange} and {@code execute} methods that
- * support of less frequent cases.
+ * The {@link RestClient} offers templates for common scenarios by HTTP
+ * method, in addition to the generalized {@code exchange} and {@code execute}
+ * methods that support of less frequent cases.
  *
  * @see HttpMessageParser
  * @see RequestProcessor
@@ -64,12 +67,22 @@ public class RestClient {
 	private UriTemplateHandler uriTemplateHandler;
 
 	/**
-	 * Create a new instance of the {@link RestClient} using default settings.
-	 * Default {@link HttpMessageParser HttpMessageConverters} are initialized.
+	 * Create a new instance of the {@link RestClient} using default
+	 * settings. Default {@link HttpMessageParser} are initialized.
+	 */
+	public RestClient() {
+		this(false);
+	}
+
+	/**
+	 * Create a new instance of the {@link RestClient} using default
+	 * settings. Default {@link HttpMessageParser} are initialized.
+	 * 
+	 * @param debug
 	 */
 	@SuppressWarnings("serial")
-	public RestClient() {
-		this(new Netty4ClientHttpRequestFactory(), new ArrayList<HttpMessageParser<?>>() {
+	public RestClient(boolean debug) {
+		this(new Netty4ClientHttpRequestFactory(debug), new ArrayList<HttpMessageParser<?>>() {
 			{
 				add(new ByteArrayHttpMessageParser());
 				add(new StringHttpMessageParser());
@@ -82,8 +95,8 @@ public class RestClient {
 	}
 
 	/**
-	 * Create a new instance of the {@link RestClient} using the given list of
-	 * {@link HttpMessageParser} to use.
+	 * Create a new instance of the {@link RestClient} using the given list
+	 * of {@link HttpMessageParser} to use.
 	 * 
 	 * @param requestFactory
 	 *            the HTTP request factory to use
@@ -1205,32 +1218,31 @@ public class RestClient {
 			} else {
 				Class<?> requestBodyClass = requestBody.getClass();
 				Type requestBodyType = (this.requestEntity instanceof HttpRequestEntity
-						? ((HttpRequestEntity<?>) this.requestEntity).getType()
-						: requestBodyClass);
+						? ((HttpRequestEntity<?>) this.requestEntity).getType() : requestBodyClass);
 				HttpHeaders httpHeaders = httpRequest.getHeaders();
 				HttpHeaders requestHeaders = this.requestEntity.getHeaders();
 				HttpMediaType requestContentType = requestHeaders.getContentType();
-				for (HttpMessageParser<?> messageConverter : getMessageParsers()) {
-					if (messageConverter instanceof GenericHttpMessageParser) {
-						GenericHttpMessageParser<Object> genericConverter = (GenericHttpMessageParser<Object>) messageConverter;
-						if (genericConverter.canWrite(requestBodyType, requestBodyClass, requestContentType)) {
+				for (HttpMessageParser<?> parser : getMessageParsers()) {
+					if (parser instanceof GenericHttpMessageParser) {
+						GenericHttpMessageParser<Object> genericParser = (GenericHttpMessageParser<Object>) parser;
+						if (genericParser.canWrite(requestBodyType, requestBodyClass, requestContentType)) {
 							if (!requestHeaders.isEmpty()) {
 								requestHeaders.forEach((key, values) -> httpHeaders.put(key, new LinkedList<>(values)));
 							}
-							logBody(requestBody, requestContentType, genericConverter);
-							genericConverter.write(requestBody, requestBodyType, requestContentType, httpRequest);
+							logBody(requestBody, requestContentType, genericParser);
+							genericParser.write(requestBody, requestBodyType, requestContentType, httpRequest);
 							return;
 						}
-					} else if (messageConverter.canWrite(requestBodyClass, requestContentType)) {
+					} else if (parser.canWrite(requestBodyClass, requestContentType)) {
 						if (!requestHeaders.isEmpty()) {
 							requestHeaders.forEach((key, values) -> httpHeaders.put(key, new LinkedList<>(values)));
 						}
-						logBody(requestBody, requestContentType, messageConverter);
-						((HttpMessageParser<Object>) messageConverter).write(requestBody, requestContentType, httpRequest);
+						logBody(requestBody, requestContentType, parser);
+						((HttpMessageParser<Object>) parser).write(requestBody, requestContentType, httpRequest);
 						return;
 					}
 				}
-				String message = "No HttpMessageConverter for " + requestBodyClass.getName();
+				String message = "No HttpMessageParser for " + requestBodyClass.getName();
 				if (requestContentType != null) {
 					message += " and content type \"" + requestContentType + "\"";
 				}
@@ -1252,10 +1264,10 @@ public class RestClient {
 	// Response data processor.
 
 	/**
-	 * Generic callback interface used by {@link RestClient}'s retrieval methods
-	 * Implementations of this interface perform the actual work of extracting
-	 * data from a {@link ClientHttpResponse}, but don't need to worry about
-	 * exception handling or closing resources.
+	 * Generic callback interface used by {@link RestClient}'s retrieval
+	 * methods Implementations of this interface perform the actual work of
+	 * extracting data from a {@link ClientHttpResponse}, but don't need to
+	 * worry about exception handling or closing resources.
 	 *
 	 * <p>
 	 * Used internally by the {@link RestClient}, but also useful for
@@ -1319,8 +1331,8 @@ public class RestClient {
 	// Response error handler.
 
 	/**
-	 * Strategy interface used by the {@link RestClient} to determine whether a
-	 * particular response has an error or not.
+	 * Strategy interface used by the {@link RestClient} to determine whether
+	 * a particular response has an error or not.
 	 */
 	public interface ResponseErrorHandler {
 

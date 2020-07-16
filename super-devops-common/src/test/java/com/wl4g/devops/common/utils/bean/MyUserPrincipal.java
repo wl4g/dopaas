@@ -15,9 +15,23 @@
  */
 package com.wl4g.devops.common.utils.bean;
 
-import org.springframework.util.Assert;
-
-import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_HOST_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PARENT_SESSIONID_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
+import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SNS_AUTHORIZED_INFO;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.String.valueOf;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,157 +45,231 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_HOST_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PARENT_SESSIONID_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SNS_AUTHORIZED_INFO;
-import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.parseBoolean;
-import static java.lang.String.valueOf;
-import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.util.Assert;
+
+import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 
 /**
- * IAM principal account information.
+ * Simple IAM principal account information.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2018-04-31
  * @since
  */
-public interface IUserPrincipal extends Serializable {
+public class MyUserPrincipal implements Serializable {
+	private static final long serialVersionUID = -2148910955172545592L;
+
+	/** Authenticate principal ID. */
+	@NotBlank
+	private String principalId;
+
+	/** Authenticate principal name. */
+	@NotBlank
+	private String principal;
+
+	/** Authenticate principal DB stored credenticals. */
+	private String storedCredentials;
+
+	/** Authenticate principal role codes. */
+	private String roles;
+
+	/** Authenticate principal organization. */
+	private PrincipalOrganization organization;
+
+	/** Authenticate principal permission. */
+	private String permissions;
+
+	/** Authenticate principal attributes. */
+	private Attributes attributes;
+
+	public MyUserPrincipal() {
+		super();
+	}
+
+	public MyUserPrincipal(@NotBlank MyUserPrincipal info) {
+		this(info.getPrincipalId(), info.getPrincipal(), info.getStoredCredentials(), info.getRoles(), info.getPermissions(),
+				info.getOrganization(), info.attributes());
+	}
+
+	public MyUserPrincipal(@NotBlank String principalId, String principal, String storedCredentials, String roles,
+			String permissions, PrincipalOrganization organization) {
+		this(principalId, principal, storedCredentials, roles, permissions, organization, null);
+	}
+
+	public MyUserPrincipal(@NotBlank String principalId, String principal, String storedCredentials, String roles,
+			String permissions, PrincipalOrganization organization, Attributes attributes) {
+		setPrincipalId(principalId);
+		setPrincipal(principal);
+		setStoredCredentials(storedCredentials);
+		setRoles(roles);
+		setPermissions(permissions);
+		setOrganization(organization);
+		setAttributes(attributes);
+	}
+
+	public final String getPrincipalId() {
+		return principalId;
+	}
+
+	public String principalId() {
+		return isBlank(principalId) ? EMPTY : principalId;
+	}
+
+	public final void setPrincipalId(String principalId) {
+		hasTextOf(principalId, "principalId");
+		this.principalId = principalId;
+	}
+
+	public final MyUserPrincipal withPrincipalId(String principalId) {
+		setPrincipalId(principalId);
+		return this;
+	}
+
+	public final String getPrincipal() {
+		return principal;
+	}
+
+	public String principal() {
+		return isBlank(principal) ? EMPTY : principal;
+	}
+
+	public final void setPrincipal(String principal) {
+		hasTextOf(principal, "principalName");
+		this.principal = principal;
+	}
+
+	public final MyUserPrincipal withPrincipal(String principal) {
+		setPrincipal(principal);
+		return this;
+	}
+
+	public final String getStoredCredentials() {
+		return storedCredentials;
+	}
+
+	public String storedCredentials() {
+		return isBlank(storedCredentials) ? EMPTY : storedCredentials;
+	}
+
+	public final void setStoredCredentials(String storedCredentials) {
+		// hasText(storedCredentials, "Authenticate storedCredentials can't
+		// empty");
+		this.storedCredentials = storedCredentials;
+	}
+
+	public final MyUserPrincipal withStoredCredentials(String storedCredentials) {
+		setStoredCredentials(storedCredentials);
+		return this;
+	}
+
+	public final String getRoles() {
+		return roles;
+	}
+
+	public String roles() {
+		return isBlank(roles) ? EMPTY : roles;
+	}
+
+	public final void setRoles(String roles) {
+		// hasText(roles, "Authenticate roles can't empty");
+		this.roles = roles;
+	}
+
+	public final MyUserPrincipal withRoles(String roles) {
+		setRoles(roles);
+		return this;
+	}
+
+	public final PrincipalOrganization getOrganization() {
+		return organization;
+	}
+
+	public PrincipalOrganization organization() {
+		return isNull(organization) ? (organization = new PrincipalOrganization()) : organization;
+	}
+
+	public void setOrganization(PrincipalOrganization organization) {
+		// notNullOf(organization, "organization");
+		this.organization = organization;
+	}
+
+	public MyUserPrincipal withOrganization(PrincipalOrganization organization) {
+		setOrganization(organization);
+		return this;
+	}
+
+	public final String getPermissions() {
+		return permissions;
+	}
+
+	public String permissions() {
+		return isBlank(permissions) ? EMPTY : permissions;
+	}
+
+	public final void setPermissions(String permissions) {
+		// hasText(permissions, "Authenticate permissions can't empty");
+		this.permissions = permissions;
+	}
+
+	public final MyUserPrincipal withPermissions(String permissions) {
+		setPermissions(permissions);
+		return this;
+	}
+
+	public final Attributes getAttributes() {
+		// notNull(attributes, "Principal attributes can't null");
+		return attributes;
+	}
+
+	public final Attributes attributes() {
+		return isNull(attributes) ? (attributes = new Attributes()) : attributes;
+	}
 
 	/**
-	 * Get account principal Id.
+	 * Sets principal account attributes.
 	 * 
+	 * @param attributes
 	 * @return
 	 */
-	String getPrincipalId();
+	public final void setAttributes(Attributes attributes) {
+		this.attributes = attributes;
+	}
 
 	/**
-	 * Get account principal Id.
+	 * Sets with principal account attributes.
 	 * 
-	 * @return If null, the NOOP default value is returned
-	 */
-	String principalId();
-
-	/**
-	 * Get account principal name.
-	 * 
+	 * @param attributes
 	 * @return
 	 */
-	String getPrincipal();
+	public final MyUserPrincipal withAttributes(Attributes attributes) {
+		setAttributes(attributes);
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		return "SimplePrincipalInfo [principalId=" + principalId + ", principal=" + principal + ", storedCredentials="
+				+ storedCredentials + ", roles=" + roles + ", permissions=" + permissions + ", attributes=" + attributes + "]";
+	}
 
 	/**
-	 * Get account principal name.
-	 * 
-	 * @return If null, the NOOP default value is returned
+	 * Validation.
 	 */
-	String principal();
-
-	/**
-	 * Principal role codes. </br>
-	 * <p>
-	 * EG: sc_sys_mgt,sc_general_mgt,sc_general_operator,sc_user_jack
-	 * </p>
-	 *
-	 * @return principal role codes.
-	 */
-	String getRoles();
-
-	/**
-	 * Principal role codes. </br>
-	 * <p>
-	 * EG: sc_sys_mgt,sc_general_mgt,sc_general_operator,sc_user_jack
-	 * </p>
-	 *
-	 * @return principal role codes, If null, the NOOP default value is returned
-	 */
-	String roles();
-
-	/**
-	 * Principal organization. </br>
-	 * <p>
-	 *
-	 * @return principal organizations identifiers.
-	 */
-	PrincipalOrganization getOrganization();
-
-	/**
-	 * Principal organization. </br>
-	 * <p>
-	 * 
-	 * @return principal organizations identifiers, If null, the new value is
-	 *         returned
-	 */
-	PrincipalOrganization organization();
-
-	/**
-	 * Principal permissions. </br>
-	 * <p>
-	 * e.g.: sys:user:view,sys:user:edit,goods:order:view,goods:order:edit
-	 * </p>
-	 *
-	 * @return principal permission identifiers.
-	 */
-	String getPermissions();
-
-	/**
-	 * Principal permissions. </br>
-	 * <p>
-	 * e.g.: sys:user:view,sys:user:edit,goods:order:view,goods:order:edit
-	 * </p>
-	 *
-	 * @return principal permission identifiers, If null, the NOOP default value
-	 *         is returned
-	 */
-	String permissions();
-
-	/**
-	 * Stored encrypted credentials
-	 * 
-	 * @return Encrypted credentials string
-	 */
-	String getStoredCredentials();
-
-	/**
-	 * Stored encrypted credentials
-	 * 
-	 * @return Encrypted credentials string, If null, the NOOP default value is
-	 *         returned
-	 */
-	String storedCredentials();
-
-	/**
-	 * Gets account attributes.
-	 * 
-	 * @return
-	 */
-	Attributes getAttributes();
-
-	/**
-	 * Gets account attributes.
-	 * 
-	 * @return If null, the new value is returned
-	 */
-	Attributes attributes();
-
-	/**
-	 * Validation of principal information attribute.
-	 * 
-	 * @throws IllegalArgumentException
-	 */
-	IUserPrincipal validate() throws IllegalArgumentException;
+	public final MyUserPrincipal validate() throws IllegalArgumentException {
+		hasText(getPrincipalId(), "Authenticate principalId can't empty");
+		hasText(getPrincipal(), "Authenticate principal name can't empty");
+		// hasText(getRoles(), "Authenticate roles can't empty");
+		// notNull(getOrganization(), "Authenticate organization can't empty");
+		// hasText(getPermissions(), "Authenticate permissions can't empty");
+		return this;
+	}
 
 	// --- Authenticating parameter's. ---
 
 	/**
-	 * {@link IUserPrincipal} attributes wrapper.
+	 * {@link MyUserPrincipal} attributes wrapper.
 	 * 
 	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
 	 * @version 2020年7月7日 v1.0.0

@@ -1,4 +1,4 @@
-package com.wl4g.devops.components.tools.common.remoting;
+package com.wl4g.devops.components.tools.common.remoting.standard;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -16,7 +16,7 @@ import java.util.Map;
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
 import com.wl4g.devops.components.tools.common.collection.CollectionUtils2;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
-import com.wl4g.devops.components.tools.common.remoting.HttpMimeType.MimeTypeUtils.InvalidMimeTypeException;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMimeType.MimeTypeUtils.InvalidMimeTypeException;
 
 /**
  * A subclass of {@link HttpMimeType} that adds support for quality parameters
