@@ -52,6 +52,8 @@ public class Menu extends BaseBean implements Serializable {
 
 	private Integer sort;
 
+	private String classify;
+
 	private List<Menu> children;
 
 	@Override
@@ -174,6 +176,14 @@ public class Menu extends BaseBean implements Serializable {
 
 	public void setRenderTarget(String renderTarget) {
 		this.renderTarget = renderTarget;
+	}
+
+	public String getClassify() {
+		return classify;
+	}
+
+	public void setClassify(String classify) {
+		this.classify = classify;
 	}
 
 	@Override
