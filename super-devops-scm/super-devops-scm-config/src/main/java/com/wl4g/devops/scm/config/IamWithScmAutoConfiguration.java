@@ -53,7 +53,7 @@ public class IamWithScmAutoConfiguration {
 		private static final long serialVersionUID = -2654363585569068709L;
 
 		@Override
-		protected void applyBuildinDefaultFilterChains(Map<String, String> chains) {
+		protected void applyRequiresFilterChains(Map<String, String> chains) {
 			chains.put(URI_S_BASE + "/**", "anon");
 		}
 

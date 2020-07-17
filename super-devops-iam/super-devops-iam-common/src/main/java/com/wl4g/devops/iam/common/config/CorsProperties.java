@@ -87,17 +87,22 @@ public class CorsProperties implements InitializingBean, Serializable {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// Apply default settings.
-		applyDefaultPropertiesSet();
+		applyRulesProperties();
 	}
 
 	/**
-	 * Apply default properties fields settings.
+	 * Apply default and requires rules if necessary.
 	 */
-	private void applyDefaultPropertiesSet() {
-		// Append default cors allows(/**).
-		getRules().getOrDefault("/**", new CorsRule()).addAllowsOrigins("http://localhost:8080").setAllowCredentials(true)
-				.addAllowsHeaders(DEFAULT_ALLOWED_HEADERS).addAllowsMethods(DEFAULT_ALLOWED_METHODS);
+	private void applyRulesProperties() {
+		// Sets default cors rules, if necessary
+		if (isEmpty(getRules())) {
+			getRules().getOrDefault("/**", new CorsRule()).addAllowsOrigins("http://localhost:8080").setAllowCredentials(true)
+					.addAllowsHeaders(DEFAULT_ALLOWED_HEADERS).addAllowsMethods(DEFAULT_ALLOWED_METHODS);
+		}
+
+		// Adds requires cors rules
+		getRules().values().stream().forEach(rule -> rule.addAllowsHeaders(DEFAULT_REQUIRES_ALLOWED_HEADERS));
+
 	}
 
 	//
@@ -524,11 +529,20 @@ public class CorsProperties implements InitializingBean, Serializable {
 	final public static String KEY_CORS_PREFIX = "spring.cloud.devops.iam.cors";
 
 	/**
+	 * Default requires allowes headers.
+	 */
+	final public static String[] DEFAULT_REQUIRES_ALLOWED_HEADERS = { "Cookie", "X-Requested-With", "Content-Type",
+			"Content-Length", "User-Agent", "Referer", "Origin", "Accept", "Accept-Language", "Accept-Encoding" };
+
+	/**
 	 * Default allowes headers.
 	 */
-	final public static String[] DEFAULT_ALLOWED_HEADERS = { DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*", "Cookie",
-			"X-Requested-With", "Content-Type", "Content-Length", "User-Agent", "Referer", "Origin", "Accept", "Accept-Language",
-			"Accept-Encoding" };
+	@SuppressWarnings("serial")
+	final public static String[] DEFAULT_ALLOWED_HEADERS = new ArrayList<String>() {
+		{
+			add(DEFAULT_CORS_ALLOW_HEADER_PREFIX + "-*");
+		}
+	}.toArray(new String[] {});
 
 	/**
 	 * Default allowes methods.

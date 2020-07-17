@@ -191,7 +191,7 @@ public class IamProperties extends AbstractIamProperties<ServerParamProperties> 
 	 * For example: {@link DefaultOauth2SnsController#connect} </br>
 	 */
 	@Override
-	protected void applyBuildinDefaultFilterChains(Map<String, String> chains) {
+	protected void applyRequiresFilterChains(Map<String, String> chains) {
 		// Default view access files request rules.
 		chains.put(DEFAULT_VIEW_BASE_URI + "/**", "anon");
 		// Default Iam-JSSDK controller rules.
