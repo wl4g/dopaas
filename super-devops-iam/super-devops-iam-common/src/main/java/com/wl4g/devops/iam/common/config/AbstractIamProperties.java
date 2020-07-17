@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
+import com.wl4g.devops.components.tools.common.collection.CollectionUtils2;
 import com.wl4g.devops.components.tools.common.collection.RegisteredSetList;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.iam.common.config.AbstractIamProperties.ParamProperties;
@@ -66,7 +67,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	/**
 	 * External custom filter chain pattern matching
 	 */
-	private Map<String, String> filterChain = new OnlyFilterChainMap();
+	private Map<String, String> filterChain = new SafeFilterChainMap();
 
 	/**
 	 * Session cache configuration properties.
@@ -212,14 +213,13 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * Apply default config property.
 	 */
 	protected void applyDefaultPropertiesSet() {
-
 		// Sets Service name defaults.
 		if (isBlank(getServiceName())) {
 			setServiceName(getSpringApplicationName());
 		}
 
-		// Adds generic build-in default filter-chains.
-		applyBuildinDefaultFilterChains(getFilterChain());
+		// Apply requires default filter-chains.
+		applyRequiresFilterChains(getFilterChain());
 	}
 
 	/**
@@ -254,8 +254,8 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	 * @param pattern
 	 *            url pattern.
 	 */
-	protected void applyBuildinDefaultFilterChains(Map<String, String> chains) {
-		// Adds default xsrf request rules.
+	protected void applyRequiresFilterChains(Map<String, String> chains) {
+		// Adds requires xsrf request rules.
 		getFilterChain().putIfAbsent(XsrfProperties.DEFAULT_XSRF_BASE_PATTERN, "anon");
 	}
 
@@ -973,13 +973,13 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 	}
 
 	/**
-	 * {@link OnlyFilterChainMap}
+	 * {@link SafeFilterChainMap}
 	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020年5月25日
 	 * @since
 	 */
-	public static class OnlyFilterChainMap extends LinkedHashMap<String, String> {
+	public static class SafeFilterChainMap extends LinkedHashMap<String, String> {
 		private static final long serialVersionUID = 8580940081413814344L;
 
 		final protected SmartLogger log = getLogger(getClass());
@@ -987,8 +987,7 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 		@Override
 		public String put(String pattern, String chain) {
 			String res = super.putIfAbsent(pattern, chain);
-			// Overwrite not allowed
-			if (!isBlank(res)) {
+			if (!isBlank(res)) { // Overwrite not allowed
 				log.warn("Ignore set already pattern filter chain: {} => {}", pattern, chain);
 			}
 			return res;
@@ -996,7 +995,9 @@ public abstract class AbstractIamProperties<P extends ParamProperties> implement
 
 		@Override
 		public void putAll(Map<? extends String, ? extends String> m) {
-			forEach((k, v) -> put(k, v)); // Overwrite not allowed
+			if (!CollectionUtils2.isEmpty(m)) {
+				m.forEach((k, v) -> put(k, v));
+			}
 		}
 
 		@Override
