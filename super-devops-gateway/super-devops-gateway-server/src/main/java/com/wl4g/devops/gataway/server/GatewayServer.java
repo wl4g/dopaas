@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops;
+package com.wl4g.devops.gataway.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -35,14 +33,14 @@ public class GatewayServer {
         SpringApplication.run(GatewayServer.class, args);
     }
 
-    @Bean
+    //@Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 //官方demo
-                /*.route(p -> p
+                .route(p -> p
                         .path("/get")
                         .filters(f -> f.addRequestHeader("Hello", "World"))
-                        .uri("http://httpbin.org:80"))*/
+                        .uri("http://httpbin.org:80"))
                 //自定义
                 .route(p -> p
 
@@ -63,7 +61,7 @@ public class GatewayServer {
                         //.host("**.wl4g.debug").and()
 
                         //method断言
-                        .method(HttpMethod.GET, HttpMethod.POST).and()
+                        //.method(HttpMethod.GET, HttpMethod.POST).and()
 
                         //query断言
                         .query("name").and()

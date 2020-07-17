@@ -487,7 +487,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Hoxton.SR5</version>
+				<version>Hoxton.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

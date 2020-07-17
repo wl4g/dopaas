@@ -1,4 +1,4 @@
-package com.wl4g.devops;
+package com.wl4g.devops.gataway.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
