@@ -97,4 +97,5 @@ public abstract class AbstractRouteRepository extends InMemoryRouteDefinitionRep
     public synchronized Mono<Void> initMemeryByPermanent(){
         return flushRoutesPermanentToMemery();
     }
+
 }
