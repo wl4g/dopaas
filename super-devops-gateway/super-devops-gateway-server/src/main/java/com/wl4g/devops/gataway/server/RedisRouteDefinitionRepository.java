@@ -5,12 +5,15 @@ import com.wl4g.devops.gataway.server.redis.JedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,14 +49,15 @@ public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
      */
     @Override
     protected Flux<RouteDefinition> getRouteDefinitionsByPermanent() {
-        List<RouteDefinition> list = new ArrayList<>();
+        /*List<RouteDefinition> list = new ArrayList<>();
         Map<String, String> map = jedisService.getMap(REDIS_ROUTE_KEY);
         for(Map.Entry<String, String> entry : map.entrySet()){
             String value = entry.getValue();
             RouteDefinition routeDefinition = JacksonUtils.parseJSON(value, RouteDefinition.class);
             list.add(routeDefinition);
         }
-        return Flux.fromIterable(list);
+        return Flux.fromIterable(list);*/
+        return Flux.fromIterable(getRouteDefinitionsFromRedis());
         //return Flux.empty();
     }
 
@@ -101,7 +105,7 @@ public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
         },REDIS_NOTIFY_KEY.getBytes(DEF_CHARTSET));*/
     }
 
-    /*private List<RouteDefinition> getRouteDefinitionsFromRedis() {
+    private List<RouteDefinition> getRouteDefinitionsFromRedis() {
         List<RouteDefinition> list = new ArrayList<>();
         RouteDefinition routeDefinition = new RouteDefinition();
         routeDefinition.setId("route_id_1");
@@ -116,6 +120,6 @@ public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
         }
         list.add(routeDefinition);
         return list;
-    }*/
+    }
 
 }
