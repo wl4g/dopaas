@@ -1,4 +1,4 @@
-package com.wl4g.devops;
+package com.wl4g.devops.gataway.server;
 
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
