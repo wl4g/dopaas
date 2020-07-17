@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -49,15 +50,23 @@ public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
      */
     @Override
     protected Flux<RouteDefinition> getRouteDefinitionsByPermanent() {
-        /*List<RouteDefinition> list = new ArrayList<>();
+        List<RouteDefinition> list = new ArrayList<>();
         Map<String, String> map = jedisService.getMap(REDIS_ROUTE_KEY);
         for(Map.Entry<String, String> entry : map.entrySet()){
             String value = entry.getValue();
-            RouteDefinition routeDefinition = JacksonUtils.parseJSON(value, RouteDefinition.class);
-            list.add(routeDefinition);
+            RouteDefinition routeDefinition = null;
+            try {
+                routeDefinition = JacksonUtils.parseJSON(value, RouteDefinition.class);
+                list.add(routeDefinition);
+            }catch (Exception e){
+                logger.error("parseJSON fail");
+            }
         }
-        return Flux.fromIterable(list);*/
-        return Flux.fromIterable(getRouteDefinitionsFromRedis());
+        if(CollectionUtils.isEmpty(list)){
+            return Flux.empty();
+        }
+        return Flux.fromIterable(list);
+        //return Flux.fromIterable(getRouteDefinitionsFromRedis());
         //return Flux.empty();
     }
 
