@@ -34,7 +34,7 @@ public class AppInstance extends BaseBean {
 
 	private Integer versionId;
 
-	//private Integer deployType;
+	// private Integer deployType;
 
 	private Integer hostId;
 
@@ -44,17 +44,17 @@ public class AppInstance extends BaseBean {
 
 	private String cossRefBucket;
 
-	//private Integer sshId;
+	// private Integer sshId;
 
 	private String envType;
 
 	private Integer enable;
 
-	//private String endpoint;
+	// private String endpoint;
 
 	private String remark;
 
-	//private Ssh ssh;
+	// private Ssh ssh;
 
 	//
 	// --- Temporary fields. ---
@@ -114,8 +114,6 @@ public class AppInstance extends BaseBean {
 		this.enable = enable;
 	}
 
-
-
 	@Override
 	public String getRemark() {
 		return remark;
@@ -125,8 +123,6 @@ public class AppInstance extends BaseBean {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-
-
 
 	public Integer getK8sId() {
 		return k8sId;
@@ -144,7 +140,6 @@ public class AppInstance extends BaseBean {
 		this.dockerId = dockerId;
 	}
 
-
 	public String getName() {
 		return name;
 	}
@@ -160,7 +155,6 @@ public class AppInstance extends BaseBean {
 	public void setHostname(String hostname) {
 		this.hostname = hostname;
 	}
-
 
 	public String getClusterName() {
 		return clusterName;
@@ -212,16 +206,8 @@ public class AppInstance extends BaseBean {
 
 	@Override
 	public String toString() {
-		return "AppInstance{" +
-				"name='" + name + '\'' +
-				", clusterId=" + clusterId +
-				", versionId=" + versionId +
-				", hostId=" + hostId +
-				", k8sId=" + k8sId +
-				", dockerId=" + dockerId +
-				", envType='" + envType + '\'' +
-				", enable=" + enable +
-				", remark='" + remark + '\'' +
-				'}';
+		return "AppInstance{" + "name='" + name + '\'' + ", clusterId=" + clusterId + ", versionId=" + versionId + ", hostId="
+				+ hostId + ", k8sId=" + k8sId + ", dockerId=" + dockerId + ", envType='" + envType + '\'' + ", enable=" + enable
+				+ ", remark='" + remark + '\'' + '}';
 	}
 }
