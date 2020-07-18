@@ -25,121 +25,121 @@ import java.util.List;
  * @date 2018年9月19日
  */
 public class AppCluster extends BaseBean {
-    private static final long serialVersionUID = -3298424126317938674L;
+	private static final long serialVersionUID = -3298424126317938674L;
 
-    private String name;
+	private String name;
 
-    private Integer type;
+	private Integer type;
 
-    private Integer enable;
+	private Integer enable;
 
-    private String remark;
+	private String remark;
 
-    private String endpoint;
+	private String endpoint;
 
-    private Integer sshId;
+	private Integer sshId;
 
-    private Integer deployType;
+	private Integer deployType;
 
-    private Ssh ssh;
+	private Ssh ssh;
 
-    // --- Temporary. ---
+	// --- Temporary. ---
 
-    private int instanceCount;
+	private int instanceCount;
 
-    private List<AppInstance> instances;
+	private List<AppInstance> instances;
 
-    private List<AppEnvironment> environments;
+	private List<AppEnvironment> environments;
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public Integer getType() {
-        return type;
-    }
+	public Integer getType() {
+		return type;
+	}
 
-    public void setType(Integer type) {
-        this.type = type;
-    }
+	public void setType(Integer type) {
+		this.type = type;
+	}
 
-    @Override
-    public Integer getEnable() {
-        return enable;
-    }
+	@Override
+	public Integer getEnable() {
+		return enable;
+	}
 
-    @Override
-    public void setEnable(Integer enable) {
-        this.enable = enable;
-    }
+	@Override
+	public void setEnable(Integer enable) {
+		this.enable = enable;
+	}
 
-    @Override
-    public String getRemark() {
-        return remark;
-    }
+	@Override
+	public String getRemark() {
+		return remark;
+	}
 
-    @Override
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
+	@Override
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 
-    public List<AppInstance> getInstances() {
-        return instances;
-    }
+	public List<AppInstance> getInstances() {
+		return instances;
+	}
 
-    public void setInstances(List<AppInstance> instances) {
-        this.instances = instances;
-    }
+	public void setInstances(List<AppInstance> instances) {
+		this.instances = instances;
+	}
 
-    public int getInstanceCount() {
-        return instanceCount;
-    }
+	public int getInstanceCount() {
+		return instanceCount;
+	}
 
-    public void setInstanceCount(int instanceCount) {
-        this.instanceCount = instanceCount;
-    }
+	public void setInstanceCount(int instanceCount) {
+		this.instanceCount = instanceCount;
+	}
 
-    public String getEndpoint() {
-        return endpoint;
-    }
+	public String getEndpoint() {
+		return endpoint;
+	}
 
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
-    }
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
 
-    public Integer getSshId() {
-        return sshId;
-    }
+	public Integer getSshId() {
+		return sshId;
+	}
 
-    public void setSshId(Integer sshId) {
-        this.sshId = sshId;
-    }
+	public void setSshId(Integer sshId) {
+		this.sshId = sshId;
+	}
 
-    public Integer getDeployType() {
-        return deployType;
-    }
+	public Integer getDeployType() {
+		return deployType;
+	}
 
-    public void setDeployType(Integer deployType) {
-        this.deployType = deployType;
-    }
+	public void setDeployType(Integer deployType) {
+		this.deployType = deployType;
+	}
 
-    public Ssh getSsh() {
-        return ssh;
-    }
+	public Ssh getSsh() {
+		return ssh;
+	}
 
-    public void setSsh(Ssh ssh) {
-        this.ssh = ssh;
-    }
+	public void setSsh(Ssh ssh) {
+		this.ssh = ssh;
+	}
 
-    public List<AppEnvironment> getEnvironments() {
-        return environments;
-    }
+	public List<AppEnvironment> getEnvironments() {
+		return environments;
+	}
 
-    public void setEnvironments(List<AppEnvironment> environments) {
-        this.environments = environments;
-    }
+	public void setEnvironments(List<AppEnvironment> environments) {
+		this.environments = environments;
+	}
 }

@@ -13,10 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020年2月8日
- * @since
- * @see {@link org.apache.commons.codec.digest.HmacUtils}
- */
 package com.wl4g.devops.components.tools.common.crypto.hmac;

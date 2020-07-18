@@ -50,11 +50,10 @@ public class DefaultPipelineContext implements PipelineContext {
 	final private PipeStepBuilding pipeStepBuilding;
 	final private AppEnvironment environment;
 
-
 	public DefaultPipelineContext(Project project, String projectSourceDir, AppCluster appCluster, List<AppInstance> instances,
-								  PipelineHistory pipelineHistory, List<PipelineHistoryInstance> pipelineHistoryInstances, PipelineModel pipelineModel,
-								  PipeStepInstanceCommand pipeStepInstanceCommand, Pipeline pipeline, PipeStepNotification pipeStepNotification,
-								  PipeStepBuilding pipeStepBuilding, AppEnvironment environment) {
+			PipelineHistory pipelineHistory, List<PipelineHistoryInstance> pipelineHistoryInstances, PipelineModel pipelineModel,
+			PipeStepInstanceCommand pipeStepInstanceCommand, Pipeline pipeline, PipeStepNotification pipeStepNotification,
+			PipeStepBuilding pipeStepBuilding, AppEnvironment environment) {
 		notNull(project, "project must not be null");
 		hasText(projectSourceDir, "projectSourceDir must not be empty");
 		notNull(appCluster, "AppCluster must not be empty");
