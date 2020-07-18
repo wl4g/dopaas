@@ -486,6 +486,10 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		// after expand determine successUrl.
 		String determinedRedirectUrl = configurer.decorateAuthenticateSuccessUrl(redirect.getRedirectUrl(), token, subject,
 				request, response);
+		// Check redirectUrl
+		isTrue(!isRelativeUri(determinedRedirectUrl), IamException.class, "Custom success redirectUrl: %s is not an absolute",
+				determinedRedirectUrl);
+
 		redirect.setRedirectUrl(correctAuthenticaitorURI(URI.create(determinedRedirectUrl).toString())); // Check-symbol
 		hasText(redirect.getRedirectUrl(), "Success redirectUrl empty, please check the configure");
 		hasText(redirect.getFromAppName(), "Success application empty, please check the configure");
@@ -513,6 +517,10 @@ public abstract class AbstractServerIamAuthenticationFilter<T extends IamAuthent
 		// Determinte failure loginUrl
 		String determinedLoginUrl = configurer.decorateAuthenticateFailureUrl(redirect.getRedirectUrl(), token, ae, request,
 				response);
+		// Check loginUrl
+		isTrue(!isRelativeUri(determinedLoginUrl), IamException.class, "Custom failed loginUrl: %s is not an absolute",
+				determinedLoginUrl);
+
 		redirect.setRedirectUrl(cleanURI(determinedLoginUrl)); // Symbol check
 		// hasTextOf(redirect.getFromAppName(), "application"); //Probably-empty
 		hasText(redirect.getRedirectUrl(), "Failure redirectUrl is required, please check the configure");
