@@ -42,7 +42,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
- * JEDIS cluster service template.
+ * JEDIS adapter service template.
  * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018年9月16日
@@ -69,8 +69,8 @@ public class JedisService {
 	// --- Basic ---
 
 	public String get(final String key) {
-		return doExecuteWithRedis(cluster -> {
-			String value = cluster.get(key);
+		return doExecuteWithRedis(adapter -> {
+			String value = adapter.get(key);
 			value = !isBlank(value) && !"nil".equalsIgnoreCase(value) ? value : null;
 			log.debug("get {} = {}", key, value);
 			return value;
@@ -78,12 +78,12 @@ public class JedisService {
 	}
 
 	public String set(final String key, final String value, final int cacheSeconds) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			String result = null;
 			if (cacheSeconds != 0) {
-				result = cluster.setex(key, cacheSeconds, value);
+				result = adapter.setex(key, cacheSeconds, value);
 			} else {
-				result = cluster.set(key, value);
+				result = adapter.set(key, value);
 			}
 			log.debug("set {} = {}", key, value);
 			return result;
@@ -99,8 +99,8 @@ public class JedisService {
 	}
 
 	public Long del(final String key) {
-		return doExecuteWithRedis(cluster -> {
-			Long result = cluster.del(key);
+		return doExecuteWithRedis(adapter -> {
+			Long result = adapter.del(key);
 			log.debug("del {}", key);
 			return result;
 		});
@@ -108,16 +108,16 @@ public class JedisService {
 	}
 
 	public Long delObject(final String key) {
-		return doExecuteWithRedis(cluster -> {
-			long result = cluster.del(getBytesKey(key));
+		return doExecuteWithRedis(adapter -> {
+			long result = adapter.del(getBytesKey(key));
 			log.debug("delObject {}", key);
 			return result;
 		});
 	}
 
 	public Boolean exists(final String key) {
-		return doExecuteWithRedis(cluster -> {
-			Boolean result = cluster.exists(key);
+		return doExecuteWithRedis(adapter -> {
+			Boolean result = adapter.exists(key);
 			if (log.isDebugEnabled())
 				log.debug("exists {}", key);
 			return result;
@@ -125,8 +125,8 @@ public class JedisService {
 	}
 
 	public Boolean existsObject(final String key) {
-		return doExecuteWithRedis(cluster -> {
-			boolean result = cluster.exists(getBytesKey(key));
+		return doExecuteWithRedis(adapter -> {
+			boolean result = adapter.exists(getBytesKey(key));
 			log.debug("existsObject {}", key);
 			return result;
 		});
@@ -135,22 +135,22 @@ public class JedisService {
 	// --- ObjectT ---
 
 	public <T> T getObjectT(final String key, Class<T> clazz) {
-		return doExecuteWithRedis(cluster -> {
-			T value = ProtostuffUtils.deserialize(cluster.get(getBytesKey(key)), clazz);
+		return doExecuteWithRedis(adapter -> {
+			T value = ProtostuffUtils.deserialize(adapter.get(getBytesKey(key)), clazz);
 			log.debug("getObjectT {} = {}", key, value);
 			return value;
 		});
 	}
 
 	public <T> String setObjectT(final String key, final T value, final int cacheSeconds) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			String result = null;
 			if (cacheSeconds > 0) {
-				result = cluster.setex(getBytesKey(key), cacheSeconds, serialize(value));
+				result = adapter.setex(getBytesKey(key), cacheSeconds, serialize(value));
 			} else {
 				byte[] serialize = serialize(value);
 				System.out.println(serialize.length);
-				result = cluster.set(getBytesKey(key), serialize);
+				result = adapter.set(getBytesKey(key), serialize);
 			}
 			log.debug("setObjectT {} = {}", key, value);
 			return result;
@@ -160,12 +160,12 @@ public class JedisService {
 	// --- ObjectAsJson ---
 
 	public <T> String setObjectAsJson(final String key, final T value, final int cacheSeconds) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			String result = null;
 			if (cacheSeconds != 0) {
-				result = cluster.setex(key, cacheSeconds, toJSONString(value));
+				result = adapter.setex(key, cacheSeconds, toJSONString(value));
 			} else {
-				result = cluster.set(key, toJSONString(value));
+				result = adapter.set(key, toJSONString(value));
 			}
 			log.debug("setObjectAsJson {} = {}", key, value);
 			return result;
@@ -173,8 +173,8 @@ public class JedisService {
 	}
 
 	public <T> T getObjectAsJson(final String key, Class<T> clazz) {
-		return doExecuteWithRedis(cluster -> {
-			String json = cluster.get(key);
+		return doExecuteWithRedis(adapter -> {
+			String json = adapter.get(key);
 			if (isBlank(json)) {
 				return null;
 			}
@@ -187,18 +187,18 @@ public class JedisService {
 	// --- get/set object ---
 
 	public Object getObject(final String key) {
-		return doExecuteWithRedis(cluster -> {
-			Object value = toObject(cluster.get(getBytesKey(key)));
+		return doExecuteWithRedis(adapter -> {
+			Object value = toObject(adapter.get(getBytesKey(key)));
 			log.debug("getObject {} = {}", key, value);
 			return value;
 		});
 	}
 
 	public String setObject(final String key, final Object value, final int cacheSeconds) {
-		return doExecuteWithRedis(cluster -> {
-			String result = cluster.set(getBytesKey(key), toBytes(value));
+		return doExecuteWithRedis(adapter -> {
+			String result = adapter.set(getBytesKey(key), toBytes(value));
 			if (cacheSeconds != 0) {
-				cluster.expire(key, cacheSeconds);
+				adapter.expire(key, cacheSeconds);
 			}
 			log.debug("setObject {} = {}", key, value);
 			return result;
@@ -208,18 +208,18 @@ public class JedisService {
 	// --- String list ---
 
 	public List<String> getList(final String key) {
-		return doExecuteWithRedis(cluster -> {
-			List<String> value = cluster.lrange(key, 0, -1);
+		return doExecuteWithRedis(adapter -> {
+			List<String> value = adapter.lrange(key, 0, -1);
 			log.debug("getList {} = {}", key, value);
 			return value;
 		});
 	}
 
 	public Long setList(final String key, final List<String> values, final int cacheSeconds) {
-		return doExecuteWithRedis(cluster -> {
-			Long result = cluster.rpush(key, values.toArray(new String[] {}));
+		return doExecuteWithRedis(adapter -> {
+			Long result = adapter.rpush(key, values.toArray(new String[] {}));
 			if (cacheSeconds > 0) {
-				cluster.expire(key, cacheSeconds);
+				adapter.expire(key, cacheSeconds);
 			}
 			log.debug("setList {} = {}", key, values);
 			return result;
@@ -227,8 +227,8 @@ public class JedisService {
 	}
 
 	public Long listAdd(final String key, final String... values) {
-		return doExecuteWithRedis(cluster -> {
-			Long result = cluster.rpush(key, values);
+		return doExecuteWithRedis(adapter -> {
+			Long result = adapter.rpush(key, values);
 			log.debug("listAdd {} = {}", key, values);
 			return result;
 		});
@@ -242,10 +242,10 @@ public class JedisService {
 	 * @return
 	 */
 	public Long delListMember(final String key, final String member) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Long result = 0L;
 			if (!isBlank(member)) {
-				result = cluster.lrem(key, 0, member);
+				result = adapter.lrem(key, 0, member);
 			}
 			log.debug("delListMember {}", key);
 			return result;
@@ -255,20 +255,20 @@ public class JedisService {
 	// --- Object list ---
 
 	public <T> List<T> getObjectList(final String key, final Class<T> clazz) {
-		return doExecuteWithRedis(cluster -> {
-			return safeList(cluster.lrange(key, 0, -1)).stream().map(e -> parseJSON(e, clazz)).collect(toList());
+		return doExecuteWithRedis(adapter -> {
+			return safeList(adapter.lrange(key, 0, -1)).stream().map(e -> parseJSON(e, clazz)).collect(toList());
 		});
 	}
 
 	public <T> Long setObjectList(final String key, final List<T> values, final int cacheSeconds) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Long result = 0L;
 			if (!isEmpty(values)) {
 				List<String> members = safeList(values).stream().map(v -> toJSONString(v)).collect(toList());
-				result = cluster.rpush(key, members.toArray(new String[] {}));
+				result = adapter.rpush(key, members.toArray(new String[] {}));
 			}
 			if (cacheSeconds != 0) {
-				cluster.expire(key, cacheSeconds);
+				adapter.expire(key, cacheSeconds);
 			}
 			log.debug("setObjectList {} = {}", key, values);
 			return result;
@@ -277,14 +277,14 @@ public class JedisService {
 
 	@SuppressWarnings("unchecked")
 	public <T> Long listObjectAdd(final String key, final T... values) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Long result = 0L;
 			if (values != null && values.length != 0) {
 				String[] members = new String[values.length];
 				for (int i = 0; i < values.length; i++) {
 					members[i] = toJSONString(values[i]);
 				}
-				result = cluster.rpush(key, members);
+				result = adapter.rpush(key, members);
 			}
 			log.debug("listObjectAdd {} = {}", key, values);
 			return result;
@@ -294,8 +294,8 @@ public class JedisService {
 	// --- String set ---
 
 	public Set<String> getSet(final String key) {
-		return doExecuteWithRedis(cluster -> {
-			Set<String> value = cluster.smembers(key);
+		return doExecuteWithRedis(adapter -> {
+			Set<String> value = adapter.smembers(key);
 			log.debug("getSet {} = {}", key, value);
 			return value;
 		});
@@ -303,12 +303,12 @@ public class JedisService {
 	}
 
 	public Long setSet(final String key, final Set<String> value, final int cacheSeconds) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Long result = 0L;
 			if (value != null && !value.isEmpty())
-				result = cluster.sadd(key, value.toArray(new String[] {}));
+				result = adapter.sadd(key, value.toArray(new String[] {}));
 			if (cacheSeconds != 0)
-				cluster.expire(key, cacheSeconds);
+				adapter.expire(key, cacheSeconds);
 
 			log.debug("setSet {} = {}", key, value);
 			return result;
@@ -324,10 +324,10 @@ public class JedisService {
 	 * @return
 	 */
 	public Long setSetAdd(final String key, final String... value) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Long result = 0L;
 			if (value != null && value.length != 0)
-				result = cluster.sadd(key, value);
+				result = adapter.sadd(key, value);
 			log.debug("setSetAdd {} = {}", key, value);
 			return result;
 		});
@@ -341,10 +341,10 @@ public class JedisService {
 	 * @return
 	 */
 	public Long delSetMember(final String key, final String... members) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Long result = 0L;
 			if (members != null && members.length != 0)
-				result = cluster.srem(key, members);
+				result = adapter.srem(key, members);
 			log.debug("delSetMember {}", key);
 			return result;
 		});
@@ -354,9 +354,9 @@ public class JedisService {
 
 	@SuppressWarnings("unchecked")
 	public <T> Set<T> getObjectSet(final String key) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Set<T> value = Sets.newHashSet();
-			Set<byte[]> set = cluster.smembers(getBytesKey(key));
+			Set<byte[]> set = adapter.smembers(getBytesKey(key));
 			for (byte[] bs : set) {
 				value.add((T) toObject(bs));
 			}
@@ -375,7 +375,7 @@ public class JedisService {
 	 * @return
 	 */
 	public Long setObjectSet(final String key, final Set<Object> value, final int cacheSeconds) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Long result = 0L;
 			if (value != null && !value.isEmpty()) {
 				byte[][] members = new byte[value.size()][0];
@@ -384,10 +384,10 @@ public class JedisService {
 					members[i] = toBytes(o);
 					++i;
 				}
-				result = cluster.sadd(getBytesKey(key), members);
+				result = adapter.sadd(getBytesKey(key), members);
 			}
 			if (cacheSeconds != 0) {
-				cluster.expire(key, cacheSeconds);
+				adapter.expire(key, cacheSeconds);
 			}
 			log.debug("setObjectSet {} = {}", key, value);
 			return result;
@@ -402,7 +402,7 @@ public class JedisService {
 	 * @return
 	 */
 	public Long setSetObjectAdd(final String key, final Object... value) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Long result = 0L;
 			if (value != null && value.length != 0) {
 				byte[][] members = new byte[value.length][0];
@@ -411,7 +411,7 @@ public class JedisService {
 					members[i] = toBytes(o);
 					++i;
 				}
-				result = cluster.sadd(getBytesKey(key), members);
+				result = adapter.sadd(getBytesKey(key), members);
 			}
 			log.debug("setSetObjectAdd {} = {}", key, value);
 			return result;
@@ -428,7 +428,7 @@ public class JedisService {
 	 */
 	@Deprecated
 	public Long delSetObjectMember(final String key, final Object... members) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Long result = 0L;
 			if (members != null && members.length != 0) {
 				byte[][] members0 = new byte[members.length][0];
@@ -437,7 +437,7 @@ public class JedisService {
 					members0[i] = toBytes(o);
 					++i;
 				}
-				result = cluster.srem(getBytesKey(key), members0);
+				result = adapter.srem(getBytesKey(key), members0);
 			}
 			log.debug("delSetMember {}", key);
 			return result;
@@ -454,8 +454,8 @@ public class JedisService {
 	 */
 
 	public Map<String, String> getMap(final String key) {
-		return (Map<String, String>) doExecuteWithRedis(cluster -> {
-			Map<String, String> value = cluster.hgetAll(key);
+		return (Map<String, String>) doExecuteWithRedis(adapter -> {
+			Map<String, String> value = adapter.hgetAll(key);
 			log.debug("getMap {} = {}", key, value);
 			return value;
 		});
@@ -471,10 +471,10 @@ public class JedisService {
 	 * @return
 	 */
 	public String setMap(final String key, final Map<String, String> value, final int cacheSeconds) {
-		return doExecuteWithRedis(cluster -> {
-			String result = cluster.hmset(key, value);
+		return doExecuteWithRedis(adapter -> {
+			String result = adapter.hmset(key, value);
 			if (cacheSeconds != 0) {
-				cluster.expire(key, cacheSeconds);
+				adapter.expire(key, cacheSeconds);
 			}
 			log.debug("setMap {} = {}", key, value);
 			return result;
@@ -489,8 +489,8 @@ public class JedisService {
 	 * @return
 	 */
 	public String mapPut(final String key, final Map<String, String> value) {
-		return doExecuteWithRedis(cluster -> {
-			String result = cluster.hmset(key, value);
+		return doExecuteWithRedis(adapter -> {
+			String result = adapter.hmset(key, value);
 			log.debug("mapPut {} = {}", key, value);
 			return result;
 		});
@@ -504,16 +504,16 @@ public class JedisService {
 	 * @return
 	 */
 	public Long mapRemove(final String key, final String mapKey) {
-		return doExecuteWithRedis(cluster -> {
-			Long result = cluster.hdel(key, mapKey);
+		return doExecuteWithRedis(adapter -> {
+			Long result = adapter.hdel(key, mapKey);
 			log.debug("mapRemove {}  {}", key, mapKey);
 			return result;
 		});
 	}
 
 	public Boolean mapExists(final String key, final String mapKey) {
-		return doExecuteWithRedis(cluster -> {
-			Boolean result = cluster.hexists(key, mapKey);
+		return doExecuteWithRedis(adapter -> {
+			Boolean result = adapter.hexists(key, mapKey);
 			log.debug("mapObjectExists {}  {}", key, mapKey);
 			return result;
 		});
@@ -529,9 +529,9 @@ public class JedisService {
 	 * @return
 	 */
 	public Map<String, Object> getObjectMap(final String key) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Map<String, Object> value = Maps.newHashMap();
-			Map<byte[], byte[]> map = cluster.hgetAll(getBytesKey(key));
+			Map<byte[], byte[]> map = adapter.hgetAll(getBytesKey(key));
 			for (Map.Entry<byte[], byte[]> e : map.entrySet()) {
 				value.put(StringUtils2.toString(e.getKey()), toObject(e.getValue()));
 			}
@@ -550,14 +550,14 @@ public class JedisService {
 	 * @return
 	 */
 	public String setObjectMap(final String key, final Map<String, Object> value, final int cacheSeconds) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			Map<byte[], byte[]> map = Maps.newHashMap();
 			for (Map.Entry<String, Object> e : value.entrySet()) {
 				map.put(getBytesKey(e.getKey()), toBytes(e.getValue()));
 			}
-			String result = cluster.hmset(getBytesKey(key), (Map<byte[], byte[]>) map);
+			String result = adapter.hmset(getBytesKey(key), (Map<byte[], byte[]>) map);
 			if (cacheSeconds != 0) {
-				cluster.expire(key, cacheSeconds);
+				adapter.expire(key, cacheSeconds);
 			}
 			log.debug("setObjectMap {} = {}", key, value);
 			return result;
@@ -572,13 +572,13 @@ public class JedisService {
 	 * @return
 	 */
 	public String mapObjectPut(final String key, final Map<String, Object> value) {
-		return doExecuteWithRedis(cluster -> {
+		return doExecuteWithRedis(adapter -> {
 			String result = null;
 			Map<byte[], byte[]> map = Maps.newHashMap();
 			for (Map.Entry<String, Object> e : value.entrySet()) {
 				map.put(getBytesKey(e.getKey()), toBytes(e.getValue()));
 			}
-			result = cluster.hmset(getBytesKey(key), map);
+			result = adapter.hmset(getBytesKey(key), map);
 			log.debug("mapObjectPut {} = {}", key, value);
 			return result;
 		});
@@ -586,16 +586,16 @@ public class JedisService {
 
 	@Deprecated
 	public Long mapObjectRemove(final String key, final String mapKey) {
-		return doExecuteWithRedis(cluster -> {
-			Long result = cluster.hdel(getBytesKey(key), getBytesKey(mapKey));
+		return doExecuteWithRedis(adapter -> {
+			Long result = adapter.hdel(getBytesKey(key), getBytesKey(mapKey));
 			log.debug("mapObjectRemove {}  {}", key, mapKey);
 			return result;
 		});
 	}
 
 	public Boolean mapObjectExists(final String key, final String mapKey) {
-		return doExecuteWithRedis(cluster -> {
-			Boolean result = cluster.hexists(getBytesKey(key), getBytesKey(mapKey));
+		return doExecuteWithRedis(adapter -> {
+			Boolean result = adapter.hexists(getBytesKey(key), getBytesKey(mapKey));
 			log.debug("mapObjectExists {}  {}", key, mapKey);
 			return result;
 		});
@@ -614,7 +614,7 @@ public class JedisService {
 			log.error("Redis processing fail.", t);
 			throw t;
 		} finally {
-			// Redis cluster mode does not need to display the release of
+			// Redis adapter mode does not need to display the release of
 			// resources.
 		}
 	}
