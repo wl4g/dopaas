@@ -19,8 +19,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.support.cli.NodeProcessManagerImpl;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
+import com.wl4g.devops.support.cli.NodeProcessManagerImpl;
 import com.wl4g.devops.support.cli.repository.DefaultProcessRepository;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
 

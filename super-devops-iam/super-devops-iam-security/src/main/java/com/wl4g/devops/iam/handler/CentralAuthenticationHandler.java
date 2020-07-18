@@ -37,8 +37,8 @@ import com.wl4g.devops.iam.common.session.IamSession.RelationAttrKey;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.iam.common.subject.IamPrincipalInfo.Attributes;
+import com.wl4g.devops.support.redis.jedis.ScanCursor;
 import com.wl4g.devops.iam.common.subject.SimplePrincipalInfo;
-import com.wl4g.devops.support.redis.ScanCursor;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.session.Session;

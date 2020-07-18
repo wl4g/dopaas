@@ -42,84 +42,81 @@ import static java.util.Objects.isNull;
 @Service
 public class DockerClusterServiceImpl implements DockerClusterService {
 
-    @Autowired
-    private DockerClusterDao dockerClusterDao;
+	@Autowired
+	private DockerClusterDao dockerClusterDao;
 
-    @Autowired
-    private DockerInstanceDao dockerInstanceDao;
+	@Autowired
+	private DockerInstanceDao dockerInstanceDao;
 
-    @Override
-    public PageModel page(PageModel pm,String name) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(dockerClusterDao.list(getRequestOrganizationCodes(), name));
-        return pm;
-    }
+	@Override
+	public PageModel page(PageModel pm, String name) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(dockerClusterDao.list(getRequestOrganizationCodes(), name));
+		return pm;
+	}
 
-    @Override
-    public List<DockerCluster> getForSelect() {
-        return dockerClusterDao.list(getRequestOrganizationCodes(),null);
-    }
+	@Override
+	public List<DockerCluster> getForSelect() {
+		return dockerClusterDao.list(getRequestOrganizationCodes(), null);
+	}
 
-    public void save(DockerCluster dockerCluster){
-        if(isNull(dockerCluster.getId())){
-            dockerCluster.preInsert(getRequestOrganizationCode());
-            insert(dockerCluster);
-        }else{
-            dockerCluster.preUpdate();
-            update(dockerCluster);
-        }
-    }
+	public void save(DockerCluster dockerCluster) {
+		if (isNull(dockerCluster.getId())) {
+			dockerCluster.preInsert(getRequestOrganizationCode());
+			insert(dockerCluster);
+		} else {
+			dockerCluster.preUpdate();
+			update(dockerCluster);
+		}
+	}
 
-    private void insert(DockerCluster dockerCluster){
-        dockerClusterDao.insertSelective(dockerCluster);
-        List<Integer> hostIds = dockerCluster.getHostIds();
-        if(!CollectionUtils.isEmpty(hostIds)){
-            List<DockerInstance> dockerInstances = new ArrayList<>();
-            for(Integer hostId : hostIds){
-                DockerInstance dockerInstance = new DockerInstance();
-                dockerInstance.preInsert();
-                dockerInstance.setHostId(hostId);
-                dockerInstance.setDockerId(dockerCluster.getId());
-                dockerInstances.add(dockerInstance);
-            }
-            dockerInstanceDao.insertBatch(dockerInstances);
-        }
-    }
+	private void insert(DockerCluster dockerCluster) {
+		dockerClusterDao.insertSelective(dockerCluster);
+		List<Integer> hostIds = dockerCluster.getHostIds();
+		if (!CollectionUtils.isEmpty(hostIds)) {
+			List<DockerInstance> dockerInstances = new ArrayList<>();
+			for (Integer hostId : hostIds) {
+				DockerInstance dockerInstance = new DockerInstance();
+				dockerInstance.preInsert();
+				dockerInstance.setHostId(hostId);
+				dockerInstance.setDockerId(dockerCluster.getId());
+				dockerInstances.add(dockerInstance);
+			}
+			dockerInstanceDao.insertBatch(dockerInstances);
+		}
+	}
 
-    private void update(DockerCluster dockerCluster){
-        dockerClusterDao.updateByPrimaryKeySelective(dockerCluster);
-        dockerInstanceDao.deleteByDockerId(dockerCluster.getId());
-        List<Integer> hostIds = dockerCluster.getHostIds();
-        if(!CollectionUtils.isEmpty(hostIds)){
-            List<DockerInstance> dockerInstances = new ArrayList<>();
-            for(Integer hostId : hostIds){
-                DockerInstance dockerInstance = new DockerInstance();
-                dockerInstance.preInsert();
-                dockerInstance.setHostId(hostId);
-                dockerInstance.setDockerId(dockerCluster.getId());
-                dockerInstances.add(dockerInstance);
-            }
-            dockerInstanceDao.insertBatch(dockerInstances);
-        }
-    }
+	private void update(DockerCluster dockerCluster) {
+		dockerClusterDao.updateByPrimaryKeySelective(dockerCluster);
+		dockerInstanceDao.deleteByDockerId(dockerCluster.getId());
+		List<Integer> hostIds = dockerCluster.getHostIds();
+		if (!CollectionUtils.isEmpty(hostIds)) {
+			List<DockerInstance> dockerInstances = new ArrayList<>();
+			for (Integer hostId : hostIds) {
+				DockerInstance dockerInstance = new DockerInstance();
+				dockerInstance.preInsert();
+				dockerInstance.setHostId(hostId);
+				dockerInstance.setDockerId(dockerCluster.getId());
+				dockerInstances.add(dockerInstance);
+			}
+			dockerInstanceDao.insertBatch(dockerInstances);
+		}
+	}
 
+	public DockerCluster detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		DockerCluster dockerCluster = dockerClusterDao.selectByPrimaryKey(id);
+		List<Integer> hostIds = dockerInstanceDao.selectHostIdByDockerId(id);
+		dockerCluster.setHostIds(hostIds);
+		return dockerCluster;
+	}
 
-    public DockerCluster detail(Integer id){
-        Assert.notNull(id,"id is null");
-        DockerCluster dockerCluster = dockerClusterDao.selectByPrimaryKey(id);
-        List<Integer> hostIds = dockerInstanceDao.selectHostIdByDockerId(id);
-        dockerCluster.setHostIds(hostIds);
-        return dockerCluster;
-    }
-
-    public void del(Integer id){
-        Assert.notNull(id,"id is null");
-        DockerCluster dockerCluster = new DockerCluster();
-        dockerCluster.setId(id);
-        dockerCluster.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        dockerClusterDao.updateByPrimaryKeySelective(dockerCluster);
-    }
-
-
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		DockerCluster dockerCluster = new DockerCluster();
+		dockerCluster.setId(id);
+		dockerCluster.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		dockerClusterDao.updateByPrimaryKeySelective(dockerCluster);
+	}
 
 }

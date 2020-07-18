@@ -39,9 +39,9 @@ public class DnsPrivateResolutionController extends BaseController {
 	private DnsPrivateResolutionService dnsPrivateResolutionService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String host,Integer domainId) {
+	public RespBase<?> list(PageModel pm, String host, Integer domainId) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(dnsPrivateResolutionService.page(pm, host,domainId));
+		resp.setData(dnsPrivateResolutionService.page(pm, host, domainId));
 		return resp;
 	}
 

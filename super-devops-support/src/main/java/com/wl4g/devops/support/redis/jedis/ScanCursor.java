@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.redis;
+package com.wl4g.devops.support.redis.jedis;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static com.wl4g.devops.components.tools.common.serialize.ProtostuffUtils.*;
@@ -45,7 +45,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Charsets;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
@@ -74,7 +73,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	final private Logger log = LoggerFactory.getLogger(getClass());
 	final private ScanParams params;
 	final private Class<?> valueType;
-	final private JedisCluster cluster;
+	final private CompositeJedisOperatorsAdapter adapter;
 	final private List<JedisPool> nodePools;
 
 	private CursorWrapper cursor;
@@ -85,8 +84,8 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * Crates new {@link ScanCursor} with {@code id=0} and
 	 * {@link ScanParams#NONE}
 	 */
-	public ScanCursor(JedisCluster cluster, Class<?> valueType) {
-		this(cluster, valueType, NONE_PARAMS);
+	public ScanCursor(CompositeJedisOperatorsAdapter adapter, Class<?> valueType) {
+		this(adapter, valueType, NONE_PARAMS);
 	}
 
 	/**
@@ -94,8 +93,8 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @param params
 	 */
-	public ScanCursor(JedisCluster cluster, ScanParams params) {
-		this(cluster, new CursorWrapper(), null, params);
+	public ScanCursor(CompositeJedisOperatorsAdapter adapter, ScanParams params) {
+		this(adapter, new CursorWrapper(), null, params);
 	}
 
 	/**
@@ -103,8 +102,8 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @param params
 	 */
-	public ScanCursor(JedisCluster cluster, Class<?> valueType, ScanParams params) {
-		this(cluster, new CursorWrapper(), valueType, params);
+	public ScanCursor(CompositeJedisOperatorsAdapter adapter, Class<?> valueType, ScanParams params) {
+		this(adapter, new CursorWrapper(), valueType, params);
 	}
 
 	/**
@@ -112,29 +111,29 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 	 * 
 	 * @param cursor
 	 */
-	public ScanCursor(JedisCluster cluster, CursorWrapper cursor, Class<?> valueType) {
-		this(cluster, cursor, valueType, NONE_PARAMS);
+	public ScanCursor(CompositeJedisOperatorsAdapter adapter, CursorWrapper cursor, Class<?> valueType) {
+		this(adapter, cursor, valueType, NONE_PARAMS);
 	}
 
 	/**
 	 * Crates new {@link ScanCursor}
 	 * 
-	 * @param cluster
+	 * @param adapter
 	 *            JedisCluster
 	 * @param cursor
 	 * @param param
 	 *            Defaulted to {@link ScanParams#NONE} if nulled.
 	 */
-	public ScanCursor(JedisCluster cluster, CursorWrapper cursor, Class<?> valueType, ScanParams param) {
-		notNull(cluster, "jedisCluster must not be null");
+	public ScanCursor(CompositeJedisOperatorsAdapter adapter, CursorWrapper cursor, Class<?> valueType, ScanParams param) {
+		notNull(adapter, "jedisCluster must not be null");
 		if (isNull(valueType)) {
 			valueType = ResolvableType.forClass(getClass()).getSuperType().getGeneric(0).resolve();
 		}
 		this.valueType = valueType;
 		notNull(valueType, "No scan value java type is specified. Use constructs that can set value java type.");
-		this.cluster = cluster;
+		this.adapter = adapter;
 		this.params = param != null ? param : NONE_PARAMS;
-		this.nodePools = cluster.getClusterNodes().values().stream().map(n -> n).collect(toList());
+		this.nodePools = adapter.getClusterNodes().values().stream().map(n -> n).collect(toList());
 		this.state = CursorState.READY;
 		this.cursor = cursor;
 		this.iter = new ScanIterable<>(cursor, emptyList());
@@ -256,7 +255,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 
 			// Iterated yet?
 			return (List<E>) iter.getItems().stream().map(key -> {
-				return deserialize(cluster.get(key), valueType);
+				return deserialize(adapter.get(key), valueType);
 			}).collect(toList());
 		} finally {
 			iter.getItems().clear();
@@ -279,7 +278,7 @@ public abstract class ScanCursor<E> implements Iterator<E> {
 			throw new NoSuchElementException("No more elements available for cursor " + getCursor() + ".");
 		}
 
-		return (E) deserialize(cluster.get(iter.iterator().next()), valueType);
+		return (E) deserialize(adapter.get(iter.iterator().next()), valueType);
 	}
 
 	/**

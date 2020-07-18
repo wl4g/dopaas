@@ -16,7 +16,7 @@
 package com.wl4g.devops.iam.common.cache;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.support.redis.EnhancedJedisCluster.RedisProtocolUtil.keyFormat;
+import static com.wl4g.devops.support.redis.jedis.CompositeJedisOperatorsAdapter.RedisProtoUtil.keyFormat;
 
 import java.util.Map;
 import java.util.Objects;
@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 
-import redis.clients.jedis.JedisCluster;
+import com.wl4g.devops.support.redis.jedis.CompositeJedisOperatorsAdapter;
 
 /**
  * RedisCache Manager implements let Shiro use Redis caching
@@ -40,18 +40,18 @@ public class JedisIamCacheManager implements IamCacheManager {
 	final private Map<String, IamCache> caching = new ConcurrentHashMap<>();
 
 	private String prefix;
-	private JedisCluster jedisCluster;
+	private CompositeJedisOperatorsAdapter jedisAdapter;
 
-	public JedisIamCacheManager(String prefix, JedisCluster jedisCluster) {
+	public JedisIamCacheManager(String prefix, CompositeJedisOperatorsAdapter jedisAdapter) {
 		notNullOf(prefix, "prefix");
-		notNullOf(jedisCluster, "jedisCluster");
+		notNullOf(jedisAdapter, "jedisAdapter");
 		// e.g: iam-server => iam_server
 		this.prefix = keyFormat(prefix, '_');
-		this.jedisCluster = jedisCluster;
+		this.jedisAdapter = jedisAdapter;
 	}
 
-	public JedisCluster getJedisCluster() {
-		return jedisCluster;
+	public CompositeJedisOperatorsAdapter getJedisAdapter() {
+		return jedisAdapter;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -72,7 +72,7 @@ public class JedisIamCacheManager implements IamCacheManager {
 		String cacheName = getCacheName(name);
 		IamCache cache = caching.get(cacheName);
 		if (Objects.isNull(cache)) {
-			caching.put(cacheName, (cache = new JedisIamCache(cacheName, jedisCluster)));
+			caching.put(cacheName, (cache = new JedisIamCache(cacheName, jedisAdapter)));
 		}
 		return cache;
 	}

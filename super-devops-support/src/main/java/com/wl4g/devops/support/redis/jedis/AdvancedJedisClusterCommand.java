@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.redis;
+package com.wl4g.devops.support.redis.jedis;
 
 import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
@@ -39,18 +39,18 @@ import redis.clients.jedis.exceptions.JedisNoReachableClusterNodeException;
 import redis.clients.jedis.exceptions.JedisRedirectionException;
 
 /**
- * {@link EnhancedJedisClusterCommand}
+ * {@link AdvancedJedisClusterCommand}
  * 
  * @param <T>
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020年3月28日 v1.0.0
  * @see
  */
-public abstract class EnhancedJedisClusterCommand<T> extends JedisClusterCommand<T> {
+public abstract class AdvancedJedisClusterCommand<T> extends JedisClusterCommand<T> {
 
 	final protected SmartLogger log = getLogger(getClass());
 
-	public EnhancedJedisClusterCommand(JedisClusterConnectionHandler connectionHandler, int maxAttempts) {
+	public AdvancedJedisClusterCommand(JedisClusterConnectionHandler connectionHandler, int maxAttempts) {
 		super(connectionHandler, maxAttempts);
 	}
 
