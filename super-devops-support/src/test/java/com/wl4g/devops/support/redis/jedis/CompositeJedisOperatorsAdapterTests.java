@@ -58,7 +58,6 @@ public class CompositeJedisOperatorsAdapterTests {
 	public static void createWithJedisSingleTest2() throws Exception {
 		JedisProperties config = new JedisProperties();
 		config.setNodes(singletonList("127.0.0.1:6379"));
-		config.setPasswd("zzx!@#$%");
 
 		out.println("Instantiating composite operators adapter with single ...");
 		CompositeJedisFactoryBean factory = new CompositeJedisFactoryBean(config);
@@ -74,7 +73,7 @@ public class CompositeJedisOperatorsAdapterTests {
 		JedisProperties config = new JedisProperties();
 		config.setNodes(asList(new String[] { "127.0.0.1:6379", "127.0.0.1:6380", "127.0.0.1:6381", "127.0.0.1:7379",
 				"127.0.0.1:7380", "127.0.0.1:7381" }));
-		config.setPasswd("zzx!@#$%");
+		config.setPasswd("123456");
 
 		out.println("Instantiating composite operators adapter with cluster ...");
 		CompositeJedisFactoryBean factory = new CompositeJedisFactoryBean(config);
