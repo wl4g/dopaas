@@ -17,9 +17,7 @@ package com.wl4g.devops.support.redis.jedis;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 
-import java.net.URI;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -81,10 +79,9 @@ public class CompositeJedisFactoryBean implements FactoryBean<CompositeJedisOper
 						config.getMaxAttempts(), config.getPasswd(), config.getPoolConfig(), config.isSafeMode());
 			} else { // single
 				HostAndPort hap = haps.iterator().next();
-				URI uri = new URI("redis://None@".concat(config.getPasswd()).concat(hap.getHost()).concat(":")
-						.concat(valueOf(hap.getPort())));
-				JedisPool jedisPool = new JedisPool(config.getPoolConfig(), uri, config.getConnTimeout(), config.getSoTimeout());
-				jedisAdapter = new DelegateJedis(jedisPool, config.isSafeMode());
+				JedisPool pool = new JedisPool(config.getPoolConfig(), hap.getHost(), hap.getPort(), config.getConnTimeout(),
+						config.getSoTimeout(), config.getPasswd(), 0, config.getClientName(), false, null, null, null);
+				jedisAdapter = new DelegateJedis(pool, config.isSafeMode());
 			}
 		} catch (Exception e) {
 			throw new IllegalStateException(format("Can't connect to redis servers: %s", haps), e);

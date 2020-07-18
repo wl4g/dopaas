@@ -92,9 +92,12 @@ public class JedisAutoConfiguration {
 
 		private List<String> nodes = new ArrayList<>();
 		private String passwd;
+		private String clientName;
 		private int connTimeout = 10_000;
 		private int soTimeout = 10_000;
 		private int maxAttempts = 20;
+		private int database = 0;
+
 		private JedisPoolConfig poolConfig = new JedisPoolConfig();
 		private boolean safeMode = true;
 
@@ -122,6 +125,14 @@ public class JedisAutoConfiguration {
 			this.passwd = passwd;
 		}
 
+		public String getClientName() {
+			return clientName;
+		}
+
+		public void setClientName(String clientName) {
+			this.clientName = clientName;
+		}
+
 		public int getConnTimeout() {
 			return connTimeout;
 		}
@@ -144,6 +155,14 @@ public class JedisAutoConfiguration {
 
 		public void setMaxAttempts(int maxAttempts) {
 			this.maxAttempts = maxAttempts;
+		}
+
+		public int getDatabase() {
+			return database;
+		}
+
+		public void setDatabase(int database) {
+			this.database = database;
 		}
 
 		public JedisPoolConfig getPoolConfig() {
