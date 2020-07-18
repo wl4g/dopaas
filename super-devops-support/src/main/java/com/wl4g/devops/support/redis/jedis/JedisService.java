@@ -24,7 +24,6 @@ import com.wl4g.devops.components.tools.common.serialize.JdkSerializeUtils;
 import com.wl4g.devops.components.tools.common.serialize.ProtostuffUtils;
 
 import org.springframework.util.Assert;
-import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.ScanParams;
 
 import java.util.List;
@@ -636,10 +635,6 @@ public class JedisService {
 
 	public static Object toObject(byte[] bytes) {
 		return JdkSerializeUtils.unserialize(bytes);
-	}
-
-	public interface Callback {
-		public Object execute(JedisCluster jedisCluster);
 	}
 
 }
