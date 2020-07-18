@@ -35,49 +35,48 @@ import static java.util.Objects.isNull;
 @Service
 public class DnsPublicZoneServiceImpl implements DnsPublicZoneService {
 
-    @Autowired
-    private DnsPublicZoneDao dnsPublicDomainDao;
+	@Autowired
+	private DnsPublicZoneDao dnsPublicDomainDao;
 
-    @Override
-    public PageModel page(PageModel pm,String zone) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(dnsPublicDomainDao.list(getRequestOrganizationCodes(), zone));
-        return pm;
-    }
+	@Override
+	public PageModel page(PageModel pm, String zone) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(dnsPublicDomainDao.list(getRequestOrganizationCodes(), zone));
+		return pm;
+	}
 
-    public void save(DnsPublicZone dnsPublicDomain){
-        if(isNull(dnsPublicDomain.getId())){
-            dnsPublicDomain.preInsert(getRequestOrganizationCode());
-            insert(dnsPublicDomain);
-        }else{
-            dnsPublicDomain.preUpdate();
-            update(dnsPublicDomain);
-        }
-    }
+	public void save(DnsPublicZone dnsPublicDomain) {
+		if (isNull(dnsPublicDomain.getId())) {
+			dnsPublicDomain.preInsert(getRequestOrganizationCode());
+			insert(dnsPublicDomain);
+		} else {
+			dnsPublicDomain.preUpdate();
+			update(dnsPublicDomain);
+		}
+	}
 
-    private void insert(DnsPublicZone dnsPublicDomain){
-        dnsPublicDomainDao.insertSelective(dnsPublicDomain);
-    }
+	private void insert(DnsPublicZone dnsPublicDomain) {
+		dnsPublicDomainDao.insertSelective(dnsPublicDomain);
+	}
 
-    private void update(DnsPublicZone dnsPublicDomain){
-        dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);
-    }
+	private void update(DnsPublicZone dnsPublicDomain) {
+		dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);
+	}
 
+	public DnsPublicZone detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		return dnsPublicDomainDao.selectByPrimaryKey(id);
+	}
 
-    public DnsPublicZone detail(Integer id){
-        Assert.notNull(id,"id is null");
-        return dnsPublicDomainDao.selectByPrimaryKey(id);
-    }
-
-    public void del(Integer id){
-        Assert.notNull(id,"id is null");
-        /*DnsPublicZone dnsPublicDomain = new DnsPublicZone();
-        dnsPublicDomain.setId(id);
-        dnsPublicDomain.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);*/
-        dnsPublicDomainDao.deleteByPrimaryKey(id);
-    }
-
-
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		/*
+		 * DnsPublicZone dnsPublicDomain = new DnsPublicZone();
+		 * dnsPublicDomain.setId(id);
+		 * dnsPublicDomain.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		 * dnsPublicDomainDao.updateByPrimaryKeySelective(dnsPublicDomain);
+		 */
+		dnsPublicDomainDao.deleteByPrimaryKey(id);
+	}
 
 }

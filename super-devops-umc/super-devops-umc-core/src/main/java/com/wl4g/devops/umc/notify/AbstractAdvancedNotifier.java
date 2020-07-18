@@ -29,7 +29,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import com.wl4g.devops.common.constants.UMCDevOpsConstants;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
-import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.support.redis.jedis.JedisService;
 import com.wl4g.devops.umc.model.StatusMessage;
 
 import de.codecentric.boot.admin.server.domain.entities.Instance;

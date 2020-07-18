@@ -25,7 +25,7 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.support.redis.jedis.JedisService;
 import com.wl4g.devops.umc.alarm.alerting.DefaultIndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.alerting.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.alerting.SimulateIndicatorsValveAleter;

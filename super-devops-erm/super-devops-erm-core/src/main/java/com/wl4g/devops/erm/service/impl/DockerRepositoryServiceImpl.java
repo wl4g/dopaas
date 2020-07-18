@@ -59,100 +59,101 @@ import static java.util.Objects.isNull;
 @Service
 public class DockerRepositoryServiceImpl implements DockerRepositoryService {
 
-    final private static String URL_FOR_PROJECT = "/api/v2.0/projects";
+	final private static String URL_FOR_PROJECT = "/api/v2.0/projects";
 
-    @Autowired
-    private DockerRepositoryDao dockerRepositoryDao;
+	@Autowired
+	private DockerRepositoryDao dockerRepositoryDao;
 
-    @Override
-    public PageModel page(PageModel pm, String name) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(dockerRepositoryDao.list(getRequestOrganizationCodes(), name));
-        return pm;
-    }
+	@Override
+	public PageModel page(PageModel pm, String name) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(dockerRepositoryDao.list(getRequestOrganizationCodes(), name));
+		return pm;
+	}
 
-    @Override
-    public List<DockerRepository> getForSelect() {
-        return dockerRepositoryDao.list(getRequestOrganizationCodes(), null);
-    }
+	@Override
+	public List<DockerRepository> getForSelect() {
+		return dockerRepositoryDao.list(getRequestOrganizationCodes(), null);
+	}
 
-    public void save(DockerRepository dockerRepository) {
-        Assert2.notNullOf(dockerRepository, "dockerRepository");
-        if (Objects.nonNull(dockerRepository.getAuthConfigModel())) {
-            dockerRepository.setAuthConfig(JacksonUtils.toJSONString(dockerRepository.getAuthConfigModel()));
-        }
-        if (isNull(dockerRepository.getId())) {
-            dockerRepository.preInsert(getRequestOrganizationCode());
-            insert(dockerRepository);
-        } else {
-            dockerRepository.preUpdate();
-            update(dockerRepository);
-        }
-    }
+	public void save(DockerRepository dockerRepository) {
+		Assert2.notNullOf(dockerRepository, "dockerRepository");
+		if (Objects.nonNull(dockerRepository.getAuthConfigModel())) {
+			dockerRepository.setAuthConfig(JacksonUtils.toJSONString(dockerRepository.getAuthConfigModel()));
+		}
+		if (isNull(dockerRepository.getId())) {
+			dockerRepository.preInsert(getRequestOrganizationCode());
+			insert(dockerRepository);
+		} else {
+			dockerRepository.preUpdate();
+			update(dockerRepository);
+		}
+	}
 
-    private void insert(DockerRepository dockerRepository) {
-        dockerRepositoryDao.insertSelective(dockerRepository);
-    }
+	private void insert(DockerRepository dockerRepository) {
+		dockerRepositoryDao.insertSelective(dockerRepository);
+	}
 
-    private void update(DockerRepository dockerRepository) {
-        dockerRepositoryDao.updateByPrimaryKeySelective(dockerRepository);
-    }
+	private void update(DockerRepository dockerRepository) {
+		dockerRepositoryDao.updateByPrimaryKeySelective(dockerRepository);
+	}
 
+	public DockerRepository detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		DockerRepository dockerRepository = dockerRepositoryDao.selectByPrimaryKey(id);
+		if (StringUtils.isNotBlank(dockerRepository.getAuthConfig())) {
+			dockerRepository.setAuthConfigModel(
+					JacksonUtils.parseJSON(dockerRepository.getAuthConfig(), DockerRepository.AuthConfigModel.class));
+		}
+		return dockerRepository;
+	}
 
-    public DockerRepository detail(Integer id) {
-        Assert.notNull(id, "id is null");
-        DockerRepository dockerRepository = dockerRepositoryDao.selectByPrimaryKey(id);
-        if(StringUtils.isNotBlank(dockerRepository.getAuthConfig())){
-            dockerRepository.setAuthConfigModel(JacksonUtils.parseJSON(dockerRepository.getAuthConfig(), DockerRepository.AuthConfigModel.class));
-        }
-        return dockerRepository;
-    }
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		DockerRepository dockerRepository = new DockerRepository();
+		dockerRepository.setId(id);
+		dockerRepository.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		dockerRepositoryDao.updateByPrimaryKeySelective(dockerRepository);
+	}
 
-    public void del(Integer id) {
-        Assert.notNull(id, "id is null");
-        DockerRepository dockerRepository = new DockerRepository();
-        dockerRepository.setId(id);
-        dockerRepository.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        dockerRepositoryDao.updateByPrimaryKeySelective(dockerRepository);
-    }
+	@Override
+	public List<RepositoryProject> getRepositoryProjects(Integer id, String address, String name)
+			throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+		if (Objects.nonNull(id) && id != -1) {
+			DockerRepository dockerRepository = dockerRepositoryDao.selectByPrimaryKey(id);
+			Assert2.notNullOf(dockerRepository, "dockerRepository");
+			address = dockerRepository.getRegistryAddress();
+		}
+		if (StringUtils.isBlank(address)) {
+			return null;
+		}
 
-    @Override
-    public List<RepositoryProject> getRepositoryProjects(Integer id, String address,String name) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
-        if(Objects.nonNull(id) && id != -1){
-            DockerRepository dockerRepository = dockerRepositoryDao.selectByPrimaryKey(id);
-            Assert2.notNullOf(dockerRepository, "dockerRepository");
-            address = dockerRepository.getRegistryAddress();
-        }
-        if(StringUtils.isBlank(address)){
-            return null;
-        }
+		String url = "https://" + address + URL_FOR_PROJECT;
+		if (StringUtils.isNotBlank(name)) {
+			url = url + "?name=" + name;
+		}
+		// Netty4ClientHttpRequestFactory factory = new
+		// Netty4ClientHttpRequestFactory();
+		RestTemplate restTemplate = new RestTemplate(generateHttpRequestFactory());
+		ParameterizedTypeReference<List<RepositoryProject>> responseType = new ParameterizedTypeReference<List<RepositoryProject>>() {
+		};
+		ResponseEntity<List<RepositoryProject>> result = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
+		return result.getBody();
+	}
 
-        String url = "https://" + address + URL_FOR_PROJECT;
-        if(StringUtils.isNotBlank(name)){
-            url = url + "?name="+ name;
-        }
-        //Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-        RestTemplate restTemplate = new RestTemplate(generateHttpRequestFactory());
-        ParameterizedTypeReference<List<RepositoryProject>> responseType = new ParameterizedTypeReference<List<RepositoryProject>>() {};
-        ResponseEntity<List<RepositoryProject>> result = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
-        return result.getBody();
-    }
+	private HttpComponentsClientHttpRequestFactory generateHttpRequestFactory()
+			throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
+		TrustStrategy acceptingTrustStrategy = (x509Certificates, authType) -> true;
+		SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
+		SSLConnectionSocketFactory connectionSocketFactory = new SSLConnectionSocketFactory(sslContext,
+				new NoopHostnameVerifier());
 
-    private HttpComponentsClientHttpRequestFactory generateHttpRequestFactory()
-            throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException
-    {
-        TrustStrategy acceptingTrustStrategy = (x509Certificates, authType) -> true;
-        SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
-        SSLConnectionSocketFactory connectionSocketFactory = new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier());
-
-        HttpClientBuilder httpClientBuilder = HttpClients.custom();
-        httpClientBuilder.setSSLSocketFactory(connectionSocketFactory);
-        CloseableHttpClient httpClient = httpClientBuilder.build();
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setHttpClient(httpClient);
-        return factory;
-    }
-
-
+		HttpClientBuilder httpClientBuilder = HttpClients.custom();
+		httpClientBuilder.setSSLSocketFactory(connectionSocketFactory);
+		CloseableHttpClient httpClient = httpClientBuilder.build();
+		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+		factory.setHttpClient(httpClient);
+		return factory;
+	}
 
 }

@@ -50,92 +50,89 @@ import static java.util.Objects.isNull;
 @Service
 public class SshServiceImpl implements SshService {
 
-    @Autowired
-    private SshDao sshDao;
+	@Autowired
+	private SshDao sshDao;
 
-    @Value("${cipher-key}")
-    protected String cipherKey;
+	@Value("${cipher-key}")
+	protected String cipherKey;
 
-    @Autowired
-    private HostDao appHostDao;
+	@Autowired
+	private HostDao appHostDao;
 
-    @Autowired
-    private DestroableProcessManager pm;
+	@Autowired
+	private DestroableProcessManager pm;
 
-    @Override
-    public PageModel page(PageModel pm,String name) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(sshDao.list(getRequestOrganizationCodes(), name));
-        return pm;
-    }
+	@Override
+	public PageModel page(PageModel pm, String name) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(sshDao.list(getRequestOrganizationCodes(), name));
+		return pm;
+	}
 
-    @Override
-    public List<Ssh> getForSelect() {
-        return sshDao.list(getRequestOrganizationCodes(),null);
-    }
+	@Override
+	public List<Ssh> getForSelect() {
+		return sshDao.list(getRequestOrganizationCodes(), null);
+	}
 
-    public void save(Ssh ssh){
-        if(isNull(ssh.getId())){
-            ssh.preInsert(getRequestOrganizationCode());
-            insert(ssh);
-        }else{
-            ssh.preUpdate();
-            update(ssh);
-        }
-    }
+	public void save(Ssh ssh) {
+		if (isNull(ssh.getId())) {
+			ssh.preInsert(getRequestOrganizationCode());
+			insert(ssh);
+		} else {
+			ssh.preUpdate();
+			update(ssh);
+		}
+	}
 
-    private void insert(Ssh ssh){
-        if(StringUtils.isNotBlank(ssh.getSshKey())){
-            ssh.setSshKey(encryptSshkeyToHex(cipherKey, ssh.getSshKey()));
-        }
-        sshDao.insertSelective(ssh);
-    }
+	private void insert(Ssh ssh) {
+		if (StringUtils.isNotBlank(ssh.getSshKey())) {
+			ssh.setSshKey(encryptSshkeyToHex(cipherKey, ssh.getSshKey()));
+		}
+		sshDao.insertSelective(ssh);
+	}
 
-    private void update(Ssh ssh){
-        if(StringUtils.isNotBlank(ssh.getSshKey())){
-            ssh.setSshKey(encryptSshkeyToHex(cipherKey, ssh.getSshKey()));
-        }
-        sshDao.updateByPrimaryKeySelective(ssh);
-    }
+	private void update(Ssh ssh) {
+		if (StringUtils.isNotBlank(ssh.getSshKey())) {
+			ssh.setSshKey(encryptSshkeyToHex(cipherKey, ssh.getSshKey()));
+		}
+		sshDao.updateByPrimaryKeySelective(ssh);
+	}
 
+	public Ssh detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		Ssh ssh = sshDao.selectByPrimaryKey(id);
+		ssh.setSshKey(decryptSshkeyFromHex(cipherKey, ssh.getSshKey()));
+		return ssh;
+	}
 
-    public Ssh detail(Integer id){
-        Assert.notNull(id,"id is null");
-        Ssh ssh = sshDao.selectByPrimaryKey(id);
-        ssh.setSshKey(decryptSshkeyFromHex(cipherKey, ssh.getSshKey()));
-        return ssh;
-    }
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		Ssh ssh = new Ssh();
+		ssh.setId(id);
+		ssh.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		sshDao.updateByPrimaryKeySelective(ssh);
+	}
 
-    public void del(Integer id){
-        Assert.notNull(id,"id is null");
-        Ssh ssh = new Ssh();
-        ssh.setId(id);
-        ssh.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        sshDao.updateByPrimaryKeySelective(ssh);
-    }
-
-    @Override
-    public void testSSHConnect(Integer hostId, String sshUser, String sshKey, Integer sshId) throws Exception {
-        Host appHost = appHostDao.selectByPrimaryKey(hostId);
-        if(Objects.nonNull(sshId)){
-            Ssh ssh = sshDao.selectByPrimaryKey(sshId);
-            sshUser = ssh.getUsername();
-            sshKey = ssh.getSshKey();
-        }
-        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        String command = "echo " + uuid;
-        String echoStr;
-        try {
-            echoStr = pm.execWaitForComplete(
-                    new RemoteDestroableCommand(command, 10000, sshUser, appHost.getHostname(), decryptSshkeyFromHex(cipherKey, sshKey).toCharArray()));
-        } catch (UnknownHostException e) {
-            throw new UnknownHostException(appHost.getHostname() + ": Name or service not known");
-        }
-        if (Objects.isNull(echoStr) || !uuid.equals(echoStr.replaceAll("\n", ""))) {
-            throw new IOException("Test Connect Fail");
-        }
-    }
-
-
+	@Override
+	public void testSSHConnect(Integer hostId, String sshUser, String sshKey, Integer sshId) throws Exception {
+		Host appHost = appHostDao.selectByPrimaryKey(hostId);
+		if (Objects.nonNull(sshId)) {
+			Ssh ssh = sshDao.selectByPrimaryKey(sshId);
+			sshUser = ssh.getUsername();
+			sshKey = ssh.getSshKey();
+		}
+		String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+		String command = "echo " + uuid;
+		String echoStr;
+		try {
+			echoStr = pm.execWaitForComplete(new RemoteDestroableCommand(command, 10000, sshUser, appHost.getHostname(),
+					decryptSshkeyFromHex(cipherKey, sshKey).toCharArray()));
+		} catch (UnknownHostException e) {
+			throw new UnknownHostException(appHost.getHostname() + ": Name or service not known");
+		}
+		if (Objects.isNull(echoStr) || !uuid.equals(echoStr.replaceAll("\n", ""))) {
+			throw new IOException("Test Connect Fail");
+		}
+	}
 
 }

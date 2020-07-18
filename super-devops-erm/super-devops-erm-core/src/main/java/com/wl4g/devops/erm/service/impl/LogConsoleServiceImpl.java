@@ -73,10 +73,10 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 
 		List<Log> logs = queryLogFromESDocuments(index, model.getStartTime(), model.getEndTime(), model.getFrom(),
 				model.getLimit(), model.getQueryList(), model.getLevel());
-		/*List<String> result = new ArrayList<>();
-		for (Log log : logs) {
-			result.add(log.getMessage());
-		}*/
+		/*
+		 * List<String> result = new ArrayList<>(); for (Log log : logs) {
+		 * result.add(log.getMessage()); }
+		 */
 
 		return logs;
 	}
@@ -125,7 +125,8 @@ public class LogConsoleServiceImpl implements LogConsoleService {
 		if (!Objects.isNull(level) && level > 0) {
 			BoolQueryBuilder boolQueryBuilder1 = boolQuery();
 			for (int i = level - 1; i < LOG_LEVEL.size(); i++) {
-				//boolQueryBuilder1.should(matchQuery(KEY_DEFAULT_MSG, LOG_LEVEL.get(i)));
+				// boolQueryBuilder1.should(matchQuery(KEY_DEFAULT_MSG,
+				// LOG_LEVEL.get(i)));
 				boolQueryBuilder1.must(queryStringQuery(LOG_LEVEL.get(i)).field(KEY_DEFAULT_MSG));
 			}
 			boolQueryBuilder.must(boolQueryBuilder1);

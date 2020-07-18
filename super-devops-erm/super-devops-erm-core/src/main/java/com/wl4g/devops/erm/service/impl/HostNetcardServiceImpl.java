@@ -44,65 +44,63 @@ import static java.util.Objects.isNull;
 @Service
 public class HostNetcardServiceImpl implements HostNetcardService {
 
-    @Autowired
-    private HostNetcardDao appHostNetCardDao;
+	@Autowired
+	private HostNetcardDao appHostNetCardDao;
 
-    @Autowired
-    private HostTunnelOpenvpnDao hostTunnelOpenvpnDao;
+	@Autowired
+	private HostTunnelOpenvpnDao hostTunnelOpenvpnDao;
 
-    @Autowired
-    private HostTunnelPptpDao hostTunnelPptpDao;
+	@Autowired
+	private HostTunnelPptpDao hostTunnelPptpDao;
 
-    @Override
-    public PageModel page(PageModel pm,Integer hostId,String name) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(appHostNetCardDao.list(getRequestOrganizationCodes(), hostId,name));
-        return pm;
-    }
+	@Override
+	public PageModel page(PageModel pm, Integer hostId, String name) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(appHostNetCardDao.list(getRequestOrganizationCodes(), hostId, name));
+		return pm;
+	}
 
-    public void save(HostNetcard hostNetcard){
-        if(isNull(hostNetcard.getId())){
-            hostNetcard.preInsert(getRequestOrganizationCode());
-            insert(hostNetcard);
-        }else{
-            hostNetcard.preUpdate();
-            update(hostNetcard);
-        }
-    }
+	public void save(HostNetcard hostNetcard) {
+		if (isNull(hostNetcard.getId())) {
+			hostNetcard.preInsert(getRequestOrganizationCode());
+			insert(hostNetcard);
+		} else {
+			hostNetcard.preUpdate();
+			update(hostNetcard);
+		}
+	}
 
-    private void insert(HostNetcard hostNetcard){
-        appHostNetCardDao.insertSelective(hostNetcard);
-    }
+	private void insert(HostNetcard hostNetcard) {
+		appHostNetCardDao.insertSelective(hostNetcard);
+	}
 
-    private void update(HostNetcard hostNetcard){
-        appHostNetCardDao.updateByPrimaryKeySelective(hostNetcard);
-    }
+	private void update(HostNetcard hostNetcard) {
+		appHostNetCardDao.updateByPrimaryKeySelective(hostNetcard);
+	}
 
-    @Override
-    public HostNetcard detail(Integer id){
-        Assert.notNull(id,"id is null");
-        return appHostNetCardDao.selectByPrimaryKey(id);
-    }
+	@Override
+	public HostNetcard detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		return appHostNetCardDao.selectByPrimaryKey(id);
+	}
 
-    @Override
-    public void del(Integer id){
-        Assert.notNull(id,"id is null");
-        HostNetcard hostNetcard = new HostNetcard();
-        hostNetcard.setId(id);
-        hostNetcard.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        appHostNetCardDao.updateByPrimaryKeySelective(hostNetcard);
-    }
+	@Override
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		HostNetcard hostNetcard = new HostNetcard();
+		hostNetcard.setId(id);
+		hostNetcard.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		appHostNetCardDao.updateByPrimaryKeySelective(hostNetcard);
+	}
 
-    @Override
-    public Map<String, Object> getHostTunnel(){
-        Map<String, Object> resutl = new HashMap<>();
-        List<HostTunnelOpenvpn> hostTunnelOpenvpns = hostTunnelOpenvpnDao.selectAll(getRequestOrganizationCodes());
-            List<HostTunnelPptp> hostTunnelPptps = hostTunnelPptpDao.selectAll(getRequestOrganizationCodes());
-        resutl.put("openvpn",hostTunnelOpenvpns);
-        resutl.put("pptp",hostTunnelPptps);
-        return resutl;
-    }
-
-
+	@Override
+	public Map<String, Object> getHostTunnel() {
+		Map<String, Object> resutl = new HashMap<>();
+		List<HostTunnelOpenvpn> hostTunnelOpenvpns = hostTunnelOpenvpnDao.selectAll(getRequestOrganizationCodes());
+		List<HostTunnelPptp> hostTunnelPptps = hostTunnelPptpDao.selectAll(getRequestOrganizationCodes());
+		resutl.put("openvpn", hostTunnelOpenvpns);
+		resutl.put("pptp", hostTunnelPptps);
+		return resutl;
+	}
 
 }

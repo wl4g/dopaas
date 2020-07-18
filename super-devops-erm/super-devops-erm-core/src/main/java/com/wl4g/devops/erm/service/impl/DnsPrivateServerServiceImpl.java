@@ -36,48 +36,45 @@ import static java.util.Objects.isNull;
 @Service
 public class DnsPrivateServerServiceImpl implements DnsPrivateServerService {
 
-    @Autowired
-    private DnsPrivateServerDao dnsPrivateServerDao;
+	@Autowired
+	private DnsPrivateServerDao dnsPrivateServerDao;
 
-    @Override
-    public PageModel page(PageModel pm,String name) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(dnsPrivateServerDao.list(getRequestOrganizationCodes(), name));
-        return pm;
-    }
+	@Override
+	public PageModel page(PageModel pm, String name) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(dnsPrivateServerDao.list(getRequestOrganizationCodes(), name));
+		return pm;
+	}
 
-    public void save(DnsPrivateServer dnsPrivateServer){
-        if(isNull(dnsPrivateServer.getId())){
-            dnsPrivateServer.preInsert(getRequestOrganizationCode());
-            insert(dnsPrivateServer);
-        }else{
-            dnsPrivateServer.preUpdate();
-            update(dnsPrivateServer);
-        }
-    }
+	public void save(DnsPrivateServer dnsPrivateServer) {
+		if (isNull(dnsPrivateServer.getId())) {
+			dnsPrivateServer.preInsert(getRequestOrganizationCode());
+			insert(dnsPrivateServer);
+		} else {
+			dnsPrivateServer.preUpdate();
+			update(dnsPrivateServer);
+		}
+	}
 
-    private void insert(DnsPrivateServer dnsPrivateServer){
-        dnsPrivateServerDao.insertSelective(dnsPrivateServer);
-    }
+	private void insert(DnsPrivateServer dnsPrivateServer) {
+		dnsPrivateServerDao.insertSelective(dnsPrivateServer);
+	}
 
-    private void update(DnsPrivateServer dnsPrivateServer){
-        dnsPrivateServerDao.updateByPrimaryKeySelective(dnsPrivateServer);
-    }
+	private void update(DnsPrivateServer dnsPrivateServer) {
+		dnsPrivateServerDao.updateByPrimaryKeySelective(dnsPrivateServer);
+	}
 
+	public DnsPrivateServer detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		return dnsPrivateServerDao.selectByPrimaryKey(id);
+	}
 
-    public DnsPrivateServer detail(Integer id){
-        Assert.notNull(id,"id is null");
-        return dnsPrivateServerDao.selectByPrimaryKey(id);
-    }
-
-    public void del(Integer id){
-        Assert.notNull(id,"id is null");
-        DnsPrivateServer dnsPrivateServer = new DnsPrivateServer();
-        dnsPrivateServer.setId(id);
-        dnsPrivateServer.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        dnsPrivateServerDao.updateByPrimaryKeySelective(dnsPrivateServer);
-    }
-
-
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		DnsPrivateServer dnsPrivateServer = new DnsPrivateServer();
+		dnsPrivateServer.setId(id);
+		dnsPrivateServer.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		dnsPrivateServerDao.updateByPrimaryKeySelective(dnsPrivateServer);
+	}
 
 }

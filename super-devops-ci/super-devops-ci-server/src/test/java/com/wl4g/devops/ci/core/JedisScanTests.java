@@ -2,8 +2,9 @@ package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.CiServer;
 import com.wl4g.devops.ci.bean.RunModel;
-import com.wl4g.devops.support.redis.JedisService;
-import com.wl4g.devops.support.redis.ScanCursor;
+import com.wl4g.devops.support.redis.jedis.JedisService;
+import com.wl4g.devops.support.redis.jedis.ScanCursor;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -42,85 +42,82 @@ import static java.util.Objects.isNull;
 @Service
 public class K8sClusterServiceImpl implements K8sClusterService {
 
-    @Autowired
-    private K8sClusterDao k8sClusterDao;
+	@Autowired
+	private K8sClusterDao k8sClusterDao;
 
-    @Autowired
-    private K8sInstanceDao k8sInstanceDao;
+	@Autowired
+	private K8sInstanceDao k8sInstanceDao;
 
-    @Override
-    public PageModel page(PageModel pm,String name) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(k8sClusterDao.list(getRequestOrganizationCodes(), name));
-        return pm;
-    }
+	@Override
+	public PageModel page(PageModel pm, String name) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(k8sClusterDao.list(getRequestOrganizationCodes(), name));
+		return pm;
+	}
 
-    @Override
-    public List<K8sCluster> getForSelect() {
-        return k8sClusterDao.list(getRequestOrganizationCodes(),null);
-    }
+	@Override
+	public List<K8sCluster> getForSelect() {
+		return k8sClusterDao.list(getRequestOrganizationCodes(), null);
+	}
 
-    public void save(K8sCluster k8sCluster){
-        if(isNull(k8sCluster.getId())){
-            k8sCluster.preInsert(getRequestOrganizationCode());
-            insert(k8sCluster);
-        }else{
-            k8sCluster.preUpdate();
-            update(k8sCluster);
-        }
-    }
+	public void save(K8sCluster k8sCluster) {
+		if (isNull(k8sCluster.getId())) {
+			k8sCluster.preInsert(getRequestOrganizationCode());
+			insert(k8sCluster);
+		} else {
+			k8sCluster.preUpdate();
+			update(k8sCluster);
+		}
+	}
 
-    private void insert(K8sCluster k8sCluster){
-        k8sClusterDao.insertSelective(k8sCluster);
-        List<Integer> hostIds = k8sCluster.getHostIds();
-        if(!CollectionUtils.isEmpty(hostIds)){
-            List<K8sInstance> k8sInstances = new ArrayList<>();
-            for(Integer hostId : hostIds){
-                K8sInstance k8sInstance = new K8sInstance();
-                k8sInstance.preInsert();
-                k8sInstance.setHostId(hostId);
-                k8sInstance.setK8sId(k8sCluster.getId());
-                k8sInstances.add(k8sInstance);
-            }
-            k8sInstanceDao.insertBatch(k8sInstances);
-        }
-    }
+	private void insert(K8sCluster k8sCluster) {
+		k8sClusterDao.insertSelective(k8sCluster);
+		List<Integer> hostIds = k8sCluster.getHostIds();
+		if (!CollectionUtils.isEmpty(hostIds)) {
+			List<K8sInstance> k8sInstances = new ArrayList<>();
+			for (Integer hostId : hostIds) {
+				K8sInstance k8sInstance = new K8sInstance();
+				k8sInstance.preInsert();
+				k8sInstance.setHostId(hostId);
+				k8sInstance.setK8sId(k8sCluster.getId());
+				k8sInstances.add(k8sInstance);
+			}
+			k8sInstanceDao.insertBatch(k8sInstances);
+		}
+	}
 
-    private void update(K8sCluster k8sCluster){
-        k8sClusterDao.updateByPrimaryKeySelective(k8sCluster);
+	private void update(K8sCluster k8sCluster) {
+		k8sClusterDao.updateByPrimaryKeySelective(k8sCluster);
 
-        k8sInstanceDao.deleteByK8sId(k8sCluster.getId());
-        List<Integer> hostIds = k8sCluster.getHostIds();
-        if(!CollectionUtils.isEmpty(hostIds)){
-            List<K8sInstance> k8sInstances = new ArrayList<>();
-            for(Integer hostId : hostIds){
-                K8sInstance k8sInstance = new K8sInstance();
-                k8sInstance.preInsert();
-                k8sInstance.setHostId(hostId);
-                k8sInstance.setK8sId(k8sCluster.getId());
-                k8sInstances.add(k8sInstance);
-            }
-            k8sInstanceDao.insertBatch(k8sInstances);
-        }
-    }
+		k8sInstanceDao.deleteByK8sId(k8sCluster.getId());
+		List<Integer> hostIds = k8sCluster.getHostIds();
+		if (!CollectionUtils.isEmpty(hostIds)) {
+			List<K8sInstance> k8sInstances = new ArrayList<>();
+			for (Integer hostId : hostIds) {
+				K8sInstance k8sInstance = new K8sInstance();
+				k8sInstance.preInsert();
+				k8sInstance.setHostId(hostId);
+				k8sInstance.setK8sId(k8sCluster.getId());
+				k8sInstances.add(k8sInstance);
+			}
+			k8sInstanceDao.insertBatch(k8sInstances);
+		}
+	}
 
+	public K8sCluster detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		K8sCluster k8sCluster = k8sClusterDao.selectByPrimaryKey(id);
+		List<Integer> hostIds = k8sInstanceDao.selectHostIdByK8sId(id);
+		k8sCluster.setHostIds(hostIds);
+		return k8sCluster;
+	}
 
-    public K8sCluster detail(Integer id){
-        Assert.notNull(id,"id is null");
-        K8sCluster k8sCluster = k8sClusterDao.selectByPrimaryKey(id);
-        List<Integer> hostIds = k8sInstanceDao.selectHostIdByK8sId(id);
-        k8sCluster.setHostIds(hostIds);
-        return k8sCluster;
-    }
-
-    public void del(Integer id){
-        Assert.notNull(id,"id is null");
-        K8sCluster k8sCluster = new K8sCluster();
-        k8sCluster.setId(id);
-        k8sCluster.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        k8sClusterDao.updateByPrimaryKeySelective(k8sCluster);
-    }
-
-
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		K8sCluster k8sCluster = new K8sCluster();
+		k8sCluster.setId(id);
+		k8sCluster.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		k8sClusterDao.updateByPrimaryKeySelective(k8sCluster);
+	}
 
 }

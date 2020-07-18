@@ -78,9 +78,10 @@ public class DockerRepositoryController extends BaseController {
 	}
 
 	@RequestMapping(value = "/getRepositoryProjects")
-	public RespBase<?> getRepositoryProjects(Integer id, String address,String name) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+	public RespBase<?> getRepositoryProjects(Integer id, String address, String name)
+			throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(dockerRepositoryService.getRepositoryProjects(id,address,name));
+		resp.setData(dockerRepositoryService.getRepositoryProjects(id, address, name));
 		return resp;
 	}
 

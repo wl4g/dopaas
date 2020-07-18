@@ -1,9 +1,10 @@
 package com.wl4g.devops.erm.dns.config;
 
-import com.wl4g.devops.erm.dns.CorednsServer;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.wl4g.devops.erm.dns.handler.JedisCorednsStoreHandler;
 
 @Configuration
 public class DnsConfiguration {
@@ -15,7 +16,7 @@ public class DnsConfiguration {
     }
 
     @Bean
-    public CorednsServer corednsServer(){
-        return new CorednsServer();
+    public JedisCorednsStoreHandler corednsServer(){
+        return new JedisCorednsStoreHandler();
     }
 }

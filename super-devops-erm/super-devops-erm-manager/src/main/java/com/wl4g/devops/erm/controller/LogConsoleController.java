@@ -33,24 +33,24 @@ import java.util.List;
 @RequestMapping("/console")
 public class LogConsoleController extends BaseController {
 
-    @Autowired
-    protected LogConsoleService logConsoleService;
+	@Autowired
+	protected LogConsoleService logConsoleService;
 
-    @RequestMapping("/consoleLog")
-    @ResponseBody
-    public RespBase<?> logfile(@Validated @RequestBody QueryLogModel model) throws Exception {
-        if (log.isInfoEnabled()) {
-            log.info("Reading logfile... {}", model);
-        }
+	@RequestMapping("/consoleLog")
+	@ResponseBody
+	public RespBase<?> logfile(@Validated @RequestBody QueryLogModel model) throws Exception {
+		if (log.isInfoEnabled()) {
+			log.info("Reading logfile... {}", model);
+		}
 
-        RespBase<Object> resp = RespBase.create();
-        try {
-            List<Log> result = logConsoleService.console(model);
-            resp.setData(result);
-        } catch (Exception e) {
-            log.info("Failed to reading logfile.", e);
-            resp.setThrowable(e);
-        }
-        return resp;
-    }
+		RespBase<Object> resp = RespBase.create();
+		try {
+			List<Log> result = logConsoleService.console(model);
+			resp.setData(result);
+		} catch (Exception e) {
+			log.info("Failed to reading logfile.", e);
+			resp.setThrowable(e);
+		}
+		return resp;
+	}
 }

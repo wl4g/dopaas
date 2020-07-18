@@ -40,7 +40,7 @@ import com.wl4g.devops.iam.common.cache.IamCacheManager;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.AbstractIamSessionManager;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.redis.ScanCursor;
+import com.wl4g.devops.support.redis.jedis.ScanCursor;
 
 /**
  * IAM client session manager

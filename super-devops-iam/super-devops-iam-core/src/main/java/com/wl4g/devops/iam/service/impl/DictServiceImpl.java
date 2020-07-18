@@ -22,7 +22,7 @@ import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 import com.wl4g.devops.dao.iam.DictDao;
 import com.wl4g.devops.iam.service.DictService;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.support.redis.jedis.JedisService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

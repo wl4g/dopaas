@@ -16,7 +16,8 @@
 package com.wl4g.devops.scm.publish;
 
 import com.wl4g.devops.scm.config.ScmProperties;
-import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.support.redis.jedis.JedisService;
+
 import org.apache.commons.codec.binary.Hex;
 
 import java.util.ArrayList;
