@@ -37,13 +37,6 @@ import com.wl4g.devops.components.tools.common.remoting.standard.HttpMimeType.Mi
  * A subclass of {@link HttpMimeType} that adds support for quality parameters
  * as defined in the HTTP specification.
  *
- * @author Arjen Poutsma
- * @author Juergen Hoeller
- * @author Rossen Stoyanchev
- * @author Sebastien Deleuze
- * @author Kazuki Shimizu
- * @author Sam Brannen
- * @since 3.0
  * @see <a href="https://tools.ietf.org/html/rfc7231#section-3.1.1.1"> HTTP 1.1:
  *      Semantics and Content, section 3.1.1.1</a>
  */
@@ -620,9 +613,7 @@ public class HttpMediaType extends HttpMimeType implements Serializable {
 	}
 
 	/**
-	 * Parse the given String value into a {@code MediaType} object, with this
-	 * method name following the 'valueOf' naming convention (as supported by
-	 * {@link org.springframework.core.convert.ConversionService}.
+	 * Parse the given String value into a {@code MediaType} object.
 	 * 
 	 * @param value
 	 *            the string to parse

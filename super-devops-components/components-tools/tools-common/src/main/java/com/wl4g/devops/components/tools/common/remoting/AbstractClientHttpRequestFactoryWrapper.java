@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import com.wl4g.devops.components.tools.common.lang.Assert2;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
 
 import io.netty.handler.codec.http.HttpMethod;
 
@@ -50,8 +51,8 @@ public abstract class AbstractClientHttpRequestFactoryWrapper implements ClientH
 	 * constructor}.
 	 */
 	@Override
-	public final ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod) throws IOException {
-		return createRequest(uri, httpMethod, this.requestFactory);
+	public final ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod, HttpHeaders requestHeaders) throws IOException {
+		return createRequest(uri, httpMethod, this.requestFactory, requestHeaders);
 	}
 
 	/**
@@ -66,11 +67,13 @@ public abstract class AbstractClientHttpRequestFactoryWrapper implements ClientH
 	 *            the HTTP method to execute
 	 * @param requestFactory
 	 *            the wrapped request factory
+	 * @param requestHeaders
+	 *            Request headers
 	 * @return the created request
 	 * @throws IOException
 	 *             in case of I/O errors
 	 */
-	protected abstract ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod, ClientHttpRequestFactory requestFactory)
-			throws IOException;
+	protected abstract ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod, ClientHttpRequestFactory requestFactory,
+			HttpHeaders requestHeaders) throws IOException;
 
 }

@@ -27,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLException;
 
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelConfig;
@@ -38,32 +40,29 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.SocketChannelConfig;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpClientCodec;
+import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
- * {@link com.wl4g.devops.coss.client.channel.netty.ClientHttpRequestFactory}
- * implementation that uses <a href="https://netty.io/">Netty 4</a> to create
- * requests.
- *
+ * {@link ClientHttpRequestFactory} implementation that uses
+ * <a href="https://netty.io/">Netty 4</a> to create requests.
  * <p>
  * Allows to use a pre-configured {@link EventLoopGroup} instance: useful for
  * sharing across multiple clients.
- *
  * <p>
  * Note that this implementation consistently closes the HTTP connection on each
  * request.
- *
- * @author Arjen Poutsma
- * @author Rossen Stoyanchev
- * @author Brian Clozel
- * @author Mark Paluch
- * @since 4.1.2
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020年7月01日 v1.0.0
+ * @see
  */
 public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory, Closeable {
 
@@ -72,15 +71,12 @@ public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory,
 
 	@Nullable
 	private SslContext sslContext;
-
 	private boolean debug = false;
 	private int connectTimeout = -1;
 	private int readTimeout = -1;
 	private int maxResponseSize = DEFAULT_MAX_RESPONSE_SIZE;
 
-	/**
-	 * Nullabled
-	 */
+	@Nullable
 	private volatile Bootstrap bootstrap;
 
 	/**
@@ -165,11 +161,12 @@ public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory,
 	 * 
 	 * @param uri
 	 * @param httpMethod
+	 * @param requestHeaders
 	 * @return
 	 * @throws IOException
 	 */
-	public ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod) throws IOException {
-		return new Netty4ClientHttpRequest(getBootstrap(uri), uri, httpMethod);
+	public ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod, HttpHeaders requestHeaders) throws IOException {
+		return new Netty4ClientHttpRequest(getBootstrap(uri, requestHeaders), uri, httpMethod);
 	}
 
 	/**
@@ -203,37 +200,21 @@ public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory,
 		}
 	}
 
-	private Bootstrap getBootstrap(URI uri) {
+	private Bootstrap getBootstrap(URI uri, HttpHeaders requestHeaders) {
 		boolean isSecure = (uri.getPort() == 443 || "https".equalsIgnoreCase(uri.getScheme()));
-		if (isSecure) {
-			return createBootstrap(uri, true);
-		} else if (isNull(bootstrap)) {
-			this.bootstrap = createBootstrap(uri, false);
-		}
-		return bootstrap;
+		// if (isSecure) {
+		// return createBootstrap(uri, true, requestHeaders);
+		// } else if (isNull(bootstrap)) {
+		// this.bootstrap = createBootstrap(uri, false, requestHeaders);
+		// }
+		// return bootstrap;
+		return createBootstrap(uri, isSecure, requestHeaders);
 	}
 
-	private Bootstrap createBootstrap(URI uri, boolean isSecure) {
+	private Bootstrap createBootstrap(final URI uri, final boolean isSecure, final HttpHeaders requestHeaders) {
 		Bootstrap bootstrap = new Bootstrap();
-		bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
-			@Override
-			protected void initChannel(SocketChannel channel) throws Exception {
-				configureChannel(channel.config());
-				ChannelPipeline pipe = channel.pipeline();
-				if (debug) {
-					pipe.addLast(new LoggingHandler(LogLevel.INFO));
-				}
-				if (isSecure) {
-					notNull(getSslContext(), "sslContext should not be null");
-					pipe.addLast(getSslContext().newHandler(channel.alloc(), uri.getHost(), uri.getPort()));
-				}
-				pipe.addLast(new HttpClientCodec());
-				pipe.addLast(new HttpObjectAggregator(maxResponseSize));
-				if (readTimeout > 0) {
-					pipe.addLast(new ReadTimeoutHandler(readTimeout, TimeUnit.MILLISECONDS));
-				}
-			}
-		});
+		bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class)
+				.handler(new HttpChannelInitializer(uri, isSecure, requestHeaders));
 		return bootstrap;
 	}
 
@@ -247,6 +228,52 @@ public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory,
 				throw new IllegalStateException(e);
 			}
 		}
+	}
+
+	/**
+	 * {@link HttpChannelInitializer}
+	 */
+	private class HttpChannelInitializer extends ChannelInitializer<SocketChannel> {
+		final private URI uri;
+		final private boolean isSecure;
+		final private HttpHeaders requestHeaders;
+
+		HttpChannelInitializer(final URI uri, final boolean isSecure, final HttpHeaders requestHeaders) {
+			this.uri = uri;
+			this.isSecure = isSecure;
+			this.requestHeaders = requestHeaders;
+		}
+
+		@Override
+		protected void initChannel(SocketChannel ch) throws Exception {
+			configureChannel(ch.config());
+
+			ChannelPipeline pipe = ch.pipeline();
+			if (debug) {
+				pipe.addLast(new LoggingHandler(LogLevel.INFO));
+			}
+			if (isSecure) {
+				notNull(getSslContext(), "sslContext should not be null");
+				pipe.addLast(getSslContext().newHandler(ch.alloc(), uri.getHost(), uri.getPort()));
+			}
+			pipe.addLast(new HttpClientCodec());
+
+			if (requestHeaders.getContentType().isCompatibleWith(HttpMediaType.MULTIPART_FORM_DATA)) {
+				// Remove the following line if you don't want automatic
+				// content decompression.
+				pipe.addLast("inflater", new HttpContentDecompressor());
+				// to be used since huge file transfer
+				pipe.addLast("chunkedWriter", new ChunkedWriteHandler());
+			} else {
+				pipe.addLast(new HttpObjectAggregator(maxResponseSize));
+			}
+
+			if (readTimeout > 0) {
+				pipe.addLast(new ReadTimeoutHandler(readTimeout, TimeUnit.MILLISECONDS));
+			}
+
+		}
+
 	}
 
 	/**

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.components.tools.common.remoting;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -48,7 +50,6 @@ import io.netty.handler.codec.http.HttpVersion;
  */
 class Netty4ClientHttpRequest extends AbstractAsyncClientHttpRequest implements ClientHttpRequest {
 
-	private final HttpHeaders headers = new HttpHeaders();
 	private final Bootstrap bootstrap;
 	private final URI uri;
 	private final HttpMethod method;
@@ -56,6 +57,9 @@ class Netty4ClientHttpRequest extends AbstractAsyncClientHttpRequest implements 
 	private boolean executed = false;
 
 	public Netty4ClientHttpRequest(Bootstrap bootstrap, URI uri, HttpMethod method) {
+		notNullOf(bootstrap, "bootstrap");
+		notNullOf(uri, "uri");
+		notNullOf(method, "method");
 		this.bootstrap = bootstrap;
 		this.uri = uri;
 		this.method = method;
@@ -97,7 +101,7 @@ class Netty4ClientHttpRequest extends AbstractAsyncClientHttpRequest implements 
 	 */
 	public ListenableFuture<ClientHttpResponse> executeAsync() throws IOException {
 		assertNotExecuted();
-		ListenableFuture<ClientHttpResponse> result = executeInternal(headers);
+		ListenableFuture<ClientHttpResponse> result = executeInternal(getHeaders());
 		this.executed = true;
 		return result;
 	}
