@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import com.google.common.io.Resources;
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
 import com.wl4g.devops.components.tools.common.collection.multimap.LinkedMultiValueMap;
 import com.wl4g.devops.components.tools.common.collection.multimap.MultiValueMap;
@@ -55,7 +56,12 @@ public final class MediaTypeFactory {
 	 * @return a multi-value map, mapping media types to file extensions.
 	 */
 	private static MultiValueMap<String, HttpMediaType> parseMimeTypes() {
-		InputStream is = MediaTypeFactory.class.getResourceAsStream(defaultMimeTypesFileName);
+		InputStream is;
+		try {
+			is = Resources.getResource(defaultMimeTypesFileName).openStream();
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.US_ASCII))) {
 			MultiValueMap<String, HttpMediaType> result = new LinkedMultiValueMap<>();
 			String line;
@@ -110,9 +116,10 @@ public final class MediaTypeFactory {
 				.map(fileExtensionToMediaTypes::get).orElse(Collections.emptyList());
 	}
 
-	private static final MultiValueMap<String, HttpMediaType> fileExtensionToMediaTypes = parseMimeTypes();
 	// e.g: com/wl4g/devops/components/tools/common/remoting/mime.types
 	private static final String defaultMimeTypesFileName = MediaTypeFactory.class.getName().replace(".", "/")
 			.replace(MediaTypeFactory.class.getSimpleName(), "").concat("mime.types");
+
+	private static final MultiValueMap<String, HttpMediaType> fileExtensionToMediaTypes = parseMimeTypes();
 
 }

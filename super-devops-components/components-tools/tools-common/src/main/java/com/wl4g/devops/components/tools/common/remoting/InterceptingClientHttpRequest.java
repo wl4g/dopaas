@@ -35,20 +35,18 @@ import io.netty.handler.codec.http.HttpMethod;
 class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest {
 
 	private final ClientHttpRequestFactory requestFactory;
-
 	private final List<ClientHttpRequestInterceptor> interceptors;
-
 	private HttpMethod method;
-
+	private HttpHeaders requestHeaders;
 	private URI uri;
 
 	protected InterceptingClientHttpRequest(ClientHttpRequestFactory requestFactory,
-			List<ClientHttpRequestInterceptor> interceptors, URI uri, HttpMethod method) {
-
+			List<ClientHttpRequestInterceptor> interceptors, URI uri, HttpMethod method, HttpHeaders requestHeaders) {
 		this.requestFactory = requestFactory;
 		this.interceptors = interceptors;
 		this.method = method;
 		this.uri = uri;
+		this.requestHeaders = requestHeaders;
 	}
 
 	@Override
@@ -81,7 +79,7 @@ class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest {
 				ClientHttpRequestInterceptor nextInterceptor = this.iterator.next();
 				return nextInterceptor.intercept(request, body, this);
 			} else {
-				ClientHttpRequest delegate = requestFactory.createRequest(request.getURI(), request.getMethod());
+				ClientHttpRequest delegate = requestFactory.createRequest(request.getURI(), request.getMethod(), requestHeaders);
 				for (Map.Entry<String, List<String>> entry : request.getHeaders().entrySet()) {
 					List<String> values = entry.getValue();
 					for (String value : values) {

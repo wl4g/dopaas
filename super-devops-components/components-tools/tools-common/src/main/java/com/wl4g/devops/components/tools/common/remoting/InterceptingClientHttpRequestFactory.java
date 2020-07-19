@@ -19,6 +19,8 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+
 import io.netty.handler.codec.http.HttpMethod;
 
 /**
@@ -49,8 +51,9 @@ public class InterceptingClientHttpRequestFactory extends AbstractClientHttpRequ
 	}
 
 	@Override
-	protected ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod, ClientHttpRequestFactory requestFactory) {
-		return new InterceptingClientHttpRequest(requestFactory, this.interceptors, uri, httpMethod);
+	protected ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod, ClientHttpRequestFactory requestFactory,
+			HttpHeaders requestHeaders) {
+		return new InterceptingClientHttpRequest(requestFactory, this.interceptors, uri, httpMethod, requestHeaders);
 	}
 
 }

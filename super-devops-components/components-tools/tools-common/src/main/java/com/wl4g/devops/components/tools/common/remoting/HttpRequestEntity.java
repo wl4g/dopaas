@@ -38,9 +38,7 @@ import io.netty.handler.codec.http.HttpMethod;
 public class HttpRequestEntity<T> extends HttpEntity<T> {
 
 	private final HttpMethod method;
-
 	private final URI url;
-
 	private final Type type;
 
 	/**

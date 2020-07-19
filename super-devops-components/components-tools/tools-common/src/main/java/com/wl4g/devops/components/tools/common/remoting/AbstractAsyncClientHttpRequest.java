@@ -42,13 +42,13 @@ abstract class AbstractAsyncClientHttpRequest implements HttpRequest, HttpOutput
 
 	@Override
 	public final HttpHeaders getHeaders() {
-		return (this.executed ? HttpHeaders.readOnlyHttpHeaders(this.headers) : this.headers);
+		return (this.executed ? HttpHeaders.readOnlyHttpHeaders(headers) : headers);
 	}
 
 	@Override
 	public final OutputStream getBody() throws IOException {
 		assert2NotExecuted();
-		return getBodyInternal(this.headers);
+		return getBodyInternal(headers);
 	}
 
 	/**
@@ -61,7 +61,7 @@ abstract class AbstractAsyncClientHttpRequest implements HttpRequest, HttpOutput
 	 */
 	public ListenableFuture<ClientHttpResponse> executeAsync() throws IOException {
 		assert2NotExecuted();
-		ListenableFuture<ClientHttpResponse> result = executeInternal(this.headers);
+		ListenableFuture<ClientHttpResponse> result = executeInternal(headers);
 		this.executed = true;
 		return result;
 	}
@@ -74,7 +74,7 @@ abstract class AbstractAsyncClientHttpRequest implements HttpRequest, HttpOutput
 	 *             if this request has been executed
 	 */
 	protected void assert2NotExecuted() {
-		Assert2.state(!this.executed, "ClientHttpRequest already executed");
+		Assert2.state(!executed, "ClientHttpRequest already executed");
 	}
 
 	/**

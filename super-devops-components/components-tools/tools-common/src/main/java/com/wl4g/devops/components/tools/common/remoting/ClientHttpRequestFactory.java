@@ -18,6 +18,8 @@ package com.wl4g.devops.components.tools.common.remoting;
 import java.io.IOException;
 import java.net.URI;
 
+import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
+
 import io.netty.handler.codec.http.HttpMethod;
 
 /**
@@ -37,10 +39,12 @@ public interface ClientHttpRequestFactory {
 	 *            the URI to create a request for
 	 * @param httpMethod
 	 *            the HTTP method to execute
+	 * @param requestProcessor
+	 *            Request headers
 	 * @return the created request
 	 * @throws IOException
 	 *             in case of I/O errors
 	 */
-	ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod) throws IOException;
+	ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod, HttpHeaders requestHeaders) throws IOException;
 
 }
