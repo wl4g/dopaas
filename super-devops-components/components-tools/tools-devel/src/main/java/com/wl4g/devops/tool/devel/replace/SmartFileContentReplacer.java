@@ -25,6 +25,7 @@ import java.util.List;
 
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+import com.wl4g.devops.components.tools.common.annotation.Reserved;
 
 /**
  * {@link SmartFileContentReplacer}
@@ -34,6 +35,8 @@ import com.google.common.io.Resources;
  * @since
  */
 @SuppressWarnings("unused")
+@Deprecated
+@Reserved
 public class SmartFileContentReplacer implements Runnable {
 
 	private final File file;

@@ -15,12 +15,13 @@
  */
 package com.wl4g.devops.tool.devel.replace;
 
-import static java.lang.System.out;
+import static java.lang.System.out; 
 import static org.apache.commons.lang3.SystemUtils.USER_DIR;
 
 import java.io.File;
 
 import com.wl4g.devops.tool.devel.replace.SmartFileContentReplacer.ReplaceStrategy;
+import com.wl4g.devops.components.tools.common.annotation.Reserved;
 import com.wl4g.devops.tool.devel.replace.SmartFileContentReplacer.MatchStrategy;
 
 /**
@@ -30,6 +31,8 @@ import com.wl4g.devops.tool.devel.replace.SmartFileContentReplacer.MatchStrategy
  * @version v1.0 2020年7月17日
  * @since
  */
+@Deprecated
+@Reserved
 public class SmartFileContentReplacerTests {
 
 	static File file = new File(USER_DIR + "/CompositeJedisCommandsAdapter.java.txt");
