@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.gataway.server;
+package com.wl4g.devops.gataway.server.route;
 
 import reactor.core.publisher.Mono;
 
-public interface IRouteCacheRefresh {
+public interface IRouteAlterPublisher {
+
 
     /**
-     * 刷新内存中的路由信息
-     * @return
+     * 发送《刷新》路由的通知消息
      */
-    public Mono<Void> flushRoutesPermanentToMemery();
+    Mono<Void> notifyAllRefresh(NotifyType notifyType);
+
 }

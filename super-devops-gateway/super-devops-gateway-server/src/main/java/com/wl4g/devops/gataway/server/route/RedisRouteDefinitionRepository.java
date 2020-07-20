@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.gataway.server;
+package com.wl4g.devops.gataway.server.route;
 
 import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 import com.wl4g.devops.gataway.server.redis.JedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.CollectionUtils;
@@ -28,8 +27,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +55,6 @@ public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
 
     private static final String REDIS_NOTIFY_KEY = "GATEWAY_ROUTE_NOTIFY";
 
-
     /**
      * 获取全部的路由信息
      * @return
@@ -81,8 +77,6 @@ public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
             return Flux.empty();
         }
         return Flux.fromIterable(list);
-        //return Flux.fromIterable(getRouteDefinitionsFromRedis());
-        //return Flux.empty();
     }
 
     @Override
@@ -129,21 +123,5 @@ public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
         },REDIS_NOTIFY_KEY.getBytes(DEF_CHARTSET));*/
     }
 
-    private List<RouteDefinition> getRouteDefinitionsFromRedis() {
-        List<RouteDefinition> list = new ArrayList<>();
-        RouteDefinition routeDefinition = new RouteDefinition();
-        routeDefinition.setId("route_id_1");
-        List<PredicateDefinition> predicateDefinitions = new ArrayList<>();
-        PredicateDefinition predicateDefinition = new PredicateDefinition("Path=/**");
-        predicateDefinitions.add(predicateDefinition);
-        routeDefinition.setPredicates(predicateDefinitions);
-        try {
-            routeDefinition.setUri(new URI("http://localhost:14086"));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        list.add(routeDefinition);
-        return list;
-    }
 
 }

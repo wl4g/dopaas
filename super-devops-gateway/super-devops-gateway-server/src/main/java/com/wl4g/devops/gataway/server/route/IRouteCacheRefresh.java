@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.gataway.server;
+package com.wl4g.devops.gataway.server.route;
 
-/**
- * @author guzhandong
- * @CREATE 2018-10-08 6:24 PM
- */
-public enum NotifyType {
-    permanent, state
+import reactor.core.publisher.Mono;
+
+public interface IRouteCacheRefresh {
+
+    /**
+     * 刷新内存中的路由信息
+     * @return
+     */
+    public Mono<Void> flushRoutesPermanentToMemery();
 }
