@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.gataway.server;
+package com.wl4g.devops.gataway.server.route;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
