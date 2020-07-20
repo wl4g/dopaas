@@ -21,7 +21,7 @@ import com.wl4g.devops.common.bean.umc.*;
 import com.wl4g.devops.dao.iam.ContactDao;
 import com.wl4g.devops.dao.iam.NotificationContactDao;
 import com.wl4g.devops.dao.umc.*;
-import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.support.redis.jedis.JedisService;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 

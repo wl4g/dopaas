@@ -77,16 +77,18 @@ public class SshController extends BaseController {
 	}
 
 	@RequestMapping(value = "/connectTest")
-	public RespBase<?> testSSHConnect(Integer hostId, String sshUser, String sshKey, Integer sshId) throws Exception, InterruptedException {
+	public RespBase<?> testSSHConnect(Integer hostId, String sshUser, String sshKey, Integer sshId)
+			throws Exception, InterruptedException {
 		RespBase<Object> resp = RespBase.create();
-		sshService.testSSHConnect(hostId, sshUser, sshKey,sshId);
+		sshService.testSSHConnect(hostId, sshUser, sshKey, sshId);
 		return resp;
 	}
 
 	@RequestMapping(value = "/generateSshKeyPair")
 	public RespBase<?> generateSshKeyPair() throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		SSH2Holders.Ssh2KeyPair ssh2KeyPair = SSH2Holders.getInstance(JschHolder.class).generateKeypair(SSH2Holders.AlgorithmType.RSA, "generateBySystem");
+		SSH2Holders.Ssh2KeyPair ssh2KeyPair = SSH2Holders.getInstance(JschHolder.class)
+				.generateKeypair(SSH2Holders.AlgorithmType.RSA, "generateBySystem");
 		resp.setData(ssh2KeyPair);
 		return resp;
 	}

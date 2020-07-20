@@ -33,9 +33,9 @@ import org.springframework.context.annotation.Configuration;
 
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.redis.EnhancedJedisCluster;
-import com.wl4g.devops.support.redis.JedisClusterFactoryBean;
-import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.support.redis.jedis.AdvancedJedisCluster;
+import com.wl4g.devops.support.redis.jedis.CompositeJedisFactoryBean;
+import com.wl4g.devops.support.redis.jedis.JedisService;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
@@ -62,13 +62,13 @@ public class JedisAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean(JedisProperties.class)
-	public JedisClusterFactoryBean jedisClusterFactoryBean(JedisProperties properties) {
-		return new JedisClusterFactoryBean(properties);
+	public CompositeJedisFactoryBean jedisClusterFactoryBean(JedisProperties properties) {
+		return new CompositeJedisFactoryBean(properties);
 	}
 
 	@Bean(BEAN_NAME_REDIS)
 	@ConditionalOnBean(JedisProperties.class)
-	public JedisService jedisService(EnhancedJedisCluster jedisCluster) {
+	public JedisService jedisService(AdvancedJedisCluster jedisCluster) {
 		return new JedisService(jedisCluster);
 	}
 
@@ -79,25 +79,27 @@ public class JedisAutoConfiguration {
 	}
 
 	/**
-	 * JEDIS properties.
+	 * Jedis properties.
 	 * 
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2018年9月16日
 	 * @since
 	 */
 	public static class JedisProperties implements Serializable {
-		final private static long serialVersionUID = 1906168160146495488L;
-
-		final private static Pattern DefaultNodePattern = Pattern.compile("^.+[:]\\d{1,9}\\s*$");
+		private final static long serialVersionUID = 1906168160146495488L;
 
 		protected SmartLogger log = getLogger(getClass());
 
 		private List<String> nodes = new ArrayList<>();
 		private String passwd;
-		private int connTimeout = 10000;
-		private int soTimeout = 10000;
+		private String clientName;
+		private int connTimeout = 10_000;
+		private int soTimeout = 10_000;
 		private int maxAttempts = 20;
+		private int database = 0;
+
 		private JedisPoolConfig poolConfig = new JedisPoolConfig();
+		private boolean safeMode = true;
 
 		public JedisProperties() {
 			// Initialize by default
@@ -121,6 +123,14 @@ public class JedisAutoConfiguration {
 
 		public void setPasswd(String passwd) {
 			this.passwd = passwd;
+		}
+
+		public String getClientName() {
+			return clientName;
+		}
+
+		public void setClientName(String clientName) {
+			this.clientName = clientName;
 		}
 
 		public int getConnTimeout() {
@@ -147,6 +157,14 @@ public class JedisAutoConfiguration {
 			this.maxAttempts = maxAttempts;
 		}
 
+		public int getDatabase() {
+			return database;
+		}
+
+		public void setDatabase(int database) {
+			this.database = database;
+		}
+
 		public JedisPoolConfig getPoolConfig() {
 			return poolConfig;
 		}
@@ -155,19 +173,25 @@ public class JedisAutoConfiguration {
 			this.poolConfig = poolConfig;
 		}
 
+		public boolean isSafeMode() {
+			return safeMode;
+		}
+
+		public void setSafeMode(boolean safeMode) {
+			this.safeMode = safeMode;
+		}
+
 		public synchronized Set<HostAndPort> parseHostAndPort() throws Exception {
 			try {
 				Set<HostAndPort> haps = new HashSet<HostAndPort>();
-				for (String node : this.getNodes()) {
-					boolean matched = DefaultNodePattern.matcher(node).matches();
+				for (String node : getNodes()) {
+					boolean matched = defaultNodePattern.matcher(node).matches();
 					if (!matched) {
 						throw new IllegalArgumentException("illegal ip or port");
 					}
 					String[] addrString = node.split(":");
 					HostAndPort hap = new HostAndPort(addrString[0].trim(), Integer.parseInt(addrString[1]));
-					if (log.isDebugEnabled()) {
-						log.debug("Redis node: {}", hap);
-					}
+					log.debug("Redis node: {}", hap);
 					haps.add(hap);
 				}
 				return haps;
@@ -175,6 +199,8 @@ public class JedisAutoConfiguration {
 				throw new JedisException("Resolve of redis cluster configuration failure.", e);
 			}
 		}
+
+		private final static Pattern defaultNodePattern = Pattern.compile("^.+[:]\\d{1,9}\\s*$");
 
 	}
 

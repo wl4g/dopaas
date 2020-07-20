@@ -98,7 +98,7 @@ public class Dependency extends BaseBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Dependency{" + "id=" + id + ", projectId=" + projectId + ", dependentId=" + dependentId
-				 + ", projectName='" + projectName + '\'' + ", parentName='" + parentName + '\'' + '}';
+		return "Dependency{" + "id=" + id + ", projectId=" + projectId + ", dependentId=" + dependentId + ", projectName='"
+				+ projectName + '\'' + ", parentName='" + parentName + '\'' + '}';
 	}
 }

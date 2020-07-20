@@ -1,3 +1,18 @@
+/*
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.wl4g.devops.components.tools.common.remoting;
 
 import java.io.IOException;
@@ -7,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import com.wl4g.devops.components.tools.common.reflect.ParameterizedTypeReference;
 import com.wl4g.devops.components.tools.common.remoting.exception.RestClientException;
+import com.wl4g.devops.components.tools.common.remoting.parse.AllEncompassingFormHttpMessageParser;
 import com.wl4g.devops.components.tools.common.remoting.parse.ByteArrayHttpMessageParser;
 import com.wl4g.devops.components.tools.common.remoting.parse.GenericHttpMessageParser;
 import com.wl4g.devops.components.tools.common.remoting.parse.HttpMessageParser;
@@ -46,9 +63,9 @@ import io.netty.handler.codec.http.HttpMethod;
  * {@code HttpURLConnection}, Apache HttpComponents, and others.
  *
  * <p>
- * The {@link RestClient} offers templates for common scenarios by HTTP
- * method, in addition to the generalized {@code exchange} and {@code execute}
- * methods that support of less frequent cases.
+ * The {@link RestClient} offers templates for common scenarios by HTTP method,
+ * in addition to the generalized {@code exchange} and {@code execute} methods
+ * that support of less frequent cases.
  *
  * @see HttpMessageParser
  * @see RequestProcessor
@@ -67,16 +84,16 @@ public class RestClient {
 	private UriTemplateHandler uriTemplateHandler;
 
 	/**
-	 * Create a new instance of the {@link RestClient} using default
-	 * settings. Default {@link HttpMessageParser} are initialized.
+	 * Create a new instance of the {@link RestClient} using default settings.
+	 * Default {@link HttpMessageParser} are initialized.
 	 */
 	public RestClient() {
 		this(false);
 	}
 
 	/**
-	 * Create a new instance of the {@link RestClient} using default
-	 * settings. Default {@link HttpMessageParser} are initialized.
+	 * Create a new instance of the {@link RestClient} using default settings.
+	 * Default {@link HttpMessageParser} are initialized.
 	 * 
 	 * @param debug
 	 */
@@ -84,6 +101,7 @@ public class RestClient {
 	public RestClient(boolean debug) {
 		this(new Netty4ClientHttpRequestFactory(debug), new ArrayList<HttpMessageParser<?>>() {
 			{
+				add(new AllEncompassingFormHttpMessageParser());
 				add(new ByteArrayHttpMessageParser());
 				add(new StringHttpMessageParser());
 				add(new ResourceHttpMessageParser(false));
@@ -95,8 +113,8 @@ public class RestClient {
 	}
 
 	/**
-	 * Create a new instance of the {@link RestClient} using the given list
-	 * of {@link HttpMessageParser} to use.
+	 * Create a new instance of the {@link RestClient} using the given list of
+	 * {@link HttpMessageParser} to use.
 	 * 
 	 * @param requestFactory
 	 *            the HTTP request factory to use
@@ -328,14 +346,16 @@ public class RestClient {
 	 *            the URL to connect to
 	 * @param method
 	 *            the HTTP method to execute (GET, POST, etc)
+	 * @param requestHeaders
+	 *            Request headers
 	 * @return the created request
 	 * @throws IOException
 	 *             in case of I/O errors
 	 * @see #getRequestFactory()
 	 * @see ClientHttpRequestFactory#createRequest(URI, HttpMethod)
 	 */
-	private ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
-		ClientHttpRequest request = getRequestFactory().createRequest(url, method);
+	private ClientHttpRequest createRequest(URI url, HttpMethod method, HttpHeaders requestHeaders) throws IOException {
+		ClientHttpRequest request = getRequestFactory().createRequest(url, method, requestHeaders);
 		if (log.isDebugEnabled()) {
 			log.debug("HTTP " + method.name() + " " + url);
 		}
@@ -1074,26 +1094,26 @@ public class RestClient {
 	 *            the HTTP method to execute (GET, POST, etc.)
 	 * @param requestProcessor
 	 *            object that prepares the request (can be {@code null})
-	 * @param responseExtractor
+	 * @param responseProcessor
 	 *            object that extracts the return value from the response (can
 	 *            be {@code null})
 	 * @return an arbitrary object, as returned by the {@link ResponseProcessor}
 	 */
 	@Nullable
 	protected <T> T doExecute(URI url, @Nullable HttpMethod method, @Nullable RequestProcessor requestProcessor,
-			@Nullable ResponseProcessor<T> responseExtractor) throws RestClientException {
+			@Nullable ResponseProcessor<T> responseProcessor) throws RestClientException {
 
 		notNull(url, "URI is required");
 		notNull(method, "HttpMethod is required");
 		ClientHttpResponse response = null;
 		try {
-			ClientHttpRequest request = createRequest(url, method);
-			if (requestProcessor != null) {
+			ClientHttpRequest request = createRequest(url, method, requestProcessor.getRequestHeaders());
+			if (Objects.nonNull(requestProcessor)) {
 				requestProcessor.doWithRequest(request);
 			}
 			response = request.execute();
 			handleResponse(url, method, response);
-			return (responseExtractor != null ? responseExtractor.extractData(response) : null);
+			return (Objects.nonNull(responseProcessor) ? responseProcessor.extractData(response) : null);
 		} catch (IOException ex) {
 			String resource = url.toString();
 			String query = url.getRawQuery();
@@ -1115,6 +1135,13 @@ public class RestClient {
 	 * headers, and write to the request body.
 	 */
 	public interface RequestProcessor {
+
+		/**
+		 * Gets request headers.
+		 * 
+		 * @return
+		 */
+		HttpHeaders getRequestHeaders();
 
 		/**
 		 * Gets called by {@link RestClient#execute} with an opened
@@ -1145,10 +1172,15 @@ public class RestClient {
 		}
 
 		@Override
+		public HttpHeaders getRequestHeaders() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
 		public void doWithRequest(ClientHttpRequest request) throws IOException {
 			if (this.responseType != null) {
 				List<HttpMediaType> allSupportedMediaTypes = getMessageParsers().stream()
-						.filter(converter -> canReadResponse(this.responseType, converter)).flatMap(this::getSupportedMediaTypes)
+						.filter(converter -> canReadResponse(responseType, converter)).flatMap(this::getSupportedMediaTypes)
 						.distinct().sorted(HttpMediaType.SPECIFICITY_COMPARATOR).collect(Collectors.toList());
 				if (log.isDebugEnabled()) {
 					log.debug("Accept=" + allSupportedMediaTypes);
@@ -1176,6 +1208,7 @@ public class RestClient {
 				return mediaType;
 			});
 		}
+
 	}
 
 	/**
@@ -1202,13 +1235,18 @@ public class RestClient {
 		}
 
 		@Override
+		public HttpHeaders getRequestHeaders() {
+			return requestEntity.getHeaders();
+		}
+
+		@Override
 		@SuppressWarnings("unchecked")
 		public void doWithRequest(ClientHttpRequest httpRequest) throws IOException {
 			super.doWithRequest(httpRequest);
-			Object requestBody = this.requestEntity.getBody();
+			Object requestBody = requestEntity.getBody();
 			if (requestBody == null) {
 				HttpHeaders httpHeaders = httpRequest.getHeaders();
-				HttpHeaders requestHeaders = this.requestEntity.getHeaders();
+				HttpHeaders requestHeaders = requestEntity.getHeaders();
 				if (!requestHeaders.isEmpty()) {
 					requestHeaders.forEach((key, values) -> httpHeaders.put(key, new LinkedList<>(values)));
 				}
@@ -1217,10 +1255,11 @@ public class RestClient {
 				}
 			} else {
 				Class<?> requestBodyClass = requestBody.getClass();
-				Type requestBodyType = (this.requestEntity instanceof HttpRequestEntity
-						? ((HttpRequestEntity<?>) this.requestEntity).getType() : requestBodyClass);
+				Type requestBodyType = (requestEntity instanceof HttpRequestEntity
+						? ((HttpRequestEntity<?>) requestEntity).getType()
+						: requestBodyClass);
 				HttpHeaders httpHeaders = httpRequest.getHeaders();
-				HttpHeaders requestHeaders = this.requestEntity.getHeaders();
+				HttpHeaders requestHeaders = requestEntity.getHeaders();
 				HttpMediaType requestContentType = requestHeaders.getContentType();
 				for (HttpMessageParser<?> parser : getMessageParsers()) {
 					if (parser instanceof GenericHttpMessageParser) {
@@ -1259,15 +1298,16 @@ public class RestClient {
 				}
 			}
 		}
+
 	}
 
 	// Response data processor.
 
 	/**
-	 * Generic callback interface used by {@link RestClient}'s retrieval
-	 * methods Implementations of this interface perform the actual work of
-	 * extracting data from a {@link ClientHttpResponse}, but don't need to
-	 * worry about exception handling or closing resources.
+	 * Generic callback interface used by {@link RestClient}'s retrieval methods
+	 * Implementations of this interface perform the actual work of extracting
+	 * data from a {@link ClientHttpResponse}, but don't need to worry about
+	 * exception handling or closing resources.
 	 *
 	 * <p>
 	 * Used internally by the {@link RestClient}, but also useful for
@@ -1331,8 +1371,8 @@ public class RestClient {
 	// Response error handler.
 
 	/**
-	 * Strategy interface used by the {@link RestClient} to determine whether
-	 * a particular response has an error or not.
+	 * Strategy interface used by the {@link RestClient} to determine whether a
+	 * particular response has an error or not.
 	 */
 	public interface ResponseErrorHandler {
 

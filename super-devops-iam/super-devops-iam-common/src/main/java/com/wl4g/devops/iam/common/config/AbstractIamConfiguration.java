@@ -71,8 +71,7 @@ import com.wl4g.devops.iam.common.session.mgt.JedisIamSessionDAO;
 import com.wl4g.devops.iam.common.session.mgt.support.IamUidSessionIdGenerator;
 import com.wl4g.devops.iam.common.web.IamErrorConfiguring;
 import com.wl4g.devops.iam.common.web.servlet.IamCookie;
-
-import redis.clients.jedis.JedisCluster;
+import com.wl4g.devops.support.redis.jedis.CompositeJedisOperatorsAdapter;
 
 /**
  * Abstract IAM common based configuration.
@@ -190,8 +189,8 @@ public abstract class AbstractIamConfiguration extends OptionalPrefixControllerA
 
 	@Bean
 	public JedisIamCacheManager jedisIamCacheManager(AbstractIamProperties<? extends ParamProperties> config,
-			JedisCluster jedisCluster) {
-		return new JedisIamCacheManager(config.getCache().getPrefix(), jedisCluster);
+			CompositeJedisOperatorsAdapter jedisAdapter) {
+		return new JedisIamCacheManager(config.getCache().getPrefix(), jedisAdapter);
 	}
 
 	@Bean

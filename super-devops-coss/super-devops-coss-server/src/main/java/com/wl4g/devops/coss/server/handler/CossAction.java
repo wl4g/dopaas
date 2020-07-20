@@ -105,7 +105,7 @@ public enum CossAction {
 	 */
 	public static CossAction safeOf(String action) {
 		for (CossAction _action : values()) {
-			if (_action.getActionName().equals(_action) || _action.name().equals(action)) {
+			if (_action.getActionName().equals(action) || _action.name().equals(action)) {
 				return _action;
 			}
 		}

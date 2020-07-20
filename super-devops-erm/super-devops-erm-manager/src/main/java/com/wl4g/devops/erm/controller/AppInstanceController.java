@@ -44,9 +44,9 @@ public class AppInstanceController extends BaseController {
 	private AppInstanceService appInstanceService;
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm,String name, Integer clusterId,String envType,Integer deployType) {
+	public RespBase<?> list(PageModel pm, String name, Integer clusterId, String envType, Integer deployType) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(appInstanceService.list(pm, name ,clusterId,envType,deployType));
+		resp.setData(appInstanceService.list(pm, name, clusterId, envType, deployType));
 		return resp;
 	}
 
@@ -82,7 +82,8 @@ public class AppInstanceController extends BaseController {
 	@RequestMapping(value = "/generateSshKeyPair")
 	public RespBase<?> generateSshKeyPair() throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		SSH2Holders.Ssh2KeyPair ssh2KeyPair = SSH2Holders.getInstance(JschHolder.class).generateKeypair(SSH2Holders.AlgorithmType.RSA, "generateBySystem");
+		SSH2Holders.Ssh2KeyPair ssh2KeyPair = SSH2Holders.getInstance(JschHolder.class)
+				.generateKeypair(SSH2Holders.AlgorithmType.RSA, "generateBySystem");
 		resp.setData(ssh2KeyPair);
 		return resp;
 	}

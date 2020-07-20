@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>super-devops-bom</artifactId>
@@ -487,7 +488,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Hoxton.SR5</version>
+				<version>Hoxton.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -544,9 +545,9 @@
 				<version>${javax-servlet-api.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			<!-- Validation, Note: that the use of '$NO-MVN-MAN-VER$' is valid for the current dependency. 
-				When this project is referenced externally, the indirect dependency will fail, possibly leading 
-				to dependency incompatible versions. -->
+			<!-- Validation, Note: that the use of '$NO-MVN-MAN-VER$' is valid for 
+				the current dependency. When this project is referenced externally, the indirect 
+				dependency will fail, possibly leading to dependency incompatible versions. -->
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator</artifactId>
@@ -724,7 +725,8 @@
 				<version>${spotbugs.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- Using metrics package, spring-actual will use DropwizardMetricServices implementation. -->
+			<!-- Using metrics package, spring-actual will use DropwizardMetricServices 
+				implementation. -->
 			<dependency>
 				<groupId>com.codahale.metrics</groupId>
 				<artifactId>metrics-core</artifactId>
@@ -1027,8 +1029,8 @@
 				<version>${elasticsearch-client.version}</version>
 				<scope>compile</scope>
 			</dependency>
-			<!-- Note: only specified 6.2.3 can be displayed here, otherwise it will be overwritten by 
-				other dependency packages (such as spring dependency BOM) -->
+			<!-- Note: only specified 6.2.3 can be displayed here, otherwise it will 
+				be overwritten by other dependency packages (such as spring dependency BOM) -->
 			<dependency>
 				<groupId>org.elasticsearch</groupId>
 				<artifactId>elasticsearch</artifactId>
@@ -1104,8 +1106,8 @@
 				<artifactId>docker-java</artifactId>
 				<version>${docker-java.version}</version>
 				<scope>compile</scope>
-				<!-- Solve the problem that the pit cannot be read and written due to the inconsistent version 
-					of the .os local library (such as netty-transport-native-epoll) -->
+				<!-- Solve the problem that the pit cannot be read and written due to 
+					the inconsistent version of the .os local library (such as netty-transport-native-epoll) -->
 				<exclusions>
 					<exclusion>
 						<groupId>io.netty</groupId>
@@ -1118,6 +1120,10 @@
 					<exclusion>
 						<groupId>io.netty</groupId>
 						<artifactId>netty-codec-http</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty-codec-http2</artifactId>
 					</exclusion>
 					<exclusion>
 						<groupId>io.netty</groupId>
