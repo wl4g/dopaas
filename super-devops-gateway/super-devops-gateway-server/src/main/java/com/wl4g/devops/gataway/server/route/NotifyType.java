@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.gataway.server;
+package com.wl4g.devops.gataway.server.route;
 
-import reactor.core.publisher.Mono;
-
-public interface IRouteAlterPublisher {
-
-
-    /**
-     * 发送《刷新》路由的通知消息
-     */
-    Mono<Void> notifyAllRefresh(NotifyType notifyType);
-
+/**
+ * @author guzhandong
+ * @CREATE 2018-10-08 6:24 PM
+ */
+public enum NotifyType {
+    permanent, state
 }
