@@ -29,22 +29,22 @@
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-components-shell-cli</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-components-shell-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway</artifactId>
 			<exclusions>
-				<!-- <exclusion> -->
-				<!-- <groupId>org.springframework.boot</groupId> -->
-				<!-- <artifactId>spring-boot-starter-web</artifactId> -->
-				<!-- </exclusion> -->
 				<exclusion>
 					<groupId>io.netty</groupId>
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-components-tools-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>redis.clients</groupId>
@@ -65,12 +65,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- TODO removing...!!! -->
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
 		</dependency>
 	</dependencies>
-
 	<build>
 		<finalName>${final.name}</finalName>
 		<resources>

@@ -64,8 +64,6 @@ public class JedisClusterFactoryBean implements FactoryBean<JedisCluster>, Initi
 		return true;
 	}
 
-
-
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// Parse cluster node's
