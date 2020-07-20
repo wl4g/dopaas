@@ -16,11 +16,11 @@
 package com.wl4g.devops.gataway.server.config;
 
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
-import com.wl4g.devops.gataway.server.RedisRouteDefinitionRepository;
-import com.wl4g.devops.gataway.server.RouteAlterHandler;
 import com.wl4g.devops.gataway.server.redis.EnhancedJedisCluster;
 import com.wl4g.devops.gataway.server.redis.JedisClusterFactoryBean;
 import com.wl4g.devops.gataway.server.redis.JedisService;
+import com.wl4g.devops.gataway.server.route.RedisRouteDefinitionRepository;
+import com.wl4g.devops.gataway.server.route.RouteAlterHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -84,11 +84,11 @@ public class JedisAutoConfiguration {
 
 
 	/*@Bean
-	@ConditionalOnBean(JedisService.class)
-	public JedisLockManager jedisLockManager(JedisService jedisService) {
-		return new JedisLockManager(jedisService);
-	}
-*/
+	public PeriodicityRefresh periodicityRefresh(){
+		return new PeriodicityRefresh();
+	}*/
+
+
 	/**
 	 * JEDIS properties.
 	 * 
