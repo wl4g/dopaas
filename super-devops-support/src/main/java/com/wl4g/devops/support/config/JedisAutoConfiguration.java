@@ -53,7 +53,7 @@ import redis.clients.jedis.exceptions.JedisException;
 public class JedisAutoConfiguration {
 
 	@Bean
-	@ConditionalOnProperty(name = KEY_JEDIS_PREFIX + ".nodes", matchIfMissing = false)
+	@ConditionalOnProperty(name = KEY_JEDIS_PREFIX + ".enable", matchIfMissing = true)
 	@ConfigurationProperties(prefix = KEY_JEDIS_PREFIX)
 	@ConditionalOnClass(JedisCluster.class)
 	public JedisProperties jedisProperties() {
