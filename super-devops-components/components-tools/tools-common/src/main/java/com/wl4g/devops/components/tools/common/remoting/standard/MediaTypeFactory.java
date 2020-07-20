@@ -1,3 +1,18 @@
+/*
+ * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.wl4g.devops.components.tools.common.remoting.standard;
 
 import java.io.BufferedReader;
@@ -10,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import com.google.common.io.Resources;
 import com.wl4g.devops.components.tools.common.annotation.Nullable;
 import com.wl4g.devops.components.tools.common.collection.multimap.LinkedMultiValueMap;
 import com.wl4g.devops.components.tools.common.collection.multimap.MultiValueMap;
@@ -40,7 +56,12 @@ public final class MediaTypeFactory {
 	 * @return a multi-value map, mapping media types to file extensions.
 	 */
 	private static MultiValueMap<String, HttpMediaType> parseMimeTypes() {
-		InputStream is = MediaTypeFactory.class.getResourceAsStream(defaultMimeTypesFileName);
+		InputStream is;
+		try {
+			is = Resources.getResource(defaultMimeTypesFileName).openStream();
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.US_ASCII))) {
 			MultiValueMap<String, HttpMediaType> result = new LinkedMultiValueMap<>();
 			String line;
@@ -95,9 +116,10 @@ public final class MediaTypeFactory {
 				.map(fileExtensionToMediaTypes::get).orElse(Collections.emptyList());
 	}
 
-	private static final MultiValueMap<String, HttpMediaType> fileExtensionToMediaTypes = parseMimeTypes();
 	// e.g: com/wl4g/devops/components/tools/common/remoting/mime.types
 	private static final String defaultMimeTypesFileName = MediaTypeFactory.class.getName().replace(".", "/")
 			.replace(MediaTypeFactory.class.getSimpleName(), "").concat("mime.types");
+
+	private static final MultiValueMap<String, HttpMediaType> fileExtensionToMediaTypes = parseMimeTypes();
 
 }

@@ -20,6 +20,9 @@ import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
+
+import static com.wl4g.devops.support.config.NotificationAutoConfiguration.KEY_NOTIFY_PREFIX;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,8 +30,6 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static com.wl4g.devops.support.config.NotificationAutoConfiguration.KEY_NOTIFY_PREFIX;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IamServer.class, properties = { KEY_NOTIFY_PREFIX + ".vms.enable=true",

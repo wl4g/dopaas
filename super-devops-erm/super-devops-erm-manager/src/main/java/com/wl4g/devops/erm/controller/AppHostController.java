@@ -84,14 +84,15 @@ public class AppHostController extends BaseController {
 		return resp;
 	}
 
-
 	@RequestMapping(value = "/createAndDownloadTemplate")
-	public ResponseEntity<FileSystemResource> createAndDownloadTemplate(Integer idcId,String organizationCode) throws IOException {
-		return hostService.createAndDownloadTemplate(idcId,organizationCode);
+	public ResponseEntity<FileSystemResource> createAndDownloadTemplate(Integer idcId, String organizationCode)
+			throws IOException {
+		return hostService.createAndDownloadTemplate(idcId, organizationCode);
 	}
 
 	@RequestMapping(value = "/importHost")
-	public RespBase<?> importHost(@RequestParam(value = "file") MultipartFile file,Integer force,Integer sshAutoCreate) throws IOException {
+	public RespBase<?> importHost(@RequestParam(value = "file") MultipartFile file, Integer force, Integer sshAutoCreate)
+			throws IOException {
 		RespBase<Object> resp = RespBase.create();
 		Map<String, Object> result = hostService.importHost(file, force, sshAutoCreate);
 		resp.setData(result);

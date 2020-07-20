@@ -31,8 +31,8 @@ import static com.google.common.base.Charsets.*;
 import com.wl4g.devops.IamServer;
 import com.wl4g.devops.iam.common.session.IamSession;
 import com.wl4g.devops.iam.common.session.mgt.IamSessionDAO;
-import com.wl4g.devops.support.redis.JedisService;
-import com.wl4g.devops.support.redis.ScanCursor;
+import com.wl4g.devops.support.redis.jedis.JedisService;
+import com.wl4g.devops.support.redis.jedis.ScanCursor;
 
 import redis.clients.jedis.ScanParams;
 
@@ -66,7 +66,7 @@ public class IamSessionDAOTests {
 		byte[] match = ("iam_" + CACHE_SESSION + "*").getBytes(UTF_8);
 		ScanParams params = new ScanParams().count(200).match(match);
 
-		ScanCursor<IamSession> sc = new ScanCursor<IamSession>(jedisService.getJedisCluster(), null, params) {
+		ScanCursor<IamSession> sc = new ScanCursor<IamSession>(jedisService.getJedisAdapter(), null, params) {
 		}.open();
 		System.out.println("ScanResult: " + sc);
 		while (sc.hasNext()) {

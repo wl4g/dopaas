@@ -27,7 +27,7 @@ import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
 import com.wl4g.devops.components.tools.common.crypto.asymmetric.AsymmetricCryptor;
 import com.wl4g.devops.components.tools.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.devops.scm.session.HandshakeResult;
-import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.support.redis.jedis.JedisService;
 
 /**
  * {@link ScmServerConfigSecurityManager}

@@ -36,48 +36,45 @@ import static java.util.Objects.isNull;
 @Service
 public class DnsOperationLogServiceImpl implements DnsOperationLogService {
 
-    @Autowired
-    private DnsOperationLogDao dnsOperationLogDao;
+	@Autowired
+	private DnsOperationLogDao dnsOperationLogDao;
 
-    @Override
-    public PageModel page(PageModel pm,String domain) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(dnsOperationLogDao.list(getRequestOrganizationCodes(), domain));
-        return pm;
-    }
+	@Override
+	public PageModel page(PageModel pm, String domain) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(dnsOperationLogDao.list(getRequestOrganizationCodes(), domain));
+		return pm;
+	}
 
-    public void save(DnsOperationLog dnsOperationLog){
-        if(isNull(dnsOperationLog.getId())){
-            dnsOperationLog.preInsert(getRequestOrganizationCode());
-            insert(dnsOperationLog);
-        }else{
-            dnsOperationLog.preUpdate();
-            update(dnsOperationLog);
-        }
-    }
+	public void save(DnsOperationLog dnsOperationLog) {
+		if (isNull(dnsOperationLog.getId())) {
+			dnsOperationLog.preInsert(getRequestOrganizationCode());
+			insert(dnsOperationLog);
+		} else {
+			dnsOperationLog.preUpdate();
+			update(dnsOperationLog);
+		}
+	}
 
-    private void insert(DnsOperationLog dnsOperationLog){
-        dnsOperationLogDao.insertSelective(dnsOperationLog);
-    }
+	private void insert(DnsOperationLog dnsOperationLog) {
+		dnsOperationLogDao.insertSelective(dnsOperationLog);
+	}
 
-    private void update(DnsOperationLog dnsOperationLog){
-        dnsOperationLogDao.updateByPrimaryKeySelective(dnsOperationLog);
-    }
+	private void update(DnsOperationLog dnsOperationLog) {
+		dnsOperationLogDao.updateByPrimaryKeySelective(dnsOperationLog);
+	}
 
+	public DnsOperationLog detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		return dnsOperationLogDao.selectByPrimaryKey(id);
+	}
 
-    public DnsOperationLog detail(Integer id){
-        Assert.notNull(id,"id is null");
-        return dnsOperationLogDao.selectByPrimaryKey(id);
-    }
-
-    public void del(Integer id){
-        Assert.notNull(id,"id is null");
-        DnsOperationLog dnsOperationLog = new DnsOperationLog();
-        dnsOperationLog.setId(id);
-        dnsOperationLog.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        dnsOperationLogDao.updateByPrimaryKeySelective(dnsOperationLog);
-    }
-
-
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		DnsOperationLog dnsOperationLog = new DnsOperationLog();
+		dnsOperationLog.setId(id);
+		dnsOperationLog.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		dnsOperationLogDao.updateByPrimaryKeySelective(dnsOperationLog);
+	}
 
 }

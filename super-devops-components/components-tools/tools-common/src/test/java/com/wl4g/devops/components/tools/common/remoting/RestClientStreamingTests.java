@@ -39,11 +39,12 @@ import java.util.regex.Pattern;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import com.wl4g.devops.components.tools.common.collection.multimap.LinkedMultiValueMap;
+import com.wl4g.devops.components.tools.common.collection.multimap.MultiValueMap;
 import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
 import com.wl4g.devops.components.tools.common.remoting.standard.HttpHeaders;
 import com.wl4g.devops.components.tools.common.remoting.standard.HttpMediaType;
 import com.wl4g.devops.components.tools.common.resource.FileStreamResource;
-import com.wl4g.devops.components.tools.common.resource.StreamResource;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -76,7 +77,6 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -99,6 +99,7 @@ import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 import io.netty.util.internal.SystemPropertyUtil;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -142,7 +143,7 @@ public class RestClientStreamingTests {
 	public static void downloadTest1() throws Exception {
 		System.out.println("downloadTest1, startSampleFSServer...");
 		startSampleFSServer(new HttpServerCodec(), new HttpObjectAggregator(65535), new ChunkedWriteHandler(),
-				new FSServerOutChannelHandler());
+				new HttpStaticFileServerHandler());
 		System.out.println("downloading...");
 
 		// URI uri = URI
@@ -166,12 +167,15 @@ public class RestClientStreamingTests {
 		// Remove the following line if you don't want automatic content
 		// compression.
 		startSampleFSServer(new HttpRequestDecoder(), new HttpResponseEncoder(), new HttpContentCompressor(),
-				new FSServerInChannelHandler());
+				new HttpUploadServerHandler());
 		System.out.println("uploading...");
+
+		MultiValueMap<String, Object> bodyMap = new LinkedMultiValueMap<>();
+		bodyMap.add("myfile", new FileStreamResource(sampleFile));
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(HttpMediaType.MULTIPART_FORM_DATA);
-		HttpEntity<StreamResource> requestEntity = new HttpEntity<>(new FileStreamResource(sampleFile), headers);
+		HttpEntity<?> requestEntity = new HttpEntity<>(bodyMap, headers);
 
 		URI uri = URI.create("http://".concat(HOST).concat(":").concat(valueOf(PORT).concat("/upload")));
 		HttpResponseEntity<String> response = new RestClient(true).exchange(uri, POST, requestEntity, String.class);
@@ -262,7 +266,7 @@ public class RestClientStreamingTests {
 	/**
 	 * Input FS server channel handler
 	 */
-	public static class FSServerInChannelHandler extends SimpleChannelInboundHandler<HttpObject> {
+	public static class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObject> {
 
 		// Disk if size exceed
 		private static final HttpDataFactory factory = new DefaultHttpDataFactory(DefaultHttpDataFactory.MINSIZE);
@@ -284,12 +288,13 @@ public class RestClientStreamingTests {
 
 		@Override
 		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-			System.out.println(cause);
+			System.out.println("exceptionCaught: " + cause);
 			ctx.channel().close();
 		}
 
 		@Override
 		public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+			System.out.println("channelInactive: " + ctx);
 			if (decoder != null) {
 				decoder.cleanFiles();
 			}
@@ -647,9 +652,9 @@ public class RestClientStreamingTests {
 	}
 
 	/**
-	 * Output FS server channel handler
+	 * Http static file server channel handler
 	 */
-	public static class FSServerOutChannelHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+	public static class HttpStaticFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
 		private static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
 		private static final String HTTP_DATE_GMT_TIMEZONE = "GMT";

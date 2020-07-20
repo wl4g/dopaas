@@ -20,7 +20,7 @@ import com.wl4g.devops.common.bean.BaseBean;
 import com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.dao.erm.DnsPrivateBlacklistDao;
-import com.wl4g.devops.erm.dns.DnsServerInterface;
+import com.wl4g.devops.erm.dns.handler.ZoneStoreHandler;
 import com.wl4g.devops.erm.service.DnsPrivateBlacklistService;
 import com.wl4g.devops.page.PageModel;
 import org.apache.commons.lang3.StringUtils;
@@ -42,88 +42,87 @@ import static java.util.Objects.isNull;
 @Service
 public class DnsPrivateBlacklistServiceImpl implements DnsPrivateBlacklistService {
 
-    final private static String BLACKLIST = "1";
-    //final public static String WHITELIST = "2";
+	final private static String BLACKLIST = "1";
+	// final public static String WHITELIST = "2";
 
-    @Autowired
-    private DnsPrivateBlacklistDao dnsPrivateBlacklistDao;
+	@Autowired
+	private DnsPrivateBlacklistDao dnsPrivateBlacklistDao;
 
-    @Autowired
-    private DnsServerInterface dnsServerInterface;
+	@Autowired
+	private ZoneStoreHandler dnsServerInterface;
 
-    @Override
-    public PageModel page(PageModel pm, String expression) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(dnsPrivateBlacklistDao.list(expression));
-        return pm;
-    }
+	@Override
+	public PageModel page(PageModel pm, String expression) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(dnsPrivateBlacklistDao.list(expression));
+		return pm;
+	}
 
-    public void save(DnsPrivateBlacklist dnsPrivateBlacklist) {
-        if (isNull(dnsPrivateBlacklist.getId())) {
-            dnsPrivateBlacklist.preInsert(getRequestOrganizationCode());
-            insert(dnsPrivateBlacklist);
-        } else {
-            dnsPrivateBlacklist.preUpdate();
-            update(dnsPrivateBlacklist);
-        }
-        if(dnsPrivateBlacklist.getEnable()==1){
-            if (StringUtils.equals(BLACKLIST, dnsPrivateBlacklist.getType())) {
-                dnsServerInterface.addDnsPrivateBlacklist(dnsPrivateBlacklist.getExpression(), null);
-            } else {
-                dnsServerInterface.addDnsPrivateBlacklist(null, dnsPrivateBlacklist.getExpression());
-            }
-        }else{
-            if (StringUtils.equals(BLACKLIST, dnsPrivateBlacklist.getType())) {
-                dnsServerInterface.removeDnsPrivateBlacklist(dnsPrivateBlacklist.getExpression(), null);
-            } else {
-                dnsServerInterface.removeDnsPrivateBlacklist(null, dnsPrivateBlacklist.getExpression());
-            }
-        }
-    }
+	public void save(DnsPrivateBlacklist dnsPrivateBlacklist) {
+		if (isNull(dnsPrivateBlacklist.getId())) {
+			dnsPrivateBlacklist.preInsert(getRequestOrganizationCode());
+			insert(dnsPrivateBlacklist);
+		} else {
+			dnsPrivateBlacklist.preUpdate();
+			update(dnsPrivateBlacklist);
+		}
+		if (dnsPrivateBlacklist.getEnable() == 1) {
+			if (StringUtils.equals(BLACKLIST, dnsPrivateBlacklist.getType())) {
+				dnsServerInterface.addDnsPrivateBlacklist(dnsPrivateBlacklist.getExpression(), null);
+			} else {
+				dnsServerInterface.addDnsPrivateBlacklist(null, dnsPrivateBlacklist.getExpression());
+			}
+		} else {
+			if (StringUtils.equals(BLACKLIST, dnsPrivateBlacklist.getType())) {
+				dnsServerInterface.removeDnsPrivateBlacklist(dnsPrivateBlacklist.getExpression(), null);
+			} else {
+				dnsServerInterface.removeDnsPrivateBlacklist(null, dnsPrivateBlacklist.getExpression());
+			}
+		}
+	}
 
-    private void insert(DnsPrivateBlacklist dnsPrivateBlacklist) {
-        DnsPrivateBlacklist dnsPrivateBlacklistDB = dnsPrivateBlacklistDao.selectByExpression(dnsPrivateBlacklist.getExpression());
-        Assert2.isNull(dnsPrivateBlacklistDB,"Repeat Expression");
-        dnsPrivateBlacklistDao.insertSelective(dnsPrivateBlacklist);
-    }
+	private void insert(DnsPrivateBlacklist dnsPrivateBlacklist) {
+		DnsPrivateBlacklist dnsPrivateBlacklistDB = dnsPrivateBlacklistDao
+				.selectByExpression(dnsPrivateBlacklist.getExpression());
+		Assert2.isNull(dnsPrivateBlacklistDB, "Repeat Expression");
+		dnsPrivateBlacklistDao.insertSelective(dnsPrivateBlacklist);
+	}
 
-    private void update(DnsPrivateBlacklist dnsPrivateBlacklist) {
-        dnsPrivateBlacklistDao.updateByPrimaryKeySelective(dnsPrivateBlacklist);
-    }
+	private void update(DnsPrivateBlacklist dnsPrivateBlacklist) {
+		dnsPrivateBlacklistDao.updateByPrimaryKeySelective(dnsPrivateBlacklist);
+	}
 
+	public DnsPrivateBlacklist detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		return dnsPrivateBlacklistDao.selectByPrimaryKey(id);
+	}
 
-    public DnsPrivateBlacklist detail(Integer id) {
-        Assert.notNull(id, "id is null");
-        return dnsPrivateBlacklistDao.selectByPrimaryKey(id);
-    }
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		DnsPrivateBlacklist dnsPrivateBlacklist = dnsPrivateBlacklistDao.selectByPrimaryKey(id);
+		dnsPrivateBlacklist.setId(id);
+		dnsPrivateBlacklist.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		dnsPrivateBlacklistDao.updateByPrimaryKeySelective(dnsPrivateBlacklist);
+		if (StringUtils.equals(BLACKLIST, dnsPrivateBlacklist.getType())) {
+			dnsServerInterface.removeDnsPrivateBlacklist(dnsPrivateBlacklist.getExpression(), null);
+		} else {
+			dnsServerInterface.removeDnsPrivateBlacklist(null, dnsPrivateBlacklist.getExpression());
+		}
+	}
 
-    public void del(Integer id) {
-        Assert.notNull(id, "id is null");
-        DnsPrivateBlacklist dnsPrivateBlacklist = dnsPrivateBlacklistDao.selectByPrimaryKey(id);
-        dnsPrivateBlacklist.setId(id);
-        dnsPrivateBlacklist.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        dnsPrivateBlacklistDao.updateByPrimaryKeySelective(dnsPrivateBlacklist);
-        if (StringUtils.equals(BLACKLIST, dnsPrivateBlacklist.getType())) {
-            dnsServerInterface.removeDnsPrivateBlacklist(dnsPrivateBlacklist.getExpression(), null);
-        } else {
-            dnsServerInterface.removeDnsPrivateBlacklist(null, dnsPrivateBlacklist.getExpression());
-        }
-    }
-
-    @Override
-    public void loadBlacklistAtStart() {
-        List<DnsPrivateBlacklist> list = dnsPrivateBlacklistDao.list(null);
-        Set<String> blacks = new HashSet<>();
-        Set<String> whites = new HashSet<>();
-        for (DnsPrivateBlacklist dnsPrivateBlacklist : list) {
-            if (StringUtils.equals(BLACKLIST, dnsPrivateBlacklist.getType())) {
-                blacks.add(dnsPrivateBlacklist.getExpression());
-            } else {
-                whites.add(dnsPrivateBlacklist.getExpression());
-            }
-        }
-        dnsServerInterface.reloadDnsPrivateBlacklist(blacks, whites);
-    }
-
+	@Override
+	public void loadBlacklistAtStart() {
+		List<DnsPrivateBlacklist> list = dnsPrivateBlacklistDao.list(null);
+		Set<String> blacks = new HashSet<>();
+		Set<String> whites = new HashSet<>();
+		for (DnsPrivateBlacklist dnsPrivateBlacklist : list) {
+			if (StringUtils.equals(BLACKLIST, dnsPrivateBlacklist.getType())) {
+				blacks.add(dnsPrivateBlacklist.getExpression());
+			} else {
+				whites.add(dnsPrivateBlacklist.getExpression());
+			}
+		}
+		dnsServerInterface.reloadDnsPrivateBlacklist(blacks, whites);
+	}
 
 }

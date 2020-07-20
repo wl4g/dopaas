@@ -26,8 +26,8 @@ import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.dao.ci.OrchestrationDao;
 import com.wl4g.devops.dao.ci.OrchestrationPipelineDao;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.support.redis.JedisService;
-import com.wl4g.devops.support.redis.ScanCursor;
+import com.wl4g.devops.support.redis.jedis.JedisService;
+import com.wl4g.devops.support.redis.jedis.ScanCursor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,134 +48,135 @@ import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestO
 @Service
 public class OrchestrationServcieImpl implements OrchestrationService {
 
-    @Autowired
-    private OrchestrationDao orchestrationDao;
+	@Autowired
+	private OrchestrationDao orchestrationDao;
 
-    @Autowired
-    private OrchestrationPipelineDao orchestrationPipelineDao;
+	@Autowired
+	private OrchestrationPipelineDao orchestrationPipelineDao;
 
-    @Autowired
-    private FlowManager flowManager;
+	@Autowired
+	private FlowManager flowManager;
 
-    @Autowired
-    private JedisService jedisService;
+	@Autowired
+	private JedisService jedisService;
 
-    @Override
-    public PageModel list(PageModel pm, String name) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(orchestrationDao.list(getRequestOrganizationCodes(), name));
-        return pm;
-    }
+	@Override
+	public PageModel list(PageModel pm, String name) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(orchestrationDao.list(getRequestOrganizationCodes(), name));
+		return pm;
+	}
 
-    @Override
-    public void save(Orchestration orchestration) {
-        if (orchestration.getId() == null) {
-            orchestration.preInsert(getRequestOrganizationCode());
-            insert(orchestration);
-        } else {
-            orchestration.preUpdate();
-            update(orchestration);
-        }
-    }
+	@Override
+	public void save(Orchestration orchestration) {
+		if (orchestration.getId() == null) {
+			orchestration.preInsert(getRequestOrganizationCode());
+			insert(orchestration);
+		} else {
+			orchestration.preUpdate();
+			update(orchestration);
+		}
+	}
 
-    private void insert(Orchestration orchestration) {
-        insertOrUpdateOrchestrationPipelines(orchestration.getOrchestrationPipelines(), orchestration.getId());
-        orchestrationDao.insertSelective(orchestration);
-    }
+	private void insert(Orchestration orchestration) {
+		insertOrUpdateOrchestrationPipelines(orchestration.getOrchestrationPipelines(), orchestration.getId());
+		orchestrationDao.insertSelective(orchestration);
+	}
 
-    private void update(Orchestration orchestration) {
-        insertOrUpdateOrchestrationPipelines(orchestration.getOrchestrationPipelines(), orchestration.getId());
-        orchestrationDao.updateByPrimaryKeySelective(orchestration);
-    }
+	private void update(Orchestration orchestration) {
+		insertOrUpdateOrchestrationPipelines(orchestration.getOrchestrationPipelines(), orchestration.getId());
+		orchestrationDao.updateByPrimaryKeySelective(orchestration);
+	}
 
-    private void insertOrUpdateOrchestrationPipelines(List<OrchestrationPipeline> orchestrationPipelines,
-                                                      Integer orchestrationId) {
+	private void insertOrUpdateOrchestrationPipelines(List<OrchestrationPipeline> orchestrationPipelines,
+			Integer orchestrationId) {
 
-        List<OrchestrationPipeline> oldOrchestrationPipelines = orchestrationPipelineDao.selectByOrchestrationId(orchestrationId);
-        cleanOldOrchestrationPipelines(oldOrchestrationPipelines, orchestrationPipelines);
-        cleanRepeat(orchestrationPipelines);
+		List<OrchestrationPipeline> oldOrchestrationPipelines = orchestrationPipelineDao.selectByOrchestrationId(orchestrationId);
+		cleanOldOrchestrationPipelines(oldOrchestrationPipelines, orchestrationPipelines);
+		cleanRepeat(orchestrationPipelines);
 
-        for (OrchestrationPipeline orchestrationPipeline : orchestrationPipelines) {
-            if (Objects.isNull(orchestrationPipeline.getPipelineId())) {
-                continue;
-            }
-            if (Objects.isNull(orchestrationPipeline.getId())) {
-                orchestrationPipeline.preInsert();
-                orchestrationPipeline.setOrchestrationId(orchestrationId);
-                orchestrationPipelineDao.insertSelective(orchestrationPipeline);
-            } else {
-                orchestrationPipelineDao.updateByPrimaryKeySelective(orchestrationPipeline);
-            }
-        }
-    }
+		for (OrchestrationPipeline orchestrationPipeline : orchestrationPipelines) {
+			if (Objects.isNull(orchestrationPipeline.getPipelineId())) {
+				continue;
+			}
+			if (Objects.isNull(orchestrationPipeline.getId())) {
+				orchestrationPipeline.preInsert();
+				orchestrationPipeline.setOrchestrationId(orchestrationId);
+				orchestrationPipelineDao.insertSelective(orchestrationPipeline);
+			} else {
+				orchestrationPipelineDao.updateByPrimaryKeySelective(orchestrationPipeline);
+			}
+		}
+	}
 
-    private void cleanOldOrchestrationPipelines(List<OrchestrationPipeline> oldOrchestrationPipelines, List<OrchestrationPipeline> newOrchestrationPipelines) {
-        for (OrchestrationPipeline oldOrchestrationPipeline : oldOrchestrationPipelines) {
-            boolean had = false;
-            for (OrchestrationPipeline newOrchestrationPipeline : newOrchestrationPipelines) {
-                if (newOrchestrationPipeline.getId() == null) {
-                    continue;
-                }
-                if (oldOrchestrationPipeline.getId().intValue() == newOrchestrationPipeline.getId().intValue()) {
-                    had = true;
-                    break;
-                }
-            }
-            if (!had) {
-                orchestrationPipelineDao.deleteByPrimaryKey(oldOrchestrationPipeline.getId());
-            }
-        }
-    }
+	private void cleanOldOrchestrationPipelines(List<OrchestrationPipeline> oldOrchestrationPipelines,
+			List<OrchestrationPipeline> newOrchestrationPipelines) {
+		for (OrchestrationPipeline oldOrchestrationPipeline : oldOrchestrationPipelines) {
+			boolean had = false;
+			for (OrchestrationPipeline newOrchestrationPipeline : newOrchestrationPipelines) {
+				if (newOrchestrationPipeline.getId() == null) {
+					continue;
+				}
+				if (oldOrchestrationPipeline.getId().intValue() == newOrchestrationPipeline.getId().intValue()) {
+					had = true;
+					break;
+				}
+			}
+			if (!had) {
+				orchestrationPipelineDao.deleteByPrimaryKey(oldOrchestrationPipeline.getId());
+			}
+		}
+	}
 
+	private void cleanRepeat(List<OrchestrationPipeline> orchestrationPipelines) {
+		List<OrchestrationPipeline> needRemove = new ArrayList<>();
+		for (int i = 0; i < orchestrationPipelines.size(); i++) {
+			for (int j = i + 1; j < orchestrationPipelines.size(); j++) {
+				if (orchestrationPipelines.get(i).getPipelineId().intValue() == orchestrationPipelines.get(j).getPipelineId()
+						.intValue()) {
+					needRemove.add(orchestrationPipelines.get(i));
+				}
+			}
+		}
+		orchestrationPipelines.removeAll(needRemove);
+	}
 
-    private void cleanRepeat(List<OrchestrationPipeline> orchestrationPipelines){
-        List<OrchestrationPipeline> needRemove = new ArrayList<>();
-        for(int i = 0;i < orchestrationPipelines.size();i++){
-            for(int j = i+1;j < orchestrationPipelines.size();j++){
-                if(orchestrationPipelines.get(i).getPipelineId().intValue() == orchestrationPipelines.get(j).getPipelineId().intValue()){
-                    needRemove.add(orchestrationPipelines.get(i));
-                }
-            }
-        }
-        orchestrationPipelines.removeAll(needRemove);
-    }
+	@Override
+	public void del(Integer id) {
+		Orchestration orchestration = new Orchestration();
+		orchestration.setId(id);
+		orchestration.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		orchestrationDao.updateByPrimaryKeySelective(orchestration);
+	}
 
-    @Override
-    public void del(Integer id) {
-        Orchestration orchestration = new Orchestration();
-        orchestration.setId(id);
-        orchestration.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        orchestrationDao.updateByPrimaryKeySelective(orchestration);
-    }
+	@Override
+	public Orchestration detail(Integer id) {
+		return orchestrationDao.selectByPrimaryKey(id);
+	}
 
-    @Override
-    public Orchestration detail(Integer id) {
-        return orchestrationDao.selectByPrimaryKey(id);
-    }
+	@Override
+	public void run(Integer id, String remark, String taskTraceId, String taskTraceType, String annex) {
+		Assert2.notNullOf(id, "id");
+		Assert2.isTrue(!isMaxRuner(), "Runner is biggest , cant not create any more");
+		Orchestration orchestration = orchestrationDao.selectByPrimaryKey(id);
+		Assert2.notNullOf(orchestration, "orchestration");
+		orchestration.setStatus(1);
+		orchestrationDao.updateByPrimaryKeySelective(orchestration);
+		flowManager.runOrchestration(orchestration, remark, taskTraceId, taskTraceType, annex);
 
-    @Override
-    public void run(Integer id,String remark, String taskTraceId, String taskTraceType, String annex) {
-        Assert2.notNullOf(id, "id");
-        Assert2.isTrue(!isMaxRuner(),"Runner is biggest , cant not create any more");
-        Orchestration orchestration = orchestrationDao.selectByPrimaryKey(id);
-        Assert2.notNullOf(orchestration, "orchestration");
-        orchestration.setStatus(1);
-        orchestrationDao.updateByPrimaryKeySelective(orchestration);
-        flowManager.runOrchestration(orchestration,remark, taskTraceId, taskTraceType, annex);
+	}
 
-    }
-
-    private boolean isMaxRuner() {
-        ScanCursor<RunModel> scan = jedisService.scan(REDIS_CI_RUN_PRE, REDIS_CI_RUN_SCAN_BATCH + 1, RunModel.class);
-        int count = 0;
-        while (scan.hasNext()) {
-            scan.next();
-            count++;
-            if (count >= REDIS_CI_RUN_SCAN_BATCH) {
-                return true;
-            }
-        }
-        return false;
-    }
+	private boolean isMaxRuner() {
+		ScanCursor<RunModel> scan = jedisService.scan(REDIS_CI_RUN_PRE, REDIS_CI_RUN_SCAN_BATCH + 1, RunModel.class);
+		int count = 0;
+		while (scan.hasNext()) {
+			scan.next();
+			count++;
+			if (count >= REDIS_CI_RUN_SCAN_BATCH) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

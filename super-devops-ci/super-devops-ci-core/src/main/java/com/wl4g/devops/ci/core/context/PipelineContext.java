@@ -77,7 +77,6 @@ public abstract interface PipelineContext {
 			throw new UnsupportedOperationException();
 		}
 
-
 		@Override
 		public String getProjectSourceDir() {
 			throw new UnsupportedOperationException();

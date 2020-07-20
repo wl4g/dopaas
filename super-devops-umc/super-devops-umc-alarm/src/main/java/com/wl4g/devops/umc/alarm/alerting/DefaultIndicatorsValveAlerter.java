@@ -29,7 +29,7 @@ import com.wl4g.devops.support.notification.GenericNotifyMessage;
 import com.wl4g.devops.support.notification.MessageNotifier;
 import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
-import com.wl4g.devops.support.redis.JedisService;
+import com.wl4g.devops.support.redis.jedis.JedisService;
 import com.wl4g.devops.umc.alarm.AlarmNote;
 import com.wl4g.devops.umc.alarm.AlarmMessage;
 import com.wl4g.devops.umc.alarm.TemplateContactWrapper;
@@ -330,8 +330,8 @@ public class DefaultIndicatorsValveAlerter extends AbstractIndicatorsValveAlerte
 	 * @param timeOfFreq
 	 */
 	protected void handleRateLimit(String key, int timeOfFreq) {
-		jedisService.getJedisCluster().incrBy(key, 1);
-		jedisService.getJedisCluster().expire(key, timeOfFreq);
+		jedisService.getJedisAdapter().incrBy(key, 1);
+		jedisService.getJedisAdapter().expire(key, timeOfFreq);
 	}
 
 	/**

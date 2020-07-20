@@ -38,53 +38,50 @@ import static java.util.Objects.isNull;
 @Service
 public class IdcServiceImpl implements IdcService {
 
-    @Autowired
-    private IdcDao idcDao;
+	@Autowired
+	private IdcDao idcDao;
 
-    @Override
-    public PageModel page(PageModel pm,String name) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(idcDao.list(getRequestOrganizationCodes(), name));
-        return pm;
-    }
+	@Override
+	public PageModel page(PageModel pm, String name) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(idcDao.list(getRequestOrganizationCodes(), name));
+		return pm;
+	}
 
-    @Override
-    public List<Idc> getForSelect() {
-        return idcDao.list(getRequestOrganizationCodes(),null);
-    }
+	@Override
+	public List<Idc> getForSelect() {
+		return idcDao.list(getRequestOrganizationCodes(), null);
+	}
 
-    public void save(Idc idc){
-        if(isNull(idc.getId())){
-            idc.preInsert(getRequestOrganizationCode());
-            insert(idc);
-        }else{
-            idc.preUpdate();
-            update(idc);
-        }
-    }
+	public void save(Idc idc) {
+		if (isNull(idc.getId())) {
+			idc.preInsert(getRequestOrganizationCode());
+			insert(idc);
+		} else {
+			idc.preUpdate();
+			update(idc);
+		}
+	}
 
-    private void insert(Idc idc){
-        idcDao.insertSelective(idc);
-    }
+	private void insert(Idc idc) {
+		idcDao.insertSelective(idc);
+	}
 
-    private void update(Idc idc){
-        idcDao.updateByPrimaryKeySelective(idc);
-    }
+	private void update(Idc idc) {
+		idcDao.updateByPrimaryKeySelective(idc);
+	}
 
+	public Idc detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		return idcDao.selectByPrimaryKey(id);
+	}
 
-    public Idc detail(Integer id){
-        Assert.notNull(id,"id is null");
-        return idcDao.selectByPrimaryKey(id);
-    }
-
-    public void del(Integer id){
-        Assert.notNull(id,"id is null");
-        Idc idc = new Idc();
-        idc.setId(id);
-        idc.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        idcDao.updateByPrimaryKeySelective(idc);
-    }
-
-
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		Idc idc = new Idc();
+		idc.setId(id);
+		idc.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		idcDao.updateByPrimaryKeySelective(idc);
+	}
 
 }

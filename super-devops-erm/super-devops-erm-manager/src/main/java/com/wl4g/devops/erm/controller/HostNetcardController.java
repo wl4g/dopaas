@@ -35,43 +35,42 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/netcard")
 public class HostNetcardController extends BaseController {
 
-    @Autowired
-    private HostNetcardService hostNetcardService;
+	@Autowired
+	private HostNetcardService hostNetcardService;
 
-    @RequestMapping(value = "/list")
-    public RespBase<?> list(PageModel pm, Integer hostId, String name) {
-        RespBase<Object> resp = RespBase.create();
-        resp.setData(hostNetcardService.page(pm, hostId, name));
-        return resp;
-    }
+	@RequestMapping(value = "/list")
+	public RespBase<?> list(PageModel pm, Integer hostId, String name) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(hostNetcardService.page(pm, hostId, name));
+		return resp;
+	}
 
-    @RequestMapping(value = "/save")
-    public RespBase<?> save(@RequestBody  HostNetcard hostNetcard) {
-        RespBase<Object> resp = RespBase.create();
-        hostNetcardService.save(hostNetcard);
-        return resp;
-    }
+	@RequestMapping(value = "/save")
+	public RespBase<?> save(@RequestBody HostNetcard hostNetcard) {
+		RespBase<Object> resp = RespBase.create();
+		hostNetcardService.save(hostNetcard);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail")
-    public RespBase<?> detail(Integer id) {
-        RespBase<Object> resp = RespBase.create();
-        resp.setData(hostNetcardService.detail(id));
-        return resp;
-    }
+	@RequestMapping(value = "/detail")
+	public RespBase<?> detail(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(hostNetcardService.detail(id));
+		return resp;
+	}
 
-    @RequestMapping(value = "/del")
-    public RespBase<?> del(Integer id) {
-        RespBase<Object> resp = RespBase.create();
-        hostNetcardService.del(id);
-        return resp;
-    }
+	@RequestMapping(value = "/del")
+	public RespBase<?> del(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		hostNetcardService.del(id);
+		return resp;
+	}
 
-    @RequestMapping(value = "/getHostTunnel")
-    public RespBase<?> getHostTunnel() {
-        RespBase<Object> resp = RespBase.create();
-        resp.setData(hostNetcardService.getHostTunnel());
-        return resp;
-    }
-
+	@RequestMapping(value = "/getHostTunnel")
+	public RespBase<?> getHostTunnel() {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(hostNetcardService.getHostTunnel());
+		return resp;
+	}
 
 }
