@@ -23,28 +23,25 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import com.wl4g.devops.iam.client.config.IamClientAutoConfiguration;
-import com.wl4g.devops.iam.common.config.CorsAutoConfiguration;
-import com.wl4g.devops.iam.common.config.ReplayAutoConfiguration;
-import com.wl4g.devops.iam.common.config.XsrfAutoConfiguration;
-import com.wl4g.devops.iam.common.config.XssAutoConfiguration;
+import com.wl4g.devops.components.tools.common.annotation.Reserved;
+import com.wl4g.devops.iam.client.config.IamClientTestAutoConfiguration;
 
 /**
- * When enabled, all requests go through spring.cloud.devops . iam.client.filter
- * -The interceptor specified by chains will be intercepted and authenticated
- * unless it is a filter of type anon.</br>
+ * [Not yet implements !!!]</br>
  * 
- * Note: it is mutually exclusive with {@link EnableIamClientTest}
+ * It is used for convenient debugging in the development phase. Note: it is
+ * mutually exclusive with {@link EnableIamClient}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2018-12-20
+ * @version v1.0 2020-07-20
  * @since
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Documented
-@Import({ IamClientAutoConfiguration.class, CorsAutoConfiguration.class, XsrfAutoConfiguration.class, XssAutoConfiguration.class,
-		ReplayAutoConfiguration.class })
-public @interface EnableIamClient {
+@Import({ IamClientTestAutoConfiguration.class })
+@Reserved
+@Deprecated
+public @interface EnableIamClientTest {
 
 }
