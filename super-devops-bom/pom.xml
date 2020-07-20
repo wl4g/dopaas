@@ -83,7 +83,7 @@
 		<!-- <protobuf.version>2.5.0</protobuf.version> hbase-1.2.5 dependency -->
 		<protostuff.version>1.6.0</protostuff.version>
 		<!-- Network socket's. -->
-		<netty.version>4.1.45.Final</netty.version>
+		<netty.version>4.1.51.Final</netty.version>
 		<!-- Cache/jedis's. -->
 		<jedis.version>2.9.0</jedis.version>
 		<!-- Bigdata/Hadoop. -->
