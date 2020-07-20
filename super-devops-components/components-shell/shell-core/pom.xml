@@ -29,11 +29,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-common</artifactId>
+			<artifactId>super-devops-components-shell-common</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.wl4g</groupId>
-			<artifactId>super-devops-components-shell-common</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

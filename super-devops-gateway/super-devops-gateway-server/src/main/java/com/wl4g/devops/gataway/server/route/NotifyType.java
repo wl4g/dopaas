@@ -20,5 +20,5 @@ package com.wl4g.devops.gataway.server.route;
  * @CREATE 2018-10-08 6:24 PM
  */
 public enum NotifyType {
-    permanent, state
+	permanent, state
 }
