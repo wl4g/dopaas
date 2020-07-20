@@ -61,7 +61,7 @@ spring:
 #        unauthorized-uri: /view/403.html
 #        success-endpoint: ${spring.cloud.devops.iam.service-name}@http://localhost:14041/iam-example
         filter-chain:
-          /public/**: anon # Public rule
+          '[/public/**]': anon # Public rule
         param: # Must be consistent with the client, otherwise authentication will never succeed
           sid: __sid
         matcher:
