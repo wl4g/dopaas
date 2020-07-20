@@ -38,7 +38,7 @@ spring:
           enabled: true # Default: true
         client: # IAM client configuration.
           filter-chain:
-            /public/**: anon # Public rule release
+            '[/public/**]': anon # Public rule release
           cipher:
             enable-data-cipher: true # Default by true
           session:
