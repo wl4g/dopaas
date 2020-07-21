@@ -33,6 +33,8 @@ logging:
     de.codecentric.boot.admin: INFO
     org:
       apache: INFO
-      springframework: INFO
+      springframework:
+        cloud:
+          gateway: TRACE
     com:
       wl4g.devops.dao: DEBUG
