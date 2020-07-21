@@ -62,10 +62,11 @@ public class JgitTests {
         String branchName = "branch1";
 
         Git git = Git.open(new File(gitPath));
-        FetchCommand fetchCommand = git.fetch().setTagOpt(TagOpt.FETCH_TAGS);
+        FetchCommand fetchCommand = git.fetch().setTagOpt(TagOpt.FETCH_TAGS).setForceUpdate(true);
         fetchCommand.setCredentialsProvider(usernamePasswordCredentialsProvider);
         fetchCommand.call();
 
+        git.reset().call();
 
         List<Ref> refs = git.branchList().call();
         boolean exist = false;// is branch exist
@@ -88,6 +89,12 @@ public class JgitTests {
 
 
         System.out.println("success");
+    }
+
+    @Test
+    public void resetTest() throws Exception{
+        Git git = Git.open(new File(gitPath));
+        git.reset().call();
     }
 
     @Test
