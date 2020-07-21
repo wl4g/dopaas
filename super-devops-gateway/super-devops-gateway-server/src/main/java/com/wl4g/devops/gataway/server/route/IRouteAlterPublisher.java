@@ -17,6 +17,13 @@ package com.wl4g.devops.gataway.server.route;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * {@link IRouteAlterPublisher}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020-07-21
+ * @since
+ */
 public interface IRouteAlterPublisher {
 
 	/**

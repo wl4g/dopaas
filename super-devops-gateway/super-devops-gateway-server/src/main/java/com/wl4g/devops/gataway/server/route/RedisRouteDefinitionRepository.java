@@ -32,81 +32,77 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * redis 路由信息持久化类. <br>
- * 该类包含了 路由持久化 和 分布式集群的路由刷新通知
+ * Redis routing information persistence class This class contains route
+ * persistence and route refresh of distributed cluster
  *
- * @author: guzhandong
- * @createDate: 2018/9/28 10:31 AM
- * @version: [v1.0]
- * @since [jdk 1.8]
- **/
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020-07-21
+ * @since
+ */
 public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+	@Autowired
+	private StringRedisTemplate stringRedisTemplate;
 
-    @Autowired
-    private JedisService jedisService;
+	@Autowired
+	private JedisService jedisService;
 
-    private static final String REDIS_ROUTE_KEY = "GATEWAY_ROUTE";
+	private static final String REDIS_ROUTE_KEY = "GATEWAY_ROUTE";
 
-    private static final String REDIS_NOTIFY_KEY = "GATEWAY_ROUTE_NOTIFY";
+	private static final String REDIS_NOTIFY_KEY = "GATEWAY_ROUTE_NOTIFY";
 
-    /**
-     * 获取全部的路由信息
-     * @return
-     */
-    @Override
-    protected Flux<RouteDefinition> getRouteDefinitionsByPermanent() {
-        List<RouteDefinition> list = new ArrayList<>();
-        Map<String, String> map = jedisService.getMap(REDIS_ROUTE_KEY);
-        for(Map.Entry<String, String> entry : map.entrySet()){
-            String value = entry.getValue();
-            RouteDefinition routeDefinition = null;
-            try {
-                routeDefinition = JacksonUtils.parseJSON(value, RouteDefinition.class);
-                list.add(routeDefinition);
-            }catch (Exception e){
-                logger.error("parseJSON fail");
-            }
-        }
-        if(CollectionUtils.isEmpty(list)){
-            return Flux.empty();
-        }
-        return Flux.fromIterable(list);
-    }
+	/**
+	 * 获取全部的路由信息
+	 * 
+	 * @return
+	 */
+	@Override
+	protected Flux<RouteDefinition> getRouteDefinitionsByPermanent() {
+		List<RouteDefinition> list = new ArrayList<>();
+		Map<String, String> map = jedisService.getMap(REDIS_ROUTE_KEY);
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			String value = entry.getValue();
+			RouteDefinition routeDefinition = null;
+			try {
+				routeDefinition = JacksonUtils.parseJSON(value, RouteDefinition.class);
+				list.add(routeDefinition);
+			} catch (Exception e) {
+				log.error("parseJSON fail");
+			}
+		}
+		if (CollectionUtils.isEmpty(list)) {
+			return Flux.empty();
+		}
+		return Flux.fromIterable(list);
+	}
 
-    @Override
-    public Mono<Void> save(Mono<RouteDefinition> route) {
-        Map map = new HashMap();
-        route.flatMap(routeDefinition -> {
-            map.put(routeDefinition.getId(),JacksonUtils.toJSONString(routeDefinition));
-            return Mono.empty();
-        });
-        jedisService.mapPut(REDIS_ROUTE_KEY,map);
-        return Mono.empty();
-    }
+	@Override
+	public Mono<Void> save(Mono<RouteDefinition> route) {
+		Map map = new HashMap();
+		route.flatMap(routeDefinition -> {
+			map.put(routeDefinition.getId(), JacksonUtils.toJSONString(routeDefinition));
+			return Mono.empty();
+		});
+		jedisService.mapPut(REDIS_ROUTE_KEY, map);
+		return Mono.empty();
+	}
 
-    @Override
-    public Mono<Void> delete(Mono<String> routeId) {
-        return routeId.flatMap(id->{
-            jedisService.mapRemove(REDIS_ROUTE_KEY,id);
-            return Mono.empty();
-        });
-    }
+	@Override
+	public Mono<Void> delete(Mono<String> routeId) {
+		return routeId.flatMap(id -> {
+			jedisService.mapRemove(REDIS_ROUTE_KEY, id);
+			return Mono.empty();
+		});
+	}
 
-
-    @Override
-    public Mono<Void> notifyAllRefresh(NotifyType notifyType) {
-        logger.debug("send notify msg!");
-        stringRedisTemplate.getConnectionFactory().getConnection().publish(REDIS_NOTIFY_KEY.getBytes(DEF_CHARTSET),notifyType.toString().getBytes(DEF_CHARTSET));
-        return Mono.empty();
-    }
-
-
-
-
+	@Override
+	public Mono<Void> notifyAllRefresh(NotifyType notifyType) {
+		log.debug("send notify msg!");
+		stringRedisTemplate.getConnectionFactory().getConnection().publish(REDIS_NOTIFY_KEY.getBytes(DEF_CHARTSET),
+				notifyType.toString().getBytes(DEF_CHARTSET));
+		return Mono.empty();
+	}
 
 }
