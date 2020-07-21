@@ -73,21 +73,19 @@ public class JedisAutoConfiguration {
 	}
 
 	@Bean
-	public RouteAlterHandler routeAlterHandler(){
+	public RouteAlterHandler routeAlterHandler() {
 		return new RouteAlterHandler();
 	}
 
 	@Bean
-	public RouteDefinitionRepository redisRouteDefinitionRepository(){
+	public RouteDefinitionRepository redisRouteDefinitionRepository() {
 		return new RedisRouteDefinitionRepository();
 	}
 
-
-	/*@Bean
-	public PeriodicityRefresh periodicityRefresh(){
-		return new PeriodicityRefresh();
-	}*/
-
+	/*
+	 * @Bean public PeriodicityRefresh periodicityRefresh(){ return new
+	 * PeriodicityRefresh(); }
+	 */
 
 	/**
 	 * JEDIS properties.

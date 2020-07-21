@@ -43,85 +43,87 @@ import java.util.Map;
  **/
 public class RedisRouteDefinitionRepository extends AbstractRouteRepository {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+	@Autowired
+	private StringRedisTemplate stringRedisTemplate;
 
-    @Autowired
-    private JedisService jedisService;
+	@Autowired
+	private JedisService jedisService;
 
-    private static final String REDIS_ROUTE_KEY = "GATEWAY_ROUTE";
+	private static final String REDIS_ROUTE_KEY = "GATEWAY_ROUTE";
 
-    private static final String REDIS_NOTIFY_KEY = "GATEWAY_ROUTE_NOTIFY";
+	private static final String REDIS_NOTIFY_KEY = "GATEWAY_ROUTE_NOTIFY";
 
-    /**
-     * 获取全部的路由信息
-     * @return
-     */
-    @Override
-    protected Flux<RouteDefinition> getRouteDefinitionsByPermanent() {
-        List<RouteDefinition> list = new ArrayList<>();
-        Map<String, String> map = jedisService.getMap(REDIS_ROUTE_KEY);
-        for(Map.Entry<String, String> entry : map.entrySet()){
-            String value = entry.getValue();
-            RouteDefinition routeDefinition = null;
-            try {
-                routeDefinition = JacksonUtils.parseJSON(value, RouteDefinition.class);
-                list.add(routeDefinition);
-            }catch (Exception e){
-                logger.error("parseJSON fail");
-            }
-        }
-        if(CollectionUtils.isEmpty(list)){
-            return Flux.empty();
-        }
-        return Flux.fromIterable(list);
-    }
+	/**
+	 * 获取全部的路由信息
+	 * 
+	 * @return
+	 */
+	@Override
+	protected Flux<RouteDefinition> getRouteDefinitionsByPermanent() {
+		List<RouteDefinition> list = new ArrayList<>();
+		Map<String, String> map = jedisService.getMap(REDIS_ROUTE_KEY);
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			String value = entry.getValue();
+			RouteDefinition routeDefinition = null;
+			try {
+				routeDefinition = JacksonUtils.parseJSON(value, RouteDefinition.class);
+				list.add(routeDefinition);
+			} catch (Exception e) {
+				logger.error("parseJSON fail");
+			}
+		}
+		if (CollectionUtils.isEmpty(list)) {
+			return Flux.empty();
+		}
+		return Flux.fromIterable(list);
+	}
 
-    @Override
-    public Mono<Void> save(Mono<RouteDefinition> route) {
-        Map map = new HashMap();
-        route.flatMap(routeDefinition -> {
-            map.put(routeDefinition.getId(),JacksonUtils.toJSONString(routeDefinition));
-            return Mono.empty();
-        });
-        jedisService.mapPut(REDIS_ROUTE_KEY,map);
-        return Mono.empty();
-    }
+	@Override
+	public Mono<Void> save(Mono<RouteDefinition> route) {
+		Map map = new HashMap();
+		route.flatMap(routeDefinition -> {
+			map.put(routeDefinition.getId(), JacksonUtils.toJSONString(routeDefinition));
+			return Mono.empty();
+		});
+		jedisService.mapPut(REDIS_ROUTE_KEY, map);
+		return Mono.empty();
+	}
 
-    @Override
-    public Mono<Void> delete(Mono<String> routeId) {
-        return routeId.flatMap(id->{
-            jedisService.mapRemove(REDIS_ROUTE_KEY,id);
-            return Mono.empty();
-        });
-    }
+	@Override
+	public Mono<Void> delete(Mono<String> routeId) {
+		return routeId.flatMap(id -> {
+			jedisService.mapRemove(REDIS_ROUTE_KEY, id);
+			return Mono.empty();
+		});
+	}
 
+	@Override
+	public Mono<Void> notifyAllRefresh(NotifyType notifyType) {
+		logger.debug("send notify msg!");
+		stringRedisTemplate.getConnectionFactory().getConnection().publish(REDIS_NOTIFY_KEY.getBytes(DEF_CHARTSET),
+				notifyType.toString().getBytes(DEF_CHARTSET));
+		return Mono.empty();
+	}
 
-    @Override
-    public Mono<Void> notifyAllRefresh(NotifyType notifyType) {
-        logger.debug("send notify msg!");
-        stringRedisTemplate.getConnectionFactory().getConnection().publish(REDIS_NOTIFY_KEY.getBytes(DEF_CHARTSET),notifyType.toString().getBytes(DEF_CHARTSET));
-        return Mono.empty();
-    }
-
-
-    /**
-     * 初始化redis订阅者，用来监听《刷新消息》
-     */
-    @PostConstruct
-    @Override
-    public void initSubscriber()  {
-        System.out.println("into initSubscriber");
-        /*stringRedisTemplate.getConnectionFactory().getConnection().subscribe(new MessageListener() {
-            @Override
-            public void onMessage(Message message, @Nullable byte[] bytes) {
-                logger.debug("receive notify msg!");
-                //notifyAllClientRefresh(NotifyType.valueOf(new String(message.getBody(),DEF_CHARTSET)));
-            }
-        },REDIS_NOTIFY_KEY.getBytes(DEF_CHARTSET));*/
-    }
-
+	/**
+	 * 初始化redis订阅者，用来监听《刷新消息》
+	 */
+	@PostConstruct
+	@Override
+	public void initSubscriber() {
+		System.out.println("into initSubscriber");
+		/*
+		 * stringRedisTemplate.getConnectionFactory().getConnection().subscribe(
+		 * new MessageListener() {
+		 * 
+		 * @Override public void onMessage(Message message, @Nullable byte[]
+		 * bytes) { logger.debug("receive notify msg!");
+		 * //notifyAllClientRefresh(NotifyType.valueOf(new
+		 * String(message.getBody(),DEF_CHARTSET))); }
+		 * },REDIS_NOTIFY_KEY.getBytes(DEF_CHARTSET));
+		 */
+	}
 
 }

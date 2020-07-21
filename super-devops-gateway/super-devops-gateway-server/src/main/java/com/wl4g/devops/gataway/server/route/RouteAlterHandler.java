@@ -25,39 +25,38 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import reactor.core.publisher.Mono;
 
-public class RouteAlterHandler implements ApplicationListener<RefreshRoutesEvent>{
+public class RouteAlterHandler implements ApplicationListener<RefreshRoutesEvent> {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+	@Autowired
+	private ApplicationContext applicationContext;
 
+	public Mono<Void> refresh(NotifyType notifyType) {
+		if (notifyType != null) {
+			this.applicationEventPublisher.publishEvent(new RefreshRoutesEvent(notifyType));
+		}
+		return Mono.empty();
+	}
 
-    public Mono<Void> refresh(NotifyType notifyType){
-        if (notifyType!=null) {
-            this.applicationEventPublisher.publishEvent(new RefreshRoutesEvent(notifyType));
-        }
-        return Mono.empty();
-    }
-
-
-    @Override
-    public void onApplicationEvent(RefreshRoutesEvent refreshRoutesEvent) {
-        try {
-//            org.springframework.cloud.gateway.route.RouteRefreshListener
-            logger.debug(String.format("receive event %s source %s","refreshRoutesEvent",refreshRoutesEvent.getSource().toString()));
-            if (refreshRoutesEvent.getSource() instanceof GatewayControllerEndpoint) {
-                //通知所有实例更新持久化路由信息
-                applicationContext.getBean(IRouteAlterPublisher.class).notifyAllRefresh(NotifyType.permanent);
-            } else if (NotifyType.permanent.equals(refreshRoutesEvent.getSource())) {
-                //刷当前实例内存路由信息
-                applicationContext.getBean(IRouteCacheRefresh.class).flushRoutesPermanentToMemery();
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
+	@Override
+	public void onApplicationEvent(RefreshRoutesEvent refreshRoutesEvent) {
+		try {
+			// org.springframework.cloud.gateway.route.RouteRefreshListener
+			logger.debug(
+					String.format("receive event %s source %s", "refreshRoutesEvent", refreshRoutesEvent.getSource().toString()));
+			if (refreshRoutesEvent.getSource() instanceof GatewayControllerEndpoint) {
+				// 通知所有实例更新持久化路由信息
+				applicationContext.getBean(IRouteAlterPublisher.class).notifyAllRefresh(NotifyType.permanent);
+			} else if (NotifyType.permanent.equals(refreshRoutesEvent.getSource())) {
+				// 刷当前实例内存路由信息
+				applicationContext.getBean(IRouteCacheRefresh.class).flushRoutesPermanentToMemery();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

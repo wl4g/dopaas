@@ -35,9 +35,9 @@ mvn -U clean install -DskipTests -T 2C
 - step2, Initialize the db, First prepare a CentOS 6.5 + and MySQL 5.6 + instance, create a new database named Devops (utf8/utf8_bin), and then use [Initial SQL script](../../../super-cloudops-data/tree/master/db) to initialize it.（Note: this script corresponds to the code version, and we will update it regularly. Please use the latest)
 - step3, Configure hosts, Add local domain name resolution.（C:\Windows\System32\drivers\etc or vim /etc/hosts）：
 ```
-10.0.0.160	wl4g.debug # Corresponding to app_cluster_config.extranet_base_uri
+10.0.0.160	wl4g.debug # Corresponding to erm_cluster_config.extranet_base_uri
 ```
-- step4：Quickly build a redis cluster (docker)
+- step4：[Optional] Quickly build a redis cluster (docker). The current version supports the coexistence of redis single point and cluster. In application-{env}.yml redis.nodes When the key is configured with a value, the redis stand-alone mode will be automatically checked.
 ```
 mkdir -p /mnt/disk1/redis/
 docker run -itd \
@@ -77,7 +77,7 @@ sudo systemctl restart docker
 - [CI](super-devops-ci/README.md)             &nbsp;&nbsp;    Continuous integration deployment(Continuous iteration), CICD build flow, etc.
 - [ESM](super-devops-esm/README.md)           &nbsp;&nbsp;    Flexible scalability management, integrated K8s, Docker, management based on CPU, network traffic automatic or manual container scaling.
 - [SCM](super-devops-scm/README.md)           &nbsp;&nbsp;    Configure the service center to support online configuration of hot updates such as DataSource, RedisClient, etc.
-- [ERM](super-devops-erm/README_CN.md)        &nbsp;&nbsp;    Basic resource and environment management, such as elk log analysis, binary compilation package, etc
+- [ERM](super-devops-erm/README_CN.md)        &nbsp;&nbsp;    Basic resource and environment management, such as elk log analysis, binary product repository, gateway, PrivateZone DNS resolution, etc
 - [DJOB](super-devops-djob/README_CN.md)      &nbsp;&nbsp;    Based on spring cloud distributed scheduling platform, the default is based on elastic-job enhanced implementation
 - [COSS](super-devops-coss/README_CN.md)      &nbsp;&nbsp;    Based on the spring cloud composite object storage service, it supports NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS, etc
 - [SHELL](super-devops-shell/README.md)       &nbsp;&nbsp;    Shell Cli, adding a hbase-shell-like console to your app
@@ -86,6 +86,7 @@ sudo systemctl restart docker
 - [IM](super-devops-im/README.md)             &nbsp;&nbsp;    Instant messaging system, project personnel communicate in a timely manner, internal data distribution.
 - [UMC](super-devops-umc/README.md)           &nbsp;&nbsp;    Unified monitoring and operation center, providing real-time application health monitoring, real-time tracking, real-time alarms, etc.
 - [VCS](super-devops-vcs/README.md)           &nbsp;&nbsp;    Version control service, software source code, release package version management.
+- [Gateway](super-devops-gateway/README.md)   &nbsp;&nbsp;    Enterprise microservice gateway based on spring cloud gateway, Can integrate with CI to realize Canary deployment.
 
 ### Communicate, feedback and contribute?
 - Click add to group [![QQ1](https://img.shields.io/badge/QQ1-855349515-green.svg)](https://shang.qq.com/wpa/qunwpa?idkey=0343b06591d19188d86dc078912adfc5c40f023c8ec5a0d1eda5bdfc35ab40d0)

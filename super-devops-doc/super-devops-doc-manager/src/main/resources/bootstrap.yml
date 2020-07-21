@@ -42,9 +42,9 @@ spring:
           enabled: true # Default: true
         client: # IAM client configuration.
           filter-chain:
-            /public/**: anon # Public rule release
-            /view/**: anon
-            /external/**: anon
+            '[/public/**]': anon # Public rule release
+            '[/view/**]': anon
+            '[/external/**]': anon
           cipher:
             enable-data-cipher: true # Default by true
           session:
