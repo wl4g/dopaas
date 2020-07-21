@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mqttData>
+	<Session id="10">
+		<DataCollector id="ncyt02_dc">
+			<time>2016-11-22T03:39:30Z</time>
+			<type Type="Yk">
+				<yk pId="0">1</yk>
+				<yk pId="1">1</yk>
+				<yk pId="2">1</yk>
+				<yk pId="3">0</yk>
+				<yk pId="4">1</yk>
+				<yk pId="5">1</yk>
+				<yk pId="6">0</yk>
+				<yk pId="7">1</yk>
+				<yk pId="8">0</yk>
+			</type>
+			<type Type="Yt">
+				<yt pId="0">30.00</yt>
+				<yt pId="1">40.00</yt>
+				<yt pId="2">50.00</yt>
+				<yt pId="3">60.00</yt>
+				<yt pId="4">70.00</yt>
+				<yt pId="5">80.00</yt>
+				<yt pId="6">90.00</yt>
+				<yt pId="7">100.00</yt>
+				<yt pId="8">11.000</yt>
+			</type>
+		</DataCollector>
+	</Session>
+</mqttData>
