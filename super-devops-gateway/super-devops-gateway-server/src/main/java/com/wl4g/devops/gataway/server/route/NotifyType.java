@@ -16,9 +16,14 @@
 package com.wl4g.devops.gataway.server.route;
 
 /**
- * @author guzhandong
- * @CREATE 2018-10-08 6:24 PM
+ * {@link NotifyType}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020-07-21
+ * @since
  */
 public enum NotifyType {
+
 	permanent, state
+
 }

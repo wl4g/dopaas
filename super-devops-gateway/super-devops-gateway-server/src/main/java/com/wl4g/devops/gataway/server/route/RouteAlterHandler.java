@@ -25,6 +25,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import reactor.core.publisher.Mono;
 
+/**
+ * {@link RouteAlterHandler}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020-07-21
+ * @since
+ */
 public class RouteAlterHandler implements ApplicationListener<RefreshRoutesEvent> {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -59,4 +66,5 @@ public class RouteAlterHandler implements ApplicationListener<RefreshRoutesEvent
 			e.printStackTrace();
 		}
 	}
+
 }

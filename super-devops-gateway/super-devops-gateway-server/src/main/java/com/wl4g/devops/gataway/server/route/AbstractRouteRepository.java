@@ -27,11 +27,12 @@ import java.nio.charset.Charset;
 import java.util.Map;
 
 /**
- * 持久化路由信息抽象类. <br>
- * 如果需要扩展持久化方式，请继承本类，重写本类的以下方法 {@link #getRouteDefinitionsByPermanent()}
- * ，{@link #save(Mono)} ，{@link #delete(Mono)}
- * ，{@link #notifyAllRefresh(NotifyType)} } ，{@link #initSubscriber()} ()} }
- * ，{@link #flushRoutesPermanentToMemery()} }
+ * Persistent routing information abstract class. < br > abstract class If you
+ * need to extend the persistence method, please inherit this class and override
+ * the following methods of this class {@link #getRouteDefinitionsByPermanent()}
+ * and {@link #save(Mono)} and {@link #delete(Mono)} and
+ * {@link #notifyAllRefresh(NotifyType)} } and {@link #initSubscriber()} and
+ * {@link #flushRoutesPermanentToMemery()}
  *
  * @author: guzhandong
  * @createDate: 2018/10/8 6:30 PM

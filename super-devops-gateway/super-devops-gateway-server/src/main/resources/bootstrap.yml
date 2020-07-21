@@ -13,44 +13,8 @@
 spring:
   application.name: gateway-server
   profiles:
-    include: common,support,util,routing
+    include: common,support,util
     active: dev
-  cloud:
-    devops:
-      iam: # IAM client configuration.
-        cors:
-          enabled: true # Default: true
-          rules:
-            '[/**]':
-              allows-methods: [GET,HEAD,OPTIONS,POST]
-              allows-headers: [X-Iam-*]
-              allow-credentials: true
-              #allows-origins:
-                #- '*'
-        xsrf:
-          enabled: true
-        replay:
-          enabled: true
-        xss:
-          enabled: true # Default: true
-        client: # IAM client configuration.
-          filter-chain:
-            '[/public/**]': anon # Public rule release
-          cipher:
-            enable-data-cipher: true # Default by true
-          session:
-            enable-access-token-validity: true # Default by true
-      coss:
-        aliyunoss:
-          enable: true
-          endpoint: oss-cn-shenzhen.aliyuncs.com
-        hdfs:
-          enable: true
-          user: root
-        native:
-          enable: true
-          #user: ${spring.application.name}
-          endpointRootDir: /mnt/disk1/coss-bucket
 
 # ### Server configuration. ###
 server:

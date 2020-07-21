@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.components.tools.common.serialize;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notEmptyOf;
 import static java.util.Objects.isNull;
 
 import java.io.StringReader;
@@ -136,11 +137,14 @@ public abstract class JaxbUtils {
 	 * @return
 	 */
 	private static String getConverterCacheKey(Class<?>... types) {
+		notEmptyOf(types, "jaxbTypes");
+
 		StringBuffer key = new StringBuffer(types.length * 30);
 		for (Class<?> cls : types) {
 			key.append(cls.getName());
 			key.append("-");
 		}
+
 		return key.toString();
 	}
 
