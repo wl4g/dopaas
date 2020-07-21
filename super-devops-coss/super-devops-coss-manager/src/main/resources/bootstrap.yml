@@ -39,8 +39,8 @@ spring:
           enabled: true # Default: true
         client: # IAM client configuration.
           filter-chain:
-            /public/**: anon # Public rule release
-            /webservice/putObject: anon #TODO for test
+            '[/public/**]': anon # Public rule release
+            '[/webservice/putObject]': anon #TODO for test
           cipher:
             enable-data-cipher: true # Default by true
           session:

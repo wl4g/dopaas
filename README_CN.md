@@ -34,9 +34,9 @@ mvn -U clean install -DskipTests -T 2C
 - step2：初始化数据库，首先准备一台CentOS6.5+以及MySQL5.6+实例，新建名为devops(utf8/utf8_bin)的数据库，再使用 [初始sql脚本](../../../super-cloudops-data/tree/master/db) 进行初始化它。（注：此脚本与代码版本对应，我们会定期更新，请使用最新）
 - step3：配置hosts，添加本地虚拟域名解析（C:\Windows\System32\drivers\etc 或 vim /etc/hosts）：
 ```
-10.0.0.160	wl4g.debug #与数据库app_cluster_config.extranet_base_uri对应
+10.0.0.160	wl4g.debug # 与数据库erm_cluster_config.extranet_base_uri对应
 ```
-- step4：快速搭建redis集群(docker)
+- step4：[可选] 快速搭建redis集群(docker), 当前版本已实现了redis单点与集群共存, 在配置文件application-{ENV}.yml中的redis.nodes项, 若只配置一个时自动认为是redis单机环境.
 ```
 mkdir -p /mnt/disk1/redis/
 docker run -itd \
@@ -75,7 +75,7 @@ sudo systemctl restart docker
 - [CI](super-devops-ci/README_CN.md)            &nbsp;&nbsp;    持续集成部署模块（持续迭代）, CICD构建流等
 - [ESM](super-devops-esm/README_CN.md)          &nbsp;&nbsp;    弹性伸缩管理, 集成K8s、Docker，基于CPU、网络流量自动或手动容器伸缩的管理
 - [SCM](super-devops-scm/README_CN.md)          &nbsp;&nbsp;    配置服务中心, 支持在线配置热更新如：DataSource、RedisClient等
-- [ERM](super-devops-erm/README_CN.md)          &nbsp;&nbsp;    基础资源环境管理, 如ELK日志分析、二进制编译产物包等
+- [ERM](super-devops-erm/README_CN.md)          &nbsp;&nbsp;    基础资源环境管理, 如ELK日志分析、二进制产物库、网关、PrivateZone DNS解析等
 - [DJOB](super-devops-djob/README_CN.md)        &nbsp;&nbsp;    基于SpringCloud分布式调度平台, 默认是基于ElasticJob增强实现
 - [COSS](super-devops-coss/README_CN.md)        &nbsp;&nbsp;    基于SpringCloud复合对象存储服, 支持 NativeFS, HDFS, Aliyun OSS, AWS S3, GlusterFS 等
 - [SHELL](super-devops-shell/README_CN.md)      &nbsp;&nbsp;    Shell Cli, 给应用添加类似hbase-shell的控制台功能
@@ -84,6 +84,7 @@ sudo systemctl restart docker
 - [IM](super-devops-im/README_CN.md)            &nbsp;&nbsp;    即时通讯系统, 项目人员及时沟通，内部资料分发
 - [UMC](super-devops-umc/README_CN.md)          &nbsp;&nbsp;    统一监控运维中心, 提供应用健康实时监控、实时追踪、实时告警等
 - [VCS](super-devops-vcs/README_CN.md)          &nbsp;&nbsp;    版本控制服务, 软件源码、释放包版本管理
+- [Gateway](super-devops-gateway/README_CN.md)  &nbsp;&nbsp;    基于spring-cloud-gateway的企业级微服务网关, 可与CI整合实现金丝雀部署等等高级特性.
 
 
 ### 如何交流、反馈、参与贡献？
