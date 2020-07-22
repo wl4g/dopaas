@@ -69,7 +69,7 @@ import com.wl4g.devops.components.tools.common.collection.CollectionUtils2;
  * @see <a href= "http://www.doc88.com/p-3922316178617.html"> Resolution
  *      ScheduledThreadPoolExecutor for retry task OOM</a>
  */
-public class SafeEnhancedScheduledTaskExecutor extends ScheduledThreadPoolExecutor {
+public class SafeScheduledTaskPoolExecutor extends ScheduledThreadPoolExecutor {
 	final protected Logger log = getLogger(getClass());
 
 	/**
@@ -82,7 +82,7 @@ public class SafeEnhancedScheduledTaskExecutor extends ScheduledThreadPoolExecut
 	 */
 	final private RejectedExecutionHandler rejectHandler;
 
-	public SafeEnhancedScheduledTaskExecutor(int coreMaximumPoolSize, long keepAliveTimeMs, ThreadFactory threadFactory,
+	public SafeScheduledTaskPoolExecutor(int coreMaximumPoolSize, long keepAliveTimeMs, ThreadFactory threadFactory,
 			int acceptQueue, RejectedExecutionHandler rejectHandler) {
 		super(coreMaximumPoolSize, threadFactory, rejectHandler);
 		isTrue(acceptQueue > 0, "acceptQueue must be greater than 0");

@@ -16,12 +16,13 @@
 package com.wl4g.devops.ci.pipeline.coordinate;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.components.tools.common.task.RunnerProperties;
 import com.wl4g.devops.dao.ci.PipelineHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.redis.jedis.JedisService;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.support.task.ApplicationTaskRunner;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -46,7 +47,7 @@ import static java.util.Objects.nonNull;
  * @version v1.0.0 2019-10-15
  * @since
  */
-public class GlobalTimeoutJobCleanupCoordinator extends GenericTaskRunner<RunnerProperties> {
+public class GlobalTimeoutJobCleanupCoordinator extends ApplicationTaskRunner<RunnerProperties> {
 	final public static long DEFAULT_MIN_WATCH_MS = 2_000L;
 
 	final protected Logger log = getLogger(getClass());

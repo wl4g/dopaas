@@ -16,8 +16,8 @@
 package com.wl4g.devops.ci.core;
 
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.components.tools.common.task.RunnerProperties;
+import com.wl4g.devops.support.task.ApplicationTaskRunner;
 
 /**
  * Pipeline job executor runner.
@@ -26,7 +26,7 @@ import com.wl4g.devops.support.task.RunnerProperties;
  * @version v1.0.0 2019-10-13
  * @since
  */
-public class PipelineJobExecutor extends GenericTaskRunner<RunnerProperties> {
+public class PipelineJobExecutor extends ApplicationTaskRunner<RunnerProperties> {
 
 	final protected CiCdProperties config;
 

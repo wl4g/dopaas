@@ -25,11 +25,11 @@ import com.wl4g.devops.common.bean.ci.Orchestration;
 import com.wl4g.devops.common.bean.ci.OrchestrationPipeline;
 import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
+import com.wl4g.devops.components.tools.common.task.RunnerProperties;
 import com.wl4g.devops.dao.ci.OrchestrationDao;
 import com.wl4g.devops.support.redis.jedis.JedisService;
 import com.wl4g.devops.support.redis.jedis.ScanCursor;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.support.task.ApplicationTaskRunner;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -171,7 +171,7 @@ public class FlowManager {
 	public void handOut(List<List<PipelineModel>> pipelineModelSort, String remark, String taskTraceId, String taskTraceType,
 			String annex) throws Exception {
 		// Create runner.
-		GenericTaskRunner<?> runner = createGenericTaskRunner(2);
+		ApplicationTaskRunner<?> runner = createGenericTaskRunner(2);
 		for (List<PipelineModel> pipelineModels : pipelineModelSort) { // run by
 																		// batch
 			List<Runnable> jobs = new ArrayList<>();
@@ -231,8 +231,8 @@ public class FlowManager {
 				pipelineModel);
 	}
 
-	private static GenericTaskRunner<RunnerProperties> createGenericTaskRunner(int concurrencyPoolSize) throws Exception {
-		GenericTaskRunner<RunnerProperties> runner = new GenericTaskRunner<RunnerProperties>(
+	private static ApplicationTaskRunner<RunnerProperties> createGenericTaskRunner(int concurrencyPoolSize) throws Exception {
+		ApplicationTaskRunner<RunnerProperties> runner = new ApplicationTaskRunner<RunnerProperties>(
 				new RunnerProperties(false, concurrencyPoolSize)) {
 		};
 		runner.run(null);

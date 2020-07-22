@@ -21,6 +21,7 @@ import com.wl4g.devops.common.exception.support.TimeoutDestroyProcessException;
 import com.wl4g.devops.components.tools.common.cli.ssh2.EthzHolder;
 import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.task.RunnerProperties;
 import com.wl4g.devops.support.cli.command.DestroableCommand;
 import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
@@ -29,8 +30,7 @@ import com.wl4g.devops.support.cli.process.DestroableProcess;
 import com.wl4g.devops.support.cli.process.LocalDestroableProcess;
 import com.wl4g.devops.support.cli.process.RemoteDestroableProcess;
 import com.wl4g.devops.support.cli.repository.ProcessRepository;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.support.task.ApplicationTaskRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +60,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version v1.0.0 2019-10-20
  * @since
  */
-public abstract class GenericProcessManager extends GenericTaskRunner<RunnerProperties> implements DestroableProcessManager {
+public abstract class GenericProcessManager extends ApplicationTaskRunner<RunnerProperties> implements DestroableProcessManager {
 
 	final protected SmartLogger log = getLogger(getClass());
 

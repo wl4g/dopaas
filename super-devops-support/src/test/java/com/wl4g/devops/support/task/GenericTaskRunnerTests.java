@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.components.tools.common.task.RunnerProperties;
+import com.wl4g.devops.support.task.ApplicationTaskRunner;
 
 /**
- * {@link GenericTaskRunner} tests.
+ * {@link ApplicationTaskRunner} tests.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年6月2日
@@ -63,7 +63,7 @@ public class GenericTaskRunnerTests {
 		}
 
 		// Create runner.
-		GenericTaskRunner runner = createGenericTaskRunner(2);
+		ApplicationTaskRunner runner = createGenericTaskRunner(2);
 		System.out.println(runner);
 
 		// Submit jobs & listen job timeout.
@@ -78,7 +78,7 @@ public class GenericTaskRunnerTests {
 	@SuppressWarnings({ "rawtypes" })
 	public static void scheduleQueueRejectedTest2() throws Exception {
 		// Create runner.
-		GenericTaskRunner runner = createGenericTaskRunner(2);
+		ApplicationTaskRunner runner = createGenericTaskRunner(2);
 
 		for (int i = 0; i < 100; i++) {
 			final String idStr = "testjob-" + i;
@@ -104,7 +104,7 @@ public class GenericTaskRunnerTests {
 	@SuppressWarnings({ "rawtypes" })
 	public static void scheduleWithFixedErrorInterruptedTest3() throws Exception {
 		// Create runner.
-		GenericTaskRunner runner = createGenericTaskRunner(2);
+		ApplicationTaskRunner runner = createGenericTaskRunner(2);
 
 		// Task1(Error):
 		runner.getWorker().scheduleAtFixedRate(() -> {
@@ -128,7 +128,7 @@ public class GenericTaskRunnerTests {
 	@SuppressWarnings({ "rawtypes" })
 	public static void scheduleWithRandomErrorInterruptedTest4() throws Exception {
 		// Create runner.
-		GenericTaskRunner runner = createGenericTaskRunner(2);
+		ApplicationTaskRunner runner = createGenericTaskRunner(2);
 
 		// Task1(Error):
 		runner.getWorker().scheduleAtRandomRate(() -> {
@@ -149,8 +149,8 @@ public class GenericTaskRunnerTests {
 		// runner.close();
 	}
 
-	private static GenericTaskRunner<RunnerProperties> createGenericTaskRunner(int concurrencyPoolSize) throws Exception {
-		GenericTaskRunner<RunnerProperties> runner = new GenericTaskRunner<RunnerProperties>(
+	private static ApplicationTaskRunner<RunnerProperties> createGenericTaskRunner(int concurrencyPoolSize) throws Exception {
+		ApplicationTaskRunner<RunnerProperties> runner = new ApplicationTaskRunner<RunnerProperties>(
 				new RunnerProperties(false, concurrencyPoolSize)) {
 		};
 		runner.run(null);

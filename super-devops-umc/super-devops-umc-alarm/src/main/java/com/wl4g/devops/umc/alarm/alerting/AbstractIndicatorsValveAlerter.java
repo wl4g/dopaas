@@ -17,10 +17,10 @@ package com.wl4g.devops.umc.alarm.alerting;
 
 import com.wl4g.devops.common.bean.umc.model.MetricValue;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.task.RunnerProperties;
 import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
 import com.wl4g.devops.support.redis.jedis.JedisService;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import org.springframework.util.Assert;
@@ -42,7 +42,7 @@ import static java.util.Collections.emptyList;
  * @author wangl.sir
  * @version v1.0 2019年7月5日
  */
-public abstract class AbstractIndicatorsValveAlerter extends GenericTaskRunner<RunnerProperties>
+public abstract class AbstractIndicatorsValveAlerter extends ApplicationTaskRunner<RunnerProperties>
 		implements IndicatorsValveAlerter {
 
 	final protected SmartLogger log = getLogger(getClass());

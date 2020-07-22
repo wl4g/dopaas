@@ -35,16 +35,16 @@ import com.wl4g.devops.erm.dns.service.DnsPrivateZoneService;
 public class DnsZoneApplicationListener implements ApplicationRunner {
 
 	@Autowired
-	private DnsPrivateZoneService dnsPrivateDomainService;
+	private DnsPrivateZoneService privateZoneService;
 
 	@Autowired
-	private DnsPrivateBlacklistService dnsPrivateBlacklistService;
+	private DnsPrivateBlacklistService privateBWlistService;
 
 	@Override
 	public void run(ApplicationArguments var) throws Exception {
 		try {
-			dnsPrivateDomainService.loadDnsAtStart();
-			dnsPrivateBlacklistService.loadBlacklistAtStart();
+			privateZoneService.loadDnsAtStart();
+			privateBWlistService.loadBlacklistAtStart();
 		} catch (Exception e) {
 			throw e;
 		}

@@ -17,11 +17,11 @@ package com.wl4g.devops.scm.client.handler.watch;
 
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.utils.bean.BeanMapConvert;
+import com.wl4g.devops.components.tools.common.task.RunnerProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.handler.locator.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.support.task.ApplicationTaskRunner;
 
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
 import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_WATCH_GET;
@@ -37,7 +37,7 @@ import org.springframework.util.Assert;
  * @see {@link org.springframework.cloud.zookeeper.config.ConfigWatcher
  *      ConfigWatcher}
  */
-public abstract class AbstractRefreshWatcher extends GenericTaskRunner<RunnerProperties> {
+public abstract class AbstractRefreshWatcher extends ApplicationTaskRunner<RunnerProperties> {
 
 	/** SCM client configuration */
 	final protected ScmClientProperties config;
