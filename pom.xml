@@ -71,7 +71,7 @@
 		<module>super-devops-gateway</module>
 		<!--<module>super-devops-rcm</module>-->
 		<module>super-devops-vcs</module>
-		<module>super-devops-codegen</module>
+		<module>super-devops-dts</module>
 		<!-- <module>super-devops-esm</module> -->
 		<!-- <module>super-devops-im</module> -->
 	</modules>

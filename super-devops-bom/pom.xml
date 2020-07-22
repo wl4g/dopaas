@@ -447,13 +447,19 @@
 			<!-- CodeGen dependentcie's -->
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-codegen-manager</artifactId>
+				<artifactId>super-devops-dts-codegen</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.wl4g</groupId>
-				<artifactId>super-devops-codegen-core</artifactId>
+				<artifactId>super-devops-dts-core</artifactId>
+				<version>${project.parent.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.wl4g</groupId>
+				<artifactId>super-devops-dts-kit</artifactId>
 				<version>${project.parent.version}</version>
 				<scope>compile</scope>
 			</dependency>
