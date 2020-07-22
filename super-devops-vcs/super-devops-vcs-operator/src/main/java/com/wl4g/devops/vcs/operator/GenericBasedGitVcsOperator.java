@@ -83,7 +83,7 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
         String projectURL = projecDir + "/.git";
         try (Git git = Git.open(new File(projectURL))) {
             //fetch
-            setupCredentials(credentials, git.fetch().setTagOpt(TagOpt.FETCH_TAGS)).call();
+            setupCredentials(credentials, git.fetch().setTagOpt(TagOpt.FETCH_TAGS)).setForceUpdate(true).call();
             //tag list
             boolean hasTag = false;
             if (VcsAction.TAG.equals(action)) {
@@ -108,13 +108,13 @@ public abstract class GenericBasedGitVcsOperator extends AbstractVcsOperator {
             if (hasTag && hasBranch) {
                 throw new RuntimeException("has same name with tag and branch");
             } else if (hasTag) {
-                git.checkout().setName(branchName).call();
+                git.checkout().setName(branchName).setForced(true).call();
                 return null; //needn't pull
             } else if (hasBranch) {
-                git.checkout().setName(branchName).setForceRefUpdate(true).call();
+                git.checkout().setName(branchName).setForceRefUpdate(true).setForced(true).call();
             } else { // Not exist to checkout & create local branch
                 git.checkout().setCreateBranch(true).setName(branchName).setStartPoint("origin/" + branchName)
-                        .setForceRefUpdate(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
+                        .setForceRefUpdate(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).setForced(true).call();
             }
             // Pull latest source.
             PullResult pullRes = setupCredentials(credentials, git.pull()).call();
