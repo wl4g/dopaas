@@ -615,11 +615,8 @@ public class FormHttpMessageParser implements HttpMessageParser<MultiValueMap<St
 	private static class MultipartHttpOutputMessage implements HttpOutputMessage {
 
 		private final OutputStream outputStream;
-
 		private final Charset charset;
-
 		private final HttpHeaders headers = new HttpHeaders();
-
 		private boolean headersWritten = false;
 
 		public MultipartHttpOutputMessage(OutputStream outputStream, Charset charset) {

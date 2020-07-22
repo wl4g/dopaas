@@ -1117,7 +1117,7 @@ public class RestClient {
 		} catch (IOException ex) {
 			String resource = url.toString();
 			String query = url.getRawQuery();
-			resource = (query != null ? resource.substring(0, resource.indexOf('?')) : resource);
+			resource = (Objects.nonNull(query) ? resource.substring(0, resource.indexOf('?')) : resource);
 			throw new ResourceAccessException(
 					"I/O error on " + method.name() + " request for \"" + resource + "\": " + ex.getMessage(), ex);
 		} finally {
@@ -1256,8 +1256,7 @@ public class RestClient {
 			} else {
 				Class<?> requestBodyClass = requestBody.getClass();
 				Type requestBodyType = (requestEntity instanceof HttpRequestEntity
-						? ((HttpRequestEntity<?>) requestEntity).getType()
-						: requestBodyClass);
+						? ((HttpRequestEntity<?>) requestEntity).getType() : requestBodyClass);
 				HttpHeaders httpHeaders = httpRequest.getHeaders();
 				HttpHeaders requestHeaders = requestEntity.getHeaders();
 				HttpMediaType requestContentType = requestHeaders.getContentType();
