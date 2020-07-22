@@ -62,10 +62,11 @@ public class JgitTests {
         String branchName = "branch1";
 
         Git git = Git.open(new File(gitPath));
-        FetchCommand fetchCommand = git.fetch().setTagOpt(TagOpt.FETCH_TAGS);
+        FetchCommand fetchCommand = git.fetch().setTagOpt(TagOpt.FETCH_TAGS).setForceUpdate(true);
         fetchCommand.setCredentialsProvider(usernamePasswordCredentialsProvider);
         fetchCommand.call();
 
+        //git.reset().call();
 
         List<Ref> refs = git.branchList().call();
         boolean exist = false;// is branch exist
@@ -76,9 +77,9 @@ public class JgitTests {
             }
         }
         if (exist) { // Exist to checkout
-            git.checkout().setName(branchName).call();
+            git.checkout().setName(branchName).setForced(true).call();
         } else { // Not exist to checkout & create local branch
-            git.checkout().setCreateBranch(true).setName(branchName).setStartPoint("origin/" + branchName)
+            git.checkout().setCreateBranch(true).setName(branchName).setStartPoint("origin/" + branchName).setForced(true)
                     .setForceRefUpdate(true).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.SET_UPSTREAM).call();
         }
 
@@ -89,6 +90,7 @@ public class JgitTests {
 
         System.out.println("success");
     }
+
 
     @Test
     public void checkoutTag() throws IOException, GitAPIException {
