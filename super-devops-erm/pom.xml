@@ -13,6 +13,7 @@
 		<module>super-devops-erm-manager</module>
 		<module>super-devops-erm-core</module>
 		<module>super-devops-erm-dns</module>
+		<module>super-devops-erm-initializer</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
