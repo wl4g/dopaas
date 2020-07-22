@@ -34,7 +34,3 @@ logging:
       apache: INFO
     com:
       wl4g.devops.dao: DEBUG
-
-vcs:
-  branch-format: branch.*
-  tag-format: tag.*

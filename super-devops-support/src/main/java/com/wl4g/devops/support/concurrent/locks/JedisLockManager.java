@@ -59,8 +59,7 @@ public class JedisLockManager {
 	}
 
 	/**
-	 * Get and create {@link FastReentrantUnfairDistributedClusterRedLock} with
-	 * name.
+	 * Get and create {@link FastReentrantUnfairDistributedRedLock} with name.
 	 * 
 	 * @param name
 	 * @return
@@ -70,8 +69,7 @@ public class JedisLockManager {
 	}
 
 	/**
-	 * Get and create {@link FastReentrantUnfairDistributedClusterRedLock} with
-	 * name.
+	 * Get and create {@link FastReentrantUnfairDistributedRedLock} with name.
 	 * 
 	 * @param name
 	 * @param expiredAt
@@ -82,7 +80,7 @@ public class JedisLockManager {
 		hasText(name, "Lock name must not be empty.");
 		isTrue(expiredAt > 0, "Lock expiredAt must greater than 0");
 		notNull(unit, "TimeUnit must not be null.");
-		return new FastReentrantUnfairDistributedClusterRedLock(name, unit.toMillis(expiredAt));
+		return new FastReentrantUnfairDistributedRedLock(name, unit.toMillis(expiredAt));
 	}
 
 	/**
@@ -114,7 +112,7 @@ public class JedisLockManager {
 	 *      Redlock failover analysis</a>
 	 */
 	@Beta
-	private final class FastReentrantUnfairDistributedClusterRedLock extends AbstractDistributedLock {
+	private final class FastReentrantUnfairDistributedRedLock extends AbstractDistributedLock {
 		private static final long serialVersionUID = -1909894475263151824L;
 
 		/**
@@ -124,15 +122,15 @@ public class JedisLockManager {
 		 */
 		final protected AtomicLong counter;
 
-		public FastReentrantUnfairDistributedClusterRedLock(String name, long expiredMs) {
+		public FastReentrantUnfairDistributedRedLock(String name, long expiredMs) {
 			this(name, expiredMs, 0L);
 		}
 
-		public FastReentrantUnfairDistributedClusterRedLock(String name, long expiredMs, long counterValue) {
+		public FastReentrantUnfairDistributedRedLock(String name, long expiredMs, long counterValue) {
 			this(name, expiredMs, new AtomicLong(counterValue));
 		}
 
-		public FastReentrantUnfairDistributedClusterRedLock(String name, long expiredMs, AtomicLong counter) {
+		public FastReentrantUnfairDistributedRedLock(String name, long expiredMs, AtomicLong counter) {
 			super((NAMESPACE + name), getThreadCurrentProcessId(), expiredMs);
 			isTrue(counter.get() >= 0, "Lock count must greater than 0");
 			this.counter = counter;
