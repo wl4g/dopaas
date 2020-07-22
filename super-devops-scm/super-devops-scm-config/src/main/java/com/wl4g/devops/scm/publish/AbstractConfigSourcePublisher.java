@@ -22,11 +22,11 @@ import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
 import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
 
 import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.components.tools.common.task.RunnerProperties;
 import com.wl4g.devops.common.bean.scm.model.GetRelease;
 import com.wl4g.devops.common.bean.scm.model.PreRelease;
 import com.wl4g.devops.scm.config.ScmProperties;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.support.task.ApplicationTaskRunner;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +55,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * @date 2018年10月26日
  * @since
  */
-public abstract class AbstractConfigSourcePublisher extends GenericTaskRunner<RunnerProperties> implements ConfigSourcePublisher {
+public abstract class AbstractConfigSourcePublisher extends ApplicationTaskRunner<RunnerProperties> implements ConfigSourcePublisher {
 
 	/** SCM properties configuration */
 	final protected ScmProperties config;

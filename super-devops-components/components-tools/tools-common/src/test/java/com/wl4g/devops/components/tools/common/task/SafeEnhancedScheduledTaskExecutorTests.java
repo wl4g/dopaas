@@ -22,7 +22,7 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.wl4g.devops.components.tools.common.task.SafeEnhancedScheduledTaskExecutor;
+import com.wl4g.devops.components.tools.common.task.SafeScheduledTaskPoolExecutor;
 
 public class SafeEnhancedScheduledTaskExecutorTests {
 
@@ -34,7 +34,7 @@ public class SafeEnhancedScheduledTaskExecutorTests {
 
 	public static void scheduleQueueRejectedTest1() throws Exception {
 		// Create ScheduledTaskExecutor.
-		SafeEnhancedScheduledTaskExecutor executor = createSafeEnhancedScheduledExecutor(2);
+		SafeScheduledTaskPoolExecutor executor = createSafeEnhancedScheduledExecutor(2);
 
 		for (int i = 0; i < 20; i++) {
 			final String idStr = "testjob-" + i;
@@ -59,7 +59,7 @@ public class SafeEnhancedScheduledTaskExecutorTests {
 
 	public static void scheduleWithFixedErrorInterruptedTest2() throws Exception {
 		// Create ScheduledTaskExecutor.
-		SafeEnhancedScheduledTaskExecutor executor = createSafeEnhancedScheduledExecutor(2);
+		SafeScheduledTaskPoolExecutor executor = createSafeEnhancedScheduledExecutor(2);
 
 		// Task1(Error):
 		executor.scheduleAtFixedRate(() -> {
@@ -82,7 +82,7 @@ public class SafeEnhancedScheduledTaskExecutorTests {
 
 	public static void scheduleWithRandomErrorInterruptedTest3() throws Exception {
 		// Create ScheduledTaskExecutor.
-		SafeEnhancedScheduledTaskExecutor executor = createSafeEnhancedScheduledExecutor(2);
+		SafeScheduledTaskPoolExecutor executor = createSafeEnhancedScheduledExecutor(2);
 
 		// Task1(Error):
 		executor.scheduleAtRandomRate(() -> {
@@ -102,9 +102,9 @@ public class SafeEnhancedScheduledTaskExecutorTests {
 
 	}
 
-	private static SafeEnhancedScheduledTaskExecutor createSafeEnhancedScheduledExecutor(int concurrencyPoolSize)
+	private static SafeScheduledTaskPoolExecutor createSafeEnhancedScheduledExecutor(int concurrencyPoolSize)
 			throws Exception {
-		return new SafeEnhancedScheduledTaskExecutor(concurrencyPoolSize, 0L, Executors.defaultThreadFactory(), 2,
+		return new SafeScheduledTaskPoolExecutor(concurrencyPoolSize, 0L, Executors.defaultThreadFactory(), 2,
 				new RejectedExecutionHandler() {
 					@Override
 					public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {

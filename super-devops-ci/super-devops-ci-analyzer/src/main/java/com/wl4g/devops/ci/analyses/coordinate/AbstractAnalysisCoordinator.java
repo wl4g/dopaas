@@ -32,10 +32,10 @@ import com.wl4g.devops.ci.analyses.config.CiAnalyzerProperties;
 import com.wl4g.devops.ci.analyses.config.ExecutorProperties;
 import com.wl4g.devops.ci.analyses.model.AnalysingModel;
 import com.wl4g.devops.ci.analyses.tasks.TaskManager;
+import com.wl4g.devops.components.tools.common.task.RunnerProperties;
 import com.wl4g.devops.support.cli.DestroableProcessManager;
 import com.wl4g.devops.support.redis.jedis.JedisService;
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.support.task.ApplicationTaskRunner;
 
 /**
  * Abstract basic codes analyzers.
@@ -44,7 +44,7 @@ import com.wl4g.devops.support.task.RunnerProperties;
  * @version v1.0.0 2019-11-18
  * @since
  */
-public abstract class AbstractAnalysisCoordinator<P extends AnalysingModel> extends GenericTaskRunner<RunnerProperties>
+public abstract class AbstractAnalysisCoordinator<P extends AnalysingModel> extends ApplicationTaskRunner<RunnerProperties>
 		implements AnalysisCoordinator<P> {
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 

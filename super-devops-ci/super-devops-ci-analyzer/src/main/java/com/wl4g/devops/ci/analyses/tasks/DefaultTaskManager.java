@@ -26,8 +26,8 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wl4g.devops.support.task.GenericTaskRunner;
-import com.wl4g.devops.support.task.RunnerProperties;
+import com.wl4g.devops.components.tools.common.task.RunnerProperties;
+import com.wl4g.devops.support.task.ApplicationTaskRunner;
 
 /**
  * Default Codes analyzing task manager.
@@ -36,7 +36,7 @@ import com.wl4g.devops.support.task.RunnerProperties;
  * @version v1.0 2019年11月19日
  * @since
  */
-public final class DefaultTaskManager extends GenericTaskRunner<RunnerProperties> implements TaskManager {
+public final class DefaultTaskManager extends ApplicationTaskRunner<RunnerProperties> implements TaskManager {
 	final private Logger log = LoggerFactory.getLogger(getClass());
 
 	/**

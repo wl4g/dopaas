@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.task;
-
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+package com.wl4g.devops.components.tools.common.task;
 
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
-import com.wl4g.devops.components.tools.common.task.SafeEnhancedScheduledTaskExecutor;
+import com.wl4g.devops.components.tools.common.task.SafeScheduledTaskPoolExecutor;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -46,8 +42,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  *      "http://www.doc88.com/p-3922316178617.html">ScheduledThreadPoolExecutor
  *      Retry task OOM resolution</a>
  */
-public abstract class GenericTaskRunner<C extends RunnerProperties>
-		implements Closeable, Runnable, ApplicationRunner, DisposableBean {
+public abstract class GenericTaskRunner<C extends RunnerProperties> implements Closeable, Runnable {
 
 	final protected SmartLogger log = getLogger(getClass());
 
@@ -61,7 +56,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	private Thread boss;
 
 	/** Runner worker thread group pool. */
-	private SafeEnhancedScheduledTaskExecutor worker;
+	private SafeScheduledTaskPoolExecutor worker;
 
 	@SuppressWarnings("unchecked")
 	public GenericTaskRunner() {
@@ -71,11 +66,6 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	public GenericTaskRunner(C config) {
 		notNull(config, "GenericTaskRunner properties can't null");
 		this.config = config;
-	}
-
-	@Override
-	public void destroy() throws Exception {
-		close();
 	}
 
 	/**
@@ -143,8 +133,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * 
 	 * @throws Exception
 	 */
-	@Override
-	public void run(ApplicationArguments args) throws Exception {
+	public void start() throws Exception {
 		if (running.compareAndSet(false, true)) {
 			// Call PreStartup
 			preStartupProperties();
@@ -153,7 +142,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 			if (config.getConcurrency() > 0) {
 				// See:https://www.jianshu.com/p/e7ab1ac8eb4c
 				ThreadFactory tf = new NamedThreadFactory(getClass().getSimpleName() + "-worker");
-				worker = new SafeEnhancedScheduledTaskExecutor(config.getConcurrency(), config.getKeepAliveTime(), tf,
+				worker = new SafeScheduledTaskPoolExecutor(config.getConcurrency(), config.getKeepAliveTime(), tf,
 						config.getAcceptQueue(), config.getReject());
 			} else {
 				log.warn("No start threads worker, because the number of workthreads is less than 0");
@@ -230,7 +219,7 @@ public abstract class GenericTaskRunner<C extends RunnerProperties>
 	 * 
 	 * @return
 	 */
-	public SafeEnhancedScheduledTaskExecutor getWorker() {
+	public SafeScheduledTaskPoolExecutor getWorker() {
 		state(nonNull(worker), "Worker thread group is not enabled and can be enabled with concurrency >0");
 		return worker;
 	}

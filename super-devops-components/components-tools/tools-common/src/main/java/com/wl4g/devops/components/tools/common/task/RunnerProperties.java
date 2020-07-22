@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.support.task;
+package com.wl4g.devops.components.tools.common.task;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
 
@@ -91,6 +91,11 @@ public class RunnerProperties implements Serializable {
 		this.asyncStartup = asyncStartup;
 	}
 
+	public RunnerProperties withAsyncStartup(boolean asyncStartup) {
+		setAsyncStartup(asyncStartup);
+		return this;
+	}
+
 	public int getConcurrency() {
 		return concurrency;
 	}
@@ -98,6 +103,11 @@ public class RunnerProperties implements Serializable {
 	public void setConcurrency(int concurrency) {
 		// Assert.isTrue(concurrency > 0, "Concurrency must be greater than 0");
 		this.concurrency = concurrency;
+	}
+
+	public RunnerProperties withConcurrency(int concurrency) {
+		setConcurrency(concurrency);
+		return this;
 	}
 
 	public long getKeepAliveTime() {
@@ -111,6 +121,11 @@ public class RunnerProperties implements Serializable {
 		this.keepAliveTime = keepAliveTime;
 	}
 
+	public RunnerProperties withKeepAliveTime(long keepAliveTime) {
+		setKeepAliveTime(keepAliveTime);
+		return this;
+	}
+
 	public int getAcceptQueue() {
 		return acceptQueue;
 	}
@@ -122,6 +137,11 @@ public class RunnerProperties implements Serializable {
 		this.acceptQueue = acceptQueue;
 	}
 
+	public RunnerProperties withAcceptQueue(int acceptQueue) {
+		setAcceptQueue(acceptQueue);
+		return this;
+	}
+
 	public RejectedExecutionHandler getReject() {
 		return reject;
 	}
@@ -130,6 +150,11 @@ public class RunnerProperties implements Serializable {
 		if (reject != null) {
 			this.reject = reject;
 		}
+	}
+
+	public RunnerProperties withReject(RejectedExecutionHandler reject) {
+		setReject(reject);
+		return this;
 	}
 
 	@Override
