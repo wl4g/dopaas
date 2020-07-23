@@ -1,19 +1,28 @@
 package com.wl4g.devops.gateway.server.loadbalance;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractLoadBalancerRule;
 import com.netflix.loadbalancer.Server;
+import com.wl4g.devops.components.tools.common.lang.Assert2;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 import com.wl4g.devops.gateway.server.model.HostWeight;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * @author vjay
  * @date 2020-07-22 14:41:00
  */
 public class CustomLoadBalancerRule extends AbstractLoadBalancerRule {
+
+    final private SmartLogger log = getLogger(getClass());
 
     @Override
     public void initWithNiwsConfig(IClientConfig iClientConfig) {
@@ -23,12 +32,21 @@ public class CustomLoadBalancerRule extends AbstractLoadBalancerRule {
     @Override
     public Server choose(Object key) {
         //List<Server> servers = this.getLoadBalancer().getReachableServers();
-        if(key instanceof Map){
-            Object hosts = ((Map) key).get("hosts");
-            if(hosts instanceof List){
-                List<HostWeight> list = (List) hosts;
-                Server server = new Server(weightChoose(list).getUri());
-                return server;
+        if (key instanceof Map) {
+            try {
+                Object hosts = ((Map) key).get("hosts");
+                if (hosts instanceof List) {
+                    List list = (List) hosts;
+
+                    List<HostWeight> hostWeights = JacksonUtils.parseJSON(JacksonUtils.toJSONString(list), new TypeReference<List<HostWeight>>() {
+                    });
+                    HostWeight hostWeight = weightChoose(hostWeights);
+                    if (Objects.nonNull(hostWeight)) {
+                        return new Server(weightChoose(list).getUri());
+                    }
+                }
+            }catch (Exception e){
+                log.error("",e);
             }
         }
         //Server server = new Server("localhost",14086);
@@ -36,35 +54,36 @@ public class CustomLoadBalancerRule extends AbstractLoadBalancerRule {
     }
 
 
-    private HostWeight randomChoose(List<HostWeight> servers) {
-        if (servers.isEmpty()) {
+    private HostWeight randomChoose(List<HostWeight> hostWeights) {
+        if (hostWeights.isEmpty()) {
             return null;
         }
-        if (servers.size() == 1) {
-            return servers.get(0);
+        if (hostWeights.size() == 1) {
+            return hostWeights.get(0);
         }
-        int randomIndex = RandomUtils.nextInt(0,servers.size());
-        return servers.get(randomIndex);
+        int randomIndex = RandomUtils.nextInt(0, hostWeights.size());
+        return hostWeights.get(randomIndex);
     }
 
 
-    private HostWeight weightChoose(List<HostWeight> servers){
-        Integer weightSum = 0;
-        for (HostWeight hw : servers) {
+    private HostWeight weightChoose(List<HostWeight> hostWeights) {
+        Assert2.notNullOf(hostWeights,"hostWeights");
+        int weightSum = 0;
+        for (HostWeight hw : hostWeights) {
             weightSum += hw.getWeight();
         }
 
         if (weightSum <= 0) {
-            return randomChoose(servers);
+            return randomChoose(hostWeights);
         }
-        Integer n = RandomUtils.nextInt(0,weightSum); // n in [0, weightSum)
-        Integer m = 0;
-        for (HostWeight wc : servers) {
-            if (m <= n && n < m + wc.getWeight()) {
-                System.out.println("This Random Host is "+wc.getUri());
-                break;
+        int n = RandomUtils.nextInt(0, weightSum); // n in [0, weightSum)
+        int m = 0;
+        for (HostWeight hostWeight : hostWeights) {
+            if (m <= n && n < m + hostWeight.getWeight()) {
+                log.debug("This Random Host is " + hostWeight.getUri());
+                return hostWeight;
             }
-            m += wc.getWeight();
+            m += hostWeight.getWeight();
         }
         return null;
     }

@@ -1,10 +1,15 @@
 package com.wl4g.devops.gateway.server.model;
 
+import java.io.Serializable;
+
 /**
  * @author vjay
  * @date 2020-07-22 19:08:00
  */
-public class HostWeight {
+public class HostWeight implements Serializable {
+
+    private static final long serialVersionUID = 8940373806493080114L;
+
     private String uri;
 
     private int weight = 0;
