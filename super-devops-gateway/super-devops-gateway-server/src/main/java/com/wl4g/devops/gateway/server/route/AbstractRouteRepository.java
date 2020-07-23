@@ -63,7 +63,7 @@ public abstract class AbstractRouteRepository extends InMemoryRouteDefinitionRep
 	 * 
 	 * @return
 	 */
-	private final Flux<RouteDefinition> getRouteDefinitionsByMemery() {
+	public final Flux<RouteDefinition> getRouteDefinitionsByMemery() {
 		return super.getRouteDefinitions();
 	}
 

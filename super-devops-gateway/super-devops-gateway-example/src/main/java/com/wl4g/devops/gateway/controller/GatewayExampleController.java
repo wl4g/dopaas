@@ -20,11 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
-
 import java.util.Enumeration;
 import java.util.Map;
+
+import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * {@link GatewayExampleController}

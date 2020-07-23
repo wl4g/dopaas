@@ -4,17 +4,19 @@ import com.wl4g.devops.components.shell.annotation.ShellComponent;
 import com.wl4g.devops.components.shell.annotation.ShellMethod;
 import com.wl4g.devops.components.shell.handler.SimpleShellContext;
 import com.wl4g.devops.components.tools.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 import com.wl4g.devops.gateway.server.config.GatewayRefreshProperties;
 import com.wl4g.devops.gateway.server.console.args.UpdatingRefreshDelayArgument;
 import com.wl4g.devops.gateway.server.coordinate.RefreshableConfigurationCoordinator;
+import com.wl4g.devops.gateway.server.route.AbstractRouteRepository;
 import com.wl4g.devops.gateway.server.route.IRouteCacheRefresh;
-
-import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.route.RouteDefinition;
+import reactor.core.publisher.Flux;
 
 import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.valueOf;
+import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 
 /**
  * {@link GatewayConsole}
@@ -35,6 +37,9 @@ public class GatewayConsole {
 	protected GatewayRefreshProperties config;
 
 	@Autowired
+	private AbstractRouteRepository abstractRouteRepository;
+
+	@Autowired
 	protected RefreshableConfigurationCoordinator coordinator;
 
 	/**
@@ -52,12 +57,19 @@ public class GatewayConsole {
 			log.error("", e);
 		}
 
+		Flux<RouteDefinition> memeryRoutes = abstractRouteRepository.getRouteDefinitionsByMemery();
+
 		// Print result message.
 		StringBuilder res = new StringBuilder(100);
 		res.append("Refresh succeeded. The current configuration information is: ");
 		res.append(LINE_SEPARATOR);
 		res.append("\t");
-		res.append("----route info route info----"); // TODO
+		res.append("----route info----\n"); // TODO
+
+		memeryRoutes.subscribe(route -> res.append(JacksonUtils.toJSONString(route))
+				.append("\n")
+		);
+
 		context.printf(res.toString());
 		context.completed();
 	}
