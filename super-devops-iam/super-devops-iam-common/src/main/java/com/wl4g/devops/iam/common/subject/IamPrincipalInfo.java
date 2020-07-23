@@ -54,7 +54,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @version v1.0.0 2018-04-31
  * @since
  */
-public interface IamPrincipalInfo extends Serializable {
+public interface IamPrincipalInfo extends /* Principal, */Serializable {
 
 	/**
 	 * Get account principal Id.
