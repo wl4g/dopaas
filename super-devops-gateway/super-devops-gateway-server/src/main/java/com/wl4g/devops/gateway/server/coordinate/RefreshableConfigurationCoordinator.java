@@ -26,6 +26,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
+import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.util.concurrent.ScheduledFuture;
@@ -83,7 +85,7 @@ public class RefreshableConfigurationCoordinator extends GenericTaskRunner<Runne
 	 */
 	public void restartRefresher() {
 		isTrue(future.cancel(false), CurrentlyInRefreshingException.class,
-				"Updating refreshDelayMs failed, because refreshing is currently in progress");
+				"Updating refreshDelayMs failed, because refreshing is currently in progressing");
 
 		// Re-create scheduling
 		createRefreshScheduling();
@@ -91,8 +93,14 @@ public class RefreshableConfigurationCoordinator extends GenericTaskRunner<Runne
 
 	/**
 	 * Creating refresh scheduling.
+	 * 
+	 * @throws IllegalStateException
 	 */
-	private void createRefreshScheduling() {
+	private void createRefreshScheduling() throws IllegalStateException {
+		if (nonNull(future) || !future.isDone()) {
+			throw new IllegalStateException(format("No done last schdule task future for %s", future));
+		}
+
 		this.future = getWorker().scheduleWithFixedDelay(() -> {
 			try {
 				log.info("flushRoutesPermanentToMemery");
