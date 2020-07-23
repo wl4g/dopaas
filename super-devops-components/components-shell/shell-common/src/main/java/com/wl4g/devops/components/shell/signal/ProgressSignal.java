@@ -67,7 +67,7 @@ public class ProgressSignal extends Signal {
 
 	@Override
 	public String toString() {
-		return "Progress signal [" + progress + "/" + whole + "]";
+		return super.toString().concat("[" + progress + "/" + whole + "]");
 	}
 
 }

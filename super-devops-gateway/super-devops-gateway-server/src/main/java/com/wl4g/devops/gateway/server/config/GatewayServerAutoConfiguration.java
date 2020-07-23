@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.gateway.server.config;
 
-
 import com.wl4g.devops.components.tools.common.task.RunnerProperties;
 import com.wl4g.devops.gateway.server.console.GatewayConsole;
+import com.wl4g.devops.gateway.server.coordinate.RefreshableConfigurationCoordinator;
 import com.wl4g.devops.gateway.server.redis.RedisRouteDefinitionRepository;
 import com.wl4g.devops.gateway.server.route.RouteAlterHandler;
-import com.wl4g.devops.gateway.server.task.ApplicationTaskRunner;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
 import org.springframework.context.annotation.Bean;
@@ -36,34 +36,30 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GatewayServerAutoConfiguration {
 
+	@Bean
+	public RouteAlterHandler routeAlterHandler() {
+		return new RouteAlterHandler();
+	}
 
-    @Bean
-    public RouteAlterHandler routeAlterHandler() {
-        return new RouteAlterHandler();
-    }
+	@Bean
+	public RouteDefinitionRepository redisRouteDefinitionRepository() {
+		return new RedisRouteDefinitionRepository();
+	}
 
-    @Bean
-    public RouteDefinitionRepository redisRouteDefinitionRepository() {
-        return new RedisRouteDefinitionRepository();
-    }
+	@Bean
+	public RefreshableConfigurationCoordinator applicationTaskRunner() {
+		return new RefreshableConfigurationCoordinator(new RunnerProperties().withConcurrency(1));
+	}
 
-    @Bean
-    public ApplicationTaskRunner applicationTaskRunner() {
-        return new ApplicationTaskRunner(new RunnerProperties().withConcurrency(1));
-    }
+	@Bean
+	public GatewayConsole gatewayConsole() {
+		return new GatewayConsole();
+	}
 
-    @Bean
-    public GatewayConsole gatewayConsole() {
-        return new GatewayConsole();
-    }
-
-    @Bean
-    @ConfigurationProperties(prefix = "gateway")
-    public GatewayRefreshProperties gatewayRefreshProperties() {
-        return new GatewayRefreshProperties();
-    }
-
-
-
+	@Bean
+	@ConfigurationProperties(prefix = "gateway")
+	public GatewayRefreshProperties gatewayRefreshProperties() {
+		return new GatewayRefreshProperties();
+	}
 
 }

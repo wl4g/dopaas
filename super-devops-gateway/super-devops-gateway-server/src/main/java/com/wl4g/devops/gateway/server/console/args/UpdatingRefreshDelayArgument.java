@@ -19,29 +19,33 @@ import com.wl4g.devops.components.shell.annotation.ShellOption;
 
 import java.io.Serializable;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
 import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
 
 /**
- * @author vjay
- * @date 2019-05-21 16:18:00
+ * {@link UpdatingRefreshDelayArgument}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020-07-23
+ * @since
  */
-public class UpdateRefreshTimeArgument implements Serializable {
+public class UpdatingRefreshDelayArgument implements Serializable {
 	private static final long serialVersionUID = -90377698662015272L;
 
-	@ShellOption(opt = "t", lopt = "refreshTimeMs", help = "Update refresh time ms", required = true)
-	private Long refreshTimeMs;
+	@ShellOption(opt = "t", lopt = "refreshDelayMs", help = "Gateway configuration refresh delay ms", required = true)
+	private Long refreshDelayMs;
 
-	public Long getRefreshTimeMs() {
-		notNull(refreshTimeMs, "Update refresh time must not be null.");
-		isTrue(refreshTimeMs > 0, "Update refresh time must greater than 0.");
-		return refreshTimeMs;
+	public Long getRefreshDelayMs() {
+		notNull(refreshDelayMs, "Update refresh time must not be null.");
+		isTrue(refreshDelayMs > 0, "Update refresh time must greater than 0.");
+		return refreshDelayMs;
 	}
 
-	public void setRefreshTimeMs(Long refreshTimeMs) {
-		notNull(refreshTimeMs, "Update refresh time must not be null.");
-		isTrue(refreshTimeMs > 0, "Update refresh time must greater than 0.");
-		this.refreshTimeMs = refreshTimeMs;
+	public void setRefreshDelayMs(Long refreshTimeMs) {
+		notNullOf(refreshTimeMs, "refreshTimeMs");
+		isTrue(refreshTimeMs > 0, "Updating refreshDelayMs > 0");
+		this.refreshDelayMs = refreshTimeMs;
 	}
 
 }

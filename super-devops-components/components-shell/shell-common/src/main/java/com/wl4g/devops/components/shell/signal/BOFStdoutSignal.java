@@ -20,7 +20,7 @@ public class BOFStdoutSignal extends Signal {
 
 	@Override
 	public String toString() {
-		return "BOF []";
+		return "BOF";
 	}
 
 }

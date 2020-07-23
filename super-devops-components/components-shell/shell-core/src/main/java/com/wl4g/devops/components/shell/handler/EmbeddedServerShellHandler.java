@@ -180,44 +180,48 @@ public class EmbeddedServerShellHandler extends AbstractServerShellHandler imple
 		// Bind target method
 		context.setTarget(tm);
 
-		// Resolving parameter shellContext
-		AbstractShellContext updateContext = resolveActualShellContextIfNecceary(context, tm, args);
-		// Update actual context
+		// Resolving args with {@link AbstractShellContext}
+		AbstractShellContext updateContext = resolveInjectArgsForShellContextIfNecceary(context, tm, args);
+		// Inject update actual context
 		getClient().setContext(updateContext);
 	}
 
 	/**
-	 * Resolving specific parameter {@link AbstractShellContext} if necceary
+	 * If necessary, resolving whether the shell method parameters have
+	 * {@link AbstractShellContext} instances and inject.
 	 * 
 	 * @param context
 	 * @param tm
 	 * @param args
 	 */
-	private AbstractShellContext resolveActualShellContextIfNecceary(AbstractShellContext context, TargetMethodWrapper tm,
+	private AbstractShellContext resolveInjectArgsForShellContextIfNecceary(AbstractShellContext context, TargetMethodWrapper tm,
 			List<Object> args) {
+
 		// Find parameter: ShellContext index and class
 		Object[] ret = findParameterForShellContext(tm);
 		int index = (int) ret[0];
 		Class<?> contextClass = (Class<?>) ret[1];
 
-		// Convert to specific shellContext
-		if (SimpleShellContext.class.isAssignableFrom(contextClass)) {
-			context = new SimpleShellContext(context);
-		} else if (ProgressShellContext.class.isAssignableFrom(contextClass)) {
-			context = new ProgressShellContext(context);
-		}
-		if (index >= 0) {
+		if (index >= 0) { // have ShellContext?
+			// Convert to specific shellContext
+			if (SimpleShellContext.class.isAssignableFrom(contextClass)) {
+				context = new SimpleShellContext(context);
+			} else if (ProgressShellContext.class.isAssignableFrom(contextClass)) {
+				context = new ProgressShellContext(context);
+			}
 			if (index < args.size()) { // Correct parameter index
 				args.add(index, context);
 			} else {
 				args.add(context);
 			}
+
 			/**
 			 * When injection {@link ShellContext} is used, the auto open
 			 * channel status is wait.
 			 */
 			context.begin(); // MARK2
 		}
+
 		return context;
 	}
 

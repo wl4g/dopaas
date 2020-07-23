@@ -20,7 +20,7 @@ public class EOFStdoutSignal extends Signal {
 
 	@Override
 	public String toString() {
-		return "EOF []";
+		return "EOF";
 	}
 
 }
