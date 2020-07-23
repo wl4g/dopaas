@@ -20,14 +20,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * {@link IntializerAutoConfiguration}
+ * {@link InitializerAutoConfiguration}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-22
  * @since
  */
 @Configuration
-public class IntializerAutoConfiguration {
+public class InitializerAutoConfiguration {
 
 	@Bean
 	@ConfigurationProperties(prefix = INITIALIZER_PREFIX)
