@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.gateway.server;
 
+import com.wl4g.devops.components.shell.annotation.EnableShellServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -24,7 +25,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 //@EnableIamClient
-//@EnableShellServer
+@EnableShellServer
 //@MapperScan("com.wl4g.devops.dao.*")
 @SpringBootApplication
 public class GatewayServer {
