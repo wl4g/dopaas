@@ -19,6 +19,7 @@ import com.wl4g.devops.components.tools.common.log.SmartLogger;
 import com.wl4g.devops.components.tools.common.log.SmartLoggerFactory;
 import com.wl4g.devops.components.tools.common.task.GenericTaskRunner;
 import com.wl4g.devops.components.tools.common.task.RunnerProperties;
+import com.wl4g.devops.gateway.server.config.GatewayRefreshProperties;
 import com.wl4g.devops.gateway.server.route.IRouteCacheRefresh;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +42,13 @@ import java.util.concurrent.TimeUnit;
 public class ApplicationTaskRunner<C extends RunnerProperties> extends GenericTaskRunner<C>
         implements ApplicationRunner, DisposableBean {
 
+    final private SmartLogger log = SmartLoggerFactory.getLogger(getClass());
+
     @Autowired
     private IRouteCacheRefresh iRouteCacheRefresh;
 
-    final private SmartLogger log = SmartLoggerFactory.getLogger(getClass());
+    @Autowired
+    private GatewayRefreshProperties gatewayProperties;
 
     public ApplicationTaskRunner() {
         super();
@@ -73,6 +77,6 @@ public class ApplicationTaskRunner<C extends RunnerProperties> extends GenericTa
             }catch (Exception e){
                 log.error("fresh fail", e);
             }
-        }, 1, 50, TimeUnit.SECONDS);
+        }, gatewayProperties.getRefreshTimeMs(), gatewayProperties.getRefreshTimeMs(), TimeUnit.MILLISECONDS);
     }
 }
