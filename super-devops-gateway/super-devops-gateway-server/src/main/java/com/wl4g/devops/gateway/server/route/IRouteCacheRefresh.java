@@ -31,6 +31,6 @@ public interface IRouteCacheRefresh {
 	 * 
 	 * @return
 	 */
-	public Mono<Void> flushRoutesPermanentToMemery();
+	Mono<Void> flushRoutesPermanentToMemery();
 
 }

@@ -43,7 +43,7 @@ public class AskInterruptSignal extends Signal {
 
 	@Override
 	public String toString() {
-		return "Ask signal [" + subject + "]";
+		return super.toString().concat("[subject=" + subject + "]");
 	}
 
 }

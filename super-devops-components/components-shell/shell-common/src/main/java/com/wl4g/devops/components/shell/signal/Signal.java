@@ -27,4 +27,9 @@ import java.io.Serializable;
 public abstract class Signal implements Serializable {
 	private static final long serialVersionUID = 771621623117425564L;
 
+	@Override
+	public String toString() {
+		return getClass().getSimpleName().concat(" - ");
+	}
+
 }

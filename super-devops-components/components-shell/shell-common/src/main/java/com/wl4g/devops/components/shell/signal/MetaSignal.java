@@ -50,7 +50,7 @@ public class MetaSignal extends Signal {
 
 	@Override
 	public String toString() {
-		return "Meta " + registedMethods.values();
+		return super.toString().concat(registedMethods.values().toString());
 	}
 
 }

@@ -37,6 +37,10 @@
 			<artifactId>super-devops-components-shell-core</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>super-devops-gateway-common</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway</artifactId>
 			<exclusions>

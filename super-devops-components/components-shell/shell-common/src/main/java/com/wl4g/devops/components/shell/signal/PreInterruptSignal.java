@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.components.shell.signal;
 
+import static java.lang.String.valueOf;
+
 /**
  * Pre transmit interrupt signal
  * 
@@ -38,7 +40,7 @@ public class PreInterruptSignal extends Signal {
 
 	@Override
 	public String toString() {
-		return "Pre interrupted [" + force + "]";
+		return super.toString().concat("force=").concat(valueOf(force));
 	}
 
 }

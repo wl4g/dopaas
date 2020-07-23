@@ -43,7 +43,7 @@ public class AckInterruptSignal extends Signal {
 
 	@Override
 	public String toString() {
-		return "Ack signal [" + confirm + "]";
+		return super.toString().concat("[confirm=" + confirm + "]");
 	}
 
 }
