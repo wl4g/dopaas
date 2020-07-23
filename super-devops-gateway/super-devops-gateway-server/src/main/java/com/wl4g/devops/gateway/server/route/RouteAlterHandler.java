@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.gataway.server.route;
+package com.wl4g.devops.gateway.server.route;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.wl4g.devops.components.tools.common.log.SmartLogger;
+import com.wl4g.devops.components.tools.common.log.SmartLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.actuate.GatewayControllerEndpoint;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
@@ -34,7 +34,7 @@ import reactor.core.publisher.Mono;
  */
 public class RouteAlterHandler implements ApplicationListener<RefreshRoutesEvent> {
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final SmartLogger log = SmartLoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
@@ -52,14 +52,8 @@ public class RouteAlterHandler implements ApplicationListener<RefreshRoutesEvent
 	@Override
 	public void onApplicationEvent(RefreshRoutesEvent refreshRoutesEvent) {
 		try {
-			// org.springframework.cloud.gateway.route.RouteRefreshListener
-			logger.debug(
-					String.format("receive event %s source %s", "refreshRoutesEvent", refreshRoutesEvent.getSource().toString()));
-			if (refreshRoutesEvent.getSource() instanceof GatewayControllerEndpoint) {
-				// 通知所有实例更新持久化路由信息
-				applicationContext.getBean(IRouteAlterPublisher.class).notifyAllRefresh(NotifyType.permanent);
-			} else if (NotifyType.permanent.equals(refreshRoutesEvent.getSource())) {
-				// 刷当前实例内存路由信息
+			log.debug(String.format("receive event %s source %s", "refreshRoutesEvent", refreshRoutesEvent.getSource().toString()));
+			if (refreshRoutesEvent.getSource() instanceof GatewayControllerEndpoint || NotifyType.permanent.equals(refreshRoutesEvent.getSource())) {
 				applicationContext.getBean(IRouteCacheRefresh.class).flushRoutesPermanentToMemery();
 			}
 		} catch (Exception e) {

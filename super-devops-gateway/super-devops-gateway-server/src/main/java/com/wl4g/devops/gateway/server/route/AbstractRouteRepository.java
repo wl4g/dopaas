@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.gataway.server.route;
+package com.wl4g.devops.gateway.server.route;
 
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ import java.util.Map;
  * @since [jdk 1.8]
  **/
 public abstract class AbstractRouteRepository extends InMemoryRouteDefinitionRepository
-		implements IRouteAlterPublisher, IRouteCacheRefresh, IRouteAlterSubscriber {
+		implements IRouteCacheRefresh, IRouteAlterSubscriber {
 
 	protected static final String DEF_CHARTSET_STR = "UTF-8";
 

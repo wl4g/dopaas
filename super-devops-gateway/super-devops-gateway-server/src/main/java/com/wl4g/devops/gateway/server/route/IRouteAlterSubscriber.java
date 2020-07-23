@@ -13,24 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.gataway.server.route;
+package com.wl4g.devops.gateway.server.route;
 
-import reactor.core.publisher.Mono;
-
-/**
- * {@link IRouteCacheRefresh}
- *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-07-21
- * @since
- */
-public interface IRouteCacheRefresh {
+public interface IRouteAlterSubscriber {
 
 	/**
-	 * 刷新内存中的路由信息
-	 * 
-	 * @return
+	 * 初始化订阅者，用来初始化 接收持久化刷新的消息
 	 */
-	public Mono<Void> flushRoutesPermanentToMemery();
+	// void initSubscriber();
 
 }

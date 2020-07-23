@@ -68,11 +68,33 @@ spring:
       test-on-return: false
       filters: stat,wall
       log-slow-sql: true
+  redis:
+    cluster:
+      nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
+    timeout: 10000ms
+    password: ${REDIS_PASSWD:zzx!@#$%}
+    lettuce:
+      pool:
+        max-active: 10
+        max-wait: -1ms
+
 
 # Redis configuration.
-redis:
-  passwd: ${REDIS_PASSWD:zzx!@#$%}
-  connect-timeout: 10000
-  max-attempts: 10
-  # Redis's cluster nodes.
-  nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
+#redis:
+#  passwd: ${REDIS_PASSWD:zzx!@#$%}
+#  connect-timeout: 10000
+#  max-attempts: 10
+#  # Redis's cluster nodes.
+#  nodes: ${REDIS_NODES:owner-node1:6379,owner-node1:6380,owner-node1:6381,owner-node3:6379,owner-node3:6380,owner-node3:6381}
+
+my-load-balanced-service:
+  ribbon:
+    listOfServers: http://localhost:14086, http://127.0.0.1:14087
+    NFLoadBalancerRuleClassName: com.wl4g.devops.gateway.server.loadbalance.CustomLoadBalancerRule
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+
+# spring.cloud.loadbalancer.ribbon.enabled: false
