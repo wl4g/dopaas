@@ -13,11 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.wl4g.devops.erm.initializer.installer.fink;
+
+import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
+
 /**
- * {@link package-info}
+ * {@link FinkV0xSoftInstaller}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-07-22
+ * @version v1.0 2020-07-23
  * @since
  */
-package com.wl4g.devops.erm.initializer.handler;
+public class FinkV0xSoftInstaller extends AbstractSoftInstaller {
+
+	/**
+	 * {@link FinkV0xConfiguration}
+	 * 
+	 * @since
+	 */
+	public static class FinkV0xConfiguration extends InstallerConfiguration {
+
+	}
+
+}
