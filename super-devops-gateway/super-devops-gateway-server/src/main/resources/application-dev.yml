@@ -89,7 +89,7 @@ spring:
 
 my-load-balanced-service:
   ribbon:
-    listOfServers: http://localhost:14086, http://127.0.0.1:14087
+    # listOfServers: http://localhost:14086, http://127.0.0.1:14087
     NFLoadBalancerRuleClassName: com.wl4g.devops.gateway.server.loadbalance.CustomLoadBalancerRule
 
 eureka:
@@ -97,4 +97,5 @@ eureka:
     registerWithEureka: false
     fetchRegistry: false
 
-# spring.cloud.loadbalancer.ribbon.enabled: false
+gateway:
+  refresh-time-ms: 30000

@@ -67,3 +67,17 @@ redis:
   max-attempts: 10
   # Redis's cluster nodes.
   nodes: ${DEVOPS_REDIS_NODES:n1.redis-cluster.wl4g.com:6379,n1.redis-cluster.wl4g.com:6380,n1.redis-cluster.wl4g.com:6381,n2.redis-cluster.wl4g.com:6379,n2.redis-cluster.wl4g.com:6380,n2.redis-cluster.wl4g.com:6381}
+
+
+my-load-balanced-service:
+  ribbon:
+    listOfServers: http://localhost:14086, http://127.0.0.1:14087
+    NFLoadBalancerRuleClassName: com.wl4g.devops.gateway.server.loadbalance.CustomLoadBalancerRule
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+
+gateway:
+  refresh-time-ms: 30000
