@@ -97,7 +97,7 @@ public class RefreshableConfigurationCoordinator extends GenericTaskRunner<Runne
 	 * @throws IllegalStateException
 	 */
 	private void createRefreshScheduling() throws IllegalStateException {
-		if (nonNull(future) || !future.isDone()) {
+		if (nonNull(future) && !future.isDone()) {
 			throw new IllegalStateException(format("No done last schdule task future for %s", future));
 		}
 
