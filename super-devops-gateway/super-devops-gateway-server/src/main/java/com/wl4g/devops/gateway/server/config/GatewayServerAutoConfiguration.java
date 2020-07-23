@@ -13,22 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.gataway.server.route;
+package com.wl4g.devops.gateway.server.config;
 
-import reactor.core.publisher.Mono;
+
+import com.wl4g.devops.gateway.server.redis.RedisRouteDefinitionRepository;
+import com.wl4g.devops.gateway.server.route.RouteAlterHandler;
+import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * {@link IRouteAlterPublisher}
- *
+ * JEDIS properties configuration.
+ * 
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-07-21
+ * @version v1.0 2018年9月16日
  * @since
  */
-public interface IRouteAlterPublisher {
+@Configuration
+public class GatewayServerAutoConfiguration {
 
-	/**
-	 * 发送《刷新》路由的通知消息
-	 */
-	Mono<Void> notifyAllRefresh(NotifyType notifyType);
+
+	@Bean
+	public RouteAlterHandler routeAlterHandler() {
+		return new RouteAlterHandler();
+	}
+
+	@Bean
+	public RouteDefinitionRepository redisRouteDefinitionRepository() {
+		return new RedisRouteDefinitionRepository();
+	}
+
+
 
 }

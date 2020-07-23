@@ -1,4 +1,4 @@
-package com.wl4g.devops.gataway.server.route;
+package com.wl4g.devops.gateway.server.route;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -23,6 +23,10 @@ public class PeriodicityRefresh {
 	// @Scheduled(fixedRate = 5000, initialDelay = 10000)
 	public void reportCurrentTime() {
 		applicationContext.getBean(IRouteCacheRefresh.class).flushRoutesPermanentToMemery();
+
+
+
+		
 	}
 
 }
