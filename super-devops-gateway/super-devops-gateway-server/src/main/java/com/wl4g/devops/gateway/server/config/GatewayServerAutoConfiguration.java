@@ -16,15 +16,18 @@
 package com.wl4g.devops.gateway.server.config;
 
 
+import com.wl4g.devops.components.tools.common.task.RunnerProperties;
+import com.wl4g.devops.gateway.server.console.GatewayConsole;
 import com.wl4g.devops.gateway.server.redis.RedisRouteDefinitionRepository;
 import com.wl4g.devops.gateway.server.route.RouteAlterHandler;
+import com.wl4g.devops.gateway.server.task.ApplicationTaskRunner;
 import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * JEDIS properties configuration.
- * 
+ *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018年9月16日
  * @since
@@ -33,15 +36,27 @@ import org.springframework.context.annotation.Configuration;
 public class GatewayServerAutoConfiguration {
 
 
-	@Bean
-	public RouteAlterHandler routeAlterHandler() {
-		return new RouteAlterHandler();
-	}
+    @Bean
+    public RouteAlterHandler routeAlterHandler() {
+        return new RouteAlterHandler();
+    }
 
-	@Bean
-	public RouteDefinitionRepository redisRouteDefinitionRepository() {
-		return new RedisRouteDefinitionRepository();
-	}
+    @Bean
+    public RouteDefinitionRepository redisRouteDefinitionRepository() {
+        return new RedisRouteDefinitionRepository();
+    }
+
+    @Bean
+    public ApplicationTaskRunner applicationTaskRunner() {
+        return new ApplicationTaskRunner(new RunnerProperties().withConcurrency(1));
+    }
+
+
+    @Bean
+    public GatewayConsole gatewayConsole() {
+        return new GatewayConsole();
+    }
+
 
 
 
