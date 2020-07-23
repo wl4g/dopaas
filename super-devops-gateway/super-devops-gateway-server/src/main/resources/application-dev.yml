@@ -98,4 +98,4 @@ eureka:
     fetchRegistry: false
 
 gateway:
-  refresh-time-ms: 30000
+  refresh-delay-ms: 30000

@@ -37,12 +37,11 @@ public class CustomLoadBalancerRule extends AbstractLoadBalancerRule {
                 Object hosts = ((Map) key).get("hosts");
                 if (hosts instanceof List) {
                     List list = (List) hosts;
-
                     List<HostWeight> hostWeights = JacksonUtils.parseJSON(JacksonUtils.toJSONString(list), new TypeReference<List<HostWeight>>() {
                     });
                     HostWeight hostWeight = weightChoose(hostWeights);
                     if (Objects.nonNull(hostWeight)) {
-                        return new Server(weightChoose(list).getUri());
+                        return new Server(hostWeight.getUri());
                     }
                 }
             }catch (Exception e){
