@@ -13,27 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer.kafka;
+package com.wl4g.devops.erm.initializer.installer.maven;
 
 import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
-import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
 
 /**
- * {@link KafkaClusterV0xSoftInstaller}
+ * {@link MavenV3xSoftInstaller}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-23
  * @since
  */
-public class KafkaClusterV0xSoftInstaller extends AbstractSoftInstaller {
-
-	/**
-	 * {@link KafkaClusterV0xConfiguration}
-	 * 
-	 * @since
-	 */
-	public static class KafkaClusterV0xConfiguration extends InstallerConfiguration {
-
-	}
+public abstract class MavenV3xSoftInstaller extends AbstractSoftInstaller {
 
 }

@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer;
+package com.wl4g.devops.erm.initializer.installer.hbase;
+
+import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
 
 /**
- * {@link Installer}
+ * {@link ApacheHbaseV2xSoftInstaller}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-23
  * @since
  */
-public interface Installer extends Runnable {
+public class ApacheHbaseV2xSoftInstaller extends ApacheHbaseV1xSoftInstaller {
 
-	@Override
-	default void run() {
-		throw new UnsupportedOperationException("The not implemented by the installer, please try another installer");
+	/**
+	 * {@link HbaseV2xConfiguration}
+	 * 
+	 * @since
+	 */
+	public static class HbaseV2xConfiguration extends InstallerConfiguration {
+
 	}
 
 }
