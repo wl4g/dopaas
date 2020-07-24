@@ -122,7 +122,8 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 		// Reponed handshake result.
 		HandshakeResult handshake = new HandshakeResult(V2_0_0.getVersion());
 		// Current supports crypt algorithms.
-		handshake.setAlgorithms(cryptAdapter.getRunningKinds().stream().map(k -> encodeBase58(k.getAlgorithm())).collect(toList()));
+		handshake.setAlgorithms(
+				cryptAdapter.getRunningKinds().stream().map(k -> encodeBase58(k.getAlgorithm())).collect(toList()));
 		// Assgin sessionKeyId
 		handshake.getSession().setSessionKey(config.getParam().getSid());
 		handshake.getSession().setSessionValue(getSession(true).getId());
@@ -258,10 +259,10 @@ public class LoginAuthenticatorEndpoint extends AbstractAuthenticatorEndpoint {
 		// Gets apply locale.
 		Locale locale = request.getLocale();
 		if (isNotBlank(lang)) {
-			locale = new Locale(lang);
+			lang = locale.getLanguage();
 		}
-		bind(KEY_LANG_NAME, locale);
-		resp.forMap().put(KEY_LANG_NAME, locale);
+		bind(KEY_LANG_NAME, lang);
+		resp.forMap().put(KEY_LANG_NAME, lang);
 		return resp;
 	}
 

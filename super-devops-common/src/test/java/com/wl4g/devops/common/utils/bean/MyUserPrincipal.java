@@ -15,15 +15,8 @@
  */
 package com.wl4g.devops.common.utils.bean;
 
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_ACCESSTOKEN_SIGN_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_AUTHC_HOST_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_DATA_CIPHER_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_LANG_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_PARENT_SESSIONID_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_REMEMBERME_NAME;
-import static com.wl4g.devops.common.constants.IAMDevOpsConstants.KEY_SNS_AUTHORIZED_INFO;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
+import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
 import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.Boolean.FALSE;
@@ -46,10 +39,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import javax.validation.constraints.NotBlank;
-
-import org.springframework.util.Assert;
-
-import com.wl4g.devops.common.bean.iam.SocialAuthorizeInfo;
 
 /**
  * Simple IAM principal account information.
@@ -284,7 +273,7 @@ public class MyUserPrincipal implements Serializable {
 		 * @return
 		 */
 		public String getSessionLang() {
-			return get(KEY_LANG_NAME);
+			return get("KEY_LANG_NAME");
 		}
 
 		/**
@@ -294,7 +283,7 @@ public class MyUserPrincipal implements Serializable {
 		 */
 		public Attributes setSessionLang(String lang) {
 			if (!isBlank(lang)) {
-				put(KEY_LANG_NAME, lang);
+				put("KEY_LANG_NAME", lang);
 			}
 			return this;
 		}
@@ -305,7 +294,7 @@ public class MyUserPrincipal implements Serializable {
 		 * @return
 		 */
 		public String getClientHost() {
-			return get(KEY_AUTHC_HOST_NAME);
+			return get("KEY_AUTHC_HOST_NAME");
 		}
 
 		/**
@@ -315,7 +304,7 @@ public class MyUserPrincipal implements Serializable {
 		 */
 		public Attributes setClientHost(String clientHost) {
 			if (!isBlank(clientHost)) {
-				put(KEY_AUTHC_HOST_NAME, clientHost);
+				put("KEY_AUTHC_HOST_NAME", clientHost);
 			}
 			return this;
 		}
@@ -326,7 +315,7 @@ public class MyUserPrincipal implements Serializable {
 		 * @return
 		 */
 		public String getParentSessionId() {
-			return get(KEY_PARENT_SESSIONID_NAME);
+			return get("KEY_PARENT_SESSIONID_NAME");
 		}
 
 		/**
@@ -336,7 +325,7 @@ public class MyUserPrincipal implements Serializable {
 		 */
 		public Attributes setParentSessionId(String parentSessionId) {
 			if (!isBlank(parentSessionId)) {
-				put(KEY_PARENT_SESSIONID_NAME, parentSessionId);
+				put("KEY_PARENT_SESSIONID_NAME", parentSessionId);
 			}
 			return this;
 		}
@@ -347,7 +336,7 @@ public class MyUserPrincipal implements Serializable {
 		 * @return
 		 */
 		public String getDataCipher() {
-			return get(KEY_DATA_CIPHER_NAME);
+			return get("KEY_DATA_CIPHER_NAME");
 		}
 
 		/**
@@ -357,7 +346,7 @@ public class MyUserPrincipal implements Serializable {
 		 */
 		public Attributes setDataCipher(String dataCipher) {
 			if (!isBlank(dataCipher)) {
-				put(KEY_DATA_CIPHER_NAME, dataCipher);
+				put("KEY_DATA_CIPHER_NAME", dataCipher);
 			}
 			return this;
 		}
@@ -368,7 +357,7 @@ public class MyUserPrincipal implements Serializable {
 		 * @return
 		 */
 		public String getAccessTokenSign() {
-			return get(KEY_ACCESSTOKEN_SIGN_NAME);
+			return get("KEY_ACCESSTOKEN_SIGN_NAME");
 		}
 
 		/**
@@ -378,7 +367,7 @@ public class MyUserPrincipal implements Serializable {
 		 */
 		public Attributes setAccessTokenSign(String accessTokenSign) {
 			if (!isBlank(accessTokenSign)) {
-				put(KEY_ACCESSTOKEN_SIGN_NAME, accessTokenSign);
+				put("KEY_ACCESSTOKEN_SIGN_NAME", accessTokenSign);
 			}
 			return this;
 		}
@@ -389,7 +378,7 @@ public class MyUserPrincipal implements Serializable {
 		 * @return
 		 */
 		public boolean getRememberMe() {
-			return parseBoolean(valueOf(getOrDefault(KEY_REMEMBERME_NAME, FALSE.toString())));
+			return parseBoolean(valueOf(getOrDefault("KEY_REMEMBERME_NAME", FALSE.toString())));
 		}
 
 		/**
@@ -399,7 +388,7 @@ public class MyUserPrincipal implements Serializable {
 		 */
 		public Attributes setRememberMe(String rememberMe) {
 			if (!isBlank(rememberMe)) {
-				put(KEY_REMEMBERME_NAME, rememberMe);
+				put("KEY_REMEMBERME_NAME", rememberMe);
 			}
 			return this;
 		}
@@ -410,7 +399,7 @@ public class MyUserPrincipal implements Serializable {
 		 * @return
 		 */
 		public SocialAuthorizeInfo getSocialAuthorizeInfo() {
-			String snsAuthzInfoJson = get(KEY_SNS_AUTHORIZED_INFO);
+			String snsAuthzInfoJson = get("KEY_SNS_AUTHORIZED_INFO");
 			return parseJSON(snsAuthzInfoJson, SocialAuthorizeInfo.class);
 		}
 
@@ -421,7 +410,7 @@ public class MyUserPrincipal implements Serializable {
 		 */
 		public Attributes setSocialAuthorizeInfo(SocialAuthorizeInfo info) {
 			if (!isNull(info)) {
-				put(KEY_SNS_AUTHORIZED_INFO, toJSONString(info));
+				put("KEY_SNS_AUTHORIZED_INFO", toJSONString(info));
 			}
 			return this;
 		}
@@ -687,7 +676,7 @@ public class MyUserPrincipal implements Serializable {
 		final private String principal;
 
 		public BaseParameter(String principal) {
-			Assert.hasText(principal, "'principal' must not be empty");
+			hasText(principal, "'principal' must not be empty");
 			this.principal = principal;
 		}
 
@@ -766,8 +755,8 @@ public class MyUserPrincipal implements Serializable {
 		 *            Facebook public platforms
 		 */
 		public SnsAuthorizingParameter(String provider, String openId, String unionId) {
-			Assert.notNull(provider, "'provider' must not be null");
-			Assert.notNull(openId, "'openId' must not be null");
+			notNull(provider, "'provider' must not be null");
+			notNull(openId, "'openId' must not be null");
 			this.provider = provider;
 			this.openId = openId;
 			this.unionId = unionId;
