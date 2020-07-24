@@ -70,7 +70,7 @@ spring:
             host: smtp.163.com
             port: 465
             username: babaa1f4@163.com
-            password: XBurnerAir00
+            password: UDKTGOHTZOBOTHVL
             protocol: smtp
           sms:
             aliyun:
