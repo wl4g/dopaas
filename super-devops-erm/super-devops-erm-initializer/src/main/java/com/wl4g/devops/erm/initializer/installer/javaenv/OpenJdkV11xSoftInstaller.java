@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer.hbase;
+package com.wl4g.devops.erm.initializer.installer.javaenv;
 
-import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
+import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
 
 /**
- * {@link HbaseV2xSoftInstaller}
+ * {@link OpenJdkV11xSoftInstaller}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-23
  * @since
  */
-public class HbaseV2xSoftInstaller extends HbaseV1xSoftInstaller {
-
-	/**
-	 * {@link HbaseV2xConfiguration}
-	 * 
-	 * @since
-	 */
-	public static class HbaseV2xConfiguration extends InstallerConfiguration {
-
-	}
+public abstract class OpenJdkV11xSoftInstaller extends AbstractSoftInstaller {
 
 }

@@ -13,20 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer;
+package com.wl4g.devops.erm.initializer.installer.k8s;
+
+import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
 
 /**
- * {@link Installer}
+ * {@link DockerCEK8sClusterV1xSoftInstaller}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-23
  * @since
  */
-public interface Installer extends Runnable {
+public class DockerCEK8sClusterV1xSoftInstaller extends AbstractSoftInstaller {
 
-	@Override
-	default void run() {
-		throw new UnsupportedOperationException("The not implemented by the installer, please try another installer");
+	/**
+	 * {@link DockerCEK8sClusterV1xConfiguration}
+	 * 
+	 * @since
+	 */
+	public static class DockerCEK8sClusterV1xConfiguration extends InstallerConfiguration {
+
 	}
 
 }

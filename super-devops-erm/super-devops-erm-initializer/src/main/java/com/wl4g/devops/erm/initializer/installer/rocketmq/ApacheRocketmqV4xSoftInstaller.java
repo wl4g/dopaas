@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer.hbase;
+package com.wl4g.devops.erm.initializer.installer.rocketmq;
 
+import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
 import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
 
 /**
- * {@link HbaseClusterV2xSoftInstaller}
+ * {@link ApacheRocketmqV4xSoftInstaller}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-23
  * @since
  */
-public class HbaseClusterV2xSoftInstaller extends HbaseClusterV1xSoftInstaller {
+public class ApacheRocketmqV4xSoftInstaller extends AbstractSoftInstaller {
 
 	/**
-	 * {@link HbaseClusterV2xConfiguration}
+	 * {@link ApacheRocketmqV4xConfiguration}
 	 * 
 	 * @since
 	 */
-	public static class HbaseClusterV2xConfiguration extends InstallerConfiguration {
+	public static class ApacheRocketmqV4xConfiguration extends InstallerConfiguration {
 
 	}
 

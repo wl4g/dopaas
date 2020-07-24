@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer;
+package com.wl4g.devops.erm.initializer.installer.golangenv;
+
+import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
 
 /**
- * {@link Installer}
+ * {@link GolangV13xSoftInstaller}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-23
  * @since
  */
-public interface Installer extends Runnable {
-
-	@Override
-	default void run() {
-		throw new UnsupportedOperationException("The not implemented by the installer, please try another installer");
-	}
+public abstract class GolangV13xSoftInstaller extends AbstractSoftInstaller {
 
 }

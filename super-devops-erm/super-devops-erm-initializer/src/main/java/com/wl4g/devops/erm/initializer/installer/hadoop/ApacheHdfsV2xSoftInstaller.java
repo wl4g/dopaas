@@ -19,20 +19,20 @@ import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
 import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
 
 /**
- * {@link HdfsClusterV2xSoftInstaller}
+ * {@link ApacheHdfsV2xSoftInstaller}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-23
  * @since
  */
-public class HdfsClusterV2xSoftInstaller extends AbstractSoftInstaller {
+public class ApacheHdfsV2xSoftInstaller extends AbstractSoftInstaller {
 
 	/**
-	 * {@link HdfsClusterV2xConfiguration}
+	 * {@link HdfsV2xConfiguration}
 	 * 
 	 * @since
 	 */
-	public static class HdfsClusterV2xConfiguration extends InstallerConfiguration {
+	public static class HdfsV2xConfiguration extends InstallerConfiguration {
 
 	}
 

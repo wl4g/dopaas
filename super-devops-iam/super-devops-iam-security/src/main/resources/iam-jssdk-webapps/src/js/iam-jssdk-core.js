@@ -1225,6 +1225,7 @@
 
 	// Multi modular authenticating handler
 	var _multiModularAuthenticatingHandler = {
+		isRedirectingLogin: false, // 标记正在中定向到登录页（当iam-server会话失效），解决并发请求时会多次重复执行回调函数redirectFn
 		mutexControllerManager: new Map(),
 		// Do multi modular authenticating and biz request.
 		doMultiModularRequest: function (method, url, params, successFn, errorFn, completeFn) {
@@ -1238,9 +1239,13 @@
 		    if (_isRespUnauthenticated(res)) {
 		        // IamWithCasAppClient/IamWithCasAppServer
 		        if (res.data && res.data.serviceRole == 'IamWithCasAppServer') { // TGC过期?
-		        	_iamConsole.info("TGC expired, redirectTo: ", res.data[settings.definition.redirectUrlKey]);
+		        	_iamConsole.info("TGC expired, redirectTo: ",res.data[settings.definition.redirectUrlKey],
+		        			"isRedirectingLogin: ", handler.isRedirectingLogin);
 		            // e.g: window.location.href = '/#/login';
-		        	redirectFn(res);
+		        	if (redirectFn && !handler.isRedirectingLogin) {
+		        		handler.isRedirectingLogin = true; // 正在重定向
+		        		redirectFn(res);
+					}
 		            return true;
 		        }
 		    }
