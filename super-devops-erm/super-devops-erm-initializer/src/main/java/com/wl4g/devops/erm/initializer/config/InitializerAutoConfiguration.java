@@ -31,7 +31,7 @@ public class InitializerAutoConfiguration {
 
 	@Bean
 	@ConfigurationProperties(prefix = INITIALIZER_PREFIX)
-	public InitializerProperties dnsProperties() {
+	public InitializerProperties initializerProperties() {
 		return new InitializerProperties();
 	}
 
