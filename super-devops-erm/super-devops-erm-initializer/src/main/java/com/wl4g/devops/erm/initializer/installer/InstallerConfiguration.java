@@ -15,6 +15,10 @@
  */
 package com.wl4g.devops.erm.initializer.installer;
 
+import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+
+import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller.SoftVersion;
+
 /**
  * {@link InstallerConfiguration}
  *
@@ -22,6 +26,17 @@ package com.wl4g.devops.erm.initializer.installer;
  * @version v1.0 2020-07-23
  * @since
  */
-public abstract class InstallerConfiguration {
+public class InstallerConfiguration {
+
+	private final SoftVersion version;
+
+	public InstallerConfiguration(SoftVersion version) {
+		notNullOf(version, "version");
+		this.version = version;
+	}
+
+	public SoftVersion getVersion() {
+		return version;
+	}
 
 }

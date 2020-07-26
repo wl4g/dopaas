@@ -13,27 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.erm.initializer.installer.elasticsearch;
-
-import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
-import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
+package com.wl4g.devops.erm.initializer.installer;
 
 /**
- * {@link ElasticsearchV6xSoftInstaller}
+ * {@link RemovableSoftInstaller}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-07-23
  * @since
  */
-public class ElasticsearchV6xSoftInstaller extends RemovableSoftInstaller {
+public abstract class RemovableSoftInstaller<C extends InstallerConfiguration> extends AbstractSoftInstaller<C> {
+
+	public RemovableSoftInstaller(C config) {
+		super(config);
+	}
+
+	@Override
+	protected void preHandleInstallation() {
+
+	}
 
 	/**
-	 * {@link ElasticsearchV6xConfiguration}
+	 * Check that old programs are installed, as long as they are installed,
+	 * including any version.
 	 * 
-	 * @since
+	 * @return
 	 */
-	public static class ElasticsearchV6xConfiguration extends InstallerConfiguration {
-
+	protected boolean hasOlderInstalledPackage() {
+		return false;
 	}
 
 }
