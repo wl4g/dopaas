@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.erm.initializer.installer.javaenv;
 
-import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
+import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.javaenv.OpenJdkV11xSoftInstaller.OpenJdkV11xConfiguration;
 
 /**
  * {@link OpenJdkV8xSoftInstaller}
@@ -24,6 +26,19 @@ import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
  * @version v1.0 2020-07-23
  * @since
  */
-public abstract class OpenJdkV8xSoftInstaller extends AbstractSoftInstaller {
+public abstract class OpenJdkV8xSoftInstaller extends RemovableSoftInstaller<OpenJdkV8xConfiguration> {
+
+	/**
+	 * {@link OpenJdkV8xConfiguration}
+	 * 
+	 * @since
+	 */
+	public static class OpenJdkV8xConfiguration extends InstallerConfiguration {
+
+		public OpenJdkV8xConfiguration(SoftVersion version) {
+			super(version);
+		}
+
+	}
 
 }

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.initializer.installer.k8s;
 
-import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
 import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
 
 /**
@@ -25,7 +25,7 @@ import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
  * @version v1.0 2020-07-23
  * @since
  */
-public class DockerCEK8sClusterV1xSoftInstaller extends AbstractSoftInstaller {
+public class DockerCEK8sClusterV1xSoftInstaller extends RemovableSoftInstaller {
 
 	/**
 	 * {@link DockerCEK8sClusterV1xConfiguration}

@@ -68,6 +68,11 @@ public abstract class GenericTaskRunner<C extends RunnerProperties> implements C
 		this.configProperties = config;
 	}
 
+	@Override
+	public void run() {
+		// Ignore
+	}
+
 	/**
 	 * Note: It is recommended to use the {@link AtomicBoolean} mechanism to
 	 * avoid using synchronized. </br>
@@ -164,6 +169,15 @@ public abstract class GenericTaskRunner<C extends RunnerProperties> implements C
 	}
 
 	/**
+	 * Gets configuration properties.
+	 * 
+	 * @return
+	 */
+	protected C getConfig() {
+		return configProperties;
+	}
+
+	/**
 	 * Pre startup properties
 	 */
 	protected void preStartupProperties() throws Exception {
@@ -198,20 +212,6 @@ public abstract class GenericTaskRunner<C extends RunnerProperties> implements C
 	 */
 	protected boolean isActive() {
 		return nonNull(boss) && !boss.isInterrupted() && running.get();
-	}
-
-	/**
-	 * Get configuration properties.
-	 * 
-	 * @return
-	 */
-	protected C getConfig() {
-		return configProperties;
-	}
-
-	@Override
-	public void run() {
-		// Ignore
 	}
 
 	/**

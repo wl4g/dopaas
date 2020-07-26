@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.initializer.installer.consul;
 
-import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
 import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
 
 /**
@@ -25,7 +25,7 @@ import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
  * @version v1.0 2020-07-23
  * @since
  */
-public class ConsulClusterV1xSoftInstaller extends AbstractSoftInstaller {
+public class ConsulClusterV1xSoftInstaller extends RemovableSoftInstaller {
 
 	/**
 	 * {@link ZookeeperClusterV3xConfiguration}

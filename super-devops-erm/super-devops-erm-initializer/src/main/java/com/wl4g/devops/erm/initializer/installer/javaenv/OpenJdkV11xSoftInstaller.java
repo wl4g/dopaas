@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.erm.initializer.installer.javaenv;
 
-import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
+import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.golangenv.GolangV13xSoftInstaller.GolangV13xConfiguration;
 
 /**
  * {@link OpenJdkV11xSoftInstaller}
@@ -24,6 +26,15 @@ import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
  * @version v1.0 2020-07-23
  * @since
  */
-public abstract class OpenJdkV11xSoftInstaller extends AbstractSoftInstaller {
+public abstract class OpenJdkV11xSoftInstaller extends RemovableSoftInstaller {
+
+	/**
+	 * {@link OpenJdkV11xConfiguration}
+	 * 
+	 * @since
+	 */
+	public static class OpenJdkV11xConfiguration extends InstallerConfiguration {
+
+	}
 
 }

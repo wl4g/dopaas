@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.initializer.installer.kafka;
 
-import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
 import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
 import com.wl4g.devops.erm.initializer.installer.kafka.ApacheKafkaClusterV0xSoftInstaller.KafkaClusterV0xConfiguration;
 
@@ -26,7 +26,7 @@ import com.wl4g.devops.erm.initializer.installer.kafka.ApacheKafkaClusterV0xSoft
  * @version v1.0 2020-07-23
  * @since
  */
-public class ApacheKafkaV0xSoftInstaller extends AbstractSoftInstaller {
+public class ApacheKafkaV0xSoftInstaller extends RemovableSoftInstaller {
 
 	/**
 	 * {@link KafkaClusterV0xConfiguration}

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.initializer.installer.spark;
 
-import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
 import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
 
 /**
@@ -25,7 +25,7 @@ import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
  * @version v1.0 2020-07-23
  * @since
  */
-public class SparkV2xSoftInstaller extends AbstractSoftInstaller {
+public class SparkV2xSoftInstaller extends RemovableSoftInstaller {
 
 	/**
 	 * {@link SparkV2xConfiguration}

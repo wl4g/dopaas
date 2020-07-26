@@ -15,7 +15,9 @@
  */
 package com.wl4g.devops.erm.initializer.installer.golangenv;
 
-import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.InstallerConfiguration;
+import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.k8s.DockerCEK8sClusterV1xSoftInstaller.DockerCEK8sClusterV1xConfiguration;
 
 /**
  * {@link GolangV13xSoftInstaller}
@@ -24,6 +26,15 @@ import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
  * @version v1.0 2020-07-23
  * @since
  */
-public abstract class GolangV13xSoftInstaller extends AbstractSoftInstaller {
+public abstract class GolangV13xSoftInstaller extends RemovableSoftInstaller {
+
+	/**
+	 * {@link GolangV13xConfiguration}
+	 * 
+	 * @since
+	 */
+	public static class GolangV13xConfiguration extends InstallerConfiguration {
+
+	}
 
 }

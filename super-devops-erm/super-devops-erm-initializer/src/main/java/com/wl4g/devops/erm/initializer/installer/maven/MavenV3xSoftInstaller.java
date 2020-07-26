@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.initializer.installer.maven;
 
-import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
+import com.wl4g.devops.erm.initializer.installer.RemovableSoftInstaller;
 
 /**
  * {@link MavenV3xSoftInstaller}
@@ -24,6 +24,6 @@ import com.wl4g.devops.erm.initializer.installer.AbstractSoftInstaller;
  * @version v1.0 2020-07-23
  * @since
  */
-public abstract class MavenV3xSoftInstaller extends AbstractSoftInstaller {
+public abstract class MavenV3xSoftInstaller extends RemovableSoftInstaller {
 
 }
