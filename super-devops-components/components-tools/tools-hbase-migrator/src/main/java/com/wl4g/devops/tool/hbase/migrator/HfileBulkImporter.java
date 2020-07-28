@@ -61,7 +61,7 @@ public class HfileBulkImporter {
 
 		CommandLine line = new Builder().option("z", "zkaddr", null, "Zookeeper address.")
 				.option("t", "tabname", null, "Hbase table name.")
-				.option("p", "path", null, "Data hdfs path to be import. e.g. hdfs://localhost:9000/bak/safeclound.tb_air")
+				.option("p", "path", null, "Data hdfs path to be import. e.g. hdfs://localhost:9000/bak/mydb.tb_example1")
 				.build(args);
 
 		Configuration cfg = HBaseConfiguration.create();
