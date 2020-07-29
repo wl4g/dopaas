@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops;
+package com.wl4g.devops.gateway.service;
 
-import com.wl4g.devops.components.shell.annotation.EnableShellServer;
-import com.wl4g.devops.iam.client.annotation.EnableIamClient;
+import com.wl4g.devops.common.bean.gw.GWUpstream;
+import com.wl4g.devops.page.PageModel;
 
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.util.List;
 
-@EnableIamClient
-@EnableShellServer
-@MapperScan("com.wl4g.devops.dao.*")
-@SpringBootApplication
-public class GatewayManager {
+/**
+ * @author vjay
+ */
+public interface UpstreamService {
 
-	public static void main(String[] args) {
-		SpringApplication.run(GatewayManager.class, args);
-	}
+	PageModel page(PageModel pm, String name);
 
+	List<GWUpstream> getForSelect();
+
+	void save(GWUpstream upstream);
+
+	GWUpstream detail(Integer id);
+
+	void del(Integer id);
 }
