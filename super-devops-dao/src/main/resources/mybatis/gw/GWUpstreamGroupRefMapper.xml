@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dao.gw.GWUpstreamGroupRefDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.common.bean.gw.GWUpstreamGroupRef" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="upstream_id" property="upstreamId" jdbcType="INTEGER" />
+    <result column="upstream_group_id" property="upstreamGroupId" jdbcType="INTEGER" />
+    <result column="weight" property="weight" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, upstream_id, upstream_group_id, weight
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from gw_upstream_group_ref
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from gw_upstream_group_ref
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.common.bean.gw.GWUpstreamGroupRef" >
+    insert into gw_upstream_group_ref (id, upstream_id, upstream_group_id, 
+      weight)
+    values (#{id,jdbcType=INTEGER}, #{upstreamId,jdbcType=INTEGER}, #{upstreamGroupId,jdbcType=INTEGER}, 
+      #{weight,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.common.bean.gw.GWUpstreamGroupRef" >
+    insert into gw_upstream_group_ref
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="upstreamId != null" >
+        upstream_id,
+      </if>
+      <if test="upstreamGroupId != null" >
+        upstream_group_id,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="upstreamId != null" >
+        #{upstreamId,jdbcType=INTEGER},
+      </if>
+      <if test="upstreamGroupId != null" >
+        #{upstreamGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.common.bean.gw.GWUpstreamGroupRef" >
+    update gw_upstream_group_ref
+    <set >
+      <if test="upstreamId != null" >
+        upstream_id = #{upstreamId,jdbcType=INTEGER},
+      </if>
+      <if test="upstreamGroupId != null" >
+        upstream_group_id = #{upstreamGroupId,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.common.bean.gw.GWUpstreamGroupRef" >
+    update gw_upstream_group_ref
+    set upstream_id = #{upstreamId,jdbcType=INTEGER},
+      upstream_group_id = #{upstreamGroupId,jdbcType=INTEGER},
+      weight = #{weight,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

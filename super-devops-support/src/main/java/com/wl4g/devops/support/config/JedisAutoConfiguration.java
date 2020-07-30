@@ -62,7 +62,7 @@ public class JedisAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean(JedisProperties.class)
-	public CompositeJedisFactoryBean jedisClusterFactoryBean(JedisProperties properties) {
+	public CompositeJedisFactoryBean compositeJedisFactoryBean(JedisProperties properties) {
 		return new CompositeJedisFactoryBean(properties);
 	}
 
