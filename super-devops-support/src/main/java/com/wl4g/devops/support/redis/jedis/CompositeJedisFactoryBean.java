@@ -57,7 +57,7 @@ public class CompositeJedisFactoryBean implements FactoryBean<CompositeJedisOper
 	}
 
 	@Override
-	public Class<? extends CompositeJedisOperatorsAdapter> getObjectType() {
+	public Class<?> getObjectType() {
 		return (jedisAdapter != null ? jedisAdapter.getClass() : CompositeJedisOperatorsAdapter.class);
 	}
 
