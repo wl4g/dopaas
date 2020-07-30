@@ -32,7 +32,7 @@ public class JNAClassPathNativeLibraryLoaderTests {
 		out.println(OS_ARCH);
 
 		JNAClassPathNativeLibraryLoader loader = new JNAClassPathNativeLibraryLoader()
-				.loadLibrarys("com/wl4g/devops/tool/common/natives/library/**/*.*");
+				.loadLibrarys("com/wl4g/devops/components/tools/common/natives/library/**/*.*");
 		LibSample1 sample1 = loader.loadInstance(LibSample1.class);
 
 		System.out.println("Load instance: " + sample1);
