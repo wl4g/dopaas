@@ -167,7 +167,7 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 				Files.copy(in, tmpLibFile.toPath(), REPLACE_EXISTING);
 
 				// Load to JVM.
-				load(tmpLibFile.getAbsolutePath());
+				loadNativeLibrary(tmpLibFile);
 			} catch (IOException e) {
 				if (nonNull(tmpLibFile))
 					tmpLibFile.delete();
@@ -192,6 +192,15 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 		cleanupTmpNativeLibs();
 
 		return (T) this;
+	}
+
+	/**
+	 * Do load library
+	 * 
+	 * @param tmpLibFile
+	 */
+	protected void loadNativeLibrary(File tmpLibFile) {
+		load(tmpLibFile.getAbsolutePath());
 	}
 
 	/**

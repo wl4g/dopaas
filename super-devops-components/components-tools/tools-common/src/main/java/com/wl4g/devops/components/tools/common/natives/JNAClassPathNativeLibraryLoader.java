@@ -17,6 +17,7 @@ package com.wl4g.devops.components.tools.common.natives;
 
 import static java.util.Collections.emptyMap;
 
+import java.io.File;
 import java.util.Map;
 
 import com.sun.jna.Library;
@@ -50,6 +51,14 @@ public class JNAClassPathNativeLibraryLoader extends ClassPathNativeLibraryLoade
 	 */
 	public <T extends Library> T loadInstance(Class<T> interfaceClass, Map<String, ?> options) {
 		return Native.load(interfaceClass, options);
+	}
+
+	@Override
+	protected void loadNativeLibrary(File tmpLibFile) {
+		/**
+		 * Ignore</br>
+		 * Used to {@link #loadInstance}
+		 */
 	}
 
 }
