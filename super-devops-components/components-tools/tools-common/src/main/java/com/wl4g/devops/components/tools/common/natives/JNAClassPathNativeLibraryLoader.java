@@ -18,6 +18,7 @@ package com.wl4g.devops.components.tools.common.natives;
 import static java.util.Collections.emptyMap;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import com.sun.jna.Library;
@@ -35,24 +36,31 @@ public class JNAClassPathNativeLibraryLoader extends ClassPathNativeLibraryLoade
 	/**
 	 * Load gets JNA interfaceClass instance.
 	 * 
-	 * @param name
 	 * @param interfaceClass
 	 * @return
 	 */
-	public <T extends Library> T loadInstance(String name, Class<T> interfaceClass) {
-		return loadInstance(name, interfaceClass, emptyMap());
+	public <T extends Library> T loadInstance(Class<T> interfaceClass) {
+		return loadInstance(interfaceClass, emptyMap());
 	}
 
 	/**
 	 * Load gets JNA interfaceClass instance.
 	 * 
-	 * @param name
 	 * @param interfaceClass
 	 * @param options
 	 * @return
 	 */
-	public <T extends Library> T loadInstance(String name, Class<T> interfaceClass, Map<String, ?> options) {
-		return Native.load(name, interfaceClass, options);
+	public <T extends Library> T loadInstance(Class<T> interfaceClass, Map<String, ?> options) {
+		for (File f : getLibTmpFiles()) {
+			try {
+				return Native.load(f.getCanonicalPath(), interfaceClass, options);
+			} catch (UnsatisfiedLinkError e) {
+				// Ignore
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		throw new UnsatisfiedLinkError("No satisfactory link library was found!");
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.System.load;
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Locale.US;
 import static java.util.Objects.nonNull;
 import static java.nio.file.StandardCopyOption.*;
@@ -116,6 +117,15 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 	 */
 	public boolean isLoaded() {
 		return loadedState.get();
+	}
+
+	/**
+	 * Gets generated library tmp files.
+	 * 
+	 * @return
+	 */
+	public List<File> getLibTmpFiles() {
+		return unmodifiableList(loadLibFiles);
 	}
 
 	/**
