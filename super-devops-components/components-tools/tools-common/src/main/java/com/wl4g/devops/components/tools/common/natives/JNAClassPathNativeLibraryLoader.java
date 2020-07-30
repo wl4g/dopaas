@@ -35,22 +35,24 @@ public class JNAClassPathNativeLibraryLoader extends ClassPathNativeLibraryLoade
 	/**
 	 * Load gets JNA interfaceClass instance.
 	 * 
+	 * @param name
 	 * @param interfaceClass
 	 * @return
 	 */
-	public <T extends Library> T loadInstance(Class<T> interfaceClass) {
-		return loadInstance(interfaceClass, emptyMap());
+	public <T extends Library> T loadInstance(String name, Class<T> interfaceClass) {
+		return loadInstance(name, interfaceClass, emptyMap());
 	}
 
 	/**
 	 * Load gets JNA interfaceClass instance.
 	 * 
+	 * @param name
 	 * @param interfaceClass
 	 * @param options
 	 * @return
 	 */
-	public <T extends Library> T loadInstance(Class<T> interfaceClass, Map<String, ?> options) {
-		return Native.load(interfaceClass, options);
+	public <T extends Library> T loadInstance(String name, Class<T> interfaceClass, Map<String, ?> options) {
+		return Native.load(name, interfaceClass, options);
 	}
 
 	@Override
