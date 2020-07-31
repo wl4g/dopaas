@@ -160,13 +160,12 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 		// Matching native library by current os arch.
 		for (StreamResource r : rss) {
 			if (!r.exists() || r.isOpen() || !r.isReadable()) {
-				log.warn("Unable to load native class library file: {}", r.getURL().toString());
+				log.warn("Cannot to load native library: {}", r.getURL().toString());
 				continue;
 			}
 			if (!matchArchWithRequiresCandidate(r.getURL()) || !matchArchWithCurrentOS(r.getURL())) {
 				continue;
 			}
-			log.info("Load native class library of: {}", r.getURL().toString());
 
 			File tmpLibFile = null; // Native library temporary file.
 			try (InputStream in = r.getInputStream()) {
@@ -178,6 +177,8 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 
 				// Load to JVM.
 				loadNativeLibrary(tmpLibFile);
+				log.debug("Loaded native library: {}", r.getURL().toString());
+
 			} catch (IOException e) {
 				if (nonNull(tmpLibFile))
 					tmpLibFile.delete();
