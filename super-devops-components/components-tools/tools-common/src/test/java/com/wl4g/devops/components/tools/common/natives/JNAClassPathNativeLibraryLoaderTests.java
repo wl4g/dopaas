@@ -21,6 +21,14 @@ import static org.apache.commons.lang3.SystemUtils.OS_NAME;
 
 import com.wl4g.devops.components.tools.common.natives.JNAClassPathNativeLibraryLoader;
 
+/**
+ * {@link JNAClassPathNativeLibraryLoaderTests}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020-07-31
+ * @since
+ * @see https://www.cnblogs.com/gwd1154978352/p/6831927.html
+ */
 public class JNAClassPathNativeLibraryLoaderTests {
 
 	public static void main(String[] args) throws Exception {

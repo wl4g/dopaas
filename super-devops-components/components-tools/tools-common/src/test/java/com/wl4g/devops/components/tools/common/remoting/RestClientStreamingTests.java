@@ -39,6 +39,8 @@ import java.util.regex.Pattern;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.junit.Test;
+
 import com.wl4g.devops.components.tools.common.collection.multimap.LinkedMultiValueMap;
 import com.wl4g.devops.components.tools.common.collection.multimap.MultiValueMap;
 import com.wl4g.devops.components.tools.common.io.ByteStreamUtils;
@@ -135,12 +137,8 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  */
 public class RestClientStreamingTests {
 
-	public static void main(String[] args) throws Exception {
-		// downloadTest1();
-		uploadTest2();
-	}
-
-	public static void downloadTest1() throws Exception {
+	@Test
+	public void downloadTest1() throws Exception {
 		System.out.println("downloadTest1, startSampleFSServer...");
 		startSampleFSServer(new HttpServerCodec(), new HttpObjectAggregator(65535), new ChunkedWriteHandler(),
 				new HttpStaticFileServerHandler());
@@ -159,10 +157,10 @@ public class RestClientStreamingTests {
 		});
 
 		System.out.println("Success download file: " + downloadFile.getCanonicalPath());
-
 	}
 
-	public static void uploadTest2() throws Exception {
+	@Test
+	public void uploadTest2() throws Exception {
 		System.out.println("uploadTest2, startSampleFSServer...");
 		// Remove the following line if you don't want automatic content
 		// compression.
@@ -187,7 +185,7 @@ public class RestClientStreamingTests {
 	/**
 	 * Listen http FS for testing.
 	 */
-	public static void startSampleFSServer(ChannelHandler... handlers) {
+	private void startSampleFSServer(ChannelHandler... handlers) {
 		new Thread(() -> {
 			ServerBootstrap bootstrap = new ServerBootstrap();
 			EventLoopGroup masters = new NioEventLoopGroup();

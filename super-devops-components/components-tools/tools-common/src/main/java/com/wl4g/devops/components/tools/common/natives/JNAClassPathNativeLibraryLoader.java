@@ -30,6 +30,7 @@ import com.sun.jna.Native;
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020年6月22日
  * @since
+ * @see https://www.cnblogs.com/gwd1154978352/p/6831927.html
  */
 public class JNAClassPathNativeLibraryLoader extends ClassPathNativeLibraryLoader {
 
