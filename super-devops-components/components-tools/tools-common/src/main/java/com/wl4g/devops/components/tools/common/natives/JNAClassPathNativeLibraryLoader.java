@@ -63,12 +63,12 @@ public class JNAClassPathNativeLibraryLoader extends ClassPathNativeLibraryLoade
 		throw new UnsatisfiedLinkError("No satisfactory link library was found!");
 	}
 
+	/**
+	 * Ignore</br>
+	 * Used to {@link #loadInstance(Class)}, {@link #loadInstance(Class, Map)}
+	 */
 	@Override
 	protected void loadNativeLibrary(File tmpLibFile) {
-		/**
-		 * Ignore</br>
-		 * Used to {@link #loadInstance}
-		 */
 	}
 
 }
