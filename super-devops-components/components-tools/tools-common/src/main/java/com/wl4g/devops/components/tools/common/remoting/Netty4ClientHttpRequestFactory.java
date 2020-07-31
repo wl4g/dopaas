@@ -17,6 +17,7 @@ package com.wl4g.devops.components.tools.common.remoting;
 
 import static com.wl4g.devops.components.tools.common.lang.Assert2.*;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.lang.Runtime.getRuntime;
 
 import java.io.Closeable;
@@ -258,7 +259,7 @@ public class Netty4ClientHttpRequestFactory implements ClientHttpRequestFactory,
 			}
 			pipe.addLast(new HttpClientCodec());
 
-			if (requestHeaders.getContentType().isCompatibleWith(HttpMediaType.MULTIPART_FORM_DATA)) {
+			if (nonNull(requestHeaders) && requestHeaders.getContentType().isCompatibleWith(HttpMediaType.MULTIPART_FORM_DATA)) {
 				// Remove the following line if you don't want automatic
 				// content decompression.
 				pipe.addLast("inflater", new HttpContentDecompressor());

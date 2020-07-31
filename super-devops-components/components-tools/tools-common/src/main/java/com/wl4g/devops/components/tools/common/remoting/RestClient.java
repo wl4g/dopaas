@@ -1107,7 +1107,8 @@ public class RestClient {
 		notNull(method, "HttpMethod is required");
 		ClientHttpResponse response = null;
 		try {
-			ClientHttpRequest request = createRequest(url, method, requestProcessor.getRequestHeaders());
+			ClientHttpRequest request = createRequest(url, method,
+					Objects.nonNull(requestProcessor) ? requestProcessor.getRequestHeaders() : null);
 			if (Objects.nonNull(requestProcessor)) {
 				requestProcessor.doWithRequest(request);
 			}
