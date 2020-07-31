@@ -163,7 +163,7 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 				log.warn("Unable to load native class library file: {}", r.getURL().toString());
 				continue;
 			}
-			if (!matchArchWithCurrentOS(r.getURL())) {
+			if (!matchArchWithRequiresCandidate(r.getURL()) || !matchArchWithCurrentOS(r.getURL())) {
 				continue;
 			}
 			log.info("Load native class library of: {}", r.getURL().toString());
@@ -211,6 +211,21 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 	 */
 	protected void loadNativeLibrary(File tmpLibFile) {
 		load(tmpLibFile.getAbsolutePath());
+	}
+
+	/**
+	 * Match possible requires candidate suffixes for multiple platforms
+	 * 
+	 * @return
+	 */
+	protected boolean matchArchWithRequiresCandidate(URL path) {
+		String pathURL = path.toString().toLowerCase(US);
+		for (String suffix : SUPPORTED_PLATFORM) {
+			if (pathURL.endsWith(suffix)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -348,5 +363,10 @@ public class ClassPathNativeLibraryLoader extends PlatformInfo {
 			throw new IllegalStateException(e1);
 		}
 	};
+
+	/**
+	 * Match possible requires candidate suffixes for multiple platforms.
+	 */
+	final public static List<String> SUPPORTED_PLATFORM = asList(new String[] { ".so", ".dll", ".a", ".dylib" });
 
 }
