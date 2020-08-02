@@ -2,16 +2,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.wl4g</groupId>
-	<artifactId>super-devops</artifactId>
-	<version>master</version>
+	<artifactId>xcloud-devops</artifactId>
 	<packaging>pom</packaging>
-	<name>Super DevOps</name>
-	<url>https://super-devops.wl4g.com</url>
+	<name>XCloud DevSecOps</name>
+	<url>https://xcloud.wl4g.com</url>
 	<description>A DevSecOps solution that covers the entire software lifecycle and lightweight microservices.</description>
 	<organization>
 		<name>Wanglsir</name>
-		<url>https://blog.wl4g.com/super-devops</url>
+		<url>http://xcloud.wl4g.com</url>
 	</organization>
 	<licenses>
 		<license>
@@ -21,14 +19,14 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:git@github.com:wl4g/super-devops.git</connection>
-		<developerConnection>scm:git:git@github.com:wl4g/super-devops.git</developerConnection>
-		<url>https://github.com/wl4g/super-devops</url>
+		<connection>scm:git:git@github.com:wl4g/xcloud-devops.git</connection>
+		<developerConnection>scm:git:git@github.com:wl4g/xcloud-devops.git</developerConnection>
+		<url>https://github.com/wl4g/xcloud-devops</url>
 		<tag>HEAD</tag>
 	</scm>
 	<issueManagement>
 		<system>github</system>
-		<url>https://github.com/wl4g/super-devops/issues</url>
+		<url>https://github.com/wl4g/xcloud/issues</url>
 	</issueManagement>
 	<developers>
 		<developer>
@@ -53,27 +51,19 @@
 			<timezone>+8</timezone>
 		</developer>
 	</developers>
+	<parent>
+		<groupId>com.wl4g</groupId>
+		<artifactId>xcloud-parent</artifactId>
+		<version>master</version>
+	</parent>
 	<modules>
-		<module>super-devops-bom</module>
-		<module>super-devops-components</module>
-		<module>super-devops-common</module>
-		<module>super-devops-support</module>
-		<module>super-devops-dguid</module>
-		<module>super-devops-erm</module>
-		<module>super-devops-dao</module>
-		<module>super-devops-scm</module>
-		<module>super-devops-ci</module>
-		<module>super-devops-iam</module>
-		<module>super-devops-umc</module>
-		<module>super-devops-djob</module>
-		<module>super-devops-doc</module>
-		<module>super-devops-coss</module>
-		<module>super-devops-gateway</module>
-		<!--<module>super-devops-rcm</module>-->
-		<module>super-devops-vcs</module>
-		<module>super-devops-dts</module>
-		<!-- <module>super-devops-esm</module> -->
-		<!-- <module>super-devops-im</module> -->
+		<module>xcloud-devops-erm</module>
+		<module>xcloud-devops-scm</module>
+		<module>xcloud-devops-ci</module>
+		<module>xcloud-devops-umc</module>
+		<module>xcloud-devops-doc</module>
+		<module>xcloud-devops-vcs</module>
+		<module>xcloud-devops-dts</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -123,74 +113,6 @@
 		</repository>
 	</distributionManagement>
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>${maven-compiler-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>${maven-source-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>${maven-jar-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-shade-plugin</artifactId>
-					<version>${maven-shade-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-dependency-plugin</artifactId>
-					<version>${maven-dependency-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-assembly-plugin</artifactId>
-					<version>${maven-assembly-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-release-plugin</artifactId>
-					<version>${maven-release-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>com.github.wvengen</groupId>
-					<artifactId>proguard-maven-plugin</artifactId>
-					<version>${proguard-maven-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>${maven-surefire-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>com.spotify</groupId>
-					<artifactId>dockerfile-maven-plugin</artifactId>
-					<version>${dockerfile-maven-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.mybatis.generator</groupId>
-					<artifactId>mybatis-generator-maven-plugin</artifactId>
-					<version>${mybatis-generator-maven-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.sonatype.plugins</groupId>
-					<artifactId>nexus-staging-maven-plugin</artifactId>
-					<version>${nexus-staging-maven-plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>com.samaxes.maven</groupId>
-					<artifactId>minify-maven-plugin</artifactId>
-					<version>${minify-maven-plugin.version}</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

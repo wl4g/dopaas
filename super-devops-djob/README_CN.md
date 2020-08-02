@@ -1,1 +1,0 @@
-### Djob(Distributed Job) 是一个基于SpringCloud分布式调度平台，默认是基于ElasticJob增强的调度平台，完全兼容原生ElasticJob。
