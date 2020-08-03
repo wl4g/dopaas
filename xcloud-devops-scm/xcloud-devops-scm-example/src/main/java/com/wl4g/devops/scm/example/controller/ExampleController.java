@@ -55,7 +55,7 @@ public class ExampleController implements ApplicationRunner {
 		thread = new Thread(() -> {
 			while (true) {
 				System.out.println("ExampleService " + thread.getName() + ", firstName=" + exampleService.getFirstName()
-						+ ", lastName=" + exampleService.getLastName() + " " + exampleService);
+						+ ", lastName=" + exampleService.getLastName().getLastName() + " " + exampleService);
 				try {
 					Thread.sleep(2000L);
 				} catch (InterruptedException e) {
