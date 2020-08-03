@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-umc-watch</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevSecOps UMC Watch</name>
+	<name>XCloud DevSecOps UMC Watch</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>

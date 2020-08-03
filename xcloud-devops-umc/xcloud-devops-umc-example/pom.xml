@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-umc-example</artifactId>
 	<packaging>jar</packaging>
-	<name>Super DevSecOps UMC Example</name>
+	<name>XCloud DevSecOps UMC Example</name>
 	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
