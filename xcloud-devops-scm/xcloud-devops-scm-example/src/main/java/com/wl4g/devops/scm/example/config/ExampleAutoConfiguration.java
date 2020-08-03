@@ -24,12 +24,20 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ExampleAutoConfiguration {
 
-	@Bean
-	@RefreshScope
-	@ConfigurationProperties(prefix = "example")
-	public ExampleService exampleService() {
-		System.out.println("@Bean create exampleService");
-		return new ExampleService();
-	}
+    @Bean
+    @RefreshScope
+    public ExampleService exampleService() {
+        System.out.println("@Bean create exampleService");
+        return new ExampleService();
+    }
+
+
+    @Bean
+    @RefreshScope
+    @ConfigurationProperties(prefix = "example")
+    public ExampleService.LastNameBean lastNameBean() {
+        System.out.println("@Bean create exampleService");
+        return new ExampleService.LastNameBean();
+    }
 
 }
