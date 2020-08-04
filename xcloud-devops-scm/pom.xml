@@ -15,7 +15,10 @@
 		<module>xcloud-devops-scm-common</module>
 		<module>xcloud-devops-scm-config</module>
 		<module>xcloud-devops-scm-core</module>
-		<module>xcloud-devops-scm-client</module>
+		<module>xcloud-devops-scm-client-java</module>
+        <module>xcloud-devops-scm-client-springboot</module>
+        <!-- <module>xcloud-devops-scm-client-go</module> -->
+        <!-- <module>xcloud-devops-scm-client-c</module> -->
 		<module>xcloud-devops-scm-example</module>
 		<module>xcloud-devops-scm-server</module>
 	</modules>
