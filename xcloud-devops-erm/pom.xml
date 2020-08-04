@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-erm</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud DevSevOps Environment Resources Management</name>
+	<name>XCloud DevSevOps ERM(Environment Resources Management)</name>
 	<parent>
 		<groupId>com.wl4g</groupId>
 		<artifactId>xcloud-devops</artifactId>
