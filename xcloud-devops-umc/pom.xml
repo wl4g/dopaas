@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-umc</artifactId>
 	<packaging>pom</packaging>
-	<name>XCloud Unified Monitoring Center</name>
+	<name>XCloud DevSecOps UMC(Unified Monitoring Center)</name>
 	<description>A Open Source unified monitoring center based on SpringBoot Cloud that supports real-time link tracking, real-time resource monitoring, and alarms.</description>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
