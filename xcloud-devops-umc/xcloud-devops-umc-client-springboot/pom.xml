@@ -2,9 +2,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xcloud.wl4g.com/POM/4.0.0 http://xcloud.wl4g.com/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>xcloud-devops-umc-client</artifactId>
+	<artifactId>xcloud-devops-umc-client-springboot</artifactId>
 	<packaging>jar</packaging>
-	<name>XCloud DevSecOps UMC Client</name>
+	<name>XCloud DevSecOps UMC Client for Springboot</name>
 	<url>http://xcloud.wl4g.com</url>
 	<parent>
 		<groupId>com.wl4g</groupId>
