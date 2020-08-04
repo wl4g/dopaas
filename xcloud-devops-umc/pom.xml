@@ -13,7 +13,8 @@
 	</parent>
 	<modules>
 		<module>xcloud-devops-umc-manager</module>
-		<module>xcloud-devops-umc-client</module>
+		<module>xcloud-devops-umc-client-springboot</module>
+        <!-- <module>xcloud-devops-umc-client-java</module> -->
 		<module>xcloud-devops-umc-example</module>
 		<module>xcloud-devops-umc-receiver</module>
 		<module>xcloud-devops-umc-core</module>
