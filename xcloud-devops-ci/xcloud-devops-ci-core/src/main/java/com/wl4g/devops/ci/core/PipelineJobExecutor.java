@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.ci.core;
 
+import com.wl4g.components.common.task.RunnerProperties;
+import com.wl4g.components.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.components.tools.common.task.RunnerProperties;
-import com.wl4g.devops.support.task.ApplicationTaskRunner;
 
 /**
  * Pipeline job executor runner.

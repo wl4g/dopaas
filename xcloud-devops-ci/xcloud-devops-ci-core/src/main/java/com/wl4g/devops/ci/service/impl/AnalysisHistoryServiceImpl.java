@@ -16,14 +16,15 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.wl4g.devops.ci.service.AnalysisHistoryService;
+
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.wl4g.devops.dao.ci.AnalysisHistoryDao;
 import com.wl4g.devops.page.PageModel;
-
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 /**
  * @author vjay

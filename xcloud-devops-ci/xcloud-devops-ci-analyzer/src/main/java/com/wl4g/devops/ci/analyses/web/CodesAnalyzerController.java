@@ -24,13 +24,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.ci.analyses.coordinate.CompositeAnalysisCoordinatorAdapter;
 import com.wl4g.devops.ci.analyses.coordinate.AnalysisCoordinator.AnalyzerKind;
 import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysisResultModel;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
 
 import static com.wl4g.devops.ci.analyses.coordinate.AnalysisCoordinator.AnalyzerKind.*;
 

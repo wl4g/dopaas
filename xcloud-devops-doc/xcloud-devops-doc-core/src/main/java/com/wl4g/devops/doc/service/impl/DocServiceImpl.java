@@ -16,25 +16,25 @@
 package com.wl4g.devops.doc.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.doc.FileChanges;
-import com.wl4g.devops.common.bean.doc.FileLabel;
-import com.wl4g.devops.common.bean.doc.Share;
-import com.wl4g.devops.components.tools.common.io.FileIOUtils;
-import com.wl4g.devops.components.tools.common.lang.Assert2;
-import com.wl4g.devops.components.tools.common.lang.DateUtils2;
-import com.wl4g.devops.components.tools.common.lang.TypeConverts;
+import com.wl4g.components.common.io.FileIOUtils;
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.common.lang.DateUtils2;
+import com.wl4g.components.common.lang.TypeConverts;
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.doc.FileChanges;
+import com.wl4g.components.core.bean.doc.FileLabel;
+import com.wl4g.components.core.bean.doc.Share;
+import com.wl4g.components.support.cli.DestroableProcessManager;
+import com.wl4g.components.support.cli.command.DestroableCommand;
+import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.dao.doc.FileChangesDao;
 import com.wl4g.devops.dao.doc.FileLabelDao;
 import com.wl4g.devops.dao.doc.LabelDao;
 import com.wl4g.devops.dao.doc.ShareDao;
 import com.wl4g.devops.doc.config.DocProperties;
 import com.wl4g.devops.doc.service.DocService;
-import com.wl4g.devops.iam.common.subject.IamPrincipalInfo;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.support.cli.DestroableProcessManager;
-import com.wl4g.devops.support.cli.command.DestroableCommand;
-import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
+import com.wl4g.iam.common.subject.IamPrincipalInfo;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +48,8 @@ import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.*;
 
-import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.iam.common.utils.IamSecurityHolder.getPrincipalInfo;
 
 /**
  * @author vjay

@@ -18,8 +18,9 @@ package com.wl4g.devops.vcs.operator;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.common.bean.ci.Vcs.VcsAuthType;
+import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.components.core.bean.ci.Vcs.VcsAuthType;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.lib.ObjectId;
@@ -35,7 +36,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.wl4g.devops.components.tools.common.codec.Encodes.toBytes;
+import static com.wl4g.components.common.codec.Encodes.toBytes;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 

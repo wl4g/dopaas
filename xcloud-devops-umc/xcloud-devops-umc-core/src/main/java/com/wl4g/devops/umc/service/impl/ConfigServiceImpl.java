@@ -16,10 +16,10 @@
 package com.wl4g.devops.umc.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.erm.AppInstance;
+import com.wl4g.components.core.bean.umc.AlarmConfig;
+import com.wl4g.components.core.bean.umc.AlarmTemplate;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.umc.AlarmConfigDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;

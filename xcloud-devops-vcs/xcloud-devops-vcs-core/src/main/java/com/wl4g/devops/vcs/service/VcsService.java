@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.vcs.service;
 
-import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.model.*;
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.service;
 
-import com.wl4g.devops.common.bean.umc.CustomHistory;
+import com.wl4g.components.core.bean.umc.CustomHistory;
 import com.wl4g.devops.page.PageModel;
 
 /**

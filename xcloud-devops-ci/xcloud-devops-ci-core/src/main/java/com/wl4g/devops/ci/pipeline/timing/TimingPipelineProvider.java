@@ -15,6 +15,11 @@
  */
 package com.wl4g.devops.ci.pipeline.timing;
 
+import com.wl4g.components.core.bean.ci.Project;
+import com.wl4g.components.core.bean.ci.Task;
+import com.wl4g.components.core.bean.ci.TaskInstance;
+import com.wl4g.components.core.bean.ci.Trigger;
+import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
@@ -23,11 +28,6 @@ import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
 import com.wl4g.devops.ci.service.TriggerService;
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskInstance;
-import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.bean.erm.AppInstance;
 import com.wl4g.devops.dao.ci.TriggerDao;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
+import static com.wl4g.components.common.lang.Assert2.hasText;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 /**

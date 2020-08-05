@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.vcs.controller;
 
-import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.components.core.bean.ci.Vcs;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;

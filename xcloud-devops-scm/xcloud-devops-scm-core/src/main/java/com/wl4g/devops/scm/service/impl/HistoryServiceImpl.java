@@ -16,13 +16,13 @@
 package com.wl4g.devops.scm.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.scm.*;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
-import com.wl4g.devops.common.bean.scm.model.PreRelease;
-import com.wl4g.devops.common.bean.erm.AppCluster;
-import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.iam.Dict;
+import com.wl4g.components.core.bean.erm.AppCluster;
+import com.wl4g.components.core.bean.erm.AppInstance;
+import com.wl4g.components.core.bean.iam.Dict;
+import com.wl4g.components.core.bean.scm.*;
+import com.wl4g.components.core.bean.scm.model.PreRelease;
+import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
 import com.wl4g.devops.dao.erm.AppClusterDao;

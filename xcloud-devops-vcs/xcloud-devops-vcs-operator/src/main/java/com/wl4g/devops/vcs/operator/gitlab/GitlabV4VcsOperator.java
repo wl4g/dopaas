@@ -16,8 +16,8 @@
 package com.wl4g.devops.vcs.operator.gitlab;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.components.tools.common.lang.Assert2;
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import org.springframework.http.HttpEntity;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
+import static com.wl4g.components.common.collection.Collections2.safeList;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.*;
 

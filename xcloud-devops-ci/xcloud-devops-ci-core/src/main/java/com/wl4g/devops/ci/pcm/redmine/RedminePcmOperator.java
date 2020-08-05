@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.ci.pcm.redmine;
 
+import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.components.core.bean.ci.Pcm;
+import com.wl4g.components.core.bean.ci.PipeHistoryPcm;
+import com.wl4g.components.core.web.model.SelectionModel;
 import com.wl4g.devops.ci.pcm.AbstractPcmOperator;
 import com.wl4g.devops.ci.pcm.redmine.model.*;
 import com.wl4g.devops.ci.pcm.redmine.model.RedmineIssues.RedmineIssue;
-import com.wl4g.devops.common.bean.ci.Pcm;
-import com.wl4g.devops.common.bean.ci.PipeHistoryPcm;
-import com.wl4g.devops.common.web.model.SelectionModel;
-import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;

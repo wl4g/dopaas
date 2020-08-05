@@ -15,17 +15,17 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import com.wl4g.components.core.exception.ci.NotFoundBackupAssetsFileException;
+import com.wl4g.components.support.cli.command.DestroableCommand;
+import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
-import com.wl4g.devops.common.exception.ci.NotFoundBackupAssetsFileException;
-import com.wl4g.devops.support.cli.command.DestroableCommand;
-import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
 
+import static com.wl4g.components.common.codec.FingerprintUtils.getMd5Fingerprint;
 import static com.wl4g.devops.ci.pipeline.PipelineKind.DOCKER_NATIVE;
 import static com.wl4g.devops.ci.utils.PipelineUtils.ensureDirectory;
-import static com.wl4g.devops.components.tools.common.codec.FingerprintUtils.getMd5Fingerprint;
 import static java.lang.String.format;
 
 /**

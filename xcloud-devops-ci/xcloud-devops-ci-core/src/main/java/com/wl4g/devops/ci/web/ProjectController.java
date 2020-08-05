@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.ci.web;
 
+import com.wl4g.components.core.bean.ci.Project;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.ci.service.ProjectService;
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_LOCK_STATUS_UNLOCK;
+import static com.wl4g.components.core.constants.CiDevOpsConstants.TASK_LOCK_STATUS_UNLOCK;
 import static org.apache.shiro.authz.annotation.Logical.AND;
 
 /**

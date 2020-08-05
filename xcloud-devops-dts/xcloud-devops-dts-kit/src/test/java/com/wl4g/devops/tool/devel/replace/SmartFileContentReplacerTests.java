@@ -21,7 +21,7 @@ import static org.apache.commons.lang3.SystemUtils.USER_DIR;
 import java.io.File;
 
 import com.wl4g.devops.tool.devel.replace.SmartFileContentReplacer.ReplaceStrategy;
-import com.wl4g.devops.components.tools.common.annotation.Reserved;
+import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.devops.tool.devel.replace.SmartFileContentReplacer.MatchStrategy;
 
 /**

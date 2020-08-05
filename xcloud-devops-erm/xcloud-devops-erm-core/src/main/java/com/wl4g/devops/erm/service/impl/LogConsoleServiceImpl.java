@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.erm.service.impl;
 
-import com.wl4g.devops.common.bean.erm.Log;
-import com.wl4g.devops.common.bean.erm.QueryLogModel;
-import com.wl4g.devops.common.bean.erm.Querycriteria;
-import com.wl4g.devops.components.tools.common.lang.DateUtils2;
+import com.wl4g.components.common.lang.DateUtils2;
+import com.wl4g.components.core.bean.erm.Log;
+import com.wl4g.components.core.bean.erm.QueryLogModel;
+import com.wl4g.components.core.bean.erm.Querycriteria;
 import com.wl4g.devops.erm.es.handler.LogHandler;
 import com.wl4g.devops.erm.service.LogConsoleService;
 import org.elasticsearch.action.search.SearchRequest;
@@ -37,10 +37,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.common.constants.ERMDevOpsConstants.KEY_DEFAULT_MSG;
-import static com.wl4g.devops.common.constants.ERMDevOpsConstants.LOG_LEVEL;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+import static com.wl4g.components.common.lang.Assert2.hasText;
+import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.components.core.constants.ERMDevOpsConstants.KEY_DEFAULT_MSG;
+import static com.wl4g.components.core.constants.ERMDevOpsConstants.LOG_LEVEL;
 import static java.util.Objects.isNull;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 

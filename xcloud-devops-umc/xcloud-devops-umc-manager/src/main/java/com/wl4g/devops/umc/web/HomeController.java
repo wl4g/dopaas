@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.wl4g.devops.common.constants.UMCDevOpsConstants; 
-import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
-import com.wl4g.devops.support.notification.GenericNotifyMessage;
-import com.wl4g.devops.support.notification.MessageNotifier;
-import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.notification.mail.MailMessageNotifier;
+import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.components.core.constants.UMCDevOpsConstants;
+import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.support.notification.GenericNotifyMessage;
+import com.wl4g.components.support.notification.MessageNotifier;
+import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.components.support.notification.mail.MailMessageNotifier;
 import com.wl4g.devops.umc.handler.DashboardHandler;
 import com.wl4g.devops.umc.model.StatusMessage;
 

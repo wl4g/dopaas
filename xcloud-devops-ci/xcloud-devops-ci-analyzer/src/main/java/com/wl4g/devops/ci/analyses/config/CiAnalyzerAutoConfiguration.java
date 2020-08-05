@@ -15,19 +15,19 @@
  */
 package com.wl4g.devops.ci.analyses.config;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.URL_ANALYZER_BASE_PATH;
+import static com.wl4g.components.core.constants.CiDevOpsConstants.URL_ANALYZER_BASE_PATH;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.ci.analyses.coordinate.AnalysisCoordinator;
 import com.wl4g.devops.ci.analyses.coordinate.SpotbugsAnalysisCoordinator;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
 import com.wl4g.devops.ci.analyses.tasks.DefaultTaskManager;
 import com.wl4g.devops.ci.analyses.tasks.TaskManager;
 import com.wl4g.devops.ci.analyses.web.CodesAnalyzerController;
-import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
 
 /**
  * CI analyzers auto configuration.

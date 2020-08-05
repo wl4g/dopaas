@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.ci.pipeline.timing;
 
+import com.wl4g.components.core.bean.ci.Project;
+import com.wl4g.components.core.bean.ci.Task;
+import com.wl4g.components.core.bean.ci.TaskInstance;
+import com.wl4g.components.core.bean.ci.Trigger;
 import com.wl4g.devops.ci.config.CiCdProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.common.bean.ci.Project;
-import com.wl4g.devops.common.bean.ci.Task;
-import com.wl4g.devops.common.bean.ci.TaskInstance;
-import com.wl4g.devops.common.bean.ci.Trigger;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
 import com.wl4g.devops.dao.ci.TaskDetailDao;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_TYPE_TIMMING;
+import static com.wl4g.components.core.constants.CiDevOpsConstants.TASK_TYPE_TIMMING;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.Assert.notEmpty;
 import static org.springframework.util.Assert.notNull;

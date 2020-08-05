@@ -15,8 +15,9 @@
  */
 package com.wl4g.devops.ci.web;
 
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.common.web.RespBase;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;

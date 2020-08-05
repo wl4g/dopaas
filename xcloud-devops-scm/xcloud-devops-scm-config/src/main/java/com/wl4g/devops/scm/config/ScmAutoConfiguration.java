@@ -15,15 +15,18 @@
  */
 package com.wl4g.devops.scm.config;
 
+import static com.wl4g.components.core.constants.SCMDevOpsConstants.*;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
-import com.wl4g.devops.components.tools.common.crypto.asymmetric.RSACryptor;
-import com.wl4g.devops.components.tools.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.components.common.crypto.asymmetric.RSACryptor;
+import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
+import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.endpoint.ScmServerEndpoint;
 import com.wl4g.devops.scm.handler.CentralConfigureHandler;
@@ -31,9 +34,6 @@ import com.wl4g.devops.scm.handler.CheckImpledCentralConfigureHandler;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
 import com.wl4g.devops.scm.publish.DefaultRedisConfigSourcePublisher;
 import com.wl4g.devops.scm.session.ScmServerConfigSecurityManager;
-import com.wl4g.devops.support.redis.jedis.JedisService;
-
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
 /**
  * SCM auto configuration

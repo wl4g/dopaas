@@ -16,9 +16,9 @@
 package com.wl4g.devops.erm.dns.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.DnsPrivateBlacklist;
-import com.wl4g.devops.components.tools.common.lang.Assert2;
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.erm.DnsPrivateBlacklist;
 import com.wl4g.devops.dao.erm.DnsPrivateBlacklistDao;
 import com.wl4g.devops.erm.dns.handler.DnsZoneHandler;
 import com.wl4g.devops.erm.dns.service.DnsPrivateBlacklistService;
@@ -32,7 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
 
 /**

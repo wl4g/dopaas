@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import com.wl4g.components.core.bean.ci.*;
+import com.wl4g.components.core.exception.ci.DependencyCurrentlyInBuildingException;
+import com.wl4g.components.support.cli.command.DestroableCommand;
+import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.common.exception.ci.DependencyCurrentlyInBuildingException;
-import com.wl4g.devops.support.cli.command.DestroableCommand;
-import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.vcs.operator.VcsOperator;
 
 import java.io.File;
@@ -29,11 +29,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.components.core.constants.CiDevOpsConstants.LOCK_DEPENDENCY_BUILD;
 import static com.wl4g.devops.ci.bean.RunModel.Pipeline.ModulesPorject;
 import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.RUNNING_BUILD;
 import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.RUNNING_DEPLOY;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.LOCK_DEPENDENCY_BUILD;
-import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static org.apache.commons.lang3.StringUtils.isBlank;

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.scm.publish;
 
+import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.scm.config.ScmProperties;
-import com.wl4g.devops.support.redis.jedis.JedisService;
 
 import org.apache.commons.codec.binary.Hex;
 
@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.CACHE_PUB_GROUPS;
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.KEY_PUB_PREFIX;
+import static com.wl4g.components.core.constants.SCMDevOpsConstants.CACHE_PUB_GROUPS;
+import static com.wl4g.components.core.constants.SCMDevOpsConstants.KEY_PUB_PREFIX;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;

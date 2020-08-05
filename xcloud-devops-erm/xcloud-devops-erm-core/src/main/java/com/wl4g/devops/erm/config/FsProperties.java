@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.config;
 
-import com.wl4g.devops.common.constants.DocDevOpsConstants;
+import com.wl4g.components.core.constants.DocDevOpsConstants;
 
 public class FsProperties {
 

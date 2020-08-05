@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.config;
 
-import com.wl4g.devops.common.bean.umc.CustomEngine;
+import com.wl4g.components.core.bean.umc.CustomEngine;
 import com.wl4g.devops.umc.timing.CodeExecutor;
 import com.wl4g.devops.umc.timing.DemoEngine;
 import com.wl4g.devops.umc.timing.TimingEngineProvider;

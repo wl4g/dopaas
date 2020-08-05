@@ -19,10 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.wl4g.devops.components.shell.annotation.ShellComponent;
-import com.wl4g.devops.components.shell.annotation.ShellMethod;
-import com.wl4g.devops.components.shell.annotation.ShellOption;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
+import com.wl4g.shell.annotation.ShellComponent;
+import com.wl4g.shell.annotation.ShellMethod;
+import com.wl4g.shell.annotation.ShellOption;
 
 /**
  * Receiver configuration console.

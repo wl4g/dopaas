@@ -16,11 +16,11 @@
 package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.DockerRepository;
-import com.wl4g.devops.common.bean.erm.model.RepositoryProject;
-import com.wl4g.devops.components.tools.common.lang.Assert2;
-import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.erm.DockerRepository;
+import com.wl4g.components.core.bean.erm.model.RepositoryProject;
 import com.wl4g.devops.dao.erm.DockerRepositoryDao;
 import com.wl4g.devops.erm.service.DockerRepositoryService;
 import com.wl4g.devops.page.PageModel;
@@ -48,8 +48,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**

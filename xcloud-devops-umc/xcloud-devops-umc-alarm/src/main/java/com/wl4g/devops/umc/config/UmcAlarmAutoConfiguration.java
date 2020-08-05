@@ -21,11 +21,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
-import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.notification.MessageNotifier;
-import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.redis.jedis.JedisService;
+import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.components.support.concurrent.locks.JedisLockManager;
+import com.wl4g.components.support.notification.MessageNotifier;
+import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.umc.alarm.alerting.DefaultIndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.alerting.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.alarm.alerting.SimulateIndicatorsValveAleter;

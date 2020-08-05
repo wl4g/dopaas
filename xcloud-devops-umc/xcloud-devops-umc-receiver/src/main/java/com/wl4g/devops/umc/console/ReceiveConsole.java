@@ -18,7 +18,7 @@ package com.wl4g.devops.umc.console;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.wl4g.devops.components.shell.annotation.ShellComponent;
+import com.wl4g.shell.annotation.ShellComponent;
 
 /**
  * Receiver configuration console.

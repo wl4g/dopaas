@@ -16,7 +16,7 @@
 package com.wl4g.devops.vcs.operator.gitlab;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wl4g.devops.components.tools.common.annotation.Reserved;
+import com.wl4g.components.common.annotation.Reserved;
 
 import java.util.List;
 

@@ -20,7 +20,7 @@ import static org.springframework.util.Assert.notNull;
 
 import java.io.Serializable;
 
-import com.wl4g.devops.components.shell.annotation.ShellOption;
+import com.wl4g.shell.annotation.ShellOption;
 
 /**
  * @author vjay

@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.devops.common.bean.ci.Dependency;
-
 import java.util.LinkedHashSet;
+
+import com.wl4g.components.core.bean.ci.Dependency;
 
 /**
  * @author vjay

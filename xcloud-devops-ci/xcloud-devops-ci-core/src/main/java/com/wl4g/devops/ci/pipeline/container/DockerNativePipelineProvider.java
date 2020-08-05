@@ -16,18 +16,19 @@
 package com.wl4g.devops.ci.pipeline.container;
 
 import com.github.dockerjava.api.DockerClient;
+import com.wl4g.components.core.bean.ci.PipeStepBuilding;
+import com.wl4g.components.core.bean.ci.PipelineHistory;
+import com.wl4g.components.core.bean.erm.AppCluster;
+import com.wl4g.components.core.bean.erm.AppEnvironment;
+import com.wl4g.components.core.bean.erm.AppInstance;
+import com.wl4g.components.core.bean.erm.DockerRepository;
+import com.wl4g.components.support.cli.command.DestroableCommand;
+import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
 import com.wl4g.devops.ci.pipeline.deploy.DockerNativePipeDeployer;
 import com.wl4g.devops.ci.utils.DockerJavaUtil;
-import com.wl4g.devops.common.bean.ci.PipeStepBuilding;
-import com.wl4g.devops.common.bean.ci.PipelineHistory;
-import com.wl4g.devops.common.bean.erm.AppCluster;
-import com.wl4g.devops.common.bean.erm.AppEnvironment;
-import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.erm.DockerRepository;
-import com.wl4g.devops.support.cli.command.DestroableCommand;
-import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;

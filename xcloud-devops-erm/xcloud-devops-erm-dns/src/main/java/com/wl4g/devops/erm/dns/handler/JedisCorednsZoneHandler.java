@@ -15,21 +15,21 @@
  */
 package com.wl4g.devops.erm.dns.handler;
 
-import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
-import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
-import com.wl4g.devops.components.tools.common.collection.CollectionUtils2;
-import com.wl4g.devops.components.tools.common.lang.Assert2;
-import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
+import com.wl4g.components.common.collection.CollectionUtils2;
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.components.core.bean.erm.DnsPrivateResolution;
+import com.wl4g.components.core.bean.erm.DnsPrivateZone;
+import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.erm.dns.config.DnsProperties;
 import com.wl4g.devops.erm.dns.handler.stardand.ResolvingType;
-import com.wl4g.devops.support.redis.jedis.JedisService;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.devops.components.tools.common.collection.CollectionUtils2.isEmpty;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.components.common.collection.CollectionUtils2.isEmpty;
+import static com.wl4g.components.common.lang.Assert2.isTrue;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.*;

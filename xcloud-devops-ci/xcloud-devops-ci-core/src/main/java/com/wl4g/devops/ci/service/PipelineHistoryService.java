@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.ci.service;
 
+import com.wl4g.components.core.bean.ci.PipelineHistory;
+import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.ci.core.param.HookParameter;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
-import com.wl4g.devops.common.bean.ci.PipelineHistory;
-import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
 import com.wl4g.devops.page.PageModel;
 
 import java.util.List;

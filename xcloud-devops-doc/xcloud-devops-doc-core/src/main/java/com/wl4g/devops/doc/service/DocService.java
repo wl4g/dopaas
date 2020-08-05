@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.doc.service;
 
-import com.wl4g.devops.common.bean.doc.FileChanges;
-import com.wl4g.devops.common.bean.doc.Share;
+import com.wl4g.components.core.bean.doc.FileChanges;
+import com.wl4g.components.core.bean.doc.Share;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.erm.dns.handler;
 
-import com.wl4g.devops.common.bean.erm.DnsPrivateResolution;
-import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
-
 import java.util.Set;
+
+import com.wl4g.components.core.bean.erm.DnsPrivateResolution;
+import com.wl4g.components.core.bean.erm.DnsPrivateZone;
 
 /**
  * {@link DnsZoneHandler}

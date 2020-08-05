@@ -15,16 +15,17 @@
  */
 package com.wl4g.devops.scm.endpoint;
 
-import com.wl4g.devops.common.bean.scm.model.GetRelease;
-import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
-import com.wl4g.devops.common.bean.scm.model.ReportInfo;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.components.core.bean.scm.model.GetRelease;
+import com.wl4g.components.core.bean.scm.model.ReleaseMessage;
+import com.wl4g.components.core.bean.scm.model.ReportInfo;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.handler.CentralConfigureHandler;
 import com.wl4g.devops.scm.session.HandshakeRequest;
 import com.wl4g.devops.scm.session.ScmServerConfigSecurityManager;
 
+import static com.wl4g.components.core.constants.SCMDevOpsConstants.*;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -32,8 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
-
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
 
 /**
  * SCM server end-point API

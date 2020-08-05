@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.doc.service;
 
-import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 
 /**

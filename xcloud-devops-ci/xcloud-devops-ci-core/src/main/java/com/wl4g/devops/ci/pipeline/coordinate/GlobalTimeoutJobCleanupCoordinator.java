@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.ci.pipeline.coordinate;
 
+import com.wl4g.components.common.task.RunnerProperties;
+import com.wl4g.components.support.concurrent.locks.JedisLockManager;
+import com.wl4g.components.support.redis.jedis.JedisService;
+import com.wl4g.components.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.ci.config.CiCdProperties;
-import com.wl4g.devops.components.tools.common.task.RunnerProperties;
 import com.wl4g.devops.dao.ci.PipelineHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
-import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.redis.jedis.JedisService;
-import com.wl4g.devops.support.task.ApplicationTaskRunner;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +32,10 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.KEY_FINALIZER_INTERVALMS;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.isTrue;
-import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.support.redis.jedis.JedisOperator.RedisProtoUtil.keyFormat;
+import static com.wl4g.components.common.lang.Assert2.isTrue;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.components.core.constants.CiDevOpsConstants.KEY_FINALIZER_INTERVALMS;
+import static com.wl4g.components.support.redis.jedis.JedisOperator.RedisProtoUtil.keyFormat;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;

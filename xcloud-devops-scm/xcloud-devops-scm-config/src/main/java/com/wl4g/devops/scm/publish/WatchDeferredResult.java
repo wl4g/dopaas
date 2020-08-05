@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import org.springframework.web.context.request.async.DeferredResult;
 
-import com.wl4g.devops.common.bean.scm.model.GetRelease;
+import com.wl4g.components.core.bean.scm.model.GetRelease;
 
 /**
  * SCM configuration soruce server deferred result watch.

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.erm.service;
 
-import com.wl4g.devops.common.bean.erm.DockerRepository;
-import com.wl4g.devops.common.bean.erm.model.RepositoryProject;
+import com.wl4g.components.core.bean.erm.DockerRepository;
+import com.wl4g.components.core.bean.erm.model.RepositoryProject;
 import com.wl4g.devops.page.PageModel;
 
 import java.security.KeyManagementException;

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops;
 
-import com.wl4g.devops.components.shell.annotation.EnableShellServer;
-import com.wl4g.devops.iam.client.annotation.EnableIamClient;
+import com.wl4g.iam.client.annotation.EnableIamClient;
+import com.wl4g.shell.annotation.EnableShellServer;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

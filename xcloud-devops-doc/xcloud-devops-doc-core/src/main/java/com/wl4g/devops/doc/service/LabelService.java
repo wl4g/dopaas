@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.doc.service;
 
-import com.wl4g.devops.common.bean.doc.Label;
+import com.wl4g.components.core.bean.doc.Label;
 import com.wl4g.devops.page.PageModel;
 
 import java.util.List;

@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.scm.example.controller;
 
-import com.wl4g.devops.common.bean.iam.User;
-import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
+import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.components.core.bean.iam.User;
 import com.wl4g.devops.dao.iam.UserDao;
 import com.wl4g.devops.scm.example.service.ExampleService;
 

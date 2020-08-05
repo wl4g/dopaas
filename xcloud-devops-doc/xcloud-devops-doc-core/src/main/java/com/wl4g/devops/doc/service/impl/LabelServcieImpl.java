@@ -16,8 +16,8 @@
 package com.wl4g.devops.doc.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.doc.Label;
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.doc.Label;
 import com.wl4g.devops.dao.doc.LabelDao;
 import com.wl4g.devops.doc.service.LabelService;
 import com.wl4g.devops.page.PageModel;

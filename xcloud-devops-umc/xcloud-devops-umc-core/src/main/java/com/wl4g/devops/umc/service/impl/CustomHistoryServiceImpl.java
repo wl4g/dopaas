@@ -16,8 +16,8 @@
 package com.wl4g.devops.umc.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.umc.CustomHistory;
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.umc.CustomHistory;
 import com.wl4g.devops.dao.umc.CustomHistoryDao;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.CustomHistoryService;

@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
-import com.wl4g.devops.support.redis.jedis.JedisService;
+import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.umc.model.StatusMessage;
 import com.wl4g.devops.umc.notify.AbstractAdvancedNotifier;
 
