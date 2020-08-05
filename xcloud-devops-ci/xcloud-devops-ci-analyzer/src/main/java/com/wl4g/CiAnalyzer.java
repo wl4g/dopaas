@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops;
-
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+package com.wl4g;
 
 import com.wl4g.iam.client.annotation.EnableIamClient;
+import com.wl4g.shell.annotation.EnableShellServer;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @EnableIamClient
-@MapperScan("com.wl4g.devops.dao.*")
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
-public class VcsManager {
+@EnableShellServer
+@SpringBootApplication
+public class CiAnalyzer {
 
-	public static void main(String[] args) {
-		SpringApplication.run(VcsManager.class, args);
+	public static void main(String[] args) throws Exception {
+		SpringApplication.run(CiAnalyzer.class, args);
 	}
 
 }

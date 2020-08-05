@@ -19,12 +19,14 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
 import com.wl4g.devops.scm.annotation.EnableScmServer;
 import com.wl4g.iam.client.annotation.EnableIamClient;
 
-@MapperScan("com.wl4g.devops.dao.*")
 @EnableIamClient
 @EnableScmServer
+@MapperScan("com.wl4g.devops.dao.*")
+@AutoConfigureComponentsDataSource
 @SpringBootApplication
 public class ScmServer {
 
