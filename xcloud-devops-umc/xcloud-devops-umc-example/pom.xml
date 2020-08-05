@@ -30,7 +30,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-umc-client</artifactId>
+			<artifactId>xcloud-devops-umc-client-springboot</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>

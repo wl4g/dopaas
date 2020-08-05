@@ -411,9 +411,11 @@ public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 		private String avatarUrl;
 		@JsonProperty("web_url")
 		private String webUrl;
+
 		public void setId(int id) {
 			this.id = id;
 		}
+
 		public int getId() {
 			return id;
 		}
@@ -421,6 +423,7 @@ public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 		public void setName(String name) {
 			this.name = name;
 		}
+
 		public String getName() {
 			return name;
 		}
@@ -428,6 +431,7 @@ public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 		public void setUsername(String username) {
 			this.username = username;
 		}
+
 		public String getUsername() {
 			return username;
 		}
@@ -435,6 +439,7 @@ public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 		public void setState(String state) {
 			this.state = state;
 		}
+
 		public String getState() {
 			return state;
 		}
@@ -442,6 +447,7 @@ public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 		public void setAvatarUrl(String avatarUrl) {
 			this.avatarUrl = avatarUrl;
 		}
+
 		public String getAvatarUrl() {
 			return avatarUrl;
 		}
@@ -449,6 +455,7 @@ public class GitlabV4ProjectModel extends GitlabV4SimpleProjectModel {
 		public void setWebUrl(String webUrl) {
 			this.webUrl = webUrl;
 		}
+
 		public String getWebUrl() {
 			return webUrl;
 		}

@@ -23,132 +23,152 @@ import com.wl4g.devops.vcs.operator.model.VcsTagModel;
  */
 public class GitlabV4TagModel extends VcsTagModel {
 
-    private String message;
-    private String target;
-    private Commit commit;
-    private Object release;
+	private String message;
+	private String target;
+	private Commit commit;
+	private Object release;
 
-    public String getMessage() { return message; }
-    public void setMessage(String value) { this.message = value; }
+	public String getMessage() {
+		return message;
+	}
 
-    public String getTarget() { return target; }
-    public void setTarget(String value) { this.target = value; }
+	public void setMessage(String value) {
+		this.message = value;
+	}
 
-    public Commit getCommit() { return commit; }
-    public void setCommit(Commit value) { this.commit = value; }
+	public String getTarget() {
+		return target;
+	}
 
-    public Object getRelease() { return release; }
-    public void setRelease(Object value) { this.release = value; }
+	public void setTarget(String value) {
+		this.target = value;
+	}
 
-    public static class Commit {
-        private String id;
-        private String short_iD;
-        private String created_at;
-        private String[] parent_ids;
-        private String title;
-        private String message;
-        private String author_name;
-        private String author_email;
-        private String authored_date;
-        private String committer_name;
-        private String committer_email;
-        private String committed_date;
+	public Commit getCommit() {
+		return commit;
+	}
 
-        public String getId() {
-            return id;
-        }
+	public void setCommit(Commit value) {
+		this.commit = value;
+	}
 
-        public void setId(String id) {
-            this.id = id;
-        }
+	public Object getRelease() {
+		return release;
+	}
 
-        public String getShort_iD() {
-            return short_iD;
-        }
+	public void setRelease(Object value) {
+		this.release = value;
+	}
 
-        public void setShort_iD(String short_iD) {
-            this.short_iD = short_iD;
-        }
+	public static class Commit {
+		private String id;
+		private String short_iD;
+		private String created_at;
+		private String[] parent_ids;
+		private String title;
+		private String message;
+		private String author_name;
+		private String author_email;
+		private String authored_date;
+		private String committer_name;
+		private String committer_email;
+		private String committed_date;
 
-        public String getCreated_at() {
-            return created_at;
-        }
+		public String getId() {
+			return id;
+		}
 
-        public void setCreated_at(String created_at) {
-            this.created_at = created_at;
-        }
+		public void setId(String id) {
+			this.id = id;
+		}
 
-        public String[] getParent_ids() {
-            return parent_ids;
-        }
+		public String getShort_iD() {
+			return short_iD;
+		}
 
-        public void setParent_ids(String[] parent_ids) {
-            this.parent_ids = parent_ids;
-        }
+		public void setShort_iD(String short_iD) {
+			this.short_iD = short_iD;
+		}
 
-        public String getTitle() {
-            return title;
-        }
+		public String getCreated_at() {
+			return created_at;
+		}
 
-        public void setTitle(String title) {
-            this.title = title;
-        }
+		public void setCreated_at(String created_at) {
+			this.created_at = created_at;
+		}
 
-        public String getMessage() {
-            return message;
-        }
+		public String[] getParent_ids() {
+			return parent_ids;
+		}
 
-        public void setMessage(String message) {
-            this.message = message;
-        }
+		public void setParent_ids(String[] parent_ids) {
+			this.parent_ids = parent_ids;
+		}
 
-        public String getAuthor_name() {
-            return author_name;
-        }
+		public String getTitle() {
+			return title;
+		}
 
-        public void setAuthor_name(String author_name) {
-            this.author_name = author_name;
-        }
+		public void setTitle(String title) {
+			this.title = title;
+		}
 
-        public String getAuthor_email() {
-            return author_email;
-        }
+		public String getMessage() {
+			return message;
+		}
 
-        public void setAuthor_email(String author_email) {
-            this.author_email = author_email;
-        }
+		public void setMessage(String message) {
+			this.message = message;
+		}
 
-        public String getAuthored_date() {
-            return authored_date;
-        }
+		public String getAuthor_name() {
+			return author_name;
+		}
 
-        public void setAuthored_date(String authored_date) {
-            this.authored_date = authored_date;
-        }
+		public void setAuthor_name(String author_name) {
+			this.author_name = author_name;
+		}
 
-        public String getCommitter_name() {
-            return committer_name;
-        }
+		public String getAuthor_email() {
+			return author_email;
+		}
 
-        public void setCommitter_name(String committer_name) {
-            this.committer_name = committer_name;
-        }
+		public void setAuthor_email(String author_email) {
+			this.author_email = author_email;
+		}
 
-        public String getCommitter_email() {
-            return committer_email;
-        }
+		public String getAuthored_date() {
+			return authored_date;
+		}
 
-        public void setCommitter_email(String committer_email) {
-            this.committer_email = committer_email;
-        }
+		public void setAuthored_date(String authored_date) {
+			this.authored_date = authored_date;
+		}
 
-        public String getCommitted_date() {
-            return committed_date;
-        }
+		public String getCommitter_name() {
+			return committer_name;
+		}
 
-        public void setCommitted_date(String committed_date) {
-            this.committed_date = committed_date;
-        }
-    }
+		public void setCommitter_name(String committer_name) {
+			this.committer_name = committer_name;
+		}
+
+		public String getCommitter_email() {
+			return committer_email;
+		}
+
+		public void setCommitter_email(String committer_email) {
+			this.committer_email = committer_email;
+		}
+
+		public String getCommitted_date() {
+			return committed_date;
+		}
+
+		public void setCommitted_date(String committed_date) {
+			this.committed_date = committed_date;
+		}
+	}
 
 }

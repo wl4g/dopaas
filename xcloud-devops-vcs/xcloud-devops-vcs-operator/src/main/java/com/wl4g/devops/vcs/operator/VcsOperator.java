@@ -55,6 +55,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 
 	/**
 	 * Create Branch
+	 * 
 	 * @param credentials
 	 * @param projectId
 	 * @param branch
@@ -83,7 +84,8 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param <T>
 	 * @return
 	 */
-	<T extends VcsTagModel> T createRemoteTag(Vcs credentials, int projectId, String tag, String ref,String message,String releaseDescription);
+	<T extends VcsTagModel> T createRemoteTag(Vcs credentials, int projectId, String tag, String ref, String message,
+			String releaseDescription);
 
 	/**
 	 * Gets remote project ID by project name.
@@ -102,7 +104,8 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 * @param projectName
 	 * @return
 	 */
-	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName,PageModel pm) {
+	default <T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName,
+			PageModel pm) {
 		return searchRemoteProjects(credentials, groupId, projectName, Integer.MAX_VALUE, pm);
 	}
 
@@ -117,8 +120,8 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 	 *            Page limit maximum
 	 * @return
 	 */
-	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName, int limit, PageModel pm);
-
+	<T extends VcsProjectModel> List<T> searchRemoteProjects(Vcs credentials, Integer groupId, String projectName, int limit,
+			PageModel pm);
 
 	/**
 	 * Search find remote projects by Id.
@@ -339,7 +342,7 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 				return null;
 			}
 			for (VcsAction t : values()) {
-				if (StringUtils.equals(action,t.getValue())) {
+				if (StringUtils.equals(action, t.getValue())) {
 					return t;
 				}
 			}
@@ -359,7 +362,5 @@ public interface VcsOperator extends Operator<VcsOperator.VcsProviderKind> {
 		}
 
 	}
-
-
 
 }

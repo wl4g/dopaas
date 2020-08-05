@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.vcs.operator.gitlab;
 
-
 import com.wl4g.devops.vcs.operator.model.CompositeBasicVcsProjectModel;
 import com.wl4g.devops.vcs.operator.model.VcsProjectModel;
 
@@ -198,7 +197,8 @@ public class GitlabV4SimpleProjectModel implements VcsProjectModel, Serializable
 
 	@Override
 	public CompositeBasicVcsProjectModel toCompositeVcsProject() {
-		return new CompositeBasicVcsProjectModel(getId(), getName(), getHttp_url_to_repo(), getSsh_url_to_repo(),getPath_with_namespace());
+		return new CompositeBasicVcsProjectModel(getId(), getName(), getHttp_url_to_repo(), getSsh_url_to_repo(),
+				getPath_with_namespace());
 	}
 
 	/**

@@ -17,7 +17,7 @@ package com.wl4g.devops.scm.client.utils;
 
 import static org.apache.commons.lang3.StringUtils.isAnyBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static com.wl4g.devops.components.tools.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.components.common.lang.Exceptions.getRootCausesString;
 import static java.net.NetworkInterface.getNetworkInterfaces;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -31,7 +31,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 
 import com.google.common.net.HostAndPort;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 
 /**

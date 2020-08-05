@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import com.wl4g.devops.common.config.OptionalPrefixControllerAutoConfiguration;
+import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint;
 import com.wl4g.devops.scm.client.handler.locator.ScmPropertySourceLocator;
@@ -31,7 +31,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_C_BASE;
+import static com.wl4g.components.core.constants.SCMDevOpsConstants.URI_C_BASE;
 
 /**
  * SCM refresh auto configuration.</br>

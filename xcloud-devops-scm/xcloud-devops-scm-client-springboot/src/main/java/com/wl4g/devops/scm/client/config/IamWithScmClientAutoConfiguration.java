@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_C_BASE;
+import static com.wl4g.components.core.constants.SCMDevOpsConstants.URI_C_BASE;
 
 import java.util.Map;
 
@@ -23,7 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
-import com.wl4g.devops.iam.client.config.IamClientProperties;
+import com.wl4g.iam.client.config.IamClientProperties;
 
 /**
  * {@link IamWithScmClientAutoConfiguration}

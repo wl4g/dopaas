@@ -15,16 +15,16 @@
  */
 package com.wl4g.devops.scm.client.handler.watch;
 
-import com.wl4g.devops.common.bean.scm.model.GetRelease;
-import com.wl4g.devops.common.utils.bean.BeanMapConvert;
-import com.wl4g.devops.components.tools.common.task.RunnerProperties;
+import com.wl4g.components.core.bean.scm.model.GetRelease;
+import com.wl4g.components.core.utils.bean.BeanMapConvert;
+import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.handler.locator.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
-import com.wl4g.devops.support.task.ApplicationTaskRunner;
+import com.wl4g.components.support.task.ApplicationTaskRunner;
 
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_BASE;
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.URI_S_WATCH_GET;
+import static com.wl4g.components.core.constants.SCMDevOpsConstants.URI_S_BASE;
+import static com.wl4g.components.core.constants.SCMDevOpsConstants.URI_S_WATCH_GET;
 
 import org.springframework.util.Assert;
 

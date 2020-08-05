@@ -20,10 +20,10 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestParam;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.common.web.RespBase.RetCode;
+import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseMeta;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
+import com.wl4g.components.core.web.RespBase.RetCode;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
 

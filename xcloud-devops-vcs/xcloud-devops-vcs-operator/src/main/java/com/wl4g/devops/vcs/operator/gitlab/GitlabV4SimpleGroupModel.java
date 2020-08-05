@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.vcs.operator.gitlab;
 
-
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
 
 import java.io.Serializable;
@@ -44,8 +43,7 @@ public class GitlabV4SimpleGroupModel implements VcsGroupModel, Serializable {
 	private String full_path;
 	private Integer parent_id;
 
-
-	//other
+	// other
 	List<GitlabV4SimpleGroupModel> children;
 
 	public GitlabV4SimpleGroupModel() {

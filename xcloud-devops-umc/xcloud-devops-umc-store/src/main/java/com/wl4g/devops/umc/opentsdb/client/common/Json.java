@@ -58,7 +58,6 @@ public class Json {
 		instance.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 		// 忽视为空的属性
 		instance.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-
 	}
 
 	/***
