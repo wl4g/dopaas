@@ -18,15 +18,15 @@ package com.wl4g.devops.scm.publish;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import static com.google.common.collect.Multimaps.synchronizedSetMultimap;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.hasText;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+import static com.wl4g.components.common.lang.Assert2.hasText;
+import static com.wl4g.components.common.lang.Assert2.notNull;
 
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
-import com.wl4g.devops.components.tools.common.task.RunnerProperties;
-import com.wl4g.devops.common.bean.scm.model.GetRelease;
-import com.wl4g.devops.common.bean.scm.model.PreRelease;
+import com.wl4g.components.common.task.RunnerProperties;
+import com.wl4g.components.core.bean.scm.model.GetRelease;
+import com.wl4g.components.core.bean.scm.model.PreRelease;
+import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.components.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.scm.config.ScmProperties;
-import com.wl4g.devops.support.task.ApplicationTaskRunner;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

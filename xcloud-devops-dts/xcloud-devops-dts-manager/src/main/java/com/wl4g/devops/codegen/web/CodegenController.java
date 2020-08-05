@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.codegen.web;
 
-import com.wl4g.devops.common.web.BaseController;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.wl4g.components.core.web.BaseController;
 
 /**
  * {@link CodegenController}

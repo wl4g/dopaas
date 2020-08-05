@@ -15,14 +15,14 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.common.bean.umc.AlarmRule;
+import com.wl4g.components.core.bean.umc.AlarmConfig;
+import com.wl4g.components.core.bean.umc.AlarmRule;
 import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
 
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.springframework.util.CollectionUtils.isEmpty;

@@ -16,7 +16,7 @@
 package com.wl4g.devops.vcs.operator;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.wl4g.devops.common.bean.ci.Vcs;
+import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsGroupModel;
@@ -34,8 +34,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
-import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
 import static org.springframework.util.Assert.*;
 
 /**

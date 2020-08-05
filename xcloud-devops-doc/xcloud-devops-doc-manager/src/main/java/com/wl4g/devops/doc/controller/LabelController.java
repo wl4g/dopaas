@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.doc.controller;
 
-import com.wl4g.devops.common.bean.doc.Label;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.components.core.bean.doc.Label;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.doc.service.LabelService;
 import com.wl4g.devops.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;

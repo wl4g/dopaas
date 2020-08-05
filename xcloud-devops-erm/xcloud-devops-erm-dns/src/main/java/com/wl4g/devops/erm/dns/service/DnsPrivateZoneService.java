@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm.dns.service;
 
-import com.wl4g.devops.common.bean.erm.DnsPrivateZone;
+import com.wl4g.components.core.bean.erm.DnsPrivateZone;
 import com.wl4g.devops.page.PageModel;
 
 /**

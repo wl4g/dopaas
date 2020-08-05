@@ -15,20 +15,20 @@
  */
 package com.wl4g.devops.ci.web;
 
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.core.bean.ci.PipeStepBuilding;
+import com.wl4g.components.core.bean.ci.Pipeline;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.PipelineService;
-import com.wl4g.devops.common.bean.ci.PipeStepBuilding;
-import com.wl4g.devops.common.bean.ci.Pipeline;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.page.PageModel;
 
-import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;

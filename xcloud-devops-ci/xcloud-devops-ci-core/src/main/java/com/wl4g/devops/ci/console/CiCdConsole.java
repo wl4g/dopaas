@@ -17,12 +17,13 @@ package com.wl4g.devops.ci.console;
 
 import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalArgument;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
-import com.wl4g.devops.components.shell.annotation.ShellComponent;
-import com.wl4g.devops.components.shell.annotation.ShellMethod;
-import com.wl4g.devops.components.shell.handler.SimpleShellContext;
+import com.wl4g.shell.annotation.ShellComponent;
+import com.wl4g.shell.annotation.ShellMethod;
+import com.wl4g.shell.handler.SimpleShellContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.devops.components.tools.common.lang.Exceptions.getStackTraceAsString;
+import static com.wl4g.components.common.lang.Exceptions.getStackTraceAsString;
 import static java.lang.String.format;
 
 /**

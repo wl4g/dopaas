@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.ci.web;
 
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.ci.service.AnalysisHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 
 /**

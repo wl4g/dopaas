@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.wl4g.devops.common.bean.umc.CustomAlarmEvent;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.components.core.bean.umc.CustomAlarmEvent;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.CustomAlarmEventService;
 
-import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+import static com.wl4g.components.common.lang.Assert2.notNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

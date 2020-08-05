@@ -20,7 +20,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-import com.wl4g.devops.iam.client.annotation.EnableIamClient;
+import com.wl4g.iam.client.annotation.EnableIamClient;
 
 @EnableIamClient
 @MapperScan("com.wl4g.devops.dao.*")

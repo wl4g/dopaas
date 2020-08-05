@@ -16,12 +16,12 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.ci.*;
 import com.wl4g.devops.ci.service.DependencyService;
 import com.wl4g.devops.ci.service.PipelineService;
 import com.wl4g.devops.ci.service.ProjectService;
-import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.dao.ci.*;
 import com.wl4g.devops.page.PageModel;
 import org.apache.commons.lang3.StringUtils;
@@ -34,8 +34,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;

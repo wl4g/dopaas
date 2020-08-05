@@ -16,8 +16,8 @@
 package com.wl4g.devops.vcs.operator.bitbucket;
 
 
-import com.wl4g.devops.common.bean.ci.Vcs;
-import com.wl4g.devops.components.tools.common.annotation.Reserved;
+import com.wl4g.components.common.annotation.Reserved;
+import com.wl4g.components.core.bean.ci.Vcs;
 import com.wl4g.devops.vcs.operator.GenericBasedGitVcsOperator;
 import com.wl4g.devops.vcs.operator.model.VcsBranchModel;
 import com.wl4g.devops.vcs.operator.model.VcsTagModel;

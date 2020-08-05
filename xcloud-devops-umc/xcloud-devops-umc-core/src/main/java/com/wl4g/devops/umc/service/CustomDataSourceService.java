@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.umc.service;
 
-import com.wl4g.devops.common.bean.umc.CustomDataSource;
-import com.wl4g.devops.common.bean.umc.CustomDataSourceProperties;
-import com.wl4g.devops.common.bean.umc.datasouces.BaseDataSource;
-import com.wl4g.devops.common.bean.umc.model.DataSourceProvide;
+import com.wl4g.components.core.bean.umc.CustomDataSource;
+import com.wl4g.components.core.bean.umc.CustomDataSourceProperties;
+import com.wl4g.components.core.bean.umc.datasouces.BaseDataSource;
+import com.wl4g.components.core.bean.umc.model.DataSourceProvide;
 import com.wl4g.devops.page.PageModel;
 
 import java.util.List;

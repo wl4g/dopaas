@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
+import com.wl4g.components.common.cli.ssh2.SSH2Holders;
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
+import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
-import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
-import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders;
-import com.wl4g.devops.components.tools.common.lang.Assert2;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

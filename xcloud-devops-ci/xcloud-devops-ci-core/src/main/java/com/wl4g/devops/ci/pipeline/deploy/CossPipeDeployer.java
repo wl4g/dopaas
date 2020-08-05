@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
+import com.wl4g.components.core.bean.erm.AppInstance;
+import com.wl4g.components.core.bean.erm.ClusterConfig;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.ci.pipeline.ViewNativePipelineProvider;
-import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
-import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.erm.ClusterConfig;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.components.tools.common.lang.Assert2;
-import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;

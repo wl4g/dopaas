@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.devops.common.bean.ci.PipeStepBuilding;
-import com.wl4g.devops.common.bean.ci.Pipeline;
+import com.wl4g.components.core.bean.ci.PipeStepBuilding;
+import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.devops.page.PageModel;
 
 import java.util.List;

@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import com.wl4g.components.support.cli.command.DestroableCommand;
+import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.support.cli.command.DestroableCommand;
-import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import static java.lang.String.format;
 

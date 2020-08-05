@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.umc.web;
 
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
+import com.wl4g.components.core.bean.umc.AlarmTemplate;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.umc.service.TemplateService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;

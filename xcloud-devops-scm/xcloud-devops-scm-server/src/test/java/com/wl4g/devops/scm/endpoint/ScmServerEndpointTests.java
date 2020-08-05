@@ -23,11 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.wl4g.components.common.lang.ThreadUtils2;
+import com.wl4g.components.core.bean.scm.model.PreRelease;
+import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.devops.ScmServer;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseInstance;
-import com.wl4g.devops.components.tools.common.lang.ThreadUtils2;
 import com.wl4g.devops.scm.handler.CentralConfigureHandler;
-import com.wl4g.devops.common.bean.scm.model.PreRelease;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ScmServer.class)

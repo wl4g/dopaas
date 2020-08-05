@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.ci.core.context;
 
+import com.wl4g.components.core.bean.ci.*;
+import com.wl4g.components.core.bean.erm.AppCluster;
+import com.wl4g.components.core.bean.erm.AppEnvironment;
+import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.common.bean.erm.AppCluster;
-import com.wl4g.devops.common.bean.erm.AppEnvironment;
-import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.util.List;
 

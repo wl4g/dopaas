@@ -15,14 +15,15 @@
  */
 package com.wl4g.devops.umc.receiver;
 
-import com.wl4g.devops.common.bean.umc.model.proto.MetricModel.MetricAggregate;
+import com.wl4g.components.core.bean.umc.model.proto.MetricModel.MetricAggregate;
 import com.wl4g.devops.umc.alarm.alerting.IndicatorsValveAlerter;
 import com.wl4g.devops.umc.store.MetricStore;
+
+import static com.wl4g.components.core.constants.UMCDevOpsConstants.URI_HTTP_RECEIVER_ENDPOINT;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.URI_HTTP_RECEIVER_ENDPOINT;
 
 /**
  * HTTP collection receiver

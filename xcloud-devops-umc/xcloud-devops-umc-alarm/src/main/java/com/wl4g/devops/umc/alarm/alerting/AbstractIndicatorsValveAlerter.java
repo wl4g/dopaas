@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.umc.alarm.alerting;
 
-import com.wl4g.devops.common.bean.umc.model.MetricValue;
-import com.wl4g.devops.components.tools.common.log.SmartLogger;
-import com.wl4g.devops.components.tools.common.task.RunnerProperties;
-import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.redis.jedis.JedisService;
-import com.wl4g.devops.support.task.ApplicationTaskRunner;
+import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.components.common.task.RunnerProperties;
+import com.wl4g.components.core.bean.umc.model.MetricValue;
+import com.wl4g.components.support.concurrent.locks.JedisLockManager;
+import com.wl4g.components.support.redis.jedis.JedisService;
+import com.wl4g.components.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.umc.alarm.metric.MetricAggregateWrapper;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import org.springframework.util.Assert;
@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
-import static com.wl4g.devops.components.tools.common.collection.Collections2.ensureList;
-import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.components.common.collection.Collections2.ensureList;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.components.core.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE;
 import static java.lang.Math.abs;
 import static java.util.Collections.emptyList;
 

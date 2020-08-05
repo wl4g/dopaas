@@ -21,13 +21,13 @@ import java.security.spec.KeySpec;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.wl4g.devops.common.constants.SCMDevOpsConstants.*;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.core.constants.SCMDevOpsConstants.*;
 
-import com.wl4g.devops.components.tools.common.crypto.asymmetric.AsymmetricCryptor;
-import com.wl4g.devops.components.tools.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.components.common.crypto.asymmetric.AsymmetricCryptor;
+import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.scm.session.HandshakeResult;
-import com.wl4g.devops.support.redis.jedis.JedisService;
 
 /**
  * {@link ScmServerConfigSecurityManager}

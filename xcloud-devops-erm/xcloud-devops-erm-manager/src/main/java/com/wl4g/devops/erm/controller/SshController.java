@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.erm.controller;
 
-import com.wl4g.devops.common.bean.erm.Ssh;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.components.tools.common.cli.ssh2.JschHolder;
-import com.wl4g.devops.components.tools.common.cli.ssh2.SSH2Holders;
+import com.wl4g.components.common.cli.ssh2.JschHolder;
+import com.wl4g.components.common.cli.ssh2.SSH2Holders;
+import com.wl4g.components.core.bean.erm.Ssh;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.erm.service.SshService;
 import com.wl4g.devops.page.PageModel;
 

@@ -15,11 +15,11 @@
  */
 package com.wl4g.devops.ci.web;
 
+import com.wl4g.components.common.task.QuartzCronUtils;
+import com.wl4g.components.core.bean.ci.Trigger;
+import com.wl4g.components.core.web.BaseController;
+import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.ci.service.TriggerService;
-import com.wl4g.devops.common.bean.ci.Trigger;
-import com.wl4g.devops.common.web.BaseController;
-import com.wl4g.devops.common.web.RespBase;
-import com.wl4g.devops.components.tools.common.task.QuartzCronUtils;
 import com.wl4g.devops.page.PageModel;
 
 import org.apache.commons.lang3.StringUtils;

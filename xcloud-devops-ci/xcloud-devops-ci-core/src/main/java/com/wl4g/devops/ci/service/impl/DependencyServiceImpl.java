@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.service.impl;
 
+import com.wl4g.components.core.bean.ci.Dependency;
 import com.wl4g.devops.ci.service.DependencyService;
-import com.wl4g.devops.common.bean.ci.Dependency;
 import com.wl4g.devops.dao.ci.DependencyDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

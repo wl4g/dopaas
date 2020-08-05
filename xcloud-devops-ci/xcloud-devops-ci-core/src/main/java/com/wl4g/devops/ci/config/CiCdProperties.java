@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
 import java.io.File;
 import java.util.Objects;
 
-import static com.wl4g.devops.components.tools.common.lang.SystemUtils2.cleanSystemPath;
+import static com.wl4g.components.common.lang.SystemUtils2.cleanSystemPath;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;

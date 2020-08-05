@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.ci.analyses.coordinate;
 
+import com.wl4g.components.support.cli.DestroableProcessManager.ProcessCallback;
+import com.wl4g.components.support.cli.command.DestroableCommand;
+import com.wl4g.components.support.cli.command.LocalDestroableCommand;
 import com.wl4g.devops.ci.analyses.config.ExecutorProperties;
 import com.wl4g.devops.ci.analyses.model.AnalysisQueryModel;
 import com.wl4g.devops.ci.analyses.model.AnalysisResultModel;
 import com.wl4g.devops.ci.analyses.model.SpotbugsAnalysingModel;
-import com.wl4g.devops.support.cli.DestroableProcessManager.ProcessCallback;
-import com.wl4g.devops.support.cli.command.DestroableCommand;
-import com.wl4g.devops.support.cli.command.LocalDestroableCommand;
 
 import java.io.File;
 

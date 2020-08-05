@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.scm.session;
 
-import static com.wl4g.devops.components.tools.common.codec.CodecSource.*;
-import static com.wl4g.devops.components.tools.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.components.tools.common.log.SmartLoggerFactory.getLogger;
+import static com.wl4g.components.common.codec.CodecSource.*;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 
 import java.security.spec.KeySpec;
 
@@ -25,11 +25,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
-import com.wl4g.devops.components.tools.common.codec.CodecSource;
-import com.wl4g.devops.components.tools.common.crypto.asymmetric.AsymmetricCryptor;
-import com.wl4g.devops.components.tools.common.crypto.asymmetric.spec.KeyPairSpec;
-import com.wl4g.devops.components.tools.common.crypto.symmetric.AES128ECBPKCS5;
-import com.wl4g.devops.components.tools.common.log.SmartLogger;
+import com.wl4g.components.common.codec.CodecSource;
+import com.wl4g.components.common.crypto.asymmetric.AsymmetricCryptor;
+import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
+import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
+import com.wl4g.components.common.log.SmartLogger;
 
 /**
  * Abstract scm asymmetric security manager support.

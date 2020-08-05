@@ -15,15 +15,15 @@
  */
 package com.wl4g.devops.umc.alarm.alerting;
 
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE_SIMULATE;
+import static com.wl4g.components.core.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_METRIC_QUEUE_SIMULATE;
 
 import org.springframework.util.Assert;
 
-import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
-import com.wl4g.devops.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.support.notification.MessageNotifier;
-import com.wl4g.devops.support.notification.MessageNotifier.NotifierKind;
-import com.wl4g.devops.support.redis.jedis.JedisService;
+import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
+import com.wl4g.components.support.concurrent.locks.JedisLockManager;
+import com.wl4g.components.support.notification.MessageNotifier;
+import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
+import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.umc.config.AlarmProperties;
 import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import com.wl4g.devops.umc.rule.RuleConfigManager;

@@ -16,10 +16,10 @@
 package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.HostNetcard;
-import com.wl4g.devops.common.bean.erm.HostTunnelOpenvpn;
-import com.wl4g.devops.common.bean.erm.HostTunnelPptp;
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.erm.HostNetcard;
+import com.wl4g.components.core.bean.erm.HostTunnelOpenvpn;
+import com.wl4g.components.core.bean.erm.HostTunnelPptp;
 import com.wl4g.devops.dao.erm.HostNetcardDao;
 import com.wl4g.devops.dao.erm.HostTunnelOpenvpnDao;
 import com.wl4g.devops.dao.erm.HostTunnelPptpDao;
@@ -33,8 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**

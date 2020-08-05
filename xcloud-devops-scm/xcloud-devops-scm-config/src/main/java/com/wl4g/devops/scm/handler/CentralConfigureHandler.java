@@ -18,7 +18,7 @@ package com.wl4g.devops.scm.handler;
 import org.springframework.http.ResponseEntity;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.devops.common.bean.scm.model.*;
+import com.wl4g.components.core.bean.scm.model.*;
 import com.wl4g.devops.scm.publish.WatchDeferredResult;
 
 /**

@@ -16,15 +16,16 @@
 package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.Host;
-import com.wl4g.devops.common.bean.erm.Ssh;
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.erm.Host;
+import com.wl4g.components.core.bean.erm.Ssh;
+import com.wl4g.components.support.cli.DestroableProcessManager;
+import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.devops.dao.erm.HostDao;
 import com.wl4g.devops.dao.erm.SshDao;
 import com.wl4g.devops.erm.service.SshService;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.support.cli.DestroableProcessManager;
-import com.wl4g.devops.support.cli.command.RemoteDestroableCommand;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,8 +40,8 @@ import java.util.UUID;
 
 import static com.wl4g.devops.erm.util.SshkeyUtils.decryptSshkeyFromHex;
 import static com.wl4g.devops.erm.util.SshkeyUtils.encryptSshkeyToHex;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**

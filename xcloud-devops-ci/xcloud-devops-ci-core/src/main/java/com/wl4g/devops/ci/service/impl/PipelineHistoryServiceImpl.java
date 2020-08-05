@@ -16,22 +16,22 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.core.bean.ci.Pipeline;
+import com.wl4g.components.core.bean.ci.PipelineHistory;
+import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
+import com.wl4g.components.core.bean.ci.PipelineInstance;
+import com.wl4g.components.support.cli.DestroableProcessManager;
+import com.wl4g.components.support.cli.destroy.DestroySignal;
 import com.wl4g.devops.ci.core.param.HookParameter;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
-import com.wl4g.devops.common.bean.ci.Pipeline;
-import com.wl4g.devops.common.bean.ci.PipelineHistory;
-import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
-import com.wl4g.devops.common.bean.ci.PipelineInstance;
-import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.dao.ci.PipelineDao;
 import com.wl4g.devops.dao.ci.PipelineHistoryDao;
 import com.wl4g.devops.dao.ci.PipelineHistoryInstanceDao;
 import com.wl4g.devops.dao.ci.PipelineInstanceDao;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.support.cli.DestroableProcessManager;
-import com.wl4g.devops.support.cli.destroy.DestroySignal;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +40,10 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_CREATE;
-import static com.wl4g.devops.common.constants.CiDevOpsConstants.TASK_STATUS_STOPING;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.components.core.constants.CiDevOpsConstants.TASK_STATUS_CREATE;
+import static com.wl4g.components.core.constants.CiDevOpsConstants.TASK_STATUS_STOPING;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 /**
  * @author vjay

@@ -16,8 +16,8 @@
 package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.erm.Idc;
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.erm.Idc;
 import com.wl4g.devops.dao.erm.IdcDao;
 import com.wl4g.devops.erm.service.IdcService;
 import com.wl4g.devops.page.PageModel;
@@ -27,8 +27,8 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**

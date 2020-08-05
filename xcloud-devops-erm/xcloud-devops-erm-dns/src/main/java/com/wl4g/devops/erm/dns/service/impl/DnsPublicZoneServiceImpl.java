@@ -16,7 +16,7 @@
 package com.wl4g.devops.erm.dns.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.erm.DnsPublicZone;
+import com.wl4g.components.core.bean.erm.DnsPublicZone;
 import com.wl4g.devops.dao.erm.DnsPublicZoneDao;
 import com.wl4g.devops.erm.dns.service.DnsPublicZoneService;
 import com.wl4g.devops.page.PageModel;
@@ -24,8 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 import static java.util.Objects.isNull;
 
 /**

@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.umc.timing;
 
-import com.wl4g.devops.common.bean.umc.CustomEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import com.wl4g.components.core.bean.umc.CustomEngine;
 
 /**
  * @author vjay

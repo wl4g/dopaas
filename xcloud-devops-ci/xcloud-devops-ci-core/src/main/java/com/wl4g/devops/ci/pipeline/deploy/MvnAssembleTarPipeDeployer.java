@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.ci.pipeline.deploy;
 
+import com.wl4g.components.core.bean.ci.PipelineHistoryInstance;
+import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.ci.pipeline.MvnAssembleTarPipelineProvider;
-import com.wl4g.devops.common.bean.ci.PipelineHistoryInstance;
-import com.wl4g.devops.common.bean.erm.AppInstance;
 
 import java.util.List;
 

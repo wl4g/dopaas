@@ -16,18 +16,18 @@
 package com.wl4g.devops.ci.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.components.core.bean.ci.Orchestration;
+import com.wl4g.components.core.bean.ci.OrchestrationPipeline;
+import com.wl4g.components.support.redis.jedis.JedisService;
+import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.devops.ci.bean.RunModel;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.OrchestrationService;
-import com.wl4g.devops.common.bean.BaseBean;
-import com.wl4g.devops.common.bean.ci.Orchestration;
-import com.wl4g.devops.common.bean.ci.OrchestrationPipeline;
-import com.wl4g.devops.components.tools.common.lang.Assert2;
 import com.wl4g.devops.dao.ci.OrchestrationDao;
 import com.wl4g.devops.dao.ci.OrchestrationPipelineDao;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.support.redis.jedis.JedisService;
-import com.wl4g.devops.support.redis.jedis.ScanCursor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,8 +38,8 @@ import java.util.Objects;
 
 import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_PRE;
 import static com.wl4g.devops.ci.flow.FlowManager.REDIS_CI_RUN_SCAN_BATCH;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 /**
  * @author vjay

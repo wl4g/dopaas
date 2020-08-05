@@ -15,15 +15,15 @@
  */
 package com.wl4g.devops.scm;
 
-import com.wl4g.devops.common.bean.scm.ConfigSourceBean;
-import com.wl4g.devops.common.bean.scm.VersionContentBean;
-import com.wl4g.devops.common.bean.scm.model.GetRelease;
-import com.wl4g.devops.common.bean.scm.model.PreRelease;
-import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
-import com.wl4g.devops.common.bean.scm.model.ReleaseMessage.ReleasePropertySource;
-import com.wl4g.devops.common.bean.scm.model.ReportInfo;
-import com.wl4g.devops.common.utils.PropertySources;
-import com.wl4g.devops.common.utils.PropertySources.Type;
+import com.wl4g.components.core.bean.scm.ConfigSourceBean;
+import com.wl4g.components.core.bean.scm.VersionContentBean;
+import com.wl4g.components.core.bean.scm.model.GetRelease;
+import com.wl4g.components.core.bean.scm.model.PreRelease;
+import com.wl4g.components.core.bean.scm.model.ReleaseMessage;
+import com.wl4g.components.core.bean.scm.model.ReportInfo;
+import com.wl4g.components.core.bean.scm.model.ReleaseMessage.ReleasePropertySource;
+import com.wl4g.components.core.utils.PropertySources;
+import com.wl4g.components.core.utils.PropertySources.Type;
 import com.wl4g.devops.scm.handler.CentralConfigureHandler;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
 import com.wl4g.devops.scm.publish.WatchDeferredResult;

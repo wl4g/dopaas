@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.ci.pipeline;
 
+import com.wl4g.components.common.annotation.StableApi;
+import com.wl4g.components.core.framework.beans.PrototypeBean;
 import com.wl4g.devops.ci.core.context.PipelineContext;
-import com.wl4g.devops.common.framework.beans.PrototypeBean;
-import com.wl4g.devops.components.tools.common.annotation.StableApi;
 
 /**
  * Pipeline provider SPI.

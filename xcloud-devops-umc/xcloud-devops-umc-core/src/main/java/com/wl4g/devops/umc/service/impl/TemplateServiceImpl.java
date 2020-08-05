@@ -17,16 +17,16 @@ package com.wl4g.devops.umc.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.umc.AlarmConfig;
-import com.wl4g.devops.common.bean.umc.AlarmRule;
-import com.wl4g.devops.common.bean.umc.AlarmTemplate;
+import com.wl4g.components.core.bean.erm.AppInstance;
+import com.wl4g.components.core.bean.umc.AlarmConfig;
+import com.wl4g.components.core.bean.umc.AlarmRule;
+import com.wl4g.components.core.bean.umc.AlarmTemplate;
+import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.umc.AlarmConfigDao;
 import com.wl4g.devops.dao.umc.AlarmRuleDao;
 import com.wl4g.devops.dao.umc.AlarmTemplateDao;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.support.redis.jedis.JedisService;
 import com.wl4g.devops.umc.service.TemplateService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +40,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.wl4g.devops.common.bean.BaseBean.*;
-import static com.wl4g.devops.common.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
-import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.parseJSON;
-import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.components.common.serialize.JacksonUtils.parseJSON;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.components.core.bean.BaseBean.*;
+import static com.wl4g.components.core.constants.UMCDevOpsConstants.KEY_CACHE_ALARM_TPLS;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**

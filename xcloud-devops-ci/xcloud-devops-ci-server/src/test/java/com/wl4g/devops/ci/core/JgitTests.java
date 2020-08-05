@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.wl4g.devops.components.tools.common.collection.Collections2.safeList;
+import static com.wl4g.components.common.collection.Collections2.safeList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 

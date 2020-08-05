@@ -15,6 +15,10 @@
  */
 package com.wl4g.devops.ci.config;
 
+import com.wl4g.components.core.bean.ci.*;
+import com.wl4g.components.core.bean.erm.AppInstance;
+import com.wl4g.components.core.framework.beans.PrototypeAlias;
+import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.core.DefaultPipelineManager;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
@@ -32,10 +36,7 @@ import com.wl4g.devops.ci.pipeline.deploy.*;
 import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
 import com.wl4g.devops.ci.tool.PipelineLogPurger;
-import com.wl4g.devops.common.bean.ci.*;
-import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.framework.beans.PrototypeAlias;
-import com.wl4g.devops.common.framework.operator.GenericOperatorAdapter;
+
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;

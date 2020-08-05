@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.service;
 
-import com.wl4g.devops.common.bean.ci.Orchestration;
+import com.wl4g.components.core.bean.ci.Orchestration;
 import com.wl4g.devops.page.PageModel;
 
 /**

@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.umc.handler;
 
-import com.wl4g.devops.common.bean.iam.Contact;
-import com.wl4g.devops.common.bean.iam.NotificationContact;
-import com.wl4g.devops.common.bean.umc.*;
+import com.wl4g.components.core.bean.iam.Contact;
+import com.wl4g.components.core.bean.iam.NotificationContact;
+import com.wl4g.components.core.bean.umc.*;
 
 import java.util.List;
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.analyses.model;
 
-import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static org.apache.shiro.util.Assert.notEmpty;
 import static org.springframework.util.Assert.hasText;
 import static org.springframework.util.Assert.notNull;

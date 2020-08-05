@@ -17,12 +17,12 @@ package com.wl4g.devops.erm.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.devops.common.bean.erm.AppCluster;
-import com.wl4g.devops.common.bean.erm.AppEnvironment;
-import com.wl4g.devops.common.bean.erm.AppInstance;
-import com.wl4g.devops.common.bean.erm.DockerRepository;
-import com.wl4g.devops.common.bean.iam.Dict;
-import com.wl4g.devops.components.tools.common.serialize.JacksonUtils;
+import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.components.core.bean.erm.AppCluster;
+import com.wl4g.components.core.bean.erm.AppEnvironment;
+import com.wl4g.components.core.bean.erm.AppInstance;
+import com.wl4g.components.core.bean.erm.DockerRepository;
+import com.wl4g.components.core.bean.iam.Dict;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppEnvironmentDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
@@ -38,9 +38,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
-import static com.wl4g.devops.common.bean.BaseBean.DEL_FLAG_DELETE;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
-import static com.wl4g.devops.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
+import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_DELETE;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
 
 @Service
 @Transactional

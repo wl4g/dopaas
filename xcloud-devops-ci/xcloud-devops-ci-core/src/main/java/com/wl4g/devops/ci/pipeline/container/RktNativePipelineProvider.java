@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.ci.pipeline.container;
 
+import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.AbstractPipelineProvider;
-import com.wl4g.devops.common.bean.erm.AppInstance;
 
 /**
  * CoreOS(Red hat) RKT integrate pipeline provider.

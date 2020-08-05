@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.umc.watch;
 
-import static com.wl4g.devops.components.tools.common.serialize.JacksonUtils.toJSONString;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
