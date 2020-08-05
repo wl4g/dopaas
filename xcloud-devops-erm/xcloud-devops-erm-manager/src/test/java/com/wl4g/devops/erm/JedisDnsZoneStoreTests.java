@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.erm;
 
+import com.wl4g.ErmManager;
 import com.wl4g.components.support.redis.jedis.JedisService;
-import com.wl4g.devops.ErmManager;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

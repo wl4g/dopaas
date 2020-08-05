@@ -22,6 +22,8 @@ import static org.apache.commons.lang3.SystemUtils.USER_DIR;
 
 import java.io.File;
 
+import com.wl4g.devops.dts.kit.stats.SourceCodeCounterTool;
+
 /**
  * {@link SourceCodeCounterToolTests}
  *
