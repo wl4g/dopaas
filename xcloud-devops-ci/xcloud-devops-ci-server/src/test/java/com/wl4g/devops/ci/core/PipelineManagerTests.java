@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.ci.core;
 
-import com.wl4g.devops.CiServer;
+import com.wl4g.CiServer;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.flow.FlowManager;

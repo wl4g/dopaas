@@ -13,16 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops;
+package com.wl4g;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
+import com.wl4g.iam.client.annotation.EnableIamClient;
+
+@EnableIamClient
+@MapperScan("com.wl4g.devops.dao.*")
+@AutoConfigureComponentsDataSource
 @SpringBootApplication
-public class CiExample {
+public class VcsManager {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CiExample.class, args);
+		SpringApplication.run(VcsManager.class, args);
 	}
 
 }

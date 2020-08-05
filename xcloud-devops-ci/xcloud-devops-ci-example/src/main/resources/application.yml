@@ -15,7 +15,7 @@ spring:
 
 # ### Logging configuration. ###
 logging:
-  file: /var/log/${spring.application.name}/${spring.application.name}.log
+  file: /tmp/log/${spring.application.name}/${spring.application.name}.log
   root: INFO
   level:
     org:
