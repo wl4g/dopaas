@@ -17,6 +17,7 @@ package com.wl4g.devops.scm.example.service;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.wl4g.components.common.log.SmartLogger;
@@ -27,18 +28,28 @@ public class ExampleService {
 	@Value("#{'${example.firstName:unname}'.toUpperCase()}-auto-${random.int(1000)}")
 	private String firstName;
 
-	private String lastName;
+	@Autowired
+	private LastNameBean lastName;
 
 	public String getFirstName() {
 		return firstName;
 	}
 
-	public String getLastName() {
+	public LastNameBean getLastName() {
 		return lastName;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public static class LastNameBean {
+
+		private String lastName;
+
+		public String getLastName() {
+			return lastName;
+		}
+
+		public void setLastName(String lastName) {
+			this.lastName = lastName;
+		}
 	}
 
 }
