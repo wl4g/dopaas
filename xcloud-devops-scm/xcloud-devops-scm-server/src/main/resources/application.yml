@@ -11,6 +11,12 @@
 # #### Environment base configuration. ####
 #
 
+# Mybatis configuration.
+mybatis:
+  configLocation: mybatis/mybatis-config.xml
+  mapperLocations: classpath:mybatis/**/*Mapper.xml
+  typeAliasesPackage: com.wl4g.components.core.bean.*,com.wl4g.components.core.bean.*.*
+
 # Logging configuration.
 logging:
   file: ${server.tomcat.basedir}/logs/${spring.application.name}.log
@@ -30,9 +36,3 @@ logging:
       apache: INFO
     com:
       wl4g.devops.dao: DEBUG
-
-# Mybatis configuration.
-mybatis:
-  configLocation: mybatis/mybatis-config.xml
-  mapperLocations: classpath:mybatis/**/*Mapper.xml
-  typeAliasesPackage: com.wl4g.devops.common.bean.*,com.wl4g.devops.common.bean.*.*

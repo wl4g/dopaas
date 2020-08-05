@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.handler;
 
-import static com.wl4g.devops.components.tools.common.lang.Assert2.notNull;
+import static com.wl4g.components.common.lang.Assert2.notNull;
 import static java.util.Objects.isNull;
 
 import java.util.Collection;
@@ -23,8 +23,8 @@ import java.util.Queue;
 import java.util.Set;
 
 import com.google.common.collect.Queues;
-import com.wl4g.devops.common.bean.scm.model.GenericInfo.ReleaseMeta;
-import com.wl4g.devops.common.bean.scm.model.ReportInfo.ChangedRecord;
+import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseMeta;
+import com.wl4g.components.core.bean.scm.model.ReportInfo.ChangedRecord;
 
 /**
  * Refresh configuration holder.

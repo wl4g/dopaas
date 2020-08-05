@@ -29,7 +29,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-scm-client</artifactId>
+			<artifactId>xcloud-devops-scm-client-springboot</artifactId>
 		</dependency>
 		<!-- Optional(Opening the comment means that the Iam authentication component will be loaded 
 			and the IamWithScmClientConfiguration will be started automatically) -->

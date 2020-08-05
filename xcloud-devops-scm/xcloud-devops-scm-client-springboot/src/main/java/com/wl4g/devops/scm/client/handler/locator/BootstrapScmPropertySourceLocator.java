@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.handler.locator;
 
-import com.wl4g.devops.common.bean.scm.model.ReleaseMessage;
+import com.wl4g.components.core.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.utils.InstanceHolder;
 
@@ -25,7 +25,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
-import static com.wl4g.devops.components.tools.common.lang.Exceptions.getRootCausesString;
+import static com.wl4g.components.common.lang.Exceptions.getRootCausesString;
 import static com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher.SCM_REFRESH_PROPERTY_SOURCE;
 import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 
