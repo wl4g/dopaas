@@ -30,7 +30,7 @@ public class VcsAutoConfiguration {
 
 	@Bean
 	@ConfigurationProperties(prefix = "vcs")
-	public VcsProperties ciCdProperties() {
+	public VcsProperties vcsProperties() {
 		return new VcsProperties();
 	}
 
