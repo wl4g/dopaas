@@ -30,7 +30,7 @@ import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.scm.ConfigurationDao;
 import com.wl4g.devops.dao.scm.HistoryDao;
-import com.wl4g.devops.scm.config.ScmStandardProperties;
+import com.wl4g.devops.scm.config.StandardScmProperties;
 import com.wl4g.devops.scm.handler.CentralConfigureHandler;
 import com.wl4g.devops.scm.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +63,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	private CentralConfigureHandler contextHandler;
 	@Autowired
-	private ScmStandardProperties scmServerProperties;
+	private StandardScmProperties scmServerProperties;
 
 	private static final Map<String,Long> refreshProtectIntervalMap = new HashMap<>();
 

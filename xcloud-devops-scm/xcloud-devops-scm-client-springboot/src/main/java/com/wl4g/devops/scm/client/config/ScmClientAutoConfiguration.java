@@ -17,7 +17,7 @@ package com.wl4g.devops.scm.client.config;
 
 import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.client.endpoint.ScmClientEndpoint;
+import com.wl4g.devops.scm.client.console.RefreshableConfigConsole;
 import com.wl4g.devops.scm.client.handler.locator.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
 import com.wl4g.devops.scm.client.handler.refresh.ScmLoggingRebinder;
@@ -86,8 +86,8 @@ public class ScmClientAutoConfiguration extends OptionalPrefixControllerAutoConf
 	//
 
 	@Bean
-	public ScmClientEndpoint scmClientEndpoint(Environment environment, ScmContextRefresher refresher) {
-		return new ScmClientEndpoint(environment, refresher);
+	public RefreshableConfigConsole scmClientEndpoint(Environment environment, ScmContextRefresher refresher) {
+		return new RefreshableConfigConsole(environment, refresher);
 	}
 
 	@Bean

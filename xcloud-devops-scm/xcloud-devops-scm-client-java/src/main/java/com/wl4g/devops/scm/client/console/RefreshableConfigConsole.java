@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.endpoint;
+package com.wl4g.devops.scm.client.console;
 
-import org.springframework.core.env.Environment;
-import org.springframework.util.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
+import org.slf4j.Logger;
+
 import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseMeta;
-import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.core.web.RespBase;
 import com.wl4g.components.core.web.RespBase.RetCode;
-import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
+import com.wl4g.shell.annotation.ShellComponent;
+import com.wl4g.shell.annotation.ShellMethod;
 
 /**
  * See:<a href=
@@ -36,26 +38,15 @@ import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
  * @date 2018年10月9日
  * @since
  */
-@ScmEndpoint
-public class ScmClientEndpoint extends BaseController {
+@ShellComponent
+public class RefreshableConfigConsole {
 
-	final Environment environment;
+	protected final Logger log = getLogger(getClass());
 
-	final private ScmContextRefresher refresher;
+	@Autowired
+	protected ScmContextRefresher refresher;
 
-	public ScmClientEndpoint(Environment environment, ScmContextRefresher refresher) {
-		Assert.notNull(environment, "Environment must not be null");
-		Assert.notNull(refresher, "ContextRefresher must not be null");
-		this.environment = environment;
-		this.refresher = refresher;
-	}
-
-	//
-	// Used for tests
-	//
-
-	// @PostMapping(value = URI_C_REFRESH)
-	// @ResponseBody
+	@ShellMethod(keys = { "" }, group = "", help = "'")
 	public RespBase<?> refresh(@RequestParam("releaseMeta") ReleaseMeta meta) {
 		log.info("Refresh client config meta for ... {}", meta);
 

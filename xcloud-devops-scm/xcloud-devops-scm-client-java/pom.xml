@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-scm-client-java</artifactId>
@@ -34,18 +33,15 @@
 		<!-- Requires -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-support</artifactId>
+			<artifactId>xcloud-shell-cli</artifactId>
 		</dependency>
-		<!-- Optional(Iam with SCM configuration will not be loaded by default) -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-iam-client</artifactId>
-			<optional>true</optional>
+			<artifactId>xcloud-shell-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.retry</groupId>
-			<artifactId>spring-retry</artifactId>
-			<!-- <version>1.2.4</version> -->
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-components-common</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -106,8 +102,7 @@
 						<option>-useuniqueclassmembernames</option>
 						<!-- 不混淆所有包名，本人测试混淆后WEB项目问题实在太多，毕竟Spring配置中有大量固定写法的包名 -->
 						<option>-keeppackagenames</option>
-						<!-- [*** 非常重要，不加生成jar的目录结构spring将扫描不到(同时被spring的@Configuration注解的类不能混淆, 
-							原因未知 ???) ***] -->
+						<!-- [*** 非常重要，不加生成jar的目录结构spring将扫描不到(同时被spring的@Configuration注解的类不能混淆, 原因未知 ???) ***] -->
 						<option>-keepdirectories</option>
 						<!-- 不混淆所有特殊的类 -->
 						<option>-keepattributes

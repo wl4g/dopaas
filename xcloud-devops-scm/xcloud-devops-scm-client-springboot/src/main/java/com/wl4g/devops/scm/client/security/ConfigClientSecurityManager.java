@@ -13,35 +13,29 @@
 // * See the License for the specific language governing permissions and
 // * limitations under the License.
 // */
-//package com.wl4g.devops.scm.session;
+//package com.wl4g.devops.scm.client.security;
 //
-//import javax.validation.constraints.NotBlank;
-//
-//import com.wl4g.components.core.bean.scm.model.GetRelease;
+//import com.wl4g.components.common.crypto.asymmetric.AsymmetricCryptor;
+//import com.wl4g.components.common.crypto.asymmetric.spec.KeyPairSpec;
+//import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
+//import com.wl4g.devops.scm.session.ConfigSecurityManagerSupport;
 //
 ///**
-// * {@link HandshakeRequest}
+// * {@link ConfigClientSecurityManager}
 // *
 // * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 // * @version v1.0 2020年5月26日
 // * @since
 // */
-//public class HandshakeRequest extends GetRelease {
+//public class ConfigClientSecurityManager extends ConfigSecurityManagerSupport {
 //
-//	private static final long serialVersionUID = -121403634976419032L;
-//
-//	/**
-//	 * Client secret pubkey(hex).
-//	 */
-//	@NotBlank
-//	private String clientSecretKey;
-//
-//	public String getClientSecretKey() {
-//		return clientSecretKey;
+//	protected ConfigClientSecurityManager(AsymmetricCryptor asymmeCryptor, AES128ECBPKCS5 alg) {
+//		super(asymmeCryptor, alg);
 //	}
 //
-//	public void setClientSecretKey(String clientSecretKey) {
-//		this.clientSecretKey = clientSecretKey;
+//	protected String generateClientSecretKey() {
+//		KeyPairSpec keyPairSpec = asymmeCryptor.generateKeyPair();
+//		return keyPairSpec.getHexString();
 //	}
 //
 //}

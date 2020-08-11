@@ -1,5 +1,4 @@
-<project xmlns="http://xcloud.wl4g.com/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://xcloud.wl4g.com/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xcloud.wl4g.com/POM/4.0.0 http://xcloud.wl4g.com/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>xcloud-devops-scm-client-springboot</artifactId>
@@ -29,7 +28,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-devops-scm-common</artifactId>
+			<artifactId>xcloud-devops-scm-client-java</artifactId>
 		</dependency>
 		<!-- Requires -->
 		<dependency>
@@ -45,7 +44,6 @@
 		<dependency>
 			<groupId>org.springframework.retry</groupId>
 			<artifactId>spring-retry</artifactId>
-			<!-- <version>1.2.4</version> -->
 		</dependency>
 	</dependencies>
 	<build>
@@ -106,24 +104,28 @@
 						<option>-useuniqueclassmembernames</option>
 						<!-- 不混淆所有包名，本人测试混淆后WEB项目问题实在太多，毕竟Spring配置中有大量固定写法的包名 -->
 						<option>-keeppackagenames</option>
-						<!-- [*** 非常重要，不加生成jar的目录结构spring将扫描不到(同时被spring的@Configuration注解的类不能混淆, 
-							原因未知 ???) ***] -->
+						<!-- [*** 非常重要，不加生成jar的目录结构spring将扫描不到(同时被spring的@Configuration注解的类不能混淆, 原因未知 ???) ***] -->
 						<option>-keepdirectories</option>
 						<!-- 不混淆所有特殊的类 -->
 						<option>-keepattributes
-							Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod</option>
+							Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod
+						</option>
 						<!-- 不混淆所有的set/get方法，毕竟项目中使用的部分第三方框架（例如Shiro）会用到大量的set/get映射 -->
 						<option>-keepclassmembers public class * {void set*(***);***
-							get*();}</option>
+							get*();}
+						</option>
 						<!-- 不混淆的包下的类名、或方法配置 -->
 						<option>-keep class
-							com.wl4g.devops.scm.client.config.*Configuration { *; }</option>
+							com.wl4g.devops.scm.client.config.*Configuration { *; }
+						</option>
 						<option>-keep class
-							com.wl4g.devops.scm.client.configure.RefreshBean { *; }</option>
+							com.wl4g.devops.scm.client.configure.RefreshBean { *; }
+						</option>
 						<option>-keep class
 							com.wl4g.devops.scm.client.configure.BeanCurrentlyConfigureAspect
 							{
-							*; }</option>
+							*; }
+						</option>
 					</options>
 					<outjar>${project.artifactId}-${project.version}-pg.jar</outjar>
 					<!-- 添加依赖，可以按你的需要修改，这里测试只需要一个JRE的Runtime包就行了 -->

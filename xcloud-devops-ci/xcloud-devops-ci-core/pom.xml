@@ -40,7 +40,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-shell-core</artifactId>
+			<artifactId>xcloud-shell-springboot</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
