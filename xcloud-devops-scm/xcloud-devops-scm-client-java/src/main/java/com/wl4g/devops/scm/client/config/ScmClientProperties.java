@@ -16,15 +16,14 @@
 package com.wl4g.devops.scm.client.config;
 
 import com.wl4g.devops.scm.config.BaseScmProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.wl4g.devops.scm.client.config.ScmClientProperties.PREFIX;
+import static com.wl4g.components.common.lang.Assert2.notEmpty;
+import static com.wl4g.components.common.lang.Assert2.state;
 
 /**
  * SCM client properties.
@@ -33,24 +32,11 @@ import static com.wl4g.devops.scm.client.config.ScmClientProperties.PREFIX;
  * @version v1.0 2019年6月3日
  * @since
  */
-@ConfigurationProperties(PREFIX)
 public class ScmClientProperties extends BaseScmProperties {
 	private static final long serialVersionUID = -2133451846066162424L;
 
-	/**
-	 * Prefix for SCM configuration properties.
-	 */
-	final public static String PREFIX = "spring.cloud.devops.scm.client";
-	final public static String AUTHORIZATION = "authorization";
-
-	final public static String EXP_MAXATTEMPTS = "${" + PREFIX + ".retry.max-attempts:5}";
-	final public static String EXP_DELAY = "${" + PREFIX + ".retry.delay:1000}";
-	final public static String EXP_MAXDELAY = "${" + PREFIX + ".retry.max-delay:5000}";
-	final public static String EXP_MULTIP = "${" + PREFIX + ".retry.multiplier:1.1}";
-	final public static String EXP_FASTFAIL = "${" + PREFIX + ".retry.threshold-fastfail:true}";
-
 	/** SCM server based URI. */
-	private String baseUri = "http://localhost:14043/scm";
+	private String baseUri = "http://localhost:14043/scm-server";
 
 	/**
 	 * SCM client network-card name, By default, the InetAddress that represents
@@ -105,7 +91,7 @@ public class ScmClientProperties extends BaseScmProperties {
 	}
 
 	public void setFetchReadTimeout(int fetchReadTimeout) {
-		Assert.state(fetchReadTimeout > 0, String.format("Invalid value for fetch read timeout for %s", fetchReadTimeout));
+		state(fetchReadTimeout > 0, String.format("Invalid value for fetch read timeout for %s", fetchReadTimeout));
 		this.fetchReadTimeout = fetchReadTimeout;
 	}
 
@@ -114,7 +100,7 @@ public class ScmClientProperties extends BaseScmProperties {
 	}
 
 	public void setLongPollDelay(long longPollDelay) {
-		Assert.state(longPollDelay > 0, String.format("Invalid value for long poll delay for %s", longPollDelay));
+		state(longPollDelay > 0, String.format("Invalid value for long poll delay for %s", longPollDelay));
 		this.longPollDelay = longPollDelay;
 	}
 
@@ -123,17 +109,17 @@ public class ScmClientProperties extends BaseScmProperties {
 	}
 
 	public void setLongPollMaxDelay(long longPollMaxDelay) {
-		Assert.state(longPollMaxDelay > 0, String.format("Invalid value for long poll max delay for %s", longPollMaxDelay));
+		state(longPollMaxDelay > 0, String.format("Invalid value for long poll max delay for %s", longPollMaxDelay));
 		this.longPollMaxDelay = longPollMaxDelay;
 	}
 
 	public List<String> getNamespaces() {
-		Assert.notEmpty(namespaces, String.format("Invalid value for namespaces for %s", namespaces));
+		notEmpty(namespaces, String.format("Invalid value for namespaces for %s", namespaces));
 		return namespaces;
 	}
 
 	public void setNamespaces(List<String> namespaces) {
-		Assert.notEmpty(namespaces, String.format("Invalid value for namespaces for %s", namespaces));
+		notEmpty(namespaces, String.format("Invalid value for namespaces for %s", namespaces));
 		this.namespaces = namespaces;
 	}
 
@@ -152,4 +138,10 @@ public class ScmClientProperties extends BaseScmProperties {
 	public void setRefreshProtectIntervalMs(long refreshProtectIntervalMs) {
 		this.refreshProtectIntervalMs = refreshProtectIntervalMs;
 	}
+
+	/**
+	 * Prefix for SCM configuration properties.
+	 */
+	final public static String AUTHORIZATION = "authorization";
+
 }

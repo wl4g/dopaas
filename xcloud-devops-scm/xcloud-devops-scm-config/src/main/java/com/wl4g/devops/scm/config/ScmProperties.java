@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.config;
 
-public class ScmProperties extends AbstractScmProperties {
+public class ScmProperties extends BaseScmProperties {
 	private static final long serialVersionUID = -4696830861294720221L;
 
 	/** Deferred long-polling properties */

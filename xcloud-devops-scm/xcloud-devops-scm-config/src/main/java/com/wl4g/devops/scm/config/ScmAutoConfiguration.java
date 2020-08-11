@@ -33,7 +33,7 @@ import com.wl4g.devops.scm.handler.CentralConfigureHandler;
 import com.wl4g.devops.scm.handler.CheckImpledCentralConfigureHandler;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
 import com.wl4g.devops.scm.publish.DefaultRedisConfigSourcePublisher;
-import com.wl4g.devops.scm.session.ScmServerConfigSecurityManager;
+//import com.wl4g.devops.scm.session.ConfigServerSecurityManager;
 
 /**
  * SCM auto configuration
@@ -76,10 +76,10 @@ public class ScmAutoConfiguration extends OptionalPrefixControllerAutoConfigurat
 		return new ScmWebMvcConfigurer(config, executor);
 	}
 
-	@Bean
-	public ScmServerConfigSecurityManager scmServerConfigSecurityManager() {
-		return new ScmServerConfigSecurityManager(new RSACryptor(), new AES128ECBPKCS5());
-	}
+//	@Bean
+//	public ConfigServerSecurityManager scmServerConfigSecurityManager() {
+//		return new ConfigServerSecurityManager(new RSACryptor(), new AES128ECBPKCS5());
+//	}
 
 	//
 	// --- Endpoint's. ---

@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Import;
 
 import com.wl4g.devops.scm.client.config.IamWithScmClientAutoConfiguration;
 import com.wl4g.devops.scm.client.config.ScmClientAutoConfiguration;
+import com.wl4g.shell.annotation.EnableShellServer;
 
 /**
  * SCM annotation to enable configuration.
@@ -33,6 +34,7 @@ import com.wl4g.devops.scm.client.config.ScmClientAutoConfiguration;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Import({ IamWithScmClientAutoConfiguration.class, ScmClientAutoConfiguration.class })
+@EnableShellServer
 public @interface EnableScmClient {
 
 }

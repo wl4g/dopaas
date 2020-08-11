@@ -22,12 +22,12 @@ import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.handler.CentralConfigureHandler;
-import com.wl4g.devops.scm.session.HandshakeRequest;
-import com.wl4g.devops.scm.session.ScmServerConfigSecurityManager;
+//import com.wl4g.devops.scm.session.HandshakeRequest;
+//import com.wl4g.devops.scm.session.ConfigServerSecurityManager;
 
+//import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static com.wl4g.components.core.constants.SCMDevOpsConstants.*;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -51,25 +51,25 @@ public class ScmServerEndpoint extends BaseController {
 	@Autowired
 	protected CentralConfigureHandler contextHandler;
 
-	@Autowired
-	protected ScmServerConfigSecurityManager securityManager;
-
-	/**
-	 * Init handshaking and register connection.
-	 * 
-	 * @param reg
-	 * @return
-	 */
-	@RequestMapping(value = URI_S_HANDSHAKE, method = POST)
-	public RespBase<?> handshake(@Validated HandshakeRequest reg) {
-		log.info("Scm handshaking ... <= {}", reg);
-
-		RespBase<Object> resp = new RespBase<>();
-		resp.setData(securityManager.registerSession(reg.getClientSecretKey()));
-
-		log.info("Scm handshake => {}", resp);
-		return resp;
-	}
+//	@Autowired
+//	protected ConfigServerSecurityManager securityManager;
+//
+//	/**
+//	 * Init handshaking and register connection.
+//	 * 
+//	 * @param reg
+//	 * @return
+//	 */
+//	@RequestMapping(value = URI_S_HANDSHAKE, method = POST)
+//	public RespBase<?> handshake(@Validated HandshakeRequest reg) {
+//		log.info("Scm handshaking ... <= {}", reg);
+//
+//		RespBase<Object> resp = new RespBase<>();
+//		resp.setData(securityManager.registerSession(reg.getClientSecretKey()));
+//
+//		log.info("Scm handshake => {}", resp);
+//		return resp;
+//	}
 
 	/**
 	 * Watching configuration source. </br>

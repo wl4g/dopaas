@@ -22,7 +22,7 @@ import com.wl4g.devops.scm.StandardConfigContextHandler;
 import com.wl4g.devops.scm.handler.CentralConfigureHandler;
 
 @Configuration
-public class ScmStandardAutoConfiguration {
+public class StandardScmAutoConfiguration {
 
 	@Bean
 	public CentralConfigureHandler configContextHandler() {
@@ -30,8 +30,8 @@ public class ScmStandardAutoConfiguration {
 	}
 
 	@Bean
-	public ScmStandardProperties scmServerProperties() {
-		return new ScmStandardProperties();
+	public StandardScmProperties scmServerProperties() {
+		return new StandardScmProperties();
 	}
 
 }
