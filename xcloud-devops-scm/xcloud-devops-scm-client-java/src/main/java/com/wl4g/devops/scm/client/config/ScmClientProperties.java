@@ -15,12 +15,12 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import com.wl4g.devops.scm.config.BaseScmProperties;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.wl4g.devops.scm.common.config.BaseScmProperties;
 
 import static com.wl4g.components.common.lang.Assert2.notEmpty;
 import static com.wl4g.components.common.lang.Assert2.state;

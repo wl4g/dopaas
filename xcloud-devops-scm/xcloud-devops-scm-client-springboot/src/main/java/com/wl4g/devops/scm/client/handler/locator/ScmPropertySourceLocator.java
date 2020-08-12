@@ -26,7 +26,7 @@ import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.utils.InstanceHolder;
-import com.wl4g.devops.scm.exception.ScmException;
+import com.wl4g.devops.scm.common.exception.ScmException;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
@@ -48,11 +48,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static com.wl4g.components.core.constants.SCMDevOpsConstants.*;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.AUTHORIZATION;
 import static com.wl4g.devops.scm.client.handler.RefreshConfigHolder.getReleaseMeta;
 import static com.wl4g.devops.scm.client.handler.RefreshConfigHolder.pollReleaseMeta;
+import static com.wl4g.devops.scm.common.config.SCMConstants.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.springframework.http.HttpMethod.GET;

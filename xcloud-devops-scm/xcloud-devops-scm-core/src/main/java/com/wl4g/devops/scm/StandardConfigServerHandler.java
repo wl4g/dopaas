@@ -16,8 +16,8 @@
 package com.wl4g.devops.scm;
 
 import com.wl4g.devops.scm.bean.*;
-import com.wl4g.devops.scm.model.*;
-import com.wl4g.devops.scm.model.ReleaseMessage.ReleasePropertySource;
+import com.wl4g.devops.scm.common.model.*;
+import com.wl4g.devops.scm.common.model.ReleaseMessage.ReleasePropertySource;
 import com.wl4g.components.core.utils.PropertySources;
 import com.wl4g.components.core.utils.PropertySources.Type;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;

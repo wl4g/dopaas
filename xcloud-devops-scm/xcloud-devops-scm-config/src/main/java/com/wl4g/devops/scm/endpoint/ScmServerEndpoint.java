@@ -15,18 +15,17 @@
  */
 package com.wl4g.devops.scm.endpoint;
 
-import com.wl4g.devops.scm.model.GetRelease;
-import com.wl4g.devops.scm.model.ReleaseMessage;
-import com.wl4g.devops.scm.model.ReportInfo;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
+import com.wl4g.devops.scm.common.model.GetRelease;
+import com.wl4g.devops.scm.common.model.ReleaseMessage;
+import com.wl4g.devops.scm.common.model.ReportInfo;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
 //import com.wl4g.devops.scm.session.HandshakeRequest;
 //import com.wl4g.devops.scm.session.ConfigServerSecurityManager;
 
-//import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static com.wl4g.components.core.constants.SCMDevOpsConstants.*;
+import static com.wl4g.devops.scm.common.config.SCMConstants.*;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import org.springframework.beans.factory.annotation.Autowired;

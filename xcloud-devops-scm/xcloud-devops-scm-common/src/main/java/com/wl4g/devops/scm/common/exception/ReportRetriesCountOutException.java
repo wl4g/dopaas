@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.exception;
+package com.wl4g.devops.scm.common.exception;
 
-import com.wl4g.devops.scm.exception.ScmException;
+import com.wl4g.devops.scm.common.exception.ScmException;
 
-public class NoChangedConfigException extends ScmException {
+public class ReportRetriesCountOutException extends ScmException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -25,7 +25,7 @@ public class NoChangedConfigException extends ScmException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public NoChangedConfigException() {
+	public ReportRetriesCountOutException() {
 		super();
 	}
 
@@ -38,7 +38,7 @@ public class NoChangedConfigException extends ScmException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public NoChangedConfigException(String message) {
+	public ReportRetriesCountOutException(String message) {
 		super(message);
 	}
 
@@ -59,7 +59,7 @@ public class NoChangedConfigException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public NoChangedConfigException(String message, Throwable cause) {
+	public ReportRetriesCountOutException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -77,7 +77,8 @@ public class NoChangedConfigException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public NoChangedConfigException(Throwable cause) {
+	public ReportRetriesCountOutException(Throwable cause) {
 		super(cause);
 	}
+
 }

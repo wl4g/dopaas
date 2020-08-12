@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.core.constants.SCMDevOpsConstants.CACHE_PUB_GROUPS;
-import static com.wl4g.components.core.constants.SCMDevOpsConstants.KEY_PUB_PREFIX;
+import static com.wl4g.devops.scm.common.config.SCMConstants.CACHE_PUB_GROUPS;
+import static com.wl4g.devops.scm.common.config.SCMConstants.KEY_PUB_PREFIX;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.springframework.util.CollectionUtils.isEmpty;

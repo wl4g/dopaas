@@ -20,10 +20,10 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.wl4g.devops.scm.model.CompositePropertySource;
-import com.wl4g.devops.scm.model.MapPropertySource;
-import com.wl4g.devops.scm.model.ReleaseMessage;
-import com.wl4g.devops.scm.model.ReleaseMessage.ReleasePropertySource;
+import com.wl4g.devops.scm.common.model.CompositePropertySource;
+import com.wl4g.devops.scm.common.model.MapPropertySource;
+import com.wl4g.devops.scm.common.model.ReleaseMessage;
+import com.wl4g.devops.scm.common.model.ReleaseMessage.ReleasePropertySource;
 
 /**
  * {@link SpringReleaseMessage}

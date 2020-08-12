@@ -1,3 +1,4 @@
+package com.wl4g.devops.scm.common.session;
 ///*
 // * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
 // *

@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.exception;
+package com.wl4g.devops.scm.common.exception;
 
-import com.wl4g.devops.scm.exception.ScmException;
 
-public class ReportRetriesCountOutException extends ScmException {
+public class ScmException extends RuntimeException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -25,7 +24,7 @@ public class ReportRetriesCountOutException extends ScmException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public ReportRetriesCountOutException() {
+	public ScmException() {
 		super();
 	}
 
@@ -38,7 +37,7 @@ public class ReportRetriesCountOutException extends ScmException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public ReportRetriesCountOutException(String message) {
+	public ScmException(String message) {
 		super(message);
 	}
 
@@ -59,7 +58,7 @@ public class ReportRetriesCountOutException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public ReportRetriesCountOutException(String message, Throwable cause) {
+	public ScmException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -77,7 +76,7 @@ public class ReportRetriesCountOutException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public ReportRetriesCountOutException(Throwable cause) {
+	public ScmException(Throwable cause) {
 		super(cause);
 	}
 

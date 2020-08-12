@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.config;
+package com.wl4g.devops.scm.common.config;
 
 import static com.wl4g.components.common.lang.Assert2.state;
 import static java.lang.String.format;

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.exception;
+package com.wl4g.devops.scm.common.exception;
 
-import com.wl4g.devops.scm.exception.ScmException;
+import com.wl4g.devops.scm.common.exception.ScmException;
 
 public class MismatchedConfigNamespaceException extends ScmException {
 	static final long serialVersionUID = -7034833390745766939L;

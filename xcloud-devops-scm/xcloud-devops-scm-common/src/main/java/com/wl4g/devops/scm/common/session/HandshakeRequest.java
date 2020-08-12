@@ -1,3 +1,4 @@
+package com.wl4g.devops.scm.common.session;
 ///*
 // * Copyright 2017 ~ 2025 the original author or authors. <wanglsir@gmail.com, 983708408@qq.com>
 // *
@@ -15,48 +16,33 @@
 // */
 //package com.wl4g.devops.scm.session;
 //
+//import javax.validation.constraints.NotBlank;
+//
+//import com.wl4g.components.core.bean.scm.model.GetRelease;
+//
 ///**
-// * {@link HandshakeResult}
+// * {@link HandshakeRequest}
 // *
 // * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 // * @version v1.0 2020年5月26日
 // * @since
 // */
-//public class HandshakeResult {
+//public class HandshakeRequest extends GetRelease {
+//
+//	private static final long serialVersionUID = -121403634976419032L;
 //
 //	/**
-//	 * Session key. (hex)
+//	 * Client secret pubkey(hex).
 //	 */
-//	private String sessionKey;
+//	@NotBlank
+//	private String clientSecretKey;
 //
-//	/**
-//	 * Cipher data key. (hex)
-//	 */
-//	private String cipherDataKey;
-//
-//	public HandshakeResult() {
-//		super();
+//	public String getClientSecretKey() {
+//		return clientSecretKey;
 //	}
 //
-//	public HandshakeResult(String sessionKey, String cipherDataKey) {
-//		setSessionKey(sessionKey);
-//		setCipherDataKey(cipherDataKey);
-//	}
-//
-//	public String getSessionKey() {
-//		return sessionKey;
-//	}
-//
-//	public void setSessionKey(String sessionKey) {
-//		this.sessionKey = sessionKey;
-//	}
-//
-//	public String getCipherDataKey() {
-//		return cipherDataKey;
-//	}
-//
-//	public void setCipherDataKey(String cipherDataKey) {
-//		this.cipherDataKey = cipherDataKey;
+//	public void setClientSecretKey(String clientSecretKey) {
+//		this.clientSecretKey = clientSecretKey;
 //	}
 //
 //}

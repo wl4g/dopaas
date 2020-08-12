@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.bean;
 
-import com.wl4g.devops.scm.model.GenericInfo.ReleaseMeta;
+import com.wl4g.devops.scm.common.model.GenericInfo.ReleaseMeta;
 
 public class ConfigReleaseMeta extends ReleaseMeta {
 	private static final long serialVersionUID = 2893186273652452191L;

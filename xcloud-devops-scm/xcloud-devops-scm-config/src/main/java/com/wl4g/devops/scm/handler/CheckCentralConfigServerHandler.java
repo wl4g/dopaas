@@ -20,10 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.ResponseEntity;
 
-import com.wl4g.devops.scm.model.GetRelease;
-import com.wl4g.devops.scm.model.PreRelease;
-import com.wl4g.devops.scm.model.ReleaseMessage;
-import com.wl4g.devops.scm.model.ReportInfo;
+import com.wl4g.devops.scm.common.model.GetRelease;
+import com.wl4g.devops.scm.common.model.PreRelease;
+import com.wl4g.devops.scm.common.model.ReleaseMessage;
+import com.wl4g.devops.scm.common.model.ReportInfo;
 import com.wl4g.devops.scm.publish.WatchDeferredResult;
 
 /**

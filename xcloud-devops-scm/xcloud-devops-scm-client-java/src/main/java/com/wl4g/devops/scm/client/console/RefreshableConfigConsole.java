@@ -16,13 +16,12 @@
 package com.wl4g.devops.scm.client.console;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 import org.slf4j.Logger;
 
-import com.wl4g.devops.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.shell.annotation.ShellComponent;
 import com.wl4g.shell.annotation.ShellMethod;
+import com.wl4g.shell.annotation.ShellOption;
 
 /**
  * See:<a href=
@@ -38,20 +37,19 @@ public class RefreshableConfigConsole {
 
 	protected final Logger log = getLogger(getClass());
 
-	@Autowired
-	protected ScmContextRefresher refresher;
+	/**
+	 * 
+	 * @param force
+	 */
+	@ShellMethod(keys = { "refresh" }, group = DEFAULT_SCM_CONSOLE_GROUP, help = "Execute refresh configuration immediately")
+	public void refresh(@ShellOption(opt = "f", lopt = "force", help = "Force refresh configuration") boolean force) {
+		log.info("Refresh configuration for ... force={}", force);
 
-	@ShellMethod(keys = { "" }, group = "", help = "'")
-	public RespBase<?> refresh(@RequestParam("releaseMeta") ReleaseMeta meta) {
-		log.info("Refresh client config meta for ... {}", meta);
+		// TODO
 
-		try {
-			refresher.refresh();
-		} catch (Exception e) {
-			String errmsg = getRootCauseMessage(e);
-			log.error("Refresh failed! {}", errmsg);
-		}
-		return resp;
 	}
+
+	/** SCM console group */
+	public static final String DEFAULT_SCM_CONSOLE_GROUP = "SCM configurer console";
 
 }
