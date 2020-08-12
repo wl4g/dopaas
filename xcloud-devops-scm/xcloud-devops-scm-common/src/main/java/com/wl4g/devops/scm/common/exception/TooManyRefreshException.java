@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.exception;
+package com.wl4g.devops.scm.common.exception;
 
+import com.wl4g.components.common.web.rest.FunctionalRuleRestrictException;
 
-public class ScmException extends RuntimeException {
+public class TooManyRefreshException extends ScmException implements FunctionalRuleRestrictException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -24,7 +25,7 @@ public class ScmException extends RuntimeException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public ScmException() {
+	public TooManyRefreshException() {
 		super();
 	}
 
@@ -37,7 +38,7 @@ public class ScmException extends RuntimeException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public ScmException(String message) {
+	public TooManyRefreshException(String message) {
 		super(message);
 	}
 
@@ -58,7 +59,7 @@ public class ScmException extends RuntimeException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public ScmException(String message, Throwable cause) {
+	public TooManyRefreshException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -76,7 +77,7 @@ public class ScmException extends RuntimeException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public ScmException(Throwable cause) {
+	public TooManyRefreshException(Throwable cause) {
 		super(cause);
 	}
 

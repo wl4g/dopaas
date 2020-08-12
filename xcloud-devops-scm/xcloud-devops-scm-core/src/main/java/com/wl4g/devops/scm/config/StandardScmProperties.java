@@ -17,6 +17,8 @@ package com.wl4g.devops.scm.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import com.wl4g.devops.scm.common.config.BaseScmProperties;
+
 import static com.wl4g.devops.scm.config.StandardScmProperties.PREFIX;
 
 /**

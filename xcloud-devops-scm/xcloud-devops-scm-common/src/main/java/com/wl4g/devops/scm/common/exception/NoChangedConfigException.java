@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.exception;
+package com.wl4g.devops.scm.common.exception;
 
-import com.wl4g.components.common.web.rest.FunctionalRuleRestrictException;
+import com.wl4g.devops.scm.common.exception.ScmException;
 
-public class TooManyRefreshException extends ScmException implements FunctionalRuleRestrictException {
+public class NoChangedConfigException extends ScmException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -25,7 +25,7 @@ public class TooManyRefreshException extends ScmException implements FunctionalR
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public TooManyRefreshException() {
+	public NoChangedConfigException() {
 		super();
 	}
 
@@ -38,7 +38,7 @@ public class TooManyRefreshException extends ScmException implements FunctionalR
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public TooManyRefreshException(String message) {
+	public NoChangedConfigException(String message) {
 		super(message);
 	}
 
@@ -59,7 +59,7 @@ public class TooManyRefreshException extends ScmException implements FunctionalR
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public TooManyRefreshException(String message, Throwable cause) {
+	public NoChangedConfigException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -77,8 +77,7 @@ public class TooManyRefreshException extends ScmException implements FunctionalR
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public TooManyRefreshException(Throwable cause) {
+	public NoChangedConfigException(Throwable cause) {
 		super(cause);
 	}
-
 }

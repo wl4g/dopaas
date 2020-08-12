@@ -19,8 +19,8 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.wl4g.devops.scm.model.GetRelease;
-import com.wl4g.devops.scm.model.PreRelease;
+import com.wl4g.devops.scm.common.model.GetRelease;
+import com.wl4g.devops.scm.common.model.PreRelease;
 
 /**
  * SCM config source server publisher api.

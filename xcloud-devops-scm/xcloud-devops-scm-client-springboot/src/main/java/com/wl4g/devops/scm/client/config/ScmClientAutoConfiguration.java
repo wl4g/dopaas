@@ -23,6 +23,8 @@ import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
 import com.wl4g.devops.scm.client.handler.refresh.ScmLoggingRebinder;
 import com.wl4g.devops.scm.client.handler.watch.DefaultRefreshWatcher;
 
+import static com.wl4g.devops.scm.common.config.SCMConstants.URI_C_BASE;
+
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
@@ -30,8 +32,6 @@ import org.springframework.cloud.logging.LoggingRebinder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-
-import static com.wl4g.components.core.constants.SCMDevOpsConstants.URI_C_BASE;
 
 /**
  * SCM refresh auto configuration.</br>

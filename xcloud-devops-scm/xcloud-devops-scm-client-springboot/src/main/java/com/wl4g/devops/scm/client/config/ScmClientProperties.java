@@ -15,9 +15,10 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import com.wl4g.devops.scm.config.BaseScmProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.Assert;
+
+import com.wl4g.devops.scm.common.config.BaseScmProperties;
 
 import java.util.ArrayList;
 import java.util.HashMap;

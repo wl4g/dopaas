@@ -16,7 +16,7 @@
 package com.wl4g.devops.scm.service;
 
 import com.wl4g.devops.scm.bean.*;
-import com.wl4g.devops.scm.model.*;
+import com.wl4g.devops.scm.common.model.*;
 
 import java.util.List;
 

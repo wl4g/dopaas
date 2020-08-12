@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.scm.client.locator;
 
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 
 import java.util.List;
@@ -22,9 +23,10 @@ import java.util.List;
 import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.devops.scm.exception.ScmException;
-import com.wl4g.devops.scm.model.ReleaseMessage;
-import com.wl4g.devops.scm.model.ReleaseMessage.ReleasePropertySource;
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.common.exception.ScmException;
+import com.wl4g.devops.scm.common.model.ReleaseMessage;
+import com.wl4g.devops.scm.common.model.ReleaseMessage.ReleasePropertySource;
 
 /**
  * {@link AbstractConfigSourceLocator}
@@ -36,6 +38,14 @@ import com.wl4g.devops.scm.model.ReleaseMessage.ReleasePropertySource;
 public abstract class AbstractConfigSourceLocator implements ConfigSourceLocator {
 
 	protected final SmartLogger log = getLogger(getClass());
+
+	/** {@link ScmClientProperties} */
+	protected final ScmClientProperties config;
+
+	public AbstractConfigSourceLocator(ScmClientProperties config) {
+		notNullOf(config, "config");
+		this.config = config;
+	}
 
 	/**
 	 * Resolver cipher configuration source.
@@ -68,11 +78,11 @@ public abstract class AbstractConfigSourceLocator implements ConfigSourceLocator
 	}
 
 	/**
-	 * Prints property sources.
+	 * Prints configuration sources.
 	 * 
 	 * @param release
 	 */
-	protected void printfSources(ReleaseMessage release) {
+	protected void printfConfigSources(ReleaseMessage release) {
 		log.info("Fetched from scm config <= group({}), namespace({}), release meta({})", release.getCluster(),
 				release.getNamespaces(), release.getMeta());
 

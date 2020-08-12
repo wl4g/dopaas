@@ -22,7 +22,7 @@ import com.wl4g.components.core.bean.scm.model.ReportInfo.ChangedRecord;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.handler.locator.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
-import com.wl4g.devops.scm.exception.ReportRetriesCountOutException;
+import com.wl4g.devops.scm.common.exception.ReportRetriesCountOutException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -38,13 +38,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.wl4g.components.core.constants.SCMDevOpsConstants.URI_S_BASE;
-import static com.wl4g.components.core.constants.SCMDevOpsConstants.URI_S_REPORT_POST;
 import static com.wl4g.components.common.lang.ThreadUtils2.sleep;
 import static com.wl4g.components.common.lang.ThreadUtils2.sleepRandom;
 import static com.wl4g.components.common.web.rest.RespBase.isSuccess;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.devops.scm.client.handler.RefreshConfigHolder.*;
+import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_BASE;
+import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_REPORT_POST;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;

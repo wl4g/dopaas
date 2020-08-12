@@ -23,8 +23,8 @@ import com.wl4g.devops.scm.client.handler.locator.ScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
 
-import static com.wl4g.components.core.constants.SCMDevOpsConstants.URI_S_BASE;
-import static com.wl4g.components.core.constants.SCMDevOpsConstants.URI_S_WATCH_GET;
+import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_BASE;
+import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_WATCH_GET;
 
 import org.springframework.util.Assert;
 
