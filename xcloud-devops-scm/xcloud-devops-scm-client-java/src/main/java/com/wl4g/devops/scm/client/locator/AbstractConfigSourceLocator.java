@@ -22,9 +22,9 @@ import java.util.List;
 import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.core.bean.scm.model.ReleaseMessage;
-import com.wl4g.components.core.bean.scm.model.ReleaseMessage.ReleasePropertySource;
-import com.wl4g.components.core.exception.scm.ScmException;
+import com.wl4g.devops.scm.exception.ScmException;
+import com.wl4g.devops.scm.model.ReleaseMessage;
+import com.wl4g.devops.scm.model.ReleaseMessage.ReleasePropertySource;
 
 /**
  * {@link AbstractConfigSourceLocator}

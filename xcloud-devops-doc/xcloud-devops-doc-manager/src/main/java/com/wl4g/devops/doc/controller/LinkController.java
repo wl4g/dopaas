@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.doc.controller;
 
-import com.wl4g.components.core.web.RespBase;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.devops.doc.service.ShareService;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;

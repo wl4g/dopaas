@@ -17,7 +17,7 @@ package com.wl4g.devops.scm.client.event;
 
 import java.util.EventListener;
 
-import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseMeta;
+import com.wl4g.devops.scm.model.GenericInfo.ReleaseMeta;
 
 /**
  * {@link ScmEventListener}

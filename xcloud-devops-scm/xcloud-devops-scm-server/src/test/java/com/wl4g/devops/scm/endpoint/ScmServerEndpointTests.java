@@ -25,9 +25,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.ScmServer;
 import com.wl4g.components.common.lang.ThreadUtils2;
-import com.wl4g.components.core.bean.scm.model.PreRelease;
-import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseInstance;
-import com.wl4g.devops.scm.handler.CentralConfigureHandler;
+import com.wl4g.devops.scm.model.PreRelease;
+import com.wl4g.devops.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ScmServer.class)
@@ -38,7 +38,7 @@ public class ScmServerEndpointTests {
 	 * Scm config handler.
 	 */
 	@Autowired
-	protected CentralConfigureHandler contextHandler;
+	protected CentralConfigServerHandler handler;
 
 	/**
 	 * Simulation config release. </br>
@@ -53,7 +53,7 @@ public class ScmServerEndpointTests {
 		pre.getMeta().setReleaseId("1");
 		pre.getMeta().setVersion("1.0.1");
 		pre.getInstances().add(new ReleaseInstance("localhost", "8848"));
-		contextHandler.release(pre);
+		handler.release(pre);
 
 		// For simulation continuous running of SCM server
 		ThreadUtils2.sleep(Integer.MAX_VALUE);

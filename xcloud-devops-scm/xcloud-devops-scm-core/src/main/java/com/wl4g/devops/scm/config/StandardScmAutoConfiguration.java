@@ -18,15 +18,15 @@ package com.wl4g.devops.scm.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.wl4g.devops.scm.StandardConfigContextHandler;
-import com.wl4g.devops.scm.handler.CentralConfigureHandler;
+import com.wl4g.devops.scm.StandardConfigServerHandler;
+import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
 
 @Configuration
 public class StandardScmAutoConfiguration {
 
 	@Bean
-	public CentralConfigureHandler configContextHandler() {
-		return new StandardConfigContextHandler();
+	public CentralConfigServerHandler configContextHandler() {
+		return new StandardConfigServerHandler();
 	}
 
 	@Bean

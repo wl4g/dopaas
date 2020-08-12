@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.controller;
+package com.wl4g.devops.scm.web;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.core.bean.scm.ConfigVersionList;
-import com.wl4g.components.core.bean.scm.VersionContentBean;
-import com.wl4g.components.core.bean.scm.VersionOfDetail;
+import com.wl4g.devops.scm.bean.*;
+import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.common.web.rest.RespBase.RetCode;
 import com.wl4g.components.core.utils.PropertySources;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.web.RespBase;
-import com.wl4g.components.core.web.RespBase.RetCode;
 import com.wl4g.devops.page.PageModel;
 import com.wl4g.devops.scm.service.ConfigurationService;
 import org.apache.commons.lang3.exception.ExceptionUtils;

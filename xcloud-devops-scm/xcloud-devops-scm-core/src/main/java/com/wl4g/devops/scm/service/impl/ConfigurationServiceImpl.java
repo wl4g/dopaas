@@ -19,19 +19,17 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.components.core.bean.scm.*;
-import com.wl4g.components.core.bean.scm.model.GetRelease;
-import com.wl4g.components.core.bean.scm.model.PreRelease;
-import com.wl4g.components.core.bean.scm.model.ReportInfo;
-import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseInstance;
-import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseMeta;
-import com.wl4g.components.core.exception.scm.TooManyRefreshException;
+import com.wl4g.devops.scm.bean.*;
+import com.wl4g.devops.scm.model.*;
+import com.wl4g.devops.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
-import com.wl4g.devops.dao.scm.ConfigurationDao;
-import com.wl4g.devops.dao.scm.HistoryDao;
 import com.wl4g.devops.scm.config.StandardScmProperties;
-import com.wl4g.devops.scm.handler.CentralConfigureHandler;
+import com.wl4g.devops.scm.dao.ConfigurationDao;
+import com.wl4g.devops.scm.dao.HistoryDao;
+import com.wl4g.devops.scm.exception.TooManyRefreshException;
+import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
 import com.wl4g.devops.scm.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,7 +59,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	private AppInstanceDao appInstanceDao;
 	@Autowired
-	private CentralConfigureHandler contextHandler;
+	private CentralConfigServerHandler contextHandler;
 	@Autowired
 	private StandardScmProperties scmServerProperties;
 

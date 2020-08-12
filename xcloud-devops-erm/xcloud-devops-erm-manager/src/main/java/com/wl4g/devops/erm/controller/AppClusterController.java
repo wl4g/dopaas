@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.erm.controller;
 
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.erm.service.AppClusterService;
 import com.wl4g.devops.page.PageModel;
 

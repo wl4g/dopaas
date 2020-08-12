@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.ci.web;
 
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.ci.service.AnalysisHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -15,10 +15,10 @@
  */
 package com.wl4g.devops.erm.controller;
 
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.erm.Log;
 import com.wl4g.components.core.bean.erm.QueryLogModel;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.erm.service.LogConsoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
