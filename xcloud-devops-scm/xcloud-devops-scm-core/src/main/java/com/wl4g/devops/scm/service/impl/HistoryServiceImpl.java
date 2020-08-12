@@ -19,17 +19,17 @@ import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.iam.Dict;
-import com.wl4g.components.core.bean.scm.*;
-import com.wl4g.components.core.bean.scm.model.PreRelease;
-import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseInstance;
-import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseMeta;
-import com.wl4g.devops.dao.scm.ConfigurationDao;
-import com.wl4g.devops.dao.scm.HistoryDao;
+import com.wl4g.devops.scm.bean.*;
+import com.wl4g.devops.scm.model.*;
+import com.wl4g.devops.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.iam.DictDao;
 import com.wl4g.devops.page.PageModel;
-import com.wl4g.devops.scm.handler.CentralConfigureHandler;
+import com.wl4g.devops.scm.dao.ConfigurationDao;
+import com.wl4g.devops.scm.dao.HistoryDao;
+import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
 import com.wl4g.devops.scm.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +52,7 @@ public class HistoryServiceImpl implements HistoryService {
 	@Autowired
 	private AppClusterDao appClusterDao;
 	@Autowired
-	private CentralConfigureHandler configServerService;
+	private CentralConfigServerHandler configServerService;
 	@Autowired
 	private DictDao dictDao;
 	@Autowired

@@ -16,10 +16,10 @@
 package com.wl4g.devops.doc.controller;
 
 import com.wl4g.components.common.lang.DateUtils2;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.doc.FileChanges;
 import com.wl4g.components.core.bean.doc.Share;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.doc.service.DocService;
 import com.wl4g.devops.page.PageModel;
 

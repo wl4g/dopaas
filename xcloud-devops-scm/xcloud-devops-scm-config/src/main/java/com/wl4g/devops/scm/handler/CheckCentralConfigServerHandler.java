@@ -20,10 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.ResponseEntity;
 
-import com.wl4g.components.core.bean.scm.model.GetRelease;
-import com.wl4g.components.core.bean.scm.model.PreRelease;
-import com.wl4g.components.core.bean.scm.model.ReleaseMessage;
-import com.wl4g.components.core.bean.scm.model.ReportInfo;
+import com.wl4g.devops.scm.model.GetRelease;
+import com.wl4g.devops.scm.model.PreRelease;
+import com.wl4g.devops.scm.model.ReleaseMessage;
+import com.wl4g.devops.scm.model.ReportInfo;
 import com.wl4g.devops.scm.publish.WatchDeferredResult;
 
 /**
@@ -33,7 +33,7 @@ import com.wl4g.devops.scm.publish.WatchDeferredResult;
  * @version v1.0 2019年5月27日
  * @since
  */
-public class CheckImpledCentralConfigureHandler implements CentralConfigureHandler, InitializingBean {
+public class CheckCentralConfigServerHandler implements CentralConfigServerHandler, InitializingBean {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -58,7 +58,7 @@ public class CheckImpledCentralConfigureHandler implements CentralConfigureHandl
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		throw new IllegalStateException(String.format("Used SCM server, you must customize implenments the '%s' !",
-				CentralConfigureHandler.class.getName()));
+				CentralConfigServerHandler.class.getName()));
 	}
 
 }

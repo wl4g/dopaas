@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.scm.endpoint;
 
-import com.wl4g.components.core.bean.scm.model.GetRelease;
-import com.wl4g.components.core.bean.scm.model.ReleaseMessage;
-import com.wl4g.components.core.bean.scm.model.ReportInfo;
+import com.wl4g.devops.scm.model.GetRelease;
+import com.wl4g.devops.scm.model.ReleaseMessage;
+import com.wl4g.devops.scm.model.ReportInfo;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.handler.CentralConfigureHandler;
+import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
 //import com.wl4g.devops.scm.session.HandshakeRequest;
 //import com.wl4g.devops.scm.session.ConfigServerSecurityManager;
 
@@ -49,7 +49,7 @@ public class ScmServerEndpoint extends BaseController {
 	 * Scm config handler.
 	 */
 	@Autowired
-	protected CentralConfigureHandler contextHandler;
+	protected CentralConfigServerHandler handler;
 
 //	@Autowired
 //	protected ConfigServerSecurityManager securityManager;
@@ -82,7 +82,7 @@ public class ScmServerEndpoint extends BaseController {
 	@RequestMapping(value = URI_S_WATCH_GET, method = GET)
 	public DeferredResult<?> watch(@Validated GetRelease watch) {
 		log.info("Long polling watching... <= {}", watch);
-		return contextHandler.watch(watch);
+		return handler.watch(watch);
 	}
 
 	@GetMapping(value = URI_S_SOURCE_GET)
@@ -91,7 +91,7 @@ public class ScmServerEndpoint extends BaseController {
 
 		RespBase<ReleaseMessage> resp = new RespBase<>();
 		// Fetching configuration source
-		resp.setData(contextHandler.getSource(get));
+		resp.setData(handler.getSource(get));
 
 		log.info("Fetched config source => {}", resp);
 		return resp;
@@ -101,7 +101,7 @@ public class ScmServerEndpoint extends BaseController {
 	public RespBase<?> report(@Validated @RequestBody ReportInfo report) {
 		log.info("Reporting... <= {}", report);
 		RespBase<?> resp = new RespBase<>();
-		contextHandler.report(report);
+		handler.report(report);
 		log.info("Reported => {}", resp);
 		return resp;
 	}

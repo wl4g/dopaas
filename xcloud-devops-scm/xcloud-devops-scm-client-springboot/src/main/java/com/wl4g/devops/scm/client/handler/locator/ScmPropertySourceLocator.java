@@ -19,14 +19,14 @@ import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseMeta;
 import com.wl4g.components.core.bean.scm.model.GetRelease;
 import com.wl4g.components.core.bean.scm.model.ReleaseMessage;
 import com.wl4g.components.core.bean.scm.model.ReleaseMessage.ReleasePropertySource;
-import com.wl4g.components.core.exception.scm.ScmException;
 import com.wl4g.components.core.utils.bean.BeanMapConvert;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.utils.InstanceHolder;
+import com.wl4g.devops.scm.exception.ScmException;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;

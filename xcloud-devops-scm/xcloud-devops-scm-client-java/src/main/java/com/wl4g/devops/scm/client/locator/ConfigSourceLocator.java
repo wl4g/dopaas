@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.locator;
 
-import com.wl4g.components.core.bean.scm.model.ReleaseMessage;
+import com.wl4g.devops.scm.model.ReleaseMessage;
 
 /**
  * {@link ConfigSourceLocator}

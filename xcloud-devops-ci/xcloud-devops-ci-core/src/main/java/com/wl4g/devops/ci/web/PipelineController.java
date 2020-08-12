@@ -16,10 +16,10 @@
 package com.wl4g.devops.ci.web;
 
 import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.bean.ci.PipeStepBuilding;
 import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.components.core.web.RespBase;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.NewParameter;

@@ -15,16 +15,12 @@
  */
 package com.wl4g.devops.scm;
 
-import com.wl4g.components.core.bean.scm.ConfigSourceBean;
-import com.wl4g.components.core.bean.scm.VersionContentBean;
-import com.wl4g.components.core.bean.scm.model.GetRelease;
-import com.wl4g.components.core.bean.scm.model.PreRelease;
-import com.wl4g.components.core.bean.scm.model.ReleaseMessage;
-import com.wl4g.components.core.bean.scm.model.ReportInfo;
-import com.wl4g.components.core.bean.scm.model.ReleaseMessage.ReleasePropertySource;
+import com.wl4g.devops.scm.bean.*;
+import com.wl4g.devops.scm.model.*;
+import com.wl4g.devops.scm.model.ReleaseMessage.ReleasePropertySource;
 import com.wl4g.components.core.utils.PropertySources;
 import com.wl4g.components.core.utils.PropertySources.Type;
-import com.wl4g.devops.scm.handler.CentralConfigureHandler;
+import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
 import com.wl4g.devops.scm.publish.WatchDeferredResult;
 import com.wl4g.devops.scm.service.ConfigurationService;
@@ -47,7 +43,7 @@ import static org.apache.commons.lang3.StringUtils.contains;
  * @date 2018年11月1日
  * @since
  */
-public class StandardConfigContextHandler implements CentralConfigureHandler {
+public class StandardConfigServerHandler implements CentralConfigServerHandler {
 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -96,7 +92,7 @@ public class StandardConfigContextHandler implements CentralConfigureHandler {
 	}
 
 	/**
-	 * Resolve to releasePropertySource
+	 * Resolving to releasePropertySource
 	 * 
 	 * @param vc
 	 * @return

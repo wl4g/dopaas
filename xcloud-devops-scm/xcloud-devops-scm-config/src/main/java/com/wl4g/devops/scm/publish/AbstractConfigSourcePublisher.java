@@ -22,9 +22,9 @@ import static com.wl4g.components.common.lang.Assert2.hasText;
 import static com.wl4g.components.common.lang.Assert2.notNull;
 
 import com.wl4g.components.common.task.RunnerProperties;
-import com.wl4g.components.core.bean.scm.model.GetRelease;
-import com.wl4g.components.core.bean.scm.model.PreRelease;
-import com.wl4g.components.core.bean.scm.model.GenericInfo.ReleaseInstance;
+import com.wl4g.devops.scm.model.GetRelease;
+import com.wl4g.devops.scm.model.PreRelease;
+import com.wl4g.devops.scm.model.GenericInfo.ReleaseInstance;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.scm.config.ScmProperties;
 

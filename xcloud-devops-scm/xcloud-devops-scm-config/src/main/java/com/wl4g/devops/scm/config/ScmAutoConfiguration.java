@@ -29,8 +29,8 @@ import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.endpoint.ScmServerEndpoint;
-import com.wl4g.devops.scm.handler.CentralConfigureHandler;
-import com.wl4g.devops.scm.handler.CheckImpledCentralConfigureHandler;
+import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
+import com.wl4g.devops.scm.handler.CheckCentralConfigServerHandler;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
 import com.wl4g.devops.scm.publish.DefaultRedisConfigSourcePublisher;
 //import com.wl4g.devops.scm.session.ConfigServerSecurityManager;
@@ -52,8 +52,8 @@ public class ScmAutoConfiguration extends OptionalPrefixControllerAutoConfigurat
 
 	@Bean
 	@ConditionalOnMissingBean
-	public CentralConfigureHandler configContextHandler() {
-		return new CheckImpledCentralConfigureHandler();
+	public CentralConfigServerHandler configContextHandler() {
+		return new CheckCentralConfigServerHandler();
 	}
 
 	@Bean
