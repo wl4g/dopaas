@@ -24,28 +24,30 @@ package com.wl4g.devops.scm.common.config;
  */
 public abstract class SCMConstants {
 
-	//
 	// --- Common. ---
-	//
 
 	/** Server pre-release source response data key. */
 	final public static String KEY_PRE_RELEASE = "pre-release-source";
 	/** Client environment source response data key. */
 	final public static String KEY_USED_SOURCES = "used-source";
-	//
+
+	/** Configuration modified status. */
+	final public static int WATCH_CHANGED = 200;
+	/** Configuration report check status. */
+	final public static int WATCH_CHECKPOINT = 103;
+	/** Configuration non-modified status. */
+	final public static int WATCH_NOT_MODIFIED = 304;
+
 	// --- Server. ---
-	//
 
 	/** Service web root URI. */
 	final public static String URI_S_BASE = "/scm-server";
 	/** Initialization handshake URI. */
 	final public static String URI_S_HANDSHAKE = "handshake";
 	/** Long-polling watching URI. */
-	final public static String URI_S_WATCH_GET = "watch";
-	/** Get property source URI. */
-	final public static String URI_S_SOURCE_GET = "source";
+	final public static String URI_S_SOURCE_WATCH = "watching";
 	/** Report configuration result URI. */
-	final public static String URI_S_REPORT_POST = "report";
+	final public static String URI_S_REFRESHED_REPORT = "report";
 
 	/** SCM session cache. */
 	final public static String CACHE_SESSIONS = "scm:session:";
@@ -54,9 +56,7 @@ public abstract class SCMConstants {
 	/** SCM publisher config prefix. */
 	final public static String KEY_PUB_PREFIX = "scm:publish:config:";
 
-	//
 	// --- Client. ---
-	//
 
 	/** Service web root URI. */
 	final public static String URI_C_BASE = "/scm-client";

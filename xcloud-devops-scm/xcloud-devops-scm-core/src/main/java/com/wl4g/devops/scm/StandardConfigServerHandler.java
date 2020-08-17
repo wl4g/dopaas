@@ -16,8 +16,8 @@
 package com.wl4g.devops.scm;
 
 import com.wl4g.devops.scm.bean.*;
-import com.wl4g.devops.scm.common.model.*;
-import com.wl4g.devops.scm.common.model.ReleaseMessage.ReleasePropertySource;
+import com.wl4g.devops.scm.common.command.*;
+import com.wl4g.devops.scm.common.command.WatchCommandResult.ReleasePropertySource;
 import com.wl4g.components.core.utils.PropertySources;
 import com.wl4g.components.core.utils.PropertySources.Type;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
@@ -54,39 +54,39 @@ public class StandardConfigServerHandler implements CentralConfigServerHandler {
 	private ConfigurationService configService;
 
 	@Override
-	public WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch) {
+	public WatchDeferredResult<ResponseEntity<?>> watch(WatchCommand watch) {
 		return publisher.watch(watch);
 	}
 
 	@Override
-	public void release(PreRelease pre) {
-		publisher.publish(pre);
+	public void release(WatchCommandResult result) {
+		publisher.publish(result);
 	}
 
+//	@Override
+//	public WatchCommandResult getSource(WatchCommand get) {
+//		/*
+//		 * When the client initializes, it sends out the requested version
+//		 * information, at which time releaseMeta # version / releaseMeta #
+//		 * releaseId will be empty
+//		 */
+//		get.validation(false, false);
+//		WatchCommandResult release = new WatchCommandResult(get.getCluster(), get.getNamespaces(), get.getMeta(), get.getNode());
+//
+//		ConfigSourceBean config = configService.findSource(get);
+//		if (config != null) {
+//			// Sets release meta information.
+//			release.setMeta(config.getReleaseMeta());
+//			if (nonNull(config.getContents())) {
+//				config.getContents().forEach(vc -> release.getPropertySources().add(convertReleasePropertySource(vc)));
+//			}
+//		}
+//
+//		return release;
+//	}
+
 	@Override
-	public ReleaseMessage getSource(GetRelease get) {
-		/*
-		 * When the client initializes, it sends out the requested version
-		 * information, at which time releaseMeta # version / releaseMeta #
-		 * releaseId will be empty
-		 */
-		get.validation(false, false);
-		ReleaseMessage release = new ReleaseMessage(get.getCluster(), get.getNamespaces(), get.getMeta(), get.getInstance());
-
-		ConfigSourceBean config = configService.findSource(get);
-		if (config != null) {
-			// Sets release meta information.
-			release.setMeta(config.getReleaseMeta());
-			if (nonNull(config.getContents())) {
-				config.getContents().forEach(vc -> release.getPropertySources().add(convertReleasePropertySource(vc)));
-			}
-		}
-
-		return release;
-	}
-
-	@Override
-	public void report(ReportInfo report) {
+	public void report(ReportCommand report) {
 		report.validation(true, true);
 		configService.updateReleaseDetail(report);
 	}

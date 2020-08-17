@@ -18,9 +18,9 @@ package com.wl4g.devops.scm.endpoint;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.common.model.GetRelease;
-import com.wl4g.devops.scm.common.model.ReleaseMessage;
-import com.wl4g.devops.scm.common.model.ReportInfo;
+import com.wl4g.devops.scm.common.command.WatchCommand;
+import com.wl4g.devops.scm.common.command.WatchCommandResult;
+import com.wl4g.devops.scm.common.command.ReportCommand;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
 //import com.wl4g.devops.scm.session.HandshakeRequest;
 //import com.wl4g.devops.scm.session.ConfigServerSecurityManager;
@@ -78,26 +78,26 @@ public class ScmServerEndpoint extends BaseController {
 	 * @param watch
 	 * @return
 	 */
-	@RequestMapping(value = URI_S_WATCH_GET, method = GET)
-	public DeferredResult<?> watch(@Validated GetRelease watch) {
+	@PostMapping(value = URI_S_SOURCE_WATCH)
+	public DeferredResult<?> watch(@Validated @RequestBody WatchCommand watch) {
 		log.info("Long polling watching... <= {}", watch);
 		return handler.watch(watch);
 	}
 
-	@GetMapping(value = URI_S_SOURCE_GET)
-	public RespBase<ReleaseMessage> fetchSource(@Validated GetRelease get) {
-		log.info("Fetching config source... <= {}", get);
+//	@PostMapping(value = URI_S_SOURCE_FETCH)
+//	public RespBase<WatchCommandResult> fetchSource(@Validated @RequestBody WatchCommand fetch) {
+//		log.info("Fetching config... <= {}", fetch);
+//
+//		RespBase<WatchCommandResult> resp = new RespBase<>();
+//		// Fetching configuration source
+//		resp.setData(handler.getSource(fetch));
+//
+//		log.info("Fetch config => {}", resp);
+//		return resp;
+//	}
 
-		RespBase<ReleaseMessage> resp = new RespBase<>();
-		// Fetching configuration source
-		resp.setData(handler.getSource(get));
-
-		log.info("Fetched config source => {}", resp);
-		return resp;
-	}
-
-	@PostMapping(value = URI_S_REPORT_POST)
-	public RespBase<?> report(@Validated @RequestBody ReportInfo report) {
+	@PostMapping(value = URI_S_REFRESHED_REPORT)
+	public RespBase<?> report(@Validated @RequestBody ReportCommand report) {
 		log.info("Reporting... <= {}", report);
 		RespBase<?> resp = new RespBase<>();
 		handler.report(report);

@@ -38,7 +38,7 @@ public abstract class RefreshConfigHolder {
 	/**
 	 * Refresh current release meta
 	 */
-	final private static ThreadLocal<ReleaseMeta> releaseMeta = new InheritableThreadLocal<>();
+	final private static ThreadLocal<ConfigMeta> releaseMeta = new InheritableThreadLocal<>();
 
 	/**
 	 * Refresh changed records.
@@ -55,8 +55,8 @@ public abstract class RefreshConfigHolder {
 	 * @param validate
 	 * @return
 	 */
-	public static ReleaseMeta getReleaseMeta(boolean validate) {
-		ReleaseMeta meta = releaseMeta.get();
+	public static ConfigMeta getReleaseMeta(boolean validate) {
+		ConfigMeta meta = releaseMeta.get();
 		if (validate) {
 			notNull(meta, "No available refresh releaseMeta");
 			meta.validation(validate, validate);
@@ -70,7 +70,7 @@ public abstract class RefreshConfigHolder {
 	 * @param newMeta
 	 * @return
 	 */
-	public static ReleaseMeta setReleaseMeta(ReleaseMeta newMeta) {
+	public static ConfigMeta setReleaseMeta(ConfigMeta newMeta) {
 		if (!isNull(newMeta)) {
 			releaseMeta.set(newMeta);
 		} else {
@@ -84,7 +84,7 @@ public abstract class RefreshConfigHolder {
 	 * 
 	 * @return
 	 */
-	public static ReleaseMeta pollReleaseMeta() {
+	public static ConfigMeta pollReleaseMeta() {
 		try {
 			return releaseMeta.get();
 		} finally {

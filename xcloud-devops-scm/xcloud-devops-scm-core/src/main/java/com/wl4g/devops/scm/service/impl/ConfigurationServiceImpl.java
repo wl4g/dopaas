@@ -20,10 +20,10 @@ import com.google.common.hash.Hashing;
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.scm.bean.*;
+import com.wl4g.devops.scm.common.command.*;
+import com.wl4g.devops.scm.common.command.GenericCommand.ConfigMeta;
+import com.wl4g.devops.scm.common.command.GenericCommand.ConfigNode;
 import com.wl4g.devops.scm.common.exception.TooManyRefreshException;
-import com.wl4g.devops.scm.common.model.*;
-import com.wl4g.devops.scm.common.model.GenericInfo.ReleaseInstance;
-import com.wl4g.devops.scm.common.model.GenericInfo.ReleaseMeta;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.scm.config.StandardScmProperties;
@@ -121,7 +121,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		this.historyDao.insert(historyOfDetail);
 
 		// Define release instance list.
-		List<ReleaseInstance> instances = new ArrayList<>();
+		List<ConfigNode> instances = new ArrayList<>();
 		for (AppInstance instance : nodeList) {
 			// Save release history details information.
 			ReleaseDetail releaseDetail = new ReleaseDetail();
@@ -140,7 +140,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			this.configurationDao.updateNode(nMap);
 
 			// Get application instance information.
-			ReleaseInstance releaseInstance = new ReleaseInstance();
+			ConfigNode releaseInstance = new ConfigNode();
 			// TODO
 			releaseInstance.setHost(instance.getHostname());
 			releaseInstance.setEndpoint(instance.getEndpoint());
@@ -155,12 +155,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		}
 
 		// Request configuration source send to client.
-		PreRelease pre = new PreRelease();
+		PreFetchCommand pre = new PreFetchCommand();
 		pre.setCluster(appCluster.getName());
 		pre.setNamespaces(namespaces);
-		ReleaseMeta meta = new ReleaseMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
+		ConfigMeta meta = new ConfigMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
 		pre.setMeta(meta);
-		pre.setInstances(instances);
+		pre.setNodes(instances);
 		this.contextHandler.release(pre);
 	}
 
@@ -192,12 +192,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public ConfigSourceBean findSource(GetRelease getRelease) {
+	public ConfigSourceBean findSource(WatchCommand getRelease) {
 		return this.configurationDao.findSource(getRelease);
 	}
 
 	@Override
-	public void updateReleaseDetail(ReportInfo report) {
+	public void updateReleaseDetail(ReportCommand report) {
 		this.configurationDao.updateReleaseDetail(report);
 	}
 

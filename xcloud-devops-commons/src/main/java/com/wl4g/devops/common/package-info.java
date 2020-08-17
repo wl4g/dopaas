@@ -13,11 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.bean;
-
-import com.wl4g.devops.scm.common.command.GenericCommand.ConfigMeta;
-
-public class ConfigReleaseMeta extends ConfigMeta {
-	private static final long serialVersionUID = 2893186273652452191L;
-
-}
+package com.wl4g.devops.common;

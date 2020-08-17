@@ -20,9 +20,9 @@ import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.iam.Dict;
 import com.wl4g.devops.scm.bean.*;
-import com.wl4g.devops.scm.common.model.*;
-import com.wl4g.devops.scm.common.model.GenericInfo.ReleaseInstance;
-import com.wl4g.devops.scm.common.model.GenericInfo.ReleaseMeta;
+import com.wl4g.devops.scm.common.command.*;
+import com.wl4g.devops.scm.common.command.GenericCommand.ConfigMeta;
+import com.wl4g.devops.scm.common.command.GenericCommand.ConfigNode;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.iam.DictDao;
@@ -163,10 +163,10 @@ public class HistoryServiceImpl implements HistoryService {
 		// Get application nodeList information
 		List<AppInstance> nodeList = appInstanceDao.selectByClusterIdAndEnvType(agl.getAppClusterId(), agl.getEnvType());
 		// Define release instance list.
-		List<ReleaseInstance> instances = new ArrayList<>();
+		List<ConfigNode> instances = new ArrayList<>();
 		for (AppInstance instance : nodeList) {
 			// Get application instance information.
-			ReleaseInstance releaseInstance = new ReleaseInstance();
+			ConfigNode releaseInstance = new ConfigNode();
 			releaseInstance.setHost(instance.getHostname());
 			releaseInstance.setEndpoint(instance.getEndpoint());
 			instances.add(releaseInstance);
@@ -181,14 +181,14 @@ public class HistoryServiceImpl implements HistoryService {
 			namespaces.add(namespace);
 		}
 
-		PreRelease preRelease = new PreRelease();
+		PreFetchCommand preRelease = new PreFetchCommand();
 		preRelease.setCluster(appCluster.getName());
 		preRelease.setNamespaces(namespaces);
 		String releaseId = String.valueOf(historyOfDetail.getId());
 		String versionId = String.valueOf(agl.getId());
-		ReleaseMeta meta = new ReleaseMeta(releaseId, versionId);
+		ConfigMeta meta = new ConfigMeta(releaseId, versionId);
 		preRelease.setMeta(meta);
-		preRelease.setInstances(instances);
+		preRelease.setNodes(instances);
 		this.configServerService.release(preRelease);
 	}
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.common.model;
+package com.wl4g.devops.scm.common.command;
 
 import com.google.common.net.HostAndPort;
 
@@ -31,7 +31,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenericInfo implements Serializable {
+/**
+ * {@link GenericCommand}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2018-08-17
+ * @since
+ */
+public abstract class GenericCommand implements Serializable {
 	final private static long serialVersionUID = -299157686801700764L;
 
 	/**
@@ -49,20 +56,19 @@ public class GenericInfo implements Serializable {
 	private List<String> namespaces = new ArrayList<>();
 
 	/**
-	 * Version release information
+	 * Configuration version and release info
 	 */
-	private ReleaseMeta meta = new ReleaseMeta();
+	private ConfigMeta meta = new ConfigMeta();
 
-	public GenericInfo() {
+	public GenericCommand() {
 		super();
 	}
 
-	public GenericInfo(String cluster, List<String> namespace) {
+	public GenericCommand(String cluster, List<String> namespace) {
 		this(cluster, namespace, null);
 	}
 
-	public GenericInfo(String cluster, List<String> namespaces, ReleaseMeta meta) {
-		super();
+	public GenericCommand(String cluster, List<String> namespaces, ConfigMeta meta) {
 		setCluster(cluster);
 		setNamespaces(namespaces);
 		setMeta(meta);
@@ -89,11 +95,11 @@ public class GenericInfo implements Serializable {
 		}
 	}
 
-	public ReleaseMeta getMeta() {
+	public ConfigMeta getMeta() {
 		return meta;
 	}
 
-	public void setMeta(ReleaseMeta meta) {
+	public void setMeta(ConfigMeta meta) {
 		if (meta != null) {
 			this.meta = meta;
 		}
@@ -110,7 +116,12 @@ public class GenericInfo implements Serializable {
 		getMeta().validation(validVersion, validRelease);
 	}
 
-	public static class ReleaseInstance implements Serializable {
+	/**
+	 * {@link ConfigNode}
+	 *
+	 * @since
+	 */
+	public static class ConfigNode implements Serializable {
 		private static final long serialVersionUID = -4826329780329773259L;
 
 		@NotBlank
@@ -122,11 +133,11 @@ public class GenericInfo implements Serializable {
 		@NotNull
 		private String endpoint;
 
-		public ReleaseInstance() {
+		public ConfigNode() {
 			super();
 		}
 
-		public ReleaseInstance(String host, String endpoint) {
+		public ConfigNode(String host, String endpoint) {
 			super();
 			this.host = host;
 			this.endpoint = endpoint;
@@ -169,7 +180,7 @@ public class GenericInfo implements Serializable {
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			ReleaseInstance other = (ReleaseInstance) obj;
+			ConfigNode other = (ConfigNode) obj;
 			if (host == null) {
 				if (other.host != null)
 					return false;
@@ -194,13 +205,18 @@ public class GenericInfo implements Serializable {
 			HostAndPort.fromString(toString());
 		}
 
-		public static boolean eq(ReleaseInstance i1, ReleaseInstance i2) {
+		public static boolean eq(ConfigNode i1, ConfigNode i2) {
 			return (i1 != null && i2 != null && StringUtils.equals(i1.toString(), i2.toString()));
 		}
 
 	}
 
-	public static class ReleaseMeta implements Serializable {
+	/**
+	 * {@link ConfigMeta}
+	 *
+	 * @since
+	 */
+	public static class ConfigMeta implements Serializable {
 		private static final long serialVersionUID = -4826329110329773259L;
 
 		@NotBlank
@@ -211,11 +227,11 @@ public class GenericInfo implements Serializable {
 		@NotNull
 		private String releaseId; // Release ID.
 
-		public ReleaseMeta() {
+		public ConfigMeta() {
 			super();
 		}
 
-		public ReleaseMeta(String releaseId, String version) {
+		public ConfigMeta(String releaseId, String version) {
 			super();
 			this.releaseId = releaseId;
 			this.version = version;
@@ -259,10 +275,10 @@ public class GenericInfo implements Serializable {
 			}
 		}
 
-		public static ReleaseMeta of(String releaseMetaString) {
+		public static ConfigMeta of(String releaseMetaString) {
 			if (!StringUtils.isEmpty(releaseMetaString) && releaseMetaString.contains("@")) {
 				String arr[] = String.valueOf(releaseMetaString).split("@");
-				return new ReleaseMeta(arr[0], arr[1]);
+				return new ConfigMeta(arr[0], arr[1]);
 			}
 			throw new IllegalStateException(String.format("Parmater 'releaseMetaString' : %s", releaseMetaString));
 		}

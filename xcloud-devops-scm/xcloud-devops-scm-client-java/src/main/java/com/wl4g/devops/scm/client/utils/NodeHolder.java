@@ -13,42 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.console;
+package com.wl4g.devops.scm.client.utils;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.valueOf;
 
+import com.google.common.net.HostAndPort;
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.shell.annotation.ShellComponent;
-import com.wl4g.shell.annotation.ShellMethod;
-import com.wl4g.shell.annotation.ShellOption;
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.common.command.GenericCommand.ConfigNode;
 
 /**
- * See:<a href=
- * "https://blog.csdn.net/cml_blog/article/details/78411312">https://blog.csdn.net/cml_blog/article/details/78411312</a>
+ * Instance information.
  * 
  * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2018年10月9日
+ * @version v1.0 2019年4月1日
  * @since
  */
-@ShellComponent
-public class RefreshableConfigConsole {
+public class NodeHolder {
 
 	protected final SmartLogger log = getLogger(getClass());
 
-	/**
-	 * 
-	 * @param force
-	 */
-	@ShellMethod(keys = { "refresh" }, group = DEFAULT_SCM_CONSOLE_GROUP, help = "Execute refresh configuration immediately")
-	public void refresh(@ShellOption(opt = "f", lopt = "force", help = "Force refresh configuration") boolean force) {
-		log.info("Refresh configuration for ... force={}", force);
+	/** That application instance. */
+	private final ConfigNode configNode;
 
-		// TODO
-
+	public NodeHolder(ScmClientProperties config) {
+		// Check & build.
+		HostAndPort hap = HostAndPort.fromString(config.getAvailableHostInfo().getIpAddress() + ":" + config.getServerPort());
+		this.configNode = new ConfigNode(hap.getHostText(), valueOf(hap.getPort()));
 	}
 
-	/** SCM console group */
-	public static final String DEFAULT_SCM_CONSOLE_GROUP = "SCM configurer console";
+	/**
+	 * Gets {@link ConfigNode}
+	 * 
+	 * @return
+	 */
+	public ConfigNode getConfigNode() {
+		return configNode;
+	}
 
 }

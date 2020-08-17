@@ -17,7 +17,7 @@ package com.wl4g.devops.scm.client.handler.locator;
 
 import com.wl4g.components.core.bean.scm.model.ReleaseMessage;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.utils.InstanceHolder;
+import com.wl4g.devops.scm.client.utils.NodeHolder;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.CompositePropertySource;
@@ -41,7 +41,7 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.*;
 @Order(0)
 public class BootstrapScmPropertySourceLocator extends ScmPropertySourceLocator {
 
-	public BootstrapScmPropertySourceLocator(ScmClientProperties config, InstanceHolder info) {
+	public BootstrapScmPropertySourceLocator(ScmClientProperties config, NodeHolder info) {
 		super(config, info);
 	}
 
@@ -57,7 +57,7 @@ public class BootstrapScmPropertySourceLocator extends ScmPropertySourceLocator 
 		if (environment instanceof ConfigurableEnvironment) {
 			try {
 				// Pull latest propertySources from server.
-				ReleaseMessage config = fetchRemoteReleaseConfig();
+				WatchCommandResult config = fetchRemoteReleaseConfig();
 
 				// Resolves cipher resource
 				resolvesCipherSource(config);

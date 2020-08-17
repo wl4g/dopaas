@@ -16,7 +16,7 @@
 package com.wl4g.devops.scm.service;
 
 import com.wl4g.devops.scm.bean.*;
-import com.wl4g.devops.scm.common.model.*;
+import com.wl4g.devops.scm.common.command.*;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public interface ConfigurationService {
 
 	public List<VersionContentBean> selectVersion(int id);
 
-	public ConfigSourceBean findSource(GetRelease getRelease);
+	public ConfigSourceBean findSource(WatchCommand getRelease);
 
-	public void updateReleaseDetail(ReportInfo report);
+	public void updateReleaseDetail(ReportCommand report);
 }

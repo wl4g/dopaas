@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.common.model;
+package com.wl4g.devops.scm.common.command;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.MapPropertySource;
 
 import com.wl4g.components.common.serialize.JacksonUtils;
+import com.wl4g.devops.scm.common.command.GenericCommand.ConfigNode;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -29,25 +30,41 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * {@link ReleaseMessage}
+ * {@link WatchCommandResult}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018-08-11
  * @since
  */
-public class ReleaseMessage extends GetRelease {
+public class WatchCommandResult extends GenericCommand {
 	final private static long serialVersionUID = -4016863811283064989L;
+
+	/**
+	 * Pulish configuration to nodes.
+	 */
+	@NotNull
+	@NotEmpty
+	private List<ConfigNode> nodes = new ArrayList<>();
 
 	@NotNull
 	@NotEmpty
 	private List<ReleasePropertySource> propertySources = new ArrayList<>();
 
-	public ReleaseMessage() {
+	public WatchCommandResult() {
 		super();
 	}
 
-	public ReleaseMessage(String cluster, List<String> namespaces, ReleaseMeta meta, ReleaseInstance instance) {
-		super(cluster, namespaces, meta, instance);
+	public WatchCommandResult(String cluster, List<String> namespaces, ConfigMeta meta, List<ConfigNode> nodes) {
+		super(cluster, namespaces, meta);
+		setNodes(nodes);
+	}
+
+	public List<ConfigNode> getNodes() {
+		return nodes;
+	}
+
+	public void setNodes(List<ConfigNode> nodes) {
+		this.nodes = nodes;
 	}
 
 	public List<ReleasePropertySource> getPropertySources() {

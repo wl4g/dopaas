@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.common.model;
+package com.wl4g.devops.scm.common.command;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ReportInfo extends GetRelease {
+public class ReportCommand extends WatchCommand {
 	final private static long serialVersionUID = 2523769504519533902L;
 
 	private Collection<ChangedRecord> changedRecords;
 
-	public ReportInfo(Collection<ChangedRecord> changedRecords) {
+	public ReportCommand(Collection<ChangedRecord> changedRecords) {
 		super();
 		this.changedRecords = changedRecords;
 	}
@@ -46,13 +46,13 @@ public class ReportInfo extends GetRelease {
 
 		private Set<String> changedKeys = new HashSet<>();
 
-		private ReleaseMeta meta = new ReleaseMeta();
+		private ConfigMeta meta = new ConfigMeta();
 
 		public ChangedRecord() {
 			super();
 		}
 
-		public ChangedRecord(Set<String> changedKeys, ReleaseMeta meta) {
+		public ChangedRecord(Set<String> changedKeys, ConfigMeta meta) {
 			super();
 			this.changedKeys = changedKeys;
 			this.meta = meta;
@@ -66,11 +66,11 @@ public class ReportInfo extends GetRelease {
 			this.changedKeys = changedKeys;
 		}
 
-		public ReleaseMeta getMeta() {
+		public ConfigMeta getMeta() {
 			return meta;
 		}
 
-		public void setMeta(ReleaseMeta meta) {
+		public void setMeta(ConfigMeta meta) {
 			this.meta = meta;
 		}
 

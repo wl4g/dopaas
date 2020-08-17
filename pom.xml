@@ -57,6 +57,7 @@
 		<version>master</version>
 	</parent>
 	<modules>
+		<module>xcloud-devops-commons</module>
 		<module>xcloud-devops-erm</module>
 		<module>xcloud-devops-scm</module>
 		<module>xcloud-devops-ci</module>

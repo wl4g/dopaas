@@ -17,7 +17,7 @@ package com.wl4g.devops.scm.client.config;
 
 import com.wl4g.devops.scm.client.handler.locator.BootstrapScmPropertySourceLocator;
 import com.wl4g.devops.scm.client.handler.locator.ScmPropertySourceLocator;
-import com.wl4g.devops.scm.client.utils.InstanceHolder;
+import com.wl4g.devops.scm.client.utils.NodeHolder;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -46,12 +46,12 @@ public class ScmBootstrapAutoConfiguration {
 	}
 
 	@Bean
-	public InstanceHolder instanceHolder(Environment environment) {
-		return new InstanceHolder(environment, scmClientProperties());
+	public NodeHolder instanceHolder(Environment environment) {
+		return new NodeHolder(environment, scmClientProperties());
 	}
 
 	@Bean
-	public ScmPropertySourceLocator scmPropertySourceLocator(ScmClientProperties config, InstanceHolder info) {
+	public ScmPropertySourceLocator scmPropertySourceLocator(ScmClientProperties config, NodeHolder info) {
 		return new BootstrapScmPropertySourceLocator(config, info);
 	}
 

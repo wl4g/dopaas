@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.common.model;
+package com.wl4g.devops.scm.common.command;
 
 import javax.validation.constraints.NotNull;
 
@@ -21,36 +21,43 @@ import static com.wl4g.components.common.lang.Assert2.notNull;
 
 import java.util.List;
 
-public class GetRelease extends GenericInfo {
+/**
+ * {@link WatchCommand}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2018-08-17
+ * @since
+ */
+public class WatchCommand extends GenericCommand {
 	final private static long serialVersionUID = -4016863811283064989L;
 
 	@NotNull
-	private ReleaseInstance instance;
+	private ConfigNode node;
 
-	public GetRelease() {
+	public WatchCommand() {
 		super();
 	}
 
-	public GetRelease(String cluster, List<String> namespaces, ReleaseMeta meta, ReleaseInstance instance) {
+	public WatchCommand(String cluster, List<String> namespaces, ConfigMeta meta, ConfigNode node) {
 		super(cluster, namespaces, meta);
-		setInstance(instance);
+		setNode(node);
 	}
 
-	public ReleaseInstance getInstance() {
-		return instance;
+	public ConfigNode getNode() {
+		return node;
 	}
 
-	public void setInstance(ReleaseInstance instance) {
+	public void setNode(ConfigNode instance) {
 		if (instance != null) {
-			this.instance = instance;
+			this.node = instance;
 		}
 	}
 
 	@Override
 	public void validation(boolean versionValidate, boolean releaseValidate) {
 		super.validation(versionValidate, releaseValidate);
-		notNull(getInstance(), "Invalid empty release instance");
-		getInstance().validation();
+		notNull(getNode(), "Invalid empty release instance");
+		getNode().validation();
 	}
 
 }

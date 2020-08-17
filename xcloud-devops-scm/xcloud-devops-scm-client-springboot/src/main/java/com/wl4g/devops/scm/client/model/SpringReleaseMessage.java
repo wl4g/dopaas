@@ -20,10 +20,10 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.wl4g.devops.scm.common.model.CompositePropertySource;
-import com.wl4g.devops.scm.common.model.MapPropertySource;
-import com.wl4g.devops.scm.common.model.ReleaseMessage;
-import com.wl4g.devops.scm.common.model.ReleaseMessage.ReleasePropertySource;
+import com.wl4g.devops.scm.common.command.CompositePropertySource;
+import com.wl4g.devops.scm.common.command.WatchCommandResult;
+import com.wl4g.devops.scm.common.command.MapPropertySource;
+import com.wl4g.devops.scm.common.command.WatchCommandResult.ReleasePropertySource;
 
 /**
  * {@link SpringReleaseMessage}
@@ -32,7 +32,7 @@ import com.wl4g.devops.scm.common.model.ReleaseMessage.ReleasePropertySource;
  * @version v1.0 2020-08-11
  * @since
  */
-public class SpringReleaseMessage extends ReleaseMessage {
+public class SpringReleaseMessage extends WatchCommandResult {
 	private static final long serialVersionUID = 2325498697253289001L;
 
 	@Override

@@ -25,7 +25,7 @@ import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.utils.InstanceHolder;
+import com.wl4g.devops.scm.client.utils.NodeHolder;
 import com.wl4g.devops.scm.common.exception.ScmException;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -76,7 +76,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	final protected ScmClientProperties config;
 
 	/** SCM client local instance info */
-	final protected InstanceHolder info;
+	final protected NodeHolder info;
 
 	/** SCM encrypted field identification prefix */
 	final private static String CIPHER_PREFIX = "{cipher}";
@@ -84,7 +84,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	/** Rest template */
 	protected RestTemplate restTemplate;
 
-	public ScmPropertySourceLocator(ScmClientProperties config, InstanceHolder info) {
+	public ScmPropertySourceLocator(ScmClientProperties config, NodeHolder info) {
 		Assert.notNull(config, "Scm client properties must not be null");
 		Assert.notNull(info, "Instance info must not be null");
 		this.config = config;
@@ -93,7 +93,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.restTemplate = createRestTemplate(config.getFetchReadTimeout());
+		this.restTemplate = createRestTemplate(config.getWatchReadTimeout());
 	}
 
 	/**
@@ -101,13 +101,13 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	 * 
 	 * @return
 	 */
-	public ReleaseMessage fetchRemoteReleaseConfig() {
+	public WatchCommandResult fetchRemoteReleaseConfig() {
 		try {
 			// Fetch release URL.
-			String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_GET;
+			String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_FETCH;
 			// Create release get
-			ReleaseMeta meta = getReleaseMeta(false);
-			GetRelease get = new GetRelease(info.getAppName(), config.getNamespaces(), meta, info.getInstance());
+			ConfigMeta meta = getReleaseMeta(false);
+			WatchCommand get = new WatchCommand(info.getAppName(), config.getNamespaces(), meta, info.getConfigNode());
 
 			// To parameters
 			String kvs = new BeanMapConvert(get).toUriParmaters();
@@ -124,15 +124,15 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 				log.debug("Adding header for: {}", headers);
 			}
 
-			RespBase<ReleaseMessage> resp = restTemplate
-					.exchange(url, GET, entity, new ParameterizedTypeReference<RespBase<ReleaseMessage>>() {
+			RespBase<WatchCommandResult> resp = restTemplate
+					.exchange(url, GET, entity, new ParameterizedTypeReference<RespBase<WatchCommandResult>>() {
 					}).getBody();
 			if (!RespBase.isSuccess(resp)) {
 				throw new ScmException(String.format("Locate remote config error! %s, %s", url, resp.getMessage()));
 			}
 
 			// Extract release
-			ReleaseMessage release = resp.getData();
+			WatchCommandResult release = resp.getData();
 			Assert.notNull(release, "Release message is required, it must not be null");
 			release.validation(true, true);
 
@@ -153,7 +153,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	 * 
 	 * @param release
 	 */
-	public void resolvesCipherSource(ReleaseMessage release) {
+	public void resolvesCipherSource(WatchCommandResult release) {
 		log.debug("Resolver cipher configuration propertySource ...");
 
 		for (ReleasePropertySource ps : release.getPropertySources()) {
@@ -191,7 +191,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	 * 
 	 * @param release
 	 */
-	protected void printfSources(ReleaseMessage release) {
+	protected void printfSources(WatchCommandResult release) {
 		if (log.isInfoEnabled()) {
 			log.info("Fetched from scm config <= group({}), namespace({}), release meta({})", release.getCluster(),
 					release.getNamespaces(), release.getMeta());
@@ -248,7 +248,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 		return config;
 	}
 
-	public InstanceHolder getInfo() {
+	public NodeHolder getInfo() {
 		return info;
 	}
 
