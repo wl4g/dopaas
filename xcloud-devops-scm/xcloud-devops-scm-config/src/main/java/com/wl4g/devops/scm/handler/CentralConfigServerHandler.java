@@ -18,7 +18,7 @@ package com.wl4g.devops.scm.handler;
 import org.springframework.http.ResponseEntity;
 
 import com.google.common.annotations.Beta;
-import com.wl4g.devops.scm.common.model.*;
+import com.wl4g.devops.scm.common.command.*;
 import com.wl4g.devops.scm.publish.WatchDeferredResult;
 
 /**
@@ -37,24 +37,15 @@ public interface CentralConfigServerHandler {
 	 * @param watch
 	 * @return
 	 */
-	WatchDeferredResult<ResponseEntity<?>> watch(GetRelease watch);
+	WatchDeferredResult<ResponseEntity<?>> watch(WatchCommand watch);
 
 	/**
 	 * Release configuration property-sources.
 	 * 
-	 * @param pre
+	 * @param result
 	 *            request parameter.
 	 */
-	void release(PreRelease pre);
-
-	/**
-	 * Find configuration property-source.
-	 * 
-	 * @param get
-	 *            config source get message.
-	 * @return
-	 */
-	ReleaseMessage getSource(GetRelease get);
+	void release(WatchCommandResult result);
 
 	/**
 	 * Access configuration client report configure result.
@@ -65,6 +56,6 @@ public interface CentralConfigServerHandler {
 	 *            response parameter.
 	 * @return
 	 */
-	void report(ReportInfo report);
+	void report(ReportCommand report);
 
 }

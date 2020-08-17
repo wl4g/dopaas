@@ -48,7 +48,7 @@ public class InstanceHolder {
 	final private String appName;
 
 	/** Local application instance. */
-	final private ReleaseInstance instance;
+	final private ConfigNode instance;
 
 	public InstanceHolder(Environment environment, ScmClientProperties config) {
 		this.appName = environment.getProperty("spring.application.name");
@@ -86,14 +86,14 @@ public class InstanceHolder {
 
 		// Check & build ReleaseInstance.
 		HostAndPort hap = HostAndPort.fromString(hostname + ":" + servPort);
-		this.instance = new ReleaseInstance(hap.getHostText(), String.valueOf(hap.getPort()));
+		this.instance = new ConfigNode(hap.getHostText(), String.valueOf(hap.getPort()));
 	}
 
 	public String getAppName() {
 		return appName;
 	}
 
-	public ReleaseInstance getInstance() {
+	public ConfigNode getConfigNode() {
 		return instance;
 	}
 

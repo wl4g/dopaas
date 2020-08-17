@@ -32,7 +32,7 @@ import com.wl4g.devops.scm.endpoint.ScmServerEndpoint;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
 import com.wl4g.devops.scm.handler.CheckCentralConfigServerHandler;
 import com.wl4g.devops.scm.publish.ConfigSourcePublisher;
-import com.wl4g.devops.scm.publish.DefaultRedisConfigSourcePublisher;
+import com.wl4g.devops.scm.publish.JedisConfigSourcePublisher;
 //import com.wl4g.devops.scm.session.ConfigServerSecurityManager;
 
 /**
@@ -58,7 +58,7 @@ public class ScmAutoConfiguration extends OptionalPrefixControllerAutoConfigurat
 
 	@Bean
 	public ConfigSourcePublisher configSourcePublisher(JedisService jedisService) {
-		return new DefaultRedisConfigSourcePublisher(scmProperties(), jedisService);
+		return new JedisConfigSourcePublisher(scmProperties(), jedisService);
 	}
 
 	@Bean(BEAN_MVC_EXECUTOR)

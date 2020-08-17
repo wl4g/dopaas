@@ -44,7 +44,7 @@ import static com.wl4g.components.common.web.rest.RespBase.isSuccess;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.devops.scm.client.handler.RefreshConfigHolder.*;
 import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_BASE;
-import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_REPORT_POST;
+import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_REFRESHED_REPORT;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
@@ -153,7 +153,7 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 		checkRefreshProtectInterval();
 
 		String url = getWatchingUrl(false);
-		ResponseEntity<ReleaseMeta> resp = longPollingTemplate.getForEntity(url, ReleaseMeta.class);
+		ResponseEntity<ConfigMeta> resp = longPollingTemplate.getForEntity(url, ConfigMeta.class);
 		log.debug("Watch result <= {}", resp);
 
 		if (!isNull(resp)) {
@@ -197,7 +197,7 @@ public class DefaultRefreshWatcher extends AbstractRefreshWatcher {
 	 */
 	@Retryable(value = Throwable.class, maxAttemptsExpression = EXP_MAXATTEMPTS, backoff = @Backoff(delayExpression = EXP_DELAY, maxDelayExpression = EXP_MAXDELAY, multiplierExpression = EXP_MULTIP))
 	private void backendReport() {
-		String url = config.getBaseUri() + URI_S_BASE + "/" + URI_S_REPORT_POST;
+		String url = config.getBaseUri() + URI_S_BASE + "/" + URI_S_REFRESHED_REPORT;
 
 		Collection<ChangedRecord> records = getChangedQueues();
 		// Requests

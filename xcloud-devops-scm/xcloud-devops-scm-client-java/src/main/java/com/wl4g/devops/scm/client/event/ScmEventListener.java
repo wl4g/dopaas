@@ -17,7 +17,7 @@ package com.wl4g.devops.scm.client.event;
 
 import java.util.EventListener;
 
-import com.wl4g.devops.scm.common.model.GenericInfo.ReleaseMeta;
+import com.wl4g.devops.scm.common.command.GenericCommand.ConfigMeta;
 
 /**
  * {@link ScmEventListener}
@@ -31,7 +31,7 @@ public interface ScmEventListener extends EventListener {
 	/**
 	 * On release changed event.
 	 */
-	void onRefresh(ReleaseMeta meta);
+	void onRefresh(ConfigMeta meta);
 
 	/**
 	 * On report config changed event

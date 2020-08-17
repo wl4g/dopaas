@@ -101,11 +101,11 @@ public class ScmClientProperties extends BaseScmProperties {
 		this.netcard = netcard;
 	}
 
-	public int getFetchReadTimeout() {
+	public int getWatchReadTimeout() {
 		return fetchReadTimeout;
 	}
 
-	public void setFetchReadTimeout(int fetchReadTimeout) {
+	public void setWatchReadTimeout(int fetchReadTimeout) {
 		Assert.state(fetchReadTimeout > 0, String.format("Invalid value for fetch read timeout for %s", fetchReadTimeout));
 		this.fetchReadTimeout = fetchReadTimeout;
 	}

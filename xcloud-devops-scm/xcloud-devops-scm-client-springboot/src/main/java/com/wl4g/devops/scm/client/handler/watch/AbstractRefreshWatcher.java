@@ -24,7 +24,7 @@ import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
 
 import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_BASE;
-import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_WATCH_GET;
+import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_SOURCE_WATCH;
 
 import org.springframework.util.Assert;
 
@@ -59,11 +59,11 @@ public abstract class AbstractRefreshWatcher extends ApplicationTaskRunner<Runne
 	}
 
 	protected String getWatchingUrl(boolean validate) {
-		String uri = locator.getConfig().getBaseUri() + URI_S_BASE + "/" + URI_S_WATCH_GET;
+		String uri = locator.getConfig().getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_WATCH;
 
 		// Create releaseGet
-		GetRelease get = new GetRelease(locator.getInfo().getAppName(), config.getNamespaces(), null,
-				locator.getInfo().getInstance());
+		WatchCommand get = new WatchCommand(locator.getInfo().getAppName(), config.getNamespaces(), null,
+				locator.getInfo().getConfigNode());
 		return (uri + "?" + new BeanMapConvert(get).toUriParmaters());
 	}
 
