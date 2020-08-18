@@ -15,13 +15,20 @@
  */
 package com.wl4g.devops.scm.client.event;
 
+import java.util.EventObject;
+
 /**
- * {@link ScmEventPublisher} 
+ * {@link RefreshConfigEvent}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-08-11
+ * @version v1.0 2020-08-18
  * @since
  */
-public class ScmEventPublisher {
+public class RefreshConfigEvent extends EventObject {
+	private static final long serialVersionUID = 1026288899828948496L;
+
+	public RefreshConfigEvent(Object source) {
+		super(source);
+	}
 
 }

@@ -16,9 +16,7 @@
 package com.wl4g.devops.scm.client.utils;
 
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static java.lang.String.valueOf;
 
-import com.google.common.net.HostAndPort;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.common.command.GenericCommand.ConfigNode;
@@ -38,9 +36,7 @@ public class NodeHolder {
 	private final ConfigNode configNode;
 
 	public NodeHolder(ScmClientProperties config) {
-		// Check & build.
-		HostAndPort hap = HostAndPort.fromString(config.getAvailableHostInfo().getIpAddress() + ":" + config.getServerPort());
-		this.configNode = new ConfigNode(hap.getHostText(), valueOf(hap.getPort()));
+		this.configNode = new ConfigNode(config.getAvailableHostInfo().getIpAddress(), config.getServiceId());
 	}
 
 	/**

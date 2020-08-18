@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.wl4g.components.common.lang.SystemUtils2;
 import com.wl4g.devops.common.utils.InetHolder;
 import com.wl4g.devops.common.utils.InetHolder.HostInfo;
 import com.wl4g.devops.common.utils.InetHolder.InetProperties;
@@ -54,8 +55,11 @@ public class ScmClientProperties extends BaseScmProperties {
 	/** SCM client application cluster service name mark. */
 	private String clusterName = DEF_CLUSTER_NAME;
 
-	/** SCM client application endpoint(port). */
-	private int serverPort = DEF_SERVER_PORT;
+	/**
+	 * SCM client application/service unique identification. (Default is the
+	 * system processId)
+	 */
+	private String serviceId = DEF_SERVICEID;
 
 	/** Connect to SCM server based URI. */
 	private String baseUri = DEF_BASEURI;
@@ -81,6 +85,22 @@ public class ScmClientProperties extends BaseScmProperties {
 	 * fast (ms).
 	 */
 	private long refreshProtectIntervalMs = DEF_REFRESH_PROTECT_INTERVAL_MS;
+
+	/**
+	 * Checkpoing reporting retry random min interval (ms).
+	 */
+	private long retryReportingRandomMinIntervalMs = DEF_RETRY_REPORTING_MIN_INTERVAL_MS;
+
+	/**
+	 * Checkpoing reporting retry random max interval (ms).
+	 */
+	private long retryReportingRandomMaxIntervalMs = DEF_RETRY_REPORTING_MAX_INTERVAL_MS;
+
+	/**
+	 * Retry failure reporting exceed threshold fast-fail. </br>
+	 * When it is less than 0, it means not to give up
+	 */
+	private int retryReportingDiscardFailThreshold;
 
 	/**
 	 * Refresh name-space(configuration filename)</br>
@@ -113,9 +133,10 @@ public class ScmClientProperties extends BaseScmProperties {
 		super();
 	}
 
-	public ScmClientProperties(String clusterName, int serverPort, String baseUri, InetProperties inet, List<String> namespaces) {
-		this(clusterName, serverPort, baseUri, inet, DEF_WATCH_READ_TIMEOUT_MS, DEF_LONG_POLL_DELAY_MS,
-				DEF_LONG_POLL_MAX_DELAY_MS, DEF_REFRESH_PROTECT_INTERVAL_MS, namespaces, null, null, null);
+	public ScmClientProperties(String clusterName, String baseUri, InetProperties inet, List<String> namespaces) {
+		this(clusterName, DEF_SERVICEID, baseUri, inet, DEF_WATCH_READ_TIMEOUT_MS, DEF_LONG_POLL_DELAY_MS,
+				DEF_LONG_POLL_MAX_DELAY_MS, DEF_REFRESH_PROTECT_INTERVAL_MS, DEF_RETRY_REPORTING_MIN_INTERVAL_MS,
+				DEF_RETRY_REPORTING_MAX_INTERVAL_MS, -1, namespaces, null, null, null);
 	}
 
 	/**
@@ -150,27 +171,34 @@ public class ScmClientProperties extends BaseScmProperties {
 	 * @param ignore0
 	 *            [Deprecated] only to satisfy the Lombok syntax sugar
 	 */
-	public ScmClientProperties(String clusterName, int serverPort, String baseUri, InetProperties inet, int fetchReadTimeout,
-			long longPollDelay, long longPollMaxDelay, long refreshProtectIntervalMs, List<String> namespaces,
+	public ScmClientProperties(String clusterName, String serviceId, String baseUri, InetProperties inet, int fetchReadTimeout,
+			long longPollDelay, long longPollMaxDelay, long refreshProtectIntervalMs, long retryReportingRandomMinIntervalMs,
+			long retryReportingRandomMaxIntervalMs, int retryReportingDiscardFailThreshold, List<String> namespaces,
 			Map<String, String> headers, @Deprecated InetHolder ignore0, @Deprecated String ignore1) {
 		hasTextOf(clusterName, "clusterName");
-		isTrue(serverPort > 1024, "serverPort>1024");
+		hasTextOf(serviceId, "serviceId");
 		hasTextOf(baseUri, "baseUri");
 		notNullOf(inet, "inet");
 		isTrueOf(fetchReadTimeout > 0, "fetchReadTimeout>0");
 		isTrueOf(longPollDelay > 0, "longPollDelay>0");
 		isTrue(longPollMaxDelay > longPollDelay, "longPollMaxDelay>longPollDelay(%s)", longPollDelay);
 		isTrueOf(refreshProtectIntervalMs > 0, "refreshProtectIntervalMs>0");
+		isTrueOf(retryReportingRandomMinIntervalMs > 0, "retryReportingRandomMinIntervalMs>0");
+		isTrue(retryReportingRandomMaxIntervalMs > retryReportingRandomMinIntervalMs,
+				"retryReportingRandomMaxIntervalMs>retryReportingRandomMinIntervalMs(%s)", retryReportingRandomMinIntervalMs);
 		notEmptyOf(namespaces, "namespaces");
 		// notNullOf(headers, "headers");
 		this.clusterName = clusterName;
-		this.serverPort = serverPort;
+		this.serviceId = serviceId;
 		this.baseUri = baseUri;
 		this.inet = inet;
 		this.watchReadTimeout = fetchReadTimeout;
 		this.longPollDelay = longPollDelay;
 		this.longPollMaxDelay = longPollMaxDelay;
 		this.refreshProtectIntervalMs = refreshProtectIntervalMs;
+		this.retryReportingRandomMinIntervalMs = retryReportingRandomMinIntervalMs;
+		this.retryReportingRandomMaxIntervalMs = retryReportingRandomMaxIntervalMs;
+		this.retryReportingDiscardFailThreshold = retryReportingDiscardFailThreshold;
 		this.namespaces = namespaces;
 		this.headers = headers;
 	}
@@ -205,8 +233,11 @@ public class ScmClientProperties extends BaseScmProperties {
 	/** Default SCM client application cluster service name mark. */
 	public final static String DEF_CLUSTER_NAME = "defaultScmClient";
 
-	/** Default SCM client application endpoint(port). */
-	public final static int DEF_SERVER_PORT = 8080;
+	/**
+	 * SCM client application/service unique identification. (Default is the
+	 * system processId)
+	 */
+	public final static String DEF_SERVICEID = SystemUtils2.LOCAL_PROCESS_ID;
 
 	/** Default Connect to SCM server based URI. */
 	public final static String DEF_BASEURI = "http://localhost:14043/scm-server";
@@ -232,5 +263,15 @@ public class ScmClientProperties extends BaseScmProperties {
 	 * failure too fast (ms).
 	 */
 	public final static long DEF_REFRESH_PROTECT_INTERVAL_MS = 10_000L;
+
+	/**
+	 * Default Checkpoing reporting retry random min interval (ms).
+	 */
+	public final static long DEF_RETRY_REPORTING_MIN_INTERVAL_MS = 300L;
+
+	/**
+	 * Default Checkpoing reporting retry random max interval (ms).
+	 */
+	public final static long DEF_RETRY_REPORTING_MAX_INTERVAL_MS = 3000L;
 
 }

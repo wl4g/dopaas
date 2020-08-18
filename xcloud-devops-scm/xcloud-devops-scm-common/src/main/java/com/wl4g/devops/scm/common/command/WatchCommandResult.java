@@ -16,8 +16,6 @@
 package com.wl4g.devops.scm.common.command;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.env.CompositePropertySource;
-import org.springframework.core.env.MapPropertySource;
 
 import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.devops.scm.common.command.GenericCommand.ConfigNode;
