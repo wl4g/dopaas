@@ -15,20 +15,29 @@
  */
 package com.wl4g.devops.scm.client;
 
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.client.event.ScmEventListener;
+import com.wl4g.devops.scm.client.event.support.ScmEventPublisher;
+import com.wl4g.devops.scm.client.event.support.ScmEventSubscriber;
+import com.wl4g.devops.scm.client.refresh.LongHttpRefreshWatcher;
+
 /**
- * {@link ScmClient}
+ * {@link DefaultHttpScmClient}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-08-10
+ * @version v1.0 2020-08-18
  * @since
  */
-public interface ScmClient {
+public class DefaultHttpScmClient extends GenericScmClient {
 
-	/**
-	 * Startup SCM refresh client.
-	 * 
-	 * @throws Exception
-	 */
-	void start() throws Exception;
+	public DefaultHttpScmClient(ScmClientProperties config, ScmEventListener... listeners) {
+		super(new LongHttpRefreshWatcher(config, new ScmEventPublisher(), new ScmEventSubscriber(listeners)));
+	}
+
+	@Override
+	public void start() throws Exception {
+		log.info("Starting scm client watcher ...");
+		watcher.start();
+	}
 
 }

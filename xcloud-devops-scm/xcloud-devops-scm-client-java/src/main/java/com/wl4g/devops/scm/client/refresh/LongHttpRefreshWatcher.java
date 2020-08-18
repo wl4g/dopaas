@@ -30,7 +30,9 @@ import com.wl4g.components.common.remoting.exception.ClientHttpRequestExecution;
 import com.wl4g.components.common.remoting.standard.HttpHeaders;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.event.ScmEventPublisher;
+import com.wl4g.devops.scm.client.event.support.ScmEventPublisher;
+import com.wl4g.devops.scm.client.event.support.ScmEventSubscriber;
+import com.wl4g.devops.scm.common.command.ReportCommand.ChangedRecord;
 import com.wl4g.devops.scm.common.command.WatchCommand;
 import com.wl4g.devops.scm.common.command.WatchCommandResult;
 import com.wl4g.devops.scm.common.exception.ReportRetriesCountOutException;
@@ -41,10 +43,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.wl4g.devops.scm.client.refresh.RefreshConfigHolder.*;
 import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.lang.Assert2.state;
@@ -64,6 +68,7 @@ import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 /**
@@ -73,7 +78,7 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
  * @version v1.0 2019年5月1日
  * @since
  */
-public class HttpLongPollRefreshWatcher extends GenericRefreshWatcher {
+public class LongHttpRefreshWatcher extends GenericRefreshWatcher {
 
 	/**
 	 * This is to solve the time difference between releasing the watching
@@ -99,15 +104,11 @@ public class HttpLongPollRefreshWatcher extends GenericRefreshWatcher {
 	/**
 	 * Long polling rest client
 	 */
-	private RestClient longPollingClient;
+	private RestClient http;
 
-	public HttpLongPollRefreshWatcher(ScmClientProperties config, ScmEventPublisher publisher) {
-		super(config, publisher);
-	}
-
-	@Override
-	protected void preStartupProperties() {
-		this.longPollingClient = createRestClient();
+	public LongHttpRefreshWatcher(ScmClientProperties config, ScmEventPublisher publisher, ScmEventSubscriber subscriber) {
+		super(config, publisher, subscriber);
+		this.http = createRestClient();
 	}
 
 	/**
@@ -124,8 +125,8 @@ public class HttpLongPollRefreshWatcher extends GenericRefreshWatcher {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void run() {
-		while (isActive()) { // Loop long-polling watching
+	protected void postStartupProperties() throws Exception {
+		getWorker().scheduleAtRandomRate(() -> { // Loop long-polling watching
 			try {
 				if (watchLock.tryLock()) {
 					watchLongPolling();
@@ -148,7 +149,7 @@ public class HttpLongPollRefreshWatcher extends GenericRefreshWatcher {
 			} finally {
 				watchLock.unlock();
 			}
-		}
+		}, 3000L, config.getLongPollDelay(), config.getLongPollMaxDelay(), MILLISECONDS);
 
 	}
 
@@ -202,10 +203,10 @@ public class HttpLongPollRefreshWatcher extends GenericRefreshWatcher {
 
 		HttpHeaders headers = new HttpHeaders();
 		attachHeaders(headers); // Extra headers
-		log.debug("Fetch headers of : {}", headers);
+		log.debug("Watching request headers : {}", headers);
 
 		HttpEntity<WatchCommand> entity = new HttpEntity<>(watch, headers);
-		HttpResponseEntity<RespBase<WatchCommandResult>> resp = longPollingClient.exchange(config.getWatchUri(), POST, entity,
+		HttpResponseEntity<RespBase<WatchCommandResult>> resp = http.exchange(config.getWatchUri(), POST, entity,
 				new ParameterizedTypeReference<RespBase<WatchCommandResult>>() {
 				});
 		log.debug("Watch resp: {}", resp);
@@ -217,39 +218,12 @@ public class HttpLongPollRefreshWatcher extends GenericRefreshWatcher {
 	}
 
 	@Override
-	@Retryable(value = Throwable.class, maxAttemptsExpression = EXP_MAXATTEMPTS, backoff = @Backoff(delayExpression = EXP_DELAY, maxDelayExpression = EXP_MAXDELAY, multiplierExpression = EXP_MULTIP))
-	protected void backendReport() {
-		String url = config.getBaseUri() + URI_S_BASE + "/" + URI_S_REFRESHED_REPORT;
-
-		Collection<ChangedRecord> records = getChangedQueues();
-		// Requests
-		RespBase<?> resp = locator.getRestTemplate()
+	protected boolean doReporting(Collection<ChangedRecord> records) {
+		String url = config.getBaseUri().concat(URI_S_BASE).concat("/").concat(URI_S_REFRESHED_REPORT);
+		RespBase<?> resp = http
 				.exchange(url, POST, new HttpEntity<>(new ReportInfo(records)), new ParameterizedTypeReference<RespBase<?>>() {
 				}).getBody();
-
-		// Successful reset
-		if (isSuccess(resp)) {
-			pollChangedAll();
-		} else {
-			throw new ReportRetriesCountOutException(String.format("Backend report failure! records for %s", records.size()));
-		}
-	}
-
-	/**
-	 * Report retries exceed count exception.
-	 *
-	 * @param e
-	 */
-	@Recover
-	public void recoverReportRetriesCountOutException(ReportRetriesCountOutException e) {
-		if (thresholdFastfail) {
-			if (log.isWarnEnabled()) {
-				log.warn("Refresh report retries exceed threshold, discarded refresh changed record!");
-			}
-			pollChangedAll();
-		} else if (log.isWarnEnabled()) {
-			log.warn("Refresh report retries exceed threshold!");
-		}
+		return isSuccess(resp);
 	}
 
 	/**

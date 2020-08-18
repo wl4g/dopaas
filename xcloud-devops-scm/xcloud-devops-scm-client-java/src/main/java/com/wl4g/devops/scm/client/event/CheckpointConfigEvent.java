@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client;
+package com.wl4g.devops.scm.client.event;
+
+import java.util.EventObject;
 
 /**
- * {@link ScmClient}
+ * {@link CheckpointConfigEvent}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-08-10
+ * @version v1.0 2020-08-18
  * @since
  */
-public interface ScmClient {
+public class CheckpointConfigEvent extends EventObject {
+	private static final long serialVersionUID = 1026288899828948496L;
 
-	/**
-	 * Startup SCM refresh client.
-	 * 
-	 * @throws Exception
-	 */
-	void start() throws Exception;
+	public CheckpointConfigEvent(Object source) {
+		super(source);
+	}
 
 }

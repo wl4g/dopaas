@@ -15,18 +15,29 @@
  */
 package com.wl4g.devops.scm.client;
 
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+
+import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.devops.scm.client.refresh.GenericRefreshWatcher;
+
 /**
- * {@link DefaultScmClient}
+ * {@link GenericScmClient}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-08-10
  * @since
  */
-public class DefaultScmClient implements ScmClient {
+public abstract class GenericScmClient implements ScmClient {
 
-	@Override
-	public void start() {
+	protected final SmartLogger log = getLogger(getClass());
 
+	/** {@link GenericRefreshWatcher} */
+	protected final GenericRefreshWatcher watcher;
+
+	public GenericScmClient(GenericRefreshWatcher watcher) {
+		notNullOf(watcher, "watcher");
+		this.watcher = watcher;
 	}
 
 }

@@ -128,19 +128,18 @@ public abstract class GenericCommand implements Serializable {
 		@NotNull
 		private String host;
 
-		@Min(1024)
-		@Max(65535)
+		@NotBlank
 		@NotNull
-		private String endpoint;
+		private String serviceId;
 
 		public ConfigNode() {
 			super();
 		}
 
-		public ConfigNode(String host, String endpoint) {
+		public ConfigNode(String host, String serviceId) {
 			super();
 			this.host = host;
-			this.endpoint = endpoint;
+			this.serviceId = serviceId;
 		}
 
 		public String getHost() {
@@ -153,13 +152,13 @@ public abstract class GenericCommand implements Serializable {
 			}
 		}
 
-		public String getEndpoint() {
-			return endpoint;
+		public String getServiceId() {
+			return serviceId;
 		}
 
-		public void setEndpoint(String endpoint) {
-			if (!StringUtils.isEmpty(endpoint) && !"NULL".equalsIgnoreCase(endpoint)) {
-				this.endpoint = endpoint;
+		public void setServiceId(String serviceId) {
+			if (!StringUtils.isEmpty(serviceId) && !"NULL".equalsIgnoreCase(serviceId)) {
+				this.serviceId = serviceId;
 			}
 		}
 
@@ -168,7 +167,7 @@ public abstract class GenericCommand implements Serializable {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((host == null) ? 0 : host.hashCode());
-			result = prime * result + ((endpoint == null) ? 0 : endpoint.hashCode());
+			result = prime * result + ((serviceId == null) ? 0 : serviceId.hashCode());
 			return result;
 		}
 
@@ -186,22 +185,22 @@ public abstract class GenericCommand implements Serializable {
 					return false;
 			} else if (!host.equals(other.host))
 				return false;
-			if (endpoint == null) {
-				if (other.endpoint != null)
+			if (serviceId == null) {
+				if (other.serviceId != null)
 					return false;
-			} else if (!endpoint.equals(other.endpoint))
+			} else if (!serviceId.equals(other.serviceId))
 				return false;
 			return true;
 		}
 
 		@Override
 		public String toString() {
-			return getHost() + ":" + getEndpoint();
+			return getHost() + ":" + getServiceId();
 		}
 
 		public void validation() {
 			notNull(getHost(), "`host` is not allowed to be null.");
-			notNull(getEndpoint(), "`port` is not allowed to be null.");
+			notNull(getServiceId(), "`port` is not allowed to be null.");
 			HostAndPort.fromString(toString());
 		}
 

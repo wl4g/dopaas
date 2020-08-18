@@ -23,7 +23,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import com.google.common.collect.Queues;
-import com.wl4g.devops.scm.common.command.GenericCommand.ConfigMeta;
+import com.wl4g.devops.scm.common.command.WatchCommandResult;
 import com.wl4g.devops.scm.common.command.ReportCommand.ChangedRecord;
 
 /**
@@ -36,14 +36,14 @@ import com.wl4g.devops.scm.common.command.ReportCommand.ChangedRecord;
 public abstract class RefreshConfigHolder {
 
 	/**
-	 * Refresh current release meta
+	 * Refresh current release config source
 	 */
-	final private static ThreadLocal<ConfigMeta> configMeta = new InheritableThreadLocal<>();
+	private final static ThreadLocal<WatchCommandResult> releaseConfig = new InheritableThreadLocal<>();
 
 	/**
 	 * Refresh changed records.
 	 */
-	final private static Queue<ChangedRecord> changedQueue = Queues.newArrayBlockingQueue(32);
+	private final static Queue<ChangedRecord> changedQueue = Queues.newArrayBlockingQueue(32);
 
 	private RefreshConfigHolder() {
 		throw new IllegalStateException("Cannot instantiate");
@@ -52,45 +52,47 @@ public abstract class RefreshConfigHolder {
 	/**
 	 * Gets & validate release meta
 	 * 
-	 * @param validate
+	 * @param valid
 	 * @return
 	 */
-	public static ConfigMeta getConfigMeta(boolean validate) {
-		ConfigMeta meta = configMeta.get();
-		if (validate) {
+	public static WatchCommandResult getReleaseConfig(boolean valid) {
+		WatchCommandResult meta = releaseConfig.get();
+		if (valid) {
 			notNull(meta, "No available refresh releaseMeta");
-			meta.validation(validate, validate);
+			meta.validation(valid, valid);
 		}
 		return meta;
 	}
 
 	/**
-	 * Sets release meta
+	 * Sets release config source
 	 * 
 	 * @param newMeta
 	 * @return
 	 */
-	static ConfigMeta setConfigMeta(ConfigMeta newMeta) {
-		if (!isNull(newMeta)) {
-			configMeta.set(newMeta);
+	static WatchCommandResult setReleaseConfig(WatchCommandResult result) {
+		if (!isNull(result)) {
+			releaseConfig.set(result);
 		} else {
-			pollConfigMeta();
+			pollReleaseConfig();
 		}
-		return newMeta;
+		return result;
 	}
 
 	/**
-	 * Poll release meta.
+	 * Poll release config source.
 	 * 
 	 * @return
 	 */
-	public static ConfigMeta pollConfigMeta() {
+	public static WatchCommandResult pollReleaseConfig() {
 		try {
-			return configMeta.get();
+			return releaseConfig.get();
 		} finally {
-			configMeta.remove();
+			releaseConfig.remove();
 		}
 	}
+
+	// --- Changed records .---
 
 	/**
 	 * Poll chanaged keys all.
@@ -111,7 +113,7 @@ public abstract class RefreshConfigHolder {
 	 * @param changedKeys
 	 */
 	public static void addChanged(Set<String> changedKeys) {
-		changedQueue.add(new ChangedRecord(changedKeys, getConfigMeta(false)));
+		changedQueue.add(new ChangedRecord(changedKeys, getReleaseConfig(false)));
 	}
 
 	/**

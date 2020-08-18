@@ -19,6 +19,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * {@link ReportCommand}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2018-08-18
+ * @since
+ */
 public class ReportCommand extends WatchCommand {
 	final private static long serialVersionUID = 2523769504519533902L;
 
@@ -42,20 +49,24 @@ public class ReportCommand extends WatchCommand {
 		return "ReportInfo [changedRecords=" + changedRecords + "]";
 	}
 
+	/**
+	 * {@link ChangedRecord}
+	 *
+	 * @since
+	 */
 	public static class ChangedRecord {
 
 		private Set<String> changedKeys = new HashSet<>();
-
-		private ConfigMeta meta = new ConfigMeta();
+		private WatchCommandResult result = new WatchCommandResult();
 
 		public ChangedRecord() {
 			super();
 		}
 
-		public ChangedRecord(Set<String> changedKeys, ConfigMeta meta) {
+		public ChangedRecord(Set<String> changedKeys, WatchCommandResult result) {
 			super();
 			this.changedKeys = changedKeys;
-			this.meta = meta;
+			this.result = result;
 		}
 
 		public Set<String> getChangedKeys() {
@@ -66,17 +77,17 @@ public class ReportCommand extends WatchCommand {
 			this.changedKeys = changedKeys;
 		}
 
-		public ConfigMeta getMeta() {
-			return meta;
+		public WatchCommandResult getConfigResult() {
+			return result;
 		}
 
-		public void setMeta(ConfigMeta meta) {
-			this.meta = meta;
+		public void setresult(WatchCommandResult result) {
+			this.result = result;
 		}
 
 		@Override
 		public String toString() {
-			return "ChangedInfo [changedKeys=" + changedKeys + ", meta=" + meta + "]";
+			return "ChangedInfo [changedKeys=" + changedKeys + ", result=" + result + "]";
 		}
 
 	}
