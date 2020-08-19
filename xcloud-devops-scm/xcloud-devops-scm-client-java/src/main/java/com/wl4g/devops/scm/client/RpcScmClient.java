@@ -15,29 +15,29 @@
  */
 package com.wl4g.devops.scm.client;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.devops.scm.client.refresh.GenericRefreshWatcher;
+import com.wl4g.components.common.annotation.Reserved;
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.client.event.ScmEventListener;
+import com.wl4g.devops.scm.client.refresh.RpcRefreshWatcher;
 
 /**
- * {@link GenericScmClient}
+ * {@link RpcScmClient}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-08-10
+ * @version v1.0 2020-08-18
  * @since
  */
-abstract class GenericScmClient implements ScmClient {
+@Reserved
+class RpcScmClient extends GenericScmClient {
 
-	protected final SmartLogger log = getLogger(getClass());
+	public RpcScmClient(ScmClientProperties<?> config, ScmEventListener... listeners) {
+		super(new RpcRefreshWatcher(config, listeners));
+	}
 
-	/** {@link GenericRefreshWatcher} */
-	protected final GenericRefreshWatcher watcher;
-
-	public GenericScmClient(GenericRefreshWatcher watcher) {
-		notNullOf(watcher, "watcher");
-		this.watcher = watcher;
+	@Override
+	public void start() throws Exception {
+		log.info("Starting scm rpc client watcher ...");
+		watcher.start();
 	}
 
 }

@@ -13,31 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client;
+package com.wl4g.devops.scm;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.devops.scm.client.refresh.GenericRefreshWatcher;
+import com.wl4g.devops.scm.client.ScmClient;
+import com.wl4g.devops.scm.client.ScmClientBuilder;
 
 /**
- * {@link GenericScmClient}
+ * {@link ScmClientTests}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-08-10
+ * @version v1.0 2020-08-19
  * @since
  */
-abstract class GenericScmClient implements ScmClient {
+public class ScmClientTests {
 
-	protected final SmartLogger log = getLogger(getClass());
+	public static void main(String[] args) throws Exception {
+		System.out.println("SCM client starting ...");
 
-	/** {@link GenericRefreshWatcher} */
-	protected final GenericRefreshWatcher watcher;
+		ScmClient client = ScmClientBuilder.newBuilder()
+			.withBaseUri("http://localhost:14043")
+			.withClusterName("scmClientApp1")
+			.build();
+		client.start();
 
-	public GenericScmClient(GenericRefreshWatcher watcher) {
-		notNullOf(watcher, "watcher");
-		this.watcher = watcher;
 	}
 
 }

@@ -13,31 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client;
+package com.wl4g.devops.scm.client.refresh;
 
+import java.util.Collection;
+
+import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ScmEventListener;
-import com.wl4g.devops.scm.client.event.support.ScmEventPublisher;
-import com.wl4g.devops.scm.client.event.support.ScmEventSubscriber;
-import com.wl4g.devops.scm.client.refresh.LongHttpRefreshWatcher;
+import com.wl4g.devops.scm.common.command.ReportCommand.ChangedRecord;
 
 /**
- * {@link DefaultHttpScmClient}
+ * {@link RpcRefreshWatcher}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-08-18
+ * @version v1.0 2020-08-19
  * @since
  */
-public class DefaultHttpScmClient extends GenericScmClient {
+@Reserved
+public class RpcRefreshWatcher extends GenericRefreshWatcher {
 
-	public DefaultHttpScmClient(ScmClientProperties config, ScmEventListener... listeners) {
-		super(new LongHttpRefreshWatcher(config, new ScmEventPublisher(), new ScmEventSubscriber(listeners)));
+	public RpcRefreshWatcher(ScmClientProperties<?> config, ScmEventListener[] listeners) {
+		super(config, listeners);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void start() throws Exception {
-		log.info("Starting scm client watcher ...");
-		watcher.start();
+	protected boolean doReporting(Collection<ChangedRecord> records) {
+		throw new UnsupportedOperationException();
 	}
 
 }

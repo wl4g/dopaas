@@ -30,6 +30,7 @@ import com.wl4g.components.common.remoting.exception.ClientHttpRequestExecution;
 import com.wl4g.components.common.remoting.standard.HttpHeaders;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.client.event.ScmEventListener;
 import com.wl4g.devops.scm.client.event.support.ScmEventPublisher;
 import com.wl4g.devops.scm.client.event.support.ScmEventSubscriber;
 import com.wl4g.devops.scm.common.command.ReportCommand.ChangedRecord;
@@ -72,13 +73,13 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 
 /**
- * Timing refresh watcher
+ * HTTP long polling refresh watcher
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月1日
  * @since
  */
-public class LongHttpRefreshWatcher extends GenericRefreshWatcher {
+public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 
 	/**
 	 * This is to solve the time difference between releasing the watching
@@ -97,17 +98,12 @@ public class LongHttpRefreshWatcher extends GenericRefreshWatcher {
 	final private AtomicBoolean lastWatchState = new AtomicBoolean(false);
 
 	/**
-	 * Retry failure exceed threshold fast-fail
-	 */
-	private boolean thresholdFastfail;
-
-	/**
 	 * Long polling rest client
 	 */
 	private RestClient http;
 
-	public LongHttpRefreshWatcher(ScmClientProperties config, ScmEventPublisher publisher, ScmEventSubscriber subscriber) {
-		super(config, publisher, subscriber);
+	public LongPollingRefreshWatcher(ScmClientProperties<?> config, ScmEventListener... listeners) {
+		super(config, listeners);
 		this.http = createRestClient();
 	}
 
@@ -145,11 +141,10 @@ public class LongHttpRefreshWatcher extends GenericRefreshWatcher {
 				lastWatchState.set(false);
 				log.error("Unable to watch poll", () -> getRootCauseMessage(th));
 				log.debug("Unable to watch poll", th);
-				sleepRandom(config.getLongPollDelay(), config.getLongPollMaxDelay());
 			} finally {
 				watchLock.unlock();
 			}
-		}, 3000L, config.getLongPollDelay(), config.getLongPollMaxDelay(), MILLISECONDS);
+		}, 3000L, config.getLongPollingMinDelay(), config.getLongPollingMaxDelay(), MILLISECONDS);
 
 	}
 
@@ -171,7 +166,7 @@ public class LongHttpRefreshWatcher extends GenericRefreshWatcher {
 	protected RestClient createRestClient() {
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
 		factory.setConnectTimeout(config.getConnectTimeout());
-		factory.setReadTimeout(safeLongToInt(config.getWatchReadTimeout()));
+		factory.setReadTimeout(config.getWatchReadTimeout());
 		factory.setMaxResponseSize(config.getMaxResponseSize());
 		RestClient client = new RestClient(factory);
 
@@ -196,7 +191,7 @@ public class LongHttpRefreshWatcher extends GenericRefreshWatcher {
 		log.debug("Synchronizing refresh config ... ");
 
 		// Delay freq protection limit
-		beforeDelayRefreshProtectLimit();
+		beforeSafeRefreshProtectDelaying();
 
 		// Create watch command
 		WatchCommand watch = createWatchCommand();

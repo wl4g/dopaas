@@ -29,6 +29,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import com.wl4g.components.common.lang.SystemUtils2;
 import com.wl4g.devops.common.utils.InetHolder;
 import com.wl4g.devops.common.utils.InetHolder.HostInfo;
@@ -48,8 +53,9 @@ import lombok.experimental.Wither;
  */
 @Getter
 @Setter
-@Wither
-public class ScmClientProperties extends BaseScmProperties {
+@SuppressWarnings("unchecked")
+public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseScmProperties {
+
 	private static final long serialVersionUID = -2133451846066162424L;
 
 	/** SCM client application cluster service name mark. */
@@ -72,35 +78,40 @@ public class ScmClientProperties extends BaseScmProperties {
 	/**
 	 * Watching timeout on waiting to read data from the SCM Server.
 	 */
-	private int watchReadTimeout = DEF_WATCH_READ_TIMEOUT_MS;
+	private long watchReadTimeout = DEF_WATCH_R_TIMEOUT_MS;
 
 	/** Minimum waiting time for long polling failure. */
-	private long longPollDelay = DEF_LONG_POLL_DELAY_MS;
+	private long longPollingMinDelay = DEF_LONGPOLLING_MIN_DELAY_MS;
 
 	/** Maximum waiting time for long polling failure. */
-	private long longPollMaxDelay = DEF_LONG_POLL_MAX_DELAY_MS;
+	private long longPollingMaxDelay = DEF_LONGPOLLING_MAX_DELAY_MS;
 
 	/**
 	 * Frequency interval protection mechanism to control refresh failure too
 	 * fast (ms).
 	 */
-	private long refreshProtectIntervalMs = DEF_REFRESH_PROTECT_INTERVAL_MS;
+	private long safeRefreshProtectDelay = DEF_REFRESH_PROTECT_INTERVAL_MS;
 
 	/**
 	 * Checkpoing reporting retry random min interval (ms).
 	 */
-	private long retryReportingRandomMinIntervalMs = DEF_RETRY_REPORTING_MIN_INTERVAL_MS;
+	private long retryReportingMinDelay = DEF_RETRY_REPORTING_MIN_DELAY_MS;
 
 	/**
 	 * Checkpoing reporting retry random max interval (ms).
 	 */
-	private long retryReportingRandomMaxIntervalMs = DEF_RETRY_REPORTING_MAX_INTERVAL_MS;
+	private long retryReportingMaxDelay = DEF_RETRY_REPORTING_MAX_DELAY_MS;
 
 	/**
 	 * Retry failure reporting exceed threshold fast-fail. </br>
 	 * When it is less than 0, it means not to give up
 	 */
-	private int retryReportingDiscardFailThreshold;
+	private long retryReportingFastFailThreshold;
+
+	/**
+	 * Invoking async event threads pool maximum.
+	 */
+	private int asyncEventThreads = DEF_ASYNC_EVENT_THREADS;
 
 	/**
 	 * Refresh name-space(configuration filename)</br>
@@ -134,9 +145,9 @@ public class ScmClientProperties extends BaseScmProperties {
 	}
 
 	public ScmClientProperties(String clusterName, String baseUri, InetProperties inet, List<String> namespaces) {
-		this(clusterName, DEF_SERVICEID, baseUri, inet, DEF_WATCH_READ_TIMEOUT_MS, DEF_LONG_POLL_DELAY_MS,
-				DEF_LONG_POLL_MAX_DELAY_MS, DEF_REFRESH_PROTECT_INTERVAL_MS, DEF_RETRY_REPORTING_MIN_INTERVAL_MS,
-				DEF_RETRY_REPORTING_MAX_INTERVAL_MS, -1, namespaces, null, null, null);
+		this(clusterName, DEF_SERVICEID, baseUri, inet, DEF_WATCH_R_TIMEOUT_MS, DEF_LONGPOLLING_MIN_DELAY_MS,
+				DEF_LONGPOLLING_MAX_DELAY_MS, DEF_REFRESH_PROTECT_INTERVAL_MS, DEF_RETRY_REPORTING_MIN_DELAY_MS,
+				DEF_RETRY_REPORTING_MAX_DELAY_MS, -1, DEF_ASYNC_EVENT_THREADS, namespaces, null, null, null);
 	}
 
 	/**
@@ -151,15 +162,15 @@ public class ScmClientProperties extends BaseScmProperties {
 	 *            Connect to SCM server based URI.
 	 * @param inet
 	 *            SCM client register network interface configuration.
-	 * @param fetchReadTimeout
+	 * @param watchReadTimeout
 	 *            Fetch timeout on waiting to read data from the SCM Server.
-	 * @param longPollDelay
+	 * @param longPollingMinDelay
 	 *            Minimum waiting time for long polling failure, Prevent
 	 *            avalanche.
-	 * @param longPollMaxDelay
+	 * @param longPollingMaxDelay
 	 *            Maximum waiting time for long polling failure, Prevent
 	 *            avalanche.
-	 * @param refreshProtectIntervalMs
+	 * @param safeRefreshProtectDelay
 	 *            Frequency interval protection mechanism to control refresh
 	 *            failure too fast (ms).
 	 * @param namespaces
@@ -171,36 +182,108 @@ public class ScmClientProperties extends BaseScmProperties {
 	 * @param ignore0
 	 *            [Deprecated] only to satisfy the Lombok syntax sugar
 	 */
-	public ScmClientProperties(String clusterName, String serviceId, String baseUri, InetProperties inet, int fetchReadTimeout,
-			long longPollDelay, long longPollMaxDelay, long refreshProtectIntervalMs, long retryReportingRandomMinIntervalMs,
-			long retryReportingRandomMaxIntervalMs, int retryReportingDiscardFailThreshold, List<String> namespaces,
-			Map<String, String> headers, @Deprecated InetHolder ignore0, @Deprecated String ignore1) {
+	public ScmClientProperties(@Nonnull String clusterName, @NotBlank String serviceId, @NotBlank String baseUri,
+			@NotNull InetProperties inet, long watchReadTimeout, long longPollingMinDelay, long longPollingMaxDelay,
+			long safeRefreshProtectDelay, long retryReportingMinDelay, long retryReportingMaxDelay,
+			long retryReportingFastFailThreshold, int asyncEventThreads, @Nonnull List<String> namespaces,
+			@Nullable Map<String, String> headers, @Deprecated InetHolder ignore0, @Deprecated String ignore1) {
 		hasTextOf(clusterName, "clusterName");
 		hasTextOf(serviceId, "serviceId");
 		hasTextOf(baseUri, "baseUri");
-		notNullOf(inet, "inet");
-		isTrueOf(fetchReadTimeout > 0, "fetchReadTimeout>0");
-		isTrueOf(longPollDelay > 0, "longPollDelay>0");
-		isTrue(longPollMaxDelay > longPollDelay, "longPollMaxDelay>longPollDelay(%s)", longPollDelay);
-		isTrueOf(refreshProtectIntervalMs > 0, "refreshProtectIntervalMs>0");
-		isTrueOf(retryReportingRandomMinIntervalMs > 0, "retryReportingRandomMinIntervalMs>0");
-		isTrue(retryReportingRandomMaxIntervalMs > retryReportingRandomMinIntervalMs,
-				"retryReportingRandomMaxIntervalMs>retryReportingRandomMinIntervalMs(%s)", retryReportingRandomMinIntervalMs);
+		notNullOf(inet, "inetProperties");
+		isTrueOf(watchReadTimeout > 0, "fetchReadTimeout>0");
+		isTrueOf(longPollingMinDelay > 0, "longPollingMinDelay>0");
+		isTrue(longPollingMaxDelay > longPollingMinDelay, "longPollingMaxDelay>longPollingMinDelay(%s)", longPollingMinDelay);
+		isTrueOf(safeRefreshProtectDelay > 0, "safeRefreshProtectDelay>0");
+		isTrueOf(retryReportingMinDelay > 0, "retryReportingMinDelay>0");
+		isTrue(retryReportingMaxDelay > retryReportingMinDelay, "retryReportingMaxDelay>retryReportingMinDelay(%s)",
+				retryReportingMinDelay);
+		isTrueOf(asyncEventThreads > 0, "asyncEventThreads>0");
 		notEmptyOf(namespaces, "namespaces");
-		// notNullOf(headers, "headers");
 		this.clusterName = clusterName;
 		this.serviceId = serviceId;
 		this.baseUri = baseUri;
 		this.inet = inet;
-		this.watchReadTimeout = fetchReadTimeout;
-		this.longPollDelay = longPollDelay;
-		this.longPollMaxDelay = longPollMaxDelay;
-		this.refreshProtectIntervalMs = refreshProtectIntervalMs;
-		this.retryReportingRandomMinIntervalMs = retryReportingRandomMinIntervalMs;
-		this.retryReportingRandomMaxIntervalMs = retryReportingRandomMaxIntervalMs;
-		this.retryReportingDiscardFailThreshold = retryReportingDiscardFailThreshold;
+		this.watchReadTimeout = watchReadTimeout;
+		this.longPollingMinDelay = longPollingMinDelay;
+		this.longPollingMaxDelay = longPollingMaxDelay;
+		this.safeRefreshProtectDelay = safeRefreshProtectDelay;
+		this.retryReportingMinDelay = retryReportingMinDelay;
+		this.retryReportingMaxDelay = retryReportingMaxDelay;
+		this.retryReportingFastFailThreshold = retryReportingFastFailThreshold;
+		this.asyncEventThreads = asyncEventThreads;
 		this.namespaces = namespaces;
 		this.headers = headers;
+	}
+
+	public T withClusterName(String clusterName) {
+		this.clusterName = clusterName;
+		return (T) this;
+	}
+
+	public T withServiceId(String serviceId) {
+		this.serviceId = serviceId;
+		return (T) this;
+	}
+
+	public T withBaseUri(String baseUri) {
+		this.baseUri = baseUri;
+		return (T) this;
+	}
+
+	public T withInet(InetProperties inet) {
+		this.inet = inet;
+		return (T) this;
+	}
+
+	public T withWatchReadTimeout(long watchReadTimeout) {
+		this.watchReadTimeout = watchReadTimeout;
+		return (T) this;
+	}
+
+	public T withLongPollingMinDelay(long longPollingMinDelay) {
+		this.longPollingMinDelay = longPollingMinDelay;
+		return (T) this;
+	}
+
+	public T withLongPollingMaxDelay(long longPollingMaxDelay) {
+		this.longPollingMaxDelay = longPollingMaxDelay;
+		return (T) this;
+	}
+
+	public T withSafeRefreshProtectDelay(long safeRefreshProtectDelay) {
+		this.safeRefreshProtectDelay = safeRefreshProtectDelay;
+		return (T) this;
+	}
+
+	public T withRetryReportingMinDelay(long retryReportingMinDelay) {
+		this.retryReportingMinDelay = retryReportingMinDelay;
+		return (T) this;
+	}
+
+	public T withRetryReportingMaxDelay(long retryReportingMaxDelay) {
+		this.retryReportingMaxDelay = retryReportingMaxDelay;
+		return (T) this;
+	}
+
+	public T withRetryReportingFastFailThreshold(long retryReportingFastFailThreshold) {
+		this.retryReportingFastFailThreshold = retryReportingFastFailThreshold;
+		return (T) this;
+	}
+
+	public T withAsyncEventThreads(int asyncEventThreads) {
+		this.asyncEventThreads = asyncEventThreads;
+		return (T) this;
+	}
+
+	public T withNamespaces(List<String> namespaces) {
+		this.namespaces = namespaces;
+		return (T) this;
+	}
+
+	public T withHeaders(Map<String, String> headers) {
+		this.headers = headers;
+		return (T) this;
 	}
 
 	// --- Function's. ---
@@ -250,13 +333,13 @@ public class ScmClientProperties extends BaseScmProperties {
 	/**
 	 * Default Fetch timeout on waiting to read data from the SCM Server.
 	 */
-	public final static int DEF_WATCH_READ_TIMEOUT_MS = 8 * 1000;
+	public final static int DEF_WATCH_R_TIMEOUT_MS = 8 * 1000;
 
 	/** Default Minimum waiting time for long polling failure. */
-	public final static long DEF_LONG_POLL_DELAY_MS = 2 * 1000L;
+	public final static long DEF_LONGPOLLING_MIN_DELAY_MS = 2 * 1000L;
 
 	/** Default Maximum waiting time for long polling failure. */
-	public final static long DEF_LONG_POLL_MAX_DELAY_MS = 15 * 1000L;
+	public final static long DEF_LONGPOLLING_MAX_DELAY_MS = 15 * 1000L;
 
 	/**
 	 * Default Frequency interval protection mechanism to control refresh
@@ -267,11 +350,16 @@ public class ScmClientProperties extends BaseScmProperties {
 	/**
 	 * Default Checkpoing reporting retry random min interval (ms).
 	 */
-	public final static long DEF_RETRY_REPORTING_MIN_INTERVAL_MS = 300L;
+	public final static long DEF_RETRY_REPORTING_MIN_DELAY_MS = 300L;
 
 	/**
 	 * Default Checkpoing reporting retry random max interval (ms).
 	 */
-	public final static long DEF_RETRY_REPORTING_MAX_INTERVAL_MS = 3000L;
+	public final static long DEF_RETRY_REPORTING_MAX_DELAY_MS = 3000L;
+
+	/**
+	 * Default invoking async event threads pool maximum.
+	 */
+	public final static int DEF_ASYNC_EVENT_THREADS = 1;
 
 }

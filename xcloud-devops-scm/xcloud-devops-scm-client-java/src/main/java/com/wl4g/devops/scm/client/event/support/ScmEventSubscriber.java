@@ -15,10 +15,14 @@
  */
 package com.wl4g.devops.scm.client.event.support;
 
-import static com.wl4g.components.common.lang.Assert2.notEmpty;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
+
+import javax.validation.constraints.NotNull;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.wl4g.components.common.annotation.Nullable;
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.CheckpointConfigEvent;
 import com.wl4g.devops.scm.client.event.RefreshConfigEvent;
 import com.wl4g.devops.scm.client.event.RefreshNextEvent;
@@ -40,9 +44,10 @@ public class ScmEventSubscriber {
 	/** {@link ScmEventListener} */
 	protected final ScmEventListener[] listeners;
 
-	public ScmEventSubscriber(ScmEventListener... listeners) {
-		notEmpty(listeners, "listeners");
-		this.bus = EventBusSupport.getDefault().getBus();
+	public ScmEventSubscriber(@NotNull ScmClientProperties<?> config, @Nullable ScmEventListener... listeners) {
+		notNullOf(config, "config");
+		// notEmpty(listeners, "listeners");
+		this.bus = EventBusSupport.getDefault(config).getBus();
 		this.listeners = listeners;
 	}
 

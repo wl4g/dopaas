@@ -15,8 +15,13 @@
  */
 package com.wl4g.devops.scm.client.event.support;
 
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
+
+import javax.validation.constraints.NotNull;
+
 import com.github.rholder.retry.Attempt;
 import com.google.common.eventbus.EventBus;
+import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.CheckpointConfigEvent;
 import com.wl4g.devops.scm.client.event.RefreshConfigEvent;
 import com.wl4g.devops.scm.client.event.RefreshNextEvent;
@@ -35,8 +40,9 @@ public class ScmEventPublisher {
 	/** {@link EventBus} */
 	protected final EventBus bus;
 
-	public ScmEventPublisher() {
-		this.bus = EventBusSupport.getDefault().getBus();
+	public ScmEventPublisher(@NotNull ScmClientProperties<?> config) {
+		notNullOf(config, "config");
+		this.bus = EventBusSupport.getDefault(config).getBus();
 	}
 
 	/**
