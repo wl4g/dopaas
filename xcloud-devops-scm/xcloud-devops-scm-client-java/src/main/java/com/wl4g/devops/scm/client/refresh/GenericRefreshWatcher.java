@@ -15,17 +15,19 @@
  */
 package com.wl4g.devops.scm.client.refresh;
 
+import static com.github.rholder.retry.StopStrategies.neverStop;
+import static com.github.rholder.retry.WaitStrategies.randomWait;
 import com.github.rholder.retry.Attempt;
 import com.github.rholder.retry.RetryListener;
 import com.github.rholder.retry.Retryer;
 import com.github.rholder.retry.RetryerBuilder;
-import com.github.rholder.retry.StopStrategies;
-import com.github.rholder.retry.WaitStrategies;
+import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.codec.CodecSource;
 import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.components.common.task.GenericTaskRunner;
 import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.client.event.ScmEventListener;
 import com.wl4g.devops.scm.client.event.support.ScmEventPublisher;
 import com.wl4g.devops.scm.client.event.support.ScmEventSubscriber;
 import com.wl4g.devops.scm.client.utils.NodeHolder;
@@ -41,13 +43,15 @@ import static com.wl4g.components.common.lang.ThreadUtils2.sleep;
 import static com.wl4g.devops.scm.client.refresh.RefreshConfigHolder.*;
 import static com.wl4g.devops.scm.common.config.SCMConstants.*;
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
+import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Abstract refresh watcher.
@@ -61,7 +65,7 @@ import java.util.concurrent.Callable;
 public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProperties> {
 
 	/** SCM client configuration */
-	protected final ScmClientProperties config;
+	protected final ScmClientProperties<?> config;
 
 	/** SCM refresh of {@link ScmEventPublisher}. */
 	protected final ScmEventPublisher publisher;
@@ -72,59 +76,29 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	/** SCM client instance holder */
 	protected final NodeHolder holder;
 
-	/** SCM client reporting retryer */
-	protected final Retryer<Boolean> retryer;
-
 	/** SCM client reporting handler */
 	protected final ConfigReportingHandler handler;
 
 	/**
+	 * 
 	 * Last Update Time
 	 */
-	protected long lastUpdateTime = 0;
+	protected long lastRefreshTime = 0;
 
-	public GenericRefreshWatcher(ScmClientProperties config, ScmEventPublisher publisher, ScmEventSubscriber subscriber) {
-		super(new RunnerProperties(1, 0, 0).withAsyncStartup(true));
+	public GenericRefreshWatcher(@NotNull ScmClientProperties<?> config, @Nullable ScmEventListener... listeners) {
+		super(new RunnerProperties(1, 0, 1).withAsyncStartup(true));
 		notNullOf(config, "config");
-		notNullOf(publisher, "publisher");
-		notNullOf(subscriber, "subscriber");
+		// notNullOf(listeners, "listeners");
 		this.config = config;
-		this.publisher = publisher;
-		this.subscriber = subscriber;
+		this.publisher = new ScmEventPublisher(config);
+		this.subscriber = new ScmEventSubscriber(config, listeners);
 		this.holder = new NodeHolder(config);
 		this.handler = new ConfigReportingHandler();
-		this.retryer = RetryerBuilder.<Boolean> newBuilder().retryIfExceptionOfType(Throwable.class)// Exception-retry-source
-				.retryIfResult(res -> !Boolean.valueOf(valueOf(res))) // Retrial-condition
-				.withWaitStrategy(WaitStrategies.randomWait(config.getRetryReportingRandomMinIntervalMs(), MILLISECONDS,
-						config.getRetryReportingRandomMaxIntervalMs(), MILLISECONDS)) // Waiting-interval
-				.withStopStrategy(StopStrategies.neverStop()) // stop-retries
-				.withRetryListener(new RetryListener() {
-					@Override
-					public <V> void onRetry(Attempt<V> attempt) {
-						// Discard/cleanup after maximum attempt.(if necessary)
-						if (config.getRetryReportingDiscardFailThreshold() > 0
-								&& attempt.getAttemptNumber() > config.getRetryReportingDiscardFailThreshold()) {
-							log.warn("Reporting retries max threshold({}), discarded refresh changed record!!!",
-									attempt.getAttemptNumber());
-							pollChangedAll();
-						}
-						// Publishing reporting
-						publisher.publishReportingEvent(attempt);
-					}
-				}).build();
-
 	}
 
 	@Override
 	public void run() {
-		log.info("Running config reporting handler...");
-		while (isActive()) {
-			try {
-				retryer.call(handler);
-			} catch (Exception e) {
-				log.error("Failed to reporting.", e);
-			}
-		}
+		doExecuteReporting();
 	}
 
 	/**
@@ -141,13 +115,14 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	/**
 	 * Delay refresh portection freq limit.
 	 */
-	protected void beforeDelayRefreshProtectLimit() {
+	protected void beforeSafeRefreshProtectDelaying() {
 		long now = currentTimeMillis();
-		long intervalMs = now - lastUpdateTime;
-		if (intervalMs < config.getRefreshProtectIntervalMs()) {
-			log.warn("Refresh too fast? Watch long polling waiting...  lastUpdateTime: {}, now: {}, intervalMs: {}",
-					lastUpdateTime, now, intervalMs);
-			sleep(config.getRefreshProtectIntervalMs());
+		long diffIntervalMs = now - lastRefreshTime;
+		if (diffIntervalMs < config.getSafeRefreshProtectDelay()) {
+			log.warn(
+					"Refresh too fast? Watch long polling waiting...  lastUpdateTime: {}, now: {}, safeRefreshProtectDelay: {}, diffIntervalMs: {}",
+					lastRefreshTime, now, config.getSafeRefreshProtectDelay(), diffIntervalMs);
+			sleep(config.getSafeRefreshProtectDelay());
 		}
 	}
 
@@ -173,7 +148,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 			// Records changed property names.
 			addChanged(null);
 
-			lastUpdateTime = currentTimeMillis();
+			lastRefreshTime = currentTimeMillis();
 
 			// Publishing refresh
 			publisher.publishRefreshEvent(result);
@@ -242,6 +217,45 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 						propertyCount));
 			}
 		}
+	}
+
+	/**
+	 * DO new handling execution reporting
+	 */
+	protected void doExecuteReporting() {
+		log.info("Running SCM reporting handler...");
+		try {
+			newReportingRetryer().call(handler);
+		} catch (Exception e) {
+			log.error("Failed to SCM reporting.", e);
+		}
+	}
+
+	/**
+	 * New create reporting {@link Retryer}
+	 * 
+	 * @return
+	 */
+	protected Retryer<Boolean> newReportingRetryer() {
+		return RetryerBuilder.<Boolean> newBuilder().retryIfExceptionOfType(Throwable.class)// Exception-retry-source
+				.retryIfResult(res -> (nonNull(res) && !res)) // Retrial-condition
+				.withWaitStrategy(randomWait(config.getRetryReportingMinDelay(), MILLISECONDS, config.getRetryReportingMaxDelay(),
+						MILLISECONDS)) // Waiting-interval
+				.withStopStrategy(neverStop()) // stop-retries
+				.withRetryListener(new RetryListener() {
+					@Override
+					public <V> void onRetry(Attempt<V> attempt) {
+						// Discard/cleanup after maximum attempt.(if necessary)
+						long threshold = config.getRetryReportingFastFailThreshold();
+						if (threshold > 0 && attempt.getAttemptNumber() > threshold) {
+							log.warn("Reporting retries max threshold({}), discarded refresh changed record!!!",
+									attempt.getAttemptNumber());
+							pollChangedAll();
+						}
+						// Publishing reporting
+						publisher.publishReportingEvent(attempt);
+					}
+				}).build();
 	}
 
 	/**
