@@ -35,7 +35,7 @@ public class NodeHolder {
 	/** That application instance. */
 	private final ConfigNode configNode;
 
-	public NodeHolder(ScmClientProperties config) {
+	public NodeHolder(ScmClientProperties<?> config) {
 		this.configNode = new ConfigNode(config.getAvailableHostInfo().getIpAddress(), config.getServiceId());
 	}
 
