@@ -28,6 +28,7 @@ import com.wl4g.components.common.task.GenericTaskRunner;
 import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
+import com.wl4g.devops.scm.client.event.support.EventBusSupport;
 import com.wl4g.devops.scm.client.event.support.ScmEventPublisher;
 import com.wl4g.devops.scm.client.event.support.ScmEventSubscriber;
 import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
@@ -48,6 +49,7 @@ import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -103,12 +105,18 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 		this.handler = new ConfigReportingHandler();
 	}
 
+	@Override
+	public void close() throws IOException {
+		super.close();
+		EventBusSupport.getDefault(config).close();
+	}
+
 	/**
 	 * New create {@link FetchConfigRequest}
 	 * 
 	 * @return
 	 */
-	public FetchConfigRequest getWatchCommand() {
+	protected FetchConfigRequest getWatchCommand() {
 		// Create config watching fetching command
 		ReleaseConfigInfo last = repository.getLastReleaseConfig();
 		ConfigMeta meta = nonNull(last) ? last.getMeta() : null;
