@@ -15,18 +15,26 @@
  */
 package com.wl4g.devops.scm.client.event;
 
+import java.util.EventObject;
+
 /**
- * {@link RefreshNextEvent}
+ * {@link GenericScmEvent}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-08-18
+ * @version v1.0 2020-08-20
  * @since
  */
-public class RefreshNextEvent extends GenericScmEvent<Object> {
-	private static final long serialVersionUID = 1026288899828948496L;
+public abstract class GenericScmEvent<E> extends EventObject {
+	private static final long serialVersionUID = 4548605611399343689L;
 
-	public RefreshNextEvent(Object source) {
+	public GenericScmEvent(E source) {
 		super(source);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public E getSource() {
+		return (E) super.getSource();
 	}
 
 }

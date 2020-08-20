@@ -17,6 +17,8 @@ package com.wl4g.devops.scm;
 
 import com.wl4g.devops.scm.client.ScmClient;
 import com.wl4g.devops.scm.client.ScmClientBuilder;
+import com.wl4g.devops.scm.client.event.ConfigEventListener;
+import com.wl4g.devops.scm.client.event.RefreshConfigEvent;
 
 /**
  * {@link ScmClientTests}
@@ -33,6 +35,13 @@ public class ScmClientTests {
 		ScmClient client = ScmClientBuilder.newBuilder()
 			.withBaseUri("http://localhost:14043")
 			.withClusterName("scmClientApp1")
+			.withListeners(new ConfigEventListener() {
+				@Override
+				public void onRefresh(RefreshConfigEvent event) {
+					System.out.println("On refresh configuration...");
+					System.out.println(event.getSource().toString());
+				}
+			})
 			.build();
 		client.start();
 

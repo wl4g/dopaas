@@ -15,14 +15,11 @@
  */
 package com.wl4g.devops.scm.client.refresh;
 
-import static com.wl4g.components.common.lang.TypeConverts.safeLongToInt;
-
 import com.wl4g.components.common.reflect.ParameterizedTypeReference;
 import com.wl4g.components.common.remoting.ClientHttpRequestInterceptor;
 import com.wl4g.components.common.remoting.ClientHttpResponse;
 import com.wl4g.components.common.remoting.HttpEntity;
 import com.wl4g.components.common.remoting.HttpRequest;
-import com.wl4g.components.common.remoting.HttpRequestEntity;
 import com.wl4g.components.common.remoting.HttpResponseEntity;
 import com.wl4g.components.common.remoting.Netty4ClientHttpRequestFactory;
 import com.wl4g.components.common.remoting.RestClient;
@@ -30,42 +27,27 @@ import com.wl4g.components.common.remoting.exception.ClientHttpRequestExecution;
 import com.wl4g.components.common.remoting.standard.HttpHeaders;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.event.ScmEventListener;
-import com.wl4g.devops.scm.client.event.support.ScmEventPublisher;
-import com.wl4g.devops.scm.client.event.support.ScmEventSubscriber;
+import com.wl4g.devops.scm.client.event.ConfigEventListener;
+import com.wl4g.devops.scm.client.store.RefreshConfigStore;
+import com.wl4g.devops.scm.common.command.ReportCommand;
 import com.wl4g.devops.scm.common.command.ReportCommand.ChangedRecord;
 import com.wl4g.devops.scm.common.command.WatchCommand;
 import com.wl4g.devops.scm.common.command.WatchCommandResult;
-import com.wl4g.devops.scm.common.exception.ReportRetriesCountOutException;
-import com.wl4g.devops.scm.common.exception.ScmException;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.wl4g.devops.scm.client.refresh.RefreshConfigHolder.*;
-import static com.wl4g.components.common.lang.Assert2.isTrue;
-import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.common.lang.Assert2.state;
-import static com.wl4g.components.common.lang.ThreadUtils2.sleep;
-import static com.wl4g.components.common.lang.ThreadUtils2.sleepRandom;
 import static com.wl4g.components.common.remoting.standard.HttpMediaType.APPLICATION_JSON;
-import static com.wl4g.components.common.remoting.standard.HttpStatus.CHECKPOINT;
-import static com.wl4g.components.common.remoting.standard.HttpStatus.NOT_MODIFIED;
-import static com.wl4g.components.common.remoting.standard.HttpStatus.OK;
 import static com.wl4g.components.common.web.rest.RespBase.isSuccess;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
 import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_BASE;
 import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_REFRESHED_REPORT;
 import static io.netty.handler.codec.http.HttpMethod.POST;
-import static java.lang.String.format;
-import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.isNull;
@@ -90,21 +72,16 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	/**
 	 * Watching connect lock.
 	 */
-	final private Lock watchLock = new ReentrantLock();
-
-	/**
-	 * Watching last connected state.
-	 */
-	final private AtomicBoolean lastWatchState = new AtomicBoolean(false);
+	final private Lock watchingLock = new ReentrantLock();
 
 	/**
 	 * Long polling rest client
 	 */
 	private RestClient http;
 
-	public LongPollingRefreshWatcher(ScmClientProperties<?> config, ScmEventListener... listeners) {
-		super(config, listeners);
-		this.http = createRestClient();
+	public LongPollingRefreshWatcher(ScmClientProperties<?> config, RefreshConfigStore store, ConfigEventListener... listeners) {
+		super(config, store, listeners);
+		this.http = initRestClient(config);
 	}
 
 	/**
@@ -124,25 +101,16 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	protected void postStartupProperties() throws Exception {
 		getWorker().scheduleAtRandomRate(() -> { // Loop long-polling watching
 			try {
-				if (watchLock.tryLock()) {
-					watchLongPolling();
-
-					// [MARK1] Re-refresh configuration.
-					if (!lastWatchState
-							.get() /* && isNull(getReleaseMeta(false)) */) {
-						// Records changed keys.
-						addChanged(refresher.refresh());
-					}
-					lastWatchState.set(true);
+				if (watchingLock.tryLock()) {
+					handleWatching();
 				} else {
 					log.warn("Skip the watch request in long polling!");
 				}
 			} catch (Throwable th) {
-				lastWatchState.set(false);
 				log.error("Unable to watch poll", () -> getRootCauseMessage(th));
 				log.debug("Unable to watch poll", th);
 			} finally {
-				watchLock.unlock();
+				watchingLock.unlock();
 			}
 		}, 3000L, config.getLongPollingMinDelay(), config.getLongPollingMaxDelay(), MILLISECONDS);
 
@@ -158,12 +126,12 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	}
 
 	/**
-	 * New Create RestClient
+	 * Init create {@link RestClient}
 	 * 
-	 * @param readTimeout
+	 * @param config
 	 * @return
 	 */
-	protected RestClient createRestClient() {
+	private RestClient initRestClient(ScmClientProperties<?> config) {
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
 		factory.setConnectTimeout(config.getConnectTimeout());
 		factory.setReadTimeout(config.getWatchReadTimeout());
@@ -183,18 +151,18 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	}
 
 	/**
-	 * Handle long-polling watching request.
+	 * Execution long-polling watching request.
 	 *
 	 * @throws Exception
 	 */
-	protected void watchLongPolling() throws Exception {
+	public void handleWatching() {
 		log.debug("Synchronizing refresh config ... ");
 
 		// Delay freq protection limit
 		beforeSafeRefreshProtectDelaying();
 
-		// Create watch command
-		WatchCommand watch = createWatchCommand();
+		// Gets watch command
+		WatchCommand watch = getWatchCommand();
 
 		HttpHeaders headers = new HttpHeaders();
 		attachHeaders(headers); // Extra headers
@@ -216,7 +184,7 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	protected boolean doReporting(Collection<ChangedRecord> records) {
 		String url = config.getBaseUri().concat(URI_S_BASE).concat("/").concat(URI_S_REFRESHED_REPORT);
 		RespBase<?> resp = http
-				.exchange(url, POST, new HttpEntity<>(new ReportInfo(records)), new ParameterizedTypeReference<RespBase<?>>() {
+				.exchange(url, POST, new HttpEntity<>(new ReportCommand(records)), new ParameterizedTypeReference<RespBase<?>>() {
 				}).getBody();
 		return isSuccess(resp);
 	}

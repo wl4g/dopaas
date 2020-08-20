@@ -90,7 +90,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 * Frequency interval protection mechanism to control refresh failure too
 	 * fast (ms).
 	 */
-	private long safeRefreshProtectDelay = DEF_REFRESH_PROTECT_INTERVAL_MS;
+	private long safeRefreshRateDelay = DEF_SAFE_REFRESH_DELAY_MS;
 
 	/**
 	 * Checkpoing reporting retry random min interval (ms).
@@ -146,7 +146,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 
 	public ScmClientProperties(String clusterName, String baseUri, InetProperties inet, List<String> namespaces) {
 		this(clusterName, DEF_SERVICEID, baseUri, inet, DEF_WATCH_R_TIMEOUT_MS, DEF_LONGPOLLING_MIN_DELAY_MS,
-				DEF_LONGPOLLING_MAX_DELAY_MS, DEF_REFRESH_PROTECT_INTERVAL_MS, DEF_RETRY_REPORTING_MIN_DELAY_MS,
+				DEF_LONGPOLLING_MAX_DELAY_MS, DEF_SAFE_REFRESH_DELAY_MS, DEF_RETRY_REPORTING_MIN_DELAY_MS,
 				DEF_RETRY_REPORTING_MAX_DELAY_MS, -1, DEF_ASYNC_EVENT_THREADS, namespaces, null, null, null);
 	}
 
@@ -207,7 +207,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		this.watchReadTimeout = watchReadTimeout;
 		this.longPollingMinDelay = longPollingMinDelay;
 		this.longPollingMaxDelay = longPollingMaxDelay;
-		this.safeRefreshProtectDelay = safeRefreshProtectDelay;
+		this.safeRefreshRateDelay = safeRefreshProtectDelay;
 		this.retryReportingMinDelay = retryReportingMinDelay;
 		this.retryReportingMaxDelay = retryReportingMaxDelay;
 		this.retryReportingFastFailThreshold = retryReportingFastFailThreshold;
@@ -252,7 +252,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	}
 
 	public T withSafeRefreshProtectDelay(long safeRefreshProtectDelay) {
-		this.safeRefreshProtectDelay = safeRefreshProtectDelay;
+		this.safeRefreshRateDelay = safeRefreshProtectDelay;
 		return (T) this;
 	}
 
@@ -345,7 +345,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 * Default Frequency interval protection mechanism to control refresh
 	 * failure too fast (ms).
 	 */
-	public final static long DEF_REFRESH_PROTECT_INTERVAL_MS = 10_000L;
+	public final static long DEF_SAFE_REFRESH_DELAY_MS = 10_000L;
 
 	/**
 	 * Default Checkpoing reporting retry random min interval (ms).

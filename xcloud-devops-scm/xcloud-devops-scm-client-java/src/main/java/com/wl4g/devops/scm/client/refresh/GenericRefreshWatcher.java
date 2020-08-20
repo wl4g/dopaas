@@ -27,9 +27,10 @@ import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.components.common.task.GenericTaskRunner;
 import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.event.ScmEventListener;
+import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.event.support.ScmEventPublisher;
 import com.wl4g.devops.scm.client.event.support.ScmEventSubscriber;
+import com.wl4g.devops.scm.client.store.RefreshConfigStore;
 import com.wl4g.devops.scm.client.utils.NodeHolder;
 import com.wl4g.devops.scm.common.command.WatchCommand;
 import com.wl4g.devops.scm.common.command.WatchCommandResult;
@@ -54,7 +55,7 @@ import java.util.concurrent.Callable;
 import javax.validation.constraints.NotNull;
 
 /**
- * Abstract refresh watcher.
+ * Generic abstract refresh watcher.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2018年10月20日
@@ -62,7 +63,7 @@ import javax.validation.constraints.NotNull;
  * @see {@link org.springframework.cloud.zookeeper.config.ConfigWatcher
  *      ConfigWatcher}
  */
-public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProperties> {
+public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProperties> implements RefreshWatcher {
 
 	/** SCM client configuration */
 	protected final ScmClientProperties<?> config;
@@ -79,26 +80,27 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	/** SCM client reporting handler */
 	protected final ConfigReportingHandler handler;
 
+	/** {@link RefreshConfigStore} */
+	protected final RefreshConfigStore store;
+
 	/**
 	 * 
 	 * Last Update Time
 	 */
 	protected long lastRefreshTime = 0;
 
-	public GenericRefreshWatcher(@NotNull ScmClientProperties<?> config, @Nullable ScmEventListener... listeners) {
+	public GenericRefreshWatcher(@NotNull ScmClientProperties<?> config, RefreshConfigStore store,
+			@Nullable ConfigEventListener... listeners) {
 		super(new RunnerProperties(1, 0, 1).withAsyncStartup(true));
 		notNullOf(config, "config");
+		notNullOf(store, "store");
 		// notNullOf(listeners, "listeners");
 		this.config = config;
+		this.store = store;
 		this.publisher = new ScmEventPublisher(config);
 		this.subscriber = new ScmEventSubscriber(config, listeners);
 		this.holder = new NodeHolder(config);
 		this.handler = new ConfigReportingHandler();
-	}
-
-	@Override
-	public void run() {
-		doExecuteReporting();
 	}
 
 	/**
@@ -106,7 +108,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	 * 
 	 * @return
 	 */
-	public WatchCommand createWatchCommand() {
+	public WatchCommand getWatchCommand() {
 		// Create config watching fetching command
 		WatchCommandResult lastRelease = getReleaseConfig(false);
 		return new WatchCommand(config.getClusterName(), config.getNamespaces(), lastRelease.getMeta(), holder.getConfigNode());
@@ -118,11 +120,11 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	protected void beforeSafeRefreshProtectDelaying() {
 		long now = currentTimeMillis();
 		long diffIntervalMs = now - lastRefreshTime;
-		if (diffIntervalMs < config.getSafeRefreshProtectDelay()) {
+		if (diffIntervalMs < config.getSafeRefreshRateDelay()) {
 			log.warn(
 					"Refresh too fast? Watch long polling waiting...  lastUpdateTime: {}, now: {}, safeRefreshProtectDelay: {}, diffIntervalMs: {}",
-					lastRefreshTime, now, config.getSafeRefreshProtectDelay(), diffIntervalMs);
-			sleep(config.getSafeRefreshProtectDelay());
+					lastRefreshTime, now, config.getSafeRefreshRateDelay(), diffIntervalMs);
+			sleep(config.getSafeRefreshRateDelay());
 		}
 	}
 
@@ -135,6 +137,8 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	protected void handleWatchResult(int command, WatchCommandResult result) {
 		switch (command) {
 		case WATCH_CHANGED:
+			lastRefreshTime = currentTimeMillis();
+
 			// Extract config result
 			notNull(result, ScmException.class, "Watch received config source not available");
 			result.validation(true, true);
@@ -145,17 +149,14 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 			// Sets release config source.
 			setReleaseConfig(result);
 
-			// Records changed property names.
-			addChanged(null);
-
-			lastRefreshTime = currentTimeMillis();
-
 			// Publishing refresh
 			publisher.publishRefreshEvent(result);
 			break;
 		case WATCH_CHECKPOINT:
+			// Reporting
+			doExecuteReporting();
+
 			// Report refresh changed
-			// newChangedReportingCallable();
 			publisher.publishCheckpointEvent(this);
 			break;
 		case WATCH_NOT_MODIFIED: // Next long-polling
@@ -223,11 +224,13 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	 * DO new handling execution reporting
 	 */
 	protected void doExecuteReporting() {
-		log.info("Running SCM reporting handler...");
-		try {
-			newReportingRetryer().call(handler);
-		} catch (Exception e) {
-			log.error("Failed to SCM reporting.", e);
+		if (!getChangedQueues().isEmpty()) {
+			log.info("SCM reporting ...");
+			try {
+				newReportingRetryer().call(handler);
+			} catch (Exception e) {
+				log.error("Failed to SCM reporting.", e);
+			}
 		}
 	}
 

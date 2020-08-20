@@ -15,18 +15,49 @@
  */
 package com.wl4g.devops.scm.client.event;
 
+import java.util.EventListener;
+
 /**
- * {@link RefreshNextEvent}
+ * {@link ConfigEventListener}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-08-18
+ * @version v1.0 2020-08-11
  * @since
  */
-public class RefreshNextEvent extends GenericScmEvent<Object> {
-	private static final long serialVersionUID = 1026288899828948496L;
+public interface ConfigEventListener extends EventListener {
 
-	public RefreshNextEvent(Object source) {
-		super(source);
+	/**
+	 * On release changed event.
+	 * 
+	 * @param event
+	 */
+	void onRefresh(RefreshConfigEvent event);
+
+	/**
+	 * On Reporting event.
+	 * 
+	 * @param event
+	 */
+	default void onReporting(ReportingConfigEvent event) {
+		// Ignore
+	}
+
+	/**
+	 * On report config changed event
+	 * 
+	 * @param event
+	 */
+	default void onCheckpoint(CheckpointConfigEvent event) {
+		// Ignore
+	}
+
+	/**
+	 * On next poll event
+	 * 
+	 * @param event
+	 */
+	default void onNext(RefreshNextEvent event) {
+		// Ignore
 	}
 
 }
