@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.scm.client.refresh;
 
+import java.io.Closeable;
+
 /**
  * {@link RefreshWatcher}
  *
@@ -22,7 +24,7 @@ package com.wl4g.devops.scm.client.refresh;
  * @version v1.0 2020-08-20
  * @since
  */
-public interface RefreshWatcher {
+public interface RefreshWatcher extends Closeable {
 
 	/**
 	 * Start SCM server watching for configuration source changed .

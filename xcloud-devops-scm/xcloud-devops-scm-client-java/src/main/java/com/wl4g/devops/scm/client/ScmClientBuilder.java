@@ -19,9 +19,13 @@ import static java.util.Objects.nonNull;
 
 import com.wl4g.devops.scm.client.config.ConfCommType;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import com.wl4g.devops.scm.client.console.RefreshableConfigConsole;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.repository.InMemoryRefreshConfigRepository;
 import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
+import com.wl4g.devops.scm.common.exception.ScmException;
+import com.wl4g.shell.core.EmbeddedShellServerBuilder;
+import com.wl4g.shell.core.handler.EmbeddedShellHandlerServer;
 
 /**
  * {@link ScmClientBuilder}
@@ -41,6 +45,9 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 
 	/** {@link RefreshConfigRepository} */
 	private RefreshConfigRepository repository = new InMemoryRefreshConfigRepository();
+
+	/** {@link EmbeddedShellHandlerServer} */
+	private EmbeddedShellHandlerServer shellServer;
 
 	/**
 	 * New create {@link ScmClientBuilder} instance
@@ -84,6 +91,22 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	 */
 	public ScmClientBuilder useInMemoryConfigStore() {
 		this.repository = new InMemoryRefreshConfigRepository();
+		return this;
+	}
+
+	/**
+	 * Enable startup refreshable configuration console.
+	 * 
+	 * @return
+	 */
+	public ScmClientBuilder enableRefreshableConsole() {
+		try {
+			this.shellServer = new EmbeddedShellServerBuilder("SCM Client Refreshable Console")
+					.register(new RefreshableConfigConsole()).build();
+			this.shellServer.start();
+		} catch (Exception e) {
+			throw new ScmException(e);
+		}
 		return this;
 	}
 

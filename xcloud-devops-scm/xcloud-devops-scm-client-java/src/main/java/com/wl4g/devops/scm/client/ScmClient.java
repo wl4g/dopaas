@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.scm.client;
 
+import java.io.Closeable;
+
 /**
  * {@link ScmClient}
  *
@@ -22,7 +24,7 @@ package com.wl4g.devops.scm.client;
  * @version v1.0 2020-08-10
  * @since
  */
-public interface ScmClient {
+public interface ScmClient extends Closeable {
 
 	/**
 	 * Startup SCM refresh client.

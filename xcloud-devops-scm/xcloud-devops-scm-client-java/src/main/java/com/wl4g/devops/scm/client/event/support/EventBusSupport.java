@@ -18,8 +18,11 @@ package com.wl4g.devops.scm.client.event.support;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,13 +40,16 @@ import com.wl4g.devops.scm.client.config.ScmClientProperties;
  * @version v1.0 2020-08-18
  * @since
  */
-class EventBusSupport {
+public class EventBusSupport implements Closeable {
 
 	/** {@link ScmClientProperties} */
 	protected final ScmClientProperties<?> config;
 
 	/** {@link EventBus} */
 	protected final EventBus bus;
+
+	/** {@link ThreadPoolExecutor} */
+	protected ThreadPoolExecutor executor;
 
 	private EventBusSupport(ScmClientProperties<?> config) {
 		notNullOf(config, "config");
@@ -76,6 +82,13 @@ class EventBusSupport {
 	 */
 	public EventBus getBus() {
 		return bus;
+	}
+
+	@Override
+	public void close() throws IOException {
+		if (nonNull(executor)) {
+			executor.shutdown();
+		}
 	}
 
 	/**

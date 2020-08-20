@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.scm;
 
+import java.io.IOException;
+
 import com.wl4g.devops.scm.client.ScmClient;
 import com.wl4g.devops.scm.client.ScmClientBuilder;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
@@ -32,18 +34,24 @@ public class ScmClientTests {
 	public static void main(String[] args) throws Exception {
 		System.out.println("SCM client starting ...");
 
-		ScmClient client = ScmClientBuilder.newBuilder()
-			.withBaseUri("http://localhost:14043")
-			.withClusterName("scmClientApp1")
-			.withListeners(new ConfigEventListener() {
-				@Override
-				public void onRefresh(RefreshConfigEvent event) {
-					System.out.println("On refresh configuration...");
-					System.out.println(event.getSource().toString());
-				}
-			})
-			.build();
+		ScmClient client = ScmClientBuilder.newBuilder().withBaseUri("http://localhost:14043").withClusterName("scmClientApp1")
+				.enableRefreshableConsole().withListeners(new ConfigEventListener() {
+					@Override
+					public void onRefresh(RefreshConfigEvent event) {
+						System.out.println("On refresh configuration...");
+						System.out.println(event.getSource().toString());
+					}
+				}).build();
 		client.start();
+
+		// Exiting and shutdown
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				client.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}));
 
 	}
 
