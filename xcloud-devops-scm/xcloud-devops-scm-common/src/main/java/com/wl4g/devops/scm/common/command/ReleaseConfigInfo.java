@@ -19,14 +19,19 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigNode;
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.ConfigPropertySource;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.IniPropertySource;
+
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notEmpty;
 import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
@@ -54,7 +59,7 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 	/** {@link ConfigPropertySources} */
 	@NotNull
 	@NotEmpty
-	private List<ConfigPropertySource> propertySources = new ArrayList<>();
+	private List<IniPropertySource> propertySources = new ArrayList<>();
 
 	public ReleaseConfigInfo() {
 		super();
@@ -73,11 +78,11 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 		this.nodes = nodes;
 	}
 
-	public List<ConfigPropertySource> getPropertySources() {
+	public List<IniPropertySource> getPropertySources() {
 		return propertySources;
 	}
 
-	public void setPropertySources(List<ConfigPropertySource> propertySources) {
+	public void setPropertySources(List<IniPropertySource> propertySources) {
 		if (propertySources != null) {
 			this.propertySources = propertySources;
 		}
@@ -85,7 +90,7 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 
 	@Override
 	public String toString() {
-		return JacksonUtils.toJSONString(this);
+		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 	}
 
 	@Override
@@ -100,7 +105,7 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 
 	public CompositePropertySource convertCompositePropertySource(String sourceName) {
 		CompositePropertySource composite = new CompositePropertySource(sourceName);
-		for (ConfigPropertySource ps : getPropertySources()) {
+		for (IniPropertySource ps : getPropertySources()) {
 			// See:org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration
 			composite.addFirstPropertySource(ps.convertMapPropertySource());
 		}
@@ -108,59 +113,172 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 	}
 
 	/**
-	 * {@link ConfigPropertySource}
+	 * Origin property source typeof {@link PlaintextPropertySource}
 	 * 
 	 * @see
 	 */
-	public static class ConfigPropertySource {
+	public static class PlaintextPropertySource {
 
-		private String name;
-		private Map<String, Object> source = new HashMap<>();
+		/** Release configuration profile.(like spring.profiles) */
+		private String profile;
 
-		public ConfigPropertySource() {
+		/** Release configuration plaintext content string. */
+		private String content;
+
+		public PlaintextPropertySource() {
 			super();
 		}
 
-		public ConfigPropertySource(String name, Map<String, Object> source) {
+		public PlaintextPropertySource(String profile, String content) {
+			hasTextOf(profile, "profile");
+			hasTextOf(content, "content");
+			this.profile = profile;
+			this.content = content;
+		}
+
+		public String getProfile() {
+			return profile;
+		}
+
+		public void setProfile(String profile) {
+			this.profile = profile;
+		}
+
+		public String getContent() {
+			return content;
+		}
+
+		public void setContent(String content) {
+			this.content = content;
+		}
+
+		@Override
+		public String toString() {
+			return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+		}
+
+	}
+
+	/**
+	 * {@link PropertiesPropertySource}
+	 * 
+	 * @see
+	 */
+	@Getter
+	public static class PropertiesPropertySource extends PlaintextPropertySource {
+
+		public PropertiesPropertySource(String profile, String content) {
+			super(profile, content);
+		}
+
+	}
+
+	/**
+	 * {@link IniPropertySource}
+	 * 
+	 * @see
+	 */
+	public static class IniPropertySource extends PlaintextPropertySource {
+
+		/** Configuration source typeof map */
+		private final Map<String, Object> source;
+
+		public IniPropertySource() {
 			super();
-			this.name = name;
-			this.source = source;
 		}
 
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			if (!StringUtils.isEmpty(name) && !"NULL".equalsIgnoreCase(name)) {
-				this.name = name;
-			}
+		public IniPropertySource(String profile, String content) {
+			super(profile, content);
+			this.source = null; // TODO
 		}
 
 		public Map<String, Object> getSource() {
 			return source;
 		}
 
-		public void setSource(Map<String, Object> source) {
-			if (source != null) {
-				this.source = source;
+	}
+
+	/**
+	 * {@link XmlPropertySource}
+	 * 
+	 * @see
+	 */
+	@Getter
+	public static class XmlPropertySource extends PlaintextPropertySource {
+
+		/** Configuration source typeof map */
+		private final XmlNode root;
+
+		public XmlPropertySource() {
+			super();
+		}
+
+		public XmlPropertySource(String profile, String content) {
+			super(profile, content);
+			this.root = null; // TODO
+		}
+
+		/**
+		 * {@link XmlNode}
+		 * 
+		 * @see
+		 */
+		@Getter
+		@Setter
+		public static class XmlNode {
+
+			/** Xml node name. */
+			private String name;
+
+			/** Xml node attributes. */
+			private Map<String, String> attributes;
+
+			/** Xml children nodes. */
+			private List<XmlNode> children;
+
+			@Override
+			public String toString() {
+				return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 			}
+
 		}
 
-		public void validate() {
-			notNull(getName(), "PropertySource-Name is not allowed to be null.");
-			notEmpty(getSource(), "PropertySource-Properties is not allowed to be empty.");
+	}
+
+	/**
+	 * {@link JsonPropertySource}
+	 * 
+	 * @see
+	 */
+	@Getter
+	public static class JsonPropertySource extends PlaintextPropertySource {
+
+	}
+
+	/**
+	 * {@link HoconPropertySource}
+	 * 
+	 * @see
+	 */
+	@Getter
+	public static class HoconPropertySource extends PlaintextPropertySource {
+
+		public HoconPropertySource(String profile, String content) {
+			super(profile, content);
 		}
 
-		public MapPropertySource convertMapPropertySource() {
-			return new MapPropertySource(getName(), getSource());
-		}
+	}
 
-		public static ConfigPropertySource build(MapPropertySource mapSource) {
-			if (mapSource == null) {
-				return null;
-			}
-			return new ConfigPropertySource(mapSource.getName(), mapSource.getSource());
+	/**
+	 * {@link YamlMapPropertySource}
+	 * 
+	 * @see
+	 */
+	@Getter
+	public static class YamlMapPropertySource extends PlaintextPropertySource {
+
+		public YamlMapPropertySource(String profile, String content) {
+			super(profile, content);
 		}
 
 	}

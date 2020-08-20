@@ -36,7 +36,7 @@ import com.wl4g.devops.scm.client.utils.NodeHolder;
 import com.wl4g.devops.scm.common.command.FetchConfigRequest;
 import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigMeta;
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.ConfigPropertySource;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.IniPropertySource;
 import com.wl4g.devops.scm.common.command.ReportChangedRequest.ChangedRecord;
 import com.wl4g.devops.scm.common.exception.ScmException;
 
@@ -156,7 +156,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 			printConfigSources(source);
 
 			// Addition refresh config source.
-			repository.addReleaseConfig(source);
+			repository.saveReleaseConfig(source);
 
 			// Publishing refresh
 			publisher.publishRefreshEvent(source);
@@ -185,7 +185,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	protected void resolvesCipherSource(ReleaseConfigInfo source) {
 		log.debug("Resolver cipher configuration propertySource ...");
 
-		for (ConfigPropertySource ps : source.getPropertySources()) {
+		for (IniPropertySource ps : source.getPropertySources()) {
 			ps.getSource().forEach((key, value) -> {
 				String cipher = String.valueOf(value);
 				if (cipher.startsWith(CIPHER_PREFIX)) {
@@ -217,7 +217,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 				source.getMeta());
 
 		if (log.isDebugEnabled()) {
-			List<ConfigPropertySource> pss = source.getPropertySources();
+			List<IniPropertySource> pss = source.getPropertySources();
 			if (pss != null) {
 				int psSourceCount = pss.stream().map(ps -> ps.getSource().size()).reduce((c, s) -> s += c).get();
 				log.debug("Release config profiles: {}, the property sources sizeof: {}", pss.size(), psSourceCount);
