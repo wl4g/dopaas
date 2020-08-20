@@ -18,20 +18,17 @@ package com.wl4g.devops.scm.client.console;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.shell.annotation.ShellComponent;
-import com.wl4g.shell.annotation.ShellMethod;
-import com.wl4g.shell.annotation.ShellOption;
+import com.wl4g.shell.common.annotation.ShellMethod;
+import com.wl4g.shell.common.annotation.ShellOption;
 
 /**
- * See:<a href=
- * "https://blog.csdn.net/cml_blog/article/details/78411312">https://blog.csdn.net/cml_blog/article/details/78411312</a>
+ * {@link RefreshableConfigConsole}
  * 
- * @author Wangl.sir <983708408@qq.com>
- * @version v1.0
- * @date 2018年10月9日
- * @since
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2018-10-20
+ * @sine v1.0.0
+ * @see
  */
-@ShellComponent
 public class RefreshableConfigConsole {
 
 	protected final SmartLogger log = getLogger(getClass());

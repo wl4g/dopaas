@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Import;
 
 import com.wl4g.devops.scm.client.config.IamWithScmClientAutoConfiguration;
 import com.wl4g.devops.scm.client.config.ScmClientAutoConfiguration;
-import com.wl4g.shell.annotation.EnableShellServer;
+import com.wl4g.shell.springboot.annotation.EnableShellServer;
 
 /**
  * SCM annotation to enable configuration.

@@ -17,9 +17,9 @@ package com.wl4g.devops.ci.console;
 
 import com.wl4g.devops.ci.console.args.TimeoutCleanupIntervalArgument;
 import com.wl4g.devops.ci.pipeline.coordinate.GlobalTimeoutJobCleanupCoordinator;
-import com.wl4g.shell.annotation.ShellComponent;
-import com.wl4g.shell.annotation.ShellMethod;
-import com.wl4g.shell.handler.SimpleShellContext;
+import com.wl4g.shell.common.annotation.ShellMethod;
+import com.wl4g.shell.core.handler.SimpleShellContext;
+import com.wl4g.shell.springboot.annotation.ShellComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

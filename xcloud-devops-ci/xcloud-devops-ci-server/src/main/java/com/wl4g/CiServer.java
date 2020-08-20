@@ -17,7 +17,7 @@ package com.wl4g;
 
 import com.wl4g.components.data.annotation.AutoConfigureComponentsDataSource;
 import com.wl4g.iam.client.annotation.EnableIamClient;
-import com.wl4g.shell.annotation.EnableShellServer;
+import com.wl4g.shell.springboot.annotation.EnableShellServer;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
