@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.event;
 
-import com.wl4g.devops.scm.common.command.WatchCommandResult;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
 
 /**
  * {@link RefreshConfigEvent}
@@ -24,10 +24,10 @@ import com.wl4g.devops.scm.common.command.WatchCommandResult;
  * @version v1.0 2020-08-18
  * @since
  */
-public class RefreshConfigEvent extends GenericScmEvent<WatchCommandResult> {
+public class RefreshConfigEvent extends GenericScmEvent<ReleaseConfigInfo> {
 	private static final long serialVersionUID = 1026288899828948496L;
 
-	public RefreshConfigEvent(WatchCommandResult source) {
+	public RefreshConfigEvent(ReleaseConfigInfo source) {
 		super(source);
 	}
 

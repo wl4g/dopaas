@@ -16,8 +16,8 @@
 package com.wl4g.devops.scm.dao;
 
 import com.wl4g.devops.scm.bean.*;
-import com.wl4g.devops.scm.common.command.WatchCommand;
-import com.wl4g.devops.scm.common.command.ReportCommand;
+import com.wl4g.devops.scm.common.command.FetchConfigRequest;
+import com.wl4g.devops.scm.common.command.ReportChangedRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -50,7 +50,7 @@ public interface ConfigurationDao {
 
 	public List<VersionContentBean> selectVersion(int id);
 
-	public ConfigSourceBean findSource(WatchCommand get);
+	public ConfigSourceBean findSource(FetchConfigRequest get);
 
-	public void updateReleaseDetail(ReportCommand report);
+	public void updateReleaseDetail(ReportChangedRequest report);
 }

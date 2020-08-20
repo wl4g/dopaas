@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import org.springframework.web.context.request.async.DeferredResult;
 
-import com.wl4g.devops.scm.common.command.WatchCommand;
+import com.wl4g.devops.scm.common.command.FetchConfigRequest;
 
 /**
  * SCM configuration soruce server deferred result watch.
@@ -31,7 +31,7 @@ import com.wl4g.devops.scm.common.command.WatchCommand;
 public class WatchDeferredResult<T> extends DeferredResult<T> implements Serializable {
 	private static final long serialVersionUID = -4499490832010100671L;
 
-	private WatchCommand watch;
+	private FetchConfigRequest watch;
 
 	public WatchDeferredResult() {
 	}
@@ -63,16 +63,16 @@ public class WatchDeferredResult<T> extends DeferredResult<T> implements Seriali
 		super(timeout, timeoutResult);
 	}
 
-	public WatchDeferredResult(Long timeout, WatchCommand watch) {
+	public WatchDeferredResult(Long timeout, FetchConfigRequest watch) {
 		super(timeout);
 		this.watch = watch;
 	}
 
-	public WatchCommand getWatch() {
+	public FetchConfigRequest getWatch() {
 		return watch;
 	}
 
-	public WatchDeferredResult<T> setWatch(WatchCommand get) {
+	public WatchDeferredResult<T> setWatch(FetchConfigRequest get) {
 		this.watch = get;
 		return this;
 	}

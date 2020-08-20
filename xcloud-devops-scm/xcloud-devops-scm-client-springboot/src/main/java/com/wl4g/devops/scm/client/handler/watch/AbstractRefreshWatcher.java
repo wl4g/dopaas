@@ -62,7 +62,7 @@ public abstract class AbstractRefreshWatcher extends ApplicationTaskRunner<Runne
 		String uri = locator.getConfig().getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_WATCH;
 
 		// Create releaseGet
-		WatchCommand get = new WatchCommand(locator.getInfo().getAppName(), config.getNamespaces(), null,
+		WatchCommand get = new WatchCommand(locator.getInfo().getAppName(), config.getProfiles(), null,
 				locator.getInfo().getConfigNode());
 		return (uri + "?" + new BeanMapConvert(get).toUriParmaters());
 	}

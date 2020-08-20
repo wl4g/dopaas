@@ -101,13 +101,13 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	 * 
 	 * @return
 	 */
-	public WatchCommandResult fetchRemoteReleaseConfig() {
+	public ReleaseConfigInfo fetchRemoteReleaseConfig() {
 		try {
 			// Fetch release URL.
 			String uri = config.getBaseUri() + URI_S_BASE + "/" + URI_S_SOURCE_FETCH;
 			// Create release get
 			ConfigMeta meta = getReleaseMeta(false);
-			WatchCommand get = new WatchCommand(info.getAppName(), config.getNamespaces(), meta, info.getConfigNode());
+			WatchCommand get = new WatchCommand(info.getAppName(), config.getProfiles(), meta, info.getConfigNode());
 
 			// To parameters
 			String kvs = new BeanMapConvert(get).toUriParmaters();
@@ -124,17 +124,17 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 				log.debug("Adding header for: {}", headers);
 			}
 
-			RespBase<WatchCommandResult> resp = restTemplate
-					.exchange(url, GET, entity, new ParameterizedTypeReference<RespBase<WatchCommandResult>>() {
+			RespBase<ReleaseConfigInfo> resp = restTemplate
+					.exchange(url, GET, entity, new ParameterizedTypeReference<RespBase<ReleaseConfigInfo>>() {
 					}).getBody();
 			if (!RespBase.isSuccess(resp)) {
 				throw new ScmException(String.format("Locate remote config error! %s, %s", url, resp.getMessage()));
 			}
 
 			// Extract release
-			WatchCommandResult release = resp.getData();
+			ReleaseConfigInfo release = resp.getData();
 			Assert.notNull(release, "Release message is required, it must not be null");
-			release.validation(true, true);
+			release.validate(true, true);
 
 			// Print sources
 			printfSources(release);
@@ -153,7 +153,7 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	 * 
 	 * @param release
 	 */
-	public void resolvesCipherSource(WatchCommandResult release) {
+	public void resolvesCipherSource(ReleaseConfigInfo release) {
 		log.debug("Resolver cipher configuration propertySource ...");
 
 		for (ReleasePropertySource ps : release.getPropertySources()) {
@@ -191,10 +191,10 @@ public abstract class ScmPropertySourceLocator implements PropertySourceLocator,
 	 * 
 	 * @param release
 	 */
-	protected void printfSources(WatchCommandResult release) {
+	protected void printfSources(ReleaseConfigInfo release) {
 		if (log.isInfoEnabled()) {
 			log.info("Fetched from scm config <= group({}), namespace({}), release meta({})", release.getCluster(),
-					release.getNamespaces(), release.getMeta());
+					release.getProfiles(), release.getMeta());
 		}
 
 		if (log.isDebugEnabled()) {

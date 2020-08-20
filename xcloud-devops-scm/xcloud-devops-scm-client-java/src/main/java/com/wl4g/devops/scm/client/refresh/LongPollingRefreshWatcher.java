@@ -28,11 +28,11 @@ import com.wl4g.components.common.remoting.standard.HttpHeaders;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
-import com.wl4g.devops.scm.client.store.RefreshConfigStore;
-import com.wl4g.devops.scm.common.command.ReportCommand;
-import com.wl4g.devops.scm.common.command.ReportCommand.ChangedRecord;
-import com.wl4g.devops.scm.common.command.WatchCommand;
-import com.wl4g.devops.scm.common.command.WatchCommandResult;
+import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
+import com.wl4g.devops.scm.common.command.ReportChangedRequest;
+import com.wl4g.devops.scm.common.command.ReportChangedRequest.ChangedRecord;
+import com.wl4g.devops.scm.common.command.FetchConfigRequest;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -79,8 +79,9 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	 */
 	private RestClient http;
 
-	public LongPollingRefreshWatcher(ScmClientProperties<?> config, RefreshConfigStore store, ConfigEventListener... listeners) {
-		super(config, store, listeners);
+	public LongPollingRefreshWatcher(ScmClientProperties<?> config, RefreshConfigRepository repository,
+			ConfigEventListener... listeners) {
+		super(config, repository, listeners);
 		this.http = initRestClient(config);
 	}
 
@@ -98,7 +99,7 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void postStartupProperties() throws Exception {
+	public void run() {
 		getWorker().scheduleAtRandomRate(() -> { // Loop long-polling watching
 			try {
 				if (watchingLock.tryLock()) {
@@ -113,7 +114,6 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 				watchingLock.unlock();
 			}
 		}, 3000L, config.getLongPollingMinDelay(), config.getLongPollingMaxDelay(), MILLISECONDS);
-
 	}
 
 	/**
@@ -156,23 +156,23 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	 * @throws Exception
 	 */
 	public void handleWatching() {
-		log.debug("Synchronizing refresh config ... ");
+		log.debug("Watching refresh config ... ");
 
 		// Delay freq protection limit
 		beforeSafeRefreshProtectDelaying();
 
 		// Gets watch command
-		WatchCommand watch = getWatchCommand();
+		FetchConfigRequest watch = getWatchCommand();
 
 		HttpHeaders headers = new HttpHeaders();
 		attachHeaders(headers); // Extra headers
 		log.debug("Watching request headers : {}", headers);
 
-		HttpEntity<WatchCommand> entity = new HttpEntity<>(watch, headers);
-		HttpResponseEntity<RespBase<WatchCommandResult>> resp = http.exchange(config.getWatchUri(), POST, entity,
-				new ParameterizedTypeReference<RespBase<WatchCommandResult>>() {
+		HttpEntity<FetchConfigRequest> entity = new HttpEntity<>(watch, headers);
+		HttpResponseEntity<RespBase<ReleaseConfigInfo>> resp = http.exchange(config.getWatchUri(), POST, entity,
+				new ParameterizedTypeReference<RespBase<ReleaseConfigInfo>>() {
 				});
-		log.debug("Watch resp: {}", resp);
+		log.debug("Watching fetch received: {}", resp);
 
 		if (!isNull(resp) && !isNull(resp.getBody())) {
 			handleWatchResult(resp.getStatusCodeValue(), resp.getBody().getData());
@@ -183,8 +183,8 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	@Override
 	protected boolean doReporting(Collection<ChangedRecord> records) {
 		String url = config.getBaseUri().concat(URI_S_BASE).concat("/").concat(URI_S_REFRESHED_REPORT);
-		RespBase<?> resp = http
-				.exchange(url, POST, new HttpEntity<>(new ReportCommand(records)), new ParameterizedTypeReference<RespBase<?>>() {
+		RespBase<?> resp = http.exchange(url, POST, new HttpEntity<>(new ReportChangedRequest(records)),
+				new ParameterizedTypeReference<RespBase<?>>() {
 				}).getBody();
 		return isSuccess(resp);
 	}

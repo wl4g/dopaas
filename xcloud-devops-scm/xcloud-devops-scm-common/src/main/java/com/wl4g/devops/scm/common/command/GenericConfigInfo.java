@@ -32,13 +32,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {@link GenericCommand}
+ * {@link GenericConfigInfo}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018-08-17
  * @since
  */
-public abstract class GenericCommand implements Serializable {
+public abstract class GenericConfigInfo implements Serializable {
 	final private static long serialVersionUID = -299157686801700764L;
 
 	/**
@@ -49,39 +49,39 @@ public abstract class GenericCommand implements Serializable {
 	private String cluster;
 
 	/**
-	 * Name-space(configuration file-name, like spring.profiles)
+	 * Configuration files, The like spring.profiles.
 	 */
 	@NotNull
 	@NotEmpty
-	private List<String> namespaces = new ArrayList<>();
+	private List<String> profiles = new ArrayList<>();
 
 	/**
 	 * Configuration version and release info
 	 */
 	private ConfigMeta meta = new ConfigMeta();
 
-	public GenericCommand() {
+	public GenericConfigInfo() {
 		super();
 	}
 
-	public GenericCommand(String cluster, List<String> namespace) {
+	public GenericConfigInfo(String cluster, List<String> namespace) {
 		this(cluster, namespace, null);
 	}
 
-	public GenericCommand(String cluster, List<String> namespaces, ConfigMeta meta) {
+	public GenericConfigInfo(String cluster, List<String> namespaces, ConfigMeta meta) {
 		setCluster(cluster);
-		setNamespaces(namespaces);
+		setProfiles(namespaces);
 		setMeta(meta);
 	}
 
-	public List<String> getNamespaces() {
-		return namespaces;
+	public List<String> getProfiles() {
+		return profiles;
 	}
 
-	public void setNamespaces(List<String> namespaces) {
+	public void setProfiles(List<String> namespaces) {
 		if (!isEmpty(namespaces)) {
-			this.namespaces.clear();
-			this.namespaces.addAll(namespaces);
+			this.profiles.clear();
+			this.profiles.addAll(namespaces);
 		}
 	}
 
@@ -110,9 +110,9 @@ public abstract class GenericCommand implements Serializable {
 		return getClass().getSimpleName() + " => " + toJSONString(this);
 	}
 
-	public void validation(boolean validVersion, boolean validRelease) {
+	public void validate(boolean validVersion, boolean validRelease) {
 		hasText(getCluster(), "`cluster` must not be empty");
-		notEmpty(getNamespaces(), "`namespace` must not be empty");
+		notEmpty(getProfiles(), "`namespace` must not be empty");
 		getMeta().validation(validVersion, validRelease);
 	}
 

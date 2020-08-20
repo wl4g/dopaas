@@ -18,23 +18,30 @@ package com.wl4g.devops.scm.common.command;
 import org.apache.commons.lang3.StringUtils;
 
 import com.wl4g.components.common.serialize.JacksonUtils;
-import com.wl4g.devops.scm.common.command.GenericCommand.ConfigNode;
+import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigNode;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.ConfigPropertySource;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import static com.wl4g.components.common.lang.Assert2.notEmpty;
+import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static java.util.Objects.nonNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * {@link WatchCommandResult}
+ * {@link ReleaseConfigInfo}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018-08-11
  * @since
  */
-public class WatchCommandResult extends GenericCommand {
+public class ReleaseConfigInfo extends GenericConfigInfo {
 	final private static long serialVersionUID = -4016863811283064989L;
 
 	/**
@@ -44,15 +51,16 @@ public class WatchCommandResult extends GenericCommand {
 	@NotEmpty
 	private List<ConfigNode> nodes = new ArrayList<>();
 
+	/** {@link ConfigPropertySources} */
 	@NotNull
 	@NotEmpty
-	private List<ReleasePropertySource> propertySources = new ArrayList<>();
+	private List<ConfigPropertySource> propertySources = new ArrayList<>();
 
-	public WatchCommandResult() {
+	public ReleaseConfigInfo() {
 		super();
 	}
 
-	public WatchCommandResult(String cluster, List<String> namespaces, ConfigMeta meta, List<ConfigNode> nodes) {
+	public ReleaseConfigInfo(String cluster, List<String> namespaces, ConfigMeta meta, List<ConfigNode> nodes) {
 		super(cluster, namespaces, meta);
 		setNodes(nodes);
 	}
@@ -65,11 +73,11 @@ public class WatchCommandResult extends GenericCommand {
 		this.nodes = nodes;
 	}
 
-	public List<ReleasePropertySource> getPropertySources() {
+	public List<ConfigPropertySource> getPropertySources() {
 		return propertySources;
 	}
 
-	public void setPropertySources(List<ReleasePropertySource> propertySources) {
+	public void setPropertySources(List<ConfigPropertySource> propertySources) {
 		if (propertySources != null) {
 			this.propertySources = propertySources;
 		}
@@ -81,18 +89,18 @@ public class WatchCommandResult extends GenericCommand {
 	}
 
 	@Override
-	public void validation(boolean versionValidate, boolean releaseValidate) {
-		super.validation(versionValidate, releaseValidate);
-		notEmpty(getPropertySources(), "Invalid empty propertySources");
+	public void validate(boolean versionValidate, boolean releaseValidate) {
+		super.validate(versionValidate, releaseValidate);
+		notNull(getPropertySources(), "Invalid empty propertySources");
 		getPropertySources().stream().forEach((ps) -> {
 			notNull(ps, "Invalid release propertySources");
-			ps.validation();
+			ps.validate();
 		});
 	}
 
 	public CompositePropertySource convertCompositePropertySource(String sourceName) {
 		CompositePropertySource composite = new CompositePropertySource(sourceName);
-		for (ReleasePropertySource ps : getPropertySources()) {
+		for (ConfigPropertySource ps : getPropertySources()) {
 			// See:org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration
 			composite.addFirstPropertySource(ps.convertMapPropertySource());
 		}
@@ -100,23 +108,20 @@ public class WatchCommandResult extends GenericCommand {
 	}
 
 	/**
-	 * {@link MapPropertySource} that reads keys and values from a {@code Map}
-	 * object.
-	 *
-	 * @author Chris Beams
-	 * @author Juergen Hoeller
-	 * @since 3.1
-	 * @see MapPropertySource
+	 * {@link ConfigPropertySource}
+	 * 
+	 * @see
 	 */
-	public static class ReleasePropertySource {
+	public static class ConfigPropertySource {
+
 		private String name;
 		private Map<String, Object> source = new HashMap<>();
 
-		public ReleasePropertySource() {
+		public ConfigPropertySource() {
 			super();
 		}
 
-		public ReleasePropertySource(String name, Map<String, Object> source) {
+		public ConfigPropertySource(String name, Map<String, Object> source) {
 			super();
 			this.name = name;
 			this.source = source;
@@ -142,7 +147,7 @@ public class WatchCommandResult extends GenericCommand {
 			}
 		}
 
-		public void validation() {
+		public void validate() {
 			notNull(getName(), "PropertySource-Name is not allowed to be null.");
 			notEmpty(getSource(), "PropertySource-Properties is not allowed to be empty.");
 		}
@@ -151,11 +156,11 @@ public class WatchCommandResult extends GenericCommand {
 			return new MapPropertySource(getName(), getSource());
 		}
 
-		public static ReleasePropertySource build(MapPropertySource mapSource) {
+		public static ConfigPropertySource build(MapPropertySource mapSource) {
 			if (mapSource == null) {
 				return null;
 			}
-			return new ReleasePropertySource(mapSource.getName(), mapSource.getSource());
+			return new ConfigPropertySource(mapSource.getName(), mapSource.getSource());
 		}
 
 	}

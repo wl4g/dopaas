@@ -57,7 +57,7 @@ public class BootstrapScmPropertySourceLocator extends ScmPropertySourceLocator 
 		if (environment instanceof ConfigurableEnvironment) {
 			try {
 				// Pull latest propertySources from server.
-				WatchCommandResult config = fetchRemoteReleaseConfig();
+				ReleaseConfigInfo config = fetchRemoteReleaseConfig();
 
 				// Resolves cipher resource
 				resolvesCipherSource(config);

@@ -37,7 +37,7 @@ public interface CentralConfigServerHandler {
 	 * @param watch
 	 * @return
 	 */
-	WatchDeferredResult<ResponseEntity<?>> watch(WatchCommand watch);
+	WatchDeferredResult<ResponseEntity<?>> watch(FetchConfigRequest watch);
 
 	/**
 	 * Release configuration property-sources.
@@ -45,7 +45,7 @@ public interface CentralConfigServerHandler {
 	 * @param result
 	 *            request parameter.
 	 */
-	void release(WatchCommandResult result);
+	void release(ReleaseConfigInfo result);
 
 	/**
 	 * Access configuration client report configure result.
@@ -56,6 +56,6 @@ public interface CentralConfigServerHandler {
 	 *            response parameter.
 	 * @return
 	 */
-	void report(ReportCommand report);
+	void report(ReportChangedRequest report);
 
 }

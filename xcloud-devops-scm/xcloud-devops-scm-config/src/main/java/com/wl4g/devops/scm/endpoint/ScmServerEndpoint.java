@@ -18,9 +18,9 @@ package com.wl4g.devops.scm.endpoint;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.common.command.WatchCommand;
-import com.wl4g.devops.scm.common.command.WatchCommandResult;
-import com.wl4g.devops.scm.common.command.ReportCommand;
+import com.wl4g.devops.scm.common.command.FetchConfigRequest;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
+import com.wl4g.devops.scm.common.command.ReportChangedRequest;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
 //import com.wl4g.devops.scm.session.HandshakeRequest;
 //import com.wl4g.devops.scm.session.ConfigServerSecurityManager;
@@ -79,7 +79,7 @@ public class ScmServerEndpoint extends BaseController {
 	 * @return
 	 */
 	@PostMapping(value = URI_S_SOURCE_WATCH)
-	public DeferredResult<?> watch(@Validated @RequestBody WatchCommand watch) {
+	public DeferredResult<?> watch(@Validated @RequestBody FetchConfigRequest watch) {
 		log.info("Long polling watching... <= {}", watch);
 		return handler.watch(watch);
 	}
@@ -97,7 +97,7 @@ public class ScmServerEndpoint extends BaseController {
 //	}
 
 	@PostMapping(value = URI_S_REFRESHED_REPORT)
-	public RespBase<?> report(@Validated @RequestBody ReportCommand report) {
+	public RespBase<?> report(@Validated @RequestBody ReportChangedRequest report) {
 		log.info("Reporting... <= {}", report);
 		RespBase<?> resp = new RespBase<>();
 		handler.report(report);

@@ -21,9 +21,9 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import com.wl4g.devops.scm.common.command.CompositePropertySource;
-import com.wl4g.devops.scm.common.command.WatchCommandResult;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.command.MapPropertySource;
-import com.wl4g.devops.scm.common.command.WatchCommandResult.ReleasePropertySource;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.ReleasePropertySource;
 
 /**
  * {@link SpringReleaseMessage}
@@ -32,16 +32,16 @@ import com.wl4g.devops.scm.common.command.WatchCommandResult.ReleasePropertySour
  * @version v1.0 2020-08-11
  * @since
  */
-public class SpringReleaseMessage extends WatchCommandResult {
+public class SpringReleaseMessage extends ReleaseConfigInfo {
 	private static final long serialVersionUID = 2325498697253289001L;
 
 	@Override
-	public void validation(boolean versionValidate, boolean releaseValidate) {
-		super.validation(versionValidate, releaseValidate);
+	public void validate(boolean versionValidate, boolean releaseValidate) {
+		super.validate(versionValidate, releaseValidate);
 		Assert.notEmpty(getPropertySources(), "Invalid empty propertySources");
 		getPropertySources().stream().forEach((ps) -> {
 			Assert.notNull(ps, "Invalid release propertySources");
-			ps.validation();
+			ps.validate();
 		});
 	}
 

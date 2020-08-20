@@ -15,23 +15,25 @@
  */
 package com.wl4g.devops.scm.common.command;
 
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * {@link ReportCommand}
+ * {@link ReportChangedRequest}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018-08-18
  * @since
  */
-public class ReportCommand extends WatchCommand {
+public class ReportChangedRequest extends FetchConfigRequest {
 	final private static long serialVersionUID = 2523769504519533902L;
 
 	private Collection<ChangedRecord> changedRecords;
 
-	public ReportCommand(Collection<ChangedRecord> changedRecords) {
+	public ReportChangedRequest(Collection<ChangedRecord> changedRecords) {
 		super();
 		this.changedRecords = changedRecords;
 	}
@@ -46,7 +48,7 @@ public class ReportCommand extends WatchCommand {
 
 	@Override
 	public String toString() {
-		return "ReportInfo [changedRecords=" + changedRecords + "]";
+		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 	}
 
 	/**
@@ -57,16 +59,15 @@ public class ReportCommand extends WatchCommand {
 	public static class ChangedRecord {
 
 		private Set<String> changedKeys = new HashSet<>();
-		private WatchCommandResult result = new WatchCommandResult();
+		private ReleaseConfigInfo sources = new ReleaseConfigInfo();
 
 		public ChangedRecord() {
 			super();
 		}
 
-		public ChangedRecord(Set<String> changedKeys, WatchCommandResult result) {
-			super();
+		public ChangedRecord(Set<String> changedKeys, ReleaseConfigInfo result) {
 			this.changedKeys = changedKeys;
-			this.result = result;
+			this.sources = result;
 		}
 
 		public Set<String> getChangedKeys() {
@@ -77,17 +78,17 @@ public class ReportCommand extends WatchCommand {
 			this.changedKeys = changedKeys;
 		}
 
-		public WatchCommandResult getConfigResult() {
-			return result;
+		public ReleaseConfigInfo getSources() {
+			return sources;
 		}
 
-		public void setConfigResult(WatchCommandResult result) {
-			this.result = result;
+		public void setSources(ReleaseConfigInfo sources) {
+			this.sources = sources;
 		}
 
 		@Override
 		public String toString() {
-			return "ChangedInfo [changedKeys=" + changedKeys + ", result=" + result + "]";
+			return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 		}
 
 	}

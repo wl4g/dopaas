@@ -21,8 +21,8 @@ import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.iam.Dict;
 import com.wl4g.devops.scm.bean.*;
 import com.wl4g.devops.scm.common.command.*;
-import com.wl4g.devops.scm.common.command.GenericCommand.ConfigMeta;
-import com.wl4g.devops.scm.common.command.GenericCommand.ConfigNode;
+import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigMeta;
+import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigNode;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.iam.DictDao;
@@ -183,7 +183,7 @@ public class HistoryServiceImpl implements HistoryService {
 
 		PreFetchCommand preRelease = new PreFetchCommand();
 		preRelease.setCluster(appCluster.getName());
-		preRelease.setNamespaces(namespaces);
+		preRelease.setProfiles(namespaces);
 		String releaseId = String.valueOf(historyOfDetail.getId());
 		String versionId = String.valueOf(agl.getId());
 		ConfigMeta meta = new ConfigMeta(releaseId, versionId);

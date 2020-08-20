@@ -17,7 +17,7 @@ package com.wl4g.devops.scm;
 
 import com.wl4g.devops.scm.bean.*;
 import com.wl4g.devops.scm.common.command.*;
-import com.wl4g.devops.scm.common.command.WatchCommandResult.ReleasePropertySource;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.ReleasePropertySource;
 import com.wl4g.components.core.utils.PropertySources;
 import com.wl4g.components.core.utils.PropertySources.Type;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
@@ -54,12 +54,12 @@ public class StandardConfigServerHandler implements CentralConfigServerHandler {
 	private ConfigurationService configService;
 
 	@Override
-	public WatchDeferredResult<ResponseEntity<?>> watch(WatchCommand watch) {
+	public WatchDeferredResult<ResponseEntity<?>> watch(FetchConfigRequest watch) {
 		return publisher.watch(watch);
 	}
 
 	@Override
-	public void release(WatchCommandResult result) {
+	public void release(ReleaseConfigInfo result) {
 		publisher.publish(result);
 	}
 
@@ -86,8 +86,8 @@ public class StandardConfigServerHandler implements CentralConfigServerHandler {
 //	}
 
 	@Override
-	public void report(ReportCommand report) {
-		report.validation(true, true);
+	public void report(ReportChangedRequest report) {
+		report.validate(true, true);
 		configService.updateReleaseDetail(report);
 	}
 
