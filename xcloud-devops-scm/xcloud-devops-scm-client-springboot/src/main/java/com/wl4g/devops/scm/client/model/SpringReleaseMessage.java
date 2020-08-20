@@ -55,13 +55,13 @@ public class SpringReleaseMessage extends ReleaseConfigInfo {
 	}
 
 	/**
-	 * {@link MapPropertySource} that reads keys and values from a {@code Map}
+	 * {@link IniPropertySource} that reads keys and values from a {@code Map}
 	 * object.
 	 *
 	 * @author Chris Beams
 	 * @author Juergen Hoeller
 	 * @since 3.1
-	 * @see MapPropertySource
+	 * @see IniPropertySource
 	 */
 	public static class ReleasePropertySource {
 		private String name;
@@ -102,11 +102,11 @@ public class SpringReleaseMessage extends ReleaseConfigInfo {
 			Assert.notEmpty(getSource(), "PropertySource-Properties is not allowed to be empty.");
 		}
 
-		public MapPropertySource convertMapPropertySource() {
-			return new MapPropertySource(getName(), getSource());
+		public IniPropertySource convertMapPropertySource() {
+			return new IniPropertySource(getName(), getSource());
 		}
 
-		public static ReleasePropertySource build(MapPropertySource mapSource) {
+		public static ReleasePropertySource build(IniPropertySource mapSource) {
 			if (mapSource == null) {
 				return null;
 			}

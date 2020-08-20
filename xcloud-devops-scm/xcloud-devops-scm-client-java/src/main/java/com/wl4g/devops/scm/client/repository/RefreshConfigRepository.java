@@ -35,7 +35,7 @@ public interface RefreshConfigRepository {
 	 * 
 	 * @param source
 	 */
-	void addReleaseConfig(ReleaseConfigInfo source);
+	void saveReleaseConfig(ReleaseConfigInfo source);
 
 	/**
 	 * Gets last refresh configuration property source.
@@ -73,6 +73,6 @@ public interface RefreshConfigRepository {
 	 * @param changedKeys
 	 * @param source
 	 */
-	void addChanged(Set<String> changedKeys, ReleaseConfigInfo source);
+	void saveChanged(Set<String> changedKeys, ReleaseConfigInfo source);
 
 }

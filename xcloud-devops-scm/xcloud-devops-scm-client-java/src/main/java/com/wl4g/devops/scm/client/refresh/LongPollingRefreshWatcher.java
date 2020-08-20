@@ -117,40 +117,6 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	}
 
 	/**
-	 * Attach headers, e.g. authentication token information
-	 * 
-	 * @param headers
-	 */
-	protected void attachHeaders(HttpHeaders headers) {
-		headers.setAccept(singletonList(APPLICATION_JSON));
-	}
-
-	/**
-	 * Init create {@link RestClient}
-	 * 
-	 * @param config
-	 * @return
-	 */
-	private RestClient initRestClient(ScmClientProperties<?> config) {
-		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
-		factory.setConnectTimeout(config.getConnectTimeout());
-		factory.setReadTimeout(config.getWatchReadTimeout());
-		factory.setMaxResponseSize(config.getMaxResponseSize());
-		RestClient client = new RestClient(factory);
-
-		Map<String, String> headers = new HashMap<>(config.getHeaders());
-		if (headers.containsKey(AUTHORIZATION)) {
-			// To avoid redundant addition of header
-			headers.remove(AUTHORIZATION);
-		}
-		if (!headers.isEmpty()) {
-			client.setInterceptors(asList(new GenericRequestHeaderInterceptor(headers)));
-		}
-
-		return client;
-	}
-
-	/**
 	 * Execution long-polling watching request.
 	 *
 	 * @throws Exception
@@ -187,6 +153,40 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 				new ParameterizedTypeReference<RespBase<?>>() {
 				}).getBody();
 		return isSuccess(resp);
+	}
+
+	/**
+	 * Attach headers, e.g. authentication token information
+	 * 
+	 * @param headers
+	 */
+	protected void attachHeaders(HttpHeaders headers) {
+		headers.setAccept(singletonList(APPLICATION_JSON));
+	}
+
+	/**
+	 * Init create {@link RestClient}
+	 * 
+	 * @param config
+	 * @return
+	 */
+	private RestClient initRestClient(ScmClientProperties<?> config) {
+		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
+		factory.setConnectTimeout(config.getConnectTimeout());
+		factory.setReadTimeout(config.getWatchReadTimeout());
+		factory.setMaxResponseSize(config.getMaxResponseSize());
+		RestClient client = new RestClient(factory);
+
+		Map<String, String> headers = new HashMap<>(config.getHeaders());
+		if (headers.containsKey(AUTHORIZATION)) {
+			// To avoid redundant addition of header
+			headers.remove(AUTHORIZATION);
+		}
+		if (!headers.isEmpty()) {
+			client.setInterceptors(asList(new GenericRequestHeaderInterceptor(headers)));
+		}
+
+		return client;
 	}
 
 	/**

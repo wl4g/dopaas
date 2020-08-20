@@ -50,7 +50,7 @@ public class InMemoryRefreshConfigRepository implements RefreshConfigRepository 
 	// --- Release config source. ---
 
 	@Override
-	public void addReleaseConfig(ReleaseConfigInfo source) {
+	public void saveReleaseConfig(ReleaseConfigInfo source) {
 		if (refreshConfigStore.size() <= capacity) {
 			refreshConfigStore.add(source);
 		}
@@ -93,7 +93,7 @@ public class InMemoryRefreshConfigRepository implements RefreshConfigRepository 
 	}
 
 	@Override
-	public void addChanged(Set<String> changedKeys, ReleaseConfigInfo source) {
+	public void saveChanged(Set<String> changedKeys, ReleaseConfigInfo source) {
 		changeRecordStore.add(new ChangedRecord(changedKeys, source));
 	}
 
