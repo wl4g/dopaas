@@ -39,7 +39,7 @@ public interface ConfigurationService {
 
 	public List<VersionContentBean> selectVersion(int id);
 
-	public ConfigSourceBean findSource(WatchCommand getRelease);
+	public ConfigSourceBean findSource(FetchConfigRequest getRelease);
 
-	public void updateReleaseDetail(ReportCommand report);
+	public void updateReleaseDetail(ReportChangedRequest report);
 }

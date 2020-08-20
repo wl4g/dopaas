@@ -19,7 +19,7 @@ import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.refresh.RpcRefreshWatcher;
-import com.wl4g.devops.scm.client.store.RefreshConfigStore;
+import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
 
 /**
  * {@link RpcScmClient}
@@ -31,8 +31,8 @@ import com.wl4g.devops.scm.client.store.RefreshConfigStore;
 @Reserved
 class RpcScmClient extends GenericScmClient {
 
-	public RpcScmClient(ScmClientProperties<?> config, RefreshConfigStore store, ConfigEventListener... listeners) {
-		super(new RpcRefreshWatcher(config, store, listeners));
+	public RpcScmClient(ScmClientProperties<?> config, RefreshConfigRepository repository, ConfigEventListener... listeners) {
+		super(new RpcRefreshWatcher(config, repository, listeners));
 	}
 
 	@Override

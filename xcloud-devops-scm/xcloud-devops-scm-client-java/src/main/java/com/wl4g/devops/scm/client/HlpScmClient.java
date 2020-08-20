@@ -18,7 +18,7 @@ package com.wl4g.devops.scm.client;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.refresh.LongPollingRefreshWatcher;
-import com.wl4g.devops.scm.client.store.RefreshConfigStore;
+import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
 
 /**
  * {@link HlpScmClient}
@@ -29,8 +29,8 @@ import com.wl4g.devops.scm.client.store.RefreshConfigStore;
  */
 class HlpScmClient extends GenericScmClient {
 
-	public HlpScmClient(ScmClientProperties<?> config, RefreshConfigStore store, ConfigEventListener... listeners) {
-		super(new LongPollingRefreshWatcher(config, store, listeners));
+	public HlpScmClient(ScmClientProperties<?> config, RefreshConfigRepository repository, ConfigEventListener... listeners) {
+		super(new LongPollingRefreshWatcher(config, repository, listeners));
 	}
 
 	@Override

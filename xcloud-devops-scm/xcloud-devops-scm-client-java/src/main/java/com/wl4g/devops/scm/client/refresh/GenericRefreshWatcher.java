@@ -30,18 +30,18 @@ import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.event.support.ScmEventPublisher;
 import com.wl4g.devops.scm.client.event.support.ScmEventSubscriber;
-import com.wl4g.devops.scm.client.store.RefreshConfigStore;
+import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
 import com.wl4g.devops.scm.client.utils.NodeHolder;
-import com.wl4g.devops.scm.common.command.WatchCommand;
-import com.wl4g.devops.scm.common.command.WatchCommandResult;
-import com.wl4g.devops.scm.common.command.ReportCommand.ChangedRecord;
-import com.wl4g.devops.scm.common.command.WatchCommandResult.ReleasePropertySource;
+import com.wl4g.devops.scm.common.command.FetchConfigRequest;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
+import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigMeta;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.ConfigPropertySource;
+import com.wl4g.devops.scm.common.command.ReportChangedRequest.ChangedRecord;
 import com.wl4g.devops.scm.common.exception.ScmException;
 
 import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.lang.ThreadUtils2.sleep;
-import static com.wl4g.devops.scm.client.refresh.RefreshConfigHolder.*;
 import static com.wl4g.devops.scm.common.config.SCMConstants.*;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
@@ -80,8 +80,8 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	/** SCM client reporting handler */
 	protected final ConfigReportingHandler handler;
 
-	/** {@link RefreshConfigStore} */
-	protected final RefreshConfigStore store;
+	/** {@link RefreshConfigRepository} */
+	protected final RefreshConfigRepository repository;
 
 	/**
 	 * 
@@ -89,14 +89,14 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	 */
 	protected long lastRefreshTime = 0;
 
-	public GenericRefreshWatcher(@NotNull ScmClientProperties<?> config, RefreshConfigStore store,
+	public GenericRefreshWatcher(@NotNull ScmClientProperties<?> config, RefreshConfigRepository repository,
 			@Nullable ConfigEventListener... listeners) {
 		super(new RunnerProperties(1, 0, 1).withAsyncStartup(true));
 		notNullOf(config, "config");
-		notNullOf(store, "store");
+		notNullOf(repository, "repository");
 		// notNullOf(listeners, "listeners");
 		this.config = config;
-		this.store = store;
+		this.repository = repository;
 		this.publisher = new ScmEventPublisher(config);
 		this.subscriber = new ScmEventSubscriber(config, listeners);
 		this.holder = new NodeHolder(config);
@@ -104,14 +104,15 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	}
 
 	/**
-	 * New create {@link WatchCommand}
+	 * New create {@link FetchConfigRequest}
 	 * 
 	 * @return
 	 */
-	public WatchCommand getWatchCommand() {
+	public FetchConfigRequest getWatchCommand() {
 		// Create config watching fetching command
-		WatchCommandResult lastRelease = getReleaseConfig(false);
-		return new WatchCommand(config.getClusterName(), config.getNamespaces(), lastRelease.getMeta(), holder.getConfigNode());
+		ReleaseConfigInfo last = repository.getLastReleaseConfig();
+		ConfigMeta meta = nonNull(last) ? last.getMeta() : null;
+		return new FetchConfigRequest(config.getClusterName(), config.getProfiles(), meta, holder.getConfigNode());
 	}
 
 	/**
@@ -132,25 +133,25 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	 * Handling watch result.
 	 * 
 	 * @param command
-	 * @param result
+	 * @param source
 	 */
-	protected void handleWatchResult(int command, WatchCommandResult result) {
+	protected void handleWatchResult(int command, ReleaseConfigInfo source) {
 		switch (command) {
 		case WATCH_CHANGED:
 			lastRefreshTime = currentTimeMillis();
 
 			// Extract config result
-			notNull(result, ScmException.class, "Watch received config source not available");
-			result.validation(true, true);
+			notNull(source, ScmException.class, "Watch received config source not available");
+			source.validate(true, true);
 
 			// Print configuration sources
-			printConfigSources(result);
+			printConfigSources(source);
 
-			// Sets release config source.
-			setReleaseConfig(result);
+			// Addition refresh config source.
+			repository.addReleaseConfig(source);
 
 			// Publishing refresh
-			publisher.publishRefreshEvent(result);
+			publisher.publishRefreshEvent(source);
 			break;
 		case WATCH_CHECKPOINT:
 			// Reporting
@@ -171,12 +172,12 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	/**
 	 * Resolver cipher configuration source.
 	 * 
-	 * @param result
+	 * @param source
 	 */
-	protected void resolvesCipherSource(WatchCommandResult result) {
+	protected void resolvesCipherSource(ReleaseConfigInfo source) {
 		log.debug("Resolver cipher configuration propertySource ...");
 
-		for (ReleasePropertySource ps : result.getPropertySources()) {
+		for (ConfigPropertySource ps : source.getPropertySources()) {
 			ps.getSource().forEach((key, value) -> {
 				String cipher = String.valueOf(value);
 				if (cipher.startsWith(CIPHER_PREFIX)) {
@@ -201,30 +202,27 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	/**
 	 * Prints configuration sources.
 	 * 
-	 * @param result
+	 * @param source
 	 */
-	protected void printConfigSources(WatchCommandResult result) {
-		log.info("Fetched from scm config <= group({}), namespace({}), release meta({})", result.getCluster(),
-				result.getNamespaces(), result.getMeta());
+	protected void printConfigSources(ReleaseConfigInfo source) {
+		log.info("Fetched SCM config for cluster: {}, profiles: {}, meta: {}", source.getCluster(), source.getProfiles(),
+				source.getMeta());
 
 		if (log.isDebugEnabled()) {
-			List<ReleasePropertySource> propertySources = result.getPropertySources();
-			if (propertySources != null) {
-				int propertyCount = 0;
-				for (ReleasePropertySource ps : propertySources) {
-					propertyCount += ps.getSource().size();
-				}
-				log.debug(String.format("Environment has %d property sources with %d properties.", propertySources.size(),
-						propertyCount));
+			List<ConfigPropertySource> pss = source.getPropertySources();
+			if (pss != null) {
+				int psSourceCount = pss.stream().map(ps -> ps.getSource().size()).reduce((c, s) -> s += c).get();
+				log.debug("Release config profiles: {}, the property sources sizeof: {}", pss.size(), psSourceCount);
 			}
 		}
+
 	}
 
 	/**
 	 * DO new handling execution reporting
 	 */
 	protected void doExecuteReporting() {
-		if (!getChangedQueues().isEmpty()) {
+		if (!repository.getChangedAll().isEmpty()) {
 			log.info("SCM reporting ...");
 			try {
 				newReportingRetryer().call(handler);
@@ -253,7 +251,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 						if (threshold > 0 && attempt.getAttemptNumber() > threshold) {
 							log.warn("Reporting retries max threshold({}), discarded refresh changed record!!!",
 									attempt.getAttemptNumber());
-							pollChangedAll();
+							repository.pollChangedAll();
 						}
 						// Publishing reporting
 						publisher.publishReportingEvent(attempt);
@@ -280,10 +278,10 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	class ConfigReportingHandler implements Callable<Boolean> {
 		@Override
 		public Boolean call() throws Exception {
-			Collection<ChangedRecord> records = getChangedQueues();
+			Collection<ChangedRecord> records = repository.getChangedAll();
 			boolean result = doReporting(records);
 			if (result) { // Success and cleanup
-				records = pollChangedAll();
+				records = repository.pollChangedAll();
 				log.debug("Reporting success and cleaned for records: {}", records);
 			}
 			return result;

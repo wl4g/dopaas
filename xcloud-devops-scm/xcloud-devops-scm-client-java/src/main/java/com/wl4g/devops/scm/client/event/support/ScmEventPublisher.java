@@ -26,7 +26,7 @@ import com.wl4g.devops.scm.client.event.CheckpointConfigEvent;
 import com.wl4g.devops.scm.client.event.RefreshConfigEvent;
 import com.wl4g.devops.scm.client.event.RefreshNextEvent;
 import com.wl4g.devops.scm.client.event.ReportingConfigEvent;
-import com.wl4g.devops.scm.common.command.WatchCommandResult;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
 
 /**
  * {@link ScmEventPublisher}
@@ -50,7 +50,7 @@ public class ScmEventPublisher {
 	 * 
 	 * @param source
 	 */
-	public void publishRefreshEvent(WatchCommandResult source) {
+	public void publishRefreshEvent(ReleaseConfigInfo source) {
 		bus.post(new RefreshConfigEvent(source));
 	}
 

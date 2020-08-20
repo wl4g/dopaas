@@ -128,12 +128,12 @@ public class ScmClientProperties extends BaseScmProperties {
 		this.longPollMaxDelay = longPollMaxDelay;
 	}
 
-	public List<String> getNamespaces() {
+	public List<String> getProfiles() {
 		Assert.notEmpty(namespaces, String.format("Invalid value for namespaces for %s", namespaces));
 		return namespaces;
 	}
 
-	public void setNamespaces(List<String> namespaces) {
+	public void setProfiles(List<String> namespaces) {
 		Assert.notEmpty(namespaces, String.format("Invalid value for namespaces for %s", namespaces));
 		this.namespaces = namespaces;
 	}

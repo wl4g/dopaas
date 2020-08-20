@@ -21,8 +21,8 @@ import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.scm.bean.*;
 import com.wl4g.devops.scm.common.command.*;
-import com.wl4g.devops.scm.common.command.GenericCommand.ConfigMeta;
-import com.wl4g.devops.scm.common.command.GenericCommand.ConfigNode;
+import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigMeta;
+import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigNode;
 import com.wl4g.devops.scm.common.exception.TooManyRefreshException;
 import com.wl4g.devops.dao.erm.AppClusterDao;
 import com.wl4g.devops.dao.erm.AppInstanceDao;
@@ -157,7 +157,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		// Request configuration source send to client.
 		PreFetchCommand pre = new PreFetchCommand();
 		pre.setCluster(appCluster.getName());
-		pre.setNamespaces(namespaces);
+		pre.setProfiles(namespaces);
 		ConfigMeta meta = new ConfigMeta(String.valueOf(historyOfDetail.getId()), String.valueOf(versionId));
 		pre.setMeta(meta);
 		pre.setNodes(instances);
@@ -192,12 +192,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public ConfigSourceBean findSource(WatchCommand getRelease) {
+	public ConfigSourceBean findSource(FetchConfigRequest getRelease) {
 		return this.configurationDao.findSource(getRelease);
 	}
 
 	@Override
-	public void updateReleaseDetail(ReportCommand report) {
+	public void updateReleaseDetail(ReportChangedRequest report) {
 		this.configurationDao.updateReleaseDetail(report);
 	}
 

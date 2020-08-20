@@ -118,7 +118,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 * SCM server publishing must be consistent with this configuration or the
 	 * refresh configuration will fail.(Accurate matching)
 	 */
-	private List<String> namespaces = new ArrayList<>(2);
+	private List<String> profiles = new ArrayList<>(2);
 
 	/**
 	 * Additional headers used to create the client request.
@@ -212,7 +212,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		this.retryReportingMaxDelay = retryReportingMaxDelay;
 		this.retryReportingFastFailThreshold = retryReportingFastFailThreshold;
 		this.asyncEventThreads = asyncEventThreads;
-		this.namespaces = namespaces;
+		this.profiles = namespaces;
 		this.headers = headers;
 	}
 
@@ -277,7 +277,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	}
 
 	public T withNamespaces(List<String> namespaces) {
-		this.namespaces = namespaces;
+		this.profiles = namespaces;
 		return (T) this;
 	}
 

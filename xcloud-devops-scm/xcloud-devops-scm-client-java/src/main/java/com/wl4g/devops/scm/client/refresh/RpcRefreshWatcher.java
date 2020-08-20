@@ -20,8 +20,8 @@ import java.util.Collection;
 import com.wl4g.components.common.annotation.Reserved;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
-import com.wl4g.devops.scm.client.store.RefreshConfigStore;
-import com.wl4g.devops.scm.common.command.ReportCommand.ChangedRecord;
+import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
+import com.wl4g.devops.scm.common.command.ReportChangedRequest.ChangedRecord;
 
 /**
  * {@link RpcRefreshWatcher}
@@ -33,8 +33,8 @@ import com.wl4g.devops.scm.common.command.ReportCommand.ChangedRecord;
 @Reserved
 public class RpcRefreshWatcher extends GenericRefreshWatcher {
 
-	public RpcRefreshWatcher(ScmClientProperties<?> config, RefreshConfigStore store, ConfigEventListener... listeners) {
-		super(config, store, listeners);
+	public RpcRefreshWatcher(ScmClientProperties<?> config, RefreshConfigRepository repository, ConfigEventListener... listeners) {
+		super(config, repository, listeners);
 		throw new UnsupportedOperationException();
 	}
 

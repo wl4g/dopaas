@@ -59,7 +59,7 @@ public abstract class RefreshConfigHolder {
 		ConfigMeta meta = releaseMeta.get();
 		if (validate) {
 			notNull(meta, "No available refresh releaseMeta");
-			meta.validation(validate, validate);
+			meta.validate(validate, validate);
 		}
 		return meta;
 	}

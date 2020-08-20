@@ -23,9 +23,9 @@ import static com.wl4g.components.common.lang.Assert2.notNull;
 
 import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
-import com.wl4g.devops.scm.common.command.WatchCommand;
-import com.wl4g.devops.scm.common.command.WatchCommandResult;
-import com.wl4g.devops.scm.common.command.GenericCommand.ConfigNode;
+import com.wl4g.devops.scm.common.command.FetchConfigRequest;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
+import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigNode;
 import com.wl4g.devops.scm.config.ScmProperties;
 
 import org.springframework.http.HttpStatus;
@@ -90,10 +90,10 @@ public abstract class GenericConfigSourcePublisher extends ApplicationTaskRunner
 
 						getCreateWithDeferreds(wrap.getCluster()).values().stream().filter(deferred -> {
 							if (nonNull(deferred)) {
-								WatchCommand watch = deferred.getWatch();
+								FetchConfigRequest watch = deferred.getWatch();
 								// Filter namespace
-								wrap.getNamespaces().retainAll(watch.getNamespaces());
-								if (!CollectionUtils.isEmpty(wrap.getNamespaces())) {
+								wrap.getProfiles().retainAll(watch.getProfiles());
+								if (!CollectionUtils.isEmpty(wrap.getProfiles())) {
 									// Filter instance
 									return wrap.getNodes().contains(watch.getNode());
 								}
@@ -115,7 +115,7 @@ public abstract class GenericConfigSourcePublisher extends ApplicationTaskRunner
 	}
 
 	@Override
-	public List<WatchDeferredResult<ResponseEntity<?>>> publish(WatchCommandResult result) {
+	public List<WatchDeferredResult<ResponseEntity<?>>> publish(ReleaseConfigInfo result) {
 		notNull(result, "Publish release must not be null");
 
 		// Got or create local watching deferredResults.
@@ -129,7 +129,7 @@ public abstract class GenericConfigSourcePublisher extends ApplicationTaskRunner
 	}
 
 	@Override
-	public WatchDeferredResult<ResponseEntity<?>> watch(WatchCommand watch) {
+	public WatchDeferredResult<ResponseEntity<?>> watch(FetchConfigRequest watch) {
 		// Override creation listening latency.
 		WatchDeferredResult<ResponseEntity<?>> deferred = doCreateWatchDeferred(watch);
 
@@ -168,14 +168,14 @@ public abstract class GenericConfigSourcePublisher extends ApplicationTaskRunner
 	 * @param watch
 	 * @return
 	 */
-	protected WatchDeferredResult<ResponseEntity<?>> doCreateWatchDeferred(WatchCommand watch) {
+	protected WatchDeferredResult<ResponseEntity<?>> doCreateWatchDeferred(FetchConfigRequest watch) {
 		notNull(watch, "Watch must not be null");
 
 		// Create watch-deferred
 		WatchDeferredResult<ResponseEntity<?>> deferred = new WatchDeferredResult<>(config.getLongPollTimeout(), watch);
 
 		Multimap<String, WatchDeferredResult<ResponseEntity<?>>> deferreds = getCreateWithDeferreds(watch.getCluster());
-		String watchKey = getWatchKey(watch.getNode(), watch.getNamespaces());
+		String watchKey = getWatchKey(watch.getNode(), watch.getProfiles());
 		deferreds.put(watchKey, deferred);
 
 		final String instance = watch.getNode().toString();
@@ -236,14 +236,14 @@ public abstract class GenericConfigSourcePublisher extends ApplicationTaskRunner
 	 * @version v1.0 2019年6月5日
 	 * @since
 	 */
-	public static class PublishConfigWrapper extends WatchCommandResult {
+	public static class PublishConfigWrapper extends ReleaseConfigInfo {
 		private static final long serialVersionUID = 1569807245009223834L;
 
 		public PublishConfigWrapper() {
 		}
 
-		public PublishConfigWrapper(WatchCommandResult result) {
-			super(result.getCluster(), result.getNamespaces(), result.getMeta(), result.getNodes());
+		public PublishConfigWrapper(ReleaseConfigInfo result) {
+			super(result.getCluster(), result.getProfiles(), result.getMeta(), result.getNodes());
 		}
 
 		public String asIdentify() {

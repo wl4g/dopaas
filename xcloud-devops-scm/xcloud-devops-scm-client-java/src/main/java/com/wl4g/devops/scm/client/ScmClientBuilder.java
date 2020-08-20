@@ -20,8 +20,8 @@ import static java.util.Objects.nonNull;
 import com.wl4g.devops.scm.client.config.ConfCommType;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
-import com.wl4g.devops.scm.client.store.InMemoryRefreshConfigStore;
-import com.wl4g.devops.scm.client.store.RefreshConfigStore;
+import com.wl4g.devops.scm.client.repository.InMemoryRefreshConfigRepository;
+import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
 
 /**
  * {@link ScmClientBuilder}
@@ -39,8 +39,8 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	/** Configuration refreshing {@link ConfigEventListener} */
 	private ConfigEventListener[] listeners;
 
-	/** {@link RefreshConfigStore} */
-	private RefreshConfigStore store = new InMemoryRefreshConfigStore();
+	/** {@link RefreshConfigRepository} */
+	private RefreshConfigRepository repository = new InMemoryRefreshConfigRepository();
 
 	/**
 	 * New create {@link ScmClientBuilder} instance
@@ -78,12 +78,12 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 
 	/**
 	 * Sets use refresh configuration source of
-	 * {@link InMemoryRefreshConfigStore}
+	 * {@link InMemoryRefreshConfigRepository}
 	 * 
 	 * @return
 	 */
 	public ScmClientBuilder useInMemoryConfigStore() {
-		this.store = new InMemoryRefreshConfigStore();
+		this.repository = new InMemoryRefreshConfigRepository();
 		return this;
 	}
 
@@ -95,9 +95,9 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	public ScmClient build() {
 		switch (commType) {
 		case HLP:
-			return new HlpScmClient(this, store, listeners);
+			return new HlpScmClient(this, repository, listeners);
 		case RPC:
-			return new RpcScmClient(this, store, listeners);
+			return new RpcScmClient(this, repository, listeners);
 		default:
 			throw new Error("shouldn't be here");
 		}

@@ -19,8 +19,8 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.wl4g.devops.scm.common.command.WatchCommand;
-import com.wl4g.devops.scm.common.command.WatchCommandResult;
+import com.wl4g.devops.scm.common.command.FetchConfigRequest;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
 
 /**
  * SCM config source server publisher api.
@@ -37,7 +37,7 @@ public interface ConfigSourcePublisher {
 	 * @param result
 	 * @return
 	 */
-	List<WatchDeferredResult<ResponseEntity<?>>> publish(WatchCommandResult result);
+	List<WatchDeferredResult<ResponseEntity<?>>> publish(ReleaseConfigInfo result);
 
 	/**
 	 * Used for hang live client listening configuration.
@@ -45,6 +45,6 @@ public interface ConfigSourcePublisher {
 	 * @param watch
 	 * @return
 	 */
-	WatchDeferredResult<ResponseEntity<?>> watch(WatchCommand watch);
+	WatchDeferredResult<ResponseEntity<?>> watch(FetchConfigRequest watch);
 
 }

@@ -25,8 +25,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.wl4g.ScmServer;
 import com.wl4g.components.common.lang.ThreadUtils2;
-import com.wl4g.devops.scm.common.command.GenericCommand.ConfigNode;
-import com.wl4g.devops.scm.common.command.WatchCommandResult;
+import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigNode;
+import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
 
 @RunWith(SpringRunner.class)
@@ -48,7 +48,7 @@ public class ScmServerEndpointTests {
 	 */
 	@Test
 	public void manualReleaseTests() {
-		WatchCommandResult result = new WatchCommandResult();
+		ReleaseConfigInfo result = new ReleaseConfigInfo();
 		result.setCluster("scm-example");
 		result.getMeta().setReleaseId("1");
 		result.getMeta().setVersion("1.0.1");
