@@ -33,6 +33,10 @@
 		<!-- Requires -->
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-shell-springboot</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-components-support</artifactId>
 		</dependency>
 		<!-- Optional(Iam with SCM configuration will not be loaded by default) -->
