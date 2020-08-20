@@ -81,7 +81,7 @@ public class ReportCommand extends WatchCommand {
 			return result;
 		}
 
-		public void setresult(WatchCommandResult result) {
+		public void setConfigResult(WatchCommandResult result) {
 			this.result = result;
 		}
 

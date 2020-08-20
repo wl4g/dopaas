@@ -20,6 +20,7 @@ import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.devops.scm.client.refresh.GenericRefreshWatcher;
+import com.wl4g.devops.scm.client.refresh.RefreshWatcher;
 
 /**
  * {@link GenericScmClient}
@@ -33,9 +34,9 @@ abstract class GenericScmClient implements ScmClient {
 	protected final SmartLogger log = getLogger(getClass());
 
 	/** {@link GenericRefreshWatcher} */
-	protected final GenericRefreshWatcher watcher;
+	protected final RefreshWatcher watcher;
 
-	public GenericScmClient(GenericRefreshWatcher watcher) {
+	public GenericScmClient(RefreshWatcher watcher) {
 		notNullOf(watcher, "watcher");
 		this.watcher = watcher;
 	}

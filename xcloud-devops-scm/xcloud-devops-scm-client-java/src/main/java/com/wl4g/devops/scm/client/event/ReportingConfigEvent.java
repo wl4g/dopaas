@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.event;
 
-import java.util.EventObject;
+import com.github.rholder.retry.Attempt;
 
 /**
  * {@link ReportingConfigEvent}
@@ -24,10 +24,10 @@ import java.util.EventObject;
  * @version v1.0 2020-08-18
  * @since
  */
-public class ReportingConfigEvent extends EventObject {
+public class ReportingConfigEvent extends GenericScmEvent<Attempt<?>> {
 	private static final long serialVersionUID = 1026288899828948496L;
 
-	public ReportingConfigEvent(Object source) {
+	public ReportingConfigEvent(Attempt<?> source) {
 		super(source);
 	}
 

@@ -19,7 +19,9 @@ import static java.util.Objects.nonNull;
 
 import com.wl4g.devops.scm.client.config.ConfCommType;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.event.ScmEventListener;
+import com.wl4g.devops.scm.client.event.ConfigEventListener;
+import com.wl4g.devops.scm.client.store.InMemoryRefreshConfigStore;
+import com.wl4g.devops.scm.client.store.RefreshConfigStore;
 
 /**
  * {@link ScmClientBuilder}
@@ -34,8 +36,11 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	/** Configuration refreshing internal comm protocol type. */
 	private ConfCommType commType = ConfCommType.HLP;
 
-	/** Configuration refreshing {@link ScmEventListener} */
-	private ScmEventListener[] listeners;
+	/** Configuration refreshing {@link ConfigEventListener} */
+	private ConfigEventListener[] listeners;
+
+	/** {@link RefreshConfigStore} */
+	private RefreshConfigStore store = new InMemoryRefreshConfigStore();
 
 	/**
 	 * New create {@link ScmClientBuilder} instance
@@ -46,6 +51,12 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 		return new ScmClientBuilder();
 	}
 
+	/**
+	 * Sets SCM internal comm protocol type. The default using
+	 * {@link ConfCommType#HLP}
+	 * 
+	 * @return
+	 */
 	public ScmClientBuilder withCommType(ConfCommType commType) {
 		if (nonNull(commType)) {
 			this.commType = commType;
@@ -53,10 +64,26 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 		return this;
 	}
 
-	public ScmClientBuilder withListeners(ScmEventListener... listeners) {
+	/**
+	 * Sets SCM configuration refresh listeners.
+	 * 
+	 * @return
+	 */
+	public ScmClientBuilder withListeners(ConfigEventListener... listeners) {
 		if (nonNull(listeners)) {
 			this.listeners = listeners;
 		}
+		return this;
+	}
+
+	/**
+	 * Sets use refresh configuration source of
+	 * {@link InMemoryRefreshConfigStore}
+	 * 
+	 * @return
+	 */
+	public ScmClientBuilder useInMemoryConfigStore() {
+		this.store = new InMemoryRefreshConfigStore();
 		return this;
 	}
 
@@ -68,9 +95,9 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	public ScmClient build() {
 		switch (commType) {
 		case HLP:
-			return new HlpScmClient(this, listeners);
+			return new HlpScmClient(this, store, listeners);
 		case RPC:
-			return new RpcScmClient(this, listeners);
+			return new RpcScmClient(this, store, listeners);
 		default:
 			throw new Error("shouldn't be here");
 		}

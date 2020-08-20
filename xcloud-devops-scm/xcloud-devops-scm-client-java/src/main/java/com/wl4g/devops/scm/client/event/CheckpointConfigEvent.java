@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.scm.client.event;
 
-import java.util.EventObject;
-
 /**
  * {@link CheckpointConfigEvent}
  *
@@ -24,7 +22,7 @@ import java.util.EventObject;
  * @version v1.0 2020-08-18
  * @since
  */
-public class CheckpointConfigEvent extends EventObject {
+public class CheckpointConfigEvent extends GenericScmEvent<Object> {
 	private static final long serialVersionUID = 1026288899828948496L;
 
 	public CheckpointConfigEvent(Object source) {

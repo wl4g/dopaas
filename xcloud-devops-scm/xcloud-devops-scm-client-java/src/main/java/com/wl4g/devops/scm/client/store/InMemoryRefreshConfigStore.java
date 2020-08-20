@@ -13,51 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.event;
-
-import java.util.EventListener;
+package com.wl4g.devops.scm.client.store;
 
 /**
- * {@link ScmEventListener}
+ * {@link InMemoryRefreshConfigStore}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-08-11
+ * @version v1.0 2020-08-20
  * @since
  */
-public interface ScmEventListener extends EventListener {
-
-	/**
-	 * On release changed event.
-	 * 
-	 * @param event
-	 */
-	void onRefresh(RefreshConfigEvent event);
-
-	/**
-	 * On Reporting event.
-	 * 
-	 * @param event
-	 */
-	default void onReporting(ReportingConfigEvent event) {
-		// Ignore
-	}
-
-	/**
-	 * On report config changed event
-	 * 
-	 * @param event
-	 */
-	default void onCheckpoint(CheckpointConfigEvent event) {
-		// Ignore
-	}
-
-	/**
-	 * On next poll event
-	 * 
-	 * @param event
-	 */
-	default void onNext(RefreshNextEvent event) {
-		// Ignore
-	}
+public class InMemoryRefreshConfigStore implements RefreshConfigStore {
 
 }
