@@ -18,10 +18,12 @@ package com.wl4g.devops.ci.pipeline;
 import com.wl4g.components.core.exception.ci.NotFoundBackupAssetsFileException;
 import com.wl4g.components.support.cli.command.DestroableCommand;
 import com.wl4g.components.support.cli.command.LocalDestroableCommand;
+import com.wl4g.devops.ci.bean.ActionControl;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.container.DockerNativePipelineProvider;
 
 import java.io.File;
+import java.util.Objects;
 
 import static com.wl4g.components.common.codec.FingerprintUtils.getMd5Fingerprint;
 import static com.wl4g.devops.ci.pipeline.PipelineKind.DOCKER_NATIVE;
@@ -61,6 +63,12 @@ public abstract class RestorableDeployPipelineProvider extends GenericDependenci
 
 		// Handing Build Image
 		buildImage();
+
+		//skip deploy
+		ActionControl actionControl = getContext().getActionControl();
+		if(Objects.nonNull(actionControl) && !actionControl.isDeploy()){
+			return;
+		}
 
 		// Deploying to remote instances.
 		startupExecuteRemoteDeploying();

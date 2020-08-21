@@ -83,7 +83,7 @@ public class PipelineServiceImpl implements PipelineService {
 	@Override
 	public PageModel list(PageModel pm, String pipeName, String providerKind, String environment) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment));
+		pm.setRecords(pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment,null));
 		return pm;
 	}
 
@@ -358,7 +358,7 @@ public class PipelineServiceImpl implements PipelineService {
 
 	@Override
 	public List<Pipeline> getForSelect(String environment) {
-		return pipelineDao.list(getRequestOrganizationCodes(), null, null, null, environment);
+		return pipelineDao.list(getRequestOrganizationCodes(), null, null, null, environment,null);
 	}
 
 	private PipeStepBuildingProject getPipeStepBuildingProject(List<PipeStepBuildingProject> pipeStepBuildingProjects,

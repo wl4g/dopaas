@@ -19,13 +19,16 @@ import com.wl4g.components.core.bean.ci.*;
 import com.wl4g.components.core.exception.ci.DependencyCurrentlyInBuildingException;
 import com.wl4g.components.support.cli.command.DestroableCommand;
 import com.wl4g.components.support.cli.command.LocalDestroableCommand;
+import com.wl4g.devops.ci.bean.ActionControl;
 import com.wl4g.devops.ci.bean.PipelineModel;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.vcs.operator.VcsOperator;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -82,12 +85,19 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 		log.info(writeBuildLog("Analyzed pipeline for hierarchy of appcluster: %s, dependencies: %s",
 				getContext().getAppCluster().getName(), pipeStepBuildingProjects));
 
+		// If has Action Control, user this first
+		String branchForce = null;
+		ActionControl actionControl = getContext().getActionControl();
+		if(Objects.nonNull(actionControl) && StringUtils.isNotBlank(actionControl.getBranch())){
+			branchForce = actionControl.getBranch();
+		}
+
 		// Pipeline State Change
 		List<ModulesPorject> modulesPorjects = new ArrayList<>();
 		for (PipeStepBuildingProject depd : pipeStepBuildingProjects) {
 			ModulesPorject modulesPorject = new ModulesPorject();
 			modulesPorject.setProjectId(depd.getProjectId());
-			modulesPorject.setRef(depd.getRef());
+			modulesPorject.setRef(StringUtils.isNotBlank(branchForce)?branchForce:depd.getRef());
 			modulesPorjects.add(modulesPorject);
 		}
 		PipelineModel pipelineModel = getContext().getPipelineModel();
@@ -106,7 +116,7 @@ public abstract class GenericDependenciesPipelineProvider extends AbstractPipeli
 			pipelineModel.setCurrent(buildingProject.getProjectId());
 			flowManager.pipelineStateChange(pipelineModel);
 
-			doMutexBuildModuleInDependencies(buildingProject.getProjectId(), buildingProject.getRef(),
+			doMutexBuildModuleInDependencies(buildingProject.getProjectId(), StringUtils.isNotBlank(branchForce)?branchForce:buildingProject.getRef(),
 					buildingProject.getBuildCommand());
 		}
 
