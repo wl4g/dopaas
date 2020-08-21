@@ -75,11 +75,6 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 */
 	private InetProperties inet = DEF_INET;
 
-	/**
-	 * Watching timeout on waiting to read data from the SCM Server.
-	 */
-	private long watchReadTimeout = DEF_WATCH_R_TIMEOUT_MS;
-
 	/** Minimum waiting time for long polling failure. */
 	private long longPollingMinDelay = DEF_LONGPOLLING_MIN_DELAY_MS;
 
@@ -111,7 +106,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	/**
 	 * Invoking async event threads pool maximum.
 	 */
-	private int asyncEventThreads = DEF_ASYNC_EVENT_THREADS;
+	private int eventThreads = DEF_EVENT_THREADS;
 
 	/**
 	 * Refresh name-space(configuration filename)</br>
@@ -145,9 +140,9 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	}
 
 	public ScmClientProperties(String clusterName, String baseUri, InetProperties inet, List<String> namespaces) {
-		this(clusterName, DEF_SERVICEID, baseUri, inet, DEF_WATCH_R_TIMEOUT_MS, DEF_LONGPOLLING_MIN_DELAY_MS,
-				DEF_LONGPOLLING_MAX_DELAY_MS, DEF_SAFE_REFRESH_DELAY_MS, DEF_RETRY_REPORTING_MIN_DELAY_MS,
-				DEF_RETRY_REPORTING_MAX_DELAY_MS, -1, DEF_ASYNC_EVENT_THREADS, namespaces, null, null, null);
+		this(clusterName, DEF_SERVICEID, baseUri, inet, DEF_LONGPOLLING_MIN_DELAY_MS, DEF_LONGPOLLING_MAX_DELAY_MS,
+				DEF_SAFE_REFRESH_DELAY_MS, DEF_RETRY_REPORTING_MIN_DELAY_MS, DEF_RETRY_REPORTING_MAX_DELAY_MS, -1,
+				DEF_EVENT_THREADS, namespaces, null, null, null);
 	}
 
 	/**
@@ -183,15 +178,14 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 *            [Deprecated] only to satisfy the Lombok syntax sugar
 	 */
 	public ScmClientProperties(@Nonnull String clusterName, @NotBlank String serviceId, @NotBlank String baseUri,
-			@NotNull InetProperties inet, long watchReadTimeout, long longPollingMinDelay, long longPollingMaxDelay,
-			long safeRefreshProtectDelay, long retryReportingMinDelay, long retryReportingMaxDelay,
-			long retryReportingFastFailThreshold, int asyncEventThreads, @Nonnull List<String> namespaces,
-			@Nullable Map<String, String> headers, @Deprecated InetHolder ignore0, @Deprecated String ignore1) {
+			@NotNull InetProperties inet, long longPollingMinDelay, long longPollingMaxDelay, long safeRefreshProtectDelay,
+			long retryReportingMinDelay, long retryReportingMaxDelay, long retryReportingFastFailThreshold, int asyncEventThreads,
+			@Nonnull List<String> namespaces, @Nullable Map<String, String> headers, @Deprecated InetHolder ignore0,
+			@Deprecated String ignore1) {
 		hasTextOf(clusterName, "clusterName");
 		hasTextOf(serviceId, "serviceId");
 		hasTextOf(baseUri, "baseUri");
 		notNullOf(inet, "inetProperties");
-		isTrueOf(watchReadTimeout > 0, "fetchReadTimeout>0");
 		isTrueOf(longPollingMinDelay > 0, "longPollingMinDelay>0");
 		isTrue(longPollingMaxDelay > longPollingMinDelay, "longPollingMaxDelay>longPollingMinDelay(%s)", longPollingMinDelay);
 		isTrueOf(safeRefreshProtectDelay > 0, "safeRefreshProtectDelay>0");
@@ -204,14 +198,13 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		this.serviceId = serviceId;
 		this.baseUri = baseUri;
 		this.inet = inet;
-		this.watchReadTimeout = watchReadTimeout;
 		this.longPollingMinDelay = longPollingMinDelay;
 		this.longPollingMaxDelay = longPollingMaxDelay;
 		this.safeRefreshRateDelay = safeRefreshProtectDelay;
 		this.retryReportingMinDelay = retryReportingMinDelay;
 		this.retryReportingMaxDelay = retryReportingMaxDelay;
 		this.retryReportingFastFailThreshold = retryReportingFastFailThreshold;
-		this.asyncEventThreads = asyncEventThreads;
+		this.eventThreads = asyncEventThreads;
 		this.profiles = namespaces;
 		this.headers = headers;
 	}
@@ -236,8 +229,18 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		return (T) this;
 	}
 
-	public T withWatchReadTimeout(long watchReadTimeout) {
-		this.watchReadTimeout = watchReadTimeout;
+	public T withLongPollTimeout(long longPollingTimeout) {
+		setLongPollTimeout(longPollingTimeout);
+		return (T) this;
+	}
+
+	public T withConnectTimeout(long connectTimeout) {
+		setConnectTimeout(connectTimeout);
+		return (T) this;
+	}
+
+	public T withMaxResponseSize(long maxResponseSize) {
+		setMaxResponseSize(maxResponseSize);
 		return (T) this;
 	}
 
@@ -272,7 +275,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	}
 
 	public T withAsyncEventThreads(int asyncEventThreads) {
-		this.asyncEventThreads = asyncEventThreads;
+		this.eventThreads = asyncEventThreads;
 		return (T) this;
 	}
 
@@ -330,11 +333,6 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 */
 	public final static InetProperties DEF_INET = new InetProperties();
 
-	/**
-	 * Default Fetch timeout on waiting to read data from the SCM Server.
-	 */
-	public final static int DEF_WATCH_R_TIMEOUT_MS = 8 * 1000;
-
 	/** Default Minimum waiting time for long polling failure. */
 	public final static long DEF_LONGPOLLING_MIN_DELAY_MS = 2 * 1000L;
 
@@ -360,6 +358,6 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	/**
 	 * Default invoking async event threads pool maximum.
 	 */
-	public final static int DEF_ASYNC_EVENT_THREADS = 1;
+	public final static int DEF_EVENT_THREADS = 2;
 
 }

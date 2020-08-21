@@ -15,8 +15,8 @@
  */
 package com.wl4g.devops.scm.common.config;
 
-import static com.wl4g.components.common.lang.Assert2.state;
-import static java.lang.String.format;
+import static com.wl4g.components.common.lang.Assert2.stateOf;
+import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 
 import java.io.Serializable;
 
@@ -31,47 +31,56 @@ public abstract class BaseScmProperties implements Serializable {
 	private static final long serialVersionUID = -242805976296191411L;
 
 	/**
-	 * Watch long-polling timeout on waiting to read data from the SCM Server.
+	 * Watching timeout on waiting to read data from the SCM Server.
 	 */
-	private long longPollTimeout = 30 * 1000;
+	private long longPollTimeout = DEF_WATCH_R_TIMEOUT_MS;
 
 	/** Connect timeout */
-	private int connectTimeout = 5 * 1000;
+	private long connectTimeout = DEF_CONN_TIMEOUT_MS;
 
 	/** Max response size */
-	private int maxResponseSize = 65535;
+	private long maxResponseSize = 65535;
 
 	public long getLongPollTimeout() {
 		return longPollTimeout;
 	}
 
 	public void setLongPollTimeout(long longPollingTimeout) {
-		state(longPollingTimeout > 0, format("Invalid value for long polling timeout for %s", longPollingTimeout));
+		stateOf(longPollingTimeout > 0, "longPollingTimeout > 0");
 		this.longPollTimeout = longPollingTimeout;
 	}
 
-	public int getConnectTimeout() {
+	public long getConnectTimeout() {
 		return connectTimeout;
 	}
 
-	public void setConnectTimeout(int connectTimeout) {
-		state(connectTimeout > 0, String.format("Invalid value for connect timeout for %s", connectTimeout));
+	public void setConnectTimeout(long connectTimeout) {
+		stateOf(connectTimeout > 0, "connectTimeout > 0");
 		this.connectTimeout = connectTimeout;
 	}
 
-	public int getMaxResponseSize() {
+	public long getMaxResponseSize() {
 		return maxResponseSize;
 	}
 
-	public void setMaxResponseSize(int maxResponseSize) {
-		state(maxResponseSize > 0, String.format("Invalid value for max response size for %s", maxResponseSize));
+	public void setMaxResponseSize(long maxResponseSize) {
+		stateOf(maxResponseSize > 0, "maxResponseSize > 0");
 		this.maxResponseSize = maxResponseSize;
 	}
 
 	@Override
 	public String toString() {
-		return "AbstractScmProperties [longPollingTimeout=" + longPollTimeout + ", connectTimeout=" + connectTimeout
-				+ ", maxResponseSize=" + maxResponseSize + "]";
+		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 	}
+
+	/**
+	 * Default Fetch timeout on waiting to read data from the SCM Server.
+	 */
+	public final static long DEF_WATCH_R_TIMEOUT_MS = 30 * 1000L;
+
+	/**
+	 * Default connect timeoutMs.
+	 */
+	public final static long DEF_CONN_TIMEOUT_MS = 6 * 1000L;
 
 }

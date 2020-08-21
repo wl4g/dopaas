@@ -25,6 +25,7 @@ import com.wl4g.components.common.remoting.Netty4ClientHttpRequestFactory;
 import com.wl4g.components.common.remoting.RestClient;
 import com.wl4g.components.common.remoting.exception.ClientHttpRequestExecution;
 import com.wl4g.components.common.remoting.standard.HttpHeaders;
+import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
@@ -42,6 +43,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.wl4g.components.common.lang.TypeConverts.safeLongToInt;
 import static com.wl4g.components.common.remoting.standard.HttpMediaType.APPLICATION_JSON;
 import static com.wl4g.components.common.web.rest.RespBase.isSuccess;
 import static com.wl4g.devops.scm.client.config.ScmClientProperties.*;
@@ -81,7 +83,7 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 
 	public LongPollingRefreshWatcher(ScmClientProperties<?> config, RefreshConfigRepository repository,
 			ConfigEventListener... listeners) {
-		super(config, repository, listeners);
+		super(new RunnerProperties(true, 1), config, repository, listeners);
 		this.http = initRestClient(config);
 	}
 
@@ -103,7 +105,7 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 		getWorker().scheduleAtRandomRate(() -> { // Loop long-polling watching
 			try {
 				if (watchingLock.tryLock()) {
-					handleWatching();
+					doHandleWatching();
 				} else {
 					log.warn("Skip the watch request in long polling!");
 				}
@@ -116,25 +118,34 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 		}, 3000L, config.getLongPollingMinDelay(), config.getLongPollingMaxDelay(), MILLISECONDS);
 	}
 
+	@Override
+	public boolean doReporting(Collection<ChangedRecord> records) {
+		String url = config.getBaseUri().concat(URI_S_BASE).concat("/").concat(URI_S_REFRESHED_REPORT);
+		RespBase<?> resp = http.exchange(url, POST, new HttpEntity<>(new ReportChangedRequest(records)),
+				new ParameterizedTypeReference<RespBase<?>>() {
+				}).getBody();
+		return isSuccess(resp);
+	}
+
 	/**
 	 * Execution long-polling watching request.
 	 *
 	 * @throws Exception
 	 */
-	public void handleWatching() {
+	protected void doHandleWatching() {
 		log.debug("Watching refresh config ... ");
 
 		// Delay freq protection limit
 		beforeSafeRefreshProtectDelaying();
 
 		// Gets watch command
-		FetchConfigRequest watch = getWatchCommand();
+		FetchConfigRequest request = createFetchRequest();
 
 		HttpHeaders headers = new HttpHeaders();
 		attachHeaders(headers); // Extra headers
 		log.debug("Watching request headers : {}", headers);
 
-		HttpEntity<FetchConfigRequest> entity = new HttpEntity<>(watch, headers);
+		HttpEntity<FetchConfigRequest> entity = new HttpEntity<>(request, headers);
 		HttpResponseEntity<RespBase<ReleaseConfigInfo>> resp = http.exchange(config.getWatchUri(), POST, entity,
 				new ParameterizedTypeReference<RespBase<ReleaseConfigInfo>>() {
 				});
@@ -144,15 +155,6 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 			handleWatchResult(resp.getStatusCodeValue(), resp.getBody().getData());
 		}
 
-	}
-
-	@Override
-	protected boolean doReporting(Collection<ChangedRecord> records) {
-		String url = config.getBaseUri().concat(URI_S_BASE).concat("/").concat(URI_S_REFRESHED_REPORT);
-		RespBase<?> resp = http.exchange(url, POST, new HttpEntity<>(new ReportChangedRequest(records)),
-				new ParameterizedTypeReference<RespBase<?>>() {
-				}).getBody();
-		return isSuccess(resp);
 	}
 
 	/**
@@ -173,8 +175,8 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	private RestClient initRestClient(ScmClientProperties<?> config) {
 		Netty4ClientHttpRequestFactory factory = new Netty4ClientHttpRequestFactory();
 		factory.setConnectTimeout(config.getConnectTimeout());
-		factory.setReadTimeout(config.getWatchReadTimeout());
-		factory.setMaxResponseSize(config.getMaxResponseSize());
+		factory.setReadTimeout(config.getLongPollTimeout());
+		factory.setMaxResponseSize(safeLongToInt(config.getMaxResponseSize()));
 		RestClient client = new RestClient(factory);
 
 		Map<String, String> headers = new HashMap<>(config.getHeaders());

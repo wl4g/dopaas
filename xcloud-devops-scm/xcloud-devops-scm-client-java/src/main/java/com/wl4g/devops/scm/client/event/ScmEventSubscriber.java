@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.event.support;
+package com.wl4g.devops.scm.client.event;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static java.util.Objects.nonNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
 import com.google.common.eventbus.AllowConcurrentEvents;
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.wl4g.components.common.annotation.Nullable;
-import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.event.CheckpointConfigEvent;
-import com.wl4g.devops.scm.client.event.ConfigEventListener;
-import com.wl4g.devops.scm.client.event.RefreshConfigEvent;
-import com.wl4g.devops.scm.client.event.RefreshNextEvent;
-import com.wl4g.devops.scm.client.event.ReportingConfigEvent;
+import com.wl4g.components.common.eventbus.EventBusSupport;
+import com.wl4g.devops.scm.client.refresh.GenericRefreshWatcher;
+import com.wl4g.devops.scm.client.refresh.RefreshWatcher;
+import com.wl4g.devops.scm.client.refresh.internal.ReportingConfigListener;
 
 /**
  * {@link ScmEventSubscriber}
@@ -39,18 +40,20 @@ import com.wl4g.devops.scm.client.event.ReportingConfigEvent;
  */
 public class ScmEventSubscriber {
 
-	/** {@link EventBus} */
-	protected final EventBus bus;
+	/** {@link EventBusSupport} */
+	protected final EventBusSupport support;
+
+	/** {@link RefreshWatcher} */
+	protected final GenericRefreshWatcher watcher;
 
 	/** {@link ConfigEventListener} */
 	protected final ConfigEventListener[] listeners;
 
-	public ScmEventSubscriber(@NotNull ScmClientProperties<?> config, @Nullable ConfigEventListener... listeners) {
-		notNullOf(config, "config");
-		// notEmpty(listeners, "listeners");
-		this.bus = EventBusSupport.getDefault(config).getBus();
-		this.listeners = listeners;
-		// Init subscribers
+	public ScmEventSubscriber(@NotNull RefreshWatcher watcher, @Nullable ConfigEventListener... listeners) {
+		notNullOf(watcher, "watcher");
+		this.watcher = (GenericRefreshWatcher) watcher;
+		this.support = EventBusSupport.getDefault(this.watcher.getScmConfig().getEventThreads());
+		this.listeners = wrapEventListeners(listeners);
 		initEventSubscribers();
 	}
 
@@ -78,19 +81,34 @@ public class ScmEventSubscriber {
 		}
 	}
 
-	@Subscribe
-	@AllowConcurrentEvents
-	public void onNext(RefreshNextEvent event) {
-		for (ConfigEventListener l : listeners) {
-			l.onNext(event);
+	/**
+	 * Wrap {@link ConfigEventListener}, insert to first system internal event
+	 * listeners.
+	 * 
+	 * @param listeners
+	 * @return
+	 */
+	private ConfigEventListener[] wrapEventListeners(ConfigEventListener... listeners) {
+		List<ConfigEventListener> _listeners = new ArrayList<>(4);
+
+		// Before insert internal listeners to first.
+		_listeners.add(new ReportingConfigListener(watcher));
+
+		// After addition listeners.
+		if (nonNull(listeners)) {
+			for (ConfigEventListener l : listeners) {
+				_listeners.add(l);
+			}
 		}
+
+		return _listeners.toArray(new ConfigEventListener[] {});
 	}
 
 	/**
 	 * Initialization event subscribers.
 	 */
 	private void initEventSubscribers() {
-		this.bus.register(this);
+		this.support.register(this);
 	}
 
 }
