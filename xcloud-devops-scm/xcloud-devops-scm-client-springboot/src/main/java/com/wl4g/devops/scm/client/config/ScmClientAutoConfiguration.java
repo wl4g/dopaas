@@ -16,12 +16,8 @@
 package com.wl4g.devops.scm.client.config;
 
 import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
-import com.wl4g.devops.scm.annotation.ScmEndpoint;
-import com.wl4g.devops.scm.client.console.RefreshableConfigConsole;
-import com.wl4g.devops.scm.client.handler.locator.ScmPropertySourceLocator;
-import com.wl4g.devops.scm.client.handler.refresh.ScmContextRefresher;
-import com.wl4g.devops.scm.client.handler.refresh.ScmLoggingRebinder;
-import com.wl4g.devops.scm.client.handler.watch.DefaultRefreshWatcher;
+import com.wl4g.devops.scm.client.refresh.ScmContextRefresher;
+import com.wl4g.devops.scm.client.refresh.ScmLoggingRebinder;
 
 import static com.wl4g.devops.scm.common.config.SCMConstants.URI_C_BASE;
 
@@ -34,7 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
 /**
- * SCM refresh auto configuration.</br>
+ * SCM refresher auto configuration.</br>
  * Note: Spring Cloud loads bootstrap.yml preferentially, which means that other
  * configurationfiles are not # loaded at initialization, so configurations
  * other than bootstrap.yml cannot be used at initialization.
@@ -46,10 +42,6 @@ import org.springframework.core.env.Environment;
  *        {@link de.codecentric.boot.admin.config.AdminServerWebConfiguration}}
  */
 public class ScmClientAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
-
-	//
-	// --- Refresher's. ---
-	//
 
 	/**
 	 * See:{@link RefreshAutoConfiguration#contextRefresher()}
@@ -75,24 +67,11 @@ public class ScmClientAutoConfiguration extends OptionalPrefixControllerAutoConf
 		return new ScmLoggingRebinder();
 	}
 
-	@Bean
-	public DefaultRefreshWatcher defaultRefreshWatcher(ScmClientProperties config, ScmContextRefresher refresher,
-			ScmPropertySourceLocator locator) {
-		return new DefaultRefreshWatcher(config, refresher, locator);
-	}
-
-	//
 	// --- Endpoint's. ---
-	//
 
-	@Bean
-	public RefreshableConfigConsole scmClientEndpoint(Environment environment, ScmContextRefresher refresher) {
-		return new RefreshableConfigConsole(environment, refresher);
-	}
-
-	@Bean
-	public PrefixHandlerMapping scmClientEndpointPrefixHandlerMapping() {
-		return super.newPrefixHandlerMapping(URI_C_BASE, ScmEndpoint.class);
-	}
+	// @Bean
+	// public PrefixHandlerMapping scmClientEndpointPrefixHandlerMapping() {
+	// return super.newPrefixHandlerMapping(URI_C_BASE, ScmEndpoint.class);
+	// }
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.refresh.internal;
+package com.wl4g.devops.scm.client.watch.internal;
 
 import static com.github.rholder.retry.StopStrategies.neverStop;
 import static com.github.rholder.retry.WaitStrategies.randomWait;
@@ -36,8 +36,8 @@ import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.CheckpointConfigEvent;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.event.RefreshConfigEvent;
-import com.wl4g.devops.scm.client.refresh.GenericRefreshWatcher;
-import com.wl4g.devops.scm.client.refresh.RefreshWatcher;
+import com.wl4g.devops.scm.client.watch.GenericRefreshWatcher;
+import com.wl4g.devops.scm.client.watch.RefreshWatcher;
 import com.wl4g.devops.scm.common.command.ReportChangedRequest.ChangedRecord;
 
 /**

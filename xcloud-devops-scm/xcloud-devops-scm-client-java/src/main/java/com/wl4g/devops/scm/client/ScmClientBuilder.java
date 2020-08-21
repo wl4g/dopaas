@@ -16,13 +16,18 @@
 package com.wl4g.devops.scm.client;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
+import org.apache.commons.beanutils.BeanUtilsBean2;
 
 import com.wl4g.devops.scm.client.config.ConfCommType;
+import static com.wl4g.devops.scm.client.config.ConfCommType.*;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.console.RefreshableConfigConsole;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.repository.InMemoryRefreshConfigRepository;
 import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
+import com.wl4g.devops.scm.client.watch.RefreshWatcher;
 import com.wl4g.devops.scm.common.exception.ScmException;
 import com.wl4g.shell.core.EmbeddedShellServerBuilder;
 import com.wl4g.shell.core.handler.EmbeddedShellServer;
@@ -46,6 +51,9 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	/** {@link RefreshConfigRepository} */
 	private RefreshConfigRepository repository = new InMemoryRefreshConfigRepository();
 
+	/** Enable refreshable console for {@link RefreshableConfigConsole} */
+	private boolean enableRefreshableConsole = false;
+
 	/** {@link EmbeddedShellServer} */
 	private EmbeddedShellServer shellServer;
 
@@ -56,6 +64,22 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	 */
 	public static ScmClientBuilder newBuilder() {
 		return new ScmClientBuilder();
+	}
+
+	/**
+	 * Sets SCM client configuration of {@link ScmClientProperties#HLP}
+	 * 
+	 * @return
+	 */
+	public ScmClientBuilder withConfiguration(ScmClientProperties<?> config) {
+		if (nonNull(config)) {
+			try {
+				BeanUtilsBean2.getInstance().copyProperties(config, this);
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
+			}
+		}
+		return this;
 	}
 
 	/**
@@ -100,15 +124,7 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	 * @return
 	 */
 	public ScmClientBuilder enableRefreshableConsole() {
-		try {
-			this.shellServer = EmbeddedShellServerBuilder.newBuilder()
-					.withAppName("SCM Client Refreshable Console")
-					.register(new RefreshableConfigConsole())
-					.build();
-			this.shellServer.start();
-		} catch (Exception e) {
-			throw new ScmException(e);
-		}
+		this.enableRefreshableConsole = true;
 		return this;
 	}
 
@@ -118,13 +134,41 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	 * @return
 	 */
 	public ScmClient build() {
-		switch (commType) {
-		case HLP:
-			return new HlpScmClient(this, repository, listeners);
-		case RPC:
-			return new RpcScmClient(this, repository, listeners);
-		default:
+		ScmClient client = null;
+
+		if (commType == HLP) {
+			client = new HlpScmClient(this, repository, listeners);
+		} else if (commType == RPC) {
+			client = new RpcScmClient(this, repository, listeners);
+		} else {
 			throw new Error("shouldn't be here");
+		}
+
+		// Start console
+		if (enableRefreshableConsole) {
+			startRefreshableConsole(((GenericScmClient) client).getWatcher());
+		}
+
+		return client;
+	}
+
+	/**
+	 * Enable startup refreshable configuration console.
+	 * 
+	 * @param watcher
+	 */
+	public void startRefreshableConsole(RefreshWatcher watcher) {
+		try {
+			String consolePrompt = getConsolePrompt();
+			if (isBlank(consolePrompt)) {
+				consolePrompt = getClusterName();
+			}
+
+			this.shellServer = EmbeddedShellServerBuilder.newBuilder().withAppName(consolePrompt)
+					.register(new RefreshableConfigConsole(watcher)).build();
+			this.shellServer.start();
+		} catch (Exception e) {
+			throw new ScmException(e);
 		}
 	}
 

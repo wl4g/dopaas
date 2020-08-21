@@ -108,6 +108,9 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 */
 	private int eventThreads = DEF_EVENT_THREADS;
 
+	/** SCM client console prompt. */
+	private String consolePrompt;
+
 	/**
 	 * Refresh name-space(configuration filename)</br>
 	 * SCM server publishing must be consistent with this configuration or the
@@ -139,10 +142,10 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		super();
 	}
 
-	public ScmClientProperties(String clusterName, String baseUri, InetProperties inet, List<String> namespaces) {
+	public ScmClientProperties(String clusterName, String baseUri, InetProperties inet, List<String> profiles) {
 		this(clusterName, DEF_SERVICEID, baseUri, inet, DEF_LONGPOLLING_MIN_DELAY_MS, DEF_LONGPOLLING_MAX_DELAY_MS,
 				DEF_SAFE_REFRESH_DELAY_MS, DEF_RETRY_REPORTING_MIN_DELAY_MS, DEF_RETRY_REPORTING_MAX_DELAY_MS, -1,
-				DEF_EVENT_THREADS, namespaces, null, null, null);
+				DEF_EVENT_THREADS, profiles, null, null, null, null);
 	}
 
 	/**
@@ -168,7 +171,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 * @param safeRefreshProtectDelay
 	 *            Frequency interval protection mechanism to control refresh
 	 *            failure too fast (ms).
-	 * @param namespaces
+	 * @param profiles
 	 *            Refresh name-space(configuration filename), SCM server
 	 *            publishing must be consistent with this configuration or the
 	 *            refresh configuration will fail.(Accurate matching)
@@ -180,8 +183,8 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	public ScmClientProperties(@Nonnull String clusterName, @NotBlank String serviceId, @NotBlank String baseUri,
 			@NotNull InetProperties inet, long longPollingMinDelay, long longPollingMaxDelay, long safeRefreshProtectDelay,
 			long retryReportingMinDelay, long retryReportingMaxDelay, long retryReportingFastFailThreshold, int asyncEventThreads,
-			@Nonnull List<String> namespaces, @Nullable Map<String, String> headers, @Deprecated InetHolder ignore0,
-			@Deprecated String ignore1) {
+			@Nonnull List<String> profiles, @Nullable String consolePrompt, @Nullable Map<String, String> headers,
+			@Deprecated InetHolder ignore0, @Deprecated String ignore1) {
 		hasTextOf(clusterName, "clusterName");
 		hasTextOf(serviceId, "serviceId");
 		hasTextOf(baseUri, "baseUri");
@@ -193,7 +196,8 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		isTrue(retryReportingMaxDelay > retryReportingMinDelay, "retryReportingMaxDelay>retryReportingMinDelay(%s)",
 				retryReportingMinDelay);
 		isTrueOf(asyncEventThreads > 0, "asyncEventThreads>0");
-		notEmptyOf(namespaces, "namespaces");
+		notEmptyOf(profiles, "profiles");
+		hasTextOf(consolePrompt, "consolePrompt");
 		this.clusterName = clusterName;
 		this.serviceId = serviceId;
 		this.baseUri = baseUri;
@@ -205,7 +209,8 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		this.retryReportingMaxDelay = retryReportingMaxDelay;
 		this.retryReportingFastFailThreshold = retryReportingFastFailThreshold;
 		this.eventThreads = asyncEventThreads;
-		this.profiles = namespaces;
+		this.profiles = profiles;
+		this.consolePrompt = consolePrompt;
 		this.headers = headers;
 	}
 
@@ -279,8 +284,8 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		return (T) this;
 	}
 
-	public T withNamespaces(List<String> namespaces) {
-		this.profiles = namespaces;
+	public T withProfiles(List<String> profiles) {
+		this.profiles = profiles;
 		return (T) this;
 	}
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.refresh;
+package com.wl4g.devops.scm.client.watch;
 
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.codec.CodecSource;
@@ -38,6 +38,7 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.lang.ThreadUtils2.sleep;
 import static com.wl4g.devops.scm.common.config.SCMConstants.*;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.nonNull;
 
@@ -161,6 +162,9 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 			// Print configuration sources
 			printConfigSources(source);
 
+			// Resolve configuration sources
+			resolvesCipherSource(source);
+
 			// Addition refresh config source.
 			repository.saveReleaseConfig(source);
 
@@ -189,7 +193,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 
 		for (IniPropertySource ps : source.getPropertySources()) {
 			ps.getSource().forEach((key, value) -> {
-				String cipher = String.valueOf(value);
+				String cipher = valueOf(value);
 				if (cipher.startsWith(CIPHER_PREFIX)) {
 					try {
 						// TODO using dynamic cipherKey??

@@ -27,9 +27,9 @@ import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.components.common.eventbus.EventBusSupport;
-import com.wl4g.devops.scm.client.refresh.GenericRefreshWatcher;
-import com.wl4g.devops.scm.client.refresh.RefreshWatcher;
-import com.wl4g.devops.scm.client.refresh.internal.ReportingConfigListener;
+import com.wl4g.devops.scm.client.watch.GenericRefreshWatcher;
+import com.wl4g.devops.scm.client.watch.RefreshWatcher;
+import com.wl4g.devops.scm.client.watch.internal.ReportingConfigListener;
 
 /**
  * {@link ScmEventSubscriber}
