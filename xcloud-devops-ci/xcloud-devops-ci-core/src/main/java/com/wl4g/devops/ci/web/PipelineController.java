@@ -17,6 +17,7 @@ package com.wl4g.devops.ci.web;
 
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.core.bean.ci.ClusterExtension;
 import com.wl4g.components.core.bean.ci.PipeStepBuilding;
 import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.components.core.web.BaseController;
@@ -26,15 +27,14 @@ import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
 import com.wl4g.devops.ci.service.PipelineService;
 import com.wl4g.devops.page.PageModel;
-
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 
 /**
  * Task controller
@@ -58,7 +58,7 @@ public class PipelineController extends BaseController {
 
 	/**
 	 * Page List
-	 * 
+	 *
 	 * @param customPage
 	 * @param id
 	 * @param taskName
@@ -79,7 +79,7 @@ public class PipelineController extends BaseController {
 
 	/**
 	 * Save
-	 * 
+	 *
 	 * @param task
 	 * @param instance
 	 * @return
@@ -95,7 +95,7 @@ public class PipelineController extends BaseController {
 
 	/**
 	 * Detail by id
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -110,7 +110,7 @@ public class PipelineController extends BaseController {
 
 	/**
 	 * Delete by id
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -124,7 +124,7 @@ public class PipelineController extends BaseController {
 
 	/**
 	 * Check the form
-	 * 
+	 *
 	 * @param task
 	 */
 	private void checkPipeline(Pipeline pipeline) {
@@ -135,7 +135,7 @@ public class PipelineController extends BaseController {
 
 	/**
 	 * Get List By appClusterId
-	 * 
+	 *
 	 * @param appClusterId
 	 */
 	@RequestMapping(value = "/getListByAppClusterId")
@@ -148,7 +148,7 @@ public class PipelineController extends BaseController {
 
 	/**
 	 * create Task History and run Task
-	 * 
+	 *
 	 * @param taskId
 	 */
 	/*@RequestMapping(value = "/create")
@@ -187,6 +187,20 @@ public class PipelineController extends BaseController {
 	public RespBase<?> getForSelect(String environment) {
 		RespBase<Object> resp = RespBase.create();
 		resp.setData(pipelineService.getForSelect(environment));
+		return resp;
+	}
+
+	@RequestMapping(value = "/clusterExtensionList")
+	public RespBase<?> clusterExtensionList(PageModel pm, String clusterName) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(pipelineService.clusterExtensionList(pm, clusterName));
+		return resp;
+	}
+
+	@RequestMapping(value = "/saveClusterExtension")
+	public RespBase<?> saveClusterExtension(ClusterExtension clusterExtension) {
+		RespBase<Object> resp = RespBase.create();
+		pipelineService.saveClusterExtension(clusterExtension);
 		return resp;
 	}
 

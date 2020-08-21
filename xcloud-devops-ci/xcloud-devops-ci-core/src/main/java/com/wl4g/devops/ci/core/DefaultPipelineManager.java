@@ -57,6 +57,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.io.FileIOUtils.*;
@@ -123,6 +124,8 @@ public class DefaultPipelineManager implements PipelineManager {
     private AppEnvironmentDao appEnvironmentDao;
     @Autowired
     private DockerRepositoryDao dockerRepositoryDao;
+    @Autowired
+    private ClusterExtensionDao clusterExtensionDao;
 
     @Override
     public void runPipeline(NewParameter param, PipelineModel pipelineModel) {
@@ -178,8 +181,19 @@ public class DefaultPipelineManager implements PipelineManager {
             return;
         }
 
-
         for(String project : projects){
+
+            //User default
+            ClusterExtension clusterExtension = clusterExtensionDao.selectByClusterName(project);
+            if(Objects.nonNull(clusterExtension)){
+                if(StringUtils.isBlank(env) && StringUtils.isNotBlank(clusterExtension.getDefaultEnv())){
+                    env = clusterExtension.getDefaultEnv();
+                }
+                if(StringUtils.isBlank(actionControl.getBranch()) && StringUtils.isNotBlank(clusterExtension.getDefaultBranch())){
+                    actionControl.setBranch(clusterExtension.getDefaultBranch());
+                }
+            }
+
             List<Pipeline> list = pipelineDao.list(null, null, null, null, env, project);
             if(CollectionUtils2.isEmpty(list)){
                 continue;
@@ -190,6 +204,8 @@ public class DefaultPipelineManager implements PipelineManager {
             hookParameter.setPipeId(pipeline.getId());
             hookParameter.setRemark("hook");
             PipelineHistory pipelineHistory = pipelineHistoryService.createPipelineHistory(hookParameter);
+
+
 
             // Execution pipeline job.
             doExecutePipeline(pipelineHistory.getId(), getPipelineProvider(pipelineHistory, pipelineModel,actionControl));
