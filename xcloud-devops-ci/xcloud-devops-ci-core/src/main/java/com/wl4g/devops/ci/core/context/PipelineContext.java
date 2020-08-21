@@ -19,6 +19,7 @@ import com.wl4g.components.core.bean.ci.*;
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppEnvironment;
 import com.wl4g.components.core.bean.erm.AppInstance;
+import com.wl4g.devops.ci.bean.ActionControl;
 import com.wl4g.devops.ci.bean.PipelineModel;
 
 import java.util.List;
@@ -73,6 +74,11 @@ public abstract interface PipelineContext {
 		}
 
 		@Override
+		public ActionControl getActionControl() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
 		public PipelineHistory getPipelineHistory() {
 			throw new UnsupportedOperationException();
 		}
@@ -96,6 +102,8 @@ public abstract interface PipelineContext {
 		public AppCluster getAppCluster() {
 			throw new UnsupportedOperationException();
 		}
+
+
 	};
 
 	/**
@@ -151,5 +159,7 @@ public abstract interface PipelineContext {
 	PipeStepBuilding getPipeStepBuilding();
 
 	AppEnvironment getEnvironment();
+
+	ActionControl getActionControl();
 
 }

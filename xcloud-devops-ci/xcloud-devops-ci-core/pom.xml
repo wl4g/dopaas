@@ -40,6 +40,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-ci-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-shell-springboot</artifactId>
 		</dependency>
 		<dependency>

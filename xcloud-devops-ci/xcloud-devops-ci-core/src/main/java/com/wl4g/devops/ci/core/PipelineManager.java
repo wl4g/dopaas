@@ -17,9 +17,9 @@ package com.wl4g.devops.ci.core;
 
 import com.wl4g.components.common.io.FileIOUtils.ReadResult;
 import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.ci.core.param.HookParameter;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.core.param.RollbackParameter;
+import com.wl4g.devops.ci.utils.HookCommandHolder;
 
 /**
  * CICD pipeline entry management.
@@ -49,7 +49,7 @@ public abstract interface PipelineManager {
 	 * 
 	 * @param param
 	 */
-	void hookPipeline(HookParameter param);
+	void hookPipeline(HookCommandHolder.HookCommand hookCommand);
 
 	/**
 	 * Reader pipeline task building logs.
