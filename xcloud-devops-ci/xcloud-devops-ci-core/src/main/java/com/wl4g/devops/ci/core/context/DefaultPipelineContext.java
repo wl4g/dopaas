@@ -19,6 +19,7 @@ import com.wl4g.components.core.bean.ci.*;
 import com.wl4g.components.core.bean.erm.AppCluster;
 import com.wl4g.components.core.bean.erm.AppEnvironment;
 import com.wl4g.components.core.bean.erm.AppInstance;
+import com.wl4g.devops.ci.bean.ActionControl;
 import com.wl4g.devops.ci.bean.PipelineModel;
 
 import java.util.List;
@@ -49,11 +50,12 @@ public class DefaultPipelineContext implements PipelineContext {
 	final private PipeStepNotification pipeStepNotification;
 	final private PipeStepBuilding pipeStepBuilding;
 	final private AppEnvironment environment;
+	final private ActionControl actionControl;
 
 	public DefaultPipelineContext(Project project, String projectSourceDir, AppCluster appCluster, List<AppInstance> instances,
-			PipelineHistory pipelineHistory, List<PipelineHistoryInstance> pipelineHistoryInstances, PipelineModel pipelineModel,
-			PipeStepInstanceCommand pipeStepInstanceCommand, Pipeline pipeline, PipeStepNotification pipeStepNotification,
-			PipeStepBuilding pipeStepBuilding, AppEnvironment environment) {
+								  PipelineHistory pipelineHistory, List<PipelineHistoryInstance> pipelineHistoryInstances, PipelineModel pipelineModel,
+								  PipeStepInstanceCommand pipeStepInstanceCommand, Pipeline pipeline, PipeStepNotification pipeStepNotification,
+								  PipeStepBuilding pipeStepBuilding, AppEnvironment environment, ActionControl actionControl) {
 		notNull(project, "project must not be null");
 		hasText(projectSourceDir, "projectSourceDir must not be empty");
 		notNull(appCluster, "AppCluster must not be empty");
@@ -71,6 +73,7 @@ public class DefaultPipelineContext implements PipelineContext {
 		this.pipeStepNotification = pipeStepNotification;
 		this.pipeStepBuilding = pipeStepBuilding;
 		this.environment = environment;
+		this.actionControl = actionControl;
 	}
 
 	@Override
@@ -129,5 +132,9 @@ public class DefaultPipelineContext implements PipelineContext {
 	@Override
 	public AppEnvironment getEnvironment() {
 		return environment;
+	}
+
+	public ActionControl getActionControl() {
+		return actionControl;
 	}
 }

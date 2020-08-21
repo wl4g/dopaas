@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.ci.service;
 
+import com.wl4g.components.core.bean.ci.ClusterExtension;
 import com.wl4g.components.core.bean.ci.PipeStepBuilding;
 import com.wl4g.components.core.bean.ci.Pipeline;
 import com.wl4g.devops.page.PageModel;
@@ -40,5 +41,9 @@ public interface PipelineService {
 	PipeStepBuilding getPipeStepBuilding(Integer clusterId, Integer pipeId, Integer refType);
 
 	List<Pipeline> getForSelect(String environment);
+
+	PageModel clusterExtensionList(PageModel pm, String clusterName);
+
+	void saveClusterExtension(ClusterExtension clusterExtension);
 
 }

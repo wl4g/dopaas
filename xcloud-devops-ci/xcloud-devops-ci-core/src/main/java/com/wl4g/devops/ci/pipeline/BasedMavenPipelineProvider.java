@@ -17,11 +17,13 @@ package com.wl4g.devops.ci.pipeline;
 
 import com.wl4g.components.support.cli.command.DestroableCommand;
 import com.wl4g.components.support.cli.command.LocalDestroableCommand;
+import com.wl4g.devops.ci.bean.ActionControl;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 
-import static java.lang.String.format;
-
 import java.io.File;
+import java.util.Objects;
+
+import static java.lang.String.format;
 
 /**
  * Based MAVEN pipeline provider.
@@ -36,6 +38,9 @@ public abstract class BasedMavenPipelineProvider extends RestorableDeployPipelin
 	 * Maven default build command.
 	 */
 	final public static String DEFAULT_MVN_CMD = "mvn -f %s/pom.xml -U clean install -Dmaven.test.skip=true -DskipTests -Dmaven.compile.fork=true -T 2C";
+	final public static String DEFAULT_MVN_CMD_TEST = "mvn -f %s/pom.xml -U clean install -Dmaven.compile.fork=true -T 2C";
+
+
 
 	public BasedMavenPipelineProvider(PipelineContext context) {
 		super(context);
@@ -55,7 +60,13 @@ public abstract class BasedMavenPipelineProvider extends RestorableDeployPipelin
 	 */
 	@Override
 	protected void doBuildWithDefaultCommand(String projectDir, File jobLogFile, Integer taskId) throws Exception {
+
 		String defaultMvnBuildCmd = format(DEFAULT_MVN_CMD, projectDir);
+		ActionControl actionControl = getContext().getActionControl();
+		if(Objects.nonNull(actionControl) && actionControl.isTest()){
+			defaultMvnBuildCmd = format(DEFAULT_MVN_CMD_TEST, projectDir);
+		}
+
 		log.info(writeBuildLog("Building with maven default command: %s", defaultMvnBuildCmd));
 
 		// TODO timeoutMs/pwdDir?

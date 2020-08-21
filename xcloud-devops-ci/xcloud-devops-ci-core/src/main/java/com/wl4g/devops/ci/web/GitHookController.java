@@ -15,18 +15,18 @@
  */
 package com.wl4g.devops.ci.web;
 
-import com.wl4g.components.core.bean.ci.model.HookInfo;
 import com.wl4g.components.core.web.BaseController;
-import com.wl4g.devops.ci.bean.PipelineModel;
+import com.wl4g.devops.ci.common.hook.HookInfo;
 import com.wl4g.devops.ci.core.PipelineManager;
-import com.wl4g.devops.ci.core.param.HookParameter;
-import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.ci.flow.FlowManager;
-
+import com.wl4g.devops.ci.utils.HookCommandHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * GIT hook API controller.
@@ -47,26 +47,43 @@ public class GitHookController extends BaseController {
 
 	/**
 	 * Receive GITLAB hook.
-	 * 
+	 *
 	 * @param hook
 	 * @throws Exception
 	 */
 	@RequestMapping("gitlab")
 	public void gitlabHook(@RequestBody HookInfo hook) throws Exception {
-		if (log.isInfoEnabled()) {
-			log.info("Gitlab hook receive <= {}", hook);
+
+		//HookInfoGitlab a  = JacksonUtils.parseJSON(hook,HookInfoGitlab.class);
+		log.info("Gitlab hook receive <= {}", hook);
+
+		HookCommandHolder.HookCommand hookCommand = null;
+		List<HookInfo.Commits> commits = hook.getCommits();
+		for(HookInfo.Commits commit : commits){
+			hookCommand = HookCommandHolder.parse(commit.getMessage());
+			if(Objects.nonNull(hookCommand)){
+				break;
+			}
 		}
-		String branchName = hook.getBranchName();
-		// String url = hook.getRepository().getGitHttpUrl();
-		String projectName = hook.getRepository().getName();
-		pipeliner.hookPipeline(new HookParameter(projectName, branchName));
+		if(Objects.isNull(hookCommand)){
+			return;
+		}
+
+		if(hookCommand instanceof HookCommandHolder.DeployCommand){
+			HookCommandHolder.DeployCommand deployCommand = (HookCommandHolder.DeployCommand)hookCommand;
+			System.out.println(deployCommand.getEnv());
+		}
+
+		//String branchName = hook.getBranchName();
+		//String projectName = hook.getRepository().getName();
+		pipeliner.hookPipeline(hookCommand);
 	}
 
-	@RequestMapping(value = "/run")
+	/*@RequestMapping(value = "/run")
 	public void create(Integer taskId) {
 		PipelineModel pipelineModel = flowManager.buildPipeline(taskId);
 		pipeliner.runPipeline(new NewParameter(taskId, "create by hook", null, null, null),pipelineModel);
-	}
+	}*/
 
 
 
