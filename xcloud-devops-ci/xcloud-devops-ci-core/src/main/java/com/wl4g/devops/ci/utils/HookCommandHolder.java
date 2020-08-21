@@ -206,9 +206,9 @@ public class HookCommandHolder {
     public static enum CommandType {
 
         PROJECTS("p", "projects", null, "which projects need deploy"),
-        BRANCH("b", "branch", "dev", "which branch need deploy"),
-        ENV("e", "env", "fat", "deploy environment"),
-        TEST("t", "test", "false", "is projects need test");
+        BRANCH("b", "branch", "", "which branch need deploy"),
+        ENV("e", "env", "", "deploy environment"),
+        TEST("t", "test", "", "is projects need test");
 
         private String opt;
         private String longOpt;
