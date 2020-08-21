@@ -13,30 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client;
+package com.wl4g.devops.scm.client.refresh;
 
-import com.wl4g.devops.scm.client.config.ScmClientProperties;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
-import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
-import com.wl4g.devops.scm.client.watch.LongPollingRefreshWatcher;
+import com.wl4g.devops.scm.client.event.RefreshConfigEvent;
+import com.wl4g.devops.scm.client.event.RefreshConfigEvent.RefreshContext;
 
 /**
- * {@link HlpScmClient}
+ * {@link SpringRefreshConfigEventListener}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-08-18
+ * @version v1.0 2020-08-21
  * @since
  */
-class HlpScmClient extends GenericScmClient {
-
-	public HlpScmClient(ScmClientProperties<?> config, RefreshConfigRepository repository, ConfigEventListener... listeners) {
-		super(new LongPollingRefreshWatcher(config, repository, listeners));
-	}
+public class SpringRefreshConfigEventListener implements ConfigEventListener {
 
 	@Override
-	public void start() throws Exception {
-		log.info("Starting scm hlp client watcher ...");
-		watcher.start();
+	public void onRefresh(RefreshConfigEvent event) {
+		System.out.println("On refresh configuration...");
+		RefreshContext context = event.getSource();
+		System.out.println("Refresh property: " + context.toString());
+
+		// Do refreshing
+		// ...
+
+		// Commit changed keys
+		Set<String> changeds = new HashSet<>();
+		changeds.add("myconfig.task.threads");
+		context.commitChanged(changeds);
 	}
 
 }

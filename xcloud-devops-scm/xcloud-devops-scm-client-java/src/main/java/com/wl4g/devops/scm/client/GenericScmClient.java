@@ -21,8 +21,8 @@ import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import java.io.IOException;
 
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.devops.scm.client.refresh.GenericRefreshWatcher;
-import com.wl4g.devops.scm.client.refresh.RefreshWatcher;
+import com.wl4g.devops.scm.client.watch.GenericRefreshWatcher;
+import com.wl4g.devops.scm.client.watch.RefreshWatcher;
 
 /**
  * {@link GenericScmClient}
@@ -31,7 +31,7 @@ import com.wl4g.devops.scm.client.refresh.RefreshWatcher;
  * @version v1.0 2020-08-10
  * @since
  */
-abstract class GenericScmClient implements ScmClient {
+public abstract class GenericScmClient implements ScmClient {
 
 	protected final SmartLogger log = getLogger(getClass());
 

@@ -15,12 +15,6 @@
  */
 package com.wl4g.devops.scm.common.command;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.wl4g.components.common.serialize.JacksonUtils;
-import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigNode;
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.IniPropertySource;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,14 +22,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notEmpty;
 import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +49,7 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 	/** {@link ConfigPropertySources} */
 	@NotNull
 	@NotEmpty
-	private List<IniPropertySource> propertySources = new ArrayList<>();
+	private List<PlaintextPropertySource> propertySources = new ArrayList<>();
 
 	public ReleaseConfigInfo() {
 		super();
@@ -78,11 +68,11 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 		this.nodes = nodes;
 	}
 
-	public List<IniPropertySource> getPropertySources() {
+	public List<PlaintextPropertySource> getPropertySources() {
 		return propertySources;
 	}
 
-	public void setPropertySources(List<IniPropertySource> propertySources) {
+	public void setPropertySources(List<PlaintextPropertySource> propertySources) {
 		if (propertySources != null) {
 			this.propertySources = propertySources;
 		}
@@ -101,15 +91,6 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 			notNull(ps, "Invalid release propertySources");
 			ps.validate();
 		});
-	}
-
-	public CompositePropertySource convertCompositePropertySource(String sourceName) {
-		CompositePropertySource composite = new CompositePropertySource(sourceName);
-		for (IniPropertySource ps : getPropertySources()) {
-			// See:org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration
-			composite.addFirstPropertySource(ps.convertMapPropertySource());
-		}
-		return composite;
 	}
 
 	/**
@@ -157,6 +138,14 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 			return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 		}
 
+		/**
+		 * Validation
+		 */
+		public void validate() {
+			hasTextOf(profile, "profile");
+			hasTextOf(content, "content");
+		}
+
 	}
 
 	/**
@@ -181,7 +170,7 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 	public static class IniPropertySource extends PlaintextPropertySource {
 
 		/** Configuration source typeof map */
-		private final Map<String, Object> source;
+		private Map<String, Object> source;
 
 		public IniPropertySource() {
 			super();
@@ -207,7 +196,7 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 	public static class XmlPropertySource extends PlaintextPropertySource {
 
 		/** Configuration source typeof map */
-		private final XmlNode root;
+		private XmlNode root;
 
 		public XmlPropertySource() {
 			super();

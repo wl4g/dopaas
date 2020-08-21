@@ -15,12 +15,13 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import com.wl4g.devops.scm.client.handler.locator.BootstrapScmPropertySourceLocator;
-import com.wl4g.devops.scm.client.handler.locator.ScmPropertySourceLocator;
-import com.wl4g.devops.scm.client.utils.NodeHolder;
+import com.wl4g.devops.scm.client.ScmClient;
+import com.wl4g.devops.scm.client.ScmClientBuilder;
+import com.wl4g.devops.scm.client.locator.BootstrapScmPropertySourceLocator;
+import com.wl4g.devops.scm.client.refresh.SpringRefreshConfigEventListener;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
 
 /**
  * SCM bootstrap configuration.</br>
@@ -36,23 +37,27 @@ import org.springframework.core.env.Environment;
  */
 public class ScmBootstrapAutoConfiguration {
 
-	//
-	// SCM foundation's
-	//
-
+	@ConfigurationProperties(prefix = "spring.cloud.devops.scm.client")
 	@Bean
-	public ScmClientProperties scmClientProperties() {
-		return new ScmClientProperties();
+	public ScmClientProperties<?> scmClientProperties() {
+		return new ScmClientProperties<>();
 	}
 
 	@Bean
-	public NodeHolder instanceHolder(Environment environment) {
-		return new NodeHolder(environment, scmClientProperties());
+	public SpringRefreshConfigEventListener springRefreshConfigEventListener() {
+		return new SpringRefreshConfigEventListener();
 	}
 
 	@Bean
-	public ScmPropertySourceLocator scmPropertySourceLocator(ScmClientProperties config, NodeHolder info) {
-		return new BootstrapScmPropertySourceLocator(config, info);
+	public ScmClient defaultScmClient(ScmClientProperties<?> config, SpringRefreshConfigEventListener listener) {
+		ScmClient client = ScmClientBuilder.newBuilder().withConfiguration(config).enableRefreshableConsole()
+				.withListeners(listener).build();
+		return client;
+	}
+
+	@Bean
+	public BootstrapScmPropertySourceLocator bootstrapScmPropertySourceLocator(ScmClient client) {
+		return new BootstrapScmPropertySourceLocator(client);
 	}
 
 }

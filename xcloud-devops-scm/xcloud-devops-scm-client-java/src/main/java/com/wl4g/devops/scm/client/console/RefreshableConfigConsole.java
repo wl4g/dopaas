@@ -15,9 +15,11 @@
  */
 package com.wl4g.devops.scm.client.console;
 
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 
 import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.devops.scm.client.watch.RefreshWatcher;
 import com.wl4g.shell.common.annotation.ShellMethod;
 import com.wl4g.shell.common.annotation.ShellOption;
 
@@ -33,7 +35,16 @@ public class RefreshableConfigConsole {
 
 	protected final SmartLogger log = getLogger(getClass());
 
+	/** {@link RefreshWatcher} */
+	protected final RefreshWatcher watcher;
+
+	public RefreshableConfigConsole(RefreshWatcher watcher) {
+		notNullOf(watcher, "watcher");
+		this.watcher = watcher;
+	}
+
 	/**
+	 * Refresh configuration.
 	 * 
 	 * @param force
 	 */
