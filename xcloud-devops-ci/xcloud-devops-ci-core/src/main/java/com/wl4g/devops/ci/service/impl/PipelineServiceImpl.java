@@ -80,10 +80,13 @@ public class PipelineServiceImpl implements PipelineService {
 	@Autowired
 	private PipeStepDeployDao pipeStepDeployDao;
 
+	@Autowired
+	private ClusterExtensionDao clusterExtensionDao;
+
 	@Override
 	public PageModel list(PageModel pm, String pipeName, String providerKind, String environment) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment));
+		pm.setRecords(pipelineDao.list(getRequestOrganizationCodes(), null, pipeName, providerKind, environment,null));
 		return pm;
 	}
 
@@ -358,11 +361,31 @@ public class PipelineServiceImpl implements PipelineService {
 
 	@Override
 	public List<Pipeline> getForSelect(String environment) {
-		return pipelineDao.list(getRequestOrganizationCodes(), null, null, null, environment);
+		return pipelineDao.list(getRequestOrganizationCodes(), null, null, null, environment,null);
+	}
+
+	@Override
+	public PageModel clusterExtensionList(PageModel pm, String clusterName) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(clusterExtensionDao.list(clusterName));
+		return pm;
+	}
+
+	@Override
+	public void saveClusterExtension(ClusterExtension clusterExtension) {
+		Assert2.notNull(clusterExtension,"clusterExtension");
+		ClusterExtension clusterExtensionDb = clusterExtensionDao.selectByClusterId(clusterExtension.getClusterId());
+		if(Objects.nonNull(clusterExtensionDb)){//update
+			clusterExtensionDb.preUpdate();
+			clusterExtensionDao.updateByPrimaryKeySelective(clusterExtension);
+		}else{//insert
+			clusterExtension.preInsert();
+			clusterExtensionDao.insertSelective(clusterExtension);
+		}
 	}
 
 	private PipeStepBuildingProject getPipeStepBuildingProject(List<PipeStepBuildingProject> pipeStepBuildingProjects,
-			Integer projectId) {
+															   Integer projectId) {
 		if (isEmpty(pipeStepBuildingProjects) || isNull(projectId)) {
 			return null;
 		}
