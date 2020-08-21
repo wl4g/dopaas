@@ -16,6 +16,9 @@
 package com.wl4g.devops.scm.client.refresh;
 
 import java.io.Closeable;
+import java.util.Collection;
+
+import com.wl4g.devops.scm.common.command.ReportChangedRequest.ChangedRecord;
 
 /**
  * {@link RefreshWatcher}
@@ -32,5 +35,13 @@ public interface RefreshWatcher extends Closeable {
 	 * @throws Exception
 	 */
 	void start() throws Exception;
+
+	/**
+	 * DO reporting changed records
+	 * 
+	 * @param records
+	 * @return
+	 */
+	boolean doReporting(Collection<ChangedRecord> records);
 
 }

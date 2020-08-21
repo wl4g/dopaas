@@ -47,4 +47,14 @@ abstract class GenericScmClient implements ScmClient {
 	public void close() throws IOException {
 		this.watcher.close();
 	}
+
+	/**
+	 * Gets {@link RefreshWatcher}
+	 * 
+	 * @return
+	 */
+	public RefreshWatcher getWatcher() {
+		return watcher;
+	}
+
 }

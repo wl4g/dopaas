@@ -15,10 +15,13 @@
  */
 package com.wl4g.devops.scm;
 
-import java.io.IOException; 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.wl4g.devops.scm.client.ScmClient;
 import com.wl4g.devops.scm.client.ScmClientBuilder;
+import com.wl4g.devops.scm.client.event.RefreshConfigEvent.RefreshContext;
 
 /**
  * {@link ScmClientTests}
@@ -36,9 +39,20 @@ public class ScmClientTests {
 			.withBaseUri("http://localhost:14043")
 			.withClusterName("scmClientApp1")
 			.enableRefreshableConsole()
+			.withLongPollTimeout(6000L)
 			.withListeners(event-> {
 				System.out.println("On refresh configuration...");
-				System.out.println(event.getSource().toString());
+				RefreshContext context = event.getSource();
+				System.out.println("Refresh property: " + context.toString());
+
+				// Do refreshing
+				// ...
+
+				// Commit changed keys
+				Set<String> changeds = new HashSet<>();
+				changeds.add("myconfig.task.threads");
+				context.commitChanged(changeds);
+
 			}).build();
 
 		client.start();

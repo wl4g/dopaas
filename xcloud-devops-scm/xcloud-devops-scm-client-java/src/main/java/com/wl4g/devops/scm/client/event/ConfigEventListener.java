@@ -51,13 +51,4 @@ public interface ConfigEventListener extends EventListener {
 		// Ignore
 	}
 
-	/**
-	 * On next poll event
-	 * 
-	 * @param event
-	 */
-	default void onNext(RefreshNextEvent event) {
-		// Ignore
-	}
-
 }

@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.client.event.support;
+package com.wl4g.devops.scm.client.event;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 
 import javax.validation.constraints.NotNull;
 
 import com.github.rholder.retry.Attempt;
-import com.google.common.eventbus.EventBus;
-import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.event.CheckpointConfigEvent;
-import com.wl4g.devops.scm.client.event.RefreshConfigEvent;
-import com.wl4g.devops.scm.client.event.RefreshNextEvent;
-import com.wl4g.devops.scm.client.event.ReportingConfigEvent;
+import com.wl4g.components.common.eventbus.EventBusSupport;
+import com.wl4g.devops.scm.client.event.RefreshConfigEvent.RefreshContext;
+import com.wl4g.devops.scm.client.refresh.GenericRefreshWatcher;
+import com.wl4g.devops.scm.client.refresh.RefreshWatcher;
 import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
 
 /**
@@ -37,12 +35,16 @@ import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
  */
 public class ScmEventPublisher {
 
-	/** {@link EventBus} */
-	protected final EventBus bus;
+	/** {@link EventBusSupport} */
+	protected final EventBusSupport support;
 
-	public ScmEventPublisher(@NotNull ScmClientProperties<?> config) {
-		notNullOf(config, "config");
-		this.bus = EventBusSupport.getDefault(config).getBus();
+	/** {@link RefreshWatcher} */
+	protected final GenericRefreshWatcher watcher;
+
+	public ScmEventPublisher(@NotNull RefreshWatcher watcher) {
+		notNullOf(watcher, "watcher");
+		this.watcher = (GenericRefreshWatcher) watcher;
+		this.support = EventBusSupport.getDefault(this.watcher.getScmConfig().getEventThreads());
 	}
 
 	/**
@@ -51,7 +53,7 @@ public class ScmEventPublisher {
 	 * @param source
 	 */
 	public void publishRefreshEvent(ReleaseConfigInfo source) {
-		bus.post(new RefreshConfigEvent(source));
+		support.post(new RefreshConfigEvent(new RefreshContext(source, watcher.getRepository())));
 	}
 
 	/**
@@ -60,7 +62,7 @@ public class ScmEventPublisher {
 	 * @param source
 	 */
 	public void publishCheckpointEvent(Object source) {
-		bus.post(new CheckpointConfigEvent(source));
+		support.post(new CheckpointConfigEvent(source));
 	}
 
 	/**
@@ -69,16 +71,7 @@ public class ScmEventPublisher {
 	 * @param source
 	 */
 	public void publishReportingEvent(Attempt<?> source) {
-		bus.post(new ReportingConfigEvent(source));
-	}
-
-	/**
-	 * Publishing {@link RefreshNextEvent}.
-	 * 
-	 * @param source
-	 */
-	public void publishNextEvent(Object source) {
-		bus.post(new RefreshNextEvent(source));
+		support.post(new ReportingConfigEvent(source));
 	}
 
 }
