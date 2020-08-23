@@ -18,7 +18,7 @@ package com.wl4g.devops.scm.client.watch;
 import java.io.Closeable;
 import java.util.Collection;
 
-import com.wl4g.devops.scm.common.command.ReportChangedRequest.ChangedRecord;
+import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
 
 /**
  * {@link RefreshWatcher}

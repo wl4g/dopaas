@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.config;
 
-import static com.wl4g.devops.scm.common.config.SCMConstants.*;
+import static com.wl4g.devops.scm.common.SCMConstants.*;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

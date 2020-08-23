@@ -19,7 +19,7 @@ import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration
 import com.wl4g.devops.scm.client.refresh.ScmContextRefresher;
 import com.wl4g.devops.scm.client.refresh.ScmLoggingRebinder;
 
-import static com.wl4g.devops.scm.common.config.SCMConstants.URI_C_BASE;
+import static com.wl4g.devops.scm.common.SCMConstants.URI_C_BASE;
 
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.refresh.ContextRefresher;

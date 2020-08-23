@@ -19,8 +19,8 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.wl4g.devops.scm.common.command.FetchConfigRequest;
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
+import com.wl4g.devops.scm.common.model.FetchConfigRequest;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 
 /**
  * SCM config source server publisher api.

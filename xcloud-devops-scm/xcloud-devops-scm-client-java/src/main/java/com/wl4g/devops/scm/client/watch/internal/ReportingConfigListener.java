@@ -19,6 +19,7 @@ import static com.github.rholder.retry.StopStrategies.neverStop;
 import static com.github.rholder.retry.WaitStrategies.randomWait;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.format;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -38,7 +39,7 @@ import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.event.RefreshConfigEvent;
 import com.wl4g.devops.scm.client.watch.GenericRefreshWatcher;
 import com.wl4g.devops.scm.client.watch.RefreshWatcher;
-import com.wl4g.devops.scm.common.command.ReportChangedRequest.ChangedRecord;
+import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
 
 /**
  * {@link ReportingConfigListener}
@@ -106,8 +107,10 @@ public class ReportingConfigListener implements ConfigEventListener {
 						// Discard/cleanup after maximum attempt.(if necessary)
 						long threshold = config.getRetryReportingFastFailThreshold();
 						if (threshold > 0 && attempt.getAttemptNumber() > threshold) {
-							log.warn("Reporting retries max threshold({}), discarded refresh changed record!!!",
+							String errmsg = format("Reporting retries max threshold(%s), discarded refresh changed record!!!",
 									attempt.getAttemptNumber());
+							// throw new ReportRetriesCountOutException(errmsg);
+							log.warn(errmsg);
 							watcher.getRepository().pollChangedAll();
 						}
 						// Publishing reporting

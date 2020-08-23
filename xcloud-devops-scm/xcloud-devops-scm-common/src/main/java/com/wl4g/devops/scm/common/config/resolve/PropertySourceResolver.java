@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.scm.bean;
+package com.wl4g.devops.scm.common.config.resolve;
 
-import com.wl4g.devops.scm.common.model.GenericConfigInfo.ConfigMeta;
+/**
+ * {@link PropertySourceResolver}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020-08-20
+ * @sine v1.0.0
+ * @see
+ */
+public interface PropertySourceResolver {
 
-public class ConfigReleaseMeta extends ConfigMeta {
-	private static final long serialVersionUID = 2893186273652452191L;
-
+	
+	
 }

@@ -24,7 +24,7 @@ import com.wl4g.components.common.eventbus.EventBusSupport;
 import com.wl4g.devops.scm.client.event.RefreshConfigEvent.RefreshContext;
 import com.wl4g.devops.scm.client.watch.GenericRefreshWatcher;
 import com.wl4g.devops.scm.client.watch.RefreshWatcher;
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 
 /**
  * {@link ScmEventPublisher}

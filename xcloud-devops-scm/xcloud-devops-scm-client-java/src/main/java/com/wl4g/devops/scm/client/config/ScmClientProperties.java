@@ -20,8 +20,8 @@ import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.Assert2.isTrueOf;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_BASE;
-import static com.wl4g.devops.scm.common.config.SCMConstants.URI_S_SOURCE_WATCH;
+import static com.wl4g.devops.scm.common.SCMConstants.URI_S_BASE;
+import static com.wl4g.devops.scm.common.SCMConstants.URI_S_SOURCE_WATCH;
 import static java.util.Objects.isNull;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import com.wl4g.components.common.lang.SystemUtils2;
 import com.wl4g.devops.common.utils.InetHolder;
 import com.wl4g.devops.common.utils.InetHolder.HostInfo;
 import com.wl4g.devops.common.utils.InetHolder.InetProperties;
-import com.wl4g.devops.scm.common.config.BaseScmProperties;
+import com.wl4g.devops.scm.common.BaseScmProperties;
 
 import lombok.Getter;
 import lombok.Setter;

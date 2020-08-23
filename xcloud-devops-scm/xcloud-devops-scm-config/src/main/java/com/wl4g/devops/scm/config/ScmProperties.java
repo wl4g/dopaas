@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.config;
 
-import com.wl4g.devops.scm.common.config.BaseScmProperties;
+import com.wl4g.devops.scm.common.BaseScmProperties;
 
 public class ScmProperties extends BaseScmProperties {
 	private static final long serialVersionUID = -4696830861294720221L;
