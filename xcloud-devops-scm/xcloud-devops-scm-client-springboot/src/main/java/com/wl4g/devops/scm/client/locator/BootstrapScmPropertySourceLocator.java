@@ -22,9 +22,9 @@ import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
 import com.wl4g.devops.scm.client.utils.NodeHolder;
 import com.wl4g.devops.scm.client.watch.GenericRefreshWatcher;
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.IniPropertySource;
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.PlaintextPropertySource;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.IniPropertySource;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.PlaintextPropertySource;
 
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.annotation.Order;

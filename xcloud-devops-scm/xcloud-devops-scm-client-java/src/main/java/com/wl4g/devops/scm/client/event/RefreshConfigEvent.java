@@ -21,7 +21,7 @@ import static java.util.Objects.nonNull;
 import java.util.Set;
 
 import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.scm.client.event.RefreshConfigEvent.RefreshContext;
 

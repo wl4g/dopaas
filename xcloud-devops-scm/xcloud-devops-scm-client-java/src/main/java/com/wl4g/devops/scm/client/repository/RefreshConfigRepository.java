@@ -18,8 +18,8 @@ package com.wl4g.devops.scm.client.repository;
 import java.util.Collection;
 import java.util.Set;
 
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
-import com.wl4g.devops.scm.common.command.ReportChangedRequest.ChangedRecord;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
+import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
 
 /**
  * {@link RefreshConfigRepository}

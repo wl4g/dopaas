@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import static com.wl4g.devops.scm.common.config.SCMConstants.URI_C_BASE;
+import static com.wl4g.devops.scm.common.SCMConstants.URI_C_BASE;
 
 import java.util.Map;
 

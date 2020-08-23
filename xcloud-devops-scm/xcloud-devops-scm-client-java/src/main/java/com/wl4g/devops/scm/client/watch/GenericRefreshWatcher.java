@@ -27,16 +27,15 @@ import com.wl4g.devops.scm.client.event.ScmEventPublisher;
 import com.wl4g.devops.scm.client.event.ScmEventSubscriber;
 import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
 import com.wl4g.devops.scm.client.utils.NodeHolder;
-import com.wl4g.devops.scm.common.command.FetchConfigRequest;
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo;
-import com.wl4g.devops.scm.common.command.GenericConfigInfo.ConfigMeta;
-import com.wl4g.devops.scm.common.command.ReleaseConfigInfo.IniPropertySource;
 import com.wl4g.devops.scm.common.exception.ScmException;
+import com.wl4g.devops.scm.common.model.FetchConfigRequest;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
+import com.wl4g.devops.scm.common.model.GenericConfigInfo.ConfigMeta;
 
 import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.lang.ThreadUtils2.sleep;
-import static com.wl4g.devops.scm.common.config.SCMConstants.*;
+import static com.wl4g.devops.scm.common.SCMConstants.*;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
@@ -191,25 +190,23 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	protected void resolvesCipherSource(ReleaseConfigInfo source) {
 		log.debug("Resolver cipher configuration propertySource ...");
 
-		for (IniPropertySource ps : source.getPropertySources()) {
-			ps.getSource().forEach((key, value) -> {
-				String cipher = valueOf(value);
-				if (cipher.startsWith(CIPHER_PREFIX)) {
-					try {
-						// TODO using dynamic cipherKey??
-						byte[] cipherKey = AES128ECBPKCS5.getEnvCipherKey("DEVOPS_CIPHER_KEY");
-						String cipherText = cipher.substring(CIPHER_PREFIX.length());
-						// TODO fromHex()??
-						String plain = new AES128ECBPKCS5().decrypt(cipherKey, CodecSource.fromHex(cipherText)).toString();
-						ps.getSource().put(key, plain);
+		source.getPropertySources().forEach(ps -> {
+			String cipher = valueOf(value);
+			if (cipher.startsWith(CIPHER_PREFIX)) {
+				try {
+					// TODO using dynamic cipherKey??
+					byte[] cipherKey = AES128ECBPKCS5.getEnvCipherKey("DEVOPS_CIPHER_KEY");
+					String cipherText = cipher.substring(CIPHER_PREFIX.length());
+					// TODO fromHex()??
+					String plain = new AES128ECBPKCS5().decrypt(cipherKey, CodecSource.fromHex(cipherText)).toString();
+					ps.getSource().put(key, plain);
 
-						log.debug("Decryption property key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
-					} catch (Exception e) {
-						throw new ScmException("Cipher decryption error.", e);
-					}
+					log.debug("Decryption property key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
+				} catch (Exception e) {
+					throw new ScmException("Cipher decryption error.", e);
 				}
-			});
-		}
+			}
+		});
 
 	}
 
@@ -223,10 +220,10 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 				source.getMeta());
 
 		if (log.isDebugEnabled()) {
-			List<IniPropertySource> pss = source.getPropertySources();
+			List<TextPropertySource> pss = source.getPropertySources();
 			if (pss != null) {
-				int psSourceCount = pss.stream().map(ps -> ps.getSource().size()).reduce((c, s) -> s += c).get();
-				log.debug("Release config profiles: {}, the property sources sizeof: {}", pss.size(), psSourceCount);
+				int pscount = source.getPropertySources().size();
+				log.debug("Release config profiles: {}, the property sources sizeof: {}", pss.size(), pscount);
 			}
 		}
 

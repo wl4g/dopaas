@@ -29,10 +29,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-components-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-devops-commons</artifactId>
 		</dependency>
 		<dependency>

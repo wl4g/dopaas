@@ -22,7 +22,7 @@ import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
-import com.wl4g.devops.scm.common.command.ReportChangedRequest.ChangedRecord;
+import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
 
 /**
  * {@link RpcRefreshWatcher}

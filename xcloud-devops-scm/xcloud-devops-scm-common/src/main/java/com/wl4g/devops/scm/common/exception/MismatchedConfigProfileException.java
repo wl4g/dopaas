@@ -17,7 +17,7 @@ package com.wl4g.devops.scm.common.exception;
 
 import com.wl4g.devops.scm.common.exception.ScmException;
 
-public class MismatchedConfigNamespaceException extends ScmException {
+public class MismatchedConfigProfileException extends ScmException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -25,7 +25,7 @@ public class MismatchedConfigNamespaceException extends ScmException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public MismatchedConfigNamespaceException() {
+	public MismatchedConfigProfileException() {
 		super();
 	}
 
@@ -38,7 +38,7 @@ public class MismatchedConfigNamespaceException extends ScmException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public MismatchedConfigNamespaceException(String message) {
+	public MismatchedConfigProfileException(String message) {
 		super(message);
 	}
 
@@ -59,7 +59,7 @@ public class MismatchedConfigNamespaceException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public MismatchedConfigNamespaceException(String message, Throwable cause) {
+	public MismatchedConfigProfileException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -77,7 +77,7 @@ public class MismatchedConfigNamespaceException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public MismatchedConfigNamespaceException(Throwable cause) {
+	public MismatchedConfigProfileException(Throwable cause) {
 		super(cause);
 	}
 

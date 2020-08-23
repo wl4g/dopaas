@@ -91,7 +91,7 @@ public class ScmEventSubscriber {
 	private ConfigEventListener[] wrapEventListeners(ConfigEventListener... listeners) {
 		List<ConfigEventListener> _listeners = new ArrayList<>(4);
 
-		// Before insert internal listeners to first.
+		// Insert internal listeners to first.
 		_listeners.add(new ReportingConfigListener(watcher));
 
 		// After addition listeners.

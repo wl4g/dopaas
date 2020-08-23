@@ -16,8 +16,8 @@
 package com.wl4g.devops.scm.dao;
 
 import com.wl4g.devops.scm.bean.*;
-import com.wl4g.devops.scm.common.command.FetchConfigRequest;
-import com.wl4g.devops.scm.common.command.ReportChangedRequest;
+import com.wl4g.devops.scm.common.model.FetchConfigRequest;
+import com.wl4g.devops.scm.common.model.ReportChangedRequest;
 
 import java.util.List;
 import java.util.Map;
