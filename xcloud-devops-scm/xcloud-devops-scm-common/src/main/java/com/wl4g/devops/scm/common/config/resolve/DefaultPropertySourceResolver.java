@@ -15,9 +15,14 @@
  */
 package com.wl4g.devops.scm.common.config.resolve;
 
+import static com.wl4g.components.common.lang.Assert2.notNull;
+import static java.util.Arrays.asList;
+
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.wl4g.components.common.reflect.ObjectInstantiators;
 import com.wl4g.devops.scm.common.config.HoconPropertySource;
 import com.wl4g.devops.scm.common.config.TomlPropertySource;
 import com.wl4g.devops.scm.common.config.JsonPropertySource;
@@ -25,6 +30,7 @@ import com.wl4g.devops.scm.common.config.PropertiesPropertySource;
 import com.wl4g.devops.scm.common.config.ScmPropertySource;
 import com.wl4g.devops.scm.common.config.XmlPropertySource;
 import com.wl4g.devops.scm.common.config.YamlMapPropertySource;
+import com.wl4g.devops.scm.common.exception.UnsupportedPropertySourceException;
 
 /**
  * {@link DefaultPropertySourceResolver}
@@ -36,18 +42,45 @@ import com.wl4g.devops.scm.common.config.YamlMapPropertySource;
  */
 public class DefaultPropertySourceResolver implements PropertySourceResolver {
 
+	@Override
+	public ScmPropertySource resolve(String sourceType, String sourceContent) {
+		// Gets source type.
+		Class<? extends ScmPropertySource> cls = getPropertySourceOfType(sourceType);
+		notNull(cls, UnsupportedPropertySourceException.class, "Unsupported property source of type: %s", sourceType);
+
+		// New property source.
+		ScmPropertySource source = ObjectInstantiators.newInstance(cls);
+
+		// Read and parsing.
+		source.read(sourceContent);
+
+		return source;
+	}
+
 	/**
-	 * Repository of {@link ScmPropertySource}
+	 * Gets {@link ScmPropertySource} class by type.
+	 * 
+	 * @param type
+	 * @return
 	 */
-	public static final Map<String[], Class<? extends ScmPropertySource<?>>> PRPERTY_SOURCE_TYPE = new ConcurrentHashMap<>();
+	private Class<? extends ScmPropertySource> getPropertySourceOfType(String type) {
+		return PRPERTY_SOURCE_TYPE.entrySet().stream()
+				.filter(e -> e.getKey().stream().filter(t -> t.equalsIgnoreCase(type)).findFirst().isPresent())
+				.map(e -> e.getValue()).findFirst().orElse(null);
+	}
+
+	/**
+	 * Property source definitions of {@link ScmPropertySource}
+	 */
+	public static final Map<List<String>, Class<? extends ScmPropertySource>> PRPERTY_SOURCE_TYPE = new ConcurrentHashMap<>();
 
 	static {
-		PRPERTY_SOURCE_TYPE.put(new String[] { "yaml", "yml" }, YamlMapPropertySource.class);
-		PRPERTY_SOURCE_TYPE.put(new String[] { "properties" }, PropertiesPropertySource.class);
-		PRPERTY_SOURCE_TYPE.put(new String[] { "json" }, JsonPropertySource.class);
-		PRPERTY_SOURCE_TYPE.put(new String[] { "hocon" }, HoconPropertySource.class);
-		PRPERTY_SOURCE_TYPE.put(new String[] { "ini", "toml" }, TomlPropertySource.class);
-		PRPERTY_SOURCE_TYPE.put(new String[] { "xml" }, XmlPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("yaml", "yml"), YamlMapPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("properties"), PropertiesPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("json"), JsonPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("hocon"), HoconPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("ini", "toml"), TomlPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("xml"), XmlPropertySource.class);
 	}
 
 }

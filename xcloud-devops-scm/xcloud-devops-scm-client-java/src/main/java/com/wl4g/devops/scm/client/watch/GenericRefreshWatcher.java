@@ -27,6 +27,9 @@ import com.wl4g.devops.scm.client.event.ScmEventPublisher;
 import com.wl4g.devops.scm.client.event.ScmEventSubscriber;
 import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
 import com.wl4g.devops.scm.client.utils.NodeHolder;
+import com.wl4g.devops.scm.common.config.ScmPropertySource;
+import com.wl4g.devops.scm.common.config.resolve.DefaultPropertySourceResolver;
+import com.wl4g.devops.scm.common.config.resolve.PropertySourceResolver;
 import com.wl4g.devops.scm.common.exception.ScmException;
 import com.wl4g.devops.scm.common.model.FetchConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
@@ -72,6 +75,9 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	/** {@link RefreshConfigRepository} */
 	protected final RefreshConfigRepository repository;
 
+	/** {@link PropertySourceResolver} */
+	protected final PropertySourceResolver resolver;
+
 	/**
 	 * 
 	 * Last Update Time
@@ -89,6 +95,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 		this.publisher = new ScmEventPublisher(this);
 		this.subscriber = new ScmEventSubscriber(this, listeners);
 		this.holder = new NodeHolder(config);
+		this.resolver = new DefaultPropertySourceResolver();
 	}
 
 	public ScmClientProperties<?> getScmConfig() {
@@ -147,28 +154,28 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	 * Handling watch result.
 	 * 
 	 * @param command
-	 * @param source
+	 * @param release
 	 */
-	protected void handleWatchResult(int command, ReleaseConfigInfo source) {
+	protected void handleWatchResult(int command, ReleaseConfigInfo release) {
 		switch (command) {
 		case WATCH_CHANGED:
 			lastRefreshTime = currentTimeMillis();
 
 			// Extract config result
-			notNull(source, ScmException.class, "Watch received config source not available");
-			source.validate(true, true);
+			notNull(release, ScmException.class, "Watch received config source not available");
+			release.validate(true, true);
 
-			// Print configuration sources
-			printConfigSources(source);
+			// Print release sources
+			printConfigSources(release);
 
-			// Resolve configuration sources
-			resolvesCipherSource(source);
+			// Resolve property sources
+			ScmPropertySource source = resolver.resolve("", "");
 
 			// Addition refresh config source.
-			repository.saveReleaseConfig(source);
+			repository.saveReleaseConfig(release);
 
 			// Publishing refresh
-			publisher.publishRefreshEvent(source);
+			publisher.publishRefreshEvent(release);
 			break;
 		case WATCH_CHECKPOINT:
 			// Report refresh changed
@@ -220,7 +227,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 				source.getMeta());
 
 		if (log.isDebugEnabled()) {
-			List<TextPropertySource> pss = source.getPropertySources();
+			List<ScmPropertySource> pss = source.getPropertySources();
 			if (pss != null) {
 				int pscount = source.getPropertySources().size();
 				log.debug("Release config profiles: {}, the property sources sizeof: {}", pss.size(), pscount);

@@ -18,6 +18,7 @@ package com.wl4g.devops.scm.common.model;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.wl4g.devops.scm.common.config.ScmPropertySource;
 import com.wl4g.devops.scm.common.config.TextPropertySource;
 
 import static com.wl4g.components.common.lang.Assert2.notNull;
@@ -46,7 +47,7 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 	/** {@link ConfigPropertySources} */
 	@NotNull
 	@NotEmpty
-	private List<TextPropertySource<?>> propertySources = new ArrayList<>();
+	private List<ScmPropertySource> propertySources = new ArrayList<>();
 
 	public ReleaseConfigInfo() {
 		super();
@@ -65,11 +66,11 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 		this.nodes = nodes;
 	}
 
-	public List<TextPropertySource<?>> getPropertySources() {
+	public List<ScmPropertySource> getPropertySources() {
 		return propertySources;
 	}
 
-	public void setPropertySources(List<TextPropertySource<?>> propertySources) {
+	public void setPropertySources(List<ScmPropertySource> propertySources) {
 		if (propertySources != null) {
 			this.propertySources = propertySources;
 		}
@@ -88,6 +89,42 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 			notNull(ps, "Invalid release propertySources");
 			ps.validate();
 		});
+	}
+
+	public static class ReleasePropertySource {
+
+		/**
+		 * Configuration property source format
+		 */
+		private String sourceType;
+
+		/**
+		 * Configuration property source content text.
+		 */
+		private String sourceContent;
+
+		public ReleasePropertySource(String sourceType, String sourceContent) {
+			super();
+			this.sourceType = sourceType;
+			this.sourceContent = sourceContent;
+		}
+
+		public String getSourceType() {
+			return sourceType;
+		}
+
+		public void setSourceType(String sourceType) {
+			this.sourceType = sourceType;
+		}
+
+		public String getSourceContent() {
+			return sourceContent;
+		}
+
+		public void setSourceContent(String sourceContent) {
+			this.sourceContent = sourceContent;
+		}
+
 	}
 
 }

@@ -11,7 +11,7 @@ import lombok.Getter;
  * @see
  */
 @Getter
-public class JsonPropertySource extends TextPropertySource<JsonPropertySource> {
+public class JsonPropertySource extends TextPropertySource {
 	private static final long serialVersionUID = 5937417582294678642L;
 
 }

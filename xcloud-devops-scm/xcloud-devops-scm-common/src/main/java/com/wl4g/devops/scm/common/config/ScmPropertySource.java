@@ -3,8 +3,6 @@ package com.wl4g.devops.scm.common.config;
 import java.io.Serializable;
 import java.util.function.Function;
 
-import com.wl4g.devops.scm.common.exception.UnresolvedPropertySourceException;
-
 /**
  * SCM property source interface definition.
  * 
@@ -13,26 +11,44 @@ import com.wl4g.devops.scm.common.exception.UnresolvedPropertySourceException;
  * @sine v1.0.0
  * @see
  */
-public interface ScmPropertySource<T extends ScmPropertySource<?>> extends Serializable {
+public interface ScmPropertySource extends Serializable {
 
 	/**
-	 * Hierarchical recursion resolving cipher configuration property source
-	 * value, Ignored if resolved.
+	 * Check whether the source type is configured and supported.
 	 * 
-	 * @param resolveFunction
+	 * @param type
 	 * @return
 	 */
-	default T resolveCipher(Function<String, Object> resolveFunction) {
+	default boolean support(String type) {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
-	 * Gets resolved cipher property source, If there is no resolved, throw
-	 * {@link UnresolvedPropertySourceException}
+	 * Read and parse configuration property source to itself.
 	 * 
-	 * @return
+	 * @param sourceContent
 	 */
-	default T getResolvedSource() throws UnresolvedPropertySourceException {
+	default void read(String sourceContent) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Check if the encryption configuration source has been resolved.
+	 * 
+	 * @return If not resolved, false is returned
+	 */
+	default boolean isResolved() {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Hierarchical resolve configuration property source cipher value, ignored
+	 * if resolved.
+	 * 
+	 * @param cipherResolver
+	 * @return Return decrypted property source
+	 */
+	default ScmPropertySource resolveCipher(Function<String, Object> cipherResolver) {
 		throw new UnsupportedOperationException();
 	}
 
