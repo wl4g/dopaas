@@ -11,7 +11,7 @@ import lombok.Getter;
  * @see
  */
 @Getter
-public class YamlMapPropertySource extends TextPropertySource<YamlMapPropertySource> {
+public class YamlMapPropertySource extends TextPropertySource {
 	private static final long serialVersionUID = -4793468560178245882L;
 
 	public YamlMapPropertySource(String profile, String content) {

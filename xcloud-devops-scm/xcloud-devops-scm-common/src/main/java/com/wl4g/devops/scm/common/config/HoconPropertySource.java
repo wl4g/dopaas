@@ -11,11 +11,7 @@ import lombok.Getter;
  * @see
  */
 @Getter
-public class HoconPropertySource extends TextPropertySource<HoconPropertySource> {
+public class HoconPropertySource extends TextPropertySource {
 	private static final long serialVersionUID = -2725870342625827000L;
-
-	public HoconPropertySource(String profile, String content) {
-		super(profile, content);
-	}
 
 }

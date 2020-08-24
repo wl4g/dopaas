@@ -17,7 +17,7 @@ import lombok.Setter;
  * @see
  */
 @Getter
-public class XmlPropertySource extends TextPropertySource<XmlPropertySource> {
+public class XmlPropertySource extends TextPropertySource {
 
 	private static final long serialVersionUID = -7806121596630535330L;
 
