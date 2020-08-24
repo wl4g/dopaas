@@ -15,6 +15,17 @@
  */
 package com.wl4g.devops.scm.common.config.resolve;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.wl4g.devops.scm.common.config.HoconPropertySource;
+import com.wl4g.devops.scm.common.config.TomlPropertySource;
+import com.wl4g.devops.scm.common.config.JsonPropertySource;
+import com.wl4g.devops.scm.common.config.PropertiesPropertySource;
+import com.wl4g.devops.scm.common.config.ScmPropertySource;
+import com.wl4g.devops.scm.common.config.XmlPropertySource;
+import com.wl4g.devops.scm.common.config.YamlMapPropertySource;
+
 /**
  * {@link DefaultPropertySourceResolver}
  * 
@@ -24,5 +35,19 @@ package com.wl4g.devops.scm.common.config.resolve;
  * @see
  */
 public class DefaultPropertySourceResolver implements PropertySourceResolver {
+
+	/**
+	 * Repository of {@link ScmPropertySource}
+	 */
+	public static final Map<String[], Class<? extends ScmPropertySource<?>>> PRPERTY_SOURCE_TYPE = new ConcurrentHashMap<>();
+
+	static {
+		PRPERTY_SOURCE_TYPE.put(new String[] { "yaml", "yml" }, YamlMapPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(new String[] { "properties" }, PropertiesPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(new String[] { "json" }, JsonPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(new String[] { "hocon" }, HoconPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(new String[] { "ini", "toml" }, TomlPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(new String[] { "xml" }, XmlPropertySource.class);
+	}
 
 }
