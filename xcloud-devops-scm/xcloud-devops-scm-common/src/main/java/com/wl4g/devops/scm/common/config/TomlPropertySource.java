@@ -5,7 +5,7 @@ import java.util.Map;
 import lombok.Getter;
 
 /**
- * {@link IniPropertySource}
+ * {@link TomlPropertySource}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-08-15
@@ -13,17 +13,17 @@ import lombok.Getter;
  * @see
  */
 @Getter
-public class IniPropertySource extends TextPropertySource<IniPropertySource> {
+public class TomlPropertySource extends TextPropertySource<TomlPropertySource> {
 	private static final long serialVersionUID = 4885899687723244374L;
 
 	/** Configuration source typeof map */
 	private Map<String, Object> source;
 
-	public IniPropertySource() {
+	public TomlPropertySource() {
 		super();
 	}
 
-	public IniPropertySource(String profile, String content) {
+	public TomlPropertySource(String profile, String content) {
 		super(profile, content);
 		this.source = null; // TODO
 	}
