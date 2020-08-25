@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.erm;
 
-import com.wl4g.ErmManager;
+import com.wl4g.ErmManagerTests;
 import com.wl4g.components.support.redis.jedis.JedisService;
 
 import org.junit.FixMethodOrder;
@@ -40,7 +40,7 @@ import java.util.Set;
  * @see
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ErmManager.class)
+@SpringBootTest(classes = ErmManagerTests.class)
 @FixMethodOrder(MethodSorters.JVM)
 public class JedisDnsZoneStoreTests {
 

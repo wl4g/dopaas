@@ -24,11 +24,11 @@ import com.wl4g.devops.dao.erm.AppInstanceDao;
 import com.wl4g.devops.dao.erm.HostDao;
 import com.wl4g.devops.erm.service.AppInstanceService;
 import com.wl4g.devops.page.PageModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.components.core.bean.BaseBean.DEL_FLAG_DELETE;
 import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCodes;
@@ -73,7 +72,7 @@ public class AppInstanceServiceImpl implements AppInstanceService {
 	@SuppressWarnings("unchecked")
 	private void insert(AppInstance appInstance) {
 		appInstance.preInsert(getRequestOrganizationCode());
-		if (!isEmptyArray(appInstance.getHosts())) {
+		if (!CollectionUtils.isEmpty(appInstance.getHosts())) {
 			// instance hosts count
 			for (Integer hostId : appInstance.getHosts()) {
 				appInstance.preInsert();
