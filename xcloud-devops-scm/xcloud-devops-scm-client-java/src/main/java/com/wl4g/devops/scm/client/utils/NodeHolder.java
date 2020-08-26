@@ -19,7 +19,7 @@ import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.common.model.GenericConfigInfo.ConfigNode;
+import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigNode;
 
 /**
  * Instance information.

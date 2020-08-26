@@ -15,10 +15,17 @@
  */
 package com.wl4g.devops.scm.common.model;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import static com.wl4g.components.common.lang.Assert2.notNull;
+import lombok.Getter;
+import lombok.Setter;
 
+import static com.wl4g.components.common.collection.Collections2.safeList;
+import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,36 +35,35 @@ import java.util.List;
  * @version v1.0 2018-08-17
  * @since
  */
-public class FetchConfigRequest extends GenericConfigInfo {
+@Getter
+@Setter
+public class FetchConfigRequest extends AbstractConfigInfo {
 	final private static long serialVersionUID = -4016863811283064989L;
 
+	/**
+	 * {@link ConfigNode} of current myself SCM client application.
+	 */
 	@NotNull
 	private ConfigNode node;
+
+	/**
+	 * Configuration files. (like spring.profiles)
+	 */
+	@NotNull
+	@NotEmpty
+	private List<ConfigProfile> profiles = new ArrayList<>(2);
 
 	public FetchConfigRequest() {
 		super();
 	}
 
-	public FetchConfigRequest(String cluster, List<String> namespaces, ConfigMeta meta, ConfigNode node) {
-		super(cluster, namespaces, meta);
-		setNode(node);
-	}
-
-	public ConfigNode getNode() {
-		return node;
-	}
-
-	public void setNode(ConfigNode instance) {
-		if (instance != null) {
-			this.node = instance;
-		}
-	}
-
 	@Override
 	public void validate(boolean versionValidate, boolean releaseValidate) {
 		super.validate(versionValidate, releaseValidate);
-		notNull(getNode(), "Invalid empty release instance");
+		notNullOf(getNode(), "configNode");
 		getNode().validation();
+		notEmptyOf(getProfiles(), "profiles");
+		safeList(getProfiles()).stream().forEach(p -> p.validate());
 	}
 
 }

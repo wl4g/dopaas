@@ -21,6 +21,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Wither;
+
 /**
  * {@link ReportChangedRequest}
  *
@@ -28,6 +32,9 @@ import java.util.Set;
  * @version v1.0 2018-08-18
  * @since
  */
+@Getter
+@Setter
+@Wither
 public class ReportChangedRequest extends FetchConfigRequest {
 	final private static long serialVersionUID = 2523769504519533902L;
 
@@ -35,14 +42,6 @@ public class ReportChangedRequest extends FetchConfigRequest {
 
 	public ReportChangedRequest(Collection<ChangedRecord> changedRecords) {
 		super();
-		this.changedRecords = changedRecords;
-	}
-
-	public Collection<ChangedRecord> getChangedRecords() {
-		return changedRecords;
-	}
-
-	public void setChangedRecords(Collection<ChangedRecord> changedRecords) {
 		this.changedRecords = changedRecords;
 	}
 
@@ -56,6 +55,9 @@ public class ReportChangedRequest extends FetchConfigRequest {
 	 *
 	 * @since
 	 */
+	@Getter
+	@Setter
+	@Wither
 	public static class ChangedRecord {
 
 		private Set<String> changedKeys = new HashSet<>();
@@ -68,22 +70,6 @@ public class ReportChangedRequest extends FetchConfigRequest {
 		public ChangedRecord(Set<String> changedKeys, ReleaseConfigInfo result) {
 			this.changedKeys = changedKeys;
 			this.sources = result;
-		}
-
-		public Set<String> getChangedKeys() {
-			return changedKeys;
-		}
-
-		public void setChangedKeys(Set<String> changedKeys) {
-			this.changedKeys = changedKeys;
-		}
-
-		public ReleaseConfigInfo getSources() {
-			return sources;
-		}
-
-		public void setSources(ReleaseConfigInfo sources) {
-			this.sources = sources;
 		}
 
 		@Override

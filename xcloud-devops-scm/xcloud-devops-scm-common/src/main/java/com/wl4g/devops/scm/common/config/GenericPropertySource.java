@@ -1,14 +1,14 @@
 package com.wl4g.devops.scm.common.config;
 
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import static java.util.Objects.nonNull;
 
 import java.util.function.Function;
 
-import javax.validation.constraints.NotBlank;
-
-import com.wl4g.components.common.annotation.Nullable;
+import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.ReleaseConfigSource;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,18 +26,15 @@ import lombok.experimental.Wither;
 @Setter
 @Wither
 public class GenericPropertySource implements ScmPropertySource {
+
 	private static final long serialVersionUID = -5037062685017411482L;
 
-	/** Target file name of the configuration. (like spring.profiles) */
-	private String profile;
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
-	 * Configuration property source format.
+	 * Configuration release source.
 	 */
-	private String sourceType;
-
-	/** Release configuration plaintext content string. */
-	private String content;
+	private ReleaseConfigSource release;
 
 	/** Resolved configuration decrypted property source. */
 	private transient ScmPropertySource resolvedSource;
@@ -46,12 +43,9 @@ public class GenericPropertySource implements ScmPropertySource {
 		super();
 	}
 
-	public GenericPropertySource(@NotBlank String profile, @NotBlank String sourceType, @NotBlank String content,
-			@Nullable @Deprecated ScmPropertySource ignore0) {
-		this.profile = profile;
-		this.sourceType = sourceType;
-		this.content = content;
-		validate();
+	public GenericPropertySource(ReleaseConfigSource release, ScmPropertySource resolvedSource) {
+		this.release = release;
+		this.resolvedSource = resolvedSource;
 	}
 
 	@Override
@@ -63,9 +57,8 @@ public class GenericPropertySource implements ScmPropertySource {
 	 * Validation
 	 */
 	public void validate() {
-		hasTextOf(profile, "profile");
-		hasTextOf(sourceType, "sourceType");
-		hasTextOf(content, "content");
+		notNullOf(getRelease(), "release");
+		getRelease().validate();
 	}
 
 	@Override

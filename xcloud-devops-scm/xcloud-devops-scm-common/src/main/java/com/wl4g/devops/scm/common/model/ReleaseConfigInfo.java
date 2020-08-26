@@ -18,8 +18,12 @@ package com.wl4g.devops.scm.common.model;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 
 import java.util.ArrayList;
@@ -32,7 +36,9 @@ import java.util.List;
  * @version v1.0 2018-08-11
  * @since
  */
-public class ReleaseConfigInfo extends GenericConfigInfo {
+@Getter
+@Setter
+public class ReleaseConfigInfo extends AbstractConfigInfo {
 	final private static long serialVersionUID = -4016863811283064989L;
 
 	/**
@@ -45,43 +51,17 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 	/** {@link ReleaseConfigSource} */
 	@NotNull
 	@NotEmpty
-	private List<ReleaseConfigSource> releaseSources = new ArrayList<>();
+	private List<ReleaseConfigSource> releases = new ArrayList<>(2);
 
 	public ReleaseConfigInfo() {
 		super();
 	}
 
-	public ReleaseConfigInfo(String cluster, List<String> namespaces, ConfigMeta meta, List<ConfigNode> nodes) {
-		super(cluster, namespaces, meta);
-		setNodes(nodes);
-	}
-
-	public List<ConfigNode> getNodes() {
-		return nodes;
-	}
-
-	public void setNodes(List<ConfigNode> nodes) {
-		this.nodes = nodes;
-	}
-
-	public List<ReleaseConfigSource> getReleaseSources() {
-		return releaseSources;
-	}
-
-	public void setReleaseSources(List<ReleaseConfigSource> propertySources) {
-		if (propertySources != null) {
-			this.releaseSources = propertySources;
-		}
-	}
-
 	@Override
 	public void validate(boolean versionValidate, boolean releaseValidate) {
 		super.validate(versionValidate, releaseValidate);
-		notNull(getReleaseSources(), "Invalid empty propertySources");
-		getReleaseSources().stream().forEach((rs) -> {
-			notNull(rs, "Invalid release property source");
-			rs.validate();
-		});
+		notEmptyOf(getReleases(), "propertySources");
+		getReleases().stream().forEach(rs -> rs.validate());
 	}
 
 	/**
@@ -89,40 +69,19 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 	 *
 	 * @since
 	 */
+	@Getter
+	@Setter
 	public static class ReleaseConfigSource {
 
 		/**
-		 * Configuration property source format
+		 * Configuration property source profile.
 		 */
-		private String sourceType;
+		private ConfigProfile profile;
 
 		/**
 		 * Configuration property source content text.
 		 */
 		private String sourceContent;
-
-		public ReleaseConfigSource(String sourceType, String sourceContent) {
-			setSourceType(sourceType);
-			setSourceContent(sourceContent);
-		}
-
-		public String getSourceType() {
-			return sourceType;
-		}
-
-		public void setSourceType(String sourceType) {
-			hasTextOf(sourceType, "sourceType");
-			this.sourceType = sourceType;
-		}
-
-		public String getSourceContent() {
-			return sourceContent;
-		}
-
-		public void setSourceContent(String sourceContent) {
-			hasTextOf(sourceContent, "sourceContent");
-			this.sourceContent = sourceContent;
-		}
 
 		@Override
 		public String toString() {
@@ -130,8 +89,9 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 		}
 
 		public void validate() {
-			hasTextOf(sourceType, "sourceType");
-			hasTextOf(sourceContent, "sourceContent");
+			notNullOf(getProfile(), "profile");
+			getProfile().validate();
+			hasTextOf(getSourceContent(), "sourceContent");
 		}
 
 	}
