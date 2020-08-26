@@ -30,7 +30,7 @@ import com.wl4g.devops.scm.common.config.PropertiesPropertySource;
 import com.wl4g.devops.scm.common.config.ScmPropertySource;
 import com.wl4g.devops.scm.common.config.XmlPropertySource;
 import com.wl4g.devops.scm.common.config.YamlMapPropertySource;
-import com.wl4g.devops.scm.common.exception.UnsupportedPropertySourceException;
+import com.wl4g.devops.scm.common.exception.UnknownPropertySourceException;
 
 /**
  * {@link DefaultPropertySourceResolver}
@@ -46,7 +46,7 @@ public class DefaultPropertySourceResolver implements PropertySourceResolver {
 	public ScmPropertySource resolve(String sourceType, String sourceContent) {
 		// Gets source type.
 		Class<? extends ScmPropertySource> cls = getPropertySourceOfType(sourceType);
-		notNull(cls, UnsupportedPropertySourceException.class, "Unsupported property source of type: %s", sourceType);
+		notNull(cls, UnknownPropertySourceException.class, "Unsupported property source of configuration format: %s", sourceType);
 
 		// New property source.
 		ScmPropertySource source = ObjectInstantiators.newInstance(cls);

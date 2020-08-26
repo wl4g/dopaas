@@ -18,14 +18,14 @@ package com.wl4g.devops.scm.common.exception;
 import com.wl4g.devops.scm.common.exception.ScmException;
 
 /**
- * {@link UnsupportedPropertySourceException}
+ * {@link UnknownPropertySourceException}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version 2020-08-15
  * @sine v1.0.0
  * @see
  */
-public class UnsupportedPropertySourceException extends ScmException {
+public class UnknownPropertySourceException extends ScmException {
 	static final long serialVersionUID = -7034833390745766939L;
 
 	/**
@@ -33,7 +33,7 @@ public class UnsupportedPropertySourceException extends ScmException {
 	 * message. The cause is not initialized, and may subsequently be
 	 * initialized by a call to {@link #initCause}.
 	 */
-	public UnsupportedPropertySourceException() {
+	public UnknownPropertySourceException() {
 		super();
 	}
 
@@ -46,7 +46,7 @@ public class UnsupportedPropertySourceException extends ScmException {
 	 *            the detail message. The detail message is saved for later
 	 *            retrieval by the {@link #getMessage()} method.
 	 */
-	public UnsupportedPropertySourceException(String message) {
+	public UnknownPropertySourceException(String message) {
 		super(message);
 	}
 
@@ -67,7 +67,7 @@ public class UnsupportedPropertySourceException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public UnsupportedPropertySourceException(String message, Throwable cause) {
+	public UnknownPropertySourceException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -85,7 +85,7 @@ public class UnsupportedPropertySourceException extends ScmException {
 	 *            unknown.)
 	 * @since 1.4
 	 */
-	public UnsupportedPropertySourceException(Throwable cause) {
+	public UnknownPropertySourceException(Throwable cause) {
 		super(cause);
 	}
 

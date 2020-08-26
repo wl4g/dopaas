@@ -107,7 +107,7 @@ public abstract class GenericConfigInfo implements Serializable {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " => " + toJSONString(this);
+		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 	}
 
 	public void validate(boolean validVersion, boolean validRelease) {

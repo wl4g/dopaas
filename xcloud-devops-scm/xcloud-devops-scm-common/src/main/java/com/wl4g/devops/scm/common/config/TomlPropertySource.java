@@ -13,19 +13,10 @@ import lombok.Getter;
  * @see
  */
 @Getter
-public class TomlPropertySource extends TextPropertySource {
+public class TomlPropertySource extends GenericPropertySource {
 	private static final long serialVersionUID = 4885899687723244374L;
 
 	/** Configuration source typeof map */
 	private Map<String, Object> source;
-
-	public TomlPropertySource() {
-		super();
-	}
-
-	public TomlPropertySource(String profile, String content) {
-		super(profile, content);
-		this.source = null; // TODO
-	}
 
 }

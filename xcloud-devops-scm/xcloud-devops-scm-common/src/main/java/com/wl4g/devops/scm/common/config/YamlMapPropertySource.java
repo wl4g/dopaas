@@ -1,5 +1,7 @@
 package com.wl4g.devops.scm.common.config;
 
+import java.util.function.Function;
+
 import lombok.Getter;
 
 /**
@@ -11,11 +13,14 @@ import lombok.Getter;
  * @see
  */
 @Getter
-public class YamlMapPropertySource extends TextPropertySource {
+public class YamlMapPropertySource extends GenericPropertySource {
 	private static final long serialVersionUID = -4793468560178245882L;
 
-	public YamlMapPropertySource(String profile, String content) {
-		super(profile, content);
+	@Override
+	protected ScmPropertySource doResolved(Function<String, Object> cipherResolver) {
+		// TODO Auto-generated method stub
+
+		return super.doResolved(cipherResolver);
 	}
 
 }
