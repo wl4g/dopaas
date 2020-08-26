@@ -78,7 +78,7 @@ public class DefaultPropertySourceResolver implements PropertySourceResolver {
 		PRPERTY_SOURCE_TYPE.put(asList("yaml", "yml"), YamlMapPropertySource.class);
 		PRPERTY_SOURCE_TYPE.put(asList("properties"), PropertiesPropertySource.class);
 		PRPERTY_SOURCE_TYPE.put(asList("json"), JsonPropertySource.class);
-		PRPERTY_SOURCE_TYPE.put(asList("hocon"), HoconPropertySource.class);
+		PRPERTY_SOURCE_TYPE.put(asList("hocon", "conf"), HoconPropertySource.class);
 		PRPERTY_SOURCE_TYPE.put(asList("ini", "toml"), TomlPropertySource.class);
 		PRPERTY_SOURCE_TYPE.put(asList("xml"), XmlPropertySource.class);
 	}

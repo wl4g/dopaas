@@ -16,8 +16,6 @@
 package com.wl4g.devops.scm.client.watch;
 
 import com.wl4g.components.common.annotation.Nullable;
-import com.wl4g.components.common.codec.CodecSource;
-import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
 import com.wl4g.components.common.eventbus.EventBusSupport;
 import com.wl4g.components.common.task.GenericTaskRunner;
 import com.wl4g.components.common.task.RunnerProperties;
@@ -34,14 +32,13 @@ import com.wl4g.devops.scm.common.exception.ScmException;
 import com.wl4g.devops.scm.common.model.FetchConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.ReleaseConfigSource;
-import com.wl4g.devops.scm.common.model.GenericConfigInfo.ConfigMeta;
+import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigMeta;
 
 import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.lang.ThreadUtils2.sleep;
 import static com.wl4g.devops.scm.common.SCMConstants.*;
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.nonNull;
 
@@ -216,34 +213,6 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	}
 
 	/**
-	 * Resolver cipher configuration source.
-	 * 
-	 * @param source
-	 */
-	protected void resolvesCipherSource(ReleaseConfigInfo source) {
-		log.debug("Resolver cipher configuration propertySource ...");
-
-		source.getReleaseSources().forEach(rs -> {
-			String cipher = valueOf(value);
-			if (cipher.startsWith(CIPHER_PREFIX)) {
-				try {
-					// TODO using dynamic cipherKey??
-					byte[] cipherKey = AES128ECBPKCS5.getEnvCipherKey("DEVOPS_CIPHER_KEY");
-					String cipherText = cipher.substring(CIPHER_PREFIX.length());
-					// TODO fromHex()??
-					String plain = new AES128ECBPKCS5().decrypt(cipherKey, CodecSource.fromHex(cipherText)).toString();
-					rs.getSource().put(key, plain);
-
-					log.debug("Decryption property key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
-				} catch (Exception e) {
-					throw new ScmException("Cipher decryption error.", e);
-				}
-			}
-		});
-
-	}
-
-	/**
 	 * Prints configuration sources.
 	 * 
 	 * @param source
@@ -253,9 +222,9 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 				source.getMeta());
 
 		if (log.isDebugEnabled()) {
-			List<ReleaseConfigSource> rss = source.getReleaseSources();
+			List<ReleaseConfigSource> rss = source.getReleases();
 			if (rss != null) {
-				int pscount = source.getReleaseSources().size();
+				int pscount = source.getReleases().size();
 				log.debug("Release config profiles: {}, the property sources sizeof: {}", rss.size(), pscount);
 			}
 		}

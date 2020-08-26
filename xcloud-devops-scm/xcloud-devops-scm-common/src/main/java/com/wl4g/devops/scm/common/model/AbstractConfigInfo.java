@@ -15,94 +15,55 @@
  */
 package com.wl4g.devops.scm.common.model;
 
-import com.google.common.net.HostAndPort;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Wither;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.net.HostAndPort;
+
 import javax.validation.constraints.*;
 
-import static com.wl4g.components.common.collection.CollectionUtils2.isEmpty;
-import static com.wl4g.components.common.lang.Assert2.hasText;
-import static com.wl4g.components.common.lang.Assert2.notEmpty;
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * {@link GenericConfigInfo}
+ * {@link AbstractConfigInfo}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2018-08-17
  * @since
  */
-public abstract class GenericConfigInfo implements Serializable {
+@Getter
+@Setter
+public abstract class AbstractConfigInfo implements Serializable {
 	final private static long serialVersionUID = -299157686801700764L;
 
 	/**
-	 * Application name(cluster name)
+	 * Data center of application cluster.
+	 */
+	@NotNull
+	@NotBlank
+	private String zone;
+
+	/**
+	 * Application service name. (cluster name)
 	 */
 	@NotNull
 	@NotBlank
 	private String cluster;
 
 	/**
-	 * Configuration files, The like spring.profiles.
-	 */
-	@NotNull
-	@NotEmpty
-	private List<String> profiles = new ArrayList<>();
-
-	/**
 	 * Configuration version and release info
 	 */
 	private ConfigMeta meta = new ConfigMeta();
 
-	public GenericConfigInfo() {
+	public AbstractConfigInfo() {
 		super();
-	}
-
-	public GenericConfigInfo(String cluster, List<String> namespace) {
-		this(cluster, namespace, null);
-	}
-
-	public GenericConfigInfo(String cluster, List<String> namespaces, ConfigMeta meta) {
-		setCluster(cluster);
-		setProfiles(namespaces);
-		setMeta(meta);
-	}
-
-	public List<String> getProfiles() {
-		return profiles;
-	}
-
-	public void setProfiles(List<String> namespaces) {
-		if (!isEmpty(namespaces)) {
-			this.profiles.clear();
-			this.profiles.addAll(namespaces);
-		}
-	}
-
-	public String getCluster() {
-		return cluster;
-	}
-
-	public void setCluster(String cluster) {
-		if (!StringUtils.isEmpty(cluster) && !"NULL".equalsIgnoreCase(cluster)) {
-			this.cluster = cluster;
-		}
-	}
-
-	public ConfigMeta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(ConfigMeta meta) {
-		if (meta != null) {
-			this.meta = meta;
-		}
 	}
 
 	@Override
@@ -110,10 +71,16 @@ public abstract class GenericConfigInfo implements Serializable {
 		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 	}
 
+	/**
+	 * Validation
+	 * 
+	 * @param validVersion
+	 * @param validRelease
+	 */
 	public void validate(boolean validVersion, boolean validRelease) {
-		hasText(getCluster(), "`cluster` must not be empty");
-		notEmpty(getProfiles(), "`namespace` must not be empty");
-		getMeta().validation(validVersion, validRelease);
+		hasTextOf(getZone(), "zone");
+		hasTextOf(getCluster(), "cluster");
+		getMeta().validate(validVersion, validRelease);
 	}
 
 	/**
@@ -211,6 +178,50 @@ public abstract class GenericConfigInfo implements Serializable {
 	}
 
 	/**
+	 * {@link ConfigProfile}
+	 *
+	 * @since
+	 */
+	@Getter
+	@Setter
+	@Wither
+	public static class ConfigProfile implements Serializable {
+		private static final long serialVersionUID = -3449133053778594018L;
+
+		/**
+		 * Configuration property source type.
+		 */
+		@NotNull
+		@NotBlank
+		private String type;
+
+		/**
+		 * Configuration property source filename.
+		 */
+		@NotNull
+		@NotBlank
+		private String name;
+
+		public ConfigProfile(@NotNull @NotBlank String type, @NotNull @NotBlank String name) {
+			super();
+			this.type = type;
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+		}
+
+		public ConfigProfile validate() {
+			hasTextOf(getType(), "configVersionId");
+			hasTextOf(getName(), "configVersionId");
+			return this;
+		}
+
+	}
+
+	/**
 	 * {@link ConfigMeta}
 	 *
 	 * @since
@@ -218,13 +229,19 @@ public abstract class GenericConfigInfo implements Serializable {
 	public static class ConfigMeta implements Serializable {
 		private static final long serialVersionUID = -4826329110329773259L;
 
+		/**
+		 * Release version(Required).
+		 */
 		@NotBlank
 		@NotNull
-		private String version; // Release version(Required).
+		private String version;
 
+		/**
+		 * Release configuration ID.
+		 */
 		@NotBlank
 		@NotNull
-		private String releaseId; // Release ID.
+		private String releaseId;
 
 		public ConfigMeta() {
 			super();
@@ -265,21 +282,21 @@ public abstract class GenericConfigInfo implements Serializable {
 			return asText();
 		}
 
-		public void validation(boolean validVersion, boolean validReleaseId) {
+		public void validate(boolean validVersion, boolean validReleaseId) {
 			if (validVersion) {
-				notNull(getVersion(), "`version` is not allowed to be null.");
+				hasTextOf(getVersion(), "configVersionId");
 			}
 			if (validReleaseId) {
-				notNull(getReleaseId(), "`releaseId` is not allowed to be null.");
+				hasTextOf(getReleaseId(), "configReleaseId");
 			}
 		}
 
-		public static ConfigMeta of(String releaseMetaString) {
-			if (!StringUtils.isEmpty(releaseMetaString) && releaseMetaString.contains("@")) {
-				String arr[] = String.valueOf(releaseMetaString).split("@");
+		public static ConfigMeta of(String metaString) {
+			if (!StringUtils.isEmpty(metaString) && metaString.contains("@")) {
+				String arr[] = String.valueOf(metaString).split("@");
 				return new ConfigMeta(arr[0], arr[1]);
 			}
-			throw new IllegalStateException(String.format("Parmater 'releaseMetaString' : %s", releaseMetaString));
+			throw new IllegalStateException(String.format("Parmater 'releaseMetaString' : %s", metaString));
 		}
 
 	}

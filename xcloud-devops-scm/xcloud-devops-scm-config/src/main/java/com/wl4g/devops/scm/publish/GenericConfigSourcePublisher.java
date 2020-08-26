@@ -25,7 +25,7 @@ import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
 import com.wl4g.devops.scm.common.model.FetchConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
-import com.wl4g.devops.scm.common.model.GenericConfigInfo.ConfigNode;
+import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigNode;
 import com.wl4g.devops.scm.config.ScmProperties;
 
 import org.springframework.http.HttpStatus;
