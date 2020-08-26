@@ -33,6 +33,7 @@ import com.wl4g.devops.scm.common.config.resolve.PropertySourceResolver;
 import com.wl4g.devops.scm.common.exception.ScmException;
 import com.wl4g.devops.scm.common.model.FetchConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.ReleaseConfigSource;
 import com.wl4g.devops.scm.common.model.GenericConfigInfo.ConfigMeta;
 
 import static com.wl4g.components.common.lang.Assert2.notNull;
@@ -70,7 +71,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	protected final ScmEventSubscriber subscriber;
 
 	/** SCM client instance holder */
-	protected final NodeHolder holder;
+	protected final NodeHolder nodeHolder;
 
 	/** {@link RefreshConfigRepository} */
 	protected final RefreshConfigRepository repository;
@@ -94,26 +95,51 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 		this.repository = repository;
 		this.publisher = new ScmEventPublisher(this);
 		this.subscriber = new ScmEventSubscriber(this, listeners);
-		this.holder = new NodeHolder(config);
+		this.nodeHolder = new NodeHolder(config);
 		this.resolver = new DefaultPropertySourceResolver();
 	}
 
+	/**
+	 * Gets {@link ScmClientProperties}
+	 * 
+	 * @return
+	 */
 	public ScmClientProperties<?> getScmConfig() {
 		return config;
 	}
 
+	/**
+	 * Gets {@link ScmEventPublisher}
+	 * 
+	 * @return
+	 */
 	public ScmEventPublisher getPublisher() {
 		return publisher;
 	}
 
+	/**
+	 * Gets {@link ScmEventSubscriber}
+	 * 
+	 * @return
+	 */
 	public ScmEventSubscriber getSubscriber() {
 		return subscriber;
 	}
 
-	public NodeHolder getHolder() {
-		return holder;
+	/**
+	 * Gets {@link NodeHolder}
+	 * 
+	 * @return
+	 */
+	public NodeHolder getNodeHolder() {
+		return nodeHolder;
 	}
 
+	/**
+	 * Gets {@link RefreshConfigRepository}
+	 * 
+	 * @return
+	 */
 	public RefreshConfigRepository getRepository() {
 		return repository;
 	}
@@ -133,7 +159,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 		// Create config watching fetching command
 		ReleaseConfigInfo last = repository.getLastReleaseConfig();
 		ConfigMeta meta = nonNull(last) ? last.getMeta() : null;
-		return new FetchConfigRequest(config.getClusterName(), config.getProfiles(), meta, holder.getConfigNode());
+		return new FetchConfigRequest(config.getClusterName(), config.getProfiles(), meta, nodeHolder.getConfigNode());
 	}
 
 	/**
@@ -197,7 +223,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	protected void resolvesCipherSource(ReleaseConfigInfo source) {
 		log.debug("Resolver cipher configuration propertySource ...");
 
-		source.getPropertySources().forEach(ps -> {
+		source.getReleaseSources().forEach(rs -> {
 			String cipher = valueOf(value);
 			if (cipher.startsWith(CIPHER_PREFIX)) {
 				try {
@@ -206,7 +232,7 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 					String cipherText = cipher.substring(CIPHER_PREFIX.length());
 					// TODO fromHex()??
 					String plain = new AES128ECBPKCS5().decrypt(cipherKey, CodecSource.fromHex(cipherText)).toString();
-					ps.getSource().put(key, plain);
+					rs.getSource().put(key, plain);
 
 					log.debug("Decryption property key: {}, cipherText: {}, plainText: {}", key, cipher, plain);
 				} catch (Exception e) {
@@ -227,13 +253,12 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 				source.getMeta());
 
 		if (log.isDebugEnabled()) {
-			List<ScmPropertySource> pss = source.getPropertySources();
-			if (pss != null) {
-				int pscount = source.getPropertySources().size();
-				log.debug("Release config profiles: {}, the property sources sizeof: {}", pss.size(), pscount);
+			List<ReleaseConfigSource> rss = source.getReleaseSources();
+			if (rss != null) {
+				int pscount = source.getReleaseSources().size();
+				log.debug("Release config profiles: {}, the property sources sizeof: {}", rss.size(), pscount);
 			}
 		}
-
 	}
 
 	/** SCM encrypted field identification prefix */

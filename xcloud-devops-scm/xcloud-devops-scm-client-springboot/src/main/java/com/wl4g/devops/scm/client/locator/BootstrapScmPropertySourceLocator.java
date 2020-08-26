@@ -110,7 +110,7 @@ public class BootstrapScmPropertySourceLocator implements PropertySourceLocator 
 	 */
 	protected CompositePropertySource convertToCompositePropertySource(ReleaseConfigInfo source, String compositeSourceName) {
 		CompositePropertySource composite = new CompositePropertySource(compositeSourceName);
-		for (PlaintextPropertySource ps : source.getPropertySources()) {
+		for (PlaintextPropertySource ps : source.getReleaseSources()) {
 			// See:org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration
 			composite.addFirstPropertySource(ps.convertMapPropertySource());
 		}

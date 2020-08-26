@@ -18,9 +18,7 @@ package com.wl4g.devops.scm.common.model;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import com.wl4g.devops.scm.common.config.ScmPropertySource;
-import com.wl4g.devops.scm.common.config.TextPropertySource;
-
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 
@@ -44,10 +42,10 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 	@NotEmpty
 	private List<ConfigNode> nodes = new ArrayList<>();
 
-	/** {@link ConfigPropertySources} */
+	/** {@link ReleaseConfigSource} */
 	@NotNull
 	@NotEmpty
-	private List<ScmPropertySource> propertySources = new ArrayList<>();
+	private List<ReleaseConfigSource> releaseSources = new ArrayList<>();
 
 	public ReleaseConfigInfo() {
 		super();
@@ -66,32 +64,32 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 		this.nodes = nodes;
 	}
 
-	public List<ScmPropertySource> getPropertySources() {
-		return propertySources;
+	public List<ReleaseConfigSource> getReleaseSources() {
+		return releaseSources;
 	}
 
-	public void setPropertySources(List<ScmPropertySource> propertySources) {
+	public void setReleaseSources(List<ReleaseConfigSource> propertySources) {
 		if (propertySources != null) {
-			this.propertySources = propertySources;
+			this.releaseSources = propertySources;
 		}
-	}
-
-	@Override
-	public String toString() {
-		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 	}
 
 	@Override
 	public void validate(boolean versionValidate, boolean releaseValidate) {
 		super.validate(versionValidate, releaseValidate);
-		notNull(getPropertySources(), "Invalid empty propertySources");
-		getPropertySources().stream().forEach((ps) -> {
-			notNull(ps, "Invalid release propertySources");
-			ps.validate();
+		notNull(getReleaseSources(), "Invalid empty propertySources");
+		getReleaseSources().stream().forEach((rs) -> {
+			notNull(rs, "Invalid release property source");
+			rs.validate();
 		});
 	}
 
-	public static class ReleasePropertySource {
+	/**
+	 * {@link ReleaseConfigSource}
+	 *
+	 * @since
+	 */
+	public static class ReleaseConfigSource {
 
 		/**
 		 * Configuration property source format
@@ -103,10 +101,9 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 		 */
 		private String sourceContent;
 
-		public ReleasePropertySource(String sourceType, String sourceContent) {
-			super();
-			this.sourceType = sourceType;
-			this.sourceContent = sourceContent;
+		public ReleaseConfigSource(String sourceType, String sourceContent) {
+			setSourceType(sourceType);
+			setSourceContent(sourceContent);
 		}
 
 		public String getSourceType() {
@@ -114,6 +111,7 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 		}
 
 		public void setSourceType(String sourceType) {
+			hasTextOf(sourceType, "sourceType");
 			this.sourceType = sourceType;
 		}
 
@@ -122,7 +120,18 @@ public class ReleaseConfigInfo extends GenericConfigInfo {
 		}
 
 		public void setSourceContent(String sourceContent) {
+			hasTextOf(sourceContent, "sourceContent");
 			this.sourceContent = sourceContent;
+		}
+
+		@Override
+		public String toString() {
+			return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
+		}
+
+		public void validate() {
+			hasTextOf(sourceType, "sourceType");
+			hasTextOf(sourceContent, "sourceContent");
 		}
 
 	}

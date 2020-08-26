@@ -11,11 +11,7 @@ import lombok.Getter;
  * @see
  */
 @Getter
-public class PropertiesPropertySource extends TextPropertySource {
+public class PropertiesPropertySource extends GenericPropertySource {
 	private static final long serialVersionUID = 1755382479743018762L;
-
-	public PropertiesPropertySource(String profile, String content) {
-		super(profile, content);
-	}
 
 }

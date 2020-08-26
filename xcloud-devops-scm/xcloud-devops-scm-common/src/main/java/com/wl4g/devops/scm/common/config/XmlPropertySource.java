@@ -17,21 +17,12 @@ import lombok.Setter;
  * @see
  */
 @Getter
-public class XmlPropertySource extends TextPropertySource {
+public class XmlPropertySource extends GenericPropertySource {
 
 	private static final long serialVersionUID = -7806121596630535330L;
 
 	/** Configuration source typeof map */
 	private XmlNode root;
-
-	public XmlPropertySource() {
-		super();
-	}
-
-	public XmlPropertySource(String profile, String content) {
-		super(profile, content);
-		this.root = null; // TODO
-	}
 
 	/**
 	 * {@link XmlNode}

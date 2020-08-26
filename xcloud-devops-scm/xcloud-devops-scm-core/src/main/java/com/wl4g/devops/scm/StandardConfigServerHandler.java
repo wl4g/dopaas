@@ -17,7 +17,7 @@ package com.wl4g.devops.scm;
 
 import com.wl4g.devops.scm.bean.*;
 import com.wl4g.devops.scm.common.model.*;
-import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.ReleasePropertySource;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.ReleaseConfigSource;
 import com.wl4g.components.core.utils.PropertySources;
 import com.wl4g.components.core.utils.PropertySources.Type;
 import com.wl4g.devops.scm.handler.CentralConfigServerHandler;
@@ -97,14 +97,14 @@ public class StandardConfigServerHandler implements CentralConfigServerHandler {
 	 * @param vc
 	 * @return
 	 */
-	private ReleasePropertySource convertReleasePropertySource(VersionContentBean vc) {
+	private ReleaseConfigSource convertReleasePropertySource(VersionContentBean vc) {
 		String filename = vc.getNamespace().toLowerCase();
 		Assert.state(contains(filename, "."), String.format("Invalid namespace filename for: %s", filename));
 
 		// Resolve file content
 		String fileType = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
 		Map<String, Object> source = PropertySources.resolve(Type.of(fileType), vc.getContent());
-		return new ReleasePropertySource(filename, source);
+		return new ReleaseConfigSource(filename, source);
 	}
 
 	/**
