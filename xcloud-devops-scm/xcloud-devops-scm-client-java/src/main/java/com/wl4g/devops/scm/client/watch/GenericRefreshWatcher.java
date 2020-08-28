@@ -24,6 +24,7 @@ import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.event.ScmEventPublisher;
 import com.wl4g.devops.scm.client.event.ScmEventSubscriber;
 import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
+import com.wl4g.devops.scm.client.repository.ReleasePropertySourceWrapper;
 import com.wl4g.devops.scm.client.utils.NodeHolder;
 import com.wl4g.devops.scm.common.config.ScmPropertySource;
 import com.wl4g.devops.scm.common.config.resolve.DefaultPropertySourceResolver;
@@ -31,9 +32,9 @@ import com.wl4g.devops.scm.common.config.resolve.PropertySourceResolver;
 import com.wl4g.devops.scm.common.exception.ScmException;
 import com.wl4g.devops.scm.common.model.FetchConfigRequest;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
-import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.ReleaseConfigSource;
-import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigMeta;
+import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.ReleaseContent;
 
+import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.lang.ThreadUtils2.sleep;
@@ -41,6 +42,7 @@ import static com.wl4g.devops.scm.common.SCMConstants.*;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.util.List;
@@ -154,9 +156,15 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	 */
 	protected FetchConfigRequest createFetchRequest() {
 		// Create config watching fetching command
-		ReleaseConfigInfo last = repository.getLastReleaseConfig();
-		ConfigMeta meta = nonNull(last) ? last.getMeta() : null;
-		return new FetchConfigRequest(config.getClusterName(), config.getProfiles(), meta, nodeHolder.getConfigNode());
+		ReleasePropertySourceWrapper last = repository.getLastReleaseSource();
+
+		FetchConfigRequest fetch = new FetchConfigRequest();
+		fetch.setZone(config.getZone());
+		fetch.setCluster(config.getCluster());
+		fetch.setNode(nodeHolder.getConfigNode());
+		fetch.setProfiles(config.getProfiles());
+		fetch.setMeta(nonNull(last) ? last.getRelease().getMeta() : null);
+		return fetch;
 	}
 
 	/**
@@ -191,14 +199,16 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 			// Print release sources
 			printConfigSources(release);
 
-			// Resolve property sources
-			ScmPropertySource source = resolver.resolve("", "");
+			// Resolving to property sources.
+			List<ScmPropertySource> sources = safeList(release.getReleases()).stream()
+					.map(r -> resolver.resolve(r.getProfile(), r.getSourceContent())).collect(toList());
 
 			// Addition refresh config source.
-			repository.saveReleaseConfig(release);
+			ReleasePropertySourceWrapper wrapper = new ReleasePropertySourceWrapper(release, sources);
+			repository.saveReleaseSource(wrapper);
 
 			// Publishing refresh
-			publisher.publishRefreshEvent(release);
+			publisher.publishRefreshEvent(wrapper);
 			break;
 		case WATCH_CHECKPOINT:
 			// Report refresh changed
@@ -215,16 +225,16 @@ public abstract class GenericRefreshWatcher extends GenericTaskRunner<RunnerProp
 	/**
 	 * Prints configuration sources.
 	 * 
-	 * @param source
+	 * @param release
 	 */
-	protected void printConfigSources(ReleaseConfigInfo source) {
-		log.info("Fetched SCM config for cluster: {}, profiles: {}, meta: {}", source.getCluster(), source.getProfiles(),
-				source.getMeta());
+	protected void printConfigSources(ReleaseConfigInfo release) {
+		log.info("Fetched SCM config for cluster: {}, profiles: {}, meta: {}", release.getZone(), release.getCluster(),
+				release.getMeta());
 
 		if (log.isDebugEnabled()) {
-			List<ReleaseConfigSource> rss = source.getReleases();
+			List<ReleaseContent> rss = release.getReleases();
 			if (rss != null) {
-				int pscount = source.getReleases().size();
+				int pscount = release.getReleases().size();
 				log.debug("Release config profiles: {}, the property sources sizeof: {}", rss.size(), pscount);
 			}
 		}

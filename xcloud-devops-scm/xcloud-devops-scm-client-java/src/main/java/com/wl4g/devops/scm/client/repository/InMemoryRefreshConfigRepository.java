@@ -23,7 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
 
 /**
@@ -50,14 +49,14 @@ public class InMemoryRefreshConfigRepository implements RefreshConfigRepository 
 	// --- Release config source. ---
 
 	@Override
-	public void saveReleaseConfig(ReleaseConfigInfo source) {
+	public void saveReleaseSource(ReleasePropertySourceWrapper wrapper) {
 		if (refreshConfigStore.size() <= capacity) {
-			refreshConfigStore.add(source);
+			refreshConfigStore.add(wrapper);
 		}
 	}
 
 	@Override
-	public ReleaseConfigInfo getLastReleaseConfig() {
+	public ReleasePropertySourceWrapper getLastReleaseSource() {
 		if (refreshConfigStore.isEmpty()) {
 			return null;
 		}
@@ -69,7 +68,7 @@ public class InMemoryRefreshConfigRepository implements RefreshConfigRepository 
 	}
 
 	@Override
-	public ReleaseConfigInfo getCurrentReleaseConfig() {
+	public ReleasePropertySourceWrapper getCurrentReleaseSource() {
 		if (refreshConfigStore.isEmpty()) {
 			return null;
 		}
@@ -93,12 +92,12 @@ public class InMemoryRefreshConfigRepository implements RefreshConfigRepository 
 	}
 
 	@Override
-	public void saveChanged(Set<String> changedKeys, ReleaseConfigInfo source) {
-		changeRecordStore.add(new ChangedRecord(changedKeys, source));
+	public void saveChanged(Set<String> changedKeys, ReleasePropertySourceWrapper wrapper) {
+		changeRecordStore.add(new ChangedRecord(changedKeys, wrapper.getRelease()));
 	}
 
 	/** Refresh configuration source cache registry. */
-	private static final List<ReleaseConfigInfo> refreshConfigStore = synchronizedList(new LinkedList<>());
+	private static final List<ReleasePropertySourceWrapper> refreshConfigStore = synchronizedList(new LinkedList<>());
 
 	/** Refreshed configuration changed records. */
 	private static final List<ChangedRecord> changeRecordStore = synchronizedList(new LinkedList<>());

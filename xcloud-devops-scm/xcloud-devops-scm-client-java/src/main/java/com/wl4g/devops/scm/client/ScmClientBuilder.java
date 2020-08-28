@@ -20,10 +20,10 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.commons.beanutils.BeanUtilsBean2;
 
-import com.wl4g.devops.scm.client.config.ConfCommType;
-import static com.wl4g.devops.scm.client.config.ConfCommType.*;
+import com.wl4g.devops.scm.client.config.CommType;
+import static com.wl4g.devops.scm.client.config.CommType.*;
 import com.wl4g.devops.scm.client.config.ScmClientProperties;
-import com.wl4g.devops.scm.client.console.RefreshableConfigConsole;
+import com.wl4g.devops.scm.client.console.ScmManagementConsole;
 import com.wl4g.devops.scm.client.event.ConfigEventListener;
 import com.wl4g.devops.scm.client.repository.InMemoryRefreshConfigRepository;
 import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
@@ -43,7 +43,7 @@ import com.wl4g.shell.core.handler.EmbeddedShellServer;
 public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 
 	/** Configuration refreshing internal comm protocol type. */
-	private ConfCommType commType = ConfCommType.HLP;
+	private CommType commType = CommType.HLP;
 
 	/** Configuration refreshing {@link ConfigEventListener} */
 	private ConfigEventListener[] listeners;
@@ -51,8 +51,8 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	/** {@link RefreshConfigRepository} */
 	private RefreshConfigRepository repository = new InMemoryRefreshConfigRepository();
 
-	/** Enable refreshable console for {@link RefreshableConfigConsole} */
-	private boolean enableRefreshableConsole = false;
+	/** Enable managementconsole for {@link ScmManagementConsole} */
+	private boolean enableManagementConsole = false;
 
 	/** {@link EmbeddedShellServer} */
 	private EmbeddedShellServer shellServer;
@@ -84,11 +84,11 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 
 	/**
 	 * Sets SCM internal comm protocol type. The default using
-	 * {@link ConfCommType#HLP}
+	 * {@link CommType#HLP}
 	 * 
 	 * @return
 	 */
-	public ScmClientBuilder withCommType(ConfCommType commType) {
+	public ScmClientBuilder withCommType(CommType commType) {
 		if (nonNull(commType)) {
 			this.commType = commType;
 		}
@@ -119,12 +119,12 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	}
 
 	/**
-	 * Enable startup refreshable configuration console.
+	 * Enable startup management console.
 	 * 
 	 * @return
 	 */
-	public ScmClientBuilder enableRefreshableConsole() {
-		this.enableRefreshableConsole = true;
+	public ScmClientBuilder enableManagementConsole() {
+		this.enableManagementConsole = true;
 		return this;
 	}
 
@@ -134,8 +134,9 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 	 * @return
 	 */
 	public ScmClient build() {
-		ScmClient client = null;
+		validate();
 
+		ScmClient client = null;
 		if (commType == HLP) {
 			client = new HlpScmClient(this, repository, listeners);
 		} else if (commType == RPC) {
@@ -145,27 +146,27 @@ public class ScmClientBuilder extends ScmClientProperties<ScmClientBuilder> {
 		}
 
 		// Start console
-		if (enableRefreshableConsole) {
-			startRefreshableConsole(((GenericScmClient) client).getWatcher());
+		if (enableManagementConsole) {
+			startManagementConsole(((GenericScmClient) client).getWatcher());
 		}
 
 		return client;
 	}
 
 	/**
-	 * Enable startup refreshable configuration console.
+	 * Enable starting management configuration console.
 	 * 
 	 * @param watcher
 	 */
-	public void startRefreshableConsole(RefreshWatcher watcher) {
+	public void startManagementConsole(RefreshWatcher watcher) {
 		try {
 			String consolePrompt = getConsolePrompt();
 			if (isBlank(consolePrompt)) {
-				consolePrompt = getClusterName();
+				consolePrompt = getCluster();
 			}
 
 			this.shellServer = EmbeddedShellServerBuilder.newBuilder().withAppName(consolePrompt)
-					.register(new RefreshableConfigConsole(watcher)).build();
+					.register(new ScmManagementConsole(watcher)).build();
 			this.shellServer.start();
 		} catch (Exception e) {
 			throw new ScmException(e);

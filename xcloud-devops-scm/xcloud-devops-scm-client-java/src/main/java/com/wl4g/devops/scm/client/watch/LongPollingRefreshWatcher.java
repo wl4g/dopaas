@@ -149,7 +149,7 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 		HttpResponseEntity<RespBase<ReleaseConfigInfo>> resp = http.exchange(config.getWatchUri(), POST, entity,
 				new ParameterizedTypeReference<RespBase<ReleaseConfigInfo>>() {
 				});
-		log.debug("Watching fetch received: {}", resp);
+		log.debug("Watch received: {}", resp);
 
 		if (!isNull(resp) && !isNull(resp.getBody())) {
 			handleWatchResult(resp.getStatusCodeValue(), resp.getBody().getData());
@@ -196,7 +196,7 @@ public class LongPollingRefreshWatcher extends GenericRefreshWatcher {
 	 */
 	class GenericRequestHeaderInterceptor implements ClientHttpRequestInterceptor {
 
-		final private Map<String, String> headers;
+		private final Map<String, String> headers;
 
 		public GenericRequestHeaderInterceptor(Map<String, String> headers) {
 			this.headers = headers;

@@ -1,18 +1,15 @@
 package com.wl4g.devops.scm.common.config;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
-import static java.util.Objects.nonNull;
 
-import java.util.function.Function;
+import javax.validation.constraints.NotNull;
 
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.devops.scm.common.model.ReleaseConfigInfo.ReleaseConfigSource;
+import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigProfile;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Wither;
 
 /**
  * Generic origin base property source.
@@ -24,28 +21,19 @@ import lombok.experimental.Wither;
  */
 @Getter
 @Setter
-@Wither
-public class GenericPropertySource implements ScmPropertySource {
-
+public abstract class GenericPropertySource implements ScmPropertySource {
 	private static final long serialVersionUID = -5037062685017411482L;
 
 	final protected SmartLogger log = getLogger(getClass());
 
 	/**
-	 * Configuration release source.
+	 * Configuration files. (like spring.profiles)
 	 */
-	private ReleaseConfigSource release;
-
-	/** Resolved configuration decrypted property source. */
-	private transient ScmPropertySource resolvedSource;
+	@NotNull
+	private ConfigProfile profile;
 
 	public GenericPropertySource() {
 		super();
-	}
-
-	public GenericPropertySource(ReleaseConfigSource release, ScmPropertySource resolvedSource) {
-		this.release = release;
-		this.resolvedSource = resolvedSource;
 	}
 
 	@Override
@@ -53,32 +41,18 @@ public class GenericPropertySource implements ScmPropertySource {
 		return getClass().getSimpleName().concat(" - ").concat(toJSONString(this));
 	}
 
-	/**
-	 * Validation
-	 */
-	public void validate() {
-		notNullOf(getRelease(), "release");
-		getRelease().validate();
-	}
-
 	@Override
-	public boolean isResolved() {
-		return nonNull(resolvedSource);
-	}
-
-	@Override
-	public ScmPropertySource resolveCipher(Function<String, Object> cipherResolver) {
-		return (this.resolvedSource = doResolved(cipherResolver));
+	public void read(ConfigProfile profile, String sourceContent) {
+		log.debug("Resolving release cipher configuration source ...");
+		setProfile(profile);
 	}
 
 	/**
-	 * Do resolving property source.
+	 * DO read & resolving property source.
 	 * 
-	 * @param cipherResolver
-	 * @return
+	 * @param profile
+	 * @param sourceContent
 	 */
-	protected ScmPropertySource doResolved(Function<String, Object> cipherResolver) {
-		throw new UnsupportedOperationException();
-	}
+	protected abstract void doRead(ConfigProfile profile, String sourceContent);
 
 }

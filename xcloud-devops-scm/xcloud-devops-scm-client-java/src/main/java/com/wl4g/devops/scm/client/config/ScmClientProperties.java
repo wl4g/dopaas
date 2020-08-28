@@ -23,6 +23,7 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.scm.common.SCMConstants.URI_S_BASE;
 import static com.wl4g.devops.scm.common.SCMConstants.URI_S_SOURCE_WATCH;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import com.wl4g.devops.common.utils.InetHolder;
 import com.wl4g.devops.common.utils.InetHolder.HostInfo;
 import com.wl4g.devops.common.utils.InetHolder.InetProperties;
 import com.wl4g.devops.scm.common.BaseScmProperties;
+import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigProfile;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -54,12 +56,19 @@ import lombok.experimental.Wither;
 @Getter
 @Setter
 @SuppressWarnings("unchecked")
+@Wither
 public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseScmProperties {
 
 	private static final long serialVersionUID = -2133451846066162424L;
 
+	/** Connect to SCM server based URI. */
+	private String baseUri = DEF_BASEURI;
+
 	/** SCM client application cluster service name mark. */
-	private String clusterName = DEF_CLUSTER_NAME;
+	private String zone = DEF_ZONE_NAME;
+
+	/** SCM client application cluster service name mark. */
+	private String cluster = DEF_CLUSTER_NAME;
 
 	/**
 	 * SCM client application/service unique identification. (Default is the
@@ -67,8 +76,12 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 */
 	private String serviceId = DEF_SERVICEID;
 
-	/** Connect to SCM server based URI. */
-	private String baseUri = DEF_BASEURI;
+	/**
+	 * Refresh name-space(configuration filename)</br>
+	 * SCM server publishing must be consistent with this configuration or the
+	 * refresh configuration will fail.(Accurate matching)
+	 */
+	private List<ConfigProfile> profiles = new ArrayList<>(2);
 
 	/**
 	 * SCM client register network interface configuration.
@@ -112,13 +125,6 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	private String consolePrompt;
 
 	/**
-	 * Refresh name-space(configuration filename)</br>
-	 * SCM server publishing must be consistent with this configuration or the
-	 * refresh configuration will fail.(Accurate matching)
-	 */
-	private List<String> profiles = new ArrayList<>(2);
-
-	/**
 	 * Additional headers used to create the client request.
 	 */
 	private Map<String, String> headers = new HashMap<>(4);
@@ -133,7 +139,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	@Getter(lombok.AccessLevel.NONE)
 	@Setter(lombok.AccessLevel.NONE)
 	@Wither(lombok.AccessLevel.NONE)
-	private transient String fetchUri;
+	private transient String watchUri;
 
 	/**
 	 * Default constructor of {@link ScmClientProperties}, Not recommended!!!
@@ -142,10 +148,11 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		super();
 	}
 
-	public ScmClientProperties(String clusterName, String baseUri, InetProperties inet, List<String> profiles) {
-		this(clusterName, DEF_SERVICEID, baseUri, inet, DEF_LONGPOLLING_MIN_DELAY_MS, DEF_LONGPOLLING_MAX_DELAY_MS,
+	public ScmClientProperties(@NotBlank String baseUri, @Nullable String zone, @NotBlank String cluster,
+			@NotBlank List<ConfigProfile> profiles, @NotNull InetProperties inet) {
+		this(baseUri, zone, cluster, DEF_SERVICEID, profiles, inet, DEF_LONGPOLLING_MIN_DELAY_MS, DEF_LONGPOLLING_MAX_DELAY_MS,
 				DEF_SAFE_REFRESH_DELAY_MS, DEF_RETRY_REPORTING_MIN_DELAY_MS, DEF_RETRY_REPORTING_MAX_DELAY_MS, -1,
-				DEF_EVENT_THREADS, profiles, null, null, null, null);
+				DEF_EVENT_THREADS, null, null, null, null);
 	}
 
 	/**
@@ -154,7 +161,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 * The parameter: {@link InetHolder} is ignored (only to satisfy the Lombok
 	 * syntax sugar)
 	 * 
-	 * @param clusterName
+	 * @param cluster
 	 *            SCM client application cluster service name mark.
 	 * @param baseUri
 	 *            Connect to SCM server based URI.
@@ -168,7 +175,7 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 * @param longPollingMaxDelay
 	 *            Maximum waiting time for long polling failure, Prevent
 	 *            avalanche.
-	 * @param safeRefreshProtectDelay
+	 * @param safeRefreshRateDelay
 	 *            Frequency interval protection mechanism to control refresh
 	 *            failure too fast (ms).
 	 * @param profiles
@@ -180,42 +187,31 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 	 * @param ignore0
 	 *            [Deprecated] only to satisfy the Lombok syntax sugar
 	 */
-	public ScmClientProperties(@Nonnull String clusterName, @NotBlank String serviceId, @NotBlank String baseUri,
-			@NotNull InetProperties inet, long longPollingMinDelay, long longPollingMaxDelay, long safeRefreshProtectDelay,
-			long retryReportingMinDelay, long retryReportingMaxDelay, long retryReportingFastFailThreshold, int asyncEventThreads,
-			@Nonnull List<String> profiles, @Nullable String consolePrompt, @Nullable Map<String, String> headers,
-			@Deprecated InetHolder ignore0, @Deprecated String ignore1) {
-		hasTextOf(clusterName, "clusterName");
-		hasTextOf(serviceId, "serviceId");
-		hasTextOf(baseUri, "baseUri");
-		notNullOf(inet, "inetProperties");
-		isTrueOf(longPollingMinDelay > 0, "longPollingMinDelay>0");
-		isTrue(longPollingMaxDelay > longPollingMinDelay, "longPollingMaxDelay>longPollingMinDelay(%s)", longPollingMinDelay);
-		isTrueOf(safeRefreshProtectDelay > 0, "safeRefreshProtectDelay>0");
-		isTrueOf(retryReportingMinDelay > 0, "retryReportingMinDelay>0");
-		isTrue(retryReportingMaxDelay > retryReportingMinDelay, "retryReportingMaxDelay>retryReportingMinDelay(%s)",
-				retryReportingMinDelay);
-		isTrueOf(asyncEventThreads > 0, "asyncEventThreads>0");
-		notEmptyOf(profiles, "profiles");
-		hasTextOf(consolePrompt, "consolePrompt");
-		this.clusterName = clusterName;
-		this.serviceId = serviceId;
+	public ScmClientProperties(@NotBlank String baseUri, @Nullable String zone, @NotBlank String cluster,
+			@NotBlank String serviceId, @Nonnull List<ConfigProfile> profiles, @NotNull InetProperties inet,
+			long longPollingMinDelay, long longPollingMaxDelay, long safeRefreshRateDelay, long retryReportingMinDelay,
+			long retryReportingMaxDelay, long retryReportingFastFailThreshold, int eventThreads, @Nullable String consolePrompt,
+			@Nullable Map<String, String> headers, @Deprecated InetHolder ignore0, @Deprecated String ignore1) {
 		this.baseUri = baseUri;
+		this.zone = zone;
+		this.cluster = cluster;
+		this.serviceId = serviceId;
+		this.profiles = profiles;
 		this.inet = inet;
 		this.longPollingMinDelay = longPollingMinDelay;
 		this.longPollingMaxDelay = longPollingMaxDelay;
-		this.safeRefreshRateDelay = safeRefreshProtectDelay;
+		this.safeRefreshRateDelay = safeRefreshRateDelay;
 		this.retryReportingMinDelay = retryReportingMinDelay;
 		this.retryReportingMaxDelay = retryReportingMaxDelay;
 		this.retryReportingFastFailThreshold = retryReportingFastFailThreshold;
-		this.eventThreads = asyncEventThreads;
+		this.eventThreads = eventThreads;
 		this.profiles = profiles;
 		this.consolePrompt = consolePrompt;
 		this.headers = headers;
 	}
 
-	public T withClusterName(String clusterName) {
-		this.clusterName = clusterName;
+	public T withCluster(String cluster) {
+		this.cluster = cluster;
 		return (T) this;
 	}
 
@@ -259,8 +255,8 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		return (T) this;
 	}
 
-	public T withSafeRefreshProtectDelay(long safeRefreshProtectDelay) {
-		this.safeRefreshRateDelay = safeRefreshProtectDelay;
+	public T withsafeRefreshRateDelay(long safeRefreshRateDelay) {
+		this.safeRefreshRateDelay = safeRefreshRateDelay;
 		return (T) this;
 	}
 
@@ -279,12 +275,12 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		return (T) this;
 	}
 
-	public T withAsyncEventThreads(int asyncEventThreads) {
-		this.eventThreads = asyncEventThreads;
+	public T witheventThreads(int eventThreads) {
+		this.eventThreads = eventThreads;
 		return (T) this;
 	}
 
-	public T withProfiles(List<String> profiles) {
+	public T withProfiles(List<ConfigProfile> profiles) {
 		this.profiles = profiles;
 		return (T) this;
 	}
@@ -298,11 +294,11 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 
 	public String getWatchUri() {
 		synchronized (this) {
-			if (isNull(fetchUri)) {
-				this.fetchUri = getBaseUri().concat(URI_S_BASE).concat("/").concat(URI_S_SOURCE_WATCH);
+			if (isNull(watchUri)) {
+				this.watchUri = getBaseUri().concat(URI_S_BASE).concat("/").concat(URI_S_SOURCE_WATCH);
 			}
 		}
-		return fetchUri;
+		return watchUri;
 	}
 
 	public HostInfo getAvailableHostInfo() {
@@ -314,12 +310,39 @@ public class ScmClientProperties<T extends ScmClientProperties<?>> extends BaseS
 		return inetHolder.getFirstNonLoopbackHostInfo();
 	}
 
+	/**
+	 * Check validation configuration items.
+	 */
+	protected void validate() {
+		// Apply defaults.
+		setConsolePrompt(isBlank(getConsolePrompt()) ? getCluster() : getConsolePrompt());
+
+		hasTextOf(baseUri, "baseUri");
+		// hasTextOf(zone, "zone");
+		// hasTextOf(cluster, "cluster");
+		// hasTextOf(serviceId, "serviceId");
+		notNullOf(inet, "inetProperties");
+		notEmptyOf(profiles, "profiles");
+
+		isTrueOf(longPollingMinDelay > 0, "longPollingMinDelay>0");
+		isTrue(longPollingMaxDelay > longPollingMinDelay, "longPollingMaxDelay>longPollingMinDelay(%s)", longPollingMinDelay);
+		isTrueOf(safeRefreshRateDelay > 0, "safeRefreshRateDelay>0");
+		isTrueOf(retryReportingMinDelay > 0, "retryReportingMinDelay>0");
+		isTrue(retryReportingMaxDelay > retryReportingMinDelay, "retryReportingMaxDelay>retryReportingMinDelay(%s)",
+				retryReportingMinDelay);
+		isTrueOf(eventThreads > 0, "eventThreads>0");
+		// hasTextOf(consolePrompt, "consolePrompt");
+	}
+
 	// --- Default and constant's. ---
 
 	/**
 	 * Prefix for SCM configuration properties.
 	 */
 	public final static String AUTHORIZATION = "authorization";
+
+	/** Default SCM client data center of application cluster. */
+	public final static String DEF_ZONE_NAME = "none";
 
 	/** Default SCM client application cluster service name mark. */
 	public final static String DEF_CLUSTER_NAME = "defaultScmClient";

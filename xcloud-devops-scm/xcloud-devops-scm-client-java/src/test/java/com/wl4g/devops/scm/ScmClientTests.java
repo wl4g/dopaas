@@ -37,8 +37,8 @@ public class ScmClientTests {
 
 		ScmClient client = ScmClientBuilder.newBuilder()
 			.withBaseUri("http://localhost:14043")
-			.withClusterName("scmClientApp1")
-			.enableRefreshableConsole()
+			.withCluster("scmClientApp1")
+			.enableManagementConsole()
 			.withLongPollTimeout(6000L)
 			.withListeners(event-> {
 				System.out.println("On refresh configuration...");

@@ -19,13 +19,13 @@ import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.lang.StringUtils2.eqIgnCase;
 
 /**
- * {@link ConfCommType}
+ * {@link CommType}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-08-19
  * @since
  */
-public enum ConfCommType {
+public enum CommType {
 
 	/**
 	 * Use HTTP long-polling comm protocol
@@ -43,8 +43,8 @@ public enum ConfCommType {
 	 * @param type
 	 * @return
 	 */
-	public static ConfCommType safeOf(String type) {
-		for (ConfCommType t : values()) {
+	public static CommType safeOf(String type) {
+		for (CommType t : values()) {
 			if (eqIgnCase(type, t.name())) {
 				return t;
 			}
@@ -58,8 +58,8 @@ public enum ConfCommType {
 	 * @param type
 	 * @return
 	 */
-	public static ConfCommType of(String type) {
-		ConfCommType t = safeOf(type);
+	public static CommType of(String type) {
+		CommType t = safeOf(type);
 		notNull(t, "Invalid internal comm type: '%s'", type);
 		return t;
 	}
