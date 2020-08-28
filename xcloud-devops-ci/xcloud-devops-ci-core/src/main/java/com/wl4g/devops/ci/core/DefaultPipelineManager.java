@@ -26,7 +26,7 @@ import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.erm.DockerRepository;
 import com.wl4g.components.core.bean.iam.Contact;
 import com.wl4g.components.core.bean.iam.ContactChannel;
-import com.wl4g.components.core.framework.beans.AliasPrototypeBeanFactory;
+import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.support.notification.GenericNotifyMessage;
 import com.wl4g.components.support.notification.MessageNotifier;
@@ -87,7 +87,7 @@ public class DefaultPipelineManager implements PipelineManager {
     @Autowired
     protected CiCdProperties config;
     @Autowired
-    protected AliasPrototypeBeanFactory beanFactory;
+    protected NamingPrototypeBeanFactory beanFactory;
     @Autowired
     protected PipelineJobExecutor jobExecutor;
     @Autowired

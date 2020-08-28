@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.config;
 
 import com.wl4g.components.core.bean.ci.*;
 import com.wl4g.components.core.bean.erm.AppInstance;
-import com.wl4g.components.core.framework.beans.PrototypeAlias;
+import com.wl4g.components.core.framework.beans.NamingPrototype;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.ci.console.CiCdConsole;
 import com.wl4g.devops.ci.core.DefaultPipelineManager;
@@ -126,56 +126,56 @@ public class CiCdAutoConfiguration {
 	// --- Pipeline provider's. ---
 
 	@Bean
-	@PrototypeAlias({ PipelineKind.MVN_ASSEMBLE_TAR })
+	@NamingPrototype({ PipelineKind.MVN_ASSEMBLE_TAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineContext context) {
 		return new MvnAssembleTarPipelineProvider(context);
 	}
 
 	@Bean
-	@PrototypeAlias({ PipelineKind.SPRING_EXECUTABLE_JAR })
+	@NamingPrototype({ PipelineKind.SPRING_EXECUTABLE_JAR })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineContext context) {
 		return new SpringExecutableJarPipelineProvider(context);
 	}
 
 	@Bean
-	@PrototypeAlias({ PipelineKind.NPM_VIEW })
+	@NamingPrototype({ PipelineKind.NPM_VIEW })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineContext context) {
 		return new NpmViewPipelineProvider(context);
 	}
 
 	@Bean
-	@PrototypeAlias({ PipelineKind.VIEW_NATIVE })
+	@NamingPrototype({ PipelineKind.VIEW_NATIVE })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public ViewNativePipelineProvider viewNativePipelineProvider(PipelineContext context) {
 		return new ViewNativePipelineProvider(context);
 	}
 
 	@Bean
-	@PrototypeAlias({ PipelineKind.PYTHON3_STANDARD })
+	@NamingPrototype({ PipelineKind.PYTHON3_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public Python3PipelineProvider python3StandardPipelineProvider(PipelineContext context) {
 		return new Python3PipelineProvider(context);
 	}
 
 	@Bean
-	@PrototypeAlias({ PipelineKind.GOLANG_STANDARD })
+	@NamingPrototype({ PipelineKind.GOLANG_STANDARD })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public GolangModPipelineProvider golangModPipelineProvider(PipelineContext context) {
 		return new GolangModPipelineProvider(context);
 	}
 
 	@Bean
-	@PrototypeAlias({ PipelineKind.DOCKER_NATIVE })
+	@NamingPrototype({ PipelineKind.DOCKER_NATIVE })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineContext context) {
 		return new DockerNativePipelineProvider(context);
 	}
 
 	@Bean
-	@PrototypeAlias({ PipelineKind.RKT_NATIVE })
+	@NamingPrototype({ PipelineKind.RKT_NATIVE })
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public RktNativePipelineProvider rktNativePipelineProvider(PipelineContext context) {
 		return new RktNativePipelineProvider(context);

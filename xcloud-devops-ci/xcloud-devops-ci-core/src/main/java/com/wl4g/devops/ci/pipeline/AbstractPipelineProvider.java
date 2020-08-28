@@ -22,7 +22,7 @@ import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.erm.Ssh;
 import com.wl4g.components.core.exception.ci.BadCommandScriptException;
 import com.wl4g.components.core.exception.ci.PipelineIntegrationBuildingException;
-import com.wl4g.components.core.framework.beans.AliasPrototypeBeanFactory;
+import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
@@ -81,7 +81,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	@Autowired
 	protected BeanFactory beanFactory;
 	@Autowired
-	protected AliasPrototypeBeanFactory aliasPrototypeBeanFactory;
+	protected NamingPrototypeBeanFactory aliasPrototypeBeanFactory;
 	@Autowired
 	protected JedisLockManager lockManager;
 	@Autowired
