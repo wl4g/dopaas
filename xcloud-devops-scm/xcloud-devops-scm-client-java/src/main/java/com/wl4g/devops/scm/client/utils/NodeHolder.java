@@ -22,7 +22,7 @@ import com.wl4g.devops.scm.client.config.ScmClientProperties;
 import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigNode;
 
 /**
- * Instance information.
+ * Instance node holder.
  * 
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年4月1日
@@ -32,7 +32,7 @@ public class NodeHolder {
 
 	protected final SmartLogger log = getLogger(getClass());
 
-	/** That application instance. */
+	/** That application config instance node. */
 	private final ConfigNode configNode;
 
 	public NodeHolder(ScmClientProperties<?> config) {

@@ -1,5 +1,7 @@
 package com.wl4g.devops.scm.common.config;
 
+import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigProfile;
+
 import lombok.Getter;
 
 /**
@@ -13,5 +15,10 @@ import lombok.Getter;
 @Getter
 public class PropertiesPropertySource extends GenericPropertySource {
 	private static final long serialVersionUID = 1755382479743018762L;
+
+	@Override
+	public void doRead(ConfigProfile profile, String sourceContent) {
+		throw new UnsupportedOperationException();
+	}
 
 }

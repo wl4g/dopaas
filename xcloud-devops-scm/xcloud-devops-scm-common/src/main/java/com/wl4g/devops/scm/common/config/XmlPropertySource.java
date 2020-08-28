@@ -5,6 +5,8 @@ import static com.wl4g.components.common.serialize.JacksonUtils.toJSONString;
 import java.util.List;
 import java.util.Map;
 
+import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigProfile;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +22,11 @@ import lombok.Setter;
 public class XmlPropertySource extends GenericPropertySource {
 
 	private static final long serialVersionUID = -7806121596630535330L;
+
+	@Override
+	public void doRead(ConfigProfile profile, String sourceContent) {
+		throw new UnsupportedOperationException();
+	}
 
 	/** Configuration source typeof map */
 	private XmlNode root;

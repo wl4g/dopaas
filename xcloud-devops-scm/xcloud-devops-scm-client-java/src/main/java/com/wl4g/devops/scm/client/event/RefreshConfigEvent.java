@@ -18,9 +18,12 @@ package com.wl4g.devops.scm.client.event;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.util.Objects.nonNull;
 
+import java.util.List;
 import java.util.Set;
 
 import com.wl4g.devops.scm.client.repository.RefreshConfigRepository;
+import com.wl4g.devops.scm.client.repository.ReleasePropertySourceWrapper;
+import com.wl4g.devops.scm.common.config.ScmPropertySource;
 import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.components.common.annotation.Nullable;
 import com.wl4g.devops.scm.client.event.RefreshConfigEvent.RefreshContext;
@@ -47,21 +50,21 @@ public class RefreshConfigEvent extends GenericScmEvent<RefreshContext> {
 	public static class RefreshContext {
 
 		/** {@link ReleaseConfigInfo} */
-		private final ReleaseConfigInfo source;
+		private final ReleasePropertySourceWrapper release;
 
 		/** {@link RefreshConfigRepository} */
 		protected final RefreshConfigRepository repository;
 
-		public RefreshContext(ReleaseConfigInfo source, RefreshConfigRepository repository) {
-			notNullOf(source, "refreshConfigSource");
+		public RefreshContext(ReleasePropertySourceWrapper release, RefreshConfigRepository repository) {
+			notNullOf(release, "release");
 			notNullOf(repository, "repository");
-			this.source = source;
+			this.release = release;
 			this.repository = repository;
 		}
 
-		/** Gets current refreshing {@link ReleaseConfigInfo} */
-		public ReleaseConfigInfo getSource() {
-			return source;
+		/** Gets current refreshing sources of {@link ScmPropertySource} */
+		public List<ScmPropertySource> getSources() {
+			return release.getSources();
 		}
 
 		/**
@@ -72,10 +75,9 @@ public class RefreshConfigEvent extends GenericScmEvent<RefreshContext> {
 		 */
 		public void commitChanged(@Nullable Set<String> changedKeys) {
 			if (nonNull(changedKeys)) {
-				repository.saveChanged(changedKeys, getSource());
+				repository.saveChanged(changedKeys, release);
 			} else {
-				// TODO
-
+				// TODO ...
 			}
 
 		}

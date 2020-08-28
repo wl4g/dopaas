@@ -67,9 +67,9 @@ public class ReportChangedRequest extends FetchConfigRequest {
 			super();
 		}
 
-		public ChangedRecord(Set<String> changedKeys, ReleaseConfigInfo result) {
+		public ChangedRecord(Set<String> changedKeys, ReleaseConfigInfo sources) {
 			this.changedKeys = changedKeys;
-			this.sources = result;
+			this.sources = sources;
 		}
 
 		@Override

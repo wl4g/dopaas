@@ -48,10 +48,10 @@ public class ReleaseConfigInfo extends AbstractConfigInfo {
 	@NotEmpty
 	private List<ConfigNode> nodes = new ArrayList<>();
 
-	/** {@link ReleaseConfigSource} */
+	/** {@link ReleaseContent} */
 	@NotNull
 	@NotEmpty
-	private List<ReleaseConfigSource> releases = new ArrayList<>(2);
+	private List<ReleaseContent> releases = new ArrayList<>(1);
 
 	public ReleaseConfigInfo() {
 		super();
@@ -60,18 +60,18 @@ public class ReleaseConfigInfo extends AbstractConfigInfo {
 	@Override
 	public void validate(boolean versionValidate, boolean releaseValidate) {
 		super.validate(versionValidate, releaseValidate);
-		notEmptyOf(getReleases(), "propertySources");
+		notEmptyOf(getReleases(), "releases");
 		getReleases().stream().forEach(rs -> rs.validate());
 	}
 
 	/**
-	 * {@link ReleaseConfigSource}
+	 * {@link ReleaseContent}
 	 *
 	 * @since
 	 */
 	@Getter
 	@Setter
-	public static class ReleaseConfigSource {
+	public static class ReleaseContent {
 
 		/**
 		 * Configuration property source profile.

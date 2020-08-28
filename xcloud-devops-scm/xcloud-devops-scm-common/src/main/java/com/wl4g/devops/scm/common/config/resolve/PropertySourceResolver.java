@@ -16,6 +16,7 @@
 package com.wl4g.devops.scm.common.config.resolve;
 
 import com.wl4g.devops.scm.common.config.ScmPropertySource;
+import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigProfile;
 
 /**
  * {@link PropertySourceResolver}
@@ -28,12 +29,12 @@ import com.wl4g.devops.scm.common.config.ScmPropertySource;
 public interface PropertySourceResolver {
 
 	/**
-	 * Resolving {@link ScmPropertySource} from property configuration content.
+	 * Resolving {@link ScmPropertySource} from release configuration content.
 	 * 
-	 * @param sourceType
+	 * @param profile
 	 * @param sourceContent
 	 * @return
 	 */
-	ScmPropertySource resolve(String sourceType, String sourceContent);
+	ScmPropertySource resolve(ConfigProfile profile, String sourceContent);
 
 }

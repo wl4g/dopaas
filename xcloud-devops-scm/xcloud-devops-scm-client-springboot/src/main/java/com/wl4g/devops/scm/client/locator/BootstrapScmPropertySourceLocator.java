@@ -73,7 +73,7 @@ public class BootstrapScmPropertySourceLocator implements PropertySourceLocator 
 		if (environment instanceof ConfigurableEnvironment) {
 			try {
 				// Gets current refresh config source
-				ReleaseConfigInfo source = getRefreshRepository().getCurrentReleaseConfig();
+				ReleaseConfigInfo source = getRefreshRepository().getCurrentReleaseSource();
 
 				// Conversion configuration to spring property source.
 				composite = convertToCompositePropertySource(source, SCM_REFRESH_PROPERTY_SOURCE);

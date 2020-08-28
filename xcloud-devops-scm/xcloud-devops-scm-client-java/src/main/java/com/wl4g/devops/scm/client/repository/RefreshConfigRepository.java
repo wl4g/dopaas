@@ -18,7 +18,6 @@ package com.wl4g.devops.scm.client.repository;
 import java.util.Collection;
 import java.util.Set;
 
-import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
 
 /**
@@ -31,25 +30,25 @@ import com.wl4g.devops.scm.common.model.ReportChangedRequest.ChangedRecord;
 public interface RefreshConfigRepository {
 
 	/**
-	 * Addition refresh configuration property source.
+	 * Addition save refresh configuration property source.
 	 * 
-	 * @param source
+	 * @param wrapper
 	 */
-	void saveReleaseConfig(ReleaseConfigInfo source);
+	void saveReleaseSource(ReleasePropertySourceWrapper wrapper);
 
 	/**
 	 * Gets last refresh configuration property source.
 	 * 
 	 * @return
 	 */
-	ReleaseConfigInfo getLastReleaseConfig();
+	ReleasePropertySourceWrapper getLastReleaseSource();
 
 	/**
 	 * Gets refresh configuration source currently in use.
 	 * 
 	 * @return
 	 */
-	ReleaseConfigInfo getCurrentReleaseConfig();
+	ReleasePropertySourceWrapper getCurrentReleaseSource();
 
 	// --- Changed records .---
 
@@ -71,8 +70,8 @@ public interface RefreshConfigRepository {
 	 * Addition changed keys.
 	 * 
 	 * @param changedKeys
-	 * @param source
+	 * @param wrapper
 	 */
-	void saveChanged(Set<String> changedKeys, ReleaseConfigInfo source);
+	void saveChanged(Set<String> changedKeys, ReleasePropertySourceWrapper wrapper);
 
 }

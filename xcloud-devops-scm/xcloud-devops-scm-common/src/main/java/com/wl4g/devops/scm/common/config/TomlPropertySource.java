@@ -2,6 +2,8 @@ package com.wl4g.devops.scm.common.config;
 
 import java.util.Map;
 
+import com.wl4g.devops.scm.common.model.AbstractConfigInfo.ConfigProfile;
+
 import lombok.Getter;
 
 /**
@@ -18,5 +20,10 @@ public class TomlPropertySource extends GenericPropertySource {
 
 	/** Configuration source typeof map */
 	private Map<String, Object> source;
+
+	@Override
+	public void doRead(ConfigProfile profile, String sourceContent) {
+		throw new UnsupportedOperationException();
+	}
 
 }

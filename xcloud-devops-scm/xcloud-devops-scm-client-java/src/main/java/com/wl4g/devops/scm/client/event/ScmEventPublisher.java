@@ -22,9 +22,9 @@ import javax.validation.constraints.NotNull;
 import com.github.rholder.retry.Attempt;
 import com.wl4g.components.common.eventbus.EventBusSupport;
 import com.wl4g.devops.scm.client.event.RefreshConfigEvent.RefreshContext;
+import com.wl4g.devops.scm.client.repository.ReleasePropertySourceWrapper;
 import com.wl4g.devops.scm.client.watch.GenericRefreshWatcher;
 import com.wl4g.devops.scm.client.watch.RefreshWatcher;
-import com.wl4g.devops.scm.common.model.ReleaseConfigInfo;
 
 /**
  * {@link ScmEventPublisher}
@@ -50,10 +50,10 @@ public class ScmEventPublisher {
 	/**
 	 * Publishing {@link RefreshConfigEvent}.
 	 * 
-	 * @param source
+	 * @param release
 	 */
-	public void publishRefreshEvent(ReleaseConfigInfo source) {
-		support.post(new RefreshConfigEvent(new RefreshContext(source, watcher.getRepository())));
+	public void publishRefreshEvent(ReleasePropertySourceWrapper release) {
+		support.post(new RefreshConfigEvent(new RefreshContext(release, watcher.getRepository())));
 	}
 
 	/**
