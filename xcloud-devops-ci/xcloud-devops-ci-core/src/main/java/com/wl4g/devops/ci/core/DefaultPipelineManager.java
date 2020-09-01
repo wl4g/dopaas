@@ -26,6 +26,7 @@ import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.erm.DockerRepository;
 import com.wl4g.components.core.bean.iam.Contact;
 import com.wl4g.components.core.bean.iam.ContactChannel;
+import com.wl4g.components.core.exception.ci.CiException;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.support.notification.GenericNotifyMessage;
@@ -128,7 +129,7 @@ public class DefaultPipelineManager implements PipelineManager {
     private ClusterExtensionDao clusterExtensionDao;
 
     @Override
-    public void runPipeline(NewParameter param, PipelineModel pipelineModel) {
+    public void runPipeline(NewParameter param, PipelineModel pipelineModel) throws Exception {
         log.info("Running pipeline job for: {}", param);
 
         Pipeline pipeline = pipelineDao.selectByPrimaryKey(param.getPipeId());
@@ -155,7 +156,7 @@ public class DefaultPipelineManager implements PipelineManager {
     }
 
     @Override
-    public void hookPipeline(HookCommandHolder.HookCommand hookCommand) {
+    public void hookPipeline(HookCommandHolder.HookCommand hookCommand) throws Exception {
         log.info("On hook pipeline job for: {}", hookCommand);
 
         ActionControl actionControl = new ActionControl();
@@ -244,7 +245,7 @@ public class DefaultPipelineManager implements PipelineManager {
      * @param taskId
      * @param provider
      */
-    private void doExecutePipeline(Integer taskId, PipelineProvider provider) {
+    private void doExecutePipeline(Integer taskId, PipelineProvider provider) throws Exception{
         notNull(taskId, "Pipeline taskId must not be null");
         notNull(provider, "Pipeline provider must not be null");
         log.info("Starting pipeline job for taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
@@ -299,12 +300,13 @@ public class DefaultPipelineManager implements PipelineManager {
                 // Failed process.
                 log.info("Post pipeline executeing of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
                 postPipelineRunFailure(taskId, provider, e);
+                throw new CiException(e);
             } finally {
                 // Log file end EOF.
                 writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);
                 log.info("Completed for pipeline taskId: {}", taskId);
                 pipelineHistoryService.updateCostTime(taskId, (currentTimeMillis() - startTime));
-                flowManager.pipelineComplete(provider.getContext().getPipelineModel());
+                flowManager.pipelineComplete(provider.getContext().getPipelineModel().getRunId());
             }
         });
     }
