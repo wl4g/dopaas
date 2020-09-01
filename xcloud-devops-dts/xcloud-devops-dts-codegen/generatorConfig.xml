@@ -20,7 +20,7 @@
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
         <!-- 生成模型的包名和位置-->
-        <javaModelGenerator targetPackage="com.wl4g.devops.common.bean.ci" targetProject="../../../xcloud-components/xcloud-components-core/src/main/java">
+        <javaModelGenerator targetPackage="com.wl4g.components.core.bean.ci" targetProject="../../../xcloud-components/xcloud-components-core/src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
@@ -63,7 +63,7 @@
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>-->
 
-        <table tableName="ci_cluster_extension" domainObjectName="ClusterExtension"
+        <table tableName="ci_orchestration_history" domainObjectName="OrchestrationHistory"
                enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
         </table>
 
