@@ -86,6 +86,9 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 		pipelineHistory.setTrackType(traceType);
 		pipelineHistory.setRemark(remark);
 
+		pipelineHistory.setOrchestrationType(newParameter.getOrchestrationType());
+		pipelineHistory.setOrchestrationId(newParameter.getOrchestrationId());
+
 		pipelineHistoryDao.insertSelective(pipelineHistory);
 		createPipeHistoryInstance(pipeline.getId(), pipelineHistory.getId());
 		return pipelineHistory;
@@ -206,7 +209,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 			String providerKind) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
 		pm.setRecords(pipelineHistoryDao.list(getRequestOrganizationCodes(), pipeName, clusterName, environment, startDate,
-				endDate, providerKind));
+				endDate, providerKind,null,null));
 		return pm;
 	}
 

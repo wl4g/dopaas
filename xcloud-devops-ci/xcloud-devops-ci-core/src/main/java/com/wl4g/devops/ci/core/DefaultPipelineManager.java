@@ -26,7 +26,6 @@ import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.components.core.bean.erm.DockerRepository;
 import com.wl4g.components.core.bean.iam.Contact;
 import com.wl4g.components.core.bean.iam.ContactChannel;
-import com.wl4g.components.core.exception.ci.CiException;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.support.notification.GenericNotifyMessage;
@@ -265,6 +264,10 @@ public class DefaultPipelineManager implements PipelineManager {
         jobExecutor.getWorker().execute(() -> {
             long startTime = currentTimeMillis();
             try {
+                /*if(taskId>0){//TODO just for test
+                    throw new CiException("Test Throw Exception");
+                }*/
+
                 // Pre Pileline Execute
                 log.info("Pre pipeline executing of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
                 prePipelineExecute(taskId);
@@ -278,6 +281,7 @@ public class DefaultPipelineManager implements PipelineManager {
                 flowManager.pipelineStateChange(pipelineModel);
 
                 postPipelineRunSuccess(taskId, provider);
+
             } catch (Throwable e) {
                 log.error(format("Failed to pipeline job for taskId: %s, provider: %s", taskId,
                         provider.getClass().getSimpleName()), e);
@@ -300,7 +304,6 @@ public class DefaultPipelineManager implements PipelineManager {
                 // Failed process.
                 log.info("Post pipeline executeing of taskId: {}, provider: {}", taskId, provider.getClass().getSimpleName());
                 postPipelineRunFailure(taskId, provider, e);
-                throw new CiException(e);
             } finally {
                 // Log file end EOF.
                 writeALineFile(config.getJobLog(taskId).getAbsoluteFile(), LOG_FILE_END);

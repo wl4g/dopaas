@@ -19,6 +19,7 @@ import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.common.serialize.JacksonUtils;
 import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.core.bean.ci.Orchestration;
+import com.wl4g.components.core.bean.ci.OrchestrationHistory;
 import com.wl4g.components.core.bean.ci.OrchestrationPipeline;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
@@ -30,7 +31,7 @@ import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.dao.ci.OrchestrationDao;
-
+import com.wl4g.devops.dao.ci.OrchestrationHistoryDao;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
+import static com.wl4g.components.core.constants.CiDevOpsConstants.*;
 import static com.wl4g.devops.ci.flow.FlowManager.FlowStatus.*;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
 import static java.util.Objects.isNull;
 
 /**
@@ -62,6 +65,9 @@ public class FlowManager {
 
     @Autowired
     private OrchestrationDao orchestrationDao;
+
+    @Autowired
+    OrchestrationHistoryDao orchestrationHistoryDao;
 
     public static final String REDIS_CI_RUN_PRE = "CI_RUN_";// redis key
 
@@ -86,9 +92,19 @@ public class FlowManager {
         RunModel runModel = new RunModel();
         List<List<PipelineModel>> pipelineModelSort = buildFlow(orchestration.getId(), orchestrationPipelinesSort, runModel);
         log.info("start hand out job");
+
+        //insert flow history
+        OrchestrationHistory orchestrationHistory = new OrchestrationHistory();
+        orchestrationHistory.preInsert(getRequestOrganizationCode());
+        orchestrationHistory.setRunId(runModel.getRunId());
+        orchestrationHistory.setStatus(TASK_STATUS_RUNNING);
+        orchestrationHistory.setInfo(JacksonUtils.toJSONString(runModel));
+        orchestrationHistoryDao.insertSelective(orchestrationHistory);
+
+
         jobExecutor.getWorker().execute(() -> {
             try {
-                handOut(pipelineModelSort, runModel, remark, taskTraceId, taskTraceType, annex);
+                handOut(orchestrationHistory, pipelineModelSort, runModel, remark, taskTraceId, taskTraceType, annex);
             } catch (Exception e) {
                 log.error("run flow fail", e);
             }
@@ -163,10 +179,12 @@ public class FlowManager {
      *
      * @param lists
      */
-    public void handOut(List<List<PipelineModel>> pipelineModelSort, RunModel runModel, String remark, String taskTraceId, String taskTraceType,
+    public void handOut(OrchestrationHistory orchestrationHistory, List<List<PipelineModel>> pipelineModelSort, RunModel runModel, String remark, String taskTraceId, String taskTraceType,
                         String annex) throws Exception {
         // Create runner.
         ApplicationTaskRunner<?> runner = createGenericTaskRunner(2);
+        long startTime = System.currentTimeMillis();
+
         try {
             for (List<PipelineModel> pipelineModels : pipelineModelSort) { // run by batch
                 List<Runnable> jobs = new ArrayList<>();
@@ -175,7 +193,7 @@ public class FlowManager {
                     pipelineModel.setNode(node);
                     pipelineStateChange(pipelineModel);
                     // TODO hand out here
-                    master2slave(pipelineModel, remark, taskTraceId, taskTraceType, annex);
+                    master2slave(orchestrationHistory, pipelineModel, remark, taskTraceId, taskTraceType, annex);
                 }
                 // wait for this batch finish;
                 jobs.add(new Runnable() {
@@ -188,7 +206,6 @@ public class FlowManager {
                                 for (PipelineModel pipelineModel : pipelineModels) {
                                     // the status get from redis
                                     Pipeline pipeline = getPipeline(pipelineModel.getRunId(), pipelineModel.getPipeId());
-
                                     if (!isNull(pipeline)
                                             && !StringUtils.equalsAny(pipeline.getStatus(), SUCCESS.toString(), FAILED.toString())) { // RUNNING_DEPLOY
                                         batchFinish = false;
@@ -204,12 +221,20 @@ public class FlowManager {
                 });
                 // Submit jobs & listen job timeout.
                 runner.getWorker().submitForComplete(jobs, (ex, completed, uncompleted) -> {
-
+                    log.error("error",ex);
                 }, FLOW_TIME_OUT_MS);
             }
         } catch (Exception e) {
+            log.error("flow run fail",e);
             pipelineCompleteFocus(runModel.getRunId());
             throw e;
+        } finally {
+            OrchestrationHistory orchestrationHistoryNew = new OrchestrationHistory();
+            orchestrationHistoryNew.setId(orchestrationHistory.getId());
+            long endTime = System.currentTimeMillis();
+            orchestrationHistoryNew.preUpdate();
+            orchestrationHistoryNew.setCostTime(endTime - startTime);
+            orchestrationHistoryDao.updateByPrimaryKeySelective(orchestrationHistoryNew);
         }
 
         runner.close();
@@ -218,12 +243,12 @@ public class FlowManager {
     /**
      * @param pipelineModel
      */
-    public void master2slave(PipelineModel pipelineModel, String remark, String taskTraceId, String taskTraceType, String annex) throws Exception {
+    public void master2slave(OrchestrationHistory orchestrationHistory, PipelineModel pipelineModel, String remark, String taskTraceId, String taskTraceType, String annex) throws Exception {
         log.info(
                 "FlowManager.master2slave prarms::"
                         + "pipelineModel = {} , remark = {} , taskTraceId = {} , taskTraceType = {} , annex = {} ",
                 pipelineModel, remark, taskTraceId, taskTraceType, annex);
-        pipeliner.runPipeline(new NewParameter(pipelineModel.getPipeId(), remark, taskTraceId, taskTraceType, annex,2,null/*TODO*/),
+        pipeliner.runPipeline(new NewParameter(pipelineModel.getPipeId(), remark, taskTraceId, taskTraceType, annex,2,orchestrationHistory.getId()),
                 pipelineModel);
     }
 
@@ -301,21 +326,25 @@ public class FlowManager {
         }
 
         boolean isAllComplete = true;
+        boolean isAllSuccess = true;
         for (Pipeline p : pipelines) {
+            if(!StringUtils.equalsIgnoreCase(p.getStatus(),SUCCESS.toString())){
+                isAllSuccess = false;
+            }
             if (!StringUtils.equalsAnyIgnoreCase(p.getStatus(), SUCCESS.toString(), FAILED.toString())) {
                 isAllComplete = false;
                 break;
             }
         }
         if (isAllComplete) {
-            flowComplete(runModel);
+            flowComplete(runModel,isAllSuccess);
         }
     }
 
     public void pipelineCompleteFocus(String runId) {
         RunModel runModel = getRunModel(runId);
         if (Objects.nonNull(runModel)) {
-            flowComplete(runModel);
+            flowComplete(runModel,false);
         }
     }
 
@@ -324,7 +353,7 @@ public class FlowManager {
      *
      * @param runId
      */
-    public void flowComplete(RunModel runModel) {
+    public void flowComplete(RunModel runModel,boolean isAllSuccess) {
         String runId = runModel.getRunId();
         // remove redis
         jedisService.del(runId);
@@ -336,12 +365,33 @@ public class FlowManager {
         }
 
         // update db status
-        runId = runId.replaceAll(REDIS_CI_RUN_PRE, "");
-        String[] split = runId.split("_");
+        String runId2 = runId.replaceAll(REDIS_CI_RUN_PRE, "");
+        String[] split = runId2.split("_");
         Orchestration orchestration = new Orchestration();
         orchestration.setId(Integer.valueOf(split[0]));
         orchestration.setStatus(5);
         orchestrationDao.updateByPrimaryKeySelective(orchestration);
+
+        OrchestrationHistory orchestrationHistoryDb = orchestrationHistoryDao.selectByRunId(runId);
+        if(Objects.nonNull(orchestrationHistoryDb)){
+            OrchestrationHistory orchestrationHistory = new OrchestrationHistory();
+            orchestrationHistory.setId(orchestrationHistoryDb.getId());
+            //success
+            if(isAllSuccess){
+                log.info("flow run success");
+                orchestrationHistory.preUpdate();
+                orchestrationHistory.setStatus(TASK_STATUS_SUCCESS);
+                orchestrationHistoryDao.updateByPrimaryKeySelective(orchestrationHistory);
+            }else{
+                log.error("flow run fail");
+                pipelineCompleteFocus(runModel.getRunId());
+                orchestrationHistory.preUpdate();
+                orchestrationHistory.setStatus(TASK_STATUS_FAIL);
+                orchestrationHistoryDao.updateByPrimaryKeySelective(orchestrationHistory);
+            }
+        }
+
+
     }
 
     private RunModel getRunModel(String runId) {
