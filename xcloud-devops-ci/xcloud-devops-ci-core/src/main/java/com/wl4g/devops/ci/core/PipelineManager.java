@@ -35,7 +35,7 @@ public abstract interface PipelineManager {
 	 * 
 	 * @param param
 	 */
-	void runPipeline(NewParameter param, PipelineModel pipelineModel);
+	void runPipeline(NewParameter param, PipelineModel pipelineModel) throws Exception;
 
 	/**
 	 * Roll-back pipeline task job.
@@ -49,7 +49,7 @@ public abstract interface PipelineManager {
 	 * 
 	 * @param param
 	 */
-	void hookPipeline(HookCommandHolder.HookCommand hookCommand);
+	void hookPipeline(HookCommandHolder.HookCommand hookCommand) throws Exception;
 
 	/**
 	 * Reader pipeline task building logs.

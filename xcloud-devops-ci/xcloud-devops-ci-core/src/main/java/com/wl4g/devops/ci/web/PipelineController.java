@@ -165,7 +165,7 @@ public class PipelineController extends BaseController {
 	 * @param taskId
 	 */
 	@RequestMapping(value = "/create")
-	public RespBase<?> create(NewParameter newParameter) {
+	public RespBase<?> create(NewParameter newParameter) throws Exception {
 		RespBase<Object> resp = RespBase.create();
 		PipelineModel pipelineModel = flowManager.buildPipeline(newParameter.getPipeId());
 		pipeliner.runPipeline(newParameter,pipelineModel);
