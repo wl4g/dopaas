@@ -260,6 +260,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 				} catch (Exception e) {
 					String logmsg = writeBuildLog("Failed to deployed to remote! Caused by: \n%s", getStackTraceAsString(e));
 					log.error(logmsg);
+					//TODO
 				} finally {
 					writeALineFile(jobDeployerLog, LOG_FILE_END);
 				}

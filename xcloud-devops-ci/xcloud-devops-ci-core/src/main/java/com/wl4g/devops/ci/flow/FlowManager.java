@@ -21,6 +21,7 @@ import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.core.bean.ci.Orchestration;
 import com.wl4g.components.core.bean.ci.OrchestrationHistory;
 import com.wl4g.components.core.bean.ci.OrchestrationPipeline;
+import com.wl4g.components.core.bean.ci.TaskHistory;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.components.support.redis.jedis.ScanCursor;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
@@ -32,6 +33,7 @@ import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.param.NewParameter;
 import com.wl4g.devops.dao.ci.OrchestrationDao;
 import com.wl4g.devops.dao.ci.OrchestrationHistoryDao;
+import com.wl4g.devops.dao.ci.PipelineHistoryDao;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +70,9 @@ public class FlowManager {
 
     @Autowired
     OrchestrationHistoryDao orchestrationHistoryDao;
+
+    @Autowired
+    private PipelineHistoryDao pipelineHistoryDao;
 
     public static final String REDIS_CI_RUN_PRE = "CI_RUN_";// redis key
 
@@ -229,10 +234,28 @@ public class FlowManager {
             pipelineCompleteFocus(runModel.getRunId());
             throw e;
         } finally {
+
+            List<TaskHistory> list = pipelineHistoryDao.list(null, null, null, null, null, null, null,
+                    2, orchestrationHistory.getId());
+
+            boolean isAllSuccess = true;
+            for (TaskHistory p : list) {
+                if(p.getStatus()!=2){
+                    isAllSuccess = false;
+                }
+            }
+
             OrchestrationHistory orchestrationHistoryNew = new OrchestrationHistory();
             orchestrationHistoryNew.setId(orchestrationHistory.getId());
             long endTime = System.currentTimeMillis();
             orchestrationHistoryNew.preUpdate();
+            if(isAllSuccess){
+                orchestrationHistoryNew.preUpdate();
+                orchestrationHistoryNew.setStatus(TASK_STATUS_SUCCESS);
+            }else{
+                orchestrationHistoryNew.preUpdate();
+                orchestrationHistoryNew.setStatus(TASK_STATUS_FAIL);
+            }
             orchestrationHistoryNew.setCostTime(endTime - startTime);
             orchestrationHistoryDao.updateByPrimaryKeySelective(orchestrationHistoryNew);
         }
@@ -371,25 +394,6 @@ public class FlowManager {
         orchestration.setId(Integer.valueOf(split[0]));
         orchestration.setStatus(5);
         orchestrationDao.updateByPrimaryKeySelective(orchestration);
-
-        OrchestrationHistory orchestrationHistoryDb = orchestrationHistoryDao.selectByRunId(runId);
-        if(Objects.nonNull(orchestrationHistoryDb)){
-            OrchestrationHistory orchestrationHistory = new OrchestrationHistory();
-            orchestrationHistory.setId(orchestrationHistoryDb.getId());
-            //success
-            if(isAllSuccess){
-                log.info("flow run success");
-                orchestrationHistory.preUpdate();
-                orchestrationHistory.setStatus(TASK_STATUS_SUCCESS);
-                orchestrationHistoryDao.updateByPrimaryKeySelective(orchestrationHistory);
-            }else{
-                log.error("flow run fail");
-                pipelineCompleteFocus(runModel.getRunId());
-                orchestrationHistory.preUpdate();
-                orchestrationHistory.setStatus(TASK_STATUS_FAIL);
-                orchestrationHistoryDao.updateByPrimaryKeySelective(orchestrationHistory);
-            }
-        }
 
 
     }
