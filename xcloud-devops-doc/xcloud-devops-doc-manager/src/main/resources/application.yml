@@ -34,3 +34,7 @@ logging:
       apache: INFO
     com:
       wl4g.devops.dao: DEBUG
+
+doc:
+   base-path: /mnt/disk1/doc-manager/data/
+

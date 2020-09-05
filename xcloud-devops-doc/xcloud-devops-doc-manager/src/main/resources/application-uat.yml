@@ -64,6 +64,5 @@ redis:
 cipher-key: 03DE18C2FC4E605F
 
 doc:
-  basePath: /mnt/disk1/upload
   share-base-url: http://share.anjiancloud.alpha/share-manager
   doc-base-url: http://share.anjiancloud.alpha/doc-manager
