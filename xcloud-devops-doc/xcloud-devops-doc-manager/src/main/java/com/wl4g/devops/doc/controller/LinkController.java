@@ -26,6 +26,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * {@link LinkController}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * @version 2020-09-05
+ * @sine v1.0.0
+ * @see https://github.com/sindresorhus/github-markdown-css
+ */
 @RestController
 @RequestMapping("/link")
 public class LinkController {
@@ -35,6 +43,14 @@ public class LinkController {
 	@Autowired
 	private ShareService shareService;
 
+	/**
+	 * Rendering markdown doc
+	 * 
+	 * @param code
+	 * @param passwd
+	 * @return
+	 * @see https://github.com/sindresorhus/github-markdown-css
+	 */
 	@CrossOrigin
 	@RequestMapping(value = "/rendering")
 	public RespBase<?> rendering(String code, String passwd) {

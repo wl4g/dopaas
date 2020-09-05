@@ -21,7 +21,8 @@ package com.wl4g.devops.doc.config;
  */
 public class DocProperties {
 
-	private String basePath;
+	// TODO use minio(OSS)
+	private String basePath = "/mnt/disk1/doc-manager/data/";
 
 	private String shareBaseUrl;
 
