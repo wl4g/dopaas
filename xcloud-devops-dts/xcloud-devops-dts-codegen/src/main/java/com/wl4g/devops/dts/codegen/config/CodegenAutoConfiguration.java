@@ -15,9 +15,40 @@
  */
 package com.wl4g.devops.dts.codegen.config;
 
-//@Configuration
+import java.util.List;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.wl4g.components.core.framework.beans.NamingPrototype;
+import com.wl4g.devops.dts.codegen.core.DefaultGenerateManager;
+import com.wl4g.devops.dts.codegen.provider.GeneratorProvider;
+import com.wl4g.devops.dts.codegen.provider.backend.SSMGeneratorProvider;
+
+/**
+ * {@link CodegenAutoConfiguration}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+ * @version v1.0 2020-09-07
+ * @since
+ */
+@Configuration
 public class CodegenAutoConfiguration {
 
+	@Bean
+	public DefaultGenerateManager defaultGenerateManager(List<GeneratorProvider> providers) {
+		return new DefaultGenerateManager(providers);
+	}
+
+	// --- Generator Provider's. ---
+
+	@NamingPrototype({ "ssm", "standardBackend" })
+	@Bean
+	public SSMGeneratorProvider ssmGeneratorProvider() {
+		return new SSMGeneratorProvider();
+	}
+
 	// TODO
+	// ...
 
 }
