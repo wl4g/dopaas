@@ -15,10 +15,11 @@
  */
 package com.wl4g.devops.dts.web;
 
+import com.wl4g.components.common.lang.Assert2;
+import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.core.web.BaseController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.wl4g.components.core.web.BaseController;
 
 /**
  * {@link CodegenController}
@@ -28,7 +29,14 @@ import com.wl4g.components.core.web.BaseController;
  * @since
  */
 @RestController
-@RequestMapping("/vcs")
+@RequestMapping("/codegen")
 public class CodegenController extends BaseController {
+
+    @RequestMapping(value = "/gen")
+    public RespBase<?> list(Integer id) {
+        RespBase<Object> resp = RespBase.create();
+        Assert2.notNullOf(id,"id");
+        return resp;
+    }
 
 }
