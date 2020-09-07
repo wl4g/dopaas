@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.provider;
-
-import com.wl4g.components.core.framework.beans.PrototypeBean;
+package com.wl4g.devops.dts.codegen.core.param;
 
 /**
- * {@link GeneratorProvider} 
+ * {@link AbstractParameter}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public interface GeneratorProvider extends PrototypeBean {
+public class AbstractParameter extends GenericParameter {
+	private static final long serialVersionUID = 7731101309466737836L;
 
 }
