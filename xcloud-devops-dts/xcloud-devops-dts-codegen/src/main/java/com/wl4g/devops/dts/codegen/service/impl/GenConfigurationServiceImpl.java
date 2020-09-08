@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.service.impl;
 
+import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.core.GenerateManager;
 import com.wl4g.devops.dts.codegen.service.GenConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,27 @@ public class GenConfigurationServiceImpl implements GenConfigurationService {
     private GenerateManager generateManager;
 
     @Override
-    public void genCode(Integer tableId) {
+    public GenTable loadMetadata(Integer databaseId, String tableName) {
+        return null;
+    }
+
+    @Override
+    public GenTable detail(Integer tableId) {
+        return null;
+    }
+
+    @Override
+    public void saveGenConfig(GenTable genTable) {
+
+    }
+
+    @Override
+    public void delete(Integer tableId) {
+
+    }
+
+    @Override
+    public void generate(Integer tableId) {
         //TODO find table config from db
 
         /*AbstractParameter abstractParameter = new AbstractParameter();

@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.dts.codegen.service;
 
+import com.wl4g.devops.dts.codegen.bean.GenTable;
+
 /**
  * {@link GenConfigurationService}
  *
@@ -24,6 +26,20 @@ package com.wl4g.devops.dts.codegen.service;
  */
 public interface GenConfigurationService {
 
-    void genCode(Integer tableId);
+
+    /**
+     * new gen code
+     * @param databaseId
+     * @param tableName
+     */
+    GenTable loadMetadata(Integer databaseId,String tableName);
+
+    GenTable detail(Integer tableId);
+
+    void saveGenConfig(GenTable genTable);
+
+    void delete(Integer tableId);
+
+    void generate(Integer tableId);
 
 }

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wl4g.devops.dts.codegen.dao.GenTableDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.dts.codegen.bean.GenTable" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="database_id" property="databaseId" jdbcType="INTEGER" />
+    <result column="table_name" property="tableName" jdbcType="VARCHAR" />
+    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="comments" property="comments" jdbcType="VARCHAR" />
+    <result column="parent_table_name" property="parentTableName" jdbcType="VARCHAR" />
+    <result column="parent_table_fk_name" property="parentTableFkName" jdbcType="VARCHAR" />
+    <result column="data_source_name" property="dataSourceName" jdbcType="VARCHAR" />
+    <result column="tpl_category" property="tplCategory" jdbcType="VARCHAR" />
+    <result column="package_name" property="packageName" jdbcType="VARCHAR" />
+    <result column="module_name" property="moduleName" jdbcType="VARCHAR" />
+    <result column="sub_module_name" property="subModuleName" jdbcType="VARCHAR" />
+    <result column="function_name" property="functionName" jdbcType="VARCHAR" />
+    <result column="function_name_simple" property="functionNameSimple" jdbcType="VARCHAR" />
+    <result column="function_author" property="functionAuthor" jdbcType="VARCHAR" />
+    <result column="gen_base_dir" property="genBaseDir" jdbcType="VARCHAR" />
+    <result column="options" property="options" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="create_by" property="createBy" jdbcType="VARCHAR" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, database_id, table_name, class_name, comments, parent_table_name, parent_table_fk_name, 
+    data_source_name, tpl_category, package_name, module_name, sub_module_name, function_name, 
+    function_name_simple, function_author, gen_base_dir, options, remark, del_flag, create_date, 
+    create_by, update_date, update_by
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dts_gen_table
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dts_gen_table
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
+    insert into dts_gen_table (id, database_id, table_name, 
+      class_name, comments, parent_table_name, 
+      parent_table_fk_name, data_source_name, tpl_category, 
+      package_name, module_name, sub_module_name, 
+      function_name, function_name_simple, function_author, 
+      gen_base_dir, options, remark, 
+      del_flag, create_date, create_by, 
+      update_date, update_by)
+    values (#{id,jdbcType=INTEGER}, #{databaseId,jdbcType=INTEGER}, #{tableName,jdbcType=VARCHAR}, 
+      #{className,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{parentTableName,jdbcType=VARCHAR}, 
+      #{parentTableFkName,jdbcType=VARCHAR}, #{dataSourceName,jdbcType=VARCHAR}, #{tplCategory,jdbcType=VARCHAR}, 
+      #{packageName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR}, 
+      #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR}, #{functionAuthor,jdbcType=VARCHAR}, 
+      #{genBaseDir,jdbcType=VARCHAR}, #{options,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
+    insert into dts_gen_table
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="databaseId != null" >
+        database_id,
+      </if>
+      <if test="tableName != null" >
+        table_name,
+      </if>
+      <if test="className != null" >
+        class_name,
+      </if>
+      <if test="comments != null" >
+        comments,
+      </if>
+      <if test="parentTableName != null" >
+        parent_table_name,
+      </if>
+      <if test="parentTableFkName != null" >
+        parent_table_fk_name,
+      </if>
+      <if test="dataSourceName != null" >
+        data_source_name,
+      </if>
+      <if test="tplCategory != null" >
+        tpl_category,
+      </if>
+      <if test="packageName != null" >
+        package_name,
+      </if>
+      <if test="moduleName != null" >
+        module_name,
+      </if>
+      <if test="subModuleName != null" >
+        sub_module_name,
+      </if>
+      <if test="functionName != null" >
+        function_name,
+      </if>
+      <if test="functionNameSimple != null" >
+        function_name_simple,
+      </if>
+      <if test="functionAuthor != null" >
+        function_author,
+      </if>
+      <if test="genBaseDir != null" >
+        gen_base_dir,
+      </if>
+      <if test="options != null" >
+        options,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="databaseId != null" >
+        #{databaseId,jdbcType=INTEGER},
+      </if>
+      <if test="tableName != null" >
+        #{tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null" >
+        #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="parentTableName != null" >
+        #{parentTableName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentTableFkName != null" >
+        #{parentTableFkName,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSourceName != null" >
+        #{dataSourceName,jdbcType=VARCHAR},
+      </if>
+      <if test="tplCategory != null" >
+        #{tplCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="packageName != null" >
+        #{packageName,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleName != null" >
+        #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="subModuleName != null" >
+        #{subModuleName,jdbcType=VARCHAR},
+      </if>
+      <if test="functionName != null" >
+        #{functionName,jdbcType=VARCHAR},
+      </if>
+      <if test="functionNameSimple != null" >
+        #{functionNameSimple,jdbcType=VARCHAR},
+      </if>
+      <if test="functionAuthor != null" >
+        #{functionAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="genBaseDir != null" >
+        #{genBaseDir,jdbcType=VARCHAR},
+      </if>
+      <if test="options != null" >
+        #{options,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
+    update dts_gen_table
+    <set >
+      <if test="databaseId != null" >
+        database_id = #{databaseId,jdbcType=INTEGER},
+      </if>
+      <if test="tableName != null" >
+        table_name = #{tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="className != null" >
+        class_name = #{className,jdbcType=VARCHAR},
+      </if>
+      <if test="comments != null" >
+        comments = #{comments,jdbcType=VARCHAR},
+      </if>
+      <if test="parentTableName != null" >
+        parent_table_name = #{parentTableName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentTableFkName != null" >
+        parent_table_fk_name = #{parentTableFkName,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSourceName != null" >
+        data_source_name = #{dataSourceName,jdbcType=VARCHAR},
+      </if>
+      <if test="tplCategory != null" >
+        tpl_category = #{tplCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="packageName != null" >
+        package_name = #{packageName,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleName != null" >
+        module_name = #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="subModuleName != null" >
+        sub_module_name = #{subModuleName,jdbcType=VARCHAR},
+      </if>
+      <if test="functionName != null" >
+        function_name = #{functionName,jdbcType=VARCHAR},
+      </if>
+      <if test="functionNameSimple != null" >
+        function_name_simple = #{functionNameSimple,jdbcType=VARCHAR},
+      </if>
+      <if test="functionAuthor != null" >
+        function_author = #{functionAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="genBaseDir != null" >
+        gen_base_dir = #{genBaseDir,jdbcType=VARCHAR},
+      </if>
+      <if test="options != null" >
+        options = #{options,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
+    update dts_gen_table
+    set database_id = #{databaseId,jdbcType=INTEGER},
+      table_name = #{tableName,jdbcType=VARCHAR},
+      class_name = #{className,jdbcType=VARCHAR},
+      comments = #{comments,jdbcType=VARCHAR},
+      parent_table_name = #{parentTableName,jdbcType=VARCHAR},
+      parent_table_fk_name = #{parentTableFkName,jdbcType=VARCHAR},
+      data_source_name = #{dataSourceName,jdbcType=VARCHAR},
+      tpl_category = #{tplCategory,jdbcType=VARCHAR},
+      package_name = #{packageName,jdbcType=VARCHAR},
+      module_name = #{moduleName,jdbcType=VARCHAR},
+      sub_module_name = #{subModuleName,jdbcType=VARCHAR},
+      function_name = #{functionName,jdbcType=VARCHAR},
+      function_name_simple = #{functionNameSimple,jdbcType=VARCHAR},
+      function_author = #{functionAuthor,jdbcType=VARCHAR},
+      gen_base_dir = #{genBaseDir,jdbcType=VARCHAR},
+      options = #{options,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
