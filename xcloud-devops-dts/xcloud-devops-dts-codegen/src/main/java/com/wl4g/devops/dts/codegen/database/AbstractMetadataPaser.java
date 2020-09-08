@@ -10,21 +10,21 @@ public abstract class AbstractMetadataPaser implements MetadataPaser {
 
     @Override
     public void queryColumns() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void queryTable() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void queryList() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void queryVersion() {
-
+        throw new UnsupportedOperationException();
     }
 }
