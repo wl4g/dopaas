@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.core.param;
 
-import java.io.Serializable;
-
 /**
  * {@link GenericParameter}
  *
@@ -24,7 +22,9 @@ import java.io.Serializable;
  * @version v1.0 2020-09-07
  * @since
  */
-public abstract class GenericParameter implements Serializable {
+public  class GenericParameter extends AbstractParameter {
 	private static final long serialVersionUID = -608968076331460509L;
+
+	//TODO
 
 }

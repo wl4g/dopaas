@@ -15,6 +15,10 @@
  */
 package com.wl4g.devops.dts.codegen.web;
 
+import com.wl4g.components.common.web.rest.RespBase;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 /**
  * {@link GenConfigurationController}
  *
@@ -22,8 +26,33 @@ package com.wl4g.devops.dts.codegen.web;
  * @version v1.0 2020-09-07
  * @since
  */
-// @Controller
-// @RequestMapping("/gen/configure")
+@Controller
+@RequestMapping("/gen/configure")
 public class GenConfigurationController {
+
+    @RequestMapping("loadMetadata")
+    public RespBase<?> loadMetadata(){
+        //TODO
+        return null;
+    }
+
+
+    @RequestMapping("saveGenConfig")
+    public RespBase<?> saveGenConfig(){
+        //TODO
+        return null;
+    }
+
+    @RequestMapping("generate")
+    public RespBase<?> generate(String id){
+        //TODO return zip
+        return null;
+    }
+
+
+
+
+
+
 
 }

@@ -24,4 +24,6 @@ package com.wl4g.devops.dts.codegen.service;
  */
 public interface GenConfigurationService {
 
+    void genCode(Integer tableId);
+
 }
