@@ -19,7 +19,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, name, type, host, port, database, username, password, url, remark, del_flag, 
+    id, `name`, `type`, host, port, `database`, username, password, url, remark, del_flag,
     create_date, create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -33,8 +33,8 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenDatabase" >
-    insert into dts_gen_database (id, name, type, 
-      host, port, database, 
+    insert into dts_gen_database (id, name, `type`,
+      host, port, `database`,
       username, password, url, 
       remark, del_flag, create_date, 
       create_by, update_date, update_by
@@ -56,7 +56,7 @@
         name,
       </if>
       <if test="type != null" >
-        type,
+        `type`,
       </if>
       <if test="host != null" >
         host,
@@ -65,7 +65,7 @@
         port,
       </if>
       <if test="database != null" >
-        database,
+        `database`,
       </if>
       <if test="username != null" >
         username,
@@ -150,7 +150,7 @@
         name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="type != null" >
-        type = #{type,jdbcType=VARCHAR},
+        `type` = #{type,jdbcType=VARCHAR},
       </if>
       <if test="host != null" >
         host = #{host,jdbcType=VARCHAR},
@@ -159,7 +159,7 @@
         port = #{port,jdbcType=VARCHAR},
       </if>
       <if test="database != null" >
-        database = #{database,jdbcType=VARCHAR},
+        `database` = #{database,jdbcType=VARCHAR},
       </if>
       <if test="username != null" >
         username = #{username,jdbcType=VARCHAR},
@@ -194,10 +194,10 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenDatabase" >
     update dts_gen_database
     set name = #{name,jdbcType=VARCHAR},
-      type = #{type,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=VARCHAR},
       host = #{host,jdbcType=VARCHAR},
       port = #{port,jdbcType=VARCHAR},
-      database = #{database,jdbcType=VARCHAR},
+      `database` = #{database,jdbcType=VARCHAR},
       username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       url = #{url,jdbcType=VARCHAR},

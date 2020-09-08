@@ -17,6 +17,8 @@ package com.wl4g.devops.dts.codegen.service;
 
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 
+import java.util.List;
+
 /**
  * {@link GenConfigurationService}
  *
@@ -26,6 +28,8 @@ import com.wl4g.devops.dts.codegen.bean.GenTable;
  */
 public interface GenConfigurationService {
 
+
+    List<String> loadTables(Integer databaseId);
 
     /**
      * new gen code

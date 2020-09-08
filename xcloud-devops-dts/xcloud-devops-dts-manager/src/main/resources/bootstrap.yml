@@ -11,7 +11,7 @@
 # #### Spring cloud config server configuration. ####
 #
 spring:
-  application.name: codegen-manager
+  application.name: dts-manager
   profiles:
     include: common,support,util
     active: dev

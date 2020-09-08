@@ -32,9 +32,21 @@
     from dts_gen_table_column
     where id = #{id,jdbcType=INTEGER}
   </select>
+
+  <select id="selectByTableId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from dts_gen_table_column
+    where table_id = #{tableId,jdbcType=INTEGER}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from dts_gen_table_column
     where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByTableId" parameterType="java.lang.Integer" >
+    delete from dts_gen_table_column
+    where table_id = #{tableId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTableColumn" >
     insert into dts_gen_table_column (id, table_id, column_name, 
@@ -52,6 +64,27 @@
       #{isEdit,jdbcType=VARCHAR}, #{showType,jdbcType=VARCHAR}, #{options,jdbcType=VARCHAR}
       )
   </insert>
+
+  <insert id="insertBatch" parameterType="java.util.Map">
+    insert into dts_gen_table_column (id, table_id, column_name,
+    column_comment, column_type, column_sort,
+    attr_type, attr_name, is_pk,
+    is_null, is_insert, is_update,
+    is_list, is_query, query_type,
+    is_edit, show_type, options
+    )
+    VALUES
+    <foreach collection="columns" item="column" separator=",">
+      (#{column.id,jdbcType=INTEGER}, #{column.tableId,jdbcType=INTEGER}, #{column.columnName,jdbcType=VARCHAR},
+      #{column.columnComment,jdbcType=VARCHAR}, #{column.columnType,jdbcType=VARCHAR}, #{column.columnSort,jdbcType=INTEGER},
+      #{column.attrType,jdbcType=VARCHAR}, #{column.attrName,jdbcType=VARCHAR}, #{column.isPk,jdbcType=VARCHAR},
+      #{column.isNull,jdbcType=VARCHAR}, #{column.isInsert,jdbcType=VARCHAR}, #{column.isUpdate,jdbcType=VARCHAR},
+      #{column.isList,jdbcType=VARCHAR}, #{column.isQuery,jdbcType=VARCHAR}, #{column.queryType,jdbcType=VARCHAR},
+      #{column.isEdit,jdbcType=VARCHAR}, #{column.showType,jdbcType=VARCHAR}, #{column.options,jdbcType=VARCHAR}
+      )
+    </foreach>
+  </insert>
+
   <insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenTableColumn" >
     insert into dts_gen_table_column
     <trim prefix="(" suffix=")" suffixOverrides="," >

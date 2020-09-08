@@ -2,6 +2,8 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
 
+import java.util.List;
+
 public class GenTable extends BaseBean {
     private static final long serialVersionUID = 6815608076300843748L;
 
@@ -36,6 +38,9 @@ public class GenTable extends BaseBean {
     private String genBaseDir;
 
     private String options;
+
+    //extend
+    private List<GenTableColumn> genTableColumns;
 
     public Integer getDatabaseId() {
         return databaseId;
@@ -165,4 +170,11 @@ public class GenTable extends BaseBean {
         this.options = options == null ? null : options.trim();
     }
 
+    public List<GenTableColumn> getGenTableColumns() {
+        return genTableColumns;
+    }
+
+    public void setGenTableColumns(List<GenTableColumn> genTableColumns) {
+        this.genTableColumns = genTableColumns;
+    }
 }
