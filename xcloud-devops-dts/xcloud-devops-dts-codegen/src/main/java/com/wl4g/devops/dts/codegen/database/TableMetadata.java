@@ -28,6 +28,8 @@ public class TableMetadata {
         private String columnKey;
         //列名类型
         private String dataType;
+
+        private String columnType;
         //列名备注
         private String comments;
         //属性名称(第一个字母大写)，如：user_name => UserName
@@ -101,6 +103,14 @@ public class TableMetadata {
 
         public void setColumnKey(String columnKey) {
             this.columnKey = columnKey;
+        }
+
+        public String getColumnType() {
+            return columnType;
+        }
+
+        public void setColumnType(String columnType) {
+            this.columnType = columnType;
         }
     }
 

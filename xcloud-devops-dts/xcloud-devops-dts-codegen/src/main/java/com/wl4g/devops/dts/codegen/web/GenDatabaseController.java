@@ -6,16 +6,16 @@ import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDatabase;
 import com.wl4g.devops.dts.codegen.service.GenDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author vjay
  * @date 2020-09-08 14:22:00
  */
-@Controller
-@RequestMapping("/genDatabase")
+@RestController
+@RequestMapping("/database")
 public class GenDatabaseController extends BaseController {
 
     @Autowired

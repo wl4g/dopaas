@@ -16,6 +16,9 @@
 package com.wl4g.devops.dts.codegen.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.service.GenConfigurationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -30,23 +33,44 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/gen/configure")
 public class GenConfigurationController {
 
-    @RequestMapping("loadMetadata")
-    public RespBase<?> loadMetadata(){
-        //TODO
-        return null;
-    }
+    @Autowired
+    private GenConfigurationService genConfigurationService;
 
+    @RequestMapping("loadMetadata")
+    public RespBase<?> loadMetadata(Integer databaseId,String tableName){
+        RespBase<Object> resp = RespBase.create();
+        GenTable genTable = genConfigurationService.loadMetadata(databaseId, tableName);
+        resp.setData(genTable);
+        return resp;
+    }
 
     @RequestMapping("saveGenConfig")
-    public RespBase<?> saveGenConfig(){
-        //TODO
-        return null;
+    public RespBase<?> saveGenConfig(GenTable genTable){
+        RespBase<Object> resp = RespBase.create();
+        genConfigurationService.saveGenConfig(genTable);
+        return resp;
     }
+
+    @RequestMapping("genConfigDetail")
+    public RespBase<?> genConfigDetail(Integer tableId){
+        RespBase<Object> resp = RespBase.create();
+        resp.setData(genConfigurationService.detail(tableId));
+        return resp;
+    }
+
+    @RequestMapping("delGenConfig")
+    public RespBase<?> delGenConfig(Integer tableId){
+        RespBase<Object> resp = RespBase.create();
+        genConfigurationService.delete(tableId);
+        return resp;
+    }
+
 
     @RequestMapping("generate")
     public RespBase<?> generate(String id){
-        //TODO return zip
-        return null;
+        //TODO generate
+        RespBase<Object> resp = RespBase.create();
+        return resp;
     }
 
 
