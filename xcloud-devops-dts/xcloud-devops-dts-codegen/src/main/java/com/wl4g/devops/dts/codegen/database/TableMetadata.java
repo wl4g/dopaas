@@ -1,4 +1,4 @@
-package com.wl4g.devops.dts.codegen.model;
+package com.wl4g.devops.dts.codegen.database;
 
 import java.util.List;
 
@@ -6,24 +6,26 @@ import java.util.List;
  * @author vjay
  * @date 2020-09-07 11:12:00
  */
-public class Table {
+public class TableMetadata {
 
     //表的名称
     private String tableName;
     //表的备注
     private String comments;
     //表的主键
-    private Column pk;
+    private ColumnMetadata pk;
     //表的字段
-    private List<Column> fields;
+    private List<ColumnMetadata> columns;
     //类名(第一个字母大写)，如：sys_user => SysUser
     private String className;
     //类名(第一个字母小写)，如：sys_user => sysUser
     private String classname;
 
-    private static class Column{
+    public static class ColumnMetadata {
         //列名
         private String columnName;
+        //主键？
+        private String columnKey;
         //列名类型
         private String dataType;
         //列名备注
@@ -92,6 +94,14 @@ public class Table {
         public void setExtra(String extra) {
             this.extra = extra;
         }
+
+        public String getColumnKey() {
+            return columnKey;
+        }
+
+        public void setColumnKey(String columnKey) {
+            this.columnKey = columnKey;
+        }
     }
 
     public String getTableName() {
@@ -110,20 +120,20 @@ public class Table {
         this.comments = comments;
     }
 
-    public Column getPk() {
+    public ColumnMetadata getPk() {
         return pk;
     }
 
-    public void setPk(Column pk) {
+    public void setPk(ColumnMetadata pk) {
         this.pk = pk;
     }
 
-    public List<Column> getFields() {
-        return fields;
+    public List<ColumnMetadata> getColumns() {
+        return columns;
     }
 
-    public void setFields(List<Column> fields) {
-        this.fields = fields;
+    public void setColumns(List<ColumnMetadata> columns) {
+        this.columns = columns;
     }
 
     public String getClassName() {

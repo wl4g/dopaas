@@ -15,15 +15,15 @@
  */
 package com.wl4g.devops.dts.codegen.config;
 
-import java.util.List;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.wl4g.components.core.framework.beans.NamingPrototype;
 import com.wl4g.devops.dts.codegen.core.DefaultGenerateManager;
 import com.wl4g.devops.dts.codegen.provider.GeneratorProvider;
 import com.wl4g.devops.dts.codegen.provider.backend.SSMGeneratorProvider;
+import com.wl4g.devops.dts.codegen.provider.frontend.VueCodegenProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * {@link CodegenAutoConfiguration}
@@ -46,6 +46,12 @@ public class CodegenAutoConfiguration {
 	@Bean
 	public SSMGeneratorProvider ssmGeneratorProvider() {
 		return new SSMGeneratorProvider();
+	}
+
+	@NamingPrototype({ "vue", "standardVue" })
+	@Bean
+	public VueCodegenProvider vueCodegenProvider() {
+		return new VueCodegenProvider();
 	}
 
 	// TODO

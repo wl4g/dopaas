@@ -32,11 +32,15 @@
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
-			<artifactId>xcloud-dao</artifactId>
+			<artifactId>xcloud-components-data</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.wl4g</groupId>
 			<artifactId>xcloud-iam-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-devops-dts-codegen</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

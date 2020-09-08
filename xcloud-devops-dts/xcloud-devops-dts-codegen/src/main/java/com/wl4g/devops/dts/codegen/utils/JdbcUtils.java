@@ -1,4 +1,4 @@
-package com.wl4g.devops.dts.codegen.util;
+package com.wl4g.devops.dts.codegen.utils;
 
 /**
  * @author vjay
