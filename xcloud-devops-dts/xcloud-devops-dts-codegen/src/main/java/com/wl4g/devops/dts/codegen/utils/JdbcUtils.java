@@ -6,5 +6,4 @@ package com.wl4g.devops.dts.codegen.utils;
  */
 public class JdbcUtils {
 
-
 }

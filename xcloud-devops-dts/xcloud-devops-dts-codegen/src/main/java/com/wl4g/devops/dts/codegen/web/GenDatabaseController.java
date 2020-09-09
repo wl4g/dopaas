@@ -18,41 +18,41 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/database")
 public class GenDatabaseController extends BaseController {
 
-    @Autowired
-    private GenDatabaseService genDatabaseService;
+	@Autowired
+	private GenDatabaseService genDatabaseService;
 
-    @RequestMapping(value = "/list")
-    public RespBase<?> list(PageModel pm, String name) {
-        RespBase<Object> resp = RespBase.create();
-        resp.setData(genDatabaseService.page(pm, name));
-        return resp;
-    }
+	@RequestMapping(value = "/list")
+	public RespBase<?> list(PageModel pm, String name) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(genDatabaseService.page(pm, name));
+		return resp;
+	}
 
-    @RequestMapping(value = "/save")
-    public RespBase<?> save(@RequestBody GenDatabase genDatabase) {
-        RespBase<Object> resp = RespBase.create();
-        genDatabaseService.save(genDatabase);
-        return resp;
-    }
+	@RequestMapping(value = "/save")
+	public RespBase<?> save(@RequestBody GenDatabase genDatabase) {
+		RespBase<Object> resp = RespBase.create();
+		genDatabaseService.save(genDatabase);
+		return resp;
+	}
 
-    @RequestMapping(value = "/detail")
-    public RespBase<?> detail(Integer id) {
-        RespBase<Object> resp = RespBase.create();
-        resp.setData(genDatabaseService.detail(id));
-        return resp;
-    }
+	@RequestMapping(value = "/detail")
+	public RespBase<?> detail(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(genDatabaseService.detail(id));
+		return resp;
+	}
 
-    @RequestMapping(value = "/del")
-    public RespBase<?> del(Integer id) {
-        RespBase<Object> resp = RespBase.create();
-        genDatabaseService.del(id);
-        return resp;
-    }
+	@RequestMapping(value = "/del")
+	public RespBase<?> del(Integer id) {
+		RespBase<Object> resp = RespBase.create();
+		genDatabaseService.del(id);
+		return resp;
+	}
 
-    @RequestMapping(value = "/getForSelect")
-    public RespBase<?> getForSelect() {
-        RespBase<Object> resp = RespBase.create();
-        resp.setData(genDatabaseService.getForSelect());
-        return resp;
-    }
+	@RequestMapping(value = "/getForSelect")
+	public RespBase<?> getForSelect() {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(genDatabaseService.getForSelect());
+		return resp;
+	}
 }

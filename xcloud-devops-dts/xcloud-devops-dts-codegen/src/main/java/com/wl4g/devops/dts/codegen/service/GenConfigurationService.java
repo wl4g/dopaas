@@ -29,24 +29,24 @@ import java.util.List;
  */
 public interface GenConfigurationService {
 
+	List<String> loadTables(Integer databaseId);
 
-    List<String> loadTables(Integer databaseId);
+	/**
+	 * new gen code
+	 * 
+	 * @param databaseId
+	 * @param tableName
+	 */
+	GenTable loadMetadata(Integer databaseId, String tableName);
 
-    /**
-     * new gen code
-     * @param databaseId
-     * @param tableName
-     */
-    GenTable loadMetadata(Integer databaseId,String tableName);
+	PageModel page(PageModel pm, String tableName);
 
-    PageModel page(PageModel pm, String tableName);
+	GenTable detail(Integer tableId);
 
-    GenTable detail(Integer tableId);
+	void saveGenConfig(GenTable genTable);
 
-    void saveGenConfig(GenTable genTable);
+	void delete(Integer tableId);
 
-    void delete(Integer tableId);
-
-    void generate(Integer tableId);
+	void generate(Integer tableId);
 
 }

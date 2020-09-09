@@ -52,133 +52,134 @@ import static com.wl4g.devops.dts.codegen.utils.ParseUtils.lineToHump;
 @Service
 public class GenConfigurationServiceImpl implements GenConfigurationService {
 
-    @Autowired
-    private GenerateManager generateManager;
+	@Autowired
+	private GenerateManager generateManager;
 
-    @Autowired
-    protected NamingPrototypeBeanFactory beanFactory;
+	@Autowired
+	protected NamingPrototypeBeanFactory beanFactory;
 
-    @Autowired
-    private GenDatabaseDao genDatabaseDao;
+	@Autowired
+	private GenDatabaseDao genDatabaseDao;
 
-    @Autowired
-    private GenTableDao genTableDao;
+	@Autowired
+	private GenTableDao genTableDao;
 
-    @Autowired
-    private GenTableColumnDao genTableColumnDao;
+	@Autowired
+	private GenTableColumnDao genTableColumnDao;
 
-    @Override
-    public List<String> loadTables(Integer databaseId) {
-        Assert2.notNullOf(databaseId,"databaseId");
-        GenDatabase genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
-        Assert2.notNullOf(genDatabase,"genDatabase");
-        MetadataPaser metadataPaser = getMetadataPaser(genDatabase);
-        return metadataPaser.queryTables(genDatabase);
-    }
+	@Override
+	public List<String> loadTables(Integer databaseId) {
+		Assert2.notNullOf(databaseId, "databaseId");
+		GenDatabase genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
+		Assert2.notNullOf(genDatabase, "genDatabase");
+		MetadataPaser metadataPaser = getMetadataPaser(genDatabase);
+		return metadataPaser.loadTable(genDatabase);
+	}
 
-    @Override
-    public GenTable loadMetadata(Integer databaseId, String tableName) {
-        Assert2.notNullOf(databaseId,"databaseId");
-        GenDatabase genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
-        Assert2.notNullOf(genDatabase,"genDatabase");
-        MetadataPaser paser = getMetadataPaser(genDatabase);
-        TableMetadata tableMetadata = paser.queryTable(genDatabase, tableName);
-        Assert2.notNullOf(tableMetadata,"tableMetadata");
-        // TableMetadata to GenTable
-        GenTable genTable = new GenTable();
-        genTable.setClassName(ParseUtils.tableName2ClassName(tableMetadata.getTableName()));
-        genTable.setTableName(tableMetadata.getTableName());
-        genTable.setComments(tableMetadata.getComments());
+	@Override
+	public GenTable loadMetadata(Integer databaseId, String tableName) {
+		Assert2.notNullOf(databaseId, "databaseId");
+		GenDatabase genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
+		Assert2.notNullOf(genDatabase, "genDatabase");
+		MetadataPaser paser = getMetadataPaser(genDatabase);
+		TableMetadata tableMetadata = paser.loadTable(genDatabase, tableName);
+		Assert2.notNullOf(tableMetadata, "tableMetadata");
+		// TableMetadata to GenTable
+		GenTable genTable = new GenTable();
+		genTable.setClassName(ParseUtils.tableName2ClassName(tableMetadata.getTableName()));
+		genTable.setTableName(tableMetadata.getTableName());
+		genTable.setComments(tableMetadata.getComments());
 
-        List<GenTableColumn> genTableColumns = new ArrayList<>();
-        for(TableMetadata.ColumnMetadata columnMetadata : tableMetadata.getColumns()){
-            GenTableColumn column = new GenTableColumn();
-            column.setColumnName(columnMetadata.getColumnName());
-            column.setColumnComment(columnMetadata.getComments());
-            column.setColumnType(columnMetadata.getColumnType());
-            column.setAttrType(paser.ColumnType2AttrType(columnMetadata.getDataType()));
-            column.setAttrName(lineToHump(columnMetadata.getColumnName()));
-            //TODO......
+		List<GenTableColumn> genTableColumns = new ArrayList<>();
+		for (TableMetadata.ColumnMetadata columnMetadata : tableMetadata.getColumns()) {
+			GenTableColumn column = new GenTableColumn();
+			column.setColumnName(columnMetadata.getColumnName());
+			column.setColumnComment(columnMetadata.getComments());
+			column.setColumnType(columnMetadata.getColumnType());
+			column.setAttrType(paser.convertToJavaType(columnMetadata.getDataType()));
+			column.setAttrName(lineToHump(columnMetadata.getColumnName()));
+			// TODO......
 
-            genTableColumns.add(column);
-        }
-        genTable.setGenTableColumns(genTableColumns);
+			genTableColumns.add(column);
+		}
+		genTable.setGenTableColumns(genTableColumns);
 
-        return genTable;
-    }
+		return genTable;
+	}
 
-    @Override
-    public PageModel page(PageModel pm, String tableName) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(genTableDao.list(tableName));
-        return pm;
-    }
+	@Override
+	public PageModel page(PageModel pm, String tableName) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(genTableDao.list(tableName));
+		return pm;
+	}
 
-    @Override
-    public GenTable detail(Integer tableId) {
-        Assert2.notNullOf(tableId,"tableId");
-        GenTable genTable = genTableDao.selectByPrimaryKey(tableId);
-        Assert2.notNullOf(genTable,"genTable");
-        List<GenTableColumn> genTableColumns = genTableColumnDao.selectByTableId(tableId);
-        genTable.setGenTableColumns(genTableColumns);
-        return genTable;
-    }
+	@Override
+	public GenTable detail(Integer tableId) {
+		Assert2.notNullOf(tableId, "tableId");
+		GenTable genTable = genTableDao.selectByPrimaryKey(tableId);
+		Assert2.notNullOf(genTable, "genTable");
+		List<GenTableColumn> genTableColumns = genTableColumnDao.selectByTableId(tableId);
+		genTable.setGenTableColumns(genTableColumns);
+		return genTable;
+	}
 
-    @Override
-    public void saveGenConfig(GenTable genTable) {
-        if(Objects.nonNull(genTable.getId())){
-            genTable.preUpdate();
-            update(genTable);
-        }else{
-            genTable.preInsert();
-            insert(genTable);
-        }
-    }
+	@Override
+	public void saveGenConfig(GenTable genTable) {
+		if (Objects.nonNull(genTable.getId())) {
+			genTable.preUpdate();
+			update(genTable);
+		} else {
+			genTable.preInsert();
+			insert(genTable);
+		}
+	}
 
-    private void insert(GenTable genTable){
+	private void insert(GenTable genTable) {
 
-        List<GenTableColumn> genTableColumns = genTable.getGenTableColumns();
-        for(GenTableColumn column : genTableColumns){
-            column.preInsert();
-            column.setTableId(genTable.getId());
-        }
-        genTableColumnDao.insertBatch(genTableColumns);
-        genTableDao.insertSelective(genTable);
-    }
+		List<GenTableColumn> genTableColumns = genTable.getGenTableColumns();
+		for (GenTableColumn column : genTableColumns) {
+			column.preInsert();
+			column.setTableId(genTable.getId());
+		}
+		genTableColumnDao.insertBatch(genTableColumns);
+		genTableDao.insertSelective(genTable);
+	}
 
-    private void update(GenTable genTable){
-        genTableColumnDao.deleteByTableId(genTable.getId());
-        genTableDao.updateByPrimaryKeySelective(genTable);
-        List<GenTableColumn> genTableColumns = genTable.getGenTableColumns();
-        for(GenTableColumn column : genTableColumns){
-            column.preInsert();
-            column.setTableId(genTable.getId());
-        }
-        genTableColumnDao.insertBatch(genTable.getGenTableColumns());
-    }
+	private void update(GenTable genTable) {
+		genTableColumnDao.deleteByTableId(genTable.getId());
+		genTableDao.updateByPrimaryKeySelective(genTable);
+		List<GenTableColumn> genTableColumns = genTable.getGenTableColumns();
+		for (GenTableColumn column : genTableColumns) {
+			column.preInsert();
+			column.setTableId(genTable.getId());
+		}
+		genTableColumnDao.insertBatch(genTable.getGenTableColumns());
+	}
 
-    @Override
-    public void delete(Integer tableId) {
-        GenTable genTable = new GenTable();
-        genTable.preUpdate();
-        genTable.setId(tableId);
-        genTable.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        genTableDao.updateByPrimaryKeySelective(genTable);
-    }
+	@Override
+	public void delete(Integer tableId) {
+		GenTable genTable = new GenTable();
+		genTable.preUpdate();
+		genTable.setId(tableId);
+		genTable.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		genTableDao.updateByPrimaryKeySelective(genTable);
+	}
 
-    @Override
-    public void generate(Integer tableId) {
-        //TODO find table config from db
-        GenericParameter genericParameter = new GenericParameter();
-        generateManager.execute(genericParameter);
-    }
+	@Override
+	public void generate(Integer tableId) {
+		// TODO find table config from db
+		GenericParameter genericParameter = new GenericParameter();
+		generateManager.execute(genericParameter);
+	}
 
-    private MetadataPaser getMetadataPaser(GenDatabase genDatabase){
-        //TODO
-        if(StringUtils.equalsIgnoreCase(genDatabase.getType(),"mysql")){
-            return beanFactory.getPrototypeBean("mysqlPaser", null);
-        }
-        //TODO else if .......
-        return beanFactory.getPrototypeBean("mysqlPaser", null);
-    }
+	private MetadataPaser getMetadataPaser(GenDatabase genDatabase) {
+		// TODO
+		if (StringUtils.equalsIgnoreCase(genDatabase.getType(), "mysql")) {
+			return beanFactory.getPrototypeBean("mysqlPaser", null);
+		}
+		// TODO else if .......
+		return beanFactory.getPrototypeBean("mysqlPaser", null);
+	}
+
 }

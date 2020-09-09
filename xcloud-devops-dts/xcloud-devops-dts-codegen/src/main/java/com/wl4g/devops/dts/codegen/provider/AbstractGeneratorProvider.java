@@ -20,7 +20,7 @@ import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import com.wl4g.components.common.log.SmartLogger;
 
 /**
- * {@link AbstractGeneratorProvider} 
+ * {@link AbstractGeneratorProvider}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
@@ -29,5 +29,5 @@ import com.wl4g.components.common.log.SmartLogger;
 public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 	protected final SmartLogger log = getLogger(getClass());
-	
+
 }

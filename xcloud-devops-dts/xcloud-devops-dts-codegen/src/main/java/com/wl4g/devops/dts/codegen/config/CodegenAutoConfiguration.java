@@ -17,7 +17,7 @@ package com.wl4g.devops.dts.codegen.config;
 
 import com.wl4g.components.core.framework.beans.NamingPrototype;
 import com.wl4g.devops.dts.codegen.core.DefaultGenerateManager;
-import com.wl4g.devops.dts.codegen.database.MySQLV57xMetadataPaser;
+import com.wl4g.devops.dts.codegen.database.MySQLV5xMetadataPaser;
 import com.wl4g.devops.dts.codegen.provider.GeneratorProvider;
 import com.wl4g.devops.dts.codegen.provider.backend.SSMGeneratorProvider;
 import com.wl4g.devops.dts.codegen.provider.frontend.VueCodegenProvider;
@@ -57,12 +57,11 @@ public class CodegenAutoConfiguration {
 		return new VueCodegenProvider();
 	}
 
-
-	@NamingPrototype({"mysqlPaser"})
+	@NamingPrototype({ "mysqlPaser" })
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public MySQLV57xMetadataPaser mySQLV57xMetadataPaser() {
-		return new MySQLV57xMetadataPaser();
+	public MySQLV5xMetadataPaser mySQLV57xMetadataPaser() {
+		return new MySQLV5xMetadataPaser();
 	}
 
 	// TODO

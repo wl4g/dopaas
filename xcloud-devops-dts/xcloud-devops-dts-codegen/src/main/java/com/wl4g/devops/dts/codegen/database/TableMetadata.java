@@ -2,163 +2,75 @@ package com.wl4g.devops.dts.codegen.database;
 
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
+ * {@link TableMetadata}
+ * 
+ * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
- * @date 2020-09-07 11:12:00
+ * @version 2020-09-09
+ * @sine v1.0.0
+ * @see
  */
+@Getter
+@Setter
 public class TableMetadata {
 
-    //表的名称
-    private String tableName;
-    //表的备注
-    private String comments;
-    //表的主键
-    private ColumnMetadata pk;
-    //表的字段
-    private List<ColumnMetadata> columns;
-    //类名(第一个字母大写)，如：sys_user => SysUser
-    private String className;
-    //类名(第一个字母小写)，如：sys_user => sysUser
-    private String classname;
+	// 表的名称
+	private String tableName;
 
-    public static class ColumnMetadata {
-        //列名
-        private String columnName;
-        //主键？
-        private String columnKey;
-        //列名类型
-        private String dataType;
+	// 表的备注
+	private String comments;
 
-        private String columnType;
-        //列名备注
-        private String comments;
-        //属性名称(第一个字母大写)，如：user_name => UserName
-        private String attrName;
-        //属性名称(第一个字母小写)，如：user_name => userName
-        private String attrname;
-        //属性类型
-        private String attrType;
-        //auto_increment
-        private String extra;
+	// 表的主键
+	private ColumnMetadata pk;
 
-        public String getColumnName() {
-            return columnName;
-        }
+	// 表的字段
+	private List<ColumnMetadata> columns;
 
-        public void setColumnName(String columnName) {
-            this.columnName = columnName;
-        }
+	// 类名(第一个字母大写)，如：sys_user => SysUser
+	private String classNameFirstUpper;
 
-        public String getDataType() {
-            return dataType;
-        }
+	// 类名(第一个字母小写)，如：sys_user => sysUser
+	private String classNameFirstLower;
 
-        public void setDataType(String dataType) {
-            this.dataType = dataType;
-        }
+	/**
+	 * {@link ColumnMetadata}
+	 * 
+	 * @see
+	 */
+	@Getter
+	@Setter
+	public static class ColumnMetadata {
 
-        public String getComments() {
-            return comments;
-        }
+		// 列名
+		private String columnName;
 
-        public void setComments(String comments) {
-            this.comments = comments;
-        }
+		// 主键？
+		private String columnKey;
 
-        public String getAttrName() {
-            return attrName;
-        }
+		// 列名类型
+		private String dataType;
 
-        public void setAttrName(String attrName) {
-            this.attrName = attrName;
-        }
+		private String columnType;
 
-        public String getAttrname() {
-            return attrname;
-        }
+		// 列名备注
+		private String comments;
 
-        public void setAttrname(String attrname) {
-            this.attrname = attrname;
-        }
+		// 属性名称(第一个字母大写)，如：user_name => UserName
+		private String attrNameFirstUpper;
 
-        public String getAttrType() {
-            return attrType;
-        }
+		// 属性名称(第一个字母小写)，如：user_name => userName
+		private String attrNameFirstLower;
 
-        public void setAttrType(String attrType) {
-            this.attrType = attrType;
-        }
+		// 属性类型
+		private String attrType;
 
-        public String getExtra() {
-            return extra;
-        }
+		// auto_increment
+		private String extra;
 
-        public void setExtra(String extra) {
-            this.extra = extra;
-        }
+	}
 
-        public String getColumnKey() {
-            return columnKey;
-        }
-
-        public void setColumnKey(String columnKey) {
-            this.columnKey = columnKey;
-        }
-
-        public String getColumnType() {
-            return columnType;
-        }
-
-        public void setColumnType(String columnType) {
-            this.columnType = columnType;
-        }
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public ColumnMetadata getPk() {
-        return pk;
-    }
-
-    public void setPk(ColumnMetadata pk) {
-        this.pk = pk;
-    }
-
-    public List<ColumnMetadata> getColumns() {
-        return columns;
-    }
-
-    public void setColumns(List<ColumnMetadata> columns) {
-        this.columns = columns;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public String getClassname() {
-        return classname;
-    }
-
-    public void setClassname(String classname) {
-        this.classname = classname;
-    }
 }

@@ -6,17 +6,17 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface GenDatabaseDao {
-    int deleteByPrimaryKey(Integer id);
+	int deleteByPrimaryKey(Integer id);
 
-    int insert(GenDatabase record);
+	int insert(GenDatabase record);
 
-    int insertSelective(GenDatabase record);
+	int insertSelective(GenDatabase record);
 
-    GenDatabase selectByPrimaryKey(Integer id);
+	GenDatabase selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(GenDatabase record);
+	int updateByPrimaryKeySelective(GenDatabase record);
 
-    int updateByPrimaryKey(GenDatabase record);
+	int updateByPrimaryKey(GenDatabase record);
 
-    List<GenDatabase> list(@Param("name") String name);
+	List<GenDatabase> list(@Param("name") String name);
 }
