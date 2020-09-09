@@ -21,8 +21,10 @@ import com.wl4g.devops.dts.codegen.database.MySQLV57xMetadataPaser;
 import com.wl4g.devops.dts.codegen.provider.GeneratorProvider;
 import com.wl4g.devops.dts.codegen.provider.backend.SSMGeneratorProvider;
 import com.wl4g.devops.dts.codegen.provider.frontend.VueCodegenProvider;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import java.util.List;
 
@@ -56,8 +58,9 @@ public class CodegenAutoConfiguration {
 	}
 
 
-	@NamingPrototype({ "mysqlPaser" })
+	@NamingPrototype({"mysqlPaser"})
 	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public MySQLV57xMetadataPaser mySQLV57xMetadataPaser() {
 		return new MySQLV57xMetadataPaser();
 	}

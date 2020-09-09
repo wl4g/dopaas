@@ -16,11 +16,14 @@
 package com.wl4g.devops.dts.codegen.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.service.GenConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * {@link GenConfigurationController}
@@ -29,12 +32,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @version v1.0 2020-09-07
  * @since
  */
-@Controller
+@RestController
 @RequestMapping("/gen/configure")
 public class GenConfigurationController {
 
     @Autowired
     private GenConfigurationService genConfigurationService;
+
+    @RequestMapping("loadTables")
+    public RespBase<?> loadTables(Integer databaseId){
+        RespBase<Object> resp = RespBase.create();
+        List<String> strings = genConfigurationService.loadTables(databaseId);
+        resp.setData(strings);
+        return resp;
+    }
 
     @RequestMapping("loadMetadata")
     public RespBase<?> loadMetadata(Integer databaseId,String tableName){
@@ -44,22 +55,29 @@ public class GenConfigurationController {
         return resp;
     }
 
-    @RequestMapping("saveGenConfig")
-    public RespBase<?> saveGenConfig(GenTable genTable){
+    @RequestMapping(value = "/list")
+    public RespBase<?> list(PageModel pm, String tableName) {
+        RespBase<Object> resp = RespBase.create();
+        resp.setData(genConfigurationService.page(pm, tableName));
+        return resp;
+    }
+
+    @RequestMapping("save")
+    public RespBase<?> save(GenTable genTable){
         RespBase<Object> resp = RespBase.create();
         genConfigurationService.saveGenConfig(genTable);
         return resp;
     }
 
-    @RequestMapping("genConfigDetail")
-    public RespBase<?> genConfigDetail(Integer tableId){
+    @RequestMapping("detail")
+    public RespBase<?> detail(Integer tableId){
         RespBase<Object> resp = RespBase.create();
         resp.setData(genConfigurationService.detail(tableId));
         return resp;
     }
 
-    @RequestMapping("delGenConfig")
-    public RespBase<?> delGenConfig(Integer tableId){
+    @RequestMapping("del")
+    public RespBase<?> del(Integer tableId){
         RespBase<Object> resp = RespBase.create();
         genConfigurationService.delete(tableId);
         return resp;

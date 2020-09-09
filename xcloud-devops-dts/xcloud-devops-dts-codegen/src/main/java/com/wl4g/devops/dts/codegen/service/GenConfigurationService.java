@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.service;
 
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 
 import java.util.List;
@@ -37,6 +38,8 @@ public interface GenConfigurationService {
      * @param tableName
      */
     GenTable loadMetadata(Integer databaseId,String tableName);
+
+    PageModel page(PageModel pm, String tableName);
 
     GenTable detail(Integer tableId);
 
