@@ -22,9 +22,9 @@ package com.wl4g.devops.dts.codegen.core.param;
  * @version v1.0 2020-09-07
  * @since
  */
-public  class GenericParameter extends AbstractParameter {
+public class GenericParameter extends AbstractParameter {
 	private static final long serialVersionUID = -608968076331460509L;
 
-	//TODO
+	// TODO
 
 }

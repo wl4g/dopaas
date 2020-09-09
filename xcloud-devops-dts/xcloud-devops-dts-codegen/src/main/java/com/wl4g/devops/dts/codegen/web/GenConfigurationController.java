@@ -36,65 +36,58 @@ import java.util.List;
 @RequestMapping("/gen/configure")
 public class GenConfigurationController {
 
-    @Autowired
-    private GenConfigurationService genConfigurationService;
+	@Autowired
+	private GenConfigurationService genConfigurationService;
 
-    @RequestMapping("loadTables")
-    public RespBase<?> loadTables(Integer databaseId){
-        RespBase<Object> resp = RespBase.create();
-        List<String> strings = genConfigurationService.loadTables(databaseId);
-        resp.setData(strings);
-        return resp;
-    }
+	@RequestMapping("loadTables")
+	public RespBase<?> loadTables(Integer databaseId) {
+		RespBase<Object> resp = RespBase.create();
+		List<String> strings = genConfigurationService.loadTables(databaseId);
+		resp.setData(strings);
+		return resp;
+	}
 
-    @RequestMapping("loadMetadata")
-    public RespBase<?> loadMetadata(Integer databaseId,String tableName){
-        RespBase<Object> resp = RespBase.create();
-        GenTable genTable = genConfigurationService.loadMetadata(databaseId, tableName);
-        resp.setData(genTable);
-        return resp;
-    }
+	@RequestMapping("loadMetadata")
+	public RespBase<?> loadMetadata(Integer databaseId, String tableName) {
+		RespBase<Object> resp = RespBase.create();
+		GenTable genTable = genConfigurationService.loadMetadata(databaseId, tableName);
+		resp.setData(genTable);
+		return resp;
+	}
 
-    @RequestMapping(value = "/list")
-    public RespBase<?> list(PageModel pm, String tableName) {
-        RespBase<Object> resp = RespBase.create();
-        resp.setData(genConfigurationService.page(pm, tableName));
-        return resp;
-    }
+	@RequestMapping(value = "/list")
+	public RespBase<?> list(PageModel pm, String tableName) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(genConfigurationService.page(pm, tableName));
+		return resp;
+	}
 
-    @RequestMapping("save")
-    public RespBase<?> save(GenTable genTable){
-        RespBase<Object> resp = RespBase.create();
-        genConfigurationService.saveGenConfig(genTable);
-        return resp;
-    }
+	@RequestMapping("save")
+	public RespBase<?> save(GenTable genTable) {
+		RespBase<Object> resp = RespBase.create();
+		genConfigurationService.saveGenConfig(genTable);
+		return resp;
+	}
 
-    @RequestMapping("detail")
-    public RespBase<?> detail(Integer tableId){
-        RespBase<Object> resp = RespBase.create();
-        resp.setData(genConfigurationService.detail(tableId));
-        return resp;
-    }
+	@RequestMapping("detail")
+	public RespBase<?> detail(Integer tableId) {
+		RespBase<Object> resp = RespBase.create();
+		resp.setData(genConfigurationService.detail(tableId));
+		return resp;
+	}
 
-    @RequestMapping("del")
-    public RespBase<?> del(Integer tableId){
-        RespBase<Object> resp = RespBase.create();
-        genConfigurationService.delete(tableId);
-        return resp;
-    }
+	@RequestMapping("del")
+	public RespBase<?> del(Integer tableId) {
+		RespBase<Object> resp = RespBase.create();
+		genConfigurationService.delete(tableId);
+		return resp;
+	}
 
-
-    @RequestMapping("generate")
-    public RespBase<?> generate(String id){
-        //TODO generate
-        RespBase<Object> resp = RespBase.create();
-        return resp;
-    }
-
-
-
-
-
-
+	@RequestMapping("generate")
+	public RespBase<?> generate(String id) {
+		// TODO generate
+		RespBase<Object> resp = RespBase.create();
+		return resp;
+	}
 
 }
