@@ -303,4 +303,14 @@
       update_by = #{updateBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="list" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List"/>
+    from dts_gen_table
+    where del_flag!=1
+    <if test="tableName != null and tableName != ''" >
+      AND `table_name` LIKE CONCAT('%','${tableName}','%')
+    </if>
+  </select>
 </mapper>

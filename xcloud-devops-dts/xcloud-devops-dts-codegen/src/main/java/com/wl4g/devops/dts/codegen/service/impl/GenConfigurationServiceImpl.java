@@ -15,9 +15,11 @@
  */
 package com.wl4g.devops.dts.codegen.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDatabase;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
@@ -32,12 +34,13 @@ import com.wl4g.devops.dts.codegen.service.GenConfigurationService;
 import com.wl4g.devops.dts.codegen.utils.ParseUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wl4g.devops.dts.codegen.utils.ParseUtils.*;
+import static com.wl4g.devops.dts.codegen.utils.ParseUtils.lineToHump;
 
 /**
  * {@link GenConfigurationServiceImpl}
@@ -46,6 +49,7 @@ import static com.wl4g.devops.dts.codegen.utils.ParseUtils.*;
  * @version v1.0 2020-09-07
  * @since
  */
+@Service
 public class GenConfigurationServiceImpl implements GenConfigurationService {
 
     @Autowired
@@ -68,8 +72,8 @@ public class GenConfigurationServiceImpl implements GenConfigurationService {
         Assert2.notNullOf(databaseId,"databaseId");
         GenDatabase genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
         Assert2.notNullOf(genDatabase,"genDatabase");
-        MetadataPaser mysqlPaser = getMetadataPaser(genDatabase);
-        return mysqlPaser.queryTables(genDatabase);
+        MetadataPaser metadataPaser = getMetadataPaser(genDatabase);
+        return metadataPaser.queryTables(genDatabase);
     }
 
     @Override
@@ -79,6 +83,7 @@ public class GenConfigurationServiceImpl implements GenConfigurationService {
         Assert2.notNullOf(genDatabase,"genDatabase");
         MetadataPaser paser = getMetadataPaser(genDatabase);
         TableMetadata tableMetadata = paser.queryTable(genDatabase, tableName);
+        Assert2.notNullOf(tableMetadata,"tableMetadata");
         // TableMetadata to GenTable
         GenTable genTable = new GenTable();
         genTable.setClassName(ParseUtils.tableName2ClassName(tableMetadata.getTableName()));
@@ -91,7 +96,7 @@ public class GenConfigurationServiceImpl implements GenConfigurationService {
             column.setColumnName(columnMetadata.getColumnName());
             column.setColumnComment(columnMetadata.getComments());
             column.setColumnType(columnMetadata.getColumnType());
-            column.setAttrType(paser.ColumnType2AttrType(columnMetadata.getAttrType()));
+            column.setAttrType(paser.ColumnType2AttrType(columnMetadata.getDataType()));
             column.setAttrName(lineToHump(columnMetadata.getColumnName()));
             //TODO......
 
@@ -100,6 +105,13 @@ public class GenConfigurationServiceImpl implements GenConfigurationService {
         genTable.setGenTableColumns(genTableColumns);
 
         return genTable;
+    }
+
+    @Override
+    public PageModel page(PageModel pm, String tableName) {
+        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+        pm.setRecords(genTableDao.list(tableName));
+        return pm;
     }
 
     @Override
