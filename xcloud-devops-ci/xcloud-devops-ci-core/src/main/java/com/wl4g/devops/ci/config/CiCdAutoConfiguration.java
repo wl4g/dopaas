@@ -37,7 +37,7 @@ import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
 import com.wl4g.devops.ci.tool.PipelineLogPurger;
 
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -123,124 +123,116 @@ public class CiCdAutoConfiguration {
 		return new FlowManager();
 	}
 
-	// --- Pipeline provider's. ---
+	// --- Pipeline providers. ---
 
 	@Bean
 	@NamingPrototype({ PipelineKind.MVN_ASSEMBLE_TAR })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public MvnAssembleTarPipelineProvider mvnAssembleTarPipelineProvider(PipelineContext context) {
 		return new MvnAssembleTarPipelineProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ PipelineKind.SPRING_EXECUTABLE_JAR })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SpringExecutableJarPipelineProvider springExecutableJarPipelineProvider(PipelineContext context) {
 		return new SpringExecutableJarPipelineProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ PipelineKind.NPM_VIEW })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public NpmViewPipelineProvider npmViewPipelineProvider(PipelineContext context) {
 		return new NpmViewPipelineProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ PipelineKind.VIEW_NATIVE })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public ViewNativePipelineProvider viewNativePipelineProvider(PipelineContext context) {
 		return new ViewNativePipelineProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ PipelineKind.PYTHON3_STANDARD })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public Python3PipelineProvider python3StandardPipelineProvider(PipelineContext context) {
 		return new Python3PipelineProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ PipelineKind.GOLANG_STANDARD })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public GolangModPipelineProvider golangModPipelineProvider(PipelineContext context) {
 		return new GolangModPipelineProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ PipelineKind.DOCKER_NATIVE })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DockerNativePipelineProvider dockerNativePipelineProvider(PipelineContext context) {
 		return new DockerNativePipelineProvider(context);
 	}
 
 	@Bean
 	@NamingPrototype({ PipelineKind.RKT_NATIVE })
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public RktNativePipelineProvider rktNativePipelineProvider(PipelineContext context) {
 		return new RktNativePipelineProvider(context);
 	}
 
-	// --- Pipeline deployer's. ---
+	// --- Pipeline deployers. ---
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(SCOPE_PROTOTYPE)
 	public MvnAssembleTarPipeDeployer mvnAssembleTarPipeDeployer(MvnAssembleTarPipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new MvnAssembleTarPipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(SCOPE_PROTOTYPE)
 	public NpmViewPipeDeployer npmViewPipeDeployer(NpmViewPipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new NpmViewPipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(SCOPE_PROTOTYPE)
 	public ViewNativePipeDeployer viewNativePipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new ViewNativePipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(SCOPE_PROTOTYPE)
 	public SpringExecutableJarPipeDeployer springExecutableJarPipeDeployer(SpringExecutableJarPipelineProvider provider,
 			AppInstance instance, List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new SpringExecutableJarPipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(SCOPE_PROTOTYPE)
 	public Python3PipeDeployer python3PipeDeployer(Python3PipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new Python3PipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(SCOPE_PROTOTYPE)
 	public GolangModPipeDeployer golangModPipeDeployer(Python3PipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new GolangModPipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(SCOPE_PROTOTYPE)
 	public DockerNativePipeDeployer dockerNativePipeDeployer(PipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new DockerNativePipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(SCOPE_PROTOTYPE)
 	public RktNativePipeDeployer rktNativePipeDeployer(RktNativePipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new RktNativePipeDeployer(provider, instance, pipelineHistoryInstances);
 	}
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(SCOPE_PROTOTYPE)
 	public CossPipeDeployer cossPipeDeployer(ViewNativePipelineProvider provider, AppInstance instance,
 			List<PipelineHistoryInstance> pipelineHistoryInstances) {
 		return new CossPipeDeployer(provider, instance, pipelineHistoryInstances);
@@ -249,7 +241,6 @@ public class CiCdAutoConfiguration {
 	// --- Timing scheduling's. ---
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public TimingPipelineProvider timingPipelineJob(Trigger trigger, Project project, Task task,
 			List<TaskInstance> taskInstances) {
 		return new TimingPipelineProvider(trigger, project, task, taskInstances);
@@ -260,7 +251,7 @@ public class CiCdAutoConfiguration {
 		return new PipelineTaskScheduler();
 	}
 
-	// --- Tool's. ---
+	// --- Tools. ---
 
 	@Bean
 	public PipelineLogPurger logPipelineCleaner() {
