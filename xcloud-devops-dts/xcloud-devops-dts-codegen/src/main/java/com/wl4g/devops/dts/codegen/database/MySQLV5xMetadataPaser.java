@@ -1,6 +1,5 @@
 package com.wl4g.devops.dts.codegen.database;
 
-import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.devops.dts.codegen.bean.GenDatabase;
 
 import java.io.IOException;
@@ -10,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 
 /**
  * {@link MySQLV5xMetadataPaser}
@@ -75,7 +76,7 @@ public class MySQLV5xMetadataPaser extends AbstractMetadataPaser {
 		try {
 			connect = openConnection(databaseUrl, user, password, JDBC_CLASS_NAME);
 			TableMetadata table = getTableInfo(connect, tableName);
-			Assert2.notNullOf(table, "table");
+			notNullOf(table, "table");
 			List<TableMetadata.ColumnMetadata> tableCloumns = getTableCloumns(connect, tableName);
 			table.setColumns(tableCloumns);
 			return table;
@@ -155,8 +156,7 @@ public class MySQLV5xMetadataPaser extends AbstractMetadataPaser {
 			sqlToJavaTypes.load(new StringReader(readResource(SQL_TYPE, TYPES_SQL_TO_JAVA)));
 			// java to sql
 			javaToSqlTypes = new Properties();
-			javaToSqlTypes.load(new StringReader(readResource(SQL_TYPE, TYPES_SQL_TO_JAVA)));
-			readResource(SQL_TYPE, TYPES_JAVA_TO_SQL);
+			javaToSqlTypes.load(new StringReader(readResource(SQL_TYPE, TYPES_JAVA_TO_SQL)));
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
