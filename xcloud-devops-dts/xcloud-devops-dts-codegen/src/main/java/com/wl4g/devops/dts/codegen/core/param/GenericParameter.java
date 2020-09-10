@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.core.param;
 
-import com.wl4g.devops.dts.codegen.bean.GenTable;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 
 /**
  * {@link GenericParameter}
@@ -27,13 +27,23 @@ import com.wl4g.devops.dts.codegen.bean.GenTable;
 public class GenericParameter extends AbstractParameter {
 	private static final long serialVersionUID = -608968076331460509L;
 
-	private GenTable genTable;
+	private Integer tableId;
 
-	public GenTable getGenTable() {
-		return genTable;
+	public GenericParameter() {
+		super();
 	}
 
-	public void setGenTable(GenTable genTable) {
-		this.genTable = genTable;
+	public GenericParameter(Integer tableId) {
+		notNullOf(tableId, "tableId");
+		this.tableId = tableId;
 	}
+
+	public Integer getTableId() {
+		return tableId;
+	}
+
+	public void setTableId(Integer tableId) {
+		this.tableId = tableId;
+	}
+
 }

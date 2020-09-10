@@ -1,4 +1,4 @@
-package com.wl4g.devops.dts.codegen.database;
+package com.wl4g.devops.dts.codegen.engine.parse;
 
 import com.google.common.io.Resources;
 import com.wl4g.components.common.log.SmartLogger;
@@ -14,6 +14,7 @@ import static com.google.common.base.Charsets.UTF_8;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 
 /**
  * {@link AbstractMetadataPaser}
@@ -75,7 +76,7 @@ public abstract class AbstractMetadataPaser implements MetadataPaser {
 			String path = SQL_BASE_PATH.concat(sqlType).concat("/").concat(filename);
 			File sqlFile = ResourceUtils.getFile("classpath:" + path);
 			String sqlContent = Resources.toString(sqlFile.toURI().toURL(), UTF_8);
-			return format(sqlContent, args);
+			return format(sqlContent, nonNull(args) ? args : null);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}

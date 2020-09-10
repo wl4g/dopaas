@@ -13,15 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.provider.frontend;
+package com.wl4g.devops.dts.codegen.core.context;
+
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
+
+import com.wl4g.devops.dts.codegen.bean.GenTable;
 
 /**
- * {@link VueCodegenProvider} 
+ * {@link DefaultGenerateContext}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public class VueCodegenProvider extends GenericViewGeneratorProvider {
+public class DefaultGenerateContext implements GenerateContext {
+
+	/** {@link GenTable} */
+	private final GenTable genTable;
+
+	public DefaultGenerateContext(GenTable genTable) {
+		notNullOf(genTable, "genTable");
+		this.genTable = genTable;
+	}
+
+	public GenTable getGenTable() {
+		return genTable;
+	}
 
 }

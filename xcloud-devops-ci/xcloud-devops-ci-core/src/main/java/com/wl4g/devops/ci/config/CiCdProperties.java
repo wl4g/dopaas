@@ -15,15 +15,16 @@
  */
 package com.wl4g.devops.ci.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+
+import com.wl4g.components.common.log.SmartLogger;
 
 import java.io.File;
 import java.util.Objects;
 
 import static com.wl4g.components.common.lang.SystemUtils2.cleanSystemPath;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.SystemUtils.USER_HOME;
@@ -37,22 +38,8 @@ import static org.springframework.util.Assert.hasText;
  * @since
  */
 public class CiCdProperties implements InitializingBean {
-	final public static String DEFUALT_JOB_BASEDIR = "jobs";
-	final public static String DEFUALT_VCS_SOURCEDIR = "sources";
 
-	/**
-	 * The default version number(alias), which is used for pipeline
-	 * construction of production installation package
-	 */
-	final public static String DEFUALT_VERSION = "master";
-
-	/**
-	 * Default pipeline build production installation package type.(e.g.
-	 * portal-master-bin.tar)
-	 */
-	final public static String DEFUALT_ASSETS_TYPE = "bin";
-
-	final protected Logger log = LoggerFactory.getLogger(getClass());
+	final protected SmartLogger log = getLogger(getClass());
 
 	/**
 	 * Global workspace directory path.
@@ -343,5 +330,20 @@ public class CiCdProperties implements InitializingBean {
 	public String getAssetsFullFilename(String assetsPath, String clusterName) {
 		return assetsPath + "/" + getPrgramInstallFileName(clusterName) + ".tar";
 	}
+
+	final public static String DEFUALT_JOB_BASEDIR = "jobs";
+	final public static String DEFUALT_VCS_SOURCEDIR = "sources";
+
+	/**
+	 * The default version number(alias), which is used for pipeline
+	 * construction of production installation package
+	 */
+	final public static String DEFUALT_VERSION = "master";
+
+	/**
+	 * Default pipeline build production installation package type.(e.g.
+	 * portal-master-bin.tar)
+	 */
+	final public static String DEFUALT_ASSETS_TYPE = "bin";
 
 }

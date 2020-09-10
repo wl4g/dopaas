@@ -1,4 +1,4 @@
-package com.wl4g.devops.dts.codegen.database;
+package com.wl4g.devops.dts.codegen.engine.parse;
 
 import com.wl4g.devops.dts.codegen.bean.GenDatabase;
 

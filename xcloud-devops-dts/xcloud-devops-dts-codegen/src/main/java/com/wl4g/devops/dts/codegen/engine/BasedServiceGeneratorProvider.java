@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.provider.context;
+package com.wl4g.devops.dts.codegen.engine;
+
+import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 
 /**
- * {@link GenerateContext}
+ * {@link BasedServiceGeneratorProvider}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public interface GenerateContext {
+public abstract class BasedServiceGeneratorProvider extends AbstractGeneratorProvider {
+
+	public BasedServiceGeneratorProvider(GenerateContext context) {
+		super(context);
+	}
 
 }

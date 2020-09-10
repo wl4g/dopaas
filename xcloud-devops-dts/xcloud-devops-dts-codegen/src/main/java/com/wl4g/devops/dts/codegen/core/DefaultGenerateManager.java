@@ -16,14 +16,21 @@
 package com.wl4g.devops.dts.codegen.core;
 
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
+import com.wl4g.devops.dts.codegen.core.context.DefaultGenerateContext;
+import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
-import com.wl4g.devops.dts.codegen.provider.GeneratorProvider;
-import com.wl4g.devops.dts.codegen.provider.backend.SSMGeneratorProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
+import com.wl4g.devops.dts.codegen.dao.GenTableDao;
+import com.wl4g.devops.dts.codegen.engine.GeneratorProvider;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static java.util.Collections.unmodifiableList;
 
 /**
@@ -35,27 +42,37 @@ import static java.util.Collections.unmodifiableList;
  */
 public class DefaultGenerateManager implements GenerateManager {
 
+	/** {@link NamingPrototypeBeanFactory} */
+	protected final NamingPrototypeBeanFactory beanFactory;
+
 	/** {@link GeneratorProvider} */
 	protected final List<GeneratorProvider> providers;
 
-	/** {@link NamingPrototypeBeanFactory} */
 	@Autowired
-	protected NamingPrototypeBeanFactory beanFactory;
+	protected GenTableDao genTableDao;
 
-	public DefaultGenerateManager(List<GeneratorProvider> providers) {
+	@Autowired
+	protected GenTableColumnDao genColumnDao;
+
+	public DefaultGenerateManager(NamingPrototypeBeanFactory beanFactory, List<GeneratorProvider> providers) {
+		notNullOf(beanFactory, "beanFactory");
 		notEmptyOf(providers, "providers");
+		this.beanFactory = beanFactory;
 		this.providers = unmodifiableList(providers);
 	}
 
 	@Override
-	public void execute(GenericParameter parameter) {
-		// TODO Auto-generated method stub
+	public void execute(GenericParameter param) {
+		// Gets generate configuration.
+		GenTable genTable = genTableDao.selectByPrimaryKey(param.getTableId());
+		List<GenTableColumn> genColumns = genColumnDao.selectByTableId(param.getTableId());
+		genTable.setGenTableColumns(genColumns);
 
-		SSMGeneratorProvider ssmGeneratorProvider = beanFactory.getPrototypeBean("ssm", null);
+		// New context.
+		GenerateContext context = new DefaultGenerateContext(genTable);
 
+		GeneratorProvider provider = beanFactory.getPrototypeBean("TODO", context);
+		provider.run();
 	}
-
-	// TODO
-	// ...
 
 }

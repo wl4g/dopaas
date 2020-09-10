@@ -1,15 +1,16 @@
-package com.wl4g.devops.dts.codegen.database;
+package com.wl4g.devops.dts.codegen.engine.parse;
 
 import com.wl4g.devops.dts.codegen.bean.GenDatabase;
 
 import java.util.List;
 
 /**
- * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
+ * {@link MetadataPaser}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
- * @version 2020-09-08
- * @sine v1.0.0
- * @see
+ * @version v1.0 2020-09-08
+ * @since
  */
 public interface MetadataPaser {
 

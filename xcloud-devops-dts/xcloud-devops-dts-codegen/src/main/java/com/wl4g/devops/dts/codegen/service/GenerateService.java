@@ -13,15 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.provider.frontend;
+package com.wl4g.devops.dts.codegen.service;
+
+import com.wl4g.components.data.page.PageModel;
+import com.wl4g.devops.dts.codegen.bean.GenTable;
+
+import java.util.List;
 
 /**
- * {@link AngularJSGeneratorProvider} 
+ * {@link GenerateService}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public class AngularJSGeneratorProvider extends GenericViewGeneratorProvider {
+public interface GenerateService {
+
+	List<String> loadTables(Integer databaseId);
+
+	/**
+	 * new gen code
+	 * 
+	 * @param databaseId
+	 * @param tableName
+	 */
+	GenTable loadMetadata(Integer databaseId, String tableName);
+
+	PageModel page(PageModel pm, String tableName);
+
+	GenTable detail(Integer tableId);
+
+	void saveGenConfig(GenTable genTable);
+
+	void delete(Integer tableId);
+
+	void generate(Integer tableId);
 
 }
