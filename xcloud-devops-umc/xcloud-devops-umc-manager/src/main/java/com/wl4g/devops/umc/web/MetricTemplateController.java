@@ -37,12 +37,11 @@ import java.util.List;
 @RequestMapping("/metric")
 public class MetricTemplateController extends BaseController {
 
-
 	@Autowired
 	private MetricTemplateService metricTemplateService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"umc:metrictemplate"})
+	@RequiresPermissions(value = { "umc:metrictemplate" })
 	public RespBase<?> list(String metric, String classify, PageModel pm) {
 		RespBase<Object> resp = RespBase.create();
 		PageModel list = metricTemplateService.list(pm, metric, classify);
@@ -51,7 +50,7 @@ public class MetricTemplateController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"umc:metrictemplate"})
+	@RequiresPermissions(value = { "umc:metrictemplate" })
 	public RespBase<?> save(@RequestBody MetricTemplate metricTemplate) {
 		log.info("into MetricTemplateController.save prarms::" + "metricTemplate = {} ", metricTemplate);
 		Assert.notNull(metricTemplate, "metricTemplate is null");
@@ -63,7 +62,7 @@ public class MetricTemplateController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"umc:metrictemplate"})
+	@RequiresPermissions(value = { "umc:metrictemplate" })
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		MetricTemplate metricTemplate = metricTemplateService.detal(id);
@@ -72,7 +71,7 @@ public class MetricTemplateController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"umc:metrictemplate"})
+	@RequiresPermissions(value = { "umc:metrictemplate" })
 	public RespBase<?> del(Integer id) {
 		log.info("into MetricTemplateController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

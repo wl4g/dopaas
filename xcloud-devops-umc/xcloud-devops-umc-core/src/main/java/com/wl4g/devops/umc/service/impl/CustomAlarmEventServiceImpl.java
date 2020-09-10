@@ -24,7 +24,6 @@ import com.wl4g.devops.umc.service.CustomAlarmEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 /**
  * @author vjay
  * @date 2019-08-09 14:06:00
@@ -32,44 +31,40 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomAlarmEventServiceImpl implements CustomAlarmEventService {
 
-    @Autowired
-    private CustomAlarmEventDao customAlarmEventDao;
+	@Autowired
+	private CustomAlarmEventDao customAlarmEventDao;
 
-    @Override
-    public PageModel list(PageModel pm, String name) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(customAlarmEventDao.list(name));
-        return pm;
-    }
+	@Override
+	public PageModel list(PageModel pm, String name) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(customAlarmEventDao.list(name));
+		return pm;
+	}
 
-    @Override
-    public CustomAlarmEvent detal(Integer id) {
-        CustomAlarmEvent customAlarmEvent = customAlarmEventDao.selectByPrimaryKey(id);
-        return customAlarmEvent;
-    }
+	@Override
+	public CustomAlarmEvent detal(Integer id) {
+		CustomAlarmEvent customAlarmEvent = customAlarmEventDao.selectByPrimaryKey(id);
+		return customAlarmEvent;
+	}
 
-    @Override
-    public void save(CustomAlarmEvent customAlarmEvent) {
-        if (customAlarmEvent.getId() != null) {
-            customAlarmEvent.preUpdate();
-            customAlarmEventDao.updateByPrimaryKeySelective(customAlarmEvent);
-        } else {
-            customAlarmEvent.preInsert();
-            customAlarmEventDao.insertSelective(customAlarmEvent);
-        }
-    }
+	@Override
+	public void save(CustomAlarmEvent customAlarmEvent) {
+		if (customAlarmEvent.getId() != null) {
+			customAlarmEvent.preUpdate();
+			customAlarmEventDao.updateByPrimaryKeySelective(customAlarmEvent);
+		} else {
+			customAlarmEvent.preInsert();
+			customAlarmEventDao.insertSelective(customAlarmEvent);
+		}
+	}
 
-    @Override
-    public void del(Integer id) {
-        CustomAlarmEvent customAlarmEvent = new CustomAlarmEvent();
-        customAlarmEvent.setId(id);
-        customAlarmEvent.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        customAlarmEvent.preUpdate();
-        customAlarmEventDao.updateByPrimaryKeySelective(customAlarmEvent);
-    }
-
-    
-
-
+	@Override
+	public void del(Integer id) {
+		CustomAlarmEvent customAlarmEvent = new CustomAlarmEvent();
+		customAlarmEvent.setId(id);
+		customAlarmEvent.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		customAlarmEvent.preUpdate();
+		customAlarmEventDao.updateByPrimaryKeySelective(customAlarmEvent);
+	}
 
 }

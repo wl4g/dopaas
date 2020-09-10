@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/history")
 public class CustomHistoryController extends BaseController {
 
-
 	@Autowired
 	private CustomHistoryService customHistoryService;
 
@@ -72,7 +71,5 @@ public class CustomHistoryController extends BaseController {
 		customHistoryService.del(id);
 		return resp;
 	}
-
-
 
 }

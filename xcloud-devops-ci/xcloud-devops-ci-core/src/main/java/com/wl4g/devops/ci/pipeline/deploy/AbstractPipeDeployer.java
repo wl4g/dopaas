@@ -28,7 +28,7 @@ import com.wl4g.components.core.exception.ci.PipelineDeployingException;
 import com.wl4g.components.core.exception.ci.PipelineIntegrationBuildingException;
 import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
-import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.pipeline.PipelineProvider;
 import com.wl4g.devops.ci.service.PipelineHistoryService;
@@ -65,7 +65,7 @@ public abstract class AbstractPipeDeployer<P extends PipelineProvider> implement
 	 * Pipeline CICD properties configuration.
 	 */
 	@Autowired
-	protected CiCdProperties config;
+	protected CiProperties config;
 
 	/**
 	 * Command-line process manager.

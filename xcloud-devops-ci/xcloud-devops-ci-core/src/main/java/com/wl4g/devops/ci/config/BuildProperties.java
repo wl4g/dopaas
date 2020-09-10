@@ -22,7 +22,7 @@ import static org.springframework.util.Assert.isTrue;
 import static org.springframework.util.Assert.notNull;
 
 /**
- * CICD pipeline process, construction of relevant configuration.
+ * CI/CD pipeline build processing, construction of relevant configuration.
  * 
  * @author Wangl.sir &lt;Wanglsir@gmail.com, 983708408@qq.com&gt;
  * @version v1.0.0 2019-10-13
@@ -41,7 +41,7 @@ public class BuildProperties {
 
 	/**
 	 * Shared dependent projects wait timeout when building concurrently.</br>
-	 * {@link com.wl4g.devops.ci.config.CiCdProperties#applyDefaultProperties()}
+	 * {@link com.wl4g.devops.ci.config.CiProperties#applyDefaultProperties()}
 	 */
 	private Long sharedDependencyTryTimeoutMs;
 

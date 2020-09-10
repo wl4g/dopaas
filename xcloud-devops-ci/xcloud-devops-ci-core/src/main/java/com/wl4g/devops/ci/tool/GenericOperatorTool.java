@@ -23,7 +23,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
-import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.config.CiProperties;
 
 /**
  * Abstract generic basic operator tools.
@@ -37,7 +37,7 @@ public abstract class GenericOperatorTool implements ApplicationRunner, Runnable
 	final private AtomicBoolean running = new AtomicBoolean(false);
 
 	@Autowired
-	protected CiCdProperties config;
+	protected CiProperties config;
 
 	@Autowired
 	protected ThreadPoolTaskScheduler taskScheduler;

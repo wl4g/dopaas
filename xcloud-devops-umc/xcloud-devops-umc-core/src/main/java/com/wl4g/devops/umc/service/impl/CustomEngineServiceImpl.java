@@ -25,7 +25,6 @@ import com.wl4g.devops.umc.timing.EngineTaskScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 /**
  * @author vjay
  * @date 2019-08-09 14:06:00
@@ -33,52 +32,49 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomEngineServiceImpl implements CustomEngineService {
 
-    @Autowired
-    private CustomEngineDao customEngineDao;
+	@Autowired
+	private CustomEngineDao customEngineDao;
 
-    @Autowired
-    private EngineTaskScheduler engineTaskScheduler;
+	@Autowired
+	private EngineTaskScheduler engineTaskScheduler;
 
-    @Override
-    public PageModel list(PageModel pm, String name) {
-        pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(customEngineDao.list(name));
-        return pm;
-    }
+	@Override
+	public PageModel list(PageModel pm, String name) {
+		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
+		pm.setRecords(customEngineDao.list(name));
+		return pm;
+	}
 
-    @Override
-    public CustomEngine detal(Integer id) {
-        CustomEngine customEngine = customEngineDao.selectByPrimaryKey(id);
-        return customEngine;
-    }
+	@Override
+	public CustomEngine detal(Integer id) {
+		CustomEngine customEngine = customEngineDao.selectByPrimaryKey(id);
+		return customEngine;
+	}
 
-    @Override
-    public void save(CustomEngine customEngine) {
+	@Override
+	public void save(CustomEngine customEngine) {
 
-        if (customEngine.getId() != null) {
-            customEngine.preUpdate();
-            customEngineDao.updateByPrimaryKeySelective(customEngine);
-        } else {
-            customEngine.preInsert();
-            customEngine.setStatus(1);
-            customEngineDao.insertSelective(customEngine);
-        }
+		if (customEngine.getId() != null) {
+			customEngine.preUpdate();
+			customEngineDao.updateByPrimaryKeySelective(customEngine);
+		} else {
+			customEngine.preInsert();
+			customEngine.setStatus(1);
+			customEngineDao.insertSelective(customEngine);
+		}
 
-        engineTaskScheduler.refreshTimingPipeline(customEngine);
-    }
+		engineTaskScheduler.refreshTimingPipeline(customEngine);
+	}
 
-    @Override
-    public void del(Integer id) {
-        CustomEngine customEngine = new CustomEngine();
-        customEngine.setId(id);
-        customEngine.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-        customEngine.preUpdate();
-        customEngineDao.updateByPrimaryKeySelective(customEngine);
+	@Override
+	public void del(Integer id) {
+		CustomEngine customEngine = new CustomEngine();
+		customEngine.setId(id);
+		customEngine.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		customEngine.preUpdate();
+		customEngineDao.updateByPrimaryKeySelective(customEngine);
 
-        engineTaskScheduler.stopTimingPipeline(customEngine);
-    }
-
-
-
+		engineTaskScheduler.stopTimingPipeline(customEngine);
+	}
 
 }

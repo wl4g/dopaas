@@ -37,7 +37,6 @@ import static com.wl4g.components.core.bean.umc.model.DataSourceProvide.MYSQL;
 @RequestMapping("/datasource")
 public class CustomDataSourceController extends BaseController {
 
-
 	@Autowired
 	private CustomDataSourceService customDataSourceService;
 
@@ -50,11 +49,11 @@ public class CustomDataSourceController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(String dataSource,String provider) {
+	public RespBase<?> save(String dataSource, String provider) {
 		log.info("into CustomDatasourceController.save prarms::" + "customDataSource = {} ", dataSource);
 		notNull(dataSource, "customDataSource is null");
 		RespBase<Object> resp = RespBase.create();
-		if(MYSQL.toString().equalsIgnoreCase(provider)){
+		if (MYSQL.toString().equalsIgnoreCase(provider)) {
 			MysqlDataSource mysqlDataSource = JacksonUtils.parseJSON(dataSource, MysqlDataSource.class);
 			customDataSourceService.save(mysqlDataSource);
 		}
@@ -90,14 +89,11 @@ public class CustomDataSourceController extends BaseController {
 		return resp;
 	}
 
-
 	@RequestMapping(value = "/testConnect")
-	public RespBase<?> testConnect(String provider, String url,String username,String password,Integer id) throws Exception {
+	public RespBase<?> testConnect(String provider, String url, String username, String password, Integer id) throws Exception {
 		RespBase<Object> resp = RespBase.create();
-		customDataSourceService.testConnect(DataSourceProvide.parse(provider),url,username,password,id);
+		customDataSourceService.testConnect(DataSourceProvide.parse(provider), url, username, password, id);
 		return resp;
 	}
-
-
 
 }

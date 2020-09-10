@@ -1,13 +1,17 @@
 package com.wl4g.devops.dts.codegen.engine.resolver;
 
-import com.wl4g.devops.dts.codegen.bean.GenDatabase;
+import com.wl4g.devops.dts.codegen.bean.GenDataSource;
+import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
+import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ForeignMetadata;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
+import java.util.Map;
 
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.collection.Collections2.safeList;
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notEmpty;
 
 /**
  * {@link MySQLV5xMetadataResolver}
@@ -20,117 +24,93 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
  */
 public class MySQLV5xMetadataResolver extends AbstractMetadataResolver {
 
-	@Override
-	public List<String> loadTable(GenDatabase genDatabase) {
-		String databaseUrl = "jdbc:mysql://" + genDatabase.getHost() + ":" + genDatabase.getPort() + "/"
-				+ genDatabase.getDatabase();
-		return getTables(databaseUrl, genDatabase.getUsername(), genDatabase.getPassword());
-	}
-
-	@Override
-	public TableMetadata loadTable(GenDatabase genDatabase, String tableName) {
-		String databaseUrl = "jdbc:mysql://" + genDatabase.getHost() + ":" + genDatabase.getPort() + "/"
-				+ genDatabase.getDatabase();
-		return getTable(databaseUrl, genDatabase.getUsername(), genDatabase.getPassword(), tableName);
-	}
-
-	@Override
-	public void loadForeign(String databaseName, String tableName) throws Exception {
-		String sql = loadResolvingSql(SQL_TYPE, SQL_QUERY_FOREIGN, databaseName, tableName);
-		// TODO
-	}
-
-	private List<String> getTables(String databaseUrl, String user, String password) {
-		List<String> tables = new ArrayList<String>();
-		Connection connect = null;
-		try {
-			connect = openConnection(databaseUrl, user, password, JDBC_CLASS_NAME);
-			DatabaseMetaData dbmd = connect.getMetaData();
-
-			ResultSet rs = dbmd.getTables(null, null, null, new String[] { "TABLE" });
-			while (rs.next()) {
-				tables.add(rs.getString("TABLE_NAME"));
-			}
-		} catch (SQLException | ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			if (null != connect) {
-				try {
-					connect.close();
-				} catch (SQLException e) {
-					log.error("close connect fail", e);
-				}
-			}
-		}
-		return tables;
+	/**
+	 * New {@link MySQLV5xMetadataResolver}
+	 * 
+	 * @param genDS
+	 */
+	public MySQLV5xMetadataResolver(GenDataSource genDS) {
+		this("jdbc:mysql://".concat(genDS.getHost()).concat(":").concat(genDS.getPort()).concat("/").concat(genDS.getDatabase()),
+				genDS.getUsername(), genDS.getPassword());
 	}
 
 	/**
-	 * Get Table Info
+	 * New {@link MySQLV5xMetadataResolver}
+	 * 
+	 * @param driverClassName
+	 * @param url
+	 * @param username
+	 * @param password
 	 */
-	private TableMetadata getTable(String databaseUrl, String user, String password, String tableName) {
-		Connection connect = null;
-		try {
-			connect = openConnection(databaseUrl, user, password, JDBC_CLASS_NAME);
-			TableMetadata table = getTableInfo(connect, tableName);
-			notNullOf(table, "table");
-			List<TableMetadata.ColumnMetadata> tableCloumns = getTableCloumns(connect, tableName);
-			table.setColumns(tableCloumns);
-			return table;
-		} catch (Exception e) {
-			log.error("get Table Info error", e);
-		} finally {
-			if (connect != null) {
-				try {
-					connect.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
+	protected MySQLV5xMetadataResolver(String url, String username, String password) {
+		super("com.mysql.jdbc.Driver", url, username, password);
 	}
 
-	/**
-	 * 获取表字段信息
-	 */
-	private List<TableMetadata.ColumnMetadata> getTableCloumns(Connection connect, String tableName) throws Exception {
-		List<TableMetadata.ColumnMetadata> columns = new ArrayList<>();
-		Statement stmt = connect.createStatement();
-		String sql = loadResolvingSql(SQL_TYPE, SQL_QUERY_COLUMNS, tableName);
-		ResultSet rs = stmt.executeQuery(sql);
-		while (rs.next()) {
-			TableMetadata.ColumnMetadata column = new TableMetadata.ColumnMetadata();
-			column.setColumnName(rs.getString("columnName"));
-			column.setColumnType(rs.getString("columnType"));
-			column.setDataType(rs.getString("dataType"));
-			column.setComments(rs.getString("columnComment"));
-			column.setColumnKey(rs.getString("columnKey"));
-			column.setExtra(rs.getString("extra"));
-			columns.add(column);
-		}
-		return columns;
+	@Override
+	public List<String> findTables() {
+		String sql = loadResolvingSql(DB_TYPE, SQL_TABLES);
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
+		return safeList(list).stream().map(row -> (String) row.get("tableName")).collect(toList());
 	}
 
-	/**
-	 * 获取表字段信息
-	 */
-	private TableMetadata getTableInfo(Connection connect, String tableName) throws Exception {
+	@Override
+	public TableMetadata findTableDescribe(String tableName) {
+		hasTextOf(tableName, "tableName");
+
+		String sql = loadResolvingSql(DB_TYPE, SQL_TABLE_DESCRIBE, tableName);
+		Map<String, Object> row = jdbcTemplate.queryForMap(sql, tableName);
+
 		TableMetadata table = new TableMetadata();
-		Statement stmt = connect.createStatement();
-		String sql = loadResolvingSql(SQL_TYPE, SQL_QUERY_TABLE, tableName);
-		ResultSet rs = stmt.executeQuery(sql);
-		if (rs.next()) {// just one
-			HashMap<String, String> map = new HashMap<String, String>();
-			table.setTableName(rs.getString("tableName"));
-			table.setComments(rs.getString("tableComment"));
-			return table;
-		}
-		return null;
+		table.setTableName((String) row.get("tableName"));
+		table.setComments((String) row.get("tableComment"));
+		return table;
 	}
 
-	// MySQL jdbc
-	final private static String SQL_TYPE = "mysql";
-	final private static String JDBC_CLASS_NAME = "com.mysql.jdbc.Driver";
+	@Override
+	public List<ColumnMetadata> findTableColumns(String tableName) {
+		hasTextOf(tableName, "tableName");
+
+		String sql = loadResolvingSql(DB_TYPE, SQL_COLUMNS, tableName);
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
+
+		return safeList(list).stream().map(row -> {
+			ColumnMetadata column = new ColumnMetadata();
+			column.setColumnName((String) row.get("columnName"));
+			column.setColumnType((String) row.get("columnType"));
+			column.setDataType((String) row.get("dataType"));
+			column.setComments((String) row.get("columnComment"));
+			column.setColumnKey((String) row.get("columnKey"));
+			column.setExtra((String) row.get("extra"));
+			return column;
+		}).collect(toList());
+	}
+
+	@Override
+	public List<ForeignMetadata> findTableForeign(String tableName) {
+		hasTextOf(tableName, "tableName");
+
+		String sql = loadResolvingSql(DB_TYPE, SQL_FOREIGN, tableName);
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
+
+		return safeList(list).stream().map(row -> {
+			ForeignMetadata foreign = new ForeignMetadata();
+			foreign.setDbName((String) row.get("dbName"));
+			foreign.setForTableName((String) row.get("forTableName"));
+			foreign.setRefTableName((String) row.get("refTableName"));
+			foreign.setForColumnName((String) row.get("forColumnName"));
+			foreign.setRefColumnName((String) row.get("refColumnName"));
+			return foreign;
+		}).collect(toList());
+	}
+
+	@Override
+	public String findDBVersion() throws Exception {
+		String sql = loadResolvingSql(DB_TYPE, SQL_VERSION);
+		Map<String, Object> result = jdbcTemplate.queryForMap(sql);
+		notEmpty(result, "Cannot find database version info");
+		return (String) result.get("version");
+	}
+
+	public final static String DB_TYPE = "mysql";
 
 }

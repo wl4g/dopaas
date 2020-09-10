@@ -33,7 +33,7 @@ import com.wl4g.components.support.notification.MessageNotifier;
 import com.wl4g.components.support.notification.MessageNotifier.NotifierKind;
 import com.wl4g.devops.ci.bean.ActionControl;
 import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.context.DefaultPipelineContext;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.param.HookParameter;
@@ -85,7 +85,7 @@ public class DefaultPipelineManager implements PipelineManager {
     final protected Logger log = getLogger(getClass());
 
     @Autowired
-    protected CiCdProperties config;
+    protected CiProperties config;
     @Autowired
     protected NamingPrototypeBeanFactory beanFactory;
     @Autowired

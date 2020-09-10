@@ -37,7 +37,7 @@ import static org.springframework.util.Assert.hasText;
  * @version v1.0 2019年5月25日
  * @since
  */
-public class CiCdProperties implements InitializingBean {
+public class CiProperties implements InitializingBean {
 
 	final protected SmartLogger log = getLogger(getClass());
 

@@ -38,17 +38,17 @@ public class RecordController extends BaseController {
 	private RecordService recordService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"umc:record"})
+	@RequiresPermissions(value = { "umc:record" })
 	public RespBase<?> list(String name, PageModel pm, String startDate, String endDate) {
 		log.info("into RecordController.list prarms::" + "name = {} , pm = {} , startDate = {} , endDate = {} ", name, pm,
 				startDate, endDate);
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(recordService.list(pm,name,startDate,endDate));
+		resp.setData(recordService.list(pm, name, startDate, endDate));
 		return resp;
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"umc:record"})
+	@RequiresPermissions(value = { "umc:record" })
 	public RespBase<?> detail(Integer id) {
 		log.info("into CollectorController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

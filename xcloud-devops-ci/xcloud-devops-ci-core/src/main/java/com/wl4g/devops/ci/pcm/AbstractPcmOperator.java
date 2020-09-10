@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.config.CiProperties;
 
 /**
  * Abstract PCM operator.
@@ -40,7 +40,7 @@ public abstract class AbstractPcmOperator implements PcmOperator, InitializingBe
 	 * CICD PCM configuration.
 	 */
 	@Autowired
-	protected CiCdProperties config;
+	protected CiProperties config;
 
 	/**
 	 * {@link RestTemplate} of PCM API provider.

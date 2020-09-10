@@ -18,6 +18,7 @@ package com.wl4g.devops.dts.codegen.core;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
+import com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.GenProviderType;
 import com.wl4g.devops.dts.codegen.core.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
@@ -28,10 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.BEAN_PROVIDER_SSM;
-import static java.util.Collections.unmodifiableList;
 
 /**
  * {@link DefaultGenerateManager}
@@ -45,20 +43,15 @@ public class DefaultGenerateManager implements GenerateManager {
 	/** {@link NamingPrototypeBeanFactory} */
 	protected final NamingPrototypeBeanFactory beanFactory;
 
-	/** {@link GeneratorProvider} */
-	protected final List<GeneratorProvider> providers;
-
 	@Autowired
 	protected GenTableDao genTableDao;
 
 	@Autowired
 	protected GenTableColumnDao genColumnDao;
 
-	public DefaultGenerateManager(NamingPrototypeBeanFactory beanFactory, List<GeneratorProvider> providers) {
+	public DefaultGenerateManager(NamingPrototypeBeanFactory beanFactory) {
 		notNullOf(beanFactory, "beanFactory");
-		notEmptyOf(providers, "providers");
 		this.beanFactory = beanFactory;
-		this.providers = unmodifiableList(providers);
 	}
 
 	@Override
@@ -70,13 +63,12 @@ public class DefaultGenerateManager implements GenerateManager {
 
 		// New context.
 		GenerateContext context = new DefaultGenerateContext(genTable);
+		// TODO ...
 
-		//TODO ...
-		GeneratorProvider provider = beanFactory.getPrototypeBean(BEAN_PROVIDER_SSM, context);
+		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderType.SSM, context);
 		provider.run();
 
-		//TODO package return
-
+		// TODO package return
 
 	}
 

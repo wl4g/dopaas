@@ -17,7 +17,7 @@ package com.wl4g.devops.ci.core;
 
 import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
-import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.config.CiProperties;
 
 /**
  * Pipeline job executor runner.
@@ -28,9 +28,9 @@ import com.wl4g.devops.ci.config.CiCdProperties;
  */
 public class PipelineJobExecutor extends ApplicationTaskRunner<RunnerProperties> {
 
-	final protected CiCdProperties config;
+	final protected CiProperties config;
 
-	public PipelineJobExecutor(CiCdProperties config) {
+	public PipelineJobExecutor(CiProperties config) {
 		super(config.getExecutor());
 		this.config = config;
 	}

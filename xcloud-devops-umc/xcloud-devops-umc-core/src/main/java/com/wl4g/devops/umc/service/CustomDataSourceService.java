@@ -37,13 +37,15 @@ public interface CustomDataSourceService {
 
 	void del(Integer id);
 
-	void testConnect(DataSourceProvide dataSourceProvide, String url, String username, String password, Integer id) throws Exception;
+	void testConnect(DataSourceProvide dataSourceProvide, String url, String username, String password, Integer id)
+			throws Exception;
 
 	List<CustomDataSource> dataSources();
 
 	CustomDataSource model2Properties(BaseDataSource baseDataSource);
 
-	List<CustomDataSourceProperties> objectToCustomDataSourceProperties(Object obj, Integer dataSourceId) throws IllegalAccessException;
+	List<CustomDataSourceProperties> objectToCustomDataSourceProperties(Object obj, Integer dataSourceId)
+			throws IllegalAccessException;
 
 	<T extends BaseDataSource> T properties2Model(CustomDataSource customDataSource);
 

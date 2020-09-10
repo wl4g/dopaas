@@ -47,21 +47,21 @@ import java.util.List;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 /**
- * CICD auto configuration.
+ * CI/CD auto configuration.
  *
  * @author Wangl.sir <983708408@qq.com>
  * @version v1.0 2019年5月21日
  * @since
  */
 @Configuration
-public class CiCdAutoConfiguration {
+public class CiAutoConfiguration {
 
 	// --- Basic's ---
 
 	@Bean
 	@ConfigurationProperties(prefix = "spring.cloud.devops.ci.pipeline")
-	public CiCdProperties ciCdProperties() {
-		return new CiCdProperties();
+	public CiProperties ciCdProperties() {
+		return new CiProperties();
 	}
 
 	@Bean
@@ -70,7 +70,7 @@ public class CiCdAutoConfiguration {
 	}
 
 	@Bean
-	public PipelineJobExecutor pipelineJobExecutor(CiCdProperties config) {
+	public PipelineJobExecutor pipelineJobExecutor(CiProperties config) {
 		return new PipelineJobExecutor(config);
 	}
 
@@ -216,13 +216,13 @@ public class CiCdAutoConfiguration {
 
 	@Bean
 	@Scope(SCOPE_PROTOTYPE)
-	public TimingPipelineProvider timingPipelineJob(Trigger trigger, Project project, Task task,
+	public TimingPipelineProvider timingPipelineProvider(Trigger trigger, Project project, Task task,
 			List<TaskInstance> taskInstances) {
 		return new TimingPipelineProvider(trigger, project, task, taskInstances);
 	}
 
 	@Bean
-	public PipelineTaskScheduler timingPipelineManager() {
+	public PipelineTaskScheduler pipelineTaskScheduler() {
 		return new PipelineTaskScheduler();
 	}
 

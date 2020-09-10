@@ -22,13 +22,18 @@ import java.io.StringReader;
 import java.util.Properties;
 
 /**
- * {@link MySQLTypeConverter}
+ * {@link MySQLV5xTypeConverter}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-10
  * @since
  */
-public class MySQLTypeConverter extends DbTypeConverter {
+public class MySQLV5xTypeConverter extends DbTypeConverter {
+
+	@Override
+	public DbConverterType kind() {
+		return DbConverterType.MySQL;
+	}
 
 	@Override
 	public String convertToJavaType(String sqlType) {
@@ -50,10 +55,12 @@ public class MySQLTypeConverter extends DbTypeConverter {
 			// sql to java
 			sqlToJavaTypes = new Properties();
 			sqlToJavaTypes.load(new StringReader(readResource(false, TYPES_BASE_PATH, TYPE_MYSQL, TYPES_SQL_TO_JAVA)));
+
 			// java to sql
 			javaToSqlTypes = new Properties();
 			javaToSqlTypes.load(new StringReader(readResource(false, TYPES_BASE_PATH, TYPE_MYSQL, TYPES_JAVA_TO_SQL)));
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new IllegalStateException(e);
 		}
 

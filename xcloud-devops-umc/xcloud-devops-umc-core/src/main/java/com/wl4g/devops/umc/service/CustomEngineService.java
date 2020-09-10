@@ -32,5 +32,4 @@ public interface CustomEngineService {
 
 	void del(Integer id);
 
-
 }

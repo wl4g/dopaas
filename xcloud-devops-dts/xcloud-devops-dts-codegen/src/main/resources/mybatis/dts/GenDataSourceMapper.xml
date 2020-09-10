@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wl4g.devops.dts.codegen.dao.GenDatabaseDao" >
-  <resultMap id="BaseResultMap" type="com.wl4g.devops.dts.codegen.bean.GenDatabase" >
+<mapper namespace="com.wl4g.devops.dts.codegen.dao.GenDataSourceDao" >
+  <resultMap id="BaseResultMap" type="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="VARCHAR" />
@@ -32,7 +32,7 @@
     delete from dts_gen_database
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenDatabase" >
+  <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
     insert into dts_gen_database (id, name, `type`,
       host, port, `database`,
       username, password, url, 
@@ -46,7 +46,7 @@
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenDatabase" >
+  <insert id="insertSelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
     insert into dts_gen_database
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -143,7 +143,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenDatabase" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
     update dts_gen_database
     <set >
       <if test="name != null" >
@@ -191,7 +191,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenDatabase" >
+  <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenDataSource" >
     update dts_gen_database
     set name = #{name,jdbcType=VARCHAR},
       `type` = #{type,jdbcType=VARCHAR},

@@ -38,7 +38,7 @@ public class DeployProperties {
 
 	/**
 	 * Transfer bin file to remote host timeout (Ms). </br>
-	 * {@link com.wl4g.devops.ci.config.CiCdProperties#applyDefaultProperties()}
+	 * {@link com.wl4g.devops.ci.config.CiProperties#applyDefaultProperties()}
 	 */
 	private Long transferTimeoutMs;
 

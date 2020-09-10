@@ -16,22 +16,22 @@
 package com.wl4g.devops.dts.codegen.service;
 
 import com.wl4g.components.data.page.PageModel;
-import com.wl4g.devops.dts.codegen.bean.GenDatabase;
+import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 
 import java.util.List;
 
 /**
  * @author vjay
  */
-public interface GenDatabaseService {
+public interface GenConfigurationService {
 
 	PageModel page(PageModel pm, String name);
 
-	List<GenDatabase> getForSelect();
+	List<GenDataSource> getForSelect();
 
-	void save(GenDatabase genDatabase);
+	void save(GenDataSource genDatabase);
 
-	GenDatabase detail(Integer id);
+	GenDataSource detail(Integer id);
 
 	void del(Integer id);
 }
