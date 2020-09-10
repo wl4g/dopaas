@@ -24,13 +24,13 @@ import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.GeneratorProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.BEAN_PROVIDER_SSM;
 import static java.util.Collections.unmodifiableList;
 
 /**
@@ -71,8 +71,13 @@ public class DefaultGenerateManager implements GenerateManager {
 		// New context.
 		GenerateContext context = new DefaultGenerateContext(genTable);
 
-		GeneratorProvider provider = beanFactory.getPrototypeBean("TODO", context);
+		//TODO ...
+		GeneratorProvider provider = beanFactory.getPrototypeBean(BEAN_PROVIDER_SSM, context);
 		provider.run();
+
+		//TODO package return
+
+
 	}
 
 }

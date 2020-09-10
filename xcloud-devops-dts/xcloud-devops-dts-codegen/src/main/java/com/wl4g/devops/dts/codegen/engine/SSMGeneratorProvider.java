@@ -15,7 +15,12 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
+import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.utils.CodeGenUtils;
+import freemarker.template.TemplateException;
+
+import java.io.IOException;
 
 /**
  * {@link SSMGeneratorProvider}
@@ -30,4 +35,18 @@ public class SSMGeneratorProvider extends BasedServiceGeneratorProvider {
 		super(context);
 	}
 
+
+	@Override
+	public void run() {
+		GenTable genTable = context.getGenTable();
+		try {
+			String gen = CodeGenUtils.gen("Service.ftl", genTable);
+			System.out.println(gen);
+
+		} catch (IOException | TemplateException e) {
+			log.error("gen fail", e);
+		}
+
+
+	}
 }
