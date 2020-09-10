@@ -2,19 +2,18 @@ package com.wl4g.devops.dts.codegen.database;
 
 import com.google.common.io.Resources;
 import com.wl4g.components.common.log.SmartLogger;
-
 import org.springframework.util.ResourceUtils;
-
-import static com.google.common.base.Charsets.UTF_8;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-import static java.lang.String.format;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import static com.google.common.base.Charsets.UTF_8;
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
+import static java.lang.String.format;
 
 /**
  * {@link AbstractMetadataPaser}
@@ -76,7 +75,7 @@ public abstract class AbstractMetadataPaser implements MetadataPaser {
 			String path = SQL_BASE_PATH.concat(sqlType).concat("/").concat(filename);
 			File sqlFile = ResourceUtils.getFile("classpath:" + path);
 			String sqlContent = Resources.toString(sqlFile.toURI().toURL(), UTF_8);
-			return format(sqlContent, new Object[] { args });
+			return format(sqlContent, args);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
@@ -84,7 +83,7 @@ public abstract class AbstractMetadataPaser implements MetadataPaser {
 
 	// Database metadata query SQLs.
 	public final static String SQL_BASE_PATH = AbstractMetadataPaser.class.getName().replace(".", "/")
-			.replace(AbstractMetadataPaser.class.getName(), "") + "/sql/";
+			.replace(AbstractMetadataPaser.class.getSimpleName(), "") + "/sql/";
 	public final static String SQL_QUERY_COLUMNS = "query_columns.sql";
 	public final static String SQL_QUERY_FOREIGN = "query_foreign.sql";
 	public final static String SQL_QUERY_TABLE = "query_table.sql";
