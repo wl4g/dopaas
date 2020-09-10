@@ -98,6 +98,20 @@ public class GenConfigurationServiceImpl implements GenConfigurationService {
 			column.setColumnType(columnMetadata.getColumnType());
 			column.setAttrType(paser.convertToJavaType(columnMetadata.getDataType()));
 			column.setAttrName(lineToHump(columnMetadata.getColumnName()));
+			// Set Default Config
+			column.setIsInsert("1");
+			column.setIsUpdate("1");
+			column.setIsList("1");
+			column.setIsEdit("1");
+			column.setNoNull("1");
+			column.setQueryType("1");
+			column.setShowType("1");
+			if(StringUtils.equalsIgnoreCase(columnMetadata.getColumnKey(),"PRI")){
+				column.setIsPk("1");
+				column.setIsList("0");
+				column.setNoNull("0");
+			}
+
 			// TODO......
 
 			genTableColumns.add(column);
@@ -169,7 +183,11 @@ public class GenConfigurationServiceImpl implements GenConfigurationService {
 	@Override
 	public void generate(Integer tableId) {
 		// TODO find table config from db
+		GenTable genTable = genTableDao.selectByPrimaryKey(tableId);
+		List<GenTableColumn> genTableColumns = genTableColumnDao.selectByTableId(tableId);
+		genTable.setGenTableColumns(genTableColumns);
 		GenericParameter genericParameter = new GenericParameter();
+		genericParameter.setGenTable(genTable);
 		generateManager.execute(genericParameter);
 	}
 

@@ -177,4 +177,5 @@ public class GenTable extends BaseBean {
 	public void setGenTableColumns(List<GenTableColumn> genTableColumns) {
 		this.genTableColumns = genTableColumns;
 	}
+
 }
