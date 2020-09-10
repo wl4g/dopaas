@@ -36,8 +36,6 @@ import com.wl4g.devops.ci.pipeline.deploy.*;
 import com.wl4g.devops.ci.pipeline.timing.PipelineTaskScheduler;
 import com.wl4g.devops.ci.pipeline.timing.TimingPipelineProvider;
 import com.wl4g.devops.ci.tool.PipelineLogPurger;
-
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,6 +43,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.List;
+
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 /**
  * CICD auto configuration.
@@ -90,32 +90,6 @@ public class CiCdAutoConfiguration {
 	public CiCdConsole cicdConsole() {
 		return new CiCdConsole();
 	}
-
-	// --- VCS's (Version Control System) ---
-
-	/*
-	 * @Bean public GitlabV4VcsOperator gitlabV4VcsOperator() { return new
-	 * GitlabV4VcsOperator(); }
-	 * 
-	 * @Bean public GithubVcsOperator githubV4VcsOperator() { return new
-	 * GithubVcsOperator(); }
-	 * 
-	 * @Bean public BitbucketVcsOperator bitbucketVcsOperator() { return new
-	 * BitbucketVcsOperator(); }
-	 * 
-	 * @Bean public CodingVcsOperator codingVcsOperator() { return new
-	 * CodingVcsOperator(); }
-	 * 
-	 * @Bean public GiteeVcsOperator giteeVcsOperator() { return new
-	 * GiteeVcsOperator(); }
-	 * 
-	 * @Bean public AlicodeVcsOperator alicodeVcsOperator() { return new
-	 * AlicodeVcsOperator(); }
-	 * 
-	 * @Bean public GenericOperatorAdapter<VcsProviderKind, VcsOperator>
-	 * compositeVcsOperateAdapter(List<VcsOperator> operators) { return new
-	 * GenericOperatorAdapter<VcsProviderKind, VcsOperator>(operators) { }; }
-	 */
 
 	// --- Flow Manager ---
 	@Bean
@@ -241,6 +215,7 @@ public class CiCdAutoConfiguration {
 	// --- Timing scheduling's. ---
 
 	@Bean
+	@Scope(SCOPE_PROTOTYPE)
 	public TimingPipelineProvider timingPipelineJob(Trigger trigger, Project project, Task task,
 			List<TaskInstance> taskInstances) {
 		return new TimingPipelineProvider(trigger, project, task, taskInstances);
