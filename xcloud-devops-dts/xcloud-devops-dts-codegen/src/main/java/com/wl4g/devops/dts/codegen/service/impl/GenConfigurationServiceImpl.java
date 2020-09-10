@@ -16,188 +16,71 @@
 package com.wl4g.devops.dts.codegen.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.wl4g.components.common.lang.Assert2;
 import com.wl4g.components.core.bean.BaseBean;
-import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenDatabase;
-import com.wl4g.devops.dts.codegen.bean.GenTable;
-import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.core.GenerateManager;
-import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
 import com.wl4g.devops.dts.codegen.dao.GenDatabaseDao;
-import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
-import com.wl4g.devops.dts.codegen.dao.GenTableDao;
-import com.wl4g.devops.dts.codegen.database.MetadataPaser;
-import com.wl4g.devops.dts.codegen.database.TableMetadata;
-import com.wl4g.devops.dts.codegen.service.GenConfigurationService;
-import com.wl4g.devops.dts.codegen.utils.ParseUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.wl4g.devops.dts.codegen.service.GenDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import static com.wl4g.devops.dts.codegen.utils.ParseUtils.lineToHump;
+import static com.wl4g.iam.common.utils.IamOrganizationHolder.getRequestOrganizationCode;
+import static java.util.Objects.isNull;
 
 /**
- * {@link GenConfigurationServiceImpl}
- *
- * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-09-07
- * @since
+ * @author vjay
+ * @date 2019-11-14 14:10:00
  */
 @Service
-public class GenConfigurationServiceImpl implements GenConfigurationService {
-
-	@Autowired
-	private GenerateManager generateManager;
-
-	@Autowired
-	protected NamingPrototypeBeanFactory beanFactory;
+public class GenConfigurationServiceImpl implements GenDatabaseService {
 
 	@Autowired
 	private GenDatabaseDao genDatabaseDao;
 
-	@Autowired
-	private GenTableDao genTableDao;
-
-	@Autowired
-	private GenTableColumnDao genTableColumnDao;
-
 	@Override
-	public List<String> loadTables(Integer databaseId) {
-		Assert2.notNullOf(databaseId, "databaseId");
-		GenDatabase genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
-		Assert2.notNullOf(genDatabase, "genDatabase");
-		MetadataPaser metadataPaser = getMetadataPaser(genDatabase);
-		return metadataPaser.loadTable(genDatabase);
-	}
-
-	@Override
-	public GenTable loadMetadata(Integer databaseId, String tableName) {
-		Assert2.notNullOf(databaseId, "databaseId");
-		GenDatabase genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
-		Assert2.notNullOf(genDatabase, "genDatabase");
-		MetadataPaser paser = getMetadataPaser(genDatabase);
-		TableMetadata tableMetadata = paser.loadTable(genDatabase, tableName);
-		Assert2.notNullOf(tableMetadata, "tableMetadata");
-		// TableMetadata to GenTable
-		GenTable genTable = new GenTable();
-		genTable.setClassName(ParseUtils.tableName2ClassName(tableMetadata.getTableName()));
-		genTable.setTableName(tableMetadata.getTableName());
-		genTable.setComments(tableMetadata.getComments());
-
-		List<GenTableColumn> genTableColumns = new ArrayList<>();
-		for (TableMetadata.ColumnMetadata columnMetadata : tableMetadata.getColumns()) {
-			GenTableColumn column = new GenTableColumn();
-			column.setColumnName(columnMetadata.getColumnName());
-			column.setColumnComment(columnMetadata.getComments());
-			column.setColumnType(columnMetadata.getColumnType());
-			column.setAttrType(paser.convertToJavaType(columnMetadata.getDataType()));
-			column.setAttrName(lineToHump(columnMetadata.getColumnName()));
-			// Set Default Config
-			column.setIsInsert("1");
-			column.setIsUpdate("1");
-			column.setIsList("1");
-			column.setIsEdit("1");
-			column.setNoNull("1");
-			column.setQueryType("1");
-			column.setShowType("1");
-			if(StringUtils.equalsIgnoreCase(columnMetadata.getColumnKey(),"PRI")){
-				column.setIsPk("1");
-				column.setIsList("0");
-				column.setNoNull("0");
-			}
-
-			// TODO......
-
-			genTableColumns.add(column);
-		}
-		genTable.setGenTableColumns(genTableColumns);
-
-		return genTable;
-	}
-
-	@Override
-	public PageModel page(PageModel pm, String tableName) {
+	public PageModel page(PageModel pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(genTableDao.list(tableName));
+		pm.setRecords(genDatabaseDao.list(name));
 		return pm;
 	}
 
 	@Override
-	public GenTable detail(Integer tableId) {
-		Assert2.notNullOf(tableId, "tableId");
-		GenTable genTable = genTableDao.selectByPrimaryKey(tableId);
-		Assert2.notNullOf(genTable, "genTable");
-		List<GenTableColumn> genTableColumns = genTableColumnDao.selectByTableId(tableId);
-		genTable.setGenTableColumns(genTableColumns);
-		return genTable;
+	public List<GenDatabase> getForSelect() {
+		return genDatabaseDao.list(null);
 	}
 
-	@Override
-	public void saveGenConfig(GenTable genTable) {
-		if (Objects.nonNull(genTable.getId())) {
-			genTable.preUpdate();
-			update(genTable);
+	public void save(GenDatabase genDatabase) {
+		if (isNull(genDatabase.getId())) {
+			genDatabase.preInsert(getRequestOrganizationCode());
+			insert(genDatabase);
 		} else {
-			genTable.preInsert();
-			insert(genTable);
+			genDatabase.preUpdate();
+			update(genDatabase);
 		}
 	}
 
-	private void insert(GenTable genTable) {
-
-		List<GenTableColumn> genTableColumns = genTable.getGenTableColumns();
-		for (GenTableColumn column : genTableColumns) {
-			column.preInsert();
-			column.setTableId(genTable.getId());
-		}
-		genTableColumnDao.insertBatch(genTableColumns);
-		genTableDao.insertSelective(genTable);
+	private void insert(GenDatabase genDatabase) {
+		genDatabaseDao.insertSelective(genDatabase);
 	}
 
-	private void update(GenTable genTable) {
-		genTableColumnDao.deleteByTableId(genTable.getId());
-		genTableDao.updateByPrimaryKeySelective(genTable);
-		List<GenTableColumn> genTableColumns = genTable.getGenTableColumns();
-		for (GenTableColumn column : genTableColumns) {
-			column.preInsert();
-			column.setTableId(genTable.getId());
-		}
-		genTableColumnDao.insertBatch(genTable.getGenTableColumns());
+	private void update(GenDatabase genDatabase) {
+		genDatabaseDao.updateByPrimaryKeySelective(genDatabase);
 	}
 
-	@Override
-	public void delete(Integer tableId) {
-		GenTable genTable = new GenTable();
-		genTable.preUpdate();
-		genTable.setId(tableId);
-		genTable.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		genTableDao.updateByPrimaryKeySelective(genTable);
+	public GenDatabase detail(Integer id) {
+		Assert.notNull(id, "id is null");
+		return genDatabaseDao.selectByPrimaryKey(id);
 	}
 
-	@Override
-	public void generate(Integer tableId) {
-		// TODO find table config from db
-		GenTable genTable = genTableDao.selectByPrimaryKey(tableId);
-		List<GenTableColumn> genTableColumns = genTableColumnDao.selectByTableId(tableId);
-		genTable.setGenTableColumns(genTableColumns);
-		GenericParameter genericParameter = new GenericParameter();
-		genericParameter.setGenTable(genTable);
-		generateManager.execute(genericParameter);
-	}
-
-	private MetadataPaser getMetadataPaser(GenDatabase genDatabase) {
-		// TODO
-		if (StringUtils.equalsIgnoreCase(genDatabase.getType(), "mysql")) {
-			return beanFactory.getPrototypeBean("mysqlPaser", null);
-		}
-		// TODO else if .......
-		return beanFactory.getPrototypeBean("mysqlPaser", null);
+	public void del(Integer id) {
+		Assert.notNull(id, "id is null");
+		GenDatabase genDatabase = new GenDatabase();
+		genDatabase.setId(id);
+		genDatabase.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		genDatabaseDao.updateByPrimaryKeySelective(genDatabase);
 	}
 
 }

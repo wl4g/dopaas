@@ -16,15 +16,16 @@
 package com.wl4g.devops.dts.codegen.config;
 
 import com.wl4g.components.core.framework.beans.NamingPrototype;
+import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.core.DefaultGenerateManager;
-import com.wl4g.devops.dts.codegen.database.MySQLV5xMetadataPaser;
-import com.wl4g.devops.dts.codegen.provider.GeneratorProvider;
-import com.wl4g.devops.dts.codegen.provider.backend.SSMGeneratorProvider;
-import com.wl4g.devops.dts.codegen.provider.frontend.VueCodegenProvider;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.GeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.SSMGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.VueCodegenProvider;
+import com.wl4g.devops.dts.codegen.engine.parse.MySQLV5xMetadataPaser;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 import java.util.List;
 
@@ -39,32 +40,38 @@ import java.util.List;
 public class CodegenAutoConfiguration {
 
 	@Bean
-	public DefaultGenerateManager defaultGenerateManager(List<GeneratorProvider> providers) {
-		return new DefaultGenerateManager(providers);
+	public CodegenProperties codegenProperties() {
+		return new CodegenProperties();
 	}
 
-	// --- Generator Provider's. ---
-
-	@NamingPrototype({ "ssm", "standardBackend" })
 	@Bean
-	public SSMGeneratorProvider ssmGeneratorProvider() {
-		return new SSMGeneratorProvider();
+	public DefaultGenerateManager defaultGenerateManager(NamingPrototypeBeanFactory beanFactory,
+			List<GeneratorProvider> providers) {
+		return new DefaultGenerateManager(beanFactory, providers);
 	}
 
-	@NamingPrototype({ "vue", "standardVue" })
+	// --- Generator provider's. ---
+
+	@NamingPrototype({ BEAN_PROVIDER_SSM })
 	@Bean
-	public VueCodegenProvider vueCodegenProvider() {
-		return new VueCodegenProvider();
+	public SSMGeneratorProvider ssmGeneratorProvider(GenerateContext context) {
+		return new SSMGeneratorProvider(context);
 	}
 
-	@NamingPrototype({ "mysqlPaser" })
+	@NamingPrototype({ BEAN_PROVIDER_VUE })
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public MySQLV5xMetadataPaser mySQLV57xMetadataPaser() {
+	public VueCodegenProvider vueCodegenProvider(GenerateContext context) {
+		return new VueCodegenProvider(context);
+	}
+
+	@NamingPrototype({ BEAN_PARSER_MYSQL })
+	@Bean
+	public MySQLV5xMetadataPaser mySQLV5xMetadataPaser() {
 		return new MySQLV5xMetadataPaser();
 	}
 
-	// TODO
-	// ...
+	public static final String BEAN_PARSER_MYSQL = "mysql";
+	public static final String BEAN_PROVIDER_VUE = "vueProvider";
+	public static final String BEAN_PROVIDER_SSM = "ssmProvider";
 
 }
