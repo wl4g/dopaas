@@ -27,8 +27,8 @@ import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
 import com.wl4g.devops.dts.codegen.dao.GenDatabaseDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
-import com.wl4g.devops.dts.codegen.engine.parse.MetadataPaser;
-import com.wl4g.devops.dts.codegen.engine.parse.TableMetadata;
+import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
+import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import com.wl4g.devops.dts.codegen.utils.ParseUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -72,7 +72,7 @@ public class GenerateServiceImpl implements GenerateService {
 		notNullOf(databaseId, "databaseId");
 		GenDatabase genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
 		notNullOf(genDatabase, "genDatabase");
-		MetadataPaser paraer = getMetadataPaser(genDatabase);
+		MetadataResolver paraer = getMetadataPaser(genDatabase);
 		return paraer.loadTable(genDatabase);
 	}
 
@@ -82,7 +82,7 @@ public class GenerateServiceImpl implements GenerateService {
 		GenDatabase gendb = genDatabaseDao.selectByPrimaryKey(databaseId);
 		notNullOf(gendb, "genDatabase");
 
-		MetadataPaser paser = getMetadataPaser(gendb);
+		MetadataResolver paser = getMetadataPaser(gendb);
 		TableMetadata tableMetadata = paser.loadTable(gendb, tableName);
 		notNullOf(tableMetadata, "tableMetadata");
 
@@ -98,7 +98,9 @@ public class GenerateServiceImpl implements GenerateService {
 			column.setColumnName(columnMetadata.getColumnName());
 			column.setColumnComment(columnMetadata.getComments());
 			column.setColumnType(columnMetadata.getColumnType());
-			column.setAttrType(paser.convertToJavaType(columnMetadata.getDataType()));
+
+			// TODO
+			// column.setAttrType(paser.convertToJavaType(columnMetadata.getDataType()));
 			column.setAttrName(lineToHump(columnMetadata.getColumnName()));
 			// Sets default
 			column.setIsInsert("1");
@@ -186,12 +188,12 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	/**
-	 * Gets {@link MetadataPaser}
+	 * Gets {@link MetadataResolver}
 	 * 
 	 * @param gen
 	 * @return
 	 */
-	private MetadataPaser getMetadataPaser(GenDatabase gen) {
+	private MetadataResolver getMetadataPaser(GenDatabase gen) {
 		return beanFactory.getPrototypeBean(gen.getType());
 	}
 

@@ -36,6 +36,7 @@ public class DefaultGenerateContext implements GenerateContext {
 		this.genTable = genTable;
 	}
 
+	@Override
 	public GenTable getGenTable() {
 		return genTable;
 	}

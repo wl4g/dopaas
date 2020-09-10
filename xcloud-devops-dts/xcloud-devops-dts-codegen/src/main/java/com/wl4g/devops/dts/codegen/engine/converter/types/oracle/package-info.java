@@ -13,23 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.core.context;
-
-import com.wl4g.devops.dts.codegen.bean.GenTable;
-
 /**
- * {@link GenerateContext}
+ * {@link package-info} 
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-09-07
+ * @version v1.0 2020-09-10
  * @since
  */
-public interface GenerateContext {
-
-	/**
-	 * Gets {@link GenTable}
-	 * 
-	 * @return
-	 */
-	GenTable getGenTable();
-}
+package com.wl4g.devops.dts.codegen.engine.converter.types.oracle;

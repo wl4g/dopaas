@@ -22,7 +22,7 @@ import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.GeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.SSMGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.VueCodegenProvider;
-import com.wl4g.devops.dts.codegen.engine.parse.MySQLV5xMetadataPaser;
+import com.wl4g.devops.dts.codegen.engine.resolver.MySQLV5xMetadataResolver;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,8 +66,8 @@ public class CodegenAutoConfiguration {
 
 	@NamingPrototype({ BEAN_PARSER_MYSQL })
 	@Bean
-	public MySQLV5xMetadataPaser mySQLV5xMetadataPaser() {
-		return new MySQLV5xMetadataPaser();
+	public MySQLV5xMetadataResolver mySQLV5xMetadataPaser() {
+		return new MySQLV5xMetadataResolver();
 	}
 
 	public static final String BEAN_PARSER_MYSQL = "mysql";
