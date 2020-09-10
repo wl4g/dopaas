@@ -44,7 +44,7 @@ public class CodeGenUtils {
 		fmc = fmcr.getConfiguration();
 	}
 
-	public static String gen(String templatePath, Map<String, Object> model) throws IOException, TemplateException {
+	public static String gen(String templatePath, Object model) throws IOException, TemplateException {
 		Template template = fmc.getTemplate(templatePath, UTF_8.name());
 		return processTemplateIntoString(template, model);
 	}
