@@ -17,7 +17,9 @@ package com.wl4g.devops.dts.codegen.engine.converter;
 
 import java.io.IOException;
 
+import com.wl4g.components.core.framework.operator.Operator;
 import com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbConverterType;
 
 /**
  * {@link DbTypeConverter}
@@ -26,7 +28,7 @@ import com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils;
  * @version v1.0 2020-09-10
  * @since
  */
-public abstract class DbTypeConverter {
+public abstract class DbTypeConverter implements Operator<DbConverterType> {
 
 	public abstract String convertToJavaType(String sqlType);
 
@@ -47,8 +49,17 @@ public abstract class DbTypeConverter {
 
 	// Databsse types definitions.
 	public final static String TYPES_BASE_PATH = DbTypeConverter.class.getName().replace(".", "/")
-			.replace(DbTypeConverter.class.getSimpleName(), "") + "/types/";
+			.replace(DbTypeConverter.class.getSimpleName(), "") + "types/";
 	public final static String TYPES_SQL_TO_JAVA = "sql-to-java.types";
 	public final static String TYPES_JAVA_TO_SQL = "java-to-sql.types";
+
+	/**
+	 * {@link DbType}
+	 * 
+	 * @see
+	 */
+	public static enum DbConverterType {
+		MySQL
+	}
 
 }

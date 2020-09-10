@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/event")
 public class CustomAlarmEventController extends BaseController {
 
-
 	@Autowired
 	private CustomAlarmEventService customAlarmEventService;
 
@@ -72,7 +71,5 @@ public class CustomAlarmEventController extends BaseController {
 		customAlarmEventService.del(id);
 		return resp;
 	}
-
-
 
 }

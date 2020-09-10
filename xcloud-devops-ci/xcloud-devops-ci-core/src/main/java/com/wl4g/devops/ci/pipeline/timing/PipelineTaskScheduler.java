@@ -19,7 +19,7 @@ import com.wl4g.components.core.bean.ci.Project;
 import com.wl4g.components.core.bean.ci.Task;
 import com.wl4g.components.core.bean.ci.TaskInstance;
 import com.wl4g.components.core.bean.ci.Trigger;
-import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.dao.ci.ProjectDao;
 import com.wl4g.devops.dao.ci.TaskDao;
@@ -55,13 +55,15 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 	private static ConcurrentHashMap<String, ScheduledFuture<?>> map = new ConcurrentHashMap<String, ScheduledFuture<?>>();
 
 	@Autowired
-	protected CiCdProperties config;
-	@Autowired
-	protected PipelineManager pipeline;
+	protected CiProperties config;
 	@Autowired
 	protected BeanFactory beanFactory;
+
 	@Autowired
-	private ThreadPoolTaskScheduler taskScheduler;
+	private ThreadPoolTaskScheduler scheduler;
+	@Autowired
+	protected PipelineManager pipeline;
+
 	@Autowired
 	protected TriggerDao triggerDao;
 	@Autowired
@@ -94,9 +96,8 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 	 * @param trigger
 	 */
 	public void refreshTimingPipeline(String key, String expression, Trigger trigger) {
-		if (log.isInfoEnabled()) {
-			log.info("Refresh timing pipeline for key:'{}', expression: '{}', triggerId: {}", key, expression, trigger.getId());
-		}
+		log.info("Refresh timing pipeline for key:'{}', expression: '{}', triggerId: {}", key, expression, trigger.getId());
+
 		// Check stopped?
 		stopTimingPipeline(trigger);
 
@@ -108,7 +109,7 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 		notNull(project, String.format("Timing pipeline project:(%s) not found", task.getProjectId()));
 
 		// Startup to pipeline.
-		startupTimingPipeline(trigger, project, task, instances);
+		startTimingPipeline(trigger, project, task, instances);
 	}
 
 	/**
@@ -119,11 +120,10 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 	 * @param task
 	 * @param taskInstances
 	 */
-	private void startupTimingPipeline(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
-		if (log.isInfoEnabled()) {
-			log.info("Startup timing pipeline for triggerId: {}, expression: '{}', instances: {} ", trigger.getId(),
-					trigger.getCron(), taskInstances);
-		}
+	private void startTimingPipeline(Trigger trigger, Project project, Task task, List<TaskInstance> taskInstances) {
+		log.info("Startup timing pipeline for triggerId: {}, expression: '{}', instances: {} ", trigger.getId(),
+				trigger.getCron(), taskInstances);
+
 		stopTimingPipeline(trigger);
 
 		if (trigger.getEnable() != 1) {
@@ -132,7 +132,9 @@ public class PipelineTaskScheduler implements ApplicationRunner {
 
 		TimingPipelineProvider provider = beanFactory.getBean(TimingPipelineProvider.class,
 				new Object[] { trigger, project, task, taskInstances });
-		ScheduledFuture<?> future = taskScheduler.schedule(provider, new CronTrigger(trigger.getCron()));
+
+		ScheduledFuture<?> future = scheduler.schedule(provider, new CronTrigger(trigger.getCron()));
+
 		// TODO distributed cluster??
 		PipelineTaskScheduler.map.put(getTimingPipelineKey(trigger), future);
 	}

@@ -59,14 +59,14 @@ public class CustomEngineController extends BaseController {
 		RespBase<Object> resp = RespBase.create();
 
 		CustomEngine customEngine = new CustomEngine();
-		BeanUtils.copyProperties(customEngineModel,customEngine,"notifyGroupIds");
+		BeanUtils.copyProperties(customEngineModel, customEngine, "notifyGroupIds");
 
 		Integer[] notifyGroupIds = customEngineModel.getNotifyGroupIds();
 		StringBuilder stringBuilder = new StringBuilder();
-		for(int i = 0;i<  notifyGroupIds.length;i++){
-			if(i==notifyGroupIds.length-1){
+		for (int i = 0; i < notifyGroupIds.length; i++) {
+			if (i == notifyGroupIds.length - 1) {
 				stringBuilder.append(notifyGroupIds[i]);
-			}else{
+			} else {
 				stringBuilder.append(notifyGroupIds[i]).append(",");
 			}
 		}
@@ -82,11 +82,11 @@ public class CustomEngineController extends BaseController {
 		CustomEngine customEngine = customEngineService.detal(id);
 
 		CustomEngineModel customEngineModel = new CustomEngineModel();
-		BeanUtils.copyProperties(customEngine,customEngineModel,"notifyGroupIds");
-		if(StringUtils.isNotBlank(customEngine.getNotifyGroupIds())){
+		BeanUtils.copyProperties(customEngine, customEngineModel, "notifyGroupIds");
+		if (StringUtils.isNotBlank(customEngine.getNotifyGroupIds())) {
 			String[] split = customEngine.getNotifyGroupIds().split(",");
 			Integer[] integers = new Integer[split.length];
-			for(int i = 0;i<split.length ;i++){
+			for (int i = 0; i < split.length; i++) {
 				integers[i] = Integer.valueOf(split[i]);
 			}
 			customEngineModel.setNotifyGroupIds(integers);
@@ -131,7 +131,5 @@ public class CustomEngineController extends BaseController {
 		}
 		return resp;
 	}
-
-
 
 }

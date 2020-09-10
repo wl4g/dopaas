@@ -40,7 +40,7 @@ public class ConfigController extends BaseController {
 	private ConfigService configService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"umc:config"})
+	@RequiresPermissions(value = { "umc:config" })
 	public RespBase<?> list(Integer templateId, Integer contactGroupId, PageModel pm) {
 		log.info("into ConfigController.list prarms::" + "templateId = {} , contactGroupId = {} , pm = {} ", templateId,
 				contactGroupId, pm);
@@ -51,7 +51,7 @@ public class ConfigController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"umc:config"})
+	@RequiresPermissions(value = { "umc:config" })
 	public RespBase<?> save(@RequestBody AlarmConfig alarmConfig) {
 		Assert.notNull(alarmConfig, "config is null");
 		Assert.notNull(alarmConfig.getCollectId(), "instance is null");
@@ -63,7 +63,7 @@ public class ConfigController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"umc:config"})
+	@RequiresPermissions(value = { "umc:config" })
 	public RespBase<?> detail(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		AlarmConfig alarmConfig = configService.detail(id);
@@ -72,7 +72,7 @@ public class ConfigController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"umc:config"})
+	@RequiresPermissions(value = { "umc:config" })
 	public RespBase<?> del(Integer id) {
 		RespBase<Object> resp = RespBase.create();
 		configService.del(id);

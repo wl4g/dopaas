@@ -21,7 +21,7 @@ import com.wl4g.components.core.bean.ci.TaskInstance;
 import com.wl4g.components.core.bean.ci.Trigger;
 import com.wl4g.components.core.bean.erm.AppInstance;
 import com.wl4g.devops.ci.bean.PipelineModel;
-import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.PipelineManager;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.core.param.NewParameter;
@@ -50,7 +50,7 @@ public class TimingPipelineProvider extends AbstractPipelineProvider implements 
 	final protected Logger log = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	protected CiCdProperties config;
+	protected CiProperties config;
 	@Autowired
 	protected PipelineManager pipeManager;
 	@Autowired

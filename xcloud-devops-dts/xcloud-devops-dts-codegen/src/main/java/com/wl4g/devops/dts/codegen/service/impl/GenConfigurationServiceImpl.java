@@ -18,9 +18,9 @@ package com.wl4g.devops.dts.codegen.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.data.page.PageModel;
-import com.wl4g.devops.dts.codegen.bean.GenDatabase;
-import com.wl4g.devops.dts.codegen.dao.GenDatabaseDao;
-import com.wl4g.devops.dts.codegen.service.GenDatabaseService;
+import com.wl4g.devops.dts.codegen.bean.GenDataSource;
+import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
+import com.wl4g.devops.dts.codegen.service.GenConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -35,52 +35,52 @@ import static java.util.Objects.isNull;
  * @date 2019-11-14 14:10:00
  */
 @Service
-public class GenConfigurationServiceImpl implements GenDatabaseService {
+public class GenConfigurationServiceImpl implements GenConfigurationService {
 
 	@Autowired
-	private GenDatabaseDao genDatabaseDao;
+	private GenDataSourceDao genDSDao;
 
 	@Override
 	public PageModel page(PageModel pm, String name) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(genDatabaseDao.list(name));
+		pm.setRecords(genDSDao.list(name));
 		return pm;
 	}
 
 	@Override
-	public List<GenDatabase> getForSelect() {
-		return genDatabaseDao.list(null);
+	public List<GenDataSource> getForSelect() {
+		return genDSDao.list(null);
 	}
 
-	public void save(GenDatabase genDatabase) {
-		if (isNull(genDatabase.getId())) {
-			genDatabase.preInsert(getRequestOrganizationCode());
-			insert(genDatabase);
+	public void save(GenDataSource gen) {
+		if (isNull(gen.getId())) {
+			gen.preInsert(getRequestOrganizationCode());
+			insert(gen);
 		} else {
-			genDatabase.preUpdate();
-			update(genDatabase);
+			gen.preUpdate();
+			update(gen);
 		}
 	}
 
-	private void insert(GenDatabase genDatabase) {
-		genDatabaseDao.insertSelective(genDatabase);
+	private void insert(GenDataSource gen) {
+		genDSDao.insertSelective(gen);
 	}
 
-	private void update(GenDatabase genDatabase) {
-		genDatabaseDao.updateByPrimaryKeySelective(genDatabase);
+	private void update(GenDataSource gen) {
+		genDSDao.updateByPrimaryKeySelective(gen);
 	}
 
-	public GenDatabase detail(Integer id) {
+	public GenDataSource detail(Integer id) {
 		Assert.notNull(id, "id is null");
-		return genDatabaseDao.selectByPrimaryKey(id);
+		return genDSDao.selectByPrimaryKey(id);
 	}
 
 	public void del(Integer id) {
 		Assert.notNull(id, "id is null");
-		GenDatabase genDatabase = new GenDatabase();
-		genDatabase.setId(id);
-		genDatabase.setDelFlag(BaseBean.DEL_FLAG_DELETE);
-		genDatabaseDao.updateByPrimaryKeySelective(genDatabase);
+		GenDataSource gen = new GenDataSource();
+		gen.setId(id);
+		gen.setDelFlag(BaseBean.DEL_FLAG_DELETE);
+		genDSDao.updateByPrimaryKeySelective(gen);
 	}
 
 }

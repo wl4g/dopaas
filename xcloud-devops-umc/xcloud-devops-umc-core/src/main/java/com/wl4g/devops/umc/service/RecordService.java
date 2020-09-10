@@ -24,7 +24,7 @@ import com.wl4g.devops.page.PageModel;
  */
 public interface RecordService {
 
-	PageModel list(PageModel pm,String name, String startDate, String endDate);
+	PageModel list(PageModel pm, String name, String startDate, String endDate);
 
 	AlarmRecord detail(Integer id);
 

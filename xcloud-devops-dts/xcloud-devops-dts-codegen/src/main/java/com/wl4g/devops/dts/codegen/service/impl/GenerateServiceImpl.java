@@ -18,17 +18,21 @@ package com.wl4g.devops.dts.codegen.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.data.page.PageModel;
-import com.wl4g.devops.dts.codegen.bean.GenDatabase;
+import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.core.GenerateManager;
 import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
-import com.wl4g.devops.dts.codegen.dao.GenDatabaseDao;
+import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbConverterType;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
+import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
 import com.wl4g.devops.dts.codegen.utils.ParseUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,13 +57,16 @@ import static com.wl4g.devops.dts.codegen.utils.ParseUtils.lineToHump;
 public class GenerateServiceImpl implements GenerateService {
 
 	@Autowired
-	protected NamingPrototypeBeanFactory beanFactory;
+	private NamingPrototypeBeanFactory beanFactory;
+
+	@Autowired
+	private GenericOperatorAdapter<DbConverterType, DbTypeConverter> typeConverter;
 
 	@Autowired
 	private GenerateManager genManager;
 
 	@Autowired
-	private GenDatabaseDao genDatabaseDao;
+	private GenDataSourceDao genDatabaseDao;
 
 	@Autowired
 	private GenTableDao genTableDao;
@@ -70,57 +77,57 @@ public class GenerateServiceImpl implements GenerateService {
 	@Override
 	public List<String> loadTables(Integer databaseId) {
 		notNullOf(databaseId, "databaseId");
-		GenDatabase genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
+		GenDataSource genDatabase = genDatabaseDao.selectByPrimaryKey(databaseId);
 		notNullOf(genDatabase, "genDatabase");
-		MetadataResolver paraer = getMetadataPaser(genDatabase);
-		return paraer.loadTable(genDatabase);
+		MetadataResolver resolver = getMetadataPaser(genDatabase);
+		return resolver.findTables();
 	}
 
 	@Override
 	public GenTable loadMetadata(Integer databaseId, String tableName) {
 		notNullOf(databaseId, "databaseId");
-		GenDatabase gendb = genDatabaseDao.selectByPrimaryKey(databaseId);
-		notNullOf(gendb, "genDatabase");
+		GenDataSource genDS = genDatabaseDao.selectByPrimaryKey(databaseId);
+		notNullOf(genDS, "genDatabase");
 
-		MetadataResolver paser = getMetadataPaser(gendb);
-		TableMetadata tableMetadata = paser.loadTable(gendb, tableName);
-		notNullOf(tableMetadata, "tableMetadata");
+		MetadataResolver resolver = getMetadataPaser(genDS);
+		TableMetadata metadata = resolver.findTableDescribe(tableName);
+		notNullOf(metadata, "tableMetadata");
 
 		// TableMetadata to GenTable
-		GenTable genTable = new GenTable();
-		genTable.setClassName(ParseUtils.tableName2ClassName(tableMetadata.getTableName()));
-		genTable.setTableName(tableMetadata.getTableName());
-		genTable.setComments(tableMetadata.getComments());
+		GenTable genTab = new GenTable();
+		genTab.setClassName(ParseUtils.tableName2ClassName(metadata.getTableName()));
+		genTab.setTableName(metadata.getTableName());
+		genTab.setComments(metadata.getComments());
 
 		List<GenTableColumn> genColumns = new ArrayList<>();
-		for (TableMetadata.ColumnMetadata columnMetadata : tableMetadata.getColumns()) {
-			GenTableColumn column = new GenTableColumn();
-			column.setColumnName(columnMetadata.getColumnName());
-			column.setColumnComment(columnMetadata.getComments());
-			column.setColumnType(columnMetadata.getColumnType());
+		for (ColumnMetadata colMetadata : metadata.getColumns()) {
+			GenTableColumn col = new GenTableColumn();
+			col.setColumnName(colMetadata.getColumnName());
+			col.setColumnComment(colMetadata.getComments());
+			col.setColumnType(colMetadata.getColumnType());
+			col.setAttrName(lineToHump(colMetadata.getColumnName()));
+			// Converting java type
+			DbTypeConverter conv = typeConverter.forOperator(genDS.getType());
+			col.setAttrType(conv.convertToJavaType(colMetadata.getDataType()));
 
-			// TODO
-			// column.setAttrType(paser.convertToJavaType(columnMetadata.getDataType()));
-			column.setAttrName(lineToHump(columnMetadata.getColumnName()));
-			// Sets default
-			column.setIsInsert("1");
-			column.setIsUpdate("1");
-			column.setIsList("1");
-			column.setIsEdit("1");
-			column.setNoNull("1");
-			column.setQueryType("1");
-			column.setShowType("1");
-			if (StringUtils.equalsIgnoreCase(columnMetadata.getColumnKey(), "PRI")) {
-				column.setIsPk("1");
-				column.setIsList("0");
-				column.setNoNull("0");
+			// Sets defaults
+			col.setIsInsert("1");
+			col.setIsUpdate("1");
+			col.setIsList("1");
+			col.setIsEdit("1");
+			col.setNoNull("1");
+			col.setQueryType("1");
+			col.setShowType("1");
+			if (StringUtils.equalsIgnoreCase(colMetadata.getColumnKey(), "PRI")) {
+				col.setIsPk("1");
+				col.setIsList("0");
+				col.setNoNull("0");
 			}
-			// TODO......
-			genColumns.add(column);
+			genColumns.add(col);
 		}
-		genTable.setGenTableColumns(genColumns);
+		genTab.setGenTableColumns(genColumns);
 
-		return genTable;
+		return genTab;
 	}
 
 	@Override
@@ -193,7 +200,7 @@ public class GenerateServiceImpl implements GenerateService {
 	 * @param gen
 	 * @return
 	 */
-	private MetadataResolver getMetadataPaser(GenDatabase gen) {
+	private MetadataResolver getMetadataPaser(GenDataSource gen) {
 		return beanFactory.getPrototypeBean(gen.getType());
 	}
 

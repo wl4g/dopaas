@@ -16,7 +16,7 @@
 package com.wl4g.devops.ci.web;
 
 import com.wl4g.components.common.web.rest.RespBase;
-import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.config.CiProperties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -41,7 +41,7 @@ import java.util.UUID;
 public class FsController {
 
 	@Autowired
-	protected CiCdProperties config;
+	protected CiProperties config;
 
 	@PostMapping(value = "/upload")
 	public RespBase<?> upload(@RequestParam(value = "file") MultipartFile file) {

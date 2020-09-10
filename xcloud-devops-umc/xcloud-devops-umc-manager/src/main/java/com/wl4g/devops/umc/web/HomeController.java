@@ -31,7 +31,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
- 
+
 @RestController
 @RequestMapping(UMCDevOpsConstants.URI_ADMIN_HOME)
 public class HomeController extends BaseController {
@@ -78,7 +78,7 @@ public class HomeController extends BaseController {
 		// msg.addParameter(MailMessageNotifier.KEY_MAILMSG_REPLYTO,
 		// "");
 		notifierAdapter.forOperator(MailMessageNotifier.class).send(msg);
- 
+
 		System.out.println("ok..");
 		return "ok";
 	}

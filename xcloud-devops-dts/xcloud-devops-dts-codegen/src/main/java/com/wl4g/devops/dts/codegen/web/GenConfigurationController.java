@@ -3,8 +3,8 @@ package com.wl4g.devops.dts.codegen.web;
 import com.wl4g.components.common.web.rest.RespBase;
 import com.wl4g.components.core.web.BaseController;
 import com.wl4g.components.data.page.PageModel;
-import com.wl4g.devops.dts.codegen.bean.GenDatabase;
-import com.wl4g.devops.dts.codegen.service.GenDatabaseService;
+import com.wl4g.devops.dts.codegen.bean.GenDataSource;
+import com.wl4g.devops.dts.codegen.service.GenConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GenConfigurationController extends BaseController {
 
 	@Autowired
-	private GenDatabaseService genDatabaseService;
+	private GenConfigurationService genDatabaseService;
 
 	@RequestMapping(value = "/list")
 	public RespBase<?> list(PageModel pm, String name) {
@@ -34,9 +34,9 @@ public class GenConfigurationController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	public RespBase<?> save(@RequestBody GenDatabase genDatabase) {
+	public RespBase<?> save(@RequestBody GenDataSource gen) {
 		RespBase<Object> resp = RespBase.create();
-		genDatabaseService.save(genDatabase);
+		genDatabaseService.save(gen);
 		return resp;
 	}
 

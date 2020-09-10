@@ -27,7 +27,7 @@ import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.components.support.cli.DestroableProcessManager;
 import com.wl4g.components.support.cli.command.RemoteDestroableCommand;
 import com.wl4g.components.support.concurrent.locks.JedisLockManager;
-import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.ci.core.PipelineJobExecutor;
 import com.wl4g.devops.ci.core.context.PipelineContext;
 import com.wl4g.devops.ci.flow.FlowManager;
@@ -75,7 +75,7 @@ public abstract class AbstractPipelineProvider implements PipelineProvider {
 	final protected PipelineContext context;
 
 	@Autowired
-	protected CiCdProperties config;
+	protected CiProperties config;
 	@Autowired
 	protected PipelineJobExecutor jobExecutor;
 	@Autowired

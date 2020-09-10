@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * {@link GenDatabase}
+ * {@link GenDataSource}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-10
@@ -14,7 +14,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class GenDatabase extends BaseBean {
+public class GenDataSource extends BaseBean {
 	private static final long serialVersionUID = 6815608076300843748L;
 
 	private String name;

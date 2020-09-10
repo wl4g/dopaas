@@ -41,7 +41,7 @@ public class TemplateController extends BaseController {
 	private TemplateService templateService;
 
 	@RequestMapping(value = "/list")
-	@RequiresPermissions(value = {"umc:templat"})
+	@RequiresPermissions(value = { "umc:templat" })
 	public RespBase<?> list(String name, Integer metricId, String classify, PageModel pm) {
 		log.info("into TemplateController.list prarms::" + "name = {} , metric = {} , classify = {} , pm = {} ", name, metricId,
 				classify, pm);
@@ -52,7 +52,7 @@ public class TemplateController extends BaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	@RequiresPermissions(value = {"umc:templat"})
+	@RequiresPermissions(value = { "umc:templat" })
 	public RespBase<?> save(@RequestBody AlarmTemplate alarmTemplate) {
 		log.info("into TemplateController.save prarms::" + "alarmTemplate = {} ", alarmTemplate);
 		Assert.notNull(alarmTemplate, "template is null");
@@ -64,7 +64,7 @@ public class TemplateController extends BaseController {
 	}
 
 	@RequestMapping(value = "/detail")
-	@RequiresPermissions(value = {"umc:templat"})
+	@RequiresPermissions(value = { "umc:templat" })
 	public RespBase<?> detail(Integer id) {
 		log.info("into TemplateController.detail prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();
@@ -74,7 +74,7 @@ public class TemplateController extends BaseController {
 	}
 
 	@RequestMapping(value = "/del")
-	@RequiresPermissions(value = {"umc:templat"})
+	@RequiresPermissions(value = { "umc:templat" })
 	public RespBase<?> del(Integer id) {
 		log.info("into TemplateController.del prarms::" + "id = {} ", id);
 		RespBase<Object> resp = RespBase.create();

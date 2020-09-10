@@ -71,11 +71,11 @@ public abstract class ResourceBundleUtils {
 			}
 
 			File sqlFile = ResourceUtils.getFile("classpath:" + path);
-			String sqlContent = Resources.toString(sqlFile.toURI().toURL(), UTF_8);
+			content = Resources.toString(sqlFile.toURI().toURL(), UTF_8);
 
 			// Storage resource content
 			if (useCache) {
-				resourcesCache.put(path, content = format(sqlContent, nonNull(args) ? args : null));
+				resourcesCache.put(path, content = format(content, nonNull(args) ? args : null));
 			}
 
 			return content;

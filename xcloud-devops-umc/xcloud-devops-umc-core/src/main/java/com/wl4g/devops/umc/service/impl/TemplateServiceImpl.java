@@ -96,7 +96,7 @@ public class TemplateServiceImpl implements TemplateService {
 		List<Map<String, String>> tagMap = tpl.getTagMap();
 		if (!CollectionUtils.isEmpty(tagMap)) {
 			tpl.setTags(toJSONString(tagMap));
-		}else{
+		} else {
 			tpl.setTags("");
 		}
 
@@ -143,12 +143,12 @@ public class TemplateServiceImpl implements TemplateService {
 			}
 		}
 
-		//del redis
+		// del redis
 		List<AlarmConfig> alarmConfigs = alarmConfigDao.selectByTemplateId(tpl.getId());
-		for(AlarmConfig alarmConfig : alarmConfigs){
+		for (AlarmConfig alarmConfig : alarmConfigs) {
 			AppInstance appInstance = appInstanceDao.selectByPrimaryKey(alarmConfig.getCollectId());
-			if(Objects.nonNull(appInstance)){
-				jedisService.del(KEY_CACHE_ALARM_TPLS+appInstance.getHostname()+appInstance.getEndpoint());
+			if (Objects.nonNull(appInstance)) {
+				jedisService.del(KEY_CACHE_ALARM_TPLS + appInstance.getHostname() + appInstance.getEndpoint());
 			}
 		}
 	}

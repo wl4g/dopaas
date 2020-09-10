@@ -9,5 +9,5 @@ FROM
 	information_schema.INNODB_SYS_FOREIGN f
 LEFT JOIN information_schema.INNODB_SYS_FOREIGN_COLS fc ON fc.ID = f.ID
 WHERE
-	SUBSTRING_INDEX(f.ID, '/', 1) = '%s'
+	SUBSTRING_INDEX(f.ID, '/', 1) = (SELECT DATABASE()) 
 AND SUBSTRING_INDEX(f.FOR_NAME, '/', - 1) = '%s';

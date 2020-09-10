@@ -19,7 +19,7 @@ import com.wl4g.components.common.task.RunnerProperties;
 import com.wl4g.components.support.concurrent.locks.JedisLockManager;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.components.support.task.ApplicationTaskRunner;
-import com.wl4g.devops.ci.config.CiCdProperties;
+import com.wl4g.devops.ci.config.CiProperties;
 import com.wl4g.devops.dao.ci.PipelineHistoryDao;
 import com.wl4g.devops.dao.ci.TaskHistoryDao;
 
@@ -57,7 +57,7 @@ public class GlobalTimeoutJobCleanupCoordinator extends ApplicationTaskRunner<Ru
 	@Autowired
 	protected ConfigurableEnvironment environment;
 	@Autowired
-	protected CiCdProperties config;
+	protected CiProperties config;
 	@Autowired
 	protected JedisLockManager lockManager;
 	@Autowired

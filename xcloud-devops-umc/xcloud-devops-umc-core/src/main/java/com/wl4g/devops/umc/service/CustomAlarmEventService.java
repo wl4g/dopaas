@@ -32,5 +32,4 @@ public interface CustomAlarmEventService {
 
 	void del(Integer id);
 
-
 }
