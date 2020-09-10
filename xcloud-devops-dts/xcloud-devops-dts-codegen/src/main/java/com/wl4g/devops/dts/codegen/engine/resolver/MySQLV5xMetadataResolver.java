@@ -1,19 +1,16 @@
-package com.wl4g.devops.dts.codegen.engine.parse;
+package com.wl4g.devops.dts.codegen.engine.resolver;
 
 import com.wl4g.devops.dts.codegen.bean.GenDatabase;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 
 /**
- * {@link MySQLV5xMetadataPaser}
+ * {@link MySQLV5xMetadataResolver}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
@@ -21,7 +18,7 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
  * @sine v1.0.0
  * @see
  */
-public class MySQLV5xMetadataPaser extends AbstractMetadataPaser {
+public class MySQLV5xMetadataResolver extends AbstractMetadataResolver {
 
 	@Override
 	public List<String> loadTable(GenDatabase genDatabase) {
@@ -39,7 +36,7 @@ public class MySQLV5xMetadataPaser extends AbstractMetadataPaser {
 
 	@Override
 	public void loadForeign(String databaseName, String tableName) throws Exception {
-		String sql = loadParseSql(SQL_TYPE, SQL_QUERY_FOREIGN, databaseName, tableName);
+		String sql = loadResolvingSql(SQL_TYPE, SQL_QUERY_FOREIGN, databaseName, tableName);
 		// TODO
 	}
 
@@ -100,7 +97,7 @@ public class MySQLV5xMetadataPaser extends AbstractMetadataPaser {
 	private List<TableMetadata.ColumnMetadata> getTableCloumns(Connection connect, String tableName) throws Exception {
 		List<TableMetadata.ColumnMetadata> columns = new ArrayList<>();
 		Statement stmt = connect.createStatement();
-		String sql = loadParseSql(SQL_TYPE, SQL_QUERY_COLUMNS, tableName);
+		String sql = loadResolvingSql(SQL_TYPE, SQL_QUERY_COLUMNS, tableName);
 		ResultSet rs = stmt.executeQuery(sql);
 		while (rs.next()) {
 			TableMetadata.ColumnMetadata column = new TableMetadata.ColumnMetadata();
@@ -121,7 +118,7 @@ public class MySQLV5xMetadataPaser extends AbstractMetadataPaser {
 	private TableMetadata getTableInfo(Connection connect, String tableName) throws Exception {
 		TableMetadata table = new TableMetadata();
 		Statement stmt = connect.createStatement();
-		String sql = loadParseSql(SQL_TYPE, SQL_QUERY_TABLE, tableName);
+		String sql = loadResolvingSql(SQL_TYPE, SQL_QUERY_TABLE, tableName);
 		ResultSet rs = stmt.executeQuery(sql);
 		if (rs.next()) {// just one
 			HashMap<String, String> map = new HashMap<String, String>();
@@ -132,35 +129,8 @@ public class MySQLV5xMetadataPaser extends AbstractMetadataPaser {
 		return null;
 	}
 
-	@Override
-	public String convertToJavaType(String sqlType) {
-		return sqlToJavaTypes.getProperty(sqlType);
-	}
-
-	@Override
-	public String convertToSqlType(String javaType) {
-		return javaToSqlTypes.getProperty(javaType);
-	}
-
-	// Cache of types.
-	private final static Properties sqlToJavaTypes;
-	private final static Properties javaToSqlTypes;
 	// MySQL jdbc
 	final private static String SQL_TYPE = "mysql";
 	final private static String JDBC_CLASS_NAME = "com.mysql.jdbc.Driver";
-
-	static {
-		try {
-			// sql to java
-			sqlToJavaTypes = new Properties();
-			sqlToJavaTypes.load(new StringReader(readResource(SQL_TYPE, TYPES_SQL_TO_JAVA)));
-			// java to sql
-			javaToSqlTypes = new Properties();
-			javaToSqlTypes.load(new StringReader(readResource(SQL_TYPE, TYPES_JAVA_TO_SQL)));
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
-
-	}
 
 }
