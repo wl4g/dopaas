@@ -312,5 +312,6 @@
     <if test="tableName != null and tableName != ''" >
       AND `table_name` LIKE CONCAT('%','${tableName}','%')
     </if>
+    order by update_date desc
   </select>
 </mapper>

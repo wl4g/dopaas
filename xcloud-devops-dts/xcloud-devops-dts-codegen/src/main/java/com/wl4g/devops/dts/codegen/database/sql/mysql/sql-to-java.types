@@ -13,21 +13,43 @@
 # limitations under the License.
 #
 
-VARCHAR             = java.lang.String
-CHAR                = java.lang.String
-BLOB                = java.lang.byte[]
-TEXT                = java.lang.String
-INTEGER             = java.lang.Long
-TINYINT             = java.lang.Integer
-SMALLINT            = java.lang.Integer
-MEDIUMINT           = java.lang.Integer
-BIT                 = java.lang.Boolean
-BIGINT              = java.math.BigInteger
-FLOAT               = java.lang.Float
-DOUBLE              = java.lang.Double
-DECIMAL             = java.math.BigDecimal
-DATE                = java.sql.Date
-TIME                = java.sql.Time
-DATETIME            = java.sql.Timestamp
-TIMESTAMP           = java.sql.Timestamp
-YEAR                = java.sql.Date
+int                 = Integer
+varchar             = String
+char                = String
+blob                = byte[]
+text                = String
+integer             = Long
+tinyint             = Integer
+smallint            = Integer
+mediumint           = Integer
+bit                 = Boolean
+bigint              = BigInteger
+float               = Float
+double              = Double
+decimal             = BigDecimal
+date                = Date
+time                = Time
+datetime            = Timestamp
+timestamp           = Timestamp
+year                = Date
+
+
+# int                 = java.lang.Integer
+# varchar             = java.lang.String
+# char                = java.lang.String
+# blob                = java.lang.byte[]
+# text                = java.lang.String
+# integer             = java.lang.Long
+# tinyint             = java.lang.Integer
+# smallint            = java.lang.Integer
+# mediumint           = java.lang.Integer
+# bit                 = java.lang.Boolean
+# bigint              = java.math.BigInteger
+# float               = java.lang.Float
+# double              = java.lang.Double
+# decimal             = java.math.BigDecimal
+# date                = java.sql.Date
+# time                = java.sql.Time
+# datetime            = java.sql.Timestamp
+# timestamp           = java.sql.Timestamp
+# year                = java.sql.Date

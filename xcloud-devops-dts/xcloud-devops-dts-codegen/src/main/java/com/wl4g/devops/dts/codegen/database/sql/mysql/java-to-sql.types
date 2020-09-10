@@ -13,19 +13,19 @@
 # limitations under the License.
 #
 
-java.lang.String            = VARCHAR
-Ljava.lang.byte[]           = BLOB
-java.lang.Long              = INTEGER
-java.lang.Integer           = TINYINT
-java.lang.Integer           = SMALLINT
-java.lang.Integer           = MEDIUMINT
-java.lang.Boolean           = BIT
-java.math.BigInteger        = BIGINT
-java.lang.Float             = FLOAT
-java.lang.Double            = DOUBLE
-java.math.BigDecimal        = DECIMAL
-java.sql.Date               = DATE
-java.sql.Time               = TIME
-java.sql.Timestamp          = DATETIME
-java.sql.Timestamp          = TIMESTAMP
-java.sql.Date               = YEAR
+java.lang.String            = varchar
+Ljava.lang.byte[]           = blob
+java.lang.Long              = integer
+java.lang.Integer           = tinyint
+java.lang.Integer           = smallint
+java.lang.Integer           = mediumint
+java.lang.Boolean           = bit
+java.math.BigInteger        = bigint
+java.lang.Float             = float
+java.lang.Double            = double
+java.math.BigDecimal        = decimal
+java.sql.Date               = date
+java.sql.Time               = time
+java.sql.Timestamp          = datetime
+java.sql.Timestamp          = timestamp
+java.sql.Date               = year

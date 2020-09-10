@@ -15,6 +15,8 @@
  */
 package com.wl4g.devops.dts.codegen.core.param;
 
+import com.wl4g.devops.dts.codegen.bean.GenTable;
+
 /**
  * {@link GenericParameter}
  *
@@ -25,6 +27,13 @@ package com.wl4g.devops.dts.codegen.core.param;
 public class GenericParameter extends AbstractParameter {
 	private static final long serialVersionUID = -608968076331460509L;
 
-	// TODO
+	private GenTable genTable;
 
+	public GenTable getGenTable() {
+		return genTable;
+	}
+
+	public void setGenTable(GenTable genTable) {
+		this.genTable = genTable;
+	}
 }

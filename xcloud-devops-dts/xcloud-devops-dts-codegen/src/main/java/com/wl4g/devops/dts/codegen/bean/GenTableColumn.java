@@ -35,7 +35,7 @@ public class GenTableColumn extends BaseBean {
 
 	private String isPk;
 
-	private String isNull;
+	private String noNull;
 
 	private String isInsert;
 
@@ -52,5 +52,9 @@ public class GenTableColumn extends BaseBean {
 	private String showType;
 
 	private String options;
+
+	private String dictType;
+
+	private String rule;
 
 }

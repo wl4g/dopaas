@@ -20,10 +20,14 @@ import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.service.GenConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static java.lang.Integer.valueOf;
 
 /**
  * {@link GenConfigurationController}
@@ -63,7 +67,7 @@ public class GenConfigurationController {
 	}
 
 	@RequestMapping("save")
-	public RespBase<?> save(GenTable genTable) {
+	public RespBase<?> save(@RequestBody GenTable genTable) {
 		RespBase<Object> resp = RespBase.create();
 		genConfigurationService.saveGenConfig(genTable);
 		return resp;
@@ -85,8 +89,9 @@ public class GenConfigurationController {
 
 	@RequestMapping("generate")
 	public RespBase<?> generate(String id) {
-		// TODO generate
+		hasTextOf(id,"id");
 		RespBase<Object> resp = RespBase.create();
+		genConfigurationService.generate(valueOf(id));
 		return resp;
 	}
 

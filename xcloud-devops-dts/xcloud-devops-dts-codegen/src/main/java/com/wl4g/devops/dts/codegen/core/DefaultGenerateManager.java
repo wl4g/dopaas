@@ -15,16 +15,16 @@
  */
 package com.wl4g.devops.dts.codegen.core;
 
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static java.util.Collections.unmodifiableList;
-
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
 import com.wl4g.devops.dts.codegen.provider.GeneratorProvider;
+import com.wl4g.devops.dts.codegen.provider.backend.SSMGeneratorProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
+import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * {@link DefaultGenerateManager}
@@ -51,7 +51,7 @@ public class DefaultGenerateManager implements GenerateManager {
 	public void execute(GenericParameter parameter) {
 		// TODO Auto-generated method stub
 
-		// beanFactory.getPrototypeBean("ssm", null);
+		SSMGeneratorProvider ssmGeneratorProvider = beanFactory.getPrototypeBean("ssm", null);
 
 	}
 
