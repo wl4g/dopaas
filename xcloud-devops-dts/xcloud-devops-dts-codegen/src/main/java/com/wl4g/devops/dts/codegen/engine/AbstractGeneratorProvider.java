@@ -15,11 +15,13 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
+import com.wl4g.components.common.log.SmartLogger;
+import com.wl4g.devops.dts.codegen.config.CodegenProperties;
+import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
-
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 
 /**
  * {@link AbstractGeneratorProvider}
@@ -29,6 +31,9 @@ import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
  * @since
  */
 public abstract class AbstractGeneratorProvider implements GeneratorProvider {
+
+	@Autowired
+	protected CodegenProperties codegenProperties;
 
 	protected final SmartLogger log = getLogger(getClass());
 
