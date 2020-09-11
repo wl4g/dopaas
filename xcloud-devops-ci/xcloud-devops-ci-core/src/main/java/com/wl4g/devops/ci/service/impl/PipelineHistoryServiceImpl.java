@@ -138,7 +138,7 @@ public class PipelineHistoryServiceImpl implements PipelineHistoryService {
 		PipelineHistory pipelineHistory = new PipelineHistory();
 		BeanUtils.copyProperties(oldPipelineHistory, pipelineHistory);
 		pipelineHistory.preInsert(getRequestOrganizationCode());
-		pipelineHistory.setPipeId(pipeId);
+		pipelineHistory.setPipeId(oldPipeId);
 		pipelineHistory.setProviderKind(pipeline.getProviderKind());
 		pipelineHistory.setStatus(TASK_STATUS_CREATE);
 		pipelineHistory.setRemark(remark);
