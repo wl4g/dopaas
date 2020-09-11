@@ -23,7 +23,9 @@ import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.core.DefaultGenerateManager;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.engine.AngularJSGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.MapperDaoGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.SpringMvcGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.MySQLV5xTypeConverter;
@@ -32,9 +34,6 @@ import com.wl4g.devops.dts.codegen.engine.resolver.MySQLV5xMetadataResolver;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 import java.util.List;
 
@@ -63,22 +62,33 @@ public class CodegenAutoConfiguration {
 	// --- Generator provider's. ---
 
 	@Bean
-	@NamingPrototype({ SSM })
-	@Scope(SCOPE_PROTOTYPE)
-	public MapperDaoGeneratorProvider ssmGeneratorProvider(GenerateContext context) {
+	@NamingPrototype({ MAPPER })
+	public MapperDaoGeneratorProvider mapperDaoGeneratorProvider(GenerateContext context) {
 		return new MapperDaoGeneratorProvider(context);
 	}
 
-	@Bean({ VUE })
-	@Scope(SCOPE_PROTOTYPE)
-	public VueGeneratorProvider vueCodegenProvider(GenerateContext context) {
+	@Bean
+	@NamingPrototype({ MVC })
+	public SpringMvcGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
+		return new SpringMvcGeneratorProvider(context);
+	}
+
+	@Bean
+	@NamingPrototype({ VUEJS })
+	public VueGeneratorProvider vueGeneratorProvider(GenerateContext context) {
 		return new VueGeneratorProvider(context);
+	}
+
+	@Bean
+	@NamingPrototype({ AGJS })
+	public AngularJSGeneratorProvider angularJSGeneratorProvider(GenerateContext context) {
+		return new AngularJSGeneratorProvider(context);
 	}
 
 	// --- DB metadata resolver's. ---
 
-	@Bean({ MySQLV5xMetadataResolver.DB_TYPE })
-	@Scope(SCOPE_PROTOTYPE)
+	@Bean
+	@NamingPrototype({ MySQLV5xMetadataResolver.DB_TYPE })
 	public MySQLV5xMetadataResolver mySQLV5xMetadataResolver(GenDataSource genDataSource) {
 		return new MySQLV5xMetadataResolver(genDataSource);
 	}
@@ -106,10 +116,13 @@ public class CodegenAutoConfiguration {
 	 */
 	public static interface GenProviderType {
 
-		public static final String SSM = "ssmGenProvider";
-		public static final String VUE = "vueGenProvider";
+		public static final String MAPPER = "mapperGenProvider";
+		public static final String MVC = "mvcGenProvider";
 
-		/** Of {@link GenProviderType} fields values. */
+		public static final String VUEJS = "vueGenProvider";
+		public static final String AGJS = "agGenProvider";
+
+		/** List of field values of class {@link GenProviderType}. */
 		public static final String[] VALUES = getFieldValues(GenProviderType.class, "VALUES").toArray(new String[] {});
 
 	}
