@@ -17,6 +17,7 @@ package com.wl4g.devops.dts.codegen.engine.converter;
 
 import static com.wl4g.components.common.lang.Assert2.hasText;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils.readResource;
 
@@ -63,7 +64,7 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 	 */
 	public String convertToCodeType(@NotBlank String sqlType, @NotBlank String codeKind) {
 		notNullOf(kind(), "codeKind");
-		return hasText(typesCache.get(CodeKind.valueOf(codeKind)).getSqlToCodeTypes().getProperty(sqlType),
+		return hasText(typesCache.get(CodeKind.of(codeKind)).getSqlToCodeTypes().getProperty(sqlType),
 				"No such sqlType: %s mapped codeType of codeKind: %s", sqlType, codeKind);
 	}
 
@@ -78,7 +79,7 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 	 */
 	public String convertToSqlType(@NotBlank String codeType, @NotBlank String codeKind) {
 		notNullOf(kind(), "codeKind");
-		return hasText(typesCache.get(CodeKind.valueOf(codeKind)).getCodeToSqlTypes().getProperty(codeType),
+		return hasText(typesCache.get(CodeKind.of(codeKind)).getCodeToSqlTypes().getProperty(codeType),
 				"No such codeType: %s mapped sqlType of codeKind: %s", codeType, codeKind);
 	}
 
@@ -151,6 +152,19 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 
 		public String getCodeToSqlFile() {
 			return codeToSqlFile;
+		}
+
+		public static CodeKind of(String alias) {
+			return notNull(safeOf(alias), "No such codeKind of %s", alias);
+		}
+
+		public static CodeKind safeOf(String alias) {
+			for (CodeKind ck : values()) {
+				if (ck.getAlias().equalsIgnoreCase(alias) || ck.name().equalsIgnoreCase(alias)) {
+					return ck;
+				}
+			}
+			return null;
 		}
 
 	}
