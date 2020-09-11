@@ -65,7 +65,7 @@ public class DefaultGenerateManager implements GenerateManager {
 		GenerateContext context = new DefaultGenerateContext(genTable);
 		// TODO ...
 
-		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderType.SSM, context);
+		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderType.MAPPER, context);
 		provider.run();
 
 		// TODO package return
