@@ -23,8 +23,8 @@ import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.core.DefaultGenerateManager;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.SSMGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.VueCodegenProvider;
+import com.wl4g.devops.dts.codegen.engine.MapperDaoGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.MySQLV5xTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbConverterType;
@@ -65,14 +65,14 @@ public class CodegenAutoConfiguration {
 	@Bean
 	@NamingPrototype({ SSM })
 	@Scope(SCOPE_PROTOTYPE)
-	public SSMGeneratorProvider ssmGeneratorProvider(GenerateContext context) {
-		return new SSMGeneratorProvider(context);
+	public MapperDaoGeneratorProvider ssmGeneratorProvider(GenerateContext context) {
+		return new MapperDaoGeneratorProvider(context);
 	}
 
 	@Bean({ VUE })
 	@Scope(SCOPE_PROTOTYPE)
-	public VueCodegenProvider vueCodegenProvider(GenerateContext context) {
-		return new VueCodegenProvider(context);
+	public VueGeneratorProvider vueCodegenProvider(GenerateContext context) {
+		return new VueGeneratorProvider(context);
 	}
 
 	// --- DB metadata resolver's. ---

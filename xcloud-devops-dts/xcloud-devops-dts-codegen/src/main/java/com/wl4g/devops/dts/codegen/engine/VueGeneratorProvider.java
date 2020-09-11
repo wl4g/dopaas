@@ -18,15 +18,15 @@ package com.wl4g.devops.dts.codegen.engine;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 
 /**
- * {@link BasedServiceGeneratorProvider}
+ * {@link VueGeneratorProvider} 
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public abstract class BasedServiceGeneratorProvider extends AbstractGeneratorProvider {
+public class VueGeneratorProvider extends BasedFrontGeneratorProvider {
 
-	public BasedServiceGeneratorProvider(GenerateContext context) {
+	public VueGeneratorProvider(GenerateContext context) {
 		super(context);
 	}
 

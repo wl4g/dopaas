@@ -15,19 +15,36 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
+import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
+import com.wl4g.devops.dts.codegen.utils.CodeGenUtils;
+import freemarker.template.TemplateException;
+
+import java.io.IOException;
 
 /**
- * {@link VueCodegenProvider} 
+ * Mybatis mapper, entity and DAO generator.
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-07
  * @since
  */
-public class VueCodegenProvider extends BasedViewGeneratorProvider {
+public class MapperDaoGeneratorProvider extends BasedBackendGeneratorProvider {
 
-	public VueCodegenProvider(GenerateContext context) {
+	public MapperDaoGeneratorProvider(GenerateContext context) {
 		super(context);
 	}
 
+	@Override
+	public void run() {
+		GenTable genTable = context.getGenTable();
+		try {
+			String gen = CodeGenUtils.gen("Service.ftl", genTable);
+			System.out.println(gen);
+
+		} catch (IOException | TemplateException e) {
+			log.error("gen fail", e);
+		}
+
+	}
 }

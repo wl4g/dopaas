@@ -40,6 +40,10 @@ spring:
             enable-data-cipher: true # Default by true
           session:
             enable-access-token-validity: true # Default by true
+      # DTS configuration.
+      dts:
+        codegen:
+          #workspace: ${HOME}/.codegen-workspace
 
 # ### Server configuration. ###
 server:
