@@ -47,8 +47,8 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 
 	protected DbTypeConverter() {
 		for (CodeKind ck : CodeKind.values()) {
-			Properties sqlToCodeTypes = loadTypes(kind().name(), ck.getSqlToCodeFile());
-			Properties codeToSqlTypes = loadTypes(kind().name(), ck.getCodeToSqlFile());
+			Properties sqlToCodeTypes = loadTypes(kind().getAlias(), ck.getSqlToCodeFile());
+			Properties codeToSqlTypes = loadTypes(kind().getAlias(), ck.getCodeToSqlFile());
 			this.typesCache.put(ck, new TypePropertiesWrapper(sqlToCodeTypes, codeToSqlTypes));
 		}
 	}
@@ -115,7 +115,22 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 	 * @see
 	 */
 	public static enum ConverterKind {
-		MySQLV5, OracleV11g, PostgreSQLV10
+		MySQLV5("mysqlv5"),
+
+		OracleV11g("oraclev11g"),
+
+		PostgreSQLV10("postgresqlv10");
+
+		private final String alias;
+
+		private ConverterKind(String alias) {
+			this.alias = hasTextOf(alias, "alias");
+		}
+
+		public String getAlias() {
+			return alias;
+		}
+
 	}
 
 	/**
