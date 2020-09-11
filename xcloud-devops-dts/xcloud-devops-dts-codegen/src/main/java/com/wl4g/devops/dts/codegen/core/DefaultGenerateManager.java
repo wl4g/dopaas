@@ -18,7 +18,7 @@ package com.wl4g.devops.dts.codegen.core;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.GenProviderType;
+import com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.GenProviderAlias;
 import com.wl4g.devops.dts.codegen.core.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
@@ -65,7 +65,7 @@ public class DefaultGenerateManager implements GenerateManager {
 		GenerateContext context = new DefaultGenerateContext(genTable);
 		// TODO ...
 
-		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderType.MAPPER, context);
+		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderAlias.MAPPER, context);
 		provider.run();
 
 		// TODO package return
