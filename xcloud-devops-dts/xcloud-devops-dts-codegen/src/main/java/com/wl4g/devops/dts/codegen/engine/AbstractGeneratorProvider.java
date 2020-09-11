@@ -15,10 +15,15 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
+import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.devops.dts.codegen.config.CodegenProperties;
+import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.wl4g.devops.dts.codegen.utils.FreemarkerUtils2;
+import freemarker.template.TemplateException;
+
+import java.io.File;
+import java.io.IOException;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
@@ -31,9 +36,6 @@ import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
  * @since
  */
 public abstract class AbstractGeneratorProvider implements GeneratorProvider {
-
-	@Autowired
-	protected CodegenProperties codegenProperties;
 
 	protected final SmartLogger log = getLogger(getClass());
 
@@ -48,7 +50,14 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+	}
 
+	void genFileToLoacl(String templateName, String pathName) throws IOException, TemplateException {
+		GenTable genTable = context.getGenTable();
+		String gen = FreemarkerUtils2.gen(templateName, genTable);
+		File jobDir = context.getJobDir();
+		File file = new File(jobDir, pathName);
+		FileIOUtils.writeFile(file, gen,false);
 	}
 
 }

@@ -26,15 +26,13 @@ import com.wl4g.devops.dts.codegen.engine.MapperDaoGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.SpringMvcGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
 import com.wl4g.devops.dts.codegen.engine.converter.MySQLV5TypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.OracleV11gTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.PostgreSQLV10TypeConverter;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
-import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.MySQLV5MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.OracleV11gMetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.PostgreSQLV10MetadataResolver;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -67,19 +65,19 @@ public class CodegenAutoConfiguration {
 
 	@Bean
 	@NamingPrototype({ MYSQLV5 })
-	public MetadataResolver mySQLV5xMetadataResolver(GenDataSource genDS) {
+	public MySQLV5MetadataResolver mySQLV5xMetadataResolver(GenDataSource genDS) {
 		return new MySQLV5MetadataResolver(genDS);
 	}
 
 	@Bean
 	@NamingPrototype({ ORACLEV11G })
-	public MetadataResolver oracleV11gMetadataResolver(GenDataSource genDS) {
+	public OracleV11gMetadataResolver oracleV11gMetadataResolver(GenDataSource genDS) {
 		return new OracleV11gMetadataResolver(genDS);
 	}
 
 	@Bean
 	@NamingPrototype({ POSTGRESQLV10 })
-	public MetadataResolver postgreSQLV10MetadataResolver(GenDataSource genDS) {
+	public PostgreSQLV10MetadataResolver postgreSQLV10MetadataResolver(GenDataSource genDS) {
 		return new PostgreSQLV10MetadataResolver(genDS);
 	}
 

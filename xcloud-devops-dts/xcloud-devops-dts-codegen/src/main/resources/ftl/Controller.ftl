@@ -2,6 +2,8 @@
 <#include "utils/package.ftl" />
 <#assign aDateTime = .now>
 <#assign aDate = aDateTime?date>
+
+
 <#--package name-->
 package <@class_package package_name="${packageName}" module_name="${moduleName}" demixing_package="web" sub_module_name="${subModuleName}" />
 
@@ -27,29 +29,29 @@ public class ${className}Controller extends BaseController {
     private ${className}Service ${className?uncap_first}Service;
 
     @RequestMapping(value = "/list")
-    public RespBase&lt;?> list(PageModel pm, String name) {
-        RespBase\lObject> resp = RespBase.create();
+    public RespBase${r"<"}?> list(PageModel pm, String name) {
+        RespBase${r"<"}Object> resp = RespBase.create();
         resp.setData(${className?uncap_first}Service.page(pm, name));
         return resp;
     }
 
     @RequestMapping(value = "/save")
-    public RespBase\l?> save(@RequestBody ${className} ${className?uncap_first}) {
-        RespBase\lObject> resp = RespBase.create();
+    public RespBase${r"<"}?> save(@RequestBody ${className} ${className?uncap_first}) {
+        RespBase${r"<"}Object> resp = RespBase.create();
         ${className?uncap_first}Service.save(${className?uncap_first});
         return resp;
     }
 
     @RequestMapping(value = "/detail")
-    public RespBase\l?> detail(Integer id) {
-        RespBase\lObject> resp = RespBase.create();
+    public RespBase${r"<"}?> detail(Integer id) {
+        RespBase${r"<"}Object> resp = RespBase.create();
         resp.setData(${className?uncap_first}Service.detail(id));
         return resp;
     }
 
     @RequestMapping(value = "/del")
-    public RespBase\l?> del(Integer id) {
-        RespBase\lObject> resp = RespBase.create();
+    public RespBase${r"<"}?> del(Integer id) {
+        RespBase${r"<"}Object> resp = RespBase.create();
         ${className?uncap_first}Service.del(id);
         return resp;
     }

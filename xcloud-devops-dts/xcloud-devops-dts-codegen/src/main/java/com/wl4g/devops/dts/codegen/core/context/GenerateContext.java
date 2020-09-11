@@ -16,6 +16,9 @@
 package com.wl4g.devops.dts.codegen.core.context;
 
 import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.config.CodegenProperties;
+
+import java.io.File;
 
 /**
  * {@link GenerateContext}
@@ -27,9 +30,21 @@ import com.wl4g.devops.dts.codegen.bean.GenTable;
 public interface GenerateContext {
 
 	/**
+	 * Gets {@link CodegenProperties}
+	 * @return
+	 */
+	CodegenProperties getConfig();
+
+	/**
 	 * Gets {@link GenTable}
 	 * 
 	 * @return
 	 */
 	GenTable getGenTable();
+
+	/**
+	 * Gets {@link File}
+	 * @return
+	 */
+	File getJobDir();
 }
