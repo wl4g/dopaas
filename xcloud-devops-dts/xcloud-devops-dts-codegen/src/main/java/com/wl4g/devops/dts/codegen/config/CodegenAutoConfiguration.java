@@ -28,16 +28,16 @@ import com.wl4g.devops.dts.codegen.engine.MapperDaoGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.SpringMvcGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
-import com.wl4g.devops.dts.codegen.engine.converter.MySQLV5xTypeConverter;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbConverterType;
-import com.wl4g.devops.dts.codegen.engine.resolver.MySQLV5xMetadataResolver;
+import com.wl4g.devops.dts.codegen.engine.converter.MySQLV5TypeConverter;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
+import com.wl4g.devops.dts.codegen.engine.resolver.MySQLV5MetadataResolver;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-import static com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.GenProviderType.*;
+import static com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.GenProviderAlias.*;
 
 /**
  * {@link CodegenAutoConfiguration}
@@ -88,33 +88,32 @@ public class CodegenAutoConfiguration {
 	// --- DB metadata resolver's. ---
 
 	@Bean
-	@NamingPrototype({ MySQLV5xMetadataResolver.DB_TYPE })
-	public MySQLV5xMetadataResolver mySQLV5xMetadataResolver(GenDataSource genDataSource) {
-		return new MySQLV5xMetadataResolver(genDataSource);
+	@NamingPrototype({ MySQLV5MetadataResolver.DB_TYPE })
+	public MySQLV5MetadataResolver mySQLV5xMetadataResolver(GenDataSource genDataSource) {
+		return new MySQLV5MetadataResolver(genDataSource);
 	}
 
 	// --- DB type converter's. ---
 
 	@Bean
 	public DbTypeConverter mySQLV5xTypeConverter() {
-		return new MySQLV5xTypeConverter();
+		return new MySQLV5TypeConverter();
 	}
 
 	@Bean
-	public GenericOperatorAdapter<DbConverterType, DbTypeConverter> dbTypeConverterAdapter(
-			List<DbTypeConverter> dbTypeConverters) {
-		return new GenericOperatorAdapter<DbConverterType, DbTypeConverter>(dbTypeConverters) {
+	public GenericOperatorAdapter<ConverterKind, DbTypeConverter> dbTypeConverterAdapter(List<DbTypeConverter> dbTypeConverters) {
+		return new GenericOperatorAdapter<ConverterKind, DbTypeConverter>(dbTypeConverters) {
 		};
 	}
 
 	/**
-	 * {@link GenProviderType}
+	 * {@link GenProviderAlias}
 	 * 
 	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
 	 * @sine v1.0.0
 	 * @see
 	 */
-	public static interface GenProviderType {
+	public static interface GenProviderAlias {
 
 		public static final String MAPPER = "mapperGenProvider";
 		public static final String MVC = "mvcGenProvider";
@@ -122,8 +121,8 @@ public class CodegenAutoConfiguration {
 		public static final String VUEJS = "vueGenProvider";
 		public static final String AGJS = "agGenProvider";
 
-		/** List of field values of class {@link GenProviderType}. */
-		public static final String[] VALUES = getFieldValues(GenProviderType.class, "VALUES").toArray(new String[] {});
+		/** List of field values of class {@link GenProviderAlias}. */
+		public static final String[] VALUES = getFieldValues(GenProviderAlias.class, "VALUES").toArray(new String[] {});
 
 	}
 

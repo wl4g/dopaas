@@ -15,47 +15,169 @@
  */
 package com.wl4g.devops.dts.codegen.engine.converter;
 
+import static com.wl4g.components.common.lang.Assert2.hasText;
+import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils.readResource;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.validation.constraints.NotBlank;
+
 import com.wl4g.components.core.framework.operator.Operator;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbConverterType;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
 
 /**
- * {@link DbTypeConverter}
+ * Database type or JDBC type and Java class, go structure class, python class
+ * ...
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @version v1.0 2020-09-10
  * @since
  */
-public abstract class DbTypeConverter implements Operator<DbConverterType> {
+public abstract class DbTypeConverter implements Operator<ConverterKind> {
+
+	/** Sql and code types cache. */
+	private final Map<CodeKind, TypePropertiesWrapper> typesCache = new ConcurrentHashMap<>(4);
+
+	protected DbTypeConverter() {
+		for (CodeKind ck : CodeKind.values()) {
+			Properties sqlToCodeTypes = loadTypes(kind().name(), ck.getSqlToCodeFile());
+			Properties codeToSqlTypes = loadTypes(kind().name(), ck.getCodeToSqlFile());
+			this.typesCache.put(ck, new TypePropertiesWrapper(sqlToCodeTypes, codeToSqlTypes));
+		}
+	}
 
 	/**
-	 * Converting db to java type
+	 * Converting sql to language code type(java class, C# class, go struct,
+	 * python class ...)
 	 * 
 	 * @param javaType
+	 * @param codeKind
+	 *            {@link CodeKind}
 	 * @return
 	 */
-	public abstract String convertToJavaType(String dbType);
+	public String convertToCodeType(@NotBlank String sqlType, @NotBlank String codeKind) {
+		notNullOf(kind(), "codeKind");
+		return hasText(typesCache.get(CodeKind.valueOf(codeKind)).getSqlToCodeTypes().getProperty(sqlType),
+				"No such sqlType: %s mapped codeType of codeKind: %s", sqlType, codeKind);
+	}
 
 	/**
-	 * Converting java to db type
+	 * Converting language code type(java class, C# class, go struct, python
+	 * class ...) to sql type
 	 * 
-	 * @param javaType
+	 * @param codeType
+	 * @param codeKind
+	 *            {@link CodeKind}
 	 * @return
 	 */
-	public abstract String convertToDbType(String javaType);
+	public String convertToSqlType(@NotBlank String codeType, @NotBlank String codeKind) {
+		notNullOf(kind(), "codeKind");
+		return hasText(typesCache.get(CodeKind.valueOf(codeKind)).getCodeToSqlTypes().getProperty(codeType),
+				"No such codeType: %s mapped sqlType of codeKind: %s", codeType, codeKind);
+	}
 
-	// Databsse types definitions.
-	public final static String TYPES_BASE_PATH = DbTypeConverter.class.getName().replace(".", "/")
+	/**
+	 * Loading converting types.
+	 * 
+	 * @param dbType
+	 * @param filename
+	 * @return
+	 */
+	private static Properties loadTypes(@NotBlank String dbType, @NotBlank String filename) {
+		hasTextOf(dbType, "dbType");
+		hasTextOf(filename, "filename");
+		try {
+			Properties types = new Properties();
+			types.load(new StringReader(readResource(false, TYPES_BASE_PATH, dbType, filename)));
+			return types;
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new IllegalStateException(e);
+		}
+	}
+
+	/*
+	 * Databsse types definitions base path.
+	 */
+	private final static String TYPES_BASE_PATH = DbTypeConverter.class.getName().replace(".", "/")
 			.replace(DbTypeConverter.class.getSimpleName(), "") + "types/";
-	public final static String TYPES_DB_TO_JAVA = "sql-to-java.types";
-	public final static String TYPES_JAVA_TO_DB = "java-to-sql.types";
 
 	/**
-	 * {@link DbType}
+	 * {@link ConverterKind}
 	 * 
 	 * @see
 	 */
-	public static enum DbConverterType {
-		MySQL
+	public static enum ConverterKind {
+		MySQLV5, OracleV11g
+	}
+
+	/**
+	 * {@link CodeKind}
+	 * 
+	 * @see
+	 */
+	public static enum CodeKind {
+		JAVA("java", "sql-to-java.types", "java-to-sql.types"),
+
+		GO("golang", "sql-to-golang.types", "golang-to-sql.types"),
+
+		PYTHON("python", "sql-to-python.types", "python-to-sql.types"),
+
+		C_SHARP("csharp", "sql-to-c_sharp.types", "c_sharp-to-sql.types");
+
+		private final String alias;
+		private final String sqlToCodeFile;
+		private final String codeToSqlFile;
+
+		private CodeKind(String alias, String sqlToCodeFile, String codeToSqlFile) {
+			this.alias = hasTextOf(alias, "alias");
+			this.sqlToCodeFile = hasTextOf(sqlToCodeFile, "sqlToCodeFile");
+			this.codeToSqlFile = hasTextOf(codeToSqlFile, "codeToSqlFile");
+		}
+
+		public String getAlias() {
+			return alias;
+		}
+
+		public String getSqlToCodeFile() {
+			return sqlToCodeFile;
+		}
+
+		public String getCodeToSqlFile() {
+			return codeToSqlFile;
+		}
+
+	}
+
+	/**
+	 * {@link TypePropertiesWrapper}
+	 *
+	 * @since
+	 */
+	public static class TypePropertiesWrapper {
+
+		private final Properties sqlToCodeTypes;
+		private final Properties codeToSqlTypes;
+
+		public TypePropertiesWrapper(Properties sqlToCodeTypes, Properties codeToSqlTypes) {
+			this.sqlToCodeTypes = notNullOf(sqlToCodeTypes, "sqlToCodeTypes");
+			this.codeToSqlTypes = notNullOf(codeToSqlTypes, "codeToSqlTypes");
+		}
+
+		public Properties getSqlToCodeTypes() {
+			return sqlToCodeTypes;
+		}
+
+		public Properties getCodeToSqlTypes() {
+			return codeToSqlTypes;
+		}
+
 	}
 
 }

@@ -14,7 +14,7 @@ import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notEmpty;
 
 /**
- * {@link MySQLV5xMetadataResolver}
+ * {@link MySQLV5MetadataResolver}
  * 
  * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
  * @author vjay
@@ -22,27 +22,27 @@ import static com.wl4g.components.common.lang.Assert2.notEmpty;
  * @sine v1.0.0
  * @see
  */
-public class MySQLV5xMetadataResolver extends AbstractMetadataResolver {
+public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 
 	/**
-	 * New {@link MySQLV5xMetadataResolver}
+	 * New {@link MySQLV5MetadataResolver}
 	 * 
 	 * @param genDS
 	 */
-	public MySQLV5xMetadataResolver(GenDataSource genDS) {
+	public MySQLV5MetadataResolver(GenDataSource genDS) {
 		this("jdbc:mysql://".concat(genDS.getHost()).concat(":").concat(genDS.getPort()).concat("/").concat(genDS.getDatabase()),
 				genDS.getUsername(), genDS.getPassword());
 	}
 
 	/**
-	 * New {@link MySQLV5xMetadataResolver}
+	 * New {@link MySQLV5MetadataResolver}
 	 * 
 	 * @param driverClassName
 	 * @param url
 	 * @param username
 	 * @param password
 	 */
-	protected MySQLV5xMetadataResolver(String url, String username, String password) {
+	protected MySQLV5MetadataResolver(String url, String username, String password) {
 		super("com.mysql.jdbc.Driver", url, username, password);
 	}
 

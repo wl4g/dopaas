@@ -29,7 +29,8 @@ import com.wl4g.devops.dts.codegen.dao.GenDataSourceDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
-import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbConverterType;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeKind;
+import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
@@ -60,7 +61,7 @@ public class GenerateServiceImpl implements GenerateService {
 	private NamingPrototypeBeanFactory beanFactory;
 
 	@Autowired
-	private GenericOperatorAdapter<DbConverterType, DbTypeConverter> typeConverter;
+	private GenericOperatorAdapter<ConverterKind, DbTypeConverter> typeConverter;
 
 	@Autowired
 	private GenerateManager genManager;
@@ -108,7 +109,8 @@ public class GenerateServiceImpl implements GenerateService {
 			col.setAttrName(lineToHump(colMetadata.getColumnName()));
 			// Converting java type
 			DbTypeConverter conv = typeConverter.forOperator(genDS.getType());
-			col.setAttrType(conv.convertToJavaType(colMetadata.getDataType()));
+			// TODO
+			col.setAttrType(conv.convertToCodeType(colMetadata.getDataType(), CodeKind.JAVA));
 
 			// Sets defaults
 			col.setIsInsert("1");
