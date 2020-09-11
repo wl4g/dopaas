@@ -15,13 +15,10 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
-import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.utils.FreemarkerUtils2;
 import freemarker.template.TemplateException;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -41,25 +38,16 @@ public class SpringMvcGeneratorProvider extends BasedBackendGeneratorProvider {
 	public void run() {
 		GenTable genTable = context.getGenTable();
 		try {
-			String gen = FreemarkerUtils2.gen("Controller.ftl", genTable);
-
-			File jobDir = codegenProperties.getJobDir(context.getGenTable().getId());
-
-			String packageName = context.getGenTable().getPackageName();
-			String subModuleName = context.getGenTable().getSubModuleName();
-			String moduleName = context.getGenTable().getModuleName();
-			String className = context.getGenTable().getClassName();
-			packageName = packageName.replaceAll("\\.","/");
-
-			File file = new File(jobDir, packageName + "/" +moduleName+ "/web/" +subModuleName+"/"+  className + "Controller.java");
-
-			FileIOUtils.writeFile(file, gen,false);
-
-
+			genFileToLoacl("Service.ftl","service","Service.java" );
+			genFileToLoacl("ServiceImpl.ftl","service/impl","ServiceImpl.java" );
+			genFileToLoacl("Controller.ftl","web","Controller.java" );
 		} catch (IOException | TemplateException e) {
 			log.error("gen fail", e);
 		}
 
 	}
+
+
+
 
 }

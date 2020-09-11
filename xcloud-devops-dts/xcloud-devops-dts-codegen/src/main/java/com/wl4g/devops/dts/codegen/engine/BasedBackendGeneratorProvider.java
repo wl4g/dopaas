@@ -16,6 +16,9 @@
 package com.wl4g.devops.dts.codegen.engine;
 
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
+import freemarker.template.TemplateException;
+
+import java.io.IOException;
 
 /**
  * {@link BasedBackendGeneratorProvider}
@@ -28,6 +31,15 @@ public abstract class BasedBackendGeneratorProvider extends AbstractGeneratorPro
 
 	public BasedBackendGeneratorProvider(GenerateContext context) {
 		super(context);
+	}
+
+	void genFileToLoacl(String templateName,String demixingPackage,String suffix) throws IOException, TemplateException {
+		String packageName = context.getGenTable().getPackageName();
+		String subModuleName = context.getGenTable().getSubModuleName();
+		String moduleName = context.getGenTable().getModuleName();
+		String className = context.getGenTable().getClassName();
+		packageName = packageName.replaceAll("\\.","/");
+		genFileToLoacl(templateName,packageName + "/" +moduleName+ "/"+demixingPackage+"/" +subModuleName+"/"+  className + suffix);
 	}
 
 }

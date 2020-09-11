@@ -18,13 +18,14 @@ package com.wl4g.devops.dts.codegen.core;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias;
+import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.core.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.GeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -39,6 +40,9 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
  * @since
  */
 public class DefaultGenerateManager implements GenerateManager {
+
+	@Autowired
+	protected CodegenProperties config;
 
 	/** {@link NamingPrototypeBeanFactory} */
 	protected final NamingPrototypeBeanFactory beanFactory;
@@ -62,7 +66,7 @@ public class DefaultGenerateManager implements GenerateManager {
 		genTable.setGenTableColumns(genColumns);
 
 		// New context.
-		GenerateContext context = new DefaultGenerateContext(genTable);
+		GenerateContext context = new DefaultGenerateContext(config, genTable);
 		// TODO ...
 
 		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderAlias.MVC, context);
