@@ -39,8 +39,10 @@ public class SpringMvcGeneratorProvider extends BasedBackendGeneratorProvider {
 	public void run() {
 		GenTable genTable = context.getGenTable();
 		try {
-			String gen = CodeGenUtils.gen("Service.ftl", genTable);
+			String gen = CodeGenUtils.gen("ServiceImpl.ftl", genTable);
 			System.out.println(gen);
+			//TODO ...
+
 
 		} catch (IOException | TemplateException e) {
 			log.error("gen fail", e);

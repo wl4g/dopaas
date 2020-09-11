@@ -203,7 +203,7 @@ public class GenerateServiceImpl implements GenerateService {
 	 * @return
 	 */
 	private MetadataResolver getMetadataPaser(GenDataSource gen) {
-		return beanFactory.getPrototypeBean(gen.getType());
+		return beanFactory.getPrototypeBean(gen.getType(),gen);
 	}
 
 }
