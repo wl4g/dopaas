@@ -13,11 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.wl4g.devops.dts.codegen.engine;
+
+import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
+
 /**
- * {@link package-info} 
+ * {@link BasedFrontGeneratorProvider}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-09-10
+ * @version v1.0 2020-09-07
  * @since
  */
-package com.wl4g.devops.dts.codegen.engine.converter.types.oracle;
+public abstract class BasedFrontGeneratorProvider extends AbstractGeneratorProvider {
+
+	public BasedFrontGeneratorProvider(GenerateContext context) {
+		super(context);
+	}
+
+}
