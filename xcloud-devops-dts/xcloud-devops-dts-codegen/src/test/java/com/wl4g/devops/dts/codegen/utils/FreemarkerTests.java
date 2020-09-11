@@ -1,33 +1,30 @@
 package com.wl4g.devops.dts.codegen.utils;
 
-import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.components.common.log.SmartLoggerFactory;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
-import java.io.IOException;
 import java.util.*;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.processTemplateIntoString;
 
 /**
+ * 
+ * {@link FreemarkerTests}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
- * @date 2020-09-07 10:57:00
+ * @version v1.0 2020-09-07
+ * @since
  */
-public class CodeGenUtils {
+public class FreemarkerTests {
 
-	private static SmartLogger log = SmartLoggerFactory.getLogger(CodeGenUtils.class);
-
-	private final static Configuration fmc;
-
-	private final static String ftlBasePath = "/ftl/";
-
-	static {
+	public static void main(String[] args) throws Exception {
 		FreeMarkerConfigurer fmcr = new FreeMarkerConfigurer();
-		fmcr.setTemplateLoaderPath(ftlBasePath);
+		String basePath = "/ftl/";
+
+		fmcr.setTemplateLoaderPath(basePath);
 		Properties settings = new Properties();
 		settings.setProperty("template_update_delay", "0");
 		settings.setProperty("default_encoding", "UTF-8");
@@ -36,21 +33,14 @@ public class CodeGenUtils {
 		settings.setProperty("classic_compatible", "true");
 		settings.setProperty("template_exception_handler", "ignore");
 		fmcr.setFreemarkerSettings(settings);
-		try {
-			fmcr.afterPropertiesSet();
-		} catch (IOException | TemplateException e) {
-			log.error("create FreeMarkerConfigurer fail", e);
-		}
-		fmc = fmcr.getConfiguration();
-	}
+		fmcr.afterPropertiesSet();
 
-	public static String gen(String templatePath, Object model) throws IOException, TemplateException {
-		Template template = fmc.getTemplate(templatePath, UTF_8.name());
-		return processTemplateIntoString(template, model);
-	}
+		// Initial errors template.
+		Configuration fmc = fmcr.getConfiguration();
 
-	public static void main(String[] args) throws IOException, TemplateException {
+		Template template = fmc.getTemplate("entity.ftl", UTF_8.name());
 
+		// Map<String, Object> model = new HashMap<>();
 		Map<String, Object> beanMap = new HashMap<String, Object>();
 		beanMap.put("beanName", "User");// 实体类名
 		beanMap.put("interfaceName", "User");// 接口名
@@ -64,8 +54,9 @@ public class CodeGenUtils {
 		}
 		beanMap.put("params", paramsList);
 
-		String renderString = gen("entity.ftl", beanMap);
+		String renderString = processTemplateIntoString(template, beanMap);
 		System.out.println(renderString);
+
 	}
 
 }

@@ -17,7 +17,7 @@ package com.wl4g.devops.dts.codegen.engine;
 
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.utils.CodeGenUtils;
+import com.wl4g.devops.dts.codegen.utils.FreemarkerUtils2;
 import freemarker.template.TemplateException;
 
 import java.io.IOException;
@@ -39,7 +39,7 @@ public class SpringMvcGeneratorProvider extends BasedBackendGeneratorProvider {
 	public void run() {
 		GenTable genTable = context.getGenTable();
 		try {
-			String gen = CodeGenUtils.gen("ServiceImpl.ftl", genTable);
+			String gen = FreemarkerUtils2.gen("ServiceImpl.ftl", genTable);
 			System.out.println(gen);
 			//TODO ...
 
