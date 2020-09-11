@@ -94,6 +94,8 @@ public class GenerateServiceImpl implements GenerateService {
 		TableMetadata metadata = resolver.findTableDescribe(tableName);
 		notNullOf(metadata, "tableMetadata");
 
+		metadata.setColumns(resolver.findTableColumns(tableName));
+
 		// TableMetadata to GenTable
 		GenTable genTab = new GenTable();
 		genTab.setClassName(JavaNamingSpecUtils.tableName2ClassName(metadata.getTableName()));

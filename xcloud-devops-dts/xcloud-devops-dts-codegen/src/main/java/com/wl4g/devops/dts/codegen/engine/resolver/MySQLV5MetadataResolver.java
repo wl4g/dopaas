@@ -18,9 +18,6 @@ package com.wl4g.devops.dts.codegen.engine.resolver;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ForeignMetadata;
-import static com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver.ResolverAlias.MYSQLV5;
-
-import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +25,8 @@ import java.util.Map;
 import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.notEmpty;
+import static com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver.ResolverAlias.MYSQLV5;
+import static java.util.stream.Collectors.toList;
 
 /**
  * {@link MySQLV5MetadataResolver}
@@ -74,7 +73,7 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 		hasTextOf(tableName, "tableName");
 
 		String sql = loadResolvingSql(MYSQLV5, SQL_TABLE_DESCRIBE, tableName);
-		Map<String, Object> row = jdbcTemplate.queryForMap(sql, tableName);
+		Map<String, Object> row = jdbcTemplate.queryForMap(sql);
 
 		TableMetadata table = new TableMetadata();
 		table.setTableName((String) row.get("tableName"));
