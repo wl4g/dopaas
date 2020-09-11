@@ -15,10 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.converter;
 
-import java.io.IOException;
-
 import com.wl4g.components.core.framework.operator.Operator;
-import com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbConverterType;
 
 /**
@@ -30,28 +27,27 @@ import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.DbConverterT
  */
 public abstract class DbTypeConverter implements Operator<DbConverterType> {
 
-	public abstract String convertToJavaType(String sqlType);
-
-	public abstract String convertToSqlType(String javaType);
+	/**
+	 * Converting db to java type
+	 * 
+	 * @param javaType
+	 * @return
+	 */
+	public abstract String convertToJavaType(String dbType);
 
 	/**
-	 * Load converting SQL.
+	 * Converting java to db type
 	 * 
-	 * @param dbType
-	 * @param filename
-	 * @param args
+	 * @param javaType
 	 * @return
-	 * @throws IOException
 	 */
-	protected String loadConvertingSql(String dbType, String filename, String... args) throws IOException {
-		return ResourceBundleUtils.readResource(false, TYPES_BASE_PATH, dbType, filename, args);
-	}
+	public abstract String convertToDbType(String javaType);
 
 	// Databsse types definitions.
 	public final static String TYPES_BASE_PATH = DbTypeConverter.class.getName().replace(".", "/")
 			.replace(DbTypeConverter.class.getSimpleName(), "") + "types/";
-	public final static String TYPES_SQL_TO_JAVA = "sql-to-java.types";
-	public final static String TYPES_JAVA_TO_SQL = "java-to-sql.types";
+	public final static String TYPES_DB_TO_JAVA = "sql-to-java.types";
+	public final static String TYPES_JAVA_TO_DB = "java-to-sql.types";
 
 	/**
 	 * {@link DbType}
