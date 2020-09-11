@@ -35,7 +35,7 @@ import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.service.GenerateService;
-import com.wl4g.devops.dts.codegen.utils.ParseUtils;
+import com.wl4g.devops.dts.codegen.utils.JavaNamingSpecUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.dts.codegen.utils.ParseUtils.lineToHump;
+import static com.wl4g.devops.dts.codegen.utils.JavaNamingSpecUtils.underlineToHump;
 
 /**
  * {@link GenerateServiceImpl}
@@ -96,7 +96,7 @@ public class GenerateServiceImpl implements GenerateService {
 
 		// TableMetadata to GenTable
 		GenTable genTab = new GenTable();
-		genTab.setClassName(ParseUtils.tableName2ClassName(metadata.getTableName()));
+		genTab.setClassName(JavaNamingSpecUtils.tableName2ClassName(metadata.getTableName()));
 		genTab.setTableName(metadata.getTableName());
 		genTab.setComments(metadata.getComments());
 
@@ -106,7 +106,7 @@ public class GenerateServiceImpl implements GenerateService {
 			col.setColumnName(colMetadata.getColumnName());
 			col.setColumnComment(colMetadata.getComments());
 			col.setColumnType(colMetadata.getColumnType());
-			col.setAttrName(lineToHump(colMetadata.getColumnName()));
+			col.setAttrName(underlineToHump(colMetadata.getColumnName()));
 			// Converting java type
 			DbTypeConverter conv = typeConverter.forOperator(genDS.getType());
 			// TODO
