@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine.converter;
 
+import static com.wl4g.components.common.lang.Assert2.hasText;
 import static com.wl4g.devops.dts.codegen.utils.ResourceBundleUtils.readResource;
 
 import java.io.IOException;
@@ -36,29 +37,29 @@ public class MySQLV5xTypeConverter extends DbTypeConverter {
 	}
 
 	@Override
-	public String convertToJavaType(String sqlType) {
-		return sqlToJavaTypes.getProperty(sqlType);
+	public String convertToJavaType(String dbType) {
+		return hasText(sqlToJavaTypes.getProperty(dbType), "No such dbType: %s mapped javaType", dbType);
 	}
 
 	@Override
-	public String convertToSqlType(String javaType) {
-		return javaToSqlTypes.getProperty(javaType);
+	public String convertToDbType(String javaType) {
+		return hasText(javaToDbTypes.getProperty(javaType), "No such javaType: %s mapped dbType", javaType);
 	}
 
 	// Cache of types.
 	private final static Properties sqlToJavaTypes;
-	private final static Properties javaToSqlTypes;
+	private final static Properties javaToDbTypes;
 	private final static String TYPE_MYSQL = "mysql";
 
 	static {
 		try {
 			// sql to java
 			sqlToJavaTypes = new Properties();
-			sqlToJavaTypes.load(new StringReader(readResource(false, TYPES_BASE_PATH, TYPE_MYSQL, TYPES_SQL_TO_JAVA)));
+			sqlToJavaTypes.load(new StringReader(readResource(false, TYPES_BASE_PATH, TYPE_MYSQL, TYPES_DB_TO_JAVA)));
 
 			// java to sql
-			javaToSqlTypes = new Properties();
-			javaToSqlTypes.load(new StringReader(readResource(false, TYPES_BASE_PATH, TYPE_MYSQL, TYPES_JAVA_TO_SQL)));
+			javaToDbTypes = new Properties();
+			javaToDbTypes.load(new StringReader(readResource(false, TYPES_BASE_PATH, TYPE_MYSQL, TYPES_JAVA_TO_DB)));
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new IllegalStateException(e);
