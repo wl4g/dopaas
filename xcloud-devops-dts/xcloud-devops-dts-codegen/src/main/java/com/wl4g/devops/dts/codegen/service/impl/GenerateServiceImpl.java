@@ -110,7 +110,7 @@ public class GenerateServiceImpl implements GenerateService {
 			// Converting java type
 			DbTypeConverter conv = typeConverter.forOperator(genDS.getType());
 			// TODO
-			col.setAttrType(conv.convertToCodeType(colMetadata.getDataType(), CodeKind.JAVA));
+			col.setAttrType(conv.convertToCodeType(colMetadata.getDataType(), CodeKind.JAVA.getAlias()));
 
 			// Sets defaults
 			col.setIsInsert("1");
