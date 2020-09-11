@@ -3,6 +3,7 @@ package com.wl4g.devops.dts.codegen.engine.resolver;
 import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ForeignMetadata;
+import static com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver.ResolverAlias.MYSQLV5;
 
 import static java.util.stream.Collectors.toList;
 
@@ -48,7 +49,7 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 
 	@Override
 	public List<String> findTables() {
-		String sql = loadResolvingSql(DB_TYPE, SQL_TABLES);
+		String sql = loadResolvingSql(MYSQLV5, SQL_TABLES);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
 		return safeList(list).stream().map(row -> (String) row.get("tableName")).collect(toList());
 	}
@@ -57,7 +58,7 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 	public TableMetadata findTableDescribe(String tableName) {
 		hasTextOf(tableName, "tableName");
 
-		String sql = loadResolvingSql(DB_TYPE, SQL_TABLE_DESCRIBE, tableName);
+		String sql = loadResolvingSql(MYSQLV5, SQL_TABLE_DESCRIBE, tableName);
 		Map<String, Object> row = jdbcTemplate.queryForMap(sql, tableName);
 
 		TableMetadata table = new TableMetadata();
@@ -70,7 +71,7 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 	public List<ColumnMetadata> findTableColumns(String tableName) {
 		hasTextOf(tableName, "tableName");
 
-		String sql = loadResolvingSql(DB_TYPE, SQL_COLUMNS, tableName);
+		String sql = loadResolvingSql(MYSQLV5, SQL_COLUMNS, tableName);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
 
 		return safeList(list).stream().map(row -> {
@@ -89,7 +90,7 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 	public List<ForeignMetadata> findTableForeign(String tableName) {
 		hasTextOf(tableName, "tableName");
 
-		String sql = loadResolvingSql(DB_TYPE, SQL_FOREIGN, tableName);
+		String sql = loadResolvingSql(MYSQLV5, SQL_FOREIGN, tableName);
 		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
 
 		return safeList(list).stream().map(row -> {
@@ -105,12 +106,10 @@ public class MySQLV5MetadataResolver extends AbstractMetadataResolver {
 
 	@Override
 	public String findDBVersion() throws Exception {
-		String sql = loadResolvingSql(DB_TYPE, SQL_VERSION);
+		String sql = loadResolvingSql(MYSQLV5, SQL_VERSION);
 		Map<String, Object> result = jdbcTemplate.queryForMap(sql);
 		notEmpty(result, "Cannot find database version info");
 		return (String) result.get("version");
 	}
-
-	public final static String DB_TYPE = "mysql";
 
 }

@@ -13,35 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine;
-
-import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
+package com.wl4g.devops.dts.codegen.engine.converter;
 
 /**
- * {@link GeneratorProvider}
+ * {@link PostgreSQLV10TypeConverter}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-09-07
+ * @version v1.0 2020-09-10
  * @since
  */
-public interface GeneratorProvider extends Runnable {
+public class PostgreSQLV10TypeConverter extends DbTypeConverter {
 
-	/**
-	 * {@link GenProviderAlias}
-	 * 
-	 * @see
-	 */
-	public static interface GenProviderAlias {
-
-		public static final String MAPPER = "mapperGenProvider";
-		public static final String MVC = "mvcGenProvider";
-
-		public static final String VUEJS = "vueGenProvider";
-		public static final String AGJS = "agGenProvider";
-
-		/** List of field values of class {@link GenProviderAlias}. */
-		public static final String[] VALUES = getFieldValues(GenProviderAlias.class, "VALUES").toArray(new String[] {});
-
+	@Override
+	public ConverterKind kind() {
+		return ConverterKind.PostgreSQLV10;
 	}
 
 }

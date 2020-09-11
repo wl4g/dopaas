@@ -115,7 +115,7 @@ public abstract class DbTypeConverter implements Operator<ConverterKind> {
 	 * @see
 	 */
 	public static enum ConverterKind {
-		MySQLV5, OracleV11g
+		MySQLV5, OracleV11g, PostgreSQLV10
 	}
 
 	/**

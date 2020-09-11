@@ -3,6 +3,8 @@ package com.wl4g.devops.dts.codegen.engine.resolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ForeignMetadata;
 
+import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
+
 import java.util.List;
 
 /**
@@ -47,6 +49,22 @@ public interface MetadataResolver {
 
 	default String findDBVersion() throws Exception {
 		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * {@link ResolverAlias}
+	 * 
+	 * @see
+	 */
+	public static interface ResolverAlias {
+
+		public static final String MYSQLV5 = "mysqlv5";
+		public static final String ORACLEV11G = "oraclev11g";
+		public static final String POSTGRESQLV10 = "postgresqlv10";
+
+		/** List of field values of class {@link ResolverAlias}. */
+		public static final String[] VALUES = getFieldValues(ResolverAlias.class, "VALUES").toArray(new String[] {});
+
 	}
 
 }

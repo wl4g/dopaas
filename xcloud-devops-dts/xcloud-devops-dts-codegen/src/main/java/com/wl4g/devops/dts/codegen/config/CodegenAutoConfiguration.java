@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.config;
 
-import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
-
 import com.wl4g.components.core.framework.beans.NamingPrototype;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.components.core.framework.operator.GenericOperatorAdapter;
@@ -29,15 +27,21 @@ import com.wl4g.devops.dts.codegen.engine.SpringMvcGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.MySQLV5TypeConverter;
+import com.wl4g.devops.dts.codegen.engine.converter.OracleV11gTypeConverter;
+import com.wl4g.devops.dts.codegen.engine.converter.PostgreSQLV10TypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
+import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.MySQLV5MetadataResolver;
+import com.wl4g.devops.dts.codegen.engine.resolver.OracleV11gMetadataResolver;
+import com.wl4g.devops.dts.codegen.engine.resolver.PostgreSQLV10MetadataResolver;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-import static com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.GenProviderAlias.*;
+import static com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias.*;
+import static com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver.ResolverAlias.*;
 
 /**
  * {@link CodegenAutoConfiguration}
@@ -57,6 +61,49 @@ public class CodegenAutoConfiguration {
 	@Bean
 	public DefaultGenerateManager defaultGenerateManager(NamingPrototypeBeanFactory beanFactory) {
 		return new DefaultGenerateManager(beanFactory);
+	}
+
+	// --- Metadata resolver's. ---
+
+	@Bean
+	@NamingPrototype({ MYSQLV5 })
+	public MetadataResolver mySQLV5xMetadataResolver(GenDataSource genDS) {
+		return new MySQLV5MetadataResolver(genDS);
+	}
+
+	@Bean
+	@NamingPrototype({ ORACLEV11G })
+	public MetadataResolver oracleV11gMetadataResolver(GenDataSource genDS) {
+		return new OracleV11gMetadataResolver(genDS);
+	}
+
+	@Bean
+	@NamingPrototype({ POSTGRESQLV10 })
+	public MetadataResolver postgreSQLV10MetadataResolver(GenDataSource genDS) {
+		return new PostgreSQLV10MetadataResolver(genDS);
+	}
+
+	// --- DB type converter's. ---
+
+	@Bean
+	public DbTypeConverter mySQLV5xTypeConverter() {
+		return new MySQLV5TypeConverter();
+	}
+
+	@Bean
+	public DbTypeConverter oracleV11gTypeConverter() {
+		return new OracleV11gTypeConverter();
+	}
+
+	@Bean
+	public DbTypeConverter postgreSQLV10TypeConverter() {
+		return new PostgreSQLV10TypeConverter();
+	}
+
+	@Bean
+	public GenericOperatorAdapter<ConverterKind, DbTypeConverter> dbTypeConverterAdapter(List<DbTypeConverter> dbTypeConverters) {
+		return new GenericOperatorAdapter<ConverterKind, DbTypeConverter>(dbTypeConverters) {
+		};
 	}
 
 	// --- Generator provider's. ---
@@ -83,47 +130,6 @@ public class CodegenAutoConfiguration {
 	@NamingPrototype({ AGJS })
 	public AngularJSGeneratorProvider angularJSGeneratorProvider(GenerateContext context) {
 		return new AngularJSGeneratorProvider(context);
-	}
-
-	// --- DB metadata resolver's. ---
-
-	@Bean
-	@NamingPrototype({ MySQLV5MetadataResolver.DB_TYPE })
-	public MySQLV5MetadataResolver mySQLV5xMetadataResolver(GenDataSource genDataSource) {
-		return new MySQLV5MetadataResolver(genDataSource);
-	}
-
-	// --- DB type converter's. ---
-
-	@Bean
-	public DbTypeConverter mySQLV5xTypeConverter() {
-		return new MySQLV5TypeConverter();
-	}
-
-	@Bean
-	public GenericOperatorAdapter<ConverterKind, DbTypeConverter> dbTypeConverterAdapter(List<DbTypeConverter> dbTypeConverters) {
-		return new GenericOperatorAdapter<ConverterKind, DbTypeConverter>(dbTypeConverters) {
-		};
-	}
-
-	/**
-	 * {@link GenProviderAlias}
-	 * 
-	 * @author Wangl.sir &lt;wanglsir@gmail.com, 983708408@qq.com&gt;
-	 * @sine v1.0.0
-	 * @see
-	 */
-	public static interface GenProviderAlias {
-
-		public static final String MAPPER = "mapperGenProvider";
-		public static final String MVC = "mvcGenProvider";
-
-		public static final String VUEJS = "vueGenProvider";
-		public static final String AGJS = "agGenProvider";
-
-		/** List of field values of class {@link GenProviderAlias}. */
-		public static final String[] VALUES = getFieldValues(GenProviderAlias.class, "VALUES").toArray(new String[] {});
-
 	}
 
 }

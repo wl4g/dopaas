@@ -18,7 +18,7 @@ package com.wl4g.devops.dts.codegen.core;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
-import com.wl4g.devops.dts.codegen.config.CodegenAutoConfiguration.GenProviderAlias;
+import com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias;
 import com.wl4g.devops.dts.codegen.core.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.core.param.GenericParameter;

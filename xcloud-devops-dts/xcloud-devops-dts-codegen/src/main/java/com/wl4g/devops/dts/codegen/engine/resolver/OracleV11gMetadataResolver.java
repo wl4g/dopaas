@@ -13,35 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen.engine;
+package com.wl4g.devops.dts.codegen.engine.resolver;
 
-import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
+import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 
 /**
- * {@link GeneratorProvider}
+ * {@link OracleV11gMetadataResolver}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
- * @version v1.0 2020-09-07
+ * @version v1.0 2020-09-11
  * @since
  */
-public interface GeneratorProvider extends Runnable {
+public class OracleV11gMetadataResolver extends AbstractMetadataResolver {
 
 	/**
-	 * {@link GenProviderAlias}
+	 * New {@link OracleV11gMetadataResolver}
 	 * 
-	 * @see
+	 * @param genDS
 	 */
-	public static interface GenProviderAlias {
+	public OracleV11gMetadataResolver(GenDataSource genDS) {
+		// TODO
+		this("TODO", genDS.getUsername(), genDS.getPassword());
+	}
 
-		public static final String MAPPER = "mapperGenProvider";
-		public static final String MVC = "mvcGenProvider";
-
-		public static final String VUEJS = "vueGenProvider";
-		public static final String AGJS = "agGenProvider";
-
-		/** List of field values of class {@link GenProviderAlias}. */
-		public static final String[] VALUES = getFieldValues(GenProviderAlias.class, "VALUES").toArray(new String[] {});
-
+	protected OracleV11gMetadataResolver(String url, String username, String password) {
+		// TODO
+		super("TODO", url, username, password);
 	}
 
 }
