@@ -16,9 +16,9 @@
 package com.wl4g.devops.scm.example.web;
 
 import com.wl4g.components.common.serialize.JacksonUtils;
-import com.wl4g.components.core.bean.iam.User;
-import com.wl4g.devops.dao.iam.UserDao;
 import com.wl4g.devops.scm.example.service.ExampleService;
+import com.wl4g.iam.bean.User;
+import com.wl4g.iam.dao.UserDao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
