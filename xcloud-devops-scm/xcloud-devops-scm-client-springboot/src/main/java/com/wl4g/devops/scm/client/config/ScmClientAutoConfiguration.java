@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.scm.client.config;
 
-import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
+import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
 import com.wl4g.devops.scm.client.refresh.ScmContextRefresher;
 import com.wl4g.devops.scm.client.refresh.ScmLoggingRebinder;
 
@@ -41,7 +41,7 @@ import org.springframework.core.env.Environment;
  * @since {@link de.codecentric.boot.admin.web.PrefixHandlerMapping}
  *        {@link de.codecentric.boot.admin.config.AdminServerWebConfiguration}}
  */
-public class ScmClientAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public class ScmClientAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	/**
 	 * See:{@link RefreshAutoConfiguration#contextRefresher()}

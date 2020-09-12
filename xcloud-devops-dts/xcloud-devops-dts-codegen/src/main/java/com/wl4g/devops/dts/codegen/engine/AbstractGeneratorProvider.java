@@ -57,7 +57,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		String gen = FreemarkerUtils2.gen(templateName, genTable);
 		File jobDir = context.getJobDir();
 		File file = new File(jobDir, pathName);
-		FileIOUtils.writeFile(file, gen,false);
+		FileIOUtils.writeFile(file, gen, false);
 	}
 
 }

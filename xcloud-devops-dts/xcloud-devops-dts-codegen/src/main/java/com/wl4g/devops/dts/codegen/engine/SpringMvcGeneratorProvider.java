@@ -15,7 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
-import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import freemarker.template.TemplateException;
 
@@ -36,18 +35,14 @@ public class SpringMvcGeneratorProvider extends BasedBackendGeneratorProvider {
 
 	@Override
 	public void run() {
-		GenTable genTable = context.getGenTable();
 		try {
-			genFileToLoacl("Service.ftl","service","Service.java" );
-			genFileToLoacl("ServiceImpl.ftl","service/impl","ServiceImpl.java" );
-			genFileToLoacl("Controller.ftl","web","Controller.java" );
+			genFileToLoacl("Service.ftl", "service", "Service.java");
+			genFileToLoacl("ServiceImpl.ftl", "service/impl", "ServiceImpl.java");
+			genFileToLoacl("Controller.ftl", "web", "Controller.java");
 		} catch (IOException | TemplateException e) {
 			log.error("gen fail", e);
 		}
 
 	}
-
-
-
 
 }
