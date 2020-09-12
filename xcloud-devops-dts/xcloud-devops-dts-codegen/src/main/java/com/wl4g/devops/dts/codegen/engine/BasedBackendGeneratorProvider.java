@@ -33,13 +33,14 @@ public abstract class BasedBackendGeneratorProvider extends AbstractGeneratorPro
 		super(context);
 	}
 
-	void genFileToLoacl(String templateName,String demixingPackage,String suffix) throws IOException, TemplateException {
+	void genFileToLoacl(String templateName, String demixingPackage, String suffix) throws IOException, TemplateException {
 		String packageName = context.getGenTable().getPackageName();
 		String subModuleName = context.getGenTable().getSubModuleName();
 		String moduleName = context.getGenTable().getModuleName();
 		String className = context.getGenTable().getClassName();
-		packageName = packageName.replaceAll("\\.","/");
-		genFileToLoacl(templateName,packageName + "/" +moduleName+ "/"+demixingPackage+"/" +subModuleName+"/"+  className + suffix);
+		packageName = packageName.replaceAll("\\.", "/");
+		genFileToLoacl(templateName,
+				packageName + "/" + moduleName + "/" + demixingPackage + "/" + subModuleName + "/" + className + suffix);
 	}
 
 }

@@ -32,7 +32,7 @@ public class MapperDaoGeneratorProvider extends BasedBackendGeneratorProvider {
 
 	@Override
 	public void run() {
-		//TODO
+		// TODO
 
 	}
 }

@@ -25,7 +25,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.wl4g.components.common.crypto.asymmetric.RSACryptor;
 import com.wl4g.components.common.crypto.symmetric.AES128ECBPKCS5;
-import com.wl4g.components.core.config.OptionalPrefixControllerAutoConfiguration;
+import com.wl4g.components.core.config.mapping.AbstractHandlerMappingSupport;
+import com.wl4g.components.core.config.mapping.PrefixHandlerMapping;
 import com.wl4g.components.support.redis.jedis.JedisService;
 import com.wl4g.devops.scm.annotation.ScmEndpoint;
 import com.wl4g.devops.scm.endpoint.ScmServerEndpoint;
@@ -42,7 +43,7 @@ import com.wl4g.devops.scm.publish.JedisConfigSourcePublisher;
  * @version v1.0 2019年5月27日
  * @since
  */
-public class ScmAutoConfiguration extends OptionalPrefixControllerAutoConfiguration {
+public class ScmAutoConfiguration extends AbstractHandlerMappingSupport {
 
 	@Bean
 	@ConfigurationProperties(prefix = "spring.cloud.devops.scm")
@@ -76,10 +77,11 @@ public class ScmAutoConfiguration extends OptionalPrefixControllerAutoConfigurat
 		return new ScmWebMvcConfigurer(config, executor);
 	}
 
-//	@Bean
-//	public ConfigServerSecurityManager scmServerConfigSecurityManager() {
-//		return new ConfigServerSecurityManager(new RSACryptor(), new AES128ECBPKCS5());
-//	}
+	// @Bean
+	// public ConfigServerSecurityManager scmServerConfigSecurityManager() {
+	// return new ConfigServerSecurityManager(new RSACryptor(), new
+	// AES128ECBPKCS5());
+	// }
 
 	//
 	// --- Endpoint's. ---
