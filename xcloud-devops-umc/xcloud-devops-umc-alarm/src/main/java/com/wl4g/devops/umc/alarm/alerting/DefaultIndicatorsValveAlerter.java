@@ -15,9 +15,6 @@
  */
 package com.wl4g.devops.umc.alarm.alerting;
 
-import com.wl4g.components.core.bean.iam.Contact;
-import com.wl4g.components.core.bean.iam.ContactChannel;
-import com.wl4g.components.core.bean.iam.NotificationContact;
 import com.wl4g.components.core.bean.umc.AlarmConfig;
 import com.wl4g.components.core.bean.umc.AlarmRecord;
 import com.wl4g.components.core.bean.umc.AlarmRule;
@@ -40,6 +37,10 @@ import com.wl4g.devops.umc.handler.AlarmConfigurer;
 import com.wl4g.devops.umc.rule.RuleConfigManager;
 import com.wl4g.devops.umc.rule.inspect.CompositeRuleInspectorAdapter;
 import com.wl4g.devops.umc.rule.inspect.RuleInspector.InspectWrapper;
+import com.wl4g.components.core.bean.iam.Contact;
+import com.wl4g.components.core.bean.iam.ContactChannel;
+import com.wl4g.components.core.bean.iam.NotificationContact;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;

@@ -15,9 +15,9 @@
  */
 package com.wl4g.devops.umc.alarm;
 
-import com.wl4g.components.core.bean.iam.Contact;
 import com.wl4g.components.core.bean.umc.AlarmConfig;
 import com.wl4g.components.core.bean.umc.AlarmTemplate;
+import com.wl4g.components.core.bean.iam.Contact;
 
 import java.util.List;
 
