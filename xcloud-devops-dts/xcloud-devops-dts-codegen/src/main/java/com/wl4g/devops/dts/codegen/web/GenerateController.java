@@ -60,9 +60,9 @@ public class GenerateController {
 	}
 
 	@RequestMapping(value = "/list")
-	public RespBase<?> list(PageModel pm, String tableName) {
+	public RespBase<?> list(PageModel pm, String tableName, Integer projectId) {
 		RespBase<Object> resp = RespBase.create();
-		resp.setData(genConfigurationService.page(pm, tableName));
+		resp.setData(genConfigurationService.page(pm, tableName, projectId));
 		return resp;
 	}
 

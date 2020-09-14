@@ -18,16 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 * @Date 2020-09-11
 */
 @RestController
-@RequestMapping("/genProject")
+@RequestMapping("/project")
 public class GenProjectController extends BaseController {
 
     @Autowired
     private GenProjectService genProjectService;
 
     @RequestMapping(value = "/list")
-    public RespBase<?> list(PageModel pm, String name) {
+    public RespBase<?> list(PageModel pm, String projectName) {
         RespBase<Object> resp = RespBase.create();
-        resp.setData(genProjectService.page(pm, name));
+        resp.setData(genProjectService.page(pm, projectName));
         return resp;
     }
 

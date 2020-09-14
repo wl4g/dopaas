@@ -22,7 +22,7 @@ import com.wl4g.devops.dts.codegen.bean.GenDataSource;
 import com.wl4g.devops.dts.codegen.core.DefaultGenerateManager;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.AngularJSGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.MapperDaoGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.GoStandardGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.SpringMvcGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
@@ -109,13 +109,13 @@ public class CodegenAutoConfiguration {
 	// --- Generator provider's. ---
 
 	@Bean
-	@NamingPrototype({ MAPPER })
-	public MapperDaoGeneratorProvider mapperDaoGeneratorProvider(GenerateContext context) {
-		return new MapperDaoGeneratorProvider(context);
+	@NamingPrototype({ GO_STANDARD })
+	public GoStandardGeneratorProvider goStandardGeneratorProvider(GenerateContext context) {
+		return new GoStandardGeneratorProvider(context);
 	}
 
 	@Bean
-	@NamingPrototype({ MVC })
+	@NamingPrototype({MVN_SPINGCLOUD})
 	public SpringMvcGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
 		return new SpringMvcGeneratorProvider(context);
 	}

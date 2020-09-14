@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.dts.codegen.bean.GenTable" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="database_id" property="databaseId" jdbcType="INTEGER" />
+    <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="table_name" property="tableName" jdbcType="VARCHAR" />
     <result column="class_name" property="className" jdbcType="VARCHAR" />
     <result column="comments" property="comments" jdbcType="VARCHAR" />
@@ -27,7 +28,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, database_id, table_name, class_name, comments, parent_table_name, parent_table_fk_name, 
+    id, database_id, project_id, table_name, class_name, comments, parent_table_name, parent_table_fk_name,
     data_source_name, tpl_category, package_name, module_name, sub_module_name, function_name, 
     function_name_simple, function_author, gen_base_dir, options, remark, del_flag, create_date, 
     create_by, update_date, update_by
@@ -43,7 +44,7 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
-    insert into dts_gen_table (id, database_id, table_name, 
+    insert into dts_gen_table (id, database_id, project_id, table_name,
       class_name, comments, parent_table_name, 
       parent_table_fk_name, data_source_name, tpl_category, 
       package_name, module_name, sub_module_name, 
@@ -51,7 +52,7 @@
       gen_base_dir, options, remark, 
       del_flag, create_date, create_by, 
       update_date, update_by)
-    values (#{id,jdbcType=INTEGER}, #{databaseId,jdbcType=INTEGER}, #{tableName,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{databaseId,jdbcType=INTEGER},  #{projectId,jdbcType=INTEGER}, #{tableName,jdbcType=VARCHAR},
       #{className,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{parentTableName,jdbcType=VARCHAR}, 
       #{parentTableFkName,jdbcType=VARCHAR}, #{dataSourceName,jdbcType=VARCHAR}, #{tplCategory,jdbcType=VARCHAR}, 
       #{packageName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR}, 
@@ -68,6 +69,9 @@
       </if>
       <if test="databaseId != null" >
         database_id,
+      </if>
+      <if test="projectId != null" >
+        project_id,
       </if>
       <if test="tableName != null" >
         table_name,
@@ -140,6 +144,9 @@
       <if test="databaseId != null" >
         #{databaseId,jdbcType=INTEGER},
       </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=INTEGER},
+      </if>
       <if test="tableName != null" >
         #{tableName,jdbcType=VARCHAR},
       </if>
@@ -211,6 +218,9 @@
       <if test="databaseId != null" >
         database_id = #{databaseId,jdbcType=INTEGER},
       </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=INTEGER},
+      </if>
       <if test="tableName != null" >
         table_name = #{tableName,jdbcType=VARCHAR},
       </if>
@@ -280,6 +290,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
     update dts_gen_table
     set database_id = #{databaseId,jdbcType=INTEGER},
+      project_id = #{projectId,jdbcType=INTEGER},
       table_name = #{tableName,jdbcType=VARCHAR},
       class_name = #{className,jdbcType=VARCHAR},
       comments = #{comments,jdbcType=VARCHAR},
@@ -311,6 +322,9 @@
     where del_flag!=1
     <if test="tableName != null and tableName != ''" >
       AND `table_name` LIKE CONCAT('%','${tableName}','%')
+    </if>
+    <if test="projectId != null" >
+      AND project_id = #{projectId,jdbcType=INTEGER}
     </if>
     order by update_date desc
   </select>

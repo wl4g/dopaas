@@ -36,6 +36,10 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.wl4g</groupId>
+			<artifactId>xcloud-iam-test</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${final.name}</finalName>
