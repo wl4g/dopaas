@@ -16,7 +16,7 @@
 package com.wl4g.devops.dts.codegen.utils;
 
 import com.wl4g.components.common.log.SmartLogger;
-import static com.wl4g.components.common.view.FreemarkerUtils.createDefaultConfiguration;
+import com.wl4g.components.common.view.Freemarkers;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -40,11 +40,11 @@ public abstract class FreemarkerUtils2 {
 	protected static final SmartLogger log = getLogger(FreemarkerUtils2.class);
 
 	public static String gen(String templatePath, Object model) throws IOException, TemplateException {
-		Template template = defaultFtlConfigurer.getTemplate(templatePath, UTF_8.name());
+		Template template = defaultGenConfigurer.getTemplate(templatePath, UTF_8.name());
 		return processTemplateIntoString(template, model);
 	}
 
 	private final static String TPL_BASE_PATH = "/ftl/";
-	private final static Configuration defaultFtlConfigurer = createDefaultConfiguration(null, TPL_BASE_PATH);
+	private final static Configuration defaultGenConfigurer = Freemarkers.create(TPL_BASE_PATH).build();
 
 }
