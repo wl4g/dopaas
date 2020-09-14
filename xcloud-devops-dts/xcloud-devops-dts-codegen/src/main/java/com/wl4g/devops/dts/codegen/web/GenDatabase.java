@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * {@link GenConfigurationController}
+ * {@link GenDatabase}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/database") // TODO rename
-public class GenConfigurationController extends BaseController {
+public class GenDatabase extends BaseController {
 
 	@Autowired
 	private GenConfigurationService genDatabaseService;

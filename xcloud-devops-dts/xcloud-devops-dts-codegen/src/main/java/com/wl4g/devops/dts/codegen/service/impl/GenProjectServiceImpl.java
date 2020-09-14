@@ -25,9 +25,9 @@ public class GenProjectServiceImpl implements GenProjectService {
     private GenProjectDao genProjectDao;
 
     @Override
-    public PageModel page(PageModel pm, String name) {
+    public PageModel page(PageModel pm, String projectName) {
         pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-        pm.setRecords(genProjectDao.list(name));
+        pm.setRecords(genProjectDao.list(projectName));
         return pm;
     }
 

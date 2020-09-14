@@ -36,9 +36,11 @@ public class GenTable extends BaseBean {
 
 	private Integer databaseId;
 
+	private Integer projectId;
+
 	private String tableName;
 
-	private String className;
+	private String className;//TODO entityName
 
 	private String comments;
 

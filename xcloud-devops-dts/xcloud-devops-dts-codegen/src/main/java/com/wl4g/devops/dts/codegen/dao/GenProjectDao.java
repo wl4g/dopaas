@@ -19,5 +19,5 @@ public interface GenProjectDao {
 
     int updateByPrimaryKey(GenProject record);
 
-    List<GenDataSource> list(@Param("name") String name);
+    List<GenDataSource> list(@Param("projectName") String projectName);
 }

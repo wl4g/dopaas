@@ -33,9 +33,8 @@ public interface GeneratorProvider extends Runnable {
 	 */
 	public static interface GenProviderAlias {
 
-		public static final String MAPPER = "mapperGenProvider";
-		public static final String MVC = "mvcGenProvider";
-
+		public static final String MVN_SPINGCLOUD = "mvnSpringCloudGenProvider";
+		public static final String GO_STANDARD = "goStandardGenProvider";
 		public static final String VUEJS = "vueGenProvider";
 		public static final String AGJS = "agGenProvider";
 

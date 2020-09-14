@@ -135,9 +135,9 @@ public class GenerateServiceImpl implements GenerateService {
 	}
 
 	@Override
-	public PageModel page(PageModel pm, String tableName) {
+	public PageModel page(PageModel pm, String tableName,Integer projectId) {
 		pm.page(PageHelper.startPage(pm.getPageNum(), pm.getPageSize(), true));
-		pm.setRecords(genTableDao.list(tableName));
+		pm.setRecords(genTableDao.list(tableName,projectId));
 		return pm;
 	}
 

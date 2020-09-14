@@ -39,7 +39,7 @@ public interface GenerateService {
 	 */
 	GenTable loadMetadata(Integer databaseId, String tableName);
 
-	PageModel page(PageModel pm, String tableName);
+	PageModel page(PageModel pm, String tableName, Integer projectId);
 
 	GenTable detail(Integer tableId);
 
