@@ -27,23 +27,22 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
 public class GenericParameter extends AbstractParameter {
 	private static final long serialVersionUID = -608968076331460509L;
 
-	private Integer tableId;
+	private Integer projectId;
 
 	public GenericParameter() {
 		super();
 	}
 
-	public GenericParameter(Integer tableId) {
-		notNullOf(tableId, "tableId");
-		this.tableId = tableId;
+	public GenericParameter(Integer projectId) {
+		notNullOf(projectId, "projectId");
+		this.projectId = projectId;
 	}
 
-	public Integer getTableId() {
-		return tableId;
+	public Integer getProjectId() {
+		return projectId;
 	}
 
-	public void setTableId(Integer tableId) {
-		this.tableId = tableId;
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
 	}
-
 }

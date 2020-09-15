@@ -16,9 +16,6 @@
 package com.wl4g.devops.dts.codegen.engine;
 
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
-import freemarker.template.TemplateException;
-
-import java.io.IOException;
 
 /**
  * SpringMVC service, serviceImpl and controller generator.
@@ -36,10 +33,9 @@ public class SpringMvcGeneratorProvider extends BasedBackendGeneratorProvider {
 	@Override
 	public void run() {
 		try {
-			genFileToLoacl("Service.ftl", "service", "Service.java");
-			genFileToLoacl("ServiceImpl.ftl", "service/impl", "ServiceImpl.java");
-			genFileToLoacl("Controller.ftl", "web", "Controller.java");
-		} catch (IOException | TemplateException e) {
+			genFileToLoacl("mvnSpringCloudGenTemplate");
+
+		} catch (Exception e) {
 			log.error("gen fail", e);
 		}
 

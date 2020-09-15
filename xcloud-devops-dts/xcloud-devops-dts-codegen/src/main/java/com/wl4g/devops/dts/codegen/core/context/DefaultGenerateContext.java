@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.core.context;
 
+import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 
@@ -36,14 +37,14 @@ public class DefaultGenerateContext implements GenerateContext {
     /**
      * {@link GenTable}
      */
-    private final GenTable genTable;
+    private final GenProject genProject;
 
     private final File jobDir;
 
-    public DefaultGenerateContext(CodegenProperties config, GenTable genTable) {
+    public DefaultGenerateContext(CodegenProperties config, GenProject genProject) {
         this.config = notNullOf(config, "config");
-        this.genTable = notNullOf(genTable, "genTable");
-        this.jobDir = config.getJobDir(genTable.getId());
+        this.genProject = notNullOf(genProject, "genProject");
+        this.jobDir = config.getJobDir(genProject.getId());
     }
 
 	@Override
@@ -52,8 +53,8 @@ public class DefaultGenerateContext implements GenerateContext {
 	}
 
 	@Override
-    public GenTable getGenTable() {
-        return genTable;
+    public GenProject getGenProject() {
+        return genProject;
     }
 
 	@Override

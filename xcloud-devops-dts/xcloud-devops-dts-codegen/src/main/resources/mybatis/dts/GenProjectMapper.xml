@@ -4,6 +4,8 @@
   <resultMap id="BaseResultMap" type="com.wl4g.devops.dts.codegen.bean.GenProject" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="package_name" property="packageName" jdbcType="VARCHAR" />
     <result column="version" property="version" jdbcType="VARCHAR" />
     <result column="author" property="author" jdbcType="VARCHAR" />
     <result column="since" property="since" jdbcType="VARCHAR" />
@@ -16,7 +18,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, project_name, version, author, since, copyright, remark, del_flag, create_date, 
+    id, project_name, company_name, package_name, version, author, since, copyright, remark, del_flag, create_date,
     create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -30,12 +32,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenProject" >
-    insert into dts_gen_project (id, project_name, version, 
+    insert into dts_gen_project (id, project_name, company_name, package_name, version,
       author, since, copyright, 
       remark, del_flag, create_date, 
       create_by, update_date, update_by
       )
-    values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
       #{author,jdbcType=VARCHAR}, #{since,jdbcType=VARCHAR}, #{copyright,jdbcType=VARCHAR}, 
       #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
@@ -49,6 +51,12 @@
       </if>
       <if test="projectName != null" >
         project_name,
+      </if>
+      <if test="companyName != null" >
+        company_name,
+      </if>
+      <if test="packageName != null" >
+        package_name,
       </if>
       <if test="version != null" >
         version,
@@ -88,6 +96,12 @@
       <if test="projectName != null" >
         #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="companyName != null" >
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="packageName != null" >
+        #{packageName,jdbcType=VARCHAR},
+      </if>
       <if test="version != null" >
         #{version,jdbcType=VARCHAR},
       </if>
@@ -126,6 +140,12 @@
       <if test="projectName != null" >
         project_name = #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="companyName != null" >
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="packageName != null" >
+        package_name = #{packageName,jdbcType=VARCHAR},
+      </if>
       <if test="version != null" >
         version = #{version,jdbcType=VARCHAR},
       </if>
@@ -162,6 +182,8 @@
   <update id="updateByPrimaryKey" parameterType="com.wl4g.devops.dts.codegen.bean.GenProject" >
     update dts_gen_project
     set project_name = #{projectName,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      package_name = #{packageName,jdbcType=VARCHAR},
       version = #{version,jdbcType=VARCHAR},
       author = #{author,jdbcType=VARCHAR},
       since = #{since,jdbcType=VARCHAR},

@@ -39,6 +39,12 @@
     from dts_gen_table
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByProjectId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from dts_gen_table
+    where project_id = #{id,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from dts_gen_table
     where id = #{id,jdbcType=INTEGER}

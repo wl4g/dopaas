@@ -16,12 +16,14 @@
 package com.wl4g.devops.dts.codegen.core;
 
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
+import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.bean.GenTableColumn;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 import com.wl4g.devops.dts.codegen.core.context.DefaultGenerateContext;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.core.param.GenericParameter;
+import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.GeneratorProvider;
@@ -51,6 +53,9 @@ public class DefaultGenerateManager implements GenerateManager {
 	protected GenTableDao genTableDao;
 
 	@Autowired
+	protected GenProjectDao genProjectDao;
+
+	@Autowired
 	protected GenTableColumnDao genColumnDao;
 
 	public DefaultGenerateManager(NamingPrototypeBeanFactory beanFactory) {
@@ -61,12 +66,18 @@ public class DefaultGenerateManager implements GenerateManager {
 	@Override
 	public void execute(GenericParameter param) {
 		// Gets generate configuration.
-		GenTable genTable = genTableDao.selectByPrimaryKey(param.getTableId());
-		List<GenTableColumn> genColumns = genColumnDao.selectByTableId(param.getTableId());
-		genTable.setGenTableColumns(genColumns);
+
+		GenProject genProject = genProjectDao.selectByPrimaryKey(param.getProjectId());
+
+		List<GenTable> genTables = genTableDao.selectByProjectId(param.getProjectId());
+		for(GenTable genTable : genTables){
+			List<GenTableColumn> genColumns = genColumnDao.selectByTableId(genTable.getId());
+			genTable.setGenTableColumns(genColumns);
+		}
+		genProject.setGenTables(genTables);
 
 		// New context.
-		GenerateContext context = new DefaultGenerateContext(config, genTable);
+		GenerateContext context = new DefaultGenerateContext(config, genProject);
 		// TODO ...
 
 		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderAlias.MVN_SPINGCLOUD, context);

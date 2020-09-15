@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.core.context;
 
+import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.config.CodegenProperties;
 
@@ -40,7 +41,7 @@ public interface GenerateContext {
 	 * 
 	 * @return
 	 */
-	GenTable getGenTable();
+	GenProject getGenProject();
 
 	/**
 	 * Gets {@link File}
