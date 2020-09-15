@@ -15,8 +15,6 @@
  */
 package com.wl4g.devops.dts.codegen.bean;
 
-import com.wl4g.components.core.bean.BaseBean;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,7 +29,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class GenTable extends BaseBean {
+public class GenTable extends GenProject {
 	private static final long serialVersionUID = 6815608076300843748L;
 
 	private Integer databaseId;

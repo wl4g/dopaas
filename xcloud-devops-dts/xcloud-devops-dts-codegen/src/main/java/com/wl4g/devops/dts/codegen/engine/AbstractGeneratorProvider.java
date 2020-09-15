@@ -15,15 +15,12 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
-import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.components.common.log.SmartLogger;
-import com.wl4g.devops.dts.codegen.bean.GenTable;
+import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.utils.FreemarkerUtils2;
-import freemarker.template.TemplateException;
+import com.wl4g.devops.dts.codegen.utils.GenCodeUtils;
 
 import java.io.File;
-import java.io.IOException;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
@@ -52,12 +49,15 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 		// TODO Auto-generated method stub
 	}
 
-	void genFileToLoacl(String templateName, String pathName) throws IOException, TemplateException {
-		GenTable genTable = context.getGenTable();
-		String gen = FreemarkerUtils2.gen(templateName, genTable);
+	void genFileToLoacl(String templateName) throws Exception {
+		GenProject genProject = context.getGenProject();
+
 		File jobDir = context.getJobDir();
-		File file = new File(jobDir, pathName);
-		FileIOUtils.writeFile(file, gen, false);
+
+		//TODO
+		String genPath = "/Users/vjay/git/xcloud-devops/xcloud-devops-dts/xcloud-devops-dts-codegen/src/main/resources/ftl/"+templateName;
+		GenCodeUtils.genCode(genPath, genProject, jobDir.getAbsolutePath());
+
 	}
 
 }

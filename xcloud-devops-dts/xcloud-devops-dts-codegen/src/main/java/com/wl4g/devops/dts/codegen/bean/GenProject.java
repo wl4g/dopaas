@@ -2,10 +2,16 @@ package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
 
+import java.util.List;
+
 public class GenProject extends BaseBean {
     private static final long serialVersionUID = 6815608076300843748L;
 
     private String projectName;
+
+    private String companyName;
+
+    private String packageName;
 
     private String version;
 
@@ -15,12 +21,22 @@ public class GenProject extends BaseBean {
 
     private String copyright;
 
+    private List<GenTable> genTables;
+
     public String getProjectName() {
         return projectName;
     }
 
     public void setProjectName(String projectName) {
         this.projectName = projectName == null ? null : projectName.trim();
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getVersion() {
@@ -55,4 +71,19 @@ public class GenProject extends BaseBean {
         this.copyright = copyright == null ? null : copyright.trim();
     }
 
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public List<GenTable> getGenTables() {
+        return genTables;
+    }
+
+    public void setGenTables(List<GenTable> genTables) {
+        this.genTables = genTables;
+    }
 }

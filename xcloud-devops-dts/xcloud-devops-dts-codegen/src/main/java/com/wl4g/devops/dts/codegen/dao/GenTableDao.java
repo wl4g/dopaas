@@ -31,6 +31,8 @@ public interface GenTableDao {
 
 	GenTable selectByPrimaryKey(Integer id);
 
+	List<GenTable> selectByProjectId(Integer projectId);
+
 	int updateByPrimaryKeySelective(GenTable record);
 
 	int updateByPrimaryKey(GenTable record);
