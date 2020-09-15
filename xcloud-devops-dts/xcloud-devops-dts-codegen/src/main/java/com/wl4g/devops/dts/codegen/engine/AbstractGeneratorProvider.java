@@ -40,8 +40,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 	protected final GenerateContext context;
 
 	public AbstractGeneratorProvider(GenerateContext context) {
-		notNullOf(context, "context");
-		this.context = context;
+		this.context = notNullOf(context, "context");
 	}
 
 	@Override
@@ -54,8 +53,9 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
 		File jobDir = context.getJobDir();
 
-		//TODO
-		String genPath = "/Users/vjay/git/xcloud-devops/xcloud-devops-dts/xcloud-devops-dts-codegen/src/main/resources/ftl/"+templateName;
+		// TODO
+		String genPath = "/Users/vjay/git/xcloud-devops/xcloud-devops-dts/xcloud-devops-dts-codegen/src/main/resources/ftl/"
+				+ templateName;
 		GenCodeUtils.genCode(genPath, genProject, jobDir.getAbsolutePath());
 
 	}

@@ -20,6 +20,7 @@ import static org.springframework.ui.freemarker.FreeMarkerTemplateUtils.processT
  * @author vjay
  * @date 2020-09-15 15:36:00
  */
+@Deprecated
 public class GenCodeUtils {
 
     final private static String tplSuffix = ".tpl";
