@@ -32,6 +32,7 @@ public interface GenerateContext {
 
 	/**
 	 * Gets {@link CodegenProperties}
+	 * 
 	 * @return
 	 */
 	CodegenProperties getConfig();
@@ -45,7 +46,9 @@ public interface GenerateContext {
 
 	/**
 	 * Gets {@link File}
+	 * 
 	 * @return
 	 */
 	File getJobDir();
+
 }
