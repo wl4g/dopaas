@@ -11,15 +11,15 @@ import static com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAl
  */
 public enum GenCategory {
 
-    JUST_DAO(new String[]{MAPPER}),
+    JUST_DAO(new String[]{MVN_SPINGCLOUD}),
 
     JUST_VUEJS(new String[]{VUEJS}),
 
     JUST_AGJS(new String[]{AGJS}),
 
-    DAO_SERVICE_CONTRELLER(new String[]{MAPPER, MVN_SPINGCLOUD}),
+    DAO_SERVICE_CONTRELLER(new String[]{MVN_SPINGCLOUD, MVN_SPINGCLOUD}),
 
-    DAO_SERVICE_CONTRELLER_VUE(new String[]{MAPPER, MVN_SPINGCLOUD, VUEJS});
+    DAO_SERVICE_CONTRELLER_VUE(new String[]{MVN_SPINGCLOUD, MVN_SPINGCLOUD, VUEJS});
 
     private final String[] providers;
 
