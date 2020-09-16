@@ -26,14 +26,16 @@ import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
  */
 public class SpringCloudMvnGeneratorProvider extends AbstractGeneratorProvider {
 
-	public SpringCloudMvnGeneratorProvider(GenerateContext context) {
+	final private static String PROVIDER_NAME = "mvnSpringCloudGenTpl";
+
+	public SpringMvcGeneratorProvider(GenerateContext context) {
 		super(context);
 	}
 
 	@Override
 	public void run() {
 		try {
-			genFileToLoacl("mvnSpringCloudGenTemplate");
+			genFileToLoacl(PROVIDER_NAME);
 		} catch (Exception e) {
 			log.error("gen fail", e);
 		}
