@@ -12,6 +12,7 @@
     <result column="since" property="since" jdbcType="VARCHAR" />
     <result column="copyright" property="copyright" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="provider_config_options" property="providerConfigOptions" jdbcType="VARCHAR" />
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
@@ -19,7 +20,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, project_name, company_name, tpl_category, package_name, version, author, since, copyright, remark, del_flag, create_date,
+    id, project_name, company_name, tpl_category, package_name, version, author, since, copyright, remark, provider_config_options, del_flag, create_date,
     create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -35,13 +36,13 @@
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenProject" >
     insert into dts_gen_project (id, project_name, company_name, tpl_category, package_name, version,
       author, since, copyright, 
-      remark, del_flag, create_date, 
+      remark, provider_config_options, del_flag, create_date,
       create_by, update_date, update_by
       )
     values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR},
       #{tplCategory,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
       #{author,jdbcType=VARCHAR}, #{since,jdbcType=VARCHAR}, #{copyright,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{remark,jdbcType=VARCHAR}, #{providerConfigOptions,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
       )
   </insert>
@@ -77,6 +78,9 @@
       </if>
       <if test="remark != null" >
         remark,
+      </if>
+      <if test="providerConfigOptions != null" >
+        provider_config_options,
       </if>
       <if test="delFlag != null" >
         del_flag,
@@ -125,6 +129,9 @@
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="providerConfigOptions != null" >
+        #{providerConfigOptions,jdbcType=VARCHAR},
+      </if>
       <if test="delFlag != null" >
         #{delFlag,jdbcType=INTEGER},
       </if>
@@ -172,6 +179,9 @@
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="providerConfigOptions != null" >
+        provider_config_options = #{providerConfigOptions,jdbcType=VARCHAR},
+      </if>
       <if test="delFlag != null" >
         del_flag = #{delFlag,jdbcType=INTEGER},
       </if>
@@ -201,6 +211,7 @@
       since = #{since,jdbcType=VARCHAR},
       copyright = #{copyright,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
+      provider_config_options = #{providerConfigOptions,jdbcType=VARCHAR},
       del_flag = #{delFlag,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
