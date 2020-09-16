@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.utils.naming;
 
-import com.wl4g.devops.dts.codegen.engine.naming.JavaNamingSpecs;
+import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 
 /**
  * {@link JavaNamingSpecsTests}
@@ -27,11 +27,11 @@ import com.wl4g.devops.dts.codegen.engine.naming.JavaNamingSpecs;
 public class JavaNamingSpecsTests {
 
 	public static void main(String[] args) {
-		System.out.println(JavaNamingSpecs.tableName2className("sys_user"));
-		System.out.println(JavaNamingSpecs.tableName2ClassName("sys_user"));
-		System.out.println(JavaNamingSpecs.underlineToHump("sys_user"));
-		System.out.println(JavaNamingSpecs.fistUpperCase("user"));
-		System.out.println(JavaNamingSpecs.fistLowerCase("USER"));
+		System.out.println(JavaSpecs.tableName2className("sys_user"));
+		System.out.println(JavaSpecs.tableName2ClassName("sys_user"));
+		System.out.println(JavaSpecs.underlineToHump("sys_user"));
+		System.out.println(JavaSpecs.fistUCase("user"));
+		System.out.println(JavaSpecs.fistLCase("USER"));
 	}
 
 }

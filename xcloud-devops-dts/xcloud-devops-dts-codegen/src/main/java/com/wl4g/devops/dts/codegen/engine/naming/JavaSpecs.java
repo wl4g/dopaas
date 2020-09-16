@@ -19,22 +19,22 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.wl4g.components.common.annotation.Nullable;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static java.util.regex.Pattern.compile;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static java.lang.String.valueOf;
 import static java.lang.ThreadLocal.withInitial;
 
 /**
- * {@link JavaNamingSpecs}
+ * Java naming specification {@link JavaSpecs}
  *
  * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
  * @author vjay
  * @version v1.0 2020-09-09
  * @since
  */
-public abstract class JavaNamingSpecs {
+public abstract class JavaSpecs extends BaseSpecs {
 
 	/**
 	 * TableName to className
@@ -67,7 +67,7 @@ public abstract class JavaNamingSpecs {
 		int i = tableName.indexOf("_");
 		if (i >= 0) {
 			String sub = tableName.substring(i + 1, tableName.length());
-			return fistUpperCase(underlineToHump(sub));
+			return fistUCase(underlineToHump(sub));
 		}
 		return tableName;
 	}
@@ -90,31 +90,16 @@ public abstract class JavaNamingSpecs {
 	}
 
 	/**
-	 * Gets the string that converts the first letter to uppercase
+	 * Class package name to os path.
+	 * 
+	 * @param str
+	 * @return
 	 */
-	public static String fistUpperCase(@Nullable String str) {
+	public static String pkgToPath(@Nullable String str) {
 		if (isBlank(str)) {
 			return str;
 		}
-		char[] cs = str.toCharArray();
-		cs[0] -= 32;
-		return valueOf(cs);
-	}
-
-	/**
-	 * Gets the string that converts the first letter to lowercase
-	 */
-	public static String fistLowerCase(@Nullable String str) {
-		if (isBlank(str)) {
-			return str;
-		}
-		char[] cs = str.toCharArray();
-		cs[0] += 32;
-		return valueOf(cs);
-	}
-
-	public static String packageToPath(@Nullable String str){
-		return str.replaceAll("\\.","/");
+		return str.replaceAll("\\.", File.separator);
 	}
 
 	/** Underline {@link Pattern} */
