@@ -28,7 +28,7 @@ public class SpringCloudMvnGeneratorProvider extends AbstractGeneratorProvider {
 
 	final private static String PROVIDER_NAME = "mvnSpringCloudGenTpl";
 
-	public SpringMvcGeneratorProvider(GenerateContext context) {
+	public SpringCloudMvnGeneratorProvider(GenerateContext context) {
 		super(context);
 	}
 

@@ -15,7 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.core;
 
-import com.oracle.tools.packager.Log;
+import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.log.SmartLoggerFactory.getLogger;
 
 /**
  * {@link DefaultGenerateManager}
@@ -43,6 +44,8 @@ import static com.wl4g.components.common.lang.Assert2.notNullOf;
  * @since
  */
 public class DefaultGenerateManager implements GenerateManager {
+
+	protected final SmartLogger log = getLogger(getClass());
 
 	@Autowired
 	protected CodegenProperties config;
@@ -71,7 +74,7 @@ public class DefaultGenerateManager implements GenerateManager {
 		GenProject genProject = genProjectDao.selectByPrimaryKey(param.getProjectId());
 
 		List<GenTable> genTables = genTableDao.selectByProjectId(param.getProjectId());
-		for(GenTable genTable : genTables){
+		for (GenTable genTable : genTables) {
 			List<GenTableColumn> genColumns = genColumnDao.selectByTableId(genTable.getId());
 			genTable.setGenTableColumns(genColumns);
 		}
@@ -84,7 +87,7 @@ public class DefaultGenerateManager implements GenerateManager {
 		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderAlias.SPINGCLOUD_MVN, context);
 		provider.run();
 
-		Log.info("generate code success");
+		log.info("generate code success");
 		// TODO package return
 
 	}
