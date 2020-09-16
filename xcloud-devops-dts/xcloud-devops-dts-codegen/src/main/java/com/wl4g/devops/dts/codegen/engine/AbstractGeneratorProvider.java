@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
+import com.wl4g.components.common.io.ByteStreamUtils;
 import com.wl4g.components.common.io.FileIOUtils;
 import com.wl4g.components.common.log.SmartLogger;
 import com.wl4g.components.common.resource.StreamResource;
@@ -73,8 +74,14 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
     @Override
     public void run() {
-        // TODO Auto-generated method stub
+        try {
+            doRun();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
+
+    protected abstract void doRun() throws Exception;
 
     void genFileToLoacl(String provider) throws Exception {
         GenProject genProject = context.getGenProject();
@@ -93,9 +100,12 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
         if (null == templateFiles) {
             templateFiles = new ArrayList<>();
             ClassPathResourcePatternResolver resolver = new ClassPathResourcePatternResolver();
-            Set<StreamResource> resources = resolver.getResources("classpath:/" + BASEPATH + "/" + provider + "/**/*.*");
+            Set<StreamResource> resources = resolver.getResources("classpath:/" + BASEPATH + "/" + provider + "/**/*.ftl");
             for (StreamResource res : resources) {
-                res.getURI();
+                //TODO
+                /*if(res.getFile().isDirectory()){
+                    break;
+                }*/
                 TemplateFile templateFile = wrapTemplateFile(res, provider);
                 templateFiles.add(templateFile);
             }
@@ -115,18 +125,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
         templateFile.setRelativePath(path);
         templateFile.setFileName(res.getFilename());
         templateFile.setTpl(isTpl(res.getFilename()));
-        templateFile.setFileContent(inputstream2Str(res.getInputStream()));
+        templateFile.setFileContent(ByteStreamUtils.readFullyToString(res.getInputStream()));
         return templateFile;
-    }
-
-    private static String inputstream2Str(InputStream inputStream) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        String line;
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-        while ((line = br.readLine()) != null) {
-            sb.append(line);
-        }
-        return sb.toString();
     }
 
     private static boolean isTpl(String fileName) {

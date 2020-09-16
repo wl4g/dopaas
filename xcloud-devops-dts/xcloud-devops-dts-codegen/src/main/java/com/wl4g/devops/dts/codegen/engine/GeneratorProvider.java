@@ -15,22 +15,17 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.wl4g.components.common.annotation.Nullable;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import com.wl4g.components.common.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.isTrue;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.components.common.lang.Assert2.notNull;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
 import static com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias.*;
 import static java.util.Arrays.asList;
@@ -89,7 +84,8 @@ public interface GeneratorProvider extends Runnable {
 	public static enum ExtraOptionSupport {
 
 		SpringCloudMvnOption(SPINGCLOUD_MVN,
-				new ExtraOption("codegen.provider.springcloudmvn.build-assets-type", "MvnAssTar", "SpringExecJar"));
+				new ExtraOption("codegen.provider.springcloudmvn.build-assets-type", "MvnAssTar", "SpringExecJar"),
+				new ExtraOption("codegen.provider.springcloudmvn.build-assets-classify", "a", "b"));
 
 		/** {@link GeneratorProvider} alias. */
 		private final String provider;

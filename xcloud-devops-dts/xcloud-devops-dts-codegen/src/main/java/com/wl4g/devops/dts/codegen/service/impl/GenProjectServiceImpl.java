@@ -5,10 +5,14 @@ import com.wl4g.components.core.bean.BaseBean;
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.dao.GenProjectDao;
+import com.wl4g.devops.dts.codegen.engine.GeneratorProvider;
 import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 import static java.util.Objects.isNull;
 
@@ -60,5 +64,12 @@ public class GenProjectServiceImpl implements GenProjectService {
         genProject.setId(id);
         genProject.setDelFlag(BaseBean.DEL_FLAG_DELETE);
         genProjectDao.updateByPrimaryKeySelective(genProject);
+    }
+
+    @Override
+    public List<GeneratorProvider.ExtraOptionSupport> getProviderConfig(String genProviderGroup) {
+        List<String> providers = GeneratorProvider.GenProviderGroup.getProviders(genProviderGroup);
+        //TODO
+        return CollectionUtils.arrayToList(GeneratorProvider.ExtraOptionSupport.values());
     }
 }
