@@ -88,7 +88,6 @@ public class DefaultGenerateManager implements GenerateManager {
 		provider.run();
 
 		log.info("generate code success");
-		// TODO package return
 
 	}
 
