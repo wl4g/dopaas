@@ -29,6 +29,7 @@ import com.wl4g.devops.dts.codegen.dao.GenTableColumnDao;
 import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.GeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias;
+import com.wl4g.devops.dts.codegen.service.GenProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -62,6 +63,9 @@ public class DefaultGenerateManager implements GenerateManager {
 	@Autowired
 	protected GenTableColumnDao genColumnDao;
 
+	@Autowired
+	protected GenProjectService genProjectService;
+
 	public DefaultGenerateManager(NamingPrototypeBeanFactory beanFactory) {
 		notNullOf(beanFactory, "beanFactory");
 		this.beanFactory = beanFactory;
@@ -71,7 +75,7 @@ public class DefaultGenerateManager implements GenerateManager {
 	public void execute(GenericParameter param) {
 		// Gets generate configuration.
 
-		GenProject genProject = genProjectDao.selectByPrimaryKey(param.getProjectId());
+		GenProject genProject = genProjectService.detail(param.getProjectId());
 
 		List<GenTable> genTables = genTableDao.selectByProjectId(param.getProjectId());
 		for (GenTable genTable : genTables) {
