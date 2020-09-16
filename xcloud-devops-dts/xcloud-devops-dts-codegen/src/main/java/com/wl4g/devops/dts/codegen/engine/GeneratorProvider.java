@@ -15,7 +15,11 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
+import static com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias.*;
 
 /**
  * {@link GeneratorProvider}
@@ -40,6 +44,48 @@ public interface GeneratorProvider extends Runnable {
 
 		/** List of field values of class {@link GenProviderAlias}. */
 		public static final String[] VALUES = getFieldValues(GenProviderAlias.class, "VALUES").toArray(new String[] {});
+
+	}
+
+	public static enum GenCategory {
+
+		JUST_DAO(new String[]{MVN_SPINGCLOUD}),
+
+		JUST_VUEJS(new String[]{VUEJS}),
+
+		JUST_AGJS(new String[]{AGJS}),
+
+		DAO_SERVICE_CONTRELLER(new String[]{MVN_SPINGCLOUD, MVN_SPINGCLOUD}),
+
+		DAO_SERVICE_CONTRELLER_VUE(new String[]{MVN_SPINGCLOUD, MVN_SPINGCLOUD, VUEJS});
+
+		private final String[] providers;
+
+		GenCategory(String[] providers) {
+			this.providers = providers;
+		}
+
+		public String[] getProviders() {
+			return providers;
+		}
+
+		public static String[] getProvidersByTplCategory(String tplCategory) {
+			for (GenCategory anEnum : values()) {
+				if (anEnum.name().equals(tplCategory)) {
+					return anEnum.getProviders();
+				}
+			}
+			return null;
+		}
+
+		public static List<String> getAllTplCategory() {
+			List<String> list = new ArrayList<String>();
+			GenCategory[] enums = GenCategory.values();
+			for (int i = 0; i < enums.length; i++) {
+				list.add(enums[i].name());
+			}
+			return list;
+		}
 
 	}
 

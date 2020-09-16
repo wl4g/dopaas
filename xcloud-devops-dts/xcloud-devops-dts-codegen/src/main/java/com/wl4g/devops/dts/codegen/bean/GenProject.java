@@ -11,6 +11,8 @@ public class GenProject extends BaseBean {
 
     private String companyName;
 
+    private String tplCategory;
+
     private String packageName;
 
     private String version;
@@ -73,6 +75,14 @@ public class GenProject extends BaseBean {
 
     public String getPackageName() {
         return packageName;
+    }
+
+    public String getTplCategory() {
+        return tplCategory;
+    }
+
+    public void setTplCategory(String tplCategory) {
+        this.tplCategory = tplCategory;
     }
 
     public void setPackageName(String packageName) {
