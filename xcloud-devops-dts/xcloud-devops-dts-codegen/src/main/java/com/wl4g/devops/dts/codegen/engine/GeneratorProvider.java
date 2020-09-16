@@ -16,6 +16,7 @@
 package com.wl4g.devops.dts.codegen.engine;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -29,11 +30,11 @@ import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
 import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.components.common.lang.Assert2.notNull;
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
 import static com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias.*;
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -78,7 +79,7 @@ public interface GeneratorProvider extends Runnable {
 	}
 
 	/**
-	 * An extensible configuration item {@link ExtraOptionSupport} which is
+	 * An extensible configuration item {@link ExtraConfigSupport} which is
 	 * supported by itself, If NULL is returned, there is no extensible
 	 * configuration item.
 	 *
@@ -86,105 +87,161 @@ public interface GeneratorProvider extends Runnable {
 	 * @version v1.0 2020-09-16
 	 * @since
 	 */
-	public static enum ExtraOptionSupport {
+	@SuppressWarnings("serial")
+	public static abstract class ExtraConfigSupport {
 
-		SpringCloudMvnOption(SPINGCLOUD_MVN,
-				new ExtraOption("codegen.provider.springcloudmvn.build-assets-type", "MvnAssTar", "SpringExecJar"));
-
-		/** {@link GeneratorProvider} alias. */
-		private final String provider;
-
-		/** {@link GeneratorProvider} configurable item list. */
-		private final List<ExtraOption> options;
-
-		private ExtraOptionSupport(@NotBlank String provider, @NotBlank ExtraOption... options) {
-			this.provider = hasTextOf(provider, "provider");
-			this.options = asList(notEmptyOf(options, "option"));
-		}
-
-		public String getProvider() {
-			return provider;
-		}
-
-		public final List<String> getOptionNames() {
-			return safeList(options).stream().map(o -> o.getOptionName()).collect(toList());
-		}
-
-		public final List<String> getOptionValues(@NotBlank String name) {
-			hasTextOf(name, "name");
-			return safeList(options).stream().filter(o -> o.getOptionName().equals(name))
-					.flatMap(o -> o.getOptionValues().stream()).collect(toList());
-		}
-
-		/**
-		 * Safe parsing of provider.
-		 * 
-		 * @param provider
-		 * @return
-		 */
-		public static ExtraOptionSupport safeOfProvider(@NotNull String provider) {
-			hasTextOf(provider, "provider");
-			for (ExtraOptionSupport define : values()) {
-				if (isBlank(provider) || define.name().equals(provider)) {
-					return define;
-				}
+		/** {@link ConfigOption} register. */
+		private static final List<ConfigOption> extraOptionsRegistry = unmodifiableList(new LinkedList<ConfigOption>() {
+			{
+				add(new ConfigOption(SPINGCLOUD_MVN, "codegen.provider.springcloudmvn.build-assets-type", "MvnAssTar",
+						"SpringExecJar"));
 			}
-			return null;
+		});
+
+		private ExtraConfigSupport() {
+			extraOptionsRegistry.forEach(o -> o.validate());
 		}
 
 		/**
-		 * Parsing of provider.
+		 * Gets {@link ConfigOption} by provider.
 		 * 
 		 * @param provider
 		 * @return
 		 */
-		public static ExtraOptionSupport ofProvider(@NotNull String provider) {
-			ExtraOptionSupport define = safeOfProvider(provider);
-			notNull(define, IllegalArgumentException.class, "No such extra config define of provider '%s'", provider);
-			return define;
+		public static List<ConfigOption> getOptions(@Nullable String provider) {
+			return extraOptionsRegistry.stream().filter(o -> (isBlank(provider) || provider.equals(o.getName())))
+					.collect(toList());
 		}
 
 		/**
-		 * Check {@link ExtraOptionSupport} {@link ExtraOption} name and values
-		 * invalid?
+		 * Check {@link ConfigOption} name and values invalid?
 		 * 
 		 * @param option
 		 */
-		public static void checkOption(@NotBlank String provider, @NotNull ExtraOption option) {
-			notNullOf(option, "option");
-			hasTextOf(option.getOptionName(), "optionName");
-			notEmptyOf(option.getOptionValues(), "optionValues");
-			// Parse of provider
-			ExtraOptionSupport define = ofProvider(provider);
-			isTrue(define.getOptionNames().contains(option), "Invalid option '%s' of provider '%s'", option, provider);
+		public static void checkOption(@NotBlank String provider, @NotBlank String name, @NotBlank String value) {
+			hasTextOf(provider, "provider");
+			hasTextOf(name, "name");
+			hasTextOf(value, "value");
+
+			// Validate option name & values.
+			List<ConfigOption> options = safeList(getOptions(provider));
+			isTrue(options.stream().filter(o -> o.getName().equals(name)).count() > 0,
+					"Invalid option name: '%s' of provider: '%s'", name, provider);
+			isTrue(options.stream().filter(o -> o.getValues().contains(value)).count() > 0,
+					"Invalid option name: '%s', value: '%s' of provider: '%s'", name, value, provider);
 		}
 
 		/**
-		 * {@link ExtraOption}
+		 * {@link ConfigOption}
 		 *
 		 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 		 * @version v1.0 2020-09-16
 		 * @since
 		 */
-		public static final class ExtraOption {
+		public static final class ConfigOption {
+
+			/** {@link GeneratorProvider} alias. */
+			@NotBlank
+			private String provider;
 
 			/** Gen provider extra configuration option name. */
-			private final String name;
+			@NotBlank
+			private String name;
 
 			/** Gen provider extra configuration option values. */
-			private final List<String> values;
+			@NotEmpty
+			private List<String> values;
 
-			public ExtraOption(@NotBlank String name, @NotEmpty String... values) {
-				this.name = hasTextOf(name, "name");
-				this.values = asList(notEmptyOf(values, "values"));
+			public ConfigOption() {
+				super();
 			}
 
-			public final String getOptionName() {
+			public ConfigOption(@NotBlank String provider, @NotBlank String name, @NotEmpty String... values) {
+				this(provider, name, asList(notEmptyOf(values, "values")));
+			}
+
+			public ConfigOption(@NotBlank String provider, @NotBlank String name, @NotEmpty List<String> values) {
+				setProvider(provider);
+				setName(name);
+				setValues(values);
+			}
+
+			/**
+			 * Gets extra option of gen provider.
+			 * 
+			 * @return
+			 */
+			public String getProvider() {
+				return provider;
+			}
+
+			/**
+			 * Sets extra option of gen provider.
+			 * 
+			 * @param provider
+			 */
+			public void setProvider(String provider) {
+				this.provider = hasTextOf(provider, "provider");
+			}
+
+			/**
+			 * Gets extra option name.
+			 * 
+			 * @return
+			 */
+			public final String getName() {
 				return name;
 			}
 
-			public final List<String> getOptionValues() {
+			/**
+			 * Sets extra option name.
+			 * 
+			 * @param name
+			 */
+			public void setName(String name) {
+				this.name = hasTextOf(name, "name");
+			}
+
+			/**
+			 * Gets extra option values.
+			 * 
+			 * @return
+			 */
+			public final List<String> getValues() {
 				return values;
+			}
+
+			/**
+			 * Sets extra option values.
+			 * 
+			 * @param values
+			 */
+			public void setValues(List<String> values) {
+				this.values = notEmptyOf(values, "values");
+			}
+
+			/**
+			 * Validation for itself attributes.
+			 * 
+			 * @return
+			 */
+			public final ConfigOption validate() {
+				hasTextOf(provider, "provider");
+				hasTextOf(name, "name");
+				notEmptyOf(values, "values");
+				return this;
+			}
+
+			/**
+			 * Validation for attributes.
+			 * 
+			 * @param option
+			 */
+			public static void validate(@NotNull ConfigOption option) {
+				notNullOf(option, "option");
+				hasTextOf(option.provider, "provider");
+				hasTextOf(option.name, "name");
+				notEmptyOf(option.values, "values");
 			}
 
 		}
