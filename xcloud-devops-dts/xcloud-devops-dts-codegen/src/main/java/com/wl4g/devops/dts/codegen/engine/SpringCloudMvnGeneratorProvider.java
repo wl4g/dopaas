@@ -24,9 +24,9 @@ import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
  * @version v1.0 2020-09-07
  * @since
  */
-public class SpringMvcGeneratorProvider extends BasedBackendGeneratorProvider {
+public class SpringCloudMvnGeneratorProvider extends AbstractGeneratorProvider {
 
-	public SpringMvcGeneratorProvider(GenerateContext context) {
+	public SpringCloudMvnGeneratorProvider(GenerateContext context) {
 		super(context);
 	}
 
@@ -34,7 +34,6 @@ public class SpringMvcGeneratorProvider extends BasedBackendGeneratorProvider {
 	public void run() {
 		try {
 			genFileToLoacl("mvnSpringCloudGenTemplate");
-
 		} catch (Exception e) {
 			log.error("gen fail", e);
 		}

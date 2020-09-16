@@ -24,7 +24,7 @@ import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
  * @version v1.0 2020-09-07
  * @since
  */
-public class AngularJSGeneratorProvider extends BasedFrontGeneratorProvider {
+public class AngularJSGeneratorProvider extends AbstractGeneratorProvider {
 
 	public AngularJSGeneratorProvider(GenerateContext context) {
 		super(context);
