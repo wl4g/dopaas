@@ -13,4 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wl4g.devops.dts.codegen;
+package com.wl4g.devops.dts.codegen.web.model;
+
+import com.wl4g.devops.dts.codegen.engine.GeneratorProvider.ExtraConfigSupport.ConfigOption;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * {@link ConfigOptionModel}
+ *
+ * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com> vjay
+ * @version v1.0 2020-09-16
+ * @since
+ */
+@Getter
+@Setter
+public class ConfigOptionModel extends ConfigOption {
+
+	/**
+	 * Page Selected config option value.
+	 */
+	private String value;
+
+}

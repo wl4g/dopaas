@@ -5,14 +5,14 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="project_name" property="projectName" jdbcType="VARCHAR" />
     <result column="company_name" property="companyName" jdbcType="VARCHAR" />
-    <result column="tpl_category" property="tplCategory" jdbcType="VARCHAR" />
+    <result column="provider_group" property="providerGroup" jdbcType="VARCHAR" />
     <result column="package_name" property="packageName" jdbcType="VARCHAR" />
     <result column="version" property="version" jdbcType="VARCHAR" />
     <result column="author" property="author" jdbcType="VARCHAR" />
     <result column="since" property="since" jdbcType="VARCHAR" />
     <result column="copyright" property="copyright" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="provider_config_options" property="providerConfigOptions" jdbcType="VARCHAR" />
+    <result column="extra_config_options" property="extraConfigOptions" jdbcType="VARCHAR" />
     <result column="del_flag" property="delFlag" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="VARCHAR" />
@@ -20,7 +20,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, project_name, company_name, tpl_category, package_name, version, author, since, copyright, remark, provider_config_options, del_flag, create_date,
+    id, project_name, company_name, provider_group, package_name, version, author, since, copyright, remark, extra_config_options, del_flag, create_date,
     create_by, update_date, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -34,15 +34,15 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenProject" >
-    insert into dts_gen_project (id, project_name, company_name, tpl_category, package_name, version,
+    insert into dts_gen_project (id, project_name, company_name, provider_group, package_name, version,
       author, since, copyright, 
-      remark, provider_config_options, del_flag, create_date,
+      remark, extra_config_options, del_flag, create_date,
       create_by, update_date, update_by
       )
     values (#{id,jdbcType=INTEGER}, #{projectName,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR},
-      #{tplCategory,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
+      #{providerGroup,jdbcType=VARCHAR}, #{packageName,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
       #{author,jdbcType=VARCHAR}, #{since,jdbcType=VARCHAR}, #{copyright,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{providerConfigOptions,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
+      #{remark,jdbcType=VARCHAR}, #{extraConfigOptions,jdbcType=VARCHAR}, #{delFlag,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
       #{createBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}
       )
   </insert>
@@ -58,8 +58,8 @@
       <if test="companyName != null" >
         company_name,
       </if>
-      <if test="tplCategory != null" >
-        tpl_category,
+      <if test="providerGroup != null" >
+        provider_group,
       </if>
       <if test="packageName != null" >
         package_name,
@@ -79,8 +79,8 @@
       <if test="remark != null" >
         remark,
       </if>
-      <if test="providerConfigOptions != null" >
-        provider_config_options,
+      <if test="extraConfigOptions != null" >
+        extra_config_options,
       </if>
       <if test="delFlag != null" >
         del_flag,
@@ -108,8 +108,8 @@
       <if test="companyName != null" >
         #{companyName,jdbcType=VARCHAR},
       </if>
-      <if test="tplCategory != null" >
-        #{tplCategory,jdbcType=VARCHAR},
+      <if test="providerGroup != null" >
+        #{providerGroup,jdbcType=VARCHAR},
       </if>
       <if test="packageName != null" >
         #{packageName,jdbcType=VARCHAR},
@@ -129,8 +129,8 @@
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="providerConfigOptions != null" >
-        #{providerConfigOptions,jdbcType=VARCHAR},
+      <if test="extraConfigOptions != null" >
+        #{extraConfigOptions,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
         #{delFlag,jdbcType=INTEGER},
@@ -158,8 +158,8 @@
       <if test="companyName != null" >
         company_name = #{companyName,jdbcType=VARCHAR},
       </if>
-      <if test="tplCategory != null" >
-        tpl_category = #{tplCategory,jdbcType=VARCHAR},
+      <if test="providerGroup != null" >
+        provider_group = #{providerGroup,jdbcType=VARCHAR},
       </if>
       <if test="packageName != null" >
         package_name = #{packageName,jdbcType=VARCHAR},
@@ -179,8 +179,8 @@
       <if test="remark != null" >
         remark = #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="providerConfigOptions != null" >
-        provider_config_options = #{providerConfigOptions,jdbcType=VARCHAR},
+      <if test="extraConfigOptions != null" >
+        extra_config_options = #{extraConfigOptions,jdbcType=VARCHAR},
       </if>
       <if test="delFlag != null" >
         del_flag = #{delFlag,jdbcType=INTEGER},
@@ -204,19 +204,19 @@
     update dts_gen_project
     set project_name = #{projectName,jdbcType=VARCHAR},
       company_name = #{companyName,jdbcType=VARCHAR},
-      tpl_category = #{tplCategory,jdbcType=VARCHAR},
+      provider_group = #{providerGroup,jdbcType=VARCHAR},
       package_name = #{packageName,jdbcType=VARCHAR},
       version = #{version,jdbcType=VARCHAR},
       author = #{author,jdbcType=VARCHAR},
       since = #{since,jdbcType=VARCHAR},
       copyright = #{copyright,jdbcType=VARCHAR},
+      extra_config_options = #{extraConfigOptions,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
-      provider_config_options = #{providerConfigOptions,jdbcType=VARCHAR},
-      del_flag = #{delFlag,jdbcType=INTEGER},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
-      update_by = #{updateBy,jdbcType=VARCHAR}
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 

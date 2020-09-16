@@ -24,10 +24,10 @@ import com.wl4g.components.core.utils.expression.SpelExpressions;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
-import com.wl4g.devops.dts.codegen.engine.naming.CSharpNamingSpecs;
-import com.wl4g.devops.dts.codegen.engine.naming.GolangNamingSpecs;
-import com.wl4g.devops.dts.codegen.engine.naming.JavaNamingSpecs;
-import com.wl4g.devops.dts.codegen.engine.naming.PythonNamingSpecs;
+import com.wl4g.devops.dts.codegen.engine.naming.CSharpSpecs;
+import com.wl4g.devops.dts.codegen.engine.naming.GolangSpecs;
+import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
+import com.wl4g.devops.dts.codegen.engine.naming.PythonSpecs;
 import com.wl4g.devops.dts.codegen.utils.FreemarkerUtils2;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -60,8 +60,8 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
     final private static Map<String, List<TemplateFile>> templatesMap = new HashMap<>();
     final private static Configuration configuration = FreemarkerUtils2.defaultGenConfigurer;
 
-    protected static final SpelExpressions defaultSpelExpressions = SpelExpressions.create(CSharpNamingSpecs.class,
-            GolangNamingSpecs.class, JavaNamingSpecs.class, PythonNamingSpecs.class);
+    protected static final SpelExpressions defaultSpelExpressions = SpelExpressions.create(CSharpSpecs.class,
+            GolangSpecs.class, JavaSpecs.class, PythonSpecs.class);
 
     /**
      * {@link GenerateContext}

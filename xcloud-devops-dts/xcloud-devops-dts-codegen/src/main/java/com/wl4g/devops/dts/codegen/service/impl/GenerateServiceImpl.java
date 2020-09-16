@@ -31,7 +31,7 @@ import com.wl4g.devops.dts.codegen.dao.GenTableDao;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.CodeKind;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
-import com.wl4g.devops.dts.codegen.engine.naming.JavaNamingSpecs;
+import com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs;
 import com.wl4g.devops.dts.codegen.engine.resolver.MetadataResolver;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata;
 import com.wl4g.devops.dts.codegen.engine.resolver.TableMetadata.ColumnMetadata;
@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.wl4g.components.common.lang.Assert2.notNullOf;
-import static com.wl4g.devops.dts.codegen.engine.naming.JavaNamingSpecs.underlineToHump;
+import static com.wl4g.devops.dts.codegen.engine.naming.JavaSpecs.underlineToHump;
 
 /**
  * {@link GenerateServiceImpl}
@@ -99,7 +99,7 @@ public class GenerateServiceImpl implements GenerateService {
 
 		// TableMetadata to GenTable
 		GenTable genTab = new GenTable();
-		genTab.setEntityName(JavaNamingSpecs.tableName2ClassName(metadata.getTableName()));
+		genTab.setEntityName(JavaSpecs.tableName2ClassName(metadata.getTableName()));
 		genTab.setTableName(metadata.getTableName());
 		genTab.setComments(metadata.getComments());
 
