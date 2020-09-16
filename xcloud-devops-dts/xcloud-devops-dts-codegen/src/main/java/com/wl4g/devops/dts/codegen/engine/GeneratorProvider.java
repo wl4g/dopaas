@@ -15,27 +15,24 @@
  */
 package com.wl4g.devops.dts.codegen.engine;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import com.wl4g.components.common.annotation.Nullable;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import com.wl4g.components.common.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
 import static com.wl4g.components.common.collection.Collections2.safeList;
-import static com.wl4g.components.common.lang.Assert2.hasTextOf;
-import static com.wl4g.components.common.lang.Assert2.isTrue;
-import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
-import static com.wl4g.components.common.lang.Assert2.notNullOf;
+import static com.wl4g.components.common.lang.Assert2.*;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
 import static com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -95,6 +92,7 @@ public interface GeneratorProvider extends Runnable {
 			{
 				add(new ConfigOption(SPINGCLOUD_MVN, "codegen.provider.springcloudmvn.build-assets-type", "MvnAssTar",
 						"SpringExecJar"));
+				add(new ConfigOption(VUEJS, "codegen.provider.vue.compression", "true", "false"));
 			}
 		});
 
@@ -110,10 +108,10 @@ public interface GeneratorProvider extends Runnable {
 		 */
 		public static List<ConfigOption> getOptions(@Nullable String... providers) {
 			final List<String> conditions = new ArrayList<>();
-			if (isEmptyArray(providers)) {
+			if (!isEmptyArray(providers)) {
 				conditions.addAll(asList(providers));
 			}
-			return extraOptionsRegistry.stream().filter(o -> (isEmpty(conditions) || conditions.contains(o.getName())))
+			return extraOptionsRegistry.stream().filter(o -> (isEmpty(conditions) || conditions.contains(o.getProvider())))
 					.collect(toList());
 		}
 
@@ -142,7 +140,7 @@ public interface GeneratorProvider extends Runnable {
 		 * @version v1.0 2020-09-16
 		 * @since
 		 */
-		public static final class ConfigOption {
+		public static class ConfigOption {
 
 			/** {@link GeneratorProvider} alias. */
 			@NotBlank
@@ -261,11 +259,9 @@ public interface GeneratorProvider extends Runnable {
 	 */
 	public static enum GenProviderGroup {
 
-		JustDao(asList(SPINGCLOUD_MVN)),
+		DaoServiceController(asList(SPINGCLOUD_MVN)),
 
-		DaoServiceController(asList(SPINGCLOUD_MVN, SPINGCLOUD_MVN)),
-
-		DaoServiceControllerVueJS(asList(SPINGCLOUD_MVN, SPINGCLOUD_MVN, VUEJS)),
+		DaoServiceControllerVueJS(asList(SPINGCLOUD_MVN, VUEJS)),
 
 		JustVueJS(asList(VUEJS)),
 
@@ -293,19 +289,13 @@ public interface GeneratorProvider extends Runnable {
 		 * @param group
 		 * @return
 		 */
-		public static List<String> getProviders(@Nullable String... group) {
-			List<String> providers = new ArrayList<>();
-			List<String> conditions = null;
-			if (!isEmptyArray(group)) {
-				conditions = asList(group);
-			}
+		public static List<String> getProviders(@Nullable String group) {
 			for (GenProviderGroup en : values()) {
-				if (isNull(conditions) || conditions.contains(en.name())) {
-					providers.addAll(en.providers());
-					break;
+				if (StringUtils.equalsIgnoreCase(en.name(),group)) {
+					return en.providers();
 				}
 			}
-			return providers;
+			return Collections.emptyList();
 		}
 
 	}

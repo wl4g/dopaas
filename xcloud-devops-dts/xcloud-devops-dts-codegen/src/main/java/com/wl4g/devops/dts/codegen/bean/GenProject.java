@@ -1,6 +1,7 @@
 package com.wl4g.devops.dts.codegen.bean;
 
 import com.wl4g.components.core.bean.BaseBean;
+import com.wl4g.devops.dts.codegen.web.model.ProviderConfigOption;
 
 import java.util.List;
 
@@ -24,6 +25,10 @@ public class GenProject extends BaseBean {
     private String copyright;
 
     private List<GenTable> genTables;
+
+    private String providerConfigOptions;
+
+    private List<ProviderConfigOption> providerConfigOptionList;
 
     public String getProjectName() {
         return projectName;
@@ -95,5 +100,21 @@ public class GenProject extends BaseBean {
 
     public void setGenTables(List<GenTable> genTables) {
         this.genTables = genTables;
+    }
+
+    public String getProviderConfigOptions() {
+        return providerConfigOptions;
+    }
+
+    public void setProviderConfigOptions(String providerConfigOptions) {
+        this.providerConfigOptions = providerConfigOptions;
+    }
+
+    public List<ProviderConfigOption> getProviderConfigOptionList() {
+        return providerConfigOptionList;
+    }
+
+    public void setProviderConfigOptionList(List<ProviderConfigOption> providerConfigOptionList) {
+        this.providerConfigOptionList = providerConfigOptionList;
     }
 }

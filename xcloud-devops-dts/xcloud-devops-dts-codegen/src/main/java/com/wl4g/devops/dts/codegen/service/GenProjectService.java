@@ -2,9 +2,6 @@ package com.wl4g.devops.dts.codegen.service;
 
 import com.wl4g.components.data.page.PageModel;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
-import com.wl4g.devops.dts.codegen.engine.GeneratorProvider.ExtraConfigSupport.ConfigOption;
-
-import java.util.List;
 
 /**
  * GenProjectService
@@ -22,5 +19,4 @@ public interface GenProjectService {
 
 	void del(Integer id);
 
-	List<ConfigOption> getProviderConfig(String genProviderGroup);
 }
