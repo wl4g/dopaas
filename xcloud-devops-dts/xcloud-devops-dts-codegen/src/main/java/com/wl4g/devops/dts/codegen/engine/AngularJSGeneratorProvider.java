@@ -30,4 +30,9 @@ public class AngularJSGeneratorProvider extends AbstractGeneratorProvider {
 		super(context);
 	}
 
+	@Override
+	protected void doRun() throws Exception {
+
+	}
+
 }

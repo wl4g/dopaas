@@ -113,6 +113,10 @@ public abstract class JavaNamingSpecs {
 		return valueOf(cs);
 	}
 
+	public static String packageToPath(@Nullable String str){
+		return str.replaceAll("\\.","/");
+	}
+
 	/** Underline {@link Pattern} */
 	private final static ThreadLocal<Pattern> underlinePatternCache = withInitial(() -> compile("_(\\w)"));
 

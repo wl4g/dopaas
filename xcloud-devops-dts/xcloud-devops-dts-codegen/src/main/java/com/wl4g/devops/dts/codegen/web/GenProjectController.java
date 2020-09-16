@@ -52,4 +52,11 @@ public class GenProjectController extends BaseController {
         return resp;
     }
 
+    @RequestMapping(value = "/getProviderConfig")
+    public RespBase<?> getProviderConfig(String genProviderGroup) {
+        RespBase<Object> resp = RespBase.create();
+        resp.setData(genProjectService.getProviderConfig(genProviderGroup));
+        return resp;
+    }
+
 }
