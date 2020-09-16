@@ -99,7 +99,7 @@ public class GenerateServiceImpl implements GenerateService {
 
 		// TableMetadata to GenTable
 		GenTable genTab = new GenTable();
-		genTab.setClassName(JavaNamingSpecs.tableName2ClassName(metadata.getTableName()));
+		genTab.setEntityName(JavaNamingSpecs.tableName2ClassName(metadata.getTableName()));
 		genTab.setTableName(metadata.getTableName());
 		genTab.setComments(metadata.getComments());
 

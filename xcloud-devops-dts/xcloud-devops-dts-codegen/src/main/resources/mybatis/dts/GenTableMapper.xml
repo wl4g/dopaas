@@ -6,7 +6,7 @@
     <result column="database_id" property="databaseId" jdbcType="INTEGER" />
     <result column="project_id" property="projectId" jdbcType="INTEGER" />
     <result column="table_name" property="tableName" jdbcType="VARCHAR" />
-    <result column="class_name" property="className" jdbcType="VARCHAR" />
+    <result column="entity_name" property="entityName" jdbcType="VARCHAR" />
     <result column="comments" property="comments" jdbcType="VARCHAR" />
     <result column="parent_table_name" property="parentTableName" jdbcType="VARCHAR" />
     <result column="parent_table_fk_name" property="parentTableFkName" jdbcType="VARCHAR" />
@@ -28,7 +28,7 @@
     <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, database_id, project_id, table_name, class_name, comments, parent_table_name, parent_table_fk_name,
+    id, database_id, project_id, table_name, entity_name, comments, parent_table_name, parent_table_fk_name,
     data_source_name, tpl_category, package_name, module_name, sub_module_name, function_name, 
     function_name_simple, function_author, gen_base_dir, options, remark, del_flag, create_date, 
     create_by, update_date, update_by
@@ -51,7 +51,7 @@
   </delete>
   <insert id="insert" parameterType="com.wl4g.devops.dts.codegen.bean.GenTable" >
     insert into dts_gen_table (id, database_id, project_id, table_name,
-      class_name, comments, parent_table_name, 
+      entity_name, comments, parent_table_name,
       parent_table_fk_name, data_source_name, tpl_category, 
       package_name, module_name, sub_module_name, 
       function_name, function_name_simple, function_author, 
@@ -59,7 +59,7 @@
       del_flag, create_date, create_by, 
       update_date, update_by)
     values (#{id,jdbcType=INTEGER}, #{databaseId,jdbcType=INTEGER},  #{projectId,jdbcType=INTEGER}, #{tableName,jdbcType=VARCHAR},
-      #{className,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{parentTableName,jdbcType=VARCHAR}, 
+      #{entityName,jdbcType=VARCHAR}, #{comments,jdbcType=VARCHAR}, #{parentTableName,jdbcType=VARCHAR},
       #{parentTableFkName,jdbcType=VARCHAR}, #{dataSourceName,jdbcType=VARCHAR}, #{tplCategory,jdbcType=VARCHAR}, 
       #{packageName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{subModuleName,jdbcType=VARCHAR}, 
       #{functionName,jdbcType=VARCHAR}, #{functionNameSimple,jdbcType=VARCHAR}, #{functionAuthor,jdbcType=VARCHAR}, 
@@ -82,8 +82,8 @@
       <if test="tableName != null" >
         table_name,
       </if>
-      <if test="className != null" >
-        class_name,
+      <if test="entityName != null" >
+        entity_name,
       </if>
       <if test="comments != null" >
         comments,
@@ -156,8 +156,8 @@
       <if test="tableName != null" >
         #{tableName,jdbcType=VARCHAR},
       </if>
-      <if test="className != null" >
-        #{className,jdbcType=VARCHAR},
+      <if test="entityName != null" >
+        #{entityName,jdbcType=VARCHAR},
       </if>
       <if test="comments != null" >
         #{comments,jdbcType=VARCHAR},
@@ -230,8 +230,8 @@
       <if test="tableName != null" >
         table_name = #{tableName,jdbcType=VARCHAR},
       </if>
-      <if test="className != null" >
-        class_name = #{className,jdbcType=VARCHAR},
+      <if test="entityName != null" >
+        entity_name = #{entityName,jdbcType=VARCHAR},
       </if>
       <if test="comments != null" >
         comments = #{comments,jdbcType=VARCHAR},
@@ -298,7 +298,7 @@
     set database_id = #{databaseId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
       table_name = #{tableName,jdbcType=VARCHAR},
-      class_name = #{className,jdbcType=VARCHAR},
+      entity_name = #{entityName,jdbcType=VARCHAR},
       comments = #{comments,jdbcType=VARCHAR},
       parent_table_name = #{parentTableName,jdbcType=VARCHAR},
       parent_table_fk_name = #{parentTableFkName,jdbcType=VARCHAR},

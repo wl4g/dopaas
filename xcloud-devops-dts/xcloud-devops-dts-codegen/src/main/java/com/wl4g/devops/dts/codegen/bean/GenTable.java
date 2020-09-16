@@ -38,7 +38,7 @@ public class GenTable extends GenProject {
 
 	private String tableName;
 
-	private String className;//TODO entityName
+	private String entityName;
 
 	private String comments;
 

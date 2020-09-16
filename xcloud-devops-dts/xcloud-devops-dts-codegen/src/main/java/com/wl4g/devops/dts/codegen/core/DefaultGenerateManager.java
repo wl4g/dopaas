@@ -15,6 +15,7 @@
  */
 package com.wl4g.devops.dts.codegen.core;
 
+import com.oracle.tools.packager.Log;
 import com.wl4g.components.core.framework.beans.NamingPrototypeBeanFactory;
 import com.wl4g.devops.dts.codegen.bean.GenProject;
 import com.wl4g.devops.dts.codegen.bean.GenTable;
@@ -83,6 +84,7 @@ public class DefaultGenerateManager implements GenerateManager {
 		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderAlias.SPINGCLOUD_MVN, context);
 		provider.run();
 
+		Log.info("generate code success");
 		// TODO package return
 
 	}
