@@ -80,7 +80,7 @@ public class DefaultGenerateManager implements GenerateManager {
 		GenerateContext context = new DefaultGenerateContext(config, genProject);
 		// TODO ...
 
-		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderAlias.MVN_SPINGCLOUD, context);
+		GeneratorProvider provider = beanFactory.getPrototypeBean(GenProviderAlias.SPINGCLOUD_MVN, context);
 		provider.run();
 
 		// TODO package return

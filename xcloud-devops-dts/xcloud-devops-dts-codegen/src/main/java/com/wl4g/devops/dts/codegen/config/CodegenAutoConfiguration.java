@@ -23,7 +23,7 @@ import com.wl4g.devops.dts.codegen.core.DefaultGenerateManager;
 import com.wl4g.devops.dts.codegen.core.context.GenerateContext;
 import com.wl4g.devops.dts.codegen.engine.AngularJSGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.GoStandardGeneratorProvider;
-import com.wl4g.devops.dts.codegen.engine.SpringMvcGeneratorProvider;
+import com.wl4g.devops.dts.codegen.engine.SpringCloudMvnGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.VueGeneratorProvider;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter;
 import com.wl4g.devops.dts.codegen.engine.converter.DbTypeConverter.ConverterKind;
@@ -115,9 +115,9 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	@NamingPrototype({MVN_SPINGCLOUD})
-	public SpringMvcGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
-		return new SpringMvcGeneratorProvider(context);
+	@NamingPrototype({SPINGCLOUD_MVN})
+	public SpringCloudMvnGeneratorProvider springMvcGeneratorProvider(GenerateContext context) {
+		return new SpringCloudMvnGeneratorProvider(context);
 	}
 
 	@Bean
@@ -127,7 +127,7 @@ public class CodegenAutoConfiguration {
 	}
 
 	@Bean
-	@NamingPrototype({ AGJS })
+	@NamingPrototype({ NGJS })
 	public AngularJSGeneratorProvider angularJSGeneratorProvider(GenerateContext context) {
 		return new AngularJSGeneratorProvider(context);
 	}
