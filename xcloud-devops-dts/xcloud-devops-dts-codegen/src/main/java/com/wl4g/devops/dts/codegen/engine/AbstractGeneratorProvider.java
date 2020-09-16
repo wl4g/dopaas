@@ -54,7 +54,7 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
 
     final private static String tplSuffix = ".tpl";
     final private static String BASEPATH = "projects-template";
-    final private static String ENTITY_NAME = "entity_name";
+    final private static String ENTITY_NAME = "entityName";
 
     final private static Map<String, List<TemplateFile>> templatesMap = new HashMap<>();
     final private static Configuration configuration = FreemarkerUtils2.defaultGenConfigurer;
@@ -76,10 +76,10 @@ public abstract class AbstractGeneratorProvider implements GeneratorProvider {
         // TODO Auto-generated method stub
     }
 
-    void genFileToLoacl(String templateName) throws Exception {
+    void genFileToLoacl(String provider) throws Exception {
         GenProject genProject = context.getGenProject();
         File jobDir = context.getJobDir();
-        genCode(templateName, genProject, jobDir.getAbsolutePath());
+        genCode(provider, genProject, jobDir.getAbsolutePath());
     }
 
 
