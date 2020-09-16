@@ -15,13 +15,13 @@
  */
 package com.wl4g.devops.dts.codegen.utils;
 
+import freemarker.template.TemplateException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import freemarker.template.TemplateException;
 
 /**
  * {@link FreemarkerUtils2Tests}
@@ -46,8 +46,8 @@ public class FreemarkerUtils2Tests {
 		}
 		beanMap.put("params", paramsList);
 
-		String renderString = FreemarkerUtils2.gen("entity.ftl", beanMap);
-		System.out.println(renderString);
+		/*String renderString = FreemarkerUtils2.gen("entity.ftl", beanMap);
+		System.out.println(renderString);*/
 	}
 
 }
