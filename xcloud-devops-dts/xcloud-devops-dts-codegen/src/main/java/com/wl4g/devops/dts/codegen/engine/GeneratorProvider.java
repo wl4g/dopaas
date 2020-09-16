@@ -17,21 +17,25 @@ package com.wl4g.devops.dts.codegen.engine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.wl4g.components.common.annotation.Nullable;
-import com.wl4g.components.common.collection.multimap.LinkedMultiValueMap;
-import com.wl4g.components.common.collection.multimap.MultiValueMap;
 
 import static com.wl4g.components.common.collection.Collections2.isEmptyArray;
+import static com.wl4g.components.common.collection.Collections2.safeList;
 import static com.wl4g.components.common.lang.Assert2.hasTextOf;
+import static com.wl4g.components.common.lang.Assert2.isTrue;
 import static com.wl4g.components.common.lang.Assert2.notEmptyOf;
+import static com.wl4g.components.common.lang.Assert2.notNull;
+import static com.wl4g.components.common.lang.Assert2.notNullOf;
 import static com.wl4g.components.common.reflect.ReflectionUtils2.getFieldValues;
 import static com.wl4g.devops.dts.codegen.engine.GeneratorProvider.GenProviderAlias.*;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -74,60 +78,115 @@ public interface GeneratorProvider extends Runnable {
 	}
 
 	/**
-	 * An extensible configuration item {@link ExtraOptions} which is supported
-	 * by itself, If NULL is returned, there is no extensible configuration
-	 * item.
+	 * An extensible configuration item {@link ExtraOptionSupport} which is
+	 * supported by itself, If NULL is returned, there is no extensible
+	 * configuration item.
 	 *
 	 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
 	 * @version v1.0 2020-09-16
 	 * @since
 	 */
-	@SuppressWarnings("serial")
-	public static enum ExtraOptions {
+	public static enum ExtraOptionSupport {
 
-		SPINGCLOUD_MVN_ITEMS(SPINGCLOUD_MVN, new LinkedMultiValueMap<String, String>() {
-			{
-				put("codegen.provider.springcloudmvn.build-assets-type", new ArrayList<String>() {
-					{
-						add("MvnAssTar");
-						add("SpringExecJar");
-					}
-				});
-			}
-		});
+		SpringCloudMvnOption(SPINGCLOUD_MVN,
+				new ExtraOption("codegen.provider.springcloudmvn.build-assets-type", "MvnAssTar", "SpringExecJar"));
 
 		/** {@link GeneratorProvider} alias. */
 		private final String provider;
 
-		/** {@link GeneratorProvider} Configurable item list. */
-		private final MultiValueMap<String, String> options;
+		/** {@link GeneratorProvider} configurable item list. */
+		private final List<ExtraOption> options;
 
-		private ExtraOptions(@NotBlank String provider, @NotBlank MultiValueMap<String, String> options) {
+		private ExtraOptionSupport(@NotBlank String provider, @NotBlank ExtraOption... options) {
 			this.provider = hasTextOf(provider, "provider");
-			this.options = notEmptyOf(options, "options");
+			this.options = asList(notEmptyOf(options, "option"));
 		}
 
 		public String getProvider() {
 			return provider;
 		}
 
-		public final MultiValueMap<String, String> getOptions() {
-			return options;
+		public final List<String> getOptionNames() {
+			return safeList(options).stream().map(o -> o.getOptionName()).collect(toList());
 		}
 
-		public final Set<String> getOptionKeys() {
-			return options.keySet();
+		public final List<String> getOptionValues(@NotBlank String name) {
+			hasTextOf(name, "name");
+			return safeList(options).stream().filter(o -> o.getOptionName().equals(name))
+					.flatMap(o -> o.getOptionValues().stream()).collect(toList());
 		}
 
-		public final List<String> getOptionValues(@Nullable String key) {
-			List<String> optionValues = new ArrayList<>();
-			for (List<String> vals : options.values()) {
-				if (isBlank(key) || vals.contains(key)) {
-					optionValues.addAll(vals);
-					break;
+		/**
+		 * Safe parsing of provider.
+		 * 
+		 * @param provider
+		 * @return
+		 */
+		public static ExtraOptionSupport safeOfProvider(@NotNull String provider) {
+			hasTextOf(provider, "provider");
+			for (ExtraOptionSupport define : values()) {
+				if (isBlank(provider) || define.name().equals(provider)) {
+					return define;
 				}
 			}
-			return optionValues;
+			return null;
+		}
+
+		/**
+		 * Parsing of provider.
+		 * 
+		 * @param provider
+		 * @return
+		 */
+		public static ExtraOptionSupport ofProvider(@NotNull String provider) {
+			ExtraOptionSupport define = safeOfProvider(provider);
+			notNull(define, IllegalArgumentException.class, "No such extra config define of provider '%s'", provider);
+			return define;
+		}
+
+		/**
+		 * Check {@link ExtraOptionSupport} {@link ExtraOption} name and values
+		 * invalid?
+		 * 
+		 * @param option
+		 */
+		public static void checkOption(@NotBlank String provider, @NotNull ExtraOption option) {
+			notNullOf(option, "option");
+			hasTextOf(option.getOptionName(), "optionName");
+			notEmptyOf(option.getOptionValues(), "optionValues");
+			// Parse of provider
+			ExtraOptionSupport define = ofProvider(provider);
+			isTrue(define.getOptionNames().contains(option), "Invalid option '%s' of provider '%s'", option, provider);
+		}
+
+		/**
+		 * {@link ExtraOption}
+		 *
+		 * @author Wangl.sir <wanglsir@gmail.com, 983708408@qq.com>
+		 * @version v1.0 2020-09-16
+		 * @since
+		 */
+		public static final class ExtraOption {
+
+			/** Gen provider extra configuration option name. */
+			private final String name;
+
+			/** Gen provider extra configuration option values. */
+			private final List<String> values;
+
+			public ExtraOption(@NotBlank String name, @NotEmpty String... values) {
+				this.name = hasTextOf(name, "name");
+				this.values = asList(notEmptyOf(values, "values"));
+			}
+
+			public final String getOptionName() {
+				return name;
+			}
+
+			public final List<String> getOptionValues() {
+				return values;
+			}
+
 		}
 
 	}
@@ -141,15 +200,15 @@ public interface GeneratorProvider extends Runnable {
 	 */
 	public static enum GenProviderGroup {
 
-		JUST_DAO(asList(SPINGCLOUD_MVN)),
+		JustDao(asList(SPINGCLOUD_MVN)),
 
-		DAO_SERVICE_CONTRELLER(asList(SPINGCLOUD_MVN, SPINGCLOUD_MVN)),
+		DaoServiceController(asList(SPINGCLOUD_MVN, SPINGCLOUD_MVN)),
 
-		DAO_SERVICE_CONTRELLER_VUE(asList(SPINGCLOUD_MVN, SPINGCLOUD_MVN, VUEJS)),
+		DaoServiceControllerVueJS(asList(SPINGCLOUD_MVN, SPINGCLOUD_MVN, VUEJS)),
 
-		JUST_VUEJS(asList(VUEJS)),
+		JustVueJS(asList(VUEJS)),
 
-		JUST_AGJS(asList(NGJS));
+		JustNgJS(asList(NGJS));
 
 		/** {@link GenProviderAlias} */
 		private final List<String> providers;
