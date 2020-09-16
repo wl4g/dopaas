@@ -37,7 +37,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * {@link GeneratorProvider}
@@ -108,8 +108,12 @@ public interface GeneratorProvider extends Runnable {
 		 * @param provider
 		 * @return
 		 */
-		public static List<ConfigOption> getOptions(@Nullable String provider) {
-			return extraOptionsRegistry.stream().filter(o -> (isBlank(provider) || provider.equals(o.getName())))
+		public static List<ConfigOption> getOptions(@Nullable String... providers) {
+			final List<String> conditions = new ArrayList<>();
+			if (isEmptyArray(providers)) {
+				conditions.addAll(asList(providers));
+			}
+			return extraOptionsRegistry.stream().filter(o -> (isEmpty(conditions) || conditions.contains(o.getName())))
 					.collect(toList());
 		}
 
@@ -284,16 +288,16 @@ public interface GeneratorProvider extends Runnable {
 		}
 
 		/**
-		 * Gets providers by components name.
+		 * Gets providers by group name.
 		 * 
-		 * @param components
+		 * @param group
 		 * @return
 		 */
-		public static List<String> getProviders(@Nullable String... components) {
+		public static List<String> getProviders(@Nullable String... group) {
 			List<String> providers = new ArrayList<>();
 			List<String> conditions = null;
-			if (!isEmptyArray(components)) {
-				conditions = asList(components);
+			if (!isEmptyArray(group)) {
+				conditions = asList(group);
 			}
 			for (GenProviderGroup en : values()) {
 				if (isNull(conditions) || conditions.contains(en.name())) {
