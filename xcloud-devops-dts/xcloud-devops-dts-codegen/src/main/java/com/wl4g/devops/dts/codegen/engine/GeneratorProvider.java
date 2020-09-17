@@ -148,7 +148,7 @@ public interface GeneratorProvider extends Runnable {
 		 * @param configuredOptions
 		 * @return
 		 */
-		public static boolean checkConfigured(@NotNull String provider, @NotEmpty List<ConfigOption> configuredOptions) {
+		public static boolean checkConfigured(@NotBlank String provider, @NotEmpty List<ConfigOption> configuredOptions) {
 			hasTextOf(provider, "provider");
 			notEmptyOf(configuredOptions, "configuredOptions");
 			for (ConfigOption defineOption : safeList(getOptions(provider))) {
